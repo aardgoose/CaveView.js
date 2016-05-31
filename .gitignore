@@ -7,3 +7,4 @@ build/surveys/*.3d
 build/surveys/*.lox
 !build/terrain/README.txt
 !build/surveys/README.txt
+src/js/shaders/*.txt

@@ -1,1 +1,0 @@
-\nvarying float vHeight;\nvoid main() {\n	gl_FragColor = vec4(vHeight, vHeight, vHeight, 1.0);\n}\n

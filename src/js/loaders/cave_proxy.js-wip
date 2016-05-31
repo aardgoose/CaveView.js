@@ -1,0 +1,117 @@
+//"use strict";
+
+var Cave = Cave || {};
+
+Cave.LoaderProxy = function ( callback, progress ) {
+
+	if (!callback) {
+
+		alert( "No callback specified");
+
+	}
+
+	this.callback = callback;
+	this.progress = progress;
+
+	this.worker = new Worker( "cave_factory.js" );
+
+}
+
+Cave.LoaderProxy.prototype.constructor = Cave.LoaderProxy;
+
+Cave.LoaderProxy.prototype.loadURL = function ( cave ) {
+
+	var self     = this;
+	var fileName = cave;
+	var worker   = this.worker;
+
+	worker.addEventListener( "message", _loaded );
+
+	worker.postMessage( { action: "loadUrl", file: fileName } );
+
+	return true;
+
+	function _loaded ( event ) {
+
+		// FIXME - add error handling
+
+		this.data = event.data.cave;
+
+		self.callback( this );
+
+	}
+
+}
+
+Cave.LoaderProxy.prototype.loadFile = function ( file ) {
+
+	var self = this;
+	var fileName = file.name;
+	var worker   = this.worker;
+
+	worker.addEventListener( "message", _loaded );
+
+	worker.postMessage( { action: "loadFile", file: fileName } );
+
+	return true;
+
+	function _loaded ( event ) {
+
+		this.data = event.data.cave;
+
+		self.callback( this );
+
+	}
+
+}
+
+Cave.LoaderProxy.prototype.getRemote = function ( action ) {
+
+	return this.data[action];
+
+}
+
+// Cave survey proxy stubs
+
+Cave.LoaderProxy.prototype.getLineSegments = function () {
+
+	return this.getRemote( "getLineSegments" );
+
+}
+
+Cave.LoaderProxy.prototype.getSurveyTree = function () {
+
+	return this.getRemote( "getSurveyTree" );
+
+}
+
+Cave.LoaderProxy.prototype.getScraps = function () {
+
+	return this.getRemote( "getScraps" );
+
+}
+
+Cave.LoaderProxy.prototype.getCrossSections = function () {
+
+	return this.getRemote( "getCrossSections" );
+
+}
+
+Cave.LoaderProxy.prototype.getEntrances = function () {
+
+	return this.getRemote( "getEntrances" );
+
+}
+
+Cave.LoaderProxy.prototype.getTerrainDimensions = function () {
+
+	return this.getRemote( "getTerrainDimensions" );
+
+}
+
+Cave.LoaderProxy.prototype.getTerrainBitmap = function () {
+
+	return this.getRemote( "getTerrainBitmap" );
+
+}
+

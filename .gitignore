@@ -1,0 +1,7 @@
+node_modules
+build/terrain
+!build/terrain/README.txt
+build/surveys
+!build/surveys/README.txt
+.vscode
+3rdParty

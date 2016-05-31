@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>demo 3d cave viewer</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+</head>
+<body onload="onload();" >
+<script type="text/javascript" src="CaveView/lib/three.js" ></script>
+<script type="text/javascript" src="CaveView/lib/OrbitControls.js" ></script>
+<script type="text/javascript" src="CaveView/lib/chroma.min.js" ></script>
+<script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
+<script type="text/javascript" >
+
+function onload () {
+
+	CV.UI.init( "scene" );
+	CV.UI.loadCaveList( [ 'Castleton_Master.3d', 'Cheddar.lox', 'Peak_Master.3d', 'Bradwell_Master.3d', 'all.3d', 'Lathkill.lox', 'titan.3d', "Nettle_Pot_Master.3d", "P8_Master.3d"] );
+}
+
+</script>
+<div id="scene"></div>
+<p>Mouse: left button down - rotate, right button down pan, mouse wheel - zoom</p>
+<p>The Cheddar and Lathkill Area Survey "Therion" 3D file by University of Bristol Spelaeological Society are released under a
+<a rel="license" title="Creative Commons Attribution-Non-Commercial-Share Alike 2.0 UK: England &amp; Wales License" href="http://creativecommons.org/licenses/by-nc-sa/2.0/uk/">Creative Commons</a> license.
+<br>
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/uk/"><img alt="Creative Commons License" src="http://i.creativecommons.org/l/by-nc-sa/2.0/uk/88x31.png"></a>
+</p>
+<p>Contains Ordnance Survey data &copy; Crown copyright and database right 2015.</p>
+<p>contains DTM data &copy; Environment Agency copyright and/or database right 2015</p>
+<p>Contains British Geological Survey materials &copy;NERC 2016</p>
+<!--- <iframe id="iframe" src="http://thedca.org.uk/dca-cr/registry/registrysearch.php" ></iframe> -->
+</body>
+</html>
+

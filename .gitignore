@@ -1,7 +1,9 @@
-node_modules
-build/terrain
-!build/terrain/README.txt
-build/surveys
-!build/surveys/README.txt
 .vscode
 3rdParty
+node_modules
+build/terrain/tilesets.json
+build/terrain/SK
+build/surveys/*.3d
+build/surveys/*.lox
+!build/terrain/README.txt
+!build/surveys/README.txt

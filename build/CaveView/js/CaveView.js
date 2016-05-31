@@ -6924,7 +6924,7 @@ function loadCave ( file ) {
 
 	progressBar.Start( "Loading file " + file + " ..." );
 
-	caveLoader.loadURL( "/surveys/" + file );
+	caveLoader.loadURL( "surveys/" + file );
 
 }
 

@@ -4068,8 +4068,8 @@ CV.TileSet = {
 	W: 400000,
 
 	TILESIZE: 256,
-	BASEDIR: "terrain/SK/heightmaps/",
-	OVERLAYDIR: "terrain/SK/overlays/",
+	BASEDIR: "../../../terrain/SK/heightmaps/",
+	OVERLAYDIR: "../../../terrain/SK/overlays/",
 	OVERLAYS: [ "OS", "BGS" ],
 	OVERLAY_RESOLUTION: 32,
 	PREFIX: "SK",

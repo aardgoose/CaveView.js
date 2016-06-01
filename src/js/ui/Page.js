@@ -63,6 +63,12 @@ CV.Page.handleChange = function ( event ) {
 
 				break;
 
+			case "range":
+
+				ctrl.value = obj[ property ];
+
+				break;
+
 			}
 
 		}
@@ -121,7 +127,6 @@ CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 	var label  = document.createElement( "label" );
 	var select = document.createElement( "select" );
 	var opt;
-	var self = this;
 
 	if ( obj instanceof Array ) {
 
@@ -155,7 +160,7 @@ CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 		}
 
-		select.addEventListener( "change", function (event) { CV.Page.inHandler = true; trgObj[property] = event.target.value; CV.Page.inHandler = false; } );
+		select.addEventListener( "change", function ( event ) { CV.Page.inHandler = true; trgObj[property] = event.target.value; CV.Page.inHandler = false; } );
 
 	}
 
@@ -170,8 +175,8 @@ CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 CV.Page.prototype.addCheckbox = function ( title, obj, property ) {
 
-	var label  = document.createElement( "label" );
-	var cb     = document.createElement( "input" );
+	var label = document.createElement( "label" );
+	var cb    = document.createElement( "input" );
 
 	label.textContent = title;
 
@@ -193,6 +198,35 @@ CV.Page.prototype.addCheckbox = function ( title, obj, property ) {
 		CV.Page.inHandler = true;
 
 		obj[ property ] = event.target.checked; 
+
+		CV.Page.inHandler = false;
+
+	}
+
+}
+
+CV.Page.prototype.addRange = function ( title, obj, property ) {
+
+	var label = document.createElement( "label" );
+	var range = document.createElement( "input" );
+
+	range.type = "range";
+
+	range.addEventListener( "input", _rangeChanged );
+	range.addEventListener( "change", _rangeChanged ); // for IE11 support
+	
+	label.textContent = title;
+
+	CV.Page.controls[ property ] = range;
+
+	this.page.appendChild( label );
+	this.page.appendChild( range );
+
+	function _rangeChanged ( event ) {
+
+		CV.Page.inHandler = true;
+
+		obj[ property ] = event.target.value; 
 
 		CV.Page.inHandler = false;
 

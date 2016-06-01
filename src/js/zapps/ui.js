@@ -385,7 +385,6 @@ function initSettingsPage () {
 
 	}
 
-
 	if ( viewState.hasTerrain ) {
 
 		var overlays = viewState.terrainOverlays;
@@ -397,6 +396,10 @@ function initSettingsPage () {
 		if ( overlays.length > 1 ) page.addSelect( "Overlay", overlays, viewState, "terrainOverlay" );
 
 	}
+
+	page.addHeader( "WIP" );
+
+	page.addRange( "Vertical scaling", viewState, "zScale" );
 
 	page.addHeader( "Visibility" );
 

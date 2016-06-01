@@ -41,6 +41,7 @@ var survey;
 var limits;
 var stats  = {};
 var scaleMatrix;
+var zScale;
 
 var viewState = {};
 var cursorHeight;
@@ -260,10 +261,10 @@ function init ( domID ) { // public method
 
 	} );
 
-	Object.defineProperty( viewState, "test", {
+	Object.defineProperty( viewState, "zScale", {
 		writeable: true,
-		get: function () { return true; },
-		set: function ( x ) { loadRegistry( x ) }
+		get: function () { return zScale; },
+		set: function ( x ) { setZScale( x ) }
 
 	} );
 
@@ -295,6 +296,20 @@ function init ( domID ) { // public method
 		viewState.dispatchEvent( { type: "change", name: name } );
 
 	}
+
+}
+
+
+function setZScale( scale ) {
+
+	// scale - in range 1 - 100
+	// scale -= 50;
+
+	scale = Math.pow( 2, ( scale - 50 ) / 25 );
+
+	region.applyMatrix( new THREE.Matrix4().makeScale( 1, 1, scale / zScale ) );
+
+	zScale = scale;
 
 }
 
@@ -1069,6 +1084,7 @@ function setScale () {
 	var height = container.clientHeight;
 
 	limits = survey.limits;
+	zScale = 1;
 
 	var range  = limits.size();
 	var center = limits.center();

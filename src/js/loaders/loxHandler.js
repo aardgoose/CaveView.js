@@ -39,7 +39,6 @@ CV.loxHandler = function ( fileName, dataStream ) {
 
 	// Drop data to give GC a chance ASAP
 	source = null;
-	xhr    = null;
 
 	// strip empty/single top nodes of tree
 	surveyTree.reduce( "unknown" );

@@ -110,7 +110,7 @@ CV.Loader.prototype.loadFile = function ( file ) {
 
 	var type = this.dataType;
 
-	if (!type) {
+	if ( !type ) {
 
 		alert( "Cave: unknown file extension [", self.extention, "]");
 		return false;

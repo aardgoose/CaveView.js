@@ -401,6 +401,8 @@ function initSettingsPage () {
 
 	page.addRange( "Vertical scaling", viewState, "zScale" );
 
+	if ( viewState.hasTerrain ) page.addRange( "Terrain opacity", viewState, "terrainOpacity" );
+
 	page.addHeader( "Visibility" );
 
 	if ( viewState.hasEntrances )    page.addCheckbox( "Entrances",     viewState, "entrances" );

@@ -6,8 +6,9 @@ CV.Terrain = function () {
 
 	THREE.Group.call( this );
 
-	this.type   = "CV.Terrain";
-	this.tile   = null;
+	this.type     = "CV.Terrain";
+	this.tile     = null;
+	this.material = null;
 	this.overlay;
 
 	return this;
@@ -83,7 +84,21 @@ CV.Terrain.prototype.setOverlay = function ( overlay ) {
 CV.Terrain.prototype.setMaterial = function ( material ) {
 
 	this.tile.setMaterial( material );
+	this.material = material;
+}
+
+CV.Terrain.prototype.setOpacity= function ( opacity ) {
+
+	this.material.opacity = opacity;
+	this.material.needsUpdate = true;
 
 }
+
+CV.Terrain.prototype.getOpacity = function () {
+
+	return this.material.opacity;
+
+}
+
 
 // EOF

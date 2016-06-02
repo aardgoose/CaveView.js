@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>demo 3d cave viewer</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+</head>
+<body onload="onload();" >
+<script type="text/javascript" src="CaveView/lib/three.js" ></script>
+<script type="text/javascript" src="CaveView/lib/OrbitControls.js" ></script>
+<script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
+<script type="text/javascript" >
+
+var	caveLoader = new CV.Loader( caveLoaded, progress );
+var	viewState = CV.Viewer.getState;
+var index = 0;
+
+var demo = [
+
+	{
+		caption: "3D Cave survey",
+		delay: 5,
+		view: {
+		//	terrainOpacity: 1,
+//			section: 0,
+			zScale: 0.5,
+		}
+	},
+	
+	{
+		caption: "3D Cave survey",
+		delay: 5,
+		view: {
+			autoRotate: 1.0,
+			view: CV.VIEW_ELEVATION_S
+		}
+	},
+	{
+		caption: "Passage walls",
+		delay: 5,
+		view: {
+			walls: true
+		}
+	},
+	{
+		caption: "Multiple line shading methods",
+		delay: 5,
+		view: {
+			shadingMode: CV.SHADING_SINGLE
+		}
+	},
+
+	{
+		caption: "Shading by height",
+		delay: 5,
+		view: {
+			shadingMode: CV.SHADING_HEIGHT
+		}
+	},
+
+	{
+		caption: "Shading by leg length",
+		delay: 5,
+		view: {
+			shadingMode: CV.SHADING_LENGTH
+		}
+	},
+	{
+		caption: "Shading by leg inclination",
+		delay: 5,
+		view: {
+			shadingMode : CV.SHADING_INCLINATION
+		}
+	},
+	{
+		caption: "Shading by survey section",
+		delay: 5,
+		view: {
+			shadingMode: CV.SHADING_SURVEY
+		}
+	},
+	{
+		caption: "Shading by depth below surface",
+		delay: 5,
+		view: {
+			shadingMode: CV.SHADING_DEPTH
+		}
+	},
+	{
+		caption: "Entrance Markers",
+		delay: 5,
+		view: {
+			entrances: true
+		}
+	},
+	{
+		caption: "terrain",
+		delay: 5,
+		view: {
+			terrainOpacity: 1,
+			terrain: true
+		}
+	},
+	{
+		caption: "transparent terrain",
+		delay: 5,
+		view: {
+			terrainOpacity: 0.3
+		}
+	},
+	{
+		caption: "on screen indicators",
+		delay: 5,
+		view: {
+			HUD: true
+		}
+	},
+	{
+		caption: "Optional bounding box",
+		delay: 5,
+		view: {
+			box: true,
+		}
+	},
+	{
+		caption: "vertical scaling ( x 2)",
+		delay: 5,
+		view: {
+			zScale: 0.75
+		}
+	},
+	{
+		caption: "vertical scaling ( x 4)",
+		delay: 5,
+		view: {
+			zScale: 1.0,
+			terrainOpacity: 1,
+			terrain: false
+		}
+	},
+	{
+		caption: "Focus on survey section",
+		delay: 5,
+		view: {
+			zScale: 0.5,
+			section: 3
+		}
+	},
+	{
+		caption: "Orthographic view",
+		delay: 5,
+		view: {
+			section: 3,
+			cameraType: CV.CAMERA_ORTHOGRAPHIC
+		}
+	},
+	{
+		caption: "...",
+		delay: 5,
+		view: {
+			section: 0,
+			cameraType: CV.CAMERA_PERSPECTIVE,
+			walls: false
+		}
+	},
+];
+
+
+function runDemo() {
+
+	if ( index === demo.length ) index = 0;
+
+	var d = demo[index++];
+
+	console.log( d.caption );
+	setTimeout(runDemo, d.delay * 1000 ); // FIXME * 1000 for real time spec
+
+	var view = d.view;
+
+	if ( view ) {
+
+		for ( p in view ) {
+
+				console.log("view setting ", p );
+				viewState[p] = view[p];
+
+		}
+
+	}
+
+}
+
+function progress ( pcent ) {}
+
+function caveLoaded ( cave ) { 
+
+	viewState.addEventListener( "newCave", viewComplete );
+
+	CV.Viewer.loadCave( cave );
+
+}
+
+function viewComplete () {
+
+	// display shading mode and initialize
+
+	viewState.shadingMode = CV.SHADING_SINGLE;
+
+	viewState.entrances  = false;
+	viewState.box        = false;
+	viewState.HUD        = false;
+	viewState.walls      = false;
+
+	surveyTree = CV.Viewer.getSurveyTree();
+
+	// drop reference to cave to free heap space
+	cave = null;
+	
+	runDemo();
+}
+
+function onload () {
+
+	CV.Viewer.init( "scene" );
+	CV.Hud.init( "scene" );
+
+	CV.Viewer.clearView();
+
+	caveLoader.loadURL( "/surveys/P8_Master.3d" );
+
+}
+
+</script>
+<div id="scene" style="width: 500px; height: 500px;" ></div>
+<p>Mouse: left button down - rotate, right button down pan, mouse wheel - zoom</p>
+<p>Contains Ordnance Survey data &copy; Crown copyright and database right 2015.</p>
+<p>contains DTM data &copy; Environment Agency copyright and/or database right 2015</p>
+<p>Contains British Geological Survey materials &copy;NERC 2016</p>
+</body>
+</html>
+

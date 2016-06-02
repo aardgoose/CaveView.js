@@ -90,7 +90,7 @@ function init ( domID ) { // public method
 	viewState.addEventListener( "change",  CV.Page.handleChange );
 	viewState.addEventListener( "newCave", viewComplete );
 
-	CV.Hud.init( container );
+	CV.Hud.init( domID );
 
 }
 

@@ -212,6 +212,11 @@ CV.Page.prototype.addRange = function ( title, obj, property ) {
 
 	range.type = "range";
 
+	range.min  = 0;
+	range.max  = 1;
+
+	range.step = 0.05;
+
 	range.addEventListener( "input", _rangeChanged );
 	range.addEventListener( "change", _rangeChanged ); // for IE11 support
 	

@@ -25,6 +25,7 @@ CV.TiledTerrain = function ( limits3, onLoaded ) {
 	this.terrainLoaded = false;
 	this.replaceTile   = null;
 	this.activeOverlay = null;
+	this.material      = null;
 	this.initialResolution;
 	this.currentLimits;
 
@@ -177,7 +178,7 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 		var attributes = tileData.json.data.attributes;
 
 		// large arrays in source were translated to ArrayBuffers to allow transferable objects to 
-		// be used, to decrease execution time for this hander.
+		// be used, to decrease execution time for this handler.
 
 		// retype and move arrays back to useable format
 		// note: the standard JSON bufferGeometry format uses Array but accepts TypedArray
@@ -412,9 +413,20 @@ CV.TiledTerrain.prototype.setMaterial = function ( material ) {
 
 	_setTileMaterial( tileTree.getRootId() );
 
+	if ( this.material && material !== this.material ) {
+
+		material.opacity = this.material.opacity;
+		material.needsUpdate = true;
+
+	}
+
+	this.material = material;
+
 	return;
 
 	function _setTileMaterial ( id ) {
+
+		// FIXME this needs fixing by a tree method
 
 		var nodes = tileTree.getChildData( id );
 		var node;
@@ -589,6 +601,19 @@ CV.TiledTerrain.prototype.zoomCheck = function ( camera ) {
 		tileTree.removeNodes( function ( x ) { x.name.remove(); }, tileTree.findById( id ) );
 
 	}
+
+}
+
+CV.TiledTerrain.prototype.setOpacity= function ( opacity ) {
+
+	this.material.opacity = opacity;
+	this.material.needsUpdate = true;
+
+}
+
+CV.TiledTerrain.prototype.getOpacity = function () {
+
+	return this.material.opacity;
 
 }
 

@@ -163,6 +163,12 @@ function init ( domID ) { // public method
 		set: function ( x ) { _viewStateSetter( setTerrainOverlay, "terrainOverlay", x ); }
 	} );
 
+	Object.defineProperty( viewState, "terrainOpacity", {
+		writeable: true,
+		get: function () { return terrain.getOpacity(); },
+		set: function ( x ) { terrain.setOpacity( x ); }
+	} );
+
 	Object.defineProperty( viewState, "shadingMode", {
 		writeable: true,
 		get: function () { return shadingMode; },
@@ -299,31 +305,16 @@ function init ( domID ) { // public method
 
 }
 
-
 function setZScale( scale ) {
 
-	// scale - in range 1 - 100
-	// scale -= 50;
+	// scale - in range 0 - 1
 
-	scale = Math.pow( 2, ( scale - 50 ) / 25 );
+	var lastScale = Math.pow( 2, ( zScale - 0.5 ) * 4 );
+	var newScale  = Math.pow( 2, ( scale - 0.5 ) * 4 );
 
-	region.applyMatrix( new THREE.Matrix4().makeScale( 1, 1, scale / zScale ) );
+	region.applyMatrix( new THREE.Matrix4().makeScale( 1, 1, newScale / lastScale ) );
 
 	zScale = scale;
-
-}
-
-function loadRegistry( x ) {
-
-	var registry = new CV.Registry( _registryLoaded );
-	
-	registry.loadURL( "http://thedca.org.uk/dca-cr/registry/googleEarth/", "Registry_kml.php" );
-
-	function _registryLoaded () {
-
-		console.log( "registry loaded" );
-
-	}
 
 }
 
@@ -380,7 +371,7 @@ function renderDepthTexture () {
 	renderer.setPixelRatio( window.devicePixelRatio );
 
 	scene.overrideMaterial = null;
-	
+
 }
 
 function setCameraMode ( mode ) {
@@ -1084,7 +1075,7 @@ function setScale () {
 	var height = container.clientHeight;
 
 	limits = survey.limits;
-	zScale = 1;
+	zScale = 0.5;
 
 	var range  = limits.size();
 	var center = limits.center();

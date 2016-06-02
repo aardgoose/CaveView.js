@@ -30,9 +30,9 @@ var container;
 var viewState;
 var isVisible = true;
 
-function init ( containerIn ) {
+function init ( domId ) {
 
-	container = containerIn;
+	container = document.getElementById( domId );
 	viewState = CV.Viewer.getState;
 
 	var hHeight = container.clientHeight / 2;
@@ -204,7 +204,7 @@ function caveChanged ( event ) {
 
 function viewChanged ( event ) {
 
-	if ( event.name !== "shadingMode" ) return;
+	if ( event.name !== "shadingMode" || !isVisible ) return;
 
 	switch ( viewState.shadingMode ) {
 

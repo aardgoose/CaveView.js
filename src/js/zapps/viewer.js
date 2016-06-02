@@ -274,6 +274,13 @@ function init ( domID ) { // public method
 
 	} );
 
+	Object.defineProperty( viewState, "autoRotate", {
+		writeable: true,
+		get: function () { return true; },
+		set: function ( x ) { setAutoRotate( x ); }
+
+	} );
+
 	CV.Materials.initCache( viewState );
 
 	return;
@@ -310,12 +317,18 @@ function setZScale( scale ) {
 	// scale - in range 0 - 1
 
 	var lastScale = Math.pow( 2, ( zScale - 0.5 ) * 4 );
-	var newScale  = Math.pow( 2, ( scale - 0.5 ) * 4 );
+	var newScale  = Math.pow( 2, ( scale - 0.5 )  * 4 );
 
 	region.applyMatrix( new THREE.Matrix4().makeScale( 1, 1, newScale / lastScale ) );
 
 	zScale = scale;
 
+}
+
+function setAutoRotate( rate ) {
+
+	controls.autoRotate = ( rate > 0 );
+	controls.autoRotateSpeed = rate;
 }
 
 function renderDepthTexture () {
@@ -338,7 +351,7 @@ function renderDepthTexture () {
 
 		height = height * scaleX / scaleY;
 
-	} else if ( scaleY < scaleX ) {
+	} else {
 
 		width = width * scaleY / scaleX;
 
@@ -838,7 +851,7 @@ function loadSurvey( newSurvey ) {
 	controls.object = camera;
 	controls.enabled = true;
 
-	CV.Hud.setVisibility( true );
+//	CV.Hud.setVisibility( true );
 	
 	__dyeTrace(); // FIXME test function
 

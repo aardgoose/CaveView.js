@@ -1,6 +1,6 @@
  "use strict";
 
-importScripts( "../../lib/three.js", "../../lib/chroma.min.js", "../CaveView.js" );
+importScripts( "../../lib/three.js",  "../CaveView.js" );
 
 var CV = CV || {};
 

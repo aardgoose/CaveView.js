@@ -104,7 +104,7 @@ function init ( domID ) { // public method
 	renderer.setClearColor( 0x000000 );
 	renderer.autoClear = false;
 
-	oCamera = new THREE.OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, -10000, 10000 );
+	oCamera = new THREE.OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 10000 );
 
 	oCamera.rotateOnAxis( CV.upAxis, Math.PI / 2 );
 	oCamera.up = CV.upAxis;

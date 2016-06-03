@@ -271,13 +271,6 @@ function init ( domID ) { // public method
 
 	} );
 
-	Object.defineProperty( viewState, "autoRotate", {
-		writeable: true,
-		get: function () { return true; },
-		set: function ( x ) { setAutoRotate( x ); }
-
-	} );
-
 	CV.Materials.initCache( viewState );
 
 	return;
@@ -320,12 +313,6 @@ function setZScale( scale ) {
 
 	zScale = scale;
 
-}
-
-function setAutoRotate( rate ) {
-
-	controls.autoRotate = ( rate > 0 );
-	controls.autoRotateSpeed = rate;
 }
 
 function renderDepthTexture () {
@@ -421,6 +408,10 @@ function initCameraLayers ( camera ) {
 	camera.layers.enable( CV.LEG_CAVE );
 	camera.layers.enable( CV.FEATURE_ENTRANCES );
 	camera.layers.enable( CV.FEATURE_BOX );
+	
+	camera.position.set( 0, 0, 600 );
+	camera.lookAt( 0, 0, 0 );
+	camera.updateProjectionMatrix();
 
 }
 
@@ -448,41 +439,38 @@ function testCameraLayer ( layerTag ) {
 
 function setViewMode ( mode ) {
 
+	var position = new  THREE.Vector3();
+	
 	switch ( mode ) {
 
 	case CV.VIEW_PLAN:
 
 		// reset camera to start position
-		pCamera.position.set( 0, 0, 600 );
-		oCamera.position.set( 0, 0, 600 );
+		position.set( 0, 0, 600 );
 
 		break;
 
 	case CV.VIEW_ELEVATION_N:
 
-		pCamera.position.set( 0, 600, 0 );
-		oCamera.position.set( 0, 600, 0 );
+		position.set( 0, 600, 0 );
 
 		break;
 
 	case CV.VIEW_ELEVATION_S:
 
-		pCamera.position.set( 0, -600, 0 );
-		oCamera.position.set( 0, -600, 0 );
+		position.set( 0, -600, 0 );
 
 		break;
 
 	case CV.VIEW_ELEVATION_E:
 
-		pCamera.position.set( 600, 0, 0 );
-		oCamera.position.set( 600, 0, 0 );
+		position.set( 600, 0, 0 );
 
 		break;
 
 	case CV.VIEW_ELEVATION_W:
 
-		pCamera.position.set( -600, 0, 0 );
-		oCamera.position.set( -600, 0, 0 );
+		position.set( -600, 0, 0 );
 
 		break;
 
@@ -493,16 +481,15 @@ function setViewMode ( mode ) {
 
 	}
 
-	pCamera.lookAt( 0, 0, 0 );
-	pCamera.updateProjectionMatrix();
+	activePOIPosition = new THREE.Vector3();
 
-	oCamera.zoom = 1;
-	oCamera.lookAt( 0, 0, 0 );
-	oCamera.updateProjectionMatrix();
+	targetPOI = {
+		tAnimate: 240,
+		position: activePOIPosition,
+		cameraPosition: position
+	};
 
-	controls.target = new THREE.Vector3();
-
-	viewMode = mode;
+	controls.enabled = false;
 
 }
 
@@ -779,13 +766,14 @@ function loadSurvey( newSurvey ) {
 
 	container.addEventListener( "click", entranceClick, false );
 
+	CV.Hud.setVisibility( true );
+
 	// signal any listeners that we have a new cave
 	viewState.dispatchEvent( { type: "newCave", name: "newCave" } );
 
 	controls.object = camera;
 	controls.enabled = true;
 
-//	CV.Hud.setVisibility( true );
 	
 	__dyeTrace(); // FIXME test function
 
@@ -949,7 +937,8 @@ function render () {
 
 		camera.position.lerp( targetPOI.cameraPosition, t );
 		camera.lookAt( activePOIPosition );
-		camera.quaternion.slerp( targetPOI.quaternion, t );
+
+		if ( targetPOI.quaternion ) camera.quaternion.slerp( targetPOI.quaternion, t );
 
 		camera.updateProjectionMatrix();
 
@@ -1055,6 +1044,12 @@ function getStats () {
 
 }
 
+function getControls () {
+
+	return controls;
+
+}
+
 function getSurveyTree () {
 
 	return survey.getSurveyTree();
@@ -1069,6 +1064,7 @@ return {
 	loadCave:      loadCave,
 	getStats:      getStats,
 	getSurveyTree: getSurveyTree,
+	getControls:   getControls,
 	getState:      viewState
 };
 

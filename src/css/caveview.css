@@ -270,9 +270,15 @@ div.linear-scale-caption {
 	margin-left: 8px;
 }
 
-#frame div.page input {
+#frame div.page input[type="checkbox"] {
 	position: absolute;
 	right: 0px;
+}
+
+#frame div.page input[type="range"] {
+	position: relative;
+	width: 184px;
+	box-sizing: border-box;
 }
 
 #frame dt, #frame dd {

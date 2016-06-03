@@ -50,9 +50,6 @@ var shadingMode        = CV.SHADING_HEIGHT;
 var surfaceShadingMode = CV.SHADING_SINGLE;
 var terrainShadingMode = CV.SHADING_SHADED;
 
-var depthMaterialLine;
-var depthMaterialFace;
-
 var cameraMode;
 var viewMode;
 var selectedSection = 0;
@@ -369,8 +366,8 @@ function renderDepthTexture () {
 
 	renderTarget.texture.generateMipmaps = false;
 
-	depthMaterialLine = CV.Materials.getDepthMaterial( CV.MATERIAL_LINE,    limits, renderTarget.texture );
-	depthMaterialFace = CV.Materials.getDepthMaterial( CV.MATERIAL_SURFACE, limits, renderTarget.texture );
+	CV.Materials.createDepthMaterial( CV.MATERIAL_LINE, limits, renderTarget.texture );
+	CV.Materials.createDepthMaterial( CV.MATERIAL_SURFACE, limits, renderTarget.texture );
 
 	renderer.setSize( dim, dim );
 	renderer.setPixelRatio( 1 );
@@ -540,7 +537,7 @@ function setTerrainShadingMode ( mode ) {
 			vertexColors: THREE.VertexColors,
 			side:         THREE.FrontSide,
 			transparent:  true,
-			opacity:      0.55 }
+			opacity:      0.5 }
 		);
 
 		break;
@@ -566,67 +563,7 @@ function setTerrainShadingMode ( mode ) {
 
 function setShadingMode ( mode ) {
 
-	var material;
-	var legMaterial;
-
-	switch ( mode ) {
-
-	case CV.SHADING_HEIGHT:
-
-		material = CV.Materials.getHeightMaterial( CV.MATERIAL_SURFACE );
-
-		break;
-
-	case CV.SHADING_CURSOR:
-
-		material = CV.Materials.getCursorMaterial( CV.MATERIAL_SURFACE, 5.0 );
-
-		break;
-
-	case CV.SHADING_SINGLE:
-
-		material = new THREE.MeshLambertMaterial( { color: 0xff0000, vertexColors: THREE.NoColors } );
-
-		break;
-
-	case CV.SHADING_SURVEY:
-
-		material = new THREE.MeshLambertMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } );
-
-		break;
-
-	case CV.SHADING_DEPTH:
-
-		if ( depthMaterialLine === null ) {
-
-			mode = shadingMode;
-
-		} else {
-
-			legMaterial = depthMaterialLine;
-			material    = depthMaterialFace;
-
-		}
-
-		break;
-
-	}
-
-	if ( survey.setLegShading( CV.LEG_CAVE, mode, legMaterial ) ) {
-
-		if ( material ) {
-
-			survey.setFaceShading( mode, material );
-
-			setCameraLayer( CV.FACE_WALLS, true );
-			setCameraLayer( CV.FACE_SCRAPS, true );
-
-		} else {
-
-			setCameraLayer( CV.FACE_WALLS, false );
-			setCameraLayer( CV.FACE_SCRAPS, false );
-
-		}
+	if ( survey.setShadingMode( mode ) ) {
 
 		//survey.setEntrancesSelected();
 		shadingMode = mode;
@@ -746,9 +683,6 @@ function clearView () {
 	region          = new THREE.Group();
 	targetPOI       = null;
 
-	depthMaterialLine = null;
-	depthMaterialFace = null;
-
 	shadingMode = CV.SHADING_HEIGHT;
 
 	// remove event listeners
@@ -862,7 +796,7 @@ function loadSurvey( newSurvey ) {
 		setTerrainShadingMode( terrainShadingMode );
 		loadTerrainListeners();
 
-		if ( !depthMaterialLine ) renderDepthTexture();
+		if ( !CV.Materials.getDepthMaterial( CV.MATERIAL_LINE ) ) renderDepthTexture();
 
 	}
 

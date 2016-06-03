@@ -870,16 +870,80 @@ CV.Survey.prototype.getBounds = function ()  {
 
 }
 
-CV.Survey.prototype.setFaceShading = function ( mode, material ) {
+CV.Survey.prototype.setShadingMode = function ( mode ) {
 
-	this.setFacesSelected( this.getObjectByName( "CV.Survey:faces:walls" ), material, mode );
-	this.setFacesSelected( this.getObjectByName( "CV.Survey:faces:scraps" ), material, mode );
+	var material;
+	var self = this;
+
+	switch ( mode ) {
+
+	case CV.SHADING_HEIGHT:
+
+		material = CV.Materials.getHeightMaterial( CV.MATERIAL_SURFACE );
+
+		break;
+
+	case CV.SHADING_CURSOR:
+
+		material = CV.Materials.getCursorMaterial( CV.MATERIAL_SURFACE, 5.0 );
+
+		break;
+
+	case CV.SHADING_SINGLE:
+
+		material = new THREE.MeshLambertMaterial( { color: 0xff0000, vertexColors: THREE.NoColors } );
+
+		break;
+
+	case CV.SHADING_SURVEY:
+
+		material = new THREE.MeshLambertMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } );
+
+		break;
+
+	case CV.SHADING_DEPTH:
+
+		material = CV.Materials.getDepthMaterial( CV.MATERIAL_SURFACE );
+
+		if ( ! material )  return false;
+
+		break;
+
+	}
+
+	if ( this.setLegShading( CV.LEG_CAVE, mode ) ) {
+
+		_setFaceShading( this.getObjectByName( "CV.Survey:faces:walls" ), mode, material );
+		_setFaceShading( this.getObjectByName( "CV.Survey:faces:scraps" ), mode, material );
+
+		return true;
+
+	}
+
+	return false;
+
+	function _setFaceShading ( mesh, mode, material ) {
+
+		if ( !mesh ) return;
+
+		if ( material ) {
+
+			self.setFacesSelected( mesh, material, mode );
+			mesh.visible = true;
+
+		} else {
+
+			mesh.visible = false;
+
+		}
+
+	}
 
 }
 
 CV.Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
-	if (!mesh) return;
+	if ( !mesh ) return;
 
 	var faceRuns = mesh.userData;
 	var faces    = mesh.geometry.faces;
@@ -887,11 +951,7 @@ CV.Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 	var surveyColours;
 	var unselected = new THREE.MeshLambertMaterial( { side: THREE.FrontSide, color: 0x444444, vertexColors: THREE.FaceColors } );
 
-	if ( mode === CV.SHADING_SURVEY ) {
-
-		surveyColours = this.getSurveyColours();
-
-	}
+	if ( mode === CV.SHADING_SURVEY ) surveyColours = this.getSurveyColours();
 
 	mesh.material = new THREE.MultiMaterial( [ selected, unselected ] );
 
@@ -954,11 +1014,11 @@ CV.Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
 CV.Survey.prototype.hasFeature = function ( layerTag ) {
 
-	return !((this.layers.mask & 1 << layerTag) === 0);
+	return !( ( this.layers.mask & 1 << layerTag ) === 0 );
 
 }
 
-CV.Survey.prototype.setLegShading = function ( legType, legShadingMode, material ) {
+CV.Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	var mesh;
 
@@ -972,7 +1032,7 @@ CV.Survey.prototype.setLegShading = function ( legType, legShadingMode, material
 
 	case CV.LEG_SPLAY:
 
-		mesh = this.getObjectByName(  "CV.Survey:legs:cave:splay" );
+		mesh = this.getObjectByName( "CV.Survey:legs:cave:splay" );
 
 		break;
 
@@ -1039,7 +1099,7 @@ CV.Survey.prototype.setLegShading = function ( legType, legShadingMode, material
 
 	case CV.SHADING_DEPTH:
 
-		this.setLegColourByMaterial( mesh, material ); 
+		this.setLegColourByDepth( mesh );
 
 		break;
 
@@ -1135,7 +1195,7 @@ CV.Survey.prototype.setEntrancesSelected = function () {
 			if ( selectedSectionIds.has( entrance.userData ) ) {
 
 				entrance.visible = true;
-				boundingBox.expandByPoint( entrance.position );		
+				boundingBox.expandByPoint( entrance.position );
 
 			} else {
 
@@ -1174,6 +1234,12 @@ CV.Survey.prototype.setLegColourByMaterial = function ( mesh, material ) {
 		geometry.colors[ v2 ] = CV.ColourCache.white;
 
 	}
+
+}
+
+CV.Survey.prototype.setLegColourByDepth = function ( mesh ) {
+
+	this.setLegColourByMaterial( mesh, CV.Materials.getDepthMaterial( CV.MATERIAL_LINE ) );
 
 }
 

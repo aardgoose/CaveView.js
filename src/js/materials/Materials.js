@@ -39,15 +39,13 @@ function getDepthMapMaterial () {
 
 }
 
-function getDepthMaterial ( type, limits, texture ) {
+function createDepthMaterial ( type, limits, texture ) {
 
 	var name = "depth" + type;
 
-	if ( cache.has( name ) ) return cache.get( name );
-	
 	var material = new CV.DepthMaterial( type, limits, texture );
 
-	cache.set(name, material);
+	cache.set( name, material );
 
 	viewState.addEventListener( "newCave",  _updateDepthMaterial );
 
@@ -58,6 +56,12 @@ function getDepthMaterial ( type, limits, texture ) {
 		cache.delete( name );
 
 	}
+
+}
+
+function getDepthMaterial ( type ) {
+
+	 return cache.get( "depth" + type );	
 
 }
 
@@ -92,12 +96,12 @@ function getLineMaterial () {
 	var name = "line";
 
 	if ( cache.has( name ) ) {
-		
+
 		return cache.get(name);
 
 	}
 
-	var material = new THREE.LineBasicMaterial( { color: 0xFFFFFF, vertexColors: THREE.VertexColors } );   
+	var material = new THREE.LineBasicMaterial( { color: 0xFFFFFF, vertexColors: THREE.VertexColors } );
 
 	cache.set( name, material );
 
@@ -115,6 +119,7 @@ function initCache ( viewerViewState ) {
 
 return {
 
+	createDepthMaterial: createDepthMaterial,
 	getHeightMaterial:   getHeightMaterial,
 	getDepthMapMaterial: getDepthMapMaterial,
 	getDepthMaterial:    getDepthMaterial,

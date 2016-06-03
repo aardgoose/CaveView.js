@@ -5,15 +5,41 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+	<style>
+
+		h1, h2 {
+			margin-left: 50px;
+		}
+
+		div#scene {
+			position: relative;
+			width: 600px;
+			height:600px;
+			margin-left: 100px;	
+		}
+
+		div#scene-caption {
+			position: absolute;
+			top: 8px;
+			left: 100px;
+			color: white;
+			background-color: black;
+		}
+
+	</style>
 </head>
 <body onload="onload();" >
 <script type="text/javascript" src="CaveView/lib/three.js" ></script>
 <script type="text/javascript" src="CaveView/lib/OrbitControls.js" ></script>
 <script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
 <script type="text/javascript" >
+"use strict";
 
 var	caveLoader = new CV.Loader( caveLoaded, progress );
-var	viewState = CV.Viewer.getState;
+var	viewState;
+var viewControls;
+var captionDiv;
+var cave;
 var index = 0;
 
 var demo = [
@@ -22,29 +48,34 @@ var demo = [
 		caption: "3D Cave survey",
 		delay: 5,
 		view: {
-		//	terrainOpacity: 1,
-//			section: 0,
-			zScale: 0.5,
+			zScale: 0.5
 		}
 	},
 	
 	{
 		caption: "3D Cave survey",
-		delay: 5,
+		delay: 7,
 		view: {
-			autoRotate: 1.0,
 			view: CV.VIEW_ELEVATION_S
-		}
+		},
 	},
 	{
-		caption: "Passage walls",
-		delay: 5,
+		caption: "Displays passage walls ...",
+		delay: 2,
 		view: {
 			walls: true
 		}
 	},
 	{
-		caption: "Multiple line shading methods",
+		caption: "...",
+		delay: 2,
+		controls: {
+			autoRotate: true,
+			autoRotateRate: 2.0
+		}
+	},
+	{
+		caption: "Supports multiple cave shading modes ...",
 		delay: 5,
 		view: {
 			shadingMode: CV.SHADING_SINGLE
@@ -52,7 +83,7 @@ var demo = [
 	},
 
 	{
-		caption: "Shading by height",
+		caption: "... shading by height ...",
 		delay: 5,
 		view: {
 			shadingMode: CV.SHADING_HEIGHT
@@ -60,28 +91,28 @@ var demo = [
 	},
 
 	{
-		caption: "Shading by leg length",
+		caption: "... shading by leg length ...",
 		delay: 5,
 		view: {
 			shadingMode: CV.SHADING_LENGTH
 		}
 	},
 	{
-		caption: "Shading by leg inclination",
+		caption: "... shading by leg inclination ...",
 		delay: 5,
 		view: {
 			shadingMode : CV.SHADING_INCLINATION
 		}
 	},
 	{
-		caption: "Shading by survey section",
+		caption: "... shading by survey section ...",
 		delay: 5,
 		view: {
 			shadingMode: CV.SHADING_SURVEY
 		}
 	},
 	{
-		caption: "Shading by depth below surface",
+		caption: " and shading by depth below surface.",
 		delay: 5,
 		view: {
 			shadingMode: CV.SHADING_DEPTH
@@ -95,22 +126,25 @@ var demo = [
 		}
 	},
 	{
-		caption: "terrain",
+		caption: "Terrain (tiled at multiple resolutions)",
 		delay: 5,
 		view: {
 			terrainOpacity: 1,
-			terrain: true
+			terrain: true,
+			view: CV.VIEW_PLAN
 		}
 	},
+
 	{
-		caption: "transparent terrain",
+		caption: "Adjustable terrain transparency",
 		delay: 5,
 		view: {
-			terrainOpacity: 0.3
+			terrainOpacity: 0.4,
+			view: CV.VIEW_ELEVATION_S
 		}
 	},
 	{
-		caption: "on screen indicators",
+		caption: "On screen indicators",
 		delay: 5,
 		view: {
 			HUD: true
@@ -124,14 +158,14 @@ var demo = [
 		}
 	},
 	{
-		caption: "vertical scaling ( x 2)",
+		caption: "Vertical scaling ( x2 )",
 		delay: 5,
 		view: {
 			zScale: 0.75
 		}
 	},
 	{
-		caption: "vertical scaling ( x 4)",
+		caption: "Vertical scaling ( x4 )",
 		delay: 5,
 		view: {
 			zScale: 1.0,
@@ -140,11 +174,12 @@ var demo = [
 		}
 	},
 	{
-		caption: "Focus on survey section",
+		caption: "Focus on selected survey sections",
 		delay: 5,
 		view: {
 			zScale: 0.5,
-			section: 3
+			section: 3,
+			box: false
 		}
 	},
 	{
@@ -152,7 +187,8 @@ var demo = [
 		delay: 5,
 		view: {
 			section: 3,
-			cameraType: CV.CAMERA_ORTHOGRAPHIC
+			cameraType: CV.CAMERA_ORTHOGRAPHIC,
+			view: CV.VIEW_ELEVATION_S
 		}
 	},
 	{
@@ -160,8 +196,16 @@ var demo = [
 		delay: 5,
 		view: {
 			section: 0,
+			entrances: false,
 			cameraType: CV.CAMERA_PERSPECTIVE,
-			walls: false
+			view: CV.VIEW_PLAN,
+			box: false,
+			shadingMode: CV.SHADING_SINGLE,
+			walls: false,
+			HUD: false
+		},
+		controls: {
+			autoRotate: false
 		}
 	},
 ];
@@ -172,29 +216,32 @@ function runDemo() {
 	if ( index === demo.length ) index = 0;
 
 	var d = demo[index++];
+	var p;
 
-	console.log( d.caption );
-	setTimeout(runDemo, d.delay * 1000 ); // FIXME * 1000 for real time spec
+	captionDiv.textContent = d.caption;
 
-	var view = d.view;
+	var view     = d.view;
+	var controls = d.controls;
 
 	if ( view ) {
 
-		for ( p in view ) {
-
-				console.log("view setting ", p );
-				viewState[p] = view[p];
-
-		}
+		for ( p in view ) viewState[p] = view[p];
 
 	}
+
+	if ( controls ) for ( p in controls ) viewControls[p] = controls[p];
+
+	setTimeout(runDemo, d.delay * 1000 ); // FIXME * 1000 for real time spec
 
 }
 
 function progress ( pcent ) {}
 
-function caveLoaded ( cave ) { 
+function caveLoaded ( newCave ) {
 
+	cave = newCave;
+
+	viewState = CV.Viewer.getState;
 	viewState.addEventListener( "newCave", viewComplete );
 
 	CV.Viewer.loadCave( cave );
@@ -212,11 +259,11 @@ function viewComplete () {
 	viewState.HUD        = false;
 	viewState.walls      = false;
 
-	surveyTree = CV.Viewer.getSurveyTree();
-
 	// drop reference to cave to free heap space
 	cave = null;
-	
+
+	viewControls = CV.Viewer.getControls();
+
 	runDemo();
 }
 
@@ -228,15 +275,18 @@ function onload () {
 	CV.Viewer.clearView();
 
 	caveLoader.loadURL( "/surveys/P8_Master.3d" );
+	
+	captionDiv = document.getElementById( "scene-caption" );
 
 }
 
 </script>
-<div id="scene" style="width: 500px; height: 500px;" ></div>
+<h1>Cave View</h1>
+<h2>a 3D Cave Survey Viewer for the web.</h2>
+<div id="scene" ><div id="scene-caption" ></div></div>
+<div id="scene-caption" ></div>
 <p>Mouse: left button down - rotate, right button down pan, mouse wheel - zoom</p>
-<p>Contains Ordnance Survey data &copy; Crown copyright and database right 2015.</p>
 <p>contains DTM data &copy; Environment Agency copyright and/or database right 2015</p>
-<p>Contains British Geological Survey materials &copy;NERC 2016</p>
 </body>
 </html>
 

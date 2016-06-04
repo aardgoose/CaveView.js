@@ -77,6 +77,7 @@ function setVisibility ( visible ) {
 
 	compass.setVisibility( visible );
 	ahi.setVisibility( visible );
+	progressDial.setVisibility( visible );
 
 	if ( linearScale ) linearScale.setVisibility( visible );
 	if ( angleScale ) angleScale.setVisibility( visible );

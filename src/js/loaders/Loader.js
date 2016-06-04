@@ -2,11 +2,6 @@
 
 var CV = CV || {};
 
-CV.NORMAL  = 0;
-CV.SURFACE = 1;
-CV.SPLAY   = 2;
-CV.DIVING  = 3;
-
 CV.Loader = function ( callback, progress ) {
 
 	if (!callback) {

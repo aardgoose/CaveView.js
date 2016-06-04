@@ -39,6 +39,8 @@ CV.TiledTerrain = function ( limits3, onLoaded ) {
 
 CV.TiledTerrain.prototype = Object.create( THREE.Group.prototype );
 
+Object.assign( CV.TiledTerrain.prototype, CV.CommonTerrain.prototype );
+
 CV.TiledTerrain.prototype.constructor = CV.TiledTerrain;
 
 CV.TiledTerrain.prototype.isTiled = function () {
@@ -213,9 +215,9 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 
 		tile.createFromBufferGeometryJSON( tileData.json, tileData.boundingBox );
 
-		if (self.activeOverlay) {
+		if ( self.activeOverlay ) {
 
-			tile.setOverlay( self.activeOverlay );
+			tile.setOverlay( self.activeOverlay, self.opacity );
 
 		}
 
@@ -301,7 +303,7 @@ CV.TiledTerrain.prototype.endLoad = function ( tile ) {
 
 CV.TiledTerrain.prototype.resurrectTile = function ( tile ) {
 
-	if (tile.mesh) {
+	if ( tile.mesh ) {
 
 		console.log( "resurrecting the undead!" );
 		return;
@@ -378,7 +380,7 @@ CV.TiledTerrain.prototype.setOverlay = function ( overlay ) {
 			node = nodes[ i ];
 			tile = node.name;
 
-			tile.setOverlay( overlay );
+			tile.setOverlay( overlay, self.opacity );
 
 			_setTileOverlays( node.id );
 
@@ -413,12 +415,8 @@ CV.TiledTerrain.prototype.setMaterial = function ( material ) {
 
 	_setTileMaterial( tileTree.getRootId() );
 
-	if ( this.material && material !== this.material ) {
-
-		material.opacity = this.material.opacity;
-		material.needsUpdate = true;
-
-	}
+	material.opacity = this.opacity;
+	material.needsUpdate = true;
 
 	this.material = material;
 
@@ -604,17 +602,53 @@ CV.TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 }
 
-CV.TiledTerrain.prototype.setOpacity= function ( opacity ) {
+CV.TiledTerrain.prototype.setOpacity = function ( opacity ) {
 
-	this.material.opacity = opacity;
-	this.material.needsUpdate = true;
+	var self = this;
+	var tileTree = this.tileTree;
+
+	if ( this.shadingMode === CV.SHADING_OVERLAY ) {
+
+		// each tile has its own material, therefore need setting separately
+		_setTileOpacity( tileTree.getRootId() );
+
+	} else {
+
+		if ( this.material ) {
+
+			this.material.opacity = opacity;
+			this.material.needsUpdate = true;
+
+		}
+
+	}
+
+	this.opacity = opacity;
+
+	return;
+
+	function _setTileOpacity ( id ) {
+
+		// FIXME this needs fixing by a tree method
+
+		var nodes = tileTree.getChildData( id );
+		var node;
+		var tile;
+
+		for ( var i = 0, l = nodes.length; i < l; i++ ) {
+
+			node = nodes[ i ];
+			tile = node.name;
+
+			tile.setOpacity( opacity );
+
+			_setTileOpacity( node.id );
+
+		}
+
+	}
 
 }
 
-CV.TiledTerrain.prototype.getOpacity = function () {
-
-	return this.material.opacity;
-
-}
 
 // EOF

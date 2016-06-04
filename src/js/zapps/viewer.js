@@ -317,7 +317,7 @@ function setZScale( scale ) {
 
 function renderDepthTexture () {
 
-	if ( terrain == null || !terrain.isLoaded() ) return;
+	if ( terrain === null || !terrain.isLoaded() ) return;
 
 	var dim = 512;
 
@@ -433,7 +433,7 @@ function setCameraLayer ( layerTag, enable ) {
 
 function testCameraLayer ( layerTag ) {
 
-	return !( ( oCamera.layers.mask & 1 << layerTag ) === 0 );
+	return ( ( oCamera.layers.mask & 1 << layerTag ) > 0 );
 
 }
 
@@ -495,67 +495,13 @@ function setViewMode ( mode ) {
 
 function setTerrainShadingMode ( mode ) {
 
-	var material;
-
-	switch ( mode ) {
-
-	case CV.SHADING_HEIGHT:
-
-		material = CV.Materials.getHeightMaterial( CV.MATERIAL_SURFACE );
-
-		break;
-
-	case CV.SHADING_OVERLAY:
-
-		if (terrain.getOverlays()) terrain.setOverlay( terrain.getOverlay() );
-
-		break;
-
-	case CV.SHADING_CURSOR:
-
-		 material = CV.Materials.getCursorMaterial( CV.MATERIAL_SURFACE, 5.0 );
-
-		 break;
-
-	case CV.SHADING_SHADED:
-
-		material = new THREE.MeshLambertMaterial( {
-			color:        0xffffff,
-			vertexColors: THREE.VertexColors,
-			side:         THREE.FrontSide,
-			transparent:  true,
-			opacity:      0.5 }
-		);
-
-		break;
-
-	case CV.SHADING_PW:
-
-		material = new CV.PWMaterial();
-
-		break;
-
-	default:
-
-		console.log( "unknown mode", mode );
-		return;
-
-	}
-
-	if ( material !== undefined ) terrain.setMaterial( material );
-
-	terrainShadingMode = mode;
+	if ( terrain.setShadingMode( mode ) ) terrainShadingMode = mode;
 
 }
 
 function setShadingMode ( mode ) {
 
-	if ( survey.setShadingMode( mode ) ) {
-
-		//survey.setEntrancesSelected();
-		shadingMode = mode;
-
-	}
+	if ( survey.setShadingMode( mode ) ) shadingMode = mode;
 
 }
 

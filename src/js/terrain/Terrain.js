@@ -8,7 +8,6 @@ CV.Terrain = function () {
 
 	this.type     = "CV.Terrain";
 	this.tile     = null;
-	this.material = null;
 	this.overlay;
 
 	return this;
@@ -16,6 +15,8 @@ CV.Terrain = function () {
 }
 
 CV.Terrain.prototype = Object.create( THREE.Group.prototype );
+
+Object.assign( CV.Terrain.prototype, CV.CommonTerrain.prototype );
 
 CV.Terrain.prototype.constructor = CV.Terrain;
 
@@ -74,7 +75,7 @@ CV.Terrain.prototype.setOverlay = function ( overlay ) {
 		{
 			map: texture,
 			transparent: true,
-			opacity: 0.75
+			opacity: this.opacity
 		}
 
 	) );
@@ -84,21 +85,14 @@ CV.Terrain.prototype.setOverlay = function ( overlay ) {
 CV.Terrain.prototype.setMaterial = function ( material ) {
 
 	this.tile.setMaterial( material );
-	this.material = material;
-}
-
-CV.Terrain.prototype.setOpacity= function ( opacity ) {
-
-	this.material.opacity = opacity;
-	this.material.needsUpdate = true;
 
 }
 
-CV.Terrain.prototype.getOpacity = function () {
+CV.Terrain.prototype.setOpacity = function ( opacity ) {
 
-	return this.material.opacity;
+	this.tile.setOpacity( opacity );
+	this.opacity = opacity;
 
 }
-
 
 // EOF

@@ -151,7 +151,7 @@ function init ( domID ) { // public method
 	Object.defineProperty( viewState, "terrainOpacity", {
 		writeable: true,
 		get: function () { return terrain.getOpacity(); },
-		set: function ( x ) { terrain.setOpacity( x ); }
+		set: function ( x ) { terrain.setOpacity( x ); viewState.dispatchEvent( { type: "change", name: "terrainOpacity" } ) }
 	} );
 
 	Object.defineProperty( viewState, "shadingMode", {

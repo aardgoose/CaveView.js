@@ -191,9 +191,22 @@ CV.Tile.prototype.setMaterial = function ( material ) {
 
 }
 
-CV.Tile.prototype.setOverlay = function ( overlay ) {
+CV.Tile.prototype.setOpacity = function ( opacity ) {
 
-	if (!this.mesh) return;
+	var mesh = this.mesh;
+
+	if ( mesh ) {
+
+		mesh.material.opacity = opacity;
+		mesh.material.needsUpdate = true;
+
+	}
+
+}
+
+CV.Tile.prototype.setOverlay = function ( overlay, opacity ) {
+
+	if ( !this.mesh ) return;
 
 	var self = this;
 	var tileSet = this.tileSet;
@@ -229,14 +242,14 @@ CV.Tile.prototype.setOverlay = function ( overlay ) {
 		var loader = new THREE.ImageLoader();
 
 		loader.load( imageFile, _imageLoaded );
-				
+
 	}
 
 	return;
 
 	function _imageLoaded ( image ) {
 
-		var material = new THREE.MeshLambertMaterial( { transparent: true, opacity: 0.75} );
+		var material = new THREE.MeshLambertMaterial( { transparent: true, opacity: opacity } );
 
 		CV.Tile.overlayImages.set( imageFile, image );
 

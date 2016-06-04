@@ -2,18 +2,6 @@
 
 var CV = CV || {};
 
-CV.MATERIAL_LINE       = 1;
-CV.MATERIAL_SURFACE    = 2;
-
-CV.CAMERA_ORTHOGRAPHIC = 1;
-CV.CAMERA_PERSPECTIVE  = 2;
-
-CV.VIEW_PLAN           = 1;
-CV.VIEW_ELEVATION_N    = 2;
-CV.VIEW_ELEVATION_S    = 3;
-CV.VIEW_ELEVATION_E    = 4;
-CV.VIEW_ELEVATION_W    = 5;
-
 CV.lightPosition = new THREE.Vector3( -1, -1, 0.5 );  
 
 CV.Viewer = ( function () {

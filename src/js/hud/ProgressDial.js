@@ -21,7 +21,8 @@ CV.ProgressDial = function ( container ) {
 
 	this.rotateOnAxis( new THREE.Vector3( 0, 0, 1 ), Math.PI / 2 );
 
-	this.visible = false;
+	this.visible  = false;
+	this.isVisible = true;
 
 	this.addEventListener( "removed", this.removeDomObjects );
 
@@ -70,7 +71,7 @@ CV.ProgressDial.prototype.start = function () {
 
 	this.geometry.colorsNeedUpdate = true;
 	this.progress = 0;
-	this.visible = true;
+	this.visible = this.isVisible;
 
 }
 
@@ -79,6 +80,13 @@ CV.ProgressDial.prototype.end = function () {
 	var self = this;
 
 	setTimeout( function () { self.visible = false; }, 500 );
+
+}
+
+CV.ProgressDial.prototype.setVisibility = function ( visibility ) {
+
+	this.isVisible = visibility;
+	this.visible = ( this.visible && visibility );
 
 }
 

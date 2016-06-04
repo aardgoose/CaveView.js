@@ -313,6 +313,11 @@ function initHelpPage () {
 	_addKey( "S", "surface legs on/off" );
 	_addKey( "T", "terrain on/off" );
 	_addKey( "W", "LRUD walls on/off" );
+	
+	_addKey( "", "-" );
+
+	_addKey( "<", "Decrease terrain opacity" );
+	_addKey( ">", "Increase terrain opacity" );
 
 	help.appendChild( dl );
 
@@ -717,9 +722,9 @@ function keyDown ( event ) {
 
 		break;
 
-	case 88: // switch walls on/off 'x'
+	case 88: // look ast last POI - '.'
 
-		viewState.test = 8;
+		viewState.setPOI = true; // actual value here is ignored.
 
 		break;
 
@@ -737,9 +742,15 @@ function keyDown ( event ) {
 
 		break;
 
-	case 190: // look ast last POI - '.'
+	case 188: // decrease terrain opacity "<" key
 
-		viewState.setPOI = true; // actual value here is ignored.
+		if ( viewState.hasTerrain ) viewState.terrainOpacity = Math.max( viewState.terrainOpacity - 0.05, 0 );
+
+		break;
+
+	case 190: // increase terrain opacity ">" key
+
+		if ( viewState.hasTerrain ) viewState.terrainOpacity = Math.min( viewState.terrainOpacity + 0.05, 1 );
 
 		break;
 	}

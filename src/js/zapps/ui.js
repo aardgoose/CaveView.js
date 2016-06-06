@@ -22,6 +22,9 @@ var heightCursorGui;
 var file;
 var progressBar;
 
+var terrainControls = [];
+var terrainOverlay = null;
+
 var legShadingModes = {
 	"by height":          CV.SHADING_HEIGHT,
 	"by leg length":      CV.SHADING_LENGTH,
@@ -45,11 +48,12 @@ var terrainShadingModes = {
 }
 
 var cameraViews = {
-	"Plan":        CV.VIEW_PLAN,
-	"N Elevation": CV.VIEW_ELEVATION_N,
-	"S Elevation": CV.VIEW_ELEVATION_S,
-	"E Elevation": CV.VIEW_ELEVATION_E,
-	"W Elevation": CV.VIEW_ELEVATION_W
+	"<select viewpoint>": CV.VIEW_NONE,
+	"Plan":               CV.VIEW_PLAN,
+	"N Elevation":        CV.VIEW_ELEVATION_N,
+	"S Elevation":        CV.VIEW_ELEVATION_S,
+	"E Elevation":        CV.VIEW_ELEVATION_E,
+	"W Elevation":        CV.VIEW_ELEVATION_W
 }
 
 var cameraModes = {
@@ -88,9 +92,57 @@ function init ( domID ) { // public method
 	viewState = CV.Viewer.getState;
 
 	viewState.addEventListener( "change",  CV.Page.handleChange );
+	viewState.addEventListener( "change",  handleChange );
 	viewState.addEventListener( "newCave", viewComplete );
 
 	CV.Hud.init( domID );
+
+}
+
+function handleChange( event ) {
+
+	var display;
+
+	// change UI dynamicly to only display useful controls
+	switch ( event.name ) {
+
+	case "terrain":
+
+		// only show overlay selection when terrain shading is set to overlay
+		if ( viewState.terrain ) {
+
+			display = "block";
+
+		} else {
+
+			display = "none";
+
+		}
+
+		for ( var i = 0, l = terrainControls.length; i < l; i++ ) {
+
+			terrainControls[ i ].style.display = display;
+
+		}
+
+		// drop through here is deliberate. Do not add "break"
+
+	case "terrainShading":
+
+		// only show overlay selection when terrain shading is set to overlay
+		if ( viewState.terrain && terrainOverlay && viewState.terrainShading === CV.SHADING_OVERLAY ) {
+
+			terrainOverlay.style.display = "block";
+
+		} else {
+
+			terrainOverlay.style.display = "none";
+
+		}
+
+		break;
+
+	}
 
 }
 
@@ -364,6 +416,10 @@ function initInfoPage() {
 
 function initSettingsPage () {
 
+	// reset 
+	terrainOverlay = null;
+	terrainControls = [];
+
 	var legShadingModesActive     = Object.assign( {}, legShadingModes );
 	var terrainShadingModesActive = Object.assign( {}, terrainShadingModes );
 
@@ -380,6 +436,8 @@ function initSettingsPage () {
 	page.addSelect( "Camera Type", cameraModes, viewState, "cameraType" );
 	page.addSelect( "View",        cameraViews, viewState, "view" );
 
+	page.addRange( "Vertical scaling", viewState, "zScale" );
+
 	page.addHeader( "Shading" );
 
 	page.addSelect( "Underground Legs", legShadingModesActive, viewState, "shadingMode" );
@@ -389,24 +447,6 @@ function initSettingsPage () {
 		page.addSelect( "Surface Legs", surfaceShadingModes, viewState, "surfaceShading" );
 
 	}
-
-	if ( viewState.hasTerrain ) {
-
-		var overlays = viewState.terrainOverlays;
-
-		if ( overlays.length > 0 ) terrainShadingModesActive[ "map overlay" ] = CV.SHADING_OVERLAY;
-
-		page.addSelect( "Terrain", terrainShadingModesActive, viewState, "terrainShading" );
-
-		if ( overlays.length > 1 ) page.addSelect( "Overlay", overlays, viewState, "terrainOverlay" );
-
-	}
-
-	page.addHeader( "WIP" );
-
-	page.addRange( "Vertical scaling", viewState, "zScale" );
-
-	if ( viewState.hasTerrain ) page.addRange( "Terrain opacity", viewState, "terrainOpacity" );
 
 	page.addHeader( "Visibility" );
 
@@ -419,6 +459,39 @@ function initSettingsPage () {
 	if ( viewState.hasHUD )          page.addCheckbox( "Indicators",    viewState, "HUD" );
 
 	page.addCheckbox( "Bounding Box", viewState, "box" );
+
+	if ( viewState.hasTerrain ) {
+
+		var control;
+
+		control = page.addHeader( "Terrain" );
+		terrainControls.push( control );
+
+		var overlays = viewState.terrainOverlays;
+
+		if ( overlays.length > 0 ) terrainShadingModesActive[ "map overlay" ] = CV.SHADING_OVERLAY;
+
+		control = page.addSelect( "Shading", terrainShadingModesActive, viewState, "terrainShading" );
+		terrainControls.push( control );
+
+		if ( overlays.length > 1 ) {
+
+			terrainOverlay = page.addSelect( "Overlay", overlays, viewState, "terrainOverlay" );
+			terrainOverlay.style.display = "none";
+			terrainControls.push( terrainOverlay );
+
+		}
+
+		control = page.addRange( "Terrain opacity", viewState, "terrainOpacity" );
+		terrainControls.push( control );
+
+		for ( var i = 0, l = terrainControls.length; i < l; i++ ) {
+
+			terrainControls[ i ].style.display = "none";
+
+		}
+
+	}
 
 }
 

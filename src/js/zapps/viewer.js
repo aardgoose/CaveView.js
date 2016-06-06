@@ -39,7 +39,6 @@ var surfaceShadingMode = CV.SHADING_SINGLE;
 var terrainShadingMode = CV.SHADING_SHADED;
 
 var cameraMode;
-var viewMode;
 var selectedSection = 0;
 
 // Point of interest tracking
@@ -174,7 +173,7 @@ function init ( domID ) { // public method
 
 	Object.defineProperty( viewState, "view", {
 		writeable: true,
-		get: function () { return viewMode; },
+		get: function () { return CV.VIEW_NONE; },
 		set: function ( x ) { _viewStateSetter( setViewMode, "view", x ); }
 	} );
 

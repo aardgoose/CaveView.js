@@ -1,7 +1,7 @@
 
 CV.Marker = ( function () {
 
-	if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
+	if ( typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope ) {
     	return function Marker () {};
 	}
 

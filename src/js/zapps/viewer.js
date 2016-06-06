@@ -823,11 +823,7 @@ var render = function () {
 		renderer.clear();
 		renderer.render( scene, camera );
 
-		var scale = 0;
-
-		if ( camera instanceof THREE.OrthographicCamera ) scale = camera.zoom;
-
-		CV.Hud.render( renderer, camera, scale );
+		CV.Hud.render( renderer, camera );
 
 		// update LOD Scene Objects
 
@@ -881,9 +877,10 @@ var render = function () {
 
 			if ( targetPOI.quaternion ) camera.quaternion.slerp( targetPOI.quaternion, t );
 
-				camera.updateProjectionMatrix();
+			camera.updateProjectionMatrix();
+			CV.Hud.update();
 
-				if ( targetPOI.tAnimate === 0 ) {
+			if ( targetPOI.tAnimate === 0 ) {
 
 				controls.target = targetPOI.position;
 				controls.enabled = true;

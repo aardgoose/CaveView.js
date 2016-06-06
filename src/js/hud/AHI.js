@@ -115,10 +115,13 @@ CV.AHI.prototype.set = function () {
 
 		var pitch = Math.PI / 2 - direction.angleTo( CV.upAxis );
 
+		if ( pitch === this.lastPitch ) return;
+
 		this.globe.rotateOnAxis( xAxis, pitch - this.lastPitch );
 		this.lastPitch = pitch;
 
 		this.txt.textContent = Math.round( THREE.Math.radToDeg( pitch ) )  + "\u00B0";
+
 	}
 
 } ();

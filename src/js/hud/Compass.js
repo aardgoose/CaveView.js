@@ -126,6 +126,8 @@ CV.Compass.prototype.set = function () {
 
 		if ( direction.x >= 0 ) a = 2 * Math.PI - a;
 
+		if ( a === this.lastRotation ) return;
+
 		var degrees = 360 - Math.round( THREE.Math.radToDeg( a ) );
 
 		this.txt.textContent = degrees.toLocaleString( "en-GB", { minimumIntegerDigits: 3 } ) + "\u00B0"; // unicaode degree symbol

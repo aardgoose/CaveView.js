@@ -28,6 +28,7 @@ var container;
 // viewer state
 
 var viewState;
+var controls;
 var isVisible = true;
 
 function init ( domId ) {
@@ -70,6 +71,10 @@ function init ( domId ) {
 
 	viewState.addEventListener( "newCave", caveChanged );
 	viewState.addEventListener( "change", viewChanged );
+
+	controls = CV.Viewer.getControls();
+
+	controls.addEventListener( "change", update );
 
 }
 
@@ -159,13 +164,19 @@ function resize () {
 
 }
 
-function render ( renderer, vCamera, scale ) {
+function update ( event ) {
 
-	// update UI components
-	compass.set( vCamera );
-	ahi.set( vCamera );
+	// update HUD components
 
-	updateScaleBar( scale );
+	var camera = controls.object;
+
+	compass.set( camera );
+	ahi.set( camera );
+	updateScaleBar( camera );
+
+}
+
+function render ( renderer, vCamera ) {
 
 	// render on screen
 	renderer.clearDepth();
@@ -294,13 +305,9 @@ function cursorChanged ( event ) {
 
 }
 
-function updateScaleBar ( scale ) {
+function updateScaleBar ( camera ) {
 
-	if ( scale === 0 ) {
-
-		if ( scaleBar ) scaleBar.setVisibility( false );
-
-	} else {
+	if ( camera instanceof THREE.OrthographicCamera ) {
 
 		if ( scaleBar === null ) {
 
@@ -309,7 +316,11 @@ function updateScaleBar ( scale ) {
 
 		}
 
-		scaleBar.setScale( scale ).setVisibility( true );
+		scaleBar.setScale( camera.zoom ).setVisibility( true );
+
+	} else {
+
+		if ( scaleBar ) scaleBar.setVisibility( false );
 
 	}
 
@@ -318,6 +329,7 @@ function updateScaleBar ( scale ) {
 return {
 	init:               init,
 	render:             render,
+	update:             update,
 	setVisibility:		setVisibility,
 	getVisibility:		getVisibility,
 	getProgressDial:    getProgressDial,

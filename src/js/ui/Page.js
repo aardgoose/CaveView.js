@@ -117,16 +117,22 @@ CV.Page.prototype.addHeader = function ( text ) {
 
 	var div = document.createElement( "div" );
 
+	div.classList.add( "header" );
 	div.textContent = text;
 	this.page.appendChild( div );
+
+	return div;
 
 }
 
 CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
+	var div    = document.createElement( "div" );
 	var label  = document.createElement( "label" );
 	var select = document.createElement( "select" );
 	var opt;
+
+	div.classList.add( "control" );
 
 	if ( obj instanceof Array ) {
 
@@ -168,8 +174,12 @@ CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 	CV.Page.controls[ property ] = select;
 
-	this.page.appendChild( label );
-	this.page.appendChild( select );
+	div.appendChild( label );
+	div.appendChild( select );
+
+	this.page.appendChild( div );
+
+	return div;
 
 }
 
@@ -207,8 +217,11 @@ CV.Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 CV.Page.prototype.addRange = function ( title, obj, property ) {
 
+	var div = document.createElement( "div" );
 	var label = document.createElement( "label" );
 	var range = document.createElement( "input" );
+
+	div.classList.add( "control" );
 
 	range.type = "range";
 
@@ -224,8 +237,12 @@ CV.Page.prototype.addRange = function ( title, obj, property ) {
 
 	CV.Page.controls[ property ] = range;
 
-	this.page.appendChild( label );
-	this.page.appendChild( range );
+	div.appendChild( label );
+	div.appendChild( range );
+
+	this.page.appendChild( div );
+
+	return div;
 
 	function _rangeChanged ( event ) {
 

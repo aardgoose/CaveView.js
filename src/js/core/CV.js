@@ -10,6 +10,7 @@ CV.CAMERA_PERSPECTIVE  = 2;
 
 // preset camera views
 
+CV.VIEW_NONE           = 0;
 CV.VIEW_PLAN           = 1;
 CV.VIEW_ELEVATION_N    = 2;
 CV.VIEW_ELEVATION_S    = 3;

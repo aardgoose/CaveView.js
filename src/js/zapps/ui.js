@@ -313,7 +313,7 @@ function initHelpPage () {
 	_addKey( "S", "surface legs on/off" );
 	_addKey( "T", "terrain on/off" );
 	_addKey( "W", "LRUD walls on/off" );
-	
+
 	_addKey( "", "-" );
 
 	_addKey( "<", "Decrease terrain opacity" );
@@ -349,7 +349,7 @@ function initInfoPage() {
 	var page = new CV.Page( frame, "icon_info" );
 
 	page.addHeader( "Information" );
-	
+
 	var p = document.createElement( "p" );
 
 	p.textContent = "CV.Viewer - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.";
@@ -373,7 +373,7 @@ function initSettingsPage () {
 
 	page.addHeader( "Survey" );
 
-	page.addSelect( "File", caveList, guiState, "file" );
+	if ( caveList.length > 0 ) page.addSelect( "File", caveList, guiState, "file" );
 
 	page.addHeader( "View" );
 

@@ -670,6 +670,7 @@ function loadSurvey( newSurvey ) {
 
 	selectSection( 0 );
 
+	setSurfaceShadingMode( surfaceShadingMode );
 	// set if we have independant terrain maps
 
 	if ( terrain === null ) {

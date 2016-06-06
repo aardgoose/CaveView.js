@@ -104,17 +104,22 @@ Object.assign( CV.AHI.prototype, CV.HudObject.prototype );
 
 CV.AHI.prototype.contructor = CV.AHI;
 
-CV.AHI.prototype.set = function ( vCamera ) {
+CV.AHI.prototype.set = function () {
 
-	var direction = vCamera.getWorldDirection();
+	var direction = new THREE.Vector3();
 
-	var pitch = Math.PI / 2 - direction.clone().angleTo( new THREE.Vector3( 0, 0, 1 ) );
+	return function ( vCamera ) {
 
-	this.globe.rotateOnAxis( new THREE.Vector3( 1, 0, 0 ), pitch - this.lastPitch );
-	this.lastPitch = pitch;
+		vCamera.getWorldDirection( direction );
 
-	this.txt.textContent = Math.round( THREE.Math.radToDeg( pitch ) )  + "\u00B0";
+		var pitch = Math.PI / 2 - direction.angleTo( CV.upAxis );
 
-}
+		this.globe.rotateOnAxis( new THREE.Vector3( 1, 0, 0 ), pitch - this.lastPitch );
+		this.lastPitch = pitch;
+
+		this.txt.textContent = Math.round( THREE.Math.radToDeg( pitch ) )  + "\u00B0";
+	}
+
+} ();
 
 // EOF

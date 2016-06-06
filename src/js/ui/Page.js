@@ -160,7 +160,7 @@ CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 			opt.text  = p;
 			opt.value = obj[ p ];
 
-			if ( opt.value === trgObj[ property ] ) opt.selected = true;
+			if ( opt.value == trgObj[ property ] ) opt.selected = true;
 
 			select.add( opt, null );
 
@@ -229,6 +229,7 @@ CV.Page.prototype.addRange = function ( title, obj, property ) {
 	range.max  = 1;
 
 	range.step = 0.05;
+	range.value = obj[ property ];
 
 	range.addEventListener( "input", _rangeChanged );
 	range.addEventListener( "change", _rangeChanged ); // for IE11 support

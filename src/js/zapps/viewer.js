@@ -808,16 +808,17 @@ function entranceClick ( event ) {
 var render = function () {
 
 	var lPosition = new THREE.Vector3();
+	var rotation = new THREE.Euler();
 
 	return function () {
 
 		if ( !caveIsLoaded ) return;
 
-		var r = camera.getWorldRotation();
+		camera.getWorldRotation( rotation );
 
-		lPosition.copy( CV.lightPosition.copy );
+		lPosition.copy( CV.lightPosition );
 
-		directionalLight.position.copy( lPosition.applyAxisAngle( CV.upAxis, r.z ) );
+		directionalLight.position.copy( lPosition.applyAxisAngle( CV.upAxis, rotation.z ) );
 
 		renderer.clear();
 		renderer.render( scene, camera );

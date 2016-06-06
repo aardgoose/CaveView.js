@@ -104,7 +104,9 @@ CV.Compass.prototype.contructor = CV.Compass;
 
 CV.Compass.prototype.set = function () {
 
-	var direction = new THREE.Vector3();
+	var direction     = new THREE.Vector3();
+	var yAxis         = new THREE.Vector3( 0, 1, 0 );
+	var negativeZAxis = new THREE.Vector3( 0, 0, -1 );
 
 	return function ( vCamera ) {
 
@@ -120,7 +122,7 @@ CV.Compass.prototype.set = function () {
 		// we are only interested in angle to horizontal plane.
 		direction.z = 0;
 
-		var a = direction.angleTo( new THREE.Vector3( 0, 1, 0 ) );
+		var a = direction.angleTo( yAxis );
 
 		if ( direction.x >= 0 ) a = 2 * Math.PI - a;
 
@@ -128,7 +130,7 @@ CV.Compass.prototype.set = function () {
 
 		this.txt.textContent = degrees.toLocaleString( "en-GB", { minimumIntegerDigits: 3 } ) + "\u00B0"; // unicaode degree symbol
 
-		this.rotateOnAxis( new THREE.Vector3( 0, 0, -1 ), a - this.lastRotation );
+		this.rotateOnAxis( negativeZAxis, a - this.lastRotation );
 
 		this.lastRotation = a;
 

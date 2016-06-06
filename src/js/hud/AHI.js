@@ -107,6 +107,7 @@ CV.AHI.prototype.contructor = CV.AHI;
 CV.AHI.prototype.set = function () {
 
 	var direction = new THREE.Vector3();
+	var xAxis     = new THREE.Vector3( 1, 0, 0 );
 
 	return function ( vCamera ) {
 
@@ -114,7 +115,7 @@ CV.AHI.prototype.set = function () {
 
 		var pitch = Math.PI / 2 - direction.angleTo( CV.upAxis );
 
-		this.globe.rotateOnAxis( new THREE.Vector3( 1, 0, 0 ), pitch - this.lastPitch );
+		this.globe.rotateOnAxis( xAxis, pitch - this.lastPitch );
 		this.lastPitch = pitch;
 
 		this.txt.textContent = Math.round( THREE.Math.radToDeg( pitch ) )  + "\u00B0";

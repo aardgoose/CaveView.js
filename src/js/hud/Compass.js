@@ -102,34 +102,38 @@ Object.assign( CV.Compass.prototype, CV.HudObject.prototype );
 
 CV.Compass.prototype.contructor = CV.Compass;
 
-CV.Compass.prototype.set = function ( vCamera ) {
+CV.Compass.prototype.set = function () {
 
-	var direction = vCamera.getWorldDirection();
+	var direction = new THREE.Vector3();
 
-	if ( direction.x === 0 && direction.y === 0 ) {
+	return function ( vCamera ) {
 
-		// FIXME get camera rotation....
-		return;
+		vCamera.getWorldDirection( direction );
+
+		if ( direction.x === 0 && direction.y === 0 ) {
+
+			// FIXME get camera rotation....
+			return;
+
+		}
+
+		// we are only interested in angle to horizontal plane.
+		direction.z = 0;
+
+		var a = direction.angleTo( new THREE.Vector3( 0, 1, 0 ) );
+
+		if ( direction.x >= 0 ) a = 2 * Math.PI - a;
+
+		var degrees = 360 - Math.round( THREE.Math.radToDeg( a ) );
+
+		this.txt.textContent = degrees.toLocaleString( "en-GB", { minimumIntegerDigits: 3 } ) + "\u00B0"; // unicaode degree symbol
+
+		this.rotateOnAxis( new THREE.Vector3( 0, 0, -1 ), a - this.lastRotation );
+
+		this.lastRotation = a;
 
 	}
 
-	var dHeading = direction.clone();
-
-	// we are only interested in angle to horizontal plane.
-	dHeading.z = 0;
-
-	var a = dHeading.angleTo( new THREE.Vector3( 0, 1, 0 ) );
-
-	if ( dHeading.x >= 0 ) a = 2 * Math.PI - a;
-
-	var degrees = 360 - Math.round( THREE.Math.radToDeg( a ) );
-
-	this.txt.textContent = degrees.toLocaleString( "en-GB", { minimumIntegerDigits: 3 } ) + "\u00B0"; // unicaode degree symbol
-
-	this.rotateOnAxis( new THREE.Vector3( 0, 0, -1 ), a - this.lastRotation );
-
-	this.lastRotation = a;
-
-}
+} ();
 
 // EOF

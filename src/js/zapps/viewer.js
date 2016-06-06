@@ -511,7 +511,7 @@ function cutSection() {
 
 	survey.cutSection( selectedSection );
 
-	// grab a reference to prevent survey being destroyed
+	// grab a reference to prevent survey being destroyed in clearView()
 	var cutSurvey = survey;
 
 	// reset view
@@ -805,91 +805,99 @@ function entranceClick ( event ) {
 
 }
 
-function render () {
+var render = function () {
 
-	if ( !caveIsLoaded ) return;
+	var lPosition = new THREE.Vector3();
 
-	var r = camera.getWorldRotation();
+	return function () {
 
-	directionalLight.position.copy( CV.lightPosition.clone().applyAxisAngle( CV.upAxis, r.z ) );
+		if ( !caveIsLoaded ) return;
 
-	renderer.clear();
-	renderer.render( scene, camera );
+		var r = camera.getWorldRotation();
 
-	var scale = 0;
+		lPosition.copy( CV.lightPosition.copy );
 
-	if ( camera instanceof THREE.OrthographicCamera ) scale = camera.zoom;
+		directionalLight.position.copy( lPosition.applyAxisAngle( CV.upAxis, r.z ) );
 
-	CV.Hud.render( renderer, camera, scale );
+		renderer.clear();
+		renderer.render( scene, camera );
 
-	// update LOD Scene Objects
+		var scale = 0;
 
-	var lods = survey.lodTargets;
-	var l    = lods.length;
+		if ( camera instanceof THREE.OrthographicCamera ) scale = camera.zoom;
 
-	if ( l > 0 ) {
+		CV.Hud.render( renderer, camera, scale );
 
-		for ( var i = 0; i < l; i++ ) {
+		// update LOD Scene Objects
 
-			lods[ i ].update( camera );
+		var lods = survey.lodTargets;
+		var l    = lods.length;
 
-		}
+		if ( l > 0 ) {
 
-	}
+			for ( var i = 0; i < l; i++ ) {
 
-	if ( targetPOI !== null && targetPOI.tAnimate > 0 ) {
-
-		// handle move to new Point of Interest (POI)
-		_moveToPOI();
-
-	} else {
-
-		if ( terrain && terrain.isTiled() && viewState.terrain ) {
-
-			if ( lastActivityTime && performance.now() - lastActivityTime > 500 ) {
-
-				clockStop();
-				terrain.zoomCheck( camera );
+				lods[ i ].update( camera );
 
 			}
 
 		}
 
-		controls.update();
+		if ( targetPOI !== null && targetPOI.tAnimate > 0 ) {
 
-	}
+			// handle move to new Point of Interest (POI)
+			_moveToPOI();
 
-	return;
+		} else {
 
-	function _moveToPOI () {
+			if ( terrain && terrain.isTiled() && viewState.terrain ) {
 
-		targetPOI.tAnimate--;
+				if ( lastActivityTime && performance.now() - lastActivityTime > 500 ) {
 
-		var t =  1 - targetPOI.tAnimate / ( targetPOI.tAnimate + 1 );
+					clockStop();
+					terrain.zoomCheck( camera );
 
-		activePOIPosition.lerp( targetPOI.position, t );
+				}
 
-		camera.position.lerp( targetPOI.cameraPosition, t );
-		camera.lookAt( activePOIPosition );
+			}
 
-		if ( targetPOI.quaternion ) camera.quaternion.slerp( targetPOI.quaternion, t );
+			controls.update();
 
-		camera.updateProjectionMatrix();
+		}
 
-		if ( targetPOI.tAnimate === 0 ) {
+		return;
 
-			controls.target = targetPOI.position;
-			controls.enabled = true;
+		function _moveToPOI () {
 
-			// restart the clock to trigger refresh of terrain
-			clockStart();
-			targetPOI = null;
+			targetPOI.tAnimate--;
+
+			var t =  1 - targetPOI.tAnimate / ( targetPOI.tAnimate + 1 );
+
+			activePOIPosition.lerp( targetPOI.position, t );
+
+			camera.position.lerp( targetPOI.cameraPosition, t );
+			camera.lookAt( activePOIPosition );
+
+			if ( targetPOI.quaternion ) camera.quaternion.slerp( targetPOI.quaternion, t );
+
+				camera.updateProjectionMatrix();
+
+				if ( targetPOI.tAnimate === 0 ) {
+
+				controls.target = targetPOI.position;
+				controls.enabled = true;
+
+				// restart the clock to trigger refresh of terrain
+				clockStart();
+				targetPOI = null;
+
+			}
 
 		}
 
 	}
-
-}
+	
+} ();
 
 function setCameraPOI ( x ) {
 

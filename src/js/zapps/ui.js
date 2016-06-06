@@ -42,9 +42,9 @@ var surfaceShadingModes = {
 }
 
 var terrainShadingModes = {
+	"Relief shading":     CV.SHADING_SHADED,
 	"by height":          CV.SHADING_HEIGHT,
-	"height cursor":      CV.SHADING_CURSOR,
-	"Relief shading":     CV.SHADING_SHADED
+	"height cursor":      CV.SHADING_CURSOR
 }
 
 var cameraViews = {

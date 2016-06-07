@@ -459,11 +459,7 @@ CV.Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	function cmd_MOVE ( c ) {
 
 		// new set of line segments
-		if ( legs.length > 1 ) {
-
-			groups.push( legs );
-
-		}
+		if ( legs.length > 1 ) groups.push( legs );
 
 		legs = [];
 

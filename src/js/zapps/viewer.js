@@ -53,8 +53,6 @@ var lastActivityTime = 0;
 
 function __dyeTrace() {
 
-	return;
-
 	var start = new THREE.Vector3();
 	var end   = new THREE.Vector3( 100, 100, 100 );
 	var progress;
@@ -709,7 +707,7 @@ function loadSurvey( newSurvey ) {
 	controls.enabled = true;
 
 	
-	__dyeTrace(); // FIXME test function
+	//__dyeTrace(); // FIXME test function
 
 	animate();
 

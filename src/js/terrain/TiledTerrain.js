@@ -3,7 +3,7 @@
 var Cave = Cave || {};
 
 CV.TiledTerrain = function ( limits3, onLoaded ) {
-	
+
 	THREE.Group.call( this );
 
 	this.name = "CV.TiledTerrain";
@@ -72,10 +72,10 @@ CV.TiledTerrain.prototype.getCoverage = function ( limits, resolution ) {
 	var tileSet  = this.tileSet;
 	var coverage = { resolution: resolution };
 
-	var N = tileSet.N + resolution / 2;
-	var W = tileSet.W - resolution / 2;
+	var N = tileSet.N;
+	var W = tileSet.W;
 
-	var tileWidth = ( tileSet.TILESIZE - 2 ) * resolution; 
+	var tileWidth = ( tileSet.TILESIZE - 1 ) * resolution; 
 
 	coverage.min_x = Math.max( Math.floor( ( limits.min.x - W ) / tileWidth ), 0 );
 	coverage.max_x = Math.floor( ( limits.max.x - W ) / tileWidth ) + 1;
@@ -118,17 +118,14 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 
 	var limits    = this.limits;
 	var tileSet   = this.tileSet;
-	var divisions = tileSet.TILESIZE - 1;
-	var tileWidth = divisions * resolution;
-	var clip = { top: 0, bottom: 0, left: 0, right: 0 };
+	var tileWidth = (tileSet.TILESIZE - 1 ) * resolution;
+	var clip      = { top: 0, bottom: 0, left: 0, right: 0 };
 
-	var N = tileSet.N + resolution / 2;
-	var W = tileSet.W - resolution / 2;
+	var N = tileSet.N;
+	var W = tileSet.W;
 
-	var tileWidthAdj = tileWidth - resolution;
-
-	var bottomLeft = new THREE.Vector2( W + x * tileWidthAdj,             N - y * tileWidthAdj - tileWidth );
-	var topRight   = new THREE.Vector2( W + x * tileWidthAdj + tileWidth, N - y * tileWidthAdj );
+	var bottomLeft = new THREE.Vector2( W + tileWidth * x,          N - tileWidth * ( y + 1 ) );
+	var topRight   = new THREE.Vector2( W + tileWidth * ( x + 1 ) , N - tileWidth * y );
 
 	var tileLimits = new THREE.Box2( bottomLeft, topRight );
 
@@ -278,7 +275,6 @@ CV.TiledTerrain.prototype.endLoad = function ( tile ) {
 		} else {
 
 			// mark this tile so we don't continually try to reload
-			// console.log( "marking as tiles missing" );
 			if ( this.resolution === this.initialResolution ) {
 
 				console.log("oops");
@@ -319,6 +315,13 @@ CV.TiledTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
 
 	var coverage   = this.pickCoverage( limits, maxResolution );
 	var resolution = coverage.resolution;
+
+	if ( tile && tile.resolution == resolution ) {
+
+		console.log("BOING!");
+		return;
+
+	}
 
 	this.replaceTile   = tile;
 	this.currentLimits = limits;
@@ -554,7 +557,7 @@ CV.TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 				if ( node.noChildren === 0 ) {
 
-					if (!tile.mesh && tile.evicted ) {
+					if (!tile.mesh ) {
 
 						resurrectTiles.push( tile );
 

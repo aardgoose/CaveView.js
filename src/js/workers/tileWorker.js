@@ -72,8 +72,8 @@ function mapLoaded ( data, x, y ) {
 	var xTileOffset = xTileWidth / 2 ;
 	var yTileOffset = yTileWidth / 2 ;
 
-	var N = tileSet.N - 32 / 2; // FIXME - adjst for tileset max res
-	var W = tileSet.W + 32 / 2;
+	var N = tileSet.N;
+	var W = tileSet.W;
 
 	var X = W + xTileOffset + resolution * ( tileSpec.tileX * divisions + clip.left );
 	var Y = N - yTileOffset - resolution * ( tileSpec.tileY * divisions + clip.top );
@@ -151,7 +151,6 @@ function mapLoaded ( data, x, y ) {
 	}
 
 	var json = bufferGeometry.toJSON();
-
 
 	// support transferable objects where possible
 	// convertion from Array to ArrayBuffer improves main script side performance

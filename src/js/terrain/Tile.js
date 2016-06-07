@@ -133,7 +133,7 @@ CV.Tile.prototype.getBoundingBox = function () {
 
 		boundingBox = this.mesh.geometry.boundingBox.clone();
 
-		var adj = this.resolution; // adjust to cope with  overlaps
+		var adj = this.resolution; // adjust to cope with overlaps
 
 		boundingBox.min.x += adj;
 		boundingBox.min.y += adj;
@@ -160,12 +160,9 @@ CV.Tile.prototype.attach = function ( parent ) {
 
 CV.Tile.prototype.remove = function ( evicted ) {
 
-	if ( evicted ) {
+	if ( evicted ) this.evictionCount++;
 
-		this.evicted = true;
-		this.evictionCount++;
-
-	}
+	this.evicted = evicted;
 
 	if (this.mesh) {
 

@@ -16,7 +16,7 @@ var surveyTree;
 var isCaveLoaded = false;
 
 var container;
-var frame;
+var frame = null;
 
 var heightCursorGui;
 var file;
@@ -134,12 +134,12 @@ function handleChange( event ) {
 
 			terrainOverlay.style.display = "block";
 
-		} else {
+		} else if ( terrainOverlay ) {
 
 			terrainOverlay.style.display = "none";
 
 		}
-
+ 
 		break;
 
 	}
@@ -340,7 +340,7 @@ function initHelpPage () {
 	_addKey( "[", "move depth cursor up" );
 	_addKey( "]", "move depth cursor down" );
 
-	//addKey("n", "next cave");
+	if ( caveList.length > 0 ) _addKey( "n", "next cave" );
 
 	help.appendChild( dl );
 
@@ -554,7 +554,7 @@ function handleDrop ( event ) {
 
 }
 
-function resetGUI () {
+function resetUI () {
 
 	if ( isCaveLoaded ) {
 
@@ -568,15 +568,15 @@ function resetGUI () {
 
 }
 
-function afterReset () {
+function afterReset ( event ) {
+
+	var frame = event.target;
 
 	frame.removeEventListener( "transitionend", afterReset );
 
-	if ( !isCaveLoaded ) {
+	if ( frame !== null ) container.removeChild( frame );
 
-		if ( frame !== undefined ) container.removeChild( frame );
-
-	}
+	frame = null;
 
 }
 
@@ -600,7 +600,7 @@ function nextCave () {
 
 function loadCave ( file ) {
 
-	resetGUI();
+	resetUI();
 	CV.Viewer.clearView();
 
 	progressBar.Start( "Loading file " + file + " ..." );

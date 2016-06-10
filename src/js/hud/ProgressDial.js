@@ -19,7 +19,7 @@ CV.ProgressDial = function ( container ) {
 	this.translateX( -offset * 5 );
 	this.translateY(  offset );
 
-	this.rotateOnAxis( new THREE.Vector3( 0, 0, 1 ), Math.PI / 2 );
+	this.rotateOnAxis( CV.upAxis, Math.PI / 2 );
 
 	this.visible  = false;
 	this.isVisible = true;
@@ -40,7 +40,7 @@ CV.ProgressDial.prototype.set = function ( progress ) {
 
 	this.progress = progress;
 
-	var l = Math.min( 100, Math.round( progress ) );
+	var l = Math.floor( Math.min( 100, Math.round( progress ) ) / 2 ) * 2;
 	var faces = this.geometry.faces;
 
 	for ( var i = 0; i < l; i++ ) {

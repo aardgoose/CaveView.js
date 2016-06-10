@@ -422,10 +422,11 @@ function testCameraLayer ( layerTag ) {
 
 }
 
-function setViewMode ( mode ) {
+function setViewMode ( mode, t ) {
 
 	var position = new  THREE.Vector3();
-	
+	var tAnimate = t || 240;
+
 	switch ( mode ) {
 
 	case CV.VIEW_PLAN:
@@ -469,7 +470,7 @@ function setViewMode ( mode ) {
 	activePOIPosition = new THREE.Vector3();
 
 	targetPOI = {
-		tAnimate: 240,
+		tAnimate: tAnimate,
 		position: activePOIPosition,
 		cameraPosition: position
 	};
@@ -615,7 +616,7 @@ function clearView () {
 	initCameraLayers( oCamera );
 
 	viewState.cameraType = CV.CAMERA_PERSPECTIVE;
-	viewState.view       = CV.VIEW_PLAN;
+	setViewMode( CV.VIEW_PLAN, 1 );
 
 	render();
 

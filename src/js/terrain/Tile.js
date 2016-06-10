@@ -222,13 +222,13 @@ CV.Tile.prototype.setOverlay = function ( overlay, opacity ) {
 
 	var tileWidth = tileSet.TILESIZE - 1; // in grid units
 
-	xOffset = xOffset + ( repeat * clip.left/tileWidth );
-	yOffset = yOffset + ( repeat * clip.bottom/tileWidth );
+	xOffset = xOffset + ( repeat * clip.left / tileWidth );
+	yOffset = yOffset + ( repeat * clip.bottom / tileWidth );
 
 	var xRepeat = repeat * ( ( tileWidth - clip.left - clip.right ) / tileWidth );
 	var yRepeat = repeat * ( ( tileWidth - clip.top  - clip.bottom ) / tileWidth );
 
-	var imageFile = tileSet.OVERLAYDIR + overlay + "/" + tileSet.PREFIX + tileSet.OVERLAY_RESOLUTION + "MX-" + CV.padDigits(y, 3) + "-" + CV.padDigits(x, 3) + ".jpg";
+	var imageFile = tileSet.OVERLAYDIR + overlay + "/" + tileSet.PREFIX + tileSet.OVERLAY_RESOLUTION + "MX-" + CV.padDigits( y, 3 ) + "-" + CV.padDigits( x, 3 ) + ".jpg";
 
 	if ( CV.Tile.overlayImages.has( imageFile ) ) {
 

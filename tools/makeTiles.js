@@ -16,17 +16,17 @@ var region = {
 	"BASEDIR": "SK",
 	"PREFIX": "SK",
 	"RESOLUTION_MIN": 2,
-	"RESOLUTION_MAX": 32,
+	"RESOLUTION_MAX": 64,
 	"SCALE": 64
 }
 
 var i, j, outFile, cmd;
 var n, s, e, w;
 
-var resolution = 16;
+var resolution = 2;
 var tileSize   = 256;
-var left       = region.W;
-var top        = region.N;
+var left       = region.W - resolution / 2;
+var top        = region.N + resolution / 2;
 
 var tileWidth  = resolution * tileSize;
 var tileOffset = tileWidth - resolution;
@@ -49,7 +49,7 @@ for ( i = 0; left < region.E; i++ ) {
 		console.log( cmd );
 
 		outFile = prefix + padDigits( j, 3 ) + "-" + padDigits( i, 3 ) + ".bin";
-		cmd = "r.out.bin -b bytes=2 input=SK2X@SK output=" + outFile;
+		cmd = "r.out.bin -b bytes=2 input=SK" + resolution + "X@SK output=" + outFile;
 
 		console.log( cmd );
 
@@ -60,4 +60,7 @@ for ( i = 0; left < region.E; i++ ) {
 	left = left + tileOffset;
 
 }
+
+console.log("del *.hdr");
+console.log("del *.wld");
 

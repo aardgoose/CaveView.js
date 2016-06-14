@@ -358,17 +358,27 @@ function renderDepthTexture () {
 
 function setCameraMode ( mode ) {
 
-	// FIXME - copy direction and scale between cameras
+	if ( mode === cameraMode ) return;
+
+	// get offset vector of current camera from target
+
+	var offset = camera.position.clone().sub( controls.target );
 
 	switch ( mode ) {
 
 	case CV.CAMERA_PERSPECTIVE:
 
+		offset.setLength( 600 / oCamera.zoom );
 		camera = pCamera;
 
 		break;
 
 	case CV.CAMERA_ORTHOGRAPHIC:
+
+		// calculate zoom from ratio of pCamera distance from target to base distance.
+		oCamera.zoom = 600 / offset.length();
+
+		offset.setLength( 600 );
 
 		camera = oCamera;
 
@@ -381,7 +391,15 @@ function setCameraMode ( mode ) {
 
 	}
 
+	// update new camera with position to give same apparent zoomm and view
+
+	camera.position.copy( offset.add( controls.target ) );
+
+	camera.updateProjectionMatrix();
+	camera.lookAt( controls.target );
+
 	controls.object = camera;
+
 	cameraMode = mode;
 
 }
@@ -709,7 +727,6 @@ function loadSurvey( newSurvey ) {
 	controls.object = camera;
 	controls.enabled = true;
 
-	
 	//__dyeTrace(); // FIXME test function
 
 	animate();

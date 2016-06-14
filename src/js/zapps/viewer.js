@@ -693,7 +693,7 @@ function loadSurvey( newSurvey ) {
 
 		region.add( terrain );
 		setTerrainShadingMode( terrainShadingMode );
-		renderDepthTexture();
+		setTimeout( renderDepthTexture, 0 ); // delay to after newCave event - after material cache is flushed
 
 	}
 

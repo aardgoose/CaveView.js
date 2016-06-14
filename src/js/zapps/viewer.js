@@ -488,7 +488,8 @@ function setViewMode ( mode, t ) {
 	targetPOI = {
 		tAnimate: tAnimate,
 		position: activePOIPosition,
-		cameraPosition: position
+		cameraPosition: position,
+		cameraZoom: 1
 	};
 
 	controls.enabled = false;
@@ -633,7 +634,7 @@ function clearView () {
 	viewState.cameraType = CV.CAMERA_PERSPECTIVE;
 	setViewMode( CV.VIEW_PLAN, 1 );
 
-	render();
+	renderView();
 
 }
 
@@ -805,6 +806,7 @@ function entranceClick ( event ) {
 			object:      entrance,
 			position:    position,
 			cameraPosition: position.clone().add( new THREE.Vector3( 0, 0, 5 ) ),
+			cameraZoom: 1,
 			boundingBox: new THREE.Box3().expandByPoint( entrance.position ),
 			quaternion:  new THREE.Quaternion()
 
@@ -818,12 +820,12 @@ function entranceClick ( event ) {
 
 }
 
-var render = function () {
+var renderView = function () {
 
 	var lPosition = new THREE.Vector3();
 	var rotation = new THREE.Euler();
 
-	return function () {
+	return function renderView () {
 
 		if ( !caveIsLoaded ) return;
 
@@ -836,7 +838,7 @@ var render = function () {
 		renderer.clear();
 		renderer.render( scene, camera );
 
-		CV.Hud.render( renderer, camera );
+		CV.Hud.renderHUD( renderer, camera );
 
 		// update LOD Scene Objects
 
@@ -888,6 +890,8 @@ var render = function () {
 			camera.position.lerp( targetPOI.cameraPosition, t );
 			camera.lookAt( activePOIPosition );
 
+			camera.zoom = camera.zoom + ( targetPOI.cameraZoom - camera.zoom ) * t;
+
 			if ( targetPOI.quaternion ) camera.quaternion.slerp( targetPOI.quaternion, t );
 
 			camera.updateProjectionMatrix();
@@ -929,12 +933,18 @@ function setCameraPOI ( x ) {
 		var e2 = tan * camera.aspect * size.x / 2 + size.z;
 
 		elevation = Math.max( e1, e2 );
-		
+
+		targetPOI.cameraZoom = 1;
+
 		if ( elevation === 0 ) elevation = 100;
 
 	} else {
 
-		elevation = 200; // FIXME
+		var hRatio = ( camera.right - camera.left ) / size.x;
+		var vRatio = ( camera.top - camera.bottom ) / size.y;
+ 
+		targetPOI.cameraZoom = Math.min( hRatio, vRatio );
+		elevation = 600;
 
 	}
 
@@ -942,7 +952,6 @@ function setCameraPOI ( x ) {
 
 	targetPOI.cameraPosition   = targetPOI.position.clone();
 	targetPOI.cameraPosition.z = targetPOI.cameraPosition.z + elevation;
-
 	targetPOI.quaternion = new THREE.Quaternion();
 
 	// disable orbit controls until move to selected POI is conplete
@@ -954,7 +963,7 @@ function setCameraPOI ( x ) {
 function animate () {
 
 	requestAnimationFrame( animate );
-	render();
+	renderView();
 
 }
 

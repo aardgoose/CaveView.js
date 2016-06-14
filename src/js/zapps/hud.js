@@ -176,7 +176,7 @@ function update ( event ) {
 
 }
 
-function render ( renderer, vCamera ) {
+function renderHUD ( renderer, vCamera ) {
 
 	// render on screen
 	renderer.clearDepth();
@@ -328,7 +328,7 @@ function updateScaleBar ( camera ) {
 
 return {
 	init:               init,
-	render:             render,
+	renderHUD:          renderHUD,
 	update:             update,
 	setVisibility:		setVisibility,
 	getVisibility:		getVisibility,

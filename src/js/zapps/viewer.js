@@ -593,6 +593,8 @@ function clearView () {
 	renderer.clear();
 	CV.Hud.setVisibility( false );
 
+	if ( terrain ) terrain.dying = true;
+
 	controls.enabled = false;
 
 	survey          = null;

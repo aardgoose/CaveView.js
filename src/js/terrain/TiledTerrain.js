@@ -28,6 +28,7 @@ CV.TiledTerrain = function ( limits3, onLoaded ) {
 	this.material      = null;
 	this.initialResolution;
 	this.currentLimits;
+	this.dying = false;
 
 	if ( CV.Hud !== undefined ) {
 
@@ -110,6 +111,8 @@ CV.TiledTerrain.prototype.pickCoverage = function ( limits, maxResolution ) {
 
 CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
+	console.log("load ", resolutionIn, ": [ ", x, ",", y, "]" );
+
 	var self       = this;
 	var resolution = resolutionIn;
 	var oldTile    = oldTileIn;
@@ -163,9 +166,19 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 
 		var tileData = event.data;
 
+		// the survey/region in the viewer may have changed while the height maos are being loaded.
+		// bail out in this case to avoid errors
+
+		if ( self.dying ) {
+
+			this.progressDial.end();
+			return;
+
+		}
+
 		if ( tileData.status !== "ok" ) ++self.errors;
 
-		if (self.errors) {
+		if ( self.errors ) {
 
 			// error out early if we or other tiles have failed to load.
 
@@ -242,7 +255,7 @@ CV.TiledTerrain.prototype.endLoad = function ( tile ) {
 			var tileTree = this.tileTree;
 			var parentId;
 
-			if (replaceTile) {
+			if ( replaceTile ) {
 
 				parentId = replaceTile.id;
 

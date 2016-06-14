@@ -2,7 +2,8 @@
 
 var CV = CV || {};
 
-CV.lightPosition = new THREE.Vector3( -1, -1, 0.5 );  
+CV.lightPosition = new THREE.Vector3( -1, -1, 0.5 );
+CV.CAMERA_OFFSET = 600;
 
 CV.Viewer = ( function () {
 
@@ -77,7 +78,7 @@ function init ( domID ) { // public method
 
 	container = document.getElementById( domID );
 
-	if (!container) alert( "No container DOM object [" + domID + "] available" );
+	if ( !container ) alert( "No container DOM object [" + domID + "] available" );
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
@@ -92,15 +93,12 @@ function init ( domID ) { // public method
 	oCamera = new THREE.OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 10000 );
 
 	oCamera.rotateOnAxis( CV.upAxis, Math.PI / 2 );
-	oCamera.up = CV.upAxis;
 
-	initCameraLayers( oCamera );
+	initCamera( oCamera );
 
 	pCamera = new THREE.PerspectiveCamera( 75, width / height, 1, 10000 );
 
-	pCamera.up = CV.upAxis;
-
-	initCameraLayers( pCamera );
+	initCamera( pCamera );
 
 	camera = pCamera;
 
@@ -226,7 +224,6 @@ function init ( domID ) { // public method
 			get: function () { return CV.Hud.getVisibility(); },
 			set: function ( x ) { CV.Hud.setVisibility( x ); }
 		} );
-
 	}
 
 	_enableLayer( CV.FEATURE_BOX,       "box" );
@@ -246,21 +243,19 @@ function init ( domID ) { // public method
 		writeable: true,
 		get: function () { return true; },
 		set: function ( x ) { cutSection( x ) }
-
 	} );
 
 	Object.defineProperty( viewState, "zScale", {
 		writeable: true,
 		get: function () { return zScale; },
 		set: function ( x ) { setZScale( x ) }
-
 	} );
 
 	CV.Materials.initCache( viewState );
 
 	return;
 
-	function _enableLayer( layerTag, name ) {
+	function _enableLayer ( layerTag, name ) {
 
 		Object.defineProperty( viewState, name, {
 			writeable: true,
@@ -270,7 +265,7 @@ function init ( domID ) { // public method
 
 	}
 	
-	function _hasLayer( layerTag, name ) {
+	function _hasLayer ( layerTag, name ) {
 
 		Object.defineProperty( viewState, name, {
 			get: function () { return survey.hasFeature( layerTag ); }
@@ -278,7 +273,7 @@ function init ( domID ) { // public method
 
 	}
 
-	function _viewStateSetter( modeFunction, name, newMode ) {
+	function _viewStateSetter ( modeFunction, name, newMode ) {
 
 		modeFunction( Number( newMode ) );
 		viewState.dispatchEvent( { type: "change", name: name } );
@@ -287,7 +282,7 @@ function init ( domID ) { // public method
 
 }
 
-function setZScale( scale ) {
+function setZScale ( scale ) {
 
 	// scale - in range 0 - 1
 
@@ -368,7 +363,8 @@ function setCameraMode ( mode ) {
 
 	case CV.CAMERA_PERSPECTIVE:
 
-		offset.setLength( 600 / oCamera.zoom );
+		offset.setLength( CV.CAMERA_OFFSET / oCamera.zoom );
+
 		camera = pCamera;
 
 		break;
@@ -376,9 +372,8 @@ function setCameraMode ( mode ) {
 	case CV.CAMERA_ORTHOGRAPHIC:
 
 		// calculate zoom from ratio of pCamera distance from target to base distance.
-		oCamera.zoom = 600 / offset.length();
-
-		offset.setLength( 600 );
+		oCamera.zoom = CV.CAMERA_OFFSET / offset.length();
+		offset.setLength( CV.CAMERA_OFFSET );
 
 		camera = oCamera;
 
@@ -404,7 +399,10 @@ function setCameraMode ( mode ) {
 
 }
 
-function initCameraLayers ( camera ) {
+function initCamera ( camera ) {
+
+	camera.up = CV.upAxis;
+	camera.zoom = 1;
 
 	camera.layers.set( 0 );
 
@@ -412,7 +410,7 @@ function initCameraLayers ( camera ) {
 	camera.layers.enable( CV.FEATURE_ENTRANCES );
 	camera.layers.enable( CV.FEATURE_BOX );
 	
-	camera.position.set( 0, 0, 600 );
+	camera.position.set( 0, 0, CV.CAMERA_OFFSET );
 	camera.lookAt( 0, 0, 0 );
 	camera.updateProjectionMatrix();
 
@@ -450,31 +448,31 @@ function setViewMode ( mode, t ) {
 	case CV.VIEW_PLAN:
 
 		// reset camera to start position
-		position.set( 0, 0, 600 );
+		position.set( 0, 0, CV.CAMERA_OFFSET );
 
 		break;
 
 	case CV.VIEW_ELEVATION_N:
 
-		position.set( 0, 600, 0 );
+		position.set( 0, CV.CAMERA_OFFSET, 0 );
 
 		break;
 
 	case CV.VIEW_ELEVATION_S:
 
-		position.set( 0, -600, 0 );
+		position.set( 0, -CV.CAMERA_OFFSET, 0 );
 
 		break;
 
 	case CV.VIEW_ELEVATION_E:
 
-		position.set( 600, 0, 0 );
+		position.set( CV.CAMERA_OFFSET, 0, 0 );
 
 		break;
 
 	case CV.VIEW_ELEVATION_W:
 
-		position.set( -600, 0, 0 );
+		position.set( -CV.CAMERA_OFFSET, 0, 0 );
 
 		break;
 
@@ -521,7 +519,7 @@ function setTerrainOverlay ( overlay ) {
 
 }
 
-function cutSection() {
+function cutSection () {
 
 	if ( selectedSection === 0 ) return;
 
@@ -555,18 +553,15 @@ function selectSection ( id ) {
 		box.geometry.computeBoundingBox();
 
 		targetPOI = {
-
 			tAnimate: 0,
 			object:      box,
 			position:    box.getWorldPosition(),
 			boundingBox: box.geometry.boundingBox
-
 		};
 
 	} else {
 
 		targetPOI = {
-
 			tAnimate: 0,
 			object:      null,
 			position:    entranceBox.center().applyMatrix4( scaleMatrix ),
@@ -632,8 +627,8 @@ function clearView () {
 	scene.add( pCamera );
 	scene.add( oCamera );
 
-	initCameraLayers( pCamera );
-	initCameraLayers( oCamera );
+	initCamera( pCamera );
+	initCamera( oCamera );
 
 	viewState.cameraType = CV.CAMERA_PERSPECTIVE;
 	setViewMode( CV.VIEW_PLAN, 1 );
@@ -655,7 +650,7 @@ function loadCave ( cave ) {
 
 }
 
-function loadSurvey( newSurvey ) {
+function loadSurvey ( newSurvey ) {
 
 	survey = newSurvey;
 
@@ -988,7 +983,7 @@ function setScale () {
 
 }
 
-function scaleObject( obj ) {
+function scaleObject ( obj ) {
 
 	obj.applyMatrix( scaleMatrix );
 

@@ -576,8 +576,6 @@ function afterReset ( event ) {
 
 	if ( frame !== null ) container.removeChild( frame );
 
-	frame = null;
-
 }
 
 function loadCaveList ( list ) {

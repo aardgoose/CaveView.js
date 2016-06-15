@@ -614,7 +614,7 @@ CV.Survey.prototype.cutSection = function ( id ) {
 
 			break;
 
-		case "CV.BoundingBox":
+		case "THREE.BoxHelper":
 
 			obj.reverseTraverse( _remove );
 
@@ -1385,7 +1385,7 @@ CV.Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 		if ( this.selectedSection > 0 && runsSelected > 0 ) {
 
-			this.selectedBox = new CV.BoundingBox( box, 0x0000ff );
+			this.selectedBox = new THREE.BoxHelper( box, 0x0000ff );
 
 			this.selectedBox.layers.set( CV.FEATURE_SELECTED_BOX );
 

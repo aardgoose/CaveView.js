@@ -29,7 +29,6 @@ var region;
 var survey;
 var limits;
 var stats  = {};
-var scaleMatrix;
 var zScale;
 
 var viewState = {};
@@ -545,33 +544,34 @@ function selectSection ( id ) {
 
 	setShadingMode( shadingMode );
 
-	var box = survey.getSelectedBox();
-
 	if ( id === 0 ) return;
+
+	var box = survey.getSelectedBox();
+	var boundingBox;
+	var obj;
 
 	if ( box ) {
 
 		box.geometry.computeBoundingBox();
 
-		targetPOI = {
-			tAnimate: 0,
-			object:      box,
-			position:    box.geometry.boundingBox.center().applyMatrix4( scaleMatrix ),
-			boundingBox: box.geometry.boundingBox
-		};
-
-		console.log( targetPOI.position );
+		boundingBox = box.geometry.boundingBox;
+		obj = box;
 
 	} else {
 
-		targetPOI = {
-			tAnimate: 0,
-			object:      null,
-			position:    entranceBox.center().applyMatrix4( scaleMatrix ),
-			boundingBox: entranceBox
-		};
+		boundingBox = entranceBox;
+		obj = null;
 
 	}
+
+	boundingBox.applyMatrix4( region.matrixWorld );
+
+	targetPOI = {
+		tAnimate: 0,
+		object:      obj,
+		position:    boundingBox.center(),
+		boundingBox: boundingBox
+	};
 
 	selectedSection = id;
 
@@ -625,7 +625,7 @@ function clearView () {
 	// remove event listeners
 
 	unloadTerrainListeners();
-	container.removeEventListener( "click", entranceClick);
+	container.removeEventListener( "click", entranceClick );
 
 	scene.add( pCamera );
 	scene.add( oCamera );
@@ -659,12 +659,12 @@ function loadSurvey ( newSurvey ) {
 
 	stats = survey.getStats();
 
-	setScale();
+	setScale( region );
 
 	terrain = survey.getTerrain();
 
 	scene.up = CV.upAxis;
-	scene.add( scaleObject( region ) );
+	scene.add( region );
 
 	region.add( survey );
 
@@ -813,7 +813,7 @@ function entranceClick ( event ) {
 		};
 
 		activePOIPosition = controls.target;
-	
+
 		console.log(entrance.type, entrance.name );
 
 	}
@@ -923,8 +923,7 @@ function setCameraPOI ( x ) {
 
 	targetPOI.tAnimate = 80;
 
-//	var size = targetPOI.boundingBox.size().multiplyScalar( scaleMatrix.elements[ 0 ] ) ;
-	var size = targetPOI.boundingBox.size().multiplyScalar( scaleMatrix.elements[ 0 ] ) ;
+	var size = targetPOI.boundingBox.size();
 
 	if ( camera instanceof THREE.PerspectiveCamera ) {
 
@@ -968,7 +967,7 @@ function animate () {
 
 }
 
-function setScale () {
+function setScale ( obj ) {
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
@@ -985,19 +984,13 @@ function setScale () {
 	// scale and translate model coordiniates into THREE.js world view
 	var scale = Math.min( width / range.x, height / range.y );
 
-	scaleMatrix = new THREE.Matrix4().makeScale( scale, scale, scale );
+	var scaleMatrix = new THREE.Matrix4().makeScale( scale, scale, scale );
 
 	scaleMatrix.multiply( new THREE.Matrix4().makeTranslation( -center.x, -center.y, -center.z ) );
 
-	CV.Hud.setScale( scale );
-
-}
-
-function scaleObject ( obj ) {
-
 	obj.applyMatrix( scaleMatrix );
 
-	return obj;
+	CV.Hud.setScale( scale );
 
 }
 

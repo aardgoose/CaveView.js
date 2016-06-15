@@ -108,7 +108,7 @@ function init ( domID ) { // public method
 
 	container.appendChild( renderer.domElement );
 
-	controls = new THREE.OrbitControls( camera, renderer.domElement);
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
 
 	controls.enableDamping = true;
 
@@ -154,7 +154,7 @@ function init ( domID ) { // public method
 		get: function () { return shadingMode; },
 		set: function ( x ) { _viewStateSetter( setShadingMode, "shadingMode", x ); }
 	} );
-	
+
 	Object.defineProperty( viewState, "surfaceShading", {
 		writeable: true,
 		get: function () { return surfaceShadingMode; },
@@ -264,7 +264,7 @@ function init ( domID ) { // public method
 		} );
 
 	}
-	
+
 	function _hasLayer ( layerTag, name ) {
 
 		Object.defineProperty( viewState, name, {
@@ -409,7 +409,7 @@ function initCamera ( camera ) {
 	camera.layers.enable( CV.LEG_CAVE );
 	camera.layers.enable( CV.FEATURE_ENTRANCES );
 	camera.layers.enable( CV.FEATURE_BOX );
-	
+
 	camera.position.set( 0, 0, CV.CAMERA_OFFSET );
 	camera.lookAt( 0, 0, 0 );
 	camera.updateProjectionMatrix();
@@ -556,9 +556,11 @@ function selectSection ( id ) {
 		targetPOI = {
 			tAnimate: 0,
 			object:      box,
-			position:    box.getWorldPosition(),
+			position:    box.geometry.boundingBox.center().applyMatrix4( scaleMatrix ),
 			boundingBox: box.geometry.boundingBox
 		};
+
+		console.log( targetPOI.position );
 
 	} else {
 
@@ -666,7 +668,7 @@ function loadSurvey ( newSurvey ) {
 
 	region.add( survey );
 
-	var box = new CV.BoundingBox( survey.limits, 0xffffff );
+	var box = new THREE.BoxHelper( survey.limits, 0xffffff );
 
 	box.layers.set( CV.FEATURE_BOX );
 
@@ -744,11 +746,11 @@ function loadTerrain ( mode ) {
 
 		if ( mode ) {
 
-			 loadTerrainListeners();
+			loadTerrainListeners();
 
 		} else {
 
-			 unloadTerrainListeners();
+			unloadTerrainListeners();
 
 		}
 
@@ -799,9 +801,8 @@ function entranceClick ( event ) {
 
 		var entrance = intersects[ 0 ].object;
 		var position = entrance.getWorldPosition();
-		
-		targetPOI = {
 
+		targetPOI = {
 			tAnimate:    80,
 			object:      entrance,
 			position:    position,
@@ -809,7 +810,6 @@ function entranceClick ( event ) {
 			cameraZoom: 1,
 			boundingBox: new THREE.Box3().expandByPoint( entrance.position ),
 			quaternion:  new THREE.Quaternion()
-
 		};
 
 		activePOIPosition = controls.target;
@@ -911,7 +911,7 @@ var renderView = function () {
 		}
 
 	}
-	
+
 } ();
 
 function setCameraPOI ( x ) {
@@ -923,6 +923,7 @@ function setCameraPOI ( x ) {
 
 	targetPOI.tAnimate = 80;
 
+//	var size = targetPOI.boundingBox.size().multiplyScalar( scaleMatrix.elements[ 0 ] ) ;
 	var size = targetPOI.boundingBox.size().multiplyScalar( scaleMatrix.elements[ 0 ] ) ;
 
 	if ( camera instanceof THREE.PerspectiveCamera ) {
@@ -942,7 +943,7 @@ function setCameraPOI ( x ) {
 
 		var hRatio = ( camera.right - camera.left ) / size.x;
 		var vRatio = ( camera.top - camera.bottom ) / size.y;
- 
+
 		targetPOI.cameraZoom = Math.min( hRatio, vRatio );
 		elevation = 600;
 
@@ -987,7 +988,7 @@ function setScale () {
 	scaleMatrix = new THREE.Matrix4().makeScale( scale, scale, scale );
 
 	scaleMatrix.multiply( new THREE.Matrix4().makeTranslation( -center.x, -center.y, -center.z ) );
-	
+
 	CV.Hud.setScale( scale );
 
 }

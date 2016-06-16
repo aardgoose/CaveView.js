@@ -278,7 +278,7 @@ function initSelectionPage () {
 
 		case "LI":
 
-			if (viewState.section !== Number( id ) ) {
+			if ( viewState.section !== Number( id ) ) {
 
 				viewState.section = id;
 

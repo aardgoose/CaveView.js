@@ -10,9 +10,7 @@ CV.padDigits = function ( number, digits ) {
 
 CV.HeightMapLoader = function ( tileSet, resolution, x, y, loadCallback, errorCallback ) {
 
-	if (!loadCallback) {
-		alert("No callback specified");
-	}
+	if ( !loadCallback ) alert( "No callback specified" );
 
 	var prefix = tileSet.PREFIX + resolution + "M" + tileSet.TILESIZE + "-";
 

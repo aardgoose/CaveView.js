@@ -36,6 +36,13 @@ CV.TiledTerrain = function ( limits3, onLoaded ) {
 
 	}
 
+	if ( CV.environment.has( "terrainDirectory" ) ) {
+
+		 this.tileSet.BASEDIR = CV.environment.get( "terrainDirectory" ) + this.tileSet.BASEDIR;
+		 this.tileSet.OVERLAYDIR = CV.environment.get( "terrainDirectory" ) + this.tileSet.OVERLAYDIR;
+
+	}
+
 }
 
 CV.TiledTerrain.prototype = Object.create( THREE.Group.prototype );
@@ -143,13 +150,11 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 	if ( tileLimits.max.x > limits.max.x ) clip.right = Math.floor( ( tileLimits.max.x - limits.max.x ) / resolution );
 
 	var tileSpec = {
-
 		tileSet: tileSet,
 		resolution: resolution, 
 		tileX: x, 
 		tileY: y,
 		clip: clip
-
 	}
 
 	// start web worker and create new geometry in it.

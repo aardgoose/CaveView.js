@@ -51,3 +51,20 @@ CV.SPLAY   = 2;
 CV.DIVING  = 3;
 
 CV.upAxis = new THREE.Vector3( 0, 0, 1 );
+
+CV.environment = new Map();
+
+CV.setEnvironment = function ( envs ) {
+
+	var pName
+
+	for ( pName in envs ) {
+
+			console.log("p;", pName );
+			CV.environment.set ( pName , envs[ pName ] );
+
+	}
+
+}
+
+// EOF

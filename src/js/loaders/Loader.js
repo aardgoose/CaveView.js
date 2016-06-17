@@ -49,11 +49,9 @@ CV.Loader.prototype.parseName = function ( name ) {
 CV.Loader.prototype.loadURL = function ( cave ) {
 
 	var self     = this;
-	var prefix   = "";
 	var fileName = cave;
 	var xhr;
-
-	if ( CV.environment.has( "surveyDirectory" ) ) prefix = CV.environment.get( "surveyDirectory" );
+	var prefix   = CV.getEnvironmentValue( "surveyDirectory", "" );
 
 	// parse file name
 	this.parseName( cave );

@@ -36,12 +36,8 @@ CV.TiledTerrain = function ( limits3, onLoaded ) {
 
 	}
 
-	if ( CV.environment.has( "terrainDirectory" ) ) {
-
-		 this.tileSet.BASEDIR = CV.environment.get( "terrainDirectory" ) + this.tileSet.BASEDIR;
-		 this.tileSet.OVERLAYDIR = CV.environment.get( "terrainDirectory" ) + this.tileSet.OVERLAYDIR;
-
-	}
+	 this.tileSet.BASEDIR = CV.getEnvironmentValue( "terrainDirectory", "" ) + this.tileSet.BASEDIR;
+	 this.tileSet.OVERLAYDIR = CV.getEnvironmentValue( "terrainDirectory", "" ) + this.tileSet.OVERLAYDIR;
 
 }
 

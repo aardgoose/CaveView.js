@@ -60,8 +60,21 @@ CV.setEnvironment = function ( envs ) {
 
 	for ( pName in envs ) {
 
-			console.log("p;", pName );
 			CV.environment.set ( pName , envs[ pName ] );
+
+	}
+
+}
+
+CV.getEnvironmentValue = function ( item, defaultValue ) {
+
+	if ( CV.environment.has( item ) ) {
+
+		return CV.environment.get( item );
+
+	} else {
+
+		return defaultValue;
 
 	}
 

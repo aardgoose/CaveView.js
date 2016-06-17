@@ -4,10 +4,14 @@ var CV = CV || {};
 
 CV.Colours = ( function () {
 
-	var gradientColours    = chroma.scale( [ "#EB636F", "#CA73AC", "#7B8EC6", "#109EB1", "#32A17E", "#759B4F", "#A98C41", "#C87D59" ] ).colors( 512, "rgb" );
-	var depthColours       = chroma.scale( [ "#ffffcc", "#ffeda0", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#b10026" ] ).colors( 512, "rgb" );
-	var inclinationColours = chroma.scale( [ "yellow", "008ae5" ] ).colors( 128, "rgb" );
-	var terrainColours     = chroma.scale( [ "LimeGreen", "white" ] ).colors( 128, "rgb" );
+	var gradientColours = [[235,99,111],[235,99,112],[234,99,113],[234,100,114],[233,100,114],[233,100,115],[232,100,116],[232,101,117],[231,101,118],[231,101,119],[230,101,119],[230,101,120],[230,102,121],[229,102,122],[229,102,123],[228,102,124],[228,103,124],[227,103,125],[227,103,126],[226,103,127],[226,103,128],[226,104,129],[225,104,129],[225,104,130],[224,104,131],[224,104,132],[223,105,133],[223,105,134],[222,105,134],[222,105,135],[221,106,136],[221,106,137],[221,106,138],[220,106,139],[220,106,139],[219,107,140],[219,107,141],[218,107,142],[218,107,143],[217,108,144],[217,108,144],[216,108,145],[216,108,146],[216,108,147],[215,109,148],[215,109,149],[214,109,149],[214,109,150],[213,110,151],[213,110,152],[212,110,153],[212,110,154],[211,110,154],[211,111,155],[211,111,156],[210,111,157],[210,111,158],[209,111,159],[209,112,159],[208,112,160],[208,112,161],[207,112,162],[207,113,163],[207,113,164],[206,113,164],[206,113,165],[205,113,166],[205,114,167],[204,114,168],[204,114,169],[203,114,169],[203,115,170],[202,115,171],[202,115,172],[201,115,172],[200,116,173],[199,116,173],[198,116,173],[197,117,174],[196,117,174],[194,118,174],[193,118,175],[192,118,175],[191,119,176],[190,119,176],[189,119,176],[188,120,177],[187,120,177],[186,121,177],[185,121,178],[184,121,178],[183,122,178],[181,122,179],[180,122,179],[179,123,179],[178,123,180],[177,124,180],[176,124,181],[175,124,181],[174,125,181],[173,125,182],[172,125,182],[171,126,182],[170,126,183],[168,126,183],[167,127,183],[166,127,184],[165,128,184],[164,128,184],[163,128,185],[162,129,185],[161,129,186],[160,129,186],[159,130,186],[158,130,187],[157,131,187],[155,131,187],[154,131,188],[153,132,188],[152,132,188],[151,132,189],[150,133,189],[149,133,189],[148,133,190],[147,134,190],[146,134,191],[145,135,191],[144,135,191],[142,135,192],[141,136,192],[140,136,192],[139,136,193],[138,137,193],[137,137,193],[136,138,194],[135,138,194],[134,138,194],[133,139,195],[132,139,195],[131,139,196],[129,140,196],[128,140,196],[127,141,197],[126,141,197],[125,141,197],[124,142,198],[123,142,198],[122,142,198],[120,142,197],[119,143,197],[117,143,197],[116,143,197],[114,143,196],[113,144,196],[111,144,196],[110,144,195],[108,144,195],[107,144,195],[105,145,195],[104,145,194],[102,145,194],[101,145,194],[100,146,193],[98,146,193],[97,146,193],[95,146,193],[94,146,192],[92,147,192],[91,147,192],[89,147,191],[88,147,191],[86,147,191],[85,148,191],[83,148,190],[82,148,190],[80,148,190],[79,149,189],[78,149,189],[76,149,189],[75,149,189],[73,149,188],[72,150,188],[70,150,188],[69,150,187],[67,150,187],[66,151,187],[64,151,186],[63,151,186],[61,151,186],[60,151,186],[59,152,185],[57,152,185],[56,152,185],[54,152,184],[53,153,184],[51,153,184],[50,153,184],[48,153,183],[47,153,183],[45,154,183],[44,154,182],[42,154,182],[41,154,182],[39,154,182],[38,155,181],[37,155,181],[35,155,181],[34,155,180],[32,156,180],[31,156,180],[29,156,180],[28,156,179],[26,156,179],[25,157,179],[23,157,178],[22,157,178],[20,157,178],[19,158,178],[17,158,177],[16,158,177],[16,158,176],[17,158,176],[17,158,175],[18,158,174],[18,158,174],[19,158,173],[19,158,172],[20,158,171],[20,158,171],[21,158,170],[21,158,169],[22,158,169],[22,159,168],[23,159,167],[23,159,167],[23,159,166],[24,159,165],[24,159,164],[25,159,164],[25,159,163],[26,159,162],[26,159,162],[27,159,161],[27,159,160],[28,159,160],[28,159,159],[29,159,158],[29,159,157],[30,159,157],[30,159,156],[30,159,155],[31,159,155],[31,159,154],[32,159,153],[32,159,153],[33,159,152],[33,160,151],[34,160,150],[34,160,150],[35,160,149],[35,160,148],[36,160,148],[36,160,147],[36,160,146],[37,160,146],[37,160,145],[38,160,144],[38,160,143],[39,160,143],[39,160,142],[40,160,141],[40,160,141],[41,160,140],[41,160,139],[42,160,139],[42,160,138],[43,160,137],[43,160,136],[43,160,136],[44,160,135],[44,161,134],[45,161,134],[45,161,133],[46,161,132],[46,161,132],[47,161,131],[47,161,130],[48,161,129],[48,161,129],[49,161,128],[49,161,127],[50,161,127],[50,161,126],[51,161,125],[52,161,125],[53,161,124],[54,161,123],[55,161,123],[56,161,122],[56,160,121],[57,160,121],[58,160,120],[59,160,120],[60,160,119],[61,160,118],[62,160,118],[63,160,117],[64,160,116],[65,160,116],[66,160,115],[67,160,114],[67,159,114],[68,159,113],[69,159,112],[70,159,112],[71,159,111],[72,159,111],[73,159,110],[74,159,109],[75,159,109],[76,159,108],[77,159,107],[78,159,107],[78,158,106],[79,158,105],[80,158,105],[81,158,104],[82,158,103],[83,158,103],[84,158,102],[85,158,102],[86,158,101],[87,158,100],[88,158,100],[89,158,99],[89,157,98],[90,157,98],[91,157,97],[92,157,96],[93,157,96],[94,157,95],[95,157,94],[96,157,94],[97,157,93],[98,157,93],[99,157,92],[100,157,91],[100,156,91],[101,156,90],[102,156,89],[103,156,89],[104,156,88],[105,156,87],[106,156,87],[107,156,86],[108,156,85],[109,156,85],[110,156,84],[111,156,84],[111,155,83],[112,155,82],[113,155,82],[114,155,81],[115,155,80],[116,155,80],[117,155,79],[118,155,79],[118,155,79],[119,154,78],[120,154,78],[121,154,78],[121,154,78],[122,154,78],[123,153,77],[123,153,77],[124,153,77],[125,153,77],[126,153,77],[126,152,77],[127,152,76],[128,152,76],[128,152,76],[129,152,76],[130,151,76],[131,151,75],[131,151,75],[132,151,75],[133,150,75],[133,150,75],[134,150,74],[135,150,74],[136,150,74],[136,149,74],[137,149,74],[138,149,73],[138,149,73],[139,149,73],[140,148,73],[141,148,73],[141,148,72],[142,148,72],[143,148,72],[143,147,72],[144,147,72],[145,147,72],[145,147,71],[146,147,71],[147,146,71],[148,146,71],[148,146,71],[149,146,70],[150,146,70],[150,145,70],[151,145,70],[152,145,70],[153,145,69],[153,145,69],[154,144,69],[155,144,69],[155,144,69],[156,144,68],[157,143,68],[158,143,68],[158,143,68],[159,143,68],[160,143,67],[160,142,67],[161,142,67],[162,142,67],[163,142,67],[163,142,67],[164,141,66],[165,141,66],[165,141,66],[166,141,66],[167,141,66],[168,140,65],[168,140,65],[169,140,65],[169,140,65],[170,140,66],[170,139,66],[171,139,66],[171,139,67],[172,139,67],[172,139,67],[172,138,68],[173,138,68],[173,138,68],[174,138,69],[174,138,69],[175,137,69],[175,137,70],[175,137,70],[176,137,70],[176,137,71],[177,136,71],[177,136,71],[177,136,72],[178,136,72],[178,135,72],[179,135,73],[179,135,73],[180,135,73],[180,135,74],[180,134,74],[181,134,74],[181,134,75],[182,134,75],[182,134,75],[183,133,76],[183,133,76],[183,133,76],[184,133,77],[184,133,77],[185,132,77],[185,132,77],[186,132,78],[186,132,78],[186,132,78],[187,131,79],[187,131,79],[188,131,79],[188,131,80],[189,131,80],[189,130,80],[189,130,81],[190,130,81],[190,130,81],[191,130,82],[191,129,82],[192,129,82],[192,129,83],[192,129,83],[193,128,83],[193,128,84],[194,128,84],[194,128,84],[194,128,85],[195,127,85],[195,127,85],[196,127,86],[196,127,86],[197,127,86],[197,126,87],[197,126,87],[198,126,87],[198,126,88],[199,126,88],[199,125,88],[200,125,89],[200,125,89]];
+
+	var depthColours = [[255,255,204],[255,255,203],[255,255,203],[255,254,202],[255,254,202],[255,254,201],[255,254,200],[255,253,200],[255,253,199],[255,253,199],[255,253,198],[255,252,197],[255,252,197],[255,252,196],[255,252,196],[255,251,195],[255,251,194],[255,251,194],[255,251,193],[255,250,193],[255,250,192],[255,250,191],[255,250,191],[255,249,190],[255,249,190],[255,249,189],[255,249,188],[255,248,188],[255,248,187],[255,248,187],[255,248,186],[255,247,185],[255,247,185],[255,247,184],[255,247,184],[255,246,183],[255,246,182],[255,246,182],[255,246,181],[255,245,180],[255,245,180],[255,245,179],[255,245,179],[255,244,178],[255,244,177],[255,244,177],[255,244,176],[255,243,176],[255,243,175],[255,243,174],[255,243,174],[255,242,173],[255,242,173],[255,242,172],[255,242,171],[255,241,171],[255,241,170],[255,241,170],[255,241,169],[255,240,168],[255,240,168],[255,240,167],[255,240,167],[255,239,166],[255,239,165],[255,239,165],[255,239,164],[255,238,164],[255,238,163],[255,238,162],[255,238,162],[255,237,161],[255,237,161],[255,237,160],[255,237,159],[255,236,159],[255,236,158],[255,236,158],[255,236,157],[255,235,157],[255,235,156],[255,235,155],[255,235,155],[255,234,154],[255,234,154],[255,234,153],[255,233,153],[255,233,152],[255,233,151],[255,233,151],[255,232,150],[255,232,150],[255,232,149],[255,232,148],[255,231,148],[255,231,147],[255,231,147],[255,230,146],[255,230,146],[255,230,145],[255,230,144],[255,229,144],[255,229,143],[255,229,143],[255,229,142],[255,228,142],[255,228,141],[255,228,140],[255,227,140],[255,227,139],[254,227,139],[254,227,138],[254,226,138],[254,226,137],[254,226,136],[254,225,136],[254,225,135],[254,225,135],[254,225,134],[254,224,134],[254,224,133],[254,224,132],[254,224,132],[254,223,131],[254,223,131],[254,223,130],[254,222,130],[254,222,129],[254,222,128],[254,222,128],[254,221,127],[254,221,127],[254,221,126],[254,221,125],[254,220,125],[254,220,124],[254,220,124],[254,219,123],[254,219,123],[254,219,122],[254,219,121],[254,218,121],[254,218,120],[254,218,120],[254,218,119],[254,217,119],[254,217,118],[254,216,117],[254,216,117],[254,215,116],[254,215,116],[254,214,115],[254,214,115],[254,213,114],[254,213,113],[254,212,113],[254,212,112],[254,211,112],[254,211,111],[254,210,111],[254,210,110],[254,209,109],[254,208,109],[254,208,108],[254,207,108],[254,207,107],[254,206,106],[254,206,106],[254,205,105],[254,205,105],[254,204,104],[254,204,104],[254,203,103],[254,203,102],[254,202,102],[254,202,101],[254,201,101],[254,200,100],[254,200,100],[254,199,99],[254,199,98],[254,198,98],[254,198,97],[254,197,97],[254,197,96],[254,196,96],[254,196,95],[254,195,94],[254,195,94],[254,194,93],[254,193,93],[254,193,92],[254,192,92],[254,192,91],[254,191,90],[254,191,90],[254,190,89],[254,190,89],[254,189,88],[254,189,88],[254,188,87],[254,188,86],[254,187,86],[254,187,85],[254,186,85],[254,185,84],[254,185,83],[254,184,83],[254,184,82],[254,183,82],[254,183,81],[254,182,81],[254,182,80],[254,181,79],[254,181,79],[254,180,78],[254,180,78],[254,179,77],[254,179,77],[254,178,76],[254,177,76],[254,177,76],[254,176,75],[254,176,75],[254,175,75],[254,175,75],[254,174,74],[254,174,74],[254,173,74],[254,173,74],[254,172,74],[254,172,73],[254,171,73],[254,171,73],[254,170,73],[254,170,72],[254,169,72],[254,169,72],[254,168,72],[254,168,72],[254,167,71],[254,167,71],[254,166,71],[254,166,71],[254,165,71],[254,165,70],[254,164,70],[254,164,70],[254,163,70],[254,163,69],[254,162,69],[254,162,69],[254,161,69],[254,161,69],[254,160,68],[254,160,68],[253,159,68],[253,159,68],[253,158,67],[253,158,67],[253,157,67],[253,157,67],[253,156,67],[253,156,66],[253,155,66],[253,155,66],[253,154,66],[253,154,65],[253,153,65],[253,153,65],[253,152,65],[253,152,65],[253,151,64],[253,151,64],[253,150,64],[253,150,64],[253,149,64],[253,149,63],[253,148,63],[253,148,63],[253,147,63],[253,147,62],[253,146,62],[253,146,62],[253,145,62],[253,145,62],[253,144,61],[253,144,61],[253,143,61],[253,143,61],[253,142,60],[253,142,60],[253,141,60],[253,140,60],[253,139,60],[253,138,59],[253,138,59],[253,137,59],[253,136,59],[253,135,58],[253,134,58],[253,133,58],[253,132,58],[253,132,57],[253,131,57],[253,130,57],[253,129,57],[253,128,56],[253,127,56],[253,126,56],[253,125,56],[253,125,55],[253,124,55],[253,123,55],[253,122,55],[253,121,54],[253,120,54],[253,119,54],[253,119,54],[253,118,53],[253,117,53],[253,116,53],[253,115,53],[253,114,52],[253,113,52],[253,113,52],[253,112,52],[253,111,51],[253,110,51],[252,109,51],[252,108,51],[252,107,50],[252,106,50],[252,106,50],[252,105,50],[252,104,49],[252,103,49],[252,102,49],[252,101,49],[252,100,48],[252,100,48],[252,99,48],[252,98,48],[252,97,47],[252,96,47],[252,95,47],[252,94,47],[252,94,46],[252,93,46],[252,92,46],[252,91,46],[252,90,45],[252,89,45],[252,88,45],[252,87,45],[252,87,44],[252,86,44],[252,85,44],[252,84,44],[252,83,43],[252,82,43],[252,81,43],[252,81,43],[252,80,42],[252,79,42],[252,78,42],[252,77,42],[251,77,42],[251,76,41],[251,75,41],[250,74,41],[250,74,41],[250,73,41],[249,72,40],[249,72,40],[249,71,40],[248,70,40],[248,69,40],[248,69,40],[247,68,39],[247,67,39],[247,67,39],[246,66,39],[246,65,39],[245,64,38],[245,64,38],[245,63,38],[244,62,38],[244,62,38],[244,61,37],[243,60,37],[243,59,37],[243,59,37],[242,58,37],[242,57,36],[242,57,36],[241,56,36],[241,55,36],[241,54,36],[240,54,35],[240,53,35],[240,52,35],[239,52,35],[239,51,35],[239,50,35],[238,50,34],[238,49,34],[238,48,34],[237,47,34],[237,47,34],[237,46,33],[236,45,33],[236,45,33],[236,44,33],[235,43,33],[235,42,32],[235,42,32],[234,41,32],[234,40,32],[234,40,32],[233,39,31],[233,38,31],[232,37,31],[232,37,31],[232,36,31],[231,35,30],[231,35,30],[231,34,30],[230,33,30],[230,32,30],[230,32,30],[229,31,29],[229,30,29],[229,30,29],[228,29,29],[228,28,29],[228,27,28],[227,27,28],[227,26,28],[226,26,28],[226,25,28],[225,25,28],[224,25,29],[224,24,29],[223,24,29],[222,24,29],[222,23,29],[221,23,29],[220,22,29],[219,22,30],[219,22,30],[218,21,30],[217,21,30],[217,21,30],[216,20,30],[215,20,30],[215,20,30],[214,19,31],[213,19,31],[213,19,31],[212,18,31],[211,18,31],[211,17,31],[210,17,31],[209,17,32],[209,16,32],[208,16,32],[207,16,32],[206,15,32],[206,15,32],[205,15,32],[204,14,33],[204,14,33],[203,14,33],[202,13,33],[202,13,33],[201,12,33],[200,12,33],[200,12,33],[199,11,34],[198,11,34],[198,11,34],[197,10,34],[196,10,34],[195,10,34],[195,9,34],[194,9,35],[193,9,35],[193,8,35],[192,8,35],[191,7,35],[191,7,35],[190,7,35],[189,6,36],[189,6,36],[188,6,36],[187,5,36],[187,5,36],[186,5,36],[185,4,36],[185,4,36],[184,4,37],[183,3,37],[182,3,37],[182,2,37],[181,2,37],[180,2,37],[180,1,37],[179,1,38],[178,1,38],[178,0,38],[177,0,38]];
+
+	var inclinationColours = [[255,255,0],[253,254,2],[251,253,4],[249,252,5],[247,251,7],[245,250,9],[243,249,11],[241,249,13],[239,248,14],[237,247,16],[235,246,18],[233,245,20],[231,244,22],[229,243,23],[227,242,25],[225,241,27],[223,240,29],[221,239,31],[219,238,32],[217,237,34],[215,237,36],[213,236,38],[211,235,40],[209,234,41],[207,233,43],[205,232,45],[203,231,47],[201,230,49],[199,229,50],[197,228,52],[195,227,54],[193,226,56],[191,226,58],[189,225,60],[187,224,61],[185,223,63],[183,222,65],[181,221,67],[179,220,69],[177,219,70],[175,218,72],[173,217,74],[171,216,76],[169,215,78],[167,214,79],[165,214,81],[163,213,83],[161,212,85],[159,211,87],[157,210,88],[155,209,90],[153,208,92],[151,207,94],[149,206,96],[147,205,97],[145,204,99],[143,203,101],[141,202,103],[139,202,105],[137,201,106],[135,200,108],[133,199,110],[131,198,112],[129,197,114],[126,196,115],[124,195,117],[122,194,119],[120,193,121],[118,192,123],[116,191,124],[114,191,126],[112,190,128],[110,189,130],[108,188,132],[106,187,133],[104,186,135],[102,185,137],[100,184,139],[98,183,141],[96,182,142],[94,181,144],[92,180,146],[90,179,148],[88,179,150],[86,178,151],[84,177,153],[82,176,155],[80,175,157],[78,174,159],[76,173,160],[74,172,162],[72,171,164],[70,170,166],[68,169,168],[66,168,169],[64,167,171],[62,167,173],[60,166,175],[58,165,177],[56,164,179],[54,163,180],[52,162,182],[50,161,184],[48,160,186],[46,159,188],[44,158,189],[42,157,191],[40,156,193],[38,156,195],[36,155,197],[34,154,198],[32,153,200],[30,152,202],[28,151,204],[26,150,206],[24,149,207],[22,148,209],[20,147,211],[18,146,213],[16,145,215],[14,144,216],[12,144,218],[10,143,220],[8,142,222],[6,141,224],[4,140,225],[2,139,227],[0,138,229]];
+
+	var terrainColours = [[50,205,50],[52,205,52],[53,206,53],[55,206,55],[56,207,56],[58,207,58],[60,207,60],[61,208,61],[63,208,63],[65,209,65],[66,209,66],[68,209,68],[69,210,69],[71,210,71],[73,211,73],[74,211,74],[76,211,76],[77,212,77],[79,212,79],[81,212,81],[82,213,82],[84,213,84],[86,214,86],[87,214,87],[89,214,89],[90,215,90],[92,215,92],[94,216,94],[95,216,95],[97,216,97],[98,217,98],[100,217,100],[102,218,102],[103,218,103],[105,218,105],[106,219,106],[108,219,108],[110,220,110],[111,220,111],[113,220,113],[115,221,115],[116,221,116],[118,222,118],[119,222,119],[121,222,121],[123,223,123],[124,223,124],[126,224,126],[127,224,127],[129,224,129],[131,225,131],[132,225,132],[134,225,134],[136,226,136],[137,226,137],[139,227,139],[140,227,140],[142,227,142],[144,228,144],[145,228,145],[147,229,147],[148,229,148],[150,229,150],[152,230,152],[153,230,153],[155,231,155],[157,231,157],[158,231,158],[160,232,160],[161,232,161],[163,233,163],[165,233,165],[166,233,166],[168,234,168],[169,234,169],[171,235,171],[173,235,173],[174,235,174],[176,236,176],[178,236,178],[179,236,179],[181,237,181],[182,237,182],[184,238,184],[186,238,186],[187,238,187],[189,239,189],[190,239,190],[192,240,192],[194,240,194],[195,240,195],[197,241,197],[199,241,199],[200,242,200],[202,242,202],[203,242,203],[205,243,205],[207,243,207],[208,244,208],[210,244,210],[211,244,211],[213,245,213],[215,245,215],[216,246,216],[218,246,218],[219,246,219],[221,247,221],[223,247,223],[224,248,224],[226,248,226],[228,248,228],[229,249,229],[231,249,231],[232,249,232],[234,250,234],[236,250,236],[237,251,237],[239,251,239],[240,251,240],[242,252,242],[244,252,244],[245,253,245],[247,253,247],[249,253,249],[250,254,250],[252,254,252],[253,255,253],[255,255,255]];
+
 	var surveyColours      = [ 0xa6cee3, 0x1f78b4, 0xb2df8a, 0x33a02c, 0xfb9a99, 0xe31a1c, 0xfdbf6f, 0xff7f00, 0xcab2d6, 0x6a3d9a, 0xffff99 ];
 
 	var gradientTexture    = scaleToTexture( gradientColours );
@@ -30,9 +34,9 @@ function scaleToTexture ( colours ) {
 		var c      = colours[ i ];
 		var offset = i * 3;
 
-		data[ offset ]     = Math.round( c[0] );
-		data[ offset + 1 ] = Math.round( c[1] );
-		data[ offset + 2 ] = Math.round( c[2] );
+		data[ offset ]     = c[0];
+		data[ offset + 1 ] = c[1];
+		data[ offset + 2 ] = c[2];
 
 	}
 
@@ -123,6 +127,89 @@ CV.ColourCache = ( function () {
 		grey:        grey
 	};
 } ());
+"use strict";
+
+var CV = CV || {};
+
+CV.MATERIAL_LINE       = 1;
+CV.MATERIAL_SURFACE    = 2;
+
+CV.CAMERA_ORTHOGRAPHIC = 1;
+CV.CAMERA_PERSPECTIVE  = 2;
+
+// preset camera views
+
+CV.VIEW_NONE           = 0;
+CV.VIEW_PLAN           = 1;
+CV.VIEW_ELEVATION_N    = 2;
+CV.VIEW_ELEVATION_S    = 3;
+CV.VIEW_ELEVATION_E    = 4;
+CV.VIEW_ELEVATION_W    = 5;
+
+// shading types
+
+CV.SHADING_HEIGHT      = 1;
+CV.SHADING_LENGTH      = 2;
+CV.SHADING_INCLINATION = 3;
+CV.SHADING_CURSOR      = 4;
+CV.SHADING_SINGLE      = 5;
+CV.SHADING_SURVEY      = 6; 
+CV.SHADING_OVERLAY     = 7;
+CV.SHADING_SHADED      = 8;
+CV.SHADING_DEPTH       = 9;
+CV.SHADING_PW          = 10;
+
+// layer tags for scene objects
+
+CV.FEATURE_BOX           = 1;
+CV.FEATURE_SELECTION_BOX = 2;
+CV.FEATURE_ENTRANCES     = 3;
+CV.FEATURE_TERRAIN       = 4;
+CV.FACE_WALLS            = 5;
+CV.FACE_SCRAPS           = 6;
+
+CV.LEG_CAVE              = 7;
+CV.LEG_SPLAY             = 8;
+CV.LEG_SURFACE           = 9;
+
+// flags in legs exported by Cave models
+
+CV.NORMAL  = 0;
+CV.SURFACE = 1;
+CV.SPLAY   = 2;
+CV.DIVING  = 3;
+
+CV.upAxis = new THREE.Vector3( 0, 0, 1 );
+
+CV.environment = new Map();
+
+CV.setEnvironment = function ( envs ) {
+
+	var pName
+
+	for ( pName in envs ) {
+
+			CV.environment.set ( pName , envs[ pName ] );
+
+	}
+
+}
+
+CV.getEnvironmentValue = function ( item, defaultValue ) {
+
+	if ( CV.environment.has( item ) ) {
+
+		return CV.environment.get( item );
+
+	} else {
+
+		return defaultValue;
+
+	}
+
+}
+
+// EOF
 "use strict";
 
 var CV = CV || {};
@@ -641,18 +728,27 @@ Object.assign( CV.AHI.prototype, CV.HudObject.prototype );
 
 CV.AHI.prototype.contructor = CV.AHI;
 
-CV.AHI.prototype.set = function ( vCamera ) {
+CV.AHI.prototype.set = function () {
 
-	var direction = vCamera.getWorldDirection();
+	var direction = new THREE.Vector3();
+	var xAxis     = new THREE.Vector3( 1, 0, 0 );
 
-	var pitch = Math.PI / 2 - direction.clone().angleTo( new THREE.Vector3( 0, 0, 1 ) );
+	return function set ( vCamera ) {
 
-	this.globe.rotateOnAxis( new THREE.Vector3( 1, 0, 0 ), pitch - this.lastPitch );
-	this.lastPitch = pitch;
+		vCamera.getWorldDirection( direction );
 
-	this.txt.textContent = Math.round( THREE.Math.radToDeg( pitch ) )  + "\u00B0";
+		var pitch = Math.PI / 2 - direction.angleTo( CV.upAxis );
 
-}
+		if ( pitch === this.lastPitch ) return;
+
+		this.globe.rotateOnAxis( xAxis, pitch - this.lastPitch );
+		this.lastPitch = pitch;
+
+		this.txt.textContent = Math.round( THREE.Math.radToDeg( pitch ) )  + "\u00B0";
+
+	}
+
+} ();
 
 // EOF
 "use strict";
@@ -834,35 +930,43 @@ Object.assign( CV.Compass.prototype, CV.HudObject.prototype );
 
 CV.Compass.prototype.contructor = CV.Compass;
 
-CV.Compass.prototype.set = function ( vCamera ) {
+CV.Compass.prototype.set = function () {
 
-	var direction = vCamera.getWorldDirection();
+	var direction     = new THREE.Vector3();
+	var yAxis         = new THREE.Vector3( 0, 1, 0 );
+	var negativeZAxis = new THREE.Vector3( 0, 0, -1 );
 
-	if ( direction.x === 0 && direction.y === 0 ) {
+	return function set ( vCamera ) {
 
-		// FIXME get camera rotation....
-		return;
+		vCamera.getWorldDirection( direction );
+
+		if ( direction.x === 0 && direction.y === 0 ) {
+
+			// FIXME get camera rotation....
+			return;
+
+		}
+
+		// we are only interested in angle to horizontal plane.
+		direction.z = 0;
+
+		var a = direction.angleTo( yAxis );
+
+		if ( direction.x >= 0 ) a = 2 * Math.PI - a;
+
+		if ( a === this.lastRotation ) return;
+
+		var degrees = 360 - Math.round( THREE.Math.radToDeg( a ) );
+
+		this.txt.textContent = degrees.toLocaleString( "en-GB", { minimumIntegerDigits: 3 } ) + "\u00B0"; // unicaode degree symbol
+
+		this.rotateOnAxis( negativeZAxis, a - this.lastRotation );
+
+		this.lastRotation = a;
 
 	}
 
-	var dHeading = direction.clone();
-
-	// we are only interested in angle to horizontal plane.
-	dHeading.z = 0;
-
-	var a = dHeading.angleTo( new THREE.Vector3( 0, 1, 0 ) );
-
-	if ( dHeading.x >= 0 ) a = 2 * Math.PI - a;
-
-	var degrees = 360 - Math.round( THREE.Math.radToDeg( a ) );
-
-	this.txt.textContent = degrees.toLocaleString( "en-GB", { minimumIntegerDigits: 3 } ) + "\u00B0"; // unicaode degree symbol
-
-	this.rotateOnAxis( new THREE.Vector3( 0, 0, -1 ), a - this.lastRotation );
-
-	this.lastRotation = a;
-
-}
+} ();
 
 // EOF
 "use strict";
@@ -999,9 +1103,10 @@ CV.ProgressDial = function ( container ) {
 	this.translateX( -offset * 5 );
 	this.translateY(  offset );
 
-	this.rotateOnAxis( new THREE.Vector3( 0, 0, 1 ), Math.PI / 2 );
+	this.rotateOnAxis( CV.upAxis, Math.PI / 2 );
 
-	this.visible = false;
+	this.visible  = false;
+	this.isVisible = true;
 
 	this.addEventListener( "removed", this.removeDomObjects );
 
@@ -1019,7 +1124,7 @@ CV.ProgressDial.prototype.set = function ( progress ) {
 
 	this.progress = progress;
 
-	var l = Math.min( 100, Math.round( progress ) );
+	var l = Math.floor( Math.min( 100, Math.round( progress ) ) / 2 ) * 2;
 	var faces = this.geometry.faces;
 
 	for ( var i = 0; i < l; i++ ) {
@@ -1050,7 +1155,7 @@ CV.ProgressDial.prototype.start = function () {
 
 	this.geometry.colorsNeedUpdate = true;
 	this.progress = 0;
-	this.visible = true;
+	this.visible = this.isVisible;
 
 }
 
@@ -1059,6 +1164,13 @@ CV.ProgressDial.prototype.end = function () {
 	var self = this;
 
 	setTimeout( function () { self.visible = false; }, 500 );
+
+}
+
+CV.ProgressDial.prototype.setVisibility = function ( visibility ) {
+
+	this.isVisible = visibility;
+	this.visible = ( this.visible && visibility );
 
 }
 
@@ -1229,381 +1341,6 @@ CV.ScaleBar.prototype.setScale = function ( scale ) {
 }
 
 // EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.CursorMaterial = function ( type, initialHeight ) {
-
-	THREE.ShaderMaterial.call( this );
-
-	this.defines = {};
-
-	if ( type === CV.MATERIAL_LINE ) {
-
-		this.defines.USE_COLOR = true;
-
-	} else {
-
-		this.defines.SURFACE = true;
-
-	}
-
-	this.uniforms = {
-			uLight:      { value: new THREE.Vector3( -1, -1, 2 ) },
-			cursor:      { value: initialHeight },
-			cursorWidth: { value: 5.0 },
-			baseColor:   { value: new THREE.Color( 0x888888 ) },
-			cursorColor: { value: new THREE.Color( 0x00ff00 ) }
-		};
-
-	this.vertexShader   = CV.Shaders.cursorVertexShader;
-	this.fragmentShader = CV.Shaders.cursorFragmentShader;
-
-	this.type = "CursorMaterial";
-
-	return this;
-}
-
-
-CV.CursorMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.CursorMaterial.prototype.constructor = CV.CursorMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.DepthMapMaterial = function ( minHeight, maxHeight ) {
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-
-			minZ:   { value: minHeight },
-			scaleZ: { value: 1 / ( maxHeight - minHeight ) }
-
-		},
-
-		vertexShader:    CV.Shaders.depthMapVertexShader,
-		fragmentShader:  CV.Shaders.depthMapFragmentShader,
-		depthWrite:      false,
-		type:            "CV.DepthMapMaterial"
-
-	} );
-
-	return this;
-
-}
-
-CV.DepthMapMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.DepthMapMaterial.prototype.constructor = CV.DepthMapMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.DepthMaterial = function ( type, limits, texture ) {
-
-	var range   = limits.size();
-	var defines = {};
-
-	if ( type === CV.MATERIAL_LINE ) {
-
-		defines.USE_COLOR = true;
-
-	} else {
-
-		defines.SURFACE = true;
-
-	}
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-			// pseudo light source somewhere over viewer's left shoulder.
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
-
-			minX:     { value: limits.min.x },
-			minY:     { value: limits.min.y },
-			minZ:     { value: limits.min.z },
-			scaleX:   { value: 1 / range.x },
-			scaleY:   { value: 1 / range.y },
-			scaleZ:   { value: 1 / range.z },
-			cmap:     { value: CV.Colours.gradientTexture },
-			depthMap: { value: texture }
-
-		},
-
-		defines: defines,
-		vertexShader: CV.Shaders.depthVertexShader,
-		fragmentShader: CV.Shaders.depthFragmentShader
-	} );
-
-	this.type = "CV.DepthMaterial";
-
-	return this;
-
-}
-
-CV.DepthMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.DepthMaterial.prototype.constructor = CV.DepthMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.HeightMaterial = function ( type, minHeight, maxHeight ) {
-
-	THREE.ShaderMaterial.call( this );
-
-	this.defines = {};
-
-	if ( type === CV.MATERIAL_LINE ) {
-
-		this.defines.USE_COLOR = true;
-
-	} else {
-
-		this.defines.SURFACE = true;
-
-	}
-	
-	this.uniforms = {
-
-			// pseudo light source somewhere over viewer's left shoulder.
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
-
-			minZ:   { value: minHeight },
-			scaleZ: { value: 1 / ( maxHeight - minHeight ) },
-			cmap:   { value: CV.Colours.gradientTexture }
-
-		};
-
-	this.vertexShader   = CV.Shaders.heightVertexShader;
-	this.fragmentShader = CV.Shaders.heightFragmentShader;
-
-	this.type = "CV.HeightMaterial";
-
-	return this;
-
-}
-
-CV.HeightMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.HeightMaterial.prototype.constructor = CV.HeightMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.Materials = ( function () {
-
-var cache = new Map();
-var viewState;
-
-function getHeightMaterial ( type ) {
-
-	var name = "height" + type;
-
-	if ( cache.has( name ) ) return cache.get( name );
-
-	var material = new CV.HeightMaterial( type, viewState.minHeight, viewState.maxHeight );
-
-	cache.set(name, material);
-
-	viewState.addEventListener( "newCave",  _updateHeightMaterial );
-
-	return material;
-
-	function _updateHeightMaterial ( event ) {
-
-		var minHeight = viewState.minHeight;
-		var maxHeight = viewState.maxHeight;
-
-		material.uniforms.minZ.value = minHeight;
-		material.uniforms.scaleZ.value =  1 / ( maxHeight - minHeight );
-
-	}
-
-}
-
-function getDepthMapMaterial () {
-
-	return new CV.DepthMapMaterial( viewState.minHeight, viewState.maxHeight );
-
-}
-
-function getDepthMaterial ( type, limits, texture ) {
-
-	var name = "depth" + type;
-
-	if ( cache.has( name ) ) return cache.get( name );
-	
-	var material = new CV.DepthMaterial( type, limits, texture );
-
-	cache.set(name, material);
-
-	viewState.addEventListener( "newCave",  _updateDepthMaterial );
-
-	return material;
-
-	function _updateDepthMaterial ( event ) {
-
-		cache.delete( name );
-
-	}
-
-}
-
-function getCursorMaterial ( type, halfWidth ) {
-
-	var name = "cursor" + type;
-
-	if ( cache.has(name) ) return cache.get( name );
-
-	var initialHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
-
-	var material = new CV.CursorMaterial( type, initialHeight );
-
-	cache.set( name, material );
-
-	viewState.addEventListener( "cursorChange",  _updateCursorMaterial );
-
-	return material;
-
-	function _updateCursorMaterial ( event ) {
-
-		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
-
-		material.uniforms.cursor.value = cursorHeight;
-
-	}
-
-}
-
-function getLineMaterial () {
-
-	var name = "line";
-
-	if ( cache.has( name ) ) {
-		
-		return cache.get(name);
-
-	}
-
-	var material = new THREE.LineBasicMaterial( { color: 0xFFFFFF, vertexColors: THREE.VertexColors } );   
-
-	cache.set( name, material );
-
-	return material;
-
-}
-
-function initCache ( viewerViewState ) {
-
-	cache.clear();
-
-	viewState = viewerViewState;
-
-}
-
-return {
-
-	getHeightMaterial:   getHeightMaterial,
-	getDepthMapMaterial: getDepthMapMaterial,
-	getDepthMaterial:    getDepthMaterial,
-	getCursorMaterial:   getCursorMaterial,
-	getLineMaterial:     getLineMaterial,
-	initCache:           initCache
-
-};
-
-
-} () );
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.PWMaterial = function () {
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-    		zoom:   new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
-			offset: { value: new THREE.Vector2(1.150, 0.275) },
-  			cmap:   { value: CV.Colours.gradientTexture },
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) }
-   		 },
-
-		vertexShader: CV.Shaders.pwVertexShader,
-		fragmentShader: CV.Shaders.pwFragmentShader
-
-	} );
-
-	this.type = "PWMaterial";
-
-	return this;
-
-	function _updateZoomUniform() {
-
-		this.value += 0.008;
-
-	}
-
-}
-
-CV.PWMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.PWMaterial.prototype.constructor = CV.PWMaterial;
-
-// EOF
-"use strict";
-
-CV.TestMaterial = function ( spread ) {
-
-	var i = 1;
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-
-			spread: { value: spread },
-			rIn: new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
-
-		},
-
-		vertexShader:   CV.Shaders.testVertexShader,	
-		fragmentShader: CV.Shaders.testFragmentShader,
-		vertexColors:   THREE.VertexColors
-	} );
-
-	this.type = "CV.TestMaterial";
-
-	return this;
-
-	function _updateZoomUniform() {
-
-		if ( ++i % 5 ) return;
-		this.value = Math.random();
-
-	}
-
-}
-
-CV.TestMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.TestMaterial.prototype.constructor = CV.TestMaterial;
-
-// EOF
  "use strict";
 
 var CV = CV || {};
@@ -1616,9 +1353,7 @@ CV.padDigits = function ( number, digits ) {
 
 CV.HeightMapLoader = function ( tileSet, resolution, x, y, loadCallback, errorCallback ) {
 
-	if (!loadCallback) {
-		alert("No callback specified");
-	}
+	if ( !loadCallback ) alert( "No callback specified" );
 
 	var prefix = tileSet.PREFIX + resolution + "M" + tileSet.TILESIZE + "-";
 
@@ -1671,11 +1406,6 @@ CV.HeightMapLoader.prototype.load = function () {
 
 var CV = CV || {};
 
-CV.NORMAL  = 0;
-CV.SURFACE = 1;
-CV.SPLAY   = 2;
-CV.DIVING  = 3;
-
 CV.Loader = function ( callback, progress ) {
 
 	if (!callback) {
@@ -1723,9 +1453,9 @@ CV.Loader.prototype.parseName = function ( name ) {
 CV.Loader.prototype.loadURL = function ( cave ) {
 
 	var self     = this;
-	var prefix   = "";
 	var fileName = cave;
 	var xhr;
+	var prefix   = CV.getEnvironmentValue( "surveyDirectory", "" );
 
 	// parse file name
 	this.parseName( cave );
@@ -1779,7 +1509,7 @@ CV.Loader.prototype.loadFile = function ( file ) {
 
 	var type = this.dataType;
 
-	if (!type) {
+	if ( !type ) {
 
 		alert( "Cave: unknown file extension [", self.extention, "]");
 		return false;
@@ -1898,7 +1628,6 @@ CV.loxHandler = function ( fileName, dataStream ) {
 
 	// Drop data to give GC a chance ASAP
 	source = null;
-	xhr    = null;
 
 	// strip empty/single top nodes of tree
 	surveyTree.reduce( "unknown" );
@@ -2818,11 +2547,7 @@ CV.Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	function cmd_MOVE ( c ) {
 
 		// new set of line segments
-		if ( legs.length > 1 ) {
-
-			groups.push( legs );
-
-		}
+		if ( legs.length > 1 ) groups.push( legs );
 
 		legs = [];
 
@@ -3049,29 +2774,453 @@ CV.Svx3dHandler.prototype.getName = function () {
 
 var CV = CV || {};
 
-CV.Shaders = (function() {
+CV.CursorMaterial = function ( type, initialHeight ) {
 
-// export public interface
+	THREE.ShaderMaterial.call( this );
+
+	this.defines = {};
+
+	if ( type === CV.MATERIAL_LINE ) {
+
+		this.defines.USE_COLOR = true;
+
+	} else {
+
+		this.defines.SURFACE = true;
+
+	}
+
+	this.uniforms = {
+			uLight:      { value: new THREE.Vector3( -1, -1, 2 ) },
+			cursor:      { value: initialHeight },
+			cursorWidth: { value: 5.0 },
+			baseColor:   { value: new THREE.Color( 0x888888 ) },
+			cursorColor: { value: new THREE.Color( 0x00ff00 ) }
+		};
+
+	this.vertexShader   = CV.Shaders.cursorVertexShader;
+	this.fragmentShader = CV.Shaders.cursorFragmentShader;
+
+	this.type = "CursorMaterial";
+
+	return this;
+}
+
+
+CV.CursorMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.CursorMaterial.prototype.constructor = CV.CursorMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.DepthMapMaterial = function ( minHeight, maxHeight ) {
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+
+			minZ:   { value: minHeight },
+			scaleZ: { value: 1 / ( maxHeight - minHeight ) }
+
+		},
+
+		vertexShader:    CV.Shaders.depthMapVertexShader,
+		fragmentShader:  CV.Shaders.depthMapFragmentShader,
+		depthWrite:      false,
+		type:            "CV.DepthMapMaterial"
+
+	} );
+
+	return this;
+
+}
+
+CV.DepthMapMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.DepthMapMaterial.prototype.constructor = CV.DepthMapMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.DepthMaterial = function ( type, limits, texture ) {
+
+	var range   = limits.size();
+	var defines = {};
+
+	if ( type === CV.MATERIAL_LINE ) {
+
+		defines.USE_COLOR = true;
+
+	} else {
+
+		defines.SURFACE = true;
+
+	}
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+			// pseudo light source somewhere over viewer's left shoulder.
+			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
+
+			minX:     { value: limits.min.x },
+			minY:     { value: limits.min.y },
+			minZ:     { value: limits.min.z },
+			scaleX:   { value: 1 / range.x },
+			scaleY:   { value: 1 / range.y },
+			scaleZ:   { value: 1 / range.z },
+			cmap:     { value: CV.Colours.gradientTexture },
+			depthMap: { value: texture }
+
+		},
+
+		defines: defines,
+		vertexShader: CV.Shaders.depthVertexShader,
+		fragmentShader: CV.Shaders.depthFragmentShader
+	} );
+
+	this.type = "CV.DepthMaterial";
+
+	return this;
+
+}
+
+CV.DepthMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.DepthMaterial.prototype.constructor = CV.DepthMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.HeightMaterial = function ( type, minHeight, maxHeight ) {
+
+	THREE.ShaderMaterial.call( this );
+
+	this.defines = {};
+
+	if ( type === CV.MATERIAL_LINE ) {
+
+		this.defines.USE_COLOR = true;
+
+	} else {
+
+		this.defines.SURFACE = true;
+
+	}
+	
+	this.uniforms = {
+
+			// pseudo light source somewhere over viewer's left shoulder.
+			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
+
+			minZ:   { value: minHeight },
+			scaleZ: { value: 1 / ( maxHeight - minHeight ) },
+			cmap:   { value: CV.Colours.gradientTexture }
+
+		};
+
+	this.vertexShader   = CV.Shaders.heightVertexShader;
+	this.fragmentShader = CV.Shaders.heightFragmentShader;
+
+	this.type = "CV.HeightMaterial";
+
+	return this;
+
+}
+
+CV.HeightMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.HeightMaterial.prototype.constructor = CV.HeightMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.Materials = ( function () {
+
+var cache = new Map();
+var viewState;
+
+function getHeightMaterial ( type ) {
+
+	var name = "height" + type;
+
+	if ( cache.has( name ) ) return cache.get( name );
+
+	var material = new CV.HeightMaterial( type, viewState.minHeight, viewState.maxHeight );
+
+	cache.set(name, material);
+
+	viewState.addEventListener( "newCave",  _updateHeightMaterial );
+
+	return material;
+
+	function _updateHeightMaterial ( event ) {
+
+		var minHeight = viewState.minHeight;
+		var maxHeight = viewState.maxHeight;
+
+		material.uniforms.minZ.value = minHeight;
+		material.uniforms.scaleZ.value =  1 / ( maxHeight - minHeight );
+
+	}
+
+}
+
+function getDepthMapMaterial () {
+
+	return new CV.DepthMapMaterial( viewState.minHeight, viewState.maxHeight );
+
+}
+
+function createDepthMaterial ( type, limits, texture ) {
+
+	var name = "depth" + type;
+
+	var material = new CV.DepthMaterial( type, limits, texture );
+
+	cache.set( name, material );
+
+	viewState.addEventListener( "newCave",  _updateDepthMaterial );
+
+	return material;
+
+	function _updateDepthMaterial ( event ) {
+
+		cache.delete( name );
+
+	}
+
+}
+
+function getDepthMaterial ( type ) {
+
+	 return cache.get( "depth" + type );	
+
+}
+
+function getCursorMaterial ( type, halfWidth ) {
+
+	var name = "cursor" + type;
+
+	if ( cache.has(name) ) return cache.get( name );
+
+	var initialHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
+
+	var material = new CV.CursorMaterial( type, initialHeight );
+
+	cache.set( name, material );
+
+	viewState.addEventListener( "cursorChange",  _updateCursorMaterial );
+
+	return material;
+
+	function _updateCursorMaterial ( event ) {
+
+		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
+
+		material.uniforms.cursor.value = cursorHeight;
+
+	}
+
+}
+
+function getLineMaterial () {
+
+	var name = "line";
+
+	if ( cache.has( name ) ) {
+
+		return cache.get(name);
+
+	}
+
+	var material = new THREE.LineBasicMaterial( { color: 0xFFFFFF, vertexColors: THREE.VertexColors } );
+
+	cache.set( name, material );
+
+	return material;
+
+}
+
+function initCache ( viewerViewState ) {
+
+	cache.clear();
+
+	viewState = viewerViewState;
+
+}
 
 return {
-	testVertexShader:        "\n#include <common>\nuniform float spread;\nuniform float rIn;\nvoid main() {\n	vec3 nPosition = position;\n	nPosition.x += rand( nPosition.xy * rIn ) * color.r * spread;\n	nPosition.y += rand( nPosition.xx * rIn ) * color.r * spread;\n	nPosition.z -= abs( rand( nPosition.yx * rIn ) ) * color.r * spread;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( nPosition, 1.0 );\n	gl_PointSize = 2.0;\n}\n",
-	testFragmentShader:      "\nvoid main() {\n	gl_FragColor = vec4( 0.0, 0.1, 1.0, 1.0 );\n}\n",
-	heightVertexShader:      "\nuniform sampler2D cmap;\nuniform float minZ;\nuniform float scaleZ;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float zMap;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	zMap = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	heightFragmentShader:    "\nuniform sampler2D cmap;\nvarying float zMap;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
-	cursorVertexShader:      "\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\n	\nvarying vec3 vColor;\n#endif\nvarying float height;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	height = position.z;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	cursorFragmentShader:    "\nuniform float cursor;\nuniform float cursorWidth;\nuniform vec3 baseColor;\nuniform vec3 cursorColor;\nvarying float height;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n#else\n	float light = 1.0;\n#endif\n	float delta = abs( height - cursor );\n	float ss = smoothstep( 0.0, cursorWidth, cursorWidth - delta );\n#ifdef SURFACE\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light;\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 );\n	}\n#else\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light * vec4( vColor, 1.0 );\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 ) * vec4( vColor, 1.0 );\n	}\n#endif\n}\n",
-	depthMapVertexShader:    "\nuniform float minZ;\nuniform float scaleZ;\nvarying float vHeight;\nvoid main() {\n	vHeight = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	depthMapFragmentShader:  "\nvarying float vHeight;\nvoid main() {\n	gl_FragColor = vec4(vHeight, vHeight, vHeight, 1.0);\n}\n",
-	depthVertexShader:       "\nuniform float minX;\nuniform float minY;\nuniform float minZ;\nuniform float scaleX;\nuniform float scaleY;\nuniform float scaleZ;\nuniform sampler2D depthMap;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float vHeight;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	vec2 terrainCoords = vec2( ( position.x - minX ) * scaleX, ( position.y - minY ) * scaleY );\n	vec4 terrainHeight = texture2D( depthMap, terrainCoords );\n	vHeight =  terrainHeight.g  - ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	depthFragmentShader:     "\nuniform sampler2D cmap;\nvarying float vHeight;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
-	pwVertexShader:          "\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n	vUv = uv;	\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	pwFragmentShader:        "\nprecision highp float;\nuniform sampler2D cmap;\nuniform float zoom;\nuniform vec2 offset;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	float square;\n	float x = 0.0;\n	float y = 0.0;\n	float xt;\n	float yt;\n	float light;\n	vec2 c = ( vUv - vec2( 0.5, 0.5 ) ) * 4.0 / zoom - offset;\n	for ( float i = 0.0; i < 1.0; i += 0.001 ) {\n		xt = x * x - y * y + c.x;\n		yt = 2.0 * x * y + c.y;\n		x = xt;\n		y = yt;\n		square = x * x + y * y;\n		light = dot( normalize( vNormal ), normalize( lNormal ) );\n		gl_FragColor = texture2D( cmap, vec2( i, 1.0 ) ) * light;\n		if ( square >= 4.0 ) break;\n	}\n}\n"
+
+	createDepthMaterial: createDepthMaterial,
+	getHeightMaterial:   getHeightMaterial,
+	getDepthMapMaterial: getDepthMapMaterial,
+	getDepthMaterial:    getDepthMaterial,
+	getCursorMaterial:   getCursorMaterial,
+	getLineMaterial:     getLineMaterial,
+	initCache:           initCache
 
 };
 
-} () );// end of Shader Module
+
+} () );
 
 // EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.PWMaterial = function () {
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+    		zoom:   new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
+			offset: { value: new THREE.Vector2(1.150, 0.275) },
+  			cmap:   { value: CV.Colours.gradientTexture },
+			uLight: { value: new THREE.Vector3( -1, -1, 2 ) }
+   		 },
+
+		vertexShader: CV.Shaders.pwVertexShader,
+		fragmentShader: CV.Shaders.pwFragmentShader
+
+	} );
+
+	this.type = "PWMaterial";
+
+	return this;
+
+	function _updateZoomUniform() {
+
+		this.value += 0.008;
+
+	}
+
+}
+
+CV.PWMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.PWMaterial.prototype.constructor = CV.PWMaterial;
+
+// EOF
+"use strict";
+
+CV.TestMaterial = function ( spread ) {
+
+	var i = 1;
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+
+			spread: { value: spread },
+			rIn: new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
+
+		},
+
+		vertexShader:   CV.Shaders.testVertexShader,	
+		fragmentShader: CV.Shaders.testFragmentShader,
+		vertexColors:   THREE.VertexColors
+	} );
+
+	this.type = "CV.TestMaterial";
+
+	return this;
+
+	function _updateZoomUniform() {
+
+		if ( ++i % 5 ) return;
+		this.value = Math.random();
+
+	}
+
+}
+
+CV.TestMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.TestMaterial.prototype.constructor = CV.TestMaterial;
+
+// EOF
+"use strict";
+
+var Cave = Cave || {};
+
+CV.CommonTerrain = function () {};
+
+CV.CommonTerrain.prototype.shadingMode;
+CV.CommonTerrain.prototype.opacity = 0.5;
+
+CV.CommonTerrain.prototype.getOpacity = function () {
+
+	return this.opacity;
+
+}
+
+CV.CommonTerrain.prototype.setShadingMode = function ( mode ) {
+
+	var material;
+
+	switch ( mode ) {
+
+	case CV.SHADING_HEIGHT:
+
+		material = CV.Materials.getHeightMaterial( CV.MATERIAL_SURFACE );
+
+		break;
+
+	case CV.SHADING_OVERLAY:
+
+		if ( this.getOverlays() ) this.setOverlay( this.getOverlay() );
+
+		break;
+
+	case CV.SHADING_CURSOR:
+
+		 material = CV.Materials.getCursorMaterial( CV.MATERIAL_SURFACE, 5.0 );
+
+		 break;
+
+	case CV.SHADING_SHADED:
+
+		material = new THREE.MeshLambertMaterial( {
+			color:        0xffffff,
+			vertexColors: THREE.VertexColors,
+			side:         THREE.FrontSide,
+			transparent:  true,
+			opacity:      this.opacity }
+		);
+
+		break;
+
+	case CV.SHADING_PW:
+
+		material = new CV.PWMaterial();
+
+		break;
+
+	default:
+
+		console.log( "unknown mode", mode );
+		return false;
+
+	}
+
+	if ( material !== undefined ) this.setMaterial( material );
+
+	this.shadingMode = mode;
+
+	return true;
+
+}
  "use strict";
 
 var Cave = Cave || {};
@@ -3080,8 +3229,8 @@ CV.Terrain = function () {
 
 	THREE.Group.call( this );
 
-	this.type   = "CV.Terrain";
-	this.tile   = null;
+	this.type     = "CV.Terrain";
+	this.tile     = null;
 	this.overlay;
 
 	return this;
@@ -3089,6 +3238,8 @@ CV.Terrain = function () {
 }
 
 CV.Terrain.prototype = Object.create( THREE.Group.prototype );
+
+Object.assign( CV.Terrain.prototype, CV.CommonTerrain.prototype );
 
 CV.Terrain.prototype.constructor = CV.Terrain;
 
@@ -3147,7 +3298,7 @@ CV.Terrain.prototype.setOverlay = function ( overlay ) {
 		{
 			map: texture,
 			transparent: true,
-			opacity: 0.75
+			opacity: this.opacity
 		}
 
 	) );
@@ -3157,6 +3308,13 @@ CV.Terrain.prototype.setOverlay = function ( overlay ) {
 CV.Terrain.prototype.setMaterial = function ( material ) {
 
 	this.tile.setMaterial( material );
+
+}
+
+CV.Terrain.prototype.setOpacity = function ( opacity ) {
+
+	this.tile.setOpacity( opacity );
+	this.opacity = opacity;
 
 }
 
@@ -3296,7 +3454,7 @@ CV.Tile.prototype.getBoundingBox = function () {
 
 		boundingBox = this.mesh.geometry.boundingBox.clone();
 
-		var adj = this.resolution; // adjust to cope with  overlaps
+		var adj = this.resolution; // adjust to cope with overlaps
 
 		boundingBox.min.x += adj;
 		boundingBox.min.y += adj;
@@ -3323,12 +3481,9 @@ CV.Tile.prototype.attach = function ( parent ) {
 
 CV.Tile.prototype.remove = function ( evicted ) {
 
-	if ( evicted ) {
+	if ( evicted ) this.evictionCount++;
 
-		this.evicted = true;
-		this.evictionCount++;
-
-	}
+	this.evicted = evicted;
 
 	if (this.mesh) {
 
@@ -3354,9 +3509,22 @@ CV.Tile.prototype.setMaterial = function ( material ) {
 
 }
 
-CV.Tile.prototype.setOverlay = function ( overlay ) {
+CV.Tile.prototype.setOpacity = function ( opacity ) {
 
-	if (!this.mesh) return;
+	var mesh = this.mesh;
+
+	if ( mesh ) {
+
+		mesh.material.opacity = opacity;
+		mesh.material.needsUpdate = true;
+
+	}
+
+}
+
+CV.Tile.prototype.setOverlay = function ( overlay, opacity ) {
+
+	if ( !this.mesh ) return;
 
 	var self = this;
 	var tileSet = this.tileSet;
@@ -3375,13 +3543,13 @@ CV.Tile.prototype.setOverlay = function ( overlay ) {
 
 	var tileWidth = tileSet.TILESIZE - 1; // in grid units
 
-	xOffset = xOffset + ( repeat * clip.left/tileWidth );
-	yOffset = yOffset + ( repeat * clip.bottom/tileWidth );
+	xOffset = xOffset + ( repeat * clip.left / tileWidth );
+	yOffset = yOffset + ( repeat * clip.bottom / tileWidth );
 
 	var xRepeat = repeat * ( ( tileWidth - clip.left - clip.right ) / tileWidth );
 	var yRepeat = repeat * ( ( tileWidth - clip.top  - clip.bottom ) / tileWidth );
 
-	var imageFile = tileSet.OVERLAYDIR + overlay + "/" + tileSet.PREFIX + tileSet.OVERLAY_RESOLUTION + "MX-" + CV.padDigits(y, 3) + "-" + CV.padDigits(x, 3) + ".jpg";
+	var imageFile = tileSet.OVERLAYDIR + overlay + "/" + tileSet.PREFIX + tileSet.OVERLAY_RESOLUTION + "MX-" + CV.padDigits( y, 3 ) + "-" + CV.padDigits( x, 3 ) + ".jpg";
 
 	if ( CV.Tile.overlayImages.has( imageFile ) ) {
 
@@ -3392,14 +3560,14 @@ CV.Tile.prototype.setOverlay = function ( overlay ) {
 		var loader = new THREE.ImageLoader();
 
 		loader.load( imageFile, _imageLoaded );
-				
+
 	}
 
 	return;
 
 	function _imageLoaded ( image ) {
 
-		var material = new THREE.MeshLambertMaterial( { transparent: true, opacity: 0.75} );
+		var material = new THREE.MeshLambertMaterial( { transparent: true, opacity: opacity } );
 
 		CV.Tile.overlayImages.set( imageFile, image );
 
@@ -3466,7 +3634,7 @@ CV.Tile.prototype.projectedArea = function ( camera ) {
 var Cave = Cave || {};
 
 CV.TiledTerrain = function ( limits3, onLoaded ) {
-	
+
 	THREE.Group.call( this );
 
 	this.name = "CV.TiledTerrain";
@@ -3478,7 +3646,7 @@ CV.TiledTerrain = function ( limits3, onLoaded ) {
 
 	);
 
-	this.tileSet       = CV.TileSet;
+	this.tileSet       = Object.assign( {}, CV.TileSet);
 	this.tileTree      = new CV.Tree();
 
 	this.onLoaded      = onLoaded;
@@ -3488,8 +3656,10 @@ CV.TiledTerrain = function ( limits3, onLoaded ) {
 	this.terrainLoaded = false;
 	this.replaceTile   = null;
 	this.activeOverlay = null;
+	this.material      = null;
 	this.initialResolution;
 	this.currentLimits;
+	this.dying = false;
 
 	if ( CV.Hud !== undefined ) {
 
@@ -3497,9 +3667,14 @@ CV.TiledTerrain = function ( limits3, onLoaded ) {
 
 	}
 
+	 this.tileSet.BASEDIR = CV.getEnvironmentValue( "terrainDirectory", "" ) + this.tileSet.BASEDIR;
+	 this.tileSet.OVERLAYDIR = CV.getEnvironmentValue( "terrainDirectory", "" ) + this.tileSet.OVERLAYDIR;
+
 }
 
 CV.TiledTerrain.prototype = Object.create( THREE.Group.prototype );
+
+Object.assign( CV.TiledTerrain.prototype, CV.CommonTerrain.prototype );
 
 CV.TiledTerrain.prototype.constructor = CV.TiledTerrain;
 
@@ -3532,10 +3707,10 @@ CV.TiledTerrain.prototype.getCoverage = function ( limits, resolution ) {
 	var tileSet  = this.tileSet;
 	var coverage = { resolution: resolution };
 
-	var N = tileSet.N + resolution / 2;
-	var W = tileSet.W - resolution / 2;
+	var N = tileSet.N;
+	var W = tileSet.W;
 
-	var tileWidth = ( tileSet.TILESIZE - 2 ) * resolution; 
+	var tileWidth = ( tileSet.TILESIZE - 1 ) * resolution; 
 
 	coverage.min_x = Math.max( Math.floor( ( limits.min.x - W ) / tileWidth ), 0 );
 	coverage.max_x = Math.floor( ( limits.max.x - W ) / tileWidth ) + 1;
@@ -3570,6 +3745,8 @@ CV.TiledTerrain.prototype.pickCoverage = function ( limits, maxResolution ) {
 
 CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
+	console.log("load ", resolutionIn, ": [ ", x, ",", y, "]" );
+
 	var self       = this;
 	var resolution = resolutionIn;
 	var oldTile    = oldTileIn;
@@ -3578,17 +3755,14 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 
 	var limits    = this.limits;
 	var tileSet   = this.tileSet;
-	var divisions = tileSet.TILESIZE - 1;
-	var tileWidth = divisions * resolution;
-	var clip = { top: 0, bottom: 0, left: 0, right: 0 };
+	var tileWidth = (tileSet.TILESIZE - 1 ) * resolution;
+	var clip      = { top: 0, bottom: 0, left: 0, right: 0 };
 
-	var N = tileSet.N + resolution / 2;
-	var W = tileSet.W - resolution / 2;
+	var N = tileSet.N;
+	var W = tileSet.W;
 
-	var tileWidthAdj = tileWidth - resolution;
-
-	var bottomLeft = new THREE.Vector2( W + x * tileWidthAdj,             N - y * tileWidthAdj - tileWidth );
-	var topRight   = new THREE.Vector2( W + x * tileWidthAdj + tileWidth, N - y * tileWidthAdj );
+	var bottomLeft = new THREE.Vector2( W + tileWidth * x,          N - tileWidth * ( y + 1 ) );
+	var topRight   = new THREE.Vector2( W + tileWidth * ( x + 1 ) , N - tileWidth * y );
 
 	var tileLimits = new THREE.Box2( bottomLeft, topRight );
 
@@ -3603,13 +3777,11 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 	if ( tileLimits.max.x > limits.max.x ) clip.right = Math.floor( ( tileLimits.max.x - limits.max.x ) / resolution );
 
 	var tileSpec = {
-
 		tileSet: tileSet,
 		resolution: resolution, 
 		tileX: x, 
 		tileY: y,
 		clip: clip
-
 	}
 
 	// start web worker and create new geometry in it.
@@ -3626,9 +3798,19 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 
 		var tileData = event.data;
 
+		// the survey/region in the viewer may have changed while the height maos are being loaded.
+		// bail out in this case to avoid errors
+
+		if ( self.dying ) {
+
+			this.progressDial.end();
+			return;
+
+		}
+
 		if ( tileData.status !== "ok" ) ++self.errors;
 
-		if (self.errors) {
+		if ( self.errors ) {
 
 			// error out early if we or other tiles have failed to load.
 
@@ -3640,7 +3822,7 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 		var attributes = tileData.json.data.attributes;
 
 		// large arrays in source were translated to ArrayBuffers to allow transferable objects to 
-		// be used, to decrease execution time for this hander.
+		// be used, to decrease execution time for this handler.
 
 		// retype and move arrays back to useable format
 		// note: the standard JSON bufferGeometry format uses Array but accepts TypedArray
@@ -3675,9 +3857,9 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 
 		tile.createFromBufferGeometryJSON( tileData.json, tileData.boundingBox );
 
-		if (self.activeOverlay) {
+		if ( self.activeOverlay ) {
 
-			tile.setOverlay( self.activeOverlay );
+			tile.setOverlay( self.activeOverlay, self.opacity );
 
 		}
 
@@ -3705,7 +3887,7 @@ CV.TiledTerrain.prototype.endLoad = function ( tile ) {
 			var tileTree = this.tileTree;
 			var parentId;
 
-			if (replaceTile) {
+			if ( replaceTile ) {
 
 				parentId = replaceTile.id;
 
@@ -3738,7 +3920,6 @@ CV.TiledTerrain.prototype.endLoad = function ( tile ) {
 		} else {
 
 			// mark this tile so we don't continually try to reload
-			// console.log( "marking as tiles missing" );
 			if ( this.resolution === this.initialResolution ) {
 
 				console.log("oops");
@@ -3763,7 +3944,7 @@ CV.TiledTerrain.prototype.endLoad = function ( tile ) {
 
 CV.TiledTerrain.prototype.resurrectTile = function ( tile ) {
 
-	if (tile.mesh) {
+	if ( tile.mesh ) {
 
 		console.log( "resurrecting the undead!" );
 		return;
@@ -3779,6 +3960,13 @@ CV.TiledTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
 
 	var coverage   = this.pickCoverage( limits, maxResolution );
 	var resolution = coverage.resolution;
+
+	if ( tile && tile.resolution == resolution ) {
+
+		console.log("BOING!");
+		return;
+
+	}
 
 	this.replaceTile   = tile;
 	this.currentLimits = limits;
@@ -3840,7 +4028,7 @@ CV.TiledTerrain.prototype.setOverlay = function ( overlay ) {
 			node = nodes[ i ];
 			tile = node.name;
 
-			tile.setOverlay( overlay );
+			tile.setOverlay( overlay, self.opacity );
 
 			_setTileOverlays( node.id );
 
@@ -3875,9 +4063,16 @@ CV.TiledTerrain.prototype.setMaterial = function ( material ) {
 
 	_setTileMaterial( tileTree.getRootId() );
 
+	material.opacity = this.opacity;
+	material.needsUpdate = true;
+
+	this.material = material;
+
 	return;
 
 	function _setTileMaterial ( id ) {
+
+		// FIXME this needs fixing by a tree method
 
 		var nodes = tileTree.getChildData( id );
 		var node;
@@ -4007,7 +4202,7 @@ CV.TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 				if ( node.noChildren === 0 ) {
 
-					if (!tile.mesh && tile.evicted ) {
+					if (!tile.mesh ) {
 
 						resurrectTiles.push( tile );
 
@@ -4055,6 +4250,55 @@ CV.TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 }
 
+CV.TiledTerrain.prototype.setOpacity = function ( opacity ) {
+
+	var self = this;
+	var tileTree = this.tileTree;
+
+	if ( this.shadingMode === CV.SHADING_OVERLAY ) {
+
+		// each tile has its own material, therefore need setting separately
+		_setTileOpacity( tileTree.getRootId() );
+
+	} else {
+
+		if ( this.material ) {
+
+			this.material.opacity = opacity;
+			this.material.needsUpdate = true;
+
+		}
+
+	}
+
+	this.opacity = opacity;
+
+	return;
+
+	function _setTileOpacity ( id ) {
+
+		// FIXME this needs fixing by a tree method
+
+		var nodes = tileTree.getChildData( id );
+		var node;
+		var tile;
+
+		for ( var i = 0, l = nodes.length; i < l; i++ ) {
+
+			node = nodes[ i ];
+			tile = node.name;
+
+			tile.setOpacity( opacity );
+
+			_setTileOpacity( node.id );
+
+		}
+
+	}
+
+}
+
+
 // EOF
  "use strict";
 
@@ -4068,16 +4312,43 @@ CV.TileSet = {
 	W: 400000,
 
 	TILESIZE: 256,
-	BASEDIR: "/terrain/SK/heightmaps/",
-	OVERLAYDIR: "/terrain/SK/overlays/",
+	BASEDIR: "SK/heightmaps/",
+	OVERLAYDIR: "SK/overlays/",
 	OVERLAYS: [ "OS", "BGS" ],
 	OVERLAY_RESOLUTION: 32,
 	PREFIX: "SK",
-	RESOLUTION_MIN: 2,
+	RESOLUTION_MIN: 4,
 	RESOLUTION_MAX: 32,
 	SCALE: 64
 
 }
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.Shaders = (function() {
+
+// export public interface
+
+return {
+	testVertexShader:        "\n#include <common>\nuniform float spread;\nuniform float rIn;\nvoid main() {\n	vec3 nPosition = position;\n	nPosition.x += rand( nPosition.xy * rIn ) * color.r * spread;\n	nPosition.y += rand( nPosition.xx * rIn ) * color.r * spread;\n	nPosition.z -= abs( rand( nPosition.yx * rIn ) ) * color.r * spread;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( nPosition, 1.0 );\n	gl_PointSize = 2.0;\n}\n",
+	testFragmentShader:      "\nvoid main() {\n	gl_FragColor = vec4( 0.0, 0.1, 1.0, 1.0 );\n}\n",
+	heightVertexShader:      "\nuniform sampler2D cmap;\nuniform float minZ;\nuniform float scaleZ;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float zMap;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	zMap = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	heightFragmentShader:    "\nuniform sampler2D cmap;\nvarying float zMap;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
+	cursorVertexShader:      "\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\n	\nvarying vec3 vColor;\n#endif\nvarying float height;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	height = position.z;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	cursorFragmentShader:    "\nuniform float cursor;\nuniform float cursorWidth;\nuniform vec3 baseColor;\nuniform vec3 cursorColor;\nvarying float height;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n#else\n	float light = 1.0;\n#endif\n	float delta = abs( height - cursor );\n	float ss = smoothstep( 0.0, cursorWidth, cursorWidth - delta );\n#ifdef SURFACE\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light;\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 );\n	}\n#else\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light * vec4( vColor, 1.0 );\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 ) * vec4( vColor, 1.0 );\n	}\n#endif\n}\n",
+	depthMapVertexShader:    "\nuniform float minZ;\nuniform float scaleZ;\nvarying float vHeight;\nvoid main() {\n	vHeight = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	depthMapFragmentShader:  "\nvarying float vHeight;\nvoid main() {\n	gl_FragColor = vec4(vHeight, vHeight, vHeight, 1.0);\n}\n",
+	depthVertexShader:       "\nuniform float minX;\nuniform float minY;\nuniform float minZ;\nuniform float scaleX;\nuniform float scaleY;\nuniform float scaleZ;\nuniform sampler2D depthMap;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float vHeight;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	vec2 terrainCoords = vec2( ( position.x - minX ) * scaleX, ( position.y - minY ) * scaleY );\n	vec4 terrainHeight = texture2D( depthMap, terrainCoords );\n	vHeight =  terrainHeight.g  - ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	depthFragmentShader:     "\nuniform sampler2D cmap;\nvarying float vHeight;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
+	pwVertexShader:          "\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n	vUv = uv;	\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	pwFragmentShader:        "\nprecision highp float;\nuniform sampler2D cmap;\nuniform float zoom;\nuniform vec2 offset;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	float square;\n	float x = 0.0;\n	float y = 0.0;\n	float xt;\n	float yt;\n	float light;\n	vec2 c = ( vUv - vec2( 0.5, 0.5 ) ) * 4.0 / zoom - offset;\n	for ( float i = 0.0; i < 1.0; i += 0.001 ) {\n		xt = x * x - y * y + c.x;\n		yt = 2.0 * x * y + c.y;\n		x = xt;\n		y = yt;\n		square = x * x + y * y;\n		light = dot( normalize( vNormal ), normalize( lNormal ) );\n		gl_FragColor = texture2D( cmap, vec2( i, 1.0 ) ) * light;\n		if ( square >= 4.0 ) break;\n	}\n}\n"
+
+};
+
+} () );// end of Shader Module
 
 // EOF
 "use strict";
@@ -4145,6 +4416,12 @@ CV.Page.handleChange = function ( event ) {
 
 				break;
 
+			case "range":
+
+				ctrl.value = obj[ property ];
+
+				break;
+
 			}
 
 		}
@@ -4193,17 +4470,22 @@ CV.Page.prototype.addHeader = function ( text ) {
 
 	var div = document.createElement( "div" );
 
+	div.classList.add( "header" );
 	div.textContent = text;
 	this.page.appendChild( div );
+
+	return div;
 
 }
 
 CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
+	var div    = document.createElement( "div" );
 	var label  = document.createElement( "label" );
 	var select = document.createElement( "select" );
 	var opt;
-	var self = this;
+
+	div.classList.add( "control" );
 
 	if ( obj instanceof Array ) {
 
@@ -4231,13 +4513,13 @@ CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 			opt.text  = p;
 			opt.value = obj[ p ];
 
-			if ( opt.value === trgObj[ property ] ) opt.selected = true;
+			if ( opt.value == trgObj[ property ] ) opt.selected = true;
 
 			select.add( opt, null );
 
 		}
 
-		select.addEventListener( "change", function (event) { CV.Page.inHandler = true; trgObj[property] = event.target.value; CV.Page.inHandler = false; } );
+		select.addEventListener( "change", function ( event ) { CV.Page.inHandler = true; trgObj[property] = event.target.value; CV.Page.inHandler = false; } );
 
 	}
 
@@ -4245,15 +4527,19 @@ CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 	CV.Page.controls[ property ] = select;
 
-	this.page.appendChild( label );
-	this.page.appendChild( select );
+	div.appendChild( label );
+	div.appendChild( select );
+
+	this.page.appendChild( div );
+
+	return div;
 
 }
 
 CV.Page.prototype.addCheckbox = function ( title, obj, property ) {
 
-	var label  = document.createElement( "label" );
-	var cb     = document.createElement( "input" );
+	var label = document.createElement( "label" );
+	var cb    = document.createElement( "input" );
 
 	label.textContent = title;
 
@@ -4275,6 +4561,48 @@ CV.Page.prototype.addCheckbox = function ( title, obj, property ) {
 		CV.Page.inHandler = true;
 
 		obj[ property ] = event.target.checked; 
+
+		CV.Page.inHandler = false;
+
+	}
+
+}
+
+CV.Page.prototype.addRange = function ( title, obj, property ) {
+
+	var div = document.createElement( "div" );
+	var label = document.createElement( "label" );
+	var range = document.createElement( "input" );
+
+	div.classList.add( "control" );
+
+	range.type = "range";
+
+	range.min  = 0;
+	range.max  = 1;
+
+	range.step = 0.05;
+	range.value = obj[ property ];
+
+	range.addEventListener( "input", _rangeChanged );
+	range.addEventListener( "change", _rangeChanged ); // for IE11 support
+	
+	label.textContent = title;
+
+	CV.Page.controls[ property ] = range;
+
+	div.appendChild( label );
+	div.appendChild( range );
+
+	this.page.appendChild( div );
+
+	return div;
+
+	function _rangeChanged ( event ) {
+
+		CV.Page.inHandler = true;
+
+		obj[ property ] = event.target.value; 
 
 		CV.Page.inHandler = false;
 
@@ -4428,83 +4756,6 @@ CV.ProgressBar.prototype.End = function () {
 
 // EOF
 
-CV.BoundingBox = function ( box, colour ) {
-
-	var geometry = new CV.BoundingBoxGeometry( box.size() );
-	var material = new THREE.LineBasicMaterial( { color: colour, vertexColors: THREE.NoColors } );
-
-	THREE.LineSegments.call( this, geometry, material );
-
-	this.type = "CV.BoundingBox";
-
-	this.position.copy( box.center() );
-
-	return this;
-
-}
-
-CV.BoundingBox.prototype = Object.create( THREE.LineSegments.prototype );
-
-CV.BoundingBox.prototype.constructor = CV.BoundingBox;
-
-
-// EOF
-
-
-CV.BoundingBoxGeometry = function ( box ) {
-
-	THREE.Geometry.call( this );
-
-	this.type = "CV.BoundingBoxGeometry";
-
-	var x = box.x / 2;
-	var y = box.y / 2;
-	var z = box.z / 2;
-
-	this.vertices.push( new THREE.Vector3( -x, -y, -z ) );
-	this.vertices.push( new THREE.Vector3(  x, -y, -z ) );
-	
-	this.vertices.push( new THREE.Vector3(  x, -y, -z ) );
-	this.vertices.push( new THREE.Vector3(  x,  y, -z ) );
-
-	this.vertices.push( new THREE.Vector3(  x,  y, -z ) );
-	this.vertices.push( new THREE.Vector3( -x,  y, -z ) );
-
-	this.vertices.push( new THREE.Vector3( -x,  y, -z ) );
-	this.vertices.push( new THREE.Vector3( -x, -y, -z ) );
-
-	this.vertices.push( new THREE.Vector3(  x,  y, z ) );
-	this.vertices.push( new THREE.Vector3(  x, -y, z ) );
-	
-	this.vertices.push( new THREE.Vector3(  x, -y,  z ) );
-	this.vertices.push( new THREE.Vector3( -x, -y,  z ) );
-
-	this.vertices.push( new THREE.Vector3( -x, -y,  z ) );
-	this.vertices.push( new THREE.Vector3( -x,  y,  z ) );
-
-	this.vertices.push( new THREE.Vector3( -x,  y,  z ) );
-	this.vertices.push( new THREE.Vector3(  x,  y,  z ) );
-
-	this.vertices.push( new THREE.Vector3( -x, -y, -z ) );
-	this.vertices.push( new THREE.Vector3( -x, -y,  z ) );
-
-	this.vertices.push( new THREE.Vector3( -x,  y, -z ) );
-	this.vertices.push( new THREE.Vector3( -x,  y,  z ) );
-
-	this.vertices.push( new THREE.Vector3(  x,  y, -z ) );
-	this.vertices.push( new THREE.Vector3(  x,  y,  z ) );
-
-	this.vertices.push( new THREE.Vector3(  x, -y, -z ) );
-	this.vertices.push( new THREE.Vector3(  x, -y,  z ) );
-
-};
-
-CV.BoundingBoxGeometry.prototype = Object.create( THREE.Geometry.prototype );
-
-CV.BoundingBoxGeometry.prototype.constructor = CV.BoundingBoxGeometry;
-
-// EOF
-
 CV.EntrancePointer = function ( width, height, faceColour1, faceColour2 ) {
 
 	THREE.Geometry.call( this );
@@ -4582,7 +4833,7 @@ CV.Label.prototype.constructor = CV.Label;
 
 CV.Marker = ( function () {
 
-	if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
+	if ( typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope ) {
     	return function Marker () {};
 	}
 
@@ -4702,33 +4953,6 @@ CV.RectangleGeometry.prototype.constructor = CV.RectangleGeometry;
 "use strict";
 
 var CV = CV || {};
-
-CV.MATERIAL_LINE       = 1;
-CV.MATERIAL_SURFACE    = 2;
-
-CV.SHADING_HEIGHT      = 1;
-CV.SHADING_LENGTH      = 2;
-CV.SHADING_INCLINATION = 3;
-CV.SHADING_CURSOR      = 4;
-CV.SHADING_SINGLE      = 5;
-CV.SHADING_SURVEY      = 6;
-CV.SHADING_OVERLAY     = 7;
-CV.SHADING_SHADED      = 8;
-CV.SHADING_DEPTH       = 9;
-CV.SHADING_PW          = 10;
-
-CV.FEATURE_BOX           = 1;
-CV.FEATURE_SELECTION_BOX = 2;
-CV.FEATURE_ENTRANCES     = 3;
-CV.FEATURE_TERRAIN       = 4;
-CV.FACE_WALLS            = 5;
-CV.FACE_SCRAPS           = 6;
-
-CV.LEG_CAVE              = 7;
-CV.LEG_SPLAY             = 8;
-CV.LEG_SURFACE           = 9;
-
-CV.upAxis = new THREE.Vector3( 0, 0, 1 );
 
 CV.Survey = function ( cave ) {
 
@@ -4934,7 +5158,7 @@ CV.Survey = function ( cave ) {
 					//  start tube with two triangles to form cap
 					faces.push( new THREE.Face3( u1, r1, d1 ) );
 					faces.push( new THREE.Face3( u1, d1, l1 ) );
-	
+
 					run = { start: lastEnd, survey: survey };
 
 				}
@@ -5028,7 +5252,7 @@ CV.Survey = function ( cave ) {
 		self.add( entrances );
 		self.layers.enable( CV.FEATURE_ENTRANCES );
 
-		for ( var i = 0; i < l; i++ ) { 
+		for ( var i = 0; i < l; i++ ) {
 
 			var entrance = entranceList[ i ];
 			var position = entrance.position;
@@ -5131,7 +5355,7 @@ CV.Survey = function ( cave ) {
 			run.end = legGeometries[ type ].vertices.length / 2;
 			legRuns[ type ].push( run );
 
-		} 
+		}
 
 		_addModelSegments( CV.NORMAL  , "CV.Survey:legs:cave:cave",       CV.LEG_CAVE );
 		_addModelSegments( CV.SURFACE , "CV.Survey:legs:surface:surface", CV.LEG_SURFACE );
@@ -5150,8 +5374,7 @@ CV.Survey = function ( cave ) {
 			geometry.computeBoundingBox();
 			geometry.name = name + ":g";
 
-
-			var mesh = new THREE.LineSegments( geometry );
+			var mesh = new THREE.LineSegments( geometry, new THREE.LineBasicMaterial( { color: 0x888888 } ) );
 
 			mesh.name = name;
 			mesh.userData = legRuns[ tag ];
@@ -5182,7 +5405,7 @@ CV.Survey = function ( cave ) {
 		var height = ( dim.lines   - 1 ) * dim.yDelta;
 
 		var plane = new THREE.PlaneGeometry( width, height, dim.samples - 1, dim.lines - 1 );
- 
+
 		plane.translate( dim.xOrigin + width / 2, dim.yOrigin + height / 2, 0 );
 
 		self.terrain =  new CV.Terrain().addTile( plane, cave.getTerrainData(), cave.getTerrainBitmap() );
@@ -5342,7 +5565,7 @@ CV.Survey.prototype.cutSection = function ( id ) {
 
 			break;
 
-		case "CV.BoundingBox":
+		case "THREE.BoxHelper":
 
 			obj.reverseTraverse( _remove );
 
@@ -5537,7 +5760,7 @@ CV.Survey.prototype.cutSection = function ( id ) {
 
 			return vertexIndex;
 
-		} 
+		}
 
 	}
 
@@ -5571,16 +5794,80 @@ CV.Survey.prototype.getBounds = function ()  {
 
 }
 
-CV.Survey.prototype.setFaceShading = function ( mode, material ) {
+CV.Survey.prototype.setShadingMode = function ( mode ) {
 
-	this.setFacesSelected( this.getObjectByName( "CV.Survey:faces:walls" ), material, mode );
-	this.setFacesSelected( this.getObjectByName( "CV.Survey:faces:scraps" ), material, mode );
+	var material;
+	var self = this;
+
+	switch ( mode ) {
+
+	case CV.SHADING_HEIGHT:
+
+		material = CV.Materials.getHeightMaterial( CV.MATERIAL_SURFACE );
+
+		break;
+
+	case CV.SHADING_CURSOR:
+
+		material = CV.Materials.getCursorMaterial( CV.MATERIAL_SURFACE, 5.0 );
+
+		break;
+
+	case CV.SHADING_SINGLE:
+
+		material = new THREE.MeshLambertMaterial( { color: 0xff0000, vertexColors: THREE.NoColors } );
+
+		break;
+
+	case CV.SHADING_SURVEY:
+
+		material = new THREE.MeshLambertMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } );
+
+		break;
+
+	case CV.SHADING_DEPTH:
+
+		material = CV.Materials.getDepthMaterial( CV.MATERIAL_SURFACE );
+
+		if ( ! material )  return false;
+
+		break;
+
+	}
+
+	if ( this.setLegShading( CV.LEG_CAVE, mode ) ) {
+
+		_setFaceShading( this.getObjectByName( "CV.Survey:faces:walls" ), mode, material );
+		_setFaceShading( this.getObjectByName( "CV.Survey:faces:scraps" ), mode, material );
+
+		return true;
+
+	}
+
+	return false;
+
+	function _setFaceShading ( mesh, mode, material ) {
+
+		if ( !mesh ) return;
+
+		if ( material ) {
+
+			self.setFacesSelected( mesh, material, mode );
+			mesh.visible = true;
+
+		} else {
+
+			mesh.visible = false;
+
+		}
+
+	}
 
 }
 
 CV.Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
-	if (!mesh) return;
+	if ( !mesh ) return;
 
 	var faceRuns = mesh.userData;
 	var faces    = mesh.geometry.faces;
@@ -5588,11 +5875,7 @@ CV.Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 	var surveyColours;
 	var unselected = new THREE.MeshLambertMaterial( { side: THREE.FrontSide, color: 0x444444, vertexColors: THREE.FaceColors } );
 
-	if ( mode === CV.SHADING_SURVEY ) {
-
-		surveyColours = this.getSurveyColours();
-
-	}
+	if ( mode === CV.SHADING_SURVEY ) surveyColours = this.getSurveyColours();
 
 	mesh.material = new THREE.MultiMaterial( [ selected, unselected ] );
 
@@ -5655,11 +5938,11 @@ CV.Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
 CV.Survey.prototype.hasFeature = function ( layerTag ) {
 
-	return !((this.layers.mask & 1 << layerTag) === 0);
+	return !( ( this.layers.mask & 1 << layerTag ) === 0 );
 
 }
 
-CV.Survey.prototype.setLegShading = function ( legType, legShadingMode, material ) {
+CV.Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	var mesh;
 
@@ -5673,7 +5956,7 @@ CV.Survey.prototype.setLegShading = function ( legType, legShadingMode, material
 
 	case CV.LEG_SPLAY:
 
-		mesh = this.getObjectByName(  "CV.Survey:legs:cave:splay" );
+		mesh = this.getObjectByName( "CV.Survey:legs:cave:splay" );
 
 		break;
 
@@ -5740,7 +6023,7 @@ CV.Survey.prototype.setLegShading = function ( legType, legShadingMode, material
 
 	case CV.SHADING_DEPTH:
 
-		this.setLegColourByMaterial( mesh, material ); 
+		this.setLegColourByDepth( mesh );
 
 		break;
 
@@ -5836,7 +6119,7 @@ CV.Survey.prototype.setEntrancesSelected = function () {
 			if ( selectedSectionIds.has( entrance.userData ) ) {
 
 				entrance.visible = true;
-				boundingBox.expandByPoint( entrance.position );		
+				boundingBox.expandByPoint( entrance.position );
 
 			} else {
 
@@ -5875,6 +6158,12 @@ CV.Survey.prototype.setLegColourByMaterial = function ( mesh, material ) {
 		geometry.colors[ v2 ] = CV.ColourCache.white;
 
 	}
+
+}
+
+CV.Survey.prototype.setLegColourByDepth = function ( mesh ) {
+
+	this.setLegColourByMaterial( mesh, CV.Materials.getDepthMaterial( CV.MATERIAL_LINE ) );
 
 }
 
@@ -6047,7 +6336,7 @@ CV.Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 		if ( this.selectedSection > 0 && runsSelected > 0 ) {
 
-			this.selectedBox = new CV.BoundingBox( box, 0x0000ff );
+			this.selectedBox = new THREE.BoxHelper( box, 0x0000ff );
 
 			this.selectedBox.layers.set( CV.FEATURE_SELECTED_BOX );
 
@@ -6102,11 +6391,12 @@ var container;
 // viewer state
 
 var viewState;
+var controls;
 var isVisible = true;
 
-function init ( containerIn ) {
+function init ( domId ) {
 
-	container = containerIn;
+	container = document.getElementById( domId );
 	viewState = CV.Viewer.getState;
 
 	var hHeight = container.clientHeight / 2;
@@ -6145,12 +6435,17 @@ function init ( containerIn ) {
 	viewState.addEventListener( "newCave", caveChanged );
 	viewState.addEventListener( "change", viewChanged );
 
+	controls = CV.Viewer.getControls();
+
+	controls.addEventListener( "change", update );
+
 }
 
 function setVisibility ( visible ) {
 
 	compass.setVisibility( visible );
 	ahi.setVisibility( visible );
+	progressDial.setVisibility( visible );
 
 	if ( linearScale ) linearScale.setVisibility( visible );
 	if ( angleScale ) angleScale.setVisibility( visible );
@@ -6232,13 +6527,19 @@ function resize () {
 
 }
 
-function render ( renderer, vCamera, scale ) {
+function update ( event ) {
 
-	// update UI components
-	compass.set( vCamera );
-	ahi.set( vCamera );
+	// update HUD components
 
-	updateScaleBar( scale );
+	var camera = controls.object;
+
+	compass.set( camera );
+	ahi.set( camera );
+	updateScaleBar( camera );
+
+}
+
+function renderHUD ( renderer, vCamera ) {
 
 	// render on screen
 	renderer.clearDepth();
@@ -6278,7 +6579,7 @@ function caveChanged ( event ) {
 
 function viewChanged ( event ) {
 
-	if ( event.name !== "shadingMode" ) return;
+	if ( event.name !== "shadingMode" || !isVisible ) return;
 
 	switch ( viewState.shadingMode ) {
 
@@ -6367,13 +6668,9 @@ function cursorChanged ( event ) {
 
 }
 
-function updateScaleBar ( scale ) {
+function updateScaleBar ( camera ) {
 
-	if ( scale === 0 ) {
-
-		if ( scaleBar ) scaleBar.setVisibility( false );
-
-	} else {
+	if ( camera instanceof THREE.OrthographicCamera ) {
 
 		if ( scaleBar === null ) {
 
@@ -6382,7 +6679,11 @@ function updateScaleBar ( scale ) {
 
 		}
 
-		scaleBar.setScale( scale ).setVisibility( true );
+		scaleBar.setScale( camera.zoom ).setVisibility( true );
+
+	} else {
+
+		if ( scaleBar ) scaleBar.setVisibility( false );
 
 	}
 
@@ -6390,7 +6691,8 @@ function updateScaleBar ( scale ) {
 
 return {
 	init:               init,
-	render:             render,
+	renderHUD:          renderHUD,
+	update:             update,
 	setVisibility:		setVisibility,
 	getVisibility:		getVisibility,
 	getProgressDial:    getProgressDial,
@@ -6418,11 +6720,14 @@ var surveyTree;
 var isCaveLoaded = false;
 
 var container;
-var frame;
+var frame = null;
 
 var heightCursorGui;
 var file;
 var progressBar;
+
+var terrainControls = [];
+var terrainOverlay = null;
 
 var legShadingModes = {
 	"by height":          CV.SHADING_HEIGHT,
@@ -6441,17 +6746,18 @@ var surfaceShadingModes = {
 }
 
 var terrainShadingModes = {
+	"Relief shading":     CV.SHADING_SHADED,
 	"by height":          CV.SHADING_HEIGHT,
-	"height cursor":      CV.SHADING_CURSOR,
-	"Relief shading":     CV.SHADING_SHADED
+	"height cursor":      CV.SHADING_CURSOR
 }
 
 var cameraViews = {
-	"Plan":        CV.VIEW_PLAN,
-	"N Elevation": CV.VIEW_ELEVATION_N,
-	"S Elevation": CV.VIEW_ELEVATION_S,
-	"E Elevation": CV.VIEW_ELEVATION_E,
-	"W Elevation": CV.VIEW_ELEVATION_W
+	"<select viewpoint>": CV.VIEW_NONE,
+	"Plan":               CV.VIEW_PLAN,
+	"N Elevation":        CV.VIEW_ELEVATION_N,
+	"S Elevation":        CV.VIEW_ELEVATION_S,
+	"E Elevation":        CV.VIEW_ELEVATION_E,
+	"W Elevation":        CV.VIEW_ELEVATION_W
 }
 
 var cameraModes = {
@@ -6490,9 +6796,57 @@ function init ( domID ) { // public method
 	viewState = CV.Viewer.getState;
 
 	viewState.addEventListener( "change",  CV.Page.handleChange );
+	viewState.addEventListener( "change",  handleChange );
 	viewState.addEventListener( "newCave", viewComplete );
 
-	CV.Hud.init( container );
+	CV.Hud.init( domID );
+
+}
+
+function handleChange( event ) {
+
+	var display;
+
+	// change UI dynamicly to only display useful controls
+	switch ( event.name ) {
+
+	case "terrain":
+
+		// only show overlay selection when terrain shading is set to overlay
+		if ( viewState.terrain ) {
+
+			display = "block";
+
+		} else {
+
+			display = "none";
+
+		}
+
+		for ( var i = 0, l = terrainControls.length; i < l; i++ ) {
+
+			terrainControls[ i ].style.display = display;
+
+		}
+
+		// drop through here is deliberate. Do not add "break"
+
+	case "terrainShading":
+
+		// only show overlay selection when terrain shading is set to overlay
+		if ( viewState.terrain && terrainOverlay && viewState.terrainShading === CV.SHADING_OVERLAY ) {
+
+			terrainOverlay.style.display = "block";
+
+		} else if ( terrainOverlay ) {
+
+			terrainOverlay.style.display = "none";
+
+		}
+ 
+		break;
+
+	}
 
 }
 
@@ -6628,7 +6982,7 @@ function initSelectionPage () {
 
 		case "LI":
 
-			if (viewState.section !== Number( id ) ) {
+			if ( viewState.section !== Number( id ) ) {
 
 				viewState.section = id;
 
@@ -6690,7 +7044,7 @@ function initHelpPage () {
 	_addKey( "[", "move depth cursor up" );
 	_addKey( "]", "move depth cursor down" );
 
-	//addKey("n", "next cave");
+	if ( caveList.length > 0 ) _addKey( "n", "next cave" );
 
 	help.appendChild( dl );
 
@@ -6715,6 +7069,11 @@ function initHelpPage () {
 	_addKey( "S", "surface legs on/off" );
 	_addKey( "T", "terrain on/off" );
 	_addKey( "W", "LRUD walls on/off" );
+
+	_addKey( "", "-" );
+
+	_addKey( "<", "Decrease terrain opacity" );
+	_addKey( ">", "Increase terrain opacity" );
 
 	help.appendChild( dl );
 
@@ -6746,7 +7105,7 @@ function initInfoPage() {
 	var page = new CV.Page( frame, "icon_info" );
 
 	page.addHeader( "Information" );
-	
+
 	var p = document.createElement( "p" );
 
 	p.textContent = "CV.Viewer - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.";
@@ -6761,6 +7120,10 @@ function initInfoPage() {
 
 function initSettingsPage () {
 
+	// reset 
+	terrainOverlay = null;
+	terrainControls = [];
+
 	var legShadingModesActive     = Object.assign( {}, legShadingModes );
 	var terrainShadingModesActive = Object.assign( {}, terrainShadingModes );
 
@@ -6770,12 +7133,14 @@ function initSettingsPage () {
 
 	page.addHeader( "Survey" );
 
-	page.addSelect( "File", caveList, guiState, "file" );
+	if ( caveList.length > 0 ) page.addSelect( "File", caveList, guiState, "file" );
 
 	page.addHeader( "View" );
 
 	page.addSelect( "Camera Type", cameraModes, viewState, "cameraType" );
 	page.addSelect( "View",        cameraViews, viewState, "view" );
+
+	page.addRange( "Vertical scaling", viewState, "zScale" );
 
 	page.addHeader( "Shading" );
 
@@ -6784,19 +7149,6 @@ function initSettingsPage () {
 	if ( viewState.hasSurfaceLegs ) {
 
 		page.addSelect( "Surface Legs", surfaceShadingModes, viewState, "surfaceShading" );
-
-	}
-
-
-	if ( viewState.hasTerrain ) {
-
-		var overlays = viewState.terrainOverlays;
-
-		if ( overlays.length > 0 ) terrainShadingModesActive[ "map overlay" ] = CV.SHADING_OVERLAY;
-
-		page.addSelect( "Terrain", terrainShadingModesActive, viewState, "terrainShading" );
-
-		if ( overlays.length > 1 ) page.addSelect( "Overlay", overlays, viewState, "terrainOverlay" );
 
 	}
 
@@ -6811,6 +7163,39 @@ function initSettingsPage () {
 	if ( viewState.hasHUD )          page.addCheckbox( "Indicators",    viewState, "HUD" );
 
 	page.addCheckbox( "Bounding Box", viewState, "box" );
+
+	if ( viewState.hasTerrain ) {
+
+		var control;
+
+		control = page.addHeader( "Terrain" );
+		terrainControls.push( control );
+
+		var overlays = viewState.terrainOverlays;
+
+		if ( overlays.length > 0 ) terrainShadingModesActive[ "map overlay" ] = CV.SHADING_OVERLAY;
+
+		control = page.addSelect( "Shading", terrainShadingModesActive, viewState, "terrainShading" );
+		terrainControls.push( control );
+
+		if ( overlays.length > 1 ) {
+
+			terrainOverlay = page.addSelect( "Overlay", overlays, viewState, "terrainOverlay" );
+			terrainOverlay.style.display = "none";
+			terrainControls.push( terrainOverlay );
+
+		}
+
+		control = page.addRange( "Terrain opacity", viewState, "terrainOpacity" );
+		terrainControls.push( control );
+
+		for ( var i = 0, l = terrainControls.length; i < l; i++ ) {
+
+			terrainControls[ i ].style.display = "none";
+
+		}
+
+	}
 
 }
 
@@ -6873,7 +7258,7 @@ function handleDrop ( event ) {
 
 }
 
-function resetGUI () {
+function resetUI () {
 
 	if ( isCaveLoaded ) {
 
@@ -6887,15 +7272,13 @@ function resetGUI () {
 
 }
 
-function afterReset () {
+function afterReset ( event ) {
+
+	var frame = event.target;
 
 	frame.removeEventListener( "transitionend", afterReset );
 
-	if ( !isCaveLoaded ) {
-
-		if ( frame !== undefined ) container.removeChild( frame );
-
-	}
+	if ( frame !== null ) container.removeChild( frame );
 
 }
 
@@ -6919,12 +7302,12 @@ function nextCave () {
 
 function loadCave ( file ) {
 
-	resetGUI();
+	resetUI();
 	CV.Viewer.clearView();
 
 	progressBar.Start( "Loading file " + file + " ..." );
 
-	caveLoader.loadURL( "/surveys/" + file );
+	caveLoader.loadURL( file );
 
 }
 
@@ -7114,9 +7497,9 @@ function keyDown ( event ) {
 
 		break;
 
-	case 88: // switch walls on/off 'x'
+	case 88: // look ast last POI - '.'
 
-		viewState.test = 8;
+		viewState.setPOI = true; // actual value here is ignored.
 
 		break;
 
@@ -7134,9 +7517,15 @@ function keyDown ( event ) {
 
 		break;
 
-	case 190: // look ast last POI - '.'
+	case 188: // decrease terrain opacity "<" key
 
-		viewState.setPOI = true; // actual value here is ignored.
+		if ( viewState.hasTerrain ) viewState.terrainOpacity = Math.max( viewState.terrainOpacity - 0.05, 0 );
+
+		break;
+
+	case 190: // increase terrain opacity ">" key
+
+		if ( viewState.hasTerrain ) viewState.terrainOpacity = Math.min( viewState.terrainOpacity + 0.05, 1 );
 
 		break;
 	}
@@ -7158,19 +7547,8 @@ return {
 
 var CV = CV || {};
 
-CV.MATERIAL_LINE       = 1;
-CV.MATERIAL_SURFACE    = 2;
-
-CV.CAMERA_ORTHOGRAPHIC = 1;
-CV.CAMERA_PERSPECTIVE  = 2;
-
-CV.VIEW_PLAN           = 1;
-CV.VIEW_ELEVATION_N    = 2;
-CV.VIEW_ELEVATION_S    = 3;
-CV.VIEW_ELEVATION_E    = 4;
-CV.VIEW_ELEVATION_W    = 5;
-
-CV.lightPosition = new THREE.Vector3( -1, -1, 0.5 );  
+CV.lightPosition = new THREE.Vector3( -1, -1, 0.5 );
+CV.CAMERA_OFFSET = 600;
 
 CV.Viewer = ( function () {
 
@@ -7196,7 +7574,7 @@ var region;
 var survey;
 var limits;
 var stats  = {};
-var scaleMatrix;
+var zScale;
 
 var viewState = {};
 var cursorHeight;
@@ -7205,11 +7583,7 @@ var shadingMode        = CV.SHADING_HEIGHT;
 var surfaceShadingMode = CV.SHADING_SINGLE;
 var terrainShadingMode = CV.SHADING_SHADED;
 
-var depthMaterialLine;
-var depthMaterialFace;
-
 var cameraMode;
-var viewMode;
 var selectedSection = 0;
 
 // Point of interest tracking
@@ -7223,8 +7597,6 @@ var controls;
 var lastActivityTime = 0;
 
 function __dyeTrace() {
-
-	return;
 
 	var start = new THREE.Vector3();
 	var end   = new THREE.Vector3( 100, 100, 100 );
@@ -7250,7 +7622,7 @@ function init ( domID ) { // public method
 
 	container = document.getElementById( domID );
 
-	if (!container) alert( "No container DOM object [" + domID + "] available" );
+	if ( !container ) alert( "No container DOM object [" + domID + "] available" );
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
@@ -7262,18 +7634,15 @@ function init ( domID ) { // public method
 	renderer.setClearColor( 0x000000 );
 	renderer.autoClear = false;
 
-	oCamera = new THREE.OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, -10000, 10000 );
+	oCamera = new THREE.OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 10000 );
 
 	oCamera.rotateOnAxis( CV.upAxis, Math.PI / 2 );
-	oCamera.up = CV.upAxis;
 
-	initCameraLayers( oCamera );
+	initCamera( oCamera );
 
 	pCamera = new THREE.PerspectiveCamera( 75, width / height, 1, 10000 );
 
-	pCamera.up = CV.upAxis;
-
-	initCameraLayers( pCamera );
+	initCamera( pCamera );
 
 	camera = pCamera;
 
@@ -7283,7 +7652,7 @@ function init ( domID ) { // public method
 
 	container.appendChild( renderer.domElement );
 
-	controls = new THREE.OrbitControls( camera, renderer.domElement);
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
 
 	controls.enableDamping = true;
 
@@ -7318,12 +7687,18 @@ function init ( domID ) { // public method
 		set: function ( x ) { _viewStateSetter( setTerrainOverlay, "terrainOverlay", x ); }
 	} );
 
+	Object.defineProperty( viewState, "terrainOpacity", {
+		writeable: true,
+		get: function () { return terrain.getOpacity(); },
+		set: function ( x ) { terrain.setOpacity( x ); viewState.dispatchEvent( { type: "change", name: "terrainOpacity" } ) }
+	} );
+
 	Object.defineProperty( viewState, "shadingMode", {
 		writeable: true,
 		get: function () { return shadingMode; },
 		set: function ( x ) { _viewStateSetter( setShadingMode, "shadingMode", x ); }
 	} );
-	
+
 	Object.defineProperty( viewState, "surfaceShading", {
 		writeable: true,
 		get: function () { return surfaceShadingMode; },
@@ -7338,7 +7713,7 @@ function init ( domID ) { // public method
 
 	Object.defineProperty( viewState, "view", {
 		writeable: true,
-		get: function () { return viewMode; },
+		get: function () { return CV.VIEW_NONE; },
 		set: function ( x ) { _viewStateSetter( setViewMode, "view", x ); }
 	} );
 
@@ -7393,7 +7768,6 @@ function init ( domID ) { // public method
 			get: function () { return CV.Hud.getVisibility(); },
 			set: function ( x ) { CV.Hud.setVisibility( x ); }
 		} );
-
 	}
 
 	_enableLayer( CV.FEATURE_BOX,       "box" );
@@ -7413,21 +7787,19 @@ function init ( domID ) { // public method
 		writeable: true,
 		get: function () { return true; },
 		set: function ( x ) { cutSection( x ) }
-
 	} );
 
-	Object.defineProperty( viewState, "test", {
+	Object.defineProperty( viewState, "zScale", {
 		writeable: true,
-		get: function () { return true; },
-		set: function ( x ) { loadRegistry( x ) }
-
+		get: function () { return zScale; },
+		set: function ( x ) { setZScale( x ) }
 	} );
 
 	CV.Materials.initCache( viewState );
 
 	return;
 
-	function _enableLayer( layerTag, name ) {
+	function _enableLayer ( layerTag, name ) {
 
 		Object.defineProperty( viewState, name, {
 			writeable: true,
@@ -7436,8 +7808,8 @@ function init ( domID ) { // public method
 		} );
 
 	}
-	
-	function _hasLayer( layerTag, name ) {
+
+	function _hasLayer ( layerTag, name ) {
 
 		Object.defineProperty( viewState, name, {
 			get: function () { return survey.hasFeature( layerTag ); }
@@ -7445,7 +7817,7 @@ function init ( domID ) { // public method
 
 	}
 
-	function _viewStateSetter( modeFunction, name, newMode ) {
+	function _viewStateSetter ( modeFunction, name, newMode ) {
 
 		modeFunction( Number( newMode ) );
 		viewState.dispatchEvent( { type: "change", name: name } );
@@ -7454,23 +7826,22 @@ function init ( domID ) { // public method
 
 }
 
-function loadRegistry( x ) {
+function setZScale ( scale ) {
 
-	var registry = new CV.Registry( _registryLoaded );
-	
-	registry.loadURL( "http://thedca.org.uk/dca-cr/registry/googleEarth/", "Registry_kml.php" );
+	// scale - in range 0 - 1
 
-	function _registryLoaded () {
+	var lastScale = Math.pow( 2, ( zScale - 0.5 ) * 4 );
+	var newScale  = Math.pow( 2, ( scale - 0.5 )  * 4 );
 
-		console.log( "registry loaded" );
+	region.applyMatrix( new THREE.Matrix4().makeScale( 1, 1, newScale / lastScale ) );
 
-	}
+	zScale = scale;
 
 }
 
 function renderDepthTexture () {
 
-	if ( terrain == null || !terrain.isLoaded() ) return;
+	if ( terrain === null || !terrain.isLoaded() ) return;
 
 	var dim = 512;
 
@@ -7488,7 +7859,7 @@ function renderDepthTexture () {
 
 		height = height * scaleX / scaleY;
 
-	} else if ( scaleY < scaleX ) {
+	} else {
 
 		width = width * scaleY / scaleX;
 
@@ -7506,8 +7877,8 @@ function renderDepthTexture () {
 
 	renderTarget.texture.generateMipmaps = false;
 
-	depthMaterialLine = CV.Materials.getDepthMaterial( CV.MATERIAL_LINE,    limits, renderTarget.texture );
-	depthMaterialFace = CV.Materials.getDepthMaterial( CV.MATERIAL_SURFACE, limits, renderTarget.texture );
+	CV.Materials.createDepthMaterial( CV.MATERIAL_LINE, limits, renderTarget.texture );
+	CV.Materials.createDepthMaterial( CV.MATERIAL_SURFACE, limits, renderTarget.texture );
 
 	renderer.setSize( dim, dim );
 	renderer.setPixelRatio( 1 );
@@ -7521,22 +7892,32 @@ function renderDepthTexture () {
 	renderer.setPixelRatio( window.devicePixelRatio );
 
 	scene.overrideMaterial = null;
-	
+
 }
 
 function setCameraMode ( mode ) {
 
-	// FIXME - copy direction and scale between cameras
+	if ( mode === cameraMode ) return;
+
+	// get offset vector of current camera from target
+
+	var offset = camera.position.clone().sub( controls.target );
 
 	switch ( mode ) {
 
 	case CV.CAMERA_PERSPECTIVE:
+
+		offset.setLength( CV.CAMERA_OFFSET / oCamera.zoom );
 
 		camera = pCamera;
 
 		break;
 
 	case CV.CAMERA_ORTHOGRAPHIC:
+
+		// calculate zoom from ratio of pCamera distance from target to base distance.
+		oCamera.zoom = CV.CAMERA_OFFSET / offset.length();
+		offset.setLength( CV.CAMERA_OFFSET );
 
 		camera = oCamera;
 
@@ -7549,18 +7930,33 @@ function setCameraMode ( mode ) {
 
 	}
 
+	// update new camera with position to give same apparent zoomm and view
+
+	camera.position.copy( offset.add( controls.target ) );
+
+	camera.updateProjectionMatrix();
+	camera.lookAt( controls.target );
+
 	controls.object = camera;
+
 	cameraMode = mode;
 
 }
 
-function initCameraLayers ( camera ) {
+function initCamera ( camera ) {
+
+	camera.up = CV.upAxis;
+	camera.zoom = 1;
 
 	camera.layers.set( 0 );
 
 	camera.layers.enable( CV.LEG_CAVE );
 	camera.layers.enable( CV.FEATURE_ENTRANCES );
 	camera.layers.enable( CV.FEATURE_BOX );
+
+	camera.position.set( 0, 0, CV.CAMERA_OFFSET );
+	camera.lookAt( 0, 0, 0 );
+	camera.updateProjectionMatrix();
 
 }
 
@@ -7582,47 +7978,45 @@ function setCameraLayer ( layerTag, enable ) {
 
 function testCameraLayer ( layerTag ) {
 
-	return !( ( oCamera.layers.mask & 1 << layerTag ) === 0 );
+	return ( ( oCamera.layers.mask & 1 << layerTag ) > 0 );
 
 }
 
-function setViewMode ( mode ) {
+function setViewMode ( mode, t ) {
+
+	var position = new  THREE.Vector3();
+	var tAnimate = t || 240;
 
 	switch ( mode ) {
 
 	case CV.VIEW_PLAN:
 
 		// reset camera to start position
-		pCamera.position.set( 0, 0, 600 );
-		oCamera.position.set( 0, 0, 600 );
+		position.set( 0, 0, CV.CAMERA_OFFSET );
 
 		break;
 
 	case CV.VIEW_ELEVATION_N:
 
-		pCamera.position.set( 0, 600, 0 );
-		oCamera.position.set( 0, 600, 0 );
+		position.set( 0, CV.CAMERA_OFFSET, 0 );
 
 		break;
 
 	case CV.VIEW_ELEVATION_S:
 
-		pCamera.position.set( 0, -600, 0 );
-		oCamera.position.set( 0, -600, 0 );
+		position.set( 0, -CV.CAMERA_OFFSET, 0 );
 
 		break;
 
 	case CV.VIEW_ELEVATION_E:
 
-		pCamera.position.set( 600, 0, 0 );
-		oCamera.position.set( 600, 0, 0 );
+		position.set( CV.CAMERA_OFFSET, 0, 0 );
 
 		break;
 
 	case CV.VIEW_ELEVATION_W:
 
-		pCamera.position.set( -600, 0, 0 );
-		oCamera.position.set( -600, 0, 0 );
+		position.set( -CV.CAMERA_OFFSET, 0, 0 );
 
 		break;
 
@@ -7633,142 +8027,28 @@ function setViewMode ( mode ) {
 
 	}
 
-	pCamera.lookAt( 0, 0, 0 );
-	pCamera.updateProjectionMatrix();
+	activePOIPosition = new THREE.Vector3();
 
-	oCamera.zoom = 1;
-	oCamera.lookAt( 0, 0, 0 );
-	oCamera.updateProjectionMatrix();
+	targetPOI = {
+		tAnimate: tAnimate,
+		position: activePOIPosition,
+		cameraPosition: position,
+		cameraZoom: 1
+	};
 
-	controls.target = new THREE.Vector3();
-
-	viewMode = mode;
+	controls.enabled = false;
 
 }
 
 function setTerrainShadingMode ( mode ) {
 
-	var material;
-
-	switch ( mode ) {
-
-	case CV.SHADING_HEIGHT:
-
-		material = CV.Materials.getHeightMaterial( CV.MATERIAL_SURFACE );
-
-		break;
-
-	case CV.SHADING_OVERLAY:
-
-		if (terrain.getOverlays()) terrain.setOverlay( terrain.getOverlay() );
-
-		break;
-
-	case CV.SHADING_CURSOR:
-
-		 material = CV.Materials.getCursorMaterial( CV.MATERIAL_SURFACE, 5.0 );
-
-		 break;
-
-	case CV.SHADING_SHADED:
-
-		material = new THREE.MeshLambertMaterial( {
-			color:        0xffffff,
-			vertexColors: THREE.VertexColors,
-			side:         THREE.FrontSide,
-			transparent:  true,
-			opacity:      0.55 }
-		);
-
-		break;
-
-	case CV.SHADING_PW:
-
-		material = new CV.PWMaterial();
-
-		break;
-
-	default:
-
-		console.log( "unknown mode", mode );
-		return;
-
-	}
-
-	if ( material !== undefined ) terrain.setMaterial( material );
-
-	terrainShadingMode = mode;
+	if ( terrain.setShadingMode( mode ) ) terrainShadingMode = mode;
 
 }
 
 function setShadingMode ( mode ) {
 
-	var material;
-	var legMaterial;
-
-	switch ( mode ) {
-
-	case CV.SHADING_HEIGHT:
-
-		material = CV.Materials.getHeightMaterial( CV.MATERIAL_SURFACE );
-
-		break;
-
-	case CV.SHADING_CURSOR:
-
-		material = CV.Materials.getCursorMaterial( CV.MATERIAL_SURFACE, 5.0 );
-
-		break;
-
-	case CV.SHADING_SINGLE:
-
-		material = new THREE.MeshLambertMaterial( { color: 0xff0000, vertexColors: THREE.NoColors } );
-
-		break;
-
-	case CV.SHADING_SURVEY:
-
-		material = new THREE.MeshLambertMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } );
-
-		break;
-
-	case CV.SHADING_DEPTH:
-
-		if ( depthMaterialLine === null ) {
-
-			mode = shadingMode;
-
-		} else {
-
-			legMaterial = depthMaterialLine;
-			material    = depthMaterialFace;
-
-		}
-
-		break;
-
-	}
-
-	if ( survey.setLegShading( CV.LEG_CAVE, mode, legMaterial ) ) {
-
-		if ( material ) {
-
-			survey.setFaceShading( mode, material );
-
-			setCameraLayer( CV.FACE_WALLS, true );
-			setCameraLayer( CV.FACE_SCRAPS, true );
-
-		} else {
-
-			setCameraLayer( CV.FACE_WALLS, false );
-			setCameraLayer( CV.FACE_SCRAPS, false );
-
-		}
-
-		//survey.setEntrancesSelected();
-		shadingMode = mode;
-
-	}
+	if ( survey.setShadingMode( mode ) ) shadingMode = mode;
 
 }
 
@@ -7784,13 +8064,13 @@ function setTerrainOverlay ( overlay ) {
 
 }
 
-function cutSection() {
+function cutSection () {
 
 	if ( selectedSection === 0 ) return;
 
 	survey.cutSection( selectedSection );
 
-	// grab a reference to prevent survey being destroyed
+	// grab a reference to prevent survey being destroyed in clearView()
 	var cutSurvey = survey;
 
 	// reset view
@@ -7809,34 +8089,34 @@ function selectSection ( id ) {
 
 	setShadingMode( shadingMode );
 
-	var box = survey.getSelectedBox();
-
 	if ( id === 0 ) return;
+
+	var box = survey.getSelectedBox();
+	var boundingBox;
+	var obj;
 
 	if ( box ) {
 
 		box.geometry.computeBoundingBox();
 
-		targetPOI = {
-
-			tAnimate: 0,
-			object:      box,
-			position:    box.getWorldPosition(),
-			boundingBox: box.geometry.boundingBox
-
-		};
+		boundingBox = box.geometry.boundingBox;
+		obj = box;
 
 	} else {
 
-		targetPOI = {
-
-			tAnimate: 0,
-			object:      null,
-			position:    entranceBox.center().applyMatrix4( scaleMatrix ),
-			boundingBox: entranceBox
-		};
+		boundingBox = entranceBox;
+		obj = null;
 
 	}
+
+	boundingBox.applyMatrix4( region.matrixWorld );
+
+	targetPOI = {
+		tAnimate: 0,
+		object:      obj,
+		position:    boundingBox.center(),
+		boundingBox: boundingBox
+	};
 
 	selectedSection = id;
 
@@ -7874,6 +8154,8 @@ function clearView () {
 	renderer.clear();
 	CV.Hud.setVisibility( false );
 
+	if ( terrain ) terrain.dying = true;
+
 	controls.enabled = false;
 
 	survey          = null;
@@ -7883,26 +8165,23 @@ function clearView () {
 	region          = new THREE.Group();
 	targetPOI       = null;
 
-	depthMaterialLine = null;
-	depthMaterialFace = null;
-
 	shadingMode = CV.SHADING_HEIGHT;
 
 	// remove event listeners
 
 	unloadTerrainListeners();
-	container.removeEventListener( "click", entranceClick);
+	container.removeEventListener( "click", entranceClick );
 
 	scene.add( pCamera );
 	scene.add( oCamera );
 
-	initCameraLayers( pCamera );
-	initCameraLayers( oCamera );
+	initCamera( pCamera );
+	initCamera( oCamera );
 
 	viewState.cameraType = CV.CAMERA_PERSPECTIVE;
-	viewState.view       = CV.VIEW_PLAN;
+	setViewMode( CV.VIEW_PLAN, 1 );
 
-	render();
+	renderView();
 
 }
 
@@ -7919,22 +8198,22 @@ function loadCave ( cave ) {
 
 }
 
-function loadSurvey( newSurvey ) {
+function loadSurvey ( newSurvey ) {
 
 	survey = newSurvey;
 
 	stats = survey.getStats();
 
-	setScale();
+	setScale( region );
 
 	terrain = survey.getTerrain();
 
 	scene.up = CV.upAxis;
-	scene.add( scaleObject( region ) );
+	scene.add( region );
 
 	region.add( survey );
 
-	var box = new CV.BoundingBox( survey.limits, 0xffffff );
+	var box = new THREE.BoxHelper( survey.limits, 0xffffff );
 
 	box.layers.set( CV.FEATURE_BOX );
 
@@ -7953,6 +8232,7 @@ function loadSurvey( newSurvey ) {
 
 	selectSection( 0 );
 
+	setSurfaceShadingMode( surfaceShadingMode );
 	// set if we have independant terrain maps
 
 	if ( terrain === null ) {
@@ -7974,7 +8254,7 @@ function loadSurvey( newSurvey ) {
 
 		region.add( terrain );
 		setTerrainShadingMode( terrainShadingMode );
-		renderDepthTexture();
+		setTimeout( renderDepthTexture, 0 ); // delay to after newCave event - after material cache is flushed
 
 	}
 
@@ -7982,15 +8262,15 @@ function loadSurvey( newSurvey ) {
 
 	container.addEventListener( "click", entranceClick, false );
 
+	CV.Hud.setVisibility( true );
+
 	// signal any listeners that we have a new cave
 	viewState.dispatchEvent( { type: "newCave", name: "newCave" } );
 
 	controls.object = camera;
 	controls.enabled = true;
 
-	CV.Hud.setVisibility( true );
-	
-	__dyeTrace(); // FIXME test function
+	//__dyeTrace(); // FIXME test function
 
 	animate();
 
@@ -7999,7 +8279,7 @@ function loadSurvey( newSurvey ) {
 		setTerrainShadingMode( terrainShadingMode );
 		loadTerrainListeners();
 
-		if ( !depthMaterialLine ) renderDepthTexture();
+		if ( !CV.Materials.getDepthMaterial( CV.MATERIAL_LINE ) ) renderDepthTexture();
 
 	}
 
@@ -8011,11 +8291,11 @@ function loadTerrain ( mode ) {
 
 		if ( mode ) {
 
-			 loadTerrainListeners();
+			loadTerrainListeners();
 
 		} else {
 
-			 unloadTerrainListeners();
+			unloadTerrainListeners();
 
 		}
 
@@ -8066,110 +8346,118 @@ function entranceClick ( event ) {
 
 		var entrance = intersects[ 0 ].object;
 		var position = entrance.getWorldPosition();
-		
-		targetPOI = {
 
+		targetPOI = {
 			tAnimate:    80,
 			object:      entrance,
 			position:    position,
 			cameraPosition: position.clone().add( new THREE.Vector3( 0, 0, 5 ) ),
+			cameraZoom: 1,
 			boundingBox: new THREE.Box3().expandByPoint( entrance.position ),
 			quaternion:  new THREE.Quaternion()
-
 		};
 
 		activePOIPosition = controls.target;
-	
+
 		console.log(entrance.type, entrance.name );
 
 	}
 
 }
 
-function render () {
+var renderView = function () {
 
-	if ( !caveIsLoaded ) return;
+	var lPosition = new THREE.Vector3();
+	var rotation = new THREE.Euler();
 
-	var r = camera.getWorldRotation();
+	return function renderView () {
 
-	directionalLight.position.copy( CV.lightPosition.clone().applyAxisAngle( CV.upAxis, r.z ) );
+		if ( !caveIsLoaded ) return;
 
-	renderer.clear();
-	renderer.render( scene, camera );
+		camera.getWorldRotation( rotation );
 
-	var scale = 0;
+		lPosition.copy( CV.lightPosition );
 
-	if ( camera instanceof THREE.OrthographicCamera ) scale = camera.zoom;
+		directionalLight.position.copy( lPosition.applyAxisAngle( CV.upAxis, rotation.z ) );
 
-	CV.Hud.render( renderer, camera, scale );
+		renderer.clear();
+		renderer.render( scene, camera );
 
-	// update LOD Scene Objects
+		CV.Hud.renderHUD( renderer, camera );
 
-	var lods = survey.lodTargets;
-	var l    = lods.length;
+		// update LOD Scene Objects
 
-	if ( l > 0 ) {
+		var lods = survey.lodTargets;
+		var l    = lods.length;
 
-		for ( var i = 0; i < l; i++ ) {
+		if ( l > 0 ) {
 
-			lods[ i ].update( camera );
+			for ( var i = 0; i < l; i++ ) {
 
-		}
-
-	}
-
-	if ( targetPOI !== null && targetPOI.tAnimate > 0 ) {
-
-		// handle move to new Point of Interest (POI)
-		_moveToPOI();
-
-	} else {
-
-		if ( terrain && terrain.isTiled() && viewState.terrain ) {
-
-			if ( lastActivityTime && performance.now() - lastActivityTime > 500 ) {
-
-				clockStop();
-				terrain.zoomCheck( camera );
+				lods[ i ].update( camera );
 
 			}
 
 		}
 
-		controls.update();
+		if ( targetPOI !== null && targetPOI.tAnimate > 0 ) {
 
-	}
+			// handle move to new Point of Interest (POI)
+			_moveToPOI();
 
-	return;
+		} else {
 
-	function _moveToPOI () {
+			if ( terrain && terrain.isTiled() && viewState.terrain ) {
 
-		targetPOI.tAnimate--;
+				if ( lastActivityTime && performance.now() - lastActivityTime > 500 ) {
 
-		var t =  1 - targetPOI.tAnimate / ( targetPOI.tAnimate + 1 );
+					clockStop();
+					terrain.zoomCheck( camera );
 
-		activePOIPosition.lerp( targetPOI.position, t );
+				}
 
-		camera.position.lerp( targetPOI.cameraPosition, t );
-		camera.lookAt( activePOIPosition );
-		camera.quaternion.slerp( targetPOI.quaternion, t );
+			}
 
-		camera.updateProjectionMatrix();
+			controls.update();
 
-		if ( targetPOI.tAnimate === 0 ) {
+		}
 
-			controls.target = targetPOI.position;
-			controls.enabled = true;
+		return;
 
-			// restart the clock to trigger refresh of terrain
-			clockStart();
-			targetPOI = null;
+		function _moveToPOI () {
+
+			targetPOI.tAnimate--;
+
+			var t =  1 - targetPOI.tAnimate / ( targetPOI.tAnimate + 1 );
+
+			activePOIPosition.lerp( targetPOI.position, t );
+
+			camera.position.lerp( targetPOI.cameraPosition, t );
+			camera.lookAt( activePOIPosition );
+
+			camera.zoom = camera.zoom + ( targetPOI.cameraZoom - camera.zoom ) * t;
+
+			if ( targetPOI.quaternion ) camera.quaternion.slerp( targetPOI.quaternion, t );
+
+			camera.updateProjectionMatrix();
+			CV.Hud.update();
+
+			if ( targetPOI.tAnimate === 0 ) {
+
+				controls.target = targetPOI.position;
+				controls.enabled = true;
+
+				// restart the clock to trigger refresh of terrain
+				clockStart();
+				targetPOI = null;
+
+			}
 
 		}
 
 	}
 
-}
+} ();
 
 function setCameraPOI ( x ) {
 
@@ -8180,7 +8468,7 @@ function setCameraPOI ( x ) {
 
 	targetPOI.tAnimate = 80;
 
-	var size = targetPOI.boundingBox.size().multiplyScalar( scaleMatrix.elements[ 0 ] ) ;
+	var size = targetPOI.boundingBox.size();
 
 	if ( camera instanceof THREE.PerspectiveCamera ) {
 
@@ -8190,12 +8478,18 @@ function setCameraPOI ( x ) {
 		var e2 = tan * camera.aspect * size.x / 2 + size.z;
 
 		elevation = Math.max( e1, e2 );
-		
+
+		targetPOI.cameraZoom = 1;
+
 		if ( elevation === 0 ) elevation = 100;
 
 	} else {
 
-		elevation = 200; // FIXME
+		var hRatio = ( camera.right - camera.left ) / size.x;
+		var vRatio = ( camera.top - camera.bottom ) / size.y;
+
+		targetPOI.cameraZoom = Math.min( hRatio, vRatio );
+		elevation = 600;
 
 	}
 
@@ -8203,7 +8497,6 @@ function setCameraPOI ( x ) {
 
 	targetPOI.cameraPosition   = targetPOI.position.clone();
 	targetPOI.cameraPosition.z = targetPOI.cameraPosition.z + elevation;
-
 	targetPOI.quaternion = new THREE.Quaternion();
 
 	// disable orbit controls until move to selected POI is conplete
@@ -8215,16 +8508,17 @@ function setCameraPOI ( x ) {
 function animate () {
 
 	requestAnimationFrame( animate );
-	render();
+	renderView();
 
 }
 
-function setScale () {
+function setScale ( obj ) {
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
 	limits = survey.limits;
+	zScale = 0.5;
 
 	var range  = limits.size();
 	var center = limits.center();
@@ -8235,25 +8529,25 @@ function setScale () {
 	// scale and translate model coordiniates into THREE.js world view
 	var scale = Math.min( width / range.x, height / range.y );
 
-	scaleMatrix = new THREE.Matrix4().makeScale( scale, scale, scale );
+	var scaleMatrix = new THREE.Matrix4().makeScale( scale, scale, scale );
 
 	scaleMatrix.multiply( new THREE.Matrix4().makeTranslation( -center.x, -center.y, -center.z ) );
-	
-	CV.Hud.setScale( scale );
-
-}
-
-function scaleObject( obj ) {
 
 	obj.applyMatrix( scaleMatrix );
 
-	return obj;
+	CV.Hud.setScale( scale );
 
 }
 
 function getStats () {
 
 	return stats;
+
+}
+
+function getControls () {
+
+	return controls;
 
 }
 
@@ -8271,6 +8565,7 @@ return {
 	loadCave:      loadCave,
 	getStats:      getStats,
 	getSurveyTree: getSurveyTree,
+	getControls:   getControls,
 	getState:      viewState
 };
 

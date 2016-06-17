@@ -247,33 +247,49 @@ div.linear-scale-caption {
 	padding-bottom: 40px;
 }
 
-#frame div.page div {
+#frame div.page div.header {
 	margin: 16px 0px 8px 0px;
 	font-weight: bold;
 	height: 16px;
 	box-sizing: border-box;
 }
 
+
+#frame div.page div.control {
+	margin: 2px 0 2px 0;
+	padding-top: 2px;
+}
+
 #frame div.page label {
-	position: relative;
 	display: block;
-	margin-top: 8px;
 	border-top: 1px solid grey;
-	padding-top: 4px;
+	padding: 2px 0 2px 0;
 	font-size: 12px;
 }
 
 #frame div.page select {
+	display: block;
 	width: 180px;
 	box-sizing: border-box;
-	margin-top: 4px;
+	padding-top: 2px;
 	margin-left: 8px;
 }
 
-#frame div.page input {
+
+#frame div.page input[type="checkbox"] {
 	position: absolute;
 	right: 0px;
 }
+
+#frame div.page input[type="range"] {
+	display: block;
+/*	position: relative;
+	width: 184px;
+	box-sizing: border-box;
+*/
+	margin-left: 8px;
+}
+
 
 #frame dt, #frame dd {
 	font-size: 12px;

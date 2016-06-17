@@ -9,14 +9,17 @@
 <body onload="onload();" >
 <script type="text/javascript" src="CaveView/lib/three.js" ></script>
 <script type="text/javascript" src="CaveView/lib/OrbitControls.js" ></script>
-<script type="text/javascript" src="CaveView/lib/chroma.min.js" ></script>
 <script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
 <script type="text/javascript" >
 
 function onload () {
 
+	CV.setEnvironment( { terrainDirectory: "/terrain/", surveyDirectory: "/surveys/" } );
+
 	CV.UI.init( "scene" );
-	CV.UI.loadCaveList( [ 'Castleton_Master.3d' ] );
+	CV.UI.loadCaveList( [ 'Giants_Oxlow_Maskhill_System.3d', 'Castleton_Master.3d', 'Cheddar.lox', 'Peak_Master.3d', 'Bradwell_Master.3d', 'all.3d', 'Lathkill.lox', 'titan.3d', "Nettle_Pot_Master.3d", "P8_Master.3d"] );
+//	CV.UI.loadCave( 'Giants_Oxlow_Maskhill_System.3d' );
+
 }
 
 </script>
@@ -30,7 +33,6 @@ function onload () {
 <p>Contains Ordnance Survey data &copy; Crown copyright and database right 2015.</p>
 <p>contains DTM data &copy; Environment Agency copyright and/or database right 2015</p>
 <p>Contains British Geological Survey materials &copy;NERC 2016</p>
-<!--- <iframe id="iframe" src="http://thedca.org.uk/dca-cr/registry/registrysearch.php" ></iframe> -->
 </body>
 </html>
 

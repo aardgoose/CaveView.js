@@ -1,6 +1,6 @@
  "use strict";
 
-importScripts( "../../lib/three.js", "../../lib/chroma.min.js", "../CaveView.js" );
+importScripts( "../../lib/three.js",  "../CaveView.js" );
 
 var CV = CV || {};
 
@@ -68,15 +68,15 @@ function mapLoaded ( data, x, y ) {
 
 	var xTileWidth = xDivisions * resolution;
 	var yTileWidth = yDivisions * resolution;
-	
+
 	var xTileOffset = xTileWidth / 2 ;
 	var yTileOffset = yTileWidth / 2 ;
 
-	var N = tileSet.N + resolution / 2;
-	var W = tileSet.W - resolution / 2;
+	var N = tileSet.N;
+	var W = tileSet.W;
 
-	var X = W + xTileOffset + resolution * ( tileSpec.tileX * ( divisions - 1 ) + clip.left );
-	var Y = N - yTileOffset - resolution * ( tileSpec.tileY * ( divisions - 1 ) + clip.top );
+	var X = W + xTileOffset + resolution * ( tileSpec.tileX * divisions + clip.left );
+	var Y = N - yTileOffset - resolution * ( tileSpec.tileY * divisions + clip.top );
 
 	var plane = new THREE.PlaneGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions );
 
@@ -151,7 +151,6 @@ function mapLoaded ( data, x, y ) {
 	}
 
 	var json = bufferGeometry.toJSON();
-
 
 	// support transferable objects where possible
 	// convertion from Array to ArrayBuffer improves main script side performance

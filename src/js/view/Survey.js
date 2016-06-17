@@ -206,7 +206,7 @@ CV.Survey = function ( cave ) {
 					//  start tube with two triangles to form cap
 					faces.push( new THREE.Face3( u1, r1, d1 ) );
 					faces.push( new THREE.Face3( u1, d1, l1 ) );
-	
+
 					run = { start: lastEnd, survey: survey };
 
 				}
@@ -300,7 +300,7 @@ CV.Survey = function ( cave ) {
 		self.add( entrances );
 		self.layers.enable( CV.FEATURE_ENTRANCES );
 
-		for ( var i = 0; i < l; i++ ) { 
+		for ( var i = 0; i < l; i++ ) {
 
 			var entrance = entranceList[ i ];
 			var position = entrance.position;
@@ -403,7 +403,7 @@ CV.Survey = function ( cave ) {
 			run.end = legGeometries[ type ].vertices.length / 2;
 			legRuns[ type ].push( run );
 
-		} 
+		}
 
 		_addModelSegments( CV.NORMAL  , "CV.Survey:legs:cave:cave",       CV.LEG_CAVE );
 		_addModelSegments( CV.SURFACE , "CV.Survey:legs:surface:surface", CV.LEG_SURFACE );
@@ -422,8 +422,7 @@ CV.Survey = function ( cave ) {
 			geometry.computeBoundingBox();
 			geometry.name = name + ":g";
 
-
-			var mesh = new THREE.LineSegments( geometry );
+			var mesh = new THREE.LineSegments( geometry, new THREE.LineBasicMaterial( { color: 0x888888 } ) );
 
 			mesh.name = name;
 			mesh.userData = legRuns[ tag ];
@@ -454,7 +453,7 @@ CV.Survey = function ( cave ) {
 		var height = ( dim.lines   - 1 ) * dim.yDelta;
 
 		var plane = new THREE.PlaneGeometry( width, height, dim.samples - 1, dim.lines - 1 );
- 
+
 		plane.translate( dim.xOrigin + width / 2, dim.yOrigin + height / 2, 0 );
 
 		self.terrain =  new CV.Terrain().addTile( plane, cave.getTerrainData(), cave.getTerrainBitmap() );
@@ -809,7 +808,7 @@ CV.Survey.prototype.cutSection = function ( id ) {
 
 			return vertexIndex;
 
-		} 
+		}
 
 	}
 

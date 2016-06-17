@@ -108,7 +108,7 @@ CV.Compass.prototype.set = function () {
 	var yAxis         = new THREE.Vector3( 0, 1, 0 );
 	var negativeZAxis = new THREE.Vector3( 0, 0, -1 );
 
-	return function ( vCamera ) {
+	return function set ( vCamera ) {
 
 		vCamera.getWorldDirection( direction );
 

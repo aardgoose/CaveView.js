@@ -109,7 +109,7 @@ CV.AHI.prototype.set = function () {
 	var direction = new THREE.Vector3();
 	var xAxis     = new THREE.Vector3( 1, 0, 0 );
 
-	return function ( vCamera ) {
+	return function set ( vCamera ) {
 
 		vCamera.getWorldDirection( direction );
 

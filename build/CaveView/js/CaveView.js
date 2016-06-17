@@ -4441,7 +4441,7 @@ CV.Marker = ( function () {
 	var marker  = new THREE.Geometry();
 	var loader  = new THREE.TextureLoader();
 
-	var markerTexture  = loader.load( CV.getEnvironmentValue( "cvDirectory", "" ) + "CaveView/images/marker-yellow.png" );
+	var markerTexture  = loader.load( CV.getEnvironmentValue( "cvDirectory", "yyy" ) + "CaveView/images/marker-yellow.png" );
 
 	var markerMaterial = new THREE.PointsMaterial( { size: 10, map: markerTexture, transparent : true, sizeAttenuation: false } );
 

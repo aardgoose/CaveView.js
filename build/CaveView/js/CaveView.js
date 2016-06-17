@@ -1341,386 +1341,6 @@ CV.ScaleBar.prototype.setScale = function ( scale ) {
 }
 
 // EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.CursorMaterial = function ( type, initialHeight ) {
-
-	THREE.ShaderMaterial.call( this );
-
-	this.defines = {};
-
-	if ( type === CV.MATERIAL_LINE ) {
-
-		this.defines.USE_COLOR = true;
-
-	} else {
-
-		this.defines.SURFACE = true;
-
-	}
-
-	this.uniforms = {
-			uLight:      { value: new THREE.Vector3( -1, -1, 2 ) },
-			cursor:      { value: initialHeight },
-			cursorWidth: { value: 5.0 },
-			baseColor:   { value: new THREE.Color( 0x888888 ) },
-			cursorColor: { value: new THREE.Color( 0x00ff00 ) }
-		};
-
-	this.vertexShader   = CV.Shaders.cursorVertexShader;
-	this.fragmentShader = CV.Shaders.cursorFragmentShader;
-
-	this.type = "CursorMaterial";
-
-	return this;
-}
-
-
-CV.CursorMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.CursorMaterial.prototype.constructor = CV.CursorMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.DepthMapMaterial = function ( minHeight, maxHeight ) {
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-
-			minZ:   { value: minHeight },
-			scaleZ: { value: 1 / ( maxHeight - minHeight ) }
-
-		},
-
-		vertexShader:    CV.Shaders.depthMapVertexShader,
-		fragmentShader:  CV.Shaders.depthMapFragmentShader,
-		depthWrite:      false,
-		type:            "CV.DepthMapMaterial"
-
-	} );
-
-	return this;
-
-}
-
-CV.DepthMapMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.DepthMapMaterial.prototype.constructor = CV.DepthMapMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.DepthMaterial = function ( type, limits, texture ) {
-
-	var range   = limits.size();
-	var defines = {};
-
-	if ( type === CV.MATERIAL_LINE ) {
-
-		defines.USE_COLOR = true;
-
-	} else {
-
-		defines.SURFACE = true;
-
-	}
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-			// pseudo light source somewhere over viewer's left shoulder.
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
-
-			minX:     { value: limits.min.x },
-			minY:     { value: limits.min.y },
-			minZ:     { value: limits.min.z },
-			scaleX:   { value: 1 / range.x },
-			scaleY:   { value: 1 / range.y },
-			scaleZ:   { value: 1 / range.z },
-			cmap:     { value: CV.Colours.gradientTexture },
-			depthMap: { value: texture }
-
-		},
-
-		defines: defines,
-		vertexShader: CV.Shaders.depthVertexShader,
-		fragmentShader: CV.Shaders.depthFragmentShader
-	} );
-
-	this.type = "CV.DepthMaterial";
-
-	return this;
-
-}
-
-CV.DepthMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.DepthMaterial.prototype.constructor = CV.DepthMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.HeightMaterial = function ( type, minHeight, maxHeight ) {
-
-	THREE.ShaderMaterial.call( this );
-
-	this.defines = {};
-
-	if ( type === CV.MATERIAL_LINE ) {
-
-		this.defines.USE_COLOR = true;
-
-	} else {
-
-		this.defines.SURFACE = true;
-
-	}
-	
-	this.uniforms = {
-
-			// pseudo light source somewhere over viewer's left shoulder.
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
-
-			minZ:   { value: minHeight },
-			scaleZ: { value: 1 / ( maxHeight - minHeight ) },
-			cmap:   { value: CV.Colours.gradientTexture }
-
-		};
-
-	this.vertexShader   = CV.Shaders.heightVertexShader;
-	this.fragmentShader = CV.Shaders.heightFragmentShader;
-
-	this.type = "CV.HeightMaterial";
-
-	return this;
-
-}
-
-CV.HeightMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.HeightMaterial.prototype.constructor = CV.HeightMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.Materials = ( function () {
-
-var cache = new Map();
-var viewState;
-
-function getHeightMaterial ( type ) {
-
-	var name = "height" + type;
-
-	if ( cache.has( name ) ) return cache.get( name );
-
-	var material = new CV.HeightMaterial( type, viewState.minHeight, viewState.maxHeight );
-
-	cache.set(name, material);
-
-	viewState.addEventListener( "newCave",  _updateHeightMaterial );
-
-	return material;
-
-	function _updateHeightMaterial ( event ) {
-
-		var minHeight = viewState.minHeight;
-		var maxHeight = viewState.maxHeight;
-
-		material.uniforms.minZ.value = minHeight;
-		material.uniforms.scaleZ.value =  1 / ( maxHeight - minHeight );
-
-	}
-
-}
-
-function getDepthMapMaterial () {
-
-	return new CV.DepthMapMaterial( viewState.minHeight, viewState.maxHeight );
-
-}
-
-function createDepthMaterial ( type, limits, texture ) {
-
-	var name = "depth" + type;
-
-	var material = new CV.DepthMaterial( type, limits, texture );
-
-	cache.set( name, material );
-
-	viewState.addEventListener( "newCave",  _updateDepthMaterial );
-
-	return material;
-
-	function _updateDepthMaterial ( event ) {
-
-		cache.delete( name );
-
-	}
-
-}
-
-function getDepthMaterial ( type ) {
-
-	 return cache.get( "depth" + type );	
-
-}
-
-function getCursorMaterial ( type, halfWidth ) {
-
-	var name = "cursor" + type;
-
-	if ( cache.has(name) ) return cache.get( name );
-
-	var initialHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
-
-	var material = new CV.CursorMaterial( type, initialHeight );
-
-	cache.set( name, material );
-
-	viewState.addEventListener( "cursorChange",  _updateCursorMaterial );
-
-	return material;
-
-	function _updateCursorMaterial ( event ) {
-
-		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
-
-		material.uniforms.cursor.value = cursorHeight;
-
-	}
-
-}
-
-function getLineMaterial () {
-
-	var name = "line";
-
-	if ( cache.has( name ) ) {
-
-		return cache.get(name);
-
-	}
-
-	var material = new THREE.LineBasicMaterial( { color: 0xFFFFFF, vertexColors: THREE.VertexColors } );
-
-	cache.set( name, material );
-
-	return material;
-
-}
-
-function initCache ( viewerViewState ) {
-
-	cache.clear();
-
-	viewState = viewerViewState;
-
-}
-
-return {
-
-	createDepthMaterial: createDepthMaterial,
-	getHeightMaterial:   getHeightMaterial,
-	getDepthMapMaterial: getDepthMapMaterial,
-	getDepthMaterial:    getDepthMaterial,
-	getCursorMaterial:   getCursorMaterial,
-	getLineMaterial:     getLineMaterial,
-	initCache:           initCache
-
-};
-
-
-} () );
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.PWMaterial = function () {
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-    		zoom:   new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
-			offset: { value: new THREE.Vector2(1.150, 0.275) },
-  			cmap:   { value: CV.Colours.gradientTexture },
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) }
-   		 },
-
-		vertexShader: CV.Shaders.pwVertexShader,
-		fragmentShader: CV.Shaders.pwFragmentShader
-
-	} );
-
-	this.type = "PWMaterial";
-
-	return this;
-
-	function _updateZoomUniform() {
-
-		this.value += 0.008;
-
-	}
-
-}
-
-CV.PWMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.PWMaterial.prototype.constructor = CV.PWMaterial;
-
-// EOF
-"use strict";
-
-CV.TestMaterial = function ( spread ) {
-
-	var i = 1;
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-
-			spread: { value: spread },
-			rIn: new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
-
-		},
-
-		vertexShader:   CV.Shaders.testVertexShader,	
-		fragmentShader: CV.Shaders.testFragmentShader,
-		vertexColors:   THREE.VertexColors
-	} );
-
-	this.type = "CV.TestMaterial";
-
-	return this;
-
-	function _updateZoomUniform() {
-
-		if ( ++i % 5 ) return;
-		this.value = Math.random();
-
-	}
-
-}
-
-CV.TestMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.TestMaterial.prototype.constructor = CV.TestMaterial;
-
-// EOF
  "use strict";
 
 var CV = CV || {};
@@ -3148,6 +2768,386 @@ CV.Svx3dHandler.prototype.getName = function () {
 	return this.fileName;
 
 }
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.CursorMaterial = function ( type, initialHeight ) {
+
+	THREE.ShaderMaterial.call( this );
+
+	this.defines = {};
+
+	if ( type === CV.MATERIAL_LINE ) {
+
+		this.defines.USE_COLOR = true;
+
+	} else {
+
+		this.defines.SURFACE = true;
+
+	}
+
+	this.uniforms = {
+			uLight:      { value: new THREE.Vector3( -1, -1, 2 ) },
+			cursor:      { value: initialHeight },
+			cursorWidth: { value: 5.0 },
+			baseColor:   { value: new THREE.Color( 0x888888 ) },
+			cursorColor: { value: new THREE.Color( 0x00ff00 ) }
+		};
+
+	this.vertexShader   = CV.Shaders.cursorVertexShader;
+	this.fragmentShader = CV.Shaders.cursorFragmentShader;
+
+	this.type = "CursorMaterial";
+
+	return this;
+}
+
+
+CV.CursorMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.CursorMaterial.prototype.constructor = CV.CursorMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.DepthMapMaterial = function ( minHeight, maxHeight ) {
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+
+			minZ:   { value: minHeight },
+			scaleZ: { value: 1 / ( maxHeight - minHeight ) }
+
+		},
+
+		vertexShader:    CV.Shaders.depthMapVertexShader,
+		fragmentShader:  CV.Shaders.depthMapFragmentShader,
+		depthWrite:      false,
+		type:            "CV.DepthMapMaterial"
+
+	} );
+
+	return this;
+
+}
+
+CV.DepthMapMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.DepthMapMaterial.prototype.constructor = CV.DepthMapMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.DepthMaterial = function ( type, limits, texture ) {
+
+	var range   = limits.size();
+	var defines = {};
+
+	if ( type === CV.MATERIAL_LINE ) {
+
+		defines.USE_COLOR = true;
+
+	} else {
+
+		defines.SURFACE = true;
+
+	}
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+			// pseudo light source somewhere over viewer's left shoulder.
+			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
+
+			minX:     { value: limits.min.x },
+			minY:     { value: limits.min.y },
+			minZ:     { value: limits.min.z },
+			scaleX:   { value: 1 / range.x },
+			scaleY:   { value: 1 / range.y },
+			scaleZ:   { value: 1 / range.z },
+			cmap:     { value: CV.Colours.gradientTexture },
+			depthMap: { value: texture }
+
+		},
+
+		defines: defines,
+		vertexShader: CV.Shaders.depthVertexShader,
+		fragmentShader: CV.Shaders.depthFragmentShader
+	} );
+
+	this.type = "CV.DepthMaterial";
+
+	return this;
+
+}
+
+CV.DepthMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.DepthMaterial.prototype.constructor = CV.DepthMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.HeightMaterial = function ( type, minHeight, maxHeight ) {
+
+	THREE.ShaderMaterial.call( this );
+
+	this.defines = {};
+
+	if ( type === CV.MATERIAL_LINE ) {
+
+		this.defines.USE_COLOR = true;
+
+	} else {
+
+		this.defines.SURFACE = true;
+
+	}
+	
+	this.uniforms = {
+
+			// pseudo light source somewhere over viewer's left shoulder.
+			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
+
+			minZ:   { value: minHeight },
+			scaleZ: { value: 1 / ( maxHeight - minHeight ) },
+			cmap:   { value: CV.Colours.gradientTexture }
+
+		};
+
+	this.vertexShader   = CV.Shaders.heightVertexShader;
+	this.fragmentShader = CV.Shaders.heightFragmentShader;
+
+	this.type = "CV.HeightMaterial";
+
+	return this;
+
+}
+
+CV.HeightMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.HeightMaterial.prototype.constructor = CV.HeightMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.Materials = ( function () {
+
+var cache = new Map();
+var viewState;
+
+function getHeightMaterial ( type ) {
+
+	var name = "height" + type;
+
+	if ( cache.has( name ) ) return cache.get( name );
+
+	var material = new CV.HeightMaterial( type, viewState.minHeight, viewState.maxHeight );
+
+	cache.set(name, material);
+
+	viewState.addEventListener( "newCave",  _updateHeightMaterial );
+
+	return material;
+
+	function _updateHeightMaterial ( event ) {
+
+		var minHeight = viewState.minHeight;
+		var maxHeight = viewState.maxHeight;
+
+		material.uniforms.minZ.value = minHeight;
+		material.uniforms.scaleZ.value =  1 / ( maxHeight - minHeight );
+
+	}
+
+}
+
+function getDepthMapMaterial () {
+
+	return new CV.DepthMapMaterial( viewState.minHeight, viewState.maxHeight );
+
+}
+
+function createDepthMaterial ( type, limits, texture ) {
+
+	var name = "depth" + type;
+
+	var material = new CV.DepthMaterial( type, limits, texture );
+
+	cache.set( name, material );
+
+	viewState.addEventListener( "newCave",  _updateDepthMaterial );
+
+	return material;
+
+	function _updateDepthMaterial ( event ) {
+
+		cache.delete( name );
+
+	}
+
+}
+
+function getDepthMaterial ( type ) {
+
+	 return cache.get( "depth" + type );	
+
+}
+
+function getCursorMaterial ( type, halfWidth ) {
+
+	var name = "cursor" + type;
+
+	if ( cache.has(name) ) return cache.get( name );
+
+	var initialHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
+
+	var material = new CV.CursorMaterial( type, initialHeight );
+
+	cache.set( name, material );
+
+	viewState.addEventListener( "cursorChange",  _updateCursorMaterial );
+
+	return material;
+
+	function _updateCursorMaterial ( event ) {
+
+		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
+
+		material.uniforms.cursor.value = cursorHeight;
+
+	}
+
+}
+
+function getLineMaterial () {
+
+	var name = "line";
+
+	if ( cache.has( name ) ) {
+
+		return cache.get(name);
+
+	}
+
+	var material = new THREE.LineBasicMaterial( { color: 0xFFFFFF, vertexColors: THREE.VertexColors } );
+
+	cache.set( name, material );
+
+	return material;
+
+}
+
+function initCache ( viewerViewState ) {
+
+	cache.clear();
+
+	viewState = viewerViewState;
+
+}
+
+return {
+
+	createDepthMaterial: createDepthMaterial,
+	getHeightMaterial:   getHeightMaterial,
+	getDepthMapMaterial: getDepthMapMaterial,
+	getDepthMaterial:    getDepthMaterial,
+	getCursorMaterial:   getCursorMaterial,
+	getLineMaterial:     getLineMaterial,
+	initCache:           initCache
+
+};
+
+
+} () );
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.PWMaterial = function () {
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+    		zoom:   new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
+			offset: { value: new THREE.Vector2(1.150, 0.275) },
+  			cmap:   { value: CV.Colours.gradientTexture },
+			uLight: { value: new THREE.Vector3( -1, -1, 2 ) }
+   		 },
+
+		vertexShader: CV.Shaders.pwVertexShader,
+		fragmentShader: CV.Shaders.pwFragmentShader
+
+	} );
+
+	this.type = "PWMaterial";
+
+	return this;
+
+	function _updateZoomUniform() {
+
+		this.value += 0.008;
+
+	}
+
+}
+
+CV.PWMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.PWMaterial.prototype.constructor = CV.PWMaterial;
+
+// EOF
+"use strict";
+
+CV.TestMaterial = function ( spread ) {
+
+	var i = 1;
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+
+			spread: { value: spread },
+			rIn: new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
+
+		},
+
+		vertexShader:   CV.Shaders.testVertexShader,	
+		fragmentShader: CV.Shaders.testFragmentShader,
+		vertexColors:   THREE.VertexColors
+	} );
+
+	this.type = "CV.TestMaterial";
+
+	return this;
+
+	function _updateZoomUniform() {
+
+		if ( ++i % 5 ) return;
+		this.value = Math.random();
+
+	}
+
+}
+
+CV.TestMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.TestMaterial.prototype.constructor = CV.TestMaterial;
 
 // EOF
 "use strict";
@@ -7797,6 +7797,8 @@ function init ( domID ) { // public method
 
 	CV.Materials.initCache( viewState );
 
+	animate();
+
 	return;
 
 	function _enableLayer ( layerTag, name ) {
@@ -8272,7 +8274,6 @@ function loadSurvey ( newSurvey ) {
 
 	//__dyeTrace(); // FIXME test function
 
-	animate();
 
 	function _tilesLoaded () {
 

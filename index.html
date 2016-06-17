@@ -4,7 +4,7 @@
 	<title>demo 3d cave viewer</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link type="text/css" href="build/CaveView/css/caveview.css" rel="stylesheet"/>
+	<link type="text/css" href="/CaveView.js/build/CaveView/css/caveview.css" rel="stylesheet"/>
 	<style>
 
 		h1, h2, p {
@@ -312,7 +312,7 @@ function onload () {
 
 	}
 
-	CV.setEnvironment( { terrainDirectory: "/build/terrain/", surveyDirectory: "/build/surveys/" } );
+	CV.setEnvironment( { terrainDirectory: "/CaveView.js/build/terrain/", surveyDirectory: "/CaveView.js/build/surveys/" } );
 
 	CV.Viewer.init( "scene" );
 	CV.Hud.init( "scene" );

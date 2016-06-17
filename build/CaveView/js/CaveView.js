@@ -1341,6 +1341,386 @@ CV.ScaleBar.prototype.setScale = function ( scale ) {
 }
 
 // EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.CursorMaterial = function ( type, initialHeight ) {
+
+	THREE.ShaderMaterial.call( this );
+
+	this.defines = {};
+
+	if ( type === CV.MATERIAL_LINE ) {
+
+		this.defines.USE_COLOR = true;
+
+	} else {
+
+		this.defines.SURFACE = true;
+
+	}
+
+	this.uniforms = {
+			uLight:      { value: new THREE.Vector3( -1, -1, 2 ) },
+			cursor:      { value: initialHeight },
+			cursorWidth: { value: 5.0 },
+			baseColor:   { value: new THREE.Color( 0x888888 ) },
+			cursorColor: { value: new THREE.Color( 0x00ff00 ) }
+		};
+
+	this.vertexShader   = CV.Shaders.cursorVertexShader;
+	this.fragmentShader = CV.Shaders.cursorFragmentShader;
+
+	this.type = "CursorMaterial";
+
+	return this;
+}
+
+
+CV.CursorMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.CursorMaterial.prototype.constructor = CV.CursorMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.DepthMapMaterial = function ( minHeight, maxHeight ) {
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+
+			minZ:   { value: minHeight },
+			scaleZ: { value: 1 / ( maxHeight - minHeight ) }
+
+		},
+
+		vertexShader:    CV.Shaders.depthMapVertexShader,
+		fragmentShader:  CV.Shaders.depthMapFragmentShader,
+		depthWrite:      false,
+		type:            "CV.DepthMapMaterial"
+
+	} );
+
+	return this;
+
+}
+
+CV.DepthMapMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.DepthMapMaterial.prototype.constructor = CV.DepthMapMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.DepthMaterial = function ( type, limits, texture ) {
+
+	var range   = limits.size();
+	var defines = {};
+
+	if ( type === CV.MATERIAL_LINE ) {
+
+		defines.USE_COLOR = true;
+
+	} else {
+
+		defines.SURFACE = true;
+
+	}
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+			// pseudo light source somewhere over viewer's left shoulder.
+			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
+
+			minX:     { value: limits.min.x },
+			minY:     { value: limits.min.y },
+			minZ:     { value: limits.min.z },
+			scaleX:   { value: 1 / range.x },
+			scaleY:   { value: 1 / range.y },
+			scaleZ:   { value: 1 / range.z },
+			cmap:     { value: CV.Colours.gradientTexture },
+			depthMap: { value: texture }
+
+		},
+
+		defines: defines,
+		vertexShader: CV.Shaders.depthVertexShader,
+		fragmentShader: CV.Shaders.depthFragmentShader
+	} );
+
+	this.type = "CV.DepthMaterial";
+
+	return this;
+
+}
+
+CV.DepthMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.DepthMaterial.prototype.constructor = CV.DepthMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.HeightMaterial = function ( type, minHeight, maxHeight ) {
+
+	THREE.ShaderMaterial.call( this );
+
+	this.defines = {};
+
+	if ( type === CV.MATERIAL_LINE ) {
+
+		this.defines.USE_COLOR = true;
+
+	} else {
+
+		this.defines.SURFACE = true;
+
+	}
+	
+	this.uniforms = {
+
+			// pseudo light source somewhere over viewer's left shoulder.
+			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
+
+			minZ:   { value: minHeight },
+			scaleZ: { value: 1 / ( maxHeight - minHeight ) },
+			cmap:   { value: CV.Colours.gradientTexture }
+
+		};
+
+	this.vertexShader   = CV.Shaders.heightVertexShader;
+	this.fragmentShader = CV.Shaders.heightFragmentShader;
+
+	this.type = "CV.HeightMaterial";
+
+	return this;
+
+}
+
+CV.HeightMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.HeightMaterial.prototype.constructor = CV.HeightMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.Materials = ( function () {
+
+var cache = new Map();
+var viewState;
+
+function getHeightMaterial ( type ) {
+
+	var name = "height" + type;
+
+	if ( cache.has( name ) ) return cache.get( name );
+
+	var material = new CV.HeightMaterial( type, viewState.minHeight, viewState.maxHeight );
+
+	cache.set(name, material);
+
+	viewState.addEventListener( "newCave",  _updateHeightMaterial );
+
+	return material;
+
+	function _updateHeightMaterial ( event ) {
+
+		var minHeight = viewState.minHeight;
+		var maxHeight = viewState.maxHeight;
+
+		material.uniforms.minZ.value = minHeight;
+		material.uniforms.scaleZ.value =  1 / ( maxHeight - minHeight );
+
+	}
+
+}
+
+function getDepthMapMaterial () {
+
+	return new CV.DepthMapMaterial( viewState.minHeight, viewState.maxHeight );
+
+}
+
+function createDepthMaterial ( type, limits, texture ) {
+
+	var name = "depth" + type;
+
+	var material = new CV.DepthMaterial( type, limits, texture );
+
+	cache.set( name, material );
+
+	viewState.addEventListener( "newCave",  _updateDepthMaterial );
+
+	return material;
+
+	function _updateDepthMaterial ( event ) {
+
+		cache.delete( name );
+
+	}
+
+}
+
+function getDepthMaterial ( type ) {
+
+	 return cache.get( "depth" + type );	
+
+}
+
+function getCursorMaterial ( type, halfWidth ) {
+
+	var name = "cursor" + type;
+
+	if ( cache.has(name) ) return cache.get( name );
+
+	var initialHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
+
+	var material = new CV.CursorMaterial( type, initialHeight );
+
+	cache.set( name, material );
+
+	viewState.addEventListener( "cursorChange",  _updateCursorMaterial );
+
+	return material;
+
+	function _updateCursorMaterial ( event ) {
+
+		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
+
+		material.uniforms.cursor.value = cursorHeight;
+
+	}
+
+}
+
+function getLineMaterial () {
+
+	var name = "line";
+
+	if ( cache.has( name ) ) {
+
+		return cache.get(name);
+
+	}
+
+	var material = new THREE.LineBasicMaterial( { color: 0xFFFFFF, vertexColors: THREE.VertexColors } );
+
+	cache.set( name, material );
+
+	return material;
+
+}
+
+function initCache ( viewerViewState ) {
+
+	cache.clear();
+
+	viewState = viewerViewState;
+
+}
+
+return {
+
+	createDepthMaterial: createDepthMaterial,
+	getHeightMaterial:   getHeightMaterial,
+	getDepthMapMaterial: getDepthMapMaterial,
+	getDepthMaterial:    getDepthMaterial,
+	getCursorMaterial:   getCursorMaterial,
+	getLineMaterial:     getLineMaterial,
+	initCache:           initCache
+
+};
+
+
+} () );
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.PWMaterial = function () {
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+    		zoom:   new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
+			offset: { value: new THREE.Vector2(1.150, 0.275) },
+  			cmap:   { value: CV.Colours.gradientTexture },
+			uLight: { value: new THREE.Vector3( -1, -1, 2 ) }
+   		 },
+
+		vertexShader: CV.Shaders.pwVertexShader,
+		fragmentShader: CV.Shaders.pwFragmentShader
+
+	} );
+
+	this.type = "PWMaterial";
+
+	return this;
+
+	function _updateZoomUniform() {
+
+		this.value += 0.008;
+
+	}
+
+}
+
+CV.PWMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.PWMaterial.prototype.constructor = CV.PWMaterial;
+
+// EOF
+"use strict";
+
+CV.TestMaterial = function ( spread ) {
+
+	var i = 1;
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+
+			spread: { value: spread },
+			rIn: new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
+
+		},
+
+		vertexShader:   CV.Shaders.testVertexShader,	
+		fragmentShader: CV.Shaders.testFragmentShader,
+		vertexColors:   THREE.VertexColors
+	} );
+
+	this.type = "CV.TestMaterial";
+
+	return this;
+
+	function _updateZoomUniform() {
+
+		if ( ++i % 5 ) return;
+		this.value = Math.random();
+
+	}
+
+}
+
+CV.TestMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.TestMaterial.prototype.constructor = CV.TestMaterial;
+
+// EOF
  "use strict";
 
 var CV = CV || {};
@@ -2774,380 +3154,27 @@ CV.Svx3dHandler.prototype.getName = function () {
 
 var CV = CV || {};
 
-CV.CursorMaterial = function ( type, initialHeight ) {
+CV.Shaders = (function() {
 
-	THREE.ShaderMaterial.call( this );
-
-	this.defines = {};
-
-	if ( type === CV.MATERIAL_LINE ) {
-
-		this.defines.USE_COLOR = true;
-
-	} else {
-
-		this.defines.SURFACE = true;
-
-	}
-
-	this.uniforms = {
-			uLight:      { value: new THREE.Vector3( -1, -1, 2 ) },
-			cursor:      { value: initialHeight },
-			cursorWidth: { value: 5.0 },
-			baseColor:   { value: new THREE.Color( 0x888888 ) },
-			cursorColor: { value: new THREE.Color( 0x00ff00 ) }
-		};
-
-	this.vertexShader   = CV.Shaders.cursorVertexShader;
-	this.fragmentShader = CV.Shaders.cursorFragmentShader;
-
-	this.type = "CursorMaterial";
-
-	return this;
-}
-
-
-CV.CursorMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.CursorMaterial.prototype.constructor = CV.CursorMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.DepthMapMaterial = function ( minHeight, maxHeight ) {
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-
-			minZ:   { value: minHeight },
-			scaleZ: { value: 1 / ( maxHeight - minHeight ) }
-
-		},
-
-		vertexShader:    CV.Shaders.depthMapVertexShader,
-		fragmentShader:  CV.Shaders.depthMapFragmentShader,
-		depthWrite:      false,
-		type:            "CV.DepthMapMaterial"
-
-	} );
-
-	return this;
-
-}
-
-CV.DepthMapMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.DepthMapMaterial.prototype.constructor = CV.DepthMapMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.DepthMaterial = function ( type, limits, texture ) {
-
-	var range   = limits.size();
-	var defines = {};
-
-	if ( type === CV.MATERIAL_LINE ) {
-
-		defines.USE_COLOR = true;
-
-	} else {
-
-		defines.SURFACE = true;
-
-	}
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-			// pseudo light source somewhere over viewer's left shoulder.
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
-
-			minX:     { value: limits.min.x },
-			minY:     { value: limits.min.y },
-			minZ:     { value: limits.min.z },
-			scaleX:   { value: 1 / range.x },
-			scaleY:   { value: 1 / range.y },
-			scaleZ:   { value: 1 / range.z },
-			cmap:     { value: CV.Colours.gradientTexture },
-			depthMap: { value: texture }
-
-		},
-
-		defines: defines,
-		vertexShader: CV.Shaders.depthVertexShader,
-		fragmentShader: CV.Shaders.depthFragmentShader
-	} );
-
-	this.type = "CV.DepthMaterial";
-
-	return this;
-
-}
-
-CV.DepthMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.DepthMaterial.prototype.constructor = CV.DepthMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.HeightMaterial = function ( type, minHeight, maxHeight ) {
-
-	THREE.ShaderMaterial.call( this );
-
-	this.defines = {};
-
-	if ( type === CV.MATERIAL_LINE ) {
-
-		this.defines.USE_COLOR = true;
-
-	} else {
-
-		this.defines.SURFACE = true;
-
-	}
-	
-	this.uniforms = {
-
-			// pseudo light source somewhere over viewer's left shoulder.
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
-
-			minZ:   { value: minHeight },
-			scaleZ: { value: 1 / ( maxHeight - minHeight ) },
-			cmap:   { value: CV.Colours.gradientTexture }
-
-		};
-
-	this.vertexShader   = CV.Shaders.heightVertexShader;
-	this.fragmentShader = CV.Shaders.heightFragmentShader;
-
-	this.type = "CV.HeightMaterial";
-
-	return this;
-
-}
-
-CV.HeightMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.HeightMaterial.prototype.constructor = CV.HeightMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.Materials = ( function () {
-
-var cache = new Map();
-var viewState;
-
-function getHeightMaterial ( type ) {
-
-	var name = "height" + type;
-
-	if ( cache.has( name ) ) return cache.get( name );
-
-	var material = new CV.HeightMaterial( type, viewState.minHeight, viewState.maxHeight );
-
-	cache.set(name, material);
-
-	viewState.addEventListener( "newCave",  _updateHeightMaterial );
-
-	return material;
-
-	function _updateHeightMaterial ( event ) {
-
-		var minHeight = viewState.minHeight;
-		var maxHeight = viewState.maxHeight;
-
-		material.uniforms.minZ.value = minHeight;
-		material.uniforms.scaleZ.value =  1 / ( maxHeight - minHeight );
-
-	}
-
-}
-
-function getDepthMapMaterial () {
-
-	return new CV.DepthMapMaterial( viewState.minHeight, viewState.maxHeight );
-
-}
-
-function createDepthMaterial ( type, limits, texture ) {
-
-	var name = "depth" + type;
-
-	var material = new CV.DepthMaterial( type, limits, texture );
-
-	cache.set( name, material );
-
-	viewState.addEventListener( "newCave",  _updateDepthMaterial );
-
-	return material;
-
-	function _updateDepthMaterial ( event ) {
-
-		cache.delete( name );
-
-	}
-
-}
-
-function getDepthMaterial ( type ) {
-
-	 return cache.get( "depth" + type );	
-
-}
-
-function getCursorMaterial ( type, halfWidth ) {
-
-	var name = "cursor" + type;
-
-	if ( cache.has(name) ) return cache.get( name );
-
-	var initialHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
-
-	var material = new CV.CursorMaterial( type, initialHeight );
-
-	cache.set( name, material );
-
-	viewState.addEventListener( "cursorChange",  _updateCursorMaterial );
-
-	return material;
-
-	function _updateCursorMaterial ( event ) {
-
-		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
-
-		material.uniforms.cursor.value = cursorHeight;
-
-	}
-
-}
-
-function getLineMaterial () {
-
-	var name = "line";
-
-	if ( cache.has( name ) ) {
-
-		return cache.get(name);
-
-	}
-
-	var material = new THREE.LineBasicMaterial( { color: 0xFFFFFF, vertexColors: THREE.VertexColors } );
-
-	cache.set( name, material );
-
-	return material;
-
-}
-
-function initCache ( viewerViewState ) {
-
-	cache.clear();
-
-	viewState = viewerViewState;
-
-}
+// export public interface
 
 return {
-
-	createDepthMaterial: createDepthMaterial,
-	getHeightMaterial:   getHeightMaterial,
-	getDepthMapMaterial: getDepthMapMaterial,
-	getDepthMaterial:    getDepthMaterial,
-	getCursorMaterial:   getCursorMaterial,
-	getLineMaterial:     getLineMaterial,
-	initCache:           initCache
+	testVertexShader:        "\n#include <common>\nuniform float spread;\nuniform float rIn;\nvoid main() {\n	vec3 nPosition = position;\n	nPosition.x += rand( nPosition.xy * rIn ) * color.r * spread;\n	nPosition.y += rand( nPosition.xx * rIn ) * color.r * spread;\n	nPosition.z -= abs( rand( nPosition.yx * rIn ) ) * color.r * spread;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( nPosition, 1.0 );\n	gl_PointSize = 2.0;\n}\n",
+	testFragmentShader:      "\nvoid main() {\n	gl_FragColor = vec4( 0.0, 0.1, 1.0, 1.0 );\n}\n",
+	heightVertexShader:      "\nuniform sampler2D cmap;\nuniform float minZ;\nuniform float scaleZ;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float zMap;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	zMap = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	heightFragmentShader:    "\nuniform sampler2D cmap;\nvarying float zMap;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
+	cursorVertexShader:      "\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\n	\nvarying vec3 vColor;\n#endif\nvarying float height;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	height = position.z;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	cursorFragmentShader:    "\nuniform float cursor;\nuniform float cursorWidth;\nuniform vec3 baseColor;\nuniform vec3 cursorColor;\nvarying float height;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n#else\n	float light = 1.0;\n#endif\n	float delta = abs( height - cursor );\n	float ss = smoothstep( 0.0, cursorWidth, cursorWidth - delta );\n#ifdef SURFACE\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light;\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 );\n	}\n#else\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light * vec4( vColor, 1.0 );\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 ) * vec4( vColor, 1.0 );\n	}\n#endif\n}\n",
+	depthMapVertexShader:    "\nuniform float minZ;\nuniform float scaleZ;\nvarying float vHeight;\nvoid main() {\n	vHeight = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	depthMapFragmentShader:  "\nvarying float vHeight;\nvoid main() {\n	gl_FragColor = vec4(vHeight, vHeight, vHeight, 1.0);\n}\n",
+	depthVertexShader:       "\nuniform float minX;\nuniform float minY;\nuniform float minZ;\nuniform float scaleX;\nuniform float scaleY;\nuniform float scaleZ;\nuniform sampler2D depthMap;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float vHeight;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	vec2 terrainCoords = vec2( ( position.x - minX ) * scaleX, ( position.y - minY ) * scaleY );\n	vec4 terrainHeight = texture2D( depthMap, terrainCoords );\n	vHeight =  terrainHeight.g  - ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	depthFragmentShader:     "\nuniform sampler2D cmap;\nvarying float vHeight;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
+	pwVertexShader:          "\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n	vUv = uv;	\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	pwFragmentShader:        "\nprecision highp float;\nuniform sampler2D cmap;\nuniform float zoom;\nuniform vec2 offset;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	float square;\n	float x = 0.0;\n	float y = 0.0;\n	float xt;\n	float yt;\n	float light;\n	vec2 c = ( vUv - vec2( 0.5, 0.5 ) ) * 4.0 / zoom - offset;\n	for ( float i = 0.0; i < 1.0; i += 0.001 ) {\n		xt = x * x - y * y + c.x;\n		yt = 2.0 * x * y + c.y;\n		x = xt;\n		y = yt;\n		square = x * x + y * y;\n		light = dot( normalize( vNormal ), normalize( lNormal ) );\n		gl_FragColor = texture2D( cmap, vec2( i, 1.0 ) ) * light;\n		if ( square >= 4.0 ) break;\n	}\n}\n"
 
 };
 
-
-} () );
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.PWMaterial = function () {
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-    		zoom:   new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
-			offset: { value: new THREE.Vector2(1.150, 0.275) },
-  			cmap:   { value: CV.Colours.gradientTexture },
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) }
-   		 },
-
-		vertexShader: CV.Shaders.pwVertexShader,
-		fragmentShader: CV.Shaders.pwFragmentShader
-
-	} );
-
-	this.type = "PWMaterial";
-
-	return this;
-
-	function _updateZoomUniform() {
-
-		this.value += 0.008;
-
-	}
-
-}
-
-CV.PWMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.PWMaterial.prototype.constructor = CV.PWMaterial;
-
-// EOF
-"use strict";
-
-CV.TestMaterial = function ( spread ) {
-
-	var i = 1;
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-
-			spread: { value: spread },
-			rIn: new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
-
-		},
-
-		vertexShader:   CV.Shaders.testVertexShader,	
-		fragmentShader: CV.Shaders.testFragmentShader,
-		vertexColors:   THREE.VertexColors
-	} );
-
-	this.type = "CV.TestMaterial";
-
-	return this;
-
-	function _updateZoomUniform() {
-
-		if ( ++i % 5 ) return;
-		this.value = Math.random();
-
-	}
-
-}
-
-CV.TestMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.TestMaterial.prototype.constructor = CV.TestMaterial;
+} () );// end of Shader Module
 
 // EOF
 "use strict";
@@ -3778,15 +3805,15 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 
 	var tileSpec = {
 		tileSet: tileSet,
-		resolution: resolution, 
-		tileX: x, 
+		resolution: resolution,
+		tileX: x,
 		tileY: y,
 		clip: clip
 	}
 
 	// start web worker and create new geometry in it.
 
-	var tileLoader = new Worker( "CaveView/js/workers/tileWorker.js" );
+	var tileLoader = new Worker( CV.getEnvironmentValue( "cvDirectory", "" ) + "CaveView/js/workers/tileWorker.js" );
 
 	tileLoader.onmessage = _mapLoaded;
 
@@ -4328,27 +4355,404 @@ CV.TileSet = {
 
 var CV = CV || {};
 
-CV.Shaders = (function() {
+CV.Page = function ( frame, id ) {
 
-// export public interface
+	var tab  = document.createElement( "div" );
+	var page = document.createElement( "div" );
 
-return {
-	testVertexShader:        "\n#include <common>\nuniform float spread;\nuniform float rIn;\nvoid main() {\n	vec3 nPosition = position;\n	nPosition.x += rand( nPosition.xy * rIn ) * color.r * spread;\n	nPosition.y += rand( nPosition.xx * rIn ) * color.r * spread;\n	nPosition.z -= abs( rand( nPosition.yx * rIn ) ) * color.r * spread;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( nPosition, 1.0 );\n	gl_PointSize = 2.0;\n}\n",
-	testFragmentShader:      "\nvoid main() {\n	gl_FragColor = vec4( 0.0, 0.1, 1.0, 1.0 );\n}\n",
-	heightVertexShader:      "\nuniform sampler2D cmap;\nuniform float minZ;\nuniform float scaleZ;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float zMap;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	zMap = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	heightFragmentShader:    "\nuniform sampler2D cmap;\nvarying float zMap;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
-	cursorVertexShader:      "\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\n	\nvarying vec3 vColor;\n#endif\nvarying float height;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	height = position.z;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	cursorFragmentShader:    "\nuniform float cursor;\nuniform float cursorWidth;\nuniform vec3 baseColor;\nuniform vec3 cursorColor;\nvarying float height;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n#else\n	float light = 1.0;\n#endif\n	float delta = abs( height - cursor );\n	float ss = smoothstep( 0.0, cursorWidth, cursorWidth - delta );\n#ifdef SURFACE\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light;\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 );\n	}\n#else\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light * vec4( vColor, 1.0 );\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 ) * vec4( vColor, 1.0 );\n	}\n#endif\n}\n",
-	depthMapVertexShader:    "\nuniform float minZ;\nuniform float scaleZ;\nvarying float vHeight;\nvoid main() {\n	vHeight = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	depthMapFragmentShader:  "\nvarying float vHeight;\nvoid main() {\n	gl_FragColor = vec4(vHeight, vHeight, vHeight, 1.0);\n}\n",
-	depthVertexShader:       "\nuniform float minX;\nuniform float minY;\nuniform float minZ;\nuniform float scaleX;\nuniform float scaleY;\nuniform float scaleZ;\nuniform sampler2D depthMap;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float vHeight;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	vec2 terrainCoords = vec2( ( position.x - minX ) * scaleX, ( position.y - minY ) * scaleY );\n	vec4 terrainHeight = texture2D( depthMap, terrainCoords );\n	vHeight =  terrainHeight.g  - ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	depthFragmentShader:     "\nuniform sampler2D cmap;\nvarying float vHeight;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
-	pwVertexShader:          "\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n	vUv = uv;	\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	pwFragmentShader:        "\nprecision highp float;\nuniform sampler2D cmap;\nuniform float zoom;\nuniform vec2 offset;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	float square;\n	float x = 0.0;\n	float y = 0.0;\n	float xt;\n	float yt;\n	float light;\n	vec2 c = ( vUv - vec2( 0.5, 0.5 ) ) * 4.0 / zoom - offset;\n	for ( float i = 0.0; i < 1.0; i += 0.001 ) {\n		xt = x * x - y * y + c.x;\n		yt = 2.0 * x * y + c.y;\n		x = xt;\n		y = yt;\n		square = x * x + y * y;\n		light = dot( normalize( vNormal ), normalize( lNormal ) );\n		gl_FragColor = texture2D( cmap, vec2( i, 1.0 ) ) * light;\n		if ( square >= 4.0 ) break;\n	}\n}\n"
+	page.classList.add( "page" );
 
-};
+	tab.id = id;
+	tab.classList.add( "tab" );
+	tab.addEventListener( "click", this.tabHandleClick );
+	tab.style.top = ( CV.Page.position++ * 40 ) + "px";
 
-} () );// end of Shader Module
+	frame.appendChild( tab );
+	frame.appendChild( page );
+
+	CV.Page.pages.push( { tab: tab, page: page } );
+
+	this.page = page;
+	this.slide = undefined;
+
+}
+
+CV.Page.pages     = [];
+CV.Page.position  = 0;
+CV.Page.inHandler = false;
+CV.Page.controls  = [];
+
+CV.Page.reset = function () {
+
+	CV.Page.pages     = [];
+	CV.Page.position  = 0;
+	CV.Page.inHandler = false;
+	CV.Page.controls  = [];
+
+}
+
+CV.Page.handleChange = function ( event ) {
+
+	var obj = event.target;
+	var property = event.name;
+
+	if ( !CV.Page.inHandle ) {
+
+		if ( CV.Page.controls[ property ] ) {
+
+			var ctrl = CV.Page.controls[ property] ;
+
+			switch ( ctrl.type ) {
+
+			case "checkbox":
+
+				ctrl.checked = obj[ property ];
+
+				break;
+
+			case "select-one":
+
+				ctrl.value = obj[ property ];
+
+				break;
+
+			case "range":
+
+				ctrl.value = obj[ property ];
+
+				break;
+
+			}
+
+		}
+
+	}
+
+}
+
+CV.Page.prototype.constructor = CV.Page;
+
+CV.Page.prototype.tabHandleClick = function ( event ) {
+
+	var tab = event.target;
+	var pages = CV.Page.pages;
+
+	tab.classList.add( "toptab" );
+	tab.parentElement.classList.add( "onscreen" );
+
+	for ( var i = 0, l = pages.length; i < l; i++ ) {
+
+		var otherTab  = pages[ i ].tab;
+		var otherPage = pages[ i ].page;
+
+		if ( otherTab === tab ) {
+
+			otherPage.style.display = "block";
+
+		} else {
+
+			otherTab.classList.remove( "toptab" );
+			otherPage.style.display = "none";
+
+		}
+
+	}
+
+}
+
+CV.Page.prototype.appendChild = function ( domElement ) {
+
+	this.page.appendChild( domElement );
+
+}
+
+CV.Page.prototype.addHeader = function ( text ) {
+
+	var div = document.createElement( "div" );
+
+	div.classList.add( "header" );
+	div.textContent = text;
+	this.page.appendChild( div );
+
+	return div;
+
+}
+
+CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
+
+	var div    = document.createElement( "div" );
+	var label  = document.createElement( "label" );
+	var select = document.createElement( "select" );
+	var opt;
+
+	div.classList.add( "control" );
+
+	if ( obj instanceof Array ) {
+
+		for ( var i = 0, l = obj.length; i < l; i++ ) {
+
+			opt = document.createElement( "option" );
+
+			opt.value = i;
+			opt.text  = obj[ i ];
+
+			if ( opt.text === trgObj[ property ] ) opt.selected = true;
+
+			select.add( opt, null );
+
+		}
+
+		select.addEventListener( "change", function ( event ) { CV.Page.inHandler = true; trgObj[property] = obj[event.target.value]; CV.Page.inHandler = false; } );
+
+	} else {
+
+		for ( var p in obj ) {
+
+			opt = document.createElement( "option" );
+
+			opt.text  = p;
+			opt.value = obj[ p ];
+
+			if ( opt.value == trgObj[ property ] ) opt.selected = true;
+
+			select.add( opt, null );
+
+		}
+
+		select.addEventListener( "change", function ( event ) { CV.Page.inHandler = true; trgObj[property] = event.target.value; CV.Page.inHandler = false; } );
+
+	}
+
+	label.textContent = title;
+
+	CV.Page.controls[ property ] = select;
+
+	div.appendChild( label );
+	div.appendChild( select );
+
+	this.page.appendChild( div );
+
+	return div;
+
+}
+
+CV.Page.prototype.addCheckbox = function ( title, obj, property ) {
+
+	var label = document.createElement( "label" );
+	var cb    = document.createElement( "input" );
+
+	label.textContent = title;
+
+	cb.type    = "checkbox";
+	cb.checked = obj[ property ];
+
+	cb.addEventListener( "change", _checkboxChanged );
+
+	CV.Page.controls[ property ] = cb;
+
+	label.appendChild( cb );
+
+	this.page.appendChild( label );
+
+	return;
+
+	function _checkboxChanged ( event ) {
+
+		CV.Page.inHandler = true;
+
+		obj[ property ] = event.target.checked; 
+
+		CV.Page.inHandler = false;
+
+	}
+
+}
+
+CV.Page.prototype.addRange = function ( title, obj, property ) {
+
+	var div = document.createElement( "div" );
+	var label = document.createElement( "label" );
+	var range = document.createElement( "input" );
+
+	div.classList.add( "control" );
+
+	range.type = "range";
+
+	range.min  = 0;
+	range.max  = 1;
+
+	range.step = 0.05;
+	range.value = obj[ property ];
+
+	range.addEventListener( "input", _rangeChanged );
+	range.addEventListener( "change", _rangeChanged ); // for IE11 support
+	
+	label.textContent = title;
+
+	CV.Page.controls[ property ] = range;
+
+	div.appendChild( label );
+	div.appendChild( range );
+
+	this.page.appendChild( div );
+
+	return div;
+
+	function _rangeChanged ( event ) {
+
+		CV.Page.inHandler = true;
+
+		obj[ property ] = event.target.value; 
+
+		CV.Page.inHandler = false;
+
+	}
+
+}
+
+CV.Page.prototype.addSlide = function ( domElement, depth, handleClick ) {
+
+	var slide = document.createElement( "div" );
+
+	slide.classList.add( "slide" );
+	slide.style.zIndex = 200 - depth;
+
+	slide.addEventListener( "click", handleClick );
+	slide.appendChild( domElement );
+
+	this.page.appendChild( slide );
+
+	this.slide = slide;
+	this.slideDepth = depth;
+
+	return slide;
+
+}
+
+CV.Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
+
+	var newSlide = document.createElement( "div" );
+	var oldSlide = this.slide;
+	var page = this.page;
+	var redraw;
+
+	newSlide.classList.add( "slide" );
+	newSlide.style.zIndex = 200 - depth;
+	newSlide.addEventListener( "click", handleClick );
+
+	if (depth < this.slideDepth) {
+
+		newSlide.classList.add( "slide-out" );
+
+	}
+
+	newSlide.appendChild( domElement );
+
+	page.appendChild( newSlide );
+
+	if ( depth > this.slideDepth ) {
+
+		oldSlide.addEventListener( "transitionend", afterSlideOut );
+		oldSlide.classList.add( "slide-out" );
+
+		redraw = oldSlide.clientHeight;
+
+	} else {
+
+		newSlide.addEventListener( "transitionend", afterSlideIn );
+
+		redraw = newSlide.clientHeight;
+
+		newSlide.classList.remove( "slide-out" );
+
+	}
+
+	this.slide = newSlide;
+	this.slideDepth = depth;
+
+	return;	
+
+	function afterSlideOut () {
+
+		oldSlide.removeEventListener( "transitionend", afterSlideOut );
+		page.removeChild(oldSlide);
+
+	}
+
+	function afterSlideIn () {
+
+		page.removeChild(oldSlide);
+		newSlide.removeEventListener( "transitionend", afterSlideIn );
+
+	}
+
+}
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.ProgressBar = function ( container ) {
+
+	var offset = ( container.clientWidth - 300 ) / 2;
+
+	var statusText  = document.createElement( "div" );
+
+	statusText.id  = "status-text";
+	statusText.style.width = "300px";
+	statusText.style.left  = offset + "px";
+
+	var progressBar = document.createElement( "progress" );
+
+	progressBar.id = "progress-bar";
+
+	progressBar.style.width = "300px";
+	progressBar.style.left  = offset + "px";
+
+	progressBar.setAttribute( "max", "100" );
+
+	this.container   = container;
+	this.progressBar = progressBar;
+	this.statusText  = statusText;
+
+}
+
+CV.ProgressBar.prototype.constructor = CV.ProgressBar;
+
+CV.ProgressBar.prototype.Start = function ( text ) {
+
+	var statusText  = this.statusText;
+	var progressBar = this.progressBar;
+
+	statusText.textContent = text;
+	progressBar.value = 0;
+
+	this.container.appendChild( statusText );
+	this.container.appendChild( progressBar );
+
+}
+
+CV.ProgressBar.prototype.Update = function ( pcent ) {
+
+	this.progressBar.value = pcent;
+
+}
+
+CV.ProgressBar.prototype.Add = function ( pcent ) {
+
+	this.progressBar.value += pcent;
+
+}
+
+CV.ProgressBar.prototype.End = function () {
+
+	var container = this.container;
+
+	container.removeChild( this.statusText );
+	container.removeChild( this.progressBar );
+
+}
 
 // EOF
 
@@ -4440,8 +4844,8 @@ CV.Marker = ( function () {
 	var pointer = new CV.EntrancePointer( 5, labelOffset - 10, red, yellow );
 	var marker  = new THREE.Geometry();
 	var loader  = new THREE.TextureLoader();
-
-	var markerTexture  = loader.load( CV.getEnvironmentValue( "cvDirectory", "yyy" ) + "CaveView/images/marker-yellow.png" );
+// FIXME needs to delayed to init stage
+	var markerTexture  = loader.load( CV.getEnvironmentValue( "cvDirectory", "" ) + "CaveView/images/marker-yellow.png" );
 
 	var markerMaterial = new THREE.PointsMaterial( { size: 10, map: markerTexture, transparent : true, sizeAttenuation: false } );
 
@@ -5953,410 +6357,6 @@ CV.Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 	}
 
 	geometry.colorsNeedUpdate = true; 
-
-}
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.Page = function ( frame, id ) {
-
-	var tab  = document.createElement( "div" );
-	var page = document.createElement( "div" );
-
-	page.classList.add( "page" );
-
-	tab.id = id;
-	tab.classList.add( "tab" );
-	tab.addEventListener( "click", this.tabHandleClick );
-	tab.style.top = ( CV.Page.position++ * 40 ) + "px";
-
-	frame.appendChild( tab );
-	frame.appendChild( page );
-
-	CV.Page.pages.push( { tab: tab, page: page } );
-
-	this.page = page;
-	this.slide = undefined;
-
-}
-
-CV.Page.pages     = [];
-CV.Page.position  = 0;
-CV.Page.inHandler = false;
-CV.Page.controls  = [];
-
-CV.Page.reset = function () {
-
-	CV.Page.pages     = [];
-	CV.Page.position  = 0;
-	CV.Page.inHandler = false;
-	CV.Page.controls  = [];
-
-}
-
-CV.Page.handleChange = function ( event ) {
-
-	var obj = event.target;
-	var property = event.name;
-
-	if ( !CV.Page.inHandle ) {
-
-		if ( CV.Page.controls[ property ] ) {
-
-			var ctrl = CV.Page.controls[ property] ;
-
-			switch ( ctrl.type ) {
-
-			case "checkbox":
-
-				ctrl.checked = obj[ property ];
-
-				break;
-
-			case "select-one":
-
-				ctrl.value = obj[ property ];
-
-				break;
-
-			case "range":
-
-				ctrl.value = obj[ property ];
-
-				break;
-
-			}
-
-		}
-
-	}
-
-}
-
-CV.Page.prototype.constructor = CV.Page;
-
-CV.Page.prototype.tabHandleClick = function ( event ) {
-
-	var tab = event.target;
-	var pages = CV.Page.pages;
-
-	tab.classList.add( "toptab" );
-	tab.parentElement.classList.add( "onscreen" );
-
-	for ( var i = 0, l = pages.length; i < l; i++ ) {
-
-		var otherTab  = pages[ i ].tab;
-		var otherPage = pages[ i ].page;
-
-		if ( otherTab === tab ) {
-
-			otherPage.style.display = "block";
-
-		} else {
-
-			otherTab.classList.remove( "toptab" );
-			otherPage.style.display = "none";
-
-		}
-
-	}
-
-}
-
-CV.Page.prototype.appendChild = function ( domElement ) {
-
-	this.page.appendChild( domElement );
-
-}
-
-CV.Page.prototype.addHeader = function ( text ) {
-
-	var div = document.createElement( "div" );
-
-	div.classList.add( "header" );
-	div.textContent = text;
-	this.page.appendChild( div );
-
-	return div;
-
-}
-
-CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
-
-	var div    = document.createElement( "div" );
-	var label  = document.createElement( "label" );
-	var select = document.createElement( "select" );
-	var opt;
-
-	div.classList.add( "control" );
-
-	if ( obj instanceof Array ) {
-
-		for ( var i = 0, l = obj.length; i < l; i++ ) {
-
-			opt = document.createElement( "option" );
-
-			opt.value = i;
-			opt.text  = obj[ i ];
-
-			if ( opt.text === trgObj[ property ] ) opt.selected = true;
-
-			select.add( opt, null );
-
-		}
-
-		select.addEventListener( "change", function ( event ) { CV.Page.inHandler = true; trgObj[property] = obj[event.target.value]; CV.Page.inHandler = false; } );
-
-	} else {
-
-		for ( var p in obj ) {
-
-			opt = document.createElement( "option" );
-
-			opt.text  = p;
-			opt.value = obj[ p ];
-
-			if ( opt.value == trgObj[ property ] ) opt.selected = true;
-
-			select.add( opt, null );
-
-		}
-
-		select.addEventListener( "change", function ( event ) { CV.Page.inHandler = true; trgObj[property] = event.target.value; CV.Page.inHandler = false; } );
-
-	}
-
-	label.textContent = title;
-
-	CV.Page.controls[ property ] = select;
-
-	div.appendChild( label );
-	div.appendChild( select );
-
-	this.page.appendChild( div );
-
-	return div;
-
-}
-
-CV.Page.prototype.addCheckbox = function ( title, obj, property ) {
-
-	var label = document.createElement( "label" );
-	var cb    = document.createElement( "input" );
-
-	label.textContent = title;
-
-	cb.type    = "checkbox";
-	cb.checked = obj[ property ];
-
-	cb.addEventListener( "change", _checkboxChanged );
-
-	CV.Page.controls[ property ] = cb;
-
-	label.appendChild( cb );
-
-	this.page.appendChild( label );
-
-	return;
-
-	function _checkboxChanged ( event ) {
-
-		CV.Page.inHandler = true;
-
-		obj[ property ] = event.target.checked; 
-
-		CV.Page.inHandler = false;
-
-	}
-
-}
-
-CV.Page.prototype.addRange = function ( title, obj, property ) {
-
-	var div = document.createElement( "div" );
-	var label = document.createElement( "label" );
-	var range = document.createElement( "input" );
-
-	div.classList.add( "control" );
-
-	range.type = "range";
-
-	range.min  = 0;
-	range.max  = 1;
-
-	range.step = 0.05;
-	range.value = obj[ property ];
-
-	range.addEventListener( "input", _rangeChanged );
-	range.addEventListener( "change", _rangeChanged ); // for IE11 support
-	
-	label.textContent = title;
-
-	CV.Page.controls[ property ] = range;
-
-	div.appendChild( label );
-	div.appendChild( range );
-
-	this.page.appendChild( div );
-
-	return div;
-
-	function _rangeChanged ( event ) {
-
-		CV.Page.inHandler = true;
-
-		obj[ property ] = event.target.value; 
-
-		CV.Page.inHandler = false;
-
-	}
-
-}
-
-CV.Page.prototype.addSlide = function ( domElement, depth, handleClick ) {
-
-	var slide = document.createElement( "div" );
-
-	slide.classList.add( "slide" );
-	slide.style.zIndex = 200 - depth;
-
-	slide.addEventListener( "click", handleClick );
-	slide.appendChild( domElement );
-
-	this.page.appendChild( slide );
-
-	this.slide = slide;
-	this.slideDepth = depth;
-
-	return slide;
-
-}
-
-CV.Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
-
-	var newSlide = document.createElement( "div" );
-	var oldSlide = this.slide;
-	var page = this.page;
-	var redraw;
-
-	newSlide.classList.add( "slide" );
-	newSlide.style.zIndex = 200 - depth;
-	newSlide.addEventListener( "click", handleClick );
-
-	if (depth < this.slideDepth) {
-
-		newSlide.classList.add( "slide-out" );
-
-	}
-
-	newSlide.appendChild( domElement );
-
-	page.appendChild( newSlide );
-
-	if ( depth > this.slideDepth ) {
-
-		oldSlide.addEventListener( "transitionend", afterSlideOut );
-		oldSlide.classList.add( "slide-out" );
-
-		redraw = oldSlide.clientHeight;
-
-	} else {
-
-		newSlide.addEventListener( "transitionend", afterSlideIn );
-
-		redraw = newSlide.clientHeight;
-
-		newSlide.classList.remove( "slide-out" );
-
-	}
-
-	this.slide = newSlide;
-	this.slideDepth = depth;
-
-	return;	
-
-	function afterSlideOut () {
-
-		oldSlide.removeEventListener( "transitionend", afterSlideOut );
-		page.removeChild(oldSlide);
-
-	}
-
-	function afterSlideIn () {
-
-		page.removeChild(oldSlide);
-		newSlide.removeEventListener( "transitionend", afterSlideIn );
-
-	}
-
-}
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.ProgressBar = function ( container ) {
-
-	var offset = ( container.clientWidth - 300 ) / 2;
-
-	var statusText  = document.createElement( "div" );
-
-	statusText.id  = "status-text";
-	statusText.style.width = "300px";
-	statusText.style.left  = offset + "px";
-
-	var progressBar = document.createElement( "progress" );
-
-	progressBar.id = "progress-bar";
-
-	progressBar.style.width = "300px";
-	progressBar.style.left  = offset + "px";
-
-	progressBar.setAttribute( "max", "100" );
-
-	this.container   = container;
-	this.progressBar = progressBar;
-	this.statusText  = statusText;
-
-}
-
-CV.ProgressBar.prototype.constructor = CV.ProgressBar;
-
-CV.ProgressBar.prototype.Start = function ( text ) {
-
-	var statusText  = this.statusText;
-	var progressBar = this.progressBar;
-
-	statusText.textContent = text;
-	progressBar.value = 0;
-
-	this.container.appendChild( statusText );
-	this.container.appendChild( progressBar );
-
-}
-
-CV.ProgressBar.prototype.Update = function ( pcent ) {
-
-	this.progressBar.value = pcent;
-
-}
-
-CV.ProgressBar.prototype.Add = function ( pcent ) {
-
-	this.progressBar.value += pcent;
-
-}
-
-CV.ProgressBar.prototype.End = function () {
-
-	var container = this.container;
-
-	container.removeChild( this.statusText );
-	container.removeChild( this.progressBar );
 
 }
 

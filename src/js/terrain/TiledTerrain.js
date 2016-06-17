@@ -15,7 +15,7 @@ CV.TiledTerrain = function ( limits3, onLoaded ) {
 
 	);
 
-	this.tileSet       = CV.TileSet;
+	this.tileSet       = Object.assign( {}, CV.TileSet);
 	this.tileTree      = new CV.Tree();
 
 	this.onLoaded      = onLoaded;

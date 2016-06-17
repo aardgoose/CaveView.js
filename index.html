@@ -39,10 +39,10 @@
 	</style>
 </head>
 <body onload="onload();" >
-<script type="text/javascript" src="CaveView/lib/three.js" ></script>
-<script type="text/javascript" src="CaveView/lib/Detector.js"></script>
-<script type="text/javascript" src="CaveView/lib/OrbitControls.js" ></script>
-<script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
+<script type="text/javascript" src="build/CaveView/lib/three.js" ></script>
+<script type="text/javascript" src="build/CaveView/lib/Detector.js"></script>
+<script type="text/javascript" src="build/CaveView/lib/OrbitControls.js" ></script>
+<script type="text/javascript" src="build/CaveView/js/CaveView.js" ></script>
 <script type="text/javascript" >
 "use strict";
 
@@ -312,7 +312,7 @@ function onload () {
 
 	}
 
-	CV.setEnvironment( { terrainDirectory: "/terrain/", surveyDirectory: "/surveys/" } );
+	CV.setEnvironment( { terrainDirectory: "/build/terrain/", surveyDirectory: "/build/surveys/" } );
 
 	CV.Viewer.init( "scene" );
 	CV.Hud.init( "scene" );

@@ -399,10 +399,14 @@ CV.Tree.prototype.findById = function ( id, node ) {
 
 }
 
-CV.Tree.prototype.makeTop = function ( id ) {
+CV.Tree.prototype.newTop = function ( id ) {
+
+	var newTop = new CV.Tree();
 
 	var node = this.findById( id );
-	this.root = node;
+	newTop.root = node;
+
+	return newTop;
 
 }
 
@@ -446,7 +450,7 @@ CV.Tree.prototype.addByPath = function ( path, node ) {
 
 		var next = new CV.TreeNode( name, ++this.maxId, here.id );
 
-		here.children.push( next );  
+		here.children.push( next );
 
 	}
 
@@ -478,9 +482,9 @@ CV.Tree.prototype.forNodes = function ( doFunc, node ) {
 
 	doFunc( root );
 
-	for (var i = 0, l = root.children.length; i < l; i++) {
+	for ( var i = 0, l = root.children.length; i < l; i++ ) {
 
-		this.forNodes(doFunc, root.children[ i ]);
+		this.forNodes( doFunc, root.children[ i ] );
 
 	}
 
@@ -490,7 +494,7 @@ CV.Tree.prototype.removeNodes = function ( doFunc, node ) {
 
 	var root = null;
 
-	if (node) {
+	if ( node ) {
 
 		root = node;
 
@@ -515,7 +519,7 @@ CV.Tree.prototype.getSubtreeIds = function ( id, idSet, node ) {
 
 	var root;
 
-	if (!node) {
+	if ( !node ) {
 
 		root = this.findById( id, this.root );
 
@@ -620,6 +624,386 @@ CV.Tree.prototype.getIdByPath = function ( path ) {
 
 }
 
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.CursorMaterial = function ( type, initialHeight ) {
+
+	THREE.ShaderMaterial.call( this );
+
+	this.defines = {};
+
+	if ( type === CV.MATERIAL_LINE ) {
+
+		this.defines.USE_COLOR = true;
+
+	} else {
+
+		this.defines.SURFACE = true;
+
+	}
+
+	this.uniforms = {
+			uLight:      { value: new THREE.Vector3( -1, -1, 2 ) },
+			cursor:      { value: initialHeight },
+			cursorWidth: { value: 5.0 },
+			baseColor:   { value: new THREE.Color( 0x888888 ) },
+			cursorColor: { value: new THREE.Color( 0x00ff00 ) }
+		};
+
+	this.vertexShader   = CV.Shaders.cursorVertexShader;
+	this.fragmentShader = CV.Shaders.cursorFragmentShader;
+
+	this.type = "CursorMaterial";
+
+	return this;
+}
+
+
+CV.CursorMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.CursorMaterial.prototype.constructor = CV.CursorMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.DepthMapMaterial = function ( minHeight, maxHeight ) {
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+
+			minZ:   { value: minHeight },
+			scaleZ: { value: 1 / ( maxHeight - minHeight ) }
+
+		},
+
+		vertexShader:    CV.Shaders.depthMapVertexShader,
+		fragmentShader:  CV.Shaders.depthMapFragmentShader,
+		depthWrite:      false,
+		type:            "CV.DepthMapMaterial"
+
+	} );
+
+	return this;
+
+}
+
+CV.DepthMapMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.DepthMapMaterial.prototype.constructor = CV.DepthMapMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.DepthMaterial = function ( type, limits, texture ) {
+
+	var range   = limits.size();
+	var defines = {};
+
+	if ( type === CV.MATERIAL_LINE ) {
+
+		defines.USE_COLOR = true;
+
+	} else {
+
+		defines.SURFACE = true;
+
+	}
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+			// pseudo light source somewhere over viewer's left shoulder.
+			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
+
+			minX:     { value: limits.min.x },
+			minY:     { value: limits.min.y },
+			minZ:     { value: limits.min.z },
+			scaleX:   { value: 1 / range.x },
+			scaleY:   { value: 1 / range.y },
+			scaleZ:   { value: 1 / range.z },
+			cmap:     { value: CV.Colours.gradientTexture },
+			depthMap: { value: texture }
+
+		},
+
+		defines: defines,
+		vertexShader: CV.Shaders.depthVertexShader,
+		fragmentShader: CV.Shaders.depthFragmentShader
+	} );
+
+	this.type = "CV.DepthMaterial";
+
+	return this;
+
+}
+
+CV.DepthMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.DepthMaterial.prototype.constructor = CV.DepthMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.HeightMaterial = function ( type, minHeight, maxHeight ) {
+
+	THREE.ShaderMaterial.call( this );
+
+	this.defines = {};
+
+	if ( type === CV.MATERIAL_LINE ) {
+
+		this.defines.USE_COLOR = true;
+
+	} else {
+
+		this.defines.SURFACE = true;
+
+	}
+	
+	this.uniforms = {
+
+			// pseudo light source somewhere over viewer's left shoulder.
+			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
+
+			minZ:   { value: minHeight },
+			scaleZ: { value: 1 / ( maxHeight - minHeight ) },
+			cmap:   { value: CV.Colours.gradientTexture }
+
+		};
+
+	this.vertexShader   = CV.Shaders.heightVertexShader;
+	this.fragmentShader = CV.Shaders.heightFragmentShader;
+
+	this.type = "CV.HeightMaterial";
+
+	return this;
+
+}
+
+CV.HeightMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.HeightMaterial.prototype.constructor = CV.HeightMaterial;
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.Materials = ( function () {
+
+var cache = new Map();
+var viewState;
+
+function getHeightMaterial ( type ) {
+
+	var name = "height" + type;
+
+	if ( cache.has( name ) ) return cache.get( name );
+
+	var material = new CV.HeightMaterial( type, viewState.minHeight, viewState.maxHeight );
+
+	cache.set(name, material);
+
+	viewState.addEventListener( "newCave",  _updateHeightMaterial );
+
+	return material;
+
+	function _updateHeightMaterial ( event ) {
+
+		var minHeight = viewState.minHeight;
+		var maxHeight = viewState.maxHeight;
+
+		material.uniforms.minZ.value = minHeight;
+		material.uniforms.scaleZ.value =  1 / ( maxHeight - minHeight );
+
+	}
+
+}
+
+function getDepthMapMaterial () {
+
+	return new CV.DepthMapMaterial( viewState.minHeight, viewState.maxHeight );
+
+}
+
+function createDepthMaterial ( type, limits, texture ) {
+
+	var name = "depth" + type;
+
+	var material = new CV.DepthMaterial( type, limits, texture );
+
+	cache.set( name, material );
+
+	viewState.addEventListener( "newCave",  _updateDepthMaterial );
+
+	return material;
+
+	function _updateDepthMaterial ( event ) {
+
+		cache.delete( name );
+
+	}
+
+}
+
+function getDepthMaterial ( type ) {
+
+	 return cache.get( "depth" + type );	
+
+}
+
+function getCursorMaterial ( type, halfWidth ) {
+
+	var name = "cursor" + type;
+
+	if ( cache.has(name) ) return cache.get( name );
+
+	var initialHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
+
+	var material = new CV.CursorMaterial( type, initialHeight );
+
+	cache.set( name, material );
+
+	viewState.addEventListener( "cursorChange",  _updateCursorMaterial );
+
+	return material;
+
+	function _updateCursorMaterial ( event ) {
+
+		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
+
+		material.uniforms.cursor.value = cursorHeight;
+
+	}
+
+}
+
+function getLineMaterial () {
+
+	var name = "line";
+
+	if ( cache.has( name ) ) {
+
+		return cache.get(name);
+
+	}
+
+	var material = new THREE.LineBasicMaterial( { color: 0xFFFFFF, vertexColors: THREE.VertexColors } );
+
+	cache.set( name, material );
+
+	return material;
+
+}
+
+function initCache ( viewerViewState ) {
+
+	cache.clear();
+
+	viewState = viewerViewState;
+
+}
+
+return {
+
+	createDepthMaterial: createDepthMaterial,
+	getHeightMaterial:   getHeightMaterial,
+	getDepthMapMaterial: getDepthMapMaterial,
+	getDepthMaterial:    getDepthMaterial,
+	getCursorMaterial:   getCursorMaterial,
+	getLineMaterial:     getLineMaterial,
+	initCache:           initCache
+
+};
+
+
+} () );
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
+CV.PWMaterial = function () {
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+    		zoom:   new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
+			offset: { value: new THREE.Vector2(1.150, 0.275) },
+  			cmap:   { value: CV.Colours.gradientTexture },
+			uLight: { value: new THREE.Vector3( -1, -1, 2 ) }
+   		 },
+
+		vertexShader: CV.Shaders.pwVertexShader,
+		fragmentShader: CV.Shaders.pwFragmentShader
+
+	} );
+
+	this.type = "PWMaterial";
+
+	return this;
+
+	function _updateZoomUniform() {
+
+		this.value += 0.008;
+
+	}
+
+}
+
+CV.PWMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.PWMaterial.prototype.constructor = CV.PWMaterial;
+
+// EOF
+"use strict";
+
+CV.TestMaterial = function ( spread ) {
+
+	var i = 1;
+
+	THREE.ShaderMaterial.call( this, {
+
+		uniforms: {
+
+			spread: { value: spread },
+			rIn: new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
+
+		},
+
+		vertexShader:   CV.Shaders.testVertexShader,	
+		fragmentShader: CV.Shaders.testFragmentShader,
+		vertexColors:   THREE.VertexColors
+	} );
+
+	this.type = "CV.TestMaterial";
+
+	return this;
+
+	function _updateZoomUniform() {
+
+		if ( ++i % 5 ) return;
+		this.value = Math.random();
+
+	}
+
+}
+
+CV.TestMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+
+CV.TestMaterial.prototype.constructor = CV.TestMaterial;
 
 // EOF
 "use strict";
@@ -2772,413 +3156,6 @@ CV.Svx3dHandler.prototype.getName = function () {
 // EOF
 "use strict";
 
-var CV = CV || {};
-
-CV.CursorMaterial = function ( type, initialHeight ) {
-
-	THREE.ShaderMaterial.call( this );
-
-	this.defines = {};
-
-	if ( type === CV.MATERIAL_LINE ) {
-
-		this.defines.USE_COLOR = true;
-
-	} else {
-
-		this.defines.SURFACE = true;
-
-	}
-
-	this.uniforms = {
-			uLight:      { value: new THREE.Vector3( -1, -1, 2 ) },
-			cursor:      { value: initialHeight },
-			cursorWidth: { value: 5.0 },
-			baseColor:   { value: new THREE.Color( 0x888888 ) },
-			cursorColor: { value: new THREE.Color( 0x00ff00 ) }
-		};
-
-	this.vertexShader   = CV.Shaders.cursorVertexShader;
-	this.fragmentShader = CV.Shaders.cursorFragmentShader;
-
-	this.type = "CursorMaterial";
-
-	return this;
-}
-
-
-CV.CursorMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.CursorMaterial.prototype.constructor = CV.CursorMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.DepthMapMaterial = function ( minHeight, maxHeight ) {
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-
-			minZ:   { value: minHeight },
-			scaleZ: { value: 1 / ( maxHeight - minHeight ) }
-
-		},
-
-		vertexShader:    CV.Shaders.depthMapVertexShader,
-		fragmentShader:  CV.Shaders.depthMapFragmentShader,
-		depthWrite:      false,
-		type:            "CV.DepthMapMaterial"
-
-	} );
-
-	return this;
-
-}
-
-CV.DepthMapMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.DepthMapMaterial.prototype.constructor = CV.DepthMapMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.DepthMaterial = function ( type, limits, texture ) {
-
-	var range   = limits.size();
-	var defines = {};
-
-	if ( type === CV.MATERIAL_LINE ) {
-
-		defines.USE_COLOR = true;
-
-	} else {
-
-		defines.SURFACE = true;
-
-	}
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-			// pseudo light source somewhere over viewer's left shoulder.
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
-
-			minX:     { value: limits.min.x },
-			minY:     { value: limits.min.y },
-			minZ:     { value: limits.min.z },
-			scaleX:   { value: 1 / range.x },
-			scaleY:   { value: 1 / range.y },
-			scaleZ:   { value: 1 / range.z },
-			cmap:     { value: CV.Colours.gradientTexture },
-			depthMap: { value: texture }
-
-		},
-
-		defines: defines,
-		vertexShader: CV.Shaders.depthVertexShader,
-		fragmentShader: CV.Shaders.depthFragmentShader
-	} );
-
-	this.type = "CV.DepthMaterial";
-
-	return this;
-
-}
-
-CV.DepthMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.DepthMaterial.prototype.constructor = CV.DepthMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.HeightMaterial = function ( type, minHeight, maxHeight ) {
-
-	THREE.ShaderMaterial.call( this );
-
-	this.defines = {};
-
-	if ( type === CV.MATERIAL_LINE ) {
-
-		this.defines.USE_COLOR = true;
-
-	} else {
-
-		this.defines.SURFACE = true;
-
-	}
-	
-	this.uniforms = {
-
-			// pseudo light source somewhere over viewer's left shoulder.
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
-
-			minZ:   { value: minHeight },
-			scaleZ: { value: 1 / ( maxHeight - minHeight ) },
-			cmap:   { value: CV.Colours.gradientTexture }
-
-		};
-
-	this.vertexShader   = CV.Shaders.heightVertexShader;
-	this.fragmentShader = CV.Shaders.heightFragmentShader;
-
-	this.type = "CV.HeightMaterial";
-
-	return this;
-
-}
-
-CV.HeightMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.HeightMaterial.prototype.constructor = CV.HeightMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.Materials = ( function () {
-
-var cache = new Map();
-var viewState;
-
-function getHeightMaterial ( type ) {
-
-	var name = "height" + type;
-
-	if ( cache.has( name ) ) return cache.get( name );
-
-	var material = new CV.HeightMaterial( type, viewState.minHeight, viewState.maxHeight );
-
-	cache.set(name, material);
-
-	viewState.addEventListener( "newCave",  _updateHeightMaterial );
-
-	return material;
-
-	function _updateHeightMaterial ( event ) {
-
-		var minHeight = viewState.minHeight;
-		var maxHeight = viewState.maxHeight;
-
-		material.uniforms.minZ.value = minHeight;
-		material.uniforms.scaleZ.value =  1 / ( maxHeight - minHeight );
-
-	}
-
-}
-
-function getDepthMapMaterial () {
-
-	return new CV.DepthMapMaterial( viewState.minHeight, viewState.maxHeight );
-
-}
-
-function createDepthMaterial ( type, limits, texture ) {
-
-	var name = "depth" + type;
-
-	var material = new CV.DepthMaterial( type, limits, texture );
-
-	cache.set( name, material );
-
-	viewState.addEventListener( "newCave",  _updateDepthMaterial );
-
-	return material;
-
-	function _updateDepthMaterial ( event ) {
-
-		cache.delete( name );
-
-	}
-
-}
-
-function getDepthMaterial ( type ) {
-
-	 return cache.get( "depth" + type );	
-
-}
-
-function getCursorMaterial ( type, halfWidth ) {
-
-	var name = "cursor" + type;
-
-	if ( cache.has(name) ) return cache.get( name );
-
-	var initialHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
-
-	var material = new CV.CursorMaterial( type, initialHeight );
-
-	cache.set( name, material );
-
-	viewState.addEventListener( "cursorChange",  _updateCursorMaterial );
-
-	return material;
-
-	function _updateCursorMaterial ( event ) {
-
-		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
-
-		material.uniforms.cursor.value = cursorHeight;
-
-	}
-
-}
-
-function getLineMaterial () {
-
-	var name = "line";
-
-	if ( cache.has( name ) ) {
-
-		return cache.get(name);
-
-	}
-
-	var material = new THREE.LineBasicMaterial( { color: 0xFFFFFF, vertexColors: THREE.VertexColors } );
-
-	cache.set( name, material );
-
-	return material;
-
-}
-
-function initCache ( viewerViewState ) {
-
-	cache.clear();
-
-	viewState = viewerViewState;
-
-}
-
-return {
-
-	createDepthMaterial: createDepthMaterial,
-	getHeightMaterial:   getHeightMaterial,
-	getDepthMapMaterial: getDepthMapMaterial,
-	getDepthMaterial:    getDepthMaterial,
-	getCursorMaterial:   getCursorMaterial,
-	getLineMaterial:     getLineMaterial,
-	initCache:           initCache
-
-};
-
-
-} () );
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.PWMaterial = function () {
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-    		zoom:   new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
-			offset: { value: new THREE.Vector2(1.150, 0.275) },
-  			cmap:   { value: CV.Colours.gradientTexture },
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) }
-   		 },
-
-		vertexShader: CV.Shaders.pwVertexShader,
-		fragmentShader: CV.Shaders.pwFragmentShader
-
-	} );
-
-	this.type = "PWMaterial";
-
-	return this;
-
-	function _updateZoomUniform() {
-
-		this.value += 0.008;
-
-	}
-
-}
-
-CV.PWMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.PWMaterial.prototype.constructor = CV.PWMaterial;
-
-// EOF
-"use strict";
-
-CV.TestMaterial = function ( spread ) {
-
-	var i = 1;
-
-	THREE.ShaderMaterial.call( this, {
-
-		uniforms: {
-
-			spread: { value: spread },
-			rIn: new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
-
-		},
-
-		vertexShader:   CV.Shaders.testVertexShader,	
-		fragmentShader: CV.Shaders.testFragmentShader,
-		vertexColors:   THREE.VertexColors
-	} );
-
-	this.type = "CV.TestMaterial";
-
-	return this;
-
-	function _updateZoomUniform() {
-
-		if ( ++i % 5 ) return;
-		this.value = Math.random();
-
-	}
-
-}
-
-CV.TestMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
-
-CV.TestMaterial.prototype.constructor = CV.TestMaterial;
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
-CV.Shaders = (function() {
-
-// export public interface
-
-return {
-	testVertexShader:        "\n#include <common>\nuniform float spread;\nuniform float rIn;\nvoid main() {\n	vec3 nPosition = position;\n	nPosition.x += rand( nPosition.xy * rIn ) * color.r * spread;\n	nPosition.y += rand( nPosition.xx * rIn ) * color.r * spread;\n	nPosition.z -= abs( rand( nPosition.yx * rIn ) ) * color.r * spread;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( nPosition, 1.0 );\n	gl_PointSize = 2.0;\n}\n",
-	testFragmentShader:      "\nvoid main() {\n	gl_FragColor = vec4( 0.0, 0.1, 1.0, 1.0 );\n}\n",
-	heightVertexShader:      "\nuniform sampler2D cmap;\nuniform float minZ;\nuniform float scaleZ;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float zMap;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	zMap = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	heightFragmentShader:    "\nuniform sampler2D cmap;\nvarying float zMap;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
-	cursorVertexShader:      "\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\n	\nvarying vec3 vColor;\n#endif\nvarying float height;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	height = position.z;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	cursorFragmentShader:    "\nuniform float cursor;\nuniform float cursorWidth;\nuniform vec3 baseColor;\nuniform vec3 cursorColor;\nvarying float height;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n#else\n	float light = 1.0;\n#endif\n	float delta = abs( height - cursor );\n	float ss = smoothstep( 0.0, cursorWidth, cursorWidth - delta );\n#ifdef SURFACE\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light;\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 );\n	}\n#else\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light * vec4( vColor, 1.0 );\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 ) * vec4( vColor, 1.0 );\n	}\n#endif\n}\n",
-	depthMapVertexShader:    "\nuniform float minZ;\nuniform float scaleZ;\nvarying float vHeight;\nvoid main() {\n	vHeight = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	depthMapFragmentShader:  "\nvarying float vHeight;\nvoid main() {\n	gl_FragColor = vec4(vHeight, vHeight, vHeight, 1.0);\n}\n",
-	depthVertexShader:       "\nuniform float minX;\nuniform float minY;\nuniform float minZ;\nuniform float scaleX;\nuniform float scaleY;\nuniform float scaleZ;\nuniform sampler2D depthMap;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float vHeight;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	vec2 terrainCoords = vec2( ( position.x - minX ) * scaleX, ( position.y - minY ) * scaleY );\n	vec4 terrainHeight = texture2D( depthMap, terrainCoords );\n	vHeight =  terrainHeight.g  - ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	depthFragmentShader:     "\nuniform sampler2D cmap;\nvarying float vHeight;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
-	pwVertexShader:          "\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n	vUv = uv;	\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	pwFragmentShader:        "\nprecision highp float;\nuniform sampler2D cmap;\nuniform float zoom;\nuniform vec2 offset;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	float square;\n	float x = 0.0;\n	float y = 0.0;\n	float xt;\n	float yt;\n	float light;\n	vec2 c = ( vUv - vec2( 0.5, 0.5 ) ) * 4.0 / zoom - offset;\n	for ( float i = 0.0; i < 1.0; i += 0.001 ) {\n		xt = x * x - y * y + c.x;\n		yt = 2.0 * x * y + c.y;\n		x = xt;\n		y = yt;\n		square = x * x + y * y;\n		light = dot( normalize( vNormal ), normalize( lNormal ) );\n		gl_FragColor = texture2D( cmap, vec2( i, 1.0 ) ) * light;\n		if ( square >= 4.0 ) break;\n	}\n}\n"
-
-};
-
-} () );// end of Shader Module
-
-// EOF
-"use strict";
-
 var Cave = Cave || {};
 
 CV.CommonTerrain = function () {};
@@ -4355,6 +4332,33 @@ CV.TileSet = {
 
 var CV = CV || {};
 
+CV.Shaders = (function() {
+
+// export public interface
+
+return {
+	testVertexShader:        "\n#include <common>\nuniform float spread;\nuniform float rIn;\nvoid main() {\n	vec3 nPosition = position;\n	nPosition.x += rand( nPosition.xy * rIn ) * color.r * spread;\n	nPosition.y += rand( nPosition.xx * rIn ) * color.r * spread;\n	nPosition.z -= abs( rand( nPosition.yx * rIn ) ) * color.r * spread;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( nPosition, 1.0 );\n	gl_PointSize = 2.0;\n}\n",
+	testFragmentShader:      "\nvoid main() {\n	gl_FragColor = vec4( 0.0, 0.1, 1.0, 1.0 );\n}\n",
+	heightVertexShader:      "\nuniform sampler2D cmap;\nuniform float minZ;\nuniform float scaleZ;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float zMap;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	zMap = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	heightFragmentShader:    "\nuniform sampler2D cmap;\nvarying float zMap;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
+	cursorVertexShader:      "\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\n	\nvarying vec3 vColor;\n#endif\nvarying float height;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	height = position.z;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	cursorFragmentShader:    "\nuniform float cursor;\nuniform float cursorWidth;\nuniform vec3 baseColor;\nuniform vec3 cursorColor;\nvarying float height;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n#else\n	float light = 1.0;\n#endif\n	float delta = abs( height - cursor );\n	float ss = smoothstep( 0.0, cursorWidth, cursorWidth - delta );\n#ifdef SURFACE\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light;\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 );\n	}\n#else\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light * vec4( vColor, 1.0 );\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 ) * vec4( vColor, 1.0 );\n	}\n#endif\n}\n",
+	depthMapVertexShader:    "\nuniform float minZ;\nuniform float scaleZ;\nvarying float vHeight;\nvoid main() {\n	vHeight = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	depthMapFragmentShader:  "\nvarying float vHeight;\nvoid main() {\n	gl_FragColor = vec4(vHeight, vHeight, vHeight, 1.0);\n}\n",
+	depthVertexShader:       "\nuniform float minX;\nuniform float minY;\nuniform float minZ;\nuniform float scaleX;\nuniform float scaleY;\nuniform float scaleZ;\nuniform sampler2D depthMap;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float vHeight;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	vec2 terrainCoords = vec2( ( position.x - minX ) * scaleX, ( position.y - minY ) * scaleY );\n	vec4 terrainHeight = texture2D( depthMap, terrainCoords );\n	vHeight =  terrainHeight.g  - ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	depthFragmentShader:     "\nuniform sampler2D cmap;\nvarying float vHeight;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
+	pwVertexShader:          "\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n	vUv = uv;	\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	pwFragmentShader:        "\nprecision highp float;\nuniform sampler2D cmap;\nuniform float zoom;\nuniform vec2 offset;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	float square;\n	float x = 0.0;\n	float y = 0.0;\n	float xt;\n	float yt;\n	float light;\n	vec2 c = ( vUv - vec2( 0.5, 0.5 ) ) * 4.0 / zoom - offset;\n	for ( float i = 0.0; i < 1.0; i += 0.001 ) {\n		xt = x * x - y * y + c.x;\n		yt = 2.0 * x * y + c.y;\n		x = xt;\n		y = yt;\n		square = x * x + y * y;\n		light = dot( normalize( vNormal ), normalize( lNormal ) );\n		gl_FragColor = texture2D( cmap, vec2( i, 1.0 ) ) * light;\n		if ( square >= 4.0 ) break;\n	}\n}\n"
+
+};
+
+} () );// end of Shader Module
+
+// EOF
+"use strict";
+
+var CV = CV || {};
+
 CV.Page = function ( frame, id ) {
 
 	var tab  = document.createElement( "div" );
@@ -5187,7 +5191,7 @@ CV.Survey = function ( cave ) {
 
 		for ( i = 0; i < l; i++ ) {
 
-			faces[ i ].color =  new THREE.Color( 0x0000ff );
+			faces[ i ].color =  new THREE.Color( 0x00ffff );
 
 		}
 
@@ -5524,9 +5528,7 @@ CV.Survey.prototype.cutSection = function ( id ) {
 
 	this.limits = this.getBounds();
 
-	// FIXME - prune selected tree. - new tree op needed?
-
-	this.surveyTree.makeTop( id );
+	this.surveyTree = this.surveyTree.newTop( id );
 
 	this.selectSection( 0 );
 
@@ -5969,6 +5971,7 @@ CV.Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	default:
 
 		console.log( "invalid leg type" );
+
 		return;
 
 	}
@@ -6030,6 +6033,7 @@ CV.Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	default:
 
 		console.log( "invalid leg shading mode" );
+
 		return false;
 
 	}
@@ -6042,7 +6046,7 @@ CV.Survey.prototype.getSurveyColour = function ( surveyId ) {
 
 	var surveyColours = CV.ColourCache.survey;
 
-	return surveyColours[surveyId % surveyColours.length];
+	return surveyColours[ surveyId % surveyColours.length ];
 
 }
 
@@ -6092,7 +6096,7 @@ CV.Survey.prototype.getSurveyColours = function () { // FIXME - cache save recal
 
 	function _setSurveyColour ( value ) {
 
-		surveyColours[value] = colour;
+		surveyColours[ value ] = colour;
 
 	}
 
@@ -6527,7 +6531,7 @@ function resize () {
 
 }
 
-function update ( event ) {
+function update () {
 
 	// update HUD components
 
@@ -8091,6 +8095,8 @@ function selectSection ( id ) {
 
 	setShadingMode( shadingMode );
 
+	selectedSection = id;
+
 	if ( id === 0 ) return;
 
 	var box = survey.getSelectedBox();
@@ -8119,8 +8125,6 @@ function selectSection ( id ) {
 		position:    boundingBox.center(),
 		boundingBox: boundingBox
 	};
-
-	selectedSection = id;
 
 }
 
@@ -8441,7 +8445,7 @@ var renderView = function () {
 			if ( targetPOI.quaternion ) camera.quaternion.slerp( targetPOI.quaternion, t );
 
 			camera.updateProjectionMatrix();
-			CV.Hud.update();
+			CV.Hud.update( { type: "change" } );
 
 			if ( targetPOI.tAnimate === 0 ) {
 

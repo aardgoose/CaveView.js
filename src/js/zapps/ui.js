@@ -609,7 +609,7 @@ function loadCave ( file ) {
 
 function loadCaveLocalFile ( file ) {
 
-	resetGUI();
+	resetUI();
 	CV.Viewer.clearView();
 
 	progressBar.Start( "Loading file " + file.name + " ..." );
@@ -782,7 +782,7 @@ function keyDown ( event ) {
 
 	case 86: // cut selected survey section 'v'  
 
-		resetGUI();
+		resetUI();
 		viewState.cut = true;
 
 		break;

@@ -147,15 +147,15 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 
 	var tileSpec = {
 		tileSet: tileSet,
-		resolution: resolution, 
-		tileX: x, 
+		resolution: resolution,
+		tileX: x,
 		tileY: y,
 		clip: clip
 	}
 
 	// start web worker and create new geometry in it.
 
-	var tileLoader = new Worker( "CaveView/js/workers/tileWorker.js" );
+	var tileLoader = new Worker( CV.getEnvironmentValue( "cvDirectory", "" ) + "CaveView/js/workers/tileWorker.js" );
 
 	tileLoader.onmessage = _mapLoaded;
 

@@ -252,6 +252,8 @@ function init ( domID ) { // public method
 
 	CV.Materials.initCache( viewState );
 
+	animate();
+
 	return;
 
 	function _enableLayer ( layerTag, name ) {
@@ -544,6 +546,8 @@ function selectSection ( id ) {
 
 	setShadingMode( shadingMode );
 
+	selectedSection = id;
+
 	if ( id === 0 ) return;
 
 	var box = survey.getSelectedBox();
@@ -572,8 +576,6 @@ function selectSection ( id ) {
 		position:    boundingBox.center(),
 		boundingBox: boundingBox
 	};
-
-	selectedSection = id;
 
 }
 
@@ -727,7 +729,6 @@ function loadSurvey ( newSurvey ) {
 
 	//__dyeTrace(); // FIXME test function
 
-	animate();
 
 	function _tilesLoaded () {
 

@@ -61,10 +61,14 @@ CV.Tree.prototype.findById = function ( id, node ) {
 
 }
 
-CV.Tree.prototype.makeTop = function ( id ) {
+CV.Tree.prototype.newTop = function ( id ) {
+
+	var newTop = new CV.Tree();
 
 	var node = this.findById( id );
-	this.root = node;
+	newTop.root = node;
+
+	return newTop;
 
 }
 
@@ -108,7 +112,7 @@ CV.Tree.prototype.addByPath = function ( path, node ) {
 
 		var next = new CV.TreeNode( name, ++this.maxId, here.id );
 
-		here.children.push( next );  
+		here.children.push( next );
 
 	}
 
@@ -140,9 +144,9 @@ CV.Tree.prototype.forNodes = function ( doFunc, node ) {
 
 	doFunc( root );
 
-	for (var i = 0, l = root.children.length; i < l; i++) {
+	for ( var i = 0, l = root.children.length; i < l; i++ ) {
 
-		this.forNodes(doFunc, root.children[ i ]);
+		this.forNodes( doFunc, root.children[ i ] );
 
 	}
 
@@ -152,7 +156,7 @@ CV.Tree.prototype.removeNodes = function ( doFunc, node ) {
 
 	var root = null;
 
-	if (node) {
+	if ( node ) {
 
 		root = node;
 
@@ -177,7 +181,7 @@ CV.Tree.prototype.getSubtreeIds = function ( id, idSet, node ) {
 
 	var root;
 
-	if (!node) {
+	if ( !node ) {
 
 		root = this.findById( id, this.root );
 

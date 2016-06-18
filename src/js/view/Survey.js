@@ -235,7 +235,7 @@ CV.Survey = function ( cave ) {
 
 		for ( i = 0; i < l; i++ ) {
 
-			faces[ i ].color =  new THREE.Color( 0x0000ff );
+			faces[ i ].color =  new THREE.Color( 0x00ffff );
 
 		}
 
@@ -572,9 +572,7 @@ CV.Survey.prototype.cutSection = function ( id ) {
 
 	this.limits = this.getBounds();
 
-	// FIXME - prune selected tree. - new tree op needed?
-
-	this.surveyTree.makeTop( id );
+	this.surveyTree = this.surveyTree.newTop( id );
 
 	this.selectSection( 0 );
 
@@ -1017,6 +1015,7 @@ CV.Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	default:
 
 		console.log( "invalid leg type" );
+
 		return;
 
 	}
@@ -1078,6 +1077,7 @@ CV.Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	default:
 
 		console.log( "invalid leg shading mode" );
+
 		return false;
 
 	}
@@ -1090,7 +1090,7 @@ CV.Survey.prototype.getSurveyColour = function ( surveyId ) {
 
 	var surveyColours = CV.ColourCache.survey;
 
-	return surveyColours[surveyId % surveyColours.length];
+	return surveyColours[ surveyId % surveyColours.length ];
 
 }
 
@@ -1140,7 +1140,7 @@ CV.Survey.prototype.getSurveyColours = function () { // FIXME - cache save recal
 
 	function _setSurveyColour ( value ) {
 
-		surveyColours[value] = colour;
+		surveyColours[ value ] = colour;
 
 	}
 

@@ -164,7 +164,7 @@ function resize () {
 
 }
 
-function update ( event ) {
+function update () {
 
 	// update HUD components
 

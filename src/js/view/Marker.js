@@ -6,24 +6,9 @@ CV.Marker = ( function () {
 	}
 
 	var labelOffset = 30;
-	var red    = new THREE.Color( 0xff0000 );
-	var yellow = new THREE.Color( 0xffff00 );
 
-	var pointer = new CV.EntrancePointer( 5, labelOffset - 10, red, yellow );
-	var marker  = new THREE.Geometry();
-	var loader  = new THREE.TextureLoader();
-
-	var markerTexture  = loader.load( "CaveView/images/marker-yellow.png" );
-
-	var markerMaterial = new THREE.PointsMaterial( { size: 10, map: markerTexture, transparent : true, sizeAttenuation: false } );
-
-	marker.vertices.push( new THREE.Vector3( 0, 0, 10 ) );
-	marker.colors.push( new THREE.Color( 0xff00ff ) );
-
-	var pointerBufferGeometry = new THREE.BufferGeometry().fromGeometry( pointer );
-	pointerBufferGeometry.computeBoundingBox();
-
-	var pointerMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors, side: THREE.DoubleSide } );
+	var farPointerCached;
+	var nearPointerCached;
 
 	return function Marker ( text ) {
 
@@ -31,26 +16,31 @@ CV.Marker = ( function () {
 
 		this.type = "CV.Marker";
 
-		var point = new THREE.Points( marker, markerMaterial );
+		if ( farPointerCached === undefined ) farPointerCached = new CV.EntranceFarPointer();
 
-		point.layers.set( CV.FEATURE_ENTRANCES );
+		var farPointer  = farPointerCached.clone();
+
+		farPointer.layers.set( CV.FEATURE_ENTRANCES );
+
+
+		if ( nearPointerCached === undefined ) nearPointerCached = new CV.EntranceNearPointer();
+
+		var nearPointer = nearPointerCached.clone();
+
+		nearPointer.layers.set( CV.FEATURE_ENTRANCES );
+
 
 		var label = new CV.Label( text );
 
 		label.position.setZ( labelOffset );
 		label.layers.set( CV.FEATURE_ENTRANCES );
 
-		var pointer = new THREE.Mesh( pointerBufferGeometry, pointerMaterial );
-
-		pointer.type = "CV.Pointer";
-
-		pointer.layers.set( CV.FEATURE_ENTRANCES );
-		pointer.add( label );
+		nearPointer.add( label );
 
 		this.name = text;
 
-		this.addLevel( pointer,  0 );
-		this.addLevel( point,  100 );
+		this.addLevel( nearPointer,  0 );
+		this.addLevel( farPointer,  100 );
 
 		return this;
 

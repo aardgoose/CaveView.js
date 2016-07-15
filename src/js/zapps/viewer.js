@@ -89,13 +89,13 @@ function init ( domID ) { // public method
 	renderer.setClearColor( 0x000000 );
 	renderer.autoClear = false;
 
-	oCamera = new THREE.OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 10000 );
+	oCamera = new THREE.OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 2000 );
 
 	oCamera.rotateOnAxis( CV.upAxis, Math.PI / 2 );
 
 	initCamera( oCamera );
 
-	pCamera = new THREE.PerspectiveCamera( 75, width / height, 1, 10000 );
+	pCamera = new THREE.PerspectiveCamera( 75, width / height, 1, 2000 );
 
 	initCamera( pCamera );
 

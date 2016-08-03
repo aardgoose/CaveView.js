@@ -399,10 +399,14 @@ CV.Tree.prototype.findById = function ( id, node ) {
 
 }
 
-CV.Tree.prototype.makeTop = function ( id ) {
+CV.Tree.prototype.newTop = function ( id ) {
+
+	var newTop = new CV.Tree();
 
 	var node = this.findById( id );
-	this.root = node;
+	newTop.root = node;
+
+	return newTop;
 
 }
 
@@ -446,7 +450,7 @@ CV.Tree.prototype.addByPath = function ( path, node ) {
 
 		var next = new CV.TreeNode( name, ++this.maxId, here.id );
 
-		here.children.push( next );  
+		here.children.push( next );
 
 	}
 
@@ -478,9 +482,9 @@ CV.Tree.prototype.forNodes = function ( doFunc, node ) {
 
 	doFunc( root );
 
-	for (var i = 0, l = root.children.length; i < l; i++) {
+	for ( var i = 0, l = root.children.length; i < l; i++ ) {
 
-		this.forNodes(doFunc, root.children[ i ]);
+		this.forNodes( doFunc, root.children[ i ] );
 
 	}
 
@@ -490,7 +494,7 @@ CV.Tree.prototype.removeNodes = function ( doFunc, node ) {
 
 	var root = null;
 
-	if (node) {
+	if ( node ) {
 
 		root = node;
 
@@ -515,7 +519,7 @@ CV.Tree.prototype.getSubtreeIds = function ( id, idSet, node ) {
 
 	var root;
 
-	if (!node) {
+	if ( !node ) {
 
 		root = this.findById( id, this.root );
 
@@ -2493,16 +2497,15 @@ CV.Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		console.log("v8d2");
 		pos += 3;
 
-		return false;
+		return true;
 
 	}
 
 	function cmd_DATEV8_3 ( c ) {
 
-		console.log("v8d3");
 		pos += 4;
 
-		return false;
+		return true;
 	}
 
 	function cmd_DATE_NODATE ( c ) {
@@ -3778,15 +3781,15 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 
 	var tileSpec = {
 		tileSet: tileSet,
-		resolution: resolution, 
-		tileX: x, 
+		resolution: resolution,
+		tileX: x,
 		tileY: y,
 		clip: clip
 	}
 
 	// start web worker and create new geometry in it.
 
-	var tileLoader = new Worker( "CaveView/js/workers/tileWorker.js" );
+	var tileLoader = new Worker( CV.getEnvironmentValue( "cvDirectory", "" ) + "CaveView/js/workers/tileWorker.js" );
 
 	tileLoader.onmessage = _mapLoaded;
 
@@ -4328,33 +4331,6 @@ CV.TileSet = {
 
 var CV = CV || {};
 
-CV.Shaders = (function() {
-
-// export public interface
-
-return {
-	testVertexShader:        "\n#include <common>\nuniform float spread;\nuniform float rIn;\nvoid main() {\n	vec3 nPosition = position;\n	nPosition.x += rand( nPosition.xy * rIn ) * color.r * spread;\n	nPosition.y += rand( nPosition.xx * rIn ) * color.r * spread;\n	nPosition.z -= abs( rand( nPosition.yx * rIn ) ) * color.r * spread;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( nPosition, 1.0 );\n	gl_PointSize = 2.0;\n}\n",
-	testFragmentShader:      "\nvoid main() {\n	gl_FragColor = vec4( 0.0, 0.1, 1.0, 1.0 );\n}\n",
-	heightVertexShader:      "\nuniform sampler2D cmap;\nuniform float minZ;\nuniform float scaleZ;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float zMap;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	zMap = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	heightFragmentShader:    "\nuniform sampler2D cmap;\nvarying float zMap;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
-	cursorVertexShader:      "\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\n	\nvarying vec3 vColor;\n#endif\nvarying float height;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	height = position.z;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	cursorFragmentShader:    "\nuniform float cursor;\nuniform float cursorWidth;\nuniform vec3 baseColor;\nuniform vec3 cursorColor;\nvarying float height;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n#else\n	float light = 1.0;\n#endif\n	float delta = abs( height - cursor );\n	float ss = smoothstep( 0.0, cursorWidth, cursorWidth - delta );\n#ifdef SURFACE\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light;\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 );\n	}\n#else\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light * vec4( vColor, 1.0 );\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 ) * vec4( vColor, 1.0 );\n	}\n#endif\n}\n",
-	depthMapVertexShader:    "\nuniform float minZ;\nuniform float scaleZ;\nvarying float vHeight;\nvoid main() {\n	vHeight = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	depthMapFragmentShader:  "\nvarying float vHeight;\nvoid main() {\n	gl_FragColor = vec4(vHeight, vHeight, vHeight, 1.0);\n}\n",
-	depthVertexShader:       "\nuniform float minX;\nuniform float minY;\nuniform float minZ;\nuniform float scaleX;\nuniform float scaleY;\nuniform float scaleZ;\nuniform sampler2D depthMap;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float vHeight;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	vec2 terrainCoords = vec2( ( position.x - minX ) * scaleX, ( position.y - minY ) * scaleY );\n	vec4 terrainHeight = texture2D( depthMap, terrainCoords );\n	vHeight =  terrainHeight.g  - ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	depthFragmentShader:     "\nuniform sampler2D cmap;\nvarying float vHeight;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
-	pwVertexShader:          "\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n	vUv = uv;	\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
-	pwFragmentShader:        "\nprecision highp float;\nuniform sampler2D cmap;\nuniform float zoom;\nuniform vec2 offset;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	float square;\n	float x = 0.0;\n	float y = 0.0;\n	float xt;\n	float yt;\n	float light;\n	vec2 c = ( vUv - vec2( 0.5, 0.5 ) ) * 4.0 / zoom - offset;\n	for ( float i = 0.0; i < 1.0; i += 0.001 ) {\n		xt = x * x - y * y + c.x;\n		yt = 2.0 * x * y + c.y;\n		x = xt;\n		y = yt;\n		square = x * x + y * y;\n		light = dot( normalize( vNormal ), normalize( lNormal ) );\n		gl_FragColor = texture2D( cmap, vec2( i, 1.0 ) ) * light;\n		if ( square >= 4.0 ) break;\n	}\n}\n"
-
-};
-
-} () );// end of Shader Module
-
-// EOF
-"use strict";
-
-var CV = CV || {};
-
 CV.Page = function ( frame, id ) {
 
 	var tab  = document.createElement( "div" );
@@ -4755,27 +4731,89 @@ CV.ProgressBar.prototype.End = function () {
 }
 
 // EOF
+"use strict";
 
-CV.EntrancePointer = function ( width, height, faceColour1, faceColour2 ) {
+var CV = CV || {};
 
-	THREE.Geometry.call( this );
+CV.Shaders = (function() {
 
-	this.type = "CV.Pointer";
+// export public interface
 
-	this.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
-	this.vertices.push( new THREE.Vector3( -width, 0, height ) );
-	this.vertices.push( new THREE.Vector3( width, 0, height ) );
-	this.vertices.push( new THREE.Vector3( 0, -width, height ) );
-	this.vertices.push( new THREE.Vector3( 0,  width, height ) );
-
-	this.faces.push( new THREE.Face3( 0, 1, 2, new THREE.Vector3( 0, 0, 1 ), faceColour1, 0 ) );
-	this.faces.push( new THREE.Face3( 0, 3, 4, new THREE.Vector3( 1, 0, 0 ), faceColour2, 0 ) );
+return {
+	testVertexShader:        "\n#include <common>\nuniform float spread;\nuniform float rIn;\nvoid main() {\n	vec3 nPosition = position;\n	nPosition.x += rand( nPosition.xy * rIn ) * color.r * spread;\n	nPosition.y += rand( nPosition.xx * rIn ) * color.r * spread;\n	nPosition.z -= abs( rand( nPosition.yx * rIn ) ) * color.r * spread;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( nPosition, 1.0 );\n	gl_PointSize = 2.0;\n}\n",
+	testFragmentShader:      "\nvoid main() {\n	gl_FragColor = vec4( 0.0, 0.1, 1.0, 1.0 );\n}\n",
+	heightVertexShader:      "\nuniform sampler2D cmap;\nuniform float minZ;\nuniform float scaleZ;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float zMap;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	zMap = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	heightFragmentShader:    "\nuniform sampler2D cmap;\nvarying float zMap;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
+	cursorVertexShader:      "\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\n	\nvarying vec3 vColor;\n#endif\nvarying float height;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	height = position.z;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	cursorFragmentShader:    "\nuniform float cursor;\nuniform float cursorWidth;\nuniform vec3 baseColor;\nuniform vec3 cursorColor;\nvarying float height;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n#else\n	float light = 1.0;\n#endif\n	float delta = abs( height - cursor );\n	float ss = smoothstep( 0.0, cursorWidth, cursorWidth - delta );\n#ifdef SURFACE\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light;\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 );\n	}\n#else\n	if ( delta < cursorWidth * 0.05 ) {\n		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light * vec4( vColor, 1.0 );\n	} else {\n		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 ) * vec4( vColor, 1.0 );\n	}\n#endif\n}\n",
+	depthMapVertexShader:    "\nuniform float minZ;\nuniform float scaleZ;\nvarying float vHeight;\nvoid main() {\n	vHeight = ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	depthMapFragmentShader:  "\nvarying float vHeight;\nvoid main() {\n	gl_FragColor = vec4(vHeight, vHeight, vHeight, 1.0);\n}\n",
+	depthVertexShader:       "\nuniform float minX;\nuniform float minY;\nuniform float minZ;\nuniform float scaleX;\nuniform float scaleY;\nuniform float scaleZ;\nuniform sampler2D depthMap;\n#ifdef SURFACE\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvarying float vHeight;\nvoid main() {\n#ifdef SURFACE\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n#else\n	vColor = color;\n#endif\n	vec2 terrainCoords = vec2( ( position.x - minX ) * scaleX, ( position.y - minY ) * scaleY );\n	vec4 terrainHeight = texture2D( depthMap, terrainCoords );\n	vHeight =  terrainHeight.g  - ( position.z - minZ ) * scaleZ;\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	depthFragmentShader:     "\nuniform sampler2D cmap;\nvarying float vHeight;\n#ifdef SURFACE\nvarying vec3 vNormal;\nvarying vec3 lNormal;\n#else\nvarying vec3 vColor;\n#endif\nvoid main() {\n#ifdef SURFACE\n	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );\n	float light;\n	light = 0.5 * ( nDot + 1.0 );\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * light;\n#else\n	gl_FragColor = texture2D( cmap, vec2( vHeight, 1.0 ) ) * vec4( vColor, 1.0 );\n#endif\n}\n",
+	pwVertexShader:          "\nuniform vec3 uLight;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	vNormal = normalMatrix * normal;\n	lNormal = uLight;\n	vUv = uv;	\n	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}\n",
+	pwFragmentShader:        "\nprecision highp float;\nuniform sampler2D cmap;\nuniform float zoom;\nuniform vec2 offset;\nvarying vec3 vNormal;\nvarying vec3 lNormal;\nvarying vec2 vUv;\nvoid main() {\n	float square;\n	float x = 0.0;\n	float y = 0.0;\n	float xt;\n	float yt;\n	float light;\n	vec2 c = ( vUv - vec2( 0.5, 0.5 ) ) * 4.0 / zoom - offset;\n	for ( float i = 0.0; i < 1.0; i += 0.001 ) {\n		xt = x * x - y * y + c.x;\n		yt = 2.0 * x * y + c.y;\n		x = xt;\n		y = yt;\n		square = x * x + y * y;\n		light = dot( normalize( vNormal ), normalize( lNormal ) );\n		gl_FragColor = texture2D( cmap, vec2( i, 1.0 ) ) * light;\n		if ( square >= 4.0 ) break;\n	}\n}\n"
 
 };
 
-CV.EntrancePointer.prototype = Object.create( THREE.Geometry.prototype );
+} () );// end of Shader Module
 
-CV.EntrancePointer.prototype.constructor = CV.EntrancePointer;
+// EOF
+
+CV.EntranceFarPointer = function () {
+
+	var geometry  = new THREE.Geometry();
+	var loader  = new THREE.TextureLoader();
+
+	var texture  = loader.load( CV.getEnvironmentValue( "cvDirectory", "" ) + "CaveView/images/marker-yellow.png" );
+
+	var material = new THREE.PointsMaterial( { size: 10, map: texture, transparent : true, sizeAttenuation: false } );
+
+	geometry.vertices.push( new THREE.Vector3( 0, 0, 10 ) );
+	geometry.colors.push( new THREE.Color( 0xff00ff ) );
+
+	this.type = "CV.EntranceFarPointer";
+
+	var point = THREE.Points.call( this, geometry, material );
+
+}
+
+CV.EntranceFarPointer.prototype = Object.create( THREE.Points.prototype );
+
+CV.EntranceFarPointer.prototype.constructor = CV.EntranceFarPointer;
+
+// EOF
+
+CV.EntranceNearPointer = function () {
+
+	var width = 5;
+	var height = 20;
+
+	this.type = "CV.EntranceNearPointer";
+
+	var geometry = new THREE.Geometry();
+	var bufferGeometry;
+
+	geometry.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
+	geometry.vertices.push( new THREE.Vector3( -width, 0, height ) );
+	geometry.vertices.push( new THREE.Vector3( width, 0, height ) );
+	geometry.vertices.push( new THREE.Vector3( 0, -width, height ) );
+	geometry.vertices.push( new THREE.Vector3( 0,  width, height ) );
+
+	geometry.faces.push( new THREE.Face3( 0, 1, 2, new THREE.Vector3( 0, 0, 1 ), new THREE.Color( 0xff0000 ), 0 ) );
+	geometry.faces.push( new THREE.Face3( 0, 3, 4, new THREE.Vector3( 1, 0, 0 ), new THREE.Color( 0xffff00 ), 0 ) );
+
+	bufferGeometry = new THREE.BufferGeometry().fromGeometry( geometry );
+	bufferGeometry.computeBoundingBox();
+
+	var material = new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors, side: THREE.DoubleSide } );
+
+	THREE.Mesh.call( this, bufferGeometry, material );
+
+};
+
+CV.EntranceNearPointer.prototype = Object.create( THREE.Mesh.prototype );
+
+CV.EntranceNearPointer.prototype.constructor = CV.EntranceNearPointer;
 
 // EOF
 
@@ -4838,24 +4876,9 @@ CV.Marker = ( function () {
 	}
 
 	var labelOffset = 30;
-	var red    = new THREE.Color( 0xff0000 );
-	var yellow = new THREE.Color( 0xffff00 );
 
-	var pointer = new CV.EntrancePointer( 5, labelOffset - 10, red, yellow );
-	var marker  = new THREE.Geometry();
-	var loader  = new THREE.TextureLoader();
-
-	var markerTexture  = loader.load( "CaveView/images/marker-yellow.png" );
-
-	var markerMaterial = new THREE.PointsMaterial( { size: 10, map: markerTexture, transparent : true, sizeAttenuation: false } );
-
-	marker.vertices.push( new THREE.Vector3( 0, 0, 10 ) );
-	marker.colors.push( new THREE.Color( 0xff00ff ) );
-
-	var pointerBufferGeometry = new THREE.BufferGeometry().fromGeometry( pointer );
-	pointerBufferGeometry.computeBoundingBox();
-
-	var pointerMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors, side: THREE.DoubleSide } );
+	var farPointerCached;
+	var nearPointerCached;
 
 	return function Marker ( text ) {
 
@@ -4863,26 +4886,31 @@ CV.Marker = ( function () {
 
 		this.type = "CV.Marker";
 
-		var point = new THREE.Points( marker, markerMaterial );
+		if ( farPointerCached === undefined ) farPointerCached = new CV.EntranceFarPointer();
 
-		point.layers.set( CV.FEATURE_ENTRANCES );
+		var farPointer  = farPointerCached.clone();
+
+		farPointer.layers.set( CV.FEATURE_ENTRANCES );
+
+
+		if ( nearPointerCached === undefined ) nearPointerCached = new CV.EntranceNearPointer();
+
+		var nearPointer = nearPointerCached.clone();
+
+		nearPointer.layers.set( CV.FEATURE_ENTRANCES );
+
 
 		var label = new CV.Label( text );
 
 		label.position.setZ( labelOffset );
 		label.layers.set( CV.FEATURE_ENTRANCES );
 
-		var pointer = new THREE.Mesh( pointerBufferGeometry, pointerMaterial );
-
-		pointer.type = "CV.Pointer";
-
-		pointer.layers.set( CV.FEATURE_ENTRANCES );
-		pointer.add( label );
+		nearPointer.add( label );
 
 		this.name = text;
 
-		this.addLevel( pointer,  0 );
-		this.addLevel( point,  100 );
+		this.addLevel( nearPointer,  0 );
+		this.addLevel( farPointer,  100 );
 
 		return this;
 
@@ -5187,7 +5215,7 @@ CV.Survey = function ( cave ) {
 
 		for ( i = 0; i < l; i++ ) {
 
-			faces[ i ].color =  new THREE.Color( 0x0000ff );
+			faces[ i ].color =  new THREE.Color( 0x00ffff );
 
 		}
 
@@ -5524,9 +5552,7 @@ CV.Survey.prototype.cutSection = function ( id ) {
 
 	this.limits = this.getBounds();
 
-	// FIXME - prune selected tree. - new tree op needed?
-
-	this.surveyTree.makeTop( id );
+	this.surveyTree = this.surveyTree.newTop( id );
 
 	this.selectSection( 0 );
 
@@ -5969,6 +5995,7 @@ CV.Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	default:
 
 		console.log( "invalid leg type" );
+
 		return;
 
 	}
@@ -6030,6 +6057,7 @@ CV.Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	default:
 
 		console.log( "invalid leg shading mode" );
+
 		return false;
 
 	}
@@ -6042,7 +6070,7 @@ CV.Survey.prototype.getSurveyColour = function ( surveyId ) {
 
 	var surveyColours = CV.ColourCache.survey;
 
-	return surveyColours[surveyId % surveyColours.length];
+	return surveyColours[ surveyId % surveyColours.length ];
 
 }
 
@@ -6092,7 +6120,7 @@ CV.Survey.prototype.getSurveyColours = function () { // FIXME - cache save recal
 
 	function _setSurveyColour ( value ) {
 
-		surveyColours[value] = colour;
+		surveyColours[ value ] = colour;
 
 	}
 
@@ -6527,7 +6555,7 @@ function resize () {
 
 }
 
-function update ( event ) {
+function update () {
 
 	// update HUD components
 
@@ -7313,7 +7341,7 @@ function loadCave ( file ) {
 
 function loadCaveLocalFile ( file ) {
 
-	resetGUI();
+	resetUI();
 	CV.Viewer.clearView();
 
 	progressBar.Start( "Loading file " + file.name + " ..." );
@@ -7486,7 +7514,7 @@ function keyDown ( event ) {
 
 	case 86: // cut selected survey section 'v'  
 
-		resetGUI();
+		resetUI();
 		viewState.cut = true;
 
 		break;
@@ -7634,13 +7662,13 @@ function init ( domID ) { // public method
 	renderer.setClearColor( 0x000000 );
 	renderer.autoClear = false;
 
-	oCamera = new THREE.OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 10000 );
+	oCamera = new THREE.OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 2000 );
 
 	oCamera.rotateOnAxis( CV.upAxis, Math.PI / 2 );
 
 	initCamera( oCamera );
 
-	pCamera = new THREE.PerspectiveCamera( 75, width / height, 1, 10000 );
+	pCamera = new THREE.PerspectiveCamera( 75, width / height, 1, 2000 );
 
 	initCamera( pCamera );
 
@@ -7796,6 +7824,8 @@ function init ( domID ) { // public method
 	} );
 
 	CV.Materials.initCache( viewState );
+
+	animate();
 
 	return;
 
@@ -8089,6 +8119,8 @@ function selectSection ( id ) {
 
 	setShadingMode( shadingMode );
 
+	selectedSection = id;
+
 	if ( id === 0 ) return;
 
 	var box = survey.getSelectedBox();
@@ -8117,8 +8149,6 @@ function selectSection ( id ) {
 		position:    boundingBox.center(),
 		boundingBox: boundingBox
 	};
-
-	selectedSection = id;
 
 }
 
@@ -8272,7 +8302,6 @@ function loadSurvey ( newSurvey ) {
 
 	//__dyeTrace(); // FIXME test function
 
-	animate();
 
 	function _tilesLoaded () {
 

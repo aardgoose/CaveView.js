@@ -405,16 +405,15 @@ CV.Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		console.log("v8d2");
 		pos += 3;
 
-		return false;
+		return true;
 
 	}
 
 	function cmd_DATEV8_3 ( c ) {
 
-		console.log("v8d3");
 		pos += 4;
 
-		return false;
+		return true;
 	}
 
 	function cmd_DATE_NODATE ( c ) {

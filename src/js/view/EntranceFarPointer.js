@@ -1,10 +1,10 @@
 
-CV.EntranceFarPointer = function () {
+function EntranceFarPointer () {
 
 	var geometry  = new THREE.Geometry();
 	var loader  = new THREE.TextureLoader();
 
-	var texture  = loader.load( CV.getEnvironmentValue( "cvDirectory", "" ) + "CaveView/images/marker-yellow.png" );
+	var texture  = loader.load( getEnvironmentValue( "cvDirectory", "" ) + "CaveView/images/marker-yellow.png" );
 
 	var material = new THREE.PointsMaterial( { size: 10, map: texture, transparent : true, sizeAttenuation: false } );
 
@@ -17,8 +17,10 @@ CV.EntranceFarPointer = function () {
 
 }
 
-CV.EntranceFarPointer.prototype = Object.create( THREE.Points.prototype );
+EntranceFarPointer.prototype = Object.create( THREE.Points.prototype );
 
-CV.EntranceFarPointer.prototype.constructor = CV.EntranceFarPointer;
+EntranceFarPointer.prototype.constructor = CV.EntranceFarPointer;
+
+export { EntranceFarPointer };
 
 // EOF

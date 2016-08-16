@@ -1,8 +1,6 @@
- "use strict";
 
-var Cave = Cave || {};
 
-CV.TileSet = {
+TileSet = {
 
 	N: 390000,
 	S: 340000,
@@ -10,15 +8,17 @@ CV.TileSet = {
 	W: 400000,
 
 	TILESIZE: 256,
-	BASEDIR: "/terrain/SK/heightmaps/",
-	OVERLAYDIR: "/terrain/SK/overlays/",
+	BASEDIR: "SK/heightmaps/",
+	OVERLAYDIR: "SK/overlays/",
 	OVERLAYS: [ "OS", "BGS" ],
 	OVERLAY_RESOLUTION: 32,
 	PREFIX: "SK",
-	RESOLUTION_MIN: 2,
+	RESOLUTION_MIN: 4,
 	RESOLUTION_MAX: 32,
 	SCALE: 64
 
 }
+
+export { TileSet };
 
 // EOF

@@ -1,8 +1,6 @@
-"use strict";
 
-var CV = CV || {};
 
-CV.Page = function ( frame, id ) {
+function Page( frame, id ) {
 
 	var tab  = document.createElement( "div" );
 	var page = document.createElement( "div" );
@@ -12,42 +10,42 @@ CV.Page = function ( frame, id ) {
 	tab.id = id;
 	tab.classList.add( "tab" );
 	tab.addEventListener( "click", this.tabHandleClick );
-	tab.style.top = ( CV.Page.position++ * 40 ) + "px";
+	tab.style.top = ( Page.position++ * 40 ) + "px";
 
 	frame.appendChild( tab );
 	frame.appendChild( page );
 
-	CV.Page.pages.push( { tab: tab, page: page } );
+	Page.pages.push( { tab: tab, page: page } );
 
 	this.page = page;
 	this.slide = undefined;
 
 }
 
-CV.Page.pages     = [];
-CV.Page.position  = 0;
-CV.Page.inHandler = false;
-CV.Page.controls  = [];
+Page.pages     = [];
+Page.position  = 0;
+Page.inHandler = false;
+Page.controls  = [];
 
-CV.Page.reset = function () {
+Page.reset = function () {
 
-	CV.Page.pages     = [];
-	CV.Page.position  = 0;
-	CV.Page.inHandler = false;
-	CV.Page.controls  = [];
+	Page.pages     = [];
+	Page.position  = 0;
+	Page.inHandler = false;
+	Page.controls  = [];
 
 }
 
-CV.Page.handleChange = function ( event ) {
+Page.handleChange = function ( event ) {
 
 	var obj = event.target;
 	var property = event.name;
 
-	if ( !CV.Page.inHandle ) {
+	if ( !Page.inHandle ) {
 
-		if ( CV.Page.controls[ property ] ) {
+		if ( Page.controls[ property ] ) {
 
-			var ctrl = CV.Page.controls[ property] ;
+			var ctrl = Page.controls[ property] ;
 
 			switch ( ctrl.type ) {
 
@@ -77,12 +75,12 @@ CV.Page.handleChange = function ( event ) {
 
 }
 
-CV.Page.prototype.constructor = CV.Page;
+Page.prototype.constructor = Page;
 
-CV.Page.prototype.tabHandleClick = function ( event ) {
+Page.prototype.tabHandleClick = function ( event ) {
 
 	var tab = event.target;
-	var pages = CV.Page.pages;
+	var pages = Page.pages;
 
 	tab.classList.add( "toptab" );
 	tab.parentElement.classList.add( "onscreen" );
@@ -107,13 +105,13 @@ CV.Page.prototype.tabHandleClick = function ( event ) {
 
 }
 
-CV.Page.prototype.appendChild = function ( domElement ) {
+Page.prototype.appendChild = function ( domElement ) {
 
 	this.page.appendChild( domElement );
 
 }
 
-CV.Page.prototype.addHeader = function ( text ) {
+Page.prototype.addHeader = function ( text ) {
 
 	var div = document.createElement( "div" );
 
@@ -125,7 +123,7 @@ CV.Page.prototype.addHeader = function ( text ) {
 
 }
 
-CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
+Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 	var div    = document.createElement( "div" );
 	var label  = document.createElement( "label" );
@@ -149,7 +147,7 @@ CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 		}
 
-		select.addEventListener( "change", function ( event ) { CV.Page.inHandler = true; trgObj[property] = obj[event.target.value]; CV.Page.inHandler = false; } );
+		select.addEventListener( "change", function ( event ) { Page.inHandler = true; trgObj[property] = obj[event.target.value]; Page.inHandler = false; } );
 
 	} else {
 
@@ -166,13 +164,13 @@ CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 		}
 
-		select.addEventListener( "change", function ( event ) { CV.Page.inHandler = true; trgObj[property] = event.target.value; CV.Page.inHandler = false; } );
+		select.addEventListener( "change", function ( event ) { Page.inHandler = true; trgObj[property] = event.target.value; Page.inHandler = false; } );
 
 	}
 
 	label.textContent = title;
 
-	CV.Page.controls[ property ] = select;
+	Page.controls[ property ] = select;
 
 	div.appendChild( label );
 	div.appendChild( select );
@@ -183,7 +181,7 @@ CV.Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 }
 
-CV.Page.prototype.addCheckbox = function ( title, obj, property ) {
+Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 	var label = document.createElement( "label" );
 	var cb    = document.createElement( "input" );
@@ -195,7 +193,7 @@ CV.Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 	cb.addEventListener( "change", _checkboxChanged );
 
-	CV.Page.controls[ property ] = cb;
+	Page.controls[ property ] = cb;
 
 	label.appendChild( cb );
 
@@ -205,17 +203,17 @@ CV.Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 	function _checkboxChanged ( event ) {
 
-		CV.Page.inHandler = true;
+		Page.inHandler = true;
 
 		obj[ property ] = event.target.checked; 
 
-		CV.Page.inHandler = false;
+		Page.inHandler = false;
 
 	}
 
 }
 
-CV.Page.prototype.addRange = function ( title, obj, property ) {
+Page.prototype.addRange = function ( title, obj, property ) {
 
 	var div = document.createElement( "div" );
 	var label = document.createElement( "label" );
@@ -236,7 +234,7 @@ CV.Page.prototype.addRange = function ( title, obj, property ) {
 	
 	label.textContent = title;
 
-	CV.Page.controls[ property ] = range;
+	Page.controls[ property ] = range;
 
 	div.appendChild( label );
 	div.appendChild( range );
@@ -247,17 +245,17 @@ CV.Page.prototype.addRange = function ( title, obj, property ) {
 
 	function _rangeChanged ( event ) {
 
-		CV.Page.inHandler = true;
+		Page.inHandler = true;
 
 		obj[ property ] = event.target.value; 
 
-		CV.Page.inHandler = false;
+		Page.inHandler = false;
 
 	}
 
 }
 
-CV.Page.prototype.addSlide = function ( domElement, depth, handleClick ) {
+Page.prototype.addSlide = function ( domElement, depth, handleClick ) {
 
 	var slide = document.createElement( "div" );
 
@@ -276,7 +274,7 @@ CV.Page.prototype.addSlide = function ( domElement, depth, handleClick ) {
 
 }
 
-CV.Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
+Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 
 	var newSlide = document.createElement( "div" );
 	var oldSlide = this.slide;
@@ -334,5 +332,7 @@ CV.Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 	}
 
 }
+
+export { Page };
 
 // EOF

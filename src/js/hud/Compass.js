@@ -1,14 +1,12 @@
-"use strict";
 
-var CV = CV || {};
 
-CV.Compass = function ( container ) {
+Compass = function ( container ) {
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
-	var stdWidth  = CV.HudObject.stdWidth;
-	var stdMargin = CV.HudObject.stdMargin;
+	var stdWidth  = HudObject.stdWidth;
+	var stdMargin = HudObject.stdMargin;
 
 	THREE.Group.call( this );
 
@@ -96,13 +94,13 @@ CV.Compass = function ( container ) {
 
 }
 
-CV.Compass.prototype = Object.create( THREE.Group.prototype );
+Compass.prototype = Object.create( THREE.Group.prototype );
 
-Object.assign( CV.Compass.prototype, CV.HudObject.prototype );
+Object.assign( Compass.prototype, HudObject.prototype );
 
-CV.Compass.prototype.contructor = CV.Compass;
+Compass.prototype.contructor = Compass;
 
-CV.Compass.prototype.set = function () {
+Compass.prototype.set = function () {
 
 	var direction     = new THREE.Vector3();
 	var yAxis         = new THREE.Vector3( 0, 1, 0 );
@@ -130,7 +128,8 @@ CV.Compass.prototype.set = function () {
 
 		var degrees = 360 - Math.round( THREE.Math.radToDeg( a ) );
 
-		this.txt.textContent = degrees.toLocaleString( "en-GB", { minimumIntegerDigits: 3 } ) + "\u00B0"; // unicaode degree symbol
+//		this.txt.textContent = degrees.toLocaleString( "en-GB", { minimumIntegerDigits: 3 } ) + "\u00B0"; // unicode degree symbol
+		this.txt.textContent = degrees + "\u00B0"; // unicode degree symbol
 
 		this.rotateOnAxis( negativeZAxis, a - this.lastRotation );
 
@@ -139,5 +138,7 @@ CV.Compass.prototype.set = function () {
 	}
 
 } ();
+
+export { Compass };
 
 // EOF

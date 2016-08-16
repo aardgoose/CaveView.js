@@ -1,8 +1,6 @@
- "use strict";
 
-var Cave = Cave || {};
 
-CV.Tile = function ( x, y, resolution, tileSet, clip ) {
+function Tile ( x, y, resolution, tileSet, clip ) {
 
 	this.x = x;
 	this.y = y;
@@ -23,12 +21,12 @@ CV.Tile = function ( x, y, resolution, tileSet, clip ) {
 
 }
 
-CV.Tile.liveTiles = 0;
-CV.Tile.overlayImages = new Map();
+Tile.liveTiles = 0;
+Tile.overlayImages = new Map();
 
-CV.Tile.prototype.constructor = CV.Tile;
+Tile.prototype.constructor = Tile;
 
-CV.Tile.prototype.create = function ( geometry, terrainData ) {
+Tile.prototype.create = function ( geometry, terrainData ) {
 
 	var vertices = geometry.vertices;
 	var faces    = geometry.faces;
@@ -52,7 +50,7 @@ CV.Tile.prototype.create = function ( geometry, terrainData ) {
 	geometry.computeFaceNormals();
 	geometry.computeVertexNormals();
 
-	var colourCache = CV.ColourCache.terrain;
+	var colourCache = ColourCache.terrain;
 	var colourRange = colourCache.length - 1;
 
 	for ( i = 0, l = faces.length; i < l; i++ ) {
@@ -63,7 +61,7 @@ CV.Tile.prototype.create = function ( geometry, terrainData ) {
 
 		for ( var j = 0; j < 3; j++ ) {
 
-			var dotProduct = face.vertexNormals[j].dot( CV.upAxis );
+			var dotProduct = face.vertexNormals[j].dot( upAxis );
 			var colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
 
 			face.vertexColors[ j ] = colourCache[ colourIndex ];
@@ -78,13 +76,13 @@ CV.Tile.prototype.create = function ( geometry, terrainData ) {
 	bufferGeometry.computeBoundingBox();
 
 	this.mesh = new THREE.Mesh( bufferGeometry );
-	this.mesh.layers.set ( CV.FEATURE_TERRAIN );
+	this.mesh.layers.set ( FEATURE_TERRAIN );
 
 	return this;
 
 }
 
-CV.Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
+Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 
 	var loader = new THREE.BufferGeometryLoader();
 
@@ -100,13 +98,14 @@ CV.Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) 
 	);
 
 	bufferGeometry.boundingBox = bb;
+	bufferGeometry.setDiscardBuffers(); // AAA
 
 	this.mesh = new THREE.Mesh( bufferGeometry );
-	this.mesh.layers.set ( CV.FEATURE_TERRAIN );
+	this.mesh.layers.set ( FEATURE_TERRAIN );
 
 }
 
-CV.Tile.prototype.getWorldBoundingBox = function () {
+Tile.prototype.getWorldBoundingBox = function () {
 
 	var boundingBox;
 
@@ -125,7 +124,7 @@ CV.Tile.prototype.getWorldBoundingBox = function () {
 
 }
 
-CV.Tile.prototype.getBoundingBox = function () {
+Tile.prototype.getBoundingBox = function () {
 
 	var boundingBox;
 
@@ -147,18 +146,18 @@ CV.Tile.prototype.getBoundingBox = function () {
 	return this.boundingBox;
 }
 
-CV.Tile.prototype.attach = function ( parent ) {
+Tile.prototype.attach = function ( parent ) {
 
 	this.evicted = false;
 	this.parent = parent;
 
 	parent.add( this.mesh );
 
-	++CV.Tile.liveTiles;
+	++Tile.liveTiles;
 
 }
 
-CV.Tile.prototype.remove = function ( evicted ) {
+Tile.prototype.remove = function ( evicted ) {
 
 	if ( evicted ) this.evictionCount++;
 
@@ -176,19 +175,19 @@ CV.Tile.prototype.remove = function ( evicted ) {
 		this.parent.remove( this.mesh );
 		this.mesh = null;
 
-		--CV.Tile.liveTiles;
+		--Tile.liveTiles;
 
 	}
 
 }
 
-CV.Tile.prototype.setMaterial = function ( material ) {
+Tile.prototype.setMaterial = function ( material ) {
 
 	if ( this.mesh ) this.mesh.material = material;
 
 }
 
-CV.Tile.prototype.setOpacity = function ( opacity ) {
+Tile.prototype.setOpacity = function ( opacity ) {
 
 	var mesh = this.mesh;
 
@@ -201,7 +200,7 @@ CV.Tile.prototype.setOpacity = function ( opacity ) {
 
 }
 
-CV.Tile.prototype.setOverlay = function ( overlay, opacity ) {
+Tile.prototype.setOverlay = function ( overlay, opacity ) {
 
 	if ( !this.mesh ) return;
 
@@ -228,11 +227,11 @@ CV.Tile.prototype.setOverlay = function ( overlay, opacity ) {
 	var xRepeat = repeat * ( ( tileWidth - clip.left - clip.right ) / tileWidth );
 	var yRepeat = repeat * ( ( tileWidth - clip.top  - clip.bottom ) / tileWidth );
 
-	var imageFile = tileSet.OVERLAYDIR + overlay + "/" + tileSet.PREFIX + tileSet.OVERLAY_RESOLUTION + "MX-" + CV.padDigits( y, 3 ) + "-" + CV.padDigits( x, 3 ) + ".jpg";
+	var imageFile = tileSet.OVERLAYDIR + overlay + "/" + tileSet.PREFIX + tileSet.OVERLAY_RESOLUTION + "MX-" + padDigits( y, 3 ) + "-" + padDigits( x, 3 ) + ".jpg";
 
-	if ( CV.Tile.overlayImages.has( imageFile ) ) {
+	if ( Tile.overlayImages.has( imageFile ) ) {
 
-		_imageLoaded( CV.Tile.overlayImages.get( imageFile ) );
+		_imageLoaded( Tile.overlayImages.get( imageFile ) );
 
 	} else {
 
@@ -248,7 +247,7 @@ CV.Tile.prototype.setOverlay = function ( overlay, opacity ) {
 
 		var material = new THREE.MeshLambertMaterial( { transparent: true, opacity: opacity } );
 
-		CV.Tile.overlayImages.set( imageFile, image );
+		Tile.overlayImages.set( imageFile, image );
 
 		texture = new THREE.Texture();
 
@@ -268,19 +267,19 @@ CV.Tile.prototype.setOverlay = function ( overlay, opacity ) {
 		self.mesh.material = material;
 
 		// add images to cache
-		CV.Tile.overlayImages.set( imageFile, image );
+		Tile.overlayImages.set( imageFile, image );
 
 	}
 
 }
 
-CV.Tile.prototype.getParent = function () {
+Tile.prototype.getParent = function () {
 
 	return this.parent;
 
 }
 
-CV.Tile.prototype.projectedArea = function ( camera ) {
+Tile.prototype.projectedArea = function ( camera ) {
 
 	var boundingBox = this.getWorldBoundingBox();
 
@@ -306,5 +305,7 @@ CV.Tile.prototype.projectedArea = function ( camera ) {
 	return t1.area() + t2.area();
 
 }
+
+export { Tile };
 
 // EOF

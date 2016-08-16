@@ -1,16 +1,13 @@
-//"use strict";
-
-var CV = CV || {};
 // Survex 3d file handler
 
-CV.Svx3dHandler = function ( fileName, dataStream ) {
+function Svx3dHandler ( fileName, dataStream ) {
 
 	this.fileName   = fileName;
 	this.groups     = [];
 	this.entrances  = [];
 	this.surface    = [];
 	this.xGroups    = [];
-	this.surveyTree = new CV.Tree();
+	this.surveyTree = new Tree();
 	var surveyTree  = this.surveyTree;
 
 	var source    = dataStream;  // file data as arrrayBuffer
@@ -34,6 +31,7 @@ CV.Svx3dHandler = function ( fileName, dataStream ) {
 	function readLF () { // read until Line feed
 
 		var bytes = new Uint8Array( source, 0 );
+
 		var lfString = [];
 		var b;
 
@@ -52,9 +50,9 @@ CV.Svx3dHandler = function ( fileName, dataStream ) {
 	}
 }
 
-CV.Svx3dHandler.prototype.constructor = CV.Svx3dHandler;
+Svx3dHandler.prototype.constructor = Svx3dHandler;
 
-CV.Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
+Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	var groups     = this.groups;
 	var entrances  = this.entrances;
@@ -437,15 +435,15 @@ CV.Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		if ( flags & 0x01 ) {
 
-			legs.push( { coords: coords, type: CV.SURFACE, survey: sectionId } );
+			legs.push( { coords: coords, type: SURFACE, survey: sectionId } );
 
 		} else if ( flags & 0x04 ) {
 
-			legs.push( { coords: coords, type: CV.SPLAY, survey: sectionId } );
+			legs.push( { coords: coords, type: SPLAY, survey: sectionId } );
 
 		} else {
 
-			legs.push( { coords: coords, type: CV.NORMAL, survey: sectionId } );
+			legs.push( { coords: coords, type: NORMAL, survey: sectionId } );
 
 		}
 
@@ -613,7 +611,7 @@ CV.Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 }
 
-CV.Svx3dHandler.prototype.getLineSegments = function () {
+Svx3dHandler.prototype.getLineSegments = function () {
 
 	var lineSegments = [];
 	var groups       = this.groups;
@@ -638,46 +636,48 @@ CV.Svx3dHandler.prototype.getLineSegments = function () {
 
 }
 
-CV.Svx3dHandler.prototype.getSurveyTree = function () {
+Svx3dHandler.prototype.getSurveyTree = function () {
 
 	return this.surveyTree;
 
 }
 
-CV.Svx3dHandler.prototype.getScraps = function () {
+Svx3dHandler.prototype.getScraps = function () {
 
 	return [];
 
 }
 
-CV.Svx3dHandler.prototype.getCrossSections = function () {
+Svx3dHandler.prototype.getCrossSections = function () {
 
 	return this.xGroups;
 
 }
 
-CV.Svx3dHandler.prototype.getEntrances = function () {
+Svx3dHandler.prototype.getEntrances = function () {
 
 	return this.entrances;
 
 }
 
-CV.Svx3dHandler.prototype.getTerrainDimensions = function () {
+Svx3dHandler.prototype.getTerrainDimensions = function () {
 
 	return { lines: 0, samples: 0 };
 
 }
 
-CV.Svx3dHandler.prototype.getTerrainBitmap = function () {
+Svx3dHandler.prototype.getTerrainBitmap = function () {
 
 	return false;
 
 }
 
-CV.Svx3dHandler.prototype.getName = function () {
+Svx3dHandler.prototype.getName = function () {
 
 	return this.fileName;
 
 }
+
+export { Svx3dHandler };
 
 // EOF

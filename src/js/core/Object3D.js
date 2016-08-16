@@ -1,6 +1,6 @@
-CV.Object3D = function () {};
+Object3D = function () {};
 
-CV.Object3D.prototype.reverseTraverse = function ( callback ) {
+Object3D.prototype.reverseTraverse = function ( callback ) {
 
 	var children = this.children;
 
@@ -14,6 +14,6 @@ CV.Object3D.prototype.reverseTraverse = function ( callback ) {
 
 };
 
-Object.assign( THREE.Object3D.prototype, CV.Object3D.prototype );
+Object.assign( THREE.Object3D.prototype, Object3D.prototype );
 
 // EOF

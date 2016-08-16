@@ -1,5 +1,5 @@
 
-CV.Label = function ( text ) {
+function Label ( text ) {
 
 	var canvas = document.createElement( "canvas" );
 
@@ -45,8 +45,10 @@ CV.Label = function ( text ) {
 
 };
 
-CV.Label.prototype = Object.create( THREE.Sprite.prototype );
+Label.prototype = Object.create( THREE.Sprite.prototype );
 
-CV.Label.prototype.constructor = CV.Label;
+Label.prototype.constructor = Label;
+
+export { Label };
 
 // EOF

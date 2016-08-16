@@ -1,8 +1,4 @@
-"use strict";
 
-var CV = CV || {};
-
-CV.UI = ( function() {
 
 var cave;
 var caveLoader;
@@ -26,39 +22,39 @@ var terrainControls = [];
 var terrainOverlay = null;
 
 var legShadingModes = {
-	"by height":          CV.SHADING_HEIGHT,
-	"by leg length":      CV.SHADING_LENGTH,
-	"by leg inclination": CV.SHADING_INCLINATION,
-	"height cursor":      CV.SHADING_CURSOR,
-	"fixed":              CV.SHADING_SINGLE,
-	"survey":             CV.SHADING_SURVEY
+	"by height":          SHADING_HEIGHT,
+	"by leg length":      SHADING_LENGTH,
+	"by leg inclination": SHADING_INCLINATION,
+	"height cursor":      SHADING_CURSOR,
+	"fixed":              SHADING_SINGLE,
+	"survey":             SHADING_SURVEY
 }
 
 var surfaceShadingModes = {
-	"by height":          CV.SHADING_HEIGHT,
-	"by leg inclination": CV.SHADING_INCLINATION,
-	"height cursor":      CV.SHADING_CURSOR,
-	"fixed":              CV.SHADING_SINGLE
+	"by height":          SHADING_HEIGHT,
+	"by leg inclination": SHADING_INCLINATION,
+	"height cursor":      SHADING_CURSOR,
+	"fixed":              SHADING_SINGLE
 }
 
 var terrainShadingModes = {
-	"Relief shading":     CV.SHADING_SHADED,
-	"by height":          CV.SHADING_HEIGHT,
-	"height cursor":      CV.SHADING_CURSOR
+	"Relief shading":     SHADING_SHADED,
+	"by height":          SHADING_HEIGHT,
+	"height cursor":      SHADING_CURSOR
 }
 
 var cameraViews = {
-	"<select viewpoint>": CV.VIEW_NONE,
-	"Plan":               CV.VIEW_PLAN,
-	"N Elevation":        CV.VIEW_ELEVATION_N,
-	"S Elevation":        CV.VIEW_ELEVATION_S,
-	"E Elevation":        CV.VIEW_ELEVATION_E,
-	"W Elevation":        CV.VIEW_ELEVATION_W
+	"<select viewpoint>": VIEW_NONE,
+	"Plan":               VIEW_PLAN,
+	"N Elevation":        VIEW_ELEVATION_N,
+	"S Elevation":        VIEW_ELEVATION_S,
+	"E Elevation":        VIEW_ELEVATION_E,
+	"W Elevation":        VIEW_ELEVATION_W
 }
 
 var cameraModes = {
-	"Orthographic": CV.CAMERA_ORTHOGRAPHIC,
-	"Perspective":  CV.CAMERA_PERSPECTIVE
+	"Orthographic": CAMERA_ORTHOGRAPHIC,
+	"Perspective":  CAMERA_PERSPECTIVE
 }
 
 function init ( domID ) { // public method
@@ -72,11 +68,11 @@ function init ( domID ) { // public method
 
 	}
 
-	progressBar = new CV.ProgressBar( container );
+	progressBar = new ProgressBar( container );
 
-	CV.Viewer.init( domID );
+	Viewer.init( domID );
 
-	caveLoader = new CV.Loader( caveLoaded, progress );
+	caveLoader = new Loader( caveLoaded, progress );
 
 	// event handlers
 	document.addEventListener( "keydown", function ( event ) { keyDown( event ); } );
@@ -89,13 +85,13 @@ function init ( domID ) { // public method
 		set: function ( value ) { loadCave( value ); file = value; },
 	} );
 
-	viewState = CV.Viewer.getState;
+	viewState = Viewer.getState;
 
-	viewState.addEventListener( "change",  CV.Page.handleChange );
+	viewState.addEventListener( "change",  Page.handleChange );
 	viewState.addEventListener( "change",  handleChange );
 	viewState.addEventListener( "newCave", viewComplete );
 
-	CV.Hud.init( domID );
+	Hud.init( domID );
 
 }
 
@@ -130,7 +126,7 @@ function handleChange( event ) {
 	case "terrainShading":
 
 		// only show overlay selection when terrain shading is set to overlay
-		if ( viewState.terrain && terrainOverlay && viewState.terrainShading === CV.SHADING_OVERLAY ) {
+		if ( viewState.terrain && terrainOverlay && viewState.terrainShading === SHADING_OVERLAY ) {
 
 			terrainOverlay.style.display = "block";
 
@@ -162,7 +158,7 @@ function initSelectionPage () {
 
 	if ( !isCaveLoaded ) return;
 
-	page = new CV.Page( frame, "icon_explore" );
+	page = new Page( frame, "icon_explore" );
 
 	page.addHeader( "Selection" );
 
@@ -185,7 +181,7 @@ function initSelectionPage () {
 		var tmp;
 		var i;
 		var l;
-		var surveyColours      = CV.Colours.surveyColoursCSS;
+		var surveyColours      = Colours.surveyColoursCSS;
 		var surveyColoursRange = surveyColours.length;
 		var span;
 
@@ -321,7 +317,7 @@ function initSelectionPage () {
 
 function initHelpPage () {
 
-	var help = new CV.Page( frame, "icon_help" );
+	var help = new Page( frame, "icon_help" );
 	var dl;
 
 	help.addHeader( "Help - key commands" );
@@ -398,13 +394,13 @@ function initHelpPage () {
 
 function initInfoPage() {
 
-	var page = new CV.Page( frame, "icon_info" );
+	var page = new Page( frame, "icon_info" );
 
 	page.addHeader( "Information" );
 
 	var p = document.createElement( "p" );
 
-	p.textContent = "CV.Viewer - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.";
+	p.textContent = "Viewer - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.";
 	page.appendChild( p );
 
 	p = document.createElement( "p" );
@@ -423,9 +419,9 @@ function initSettingsPage () {
 	var legShadingModesActive     = Object.assign( {}, legShadingModes );
 	var terrainShadingModesActive = Object.assign( {}, terrainShadingModes );
 
-	if ( viewState.hasTerrain ) legShadingModesActive.depth = CV.SHADING_DEPTH;
+	if ( viewState.hasTerrain ) legShadingModesActive.depth = SHADING_DEPTH;
 
-	var page = new CV.Page( frame, "icon_settings" );
+	var page = new Page( frame, "icon_settings" );
 
 	page.addHeader( "Survey" );
 
@@ -469,7 +465,7 @@ function initSettingsPage () {
 
 		var overlays = viewState.terrainOverlays;
 
-		if ( overlays.length > 0 ) terrainShadingModesActive[ "map overlay" ] = CV.SHADING_OVERLAY;
+		if ( overlays.length > 0 ) terrainShadingModesActive[ "map overlay" ] = SHADING_OVERLAY;
 
 		control = page.addSelect( "Shading", terrainShadingModesActive, viewState, "terrainShading" );
 		terrainControls.push( control );
@@ -497,7 +493,7 @@ function initSettingsPage () {
 
 function initUI () {
 
-	CV.Page.reset();
+	Page.reset();
 
 	// create UI side panel and reveal tabs
 	frame = document.createElement( "div" );
@@ -599,7 +595,7 @@ function nextCave () {
 function loadCave ( file ) {
 
 	resetUI();
-	CV.Viewer.clearView();
+	Viewer.clearView();
 
 	progressBar.Start( "Loading file " + file + " ..." );
 
@@ -610,7 +606,7 @@ function loadCave ( file ) {
 function loadCaveLocalFile ( file ) {
 
 	resetUI();
-	CV.Viewer.clearView();
+	Viewer.clearView();
 
 	progressBar.Start( "Loading file " + file.name + " ..." );
 
@@ -642,7 +638,7 @@ function caveLoaded ( inCave ) {
 
 	function _delayedTasks2 () {
 
-		CV.Viewer.loadCave( cave );
+		Viewer.loadCave( cave );
 		progressBar.End();
 
 		// viewComplete executed as "newCave"" event handler
@@ -654,21 +650,25 @@ function viewComplete () {
 
 	// display shading mode and initialize
 
-	viewState.shadingMode = CV.SHADING_HEIGHT;
+	viewState.shadingMode = SHADING_HEIGHT;
 
-	surveyTree = CV.Viewer.getSurveyTree();
+	surveyTree = Viewer.getSurveyTree();
 	isCaveLoaded = true;
 
 	// drop reference to cave to free heap space
 	cave = null;
 
 	initUI();
-
+/*
+	var v = Viewer.getControls();
+	v.autoRotate = true;
+	v.autoRotateRate = 2;
+*/
 }
 
 function shadingModeChanged () {
 
-	var stats = CV.Viewer.getStats();
+	var stats = Viewer.getStats();
 
 }
 
@@ -680,43 +680,43 @@ function keyDown ( event ) {
 
 	case 49: // change colouring scheme to depth - '1'
 
-		viewState.shadingMode = CV.SHADING_HEIGHT;
+		viewState.shadingMode = SHADING_HEIGHT;
 
 		break;
 
 	case 50: // change colouring scheme to angle - '2'
 
-		viewState.shadingMode = CV.SHADING_INCLINATION;
+		viewState.shadingMode = SHADING_INCLINATION;
 
 		break;
 
 	case 51: // change colouring scheme to length - '3'
 
-		viewState.shadingMode = CV.SHADING_LENGTH;
+		viewState.shadingMode = SHADING_LENGTH;
 
 		break;
 
 	case 52: // change colouring scheme to height cursor - '4'
 
-		viewState.shadingMode = CV.SHADING_CURSOR;
+		viewState.shadingMode = SHADING_CURSOR;
 
 		break;
 
 	case 53: // change colouring scheme to white - '5'
 
-		viewState.shadingMode = CV.SHADING_SINGLE;
+		viewState.shadingMode = SHADING_SINGLE;
 
 		break;
 
 	case 54: // change colouring scheme to per survey section - '6'
 
-		viewState.shadingMode = CV.SHADING_SURVEY;
+		viewState.shadingMode = SHADING_SURVEY;
 
 		break;
 
 	case 55: // change colouring scheme to per survey section - 'y'
 
-		viewState.shadingMode = CV.SHADING_DEPTH;
+		viewState.shadingMode = SHADING_DEPTH;
 
 		break;
 
@@ -740,13 +740,13 @@ function keyDown ( event ) {
 
 	case 79: //switch view to orthoganal - 'o'
 
-		viewState.cameraType = CV.CAMERA_ORTHOGRAPHIC;
+		viewState.cameraType = CAMERA_ORTHOGRAPHIC;
 
 		break;
 
 	case 80: // switch view to perspective -'p'
 
-		viewState.cameraType = CV.CAMERA_PERSPECTIVE;
+		viewState.cameraType = CAMERA_PERSPECTIVE;
 
 		break;
 
@@ -758,7 +758,7 @@ function keyDown ( event ) {
 
 	case 82: // reset camera positions and settings to initial plan view -'r'
 
-		viewState.view = CV.VIEW_PLAN;
+		viewState.view = VIEW_PLAN;
 
 		break;
 
@@ -776,7 +776,7 @@ function keyDown ( event ) {
 
 	case 85: // switch terrain on/off 'u'
 
-		if ( viewState.hasTerrain ) viewState.terrainShading = CV.SHADING_PW;
+		if ( viewState.hasTerrain ) viewState.terrainShading = SHADING_PW;
 
 		break;
 
@@ -830,12 +830,11 @@ function keyDown ( event ) {
 
 // export public interface
 
-return {
+export var UI = {
 	init:         init,
 	loadCave:     loadCave,
 	loadCaveList: loadCaveList
 };
 
-} () );// end of UI Module
 
 // EOF

@@ -1,8 +1,5 @@
-"use strict";
 
-var CV = CV || {};
-
-CV.ScaleBar = function ( container, hScale, rightMargin ) {
+function ScaleBar ( container, hScale, rightMargin ) {
 
 	var leftMargin = 10;
 
@@ -34,13 +31,13 @@ CV.ScaleBar = function ( container, hScale, rightMargin ) {
 
 }
 
-CV.ScaleBar.prototype = Object.create( THREE.Group.prototype );
+ScaleBar.prototype = Object.create( THREE.Group.prototype );
 
-Object.assign( CV.ScaleBar.prototype, CV.HudObject.prototype );
+Object.assign( ScaleBar.prototype, HudObject.prototype );
 
-CV.ScaleBar.prototype.constructor = CV.ScaleBar;
+ScaleBar.prototype.constructor = ScaleBar;
 
-CV.ScaleBar.prototype.setScale = function ( scale ) {
+ScaleBar.prototype.setScale = function ( scale ) {
 
 	var scaleBars = this.scaleBars;
 	var length = 0;
@@ -162,5 +159,7 @@ CV.ScaleBar.prototype.setScale = function ( scale ) {
 	}
 
 }
+
+export { ScaleBar };
 
 // EOF

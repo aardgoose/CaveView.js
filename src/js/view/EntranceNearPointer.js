@@ -1,5 +1,5 @@
 
-CV.EntranceNearPointer = function () {
+function EntranceNearPointer () {
 
 	var width = 5;
 	var height = 20;
@@ -27,8 +27,10 @@ CV.EntranceNearPointer = function () {
 
 };
 
-CV.EntranceNearPointer.prototype = Object.create( THREE.Mesh.prototype );
+EntranceNearPointer.prototype = Object.create( THREE.Mesh.prototype );
 
-CV.EntranceNearPointer.prototype.constructor = CV.EntranceNearPointer;
+EntranceNearPointer.prototype.constructor = EntranceNearPointer;
+
+export { EntranceNearPointer };
 
 // EOF

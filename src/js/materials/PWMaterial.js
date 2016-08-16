@@ -1,20 +1,18 @@
-"use strict";
 
-var CV = CV || {};
 
-CV.PWMaterial = function () {
+function PWMaterial () {
 
 	THREE.ShaderMaterial.call( this, {
 
 		uniforms: {
     		zoom:   new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
 			offset: { value: new THREE.Vector2(1.150, 0.275) },
-  			cmap:   { value: CV.Colours.gradientTexture },
+  			cmap:   { value: Colours.gradientTexture },
 			uLight: { value: new THREE.Vector3( -1, -1, 2 ) }
    		 },
 
-		vertexShader: CV.Shaders.pwVertexShader,
-		fragmentShader: CV.Shaders.pwFragmentShader
+		vertexShader: Shaders.pwVertexShader,
+		fragmentShader: Shaders.pwFragmentShader
 
 	} );
 
@@ -30,8 +28,10 @@ CV.PWMaterial = function () {
 
 }
 
-CV.PWMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+PWMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
 
-CV.PWMaterial.prototype.constructor = CV.PWMaterial;
+PWMaterial.prototype.constructor = PWMaterial;
+
+export { PWMaterial };
 
 // EOF

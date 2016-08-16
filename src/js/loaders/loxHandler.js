@@ -1,6 +1,6 @@
-//"use strict";
 
-CV.loxHandler = function ( fileName, dataStream ) {
+
+function loxHandler  ( fileName, dataStream ) {
 
 	this.fileName          = fileName;
 	this.entrances         = [];
@@ -11,7 +11,7 @@ CV.loxHandler = function ( fileName, dataStream ) {
 	this.faults            = [];
 	this.lineSegments      = [];
 	this.sections          = new Map();
-	this.surveyTree        = new CV.Tree();
+	this.surveyTree        = new Tree();
 
 	var lineSegments = [];
 	var xSects       = [];
@@ -210,13 +210,13 @@ CV.loxHandler = function ( fileName, dataStream ) {
 		var m_sectionType = readUint();
 		var m_surveyId    = readUint();
 		var m_threshold   = f.getFloat64( pos, true );
-		var type          = CV.NORMAL;
+		var type          = NORMAL;
 
 		pos += 8;
 
 
-		if ( m_flags && 0x01 ) type = CV.SURFACE;
-		if ( m_flags && 0x08 ) type = CV.SPLAY;
+		if ( m_flags && 0x01 ) type = SURFACE;
+		if ( m_flags && 0x08 ) type = SPLAY;
 
 		if ( m_flags === 0x16 ) {
 
@@ -417,45 +417,45 @@ CV.loxHandler = function ( fileName, dataStream ) {
 	}
 }
 
-CV.loxHandler.prototype.constructor = CV.loxHandler;
+loxHandler.prototype.constructor = loxHandler;
 
-CV.loxHandler.prototype.getLineSegments = function () {
+loxHandler.prototype.getLineSegments = function () {
 
 	return this.lineSegments;
 
 }
 
-CV.loxHandler.prototype.getSurveyTree = function () {
+loxHandler.prototype.getSurveyTree = function () {
 
 	return this.surveyTree;
 
 }
 
-CV.loxHandler.prototype.getScraps = function () {
+loxHandler.prototype.getScraps = function () {
 
 	return this.scraps;
 
 }
 
-CV.loxHandler.prototype.getCrossSections = function () {
+loxHandler.prototype.getCrossSections = function () {
 
 	return [];
 
 }
 
-CV.loxHandler.prototype.getEntrances = function () {
+loxHandler.prototype.getEntrances = function () {
 
 	return this.entrances;
 
 }
 
-CV.loxHandler.prototype.getTerrainDimensions = function () {
+loxHandler.prototype.getTerrainDimensions = function () {
 
 	return this.terrainDimensions;
 
 }
 
-CV.loxHandler.prototype.getTerrainData = function () {
+loxHandler.prototype.getTerrainData = function () {
 
 	// flip y direction 
 	var flippedTerrain = [];
@@ -478,22 +478,24 @@ CV.loxHandler.prototype.getTerrainData = function () {
 
 }
 
-CV.loxHandler.prototype.getTerrainBitmap = function () {
+loxHandler.prototype.getTerrainBitmap = function () {
 
 	return this.terrainBitmap;
 
 }
 
-CV.loxHandler.prototype.getFaults = function () {
+loxHandler.prototype.getFaults = function () {
 
 	return this.chains;
 
 }
 
-CV.loxHandler.prototype.getName = function () {
+loxHandler.prototype.getName = function () {
 
   return this.fileName;
 
 }
+
+export { loxHandler };
 
 // EOF

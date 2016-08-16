@@ -1,8 +1,6 @@
-"use strict";
 
-var CV = CV || {};
 
-CV.ProgressBar = function ( container ) {
+function ProgressBar ( container ) {
 
 	var offset = ( container.clientWidth - 300 ) / 2;
 
@@ -27,9 +25,9 @@ CV.ProgressBar = function ( container ) {
 
 }
 
-CV.ProgressBar.prototype.constructor = CV.ProgressBar;
+ProgressBar.prototype.constructor = ProgressBar;
 
-CV.ProgressBar.prototype.Start = function ( text ) {
+ProgressBar.prototype.Start = function ( text ) {
 
 	var statusText  = this.statusText;
 	var progressBar = this.progressBar;
@@ -42,19 +40,19 @@ CV.ProgressBar.prototype.Start = function ( text ) {
 
 }
 
-CV.ProgressBar.prototype.Update = function ( pcent ) {
+ProgressBar.prototype.Update = function ( pcent ) {
 
 	this.progressBar.value = pcent;
 
 }
 
-CV.ProgressBar.prototype.Add = function ( pcent ) {
+ProgressBar.prototype.Add = function ( pcent ) {
 
 	this.progressBar.value += pcent;
 
 }
 
-CV.ProgressBar.prototype.End = function () {
+ProgressBar.prototype.End = function () {
 
 	var container = this.container;
 
@@ -62,5 +60,7 @@ CV.ProgressBar.prototype.End = function () {
 	container.removeChild( this.progressBar );
 
 }
+
+export { ProgessBar };
 
 // EOF

@@ -1,5 +1,5 @@
 
-CV.Marker = ( function () {
+var Marker = ( function () {
 
 	if ( typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope ) {
     	return function Marker () {};
@@ -16,24 +16,24 @@ CV.Marker = ( function () {
 
 		this.type = "CV.Marker";
 
-		if ( farPointerCached === undefined ) farPointerCached = new CV.EntranceFarPointer();
+		if ( farPointerCached === undefined ) farPointerCached = new EntranceFarPointer();
 
 		var farPointer  = farPointerCached.clone();
 
-		farPointer.layers.set( CV.FEATURE_ENTRANCES );
+		farPointer.layers.set( FEATURE_ENTRANCES );
 
 
-		if ( nearPointerCached === undefined ) nearPointerCached = new CV.EntranceNearPointer();
+		if ( nearPointerCached === undefined ) nearPointerCached = new EntranceNearPointer();
 
 		var nearPointer = nearPointerCached.clone();
 
-		nearPointer.layers.set( CV.FEATURE_ENTRANCES );
+		nearPointer.layers.set( FEATURE_ENTRANCES );
 
 
-		var label = new CV.Label( text );
+		var label = new Label( text );
 
 		label.position.setZ( labelOffset );
-		label.layers.set( CV.FEATURE_ENTRANCES );
+		label.layers.set( FEATURE_ENTRANCES );
 
 		nearPointer.add( label );
 
@@ -48,11 +48,11 @@ CV.Marker = ( function () {
 
 } () );
 
-CV.Marker.prototype = Object.create( THREE.LOD.prototype );
+Marker.prototype = Object.create( THREE.LOD.prototype );
 
-CV.Marker.prototype.constructor = CV.Marker;
+Marker.prototype.constructor = Marker;
 
-CV.Marker.prototype.raycast = function ( raycaster, intersects ) {
+Marker.prototype.raycast = function ( raycaster, intersects ) {
 
 	var threshold = 10;
 	var object = this;
@@ -82,5 +82,7 @@ CV.Marker.prototype.raycast = function ( raycaster, intersects ) {
 	}
 
 };
+
+export { Marker };
 
 // EOF

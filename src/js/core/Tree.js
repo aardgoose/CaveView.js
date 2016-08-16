@@ -1,8 +1,6 @@
-//"use strict";
 
-var CV = CV || {};
 
-CV.TreeNode = function ( name, id, parent ) {
+function TreeNode( name, id, parent ) {
 
 	this.name     = name;
 	this.id       = id;
@@ -11,22 +9,22 @@ CV.TreeNode = function ( name, id, parent ) {
 
 }
 
-CV.Tree = function () {
+function Tree () {
 
-	this.root  = new CV.TreeNode( "", 0, 0 );
+	this.root  = new TreeNode( "", 0, 0 );
 	this.maxId = 0;
 
 }
 
-CV.Tree.prototype.constructor = CV.Tree;
+Tree.prototype.constructor = Tree;
 
-CV.Tree.prototype.addNodeById = function ( name, id, parentId ) {
+Tree.prototype.addNodeById = function ( name, id, parentId ) {
 
 	var pnode = this.findById( parentId, this.root );
 
 	if ( pnode ) {
 
-		pnode.children.push ( new CV.TreeNode( name, id ) );
+		pnode.children.push ( new TreeNode( name, id ) );
 		this.maxId = Math.max( this.maxId, id );
 
 		return id;
@@ -37,13 +35,13 @@ CV.Tree.prototype.addNodeById = function ( name, id, parentId ) {
 
 }
 
-CV.Tree.prototype.addNode = function ( name, parentId ) {
+Tree.prototype.addNode = function ( name, parentId ) {
 
 	return this.addNodeById( name, ++this.maxId, parentId );
 
 }
 
-CV.Tree.prototype.findById = function ( id, node ) {
+Tree.prototype.findById = function ( id, node ) {
 
 	if ( node === undefined ) node = this.root;
 
@@ -61,9 +59,9 @@ CV.Tree.prototype.findById = function ( id, node ) {
 
 }
 
-CV.Tree.prototype.newTop = function ( id ) {
+Tree.prototype.newTop = function ( id ) {
 
-	var newTop = new CV.Tree();
+	var newTop = new Tree();
 
 	var node = this.findById( id );
 	newTop.root = node;
@@ -72,7 +70,7 @@ CV.Tree.prototype.newTop = function ( id ) {
 
 }
 
-CV.Tree.prototype.addByPath = function ( path, node ) {
+Tree.prototype.addByPath = function ( path, node ) {
 
 	var name = path.shift();
 	var next = null;
@@ -110,7 +108,7 @@ CV.Tree.prototype.addByPath = function ( path, node ) {
 
 	if ( next === null ) {
 
-		var next = new CV.TreeNode( name, ++this.maxId, here.id );
+		var next = new TreeNode( name, ++this.maxId, here.id );
 
 		here.children.push( next );
 
@@ -128,7 +126,7 @@ CV.Tree.prototype.addByPath = function ( path, node ) {
 
 }
 
-CV.Tree.prototype.forNodes = function ( doFunc, node ) {
+Tree.prototype.forNodes = function ( doFunc, node ) {
 
 	var root = null;
 
@@ -152,7 +150,7 @@ CV.Tree.prototype.forNodes = function ( doFunc, node ) {
 
 }
 
-CV.Tree.prototype.removeNodes = function ( doFunc, node ) {
+Tree.prototype.removeNodes = function ( doFunc, node ) {
 
 	var root = null;
 
@@ -177,7 +175,7 @@ CV.Tree.prototype.removeNodes = function ( doFunc, node ) {
 
 }
 
-CV.Tree.prototype.getSubtreeIds = function ( id, idSet, node ) {
+Tree.prototype.getSubtreeIds = function ( id, idSet, node ) {
 
 	var root;
 
@@ -201,7 +199,7 @@ CV.Tree.prototype.getSubtreeIds = function ( id, idSet, node ) {
 
 }
 
-CV.Tree.prototype.reduce = function ( name ) {
+Tree.prototype.reduce = function ( name ) {
 
 	// remove single child nodes from top of tree.
 	while ( this.root.children.length === 1 ) {
@@ -218,13 +216,13 @@ CV.Tree.prototype.reduce = function ( name ) {
 
 }
 
-CV.Tree.prototype.getRootId = function () {
+Tree.prototype.getRootId = function () {
 
 	return this.root.id;
 
 }
 
-CV.Tree.prototype.getNodeData = function ( id ) {
+Tree.prototype.getNodeData = function ( id ) {
 
 	var node = this.findById( id, this.root );
 
@@ -232,7 +230,7 @@ CV.Tree.prototype.getNodeData = function ( id ) {
 
 }
 
-CV.Tree.prototype.getChildData = function ( id ) {
+Tree.prototype.getChildData = function ( id ) {
 
 	var node = this.findById( id, this.root );
 	var ret = [];
@@ -249,7 +247,7 @@ CV.Tree.prototype.getChildData = function ( id ) {
 
 }
 
-CV.Tree.prototype.getIdByPath = function ( path ) {
+Tree.prototype.getIdByPath = function ( path ) {
 
 	var head;
 	var node  = this.root;
@@ -286,5 +284,6 @@ CV.Tree.prototype.getIdByPath = function ( path ) {
 
 }
 
+export { Tree };
 
 // EOF

@@ -1,14 +1,12 @@
-"use strict";
 
-var CV = CV || {};
 
-CV.AHI = function ( container ) {
+function AHI ( container ) {
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
-	var stdWidth  = CV.HudObject.stdWidth;
-	var stdMargin = CV.HudObject.stdMargin;
+	var stdWidth  = HudObject.stdWidth;
+	var stdMargin = HudObject.stdMargin;
 
 	THREE.Group.call( this );
 
@@ -98,13 +96,13 @@ CV.AHI = function ( container ) {
 
 }
 
-CV.AHI.prototype = Object.create( THREE.Group.prototype );
+AHI.prototype = Object.create( THREE.Group.prototype );
 
-Object.assign( CV.AHI.prototype, CV.HudObject.prototype );
+Object.assign( AHI.prototype, HudObject.prototype );
 
-CV.AHI.prototype.contructor = CV.AHI;
+AHI.prototype.contructor = AHI;
 
-CV.AHI.prototype.set = function () {
+AHI.prototype.set = function () {
 
 	var direction = new THREE.Vector3();
 	var xAxis     = new THREE.Vector3( 1, 0, 0 );
@@ -113,7 +111,7 @@ CV.AHI.prototype.set = function () {
 
 		vCamera.getWorldDirection( direction );
 
-		var pitch = Math.PI / 2 - direction.angleTo( CV.upAxis );
+		var pitch = Math.PI / 2 - direction.angleTo( upAxis );
 
 		if ( pitch === this.lastPitch ) return;
 
@@ -125,5 +123,7 @@ CV.AHI.prototype.set = function () {
 	}
 
 } ();
+
+export { AHI };
 
 // EOF

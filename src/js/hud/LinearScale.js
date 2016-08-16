@@ -1,14 +1,12 @@
-"use strict";
 
-var CV = CV || {};
 
-CV.LinearScale = function ( container, viewState ) {
+function LinearScale ( container, viewState ) {
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
-	var stdWidth  = CV.HudObject.stdWidth;
-	var stdMargin = CV.HudObject.stdMargin;
+	var stdWidth  = HudObject.stdWidth;
+	var stdMargin = HudObject.stdMargin;
 
 	this.name = "CV.LinearScale";
 	this.domObjects = [];
@@ -27,7 +25,7 @@ CV.LinearScale = function ( container, viewState ) {
 	geometry.rotateX( Math.PI / 2 );
 	geometry.translate( -barWidth / 2, 0, range / 2 + viewState.minHeight );
 
-	THREE.Mesh.call( this, geometry, CV.Materials.getHeightMaterial( CV.MATERIAL_LINE ) );
+	THREE.Mesh.call( this, geometry, Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 	var ms = new THREE.Matrix4().makeScale( 1,  1, zScale );
 
@@ -85,13 +83,13 @@ CV.LinearScale = function ( container, viewState ) {
 
 }
 
-CV.LinearScale.prototype = Object.create( THREE.Mesh.prototype );
+LinearScale.prototype = Object.create( THREE.Mesh.prototype );
 
-Object.assign( CV.LinearScale.prototype, CV.HudObject.prototype );
+Object.assign( LinearScale.prototype, HudObject.prototype );
 
-CV.LinearScale.prototype.constructor = CV.LinearScale;
+LinearScale.prototype.constructor = LinearScale;
 
-CV.LinearScale.prototype.setRange = function ( min, max, caption ) {
+LinearScale.prototype.setRange = function ( min, max, caption ) {
 
 	this.maxDiv.textContent = Math.round( max ) + "m";
 	this.minDiv.textContent = Math.round( min ) + "m";
@@ -102,12 +100,14 @@ CV.LinearScale.prototype.setRange = function ( min, max, caption ) {
 
 }
 
-CV.LinearScale.prototype.setMaterial = function ( material ) {
+LinearScale.prototype.setMaterial = function ( material ) {
 
 	this.material = material;
 
 	return this;
 
 }
+
+export { LinearScale };
 
 // EOF

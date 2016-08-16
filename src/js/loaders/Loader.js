@@ -1,8 +1,6 @@
-//"use strict";
 
-var CV = CV || {};
 
-CV.Loader = function ( callback, progress ) {
+function Loader ( callback, progress ) {
 
 	if (!callback) {
 
@@ -15,9 +13,9 @@ CV.Loader = function ( callback, progress ) {
 
 }
 
-CV.Loader.prototype.constructor = CV.Loader;
+Loader.prototype.constructor = Loader;
 
-CV.Loader.prototype.parseName = function ( name ) {
+Loader.prototype.parseName = function ( name ) {
 
 	var rev = name.split( "." ).reverse();
 
@@ -46,12 +44,12 @@ CV.Loader.prototype.parseName = function ( name ) {
 
 }
 
-CV.Loader.prototype.loadURL = function ( cave ) {
+Loader.prototype.loadURL = function ( cave ) {
 
 	var self     = this;
 	var fileName = cave;
 	var xhr;
-	var prefix   = CV.getEnvironmentValue( "surveyDirectory", "" );
+	var prefix   = getEnvironmentValue( "surveyDirectory", "" );
 
 	// parse file name
 	this.parseName( cave );
@@ -96,7 +94,7 @@ CV.Loader.prototype.loadURL = function ( cave ) {
 	}
 }
 
-CV.Loader.prototype.loadFile = function ( file ) {
+Loader.prototype.loadFile = function ( file ) {
 
 	var self = this;
 	var fileName = file.name;
@@ -153,7 +151,7 @@ CV.Loader.prototype.loadFile = function ( file ) {
 	}
 }
 
-CV.Loader.prototype.callHandler = function( fileName, data) {
+Loader.prototype.callHandler = function( fileName, data) {
 
 	var handler;
 
@@ -161,13 +159,13 @@ CV.Loader.prototype.callHandler = function( fileName, data) {
 
 	case '3d':
 
-		handler = new CV.Svx3dHandler( fileName, data );
+		handler = new Svx3dHandler( fileName, data );
 
 		break;
 
 	case 'lox':
 
-		handler = new CV.loxHandler( fileName, data );
+		handler = new loxHandler( fileName, data );
 
 		break;
 
@@ -181,5 +179,7 @@ CV.Loader.prototype.callHandler = function( fileName, data) {
 	this.callback( handler );
 
 }
+
+export { Loader };
 
 // EOF

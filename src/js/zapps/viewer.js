@@ -1,11 +1,7 @@
- "use strict";
 
-var CV = CV || {};
 
-CV.lightPosition = new THREE.Vector3( -1, -1, 0.5 );
-CV.CAMERA_OFFSET = 600;
-
-CV.Viewer = ( function () {
+lightPosition = new THREE.Vector3( -1, -1, 0.5 );
+CAMERA_OFFSET = 600;
 
 var caveIsLoaded = false;
 
@@ -34,9 +30,9 @@ var zScale;
 var viewState = {};
 var cursorHeight;
 
-var shadingMode        = CV.SHADING_HEIGHT;
-var surfaceShadingMode = CV.SHADING_SINGLE;
-var terrainShadingMode = CV.SHADING_SHADED;
+var shadingMode        = SHADING_HEIGHT;
+var surfaceShadingMode = SHADING_SINGLE;
+var terrainShadingMode = SHADING_SHADED;
 
 var cameraMode;
 var selectedSection = 0;
@@ -69,7 +65,7 @@ function __dyeTrace() {
 
 	}
 
-	scene.add ( new THREE.Points( geometry, new CV.TestMaterial( 25 ) ) );
+	scene.add ( new THREE.Points( geometry, new TestMaterial( 25 ) ) );
 
 }
 
@@ -91,7 +87,7 @@ function init ( domID ) { // public method
 
 	oCamera = new THREE.OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 2000 );
 
-	oCamera.rotateOnAxis( CV.upAxis, Math.PI / 2 );
+	oCamera.rotateOnAxis( upAxis, Math.PI / 2 );
 
 	initCamera( oCamera );
 
@@ -118,8 +114,8 @@ function init ( domID ) { // public method
 
 	Object.defineProperty( viewState, "terrain", {
 		writeable: true,
-		get: function () { return testCameraLayer( CV.FEATURE_TERRAIN ); },
-		set: function ( x ) { loadTerrain( x ); setCameraLayer( CV.FEATURE_TERRAIN, x ); this.dispatchEvent( { type: "change", name: "terrain" } ); }
+		get: function () { return testCameraLayer( FEATURE_TERRAIN ); },
+		set: function ( x ) { loadTerrain( x ); setCameraLayer( FEATURE_TERRAIN, x ); this.dispatchEvent( { type: "change", name: "terrain" } ); }
 	} );
 
 	Object.defineProperty( viewState, "terrainShading", {
@@ -168,7 +164,7 @@ function init ( domID ) { // public method
 
 	Object.defineProperty( viewState, "view", {
 		writeable: true,
-		get: function () { return CV.VIEW_NONE; },
+		get: function () { return VIEW_NONE; },
 		set: function ( x ) { _viewStateSetter( setViewMode, "view", x ); }
 	} );
 
@@ -206,7 +202,7 @@ function init ( domID ) { // public method
 		set: function ( x ) { _viewStateSetter( setCameraPOI, "setPOI", x ); }
 	} );
 
-	if ( CV.Hud === undefined ) {
+	if ( Hud === undefined ) {
 
 		Object.defineProperty( viewState, "hasHUD", {
 			value: false,
@@ -220,23 +216,23 @@ function init ( domID ) { // public method
 
 		Object.defineProperty( viewState, "HUD", {
 			writeable: true,
-			get: function () { return CV.Hud.getVisibility(); },
-			set: function ( x ) { CV.Hud.setVisibility( x ); }
+			get: function () { return Hud.getVisibility(); },
+			set: function ( x ) { Hud.setVisibility( x ); }
 		} );
 	}
 
-	_enableLayer( CV.FEATURE_BOX,       "box" );
-	_enableLayer( CV.FEATURE_ENTRANCES, "entrances" );
-	_enableLayer( CV.FACE_SCRAPS,       "scraps" );
-	_enableLayer( CV.FACE_WALLS,        "walls" );
-	_enableLayer( CV.LEG_SPLAY,         "splays" );
-	_enableLayer( CV.LEG_SURFACE,       "surfaceLegs" );
+	_enableLayer( FEATURE_BOX,       "box" );
+	_enableLayer( FEATURE_ENTRANCES, "entrances" );
+	_enableLayer( FACE_SCRAPS,       "scraps" );
+	_enableLayer( FACE_WALLS,        "walls" );
+	_enableLayer( LEG_SPLAY,         "splays" );
+	_enableLayer( LEG_SURFACE,       "surfaceLegs" );
 	
-	_hasLayer( CV.FEATURE_ENTRANCES, "hasEntrances" );
-	_hasLayer( CV.FACE_SCRAPS,       "hasScraps" );
-	_hasLayer( CV.FACE_WALLS,        "hasWalls" );
-	_hasLayer( CV.LEG_SPLAY,         "hasSplays" );
-	_hasLayer( CV.LEG_SURFACE,       "hasSurfaceLegs" );
+	_hasLayer( FEATURE_ENTRANCES, "hasEntrances" );
+	_hasLayer( FACE_SCRAPS,       "hasScraps" );
+	_hasLayer( FACE_WALLS,        "hasWalls" );
+	_hasLayer( LEG_SPLAY,         "hasSplays" );
+	_hasLayer( LEG_SURFACE,       "hasSurfaceLegs" );
 
 	Object.defineProperty( viewState, "cut", {
 		writeable: true,
@@ -250,7 +246,7 @@ function init ( domID ) { // public method
 		set: function ( x ) { setZScale( x ) }
 	} );
 
-	CV.Materials.initCache( viewState );
+	Materials.initCache( viewState );
 
 	animate();
 
@@ -326,16 +322,16 @@ function renderDepthTexture () {
 
 	var rtCamera = new THREE.OrthographicCamera( -width / 2, width / 2,  height / 2, -height / 2, -10000, 10000 );
 
-	rtCamera.layers.enable( CV.FEATURE_TERRAIN ); // just render the terrain
+	rtCamera.layers.enable( FEATURE_TERRAIN ); // just render the terrain
 
-	scene.overrideMaterial = CV.Materials.getDepthMapMaterial();
+	scene.overrideMaterial = Materials.getDepthMapMaterial();
 
 	var renderTarget = new THREE.WebGLRenderTarget( dim, dim, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBFormat } );
 
 	renderTarget.texture.generateMipmaps = false;
 
-	CV.Materials.createDepthMaterial( CV.MATERIAL_LINE, limits, renderTarget.texture );
-	CV.Materials.createDepthMaterial( CV.MATERIAL_SURFACE, limits, renderTarget.texture );
+	Materials.createDepthMaterial( MATERIAL_LINE, limits, renderTarget.texture );
+	Materials.createDepthMaterial( MATERIAL_SURFACE, limits, renderTarget.texture );
 
 	renderer.setSize( dim, dim );
 	renderer.setPixelRatio( 1 );
@@ -362,19 +358,19 @@ function setCameraMode ( mode ) {
 
 	switch ( mode ) {
 
-	case CV.CAMERA_PERSPECTIVE:
+	case CAMERA_PERSPECTIVE:
 
-		offset.setLength( CV.CAMERA_OFFSET / oCamera.zoom );
+		offset.setLength( CAMERA_OFFSET / oCamera.zoom );
 
 		camera = pCamera;
 
 		break;
 
-	case CV.CAMERA_ORTHOGRAPHIC:
+	case CAMERA_ORTHOGRAPHIC:
 
 		// calculate zoom from ratio of pCamera distance from target to base distance.
-		oCamera.zoom = CV.CAMERA_OFFSET / offset.length();
-		offset.setLength( CV.CAMERA_OFFSET );
+		oCamera.zoom = CAMERA_OFFSET / offset.length();
+		offset.setLength( CAMERA_OFFSET );
 
 		camera = oCamera;
 
@@ -402,16 +398,16 @@ function setCameraMode ( mode ) {
 
 function initCamera ( camera ) {
 
-	camera.up = CV.upAxis;
+	camera.up = upAxis;
 	camera.zoom = 1;
 
 	camera.layers.set( 0 );
 
-	camera.layers.enable( CV.LEG_CAVE );
-	camera.layers.enable( CV.FEATURE_ENTRANCES );
-	camera.layers.enable( CV.FEATURE_BOX );
+	camera.layers.enable( LEG_CAVE );
+	camera.layers.enable( FEATURE_ENTRANCES );
+	camera.layers.enable( FEATURE_BOX );
 
-	camera.position.set( 0, 0, CV.CAMERA_OFFSET );
+	camera.position.set( 0, 0, CAMERA_OFFSET );
 	camera.lookAt( 0, 0, 0 );
 	camera.updateProjectionMatrix();
 
@@ -446,34 +442,34 @@ function setViewMode ( mode, t ) {
 
 	switch ( mode ) {
 
-	case CV.VIEW_PLAN:
+	case VIEW_PLAN:
 
 		// reset camera to start position
-		position.set( 0, 0, CV.CAMERA_OFFSET );
+		position.set( 0, 0, CAMERA_OFFSET );
 
 		break;
 
-	case CV.VIEW_ELEVATION_N:
+	case VIEW_ELEVATION_N:
 
-		position.set( 0, CV.CAMERA_OFFSET, 0 );
-
-		break;
-
-	case CV.VIEW_ELEVATION_S:
-
-		position.set( 0, -CV.CAMERA_OFFSET, 0 );
+		position.set( 0, CAMERA_OFFSET, 0 );
 
 		break;
 
-	case CV.VIEW_ELEVATION_E:
+	case VIEW_ELEVATION_S:
 
-		position.set( CV.CAMERA_OFFSET, 0, 0 );
+		position.set( 0, -CAMERA_OFFSET, 0 );
 
 		break;
 
-	case CV.VIEW_ELEVATION_W:
+	case VIEW_ELEVATION_E:
 
-		position.set( -CV.CAMERA_OFFSET, 0, 0 );
+		position.set( CAMERA_OFFSET, 0, 0 );
+
+		break;
+
+	case VIEW_ELEVATION_W:
+
+		position.set( -CAMERA_OFFSET, 0, 0 );
 
 		break;
 
@@ -511,13 +507,13 @@ function setShadingMode ( mode ) {
 
 function setSurfaceShadingMode ( mode ) {
 
-	if ( survey.setLegShading( CV.LEG_SURFACE, mode ) ) surfaceShadingMode = mode;
+	if ( survey.setLegShading( LEG_SURFACE, mode ) ) surfaceShadingMode = mode;
 
 }
 
 function setTerrainOverlay ( overlay ) {
 
-	if ( terrainShadingMode === CV.SHADING_OVERLAY ) terrain.setOverlay( overlay );
+	if ( terrainShadingMode === SHADING_OVERLAY ) terrain.setOverlay( overlay );
 
 }
 
@@ -609,7 +605,7 @@ function clearView () {
 	caveIsLoaded = false;
 
 	renderer.clear();
-	CV.Hud.setVisibility( false );
+	Hud.setVisibility( false );
 
 	if ( terrain ) terrain.dying = true;
 
@@ -622,7 +618,7 @@ function clearView () {
 	region          = new THREE.Group();
 	targetPOI       = null;
 
-	shadingMode = CV.SHADING_HEIGHT;
+	shadingMode = SHADING_HEIGHT;
 
 	// remove event listeners
 
@@ -635,8 +631,8 @@ function clearView () {
 	initCamera( pCamera );
 	initCamera( oCamera );
 
-	viewState.cameraType = CV.CAMERA_PERSPECTIVE;
-	setViewMode( CV.VIEW_PLAN, 1 );
+	viewState.cameraType = CAMERA_PERSPECTIVE;
+	setViewMode( VIEW_PLAN, 1 );
 
 	renderView();
 
@@ -651,7 +647,8 @@ function loadCave ( cave ) {
 
 	}
 
-	loadSurvey( new CV.Survey( cave ) );
+	loadSurvey( new Survey( cave ) );
+
 
 }
 
@@ -665,21 +662,21 @@ function loadSurvey ( newSurvey ) {
 
 	terrain = survey.getTerrain();
 
-	scene.up = CV.upAxis;
+	scene.up = upAxis;
 	scene.add( region );
 
 	region.add( survey );
 
 	var box = new THREE.BoxHelper( survey.limits, 0xffffff );
 
-	box.layers.set( CV.FEATURE_BOX );
+	box.layers.set( FEATURE_BOX );
 
 	survey.add( box );
 
 	// light the model for Lambert Shaded surface
 
 	directionalLight = new THREE.DirectionalLight( 0xffffff );
-	directionalLight.position.copy( CV.lightPosition );
+	directionalLight.position.copy( lightPosition );
 
 	scene.add( directionalLight );
 
@@ -694,7 +691,7 @@ function loadSurvey ( newSurvey ) {
 
 	if ( terrain === null ) {
 
-		terrain = new CV.TiledTerrain( survey.limits, _tilesLoaded );
+		terrain = new TiledTerrain( survey.limits, _tilesLoaded );
 
 		if ( !terrain.hasCoverage() ) {
 
@@ -719,7 +716,7 @@ function loadSurvey ( newSurvey ) {
 
 	container.addEventListener( "click", entranceClick, false );
 
-	CV.Hud.setVisibility( true );
+	Hud.setVisibility( true );
 
 	// signal any listeners that we have a new cave
 	viewState.dispatchEvent( { type: "newCave", name: "newCave" } );
@@ -735,7 +732,7 @@ function loadSurvey ( newSurvey ) {
 		setTerrainShadingMode( terrainShadingMode );
 		loadTerrainListeners();
 
-		if ( !CV.Materials.getDepthMaterial( CV.MATERIAL_LINE ) ) renderDepthTexture();
+		if ( !Materials.getDepthMaterial( MATERIAL_LINE ) ) renderDepthTexture();
 
 	}
 
@@ -832,14 +829,14 @@ var renderView = function () {
 
 		camera.getWorldRotation( rotation );
 
-		lPosition.copy( CV.lightPosition );
+		lPosition.copy( lightPosition );
 
-		directionalLight.position.copy( lPosition.applyAxisAngle( CV.upAxis, rotation.z ) );
+		directionalLight.position.copy( lPosition.applyAxisAngle( upAxis, rotation.z ) );
 
 		renderer.clear();
 		renderer.render( scene, camera );
 
-		CV.Hud.renderHUD( renderer, camera );
+		Hud.renderHUD( renderer, camera );
 
 		// update LOD Scene Objects
 
@@ -896,7 +893,7 @@ var renderView = function () {
 			if ( targetPOI.quaternion ) camera.quaternion.slerp( targetPOI.quaternion, t );
 
 			camera.updateProjectionMatrix();
-			CV.Hud.update();
+			Hud.update();
 
 			if ( targetPOI.tAnimate === 0 ) {
 
@@ -991,7 +988,7 @@ function setScale ( obj ) {
 
 	obj.applyMatrix( scaleMatrix );
 
-	CV.Hud.setScale( scale );
+	Hud.setScale( scale );
 
 }
 
@@ -1015,7 +1012,7 @@ function getSurveyTree () {
 
 // export public interface
 
-return {
+export var Viewer = {
 	init:          init,
 	clearView:     clearView,
 	loadCave:      loadCave,
@@ -1024,8 +1021,6 @@ return {
 	getControls:   getControls,
 	getState:      viewState
 };
-
-} () );// end of Viewer Module
 
 
 // EOF

@@ -1,8 +1,6 @@
- "use strict";
 
-var Cave = Cave || {};
 
-CV.Terrain = function () {
+function Terrain () {
 
 	THREE.Group.call( this );
 
@@ -14,29 +12,29 @@ CV.Terrain = function () {
 
 }
 
-CV.Terrain.prototype = Object.create( THREE.Group.prototype );
+Terrain.prototype = Object.create( THREE.Group.prototype );
 
-Object.assign( CV.Terrain.prototype, CV.CommonTerrain.prototype );
+Object.assign( Terrain.prototype, CommonTerrain.prototype );
 
-CV.Terrain.prototype.constructor = CV.Terrain;
+Terrain.prototype.constructor = Terrain;
 
-CV.Terrain.prototype.isTiled = function () {
+Terrain.prototype.isTiled = function () {
 
 	return false;
 
 }
 
-CV.Terrain.prototype.isLoaded = function () {
+Terrain.prototype.isLoaded = function () {
 
 	return true;
 
 }
 
-CV.Terrain.prototype.addTile = function ( plane, terrainData, bitmap ) {
+Terrain.prototype.addTile = function ( plane, terrainData, bitmap ) {
 
 	this.overlay = bitmap;
 
-	var tile = new CV.Tile().create( plane, terrainData );
+	var tile = new Tile().create( plane, terrainData );
 
 	this.add( tile.mesh )
 	this.tile = tile;
@@ -45,7 +43,7 @@ CV.Terrain.prototype.addTile = function ( plane, terrainData, bitmap ) {
 
 }
 
-CV.Terrain.prototype.getOverlays = function () {
+Terrain.prototype.getOverlays = function () {
 
 	if ( this.overlay ) {
 
@@ -59,13 +57,13 @@ CV.Terrain.prototype.getOverlays = function () {
 
 }
 
-CV.Terrain.prototype.getOverlay = function () {
+Terrain.prototype.getOverlay = function () {
 
 	return "built in";
 
 }
 
-CV.Terrain.prototype.setOverlay = function ( overlay ) {
+Terrain.prototype.setOverlay = function ( overlay ) {
 
 	var loader  = new THREE.TextureLoader();
 	var	texture = loader.load( this.overlay );
@@ -82,17 +80,19 @@ CV.Terrain.prototype.setOverlay = function ( overlay ) {
 
 }
 
-CV.Terrain.prototype.setMaterial = function ( material ) {
+Terrain.prototype.setMaterial = function ( material ) {
 
 	this.tile.setMaterial( material );
 
 }
 
-CV.Terrain.prototype.setOpacity = function ( opacity ) {
+Terrain.prototype.setOpacity = function ( opacity ) {
 
 	this.tile.setOpacity( opacity );
 	this.opacity = opacity;
 
 }
+
+export { Terrain };
 
 // EOF

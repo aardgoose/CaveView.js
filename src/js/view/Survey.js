@@ -1,8 +1,6 @@
-"use strict";
 
-var CV = CV || {};
 
-CV.Survey = function ( cave ) {
+function Survey ( cave ) {
 
 	if ( !cave ) {
 
@@ -63,11 +61,11 @@ CV.Survey = function ( cave ) {
 		var mesh = new THREE.Mesh( geometry );
 
 		mesh.name = "CV.Survey:faces:scraps";
-		mesh.layers.set( CV.FACE_SCRAPS );
+		mesh.layers.set( FACE_SCRAPS );
 		mesh.userData = faceRuns;
 
 		self.add( mesh );
-		self.layers.enable( CV.FACE_SCRAPS );
+		self.layers.enable( FACE_SCRAPS );
 
 		return;
 
@@ -250,10 +248,10 @@ CV.Survey = function ( cave ) {
 		mesh.userData = faceRuns;
 		mesh.name = "CV.Survey:faces:walls";
 		mesh.renderOrder = 100;
-		mesh.layers.set( CV.FACE_WALLS );
+		mesh.layers.set( FACE_WALLS );
 
 		self.add( mesh );
-		self.layers.enable( CV.FACE_WALLS );
+		self.layers.enable( FACE_WALLS );
 
 		return;
 
@@ -280,7 +278,7 @@ CV.Survey = function ( cave ) {
 			var s1 = crossSection.start;
 			var s2 = crossSection.end;
 
-			return new THREE.Vector3( s1.x - s2.x, s1.y - s2.y, s1.z - s2.z ).cross( CV.upAxis );
+			return new THREE.Vector3( s1.x - s2.x, s1.y - s2.y, s1.z - s2.z ).cross( upAxis );
 
 		}
 
@@ -295,16 +293,16 @@ CV.Survey = function ( cave ) {
 		var entrances = new THREE.Group();
 
 		entrances.name = "CV.Survey:entrances";
-		entrances.layers.set( CV.FEATURE_ENTRANCES );
+		entrances.layers.set( FEATURE_ENTRANCES );
 
 		self.add( entrances );
-		self.layers.enable( CV.FEATURE_ENTRANCES );
+		self.layers.enable( FEATURE_ENTRANCES );
 
 		for ( var i = 0; i < l; i++ ) {
 
 			var entrance = entranceList[ i ];
 			var position = entrance.position;
-			var marker   = new CV.Marker( entrance.label );
+			var marker   = new Marker( entrance.label );
 
 			entrances.add( marker );
 
@@ -326,13 +324,13 @@ CV.Survey = function ( cave ) {
 		var legStats      = [];
 		var legRuns       = [];
 
-		legGeometries[ CV.NORMAL  ] = new THREE.Geometry();
-		legGeometries[ CV.SURFACE ] = new THREE.Geometry();
-		legGeometries[ CV.SPLAY   ] = new THREE.Geometry();
+		legGeometries[ NORMAL  ] = new THREE.Geometry();
+		legGeometries[ SURFACE ] = new THREE.Geometry();
+		legGeometries[ SPLAY   ] = new THREE.Geometry();
 
-		legRuns[ CV.NORMAL  ] = [];
-		legRuns[ CV.SURFACE ] = [];
-		legRuns[ CV.SPLAY   ] = [];
+		legRuns[ NORMAL  ] = [];
+		legRuns[ SURFACE ] = [];
+		legRuns[ SPLAY   ] = [];
 
 		var geometry;
 
@@ -391,8 +389,8 @@ CV.Survey = function ( cave ) {
 			geometry.vertices.push( vertex1 );
 			geometry.vertices.push( vertex2 );
 
-			geometry.colors.push( CV.ColourCache.white );
-			geometry.colors.push( CV.ColourCache.white );
+			geometry.colors.push( ColourCache.white );
+			geometry.colors.push( ColourCache.white );
 
 		}
 
@@ -405,9 +403,9 @@ CV.Survey = function ( cave ) {
 
 		}
 
-		_addModelSegments( CV.NORMAL  , "CV.Survey:legs:cave:cave",       CV.LEG_CAVE );
-		_addModelSegments( CV.SURFACE , "CV.Survey:legs:surface:surface", CV.LEG_SURFACE );
-		_addModelSegments( CV.SPLAY   , "CV.Survey:legs:cave:splay",      CV.LEG_SPLAY );
+		_addModelSegments( NORMAL  , "CV.Survey:legs:cave:cave",          LEG_CAVE );
+		_addModelSegments( SURFACE , "CV.Survey:legs:surface:surface", LEG_SURFACE );
+		_addModelSegments( SPLAY   , "CV.Survey:legs:cave:splay",      LEG_SPLAY );
 
 		self.stats = legStats;
 
@@ -456,7 +454,7 @@ CV.Survey = function ( cave ) {
 
 		plane.translate( dim.xOrigin + width / 2, dim.yOrigin + height / 2, 0 );
 
-		self.terrain =  new CV.Terrain().addTile( plane, cave.getTerrainData(), cave.getTerrainBitmap() );
+		self.terrain =  new Terrain().addTile( plane, cave.getTerrainData(), cave.getTerrainBitmap() );
 
 		return;
 
@@ -464,35 +462,35 @@ CV.Survey = function ( cave ) {
 
 }
 
-CV.Survey.prototype = Object.create( THREE.Object3D.prototype );
+Survey.prototype = Object.create( THREE.Object3D.prototype );
 
-CV.Survey.prototype.constructor = CV.Survey;
+Survey.prototype.constructor = Survey;
 
-CV.Survey.prototype.getTerrain = function () {
+Survey.prototype.getTerrain = function () {
 
 	return this.terrain;
 
 }
 
-CV.Survey.prototype.getSurveyTree = function () {
+Survey.prototype.getSurveyTree = function () {
 
 	return this.surveyTree;
 
 }
 
-CV.Survey.prototype.getSelectedBox = function () {
+Survey.prototype.getSelectedBox = function () {
 
 	return this.selectedBox;
 
 }
 
-CV.Survey.prototype.getStats = function () {
+Survey.prototype.getStats = function () {
 
-	return this.stats[ CV.NORMAL ];
+	return this.stats[ NORMAL ];
 
 }
 
-CV.Survey.prototype.clearSectionSelection = function () {
+Survey.prototype.clearSectionSelection = function () {
 
 	this.selectedSection = 0;
 	this.selectedSectionIds.clear();
@@ -506,7 +504,7 @@ CV.Survey.prototype.clearSectionSelection = function () {
 
 }
 
-CV.Survey.prototype.selectSection = function ( id ) {
+Survey.prototype.selectSection = function ( id ) {
 
 	var selectedSectionIds = this.selectedSectionIds;
 	var surveyTree = this.surveyTree;
@@ -519,7 +517,7 @@ CV.Survey.prototype.selectSection = function ( id ) {
 
 }
 
-CV.Survey.prototype.getLegStats = function ( mesh ) {
+Survey.prototype.getLegStats = function ( mesh ) {
 
 	if ( !mesh ) return;
 
@@ -551,7 +549,7 @@ CV.Survey.prototype.getLegStats = function ( mesh ) {
 
 }
 
-CV.Survey.prototype.cutSection = function ( id ) {
+Survey.prototype.cutSection = function ( id ) {
 
 	var selectedSectionIds = this.selectedSectionIds;
 	var self = this;
@@ -566,9 +564,9 @@ CV.Survey.prototype.cutSection = function ( id ) {
 
 	// update stats
 
-	this.stats[ CV.NORMAL  ] = this.getLegStats( this.getObjectByName( "CV.Survey:legs:cave:cave" ) );
-	this.stats[ CV.SURFACE ] = this.getLegStats( this.getObjectByName( "CV.Survey:legs:cave:surface" ) );
-	this.stats[ CV.SPLAY   ] = this.getLegStats( this.getObjectByName( "CV.Survey:legs:surface:surface" ) );
+	this.stats[ NORMAL  ] = this.getLegStats( this.getObjectByName( "CV.Survey:legs:cave:cave" ) );
+	this.stats[ SURFACE ] = this.getLegStats( this.getObjectByName( "CV.Survey:legs:cave:surface" ) );
+	this.stats[ SPLAY   ] = this.getLegStats( this.getObjectByName( "CV.Survey:legs:surface:surface" ) );
 
 	this.limits = this.getBounds();
 
@@ -584,7 +582,7 @@ CV.Survey.prototype.cutSection = function ( id ) {
 
 		switch ( obj.type ) {
 
-		case "CV.Marker":
+		case "Marker":
 
 			if ( selectedSectionIds.has( obj.userData ) ) {
 
@@ -812,7 +810,7 @@ CV.Survey.prototype.cutSection = function ( id ) {
 
 }
 
-CV.Survey.prototype.getBounds = function ()  {
+Survey.prototype.getBounds = function ()  {
 
 	var box = new THREE.Box3();
 
@@ -825,7 +823,7 @@ CV.Survey.prototype.getBounds = function ()  {
 
 	function _addObjectBounds ( obj ) {
 
-		if ( obj.type === "CV.Pointer" ) return; // skip sprites which have abnormal bounding boxes
+		if ( obj.type === "Pointer" ) return; // skip sprites which have abnormal bounding boxes
 
 		var geometry = obj.geometry;
 
@@ -840,40 +838,40 @@ CV.Survey.prototype.getBounds = function ()  {
 
 }
 
-CV.Survey.prototype.setShadingMode = function ( mode ) {
+Survey.prototype.setShadingMode = function ( mode ) {
 
 	var material;
 	var self = this;
 
 	switch ( mode ) {
 
-	case CV.SHADING_HEIGHT:
+	case SHADING_HEIGHT:
 
-		material = CV.Materials.getHeightMaterial( CV.MATERIAL_SURFACE );
-
-		break;
-
-	case CV.SHADING_CURSOR:
-
-		material = CV.Materials.getCursorMaterial( CV.MATERIAL_SURFACE, 5.0 );
+		material = Materials.getHeightMaterial( MATERIAL_SURFACE );
 
 		break;
 
-	case CV.SHADING_SINGLE:
+	case SHADING_CURSOR:
+
+		material = Materials.getCursorMaterial( MATERIAL_SURFACE, 5.0 );
+
+		break;
+
+	case SHADING_SINGLE:
 
 		material = new THREE.MeshLambertMaterial( { color: 0xff0000, vertexColors: THREE.NoColors } );
 
 		break;
 
-	case CV.SHADING_SURVEY:
+	case SHADING_SURVEY:
 
 		material = new THREE.MeshLambertMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } );
 
 		break;
 
-	case CV.SHADING_DEPTH:
+	case SHADING_DEPTH:
 
-		material = CV.Materials.getDepthMaterial( CV.MATERIAL_SURFACE );
+		material = Materials.getDepthMaterial( MATERIAL_SURFACE );
 
 		if ( ! material )  return false;
 
@@ -881,7 +879,7 @@ CV.Survey.prototype.setShadingMode = function ( mode ) {
 
 	}
 
-	if ( this.setLegShading( CV.LEG_CAVE, mode ) ) {
+	if ( this.setLegShading( LEG_CAVE, mode ) ) {
 
 		_setFaceShading( this.getObjectByName( "CV.Survey:faces:walls" ), mode, material );
 		_setFaceShading( this.getObjectByName( "CV.Survey:faces:scraps" ), mode, material );
@@ -911,7 +909,7 @@ CV.Survey.prototype.setShadingMode = function ( mode ) {
 
 }
 
-CV.Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
+Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
 	if ( !mesh ) return;
 
@@ -921,7 +919,7 @@ CV.Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 	var surveyColours;
 	var unselected = new THREE.MeshLambertMaterial( { side: THREE.FrontSide, color: 0x444444, vertexColors: THREE.FaceColors } );
 
-	if ( mode === CV.SHADING_SURVEY ) surveyColours = this.getSurveyColours();
+	if ( mode === SHADING_SURVEY ) surveyColours = this.getSurveyColours();
 
 	mesh.material = new THREE.MultiMaterial( [ selected, unselected ] );
 
@@ -944,7 +942,7 @@ CV.Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
 					faces[ f ].materialIndex = 0;
 
-					if ( mode === CV.SHADING_SURVEY ) {
+					if ( mode === SHADING_SURVEY ) {
 
 						faces[ f ].color.copy( surveyColours[ survey ] );
 
@@ -978,35 +976,35 @@ CV.Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
 	mesh.geometry.groupsNeedUpdate = true;
 
-	if ( mode === CV.SHADING_SURVEY ) mesh.geometry.colorsNeedUpdate = true;
+	if ( mode === SHADING_SURVEY ) mesh.geometry.colorsNeedUpdate = true;
 
 }
 
-CV.Survey.prototype.hasFeature = function ( layerTag ) {
+Survey.prototype.hasFeature = function ( layerTag ) {
 
 	return !( ( this.layers.mask & 1 << layerTag ) === 0 );
 
 }
 
-CV.Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
+Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	var mesh;
 
 	switch ( legType ) {
 
-	case CV.LEG_CAVE:
+	case LEG_CAVE:
 
 		mesh = this.getObjectByName( "CV.Survey:legs:cave:cave" );
 
 		break;
 
-	case CV.LEG_SPLAY:
+	case LEG_SPLAY:
 
 		mesh = this.getObjectByName( "CV.Survey:legs:cave:splay" );
 
 		break;
 
-	case CV.LEG_SURFACE:
+	case LEG_SURFACE:
 
 		mesh = this.getObjectByName( "CV.Survey:legs:surface:surface" );
 
@@ -1024,51 +1022,51 @@ CV.Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	switch ( legShadingMode ) {
 
-	case CV.SHADING_HEIGHT:
+	case SHADING_HEIGHT:
 
 		this.setLegColourByHeight( mesh );
 
 		break;
 
-	case CV.SHADING_LENGTH:
+	case SHADING_LENGTH:
 
 		this.setLegColourByLength( mesh );
 
 		break;
 
-	case CV.SHADING_INCLINATION:
+	case SHADING_INCLINATION:
 
-		this.setLegColourByInclination( mesh, CV.upAxis );
+		this.setLegColourByInclination( mesh, upAxis );
 
 		break;
 
-	case CV.SHADING_CURSOR:
+	case SHADING_CURSOR:
 
 		this.setLegColourByCursor( mesh );
 
 		break;
 
-	case CV.SHADING_SINGLE:
+	case SHADING_SINGLE:
 
-		this.setLegColourByColour( mesh, CV.ColourCache.red );
+		this.setLegColourByColour( mesh, ColourCache.red );
 
 		break;
 
-	case CV.SHADING_SURVEY:
+	case SHADING_SURVEY:
 
 		this.setLegColourBySurvey( mesh );
 
 		break;
 
-	case CV.SHADING_OVERLAY:
+	case SHADING_OVERLAY:
 
 		break;
 
-	case CV.SHADING_SHADED:
+	case SHADING_SHADED:
 
 		break;
 
-	case CV.SHADING_DEPTH:
+	case SHADING_DEPTH:
 
 		this.setLegColourByDepth( mesh );
 
@@ -1086,15 +1084,15 @@ CV.Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 }
 
-CV.Survey.prototype.getSurveyColour = function ( surveyId ) {
+Survey.prototype.getSurveyColour = function ( surveyId ) {
 
-	var surveyColours = CV.ColourCache.survey;
+	var surveyColours = ColourCache.survey;
 
 	return surveyColours[ surveyId % surveyColours.length ];
 
 }
 
-CV.Survey.prototype.getSurveyColours = function () { // FIXME - cache save recalc for faces and lines,
+Survey.prototype.getSurveyColours = function () { // FIXME - cache save recalc for faces and lines,
 
 	var survey;
 	var surveyColours = [];
@@ -1146,7 +1144,7 @@ CV.Survey.prototype.getSurveyColours = function () { // FIXME - cache save recal
 
 }
 
-CV.Survey.prototype.setEntrancesSelected = function () {
+Survey.prototype.setEntrancesSelected = function () {
 
 	var entrances = this.getObjectByName( "CV.Survey:entrances" );
 
@@ -1193,7 +1191,7 @@ CV.Survey.prototype.setEntrancesSelected = function () {
 
 }
 
-CV.Survey.prototype.setLegColourByMaterial = function ( mesh, material ) {
+Survey.prototype.setLegColourByMaterial = function ( mesh, material ) {
 
 	mesh.material = material;
 	mesh.material.needsUpdate = true;
@@ -1202,34 +1200,34 @@ CV.Survey.prototype.setLegColourByMaterial = function ( mesh, material ) {
 
 	function _colourSegment ( geometry, v1, v2 ) {
 
-		geometry.colors[ v1 ] = CV.ColourCache.white;
-		geometry.colors[ v2 ] = CV.ColourCache.white;
+		geometry.colors[ v1 ] = ColourCache.white;
+		geometry.colors[ v2 ] = ColourCache.white;
 
 	}
 
 }
 
-CV.Survey.prototype.setLegColourByDepth = function ( mesh ) {
+Survey.prototype.setLegColourByDepth = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, CV.Materials.getDepthMaterial( CV.MATERIAL_LINE ) );
-
-}
-
-CV.Survey.prototype.setLegColourByHeight = function ( mesh ) {
-
-	this.setLegColourByMaterial( mesh, CV.Materials.getHeightMaterial( CV.MATERIAL_LINE ) );
+	this.setLegColourByMaterial( mesh, Materials.getDepthMaterial( MATERIAL_LINE ) );
 
 }
 
-CV.Survey.prototype.setLegColourByCursor = function ( mesh ) {
+Survey.prototype.setLegColourByHeight = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, CV.Materials.getCursorMaterial( CV.MATERIAL_LINE, 5.0 ) );
+	this.setLegColourByMaterial( mesh, Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 }
 
-CV.Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
+Survey.prototype.setLegColourByCursor = function ( mesh ) {
 
-	mesh.material = CV.Materials.getLineMaterial();
+	this.setLegColourByMaterial( mesh, Materials.getCursorMaterial( MATERIAL_LINE, 5.0 ) );
+
+}
+
+Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
+
+	mesh.material = Materials.getLineMaterial();
 
 	this.setLegSelected( mesh, _colourSegment );
 
@@ -1242,13 +1240,13 @@ CV.Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
 
 }
 
-CV.Survey.prototype.setLegColourByLength = function ( mesh ) {
+Survey.prototype.setLegColourByLength = function ( mesh ) {
 
-	var colours = CV.ColourCache.gradient;
+	var colours = ColourCache.gradient;
 	var colourRange = colours.length - 1;
 	var stats = this.getStats();
 
-	mesh.material = CV.Materials.getLineMaterial();
+	mesh.material = Materials.getLineMaterial();
 
 	this.setLegSelected( mesh, _colourSegment );
 
@@ -1267,11 +1265,11 @@ CV.Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 }
 
-CV.Survey.prototype.setLegColourBySurvey = function ( mesh ) {
+Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
 	var surveyColours = this.getSurveyColours();
 
-	mesh.material = CV.Materials.getLineMaterial();
+	mesh.material = Materials.getLineMaterial();
 
 	this.setLegSelected ( mesh, _colourSegment );
 
@@ -1286,14 +1284,14 @@ CV.Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
 }
 
-CV.Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
+Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
-	var colours = CV.ColourCache.inclination;
+	var colours = ColourCache.inclination;
 	var colourRange = colours.length - 1;
 
 	// pNormal = normal of reference plane in model space 
 
-	mesh.material = CV.Materials.getLineMaterial();
+	mesh.material = Materials.getLineMaterial();
 
 	this.setLegSelected ( mesh, _colourSegment );
 
@@ -1315,7 +1313,7 @@ CV.Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 }
 
-CV.Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
+Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 	// pNormal = normal of reference plane in model space 
 	var geometry   = mesh.geometry;
@@ -1373,8 +1371,8 @@ CV.Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 					var v1 = vertices[ k ];
 					var v2 = vertices[ k + 1 ];
 
-					colors[ k ]     = CV.ColourCache.grey;
-					colors[ k + 1 ] = CV.ColourCache.grey;
+					colors[ k ]     = ColourCache.grey;
+					colors[ k + 1 ] = ColourCache.grey;
 
 				}
 
@@ -1386,7 +1384,7 @@ CV.Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 			this.selectedBox = new THREE.BoxHelper( box, 0x0000ff );
 
-			this.selectedBox.layers.set( CV.FEATURE_SELECTED_BOX );
+			this.selectedBox.layers.set( FEATURE_SELECTED_BOX );
 
 			this.add( this.selectedBox );
 
@@ -1407,5 +1405,7 @@ CV.Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 	geometry.colorsNeedUpdate = true; 
 
 }
+
+export { Survey };
 
 // EOF

@@ -1,13 +1,11 @@
-"use strict";
 
-var CV = CV || {};
 
-CV.DepthMaterial = function ( type, limits, texture ) {
+function DepthMaterial ( type, limits, texture ) {
 
 	var range   = limits.size();
 	var defines = {};
 
-	if ( type === CV.MATERIAL_LINE ) {
+	if ( type === MATERIAL_LINE ) {
 
 		defines.USE_COLOR = true;
 
@@ -29,14 +27,14 @@ CV.DepthMaterial = function ( type, limits, texture ) {
 			scaleX:   { value: 1 / range.x },
 			scaleY:   { value: 1 / range.y },
 			scaleZ:   { value: 1 / range.z },
-			cmap:     { value: CV.Colours.gradientTexture },
+			cmap:     { value: Colours.gradientTexture },
 			depthMap: { value: texture }
 
 		},
 
 		defines: defines,
-		vertexShader: CV.Shaders.depthVertexShader,
-		fragmentShader: CV.Shaders.depthFragmentShader
+		vertexShader: Shaders.depthVertexShader,
+		fragmentShader: Shaders.depthFragmentShader
 	} );
 
 	this.type = "CV.DepthMaterial";
@@ -45,8 +43,10 @@ CV.DepthMaterial = function ( type, limits, texture ) {
 
 }
 
-CV.DepthMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+DepthMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
 
-CV.DepthMaterial.prototype.constructor = CV.DepthMaterial;
+DepthMaterial.prototype.constructor = DepthMaterial;
+
+export { DepthMaterial };
 
 // EOF

@@ -1,14 +1,12 @@
- "use strict";
 
-var CV = CV || {};
 
-CV.padDigits = function ( number, digits ) {
+padDigits = function ( number, digits ) {
 	
 	return Array( Math.max( digits - String( number ).length + 1, 0 ) ).join( 0 ) + number;
 
 }
 
-CV.HeightMapLoader = function ( tileSet, resolution, x, y, loadCallback, errorCallback ) {
+function HeightMapLoader ( tileSet, resolution, x, y, loadCallback, errorCallback ) {
 
 	if ( !loadCallback ) alert( "No callback specified" );
 
@@ -18,14 +16,14 @@ CV.HeightMapLoader = function ( tileSet, resolution, x, y, loadCallback, errorCa
 	this.errorCallback = errorCallback;
 	this.x = x;
 	this.y = y;
-	this.tileFile = prefix + CV.padDigits( y, 3 ) + "-" + CV.padDigits( x, 3 ) + ".bin";
+	this.tileFile = prefix + padDigits( y, 3 ) + "-" + padDigits( x, 3 ) + ".bin";
 	this.basedir = tileSet.BASEDIR;
 
 }
 
-CV.HeightMapLoader.prototype.constructor = CV.HeightMapLoader;
+HeightMapLoader.prototype.constructor = HeightMapLoader;
 
-CV.HeightMapLoader.prototype.load = function () {
+HeightMapLoader.prototype.load = function () {
 
 	var self = this;
 	var xhr;
@@ -57,5 +55,7 @@ CV.HeightMapLoader.prototype.load = function () {
 		}
 	}
 }
+
+export { HeightMapLoader };
 
 // EOF

@@ -1,6 +1,6 @@
-"use strict";
 
-CV.TestMaterial = function ( spread ) {
+
+function TestMaterial ( spread ) {
 
 	var i = 1;
 
@@ -13,8 +13,8 @@ CV.TestMaterial = function ( spread ) {
 
 		},
 
-		vertexShader:   CV.Shaders.testVertexShader,	
-		fragmentShader: CV.Shaders.testFragmentShader,
+		vertexShader:   Shaders.testVertexShader,	
+		fragmentShader: Shaders.testFragmentShader,
 		vertexColors:   THREE.VertexColors
 	} );
 
@@ -31,8 +31,10 @@ CV.TestMaterial = function ( spread ) {
 
 }
 
-CV.TestMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+TestMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
 
-CV.TestMaterial.prototype.constructor = CV.TestMaterial;
+TestMaterial.prototype.constructor = TestMaterial;
+
+export { TestMaterial };
 
 // EOF

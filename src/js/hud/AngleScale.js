@@ -1,14 +1,12 @@
-"use strict";
 
-var CV = CV || {};
 
-CV.AngleScale = function ( container ) {
+ function AngleScale ( container ) {
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
-	var stdWidth  = CV.HudObject.stdWidth;
-	var stdMargin = CV.HudObject.stdMargin;
+	var stdWidth  = HudObject.stdWidth;
+	var stdMargin = HudObject.stdMargin;
 
 	var i, l;
 
@@ -16,7 +14,7 @@ CV.AngleScale = function ( container ) {
 	var c = [];
 
 	var pNormal = new THREE.Vector3( 1, 0, 0 );
-	var hues = CV.Colours.inclinationColours;
+	var hues = Colours.inclinationColours;
 
 	var vertices = geometry.vertices;
 
@@ -66,10 +64,12 @@ CV.AngleScale = function ( container ) {
 
 }
 
-CV.AngleScale.prototype = Object.create( THREE.Mesh.prototype );
+AngleScale.prototype = Object.create( THREE.Mesh.prototype );
 
-Object.assign( CV.AngleScale.prototype, CV.HudObject.prototype );
+Object.assign( AngleScale.prototype, HudObject.prototype );
 
-CV.AngleScale.prototype.constructor = CV.AngleScale;
+AngleScale.prototype.constructor = AngleScale;
+
+export { AngleScale };
 
 // EOF

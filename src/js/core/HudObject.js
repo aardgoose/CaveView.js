@@ -1,13 +1,11 @@
-"use strict";
 
-var CV = CV || {};
 
-CV.HudObject = function () {};
+function HudObject () {};
 
-CV.HudObject.stdWidth  = 40;
-CV.HudObject.stdMargin = 5;
+HudObject.stdWidth  = 40;
+HudObject.stdMargin = 5;
 
-CV.HudObject.prototype.removeDomObjects = function () {
+HudObject.prototype.removeDomObjects = function () {
 
 	var obj;
 
@@ -23,7 +21,7 @@ CV.HudObject.prototype.removeDomObjects = function () {
 
 }
 
-CV.HudObject.prototype.setVisibility = function ( visible ) {
+HudObject.prototype.setVisibility = function ( visible ) {
 
 	var style;
 
@@ -46,5 +44,7 @@ CV.HudObject.prototype.setVisibility = function ( visible ) {
 	}
 
 }
+
+export { HudObject };
 
 // EOF

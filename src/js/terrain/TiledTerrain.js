@@ -1,12 +1,9 @@
- "use strict";
 
-var Cave = Cave || {};
-
-CV.TiledTerrain = function ( limits3, onLoaded ) {
+function TiledTerrain ( limits3, onLoaded ) {
 
 	THREE.Group.call( this );
 
-	this.name = "CV.TiledTerrain";
+	this.name = "TiledTerrain";
 
 	this.limits = new THREE.Box2(
 
@@ -15,8 +12,8 @@ CV.TiledTerrain = function ( limits3, onLoaded ) {
 
 	);
 
-	this.tileSet       = Object.assign( {}, CV.TileSet);
-	this.tileTree      = new CV.Tree();
+	this.tileSet       = Object.assign( {}, TileSet);
+	this.tileTree      = new Tree();
 
 	this.onLoaded      = onLoaded;
 	this.tilesLoading  = 0;
@@ -30,36 +27,36 @@ CV.TiledTerrain = function ( limits3, onLoaded ) {
 	this.currentLimits;
 	this.dying = false;
 
-	if ( CV.Hud !== undefined ) {
+	if ( Hud !== undefined ) {
 
-		this.progressDial = CV.Hud.getProgressDial();
+		this.progressDial = Hud.getProgressDial();
 
 	}
 
-	 this.tileSet.BASEDIR = CV.getEnvironmentValue( "terrainDirectory", "" ) + this.tileSet.BASEDIR;
-	 this.tileSet.OVERLAYDIR = CV.getEnvironmentValue( "terrainDirectory", "" ) + this.tileSet.OVERLAYDIR;
+	 this.tileSet.BASEDIR = getEnvironmentValue( "terrainDirectory", "" ) + this.tileSet.BASEDIR;
+	 this.tileSet.OVERLAYDIR = getEnvironmentValue( "terrainDirectory", "" ) + this.tileSet.OVERLAYDIR;
 
 }
 
-CV.TiledTerrain.prototype = Object.create( THREE.Group.prototype );
+TiledTerrain.prototype = Object.create( THREE.Group.prototype );
 
-Object.assign( CV.TiledTerrain.prototype, CV.CommonTerrain.prototype );
+Object.assign( TiledTerrain.prototype, CommonTerrain.prototype );
 
-CV.TiledTerrain.prototype.constructor = CV.TiledTerrain;
+TiledTerrain.prototype.constructor = TiledTerrain;
 
-CV.TiledTerrain.prototype.isTiled = function () {
+TiledTerrain.prototype.isTiled = function () {
 
 	return true;
 
 }
 
-CV.TiledTerrain.prototype.isLoaded = function () {
+TiledTerrain.prototype.isLoaded = function () {
 
 	return this.terrainLoaded;
 
 }
 
-CV.TiledTerrain.prototype.hasCoverage = function () {
+TiledTerrain.prototype.hasCoverage = function () {
 
 	var limits  = this.limits;
 	var tileSet = this.tileSet;
@@ -71,7 +68,7 @@ CV.TiledTerrain.prototype.hasCoverage = function () {
 
 }
 
-CV.TiledTerrain.prototype.getCoverage = function ( limits, resolution ) {
+TiledTerrain.prototype.getCoverage = function ( limits, resolution ) {
 
 	var tileSet  = this.tileSet;
 	var coverage = { resolution: resolution };
@@ -93,7 +90,7 @@ CV.TiledTerrain.prototype.getCoverage = function ( limits, resolution ) {
 
 }
 
-CV.TiledTerrain.prototype.pickCoverage = function ( limits, maxResolution ) {
+TiledTerrain.prototype.pickCoverage = function ( limits, maxResolution ) {
 
 	var tileSet = this.tileSet;
 	var resolution = maxResolution || tileSet.RESOLUTION_MIN;
@@ -112,7 +109,7 @@ CV.TiledTerrain.prototype.pickCoverage = function ( limits, maxResolution ) {
 
 }
 
-CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
+TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 	console.log("load ", resolutionIn, ": [ ", x, ",", y, "]" );
 
@@ -155,7 +152,7 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 
 	// start web worker and create new geometry in it.
 
-	var tileLoader = new Worker( CV.getEnvironmentValue( "cvDirectory", "" ) + "CaveView/js/workers/tileWorker.js" );
+	var tileLoader = new Worker( getEnvironmentValue( "cvDirectory", "" ) + "CaveView/js/workers/tileWorker.js" );
 
 	tileLoader.onmessage = _mapLoaded;
 
@@ -214,7 +211,7 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 
 		if (!oldTile) {
 
-			tile = new CV.Tile( x, y, resolution, self.tileSet, clip );
+			tile = new Tile( x, y, resolution, self.tileSet, clip );
 
 		} else {
 
@@ -240,7 +237,7 @@ CV.TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) 
 
 }
 
-CV.TiledTerrain.prototype.endLoad = function ( tile ) {
+TiledTerrain.prototype.endLoad = function ( tile ) {
 
 	if ( tile !== undefined ) this.loadedTiles.push( tile );
 
@@ -311,7 +308,7 @@ CV.TiledTerrain.prototype.endLoad = function ( tile ) {
 
 }
 
-CV.TiledTerrain.prototype.resurrectTile = function ( tile ) {
+TiledTerrain.prototype.resurrectTile = function ( tile ) {
 
 	if ( tile.mesh ) {
 
@@ -325,7 +322,7 @@ CV.TiledTerrain.prototype.resurrectTile = function ( tile ) {
 
 }
 
-CV.TiledTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
+TiledTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
 
 	var coverage   = this.pickCoverage( limits, maxResolution );
 	var resolution = coverage.resolution;
@@ -367,13 +364,13 @@ CV.TiledTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
 
 }
 
-CV.TiledTerrain.prototype.getOverlays = function () {
+TiledTerrain.prototype.getOverlays = function () {
 
 	return this.tileSet.OVERLAYS;
 
 }
 
-CV.TiledTerrain.prototype.setOverlay = function ( overlay ) {
+TiledTerrain.prototype.setOverlay = function ( overlay ) {
 
 	var self = this;
 	var tileTree = this.tileTree;
@@ -407,7 +404,7 @@ CV.TiledTerrain.prototype.setOverlay = function ( overlay ) {
 
 }
 
-CV.TiledTerrain.prototype.getOverlay = function () {
+TiledTerrain.prototype.getOverlay = function () {
 
 	if (this.activeOverlay) {
 
@@ -421,7 +418,7 @@ CV.TiledTerrain.prototype.getOverlay = function () {
 
 }
 
-CV.TiledTerrain.prototype.setMaterial = function ( material ) {
+TiledTerrain.prototype.setMaterial = function ( material ) {
 
 	var self = this;
 	var tileTree = this.tileTree;
@@ -462,7 +459,7 @@ CV.TiledTerrain.prototype.setMaterial = function ( material ) {
 
 }
 
-CV.TiledTerrain.prototype.zoomCheck = function ( camera ) {
+TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 	var maxResolution     = this.tileSet.RESOLUTION_MIN;
 	var initialResolution = this.initialResolution;
@@ -503,7 +500,7 @@ CV.TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 			// heuristics for evicting tiles
 
-			var pressure = CV.Tile.liveTiles / EVICT_PRESSURE;
+			var pressure = Tile.liveTiles / EVICT_PRESSURE;
 			var tilePressure = tile.evictionCount * tile.resolution / initialResolution;
 
 //			console.log( "ir", initialResolution, "p: ", pressure, " tp: ", tilePressure );
@@ -619,12 +616,12 @@ CV.TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 }
 
-CV.TiledTerrain.prototype.setOpacity = function ( opacity ) {
+TiledTerrain.prototype.setOpacity = function ( opacity ) {
 
 	var self = this;
 	var tileTree = this.tileTree;
 
-	if ( this.shadingMode === CV.SHADING_OVERLAY ) {
+	if ( this.shadingMode === SHADING_OVERLAY ) {
 
 		// each tile has its own material, therefore need setting separately
 		_setTileOpacity( tileTree.getRootId() );
@@ -667,5 +664,6 @@ CV.TiledTerrain.prototype.setOpacity = function ( opacity ) {
 
 }
 
+export { TiledTerrain };
 
 // EOF

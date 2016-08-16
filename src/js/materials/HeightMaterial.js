@@ -1,14 +1,12 @@
-"use strict";
 
-var CV = CV || {};
 
-CV.HeightMaterial = function ( type, minHeight, maxHeight ) {
+function HeightMaterial ( type, minHeight, maxHeight ) {
 
 	THREE.ShaderMaterial.call( this );
 
 	this.defines = {};
 
-	if ( type === CV.MATERIAL_LINE ) {
+	if ( type === MATERIAL_LINE ) {
 
 		this.defines.USE_COLOR = true;
 
@@ -25,12 +23,12 @@ CV.HeightMaterial = function ( type, minHeight, maxHeight ) {
 
 			minZ:   { value: minHeight },
 			scaleZ: { value: 1 / ( maxHeight - minHeight ) },
-			cmap:   { value: CV.Colours.gradientTexture }
+			cmap:   { value: Colours.gradientTexture }
 
 		};
 
-	this.vertexShader   = CV.Shaders.heightVertexShader;
-	this.fragmentShader = CV.Shaders.heightFragmentShader;
+	this.vertexShader   = Shaders.heightVertexShader;
+	this.fragmentShader = Shaders.heightFragmentShader;
 
 	this.type = "CV.HeightMaterial";
 
@@ -38,8 +36,10 @@ CV.HeightMaterial = function ( type, minHeight, maxHeight ) {
 
 }
 
-CV.HeightMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+HeightMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
 
-CV.HeightMaterial.prototype.constructor = CV.HeightMaterial;
+HeightMaterial.prototype.constructor = HeightMaterial;
+
+export { HeightMaterial };
 
 // EOF

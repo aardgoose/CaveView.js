@@ -1,10 +1,5 @@
- "use strict";
 
-importScripts( "../../lib/three.js",  "../CaveView.js" );
 
-var CV = CV || {};
-
-CV.upAxis = new THREE.Vector3( 0, 0, 1 );
 
 var tileSpec;
 
@@ -14,7 +9,7 @@ function onMessage ( event ) {
 
 	tileSpec = event.data;
 
-	new CV.HeightMapLoader( tileSpec.tileSet, tileSpec.resolution, tileSpec.tileX, tileSpec.tileY, mapLoaded, mapError ).load();
+	new HeightMapLoader( tileSpec.tileSet, tileSpec.resolution, tileSpec.tileX, tileSpec.tileY, mapLoaded, mapError ).load();
 
 }
 
@@ -103,7 +98,7 @@ function mapLoaded ( data, x, y ) {
 	plane.computeFaceNormals();
 	plane.computeVertexNormals();
 
-	var colourCache = CV.ColourCache.terrain;
+	var colourCache = ColourCache.terrain;
 	var colourRange = colourCache.length - 1;
 
 	for ( var i = 0, l = faces.length; i < l; i++ ) {
@@ -114,7 +109,7 @@ function mapLoaded ( data, x, y ) {
 
 		for ( var j = 0; j < 3; j++  ) {
 
-			var dotProduct = face.vertexNormals[ j ].dot( CV.upAxis );
+			var dotProduct = face.vertexNormals[ j ].dot( upAxis );
 			var colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
 
 			face.vertexColors[ j ] = colourCache[ colourIndex ];

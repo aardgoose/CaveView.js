@@ -1,8 +1,6 @@
-"use strict";
 
-var CV = CV || {};
 
-CV.DepthMapMaterial = function ( minHeight, maxHeight ) {
+function DepthMapMaterial ( minHeight, maxHeight ) {
 
 	THREE.ShaderMaterial.call( this, {
 
@@ -13,8 +11,8 @@ CV.DepthMapMaterial = function ( minHeight, maxHeight ) {
 
 		},
 
-		vertexShader:    CV.Shaders.depthMapVertexShader,
-		fragmentShader:  CV.Shaders.depthMapFragmentShader,
+		vertexShader:    Shaders.depthMapVertexShader,
+		fragmentShader:  Shaders.depthMapFragmentShader,
 		depthWrite:      false,
 		type:            "CV.DepthMapMaterial"
 
@@ -24,8 +22,10 @@ CV.DepthMapMaterial = function ( minHeight, maxHeight ) {
 
 }
 
-CV.DepthMapMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+DepthMapMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
 
-CV.DepthMapMaterial.prototype.constructor = CV.DepthMapMaterial;
+DepthMapMaterial.prototype.constructor = DepthMapMaterial;
+
+export { DepthMapMaterial };
 
 // EOF

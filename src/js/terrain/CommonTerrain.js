@@ -1,43 +1,40 @@
-"use strict";
 
-var Cave = Cave || {};
+function CommonTerrain () {};
 
-CV.CommonTerrain = function () {};
+CommonTerrain.prototype.shadingMode;
+CommonTerrain.prototype.opacity = 0.5;
 
-CV.CommonTerrain.prototype.shadingMode;
-CV.CommonTerrain.prototype.opacity = 0.5;
-
-CV.CommonTerrain.prototype.getOpacity = function () {
+CommonTerrain.prototype.getOpacity = function () {
 
 	return this.opacity;
 
 }
 
-CV.CommonTerrain.prototype.setShadingMode = function ( mode ) {
+CommonTerrain.prototype.setShadingMode = function ( mode ) {
 
 	var material;
 
 	switch ( mode ) {
 
-	case CV.SHADING_HEIGHT:
+	case SHADING_HEIGHT:
 
-		material = CV.Materials.getHeightMaterial( CV.MATERIAL_SURFACE );
+		material = Materials.getHeightMaterial( MATERIAL_SURFACE );
 
 		break;
 
-	case CV.SHADING_OVERLAY:
+	case SHADING_OVERLAY:
 
 		if ( this.getOverlays() ) this.setOverlay( this.getOverlay() );
 
 		break;
 
-	case CV.SHADING_CURSOR:
+	case SHADING_CURSOR:
 
-		 material = CV.Materials.getCursorMaterial( CV.MATERIAL_SURFACE, 5.0 );
+		 material = Materials.getCursorMaterial( MATERIAL_SURFACE, 5.0 );
 
 		 break;
 
-	case CV.SHADING_SHADED:
+	case SHADING_SHADED:
 
 		material = new THREE.MeshLambertMaterial( {
 			color:        0xffffff,
@@ -49,9 +46,9 @@ CV.CommonTerrain.prototype.setShadingMode = function ( mode ) {
 
 		break;
 
-	case CV.SHADING_PW:
+	case SHADING_PW:
 
-		material = new CV.PWMaterial();
+		material = new PWMaterial();
 
 		break;
 
@@ -69,3 +66,7 @@ CV.CommonTerrain.prototype.setShadingMode = function ( mode ) {
 	return true;
 
 }
+
+export { CommonTerrain };
+
+// EOF

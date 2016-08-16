@@ -1,8 +1,4 @@
-"use strict";
 
-var CV = CV || {};
-
-CV.Hud = ( function () {
 
 // THREE objects
 
@@ -34,7 +30,7 @@ var isVisible = true;
 function init ( domId ) {
 
 	container = document.getElementById( domId );
-	viewState = CV.Viewer.getState;
+	viewState = Viewer.getState;
 
 	var hHeight = container.clientHeight / 2;
 	var hWidth  = container.clientWidth / 2;
@@ -59,9 +55,9 @@ function init ( domId ) {
 	scene.add( aLight );
 	scene.add( dLight );
 
-	compass      = new CV.Compass( container );
-	ahi          = new CV.AHI( container );
-	progressDial = new CV.ProgressDial();
+	compass      = new Compass( container );
+	ahi          = new AHI( container );
+	progressDial = new ProgressDial();
 
 	attitudeGroup.add( compass );
 	attitudeGroup.add( ahi );
@@ -72,7 +68,7 @@ function init ( domId ) {
 	viewState.addEventListener( "newCave", caveChanged );
 	viewState.addEventListener( "change", viewChanged );
 
-	controls = CV.Viewer.getControls();
+	controls = Viewer.getControls();
 
 	controls.addEventListener( "change", update );
 
@@ -134,7 +130,7 @@ function resize () {
 
 		scene.remove( linearScale );
 
-		linearScale = new CV.LinearScale( container, viewState );
+		linearScale = new LinearScale( container, viewState );
 
 		scene.add( linearScale );
 
@@ -144,7 +140,7 @@ function resize () {
 
 		scene.remove( angleScale );
 
-		angleScale = new CV.AngleScale( container );
+		angleScale = new AngleScale( container );
 
 		scene.add( angleScale );
 
@@ -154,7 +150,7 @@ function resize () {
 
 		scene.remove( scaleBar );
 
-		scaleBar = new CV.ScaleBar( container, hScale, ( CV.HudObject.stdWidth + CV.HudObject.stdMargin ) * 4 );
+		scaleBar = new ScaleBar( container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
 
 		scene.add( scaleBar );
 
@@ -192,7 +188,7 @@ function caveChanged ( event ) {
 
 	}
 
-	linearScale = new CV.LinearScale( container, viewState );
+	linearScale = new LinearScale( container, viewState );
 
 	scene.add( linearScale );
 
@@ -220,31 +216,31 @@ function viewChanged ( event ) {
 
 	switch ( viewState.shadingMode ) {
 
-	case CV.SHADING_HEIGHT:
+	case SHADING_HEIGHT:
 
 		if ( angleScale ) angleScale.setVisibility( false );
 
-		if ( linearScale ) linearScale.setRange( viewState.minHeight, viewState.maxHeight, "Height above Datum" ).setMaterial( CV.Materials.getHeightMaterial( CV.MATERIAL_LINE ) ).setVisibility( true );
+		if ( linearScale ) linearScale.setRange( viewState.minHeight, viewState.maxHeight, "Height above Datum" ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
 		viewState.removeEventListener( "cursorChange",  cursorChanged );
 
 		break;
 
-	case CV.SHADING_DEPTH:
+	case SHADING_DEPTH:
 
 		if ( angleScale ) angleScale.setVisibility( false );
 
-		if ( linearScale ) linearScale.setRange( viewState.maxHeight - viewState.minHeight, 0, "Depth below surface" ).setMaterial( CV.Materials.getHeightMaterial( CV.MATERIAL_LINE ) ).setVisibility( true );
+		if ( linearScale ) linearScale.setRange( viewState.maxHeight - viewState.minHeight, 0, "Depth below surface" ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
 		viewState.removeEventListener( "cursorChange",  cursorChanged );
 
 		break;
 
-	case CV.SHADING_CURSOR:
+	case SHADING_CURSOR:
 
 		if ( angleScale ) angleScale.setVisibility( false );
 
 		if ( linearScale ) {
 
-			linearScale.setMaterial( CV.Materials.getCursorMaterial( CV.MATERIAL_LINE ) ).setVisibility( true );
+			linearScale.setMaterial( Materials.getCursorMaterial( MATERIAL_LINE ) ).setVisibility( true );
 
 			cursorChanged();
 
@@ -254,22 +250,22 @@ function viewChanged ( event ) {
 
 		break;
 
-	case CV.SHADING_LENGTH:
+	case SHADING_LENGTH:
 
 		if ( angleScale ) angleScale.setVisibility( false );
 
-		linearScale.setRange( viewState.minLegLength, viewState.maxLegLength, "Leg length" ).setMaterial( CV.Materials.getHeightMaterial( CV.MATERIAL_LINE ) ).setVisibility( true );
+		linearScale.setRange( viewState.minLegLength, viewState.maxLegLength, "Leg length" ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
 		viewState.removeEventListener( "cursorChange",  cursorChanged );
 
 		break;
 
-	case CV.SHADING_INCLINATION:
+	case SHADING_INCLINATION:
 
 		linearScale.setVisibility( false );
 
 		if ( ! angleScale ) {
 
-			angleScale = new CV.AngleScale( container );
+			angleScale = new AngleScale( container );
 
 			scene.add( angleScale );
 
@@ -281,11 +277,11 @@ function viewChanged ( event ) {
 		break;
 
 
-	case CV.SHADING_CURSOR:
+	case SHADING_CURSOR:
 
-	case CV.SHADING_SINGLE:
+	case SHADING_SINGLE:
 
-	case CV.SHADING_SURVEY:
+	case SHADING_SURVEY:
 
 		if ( angleScale ) angleScale.setVisibility( false );
 
@@ -311,7 +307,7 @@ function updateScaleBar ( camera ) {
 
 		if ( scaleBar === null ) {
 
-			scaleBar = new CV.ScaleBar( container, hScale, ( CV.HudObject.stdWidth + CV.HudObject.stdMargin ) * 4 );
+			scaleBar = new ScaleBar( container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
 			scene.add( scaleBar );
 
 		}
@@ -326,7 +322,7 @@ function updateScaleBar ( camera ) {
 
 }
 
-return {
+export var HUD =  {
 	init:               init,
 	renderHUD:          renderHUD,
 	update:             update,
@@ -335,7 +331,5 @@ return {
 	getProgressDial:    getProgressDial,
 	setScale:           setScale
 };
-
-} () ); // end of Hud Module
 
 // EOF

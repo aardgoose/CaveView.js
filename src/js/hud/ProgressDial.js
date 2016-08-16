@@ -1,11 +1,9 @@
-"use strict";
 
-var CV = CV || {};
 
-CV.ProgressDial = function ( container ) {
+function ProgressDial ( container ) {
 
-	var stdWidth  = CV.HudObject.stdWidth;
-	var stdMargin = CV.HudObject.stdMargin;
+	var stdWidth  = HudObject.stdWidth;
+	var stdMargin = HudObject.stdMargin;
 
 	var geometry = new THREE.RingGeometry( stdWidth * 0.9, stdWidth, 50 );
 
@@ -19,7 +17,7 @@ CV.ProgressDial = function ( container ) {
 	this.translateX( -offset * 5 );
 	this.translateY(  offset );
 
-	this.rotateOnAxis( CV.upAxis, Math.PI / 2 );
+	this.rotateOnAxis( upAxis, Math.PI / 2 );
 
 	this.visible  = false;
 	this.isVisible = true;
@@ -30,13 +28,13 @@ CV.ProgressDial = function ( container ) {
 
 }
 
-CV.ProgressDial.prototype = Object.create( THREE.Mesh.prototype );
+ProgressDial.prototype = Object.create( THREE.Mesh.prototype );
 
-Object.assign( CV.ProgressDial.prototype, CV.HudObject.prototype );
+Object.assign( ProgressDial.prototype, HudObject.prototype );
 
-CV.ProgressDial.prototype.contructor = CV.ProgressDial;
+ProgressDial.prototype.contructor = ProgressDial;
 
-CV.ProgressDial.prototype.set = function ( progress ) {
+ProgressDial.prototype.set = function ( progress ) {
 
 	this.progress = progress;
 
@@ -53,13 +51,13 @@ CV.ProgressDial.prototype.set = function ( progress ) {
 
 }
 
-CV.ProgressDial.prototype.add = function ( progress ) {
+ProgressDial.prototype.add = function ( progress ) {
 
 	this.set( this.progress + progress );
 
 }
 
-CV.ProgressDial.prototype.start = function () {
+ProgressDial.prototype.start = function () {
 
 	var faces = this.geometry.faces;
 
@@ -75,7 +73,7 @@ CV.ProgressDial.prototype.start = function () {
 
 }
 
-CV.ProgressDial.prototype.end = function () {
+ProgressDial.prototype.end = function () {
 
 	var self = this;
 
@@ -83,11 +81,13 @@ CV.ProgressDial.prototype.end = function () {
 
 }
 
-CV.ProgressDial.prototype.setVisibility = function ( visibility ) {
+ProgressDial.prototype.setVisibility = function ( visibility ) {
 
 	this.isVisible = visibility;
 	this.visible = ( this.visible && visibility );
 
 }
+
+export { ProgressDial };
 
 // EOF

@@ -1,6 +1,6 @@
 
 
-CV.RectangleGeometry = function ( box, z ) {
+function RectangleGeometry ( box, z ) {
 
 	THREE.Geometry.call( this );
 
@@ -17,8 +17,10 @@ CV.RectangleGeometry = function ( box, z ) {
 
 };
 
-CV.RectangleGeometry.prototype = Object.create( THREE.Geometry.prototype );
+RectangleGeometry.prototype = Object.create( THREE.Geometry.prototype );
 
-CV.RectangleGeometry.prototype.constructor = CV.RectangleGeometry;
+RectangleGeometry.prototype.constructor = RectangleGeometry;
+
+export { RectangleGeometry };
 
 // EOF

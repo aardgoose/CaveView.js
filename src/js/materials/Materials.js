@@ -1,8 +1,4 @@
-"use strict";
 
-var CV = CV || {};
-
-CV.Materials = ( function () {
 
 var cache = new Map();
 var viewState;
@@ -117,7 +113,7 @@ function initCache ( viewerViewState ) {
 
 }
 
-return {
+export var Materials =  {
 
 	createDepthMaterial: createDepthMaterial,
 	getHeightMaterial:   getHeightMaterial,
@@ -129,7 +125,5 @@ return {
 
 };
 
-
-} () );
 
 // EOF

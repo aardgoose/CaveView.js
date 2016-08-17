@@ -1,4 +1,7 @@
 
+import { MATERIAL_SURFACE, SHADING_CURSOR, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED, SHADING_PW } from '../core/constants.js';
+import { Materials } from '../materials/Materials.js';
+
 function CommonTerrain () {};
 
 CommonTerrain.prototype.shadingMode;

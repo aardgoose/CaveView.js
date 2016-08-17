@@ -1,4 +1,6 @@
 
+import { upAxis } from '../core/constants.js';
+import { HudObject } from '../core/HudObject.js';
 
 function ProgressDial ( container ) {
 

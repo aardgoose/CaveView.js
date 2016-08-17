@@ -1,4 +1,8 @@
 
+import { CursorMaterial } from './CursorMaterial.js';
+import { DepthMaterial } from './DepthMaterial.js';
+import { DepthMapMaterial } from './DepthMapMaterial.js';
+import { HeightMaterial } from './HeightMaterial.js';
 
 var cache = new Map();
 var viewState;
@@ -9,9 +13,11 @@ function getHeightMaterial ( type ) {
 
 	if ( cache.has( name ) ) return cache.get( name );
 
-	var material = new CV.HeightMaterial( type, viewState.minHeight, viewState.maxHeight );
+	console.log( viewState );
 
-	cache.set(name, material);
+	var material = new HeightMaterial( type, viewState.minHeight, viewState.maxHeight );
+
+	cache.set( name, material );
 
 	viewState.addEventListener( "newCave",  _updateHeightMaterial );
 
@@ -31,7 +37,7 @@ function getHeightMaterial ( type ) {
 
 function getDepthMapMaterial () {
 
-	return new CV.DepthMapMaterial( viewState.minHeight, viewState.maxHeight );
+	return new DepthMapMaterial( viewState.minHeight, viewState.maxHeight );
 
 }
 
@@ -39,7 +45,7 @@ function createDepthMaterial ( type, limits, texture ) {
 
 	var name = "depth" + type;
 
-	var material = new CV.DepthMaterial( type, limits, texture );
+	var material = new DepthMaterial( type, limits, texture );
 
 	cache.set( name, material );
 
@@ -65,11 +71,11 @@ function getCursorMaterial ( type, halfWidth ) {
 
 	var name = "cursor" + type;
 
-	if ( cache.has(name) ) return cache.get( name );
+	if ( cache.has( name ) ) return cache.get( name );
 
 	var initialHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
 
-	var material = new CV.CursorMaterial( type, initialHeight );
+	var material = new CursorMaterial( type, initialHeight );
 
 	cache.set( name, material );
 
@@ -108,8 +114,8 @@ function getLineMaterial () {
 function initCache ( viewerViewState ) {
 
 	cache.clear();
-
 	viewState = viewerViewState;
+	console.log(viewState);
 
 }
 
@@ -124,6 +130,5 @@ export var Materials =  {
 	initCache:           initCache
 
 };
-
 
 // EOF

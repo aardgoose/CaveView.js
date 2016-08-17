@@ -1,3 +1,9 @@
+import { CommonTerrain } from './CommonTerrain.js';
+import { Tile } from './Tile.js';
+import { TileSet } from './TileSet.js';
+import { Tree } from '../core/Tree.js';
+import { HUD } from '../HUD.js';
+import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants.js';
 
 function TiledTerrain ( limits3, onLoaded ) {
 
@@ -27,9 +33,9 @@ function TiledTerrain ( limits3, onLoaded ) {
 	this.currentLimits;
 	this.dying = false;
 
-	if ( Hud !== undefined ) {
+	if ( HUD !== undefined ) {
 
-		this.progressDial = Hud.getProgressDial();
+		this.progressDial = HUD.getProgressDial();
 
 	}
 

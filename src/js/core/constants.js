@@ -31,7 +31,7 @@ export var SHADING_PW          = 10;
 // layer tags for scene objects
 
 export var FEATURE_BOX           = 1;
-export var FEATURE_SELECTION_BOX = 2;
+export var FEATURE_SELECTED_BOX  = 2;
 export var FEATURE_ENTRANCES     = 3;
 export var FEATURE_TERRAIN       = 4;
 export var FACE_WALLS            = 5;

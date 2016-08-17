@@ -1,4 +1,18 @@
 
+import {
+	NORMAL, SPLAY, SURFACE,
+	FACE_SCRAPS, FACE_WALLS,
+	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX,
+	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
+	MATERIAL_LINE, MATERIAL_SURFACE,
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_SURVEY, SHADING_SINGLE,
+	upAxis
+} from '../core/constants.js';
+
+import { ColourCache } from '../core/Colours.js';
+import { Materials } from '../materials/Materials.js';
+import { Marker } from './Marker.js';
+import { Terrain } from '../terrain/Terrain.js';
 
 function Survey ( cave ) {
 

@@ -1,4 +1,7 @@
 
+import { MATERIAL_LINE } from '../core/constants.js';
+import { Shaders } from '../shaders/Shaders.js';
+import { Colours } from '../core/Colours.js';
 
 function HeightMaterial ( type, minHeight, maxHeight ) {
 

@@ -1,4 +1,6 @@
 
+import { CommonTerrain } from './CommonTerrain.js';
+import { Tile } from './Tile.js';
 
 function Terrain () {
 

@@ -1,4 +1,20 @@
 
+import {
+	MATERIAL_LINE,
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_SINGLE, SHADING_SURVEY
+} from './core/constants.js';
+
+import { Viewer } from './Viewer.js';
+
+import { AHI } from './hud/AHI.js';
+import { AngleScale } from './hud/AngleScale.js';
+import { Compass } from './hud/Compass.js';
+import { LinearScale } from './hud/LinearScale.js';
+import { ProgressDial } from './hud/ProgressDial.js';
+import { ScaleBar } from './hud/ScaleBar.js';
+import { HudObject } from './core/HudObject.js';
+
+import { Materials } from './materials/Materials.js';
 
 // THREE objects
 
@@ -322,7 +338,7 @@ function updateScaleBar ( camera ) {
 
 }
 
-export var HUD =  {
+export var HUD = {
 	init:               init,
 	renderHUD:          renderHUD,
 	update:             update,

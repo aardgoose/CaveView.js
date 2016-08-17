@@ -1,4 +1,7 @@
 
+import { Shaders } from '../shaders/Shaders.js';
+import { MATERIAL_LINE } from '../core/constants.js';
+import { Colours } from '../core/Colours.js';
 
 function DepthMaterial ( type, limits, texture ) {
 

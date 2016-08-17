@@ -1,4 +1,6 @@
 
+import { getEnvironmentValue } from '../core/constants.js';
+
 function EntranceFarPointer () {
 
 	var geometry  = new THREE.Geometry();
@@ -19,7 +21,7 @@ function EntranceFarPointer () {
 
 EntranceFarPointer.prototype = Object.create( THREE.Points.prototype );
 
-EntranceFarPointer.prototype.constructor = CV.EntranceFarPointer;
+EntranceFarPointer.prototype.constructor = EntranceFarPointer;
 
 export { EntranceFarPointer };
 

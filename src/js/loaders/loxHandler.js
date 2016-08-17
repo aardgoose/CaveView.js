@@ -1,4 +1,6 @@
 
+import { NORMAL, SPLAY, SURFACE } from '../core/constants.js';
+import { Tree } from '../core/Tree.js';
 
 function loxHandler  ( fileName, dataStream ) {
 

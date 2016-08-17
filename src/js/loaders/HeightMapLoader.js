@@ -1,10 +1,5 @@
 
-
-padDigits = function ( number, digits ) {
-	
-	return Array( Math.max( digits - String( number ).length + 1, 0 ) ).join( 0 ) + number;
-
-}
+import { padDigits } from '../core/lib.ls';
 
 function HeightMapLoader ( tileSet, resolution, x, y, loadCallback, errorCallback ) {
 

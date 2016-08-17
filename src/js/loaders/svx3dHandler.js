@@ -1,5 +1,8 @@
 // Survex 3d file handler
 
+import { NORMAL, SPLAY, SURFACE } from '../core/constants.js';
+import { Tree } from '../core/Tree.js';
+
 function Svx3dHandler ( fileName, dataStream ) {
 
 	this.fileName   = fileName;

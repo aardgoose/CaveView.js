@@ -1,6 +1,6 @@
 
 
-TileSet = {
+export var TileSet = {
 
 	N: 390000,
 	S: 340000,
@@ -18,7 +18,5 @@ TileSet = {
 	SCALE: 64
 
 }
-
-export { TileSet };
 
 // EOF

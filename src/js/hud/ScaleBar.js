@@ -1,4 +1,6 @@
 
+import { HudObject } from '../core/HudObject.js';
+
 function ScaleBar ( container, hScale, rightMargin ) {
 
 	var leftMargin = 10;

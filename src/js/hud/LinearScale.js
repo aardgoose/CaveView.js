@@ -1,4 +1,7 @@
 
+import { HudObject } from '../core/HudObject.js';
+import { Materials } from '../materials/Materials.js';
+import { MATERIAL_LINE } from '../core/constants.js';
 
 function LinearScale ( container, viewState ) {
 

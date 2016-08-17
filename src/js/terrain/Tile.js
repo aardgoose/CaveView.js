@@ -1,4 +1,7 @@
 
+import { FEATURE_TERRAIN, upAxis } from '../core/constants.js';
+import { padDigits } from '../core/lib.js';
+import { ColourCache } from '../core/Colours.js';
 
 function Tile ( x, y, resolution, tileSet, clip ) {
 

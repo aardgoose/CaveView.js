@@ -1,4 +1,9 @@
 
+import { FEATURE_ENTRANCES } from '../core/constants.js';
+import { EntranceFarPointer } from './EntranceFarPointer.js';
+import { EntranceNearPointer} from './EntranceNearPointer.js';
+import { Label } from './Label.js';
+
 var Marker = ( function () {
 
 	if ( typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope ) {

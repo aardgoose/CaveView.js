@@ -61,6 +61,6 @@ ProgressBar.prototype.End = function () {
 
 }
 
-export { ProgessBar };
+export { ProgressBar };
 
 // EOF

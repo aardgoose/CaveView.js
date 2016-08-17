@@ -1,6 +1,5 @@
 
-
-CV.toOSref = function ( coordinate ) {
+function toOSref ( coordinate ) {
 
 	var easting  = coordinate.x;
 	var northing = coordinate.y;
@@ -19,10 +18,12 @@ CV.toOSref = function ( coordinate ) {
 
 }
 
-CV.padDigits = function ( number, digits ) {
+function padDigits ( number, digits ) {
 
 	return Array( Math.max( digits - String( number ).length + 1, 0 ) ).join( 0 ) + number;
 
 }
+
+export { toOSref, padDigits };
 
 // EOF

@@ -1,6 +1,8 @@
 
+import { HudObject } from '../core/HudObject.js';
+import { Colours } from '../core/Colours.js';
 
- function AngleScale ( container ) {
+function AngleScale ( container ) {
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;

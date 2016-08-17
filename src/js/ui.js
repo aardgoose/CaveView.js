@@ -1,4 +1,16 @@
+import {
+	CAMERA_ORTHOGRAPHIC,CAMERA_PERSPECTIVE, 
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_PW, SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY,
+	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W
+} from './core/constants.js';
 
+import { Colours } from './core/Colours.js';
+import { Page } from './ui/Page.js';
+import { ProgressBar } from './ui/ProgressBar.js';
+import { Loader } from './loaders/Loader.js';
+
+import { Viewer } from './Viewer.js';
+import { HUD } from './HUD.js';
 
 var cave;
 var caveLoader;
@@ -91,7 +103,7 @@ function init ( domID ) { // public method
 	viewState.addEventListener( "change",  handleChange );
 	viewState.addEventListener( "newCave", viewComplete );
 
-	Hud.init( domID );
+	HUD.init( domID );
 
 }
 

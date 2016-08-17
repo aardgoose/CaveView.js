@@ -1,7 +1,25 @@
 
 
-lightPosition = new THREE.Vector3( -1, -1, 0.5 );
-CAMERA_OFFSET = 600;
+import  {
+	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE,
+	FACE_WALLS, FACE_SCRAPS,
+	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
+	MATERIAL_LINE, MATERIAL_SURFACE,
+	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY,
+	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, 
+	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
+	upAxis 
+} from './core/constants.js';
+
+import { HUD } from './HUD.js';
+import { Materials } from './materials/Materials.js';
+import { Survey } from './view/Survey.js';
+import { TiledTerrain } from './terrain/TiledTerrain.js';
+
+//import * as THREE from '../../../three.js/src/Three.js'; 
+
+var lightPosition = new THREE.Vector3( -1, -1, 0.5 );
+var CAMERA_OFFSET = 600;
 
 var caveIsLoaded = false;
 
@@ -202,7 +220,7 @@ function init ( domID ) { // public method
 		set: function ( x ) { _viewStateSetter( setCameraPOI, "setPOI", x ); }
 	} );
 
-	if ( Hud === undefined ) {
+	if ( HUD === undefined ) {
 
 		Object.defineProperty( viewState, "hasHUD", {
 			value: false,
@@ -216,8 +234,8 @@ function init ( domID ) { // public method
 
 		Object.defineProperty( viewState, "HUD", {
 			writeable: true,
-			get: function () { return Hud.getVisibility(); },
-			set: function ( x ) { Hud.setVisibility( x ); }
+			get: function () { return HUD.getVisibility(); },
+			set: function ( x ) { HUD.setVisibility( x ); }
 		} );
 	}
 
@@ -605,7 +623,7 @@ function clearView () {
 	caveIsLoaded = false;
 
 	renderer.clear();
-	Hud.setVisibility( false );
+	HUD.setVisibility( false );
 
 	if ( terrain ) terrain.dying = true;
 
@@ -716,7 +734,7 @@ function loadSurvey ( newSurvey ) {
 
 	container.addEventListener( "click", entranceClick, false );
 
-	Hud.setVisibility( true );
+	HUD.setVisibility( true );
 
 	// signal any listeners that we have a new cave
 	viewState.dispatchEvent( { type: "newCave", name: "newCave" } );
@@ -836,7 +854,7 @@ var renderView = function () {
 		renderer.clear();
 		renderer.render( scene, camera );
 
-		Hud.renderHUD( renderer, camera );
+		HUD.renderHUD( renderer, camera );
 
 		// update LOD Scene Objects
 
@@ -893,7 +911,7 @@ var renderView = function () {
 			if ( targetPOI.quaternion ) camera.quaternion.slerp( targetPOI.quaternion, t );
 
 			camera.updateProjectionMatrix();
-			Hud.update();
+			HUD.update();
 
 			if ( targetPOI.tAnimate === 0 ) {
 
@@ -988,7 +1006,7 @@ function setScale ( obj ) {
 
 	obj.applyMatrix( scaleMatrix );
 
-	Hud.setScale( scale );
+	HUD.setScale( scale );
 
 }
 

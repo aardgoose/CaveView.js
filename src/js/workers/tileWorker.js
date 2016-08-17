@@ -1,5 +1,7 @@
 
-
+import { HeightMapLoader } from '../loaders/HeightMapLoader.js';
+import { ColourCache } from '../core/Colours.js';
+import { upAxis } from '../core/constants.js';
 
 var tileSpec;
 

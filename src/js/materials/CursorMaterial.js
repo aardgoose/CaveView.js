@@ -1,4 +1,6 @@
 
+import { Shaders } from '../shaders/Shaders.js';
+import { MATERIAL_LINE } from '../core/constants.js';
 
 function CursorMaterial ( type, initialHeight ) {
 

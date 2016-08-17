@@ -1,6 +1,8 @@
 
+import { HudObject } from '../core/HudObject.js';
+import { padDigits } from '../core/lib.js';
 
-Compass = function ( container ) {
+function Compass ( container ) {
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
@@ -128,8 +130,7 @@ Compass.prototype.set = function () {
 
 		var degrees = 360 - Math.round( THREE.Math.radToDeg( a ) );
 
-//		this.txt.textContent = degrees.toLocaleString( "en-GB", { minimumIntegerDigits: 3 } ) + "\u00B0"; // unicode degree symbol
-		this.txt.textContent = degrees + "\u00B0"; // unicode degree symbol
+		this.txt.textContent = padDigits( degrees, 3 ) + "\u00B0"; // unicode degree symbol
 
 		this.rotateOnAxis( negativeZAxis, a - this.lastRotation );
 

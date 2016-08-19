@@ -1,9 +1,10 @@
 
 import { Shaders } from '../shaders/Shaders.js';
+import { ShaderMaterial } from '../../../../three.js/src/Three.js';
 
 function DepthMapMaterial ( minHeight, maxHeight ) {
 
-	THREE.ShaderMaterial.call( this, {
+	ShaderMaterial.call( this, {
 
 		uniforms: {
 
@@ -23,7 +24,7 @@ function DepthMapMaterial ( minHeight, maxHeight ) {
 
 }
 
-DepthMapMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+DepthMapMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 DepthMapMaterial.prototype.constructor = DepthMapMaterial;
 

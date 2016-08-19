@@ -1,3 +1,8 @@
+import {
+	SpriteMaterial,
+	Texture,
+	Sprite
+} from '../../../../three.js/src/Three.js';
 
 function Label ( text ) {
 
@@ -19,6 +24,7 @@ function Label ( text ) {
 
 	// make sure width is power of 2
 	var realTextWidth = textWidth;
+
 	textWidth = Math.pow( 2, Math.ceil( Math.log( textWidth ) / Math.LN2 ) );
 
 	canvas.width  = textWidth;
@@ -35,17 +41,17 @@ function Label ( text ) {
 	ctx.fillStyle = "#ffffff";
 	ctx.fillText( text, textWidth/2, textHeight - 18 );
 
-	var texture = new THREE.Texture( canvas );
+	var texture = new Texture( canvas );
 	texture.needsUpdate = true;
 
-	THREE.Sprite.call( this, new THREE.SpriteMaterial( { map: texture, fog: true } ) );
+	Sprite.call( this, new SpriteMaterial( { map: texture, fog: true } ) );
 
 	this.type = "CV.Label";
 	this.scale.set( ( textWidth * actualFontSize) / 0.8, actualFontSize * textHeight, 10 );
 
 };
 
-Label.prototype = Object.create( THREE.Sprite.prototype );
+Label.prototype = Object.create( Sprite.prototype );
 
 Label.prototype.constructor = Label;
 

@@ -16,6 +16,13 @@ import { HudObject } from './core/HudObject.js';
 
 import { Materials } from './materials/Materials.js';
 
+import {
+	Scene, Group,
+	AmbientLight, DirectionalLight,
+	OrthographicCamera, PerspectiveCamera
+} from '../../../three.js/src/Three.js'; 
+
+ 
 // THREE objects
 
 var camera;
@@ -52,19 +59,19 @@ function init ( domId ) {
 	var hWidth  = container.clientWidth / 2;
 
 	// create GL scene and camera for overlay
-	camera = new THREE.OrthographicCamera( -hWidth, hWidth, hHeight, -hHeight, 1, 1000 );
+	camera = new OrthographicCamera( -hWidth, hWidth, hHeight, -hHeight, 1, 1000 );
 	camera.position.z = 600;
 
-	scene = new THREE.Scene();
+	scene = new Scene();
 
 	// group to simplyfy resize handling 
-	attitudeGroup = new THREE.Group();
+	attitudeGroup = new Group();
 	attitudeGroup.position.set( hWidth, -hHeight, 0 );
 
 	scene.add( attitudeGroup );
 
-	var aLight = new THREE.AmbientLight( 0x888888 );
-	var dLight = new THREE.DirectionalLight( 0xFFFFFF );
+	var aLight = new AmbientLight( 0x888888 );
+	var dLight = new DirectionalLight( 0xFFFFFF );
 
 	dLight.position.set( -1, 1, 1 );
 
@@ -319,7 +326,7 @@ function cursorChanged ( event ) {
 
 function updateScaleBar ( camera ) {
 
-	if ( camera instanceof THREE.OrthographicCamera ) {
+	if ( camera instanceof OrthographicCamera ) {
 
 		if ( scaleBar === null ) {
 

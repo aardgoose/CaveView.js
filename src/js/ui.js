@@ -7,7 +7,7 @@ import {
 import { Colours } from './core/Colours.js';
 import { Page } from './ui/Page.js';
 import { ProgressBar } from './ui/ProgressBar.js';
-import { Loader } from './loaders/Loader.js';
+import { CaveLoader } from './loaders/CaveLoader.js';
 
 import { Viewer } from './Viewer.js';
 import { HUD } from './HUD.js';
@@ -84,7 +84,7 @@ function init ( domID ) { // public method
 
 	Viewer.init( domID );
 
-	caveLoader = new Loader( caveLoaded, progress );
+	caveLoader = new CaveLoader( caveLoaded, progress );
 
 	// event handlers
 	document.addEventListener( "keydown", function ( event ) { keyDown( event ); } );

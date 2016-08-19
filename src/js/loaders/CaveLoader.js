@@ -3,7 +3,7 @@ import { getEnvironmentValue } from '../core/constants.js';
 import { Svx3dHandler } from './Svx3dHandler.js';
 import { loxHandler } from './loxHandler.js';
 
-function Loader ( callback, progress ) {
+function CaveLoader ( callback, progress ) {
 
 	if (!callback) {
 
@@ -16,9 +16,9 @@ function Loader ( callback, progress ) {
 
 }
 
-Loader.prototype.constructor = Loader;
+CaveLoader.prototype.constructor = CaveLoader;
 
-Loader.prototype.parseName = function ( name ) {
+CaveLoader.prototype.parseName = function ( name ) {
 
 	var rev = name.split( "." ).reverse();
 
@@ -47,7 +47,7 @@ Loader.prototype.parseName = function ( name ) {
 
 }
 
-Loader.prototype.loadURL = function ( cave ) {
+CaveLoader.prototype.loadURL = function ( cave ) {
 
 	var self     = this;
 	var fileName = cave;
@@ -97,7 +97,7 @@ Loader.prototype.loadURL = function ( cave ) {
 	}
 }
 
-Loader.prototype.loadFile = function ( file ) {
+CaveLoader.prototype.loadFile = function ( file ) {
 
 	var self = this;
 	var fileName = file.name;
@@ -154,7 +154,7 @@ Loader.prototype.loadFile = function ( file ) {
 	}
 }
 
-Loader.prototype.callHandler = function( fileName, data) {
+CaveLoader.prototype.callHandler = function( fileName, data) {
 
 	var handler;
 
@@ -183,6 +183,6 @@ Loader.prototype.callHandler = function( fileName, data) {
 
 }
 
-export { Loader };
+export { CaveLoader };
 
 // EOF

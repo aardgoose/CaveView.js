@@ -2,9 +2,11 @@
 import { Shaders } from '../shaders/Shaders.js';
 import { MATERIAL_LINE } from '../core/constants.js';
 
+import { Vector3, Color, ShaderMaterial } from '../../../../three.js/src/Three.js';
+
 function CursorMaterial ( type, initialHeight ) {
 
-	THREE.ShaderMaterial.call( this );
+	ShaderMaterial.call( this );
 
 	this.defines = {};
 
@@ -19,11 +21,11 @@ function CursorMaterial ( type, initialHeight ) {
 	}
 
 	this.uniforms = {
-			uLight:      { value: new THREE.Vector3( -1, -1, 2 ) },
+			uLight:      { value: new Vector3( -1, -1, 2 ) },
 			cursor:      { value: initialHeight },
 			cursorWidth: { value: 5.0 },
-			baseColor:   { value: new THREE.Color( 0x888888 ) },
-			cursorColor: { value: new THREE.Color( 0x00ff00 ) }
+			baseColor:   { value: new Color( 0x888888 ) },
+			cursorColor: { value: new Color( 0x00ff00 ) }
 		};
 
 	this.vertexShader   = Shaders.cursorVertexShader;
@@ -35,7 +37,7 @@ function CursorMaterial ( type, initialHeight ) {
 }
 
 
-CursorMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+CursorMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 CursorMaterial.prototype.constructor = CursorMaterial;
 

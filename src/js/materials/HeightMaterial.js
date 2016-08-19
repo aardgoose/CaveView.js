@@ -3,9 +3,11 @@ import { MATERIAL_LINE } from '../core/constants.js';
 import { Shaders } from '../shaders/Shaders.js';
 import { Colours } from '../core/Colours.js';
 
+import { Vector3, ShaderMaterial } from '../../../../three.js/src/Three.js';
+
 function HeightMaterial ( type, minHeight, maxHeight ) {
 
-	THREE.ShaderMaterial.call( this );
+	ShaderMaterial.call( this );
 
 	this.defines = {};
 
@@ -22,7 +24,7 @@ function HeightMaterial ( type, minHeight, maxHeight ) {
 	this.uniforms = {
 
 			// pseudo light source somewhere over viewer's left shoulder.
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
+			uLight: { value: new Vector3( -1, -1, 2 ) },
 
 			minZ:   { value: minHeight },
 			scaleZ: { value: 1 / ( maxHeight - minHeight ) },
@@ -39,7 +41,7 @@ function HeightMaterial ( type, minHeight, maxHeight ) {
 
 }
 
-HeightMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+HeightMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 HeightMaterial.prototype.constructor = HeightMaterial;
 

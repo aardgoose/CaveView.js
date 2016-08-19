@@ -2,6 +2,14 @@
 import { HudObject } from '../core/HudObject.js';
 import { padDigits } from '../core/lib.js';
 
+import {
+	Vector3, Math as _Math, Face3, Color,
+	Geometry, RingBufferGeometry, RingGeometry,
+	MeshBasicMaterial,
+	FrontSide, VertexColors,
+	Mesh, Group
+} from '../../../../three.js/src/Three.js';
+
 function Compass ( container ) {
 
 	var width  = container.clientWidth;
@@ -10,16 +18,16 @@ function Compass ( container ) {
 	var stdWidth  = HudObject.stdWidth;
 	var stdMargin = HudObject.stdMargin;
 
-	THREE.Group.call( this );
+	Group.call( this );
 
 	this.name = "CV.Compass";
 	this.domObjects = [];
 
-	var cg1 = new THREE.RingGeometry( stdWidth * 0.9, stdWidth, 32 );
-	var c1  = new THREE.Mesh( cg1, new THREE.MeshBasicMaterial( { color: 0x333333 } ) );
+	var cg1 = new RingGeometry( stdWidth * 0.9, stdWidth, 32 );
+	var c1  = new Mesh( cg1, new MeshBasicMaterial( { color: 0x333333 } ) );
 
-	var cg2 = new THREE.RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
-	var c2  = new THREE.Mesh( cg2, new THREE.MeshBasicMaterial( { color: 0xb03a14 } ) );
+	var cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
+	var c2  = new Mesh( cg2, new MeshBasicMaterial( { color: 0xb03a14 } ) );
 
 	var r1 = _makeRose( stdWidth * 0.8, 0.141, 0x581d0a, 0x0c536a );
 	var r2 = _makeRose( stdWidth * 0.9, 0.141, 0xb03a14, 0x1ab4e5 );
@@ -27,7 +35,7 @@ function Compass ( container ) {
 	r1.rotateZ( Math.PI / 4 );
 	r1.merge( r2 );
 
-	var rMesh = new THREE.Mesh( r1, new THREE.MeshBasicMaterial( { vertexColors:THREE.VertexColors, side:THREE.FrontSide } ) );
+	var rMesh = new Mesh( r1, new MeshBasicMaterial( { vertexColors: VertexColors, side: FrontSide } ) );
 
 	this.add( c1 );
 	this.add( c2 );
@@ -58,15 +66,15 @@ function Compass ( container ) {
 	function _makePetal ( radius, scale, color1, color2 ) {
 
 		var innerR = radius * scale;
-		var g = new THREE.Geometry();
+		var g = new Geometry();
 
-		g.vertices.push( new THREE.Vector3( 0, radius, 0 ) );
-		g.vertices.push( new THREE.Vector3( innerR ,innerR, 0 ) );
-		g.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
-		g.vertices.push( new THREE.Vector3( -innerR, innerR, 0 ) );
+		g.vertices.push( new Vector3( 0, radius, 0 ) );
+		g.vertices.push( new Vector3( innerR ,innerR, 0 ) );
+		g.vertices.push( new Vector3( 0, 0, 0 ) );
+		g.vertices.push( new Vector3( -innerR, innerR, 0 ) );
 
-		var f1 = new THREE.Face3( 0, 2, 1, new THREE.Vector3( 0, 0, 1 ), new THREE.Color( color1 ), 0 );  
-		var f2 = new THREE.Face3( 0, 3, 2, new THREE.Vector3( 0, 0, 1 ), new THREE.Color( color2 ), 0 );
+		var f1 = new Face3( 0, 2, 1, new Vector3( 0, 0, 1 ), new Color( color1 ), 0 );  
+		var f2 = new Face3( 0, 3, 2, new Vector3( 0, 0, 1 ), new Color( color2 ), 0 );
 
 		g.faces.push( f1 );
 		g.faces.push( f2 );
@@ -96,7 +104,7 @@ function Compass ( container ) {
 
 }
 
-Compass.prototype = Object.create( THREE.Group.prototype );
+Compass.prototype = Object.create( Group.prototype );
 
 Object.assign( Compass.prototype, HudObject.prototype );
 
@@ -104,9 +112,9 @@ Compass.prototype.contructor = Compass;
 
 Compass.prototype.set = function () {
 
-	var direction     = new THREE.Vector3();
-	var yAxis         = new THREE.Vector3( 0, 1, 0 );
-	var negativeZAxis = new THREE.Vector3( 0, 0, -1 );
+	var direction     = new Vector3();
+	var yAxis         = new Vector3( 0, 1, 0 );
+	var negativeZAxis = new Vector3( 0, 0, -1 );
 
 	return function set ( vCamera ) {
 
@@ -128,7 +136,7 @@ Compass.prototype.set = function () {
 
 		if ( a === this.lastRotation ) return;
 
-		var degrees = 360 - Math.round( THREE.Math.radToDeg( a ) );
+		var degrees = 360 - Math.round( _Math.radToDeg( a ) );
 
 		this.txt.textContent = padDigits( degrees, 3 ) + "\u00B0"; // unicode degree symbol
 

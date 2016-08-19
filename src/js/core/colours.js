@@ -1,3 +1,6 @@
+import { DataTexture }  from '../../../../three.js/src/textures/DataTexture.js';
+import { RGBFormat, UnsignedByteType } from '../../../../three.js/src/constants.js';
+import { Color }  from '../../../../three.js/src/math/Color.js';
 
 
 export var Colours = ( function () {
@@ -38,7 +41,7 @@ function scaleToTexture ( colours ) {
 
 	}
 
-	var texture = new THREE.DataTexture( data, l, 1, THREE.RGBFormat, THREE.UnsignedByteType );
+	var texture = new DataTexture( data, l, 1, RGBFormat, UnsignedByteType );
 
 	texture.needsUpdate = true;
 
@@ -90,9 +93,9 @@ return {
 
 export var ColourCache = ( function () {
 
-	var white = new THREE.Color( 0xffffff );
-	var grey  = new THREE.Color( 0x444444 );
-	var red   = new THREE.Color( 0xff0000 );
+	var white = new Color( 0xffffff );
+	var grey  = new Color( 0x444444 );
+	var red   = new Color( 0xff0000 );
 
 	// define colors to share THREE.Color objects
 
@@ -107,7 +110,7 @@ export var ColourCache = ( function () {
 
 		for ( var i = 0, l = colours.length; i < l; i++ ) {
 
-			cache[i] = new THREE.Color( colours[i] );
+			cache[i] = new Color( colours[i] );
 
 		}
 

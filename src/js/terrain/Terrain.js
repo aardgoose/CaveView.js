@@ -2,9 +2,15 @@
 import { CommonTerrain } from './CommonTerrain.js';
 import { Tile } from './Tile.js';
 
+import {
+	MeshLambertMaterial,
+	TextureLoader,
+	Group
+} from '../../../../three.js/src/Three.js';
+
 function Terrain () {
 
-	THREE.Group.call( this );
+	Group.call( this );
 
 	this.type     = "CV.Terrain";
 	this.tile     = null;
@@ -14,7 +20,7 @@ function Terrain () {
 
 }
 
-Terrain.prototype = Object.create( THREE.Group.prototype );
+Terrain.prototype = Object.create( Group.prototype );
 
 Object.assign( Terrain.prototype, CommonTerrain.prototype );
 
@@ -67,10 +73,10 @@ Terrain.prototype.getOverlay = function () {
 
 Terrain.prototype.setOverlay = function ( overlay ) {
 
-	var loader  = new THREE.TextureLoader();
+	var loader  = new TextureLoader();
 	var	texture = loader.load( this.overlay );
 
-	this.setMaterial( new THREE.MeshLambertMaterial(
+	this.setMaterial( new MeshLambertMaterial(
 
 		{
 			map: texture,

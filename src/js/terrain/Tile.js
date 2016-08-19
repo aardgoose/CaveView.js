@@ -3,6 +3,17 @@ import { FEATURE_TERRAIN, upAxis } from '../core/constants.js';
 import { padDigits } from '../core/lib.js';
 import { ColourCache } from '../core/Colours.js';
 
+import {
+	Vector2, Vector3, Triangle, Box3,
+	BufferGeometry,
+	BufferGeometryLoader, ImageLoader,
+	Texture,
+	MeshBasicMaterial, MeshLambertMaterial,
+	RepeatWrapping,
+	Mesh
+} from '../../../../three.js/src/Three.js';
+
+
 function Tile ( x, y, resolution, tileSet, clip ) {
 
 	this.x = x;
@@ -74,11 +85,11 @@ Tile.prototype.create = function ( geometry, terrainData ) {
 	}
 
 	// reduce memory consumption by transferring to buffer object
-	var bufferGeometry = new THREE.BufferGeometry().fromGeometry( geometry );
+	var bufferGeometry = new BufferGeometry().fromGeometry( geometry );
 
 	bufferGeometry.computeBoundingBox();
 
-	this.mesh = new THREE.Mesh( bufferGeometry );
+	this.mesh = new Mesh( bufferGeometry );
 	this.mesh.layers.set ( FEATURE_TERRAIN );
 
 	return this;
@@ -87,23 +98,23 @@ Tile.prototype.create = function ( geometry, terrainData ) {
 
 Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 
-	var loader = new THREE.BufferGeometryLoader();
+	var loader = new BufferGeometryLoader();
 
 	var bufferGeometry = loader.parse( json, boundingBox );
 
 	// use precalculated bounding box rather than recalculating it here.
 
-	var bb = new THREE.Box3(
+	var bb = new Box3(
 
-		new THREE.Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ), 
-		new THREE.Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
+		new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ), 
+		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
 
 	);
 
 	bufferGeometry.boundingBox = bb;
-	bufferGeometry.setDiscardBuffers(); // AAA
+	bufferGeometry.setDiscardBuffers(); // Non standard feature.
 
-	this.mesh = new THREE.Mesh( bufferGeometry );
+	this.mesh = new Mesh( bufferGeometry );
 	this.mesh.layers.set ( FEATURE_TERRAIN );
 
 }
@@ -238,7 +249,7 @@ Tile.prototype.setOverlay = function ( overlay, opacity ) {
 
 	} else {
 
-		var loader = new THREE.ImageLoader();
+		var loader = new ImageLoader();
 
 		loader.load( imageFile, _imageLoaded );
 
@@ -248,19 +259,19 @@ Tile.prototype.setOverlay = function ( overlay, opacity ) {
 
 	function _imageLoaded ( image ) {
 
-		var material = new THREE.MeshLambertMaterial( { transparent: true, opacity: opacity } );
+		var material = new MeshLambertMaterial( { transparent: true, opacity: opacity } );
 
 		Tile.overlayImages.set( imageFile, image );
 
-		texture = new THREE.Texture();
+		texture = new Texture();
 
 		texture.image = image;
 
-		texture.wrapS = THREE.RepeatWrapping;
-		texture.wrapT = THREE.RepeatWrapping;
+		texture.wrapS = RepeatWrapping;
+		texture.wrapT = RepeatWrapping;
 
-		texture.offset = new THREE.Vector2( xOffset, yOffset );
-		texture.repeat = new THREE.Vector2( xRepeat, yRepeat );
+		texture.offset = new Vector2( xOffset, yOffset );
+		texture.repeat = new Vector2( xRepeat, yRepeat );
 
 		texture.needsUpdate = true;
 
@@ -292,8 +303,8 @@ Tile.prototype.projectedArea = function ( camera ) {
 	v1.z = 0;
 	v3.z = 0;
 
-	var v2 = new THREE.Vector3( v3.x, v1.y, 0 );
-	var v4 = new THREE.Vector3( v1.x, v3.y, 0 ) ;
+	var v2 = new Vector3( v3.x, v1.y, 0 );
+	var v4 = new Vector3( v1.x, v3.y, 0 ) ;
 
 	// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
 
@@ -302,8 +313,8 @@ Tile.prototype.projectedArea = function ( camera ) {
 	v3.project( camera ).clampScalar( -1, 1 );
 	v4.project( camera ).clampScalar( -1, 1 );
 
-	var t1 = new THREE.Triangle( v1, v3, v4 );
-	var t2 = new THREE.Triangle( v1, v2, v3 );
+	var t1 = new Triangle( v1, v3, v4 );
+	var t2 = new Triangle( v1, v2, v3 );
 
 	return t1.area() + t2.area();
 

@@ -1,4 +1,5 @@
 
+import { Vector3 }  from '../../../../three.js/src/math/Vector3.js';
 
 export var MATERIAL_LINE       = 1;
 export var MATERIAL_SURFACE    = 2;
@@ -48,7 +49,7 @@ export var SURFACE = 1;
 export var SPLAY   = 2;
 export var DIVING  = 3;
 
-export var upAxis = new THREE.Vector3( 0, 0, 1 );
+export var upAxis = new Vector3( 0, 0, 1 );
 
 var environment = new Map();
 

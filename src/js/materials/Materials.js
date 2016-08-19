@@ -4,6 +4,8 @@ import { DepthMaterial } from './DepthMaterial.js';
 import { DepthMapMaterial } from './DepthMapMaterial.js';
 import { HeightMaterial } from './HeightMaterial.js';
 
+import { LineBasicMaterial, VertexColors } from '../../../../three.js/src/Three.js';
+
 var cache = new Map();
 var viewState;
 
@@ -103,7 +105,7 @@ function getLineMaterial () {
 
 	}
 
-	var material = new THREE.LineBasicMaterial( { color: 0xFFFFFF, vertexColors: THREE.VertexColors } );
+	var material = new LineBasicMaterial( { color: 0xFFFFFF, vertexColors: VertexColors } );
 
 	cache.set( name, material );
 

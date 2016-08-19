@@ -16,9 +16,20 @@ import { Materials } from './materials/Materials.js';
 import { Survey } from './view/Survey.js';
 import { TiledTerrain } from './terrain/TiledTerrain.js';
 
-//import * as THREE from '../../../three.js/src/Three.js'; 
+import { OrbitControls } from './core/OrbitControls.js';
 
-var lightPosition = new THREE.Vector3( -1, -1, 0.5 );
+import {
+	EventDispatcher,
+	Vector2, Vector3, Matrix4, Quaternion, Euler,  Box3,
+	Scene, Group, Raycaster,
+	BoxHelper,
+	AmbientLight, DirectionalLight,
+	LinearFilter, NearestFilter, RGBFormat,
+	OrthographicCamera, PerspectiveCamera, 
+	WebGLRenderer, WebGLRenderTarget
+} from '../../../three.js/src/Three.js'; 
+
+var lightPosition = new Vector3( -1, -1, 0.5 );
 var CAMERA_OFFSET = 600;
 
 var caveIsLoaded = false;
@@ -34,7 +45,7 @@ var oCamera;
 var pCamera;
 var camera;
 
-var mouse = new THREE.Vector2();
+var mouse = new Vector2();
 
 var raycaster;
 var terrain = null;
@@ -64,11 +75,11 @@ var targetPOI = null;
 var controls;
 
 var lastActivityTime = 0;
-
+/*
 function __dyeTrace() {
 
-	var start = new THREE.Vector3();
-	var end   = new THREE.Vector3( 100, 100, 100 );
+	var start = new Vector3();
+	var end   = new Vector3( 100, 100, 100 );
 	var progress;
 	var max = 100;
 
@@ -78,14 +89,14 @@ function __dyeTrace() {
 
 		progress = i / max;
 
-		geometry.vertices.push ( new THREE.Vector3().lerpVectors( start, end, progress ) );
+		geometry.vertices.push ( new Vector3().lerpVectors( start, end, progress ) );
 		geometry.colors.push( new THREE.Color( Math.sin( Math.PI * progress ), 255, 0 ) );
 
 	}
 
 	scene.add ( new THREE.Points( geometry, new TestMaterial( 25 ) ) );
 
-}
+}*/
 
 function init ( domID ) { // public method
 
@@ -96,39 +107,39 @@ function init ( domID ) { // public method
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
-	renderer = new THREE.WebGLRenderer( { antialias: true } ) ;
+	renderer = new WebGLRenderer( { antialias: true } ) ;
 
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setClearColor( 0x000000 );
 	renderer.autoClear = false;
 
-	oCamera = new THREE.OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 2000 );
+	oCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 2000 );
 
 	oCamera.rotateOnAxis( upAxis, Math.PI / 2 );
 
 	initCamera( oCamera );
 
-	pCamera = new THREE.PerspectiveCamera( 75, width / height, 1, 2000 );
+	pCamera = new PerspectiveCamera( 75, width / height, 1, 2000 );
 
 	initCamera( pCamera );
 
 	camera = pCamera;
 
-	raycaster = new THREE.Raycaster();
+	raycaster = new Raycaster();
 
 	renderer.clear();
 
 	container.appendChild( renderer.domElement );
 
-	controls = new THREE.OrbitControls( camera, renderer.domElement );
+	controls = new OrbitControls( camera, renderer.domElement );
 
 	controls.enableDamping = true;
 
 	// event handler
 	window.addEventListener( "resize", resize );
 
-	Object.assign( viewState, THREE.EventDispatcher.prototype );
+	Object.assign( viewState, EventDispatcher.prototype );
 
 	Object.defineProperty( viewState, "terrain", {
 		writeable: true,
@@ -304,7 +315,7 @@ function setZScale ( scale ) {
 	var lastScale = Math.pow( 2, ( zScale - 0.5 ) * 4 );
 	var newScale  = Math.pow( 2, ( scale - 0.5 )  * 4 );
 
-	region.applyMatrix( new THREE.Matrix4().makeScale( 1, 1, newScale / lastScale ) );
+	region.applyMatrix( new Matrix4().makeScale( 1, 1, newScale / lastScale ) );
 
 	zScale = scale;
 
@@ -338,13 +349,13 @@ function renderDepthTexture () {
 
 	// render the terrain to a new canvas square canvas and extract image data
 
-	var rtCamera = new THREE.OrthographicCamera( -width / 2, width / 2,  height / 2, -height / 2, -10000, 10000 );
+	var rtCamera = new OrthographicCamera( -width / 2, width / 2,  height / 2, -height / 2, -10000, 10000 );
 
 	rtCamera.layers.enable( FEATURE_TERRAIN ); // just render the terrain
 
 	scene.overrideMaterial = Materials.getDepthMapMaterial();
 
-	var renderTarget = new THREE.WebGLRenderTarget( dim, dim, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBFormat } );
+	var renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBFormat } );
 
 	renderTarget.texture.generateMipmaps = false;
 
@@ -455,7 +466,7 @@ function testCameraLayer ( layerTag ) {
 
 function setViewMode ( mode, t ) {
 
-	var position = new  THREE.Vector3();
+	var position = new  Vector3();
 	var tAnimate = t || 240;
 
 	switch ( mode ) {
@@ -498,7 +509,7 @@ function setViewMode ( mode, t ) {
 
 	}
 
-	activePOIPosition = new THREE.Vector3();
+	activePOIPosition = new Vector3();
 
 	targetPOI = {
 		tAnimate: tAnimate,
@@ -632,8 +643,8 @@ function clearView () {
 	survey          = null;
 	terrain         = null;
 	selectedSection = 0;
-	scene           = new THREE.Scene();
-	region          = new THREE.Group();
+	scene           = new Scene();
+	region          = new Group();
 	targetPOI       = null;
 
 	shadingMode = SHADING_HEIGHT;
@@ -685,7 +696,7 @@ function loadSurvey ( newSurvey ) {
 
 	region.add( survey );
 
-	var box = new THREE.BoxHelper( survey.limits, 0xffffff );
+	var box = new BoxHelper( survey.limits, 0xffffff );
 
 	box.layers.set( FEATURE_BOX );
 
@@ -693,12 +704,12 @@ function loadSurvey ( newSurvey ) {
 
 	// light the model for Lambert Shaded surface
 
-	directionalLight = new THREE.DirectionalLight( 0xffffff );
+	directionalLight = new DirectionalLight( 0xffffff );
 	directionalLight.position.copy( lightPosition );
 
 	scene.add( directionalLight );
 
-	scene.add( new THREE.AmbientLight( 0x303030 ) );
+	scene.add( new AmbientLight( 0x303030 ) );
 
 	caveIsLoaded = true;
 
@@ -822,10 +833,10 @@ function entranceClick ( event ) {
 			tAnimate:    80,
 			object:      entrance,
 			position:    position,
-			cameraPosition: position.clone().add( new THREE.Vector3( 0, 0, 5 ) ),
+			cameraPosition: position.clone().add( new Vector3( 0, 0, 5 ) ),
 			cameraZoom: 1,
-			boundingBox: new THREE.Box3().expandByPoint( entrance.position ),
-			quaternion:  new THREE.Quaternion()
+			boundingBox: new Box3().expandByPoint( entrance.position ),
+			quaternion:  new Quaternion()
 		};
 
 		activePOIPosition = controls.target;
@@ -838,8 +849,8 @@ function entranceClick ( event ) {
 
 var renderView = function () {
 
-	var lPosition = new THREE.Vector3();
-	var rotation = new THREE.Euler();
+	var lPosition = new Vector3();
+	var rotation = new Euler();
 
 	return function renderView () {
 
@@ -941,9 +952,9 @@ function setCameraPOI ( x ) {
 
 	var size = targetPOI.boundingBox.size();
 
-	if ( camera instanceof THREE.PerspectiveCamera ) {
+	if ( camera instanceof PerspectiveCamera ) {
 
-		var tan = Math.tan( THREE.Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
+		var tan = Math.tan( Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
 
 		var e1 = 1.5 * tan * size.y / 2 + size.z;
 		var e2 = tan * camera.aspect * size.x / 2 + size.z;
@@ -968,7 +979,7 @@ function setCameraPOI ( x ) {
 
 	targetPOI.cameraPosition   = targetPOI.position.clone();
 	targetPOI.cameraPosition.z = targetPOI.cameraPosition.z + elevation;
-	targetPOI.quaternion = new THREE.Quaternion();
+	targetPOI.quaternion = new Quaternion();
 
 	// disable orbit controls until move to selected POI is conplete
 
@@ -1000,9 +1011,9 @@ function setScale ( obj ) {
 	// scale and translate model coordiniates into THREE.js world view
 	var scale = Math.min( width / range.x, height / range.y );
 
-	var scaleMatrix = new THREE.Matrix4().makeScale( scale, scale, scale );
+	var scaleMatrix = new Matrix4().makeScale( scale, scale, scale );
 
-	scaleMatrix.multiply( new THREE.Matrix4().makeTranslation( -center.x, -center.y, -center.z ) );
+	scaleMatrix.multiply( new Matrix4().makeTranslation( -center.x, -center.y, -center.z ) );
 
 	obj.applyMatrix( scaleMatrix );
 

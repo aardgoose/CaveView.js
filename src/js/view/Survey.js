@@ -14,6 +14,15 @@ import { Materials } from '../materials/Materials.js';
 import { Marker } from './Marker.js';
 import { Terrain } from '../terrain/Terrain.js';
 
+import {
+	Vector3, Face3, Color, Box3,
+	Geometry, PlaneGeometry,
+	MeshLambertMaterial, MeshBasicMaterial, MultiMaterial, LineBasicMaterial,
+	FaceColors, NoColors, FrontSide,
+	Object3D, Mesh, Group, LineSegments,
+	BoxHelper
+} from '../../../../three.js/src/Three.js';
+
 function Survey ( cave ) {
 
 	if ( !cave ) {
@@ -23,7 +32,7 @@ function Survey ( cave ) {
 
 	}
 
-	THREE.Object3D.call( this );
+	Object3D.call( this );
 
 	this.surveyTree = cave.getSurveyTree();
 	this.selectedSectionIds = new Set();
@@ -52,7 +61,7 @@ function Survey ( cave ) {
 
 	function _loadScraps ( scrapList ) {
 
-		var geometry     = new THREE.Geometry();
+		var geometry     = new Geometry();
 		var vertexOffset = 0;
 		var facesOffset  = 0;
 		var faceRuns     = [];
@@ -72,7 +81,7 @@ function Survey ( cave ) {
 
 		geometry.name = "CV.Survey:faces:scraps:g";
 
-		var mesh = new THREE.Mesh( geometry );
+		var mesh = new Mesh( geometry );
 
 		mesh.name = "CV.Survey:faces:scraps";
 		mesh.layers.set( FACE_SCRAPS );
@@ -91,7 +100,7 @@ function Survey ( cave ) {
 
 				var vertex = scrap.vertices[ i ];
 
-				geometry.vertices.push( new THREE.Vector3( vertex.x, vertex.y, vertex.z ) );
+				geometry.vertices.push( new Vector3( vertex.x, vertex.y, vertex.z ) );
 
 			}
 
@@ -99,7 +108,7 @@ function Survey ( cave ) {
 
 				var face = scrap.faces[ i ];
 
-				geometry.faces.push( new THREE.Face3( face[0] + vertexOffset, face[1] + vertexOffset, face[2] + vertexOffset ) );
+				geometry.faces.push( new Face3( face[0] + vertexOffset, face[1] + vertexOffset, face[2] + vertexOffset ) );
 
 			}
 
@@ -116,7 +125,7 @@ function Survey ( cave ) {
 
 	function _loadCrossSections ( crossSectionGroups ) {
 
-		var geometry = new THREE.Geometry();
+		var geometry = new Geometry();
 		var faces    = geometry.faces;
 		var vertices = geometry.vertices;
 
@@ -161,8 +170,8 @@ function Survey ( cave ) {
 					if ( run !== null ) {
 
 						// close section with two triangles to form cap.
-						faces.push( new THREE.Face3( u2, r2, d2 ) );
-						faces.push( new THREE.Face3( u2, d2, l2 ) );
+						faces.push( new Face3( u2, r2, d2 ) );
+						faces.push( new Face3( u2, d2, l2 ) );
 
 						var lastEnd = lastEnd + faceSet * 8 + 4;
 
@@ -198,16 +207,16 @@ function Survey ( cave ) {
 				// all face vertices specified in CCW winding order to define front side.
 
 				// top faces
-				faces.push( new THREE.Face3( u1, r1, r2 ) );
-				faces.push( new THREE.Face3( u1, r2, u2 ) );
-				faces.push( new THREE.Face3( u1, u2, l2 ) );
-				faces.push( new THREE.Face3( u1, l2, l1 ) );
+				faces.push( new Face3( u1, r1, r2 ) );
+				faces.push( new Face3( u1, r2, u2 ) );
+				faces.push( new Face3( u1, u2, l2 ) );
+				faces.push( new Face3( u1, l2, l1 ) );
 
 				// bottom faces
-				faces.push( new THREE.Face3( d1, r2, r1 ) );
-				faces.push( new THREE.Face3( d1, d2, r2 ) );
-				faces.push( new THREE.Face3( d1, l2, d2 ) );
-				faces.push( new THREE.Face3( d1, l1, l2 ) );
+				faces.push( new Face3( d1, r2, r1 ) );
+				faces.push( new Face3( d1, d2, r2 ) );
+				faces.push( new Face3( d1, l2, d2 ) );
+				faces.push( new Face3( d1, l1, l2 ) );
 
 				v = v - 4; // rewind to allow current vertices to be start of next box section.
 
@@ -216,8 +225,8 @@ function Survey ( cave ) {
 					// handle first section of run
 
 					//  start tube with two triangles to form cap
-					faces.push( new THREE.Face3( u1, r1, d1 ) );
-					faces.push( new THREE.Face3( u1, d1, l1 ) );
+					faces.push( new Face3( u1, r1, d1 ) );
+					faces.push( new Face3( u1, d1, l1 ) );
 
 					run = { start: lastEnd, survey: survey };
 
@@ -233,8 +242,8 @@ function Survey ( cave ) {
 		if ( run !== null ) {
 
 			// close tube with two triangles
-			faces.push( new THREE.Face3( u2, r2, d2 ) );
-			faces.push( new THREE.Face3( u2, d2, l2 ) );
+			faces.push( new Face3( u2, r2, d2 ) );
+			faces.push( new Face3( u2, d2, l2 ) );
 
 			run.end = lastEnd + faceSet * 8 + 4;
 			faceRuns.push( run );
@@ -247,7 +256,7 @@ function Survey ( cave ) {
 
 		for ( i = 0; i < l; i++ ) {
 
-			faces[ i ].color =  new THREE.Color( 0x00ffff );
+			faces[ i ].color =  new Color( 0x00ffff );
 
 		}
 
@@ -257,7 +266,7 @@ function Survey ( cave ) {
 
 		geometry.name = "CV.Survey:faces:walls:g";
 
-		var mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0xff0000, vertexColors: THREE.NoColors, side: THREE.FrontSide } ) );
+		var mesh = new Mesh( geometry, new MeshBasicMaterial( { color: 0xff0000, vertexColors: NoColors, side: FrontSide } ) );
 
 		mesh.userData = faceRuns;
 		mesh.name = "CV.Survey:faces:walls";
@@ -274,13 +283,13 @@ function Survey ( cave ) {
 			var station  = crossSection.end;
 			var lrud     = crossSection.lrud;
 			var cross    = _getCrossProduct( crossSection );
-			var stationV = new THREE.Vector3( station.x, station.y, station.z );
+			var stationV = new Vector3( station.x, station.y, station.z );
 
 			var L = cross.clone().setLength(  lrud.l ).add( stationV );
 			var R = cross.clone().setLength( -lrud.r ).add( stationV ); 
 
-			var U = new THREE.Vector3( station.x, station.y, station.z + lrud.u );
-			var D = new THREE.Vector3( station.x, station.y, station.z - lrud.d );
+			var U = new Vector3( station.x, station.y, station.z + lrud.u );
+			var D = new Vector3( station.x, station.y, station.z - lrud.d );
 
 			return { l: L, r: R, u: U, d: D };
 
@@ -292,7 +301,7 @@ function Survey ( cave ) {
 			var s1 = crossSection.start;
 			var s2 = crossSection.end;
 
-			return new THREE.Vector3( s1.x - s2.x, s1.y - s2.y, s1.z - s2.z ).cross( upAxis );
+			return new Vector3( s1.x - s2.x, s1.y - s2.y, s1.z - s2.z ).cross( upAxis );
 
 		}
 
@@ -304,7 +313,7 @@ function Survey ( cave ) {
 
 		if ( l === 0 ) return null;
 
-		var entrances = new THREE.Group();
+		var entrances = new Group();
 
 		entrances.name = "CV.Survey:entrances";
 		entrances.layers.set( FEATURE_ENTRANCES );
@@ -338,9 +347,9 @@ function Survey ( cave ) {
 		var legStats      = [];
 		var legRuns       = [];
 
-		legGeometries[ NORMAL  ] = new THREE.Geometry();
-		legGeometries[ SURFACE ] = new THREE.Geometry();
-		legGeometries[ SPLAY   ] = new THREE.Geometry();
+		legGeometries[ NORMAL  ] = new Geometry();
+		legGeometries[ SURFACE ] = new Geometry();
+		legGeometries[ SPLAY   ] = new Geometry();
 
 		legRuns[ NORMAL  ] = [];
 		legRuns[ SURFACE ] = [];
@@ -364,8 +373,8 @@ function Survey ( cave ) {
 			var type   = leg.type;
 			var survey = leg.survey;
 
-			var vertex1 = new THREE.Vector3( leg.from.x, leg.from.y, leg.from.z );
-			var vertex2 = new THREE.Vector3( leg.to.x,   leg.to.y,   leg.to.z );
+			var vertex1 = new Vector3( leg.from.x, leg.from.y, leg.from.z );
+			var vertex2 = new Vector3( leg.to.x,   leg.to.y,   leg.to.z );
 
 			geometry = legGeometries[ type ];
 
@@ -434,7 +443,7 @@ function Survey ( cave ) {
 			geometry.computeBoundingBox();
 			geometry.name = name + ":g";
 
-			var mesh = new THREE.LineSegments( geometry, new THREE.LineBasicMaterial( { color: 0x888888 } ) );
+			var mesh = new LineSegments( geometry, new LineBasicMaterial( { color: 0x888888 } ) );
 
 			mesh.name = name;
 			mesh.userData = legRuns[ tag ];
@@ -464,7 +473,7 @@ function Survey ( cave ) {
 		var width  = ( dim.samples - 1 ) * dim.xDelta;
 		var height = ( dim.lines   - 1 ) * dim.yDelta;
 
-		var plane = new THREE.PlaneGeometry( width, height, dim.samples - 1, dim.lines - 1 );
+		var plane = new PlaneGeometry( width, height, dim.samples - 1, dim.lines - 1 );
 
 		plane.translate( dim.xOrigin + width / 2, dim.yOrigin + height / 2, 0 );
 
@@ -476,7 +485,7 @@ function Survey ( cave ) {
 
 }
 
-Survey.prototype = Object.create( THREE.Object3D.prototype );
+Survey.prototype = Object.create( Object3D.prototype );
 
 Survey.prototype.constructor = Survey;
 
@@ -623,7 +632,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 			break;
 
-		case "THREE.BoxHelper":
+		case "BoxHelper":
 
 			obj.reverseTraverse( _remove );
 
@@ -656,7 +665,7 @@ Survey.prototype.cutSection = function ( id ) {
 		var runsSelected = 0;
 		var selectedSectionIds = self.selectedSectionIds;
 
-		var newGeometry   = new THREE.Geometry();
+		var newGeometry   = new Geometry();
 
 		var newVertices   = newGeometry.vertices;
 		var newColors     = newGeometry.colors;
@@ -732,7 +741,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 		var	selectedSectionIds = self.selectedSectionIds;
 
-		var newGeometry = new THREE.Geometry();
+		var newGeometry = new Geometry();
 
 		var newFaces    = newGeometry.faces;
 		var newVertices = newGeometry.vertices;
@@ -826,7 +835,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 Survey.prototype.getBounds = function ()  {
 
-	var box = new THREE.Box3();
+	var box = new Box3();
 
 	var min = box.min;
 	var max = box.max;
@@ -873,13 +882,13 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_SINGLE:
 
-		material = new THREE.MeshLambertMaterial( { color: 0xff0000, vertexColors: THREE.NoColors } );
+		material = new MeshLambertMaterial( { color: 0xff0000, vertexColors: NoColors } );
 
 		break;
 
 	case SHADING_SURVEY:
 
-		material = new THREE.MeshLambertMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } );
+		material = new MeshLambertMaterial( { color: 0xffffff, vertexColors: FaceColors } );
 
 		break;
 
@@ -931,11 +940,11 @@ Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 	var faces    = mesh.geometry.faces;
 	var	selectedSectionIds = this.selectedSectionIds;
 	var surveyColours;
-	var unselected = new THREE.MeshLambertMaterial( { side: THREE.FrontSide, color: 0x444444, vertexColors: THREE.FaceColors } );
+	var unselected = new MeshLambertMaterial( { side: FrontSide, color: 0x444444, vertexColors: FaceColors } );
 
 	if ( mode === SHADING_SURVEY ) surveyColours = this.getSurveyColours();
 
-	mesh.material = new THREE.MultiMaterial( [ selected, unselected ] );
+	mesh.material = new MultiMaterial( [ selected, unselected ] );
 
 	var count = 0; // check final face count is select to detect faults in constructed mesh.userData
 
@@ -1170,7 +1179,7 @@ Survey.prototype.setEntrancesSelected = function () {
 
 	if ( selectedSectionIds.size > 0 ) {
 
-		boundingBox = new THREE.Box3();
+		boundingBox = new Box3();
 
 		for ( var i = 0, l = children.length; i < l; i++ ) {
 
@@ -1314,7 +1323,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 		var vertex1 = geometry.vertices[ v1 ];
 		var vertex2 = geometry.vertices[ v2 ];
 
-		var legNormal  = new THREE.Vector3().subVectors( vertex1, vertex2 ).normalize();
+		var legNormal  = new Vector3().subVectors( vertex1, vertex2 ).normalize();
 		var dotProduct = legNormal.dot( pNormal );
 
 		var hueIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
@@ -1336,7 +1345,7 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 	var vertices = geometry.vertices;
 	var colors   = geometry.colors;
 
-	var box = new THREE.Box3();
+	var box = new Box3();
 
 	var min = box.min;
 	var max = box.max;
@@ -1396,7 +1405,7 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 		if ( this.selectedSection > 0 && runsSelected > 0 ) {
 
-			this.selectedBox = new THREE.BoxHelper( box, 0x0000ff );
+			this.selectedBox = new BoxHelper( box, 0x0000ff );
 
 			this.selectedBox.layers.set( FEATURE_SELECTED_BOX );
 

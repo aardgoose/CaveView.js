@@ -2,14 +2,22 @@
 import { upAxis } from '../core/constants.js';
 import { HudObject } from '../core/HudObject.js';
 
+import {
+	Vector3,
+	RingGeometry,
+	MeshBasicMaterial,
+	FaceColors,
+	Mesh
+} from '../../../../three.js/src/Three.js';
+
 function ProgressDial ( container ) {
 
 	var stdWidth  = HudObject.stdWidth;
 	var stdMargin = HudObject.stdMargin;
 
-	var geometry = new THREE.RingGeometry( stdWidth * 0.9, stdWidth, 50 );
+	var geometry = new RingGeometry( stdWidth * 0.9, stdWidth, 50 );
 
-	THREE.Mesh.call( this, geometry, new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } ) );
+	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors } ) );
 
 	this.name = "CV.ProgressDial";
 	this.domObjects = [];
@@ -30,7 +38,7 @@ function ProgressDial ( container ) {
 
 }
 
-ProgressDial.prototype = Object.create( THREE.Mesh.prototype );
+ProgressDial.prototype = Object.create( Mesh.prototype );
 
 Object.assign( ProgressDial.prototype, HudObject.prototype );
 

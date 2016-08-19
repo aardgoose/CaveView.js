@@ -1,3 +1,10 @@
+import {
+	Vector3, Color, Face3,
+	Geometry, BufferGeometry,
+	MeshBasicMaterial,
+	FaceColors, DoubleSide,
+	Mesh
+} from '../../../../three.js/src/Three.js';
 
 function EntranceNearPointer () {
 
@@ -6,28 +13,28 @@ function EntranceNearPointer () {
 
 	this.type = "CV.EntranceNearPointer";
 
-	var geometry = new THREE.Geometry();
+	var geometry = new Geometry();
 	var bufferGeometry;
 
-	geometry.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
-	geometry.vertices.push( new THREE.Vector3( -width, 0, height ) );
-	geometry.vertices.push( new THREE.Vector3( width, 0, height ) );
-	geometry.vertices.push( new THREE.Vector3( 0, -width, height ) );
-	geometry.vertices.push( new THREE.Vector3( 0,  width, height ) );
+	geometry.vertices.push( new Vector3( 0, 0, 0 ) );
+	geometry.vertices.push( new Vector3( -width, 0, height ) );
+	geometry.vertices.push( new Vector3( width, 0, height ) );
+	geometry.vertices.push( new Vector3( 0, -width, height ) );
+	geometry.vertices.push( new Vector3( 0,  width, height ) );
 
-	geometry.faces.push( new THREE.Face3( 0, 1, 2, new THREE.Vector3( 0, 0, 1 ), new THREE.Color( 0xff0000 ), 0 ) );
-	geometry.faces.push( new THREE.Face3( 0, 3, 4, new THREE.Vector3( 1, 0, 0 ), new THREE.Color( 0xffff00 ), 0 ) );
+	geometry.faces.push( new Face3( 0, 1, 2, new Vector3( 0, 0, 1 ), new Color( 0xff0000 ), 0 ) );
+	geometry.faces.push( new Face3( 0, 3, 4, new Vector3( 1, 0, 0 ), new Color( 0xffff00 ), 0 ) );
 
-	bufferGeometry = new THREE.BufferGeometry().fromGeometry( geometry );
+	bufferGeometry = new BufferGeometry().fromGeometry( geometry );
 	bufferGeometry.computeBoundingBox();
 
-	var material = new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors, side: THREE.DoubleSide } );
+	var material = new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: DoubleSide } );
 
-	THREE.Mesh.call( this, bufferGeometry, material );
+	Mesh.call( this, bufferGeometry, material );
 
 };
 
-EntranceNearPointer.prototype = Object.create( THREE.Mesh.prototype );
+EntranceNearPointer.prototype = Object.create( Mesh.prototype );
 
 EntranceNearPointer.prototype.constructor = EntranceNearPointer;
 

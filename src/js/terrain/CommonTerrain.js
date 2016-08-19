@@ -2,6 +2,11 @@
 import { MATERIAL_SURFACE, SHADING_CURSOR, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED, SHADING_PW } from '../core/constants.js';
 import { Materials } from '../materials/Materials.js';
 
+import {
+	MeshLambertMaterial,
+	VertexColors, FrontSide,
+} from '../../../../three.js/src/Three.js';
+
 function CommonTerrain () {};
 
 CommonTerrain.prototype.shadingMode;
@@ -39,10 +44,10 @@ CommonTerrain.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_SHADED:
 
-		material = new THREE.MeshLambertMaterial( {
+		material = new MeshLambertMaterial( {
 			color:        0xffffff,
-			vertexColors: THREE.VertexColors,
-			side:         THREE.FrontSide,
+			vertexColors: VertexColors,
+			side:         FrontSide,
 			transparent:  true,
 			opacity:      this.opacity }
 		);

@@ -1,6 +1,13 @@
 
 import { HudObject } from '../core/HudObject.js';
 import { Colours } from '../core/Colours.js';
+import {
+	Vector3, Color,
+	Geometry, RingGeometry,
+	MeshBasicMaterial,
+	VertexColors, FrontSide,
+	Mesh, Group
+} from '../../../../three.js/src/Three.js';
 
 function AngleScale ( container ) {
 
@@ -12,10 +19,10 @@ function AngleScale ( container ) {
 
 	var i, l;
 
-	var geometry = new THREE.RingGeometry( 1, 40, 36, 1, Math.PI, Math.PI );
+	var geometry = new RingGeometry( 1, 40, 36, 1, Math.PI, Math.PI );
 	var c = [];
 
-	var pNormal = new THREE.Vector3( 1, 0, 0 );
+	var pNormal = new Vector3( 1, 0, 0 );
 	var hues = Colours.inclinationColours;
 
 	var vertices = geometry.vertices;
@@ -26,7 +33,7 @@ function AngleScale ( container ) {
 		var dotProduct = legNormal.dot( pNormal );
 		var hueIndex = Math.floor( 127 * 2 * Math.asin( Math.abs( dotProduct ) ) / Math.PI );
 
-		c[ i ] = new THREE.Color( hues[ hueIndex ] );
+		c[ i ] = new Color( hues[ hueIndex ] );
 
 	}
 
@@ -42,7 +49,7 @@ function AngleScale ( container ) {
 
 	geometry.colorsNeedUpdate = true;
 
-	THREE.Mesh.call( this, geometry, new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.VertexColors, side: THREE.FrontSide } ) );
+	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors, side: FrontSide } ) );
 
 	this.translateY( -height / 2 + 3 * ( stdWidth + stdMargin ) + stdMargin + 30 );
 	this.translateX(  width / 2 - 40 - 5 );
@@ -66,7 +73,7 @@ function AngleScale ( container ) {
 
 }
 
-AngleScale.prototype = Object.create( THREE.Mesh.prototype );
+AngleScale.prototype = Object.create( Mesh.prototype );
 
 Object.assign( AngleScale.prototype, HudObject.prototype );
 

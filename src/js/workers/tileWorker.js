@@ -2,6 +2,8 @@
 import { HeightMapLoader } from '../loaders/HeightMapLoader.js';
 import { ColourCache } from '../core/Colours.js';
 import { upAxis } from '../core/constants.js';
+import { PlaneGeometry }  from '../../../../three.js/src/extras/geometries/PlaneGeometry.js';
+import { BufferGeometry }  from '../../../../three.js/src/core/BufferGeometry.js';
 
 var tileSpec;
 
@@ -75,7 +77,7 @@ function mapLoaded ( data, x, y ) {
 	var X = W + xTileOffset + resolution * ( tileSpec.tileX * divisions + clip.left );
 	var Y = N - yTileOffset - resolution * ( tileSpec.tileY * divisions + clip.top );
 
-	var plane = new THREE.PlaneGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions );
+	var plane = new PlaneGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions );
 
 	plane.translate( X, Y, 0 );
 
@@ -121,7 +123,7 @@ function mapLoaded ( data, x, y ) {
 	}
 
 	// reduce memory consumption by transferring to buffer object + a JSON de serializable form
-	var bufferGeometry = new THREE.BufferGeometry().fromGeometry( plane );
+	var bufferGeometry = new BufferGeometry().fromGeometry( plane );
 
 	// avoid calculating bounding box in main thread.
 	// however it isn't preserved in json serialisation.

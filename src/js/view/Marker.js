@@ -4,6 +4,8 @@ import { EntranceFarPointer } from './EntranceFarPointer.js';
 import { EntranceNearPointer} from './EntranceNearPointer.js';
 import { Label } from './Label.js';
 
+import { LOD } from '../../../../three.js/src/Three.js';
+
 var Marker = ( function () {
 
 	if ( typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope ) {
@@ -17,7 +19,7 @@ var Marker = ( function () {
 
 	return function Marker ( text ) {
 
-		THREE.LOD.call( this );
+		LOD.call( this );
 
 		this.type = "CV.Marker";
 
@@ -53,7 +55,7 @@ var Marker = ( function () {
 
 } () );
 
-Marker.prototype = Object.create( THREE.LOD.prototype );
+Marker.prototype = Object.create( LOD.prototype );
 
 Marker.prototype.constructor = Marker;
 

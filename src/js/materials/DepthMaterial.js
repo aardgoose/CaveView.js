@@ -3,6 +3,8 @@ import { Shaders } from '../shaders/Shaders.js';
 import { MATERIAL_LINE } from '../core/constants.js';
 import { Colours } from '../core/Colours.js';
 
+import { ShaderMaterial, Vector3 } from '../../../../three.js/src/Three.js';
+
 function DepthMaterial ( type, limits, texture ) {
 
 	var range   = limits.size();
@@ -18,11 +20,11 @@ function DepthMaterial ( type, limits, texture ) {
 
 	}
 
-	THREE.ShaderMaterial.call( this, {
+	ShaderMaterial.call( this, {
 
 		uniforms: {
 			// pseudo light source somewhere over viewer's left shoulder.
-			uLight: { value: new THREE.Vector3( -1, -1, 2 ) },
+			uLight: { value: new Vector3( -1, -1, 2 ) },
 
 			minX:     { value: limits.min.x },
 			minY:     { value: limits.min.y },
@@ -46,7 +48,7 @@ function DepthMaterial ( type, limits, texture ) {
 
 }
 
-DepthMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+DepthMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 DepthMaterial.prototype.constructor = DepthMaterial;
 

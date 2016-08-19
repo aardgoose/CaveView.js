@@ -1,21 +1,22 @@
 
+import { VertexColors, Uniform, ShaderMaterial } from '../../../../three.js/src/Three.js';
 
 function TestMaterial ( spread ) {
 
 	var i = 1;
 
-	THREE.ShaderMaterial.call( this, {
+	ShaderMaterial.call( this, {
 
 		uniforms: {
 
 			spread: { value: spread },
-			rIn: new THREE.Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
+			rIn: new Uniform( 1.0 ).onUpdate( _updateZoomUniform ),
 
 		},
 
 		vertexShader:   Shaders.testVertexShader,	
 		fragmentShader: Shaders.testFragmentShader,
-		vertexColors:   THREE.VertexColors
+		vertexColors:   VertexColors
 	} );
 
 	this.type = "CV.TestMaterial";
@@ -31,7 +32,7 @@ function TestMaterial ( spread ) {
 
 }
 
-TestMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+TestMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 TestMaterial.prototype.constructor = TestMaterial;
 

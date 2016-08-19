@@ -1,11 +1,19 @@
 
 import { HudObject } from '../core/HudObject.js';
 
+import {
+	Vector3, Color,
+	Geometry, PlaneGeometry,
+	LineBasicMaterial, MeshBasicMaterial,
+	FaceColors, FrontSide,
+	LineSegments, Group, Mesh
+} from '../../../../three.js/src/Three.js';
+
 function ScaleBar ( container, hScale, rightMargin ) {
 
 	var leftMargin = 10;
 
-	THREE.Group.call( this );
+	Group.call( this );
 
 	this.name = "CV.ScaleBar";
 	this.domObjects = [];
@@ -33,7 +41,7 @@ function ScaleBar ( container, hScale, rightMargin ) {
 
 }
 
-ScaleBar.prototype = Object.create( THREE.Group.prototype );
+ScaleBar.prototype = Object.create( Group.prototype );
 
 Object.assign( ScaleBar.prototype, HudObject.prototype );
 
@@ -117,18 +125,18 @@ ScaleBar.prototype.setScale = function ( scale ) {
 		var rLength = length * self.hScale;
 		var i, l;
 
-		var bar  = new THREE.PlaneGeometry( rLength, height, length );
-		var bar2 = new THREE.PlaneGeometry( rLength, height, length * 10 );
-		var line = new THREE.Geometry();
+		var bar  = new PlaneGeometry( rLength, height, length );
+		var bar2 = new PlaneGeometry( rLength, height, length * 10 );
+		var line = new Geometry();
 
-		line.vertices.push( new THREE.Vector3( -rLength / 2, 0, 1 ) );
-		line.vertices.push( new THREE.Vector3(  rLength / 2, 0, 1 ) );
+		line.vertices.push( new Vector3( -rLength / 2, 0, 1 ) );
+		line.vertices.push( new Vector3(  rLength / 2, 0, 1 ) );
 
-		var mBar  = new THREE.Mesh( bar,  new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors, side: THREE.FrontSide } ) );
-		var mBar2 = new THREE.Mesh( bar2, new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors, side: THREE.FrontSide } ) );
-		var mLine = new THREE.LineSegments( line, new THREE.LineBasicMaterial( { color: 0xff0000 } ) );
+		var mBar  = new Mesh( bar,  new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
+		var mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
+		var mLine = new LineSegments( line, new LineBasicMaterial( { color: 0xff0000 } ) );
 
-		var cRed = new THREE.Color( 0xff0000 );
+		var cRed = new Color( 0xff0000 );
 
 		for ( i = 0, l = bar.faces.length; i < l; i = i + 4 ) {
 
@@ -150,7 +158,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 		bar.computeBoundingBox();
 
-		var group = new THREE.Group();
+		var group = new Group();
 
 		group.add( mBar );
 		group.add( mBar2 );

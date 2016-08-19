@@ -2,6 +2,14 @@
 import { upAxis } from '../core/constants.js';
 import { HudObject } from '../core/HudObject.js';
 
+import {
+	Vector3, Math as _Math,
+	Geometry, RingBufferGeometry, SphereBufferGeometry,
+	LineBasicMaterial, MeshBasicMaterial, MeshPhongMaterial,
+	NoColors, FrontSide,
+	Mesh, LineSegments, Group
+} from '../../../../three.js/src/Three.js'; 
+
 function AHI ( container ) {
 
 	var width  = container.clientWidth;
@@ -10,7 +18,7 @@ function AHI ( container ) {
 	var stdWidth  = HudObject.stdWidth;
 	var stdMargin = HudObject.stdMargin;
 
-	THREE.Group.call( this );
+	Group.call( this );
 
 	this.name = "CV.AHI";
 	this.domObjects = [];
@@ -18,23 +26,23 @@ function AHI ( container ) {
 	this.lastPitch = 0;
 
 	// artificial horizon instrument
-	var globe = new THREE.Group();
+	var globe = new Group();
 
-	var ring  = new THREE.RingBufferGeometry( stdWidth * 0.9, stdWidth, 20, 4 );
-	var sky   = new THREE.SphereBufferGeometry( stdWidth - 10, 20, 20, 0, 2 * Math.PI, 0 , Math.PI / 2 );
-	var land  = new THREE.SphereBufferGeometry( stdWidth - 10, 20, 20, 0, 2 * Math.PI, Math.PI / 2, Math.PI / 2 );
-	var bar   = new THREE.Geometry();
-	var marks = new THREE.Geometry();
+	var ring  = new RingBufferGeometry( stdWidth * 0.9, stdWidth, 20, 4 );
+	var sky   = new SphereBufferGeometry( stdWidth - 10, 20, 20, 0, 2 * Math.PI, 0 , Math.PI / 2 );
+	var land  = new SphereBufferGeometry( stdWidth - 10, 20, 20, 0, 2 * Math.PI, Math.PI / 2, Math.PI / 2 );
+	var bar   = new Geometry();
+	var marks = new Geometry();
 
 	// view orinetation line
-	bar.vertices.push( new THREE.Vector3( 4 - stdWidth, 0, stdWidth ) );
-	bar.vertices.push( new THREE.Vector3( stdWidth - 4, 0, stdWidth ) );
+	bar.vertices.push( new Vector3( 4 - stdWidth, 0, stdWidth ) );
+	bar.vertices.push( new Vector3( stdWidth - 4, 0, stdWidth ) );
 
 	// pitch interval marks
-	var m1 = new THREE.Vector3(  4, 0, stdWidth - 10 );
-	var m2 = new THREE.Vector3( -4, 0, stdWidth - 10 );
+	var m1 = new Vector3(  4, 0, stdWidth - 10 );
+	var m2 = new Vector3( -4, 0, stdWidth - 10 );
 
-	var xAxis = new THREE.Vector3( 1, 0, 0 );
+	var xAxis = new Vector3( 1, 0, 0 );
 
 	for ( var i = 0; i < 12; i++ ) {
 
@@ -56,16 +64,16 @@ function AHI ( container ) {
 
 	}
 
-	var mRing  = new THREE.Mesh( ring, new THREE.MeshBasicMaterial( { color: 0x333333, vertexColors: THREE.NoColors, side: THREE.FrontSide } ) );
-	var mSky   = new THREE.Mesh( sky,  new THREE.MeshPhongMaterial( { color: 0x106f8d, vertexColors: THREE.NoColors, side: THREE.FrontSide } ) );
-	var mLand  = new THREE.Mesh( land, new THREE.MeshPhongMaterial( { color: 0x802100, vertexColors: THREE.NoColors, side: THREE.FrontSide } ) );
-	var mBar   = new THREE.LineSegments( bar,   new THREE.LineBasicMaterial( { color: 0xcccc00 } ) );
-	var mMarks = new THREE.LineSegments( marks, new THREE.LineBasicMaterial( { color: 0xffffff } ) );
+	var mRing  = new Mesh( ring, new MeshBasicMaterial( { color: 0x333333, vertexColors: NoColors, side: FrontSide } ) );
+	var mSky   = new Mesh( sky,  new MeshPhongMaterial( { color: 0x106f8d, vertexColors: NoColors, side: FrontSide } ) );
+	var mLand  = new Mesh( land, new MeshPhongMaterial( { color: 0x802100, vertexColors: NoColors, side: FrontSide } ) );
+	var mBar   = new LineSegments( bar,   new LineBasicMaterial( { color: 0xcccc00 } ) );
+	var mMarks = new LineSegments( marks, new LineBasicMaterial( { color: 0xffffff } ) );
 
-	mSky.rotateOnAxis( new THREE.Vector3( 0, 1, 0 ), Math.PI / 2 );
-	mLand.rotateOnAxis( new THREE.Vector3( 0, 1, 0 ), Math.PI / 2 );
-	mMarks.rotateOnAxis( new THREE.Vector3( 1, 0, 0 ), Math.PI / 2 );
-	mRing.rotateOnAxis( new THREE.Vector3( 0, 0, 1 ), Math.PI / 8 );
+	mSky.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
+	mLand.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
+	mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );
+	mRing.rotateOnAxis( new Vector3( 0, 0, 1 ), Math.PI / 8 );
 
 	globe.add( mSky );
 	globe.add( mLand );
@@ -98,7 +106,7 @@ function AHI ( container ) {
 
 }
 
-AHI.prototype = Object.create( THREE.Group.prototype );
+AHI.prototype = Object.create( Group.prototype );
 
 Object.assign( AHI.prototype, HudObject.prototype );
 
@@ -106,8 +114,8 @@ AHI.prototype.contructor = AHI;
 
 AHI.prototype.set = function () {
 
-	var direction = new THREE.Vector3();
-	var xAxis     = new THREE.Vector3( 1, 0, 0 );
+	var direction = new Vector3();
+	var xAxis     = new Vector3( 1, 0, 0 );
 
 	return function set ( vCamera ) {
 
@@ -120,7 +128,7 @@ AHI.prototype.set = function () {
 		this.globe.rotateOnAxis( xAxis, pitch - this.lastPitch );
 		this.lastPitch = pitch;
 
-		this.txt.textContent = Math.round( THREE.Math.radToDeg( pitch ) )  + "\u00B0";
+		this.txt.textContent = Math.round( _Math.radToDeg( pitch ) )  + "\u00B0";
 
 	}
 

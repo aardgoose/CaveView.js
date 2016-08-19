@@ -3,6 +3,12 @@ import { HudObject } from '../core/HudObject.js';
 import { Materials } from '../materials/Materials.js';
 import { MATERIAL_LINE } from '../core/constants.js';
 
+import {
+	Vector3, Matrix4,
+	PlaneBufferGeometry,
+	NoColors, FrontSide, Mesh
+} from '../../../../three.js/src/Three.js';
+
 function LinearScale ( container, viewState ) {
 
 	var width  = container.clientWidth;
@@ -21,23 +27,23 @@ function LinearScale ( container, viewState ) {
 	var range = viewState.maxHeight - viewState.minHeight;
 	var zScale = barHeight / range;
 
-	var geometry = new THREE.PlaneBufferGeometry( barWidth, range );
+	var geometry = new PlaneBufferGeometry( barWidth, range );
 
 	// rotate the model to put the plane in the xz plane, covering the range of view height values - the gradient shader works on z values.
 
 	geometry.rotateX( Math.PI / 2 );
 	geometry.translate( -barWidth / 2, 0, range / 2 + viewState.minHeight );
 
-	THREE.Mesh.call( this, geometry, Materials.getHeightMaterial( MATERIAL_LINE ) );
+	Mesh.call( this, geometry, Materials.getHeightMaterial( MATERIAL_LINE ) );
 
-	var ms = new THREE.Matrix4().makeScale( 1,  1, zScale );
+	var ms = new Matrix4().makeScale( 1,  1, zScale );
 
-	ms.multiply( new THREE.Matrix4().makeTranslation( width/2 - stdMargin, -height/2 + barOffset - viewState.minHeight * zScale, 0 ) );
+	ms.multiply( new Matrix4().makeTranslation( width/2 - stdMargin, -height/2 + barOffset - viewState.minHeight * zScale, 0 ) );
 
 	this.applyMatrix( ms );
 
 	// rotate the model in the world view.
-	this.rotateOnAxis( new THREE.Vector3( 1, 0, 0 ), -Math.PI / 2 );
+	this.rotateOnAxis( new Vector3( 1, 0, 0 ), -Math.PI / 2 );
 
 	// add labels
 	var maxdiv  = document.createElement( "div" );
@@ -86,7 +92,7 @@ function LinearScale ( container, viewState ) {
 
 }
 
-LinearScale.prototype = Object.create( THREE.Mesh.prototype );
+LinearScale.prototype = Object.create( Mesh.prototype );
 
 Object.assign( LinearScale.prototype, HudObject.prototype );
 

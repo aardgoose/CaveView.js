@@ -5,16 +5,21 @@ import { Tree } from '../core/Tree.js';
 import { HUD } from '../HUD.js';
 import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants.js';
 
+import {
+	Vector2, Frustum, Box2, Matrix4,
+	Group
+} from '../../../../three.js/src/Three.js';
+
 function TiledTerrain ( limits3, onLoaded ) {
 
-	THREE.Group.call( this );
+	Group.call( this );
 
 	this.name = "TiledTerrain";
 
-	this.limits = new THREE.Box2(
+	this.limits = new Box2(
 
-		new THREE.Vector2( limits3.min.x, limits3.min.y ),
-		new THREE.Vector2( limits3.max.x, limits3.max.y )
+		new Vector2( limits3.min.x, limits3.min.y ),
+		new Vector2( limits3.max.x, limits3.max.y )
 
 	);
 
@@ -44,7 +49,7 @@ function TiledTerrain ( limits3, onLoaded ) {
 
 }
 
-TiledTerrain.prototype = Object.create( THREE.Group.prototype );
+TiledTerrain.prototype = Object.create( Group.prototype );
 
 Object.assign( TiledTerrain.prototype, CommonTerrain.prototype );
 
@@ -133,10 +138,10 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 	var N = tileSet.N;
 	var W = tileSet.W;
 
-	var bottomLeft = new THREE.Vector2( W + tileWidth * x,          N - tileWidth * ( y + 1 ) );
-	var topRight   = new THREE.Vector2( W + tileWidth * ( x + 1 ) , N - tileWidth * y );
+	var bottomLeft = new Vector2( W + tileWidth * x,          N - tileWidth * ( y + 1 ) );
+	var topRight   = new Vector2( W + tileWidth * ( x + 1 ) , N - tileWidth * y );
 
-	var tileLimits = new THREE.Box2( bottomLeft, topRight );
+	var tileLimits = new Box2( bottomLeft, topRight );
 
 	// trim excess off sides of tile where overlapping with region
 
@@ -472,7 +477,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 	var tileTree          = this.tileTree;
 	var self              = this;
 
-	var frustum  = new THREE.Frustum();
+	var frustum  = new Frustum();
 
 	var candidateTiles      = [];
 	var candidateEvictTiles = [];
@@ -486,7 +491,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 	camera.updateMatrixWorld(); // make sure camera's world matrix is updated
 	camera.matrixWorldInverse.getInverse( camera.matrixWorld );
 
-	frustum.setFromMatrix( new THREE.Matrix4().multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
+	frustum.setFromMatrix( new Matrix4().multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
 
 	_searchTileTree( tileTree.getRootId() );
 

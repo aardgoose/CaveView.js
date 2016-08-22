@@ -21,10 +21,10 @@ function EntranceFarPointer () {
 	geometry.vertices.push( new Vector3( 0, 0, 10 ) );
 	geometry.colors.push( new Color( 0xff00ff ) );
 
-	this.type = "CV.EntranceFarPointer";
 
 	var point = Points.call( this, geometry, material );
 
+	this.type = "CV.EntranceFarPointer";
 }
 
 EntranceFarPointer.prototype = Object.create( Points.prototype );

@@ -11,8 +11,6 @@ function EntranceNearPointer () {
 	var width = 5;
 	var height = 20;
 
-	this.type = "CV.EntranceNearPointer";
-
 	var geometry = new Geometry();
 	var bufferGeometry;
 
@@ -32,6 +30,7 @@ function EntranceNearPointer () {
 
 	Mesh.call( this, bufferGeometry, material );
 
+	this.type = "CV.EntranceNearPointer";
 };
 
 EntranceNearPointer.prototype = Object.create( Mesh.prototype );

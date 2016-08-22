@@ -1,6 +1,6 @@
 
-import { upAxis } from './core/constants.js';
-import { HudObject } from '../HudObject.js';
+import { upAxis } from '../core/constants.js';
+import { HudObject } from './HudObject.js';
 
 import {
 	Vector3, Math as _Math,

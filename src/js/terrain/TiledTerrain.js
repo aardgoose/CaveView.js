@@ -1,4 +1,4 @@
-import { CommonTerrain } from './CommonTerrain.js';
+  import { CommonTerrain } from './CommonTerrain.js';
 import { Tile } from './Tile.js';
 import { TileSet } from './TileSet.js';
 import { Tree } from '../core/Tree.js';
@@ -220,7 +220,7 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 		var tile;
 
-		if (!oldTile) {
+		if ( !oldTile ) {
 
 			tile = new Tile( x, y, resolution, self.tileSet, clip );
 
@@ -280,7 +280,7 @@ TiledTerrain.prototype.endLoad = function ( tile ) {
 
 				tile.attach( this );
 
-				if (!tile.id) {
+				if ( !tile.id ) {
 
 					// only add new tiles to tree, ignore resurrected tiles
 					tile.id = tileTree.addNode( tile, parentId );

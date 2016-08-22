@@ -605,7 +605,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 		switch ( obj.type ) {
 
-		case "Marker":
+		case "CV.Marker":
 
 			if ( selectedSectionIds.has( obj.userData ) ) {
 
@@ -846,7 +846,8 @@ Survey.prototype.getBounds = function ()  {
 
 	function _addObjectBounds ( obj ) {
 
-		if ( obj.type === "Pointer" ) return; // skip sprites which have abnormal bounding boxes
+		if ( obj.type === "CV.EntranceNearPointer" ) return; // skip sprites which have abnormal bounding boxes
+		if ( obj.type === "CV.EntranceFarPointer" ) return; // skip sprites which have abnormal bounding boxes
 
 		var geometry = obj.geometry;
 

@@ -2,25 +2,25 @@
 import {
 	MATERIAL_LINE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_SINGLE, SHADING_SURVEY
-} from './core/constants.js';
+} from '../core/constants.js';
 
-import { Viewer } from './Viewer.js';
+import { Viewer } from '../viewer/Viewer.js';
 
-import { AHI } from './hud/AHI.js';
-import { AngleScale } from './hud/AngleScale.js';
-import { Compass } from './hud/Compass.js';
-import { LinearScale } from './hud/LinearScale.js';
-import { ProgressDial } from './hud/ProgressDial.js';
-import { ScaleBar } from './hud/ScaleBar.js';
-import { HudObject } from './hud/HudObject.js';
+import { AHI } from './AHI.js';
+import { AngleScale } from './AngleScale.js';
+import { Compass } from './Compass.js';
+import { LinearScale } from './LinearScale.js';
+import { ProgressDial } from './ProgressDial.js';
+import { ScaleBar } from './ScaleBar.js';
+import { HudObject } from './HudObject.js';
 
-import { Materials } from './materials/Materials.js';
+import { Materials } from '../materials/Materials.js';
 
 import {
 	Scene, Group,
 	AmbientLight, DirectionalLight,
 	OrthographicCamera, PerspectiveCamera
-} from '../../../three.js/src/Three.js'; 
+} from '../../../../three.js/src/Three.js'; 
 
  
 // THREE objects

@@ -1,7 +1,7 @@
 
 
 export * from './core/constants.js';
-export { Viewer } from './Viewer.js';
-export { UI } from './UI.js';
-export { HUD } from './HUD.js';
+export { Viewer } from './viewer/Viewer.js';
+export { UI } from './ui/UI.js';
+export { HUD } from './hud/HUD.js';
 

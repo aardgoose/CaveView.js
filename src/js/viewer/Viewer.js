@@ -9,14 +9,14 @@ import  {
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, 
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
 	upAxis 
-} from './core/constants.js';
+} from '../core/constants.js';
 
-import { HUD } from './HUD.js';
-import { Materials } from './materials/Materials.js';
-import { Survey } from './view/Survey.js';
-import { TiledTerrain } from './terrain/TiledTerrain.js';
+import { HUD } from '../hud/HUD.js';
+import { Materials } from '../materials/Materials.js';
+import { Survey } from './Survey.js';
+import { TiledTerrain } from '../terrain/TiledTerrain.js';
 
-import { OrbitControls } from './core/OrbitControls.js';
+import { OrbitControls } from '../core/OrbitControls.js';
 
 import {
 	EventDispatcher,
@@ -27,7 +27,7 @@ import {
 	LinearFilter, NearestFilter, RGBFormat,
 	OrthographicCamera, PerspectiveCamera, 
 	WebGLRenderer, WebGLRenderTarget
-} from '../../../three.js/src/Three.js'; 
+} from '../../../../three.js/src/Three.js'; 
 
 var lightPosition = new Vector3( -1, -1, 0.5 );
 var CAMERA_OFFSET = 600;

@@ -1,5 +1,5 @@
 
-import { HudObject } from '../core/HudObject.js';
+import { HudObject } from './HudObject.js';
 import { padDigits } from '../core/lib.js';
 
 import {

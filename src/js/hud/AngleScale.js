@@ -1,5 +1,5 @@
 
-import { HudObject } from '../core/HudObject.js';
+import { HudObject } from './HudObject.js';
 import { Colours } from '../core/Colours.js';
 import {
 	Vector3, Color,

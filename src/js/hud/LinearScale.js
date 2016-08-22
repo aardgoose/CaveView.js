@@ -1,5 +1,5 @@
 
-import { HudObject } from '../core/HudObject.js';
+import { HudObject } from './HudObject.js';
 import { Materials } from '../materials/Materials.js';
 import { MATERIAL_LINE } from '../core/constants.js';
 

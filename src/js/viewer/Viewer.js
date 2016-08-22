@@ -435,6 +435,7 @@ function initCamera ( camera ) {
 	camera.layers.enable( LEG_CAVE );
 	camera.layers.enable( FEATURE_ENTRANCES );
 	camera.layers.enable( FEATURE_BOX );
+	camera.layers.enable( FEATURE_SELECTED_BOX );
 
 	camera.position.set( 0, 0, CAMERA_OFFSET );
 	camera.lookAt( 0, 0, 0 );

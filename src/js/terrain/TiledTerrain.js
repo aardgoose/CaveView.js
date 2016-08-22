@@ -2,7 +2,7 @@
 import { Tile } from './Tile.js';
 import { TileSet } from './TileSet.js';
 import { Tree } from '../core/Tree.js';
-import { HUD } from '../HUD.js';
+import { HUD } from '../hud/HUD.js';
 import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants.js';
 
 import {

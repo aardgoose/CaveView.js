@@ -15,8 +15,6 @@ function getHeightMaterial ( type ) {
 
 	if ( cache.has( name ) ) return cache.get( name );
 
-	console.log( viewState );
-
 	var material = new HeightMaterial( type, viewState.minHeight, viewState.maxHeight );
 
 	cache.set( name, material );
@@ -117,7 +115,6 @@ function initCache ( viewerViewState ) {
 
 	cache.clear();
 	viewState = viewerViewState;
-	console.log(viewState);
 
 }
 

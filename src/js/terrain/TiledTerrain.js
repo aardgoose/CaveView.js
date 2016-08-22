@@ -1,4 +1,4 @@
-  import { CommonTerrain } from './CommonTerrain.js';
+import { CommonTerrain } from './CommonTerrain.js';
 import { Tile } from './Tile.js';
 import { TileSet } from './TileSet.js';
 import { Tree } from '../core/Tree.js';
@@ -180,7 +180,7 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 		if ( self.dying ) {
 
-			this.progressDial.end();
+			self.progressDial.end();
 			return;
 
 		}

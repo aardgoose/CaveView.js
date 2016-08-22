@@ -1,10 +1,5 @@
 .vscode
-3rdParty
 node_modules
-build/terrain/tilesets.json
-build/terrain/SK
-build/surveys/*.3d
-build/surveys/*.lox
+build/
 !build/terrain/README.txt
 !build/surveys/README.txt
-src/js/shaders/*.txt

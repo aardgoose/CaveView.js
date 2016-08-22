@@ -19,7 +19,7 @@ import {
 	OrthographicCamera, PerspectiveCamera,
 	MOUSE,
 	EventDispatcher
-} from '../../../../three.js/src/three.js';
+} from '../../../../three.js/src/Three.js';
 
 
 function OrbitControls ( object, domElement ) {

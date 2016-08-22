@@ -1,19 +1,24 @@
-Object3D = function () {};
 
-Object3D.prototype.reverseTraverse = function ( callback ) {
+import { Object3D }  from '../../../../three.js/src/Three.js';
 
-	var children = this.children;
+Object.assign( Object3D.prototype, {
 
-	for ( var i = children.length; i--; ) {
+	reverseTraverse: function ( callback ) {
 
-		children[ i ].reverseTraverse( callback );
+		var children = this.children;
+
+		for ( var i = children.length; i--; ) {
+
+			children[ i ].reverseTraverse( callback );
+
+		}
+
+		callback( this );
 
 	}
 
-	callback( this );
+}
 
-};
-
-Object.assign( THREE.Object3D.prototype, Object3D.prototype );
+);
 
 // EOF

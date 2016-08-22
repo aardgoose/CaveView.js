@@ -12,7 +12,7 @@ import { Compass } from './hud/Compass.js';
 import { LinearScale } from './hud/LinearScale.js';
 import { ProgressDial } from './hud/ProgressDial.js';
 import { ScaleBar } from './hud/ScaleBar.js';
-import { HudObject } from './core/HudObject.js';
+import { HudObject } from './hud/HudObject.js';
 
 import { Materials } from './materials/Materials.js';
 

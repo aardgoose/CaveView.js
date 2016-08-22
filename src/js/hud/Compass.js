@@ -59,6 +59,7 @@ function Compass ( container ) {
 	this.domObjects.push( panel );
 
 	this.addEventListener( "removed", this.removeDomObjects );
+	this.txt.textContent = "000\u00B0";
 
 	return this;
 

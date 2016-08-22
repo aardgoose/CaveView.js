@@ -1,7 +1,5 @@
-import { DataTexture }  from '../../../../three.js/src/textures/DataTexture.js';
-import { RGBFormat, UnsignedByteType } from '../../../../three.js/src/constants.js';
-import { Color }  from '../../../../three.js/src/math/Color.js';
 
+import { DataTexture, RGBFormat, UnsignedByteType, Color }  from '../../../../three.js/src/Three.js';
 
 export var Colours = ( function () {
 

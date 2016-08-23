@@ -1,7 +1,7 @@
 
 import { FEATURE_TERRAIN, upAxis } from '../core/constants.js';
 import { padDigits } from '../core/lib.js';
-import { ColourCache } from '../core/Colours.js';
+import { ColourCache } from '../core/ColourCache.js';
 
 import {
 	Vector2, Vector3, Triangle, Box3,

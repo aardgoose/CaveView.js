@@ -9,7 +9,7 @@ import {
 	upAxis
 } from '../core/constants.js';
 
-import { ColourCache } from '../core/Colours.js';
+import { ColourCache } from '../core/ColourCache.js';
 import { Materials } from '../materials/Materials.js';
 import { Marker } from './Marker.js';
 import { Terrain } from '../terrain/Terrain.js';

@@ -24,7 +24,7 @@ function Svx3dHandler ( fileName, dataStream ) {
 
 	console.log( "title: ", title) ;
 
-	this.handleVx( source, pos, Number(version.charAt( 1 ) ) );
+	this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
 
 	// strip empty/single top nodes of tree and add title as top node name if empty
 	surveyTree.reduce( title );
@@ -40,7 +40,7 @@ function Svx3dHandler ( fileName, dataStream ) {
 
 		do {
 
-			b = bytes[pos++];
+			b = bytes[ pos++ ];
 			lfString.push( b );
 
 		} while ( b != 0x0a && b != 0x00 )
@@ -82,42 +82,42 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	for ( i = 0; i < 256; i++ ) {
 
-		cmd[i] = function ( e ) { console.log ('unhandled command: ', e.toString( 16 ) ); return false; };	
+		cmd[ i ] = function ( e ) { console.log ('unhandled command: ', e.toString( 16 ) ); return false; };	
 
 	}
 
 	if ( version === 8 ) {
 		// v8 dispatch table start
 
-		cmd[0x00] = cmd_STYLE;
-		cmd[0x01] = cmd_STYLE;
-		cmd[0x02] = cmd_STYLE;
-		cmd[0x03] = cmd_STYLE;
-		cmd[0x04] = cmd_STYLE;
+		cmd[ 0x00 ] = cmd_STYLE;
+		cmd[ 0x01 ] = cmd_STYLE;
+		cmd[ 0x02 ] = cmd_STYLE;
+		cmd[ 0x03 ] = cmd_STYLE;
+		cmd[ 0x04 ] = cmd_STYLE;
 
-		cmd[0x0f] = cmd_MOVE;
-		cmd[0x10] = cmd_DATE_NODATE;
-		cmd[0x11] = cmd_DATEV8_1;
-		cmd[0x12] = cmd_DATEV8_2;
-		cmd[0x13] = cmd_DATEV8_3;
+		cmd[ 0x0f ] = cmd_MOVE;
+		cmd[ 0x10 ] = cmd_DATE_NODATE;
+		cmd[ 0x11 ] = cmd_DATEV8_1;
+		cmd[ 0x12 ] = cmd_DATEV8_2;
+		cmd[ 0x13 ] = cmd_DATEV8_3;
 
-		cmd[0x1F] = cmd_ERROR;
+		cmd[ 0x1F ] = cmd_ERROR;
 
-		cmd[0x30] = cmd_XSECT16;
-		cmd[0x31] = cmd_XSECT16;
+		cmd[ 0x30 ] = cmd_XSECT16;
+		cmd[ 0x31 ] = cmd_XSECT16;
 
-		cmd[0x32] = cmd_XSECT32;
-		cmd[0x33] = cmd_XSECT32;
+		cmd[ 0x32 ] = cmd_XSECT32;
+		cmd[ 0x33 ] = cmd_XSECT32;
 
 		for ( i = 0x40; i < 0x80; i++ ) {
 
-			cmd[i] = cmd_LINE;
+			cmd[ i ] = cmd_LINE;
 
 		}
 
 		for ( i = 0x80; i < 0x100; i++ ) {
 
-			cmd[i] = cmd_LABEL;
+			cmd[ i ] = cmd_LABEL;
 
 		}
 
@@ -126,7 +126,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		readLabel = readLabelV8;	
 
 		// v8 file wide flags after header
-		fileFlags = data[pos++];
+		fileFlags = data[ pos++ ];
 
 	} else {
 
@@ -134,39 +134,39 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		for ( i = 0x01; i < 0x0f; i++ ) {
 
-			cmd[i] = cmd_TRIM_PLUS;
+			cmd[ i ] = cmd_TRIM_PLUS;
 
 		}
 
-		cmd[0x0f] = cmd_MOVE;
+		cmd[ 0x0f ] = cmd_MOVE;
 
 		for ( i = 0x10; i < 0x20; i++ ) {
 
-			cmd[i] = cmd_TRIM;
+			cmd[ i ] = cmd_TRIM;
 
 		}
 
-		cmd[0x00] = cmd_STOP;
-		cmd[0x20] = cmd_DATE_V7;
-		cmd[0x21] = cmd_DATE2_V7;
-		cmd[0x24] = cmd_DATE_NODATE;
-		cmd[0x22] = cmd_ERROR;
+		cmd[ 0x00 ] = cmd_STOP;
+		cmd[ 0x20 ] = cmd_DATE_V7;
+		cmd[ 0x21 ] = cmd_DATE2_V7;
+		cmd[ 0x24 ] = cmd_DATE_NODATE;
+		cmd[ 0x22 ] = cmd_ERROR;
 
-		cmd[0x30] = cmd_XSECT16;
-		cmd[0x31] = cmd_XSECT16;
+		cmd[ 0x30 ] = cmd_XSECT16;
+		cmd[ 0x31 ] = cmd_XSECT16;
 
-		cmd[0x32] = cmd_XSECT32;
-		cmd[0x33] = cmd_XSECT32;
+		cmd[ 0x32 ] = cmd_XSECT32;
+		cmd[ 0x33 ] = cmd_XSECT32;
 
 		for ( i = 0x40; i < 0x80; i++ ) {
 
-			cmd[i] = cmd_LABEL;
+			cmd[ i ] = cmd_LABEL;
 
 		}
 
 		for ( i = 0x80; i < 0xc0; i++ ) {
 
-			cmd[i] = cmd_LINE;
+			cmd[ i ] = cmd_LINE;
 
 		}
 		// dispatch table end
@@ -177,8 +177,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	if ( version === 6 ) {
 	
-		cmd[0x20] = cmd_DATE_V4;
-		cmd[0x21] = cmd_DATE2_V4;
+		cmd[ 0x20 ] = cmd_DATE_V4;
+		cmd[ 0x21 ] = cmd_DATE2_V4;
 
 	}
 
@@ -187,7 +187,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	while ( pos < dataLength ) {
 
-		if (!cmd[data[pos]]( data[pos++] )) break;
+		if ( !cmd[ data[ pos ] ]( data[ pos++ ] ) ) break;
 
 	}
 
@@ -207,13 +207,13 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		var len = 0;
 		var l;
 
-		switch ( data[pos] ) {
+		switch ( data[ pos ] ) {
 
 			case 0xfe:
 
 				l = new DataView( source, pos );
 
-				len = l.getUint16( 0, true ) + data[pos];
+				len = l.getUint16( 0, true ) + data[ pos ];
 				pos += 2;
 
 				break;
@@ -229,7 +229,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 			default:
 
-				len = data[pos++];
+				len = data[ pos++ ];
 		}
 
 		if ( len === 0 ) return false; // no label
@@ -238,7 +238,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		for ( var i = 0; i < len; i++ ) {
 	
-			db.push( data[pos++] );
+			db.push( data[ pos++ ] );
 
 		}
 
@@ -252,11 +252,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		if ( flags & 0x20 )  return false; // no label change
 
-		var b = data[pos++];
+		var b = data[ pos++ ];
 		var add = 0;
 		var del = 0;
 
-		if (b !== 0 ) {
+		if ( b !== 0 ) {
 
 			// handle 4b= bit del/add codes
 			del = b >> 4;   // left most 4 bits
@@ -265,7 +265,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		} else {
 
 			// handle 8 bit and 32 bit del/add codes
-			b = data[pos++];
+			b = data[ pos++ ];
 
 			if ( b !== 0xff ) {
 
@@ -280,7 +280,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 			}
 
-			b = data[pos++];
+			b = data[ pos++ ];
 
 			if ( b !== 0xff ) {
 
@@ -298,9 +298,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		if ( add === 0 && del === 0 ) return;
 
-		if (del) label = label.slice( 0, -del );
+		if ( del ) label = label.slice( 0, -del );
 
-		if (add) {
+		if ( add ) {
 
 			var db = [];
 
@@ -320,7 +320,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	function cmd_STOP ( c ) {
 
-		if (label) label = "";
+		if ( label ) label = "";
 
 		return true;
 
@@ -330,14 +330,14 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		label = label.slice( 0, -16 );
 
-		if (label.charAt( label.length - 1 ) == ".") label = label.slice( 0, -1 ); // strip trailing "."
+		if ( label.charAt( label.length - 1 ) == ".") label = label.slice( 0, -1 ); // strip trailing "."
 
 		var parts = label.split( "." );
 
-		parts.splice( -(c) );
+		parts.splice( -( c ) );
 		label = parts.join( "." );
 
-		if (label) label = label + ".";
+		if ( label ) label = label + ".";
 
 		return true;
 
@@ -347,12 +347,12 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		var trim = c - 15;
 
-		label = label.slice(0, -trim);
+		label = label.slice( 0, -trim );
 
 		return true;
 
 	}
-
+ 
 	function cmd_DATE_V4 ( c ) {
 
 		pos += 4;
@@ -403,7 +403,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	function cmd_DATEV8_2 ( c ) {
 
-		console.log("v8d2");
+		console.log( "v8d2" );
 		pos += 3;
 
 		return true;
@@ -566,7 +566,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		var position = stations.get( label );
 
-		if (!position) return;
+		if ( !position ) return;
 
 		var station = label.split( "." );
 
@@ -585,7 +585,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		// cmd_MOVE saves these in the set lineEnds.
 		// this fixes up surveys that display incorrectly withg 'fly-back' artefacts in Aven and Loch.
 
-		if (flags || lineEnds.has( [position.x, position.y, position.z].toString() )) {
+		if ( flags || lineEnds.has( [ position.x, position.y, position.z ].toString() ) ) {
 
 			if ( xSects.length > 1 ) xGroups.push( xSects );
 
@@ -627,8 +627,8 @@ Svx3dHandler.prototype.getLineSegments = function () {
 
 			// create vertex pairs for each line segment.
 			// all vertices except first and last are duplicated.
-			var from = g[v];
-			var to   = g[v+1];
+			var from = g[ v ];
+			var to   = g[ v+1 ];
 
 			lineSegments.push( { from: from.coords, to: to.coords, type: to.type, survey: to.survey } );
 

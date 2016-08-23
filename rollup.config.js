@@ -1,14 +1,5 @@
 import * as fs from 'fs';
 
-var outro = `
-Object.defineProperty( exports, 'AudioContext', {
-	get: function () {
-		return exports.getAudioContext();
-	}
-});`;
-
-var footer = "";
-
 function glsl () {
 	return {
 		transform ( code, id ) {
@@ -31,8 +22,7 @@ export default {
 	format: 'umd',
 	plugins: [
 		glsl()
-	],
+	]
 
-	outro: outro,
-	footer: footer
+
 };

@@ -3,7 +3,7 @@ const fs = require('fs');
 
 function Svx3dEditor ( dataStream ) {
 
-	var source    = new Buffer( dataStream );  // file data as arrrayBuffer
+	var source    = new Buffer( dataStream );  // file data as RW arrrayBuffer 
 	var pos       = 0;	         // file position
 
 	// read file header
@@ -162,8 +162,6 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 	// common record iterator
 	// loop though data, handling record types as required.
 
-	var endHeader = pos; // temp fix for header gen
-
 	var fd;
 	var start = pos;
 	var move = false;
@@ -171,23 +169,21 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	var cave;
 	var caves = {};
+	var newCmd;
 
 	while ( pos < dataLength ) {
 
 		start = pos;
 
+		newCmd = null;
+
 		if ( cmd[ data[ pos ] ]( data[ pos++ ] ) ) {
 
 			caveName = label.split( "." )[ 1 ];
 
-			// open a new file for this cave
-//			console.log( "s", label.split( "." )[1] );
-
 			if ( caveName !== undefined ) {
 
 				if ( caves[ caveName ] === undefined ) {
-
-			//		console.log("cave: ", cave );
 
 					fd = writeHeader( caveName + ".3d", caveName );
 
@@ -196,40 +192,44 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 						lastLabel: null
 					};
 
-				} else {
-
-					fd = caves[ caveName ].fd;
-
 				}
-
-				cave = caves[ caveName ];
 
 			}
 
+			cave = caves[ caveName ];
+
 			if ( move ) {
 
+				// defer move until we know which file it is destined for
 				move = false;
 				lastMove = start;
 
 			} else {
 
-				if ( lastMove ) {
-
-					start = lastMove;
-					lastMove = 0;
-
-				}
-
 				if ( cave ) {
 
+					if ( lastMove ) {
+
+						// write deferred move
+						fs.writeSync( cave.fd, source, lastMove, start - lastMove );
+						lastMove = 0;
+
+					}
 					//	console.log(" write @ ", start, " len ", pos - start );
 					cave.lastLabel = label;
 
-					fs.writeSync( fd, source, start, pos - start );
+					if ( newCmd === null ) {
+
+						fs.writeSync( cave.fd, source, start, pos - start );
+
+					} else {
+
+						// replace command with new command to correct initial label
+						fs.writeSync( cave.fd, new Buffer( newCmd ), 0, newCmd.length );	// new LINE with new LABEL
+
+					}
 
 				}
-
-				lastMove = 0;
 
 			}
 
@@ -241,11 +241,35 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	for ( name in caves ) { 
 
-			fs.closeSync( caves[ name ].fd );
+		cave = caves[ name ];
+
+		newCmd = [];
+
+		newCmd.push( 0xA0 ); // anonymous label
+		newCmd.push( 0x00 );
+		newCmd.push( cave.lastLabel.length );
+		newCmd.push( 0x00 );
+
+		// fake coordinates
+
+		for ( var i = 0; i < 6; i++ ) {
+
+			newCmd.push( 0xCA );
+			newCmd.push( 0xFE );
+
+		}
+
+		fs.writeSync( cave.fd, new Buffer( newCmd ), 0, newCmd.length );
+
+		fs.writeSync( cave.fd, new Buffer( [ 0x00 ] ), 0, 1 ); // style = NORMAL
+		fs.writeSync( cave.fd, new Buffer( [ 0x00 ] ), 0, 1 ); // EOF
+
+		fs.closeSync( cave.fd );
 
 	}
 
-	console.log ( "l : ", dataLength, " pos: ", pos, " start: ", start );
+	console.log ( "END l : ", dataLength, " pos: ", pos, " start: ", start );
+
 	return;
 
 	function writeHeader( name, title ) {
@@ -253,22 +277,13 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 		var fd = fs.openSync( name, 'w' );
 		var lf = new Buffer( [ 0x0a ] );
 
-		fs.writeSync( fd, source, 0, endHeader );
-/*
-		fs.writeSync( fd, "Survex 3D Image File");
-		fs.writeSync( fd, lf );
+		fs.writeSync( fd, "Survex 3D Image File\n");
+		fs.writeSync( fd, "v8\n");
+		fs.writeSync( fd, title + "\n" );
+		fs.writeSync( fd, "@1371300355\n" );
 
-		fs.writeSync( fd, "v8");
-		fs.writeSync( fd, lf );
+		fs.writeSync( fd, new Buffer( [ 0x00 ] ), 0, 1 );
 
-		fs.writeSync( fd, title );
-		fs.writeSync( fd, lf );
-
-		fs.writeSync( fd, "@1371300355" );
-		fs.writeSync( fd, lf );
-
-		fs.writeSync( fd, new Buffer( [ 0x00 ] ) );
-*/
 		return fd;
 	}
 
@@ -331,6 +346,7 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 		var b = data[ pos++ ];
 		var add = 0;
 		var del = 0;
+		var i;
 
 		if ( b !== 0 ) {
 
@@ -380,7 +396,7 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 			var db = [];
 
-			for ( var i = 0; i < add; i++ ) {
+			for ( i = 0; i < add; i++ ) {
 
 				db.push( data[pos++] );
 
@@ -394,53 +410,61 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 		if ( caves[ caveName ] === undefined ) {
 
-			var cmd = data[ start ];
-			var b1  = data[ start + 1 ];
-			var b2  = data[ start + 2 ];
-			var b3  = data[ start + 3 ];
-			var b4  = data[ start + 4 ];
+			// insert new label and add coordinates
+			newCmd = [];
 
-			if ( b1 === 0 ) { // 8 bit encoding (ignoreing 32bit encoding for now)
+			newCmd.push( data[ startOfCmd ] );
+			newCmd.push( 0x00 ); 			// 4 bit coding 
+			newCmd.push( 0x00 );			// delete label count
+			newCmd.push( label.length );	// add label count
 
-				source[ start + 2 ] = 0; // patch last label to remove deletion of previous label
-				console.log( " fixed ", caveName, " - ", data[ start + 2 ] );
+			for ( i = 0; i < label.length; i++ ) {
+
+				newCmd.push(  label.charCodeAt( i ) );
+
 			}
-	
-			console.log( "fl: ", cmd, "[ ", b1, " - ", b2, " - ", b3 , " - ", b4, "]" );
 
+			// copy xyz coordinates following the orignal command
+
+			for ( i = 0; i < 12; i++ ) {
+
+				newCmd.push( data[ pos + i ] );
+
+			}
 
 		} else if ( add && caveName != oldCaveName ) {
 
 			var cave = caves[ caveName ];
 
-			//console.log( "XXX: ", cave.lastLabel );
-
 		//	console.log(" oc: ", oldCaveName, " nc: ", caveName );
 
 			// insert fake record to correct label buffer
 
-			var newCmd = [];
+			newCmd = [];
 
 			newCmd.push( 0xA0 ); // anonymouus label
 			newCmd.push( 0x00 );
 			newCmd.push( cave.lastLabel.length );
 			newCmd.push( oldLabel.length );
 
-			for ( var i = 0; i < oldLabel.length; i++ ) {
+			for ( i = 0; i < oldLabel.length; i++ ) {
 
-				newCmd.push( 0x58 );
+				newCmd.push(  oldLabel.charCodeAt( i ) );
 
 			}
 
 			// fake coordinates
 
-			for ( var i = 0; i < 12; i++ ) {
+			for ( i = 0; i < 6; i++ ) {
 
-				newCmd.push( 0x00 );
+				newCmd.push( 0xDE );
+				newCmd.push( 0xAD );
 
 			}
 
 			fs.writeSync( cave.fd, new Buffer( newCmd ), 0, newCmd.length );
+
+			newCmd = null; // don't replace current command'
 
 		}
 

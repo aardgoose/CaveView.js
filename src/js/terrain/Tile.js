@@ -177,9 +177,9 @@ Tile.prototype.remove = function ( evicted ) {
 
 	this.evicted = evicted;
 
-	if (this.mesh) {
+	if ( this.mesh ) {
 
-		if (!this.boundingBox) {
+		if ( !this.boundingBox ) {
 
 			console.log( "FIXUP :", this.x, this.y );
 			this.getWorldBoundingBox();
@@ -187,6 +187,9 @@ Tile.prototype.remove = function ( evicted ) {
 		}
 
 		this.parent.remove( this.mesh );
+
+		this.mesh.geometry.dispose();
+
 		this.mesh = null;
 
 		--Tile.liveTiles;

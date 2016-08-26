@@ -489,6 +489,18 @@ Survey.prototype = Object.create( Object3D.prototype );
 
 Survey.prototype.constructor = Survey;
 
+Survey.prototype.dispose = function () {
+
+	this.traverse( _dispose );
+
+	function _dispose( object ) {
+
+		if ( object.geometry ) object.geometry.dispose();
+
+	}
+
+}
+
 Survey.prototype.getTerrain = function () {
 
 	return this.terrain;

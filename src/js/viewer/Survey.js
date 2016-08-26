@@ -591,6 +591,11 @@ Survey.prototype.cutSection = function ( id ) {
 
 	if ( selectedSectionIds.size === 0 ) return;
 
+	// clear target lists
+
+	this.mouseTargets = [];
+	this.lodTargets   = [];
+
 	// iterate through objects replace geometries and remove bounding boxes;
 
 	this.reverseTraverse( _cutObject );
@@ -660,6 +665,8 @@ Survey.prototype.cutSection = function ( id ) {
 
 		parent = obj.parent;
 		parent.remove( obj );
+
+		if ( obj.geometry ) obj.geometry.dispose();
 
 	}
 
@@ -737,6 +744,8 @@ Survey.prototype.cutSection = function ( id ) {
 
 		mesh.geometry = newGeometry;
 		mesh.userData = newVertexRuns;
+
+		geometry.dispose();
 
 	}
 
@@ -819,6 +828,8 @@ Survey.prototype.cutSection = function ( id ) {
 
 		mesh.geometry = newGeometry;
 		mesh.userData = newFaceRuns;
+
+		geometry.dispose();
 
 		function _remapVertex( vi ) {
 

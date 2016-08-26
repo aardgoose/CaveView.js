@@ -198,6 +198,12 @@ Tile.prototype.remove = function ( evicted ) {
 
 }
 
+Tile.prototype.dispose = function () {
+
+	this.mesh.geometry.dispose();
+
+}
+
 Tile.prototype.setMaterial = function ( material ) {
 
 	if ( this.mesh ) this.mesh.material = material;

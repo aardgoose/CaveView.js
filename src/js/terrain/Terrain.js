@@ -88,6 +88,12 @@ Terrain.prototype.setOverlay = function ( overlay ) {
 
 }
 
+Terrain.prototype.dispose = function () {
+
+	this.tile.dispose();
+
+}
+
 Terrain.prototype.setMaterial = function ( material ) {
 
 	this.tile.setMaterial( material );

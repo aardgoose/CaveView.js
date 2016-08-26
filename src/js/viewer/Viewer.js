@@ -637,7 +637,15 @@ function clearView () {
 	renderer.clear();
 	HUD.setVisibility( false );
 
-	if ( terrain ) terrain.dying = true;
+	if ( terrain ) {
+
+		terrain.dying = true;
+		terrain.dispose(); // remove geometry information cached by renderer
+
+	}
+
+	if ( survey ) survey.dispose();
+	if ( scene  ) scene.dispose();
 
 	controls.enabled = false;
 

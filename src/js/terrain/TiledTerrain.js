@@ -429,6 +429,38 @@ TiledTerrain.prototype.getOverlay = function () {
 
 }
 
+TiledTerrain.prototype.dispose = function () {
+
+	var self = this;
+	var tileTree = this.tileTree;
+
+	if ( this.tilesLoading > 0 ) return;
+
+	_disposeTile( tileTree.getRootId() );
+
+	return;
+
+	function _disposeTile ( id ) {
+
+		// FIXME this needs fixing by a tree method
+
+		var nodes = tileTree.getChildData( id );
+		var node;
+		var tile;
+
+		for ( var i = 0, l = nodes.length; i < l; i++ ) {
+
+			node = nodes[ i ];
+			tile = node.name;
+
+			tile.remove();
+
+		}
+
+	}
+
+}
+
 TiledTerrain.prototype.setMaterial = function ( material ) {
 
 	var self = this;

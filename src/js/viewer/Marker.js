@@ -6,54 +6,44 @@ import { Label } from './Label.js';
 
 import { LOD } from '../../../../three.js/src/Three.js';
 
-var Marker = ( function () {
+var labelOffset = 30;
+var nearPointerCached;
 
-	if ( typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope ) {
-    	return function Marker () {};
-	}
+function Marker ( survey, entrance ) {
 
-	var labelOffset = 30;
+	LOD.call( this );
 
-	var farPointerCached;
-	var nearPointerCached;
+	this.type = "CV.Marker";
 
-	return function Marker ( text ) {
+	var text = entrance.label;
 
-		LOD.call( this );
+	var farPointer = new EntranceFarPointer( survey, entrance.position );
 
-		this.type = "CV.Marker";
+	farPointer.layers.set( FEATURE_ENTRANCES );
 
-		if ( farPointerCached === undefined ) farPointerCached = new EntranceFarPointer();
+	if ( nearPointerCached === undefined ) nearPointerCached = new EntranceNearPointer();
 
-		var farPointer  = farPointerCached.clone();
+	var nearPointer = nearPointerCached.clone();
 
-		farPointer.layers.set( FEATURE_ENTRANCES );
+	nearPointer.layers.set( FEATURE_ENTRANCES );
 
+	var label = new Label( text );
 
-		if ( nearPointerCached === undefined ) nearPointerCached = new EntranceNearPointer();
+	label.position.setZ( labelOffset );
+	label.layers.set( FEATURE_ENTRANCES );
 
-		var nearPointer = nearPointerCached.clone();
+	nearPointer.add( label );
 
-		nearPointer.layers.set( FEATURE_ENTRANCES );
+	this.name = text;
 
+	this.addLevel( nearPointer,  0 );
+	this.addLevel( farPointer, 100 );
 
-		var label = new Label( text );
+	this.position.copy( entrance.position );
 
-		label.position.setZ( labelOffset );
-		label.layers.set( FEATURE_ENTRANCES );
+	return this;
 
-		nearPointer.add( label );
-
-		this.name = text;
-
-		this.addLevel( nearPointer,  0 );
-		this.addLevel( farPointer,  100 );
-
-		return this;
-
-	}
-
-} () );
+}
 
 Marker.prototype = Object.create( LOD.prototype );
 

@@ -31,6 +31,7 @@ function EntranceNearPointer () {
 	Mesh.call( this, bufferGeometry, material );
 
 	this.type = "CV.EntranceNearPointer";
+
 };
 
 EntranceNearPointer.prototype = Object.create( Mesh.prototype );

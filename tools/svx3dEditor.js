@@ -55,6 +55,11 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 	var dataLength = data.length;
 	var i;
 
+	var region = {
+		title: "Peak District Caves",
+		caves: {}
+	};
+
 	// init cmd handler table withh  error handler for unsupported records or invalid records
 
 	for ( i = 0; i < 256; i++ ) {
@@ -164,12 +169,14 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	var fd;
 	var start = pos;
+	var surface = false;
 	var move = false;
 	var lastMove = 0;
 
 	var cave;
 	var caves = {};
 	var newCmd;
+	var entrance = false;
 
 	while ( pos < dataLength ) {
 
@@ -181,7 +188,7 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 			caveName = label.split( "." )[ 1 ];
 
-			if ( caveName !== undefined ) {
+			if ( caveName !== undefined && ! surface ) {
 
 				if ( caves[ caveName ] === undefined ) {
 
@@ -189,7 +196,8 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 					caves[ caveName ] = {
 						fd: fd,
-						lastLabel: null
+						lastLabel: null,
+						surfaceLeg: false
 					};
 
 				}
@@ -212,9 +220,9 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 						// write deferred move
 						fs.writeSync( cave.fd, source, lastMove, start - lastMove );
-						lastMove = 0;
 
 					}
+
 					//	console.log(" write @ ", start, " len ", pos - start );
 					cave.lastLabel = label;
 
@@ -230,6 +238,8 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 					}
 
 				}
+
+				lastMove = 0;
 
 			}
 
@@ -269,6 +279,8 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 	}
 
 	console.log ( "END l : ", dataLength, " pos: ", pos, " start: ", start );
+
+	fs.writeFileSync( "region.js", JSON.stringify( region ) );
 
 	return;
 
@@ -401,22 +413,28 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 				db.push( data[pos++] );
 
 			}
-
+ 
 			label = label + String.fromCharCode.apply( null, db );
 
 		}
 
 		var caveName = label.split( "." )[ 1 ];
 
-		if ( caves[ caveName ] === undefined ) {
+		if (  caves[ caveName ] === undefined  ) {
 
 			// insert new label and add coordinates
 			newCmd = [];
 
 			newCmd.push( data[ startOfCmd ] );
 			newCmd.push( 0x00 ); 			// 4 bit coding 
-			newCmd.push( 0x00 );			// delete label count
-			newCmd.push( label.length );	// add label count
+
+			// delete label count
+
+			newCmd.push( 0x00 );
+
+			// add label count
+
+			newCmd.push( label.length );
 
 			for ( i = 0; i < label.length; i++ ) {
 
@@ -578,6 +596,8 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 		var flags = c & 0x3f;
 
+		//surface = flags & 0x01;
+
 		readLabel( flags );
 
 		readCoordinates( flags );
@@ -606,6 +626,9 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 		var flags = c & 0x7f;
 
+		entrance = flags & 0x04;
+		//surface = flags & 0x01;
+
 		readLabel( 0 );
 
 		readCoordinates( flags );
@@ -628,6 +651,7 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 		var flags = c & 0x01;
 
+		entrance = false;
 		readLabel( flags );
 
 		pos += 8;
@@ -640,6 +664,7 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 		var flags = c & 0x01;
 
+		entrance = false;
 		readLabel( flags );
 
 		pos += 16;
@@ -658,6 +683,31 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 	}
 
 	function readCoordinates ( flags ) {
+
+		if ( entrance ) {
+
+			var entranceObj = {
+
+				name: label,
+				x: source.readInt32LE( pos + 0, true ) / 100,
+				y: source.readInt32LE( pos + 4, true ) / 100,
+				z: source.readInt32LE( pos + 8, true ) / 100
+
+			};
+
+			console.log("Entrance @ ", entranceObj );
+
+			var name = label.split( "." )[1];
+
+			if ( region.caves[ name ] === undefined ) {
+
+				region.caves[ name ] = { entrances: [] };
+
+			}
+
+			region.caves[ name ].entrances.push( entranceObj );
+
+		}
 
 		pos += 12;
 

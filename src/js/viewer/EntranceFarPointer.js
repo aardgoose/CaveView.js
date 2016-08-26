@@ -6,30 +6,79 @@ import {
 	Geometry,
 	TextureLoader,
 	PointsMaterial,
-	Points
+	Points,
+	Object3D
 } from '../../../../three.js/src/Three.js';
 
-function EntranceFarPointer () {
+var farPointers = null;
 
-	var geometry  = new Geometry();
-	var loader  = new TextureLoader();
+function FarPointers ( survey ) {
 
-	var texture  = loader.load( getEnvironmentValue( "cvDirectory", "" ) + "CaveView/images/marker-yellow.png" );
+	var geometry = new Geometry();
+	var loader = new TextureLoader();
+
+	var texture = loader.load( getEnvironmentValue( "cvDirectory", "" ) + "CaveView/images/marker-yellow.png" );
 
 	var material = new PointsMaterial( { size: 10, map: texture, transparent : true, sizeAttenuation: false } );
 
-	geometry.vertices.push( new Vector3( 0, 0, 10 ) );
-	geometry.colors.push( new Color( 0xff00ff ) );
+	Points.call( this, geometry, material );
 
+	this.type = "CV.FarPointers";
 
-	var point = Points.call( this, geometry, material );
+	survey.add( this );
 
-	this.type = "CV.EntranceFarPointer";
+	survey.addEventListener( "dispose", _onSurveyDispose );
+
+	function _onSurveyDispose( event ) {
+
+		var survey = event.target;
+
+		survey.removeEventListener( 'dispose', _onSurveyDispose );
+
+		farPointers.geometry.dispose();
+		farPointers = null;
+
+	}
+
 }
 
-EntranceFarPointer.prototype = Object.create( Points.prototype );
+FarPointers.prototype = Object.create( Points.prototype );
+
+FarPointers.prototype.constructor = FarPointers;
+
+FarPointers.prototype.addPointer = function ( position ) {
+
+	var geometry = this.geometry;
+
+	geometry.vertices.push( position );
+	geometry.colors.push( new Color( 0xff00ff ) );
+
+	geometry.verticesNeedUpdate = true;
+	geometry.colorsNeedUpdate = true;
+
+}
+
+function EntranceFarPointer ( survey, position ) {
+
+	if ( farPointers === null ) {
+
+		farPointers = new FarPointers( survey );
+
+	}
+
+	farPointers.addPointer( position );
+
+	Object3D.call( this );
+
+	this.type = "CV.EntranceFarPointer";
+
+}
+
+EntranceFarPointer.prototype = Object.create( Object3D.prototype );
 
 EntranceFarPointer.prototype.constructor = EntranceFarPointer;
+
+// todo - add on visible property to intercept and use to select non visible/alternate colour for marker
 
 export { EntranceFarPointer };
 

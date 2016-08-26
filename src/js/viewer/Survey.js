@@ -57,6 +57,24 @@ function Survey ( cave ) {
 
 	_loadEntrances( cave.getEntrances() );
 
+	this.addEventListener( "dispose", _onSurveyDispose );
+
+	function _onSurveyDispose( event ) {
+
+		var survey = event.target;
+
+		survey.removeEventListener( 'dispose', _onSurveyDispose );
+	
+		survey.traverse( _dispose );
+
+		function _dispose( object ) {
+
+			if ( object.geometry ) object.geometry.dispose();
+
+		}
+
+	}
+
 	return;
 
 	function _loadScraps ( scrapList ) {
@@ -324,12 +342,11 @@ function Survey ( cave ) {
 		for ( var i = 0; i < l; i++ ) {
 
 			var entrance = entranceList[ i ];
-			var position = entrance.position;
-			var marker   = new Marker( entrance.label );
+
+			var marker = new Marker( self, entrance );
 
 			entrances.add( marker );
 
-			marker.position.copy( position );
 			marker.userData = entrance.survey;
 
 			self.mouseTargets.push( marker );
@@ -488,18 +505,6 @@ function Survey ( cave ) {
 Survey.prototype = Object.create( Object3D.prototype );
 
 Survey.prototype.constructor = Survey;
-
-Survey.prototype.dispose = function () {
-
-	this.traverse( _dispose );
-
-	function _dispose( object ) {
-
-		if ( object.geometry ) object.geometry.dispose();
-
-	}
-
-}
 
 Survey.prototype.getTerrain = function () {
 

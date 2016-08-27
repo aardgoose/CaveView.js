@@ -603,7 +603,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 	// iterate through objects replace geometries and remove bounding boxes;
 
-	this.reverseTraverse( _cutObject );
+	this.traverseReverse( _cutObject );
 
 	this.selectedBox = null;
 
@@ -636,7 +636,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 			} else {
 
-				obj.reverseTraverse( _remove );
+				obj.traverseReverse( _remove );
 
 			}
 
@@ -656,7 +656,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 		case "BoxHelper":
 
-			obj.reverseTraverse( _remove );
+			obj.traverseReverse( _remove );
 
 			break;
 

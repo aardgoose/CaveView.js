@@ -104,6 +104,8 @@ function EntranceFarPointer ( survey, position ) {
 	this.index = farPointers.addPointer( position );
 	this.type = "CV.EntranceFarPointer";
 
+	this.hidden = false;
+
 	Object.defineProperty( this, "visible", {
 		writeable: true,
 		get: function () { _getVisibility(); },
@@ -111,6 +113,24 @@ function EntranceFarPointer ( survey, position ) {
 	} );
 
 	var fp = farPointers;
+
+	this.addEventListener( "removed", _onRemoved );
+
+	function _onRemoved( event ) {
+
+		var obj = event.target;
+
+		obj.removeEventListener( 'dispose', _onRemoved );
+
+		// hide from view - avoid need to recreate farPointers 
+		// and traverse all visible EntranceFarPointers and reset index values
+
+		self.hidden = true;
+
+		fp.setMaterialIndex( self.index, 0 );
+
+	}
+
 
 	function _getVisibility () {
 
@@ -120,7 +140,7 @@ function EntranceFarPointer ( survey, position ) {
 
 	function _setVisibility ( visible ) {
 
-		var newIndex = ( visible === false ) ? 0 : 1;
+		var newIndex = ( visible === false || self.hidden ) ? 0 : 1;
 
 		if ( newIndex !== fp.getMaterialIndex( self.index ) ) {
 

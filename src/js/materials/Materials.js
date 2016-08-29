@@ -45,6 +45,8 @@ function createDepthMaterial ( type, limits, texture ) {
 
 	var name = "depth" + type;
 
+	if ( cache.has( name ) ) console.warn( "createDepthMaterial - already exists" );
+
 	var material = new DepthMaterial( type, limits, texture );
 
 	cache.set( name, material );
@@ -55,6 +57,9 @@ function createDepthMaterial ( type, limits, texture ) {
 
 	function _updateDepthMaterial ( event ) {
 
+		viewState.removeEventListener( "newCave",  _updateDepthMaterial );
+
+		material.dispose();
 		cache.delete( name );
 
 	}
@@ -97,11 +102,7 @@ function getLineMaterial () {
 
 	var name = "line";
 
-	if ( cache.has( name ) ) {
-
-		return cache.get(name);
-
-	}
+	if ( cache.has( name ) ) return cache.get(name);
 
 	var material = new LineBasicMaterial( { color: 0xFFFFFF, vertexColors: VertexColors } );
 

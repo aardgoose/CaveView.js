@@ -358,6 +358,7 @@ function renderDepthTexture () {
 	var renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBFormat } );
 
 	renderTarget.texture.generateMipmaps = false;
+	renderTarget.texture.name = "CV.DepthMapTexture";
 
 	Materials.createDepthMaterial( MATERIAL_LINE, limits, renderTarget.texture );
 	Materials.createDepthMaterial( MATERIAL_SURFACE, limits, renderTarget.texture );
@@ -755,6 +756,7 @@ function loadSurvey ( newSurvey ) {
 	container.addEventListener( "click", entranceClick, false );
 
 	HUD.setVisibility( true );
+
 
 	// signal any listeners that we have a new cave
 	viewState.dispatchEvent( { type: "newCave", name: "newCave" } );

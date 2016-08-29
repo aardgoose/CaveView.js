@@ -3,6 +3,7 @@ import { getEnvironmentValue, FEATURE_ENTRANCES } from '../core/constants.js';
 
 import {
 	Vector3, Color,
+	BufferAttribute,
 	BufferGeometry,
 	DirectGeometry,
 	TextureLoader,
@@ -16,19 +17,18 @@ var farPointers = null;
 
 function FarPointers ( survey ) {
 
-	this.directGeometry = new DirectGeometry();
+	this.points = [];
+
 	var loader = new TextureLoader();
 
 	var yellowTexture = loader.load( getEnvironmentValue( "cvDirectory", "" ) + "CaveView/images/marker-yellow.png" );
-	var cyanTexture   = loader.load( getEnvironmentValue( "cvDirectory", "" ) + "CaveView/images/marker-cyan.png" );
 
-	var nullMaterial   = new PointsMaterial( { visible: false } );
-	var yellowMaterial = new PointsMaterial( { size: 10, map: yellowTexture, transparent : true, sizeAttenuation: false } );
-	var cyanMaterial   = new PointsMaterial( { size: 10, map: cyanTexture, transparent : true, sizeAttenuation: false } );
+//	var nullMaterial   = new PointsMaterial( { visible: false } );
+	var yellowMaterial = new PointsMaterial( { size: 10, map: yellowTexture, transparent : true, sizeAttenuation: true } );
 
-	var material = new MultiMaterial( [ nullMaterial, yellowMaterial ] );
+//	var material = new MultiMaterial( [ nullMaterial, yellowMaterial ] );
 
-	Points.call( this, new BufferGeometry(), material );
+	Points.call( this, new BufferGeometry(), yellowMaterial );
 
 	this.type = "CV.FarPointers";
 
@@ -57,18 +57,41 @@ FarPointers.prototype = Object.create( Points.prototype );
 
 FarPointers.prototype.constructor = FarPointers;
 
+FarPointers.prototype.updateGeometry = function () {
+
+	// sort by material and update BufferGeometry.
+
+	var points = this.points;
+	var vertices = new Float32Array( points.length * 3 );
+	var offset = 0;
+
+	for ( var i = 0; i < points.length; i++ ) {
+
+		if ( points[i].materialIndex > 0 ) {
+
+			var position = points[i].position;
+
+			vertices[ offset++ ] = position.x;
+			vertices[ offset++ ] = position.y;
+			vertices[ offset++ ] = position.z + 5;
+
+		}
+
+	}
+
+	this.geometry.addAttribute( 'position', new BufferAttribute( vertices, 3 ) );
+	this.geometry.setDrawRange( 0, offset / 3 );
+
+}
+
 FarPointers.prototype.addPointer = function ( position ) {
 
-	var geometry = this.directGeometry;
-	var index = geometry.vertices.length;
+	var points = this.points;
+	var index = points.length;
 
-	geometry.vertices.push( position );
-	geometry.groups.push( { start: index, count: 1, materialIndex: 1 } );
+	this.points.push( { position: position, materialIndex: 1 } );
 
-//	geometry.verticesNeedUpdate = true;
-
-
-	this.geometry.fromDirectGeometry( geometry );
+	this.updateGeometry();
 
 	return index;
 
@@ -76,16 +99,14 @@ FarPointers.prototype.addPointer = function ( position ) {
 
 FarPointers.prototype.setMaterialIndex = function ( index, materialIndex ) {
 
-	var geometry = this.directGeometry;
-
-	geometry.groups[index].materialIndex = materialIndex;
-	this.geometry = new BufferGeometry().fromDirectGeometry( geometry );
+	this.points[index].materialIndex = materialIndex;
+	this.updateGeometry();
 
 }
 
 FarPointers.prototype.getMaterialIndex = function ( index ) {
 
-	return  this.directGeometry.groups[index].materialIndex;
+	return  this.points[index].materialIndex;
 
 }
 
@@ -130,7 +151,6 @@ function EntranceFarPointer ( survey, position ) {
 		fp.setMaterialIndex( self.index, 0 );
 
 	}
-
 
 	function _getVisibility () {
 

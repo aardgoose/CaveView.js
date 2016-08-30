@@ -79,6 +79,8 @@ FarPointers.prototype.updateGeometry = function () {
 
 	}
 
+	this.visible = ( offset > 0 );
+
 	this.geometry.addAttribute( 'position', new BufferAttribute( vertices, 3 ) );
 	this.geometry.setDrawRange( 0, offset / 3 );
 

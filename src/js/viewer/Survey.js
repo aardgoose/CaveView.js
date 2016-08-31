@@ -530,10 +530,14 @@ Survey.prototype.clearSectionSelection = function () {
 	this.selectedSection = 0;
 	this.selectedSectionIds.clear();
 
-	if ( this.selectedBox !== null ) {
+	var box = this.selectedBox;
 
-		this.remove( this.selectedBox );
+	if ( box !== null ) {
+
+		this.remove( box );
 		this.selectedBox = null;
+
+		box.geometry.dispose();
 
 	}
 

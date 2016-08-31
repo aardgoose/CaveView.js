@@ -805,9 +805,15 @@ function keyDown ( event ) {
 
 		break;
 
-	case 88: // look ast last POI - '.'
+	case 88: // look ast last POI - 'x'
 
 		viewState.setPOI = true; // actual value here is ignored.
+
+		break;
+
+	case 90: // dev info - 'z'
+
+		viewState.developerInfo = true; // actual value here is ignored.
 
 		break;
 

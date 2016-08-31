@@ -26,7 +26,8 @@ import {
 	AmbientLight, DirectionalLight,
 	LinearFilter, NearestFilter, RGBFormat,
 	OrthographicCamera, PerspectiveCamera, 
-	WebGLRenderer, WebGLRenderTarget
+	WebGLRenderer, WebGLRenderTarget,
+	Math as _Math
 } from '../../../../three.js/src/Three.js'; 
 
 var lightPosition = new Vector3( -1, -1, 0.5 );
@@ -955,7 +956,7 @@ function setCameraPOI ( x ) {
 
 	if ( camera instanceof PerspectiveCamera ) {
 
-		var tan = Math.tan( Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
+		var tan = Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
 
 		var e1 = 1.5 * tan * size.y / 2 + size.z;
 		var e2 = tan * camera.aspect * size.x / 2 + size.z;

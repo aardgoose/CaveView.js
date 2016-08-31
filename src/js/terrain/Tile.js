@@ -223,7 +223,7 @@ Tile.prototype.setOpacity = function ( opacity ) {
 
 }
 
-Tile.prototype.setOverlay = function ( overlay, opacity ) {
+Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
 	if ( !this.mesh ) return;
 
@@ -291,6 +291,8 @@ Tile.prototype.setOverlay = function ( overlay, opacity ) {
 
 		// add images to cache
 		Tile.overlayImages.set( imageFile, image );
+
+		imageLoadedCallback();
 
 	}
 

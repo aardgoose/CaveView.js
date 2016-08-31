@@ -77,6 +77,7 @@ var targetPOI = null;
 var controls;
 
 var lastActivityTime = 0;
+var frameCount = 0;
 var leakWatcher;
 
 /*
@@ -138,6 +139,7 @@ function init ( domID ) { // public method
 
 	controls = new OrbitControls( camera, renderer.domElement );
 
+	controls.addEventListener( "change", function () { startAnimation( 60 ); } );
 	controls.enableDamping = true;
 
 	// event handler
@@ -174,7 +176,7 @@ function init ( domID ) { // public method
 	Object.defineProperty( viewState, "terrainOpacity", {
 		writeable: true,
 		get: function () { return terrain.getOpacity(); },
-		set: function ( x ) { terrain.setOpacity( x ); viewState.dispatchEvent( { type: "change", name: "terrainOpacity" } ) }
+		set: function ( x ) { setTerrainOpacity( x ); }
 	} );
 
 	Object.defineProperty( viewState, "shadingMode", {
@@ -204,7 +206,7 @@ function init ( domID ) { // public method
 	Object.defineProperty( viewState, "cursorHeight", {
 		writeable: true,
 		get: function () { return cursorHeight; },
-		set: function ( x ) { cursorHeight = x; this.dispatchEvent( { type: "cursorChange", name: "cursorHeight" } ); }
+		set: function ( x ) { setCursorHeight( x ); }
 	} );
 
 	Object.defineProperty( viewState, "maxHeight", {
@@ -287,8 +289,6 @@ function init ( domID ) { // public method
 
 	Materials.initCache( viewState );
 
-	animate();
-
 	return;
 
 	function _enableLayer ( layerTag, name ) {
@@ -329,8 +329,27 @@ function setZScale ( scale ) {
 
 	zScale = scale;
 
+	renderView();
+
 }
 
+function setCursorHeight( x ) {
+
+	cursorHeight = x;
+	this.dispatchEvent( { type: "cursorChange", name: "cursorHeight" } );
+
+	renderView();
+
+}
+
+function setTerrainOpacity( x ) {
+
+	terrain.setOpacity( x );
+	viewState.dispatchEvent( { type: "change", name: "terrainOpacity" } )
+
+	renderView();
+
+}
 
 function showDeveloperInfo( x ) {
 
@@ -404,6 +423,8 @@ function renderDepthTexture () {
 
 	scene.overrideMaterial = null;
 
+	renderView();
+
 }
 
 function setCameraMode ( mode ) {
@@ -452,6 +473,8 @@ function setCameraMode ( mode ) {
 
 	cameraMode = mode;
 
+	renderView();
+
 }
 
 function initCamera ( camera ) {
@@ -485,6 +508,8 @@ function setCameraLayer ( layerTag, enable ) {
 		pCamera.layers.disable( layerTag );
 
 	}
+
+	renderView();
 
 }
 
@@ -549,12 +574,15 @@ function setViewMode ( mode, t ) {
 	};
 
 	controls.enabled = false;
+	startAnimation( tAnimate + 1 );
 
 }
 
 function setTerrainShadingMode ( mode ) {
 
-	if ( terrain.setShadingMode( mode ) ) terrainShadingMode = mode;
+	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
+
+	renderView();
 
 }
 
@@ -562,17 +590,21 @@ function setShadingMode ( mode ) {
 
 	if ( survey.setShadingMode( mode ) ) shadingMode = mode;
 
+	renderView();
+
 }
 
 function setSurfaceShadingMode ( mode ) {
 
 	if ( survey.setLegShading( LEG_SURFACE, mode ) ) surfaceShadingMode = mode;
 
+	renderView();
+
 }
 
 function setTerrainOverlay ( overlay ) {
 
-	if ( terrainShadingMode === SHADING_OVERLAY ) terrain.setOverlay( overlay );
+	if ( terrainShadingMode === SHADING_OVERLAY ) terrain.setOverlay( overlay, renderView );
 
 }
 
@@ -632,6 +664,8 @@ function selectSection ( id ) {
 		boundingBox: boundingBox
 	};
 
+	renderView();
+
 }
 
 function resize () {
@@ -655,6 +689,8 @@ function resize () {
 	pCamera.aspect = width / height;
 
 	pCamera.updateProjectionMatrix();
+
+	renderView();
 
 }
 
@@ -792,7 +828,7 @@ function loadSurvey ( newSurvey ) {
 	controls.enabled = true;
 
 	//__dyeTrace(); // FIXME test function
-
+	renderView();
 
 	function _tilesLoaded () {
 
@@ -878,6 +914,10 @@ function entranceClick ( event ) {
 		};
 
 		activePOIPosition = controls.target;
+
+		controls.enabled = false;
+
+		startAnimation( targetPOI.tAnimate + 1 );
 
 		console.log( entrance.type, entrance.name );
 
@@ -1022,13 +1062,35 @@ function setCameraPOI ( x ) {
 	// disable orbit controls until move to selected POI is conplete
 
 	controls.enabled = false;
+	startAnimation( targetPOI.tAnimate + 1 );
+
+}
+
+function startAnimation( frames ) {
+
+	if ( frameCount === 0 ) {
+
+		frameCount = frames;
+		animate();
+
+	} else {
+
+		frameCount = Math.max( frameCount, frames );
+
+	}
 
 }
 
 function animate () {
 
-	requestAnimationFrame( animate );
-	renderView();
+	if ( frameCount > 0 ) {
+
+		requestAnimationFrame( animate );
+
+		frameCount--;
+		renderView();
+
+	}
 
 }
 

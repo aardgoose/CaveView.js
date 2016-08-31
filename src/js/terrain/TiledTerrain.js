@@ -381,7 +381,7 @@ TiledTerrain.prototype.getOverlays = function () {
 
 }
 
-TiledTerrain.prototype.setOverlay = function ( overlay ) {
+TiledTerrain.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
 
 	var self = this;
 	var tileTree = this.tileTree;
@@ -405,7 +405,7 @@ TiledTerrain.prototype.setOverlay = function ( overlay ) {
 			node = nodes[ i ];
 			tile = node.name;
 
-			tile.setOverlay( overlay, self.opacity );
+			tile.setOverlay( overlay, self.opacity, imageLoadedCallback );
 
 			_setTileOverlays( node.id );
 

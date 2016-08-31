@@ -29,6 +29,8 @@ import {
 	WebGLRenderer, WebGLRenderTarget
 } from '../../../../three.js/src/Three.js'; 
 
+import { LeakWatch } from '../../../../LeakWatch/src/LeakWatch.js';
+
 var lightPosition = new Vector3( -1, -1, 0.5 );
 var CAMERA_OFFSET = 600;
 
@@ -75,6 +77,8 @@ var targetPOI = null;
 var controls;
 
 var lastActivityTime = 0;
+var leakWatcher;
+
 /*
 function __dyeTrace() {
 
@@ -231,6 +235,12 @@ function init ( domID ) { // public method
 		set: function ( x ) { _viewStateSetter( setCameraPOI, "setPOI", x ); }
 	} );
 
+	Object.defineProperty( viewState, "developerInfo", {
+		writeable: true,
+		get: function () { return true; },
+		set: function ( x ) { showDeveloperInfo( x ); }
+	} );
+
 	if ( HUD === undefined ) {
 
 		Object.defineProperty( viewState, "hasHUD", {
@@ -318,6 +328,24 @@ function setZScale ( scale ) {
 	region.applyMatrix( new Matrix4().makeScale( 1, 1, newScale / lastScale ) );
 
 	zScale = scale;
+
+}
+
+
+function showDeveloperInfo( x ) {
+
+	var info = renderer.getResourceInfo();
+
+	if ( leakWatcher === undefined ) {
+
+		leakWatcher = new LeakWatch();
+		leakWatcher.setBaseline( scene, info );
+
+	} else {
+
+		leakWatcher.compare( scene, info );
+
+	}
 
 }
 
@@ -636,6 +664,7 @@ function clearView () {
 	caveIsLoaded = false;
 
 	renderer.clear();
+
 	HUD.setVisibility( false );
 
 	if ( terrain ) {
@@ -687,7 +716,6 @@ function loadCave ( cave ) {
 	}
 
 	loadSurvey( new Survey( cave ) );
-
 
 }
 
@@ -756,7 +784,6 @@ function loadSurvey ( newSurvey ) {
 	container.addEventListener( "click", entranceClick, false );
 
 	HUD.setVisibility( true );
-
 
 	// signal any listeners that we have a new cave
 	viewState.dispatchEvent( { type: "newCave", name: "newCave" } );
@@ -852,7 +879,7 @@ function entranceClick ( event ) {
 
 		activePOIPosition = controls.target;
 
-		console.log(entrance.type, entrance.name );
+		console.log( entrance.type, entrance.name );
 
 	}
 

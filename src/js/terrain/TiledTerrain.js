@@ -1,5 +1,6 @@
 import { CommonTerrain } from './CommonTerrain.js';
 import { Tile } from './Tile.js';
+import { TileMesh } from './TileMesh.js';
 import { TileSet } from './TileSet.js';
 import { Tree } from '../core/Tree.js';
 import { HUD } from '../hud/HUD.js';
@@ -15,6 +16,7 @@ function TiledTerrain ( limits3, onLoaded ) {
 	Group.call( this );
 
 	this.name = "TiledTerrain";
+	this.type = "CV.TiledTerrain";
 
 	this.limits = new Box2(
 
@@ -23,17 +25,17 @@ function TiledTerrain ( limits3, onLoaded ) {
 
 	);
 
-	this.tileSet       = Object.assign( {}, TileSet);
-	this.tileTree      = new Tree();
+	this.tileSet         = Object.assign( {}, TileSet);
+	this.tileMesh        = null;
 
-	this.onLoaded      = onLoaded;
-	this.tilesLoading  = 0;
-	this.loadedTiles   = [];
-	this.errors        = 0;
-	this.terrainLoaded = false;
-	this.replaceTile   = null;
-	this.activeOverlay = null;
-	this.material      = null;
+	this.onLoaded        = onLoaded;
+	this.tilesLoading    = 0;
+	this.loadedTiles     = [];
+	this.errors          = 0;
+	this.terrainLoaded   = false;
+	this.replaceTileMesh = null;
+	this.activeOverlay   = null;
+	this.material        = null;
 	this.initialResolution;
 	this.currentLimits;
 	this.dying = false;
@@ -218,79 +220,72 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 		}
 
-		var tile;
+		var tileMesh;
 
 		if ( !oldTile ) {
 
-			tile = new Tile( x, y, resolution, self.tileSet, clip );
+			tileMesh = new TileMesh( x, y, resolution, self.tileSet, clip );
 
 		} else {
 
-			tile = oldTile;
+			tileMesh = oldTile;
 
 		}
 
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
-		tile.createFromBufferGeometryJSON( tileData.json, tileData.boundingBox );
+		tileMesh.createFromBufferGeometryJSON( tileData.json, tileData.boundingBox );
 
 		if ( self.activeOverlay ) {
 
-			tile.setOverlay( self.activeOverlay, self.opacity );
+			tileMesh.setOverlay( self.activeOverlay, self.opacity );
 
 		}
 
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
-		self.endLoad( tile );
+		self.endLoad( tileMesh );
 
 	}
 
 }
 
-TiledTerrain.prototype.endLoad = function ( tile ) {
+TiledTerrain.prototype.endLoad = function ( tileMesh ) {
 
-	if ( tile !== undefined ) this.loadedTiles.push( tile );
+	if ( tileMesh !== undefined ) this.loadedTiles.push( tileMesh );
 
 	if ( --this.tilesLoading === 0 ) {
 
-		var loadedTiles = this.loadedTiles;
-		var replaceTile = this.replaceTile;
+		var loadedTiles     = this.loadedTiles;
+		var replaceTileMesh = this.replaceTileMesh;
+		var parent = null;
 
 		if ( this.errors === 0 ) {
 
 			// display loaded tiles and add to tileTree
 
-			var tileTree = this.tileTree;
-			var parentId;
 
-			if ( replaceTile ) {
+			if ( replaceTileMesh ) {
 
-				parentId = replaceTile.id;
+				parent = replaceTileMesh;
 
-			} else if ( tile.parentId === null ) {
+			} else if ( tileMesh.parent === null ) {
 
-				parentId = tileTree.getRootId();
+				parent = this;
 
 			}
 
-			for ( var i = 0, l = loadedTiles.length; i < l; i++ ) {
+			if ( parent ) {
 
-				tile = loadedTiles[ i ];
+				for ( var i = 0, l = loadedTiles.length; i < l; i++ ) {
 
-				tile.attach( this );
-
-				if ( !tile.id ) {
-
-					// only add new tiles to tree, ignore resurrected tiles
-					tile.id = tileTree.addNode( tile, parentId );
-					tile.parentId = parentId;
+					parent.add( loadedTiles[ i ] );
 
 				}
 
 			}
 
-			if ( replaceTile ) replaceTile.remove( false );
+			if ( replaceTileMesh ) replaceTile.isMesh = false;
 
 			this.terrainLoaded = true;
 
@@ -306,10 +301,18 @@ TiledTerrain.prototype.endLoad = function ( tile ) {
 
 			if ( replaceTile ) replaceTile.canZoom = false;
 
+			// dispose of any resources leaked - theoretciallly there should not be any
+
+			for ( var i = 0, l = loadedTiles.length; i < l; i++ ) {
+
+				loadedTiles[ i ].dispose();
+
+			}
+
 		}
 
 		this.errors = 0;
-		this.replaceTile = null;
+		this.replaceTileMesh = null;
 		this.loadedTiles = [];
 
 		this.onLoaded();
@@ -318,7 +321,7 @@ TiledTerrain.prototype.endLoad = function ( tile ) {
 	}
 
 }
-
+/*
 TiledTerrain.prototype.resurrectTile = function ( tile ) {
 
 	if ( tile.mesh ) {
@@ -332,21 +335,22 @@ TiledTerrain.prototype.resurrectTile = function ( tile ) {
 	this.loadTile( tile.x, tile.y, tile.resolution, tile );
 
 }
+*/
 
-TiledTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
+TiledTerrain.prototype.tileArea = function ( limits, tileMesh, maxResolution ) {
 
 	var coverage   = this.pickCoverage( limits, maxResolution );
 	var resolution = coverage.resolution;
 
-	if ( tile && tile.resolution == resolution ) {
+	if ( tileMesh && tileMesh.resolution == resolution ) {
 
 		console.log("BOING!");
 		return;
 
 	}
 
-	this.replaceTile   = tile;
-	this.currentLimits = limits;
+	this.replaceTileMesh = tileMesh;
+	this.currentLimits   = limits;
 
 	if ( this.initialResolution === undefined ) {
 
@@ -384,32 +388,18 @@ TiledTerrain.prototype.getOverlays = function () {
 TiledTerrain.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
 
 	var self = this;
-	var tileTree = this.tileTree;
 
 	if ( this.tilesLoading > 0 ) return;
 
 	this.activeOverlay = overlay;
 
-	_setTileOverlays( tileTree.getRootId() );
+	this.traverse( _setTileOverlays );
 
 	return;
 
-	function _setTileOverlays ( id ) {
+	function _setTileOverlays ( obj ) {
 
-		var nodes = tileTree.getChildData( id );
-		var node;
-		var tile;
-
-		for ( var i = 0, l = nodes.length; i < l; i++ ) {
-
-			node = nodes[ i ];
-			tile = node.name;
-
-			tile.setOverlay( overlay, self.opacity, imageLoadedCallback );
-
-			_setTileOverlays( node.id );
-
-		}
+		if ( obj !== self ) obj.setOverlay( overlay, self.opacity, imageLoadedCallback );
 
 	}
 
@@ -417,7 +407,7 @@ TiledTerrain.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
 
 TiledTerrain.prototype.getOverlay = function () {
 
-	if (this.activeOverlay) {
+	if ( this.activeOverlay ) {
 
 		return this.activeOverlay;
 
@@ -431,31 +421,17 @@ TiledTerrain.prototype.getOverlay = function () {
 
 TiledTerrain.prototype.dispose = function () {
 
-	var self = this;
-	var tileTree = this.tileTree;
-
 	if ( this.tilesLoading > 0 ) return;
 
-	_disposeTile( tileTree.getRootId() );
+	var self = this;
+
+	this.traverse( _disposeTileMesh );
 
 	return;
 
-	function _disposeTile ( id ) {
+	function _disposeTileMesh ( obj) {
 
-		// FIXME this needs fixing by a tree method
-
-		var nodes = tileTree.getChildData( id );
-		var node;
-		var tile;
-
-		for ( var i = 0, l = nodes.length; i < l; i++ ) {
-
-			node = nodes[ i ];
-			tile = node.name;
-
-			tile.remove();
-
-		}
+		if ( obj !== self ) obj.dispose( obj );
 
 	}
 
@@ -463,40 +439,54 @@ TiledTerrain.prototype.dispose = function () {
 
 TiledTerrain.prototype.setMaterial = function ( material ) {
 
-	var self = this;
-	var tileTree = this.tileTree;
-
 	if ( this.tilesLoading > 0 ) return;
+
+	var self = this;
 
 	this.activeOverlay = null;
 
-	_setTileMaterial( tileTree.getRootId() );
+	this.traverse( _setTileMeshMaterial );
 
 	material.opacity = this.opacity;
 	material.needsUpdate = true;
 
-	this.material = material;
+	return;
+
+	function _setTileMeshMaterial ( obj ) {
+
+		if ( obj !== self ) obj.setMaterial( material );
+
+	}
+
+}
+
+TiledTerrain.prototype.setOpacity = function ( opacity ) {
+
+	if ( this.shadingMode === SHADING_OVERLAY ) {
+
+		var self = this;
+
+		// each tile has its own material, therefore need setting separately
+		this.traverse( _setTileOpacity );
+
+	} else {
+
+		if ( this.material ) {
+
+			this.material.opacity = opacity;
+			this.material.needsUpdate = true;
+
+		}
+
+	}
+
+	this.opacity = opacity;
 
 	return;
 
-	function _setTileMaterial ( id ) {
+	function _setTileOpacity ( obj ) {
 
-		// FIXME this needs fixing by a tree method
-
-		var nodes = tileTree.getChildData( id );
-		var node;
-		var tile;
-
-		for ( var i = 0, l = nodes.length; i < l; i++ ) {
-
-			node = nodes[ i ];
-			tile = node.name;
-
-			tile.setMaterial( material );
-
-			_setTileMaterial( node.id );
-
-		}
+		if ( obj !== self ) obj.setOpacity( opacity );
 
 	}
 
@@ -506,7 +496,6 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 	var maxResolution     = this.tileSet.RESOLUTION_MIN;
 	var initialResolution = this.initialResolution;
-	var tileTree          = this.tileTree;
 	var self              = this;
 
 	var frustum  = new Frustum();
@@ -515,7 +504,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 	var candidateEvictTiles = [];
 	var resurrectTiles      = [];
 
-	var total, tile, i;
+	var total, tileMesh, i;
 
 	if ( this.tilesLoading > 0 ) return;
 
@@ -654,54 +643,6 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 	function _flushTiles ( id ) {
 
 		tileTree.removeNodes( function ( x ) { x.name.remove(); }, tileTree.findById( id ) );
-
-	}
-
-}
-
-TiledTerrain.prototype.setOpacity = function ( opacity ) {
-
-	var self = this;
-	var tileTree = this.tileTree;
-
-	if ( this.shadingMode === SHADING_OVERLAY ) {
-
-		// each tile has its own material, therefore need setting separately
-		_setTileOpacity( tileTree.getRootId() );
-
-	} else {
-
-		if ( this.material ) {
-
-			this.material.opacity = opacity;
-			this.material.needsUpdate = true;
-
-		}
-
-	}
-
-	this.opacity = opacity;
-
-	return;
-
-	function _setTileOpacity ( id ) {
-
-		// FIXME this needs fixing by a tree method
-
-		var nodes = tileTree.getChildData( id );
-		var node;
-		var tile;
-
-		for ( var i = 0, l = nodes.length; i < l; i++ ) {
-
-			node = nodes[ i ];
-			tile = node.name;
-
-			tile.setOpacity( opacity );
-
-			_setTileOpacity( node.id );
-
-		}
 
 	}
 

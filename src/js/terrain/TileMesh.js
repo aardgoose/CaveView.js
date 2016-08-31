@@ -98,8 +98,8 @@ TileMesh.prototype.create = function ( geometry, terrainData ) {
 	return this;
 
 }
-/*
-Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
+
+TileMesh.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 
 	var loader = new BufferGeometryLoader();
 
@@ -107,32 +107,31 @@ Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 
 	// use precalculated bounding box rather than recalculating it here.
 
-	var bb = new Box3(
+	bufferGeometry.boundingBox = new Box3(
 
 		new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ), 
 		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
 
 	);
 
-	bufferGeometry.boundingBox = bb;
 	bufferGeometry.setDiscardBuffers(); // Non standard feature.
 
-	this.mesh = new Mesh( bufferGeometry );
-	this.mesh.layers.set ( FEATURE_TERRAIN );
+	this.geometry = bufferGeometry;
+	this.layers.set ( FEATURE_TERRAIN );
 
 }
 
 
-Tile.prototype.getWorldBoundingBox = function () {
+TileMesh.prototype.getWorldBoundingBox = function () {
 
 	var boundingBox;
 
 	if ( this.worldBoundingBox === null ) {
 
-		this.mesh.updateMatrixWorld();
+		this.updateMatrixWorld();
 
 		boundingBox = this.getBoundingBox().clone();
-		boundingBox.applyMatrix4( this.mesh.matrixWorld );
+		boundingBox.applyMatrix4( this.matrixWorld );
 
 		this.worldBoundingBox = boundingBox;
 
@@ -142,13 +141,13 @@ Tile.prototype.getWorldBoundingBox = function () {
 
 }
 
-Tile.prototype.getBoundingBox = function () {
+TileMesh.prototype.getBoundingBox = function () {
 
 	var boundingBox;
 
 	if ( this.boundingBox === null ) {
 
-		boundingBox = this.mesh.geometry.boundingBox.clone();
+		boundingBox = this.geometry.boundingBox.clone();
 
 		var adj = this.resolution; // adjust to cope with overlaps
 
@@ -162,18 +161,10 @@ Tile.prototype.getBoundingBox = function () {
 	}
 
 	return this.boundingBox;
-}
-
-Tile.prototype.attach = function ( parent ) {
-
-	this.evicted = false;
-	this.parent = parent;
-
-	parent.add( this.mesh );
-
-	++Tile.liveTiles;
 
 }
+
+/*
 
 Tile.prototype.remove = function ( evicted ) {
 
@@ -268,7 +259,7 @@ TileMesh.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback
 
 		var material = new MeshLambertMaterial( { transparent: true, opacity: opacity } );
 
-		Tile.overlayImages.set( imageFile, image );
+		TileMesh.overlayImages.set( imageFile, image );
 
 		texture = new Texture();
 
@@ -302,7 +293,7 @@ TileMesh.prototype.getParent = function () {
 
 }
 /*
-Tile.prototype.projectedArea = function ( camera ) {
+TileMesh.prototype.projectedArea = function ( camera ) {
 
 	var boundingBox = this.getWorldBoundingBox();
 

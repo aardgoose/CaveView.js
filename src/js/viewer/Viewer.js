@@ -81,29 +81,6 @@ var lastActivityTime = 0;
 var frameCount = 0;
 var leakWatcher;
 
-/*
-function __dyeTrace() {
-
-	var start = new Vector3();
-	var end   = new Vector3( 100, 100, 100 );
-	var progress;
-	var max = 100;
-
-	var geometry = new THREE.Geometry();
-
-	for ( var i = 0; i < max; i++ ) {
-
-		progress = i / max;
-
-		geometry.vertices.push ( new Vector3().lerpVectors( start, end, progress ) );
-		geometry.colors.push( new THREE.Color( Math.sin( Math.PI * progress ), 255, 0 ) );
-
-	}
-
-	scene.add ( new THREE.Points( geometry, new TestMaterial( 25 ) ) );
-
-}*/
-
 function init ( domID ) { // public method
 
 	container = document.getElementById( domID );
@@ -827,7 +804,6 @@ function loadSurvey ( newSurvey ) {
 	controls.object = camera;
 	controls.enabled = true;
 
-	//__dyeTrace(); // FIXME test function
 	renderView();
 
 	function _tilesLoaded () {
@@ -988,7 +964,7 @@ var renderView = function () {
 
 			targetPOI.tAnimate--;
 
-			var t =  1 - targetPOI.tAnimate / ( targetPOI.tAnimate + 1 );
+			var t = 1 - targetPOI.tAnimate / ( targetPOI.tAnimate + 1 );
 
 			activePOIPosition.lerp( targetPOI.position, t );
 

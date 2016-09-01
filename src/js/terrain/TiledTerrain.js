@@ -543,7 +543,6 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 	}
 
-
 	return;
 
 	function _scanTiles( tile ) {
@@ -617,7 +616,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 				// console.log( "ir", initialResolution, "p: ", pressure, " tp: ", tilePressure );
 
 				if ( pressure > tilePressure ) tile.evict();
-
+ 
 			}
 
 		}

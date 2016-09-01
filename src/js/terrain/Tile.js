@@ -13,7 +13,7 @@ import {
 	Mesh
 } from '../../../../three.js/src/Three.js';
 
-function TileMesh ( x, y, resolution, tileSet, clip ) {
+function Tile ( x, y, resolution, tileSet, clip ) {
 
 	this.x = x;
 	this.y = y;
@@ -24,25 +24,30 @@ function TileMesh ( x, y, resolution, tileSet, clip ) {
 
 	this.canZoom       = true;
 	this.evicted       = false;
+	this.replaced      = false;
 	this.evictionCount = 1;
+	this.resurrectionPending = false;
+
+	this.boundingBox = null;
+	this.worldBoundingBox = null;
 
 	Mesh.call( this );
 
-	this.type = "TileMesh";
+	this.type = "Tile";
 
 	return this;
 
 }
 
-TileMesh.prototype = Object.create( Mesh.prototype );
+Tile.prototype = Object.create( Mesh.prototype );
 
-TileMesh.prototype.constructor = TileMesh;
+Tile.prototype.constructor = Tile;
 
-TileMesh.liveTiles = 0;
-TileMesh.overlayImages = new Map();
+Tile.liveTiles = 0;
+Tile.overlayImages = new Map();
 
 
-TileMesh.prototype.create = function ( geometry, terrainData ) {
+Tile.prototype.create = function ( geometry, terrainData ) {
 
 	var vertices = geometry.vertices;
 	var faces    = geometry.faces;
@@ -99,7 +104,7 @@ TileMesh.prototype.create = function ( geometry, terrainData ) {
 
 }
 
-TileMesh.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
+Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 
 	var loader = new BufferGeometryLoader();
 
@@ -122,7 +127,7 @@ TileMesh.prototype.createFromBufferGeometryJSON = function ( json, boundingBox )
 }
 
 
-TileMesh.prototype.getWorldBoundingBox = function () {
+Tile.prototype.getWorldBoundingBox = function () {
 
 	var boundingBox;
 
@@ -141,7 +146,7 @@ TileMesh.prototype.getWorldBoundingBox = function () {
 
 }
 
-TileMesh.prototype.getBoundingBox = function () {
+Tile.prototype.getBoundingBox = function () {
 
 	var boundingBox;
 
@@ -164,48 +169,58 @@ TileMesh.prototype.getBoundingBox = function () {
 
 }
 
-/*
+Tile.prototype.evict = function () {
 
-Tile.prototype.remove = function ( evicted ) {
+	this.evictionCount++;
+	this.evicted  = true;
+	this.replaced = false;
+	this.isMesh   = false;
 
-	if ( evicted ) this.evictionCount++;
+	if ( !this.boundingBox ) {
 
-	this.evicted = evicted;
-
-	if ( this.mesh ) {
-
-		if ( !this.boundingBox ) {
-
-			console.log( "FIXUP :", this.x, this.y );
-			this.getWorldBoundingBox();
-
-		}
-
-		this.parent.remove( this.mesh );
-
-		this.mesh.geometry.dispose();
-
-		this.mesh = null;
-
-		--Tile.liveTiles;
+		console.log( "FIXUP :", this.x, this.y );
+		this.getWorldBoundingBox();
 
 	}
 
-}
-*/
-TileMesh.prototype.dispose = function () {
-
 	this.geometry.dispose();
 
+	--Tile.liveTiles;
+
 }
 
-TileMesh.prototype.setMaterial = function ( material ) {
+Tile.prototype.setReplaced = function () {
+
+	this.evicted = false;
+	this.replaced = true;
+	this.isMesh = false;
+
+	if ( this.geometry ) this.geometry.dispose();
+
+	if ( !this.boundingBox ) {
+
+		console.log( "FIXUP :", this.x, this.y );
+		this.getWorldBoundingBox();
+
+	}
+
+	--Tile.liveTiles;
+
+}
+
+Tile.prototype.removed = function () {
+
+	if ( this.geometry ) this.geometry.dispose();
+
+}
+
+Tile.prototype.setMaterial = function ( material ) {
 
 	this.material = material;
 
 }
 
-TileMesh.prototype.setOpacity = function ( opacity ) {
+Tile.prototype.setOpacity = function ( opacity ) {
 
 	var material = this.material;
 
@@ -214,7 +229,7 @@ TileMesh.prototype.setOpacity = function ( opacity ) {
 
 }
 
-TileMesh.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
+Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
 	var self = this;
 	var tileSet = this.tileSet;
@@ -241,9 +256,9 @@ TileMesh.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback
 
 	var imageFile = tileSet.OVERLAYDIR + overlay + "/" + tileSet.PREFIX + tileSet.OVERLAY_RESOLUTION + "MX-" + padDigits( y, 3 ) + "-" + padDigits( x, 3 ) + ".jpg";
 
-	if ( TileMesh.overlayImages.has( imageFile ) ) {
+	if ( Tile.overlayImages.has( imageFile ) ) {
 
-		_imageLoaded( TileMesh.overlayImages.get( imageFile ) );
+		_imageLoaded( Tile.overlayImages.get( imageFile ) );
 
 	} else {
 
@@ -259,7 +274,7 @@ TileMesh.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback
 
 		var material = new MeshLambertMaterial( { transparent: true, opacity: opacity } );
 
-		TileMesh.overlayImages.set( imageFile, image );
+		Tile.overlayImages.set( imageFile, image );
 
 		texture = new Texture();
 
@@ -279,7 +294,7 @@ TileMesh.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback
 		self.material = material;
 
 		// add images to cache
-		TileMesh.overlayImages.set( imageFile, image );
+		Tile.overlayImages.set( imageFile, image );
 
 		imageLoadedCallback();
 
@@ -287,13 +302,13 @@ TileMesh.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback
 
 }
 
-TileMesh.prototype.getParent = function () {
+Tile.prototype.getParent = function () {
 
 	return this.parent;
 
 }
-/*
-TileMesh.prototype.projectedArea = function ( camera ) {
+
+Tile.prototype.projectedArea = function ( camera ) {
 
 	var boundingBox = this.getWorldBoundingBox();
 
@@ -319,8 +334,8 @@ TileMesh.prototype.projectedArea = function ( camera ) {
 	return t1.area() + t2.area();
 
 }
-*/
 
-export { TileMesh };
+
+export { Tile };
 
 // EOF

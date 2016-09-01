@@ -1,8 +1,6 @@
 import { CommonTerrain } from './CommonTerrain.js';
 import { Tile } from './Tile.js';
-import { TileMesh } from './TileMesh.js';
 import { TileSet } from './TileSet.js';
-import { Tree } from '../core/Tree.js';
 import { HUD } from '../hud/HUD.js';
 import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants.js';
 
@@ -13,7 +11,7 @@ import {
 
 function TiledTerrain ( limits3, onLoaded ) {
 
-	Group.call( this );
+	CommonTerrain.call( this );
 
 	this.name = "TiledTerrain";
 	this.type = "CV.TiledTerrain";
@@ -26,7 +24,7 @@ function TiledTerrain ( limits3, onLoaded ) {
 	);
 
 	this.tileSet         = Object.assign( {}, TileSet);
-	this.tileMesh        = null;
+	this.tile        = null;
 
 	this.onLoaded        = onLoaded;
 	this.tilesLoading    = 0;
@@ -51,9 +49,7 @@ function TiledTerrain ( limits3, onLoaded ) {
 
 }
 
-TiledTerrain.prototype = Object.create( Group.prototype );
-
-Object.assign( TiledTerrain.prototype, CommonTerrain.prototype );
+TiledTerrain.prototype = Object.create( CommonTerrain.prototype );
 
 TiledTerrain.prototype.constructor = TiledTerrain;
 
@@ -220,39 +216,35 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 		}
 
-		var tileMesh;
+		var tile;
 
 		if ( !oldTile ) {
 
-			tileMesh = new TileMesh( x, y, resolution, self.tileSet, clip );
+			tile = new Tile( x, y, resolution, self.tileSet, clip );
 
 		} else {
 
-			tileMesh = oldTile;
+			tile = oldTile;
 
 		}
 
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
-		tileMesh.createFromBufferGeometryJSON( tileData.json, tileData.boundingBox );
+		tile.createFromBufferGeometryJSON( tileData.json, tileData.boundingBox );
 
-		if ( self.activeOverlay ) {
-
-			tileMesh.setOverlay( self.activeOverlay, self.opacity );
-
-		}
+		if ( self.activeOverlay ) tile.setOverlay( self.activeOverlay, self.opacity );
 
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
-		self.endLoad( tileMesh );
+		self.endLoad( tile );
 
 	}
 
 }
 
-TiledTerrain.prototype.endLoad = function ( tileMesh ) {
+TiledTerrain.prototype.endLoad = function ( tile ) {
 
-	if ( tileMesh !== undefined ) this.loadedTiles.push( tileMesh );
+	if ( tile !== undefined ) this.loadedTiles.push( tile );
 
 	if ( --this.tilesLoading === 0 ) {
 
@@ -269,23 +261,27 @@ TiledTerrain.prototype.endLoad = function ( tileMesh ) {
 
 				parent = replaceTileMesh;
 
-			} else if ( tileMesh.parent === null ) {
+			} else if ( tile.parent === null ) {
 
 				parent = this;
 
 			}
 
-			if ( parent ) {
+			for ( var i = 0, l = loadedTiles.length; i < l; i++ ) {
+	
+				var tile = loadedTiles[ i ];
 
-				for ( var i = 0, l = loadedTiles.length; i < l; i++ ) {
+				if ( ! tile.parent ) parent.add( tile );
 
-					parent.add( loadedTiles[ i ] );
+				tile.replaced = false;
+				tile.evicted = false;
+				tile.isMesh = true;
 
-				}
+				Tile.liveTiles++;
 
 			}
 
-			if ( replaceTileMesh ) replaceTile.isMesh = false;
+			if ( replaceTileMesh ) replaceTileMesh.setReplaced();
 
 			this.terrainLoaded = true;
 
@@ -301,14 +297,6 @@ TiledTerrain.prototype.endLoad = function ( tileMesh ) {
 
 			if ( replaceTile ) replaceTile.canZoom = false;
 
-			// dispose of any resources leaked - theoretciallly there should not be any
-
-			for ( var i = 0, l = loadedTiles.length; i < l; i++ ) {
-
-				loadedTiles[ i ].dispose();
-
-			}
-
 		}
 
 		this.errors = 0;
@@ -321,10 +309,10 @@ TiledTerrain.prototype.endLoad = function ( tileMesh ) {
 	}
 
 }
-/*
+
 TiledTerrain.prototype.resurrectTile = function ( tile ) {
 
-	if ( tile.mesh ) {
+	if ( tile.isMesh ) {
 
 		console.log( "resurrecting the undead!" );
 		return;
@@ -335,21 +323,21 @@ TiledTerrain.prototype.resurrectTile = function ( tile ) {
 	this.loadTile( tile.x, tile.y, tile.resolution, tile );
 
 }
-*/
 
-TiledTerrain.prototype.tileArea = function ( limits, tileMesh, maxResolution ) {
+
+TiledTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
 
 	var coverage   = this.pickCoverage( limits, maxResolution );
 	var resolution = coverage.resolution;
 
-	if ( tileMesh && tileMesh.resolution == resolution ) {
+	if ( tile && tile.resolution == resolution ) {
 
 		console.log("BOING!");
 		return;
 
 	}
 
-	this.replaceTileMesh = tileMesh;
+	this.replaceTileMesh = tile;
 	this.currentLimits   = limits;
 
 	if ( this.initialResolution === undefined ) {
@@ -419,7 +407,9 @@ TiledTerrain.prototype.getOverlay = function () {
 
 }
 
-TiledTerrain.prototype.dispose = function () {
+TiledTerrain.prototype.removed = function () {
+
+	this.dying = true;
 
 	if ( this.tilesLoading > 0 ) return;
 
@@ -431,7 +421,7 @@ TiledTerrain.prototype.dispose = function () {
 
 	function _disposeTileMesh ( obj) {
 
-		if ( obj !== self ) obj.dispose( obj );
+		if ( obj !== self ) obj.removed( obj );
 
 	}
 
@@ -504,7 +494,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 	var candidateEvictTiles = [];
 	var resurrectTiles      = [];
 
-	var total, tileMesh, i;
+	var total, tile, i;
 
 	if ( this.tilesLoading > 0 ) return;
 
@@ -514,34 +504,14 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 	frustum.setFromMatrix( new Matrix4().multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
 
-	_searchTileTree( tileTree.getRootId() );
+	// scan scene graph of terrain
 
-	var evictCount     = candidateEvictTiles.length;
+	this.traverse( _scanTiles );
+
 	var resurrectCount = resurrectTiles.length;
 	var candidateCount = candidateTiles.length;
 
-	var EVICT_PRESSURE = 5;
-
-	if ( evictCount !== 0 ) {
-
-		candidateEvictTiles.sort( _sortByPressure );
-
-		for ( i = 0; i < evictCount; i++ ) {
-
-			var tile = candidateEvictTiles[i];
-
-			// heuristics for evicting tiles
-
-			var pressure = Tile.liveTiles / EVICT_PRESSURE;
-			var tilePressure = tile.evictionCount * tile.resolution / initialResolution;
-
-//			console.log( "ir", initialResolution, "p: ", pressure, " tp: ", tilePressure );
-
-			if ( pressure > tilePressure ) tile.remove( true );
-
-		}
-
-	}
+	_evictTiles();
 
 	if ( resurrectCount !== 0 ) {
 
@@ -565,11 +535,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 				tile = candidateTiles[ i ].tile;
 
-				if ( tile.canZoom && tile.resolution > maxResolution ) {
-
-					this.tileArea( tile.getBoundingBox(), tile );
-
-				}
+				if ( tile.resolution > maxResolution ) this.tileArea( tile.getBoundingBox(), tile );
 
 			}
 
@@ -577,72 +543,90 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 	}
 
+
 	return;
 
-	function _sortByPressure( tileA, tileB ) {
+	function _scanTiles( tile ) {
 
-		return tileA.evictionCount * tileA.resolution - tileB.evictionCount * tileB.resolution;
+		if ( tile === self ) return;
 
-	}
+		if ( frustum.intersectsBox( tile.getWorldBoundingBox() ) ) {
 
-	function _searchTileTree ( id ) {
+			// this tile intersects the screen
 
-		var nodes = tileTree.getChildData( id );
-		var node;
-		var tile;
+			if ( tile.children.length === 0 ) {
 
-		for ( var i = 0, l = nodes.length; i < l; i++ ) {
+				if ( !tile.isMesh  ) { 
 
-			node = nodes[i];
-			tile = node.name;
-
-			if ( frustum.intersectsBox( tile.getWorldBoundingBox() ) ) {
-
-				if ( node.noChildren === 0 ) {
-
-					if (!tile.mesh ) {
-
-						resurrectTiles.push( tile );
-
-					} else {
-
-						// this tile is live, consider subdividing
-						candidateTiles.push( { tile: tile, area: tile.projectedArea( camera ) } );
-
-					}
+					// this tile is not loaded, but has been previously
+					resurrectTiles.push( tile );
 
 				} else {
 
-					// resurrect existing tiles if possible
-
-					if (!tile.mesh && tile.evicted ) {
-
-						_flushTiles( node.id );
-						resurrectTiles.push( tile );
-
-					} else {
-
-						// do a full search for new tiles to add
-						_searchTileTree( node.id );
-					}
+					// this tile is loaded, maybe increase resolution?
+					if ( tile.canZoom ) candidateTiles.push( { tile: tile, area: tile.projectedArea( camera ) } );
 
 				}
 
 			} else {
 
-				_searchTileTree( node.id );
+				if ( !tile.isMesh && tile.evicted && !this.parent.resurrectionPending ) {
 
-				candidateEvictTiles.push( tile );
+					tile.resurrectionPending = true;
+					resurrectTiles.push( tile );
+
+				}
+
+				if ( tile.parent.ResurrectionPending && this.isMesh ) {
+
+					// remove tile - will be replaced with parent
+					console.log(" should not get here");
+
+				}
 
 			}
+
+		} else {
+
+			// off screen tile
+			if ( tile.isMesh ) candidateEvictTiles.push( tile );
 
 		}
 
 	}
 
-	function _flushTiles ( id ) {
+	function _evictTiles() {
 
-		tileTree.removeNodes( function ( x ) { x.name.remove(); }, tileTree.findById( id ) );
+		var EVICT_PRESSURE = 5;
+		var evictCount = candidateEvictTiles.length;
+		var i;
+
+		if ( evictCount !== 0 ) {
+
+			candidateEvictTiles.sort( _sortByPressure );
+
+			for ( i = 0; i < evictCount; i++ ) {
+
+				var tile = candidateEvictTiles[i];
+
+				// heuristics for evicting tiles - needs refinement
+
+				var pressure = Tile.liveTiles / EVICT_PRESSURE;
+				var tilePressure = tile.evictionCount * tile.resolution / initialResolution;
+
+				// console.log( "ir", initialResolution, "p: ", pressure, " tp: ", tilePressure );
+
+				if ( pressure > tilePressure ) tile.evict();
+
+			}
+
+		}
+
+		function _sortByPressure( tileA, tileB ) {
+
+			return tileA.evictionCount * tileA.resolution - tileB.evictionCount * tileB.resolution;
+
+		}
 
 	}
 

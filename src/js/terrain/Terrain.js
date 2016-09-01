@@ -1,6 +1,6 @@
 
 import { CommonTerrain } from './CommonTerrain.js';
-import { TileMesh } from './TileMesh.js';
+import { Tile } from './Tile.js';
 
 import {
 	MeshLambertMaterial,
@@ -13,7 +13,7 @@ function Terrain () {
 	Group.call( this );
 
 	this.type     = "CV.Terrain";
-	this.tileMesh = null;
+	this.tile = null;
 	this.overlay;
 
 	return this;
@@ -42,10 +42,10 @@ Terrain.prototype.addTile = function ( plane, terrainData, bitmap ) {
 
 	this.overlay = bitmap;
 
-	var tileMesh = new TileMesh().create( plane, terrainData );
+	var tile = new Tile().create( plane, terrainData );
 
-	this.add( tileMesh );
-	this.tileMesh = tileMesh;
+	this.add( tile );
+	this.tile = tile;
 
 	return this;
 
@@ -88,21 +88,21 @@ Terrain.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
 
 }
 
-Terrain.prototype.dispose = function () {
+Terrain.prototype.removed = function () {
 
-	//this.tileMesh.dispose();
+	this.tile.removed();
 
 }
 
 Terrain.prototype.setMaterial = function ( material ) {
 
-	this.tileMesh.setMaterial( material );
+	this.tile.setMaterial( material );
 
 }
 
 Terrain.prototype.setOpacity = function ( opacity ) {
 
-	this.tileMesh.setOpacity( opacity );
+	this.tile.setOpacity( opacity );
 	this.opacity = opacity;
 
 }

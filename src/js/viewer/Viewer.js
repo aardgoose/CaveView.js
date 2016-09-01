@@ -704,15 +704,14 @@ function clearView () {
 
 	HUD.setVisibility( false );
 
-	if ( terrain ) {
+	if ( region ) {
 
-		terrain.dying = true;
-		terrain.dispose(); // remove geometry information cached by renderer
+		region.remove( terrain );
+
+		if ( survey ) survey.dispose();
+		scene.dispose();
 
 	}
-
-	if ( survey ) survey.dispose();
-	if ( scene  ) scene.dispose();
 
 	controls.enabled = false;
 

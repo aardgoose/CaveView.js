@@ -5,12 +5,25 @@ import { Materials } from '../materials/Materials.js';
 import {
 	MeshLambertMaterial,
 	VertexColors, FrontSide,
+	Group
 } from '../../../../three.js/src/Three.js';
 
-function CommonTerrain () {};
+function CommonTerrain () {
+
+	Group.call( this );
+
+	this.addEventListener( "removed", function () { this.removed() } );
+
+};
+
+CommonTerrain.prototype = Object.create( Group.prototype );
+
+CommonTerrain.prototype.constructor = CommonTerrain;
 
 CommonTerrain.prototype.shadingMode;
 CommonTerrain.prototype.opacity = 0.5;
+
+CommonTerrain.prototype.removed = function () {};
 
 CommonTerrain.prototype.getOpacity = function () {
 

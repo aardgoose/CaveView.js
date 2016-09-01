@@ -170,18 +170,11 @@ function mapLoaded ( data, x, y ) {
 
 	postMessage( { status: "ok", json: json, x: x, y: y, boundingBox: boundingBox }, transferable );
 
-	// end the worker
-	close();
-
 }
 
 function mapError () {
 
 	postMessage( { status: "nomap" } );
-
-	// end the worker
-
-	close();
 
 }
 

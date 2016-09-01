@@ -684,8 +684,8 @@ function clearView () {
 	if ( region ) {
 
 		region.remove( terrain );
+		region.remove( survey  );
 
-		if ( survey ) survey.dispose();
 		scene.dispose();
 
 	}
@@ -750,6 +750,7 @@ function loadSurvey ( newSurvey ) {
 	var box = new BoxHelper( survey.limits, 0xffffff );
 
 	box.layers.set( FEATURE_BOX );
+	box.name = "survey-boundingbox";
 
 	survey.add( box );
 

@@ -2,6 +2,7 @@ import { CommonTerrain } from './CommonTerrain.js';
 import { Tile } from './Tile.js';
 import { TileSet } from './TileSet.js';
 import { HUD } from '../hud/HUD.js';
+import { WorkerPool } from '../workers/WorkerPool.js';
 import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants.js';
 
 import {
@@ -37,6 +38,8 @@ function TiledTerrain ( limits3, onLoaded ) {
 	this.initialResolution;
 	this.currentLimits;
 	this.dying = false;
+
+	this.workerPool = new WorkerPool( "CaveView/js/workers/tileWorker.js" );
 
 	if ( HUD !== undefined ) {
 
@@ -159,9 +162,9 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 		clip: clip
 	}
 
-	// start web worker and create new geometry in it.
+	// get a web worker from the pool and create new geometry in it
 
-	var tileLoader = new Worker( getEnvironmentValue( "cvDirectory", "" ) + "CaveView/js/workers/tileWorker.js" );
+	var tileLoader = this.workerPool.getWorker();
 
 	tileLoader.onmessage = _mapLoaded;
 
@@ -172,6 +175,10 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 	function _mapLoaded ( event ) {
 
 		var tileData = event.data;
+
+		// return worker to pool
+
+		self.workerPool.putWorker( tileLoader );
 
 		// the survey/region in the viewer may have changed while the height maos are being loaded.
 		// bail out in this case to avoid errors

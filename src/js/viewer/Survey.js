@@ -45,6 +45,7 @@ function Survey ( cave ) {
 	this.lodTargets = [];
 
 	this.name = cave.getName();
+	this.type = "CV.Survey";
 
 	var self = this;
 
@@ -57,14 +58,16 @@ function Survey ( cave ) {
 
 	_loadEntrances( cave.getEntrances() );
 
-	this.addEventListener( "dispose", _onSurveyDispose );
+	this.addEventListener( "removed", _onSurveyRemoved );
 
-	function _onSurveyDispose( event ) {
+	return;
+
+	function _onSurveyRemoved( event ) {
 
 		var survey = event.target;
 
-		survey.removeEventListener( 'dispose', _onSurveyDispose );
-	
+		survey.removeEventListener( 'removed', _onSurveyRemoved );
+
 		survey.traverse( _dispose );
 
 		function _dispose( object ) {
@@ -74,8 +77,6 @@ function Survey ( cave ) {
 		}
 
 	}
-
-	return;
 
 	function _loadScraps ( scrapList ) {
 
@@ -608,8 +609,7 @@ Survey.prototype.cutSection = function ( id ) {
 	// iterate through objects replace geometries and remove bounding boxes;
 
 	this.traverseReverse( _cutObject );
-
-	this.selectedBox = null;
+	this.clearSectionSelection();
 
 	// update stats
 
@@ -621,7 +621,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 	this.surveyTree = this.surveyTree.newTop( id );
 
-	this.selectSection( 0 );
+	this.clearSectionSelection();
 
 	return;
 
@@ -663,6 +663,10 @@ Survey.prototype.cutSection = function ( id ) {
 			obj.traverseReverse( _remove );
 
 			break;
+
+		default:
+
+			console.log("unexpected object type in survey cut", obj.type );
 
 		}
 
@@ -1441,6 +1445,7 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 			this.selectedBox = new BoxHelper( box, 0x0000ff );
 
 			this.selectedBox.layers.set( FEATURE_SELECTED_BOX );
+			this.selectedBox.name = "selectedBox";
 
 			this.add( this.selectedBox );
 

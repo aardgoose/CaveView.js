@@ -53,7 +53,6 @@ var mouse = new Vector2();
 var raycaster;
 var terrain = null;
 var directionalLight;
-var region;
 var survey;
 var limits;
 var stats  = {};
@@ -303,7 +302,7 @@ function setZScale ( scale ) {
 	var lastScale = Math.pow( 2, ( zScale - 0.5 ) * 4 );
 	var newScale  = Math.pow( 2, ( scale - 0.5 )  * 4 );
 
-	region.applyMatrix( new Matrix4().makeScale( 1, 1, newScale / lastScale ) );
+	survey.applyMatrix( new Matrix4().makeScale( 1, 1, newScale / lastScale ) );
 
 	zScale = scale;
 
@@ -633,7 +632,7 @@ function selectSection ( id ) {
 
 	}
 
-	boundingBox.applyMatrix4( region.matrixWorld );
+	boundingBox.applyMatrix4( survey.matrixWorld );
 
 	targetPOI = {
 		tAnimate: 0,
@@ -681,10 +680,10 @@ function clearView () {
 
 	HUD.setVisibility( false );
 
-	if ( region ) {
+	if ( survey ) {
 
-		region.remove( terrain );
-		region.remove( survey  );
+		survey.remove( terrain );
+		scene.remove( survey  );
 
 		scene.dispose();
 
@@ -696,7 +695,6 @@ function clearView () {
 	terrain         = null;
 	selectedSection = 0;
 	scene           = new Scene();
-	region          = new Group();
 	targetPOI       = null;
 
 	shadingMode = SHADING_HEIGHT;
@@ -738,14 +736,13 @@ function loadSurvey ( newSurvey ) {
 
 	stats = survey.getStats();
 
-	setScale( region );
+	setScale( survey );
 
 	terrain = survey.getTerrain();
 
 	scene.up = upAxis;
-	scene.add( region );
 
-	region.add( survey );
+	scene.add( survey );
 
 	var box = new BoxHelper( survey.limits, 0xffffff );
 
@@ -781,13 +778,13 @@ function loadSurvey ( newSurvey ) {
 		} else {
 
 			terrain.tileArea( survey.limits );
-			region.add( terrain );
+			survey.add( terrain );
 
 		}
 
 	} else {
 
-		region.add( terrain );
+		survey.add( terrain );
 		setTerrainShadingMode( terrainShadingMode );
 		setTimeout( renderDepthTexture, 0 ); // delay to after newCave event - after material cache is flushed
 

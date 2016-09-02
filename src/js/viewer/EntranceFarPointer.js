@@ -36,13 +36,13 @@ function FarPointers ( survey ) {
 
 	survey.add( this );
 
-	survey.addEventListener( "dispose", _onSurveyDispose );
+	survey.addEventListener( "removed", _onSurveyRemoved );
 
-	function _onSurveyDispose( event ) {
+	function _onSurveyRemoved( event ) {
 
 		var survey = event.target;
 
-		survey.removeEventListener( 'dispose', _onSurveyDispose );
+		survey.removeEventListener( 'removed', _onSurveyRemoved );
 
 		farPointers.geometry.dispose();
 		farPointers = null;

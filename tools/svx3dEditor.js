@@ -688,10 +688,12 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 			var entranceObj = {
 
-				name: label,
-				x: source.readInt32LE( pos + 0, true ) / 100,
-				y: source.readInt32LE( pos + 4, true ) / 100,
-				z: source.readInt32LE( pos + 8, true ) / 100
+				label: label,
+				position : {
+					x: source.readInt32LE( pos + 0, true ) / 100,
+					y: source.readInt32LE( pos + 4, true ) / 100,
+					z: source.readInt32LE( pos + 8, true ) / 100
+				}
 
 			};
 

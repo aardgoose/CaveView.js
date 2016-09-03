@@ -2,7 +2,7 @@
 import {
 	NORMAL, SPLAY, SURFACE,
 	FACE_SCRAPS, FACE_WALLS,
-	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX,
+	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED,
@@ -46,6 +46,7 @@ function Survey ( cave ) {
 
 	this.name = cave.getName();
 	this.type = "CV.Survey";
+	this.cutInProgress = false;
 
 	var self = this;
 
@@ -58,6 +59,8 @@ function Survey ( cave ) {
 
 	_loadEntrances( cave.getEntrances() );
 
+	this.setFeatureBox();
+
 	this.addEventListener( "removed", _onSurveyRemoved );
 
 	return;
@@ -65,6 +68,16 @@ function Survey ( cave ) {
 	function _onSurveyRemoved( event ) {
 
 		var survey = event.target;
+
+		if ( survey.cutInProgress ) {
+
+			// avoid disposal phase when a cut operation is taking place.
+			// this survey is being redisplayed.
+
+			survey.cutInProgress = false;
+			return;
+
+		}
 
 		survey.removeEventListener( 'removed', _onSurveyRemoved );
 
@@ -562,6 +575,16 @@ Survey.prototype.selectSection = function ( id ) {
 
 }
 
+Survey.prototype.setFeatureBox = function () {
+	var box = new BoxHelper( this.limits, 0xffffff );
+
+	box.layers.set( FEATURE_BOX );
+	box.name = "survey-boundingbox";
+
+	this.add( box );
+
+}
+
 Survey.prototype.getLegStats = function ( mesh ) {
 
 	if ( !mesh ) return;
@@ -619,9 +642,13 @@ Survey.prototype.cutSection = function ( id ) {
 
 	this.limits = this.getBounds();
 
+	this.setFeatureBox();
+
 	this.surveyTree = this.surveyTree.newTop( id );
 
 	this.clearSectionSelection();
+
+	this.cutInProgress = true;
 
 	return;
 

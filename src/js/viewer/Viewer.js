@@ -123,7 +123,11 @@ function init ( domID ) { // public method
 	// event handler
 	window.addEventListener( "resize", resize );
 
-	Object.assign( viewState, EventDispatcher.prototype );
+	Object.assign( viewState, EventDispatcher.prototype, {
+
+		refresh: renderView
+
+	} );
 
 	Object.defineProperty( viewState, "terrain", {
 		writeable: true,
@@ -266,6 +270,8 @@ function init ( domID ) { // public method
 	} );
 
 	Materials.initCache( viewState );
+
+	HUD.init( domID, renderer );
 
 	return;
 
@@ -920,7 +926,7 @@ var renderView = function () {
 		renderer.clear();
 		renderer.render( scene, camera );
 
-		HUD.renderHUD( renderer, camera );
+		HUD.renderHUD();
 
 		// update LOD Scene Objects
 

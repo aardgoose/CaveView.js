@@ -22,7 +22,6 @@ import {
 	EventDispatcher,
 	Vector2, Vector3, Matrix4, Quaternion, Euler,  Box3,
 	Scene, Group, Raycaster,
-	BoxHelper,
 	AmbientLight, DirectionalLight,
 	LinearFilter, NearestFilter, RGBFormat,
 	OrthographicCamera, PerspectiveCamera, 
@@ -589,13 +588,14 @@ function cutSection () {
 
 	if ( selectedSection === 0 ) return;
 
+	survey.remove( terrain );
 	survey.cutSection( selectedSection );
 
 	// grab a reference to prevent survey being destroyed in clearView()
 	var cutSurvey = survey;
 
 	// reset view
-	clearView()
+	clearView();
 
 	loadSurvey( cutSurvey );
 
@@ -683,7 +683,7 @@ function clearView () {
 	if ( survey ) {
 
 		survey.remove( terrain );
-		scene.remove( survey  );
+		scene.remove( survey );
 
 		scene.dispose();
 
@@ -743,13 +743,6 @@ function loadSurvey ( newSurvey ) {
 	scene.up = upAxis;
 
 	scene.add( survey );
-
-	var box = new BoxHelper( survey.limits, 0xffffff );
-
-	box.layers.set( FEATURE_BOX );
-	box.name = "survey-boundingbox";
-
-	survey.add( box );
 
 	// light the model for Lambert Shaded surface
 
@@ -1085,11 +1078,8 @@ function setScale ( obj ) {
 	// scale and translate model coordiniates into THREE.js world view
 	var scale = Math.min( width / range.x, height / range.y );
 
-	var scaleMatrix = new Matrix4().makeScale( scale, scale, scale );
-
-	scaleMatrix.multiply( new Matrix4().makeTranslation( -center.x, -center.y, -center.z ) );
-
-	obj.applyMatrix( scaleMatrix );
+	obj.scale.set( scale, scale, scale );
+	obj.position.set( -center.x * scale, -center.y * scale, -center.z * scale );
 
 	HUD.setScale( scale );
 

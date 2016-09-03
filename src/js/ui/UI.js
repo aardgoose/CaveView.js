@@ -10,7 +10,6 @@ import { ProgressBar } from './ProgressBar.js';
 import { CaveLoader } from '../loaders/CaveLoader.js';
 
 import { Viewer } from '../viewer/Viewer.js';
-import { HUD } from '../hud/HUD.js';
 
 var cave;
 var caveLoader;
@@ -102,8 +101,6 @@ function init ( domID ) { // public method
 	viewState.addEventListener( "change",  Page.handleChange );
 	viewState.addEventListener( "change",  handleChange );
 	viewState.addEventListener( "newCave", viewComplete );
-
-	HUD.init( domID );
 
 }
 

@@ -1,6 +1,6 @@
 
 import { getEnvironmentValue } from '../core/constants.js';
-import { Svx3dHandler } from './Svx3dHandler.js';
+import { Svx3dHandler } from './svx3dHandler.js';
 import { loxHandler } from './loxHandler.js';
 
 function CaveLoader ( callback, progress ) {

@@ -25,6 +25,7 @@ import {
  
 // THREE objects
 
+var renderer;
 var camera;
 var scene;
 
@@ -50,9 +51,10 @@ var viewState;
 var controls;
 var isVisible = true;
 
-function init ( domId ) {
+function init ( domId, viewRenderer ) {
 
 	container = document.getElementById( domId );
+	renderer = viewRenderer;
 	viewState = Viewer.getState;
 
 	var hHeight = container.clientHeight / 2;
@@ -195,7 +197,7 @@ function update () {
 
 }
 
-function renderHUD ( renderer, vCamera ) {
+function renderHUD () {
 
 	// render on screen
 	renderer.clearDepth();
@@ -314,6 +316,8 @@ function viewChanged ( event ) {
 		break;
 
 	}
+
+	viewState.refresh();	
 
 }
 

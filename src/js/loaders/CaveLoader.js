@@ -2,6 +2,7 @@
 import { getEnvironmentValue } from '../core/constants.js';
 import { Svx3dHandler } from './svx3dHandler.js';
 import { loxHandler } from './loxHandler.js';
+import { RegionHandler } from './RegionHandler.js';
 
 function CaveLoader ( callback, progress ) {
 
@@ -36,6 +37,12 @@ CaveLoader.prototype.parseName = function ( name ) {
 	case 'lox':
 
 		this.dataType = "arraybuffer";
+
+		break;
+
+	case 'reg':
+
+		this.dataType = "json";
 
 		break;
 
@@ -169,6 +176,12 @@ CaveLoader.prototype.callHandler = function( fileName, data) {
 	case 'lox':
 
 		handler = new loxHandler( fileName, data );
+
+		break;
+
+	case 'reg':
+
+		handler = new RegionHandler( fileName, data );
 
 		break;
 

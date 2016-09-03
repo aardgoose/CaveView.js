@@ -1,24 +1,20 @@
-	var loader = new RegionLoader( _regionLoaded );
-
-	loader.load( "region.js" );
 
 import { Object3D } from '../../../../three.js/src/Three.js';
 import { Marker } from './Marker.js';
 
-function Region( regionData ) {
+function Region( regionHandler ) {
 
 	Object3D.call( this );
 
-	console.dir( regionData );
+	var region = regionHandler.getData();
 
-	var caves = regionData.caves;
-
-	if ( caves === undefined ) { 
+	if ( region.caves === undefined ) { 
 
 		console.log("no caves in region"); 
 		return;
 
 	}
+	var caves = region.caves;
 
 	console.dir( caves );
 
@@ -32,7 +28,7 @@ function Region( regionData ) {
 
 			var entrance = cave.entrances[i];
 
-			region.add( new Marker( region, entrance ) );
+			this.add( new Marker( this, entrance ) );
 
 		}
 
@@ -46,4 +42,5 @@ Region.prototype.constructor = Region;
 
 Object.assign( Region.prototype, Object3D.prototype );
 
+export { Region };
 

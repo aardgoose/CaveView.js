@@ -14,7 +14,6 @@ import  {
 import { HUD } from '../hud/HUD.js';
 import { Materials } from '../materials/Materials.js';
 import { Survey } from './Survey.js';
-import { Region } from './Region.js';
 import { TiledTerrain } from '../terrain/TiledTerrain.js';
 
 import { OrbitControls } from '../core/OrbitControls.js';
@@ -733,15 +732,7 @@ function loadCave ( cave ) {
 
 	}
 
-	if ( cave.isRegion ) {
-
-		loadSurvey( new Region( cave ) );
-
-	} else {
-
-		loadSurvey( new Survey( cave ) );
-
-	}
+	loadSurvey( new Survey( cave ) );
 
 }
 
@@ -897,11 +888,18 @@ function entranceClick ( event ) {
 
 		activePOIPosition = controls.target;
 
-		controls.enabled = false;
-
-		startAnimation( targetPOI.tAnimate + 1 );
-
 		console.log( entrance.type, entrance.name );
+
+		if ( survey.isRegion === true ) {
+
+			survey.loadFromEntrance( entrance );
+
+		} else {
+
+			controls.enabled = false;
+			startAnimation( targetPOI.tAnimate + 1 );
+
+		}
 
 	}
 

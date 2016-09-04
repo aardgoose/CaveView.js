@@ -11,6 +11,8 @@ function Svx3dHandler ( fileName, dataStream ) {
 	this.surface    = [];
 	this.xGroups    = [];
 	this.surveyTree = new Tree();
+	this.region     = false;
+
 	var surveyTree  = this.surveyTree;
 
 	var source    = dataStream;  // file data as arrrayBuffer

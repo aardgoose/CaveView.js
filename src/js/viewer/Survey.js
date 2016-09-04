@@ -10,9 +10,11 @@ import {
 } from '../core/constants.js';
 
 import { ColourCache } from '../core/ColourCache.js';
+import { Tree } from '../core/Tree.js';
 import { Materials } from '../materials/Materials.js';
 import { Marker } from './Marker.js';
 import { Terrain } from '../terrain/Terrain.js';
+import { CaveLoader } from '../loaders/CaveLoader.js';
 
 import {
 	Vector3, Face3, Color, Box3,
@@ -46,22 +48,32 @@ function Survey ( cave ) {
 	this.name = cave.getName();
 	this.type = "CV.Survey";
 	this.cutInProgress = false;
+	this.stats = [];
+	this.terrain = null;
+	this.isRegion = cave.isRegion;
 
 	var self = this;
 
-	if ( cave.region === true ) {
+	if ( this.isRegion === true ) {
 
 		this.surveyTree = new Tree();
+		this.stats[ NORMAL ] = {};
+
+		_loadEntrances( cave.getEntrances() );
+
+		this.limits = cave.getLimits();
 
 	} else { 
 
 		this.loadCave( cave );
 		this.surveyTree = cave.getSurveyTree();
+
+		_loadEntrances( cave.getEntrances() );
+
+		this.limits = this.getBounds();
+
 	}
 
-	_loadEntrances( cave.getEntrances() );
-
-	this.limits = this.getBounds();
 	this.setFeatureBox();
 
 	this.addEventListener( "removed", _onSurveyRemoved );
@@ -529,6 +541,25 @@ Survey.prototype.loadCave = function ( cave ) {
 		self.terrain =  new Terrain().addTile( plane, cave.getTerrainData(), cave.getTerrainBitmap() );
 
 		return;
+
+	}
+
+}
+
+Survey.prototype.loadFromEntrance = function ( entrance ) {
+
+	var self = this;
+	var name = entrance.name.split( "." )[1] + ".3d";
+
+	console.log( "load: ", name );
+
+	var loader = new CaveLoader( _caveLoaded );
+
+	loader.loadURL( name );
+
+	function _caveLoaded( cave ) {
+
+		self.loadCave( cave );
 
 	}
 

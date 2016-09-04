@@ -11,7 +11,7 @@ function Svx3dHandler ( fileName, dataStream ) {
 	this.surface    = [];
 	this.xGroups    = [];
 	this.surveyTree = new Tree();
-	this.region     = false;
+	this.isRegion   = false;
 
 	var surveyTree  = this.surveyTree;
 

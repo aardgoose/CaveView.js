@@ -34,7 +34,6 @@ function Survey ( cave ) {
 
 	Object3D.call( this );
 
-	this.surveyTree = cave.getSurveyTree();
 	this.selectedSectionIds = new Set();
 	this.selectedSection = 0;
 	this.selectedBox = null;
@@ -50,15 +49,19 @@ function Survey ( cave ) {
 
 	var self = this;
 
-	_loadSegments( cave.getLineSegments() );
-	_loadScraps( cave.getScraps() );
-	_loadCrossSections( cave.getCrossSections() );
-	_loadTerrain( cave );
+	if ( cave.region === true ) {
 
-	this.limits = this.getBounds();
+		this.surveyTree = new Tree();
+
+	} else { 
+
+		this.loadCave( cave );
+		this.surveyTree = cave.getSurveyTree();
+	}
 
 	_loadEntrances( cave.getEntrances() );
 
+	this.limits = this.getBounds();
 	this.setFeatureBox();
 
 	this.addEventListener( "removed", _onSurveyRemoved );
@@ -90,6 +93,54 @@ function Survey ( cave ) {
 		}
 
 	}
+
+	function _loadEntrances ( entranceList ) {
+
+		var l = entranceList.length;
+
+		if ( l === 0 ) return null;
+
+		var entrances = new Group();
+
+		entrances.name = "CV.Survey:entrances";
+		entrances.layers.set( FEATURE_ENTRANCES );
+
+		self.add( entrances );
+		self.layers.enable( FEATURE_ENTRANCES );
+
+		for ( var i = 0; i < l; i++ ) {
+
+			var entrance = entranceList[ i ];
+
+			var marker = new Marker( self, entrance );
+
+			entrances.add( marker );
+
+			marker.userData = entrance.survey;
+
+			self.mouseTargets.push( marker );
+			self.lodTargets.push( marker );
+
+		}
+
+		return;
+
+	}
+
+}
+
+Survey.prototype = Object.create( Object3D.prototype );
+
+Survey.prototype.constructor = Survey;
+
+Survey.prototype.loadCave = function ( cave ) {
+
+	var self = this;
+
+	_loadSegments( cave.getLineSegments() );
+	_loadScraps( cave.getScraps() );
+	_loadCrossSections( cave.getCrossSections() );
+	_loadTerrain( cave );
 
 	function _loadScraps ( scrapList ) {
 
@@ -339,39 +390,6 @@ function Survey ( cave ) {
 
 	}
 
-	function _loadEntrances ( entranceList ) {
-
-		var l = entranceList.length;
-
-		if ( l === 0 ) return null;
-
-		var entrances = new Group();
-
-		entrances.name = "CV.Survey:entrances";
-		entrances.layers.set( FEATURE_ENTRANCES );
-
-		self.add( entrances );
-		self.layers.enable( FEATURE_ENTRANCES );
-
-		for ( var i = 0; i < l; i++ ) {
-
-			var entrance = entranceList[ i ];
-
-			var marker = new Marker( self, entrance );
-
-			entrances.add( marker );
-
-			marker.userData = entrance.survey;
-
-			self.mouseTargets.push( marker );
-			self.lodTargets.push( marker );
-
-		}
-
-		return;
-
-	}
-
 	function _loadSegments ( srcSegments ) {
 
 		var legGeometries = [];
@@ -516,10 +534,6 @@ function Survey ( cave ) {
 
 }
 
-Survey.prototype = Object.create( Object3D.prototype );
-
-Survey.prototype.constructor = Survey;
-
 Survey.prototype.getTerrain = function () {
 
 	return this.terrain;
@@ -576,6 +590,7 @@ Survey.prototype.selectSection = function ( id ) {
 }
 
 Survey.prototype.setFeatureBox = function () {
+
 	var box = new BoxHelper( this.limits, 0xffffff );
 
 	box.layers.set( FEATURE_BOX );

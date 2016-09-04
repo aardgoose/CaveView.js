@@ -14,6 +14,7 @@ function loxHandler  ( fileName, dataStream ) {
 	this.lineSegments      = [];
 	this.sections          = new Map();
 	this.surveyTree        = new Tree();
+	this.region			   = false;
 
 	var lineSegments = [];
 	var xSects       = [];

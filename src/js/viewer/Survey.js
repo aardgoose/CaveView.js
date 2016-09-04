@@ -14,7 +14,7 @@ import { Tree } from '../core/Tree.js';
 import { Materials } from '../materials/Materials.js';
 import { Marker } from './Marker.js';
 import { Terrain } from '../terrain/Terrain.js';
-import { CaveLoader } from '../loaders/CaveLoader.js';
+import { CaveLoader } from '../loaders /CaveLoader.js';
 
 import {
 	Vector3, Face3, Color, Box3,

@@ -604,7 +604,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 }
 
-Survey.prototype.loadFromEntrance = function ( entrance ) {
+Survey.prototype.loadFromEntrance = function ( entrance, loadedCallback ) {
 
 	var self = this;
 	var name = entrance.name.split( "." )[1] + ".3d";
@@ -633,6 +633,8 @@ Survey.prototype.loadFromEntrance = function ( entrance ) {
 		self.workerPool.putWorker( worker );
 
 		self.loadCave( surveyData.survey );
+
+		loadedCallback();
 
 	}
 

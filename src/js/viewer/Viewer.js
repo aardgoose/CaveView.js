@@ -876,7 +876,7 @@ function entranceClick ( event ) {
 		var entrance = intersects[ 0 ].object;
 		var position = entrance.getWorldPosition();
 
-		targetPOI = {
+/*		targetPOI = {
 			tAnimate:    80,
 			object:      entrance,
 			position:    position,
@@ -885,14 +885,14 @@ function entranceClick ( event ) {
 			boundingBox: new Box3().expandByPoint( entrance.position ),
 			quaternion:  new Quaternion()
 		};
-
+*/
 		activePOIPosition = controls.target;
 
 		console.log( entrance.type, entrance.name );
 
 		if ( survey.isRegion === true ) {
 
-			survey.loadFromEntrance( entrance );
+			survey.loadFromEntrance( entrance, _loaded );
 
 		} else {
 
@@ -900,6 +900,14 @@ function entranceClick ( event ) {
 			startAnimation( targetPOI.tAnimate + 1 );
 
 		}
+
+	}
+
+	function _loaded () {
+
+		setShadingMode( shadingMode );
+
+		renderView();
 
 	}
 

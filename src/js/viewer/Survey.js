@@ -14,7 +14,7 @@ import { Tree } from '../core/Tree.js';
 import { Materials } from '../materials/Materials.js';
 import { Marker } from './Marker.js';
 import { Terrain } from '../terrain/Terrain.js';
-import { CaveLoader } from '../loaders /CaveLoader.js';
+import { CaveLoader } from '../loaders/CaveLoader.js';
 
 import {
 	Vector3, Face3, Color, Box3,
@@ -51,6 +51,7 @@ function Survey ( cave ) {
 	this.stats = [];
 	this.terrain = null;
 	this.isRegion = cave.isRegion;
+	this.legMeshes = [];
 
 	var self = this;
 
@@ -407,14 +408,15 @@ Survey.prototype.loadCave = function ( cave ) {
 		var legGeometries = [];
 		var legStats      = [];
 		var legRuns       = [];
-
+		var legMeshes     = self.legMeshes;
+	
 		legGeometries[ NORMAL  ] = new Geometry();
 		legGeometries[ SURFACE ] = new Geometry();
 		legGeometries[ SPLAY   ] = new Geometry();
 
-		legRuns[ NORMAL  ] = [];
-		legRuns[ SURFACE ] = [];
-		legRuns[ SPLAY   ] = [];
+		legRuns[ NORMAL  ] = ( legMeshes[ NORMAL  ] === undefined ) ? [] : legMeshes[ NORMAL  ].userData;
+		legRuns[ SURFACE ] = ( legMeshes[ SURFACE ] === undefined ) ? [] : legMeshes[ SURFACE ].userData;
+		legRuns[ SPLAY   ] = ( legMeshes[ SPLAY   ] === undefined ) ? [] : legMeshes[ SPLAY   ].userData;
 
 		var geometry;
 
@@ -487,7 +489,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
-		_addModelSegments( NORMAL  , "CV.Survey:legs:cave:cave",          LEG_CAVE );
+		_addModelSegments( NORMAL  , "CV.Survey:legs:cave:cave",       LEG_CAVE );
 		_addModelSegments( SURFACE , "CV.Survey:legs:surface:surface", LEG_SURFACE );
 		_addModelSegments( SPLAY   , "CV.Survey:legs:cave:splay",      LEG_SPLAY );
 
@@ -497,22 +499,48 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		function _addModelSegments ( tag, name, layerTag ) {
 
-			var geometry = legGeometries[ tag ];
+			var newGeometry = legGeometries[ tag ];
+			var mesh;
 
-			if ( geometry.vertices.length === 0 ) return;
+			if ( newGeometry.vertices.length === 0 ) return;
 
-			geometry.computeBoundingBox();
-			geometry.name = name + ":g";
+			if ( legMeshes[ tag ] === undefined ) {
 
-			var mesh = new LineSegments( geometry, new LineBasicMaterial( { color: 0x888888 } ) );
+				newGeometry.name = name + ":g";
+				newGeometry.computeBoundingBox();
 
-			mesh.name = name;
-			mesh.userData = legRuns[ tag ];
+				mesh = new LineSegments( newGeometry, new LineBasicMaterial( { color: 0x888888 } ) );
 
-			mesh.layers.set( layerTag );
+				mesh.name = name;
+				mesh.userData = legRuns[ tag ];
 
-			self.add( mesh );
-			self.layers.enable( layerTag );
+				mesh.layers.set( layerTag );
+
+				self.add( mesh );
+				self.layers.enable( layerTag );
+
+				legMeshes[ tag ] = mesh;
+
+			} else {
+
+				mesh = legMeshes[ tag ];
+
+				var geometry = mesh.geometry;
+
+				mesh.geometry = geometry.clone();
+
+				geometry.dispose();
+
+				geometry = mesh.geometry;
+
+				geometry.merge( newGeometry );
+
+				geometry.verticesNeedUpdate = true;
+				geometry.colorsNeedUpdate = true;
+
+				geometry.computeBoundingBox();
+
+			}
 
 			legStats[ tag ] = self.getLegStats( mesh );
 
@@ -550,6 +578,10 @@ Survey.prototype.loadFromEntrance = function ( entrance ) {
 
 	var self = this;
 	var name = entrance.name.split( "." )[1] + ".3d";
+
+	if ( entrance.loaded ) return;
+
+	entrance.loaded = true;
 
 	console.log( "load: ", name );
 

@@ -162,7 +162,8 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadScraps ( scrapList ) {
 
-		var geometry     = new Geometry();
+		var geometry = ( self.scrapMesh === null ) ? new Geometry() : _replaceGeometry( self.scrapMesh );
+
 		var vertexOffset = 0;
 		var facesOffset  = 0;
 		var faceRuns     = [];
@@ -176,7 +177,6 @@ Survey.prototype.loadCave = function ( cave ) {
 			_loadScrap(  scrapList[i] );
 
 		}
-
 
 		if ( self.scrapMesh === undefined ) {
 
@@ -196,8 +196,6 @@ Survey.prototype.loadCave = function ( cave ) {
 		} else {
 
 			mesh = self.scrapMesh;
-
-			geometry = _spliceGeometry( mesh, geometry );
 
 			mesh.userData = mesh.userData.concat( faceRuns );
 
@@ -241,7 +239,8 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadCrossSections ( crossSectionGroups ) {
 
-		var geometry = new Geometry();
+		var geometry = ( self.crossSectionMesh === null ) ? new Geometry() : _replaceGeometry( self.crossSectionMesh );
+
 		var faces    = geometry.faces;
 		var vertices = geometry.vertices;
 
@@ -394,9 +393,7 @@ Survey.prototype.loadCave = function ( cave ) {
 		} else {
 
 			mesh = self.crossSectionMesh;
-
 			mesh.userData = mesh.userData.concat( faceRuns );
-			geometry = _spliceGeometry( self.crossSectionMesh, geometry );
 
 		}
 
@@ -441,10 +438,10 @@ Survey.prototype.loadCave = function ( cave ) {
 		var legStats      = [];
 		var legRuns       = [];
 		var legMeshes     = self.legMeshes;
-	
-		legGeometries[ NORMAL  ] = new Geometry();
-		legGeometries[ SURFACE ] = new Geometry();
-		legGeometries[ SPLAY   ] = new Geometry();
+
+		legGeometries[ NORMAL  ] = ( legMeshes[ NORMAL  ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ NORMAL  ] );
+		legGeometries[ SURFACE ] = ( legMeshes[ SURFACE ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ SURFACE ] );
+		legGeometries[ SPLAY   ] = ( legMeshes[ SPLAY   ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ SPLAY   ] );
 
 		legRuns[ NORMAL  ] = ( legMeshes[ NORMAL  ] === undefined ) ? [] : legMeshes[ NORMAL  ].userData;
 		legRuns[ SURFACE ] = ( legMeshes[ SURFACE ] === undefined ) ? [] : legMeshes[ SURFACE ].userData;
@@ -558,8 +555,6 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				mesh.userData = mesh.userData.concat( legRuns[ tag ] );
 
-				geometry = _spliceGeometry( mesh, geometry );
-
 			}
 
 			geometry.computeBoundingBox();
@@ -594,18 +589,16 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	}
 
-	function _spliceGeometry( mesh, geometry ) {
+	function _replaceGeometry( mesh ) {
 
-			var oldGeometry = mesh.geometry;
-			var newGeometry = oldGeometry.clone();
+		var oldGeometry = mesh.geometry;
+		var newGeometry = oldGeometry.clone();
 
-			newGeometry.merge( geometry );
+		mesh.geometry = newGeometry;
 
-			mesh.geometry = newGeometry;
+		oldGeometry.dispose();
 
-			oldGeometry.dispose();
-
-			return newGeometry;
+		return newGeometry;
 
 	}
 
@@ -1527,7 +1520,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 }
 
 Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
-
+console.log("S");
 	// pNormal = normal of reference plane in model space 
 	var geometry   = mesh.geometry;
 	var vertexRuns = mesh.userData;
@@ -1544,9 +1537,10 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 	var k;
 
-	var selectedSectionIds= this.selectedSectionIds;
+	var selectedSectionIds = this.selectedSectionIds;
 
-	if (selectedSectionIds.size && vertexRuns) {
+	if ( selectedSectionIds.size && vertexRuns ) {
+console.log("S1");
 
 		for ( var run = 0, l = vertexRuns.length; run < l; run++ ) {
 
@@ -1605,6 +1599,7 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 		}
 
 	} else {
+console.log("S2");
 
 		for ( var v = 0, l = geometry.vertices.length / 2; v < l; v++ ) {
 

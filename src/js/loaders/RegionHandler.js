@@ -1,6 +1,7 @@
 
 import { getEnvironmentValue } from '../core/constants.js';
-import { Box3, Vector3 } from '../../../../three.js/src/Three.js';
+import { Vector3 } from '../../../../three.js/src/math/Vector3.js';
+import { Box3    } from '../../../../three.js/src/math/Box3.js';
 
 function RegionHandler ( filename, dataStream ) {
 
@@ -12,7 +13,7 @@ function RegionHandler ( filename, dataStream ) {
 
 RegionHandler.prototype.constructor = RegionHandler;
 
-RegionHandler.prototype.getData = function () {
+RegionHandler.prototype.getSurvey = function () {
 
 	return this.data;
 

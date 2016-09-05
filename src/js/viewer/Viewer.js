@@ -318,7 +318,7 @@ function setZScale ( scale ) {
 function setCursorHeight( x ) {
 
 	cursorHeight = x;
-	this.dispatchEvent( { type: "cursorChange", name: "cursorHeight" } );
+	viewState.dispatchEvent( { type: "cursorChange", name: "cursorHeight" } );
 
 	renderView();
 

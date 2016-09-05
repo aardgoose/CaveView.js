@@ -499,6 +499,18 @@ loxHandler.prototype.getName = function () {
 
 }
 
+loxHandler.prototype.getSurvey = function () {
+
+	return {
+		title: this.fileName,
+		lineSegments: this.lineSegments,
+		crossSections: [],
+		scraps: this.scraps,
+		entrances: this.entrances,
+		hasTerrain: false
+	}
+
+}
 export { loxHandler };
 
 // EOF

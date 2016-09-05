@@ -9,12 +9,14 @@ import {
 	upAxis
 } from '../core/constants.js';
 
+import { getEnvironmentValue } from '../core/constants.js';
 import { ColourCache } from '../core/ColourCache.js';
 import { Tree } from '../core/Tree.js';
 import { Materials } from '../materials/Materials.js';
 import { Marker } from './Marker.js';
 import { Terrain } from '../terrain/Terrain.js';
 import { CaveLoader } from '../loaders/CaveLoader.js';
+import { WorkerPool } from '../workers/WorkerPool.js';
 
 import {
 	Vector3, Face3, Color, Box3,
@@ -39,6 +41,8 @@ function Survey ( cave ) {
 	this.selectedSectionIds = new Set();
 	this.selectedSection = 0;
 	this.selectedBox = null;
+	this.scrapMesh = null;
+	this.crossSectionMesh = null;
 
 	// objects targetted by raycasters and objects with variable LOD
 
@@ -52,6 +56,7 @@ function Survey ( cave ) {
 	this.terrain = null;
 	this.isRegion = cave.isRegion;
 	this.legMeshes = [];
+	this.workerPool = new WorkerPool( "CaveView/js/workers/caveWorker.js" );
 
 	var self = this;
 
@@ -66,7 +71,7 @@ function Survey ( cave ) {
 
 	} else { 
 
-		this.loadCave( cave );
+		this.loadCave( cave.getSurvey() );
 		this.surveyTree = cave.getSurveyTree();
 
 		_loadEntrances( cave.getEntrances() );
@@ -150,9 +155,9 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	var self = this;
 
-	_loadSegments( cave.getLineSegments() );
-	_loadScraps( cave.getScraps() );
-	_loadCrossSections( cave.getCrossSections() );
+	_loadSegments( cave.lineSegments );
+	_loadScraps( cave.scraps );
+	_loadCrossSections( cave.crossSections );
 	_loadTerrain( cave );
 
 	function _loadScraps ( scrapList ) {
@@ -172,19 +177,34 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
+
+		if ( self.scrapMesh === undefined ) {
+
+			geometry.name = "CV.Survey:faces:scraps:g";
+
+			var mesh = new Mesh( geometry );
+
+			mesh.name = "CV.Survey:faces:scraps";
+			mesh.layers.set( FACE_SCRAPS );
+			mesh.userData = faceRuns;
+
+			self.add( mesh );
+			self.layers.enable( FACE_SCRAPS );
+
+			self.scrapMesh = mesh;
+
+		} else {
+
+			mesh = self.scrapMesh;
+
+			geometry = _spliceGeometry( mesh, geometry );
+
+			mesh.userData = mesh.userData.concat( faceRuns );
+
+		}
+
 		geometry.computeFaceNormals();
 		geometry.computeBoundingBox();
-
-		geometry.name = "CV.Survey:faces:scraps:g";
-
-		var mesh = new Mesh( geometry );
-
-		mesh.name = "CV.Survey:faces:scraps";
-		mesh.layers.set( FACE_SCRAPS );
-		mesh.userData = faceRuns;
-
-		self.add( mesh );
-		self.layers.enable( FACE_SCRAPS );
 
 		return;
 
@@ -356,21 +376,33 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
+		if ( self.crossSectionMesh === null ) {
+
+			geometry.name = "CV.Survey:faces:walls:g";
+
+			var mesh = new Mesh( geometry, new MeshBasicMaterial( { color: 0xff0000, vertexColors: NoColors, side: FrontSide } ) );
+
+			mesh.userData = faceRuns;
+			mesh.name = "CV.Survey:faces:walls";
+			mesh.layers.set( FACE_WALLS );
+
+			self.add( mesh );
+			self.layers.enable( FACE_WALLS );
+
+			self.crossSectionMesh = mesh;
+
+		} else {
+
+			mesh = self.crossSectionMesh;
+
+			mesh.userData = mesh.userData.concat( faceRuns );
+			geometry = _spliceGeometry( self.crossSectionMesh, geometry );
+
+		}
+
 		geometry.computeFaceNormals();
 		geometry.computeVertexNormals();
 		geometry.computeBoundingBox();
-
-		geometry.name = "CV.Survey:faces:walls:g";
-
-		var mesh = new Mesh( geometry, new MeshBasicMaterial( { color: 0xff0000, vertexColors: NoColors, side: FrontSide } ) );
-
-		mesh.userData = faceRuns;
-		mesh.name = "CV.Survey:faces:walls";
-		mesh.renderOrder = 100;
-		mesh.layers.set( FACE_WALLS );
-
-		self.add( mesh );
-		self.layers.enable( FACE_WALLS );
 
 		return;
 
@@ -499,17 +531,16 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		function _addModelSegments ( tag, name, layerTag ) {
 
-			var newGeometry = legGeometries[ tag ];
+			var geometry = legGeometries[ tag ];
 			var mesh;
 
-			if ( newGeometry.vertices.length === 0 ) return;
+			if ( geometry.vertices.length === 0 ) return;
 
 			if ( legMeshes[ tag ] === undefined ) {
 
-				newGeometry.name = name + ":g";
-				newGeometry.computeBoundingBox();
+				geometry.name = name + ":g";
 
-				mesh = new LineSegments( newGeometry, new LineBasicMaterial( { color: 0x888888 } ) );
+				mesh = new LineSegments( geometry, new LineBasicMaterial( { color: 0x88FF88 } ) );
 
 				mesh.name = name;
 				mesh.userData = legRuns[ tag ];
@@ -525,22 +556,13 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				mesh = legMeshes[ tag ];
 
-				var geometry = mesh.geometry;
+				mesh.userData = mesh.userData.concat( legRuns[ tag ] );
 
-				mesh.geometry = geometry.clone();
-
-				geometry.dispose();
-
-				geometry = mesh.geometry;
-
-				geometry.merge( newGeometry );
-
-				geometry.verticesNeedUpdate = true;
-				geometry.colorsNeedUpdate = true;
-
-				geometry.computeBoundingBox();
+				geometry = _spliceGeometry( mesh, geometry );
 
 			}
+
+			geometry.computeBoundingBox();
 
 			legStats[ tag ] = self.getLegStats( mesh );
 
@@ -550,14 +572,14 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadTerrain ( cave ) {
 
-		var dim = cave.getTerrainDimensions();
-
-		if ( dim.lines === 0 ) {
+		if ( cave.hasTerrain === false ) {
 
 			self.terrain = null;
 			return;
 
 		}
+
+		var dim = cave.getTerrainDimensions();
 
 		var width  = ( dim.samples - 1 ) * dim.xDelta;
 		var height = ( dim.lines   - 1 ) * dim.yDelta;
@@ -572,12 +594,28 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	}
 
+	function _spliceGeometry( mesh, geometry ) {
+
+			var oldGeometry = mesh.geometry;
+			var newGeometry = oldGeometry.clone();
+
+			newGeometry.merge( geometry );
+
+			mesh.geometry = newGeometry;
+
+			oldGeometry.dispose();
+
+			return newGeometry;
+
+	}
+
 }
 
 Survey.prototype.loadFromEntrance = function ( entrance ) {
 
 	var self = this;
 	var name = entrance.name.split( "." )[1] + ".3d";
+	var prefix = getEnvironmentValue( "surveyDirectory", "" );
 
 	if ( entrance.loaded ) return;
 
@@ -585,13 +623,23 @@ Survey.prototype.loadFromEntrance = function ( entrance ) {
 
 	console.log( "load: ", name );
 
-	var loader = new CaveLoader( _caveLoaded );
+	var worker = this.workerPool.getWorker();
 
-	loader.loadURL( name );
+	worker.onmessage = _surveyLoaded;
 
-	function _caveLoaded( cave ) {
+	worker.postMessage( prefix + name );
 
-		self.loadCave( cave );
+	return;
+
+	function _surveyLoaded ( event ) {
+
+		var surveyData = event.data;
+
+		console.log( surveyData ); // FIXME check for ok;
+
+		self.workerPool.putWorker( worker );
+
+		self.loadCave( surveyData.survey );
 
 	}
 

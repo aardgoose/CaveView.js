@@ -683,6 +683,19 @@ Svx3dHandler.prototype.getName = function () {
 
 }
 
+Svx3dHandler.prototype.getSurvey = function () {
+
+	return {
+		title: this.fileName,
+		lineSegments: this.getLineSegments(),
+		crossSections: this.xGroups,
+		scraps: [],
+		entrances: this.entrances,
+		hasTerrain: false
+	}
+
+}
+
 export { Svx3dHandler };
 
 // EOF

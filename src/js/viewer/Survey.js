@@ -71,10 +71,12 @@ function Survey ( cave ) {
 
 	} else { 
 
-		this.loadCave( cave.getSurvey() );
+		var survey = cave.getSurvey();
+
+		this.loadCave( survey );
 		this.surveyTree = cave.getSurveyTree();
 
-		_loadEntrances( cave.getEntrances() );
+		_loadEntrances( survey.entrances );
 
 		this.limits = this.getBounds();
 
@@ -96,6 +98,7 @@ function Survey ( cave ) {
 			// this survey is being redisplayed.
 
 			survey.cutInProgress = false;
+
 			return;
 
 		}
@@ -163,9 +166,11 @@ Survey.prototype.loadCave = function ( cave ) {
 	function _loadScraps ( scrapList ) {
 
 		var geometry = ( self.scrapMesh === null ) ? new Geometry() : _replaceGeometry( self.scrapMesh );
+		var vertices = geometry.vertices;
+		var faces    = geometry.faces;
 
-		var vertexOffset = 0;
-		var facesOffset  = 0;
+		var vertexOffset = vertices.length
+		var facesOffset  = faces.length;
 		var faceRuns     = [];
 
 		var l = scrapList.length;
@@ -178,7 +183,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
-		if ( self.scrapMesh === undefined ) {
+		if ( self.scrapMesh === null ) {
 
 			geometry.name = "CV.Survey:faces:scraps:g";
 
@@ -244,14 +249,14 @@ Survey.prototype.loadCave = function ( cave ) {
 		var faces    = geometry.faces;
 		var vertices = geometry.vertices;
 
-		var v = 0; // vertex counter
+		var v = vertices.length;
 		var l = crossSectionGroups.length;
 
 		// survey to face index mapping 
 		var currentSurvey;
 		var faceRuns = [];
 		var faceSet  = 0;
-		var lastEnd  = 0;
+		var lastEnd  = faces.length;
 		var l1, r1, u1, d1, l2, r2, u2, d2;
 
 		var run = null;
@@ -288,7 +293,7 @@ Survey.prototype.loadCave = function ( cave ) {
 						faces.push( new Face3( u2, r2, d2 ) );
 						faces.push( new Face3( u2, d2, l2 ) );
 
-						var lastEnd = lastEnd + faceSet * 8 + 4;
+						lastEnd = lastEnd + faceSet * 8 + 4;
 
 						run.end = lastEnd;
 						faceRuns.push( run );
@@ -607,7 +612,7 @@ Survey.prototype.loadCave = function ( cave ) {
 Survey.prototype.loadFromEntrance = function ( entrance, loadedCallback ) {
 
 	var self = this;
-	var name = entrance.name.split( "." )[1] + ".3d";
+	var name = entrance.name.split( "." )[0] + ".3d";
 	var prefix = getEnvironmentValue( "surveyDirectory", "" );
 
 	if ( entrance.loaded ) return;
@@ -626,9 +631,7 @@ Survey.prototype.loadFromEntrance = function ( entrance, loadedCallback ) {
 
 	function _surveyLoaded ( event ) {
 
-		var surveyData = event.data;
-
-		console.log( surveyData ); // FIXME check for ok;
+		var surveyData = event.data; // FIXME check for ok;
 
 		self.workerPool.putWorker( worker );
 
@@ -1202,19 +1205,19 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	case LEG_CAVE:
 
-		mesh = this.getObjectByName( "CV.Survey:legs:cave:cave" );
+		mesh = this.legMeshes[ NORMAL ];
 
 		break;
 
 	case LEG_SPLAY:
 
-		mesh = this.getObjectByName( "CV.Survey:legs:cave:splay" );
+		mesh = this.legMeshes[ SPLAY ];
 
 		break;
 
 	case LEG_SURFACE:
 
-		mesh = this.getObjectByName( "CV.Survey:legs:surface:surface" );
+		mesh = this.legMeshes[ SURFACE ];
 
 		break;
 
@@ -1356,7 +1359,7 @@ Survey.prototype.setEntrancesSelected = function () {
 
 	var entrances = this.getObjectByName( "CV.Survey:entrances" );
 
-	if (!entrances) return;
+	if ( !entrances ) return;
 
 	var children = entrances.children;
 	var selectedSectionIds = this.selectedSectionIds;
@@ -1522,7 +1525,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 }
 
 Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
-console.log("S");
+
 	// pNormal = normal of reference plane in model space 
 	var geometry   = mesh.geometry;
 	var vertexRuns = mesh.userData;
@@ -1542,7 +1545,6 @@ console.log("S");
 	var selectedSectionIds = this.selectedSectionIds;
 
 	if ( selectedSectionIds.size && vertexRuns ) {
-console.log("S1");
 
 		for ( var run = 0, l = vertexRuns.length; run < l; run++ ) {
 
@@ -1601,7 +1603,6 @@ console.log("S1");
 		}
 
 	} else {
-console.log("S2");
 
 		for ( var v = 0, l = geometry.vertices.length / 2; v < l; v++ ) {
 

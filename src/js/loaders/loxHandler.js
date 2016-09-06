@@ -434,24 +434,6 @@ loxHandler.prototype.getSurveyTree = function () {
 
 }
 
-loxHandler.prototype.getScraps = function () {
-
-	return this.scraps;
-
-}
-
-loxHandler.prototype.getCrossSections = function () {
-
-	return [];
-
-}
-
-loxHandler.prototype.getEntrances = function () {
-
-	return this.entrances;
-
-}
-
 loxHandler.prototype.getTerrainDimensions = function () {
 
 	return this.terrainDimensions;
@@ -511,6 +493,7 @@ loxHandler.prototype.getSurvey = function () {
 	}
 
 }
+
 export { loxHandler };
 
 // EOF

@@ -4,10 +4,7 @@ onmessage = onMessage;
 
 function onMessage ( event ) {
 
-	console.log( event );
 	var file = event.data;
-
-	console.log("load file:", file );
 
 	var loader = new CaveLoader( _caveLoaded );
 

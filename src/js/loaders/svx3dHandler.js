@@ -623,14 +623,14 @@ Svx3dHandler.prototype.getLineSegments = function () {
 
 	for ( var i = 0, l = groups.length; i < l; i++ ) {
 
-		var g = groups[i];
+		var g = groups[ i ];
 
 		for ( var v = 0, vMax = g.length - 1; v < vMax; v++ ) {
 
 			// create vertex pairs for each line segment.
 			// all vertices except first and last are duplicated.
 			var from = g[ v ];
-			var to   = g[ v+1 ];
+			var to   = g[ v + 1 ];
 
 			lineSegments.push( { from: from.coords, to: to.coords, type: to.type, survey: to.survey } );
 
@@ -644,24 +644,6 @@ Svx3dHandler.prototype.getLineSegments = function () {
 Svx3dHandler.prototype.getSurveyTree = function () {
 
 	return this.surveyTree;
-
-}
-
-Svx3dHandler.prototype.getScraps = function () {
-
-	return [];
-
-}
-
-Svx3dHandler.prototype.getCrossSections = function () {
-
-	return this.xGroups;
-
-}
-
-Svx3dHandler.prototype.getEntrances = function () {
-
-	return this.entrances;
 
 }
 

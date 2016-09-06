@@ -686,9 +686,12 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 		if ( entrance ) {
 
+			var split = label.split( "." ); 
+			var name = split[ 1 ];
+
 			var entranceObj = {
 
-				label: label,
+				label: name + "." + split[ 2 ],
 				position : {
 					x: source.readInt32LE( pos + 0, true ) / 100,
 					y: source.readInt32LE( pos + 4, true ) / 100,
@@ -699,7 +702,6 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 			console.log("Entrance @ ", entranceObj );
 
-			var name = label.split( "." )[1];
 
 			if ( region.caves[ name ] === undefined ) {
 

@@ -16,9 +16,25 @@ function Tree () {
 
 }
 
+TreeNode.prototype.traverse = function ( func ) { // used - iinternal
+
+	var children = this.children;
+
+	func ( this );
+
+	for ( var i = 0; i < children.length; i++ ) {
+
+		children[ i ].traverse( func );
+
+	}
+
+}
+
+
+
 Tree.prototype.constructor = Tree;
 
-Tree.prototype.addNodeById = function ( name, id, parentId ) {
+Tree.prototype.addNodeById = function ( name, id, parentId ) { // used
 
 	var pnode = this.findById( parentId, this.root );
 
@@ -35,13 +51,7 @@ Tree.prototype.addNodeById = function ( name, id, parentId ) {
 
 }
 
-Tree.prototype.addNode = function ( name, parentId ) {
-
-	return this.addNodeById( name, ++this.maxId, parentId );
-
-}
-
-Tree.prototype.findById = function ( id, node ) {
+Tree.prototype.findById = function ( id, node ) { // used - internal - horrible - convert to node method and slowly remove silly tree object.  worst code ive ever writtem IMHO
 
 	if ( node === undefined ) node = this.root;
 
@@ -59,7 +69,7 @@ Tree.prototype.findById = function ( id, node ) {
 
 }
 
-Tree.prototype.newTop = function ( id ) {
+Tree.prototype.newTop = function ( id ) { //used
 
 	var newTop = new Tree();
 
@@ -70,7 +80,7 @@ Tree.prototype.newTop = function ( id ) {
 
 }
 
-Tree.prototype.addByPath = function ( path, node ) {
+Tree.prototype.addByPath = function ( path, node ) { // used = horrible
 
 	var name = path.shift();
 	var next = null;
@@ -126,80 +136,21 @@ Tree.prototype.addByPath = function ( path, node ) {
 
 }
 
-Tree.prototype.forNodes = function ( doFunc, node ) {
+Tree.prototype.getSubtreeIds = function ( id, idSet ) { //used
 
-	var root = null;
+	var root = this.findById( id, this.root );
 
-	if ( node ) {
+	root.traverse( _getId );
 
-		root = node;
+	function _getId( node ) {
 
-	} else {
-
-		root = this.root;
-
-	}
-
-	doFunc( root );
-
-	for ( var i = 0, l = root.children.length; i < l; i++ ) {
-
-		this.forNodes( doFunc, root.children[ i ] );
+		idSet.add( node.id );
 
 	}
 
 }
 
-Tree.prototype.removeNodes = function ( doFunc, node ) {
-
-	var root = null;
-
-	if ( node ) {
-
-		root = node;
-
-	} else {
-
-		root = this.root;
-
-	}
-
-	for ( var i = 0, l = root.children.length; i < l; i++ ) {
-
-		this.removeNodes( doFunc, root.children[ i ] );
-
-	}
-
-	doFunc( root );
-	root.children = [];
-
-}
-
-Tree.prototype.getSubtreeIds = function ( id, idSet, node ) {
-
-	var root;
-
-	if ( !node ) {
-
-		root = this.findById( id, this.root );
-
-	} else {
-
-		root = node;
-
-	}
-
-	idSet.add( root.id );
-
-	for ( var i = 0, l = root.children.length; i < l; i++ ) {
-
-		this.getSubtreeIds( id, idSet, root.children[ i ] );
-
-	}
-
-}
-
-Tree.prototype.reduce = function ( name ) {
+Tree.prototype.reduce = function ( name ) { // used
 
 	// remove single child nodes from top of tree.
 	while ( this.root.children.length === 1 ) {
@@ -216,13 +167,13 @@ Tree.prototype.reduce = function ( name ) {
 
 }
 
-Tree.prototype.getRootId = function () {
+Tree.prototype.getRootId = function () { // used
 
 	return this.root.id;
 
 }
 
-Tree.prototype.getNodeData = function ( id ) {
+Tree.prototype.getNodeData = function ( id ) { // used 
 
 	var node = this.findById( id, this.root );
 
@@ -230,7 +181,7 @@ Tree.prototype.getNodeData = function ( id ) {
 
 }
 
-Tree.prototype.getChildData = function ( id ) {
+Tree.prototype.getChildData = function ( id ) { // used
 
 	var node = this.findById( id, this.root );
 	var ret = [];
@@ -247,7 +198,7 @@ Tree.prototype.getChildData = function ( id ) {
 
 }
 
-Tree.prototype.getIdByPath = function ( path ) {
+Tree.prototype.getIdByPath = function ( path ) { // used
 
 	var head;
 	var node  = this.root;

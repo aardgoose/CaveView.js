@@ -209,6 +209,8 @@ Survey.prototype.loadCave = function ( cave ) {
 		geometry.computeFaceNormals();
 		geometry.computeBoundingBox();
 
+		geometry.onUploadBuffers( _onUploadBuffer );
+
 		return;
 
 		function _loadScrap ( scrap ) {
@@ -406,6 +408,8 @@ Survey.prototype.loadCave = function ( cave ) {
 		geometry.computeVertexNormals();
 		geometry.computeBoundingBox();
 
+		geometry.onUploadBuffers( _onUploadBuffer );
+
 		return;
 
 		function _getLRUD ( crossSection ) {
@@ -563,6 +567,7 @@ Survey.prototype.loadCave = function ( cave ) {
 			}
 
 			geometry.computeBoundingBox();
+			geometry.onUploadBuffers( _onUploadBuffer );
 
 			legStats[ tag ] = self.getLegStats( mesh );
 
@@ -604,6 +609,13 @@ Survey.prototype.loadCave = function ( cave ) {
 		oldGeometry.dispose();
 
 		return newGeometry;
+
+	}
+
+	function _onUploadBuffer ( name ) {
+
+		console.log("Buffer", name );
+		if ( name !== "color" ) { this.discard(); console.log( "X" ); }
 
 	}
 

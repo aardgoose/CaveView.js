@@ -95,12 +95,19 @@ Tile.prototype.create = function ( geometry, terrainData ) {
 	var bufferGeometry = new BufferGeometry().fromGeometry( geometry );
 
 	bufferGeometry.computeBoundingBox();
-//	bufferGeometry.setDiscardBuffers(); // FIXME test with discard buffers enabled
+
+	bufferGeometry.onUploadBuffers( _onUpload );
 
 	this.geometry = bufferGeometry;
 	this.layers.set ( FEATURE_TERRAIN );
 
 	return this;
+
+	function _onUpload( name ) {
+
+		this.discard();
+
+	}
 
 }
 
@@ -119,10 +126,21 @@ Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 
 	);
 
-	bufferGeometry.setDiscardBuffers(); // Non standard feature.
+	bufferGeometry.onUploadBuffers( _onUpload );
 
 	this.geometry = bufferGeometry;
 	this.layers.set ( FEATURE_TERRAIN );
+
+	this.geometry = bufferGeometry;
+	this.layers.set ( FEATURE_TERRAIN );
+
+	return this;
+
+	function _onUpload( name ) {
+
+		this.discard();
+
+	}
 
 }
 

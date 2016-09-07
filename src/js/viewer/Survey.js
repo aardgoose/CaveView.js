@@ -614,8 +614,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _onUploadBuffer ( name ) {
 
-		console.log("Buffer", name );
-		if ( name !== "color" ) { this.discard(); console.log( "X" ); }
+		if ( name !== "color" ) this.discard();
 
 	}
 

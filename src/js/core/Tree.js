@@ -36,7 +36,7 @@ Tree.prototype.addById = function ( name, id, parentId ) {
 		parentNode.children.push ( new Tree( name, id ) );
 		maxId = Math.max( maxId, id );
 
-		return id; // why return this - we passed this in.
+		return id;
 
 	}
 
@@ -62,36 +62,45 @@ Tree.prototype.findById = function ( id ) {
 
 }
 
-Tree.prototype.findPartialPath = function ( path ) { /* reuse in addByPath and findIdbyPath  */ }
+Tree.prototype.getByPath = function ( path ) {
 
-Tree.prototype.addPath = function ( path ) {
-
-	var node = this;
+	var node  = this;
 	var search = true;
-	var i, child;
 
 	while ( search && path.length > 0 ) {
 
 		search = false;
 
-		for ( i = 0; i < node.children.length; i++ ) {
+		for ( var i = 0, l = node.children.length; i < l; i++ ) {
 
 			var child = node.children[ i ];
 
 			if ( child.name === path[ 0 ] ) {
 
-					// we have found the next path element
+				node = child;
+				path.shift();
+				search = true;
 
-					path.shift();
-					node = child;
-					search = true;
+				break;
 
-					break;
 			}
 
 		}
 
 	}
+
+	return node;
+
+}
+
+Tree.prototype.addPath = function ( path ) {
+
+	var node = this;
+	var newNode;
+
+	// find part of path that exists already
+
+	node = this.getByPath( path );
 
 	if ( path.length === 0 ) return node.id;
 
@@ -99,14 +108,14 @@ Tree.prototype.addPath = function ( path ) {
 
 	while ( path.length > 0 ) {
 
-		var newNode = new Tree( path.shift() );
+		newNode = new Tree( path.shift() );
 
 		node.children.push( newNode );
 		node = newNode;
 
 	}
 
-	return newNode.id;
+	return node.id;
 
 }
 
@@ -139,35 +148,17 @@ Tree.prototype.reduce = function ( name ) {
 
 Tree.prototype.getIdByPath = function ( path ) {
 
-	var node  = this;
-	var search = true;
-	var id;
+	var node = this.getByPath ( path );
 
-	while ( search && path.length > 0 ) {
+	if ( path.length === 0 ) {
 
-		search = false;
+		return node.id;
 
-		for ( var i = 0, l = node.children.length; i < l; i++ ) {
+	} else {
 
-			var child = node.children[ i ];
-
-			if ( child.name === path[ 0 ] ) {
-
-				node = child;
-				path.shift();
-				search = true;
-
-				if ( path.length === 0 ) id = node.id;
-
-				break;
-
-			}
-
-		}
+		return undefined;
 
 	}
-
-	return id;
 
 }
 

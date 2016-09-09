@@ -13,7 +13,7 @@ function loxHandler  ( fileName, dataStream ) {
 	this.faults            = [];
 	this.lineSegments      = [];
 	this.sections          = new Map();
-	this.surveyTree        = new Tree();
+	this.surveyTree        = new Tree( "", 0 );
 	this.isRegion		   = false;
 
 	var lineSegments = [];
@@ -44,7 +44,7 @@ function loxHandler  ( fileName, dataStream ) {
 	source = null;
 
 	// strip empty/single top nodes of tree
-	surveyTree.reduce( "unknown" );
+	this.surveyTree = surveyTree.reduce( "unknown" );
 
 	return;
 
@@ -141,7 +141,7 @@ function loxHandler  ( fileName, dataStream ) {
 		var m_parent = readUint();
 		var titlePtr = readDataPtr();
 
-		if (m_parent != m_id && !surveyTree.addNodeById( readString( namePtr ), m_id, m_parent )) {
+		if (m_parent != m_id && !surveyTree.addById( readString( namePtr ), m_id, m_parent )) {
 
 			console.log( "error constructing survey tree" );
 

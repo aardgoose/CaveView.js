@@ -29,7 +29,7 @@ function Svx3dHandler ( fileName, dataStream ) {
 	this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
 
 	// strip empty/single top nodes of tree and add title as top node name if empty
-	surveyTree.reduce( title );
+	this.surveyTree = surveyTree.reduce( title );
 
 	return;
 
@@ -432,7 +432,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		if ( readLabel( flags ) ) {
 
 			// we have a new section name, add it to the survey tree
-			sectionId = surveyTree.addByPath( label.split( "." ) );
+			sectionId = surveyTree.addPath( label.split( "." ) );
 
 		}
 

@@ -160,7 +160,7 @@ function closeFrame ( event ) {
 function initSelectionPage () {
 
 	var titleBar  = document.createElement( "div" )
-	var rootId    = surveyTree.getRootId();
+	var rootId    = surveyTree.id;
 	var track     = [];
 	var lastSelected  = false;
 	var page;
@@ -184,8 +184,8 @@ function initSelectionPage () {
 
 	function _displayPanel ( id ) {
 
-		var topNode  = surveyTree.getNodeData( id );
-		var children = surveyTree.getChildData( id );
+		var top = surveyTree.findById( id );
+
 		var ul;
 		var tmp;
 		var i;
@@ -194,7 +194,7 @@ function initSelectionPage () {
 		var surveyColoursRange = surveyColours.length;
 		var span;
 
-		track.push( { name: topNode.name, id: id } );
+		track.push( { name: top.name, id: id } );
 
 		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp );
 
@@ -214,6 +214,8 @@ function initSelectionPage () {
 
 		ul = document.createElement( "ul" );
 
+		var children = top.children;
+
 		children.sort( _sortSurveys );
 
 		l = children.length;
@@ -221,6 +223,7 @@ function initSelectionPage () {
 		for ( i = 0; i < l; i++ ) {
 
 			var child = children[ i ];
+
 			var li    = document.createElement( "li" );
 			var txt   = document.createTextNode( child.name );
 
@@ -234,7 +237,7 @@ function initSelectionPage () {
 			li.appendChild( key );
 			li.appendChild( txt );
 
-			if ( child.noChildren ) {
+			if ( child.children.length > 0 ) {
 
 				var descend = document.createElement( "div" );
 

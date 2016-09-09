@@ -779,7 +779,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 	this.setFeatureBox();
 
-	this.surveyTree = this.surveyTree.newTop( id );
+	this.surveyTree = this.surveyTree.findById( id );
 
 	this.clearSectionSelection();
 
@@ -1330,7 +1330,7 @@ Survey.prototype.getSurveyColours = function () { // FIXME - cache save recalc f
 
 	} else {
 
-		survey = surveyTree.getRootId();
+		survey = surveyTree.id;
 		surveyTree.getSubtreeIds( survey, selectedSectionIds );
 
 	}
@@ -1338,7 +1338,7 @@ Survey.prototype.getSurveyColours = function () { // FIXME - cache save recalc f
 	// create mapping of survey id to colour
 	// map each child id _and_ all its lower level survey ids to the same colour
 
-	var children = surveyTree.getChildData( survey );
+	var children = surveyTree.findById( survey ).children;
 
 	colour = this.getSurveyColour( survey );
 	_setSurveyColour( survey );

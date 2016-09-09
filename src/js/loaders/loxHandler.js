@@ -141,7 +141,7 @@ function loxHandler  ( fileName, dataStream ) {
 		var m_parent = readUint();
 		var titlePtr = readDataPtr();
 
-		if (m_parent != m_id && !surveyTree.addById( readString( namePtr ), m_id, m_parent )) {
+		if ( m_parent != m_id && !surveyTree.addById( readString( namePtr ), m_id, m_parent ) ) {
 
 			console.log( "error constructing survey tree" );
 
@@ -175,13 +175,18 @@ function loxHandler  ( fileName, dataStream ) {
 		readDataPtr(); // commentPtr
 
 		var m_flags    = readUint();
+		var coords     = readCoords();
 
-		stations[m_id] = readCoords();
+		stations[ m_id ]  = coords;
+
+		// add non surface stations to surveyTree
+
+		if ( ! ( m_flags & 0x01 ) ) surveyTree.addById( readString( namePtr ),  m_id, m_surveyId, { p: coords } );
 
 		if ( m_flags & 0x02 ) {
 
 			// entrance
-			self.entrances.push( { position: stations[m_id], label: readString(namePtr), survey: m_surveyId } );
+			self.entrances.push( { position: coords, label: readString(namePtr), survey: m_surveyId } );
 
 		}
 
@@ -195,7 +200,7 @@ function loxHandler  ( fileName, dataStream ) {
 		coords.x = f.getFloat64( 0,  true );
 		coords.y = f.getFloat64( 8,  true );
 		coords.z = f.getFloat64( 16, true );
-		pos +=24;
+		pos += 24;
 
 		return coords;
 
@@ -223,12 +228,12 @@ function loxHandler  ( fileName, dataStream ) {
 
 		if ( m_flags === 0x16 ) {
 
-			xSects[m_from] = fromLRUD;
-			xSects[m_to]   = toLRUD;
+			xSects[ m_from ] = fromLRUD;
+			xSects[ m_to ]   = toLRUD;
 
 		}
 
-		lineSegments.push( { from: stations[m_from], to: stations[m_to], type: type, survey: m_surveyId } );
+		lineSegments.push( { from: stations[ m_from ], to: stations[ m_to ], type: type, survey: m_surveyId } );
 
 	}
 
@@ -295,7 +300,7 @@ function loxHandler  ( fileName, dataStream ) {
 
 				for ( j = 0; j < 3; j++ ) { // this case triggers more often than those below.
 
-					if (face[j] == lastFace[(j + 2) % 3] && face[(j + 1) % 3] == lastFace[(j + 3) % 3]) {
+					if (face[ j ] == lastFace[ ( j + 2 ) % 3 ] && face[ ( j + 1 ) % 3 ] == lastFace[ ( j + 3 ) % 3 ] ) {
 
 						face.reverse();
 						break fix_direction;
@@ -306,7 +311,7 @@ function loxHandler  ( fileName, dataStream ) {
 
 				for ( j = 0; j < 3; j++ ) {
 
-					if (face[j] == lastFace[j] && face[(j + 1) % 3] == lastFace[(j + 1) % 3]) {
+					if ( face[ j ] == lastFace[ j ] && face[ ( j + 1 ) % 3 ] == lastFace[ ( j + 1 ) % 3 ] ) {
 
 						face.reverse();
 						break fix_direction;
@@ -317,7 +322,7 @@ function loxHandler  ( fileName, dataStream ) {
 
 				for ( j = 0; j < 3; j++ ) {
 
-					if (face[j] == lastFace[(j + 1) % 3] && face[(j + 1) % 3] == lastFace[(j + 2) % 3]) {
+					if ( face[ j ] == lastFace[ ( j + 1 ) % 3 ] && face[ ( j + 1 ) % 3 ] == lastFace[ ( j + 2 ) % 3] ) {
 
 						face.reverse();
 						break fix_direction;
@@ -325,7 +330,7 @@ function loxHandler  ( fileName, dataStream ) {
 					}
 
 				}
-			}}
+			} }
 
 			scrap.faces.push( face );
 			lastFace = face;

@@ -501,21 +501,22 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		readLabel( 0 );
 
 		var coords = readCoordinates( flags );
+		var path = label.split( "." );
 
-		if ( c & 0x04 ) {
+		stations.set( label, coords );
 
-			var station = label.split( "." );
+		if ( flags & 0x02 ) surveyTree.addPath ( path, { p: coords } );
+
+		if ( flags & 0x04 ) {
 
 			// get survey path by removing last component of station name
-			station.pop();
+			path.pop();
 
-			var surveyId = surveyTree.getIdByPath( station );
+			var surveyId = surveyTree.getIdByPath( path );
 
 			entrances.push( { position: coords, label: label, survey: surveyId } );
 
 		}
-
-		stations.set( label, coords );
 
 		return true;
 

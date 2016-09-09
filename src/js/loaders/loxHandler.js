@@ -427,12 +427,6 @@ function loxHandler  ( fileName, dataStream ) {
 
 loxHandler.prototype.constructor = loxHandler;
 
-loxHandler.prototype.getLineSegments = function () {
-
-	return this.lineSegments;
-
-}
-
 loxHandler.prototype.getSurveyTree = function () {
 
 	return this.surveyTree;

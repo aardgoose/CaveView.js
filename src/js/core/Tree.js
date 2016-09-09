@@ -13,7 +13,7 @@ function Tree( name, id ) {
 
 Tree.prototype.constructor = Tree;
 
-Tree.prototype.traverse = function ( func ) { // internal
+Tree.prototype.traverse = function ( func ) {
 
 	var children = this.children;
 
@@ -27,13 +27,17 @@ Tree.prototype.traverse = function ( func ) { // internal
 
 }
 
-Tree.prototype.addById = function ( name, id, parentId ) {
+Tree.prototype.addById = function ( name, id, parentId, properties ) {
 
 	var parentNode = this.findById( parentId );
 
 	if ( parentNode ) {
 
-		parentNode.children.push ( new Tree( name, id ) );
+		var node = new Tree( name, id );
+
+		if ( properties !== undefined ) Object.assign( node, properties );
+
+		parentNode.children.push ( node );
 		maxId = Math.max( maxId, id );
 
 		return id;
@@ -93,7 +97,7 @@ Tree.prototype.getByPath = function ( path ) {
 
 }
 
-Tree.prototype.addPath = function ( path ) {
+Tree.prototype.addPath = function ( path, properties ) {
 
 	var node = this;
 	var newNode;
@@ -114,6 +118,8 @@ Tree.prototype.addPath = function ( path ) {
 		node = newNode;
 
 	}
+
+	if ( properties !== undefined ) Object.assign( node, properties );
 
 	return node.id;
 

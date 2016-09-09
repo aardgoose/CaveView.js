@@ -468,12 +468,6 @@ loxHandler.prototype.getTerrainBitmap = function () {
 
 }
 
-loxHandler.prototype.getFaults = function () {
-
-	return this.chains;
-
-}
-
 loxHandler.prototype.getName = function () {
 
   return this.fileName;

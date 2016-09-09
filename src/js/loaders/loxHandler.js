@@ -32,11 +32,7 @@ function loxHandler  ( fileName, dataStream ) {
 	var f = new DataView( source, 0 );
 	var l = source.byteLength;
 
-	while ( pos < l ) {
-
-		readChunkHdr();
-
-	}
+	while ( pos < l ) readChunkHdr();
 
 	this.lineSegments = lineSegments;
 
@@ -355,10 +351,10 @@ function loxHandler  ( fileName, dataStream ) {
 
 		self.terrainDimensions.samples = m_width;
 		self.terrainDimensions.lines   = m_height;
-		self.terrainDimensions.xOrigin = m_calib[0];
-		self.terrainDimensions.yOrigin = m_calib[1];
-		self.terrainDimensions.xDelta  = m_calib[2];
-		self.terrainDimensions.yDelta  = m_calib[5];
+		self.terrainDimensions.xOrigin = m_calib[ 0 ];
+		self.terrainDimensions.yOrigin = m_calib[ 1 ];
+		self.terrainDimensions.xDelta  = m_calib[ 2 ];
+		self.terrainDimensions.yDelta  = m_calib[ 5 ];
 
 	}
 
@@ -367,12 +363,12 @@ function loxHandler  ( fileName, dataStream ) {
 		var f = new DataView( source, pos );
 		var m_calib = [];
 
-		m_calib[0] = f.getFloat64( 0,  true );
-		m_calib[1] = f.getFloat64( 8,  true );
-		m_calib[2] = f.getFloat64( 16, true );
-		m_calib[3] = f.getFloat64( 24, true );
-		m_calib[4] = f.getFloat64( 32, true );
-		m_calib[5] = f.getFloat64( 40, true );
+		m_calib[ 0 ] = f.getFloat64( 0,  true );
+		m_calib[ 1 ] = f.getFloat64( 8,  true );
+		m_calib[ 2 ] = f.getFloat64( 16, true );
+		m_calib[ 3 ] = f.getFloat64( 24, true );
+		m_calib[ 4 ] = f.getFloat64( 32, true );
+		m_calib[ 5 ] = f.getFloat64( 40, true );
 
 		pos += 48;
 
@@ -396,28 +392,26 @@ function loxHandler  ( fileName, dataStream ) {
 		var imgData = new Uint8Array( source, dataStart + imagePtr.position, imagePtr.size );
 		var type;
 
-		var b1 = imgData[0];
-		var b2 = imgData[1];
+		var b1 = imgData[ 0 ];
+		var b2 = imgData[ 1 ];
 
 		if ( b1 === 0xff && b2 === 0xd8 ) {
 
 			type = "image/jpeg";
 
-		}
-
-		if ( b1 === 0x89 && b2 === 0x50 ) {
+		} else if ( b1 === 0x89 && b2 === 0x50 ) {
 
 			type = "image/png";
 
 		}
 
-		if (!type) {
+		if ( !type ) {
 
 			return "";
 
 		}
 
-		var blob = new Blob( [imgData], { type: type } );
+		var blob = new Blob( [ imgData ], { type: type } );
 		var blobURL = URL.createObjectURL( blob );
 
 		return blobURL;

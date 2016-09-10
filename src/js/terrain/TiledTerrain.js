@@ -447,6 +447,10 @@ TiledTerrain.prototype.setMaterial = function ( material ) {
 	material.opacity = this.opacity;
 	material.needsUpdate = true;
 
+	// use for commmon material access for opacity
+
+	this.material = material;
+
 	return;
 
 	function _setTileMeshMaterial ( obj ) {

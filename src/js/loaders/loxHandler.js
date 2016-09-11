@@ -284,9 +284,9 @@ function loxHandler  ( fileName, dataStream ) {
 			var f = new DataView( source, offset );
 			var face = [];
 
-			face[0] = f.getUint32( 0, true );
-			face[1] = f.getUint32( 4, true );
-			face[2] = f.getUint32( 8, true );
+			face[ 0 ] = f.getUint32( 0, true );
+			face[ 1 ] = f.getUint32( 4, true );
+			face[ 2 ] = f.getUint32( 8, true );
 
 			// check for face winding order == orientation
 

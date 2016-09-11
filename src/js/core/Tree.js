@@ -27,7 +27,7 @@ Tree.prototype.traverse = function ( func ) {
 
 }
 
-Tree.prototype.forEachChild = function ( func ) {
+Tree.prototype.forEachChild = function ( func, recurse ) {
 
 	var children = this.children;
 	var child;
@@ -37,7 +37,7 @@ Tree.prototype.forEachChild = function ( func ) {
 		child = children[ i ];
 
 		func( child );
-		child.forEachChild( func );
+		if ( recurse === true ) child.forEachChild( func, true );
 
 	}
 

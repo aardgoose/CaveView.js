@@ -27,6 +27,22 @@ Tree.prototype.traverse = function ( func ) {
 
 }
 
+Tree.prototype.forEachChild = function ( func ) {
+
+	var children = this.children;
+	var child;
+
+	for ( var i = 0; i < children.length; i++ ) {
+
+		child = children[ i ];
+
+		func( child );
+		child.forEachChild( func );
+
+	}
+
+}
+
 Tree.prototype.addById = function ( name, id, parentId, properties ) {
 
 	var parentNode = this.findById( parentId );

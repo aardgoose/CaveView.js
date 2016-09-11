@@ -235,11 +235,11 @@ function loxHandler  ( fileName, dataStream ) {
 
 	function readLRUD () {
 
-		var f          = new DataView( source, pos );
-		var L		   = f.getFloat64( 0,  true );
-		var R		   = f.getFloat64( 8,  true );
-		var U		   = f.getFloat64( 16, true );
-		var D   	   = f.getFloat64( 24, true );
+		var f = new DataView( source, pos );
+		var L = f.getFloat64( 0,  true );
+		var R = f.getFloat64( 8,  true );
+		var U = f.getFloat64( 16, true );
+		var D = f.getFloat64( 24, true );
 
 		pos += 32;
 

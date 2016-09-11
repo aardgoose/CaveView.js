@@ -642,12 +642,6 @@ Svx3dHandler.prototype.getLineSegments = function () {
 
 }
 
-Svx3dHandler.prototype.getSurveyTree = function () {
-
-	return this.surveyTree;
-
-}
-
 Svx3dHandler.prototype.getTerrainDimensions = function () {
 
 	return { lines: 0, samples: 0 };
@@ -670,6 +664,7 @@ Svx3dHandler.prototype.getSurvey = function () {
 
 	return {
 		title: this.fileName,
+		surveyTree: this.surveyTree,
 		lineSegments: this.getLineSegments(),
 		crossSections: this.xGroups,
 		scraps: [],

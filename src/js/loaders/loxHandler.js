@@ -421,12 +421,6 @@ function loxHandler  ( fileName, dataStream ) {
 
 loxHandler.prototype.constructor = loxHandler;
 
-loxHandler.prototype.getSurveyTree = function () {
-
-	return this.surveyTree;
-
-}
-
 loxHandler.prototype.getTerrainDimensions = function () {
 
 	return this.terrainDimensions;
@@ -472,6 +466,7 @@ loxHandler.prototype.getSurvey = function () {
 
 	return {
 		title: this.fileName,
+		surveyTree: this.surveyTree,
 		lineSegments: this.lineSegments,
 		crossSections: [],
 		scraps: this.scraps,

@@ -218,11 +218,13 @@ function initSelectionPage () {
 
 		children.sort( _sortSurveys );
 
-		l = children.length;
+		// FIXME need to add listener to allow survey list to be updated on dynamic load of survey
 
-		for ( i = 0; i < l; i++ ) {
+		top.forEachChild( _addLine );
+	
+		return ul;
 
-			var child = children[ i ];
+		function _addLine( child ) {
 
 			var li    = document.createElement( "li" );
 			var txt   = document.createTextNode( child.name );
@@ -252,8 +254,6 @@ function initSelectionPage () {
 			ul.appendChild( li );
 
 		}
-
-		return ul;
 
 		function _sortSurveys ( s1, s2 ) {
 

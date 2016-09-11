@@ -1,5 +1,6 @@
 
 import { getEnvironmentValue } from '../core/constants.js';
+import { Tree } from '../core/Tree.js';
 import { Vector3 } from '../../../../three.js/src/math/Vector3.js';
 import { Box3    } from '../../../../three.js/src/math/Box3.js';
 
@@ -8,18 +9,6 @@ function RegionHandler ( filename, dataStream ) {
 	this.isRegion = true;
 	this.data = dataStream;
 	this.box = new Box3();
-
-}
-
-RegionHandler.prototype.constructor = RegionHandler;
-
-RegionHandler.prototype.getSurvey = function () {
-
-	return this.data;
-
-}
-
-RegionHandler.prototype.getEntrances = function () {
 
 	var entrances = [];
 	var caves = this.data.caves;
@@ -46,7 +35,16 @@ RegionHandler.prototype.getEntrances = function () {
 
 	}
 
-	return entrances;
+	this.data.entrances = entrances;
+	this.data.surveyTree = new Tree( this.data.title );
+
+}
+
+RegionHandler.prototype.constructor = RegionHandler;
+
+RegionHandler.prototype.getSurvey = function () {
+
+	return this.data;
 
 }
 

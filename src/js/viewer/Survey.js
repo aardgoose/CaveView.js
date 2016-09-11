@@ -43,6 +43,7 @@ function Survey ( cave ) {
 	this.selectedBox = null;
 	this.scrapMesh = null;
 	this.crossSectionMesh = null;
+	this.surveyTree = null;
 
 	// objects targetted by raycasters and objects with variable LOD
 
@@ -60,24 +61,19 @@ function Survey ( cave ) {
 
 	var self = this;
 
+	var survey = cave.getSurvey();
+
+	_loadEntrances( survey.entrances );
+
 	if ( this.isRegion === true ) {
 
-		this.surveyTree = new Tree();
 		this.stats[ NORMAL ] = {};
-
-		_loadEntrances( cave.getEntrances() );
-
+		this.surveyTree = survey.surveyTree;
 		this.limits = cave.getLimits();
 
 	} else { 
 
-		var survey = cave.getSurvey();
-
 		this.loadCave( survey );
-		this.surveyTree = cave.getSurveyTree();
-
-		_loadEntrances( survey.entrances );
-
 		this.limits = this.getBounds();
 
 	}
@@ -158,10 +154,47 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	var self = this;
 
+	_restoreSurveyTree( cave.surveyTree );
+
 	_loadSegments( cave.lineSegments );
 	_loadScraps( cave.scraps );
 	_loadCrossSections( cave.crossSections );
 	_loadTerrain( cave );
+
+	return;
+
+	function _restoreSurveyTree( surveyTree ) {
+
+		if ( surveyTree.forEachChild === undefined ) {
+	
+			// surveyTree from worker loading  - add Tree methods to all objects in tree.
+
+			Object.assign( surveyTree, Tree.prototype );
+
+			surveyTree.forEachChild( _restore,  true );
+		}
+
+
+		if ( self.surveyTree === null ) {
+
+			self.surveyTree = surveyTree;
+
+		} else {
+
+			self.surveyTree.children.push( surveyTree );
+			console.log( self.surveyTree );
+
+		}
+
+		return;
+
+		function _restore ( child ) {
+
+			Object.assign( child, Tree.prototype );
+
+		}
+
+	}
 
 	function _loadScraps ( scrapList ) {
 

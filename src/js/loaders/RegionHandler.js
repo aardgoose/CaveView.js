@@ -48,12 +48,6 @@ RegionHandler.prototype.getSurvey = function () {
 
 }
 
-RegionHandler.prototype.getName = function () {
-
-	return this.data.title;
-
-}
-
 RegionHandler.prototype.getLimits = function () {
 
 	return this.box;

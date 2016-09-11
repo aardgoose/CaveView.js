@@ -654,12 +654,6 @@ Svx3dHandler.prototype.getTerrainBitmap = function () {
 
 }
 
-Svx3dHandler.prototype.getName = function () {
-
-	return this.fileName;
-
-}
-
 Svx3dHandler.prototype.getSurvey = function () {
 
 	return {

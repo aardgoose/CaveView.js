@@ -50,7 +50,6 @@ function Survey ( cave ) {
 	this.mouseTargets = [];
 	this.lodTargets = [];
 
-	this.name = cave.getName();
 	this.type = "CV.Survey";
 	this.cutInProgress = false;
 	this.stats = [];
@@ -62,6 +61,8 @@ function Survey ( cave ) {
 	var self = this;
 
 	var survey = cave.getSurvey();
+
+	this.name = survey.title;
 
 	_loadEntrances( survey.entrances );
 

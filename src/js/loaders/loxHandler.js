@@ -456,12 +456,6 @@ loxHandler.prototype.getTerrainBitmap = function () {
 
 }
 
-loxHandler.prototype.getName = function () {
-
-  return this.fileName;
-
-}
-
 loxHandler.prototype.getSurvey = function () {
 
 	return {

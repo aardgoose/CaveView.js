@@ -18,17 +18,19 @@ function HeightMaterial ( type, minHeight, maxHeight ) {
 	} else {
 
 		this.defines.SURFACE = true;
+		this.transparent = true;
 
 	}
 	
 	this.uniforms = {
 
 			// pseudo light source somewhere over viewer's left shoulder.
-			uLight: { value: new Vector3( -1, -1, 2 ) },
+			uLight:         { value: new Vector3( -1, -1, 2 ) },
 
-			minZ:   { value: minHeight },
-			scaleZ: { value: 1 / ( maxHeight - minHeight ) },
-			cmap:   { value: Colours.gradientTexture }
+			minZ:           { value: minHeight },
+			scaleZ:         { value: 1 / ( maxHeight - minHeight ) },
+			cmap:           { value: Colours.gradientTexture },
+			surfaceOpacity: { value: 0.5 }
 
 		};
 

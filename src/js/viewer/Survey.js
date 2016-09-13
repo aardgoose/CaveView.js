@@ -183,7 +183,6 @@ Survey.prototype.loadCave = function ( cave ) {
 		} else {
 
 			self.surveyTree.children.push( surveyTree );
-			console.log( self.surveyTree );
 
 		}
 

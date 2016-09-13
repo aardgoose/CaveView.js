@@ -35,7 +35,16 @@ function CursorMaterial ( type, initialHeight ) {
 	this.transparent = true;
 	this.type = "CV.CursorMaterial";
 
+	this.addEventListener( "update", _update );
+
 	return this;
+
+	function _update() {
+
+		this.uniforms.surfaceOpacity.value = this.opacity;
+
+	}
+
 }
 
 

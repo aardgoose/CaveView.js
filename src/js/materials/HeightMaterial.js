@@ -39,7 +39,15 @@ function HeightMaterial ( type, minHeight, maxHeight ) {
 
 	this.type = "CV.HeightMaterial";
 
+	this.addEventListener( "update", _update );
+
 	return this;
+
+	function _update() {
+
+		this.uniforms.surfaceOpacity.value = this.opacity;
+
+	}
 
 }
 

@@ -643,7 +643,7 @@ function selectSection ( id ) {
 	targetPOI = {
 		tAnimate: 0,
 		object:      obj,
-		position:    boundingBox.center(),
+		position:    boundingBox.getCenter(),
 		boundingBox: boundingBox
 	};
 

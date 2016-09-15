@@ -7,7 +7,7 @@ import { ShaderMaterial, Vector3 } from '../../../../three.js/src/Three.js';
 
 function DepthMaterial ( type, limits, texture ) {
 
-	var range   = limits.size();
+	var range   = limits.getSize();
 	var defines = {};
 
 	if ( type === MATERIAL_LINE ) {

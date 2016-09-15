@@ -361,7 +361,7 @@ function renderDepthTexture () {
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
-	var range = limits.size();
+	var range = limits.getSize();
 
 	var scaleX = width / range.x;
 	var scaleY = height / range.y;
@@ -1016,7 +1016,7 @@ function setCameraPOI ( x ) {
 
 	targetPOI.tAnimate = 80;
 
-	var size = targetPOI.boundingBox.size();
+	var size = targetPOI.boundingBox.getSize();
 
 	if ( camera instanceof PerspectiveCamera ) {
 
@@ -1090,8 +1090,8 @@ function setScale ( obj ) {
 	limits = survey.limits;
 	zScale = 0.5;
 
-	var range  = limits.size();
-	var center = limits.center();
+	var range  = limits.getSize();
+	var center = limits.getCenter();
 
 	// initialize cursor height to be mid range of heights
 	cursorHeight = center.z;

@@ -21,7 +21,7 @@ function FarPointers ( survey ) {
 
 	var loader = new TextureLoader();
 
-	var yellowTexture = loader.load( getEnvironmentValue( "cvDirectory", "" ) + "CaveView/images/marker-yellow.png" );
+	var yellowTexture = loader.load( getEnvironmentValue( "home", "" ) + "images/marker-yellow.png" );
 
 //	var nullMaterial   = new PointsMaterial( { visible: false } );
 	var yellowMaterial = new PointsMaterial( { size: 10, map: yellowTexture, transparent : true, sizeAttenuation: true } );

@@ -2,7 +2,7 @@
 import { HeightMapLoader } from '../loaders/HeightMapLoader.js';
 import { ColourCache } from '../core/ColourCache.js';
 import { upAxis } from '../core/constants.js';
-import { PlaneGeometry }  from '../../../../three.js/src/extras/geometries/PlaneGeometry.js';
+import { PlaneGeometry }  from '../../../../three.js/src/geometries/PlaneGeometry.js';
 import { BufferGeometry }  from '../../../../three.js/src/core/BufferGeometry.js';
 
 var tileSpec;

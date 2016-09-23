@@ -4,62 +4,6 @@
 	(factory());
 }(this, (function () { 'use strict';
 
-function padDigits ( number, digits ) {
-
-	return Array( Math.max( digits - String( number ).length + 1, 0 ) ).join( 0 ) + number;
-
-}
-
-function HeightMapLoader ( tileSet, resolution, x, y, loadCallback, errorCallback ) {
-
-	if ( !loadCallback ) alert( "No callback specified" );
-
-	var prefix = tileSet.PREFIX + resolution + "M" + tileSet.TILESIZE + "-";
-
-	this.loadCallback  = loadCallback;
-	this.errorCallback = errorCallback;
-	this.x = x;
-	this.y = y;
-	this.tileFile = prefix + padDigits( y, 3 ) + "-" + padDigits( x, 3 ) + ".bin";
-	this.basedir = tileSet.BASEDIR;
-
-}
-
-HeightMapLoader.prototype.constructor = HeightMapLoader;
-
-HeightMapLoader.prototype.load = function () {
-
-	var self = this;
-	var xhr;
-
-	// console.log( "loading: ", this.tileFile );
-
-	xhr = new XMLHttpRequest();
-
-	xhr.addEventListener( "load", _loaded);
-	xhr.addEventListener( "error", this.errorCallback );
-
-	xhr.open( "GET", this.basedir + this.tileFile );
-	xhr.responseType = "arraybuffer"; // Must be after open() to keep IE happy.
-
-	xhr.send();
-
-	return true;
-
-	function _loaded ( request ) {
-
-		if (xhr.status === 200) {
-
-			self.loadCallback( xhr.response, self.x, self.y );
-
-		} else {
-
-			self.errorCallback( xhr.response, self.x, self.y );
-
-		}
-	}
-}
-
 // Polyfills
 
 if ( Number.EPSILON === undefined ) {
@@ -259,7 +203,6 @@ var CubeReflectionMapping = 301;
 var RepeatWrapping = 1000;
 var ClampToEdgeWrapping = 1001;
 var MirroredRepeatWrapping = 1002;
-var NearestFilter = 1003;
 var LinearFilter = 1006;
 var LinearMipMapLinearFilter = 1008;
 var UnsignedByteType = 1009;
@@ -7612,14 +7555,14 @@ function BufferAttribute( array, itemSize, normalized ) {
 
 	this.array = array;
 	this.itemSize = itemSize;
+	this.count = array.length / itemSize;
 	this.normalized = normalized === true;
 
 	this.dynamic = false;
 	this.updateRange = { offset: 0, count: - 1 };
 
 	this.version = 0;
-	this.discard = false;
-	this.discardedLength = 0;
+	this.onUploadCallback = null;
 
 }
 
@@ -7628,12 +7571,6 @@ BufferAttribute.prototype = {
 	constructor: BufferAttribute,
 
 	isBufferAttribute: true,
-
-	get count() {
-
-		return ( this.discardedLength > 0 ? this.discardedLength : this.array.length ) / this.itemSize;
-
-	},
 
 	set needsUpdate( value ) {
 
@@ -7653,6 +7590,7 @@ BufferAttribute.prototype = {
 
 		this.array = new source.array.constructor( source.array );
 		this.itemSize = source.itemSize;
+		this.count = source.count;
 		this.normalized = source.normalized;
 
 		this.dynamic = source.dynamic;
@@ -7907,6 +7845,14 @@ BufferAttribute.prototype = {
 	clone: function () {
 
 		return new this.constructor().copy( this );
+
+	},
+
+	discard: function () {
+
+		var oldArray = this.array;
+
+		this.array = new oldArray.constructor( 1 ); // create dummy minimal length TypedArray
 
 	}
 
@@ -9126,6 +9072,7 @@ function Geometry() {
 
 	this.boundingBox = null;
 	this.boundingSphere = null;
+	this.onUploadCallback = null;
 
 	// update flags
 
@@ -9750,6 +9697,12 @@ Object.assign( Geometry.prototype, EventDispatcher.prototype, {
 
 	},
 
+	onUploadBuffers: function ( callback ) {
+
+		this.onUploadCallback = callback;
+
+	},
+
 	merge: function ( geometry, matrix, materialIndexOffset ) {
 
 		if ( (geometry && geometry.isGeometry) === false ) {
@@ -9766,7 +9719,9 @@ Object.assign( Geometry.prototype, EventDispatcher.prototype, {
 		faces1 = this.faces,
 		faces2 = geometry.faces,
 		uvs1 = this.faceVertexUvs[ 0 ],
-		uvs2 = geometry.faceVertexUvs[ 0 ];
+		uvs2 = geometry.faceVertexUvs[ 0 ],
+		colors1 = this.colors,
+		colors2 = geometry.colors;
 
 		if ( materialIndexOffset === undefined ) materialIndexOffset = 0;
 
@@ -9787,6 +9742,14 @@ Object.assign( Geometry.prototype, EventDispatcher.prototype, {
 			if ( matrix !== undefined ) vertexCopy.applyMatrix4( matrix );
 
 			vertices1.push( vertexCopy );
+
+		}
+
+		// colors
+
+		for ( var i = 0, il = colors2.length; i < il; i ++ ) {
+
+			colors1.push( colors2[ i ].clone() );
 
 		}
 
@@ -10242,12 +10205,21 @@ Object.assign( Geometry.prototype, EventDispatcher.prototype, {
 		this.vertices = [];
 		this.faces = [];
 		this.faceVertexUvs = [ [] ];
+		this.colors = [];
 
 		var vertices = source.vertices;
 
 		for ( var i = 0, il = vertices.length; i < il; i ++ ) {
 
 			this.vertices.push( vertices[ i ].clone() );
+
+		}
+
+		var colors = source.colors;
+
+		for ( var i = 0, il = colors.length; i < il; i ++ ) {
+
+			this.colors.push( colors[ i ].clone() );
 
 		}
 
@@ -10911,6 +10883,12 @@ Object.assign( BufferGeometry.prototype, EventDispatcher.prototype, {
 
 		}
 
+		if ( geometry.onUploadCallback ) {
+
+			this.onUploadBuffers ( geometry.onUploadCallback );
+
+		}
+
 		return this;
 
 	},
@@ -11359,13 +11337,13 @@ Object.assign( BufferGeometry.prototype, EventDispatcher.prototype, {
 
 	},
 
-	setDiscardBuffers: function () {
+	onUploadBuffers: function ( callback ) {
 
 		var attributes = this.attributes;
 
 		for ( var key in attributes ) {
 
-			attributes[ key ].discard = true;
+			attributes[ key ].onUploadCallback = callback;
 
 		}
 
@@ -13014,103 +12992,6 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 /**
  * @author mrdoob / http://mrdoob.com/
- * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
- */
-
-function PlaneBufferGeometry( width, height, widthSegments, heightSegments ) {
-
-	BufferGeometry.call( this );
-
-	this.type = 'PlaneBufferGeometry';
-
-	this.parameters = {
-		width: width,
-		height: height,
-		widthSegments: widthSegments,
-		heightSegments: heightSegments
-	};
-
-	var width_half = width / 2;
-	var height_half = height / 2;
-
-	var gridX = Math.floor( widthSegments ) || 1;
-	var gridY = Math.floor( heightSegments ) || 1;
-
-	var gridX1 = gridX + 1;
-	var gridY1 = gridY + 1;
-
-	var segment_width = width / gridX;
-	var segment_height = height / gridY;
-
-	var vertices = new Float32Array( gridX1 * gridY1 * 3 );
-	var normals = new Float32Array( gridX1 * gridY1 * 3 );
-	var uvs = new Float32Array( gridX1 * gridY1 * 2 );
-
-	var offset = 0;
-	var offset2 = 0;
-
-	for ( var iy = 0; iy < gridY1; iy ++ ) {
-
-		var y = iy * segment_height - height_half;
-
-		for ( var ix = 0; ix < gridX1; ix ++ ) {
-
-			var x = ix * segment_width - width_half;
-
-			vertices[ offset ] = x;
-			vertices[ offset + 1 ] = - y;
-
-			normals[ offset + 2 ] = 1;
-
-			uvs[ offset2 ] = ix / gridX;
-			uvs[ offset2 + 1 ] = 1 - ( iy / gridY );
-
-			offset += 3;
-			offset2 += 2;
-
-		}
-
-	}
-
-	offset = 0;
-
-	var indices = new ( ( vertices.length / 3 ) > 65535 ? Uint32Array : Uint16Array )( gridX * gridY * 6 );
-
-	for ( var iy = 0; iy < gridY; iy ++ ) {
-
-		for ( var ix = 0; ix < gridX; ix ++ ) {
-
-			var a = ix + gridX1 * iy;
-			var b = ix + gridX1 * ( iy + 1 );
-			var c = ( ix + 1 ) + gridX1 * ( iy + 1 );
-			var d = ( ix + 1 ) + gridX1 * iy;
-
-			indices[ offset ] = a;
-			indices[ offset + 1 ] = b;
-			indices[ offset + 2 ] = d;
-
-			indices[ offset + 3 ] = b;
-			indices[ offset + 4 ] = c;
-			indices[ offset + 5 ] = d;
-
-			offset += 6;
-
-		}
-
-	}
-
-	this.setIndex( new BufferAttribute( indices, 1 ) );
-	this.addAttribute( 'position', new BufferAttribute( vertices, 3 ) );
-	this.addAttribute( 'normal', new BufferAttribute( normals, 3 ) );
-	this.addAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
-
-}
-
-PlaneBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
-PlaneBufferGeometry.prototype.constructor = PlaneBufferGeometry;
-
-/**
- * @author mrdoob / http://mrdoob.com/
  * @author mikael emtinger / http://gomo.se/
  * @author WestLangley / http://github.com/WestLangley
 */
@@ -14295,29 +14176,6 @@ Group.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 } );
 
-/**
- * @author alteredq / http://alteredqualia.com/
- */
-
-function DataTexture( data, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, encoding ) {
-
-	Texture.call( this, null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding );
-
-	this.image = { data: data, width: width, height: height };
-
-	this.magFilter = magFilter !== undefined ? magFilter : NearestFilter;
-	this.minFilter = minFilter !== undefined ? minFilter : NearestFilter;
-
-	this.flipY = false;
-	this.generateMipmaps  = false;
-
-}
-
-DataTexture.prototype = Object.create( Texture.prototype );
-DataTexture.prototype.constructor = DataTexture;
-
-DataTexture.prototype.isDataTexture = true;
-
 var Cache;
 
 /**
@@ -15078,306 +14936,1621 @@ BoxHelper.prototype.update = ( function () {
 
 } )();
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
- */
+// flags in legs exported by Cave models
 
-function PlaneGeometry( width, height, widthSegments, heightSegments ) {
-
-	Geometry.call( this );
-
-	this.type = 'PlaneGeometry';
-
-	this.parameters = {
-		width: width,
-		height: height,
-		widthSegments: widthSegments,
-		heightSegments: heightSegments
-	};
-
-	this.fromBufferGeometry( new PlaneBufferGeometry( width, height, widthSegments, heightSegments ) );
-
-}
-
-PlaneGeometry.prototype = Object.create( Geometry.prototype );
-PlaneGeometry.prototype.constructor = PlaneGeometry;
-
-var gradientColours = [[235,99,111],[235,99,112],[234,99,113],[234,100,114],[233,100,114],[233,100,115],[232,100,116],[232,101,117],[231,101,118],[231,101,119],[230,101,119],[230,101,120],[230,102,121],[229,102,122],[229,102,123],[228,102,124],[228,103,124],[227,103,125],[227,103,126],[226,103,127],[226,103,128],[226,104,129],[225,104,129],[225,104,130],[224,104,131],[224,104,132],[223,105,133],[223,105,134],[222,105,134],[222,105,135],[221,106,136],[221,106,137],[221,106,138],[220,106,139],[220,106,139],[219,107,140],[219,107,141],[218,107,142],[218,107,143],[217,108,144],[217,108,144],[216,108,145],[216,108,146],[216,108,147],[215,109,148],[215,109,149],[214,109,149],[214,109,150],[213,110,151],[213,110,152],[212,110,153],[212,110,154],[211,110,154],[211,111,155],[211,111,156],[210,111,157],[210,111,158],[209,111,159],[209,112,159],[208,112,160],[208,112,161],[207,112,162],[207,113,163],[207,113,164],[206,113,164],[206,113,165],[205,113,166],[205,114,167],[204,114,168],[204,114,169],[203,114,169],[203,115,170],[202,115,171],[202,115,172],[201,115,172],[200,116,173],[199,116,173],[198,116,173],[197,117,174],[196,117,174],[194,118,174],[193,118,175],[192,118,175],[191,119,176],[190,119,176],[189,119,176],[188,120,177],[187,120,177],[186,121,177],[185,121,178],[184,121,178],[183,122,178],[181,122,179],[180,122,179],[179,123,179],[178,123,180],[177,124,180],[176,124,181],[175,124,181],[174,125,181],[173,125,182],[172,125,182],[171,126,182],[170,126,183],[168,126,183],[167,127,183],[166,127,184],[165,128,184],[164,128,184],[163,128,185],[162,129,185],[161,129,186],[160,129,186],[159,130,186],[158,130,187],[157,131,187],[155,131,187],[154,131,188],[153,132,188],[152,132,188],[151,132,189],[150,133,189],[149,133,189],[148,133,190],[147,134,190],[146,134,191],[145,135,191],[144,135,191],[142,135,192],[141,136,192],[140,136,192],[139,136,193],[138,137,193],[137,137,193],[136,138,194],[135,138,194],[134,138,194],[133,139,195],[132,139,195],[131,139,196],[129,140,196],[128,140,196],[127,141,197],[126,141,197],[125,141,197],[124,142,198],[123,142,198],[122,142,198],[120,142,197],[119,143,197],[117,143,197],[116,143,197],[114,143,196],[113,144,196],[111,144,196],[110,144,195],[108,144,195],[107,144,195],[105,145,195],[104,145,194],[102,145,194],[101,145,194],[100,146,193],[98,146,193],[97,146,193],[95,146,193],[94,146,192],[92,147,192],[91,147,192],[89,147,191],[88,147,191],[86,147,191],[85,148,191],[83,148,190],[82,148,190],[80,148,190],[79,149,189],[78,149,189],[76,149,189],[75,149,189],[73,149,188],[72,150,188],[70,150,188],[69,150,187],[67,150,187],[66,151,187],[64,151,186],[63,151,186],[61,151,186],[60,151,186],[59,152,185],[57,152,185],[56,152,185],[54,152,184],[53,153,184],[51,153,184],[50,153,184],[48,153,183],[47,153,183],[45,154,183],[44,154,182],[42,154,182],[41,154,182],[39,154,182],[38,155,181],[37,155,181],[35,155,181],[34,155,180],[32,156,180],[31,156,180],[29,156,180],[28,156,179],[26,156,179],[25,157,179],[23,157,178],[22,157,178],[20,157,178],[19,158,178],[17,158,177],[16,158,177],[16,158,176],[17,158,176],[17,158,175],[18,158,174],[18,158,174],[19,158,173],[19,158,172],[20,158,171],[20,158,171],[21,158,170],[21,158,169],[22,158,169],[22,159,168],[23,159,167],[23,159,167],[23,159,166],[24,159,165],[24,159,164],[25,159,164],[25,159,163],[26,159,162],[26,159,162],[27,159,161],[27,159,160],[28,159,160],[28,159,159],[29,159,158],[29,159,157],[30,159,157],[30,159,156],[30,159,155],[31,159,155],[31,159,154],[32,159,153],[32,159,153],[33,159,152],[33,160,151],[34,160,150],[34,160,150],[35,160,149],[35,160,148],[36,160,148],[36,160,147],[36,160,146],[37,160,146],[37,160,145],[38,160,144],[38,160,143],[39,160,143],[39,160,142],[40,160,141],[40,160,141],[41,160,140],[41,160,139],[42,160,139],[42,160,138],[43,160,137],[43,160,136],[43,160,136],[44,160,135],[44,161,134],[45,161,134],[45,161,133],[46,161,132],[46,161,132],[47,161,131],[47,161,130],[48,161,129],[48,161,129],[49,161,128],[49,161,127],[50,161,127],[50,161,126],[51,161,125],[52,161,125],[53,161,124],[54,161,123],[55,161,123],[56,161,122],[56,160,121],[57,160,121],[58,160,120],[59,160,120],[60,160,119],[61,160,118],[62,160,118],[63,160,117],[64,160,116],[65,160,116],[66,160,115],[67,160,114],[67,159,114],[68,159,113],[69,159,112],[70,159,112],[71,159,111],[72,159,111],[73,159,110],[74,159,109],[75,159,109],[76,159,108],[77,159,107],[78,159,107],[78,158,106],[79,158,105],[80,158,105],[81,158,104],[82,158,103],[83,158,103],[84,158,102],[85,158,102],[86,158,101],[87,158,100],[88,158,100],[89,158,99],[89,157,98],[90,157,98],[91,157,97],[92,157,96],[93,157,96],[94,157,95],[95,157,94],[96,157,94],[97,157,93],[98,157,93],[99,157,92],[100,157,91],[100,156,91],[101,156,90],[102,156,89],[103,156,89],[104,156,88],[105,156,87],[106,156,87],[107,156,86],[108,156,85],[109,156,85],[110,156,84],[111,156,84],[111,155,83],[112,155,82],[113,155,82],[114,155,81],[115,155,80],[116,155,80],[117,155,79],[118,155,79],[118,155,79],[119,154,78],[120,154,78],[121,154,78],[121,154,78],[122,154,78],[123,153,77],[123,153,77],[124,153,77],[125,153,77],[126,153,77],[126,152,77],[127,152,76],[128,152,76],[128,152,76],[129,152,76],[130,151,76],[131,151,75],[131,151,75],[132,151,75],[133,150,75],[133,150,75],[134,150,74],[135,150,74],[136,150,74],[136,149,74],[137,149,74],[138,149,73],[138,149,73],[139,149,73],[140,148,73],[141,148,73],[141,148,72],[142,148,72],[143,148,72],[143,147,72],[144,147,72],[145,147,72],[145,147,71],[146,147,71],[147,146,71],[148,146,71],[148,146,71],[149,146,70],[150,146,70],[150,145,70],[151,145,70],[152,145,70],[153,145,69],[153,145,69],[154,144,69],[155,144,69],[155,144,69],[156,144,68],[157,143,68],[158,143,68],[158,143,68],[159,143,68],[160,143,67],[160,142,67],[161,142,67],[162,142,67],[163,142,67],[163,142,67],[164,141,66],[165,141,66],[165,141,66],[166,141,66],[167,141,66],[168,140,65],[168,140,65],[169,140,65],[169,140,65],[170,140,66],[170,139,66],[171,139,66],[171,139,67],[172,139,67],[172,139,67],[172,138,68],[173,138,68],[173,138,68],[174,138,69],[174,138,69],[175,137,69],[175,137,70],[175,137,70],[176,137,70],[176,137,71],[177,136,71],[177,136,71],[177,136,72],[178,136,72],[178,135,72],[179,135,73],[179,135,73],[180,135,73],[180,135,74],[180,134,74],[181,134,74],[181,134,75],[182,134,75],[182,134,75],[183,133,76],[183,133,76],[183,133,76],[184,133,77],[184,133,77],[185,132,77],[185,132,77],[186,132,78],[186,132,78],[186,132,78],[187,131,79],[187,131,79],[188,131,79],[188,131,80],[189,131,80],[189,130,80],[189,130,81],[190,130,81],[190,130,81],[191,130,82],[191,129,82],[192,129,82],[192,129,83],[192,129,83],[193,128,83],[193,128,84],[194,128,84],[194,128,84],[194,128,85],[195,127,85],[195,127,85],[196,127,86],[196,127,86],[197,127,86],[197,126,87],[197,126,87],[198,126,87],[198,126,88],[199,126,88],[199,125,88],[200,125,89],[200,125,89]];
-
-var depthColours = [[255,255,204],[255,255,203],[255,255,203],[255,254,202],[255,254,202],[255,254,201],[255,254,200],[255,253,200],[255,253,199],[255,253,199],[255,253,198],[255,252,197],[255,252,197],[255,252,196],[255,252,196],[255,251,195],[255,251,194],[255,251,194],[255,251,193],[255,250,193],[255,250,192],[255,250,191],[255,250,191],[255,249,190],[255,249,190],[255,249,189],[255,249,188],[255,248,188],[255,248,187],[255,248,187],[255,248,186],[255,247,185],[255,247,185],[255,247,184],[255,247,184],[255,246,183],[255,246,182],[255,246,182],[255,246,181],[255,245,180],[255,245,180],[255,245,179],[255,245,179],[255,244,178],[255,244,177],[255,244,177],[255,244,176],[255,243,176],[255,243,175],[255,243,174],[255,243,174],[255,242,173],[255,242,173],[255,242,172],[255,242,171],[255,241,171],[255,241,170],[255,241,170],[255,241,169],[255,240,168],[255,240,168],[255,240,167],[255,240,167],[255,239,166],[255,239,165],[255,239,165],[255,239,164],[255,238,164],[255,238,163],[255,238,162],[255,238,162],[255,237,161],[255,237,161],[255,237,160],[255,237,159],[255,236,159],[255,236,158],[255,236,158],[255,236,157],[255,235,157],[255,235,156],[255,235,155],[255,235,155],[255,234,154],[255,234,154],[255,234,153],[255,233,153],[255,233,152],[255,233,151],[255,233,151],[255,232,150],[255,232,150],[255,232,149],[255,232,148],[255,231,148],[255,231,147],[255,231,147],[255,230,146],[255,230,146],[255,230,145],[255,230,144],[255,229,144],[255,229,143],[255,229,143],[255,229,142],[255,228,142],[255,228,141],[255,228,140],[255,227,140],[255,227,139],[254,227,139],[254,227,138],[254,226,138],[254,226,137],[254,226,136],[254,225,136],[254,225,135],[254,225,135],[254,225,134],[254,224,134],[254,224,133],[254,224,132],[254,224,132],[254,223,131],[254,223,131],[254,223,130],[254,222,130],[254,222,129],[254,222,128],[254,222,128],[254,221,127],[254,221,127],[254,221,126],[254,221,125],[254,220,125],[254,220,124],[254,220,124],[254,219,123],[254,219,123],[254,219,122],[254,219,121],[254,218,121],[254,218,120],[254,218,120],[254,218,119],[254,217,119],[254,217,118],[254,216,117],[254,216,117],[254,215,116],[254,215,116],[254,214,115],[254,214,115],[254,213,114],[254,213,113],[254,212,113],[254,212,112],[254,211,112],[254,211,111],[254,210,111],[254,210,110],[254,209,109],[254,208,109],[254,208,108],[254,207,108],[254,207,107],[254,206,106],[254,206,106],[254,205,105],[254,205,105],[254,204,104],[254,204,104],[254,203,103],[254,203,102],[254,202,102],[254,202,101],[254,201,101],[254,200,100],[254,200,100],[254,199,99],[254,199,98],[254,198,98],[254,198,97],[254,197,97],[254,197,96],[254,196,96],[254,196,95],[254,195,94],[254,195,94],[254,194,93],[254,193,93],[254,193,92],[254,192,92],[254,192,91],[254,191,90],[254,191,90],[254,190,89],[254,190,89],[254,189,88],[254,189,88],[254,188,87],[254,188,86],[254,187,86],[254,187,85],[254,186,85],[254,185,84],[254,185,83],[254,184,83],[254,184,82],[254,183,82],[254,183,81],[254,182,81],[254,182,80],[254,181,79],[254,181,79],[254,180,78],[254,180,78],[254,179,77],[254,179,77],[254,178,76],[254,177,76],[254,177,76],[254,176,75],[254,176,75],[254,175,75],[254,175,75],[254,174,74],[254,174,74],[254,173,74],[254,173,74],[254,172,74],[254,172,73],[254,171,73],[254,171,73],[254,170,73],[254,170,72],[254,169,72],[254,169,72],[254,168,72],[254,168,72],[254,167,71],[254,167,71],[254,166,71],[254,166,71],[254,165,71],[254,165,70],[254,164,70],[254,164,70],[254,163,70],[254,163,69],[254,162,69],[254,162,69],[254,161,69],[254,161,69],[254,160,68],[254,160,68],[253,159,68],[253,159,68],[253,158,67],[253,158,67],[253,157,67],[253,157,67],[253,156,67],[253,156,66],[253,155,66],[253,155,66],[253,154,66],[253,154,65],[253,153,65],[253,153,65],[253,152,65],[253,152,65],[253,151,64],[253,151,64],[253,150,64],[253,150,64],[253,149,64],[253,149,63],[253,148,63],[253,148,63],[253,147,63],[253,147,62],[253,146,62],[253,146,62],[253,145,62],[253,145,62],[253,144,61],[253,144,61],[253,143,61],[253,143,61],[253,142,60],[253,142,60],[253,141,60],[253,140,60],[253,139,60],[253,138,59],[253,138,59],[253,137,59],[253,136,59],[253,135,58],[253,134,58],[253,133,58],[253,132,58],[253,132,57],[253,131,57],[253,130,57],[253,129,57],[253,128,56],[253,127,56],[253,126,56],[253,125,56],[253,125,55],[253,124,55],[253,123,55],[253,122,55],[253,121,54],[253,120,54],[253,119,54],[253,119,54],[253,118,53],[253,117,53],[253,116,53],[253,115,53],[253,114,52],[253,113,52],[253,113,52],[253,112,52],[253,111,51],[253,110,51],[252,109,51],[252,108,51],[252,107,50],[252,106,50],[252,106,50],[252,105,50],[252,104,49],[252,103,49],[252,102,49],[252,101,49],[252,100,48],[252,100,48],[252,99,48],[252,98,48],[252,97,47],[252,96,47],[252,95,47],[252,94,47],[252,94,46],[252,93,46],[252,92,46],[252,91,46],[252,90,45],[252,89,45],[252,88,45],[252,87,45],[252,87,44],[252,86,44],[252,85,44],[252,84,44],[252,83,43],[252,82,43],[252,81,43],[252,81,43],[252,80,42],[252,79,42],[252,78,42],[252,77,42],[251,77,42],[251,76,41],[251,75,41],[250,74,41],[250,74,41],[250,73,41],[249,72,40],[249,72,40],[249,71,40],[248,70,40],[248,69,40],[248,69,40],[247,68,39],[247,67,39],[247,67,39],[246,66,39],[246,65,39],[245,64,38],[245,64,38],[245,63,38],[244,62,38],[244,62,38],[244,61,37],[243,60,37],[243,59,37],[243,59,37],[242,58,37],[242,57,36],[242,57,36],[241,56,36],[241,55,36],[241,54,36],[240,54,35],[240,53,35],[240,52,35],[239,52,35],[239,51,35],[239,50,35],[238,50,34],[238,49,34],[238,48,34],[237,47,34],[237,47,34],[237,46,33],[236,45,33],[236,45,33],[236,44,33],[235,43,33],[235,42,32],[235,42,32],[234,41,32],[234,40,32],[234,40,32],[233,39,31],[233,38,31],[232,37,31],[232,37,31],[232,36,31],[231,35,30],[231,35,30],[231,34,30],[230,33,30],[230,32,30],[230,32,30],[229,31,29],[229,30,29],[229,30,29],[228,29,29],[228,28,29],[228,27,28],[227,27,28],[227,26,28],[226,26,28],[226,25,28],[225,25,28],[224,25,29],[224,24,29],[223,24,29],[222,24,29],[222,23,29],[221,23,29],[220,22,29],[219,22,30],[219,22,30],[218,21,30],[217,21,30],[217,21,30],[216,20,30],[215,20,30],[215,20,30],[214,19,31],[213,19,31],[213,19,31],[212,18,31],[211,18,31],[211,17,31],[210,17,31],[209,17,32],[209,16,32],[208,16,32],[207,16,32],[206,15,32],[206,15,32],[205,15,32],[204,14,33],[204,14,33],[203,14,33],[202,13,33],[202,13,33],[201,12,33],[200,12,33],[200,12,33],[199,11,34],[198,11,34],[198,11,34],[197,10,34],[196,10,34],[195,10,34],[195,9,34],[194,9,35],[193,9,35],[193,8,35],[192,8,35],[191,7,35],[191,7,35],[190,7,35],[189,6,36],[189,6,36],[188,6,36],[187,5,36],[187,5,36],[186,5,36],[185,4,36],[185,4,36],[184,4,37],[183,3,37],[182,3,37],[182,2,37],[181,2,37],[180,2,37],[180,1,37],[179,1,38],[178,1,38],[178,0,38],[177,0,38]];
-
-var inclinationColours = [[255,255,0],[253,254,2],[251,253,4],[249,252,5],[247,251,7],[245,250,9],[243,249,11],[241,249,13],[239,248,14],[237,247,16],[235,246,18],[233,245,20],[231,244,22],[229,243,23],[227,242,25],[225,241,27],[223,240,29],[221,239,31],[219,238,32],[217,237,34],[215,237,36],[213,236,38],[211,235,40],[209,234,41],[207,233,43],[205,232,45],[203,231,47],[201,230,49],[199,229,50],[197,228,52],[195,227,54],[193,226,56],[191,226,58],[189,225,60],[187,224,61],[185,223,63],[183,222,65],[181,221,67],[179,220,69],[177,219,70],[175,218,72],[173,217,74],[171,216,76],[169,215,78],[167,214,79],[165,214,81],[163,213,83],[161,212,85],[159,211,87],[157,210,88],[155,209,90],[153,208,92],[151,207,94],[149,206,96],[147,205,97],[145,204,99],[143,203,101],[141,202,103],[139,202,105],[137,201,106],[135,200,108],[133,199,110],[131,198,112],[129,197,114],[126,196,115],[124,195,117],[122,194,119],[120,193,121],[118,192,123],[116,191,124],[114,191,126],[112,190,128],[110,189,130],[108,188,132],[106,187,133],[104,186,135],[102,185,137],[100,184,139],[98,183,141],[96,182,142],[94,181,144],[92,180,146],[90,179,148],[88,179,150],[86,178,151],[84,177,153],[82,176,155],[80,175,157],[78,174,159],[76,173,160],[74,172,162],[72,171,164],[70,170,166],[68,169,168],[66,168,169],[64,167,171],[62,167,173],[60,166,175],[58,165,177],[56,164,179],[54,163,180],[52,162,182],[50,161,184],[48,160,186],[46,159,188],[44,158,189],[42,157,191],[40,156,193],[38,156,195],[36,155,197],[34,154,198],[32,153,200],[30,152,202],[28,151,204],[26,150,206],[24,149,207],[22,148,209],[20,147,211],[18,146,213],[16,145,215],[14,144,216],[12,144,218],[10,143,220],[8,142,222],[6,141,224],[4,140,225],[2,139,227],[0,138,229]];
-
-var terrainColours = [[50,205,50],[52,205,52],[53,206,53],[55,206,55],[56,207,56],[58,207,58],[60,207,60],[61,208,61],[63,208,63],[65,209,65],[66,209,66],[68,209,68],[69,210,69],[71,210,71],[73,211,73],[74,211,74],[76,211,76],[77,212,77],[79,212,79],[81,212,81],[82,213,82],[84,213,84],[86,214,86],[87,214,87],[89,214,89],[90,215,90],[92,215,92],[94,216,94],[95,216,95],[97,216,97],[98,217,98],[100,217,100],[102,218,102],[103,218,103],[105,218,105],[106,219,106],[108,219,108],[110,220,110],[111,220,111],[113,220,113],[115,221,115],[116,221,116],[118,222,118],[119,222,119],[121,222,121],[123,223,123],[124,223,124],[126,224,126],[127,224,127],[129,224,129],[131,225,131],[132,225,132],[134,225,134],[136,226,136],[137,226,137],[139,227,139],[140,227,140],[142,227,142],[144,228,144],[145,228,145],[147,229,147],[148,229,148],[150,229,150],[152,230,152],[153,230,153],[155,231,155],[157,231,157],[158,231,158],[160,232,160],[161,232,161],[163,233,163],[165,233,165],[166,233,166],[168,234,168],[169,234,169],[171,235,171],[173,235,173],[174,235,174],[176,236,176],[178,236,178],[179,236,179],[181,237,181],[182,237,182],[184,238,184],[186,238,186],[187,238,187],[189,239,189],[190,239,190],[192,240,192],[194,240,194],[195,240,195],[197,241,197],[199,241,199],[200,242,200],[202,242,202],[203,242,203],[205,243,205],[207,243,207],[208,244,208],[210,244,210],[211,244,211],[213,245,213],[215,245,215],[216,246,216],[218,246,218],[219,246,219],[221,247,221],[223,247,223],[224,248,224],[226,248,226],[228,248,228],[229,249,229],[231,249,231],[232,249,232],[234,250,234],[236,250,236],[237,251,237],[239,251,239],[240,251,240],[242,252,242],[244,252,244],[245,253,245],[247,253,247],[249,253,249],[250,254,250],[252,254,252],[253,255,253],[255,255,255]];
-
-var surveyColours      = [ 0xa6cee3, 0x1f78b4, 0xb2df8a, 0x33a02c, 0xfb9a99, 0xe31a1c, 0xfdbf6f, 0xff7f00, 0xcab2d6, 0x6a3d9a, 0xffff99 ];
-
-function scaleToTexture ( colours ) {
-
-	var l = colours.length;
-	var data = new Uint8Array( l * 3 );
-
-	for ( var i = 0; i < l; i++ ) {
-
-		var c      = colours[ i ];
-		var offset = i * 3;
-
-		data[ offset ]     = c[0];
-		data[ offset + 1 ] = c[1];
-		data[ offset + 2 ] = c[2];
-
-	}
-
-	var texture = new DataTexture( data, l, 1, RGBFormat, UnsignedByteType );
-
-	texture.needsUpdate = true;
-
-	return texture;
-
-}
-
-function rgbToHex ( rgbColours ) {
-
-	var colours = [];
-
-	for ( var i = 0, l = rgbColours.length; i < l; i++ ) {
-
-		var c = rgbColours[ i ];
-
-		colours[ i ] = ( Math.round( c[ 0 ] ) << 16 ) + ( Math.round( c[ 1 ]) << 8 ) + Math.round( c[ 2 ] );
-
-	}
-
-	return colours;
-
-}
-
-function rgbToCSS ( rgbColours ) {
-
-	var colours = [];
-
-	for ( var i = 0, l = rgbColours.length; i < l; i++ ) {
-
-		colours[ i ] = "#" +  rgbColours[ i ].toString( 16 );
-
-	}
-
-	return colours;
-
-}
-
-var Colours = {
-	surveyColoursCSS:    rgbToCSS( surveyColours ),
-	inclinationColours:  rgbToHex( inclinationColours ),
-	terrainColours:      rgbToHex( terrainColours ),
-	gradientColours:     rgbToHex( gradientColours ),
-	surveyColours:       surveyColours,
-	gradientTexture:     scaleToTexture( gradientColours ),
-	depthTexture:        scaleToTexture( depthColours )
-};
-
-// define colors to share THREE.Color objects
-
-function createCache ( colours ) {
-
-	var cache = [];
-
-	for ( var i = 0, l = colours.length; i < l; i++ ) {
-
-		cache[i] = new Color( colours[i] );
-
-	}
-
-	return cache;
-
-}
-
-var ColourCache = {
-	inclination: createCache( Colours.inclinationColours ),
-	terrain:     createCache( Colours.terrainColours ),
-	gradient:    createCache( Colours.gradientColours ),
-	survey:      createCache( Colours.surveyColours ),
-	red:         new Color( 0xff0000 ),
-	white:       new Color( 0xffffff ),
-	grey:        new Color( 0x444444 )
-};
-
+var NORMAL  = 0;
+var SURFACE = 1;
+var SPLAY   = 2;
 var upAxis = new Vector3( 0, 0, 1 );
 
-var tileSpec;
+var environment = new Map();
 
-onmessage = onMessage;
+function getEnvironmentValue ( item, defaultValue ) {
 
-function onMessage ( event ) {
+	if ( environment.has( item ) ) {
 
-	tileSpec = event.data;
+		return environment.get( item );
 
-	new HeightMapLoader( tileSpec.tileSet, tileSpec.resolution, tileSpec.tileX, tileSpec.tileY, mapLoaded, mapError ).load();
+	} else {
+
+		return defaultValue;
+
+	}
 
 }
 
-function mapLoaded ( data, x, y ) {
+var maxId = -1;
 
-	// clip height map data
+function Tree( name, id ) {
 
-	var clip       = tileSpec.clip;
-	var divisions  = tileSpec.tileSet.TILESIZE - 1;
-	var resolution = tileSpec.resolution;
-	var tileSet    = tileSpec.tileSet;
+	this.name     = name || "";
+	this.id       = id || maxId++;
+	this.children = [];
 
-	// clip excess rows from top of height map
+}
 
-	var offset = clip.top * tileSet.TILESIZE * Uint16Array.BYTES_PER_ELEMENT;
+Tree.prototype.constructor = Tree;
 
-	var terrainDataTyped = new Uint16Array( data, offset );
-	var terrainData;
+Tree.prototype.traverse = function ( func ) {
 
-	var xDivisions = divisions - clip.left - clip.right;
-	var yDivisions = divisions - clip.top - clip.bottom;
+	var children = this.children;
 
-	// clip excess left and right columns from height map
+	func ( this );
 
-	if ( clip.left || clip.right ) {
+	for ( var i = 0; i < children.length; i++ ) {
 
-		var columns = tileSet.TILESIZE;
-		var rows;
-		var rowStart;
+		children[ i ].traverse( func );
 
-		terrainData = [];
+	}
 
-		for ( var i = 0, l1 = yDivisions + 1; i < l1; i++ ) {
+}
 
-			// per row of data
-			rowStart = i * columns + clip.left;
+Tree.prototype.addById = function ( name, id, parentId, properties ) {
 
-			for ( var j = 0, l2 = xDivisions + 1; j < l2; j++ ) {
+	var parentNode = this.findById( parentId );
 
-				terrainData.push( terrainDataTyped[ rowStart + j ] );
+	if ( parentNode ) {
+
+		var node = new Tree( name, id );
+
+		if ( properties !== undefined ) Object.assign( node, properties );
+
+		parentNode.children.push ( node );
+		maxId = Math.max( maxId, id );
+
+		return id;
+
+	}
+
+	return null;
+
+}
+
+Tree.prototype.findById = function ( id ) {
+
+	if ( this.id == id ) return this;
+
+	for ( var i = 0, l = this.children.length; i < l; i++ ) {
+
+		var child = this.children[ i ];
+
+		var found = child.findById( id );
+
+		if ( found ) return found;
+
+	}
+
+	return undefined;
+
+}
+
+Tree.prototype.getByPath = function ( path ) {
+
+	var node  = this;
+	var search = true;
+
+	while ( search && path.length > 0 ) {
+
+		search = false;
+
+		for ( var i = 0, l = node.children.length; i < l; i++ ) {
+
+			var child = node.children[ i ];
+
+			if ( child.name === path[ 0 ] ) {
+
+				node = child;
+				path.shift();
+				search = true;
+
+				break;
 
 			}
 
 		}
 
+	}
+
+	return node;
+
+}
+
+Tree.prototype.addPath = function ( path, properties ) {
+
+	var node = this;
+	var newNode;
+
+	// find part of path that exists already
+
+	node = this.getByPath( path );
+
+	if ( path.length === 0 ) return node.id;
+
+	// add remainder of path to node
+
+	while ( path.length > 0 ) {
+
+		newNode = new Tree( path.shift() );
+
+		node.children.push( newNode );
+		node = newNode;
+
+	}
+
+	if ( properties !== undefined ) Object.assign( node, properties );
+
+	return node.id;
+
+}
+
+Tree.prototype.getSubtreeIds = function ( id, idSet ) {
+
+	var node = this.findById( id );
+
+	node.traverse( _getId );
+
+	function _getId( node ) {
+
+		idSet.add( node.id );
+
+	}
+
+}
+
+Tree.prototype.reduce = function ( name ) {
+
+	var node = this;
+
+	// remove single child nodes from top of tree.
+	while ( node.children.length === 1 ) node = node.children[ 0 ];
+
+	if ( !node.name ) node.name = name;
+
+	return node;
+
+}
+
+Tree.prototype.getIdByPath = function ( path ) {
+
+	var node = this.getByPath ( path );
+
+	if ( path.length === 0 ) {
+
+		return node.id;
+
 	} else {
 
-		terrainData = terrainDataTyped;
+		return undefined;
 
 	}
 
-	var xTileWidth = xDivisions * resolution;
-	var yTileWidth = yDivisions * resolution;
+}
 
-	var xTileOffset = xTileWidth / 2 ;
-	var yTileOffset = yTileWidth / 2 ;
+// Survex 3d file handler
 
-	var N = tileSet.N;
-	var W = tileSet.W;
+function Svx3dHandler ( fileName, dataStream ) {
 
-	var X = W + xTileOffset + resolution * ( tileSpec.tileX * divisions + clip.left );
-	var Y = N - yTileOffset - resolution * ( tileSpec.tileY * divisions + clip.top );
+	this.fileName   = fileName;
+	this.groups     = [];
+	this.entrances  = [];
+	this.surface    = [];
+	this.xGroups    = [];
+	this.surveyTree = new Tree();
+	this.isRegion   = false;
 
-	var plane = new PlaneGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions );
+	var surveyTree  = this.surveyTree;
 
-	plane.translate( X, Y, 0 );
+	var source    = dataStream;  // file data as arrrayBuffer
+	var pos       = 0;	         // file position
 
-	var vertices = plane.vertices;
-	var faces    = plane.faces;
-	var colors   = plane.colors;
+	// read file header
+	var stdHeader = readLF(); // Survex 3D Image File
+	var version   = readLF(); // 3d version
+	var title     = readLF(); // Title
+	var date      = readLF(); // Date
 
-	var l1 = terrainData.length;
-	var l2 = vertices.length;
-	var scale = 1;
+	console.log( "title: ", title) ;
 
-	var l = Math.min( l1, l2 ); // FIXME
+	this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
 
-	scale = tileSet.SCALE;
+	// strip empty/single top nodes of tree and add title as top node name if empty
+	this.surveyTree = surveyTree.reduce( title );
 
-	for ( var i = 0; i < l; i++ ) {
+	return;
 
-		vertices[i].setZ( terrainData[ i ] / scale );
+	function readLF () { // read until Line feed
+
+		var bytes = new Uint8Array( source, 0 );
+
+		var lfString = [];
+		var b;
+
+		do {
+
+			b = bytes[ pos++ ];
+			lfString.push( b );
+
+		} while ( b != 0x0a && b != 0x00 )
+
+		var s = String.fromCharCode.apply( null, lfString ).trim();
+
+		console.log( s  );
+
+		return s;
+	}
+}
+
+Svx3dHandler.prototype.constructor = Svx3dHandler;
+
+Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
+
+	var groups     = this.groups;
+	var entrances  = this.entrances;
+	var xGroups    = this.xGroups;
+	var surveyTree = this.surveyTree;
+
+	var cmd         = [];
+	var legs        = [];
+	var label       = "";
+	var readLabel;
+	var fileFlags   = 0;
+	var style       = 0;
+	var stations    = new Map();
+	var lineEnds    = new Set(); // implied line ends to fixnup xsects
+	var xSects      = [];
+	var sectionId   = 0;
+
+	var data       = new Uint8Array( source, 0 );
+	var dataLength = data.length;
+	var lastPosition = { x: 0, y:0, z: 0 }; // value to allow approach vector for xsect coord frame
+	var i;
+
+	// init cmd handler table withh  error handler for unsupported records or invalid records
+
+	for ( i = 0; i < 256; i++ ) {
+
+		cmd[ i ] = function ( e ) { console.log ('unhandled command: ', e.toString( 16 ) ); return false; };	
 
 	}
 
-	plane.computeFaceNormals();
-	plane.computeVertexNormals();
+	if ( version === 8 ) {
+		// v8 dispatch table start
 
-	var colourCache = ColourCache.terrain;
-	var colourRange = colourCache.length - 1;
+		cmd[ 0x00 ] = cmd_STYLE;
+		cmd[ 0x01 ] = cmd_STYLE;
+		cmd[ 0x02 ] = cmd_STYLE;
+		cmd[ 0x03 ] = cmd_STYLE;
+		cmd[ 0x04 ] = cmd_STYLE;
 
-	for ( var i = 0, l = faces.length; i < l; i++ ) {
+		cmd[ 0x0f ] = cmd_MOVE;
+		cmd[ 0x10 ] = cmd_DATE_NODATE;
+		cmd[ 0x11 ] = cmd_DATEV8_1;
+		cmd[ 0x12 ] = cmd_DATEV8_2;
+		cmd[ 0x13 ] = cmd_DATEV8_3;
 
-		var face = faces[ i ];
+		cmd[ 0x1F ] = cmd_ERROR;
 
-		// compute vertex colour per vertex normal
+		cmd[ 0x30 ] = cmd_XSECT16;
+		cmd[ 0x31 ] = cmd_XSECT16;
 
-		for ( var j = 0; j < 3; j++  ) {
+		cmd[ 0x32 ] = cmd_XSECT32;
+		cmd[ 0x33 ] = cmd_XSECT32;
 
-			var dotProduct = face.vertexNormals[ j ].dot( upAxis );
-			var colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
+		for ( i = 0x40; i < 0x80; i++ ) {
 
-			face.vertexColors[ j ] = colourCache[ colourIndex ];
+			cmd[ i ] = cmd_LINE;
 
 		}
 
+		for ( i = 0x80; i < 0x100; i++ ) {
+
+			cmd[ i ] = cmd_LABEL;
+
+		}
+
+		// dispatch table end
+
+		readLabel = readLabelV8;	
+
+		// v8 file wide flags after header
+		fileFlags = data[ pos++ ];
+
+	} else {
+
+		// dispatch table for v7 format 
+
+		for ( i = 0x01; i < 0x0f; i++ ) {
+
+			cmd[ i ] = cmd_TRIM_PLUS;
+
+		}
+
+		cmd[ 0x0f ] = cmd_MOVE;
+
+		for ( i = 0x10; i < 0x20; i++ ) {
+
+			cmd[ i ] = cmd_TRIM;
+
+		}
+
+		cmd[ 0x00 ] = cmd_STOP;
+		cmd[ 0x20 ] = cmd_DATE_V7;
+		cmd[ 0x21 ] = cmd_DATE2_V7;
+		cmd[ 0x24 ] = cmd_DATE_NODATE;
+		cmd[ 0x22 ] = cmd_ERROR;
+
+		cmd[ 0x30 ] = cmd_XSECT16;
+		cmd[ 0x31 ] = cmd_XSECT16;
+
+		cmd[ 0x32 ] = cmd_XSECT32;
+		cmd[ 0x33 ] = cmd_XSECT32;
+
+		for ( i = 0x40; i < 0x80; i++ ) {
+
+			cmd[ i ] = cmd_LABEL;
+
+		}
+
+		for ( i = 0x80; i < 0xc0; i++ ) {
+
+			cmd[ i ] = cmd_LINE;
+
+		}
+		// dispatch table end
+
+		readLabel = readLabelV7;
+
 	}
 
-	// reduce memory consumption by transferring to buffer object + a JSON de serializable form
-	var bufferGeometry = new BufferGeometry().fromGeometry( plane );
-
-	// avoid calculating bounding box in main thread.
-	// however it isn't preserved in json serialisation.
-
-	bufferGeometry.computeBoundingBox();
-
-	var bb = bufferGeometry.boundingBox;
+	if ( version === 6 ) {
 	
-	var boundingBox = {
+		cmd[ 0x20 ] = cmd_DATE_V4;
+		cmd[ 0x21 ] = cmd_DATE2_V4;
 
-		min: {
-			x: bb.min.x,
-			y: bb.min.y,
-			z: bb.min.z
-		},
+	}
 
-		max: {
+	// common record iterator
+	// loop though data, handling record types as required.
 
-			x: bb.max.x,
-			y: bb.max.y,
-			z: bb.max.z
+	while ( pos < dataLength ) {
+
+		if ( !cmd[ data[ pos ] ]( data[ pos++ ] ) ) break;
+
+	}
+
+	if ( xSects.length > 1 ) {
+
+		xGroups.push( xSects );
+
+	}
+
+	groups.push( legs );
+
+	return;
+
+	function readLabelV7 () {
+		// find length of label and read label = v3 - v7 .3d format
+
+		var len = 0;
+		var l;
+
+		switch ( data[ pos ] ) {
+
+			case 0xfe:
+
+				l = new DataView( source, pos );
+
+				len = l.getUint16( 0, true ) + data[ pos ];
+				pos += 2;
+
+				break;
+
+			case 0xff:
+
+				l = new DataView( source, pos );
+
+				len = l.getUint32( 0, true );
+				pos +=4;
+
+				break;
+
+			default:
+
+				len = data[ pos++ ];
+		}
+
+		if ( len === 0 ) return false; // no label
+
+		var db = [];
+
+		for ( var i = 0; i < len; i++ ) {
+	
+			db.push( data[ pos++ ] );
+
+		}
+
+		label = label + String.fromCharCode.apply( null, db  );
+
+		return true;
+
+	}
+
+	function readLabelV8 ( flags ) {
+
+		if ( flags & 0x20 )  return false; // no label change
+
+		var b = data[ pos++ ];
+		var add = 0;
+		var del = 0;
+
+		if ( b !== 0 ) {
+
+			// handle 4b= bit del/add codes
+			del = b >> 4;   // left most 4 bits
+			add = b & 0x0f; // right most 4 bits
+
+		} else {
+
+			// handle 8 bit and 32 bit del/add codes
+			b = data[ pos++ ];
+
+			if ( b !== 0xff ) {
+
+				del = b;
+
+			} else {
+
+				var l = new DataView( source, pos );
+
+				del = l.getUint32( 0, true );
+				pos +=4;
+
+			}
+
+			b = data[ pos++ ];
+
+			if ( b !== 0xff ) {
+
+				add = b;
+
+			} else {
+
+				var l = new DataView( source, pos );
+
+				add = l.getUint32( 0, true );
+				pos +=4;
+
+			}
+		}
+
+		if ( add === 0 && del === 0 ) return;
+
+		if ( del ) label = label.slice( 0, -del );
+
+		if ( add ) {
+
+			var db = [];
+
+			for ( var i = 0; i < add; i++ ) {
+
+				db.push( data[pos++] );
+
+			}
+
+			label = label + String.fromCharCode.apply( null, db );
+
+		}
+
+		return true;
+
+	}
+
+	function cmd_STOP ( c ) {
+
+		if ( label ) label = "";
+
+		return true;
+
+	}
+
+	function cmd_TRIM_PLUS ( c ) { // v7 and previous
+
+		label = label.slice( 0, -16 );
+
+		if ( label.charAt( label.length - 1 ) == ".") label = label.slice( 0, -1 ); // strip trailing "."
+
+		var parts = label.split( "." );
+
+		parts.splice( -( c ) );
+		label = parts.join( "." );
+
+		if ( label ) label = label + ".";
+
+		return true;
+
+	}
+
+	function cmd_TRIM ( c ) {  // v7 and previous
+
+		var trim = c - 15;
+
+		label = label.slice( 0, -trim );
+
+		return true;
+
+	}
+ 
+	function cmd_DATE_V4 ( c ) {
+
+		pos += 4;
+
+		return true;
+
+	}
+
+	function cmd_DATE_V7 ( c ) {
+
+		pos += 2;
+
+		return true;
+
+	}
+
+	function cmd_DATE2_V4 ( c ) {
+
+		pos += 8;
+
+		return true;
+
+	}
+
+	function cmd_DATE2_V7 ( c ) {
+
+		pos += 3;
+
+		return true;
+
+	}
+
+	function cmd_STYLE ( c ) {
+
+		style = c;
+
+		return true;
+
+	}
+
+	function cmd_DATEV8_1 ( c ) {
+
+		pos += 2;
+
+		return true;
+
+	}
+
+	function cmd_DATEV8_2 ( c ) {
+
+		console.log( "v8d2" );
+		pos += 3;
+
+		return true;
+
+	}
+
+	function cmd_DATEV8_3 ( c ) {
+
+		pos += 4;
+
+		return true;
+	}
+
+	function cmd_DATE_NODATE ( c ) {
+
+		return true;
+
+	}
+
+	function cmd_LINE ( c ) {
+
+		var flags = c & 0x3f;
+
+		if ( readLabel( flags ) ) {
+
+			// we have a new section name, add it to the survey tree
+			sectionId = surveyTree.addPath( label.split( "." ) );
+
+		}
+
+		var coords = readCoordinates( flags );
+
+		if ( flags & 0x01 ) {
+
+			legs.push( { coords: coords, type: SURFACE, survey: sectionId } );
+
+		} else if ( flags & 0x04 ) {
+
+			legs.push( { coords: coords, type: SPLAY, survey: sectionId } );
+
+		} else {
+
+			legs.push( { coords: coords, type: NORMAL, survey: sectionId } );
+
+		}
+
+		lastPosition = coords;
+
+		return true;
+
+	}
+
+	function cmd_MOVE ( c ) {
+
+		// new set of line segments
+		if ( legs.length > 1 ) groups.push( legs );
+
+		legs = [];
+
+		// heuristic to detect line ends. lastPosition was presumably set in a line sequence therefore is at the end 
+		// of a line, Add the current label, presumably specified in the last LINE, to a Set of lineEnds.
+
+		lineEnds.add( [ lastPosition.x, lastPosition.y, lastPosition.z ].toString() );
+
+		var coords = readCoordinates( 0x00 );
+
+		legs.push( { coords: coords } );
+
+		lastPosition = coords;
+
+		return true;
+
+	}
+
+	function cmd_ERROR ( c ) {
+		//var l = new DataView(source, pos);
+
+		//console.log("legs   : ", l.getInt32(0, true));
+		//console.log("length : ", l.getInt32(4, true));
+		//console.log("E      : ", l.getInt32(8, true));
+		//console.log("H      : ", l.getInt32(12, true));
+		//console.log("V      : ", l.getInt32(16, true));
+		pos += 20;
+
+		return true;
+
+	}
+
+	function cmd_LABEL ( c ) {
+
+		var flags = c & 0x7f;
+
+		readLabel( 0 );
+
+		var coords = readCoordinates( flags );
+		var path = label.split( "." );
+
+		stations.set( label, coords );
+
+		if ( flags & 0x02 ) surveyTree.addPath ( path, { p: coords } );
+
+		if ( flags & 0x04 ) {
+
+			// get survey path by removing last component of station name
+			path.pop();
+
+			var surveyId = surveyTree.getIdByPath( path );
+
+			entrances.push( { position: coords, label: label, survey: surveyId } );
+
+		}
+
+		return true;
+
+	}
+
+	function cmd_XSECT16 ( c ) {
+
+		var flags = c & 0x01;
+
+		readLabel( flags );
+
+		var l = new DataView( source, pos );
+
+		var lrud = {
+			l: l.getInt16( 0, true ) / 100,
+			r: l.getInt16( 2, true ) / 100,
+			u: l.getInt16( 4, true ) / 100,
+			d: l.getInt16( 6, true ) / 100
+		};
+
+		pos += 8;
+
+		return commonXSECT( flags, lrud );
+
+
+	}
+
+	function cmd_XSECT32 ( c ) {
+
+		var flags = c & 0x01;
+
+		readLabel( flags );
+
+		var l = new DataView( source, pos );
+
+		var lrud = {
+			l: l.getInt32( 0, true ) / 100,
+			r: l.getInt32( 0, true ) / 100,
+			u: l.getInt32( 0, true ) / 100,
+			d: l.getInt32( 0, true ) / 100
+		};
+
+		pos += 16;
+
+		return commonXSECT( flags, lrud );
+
+	}
+
+	function commonXSECT( flags, lrud ) {
+
+		var position = stations.get( label );
+
+		if ( !position ) return;
+
+		var station = label.split( "." );
+
+		// get survey path by removing last component of station name
+		station.pop();
+
+		var surveyId = surveyTree.getIdByPath( station );
+
+		// FIXME to get a approach vector for the first XSECT in a run so we can add it to the display
+		xSects.push( { start: lastPosition, end: position, lrud: lrud, survey: surveyId } );
+
+		lastPosition = position;
+
+		// some XSECTS are not flagged as last in passage
+		// heuristic - the last line position before a move is an implied line end.
+		// cmd_MOVE saves these in the set lineEnds.
+		// this fixes up surveys that display incorrectly withg 'fly-back' artefacts in Aven and Loch.
+
+		if ( flags || lineEnds.has( [ position.x, position.y, position.z ].toString() ) ) {
+
+			if ( xSects.length > 1 ) xGroups.push( xSects );
+
+			lastPosition = { x: 0, y: 0, z: 0 };
+			xSects = [];
+
+		}
+
+		return true;
+
+	}
+
+	function readCoordinates ( flags ) {
+
+		var l = new DataView( source, pos );
+		var coords = {};
+
+		coords.x = l.getInt32( 0, true ) / 100;
+		coords.y = l.getInt32( 4, true ) / 100;
+		coords.z = l.getInt32( 8, true ) / 100;
+		pos += 12;
+
+		return coords;
+
+	}
+
+}
+
+Svx3dHandler.prototype.getLineSegments = function () {
+
+	var lineSegments = [];
+	var groups       = this.groups;
+
+	for ( var i = 0, l = groups.length; i < l; i++ ) {
+
+		var g = groups[ i ];
+
+		for ( var v = 0, vMax = g.length - 1; v < vMax; v++ ) {
+
+			// create vertex pairs for each line segment.
+			// all vertices except first and last are duplicated.
+			var from = g[ v ];
+			var to   = g[ v + 1 ];
+
+			lineSegments.push( { from: from.coords, to: to.coords, type: to.type, survey: to.survey } );
+
+		}
+	}
+
+	return lineSegments;
+
+}
+
+Svx3dHandler.prototype.getSurveyTree = function () {
+
+	return this.surveyTree;
+
+}
+
+Svx3dHandler.prototype.getTerrainDimensions = function () {
+
+	return { lines: 0, samples: 0 };
+
+}
+
+Svx3dHandler.prototype.getTerrainBitmap = function () {
+
+	return false;
+
+}
+
+Svx3dHandler.prototype.getName = function () {
+
+	return this.fileName;
+
+}
+
+Svx3dHandler.prototype.getSurvey = function () {
+
+	return {
+		title: this.fileName,
+		surveyTree: this.surveyTree,
+		lineSegments: this.getLineSegments(),
+		crossSections: this.xGroups,
+		scraps: [],
+		entrances: this.entrances,
+		hasTerrain: false
+	}
+
+}
+
+function loxHandler  ( fileName, dataStream ) {
+
+	this.fileName          = fileName;
+	this.entrances         = [];
+	this.terrain           = [];
+	this.terrainBitmap     = "";
+	this.terrainDimensions = {};
+	this.scraps            = [];
+	this.faults            = [];
+	this.lineSegments      = [];
+	this.sections          = new Map();
+	this.surveyTree        = new Tree( "", 0 );
+	this.isRegion		   = false;
+
+	var lineSegments = [];
+	var xSects       = [];
+	var stations     = [];
+	var lines        = 0;
+	var samples      = 0;
+	var self         = this;
+	var surveyTree   = this.surveyTree;
+
+	// assumes little endian data ATM - FIXME
+
+	var source = dataStream;
+	var pos = 0; // file position
+	var dataStart;
+	var f = new DataView( source, 0 );
+	var l = source.byteLength;
+
+	while ( pos < l ) readChunkHdr();
+
+	this.lineSegments = lineSegments;
+
+	// Drop data to give GC a chance ASAP
+	source = null;
+
+	// strip empty/single top nodes of tree
+	this.surveyTree = surveyTree.reduce( "unknown" );
+
+	return;
+
+	// .lox parsing functions
+
+	function readChunkHdr () {
+
+		var m_type     = readUint();
+		var m_recSize  = readUint();
+		var m_recCount = readUint();
+		var m_dataSize = readUint();
+		var doFunction;
+
+		// offset of data region for out of line strings/images/scrap data.
+		dataStart  = pos + m_recSize;
+
+		switch ( m_type ) {
+
+		case 1:
+
+			doFunction = readSurvey;
+
+			break;
+
+		case 2:
+
+			doFunction = readStation;
+
+			break;
+
+		case 3:
+
+			doFunction = readShot;
+
+			break;
+
+		case 4:
+
+			doFunction = readScrap;
+
+			break;
+
+		case 5:
+
+			doFunction = readSurface;
+
+			break;
+
+		case 6:
+
+			doFunction = readSurfaceBMP;
+
+			break;
+
+		default:
+
+			console.log( "unknown chunk header. type : ", m_type );
+
+		}
+
+		if ( doFunction !== undefined) {
+
+			for ( var i = 0; i < m_recCount; i++ ) {
+
+				doFunction( i );
+
+			}
+
+		}
+
+		skipData( m_dataSize );
+	}
+
+	function readUint () {
+
+		var i = f.getUint32( pos, true );
+
+		pos += 4;
+
+		return i;
+
+	}
+
+	function skipData ( i ) {
+
+		pos += i;
+
+	}
+
+	function readSurvey ( i ) {
+
+		var m_id     = readUint();
+		var namePtr  = readDataPtr();
+		var m_parent = readUint();
+		var titlePtr = readDataPtr();
+
+		if ( m_parent != m_id && !surveyTree.addById( readString( namePtr ), m_id, m_parent ) ) {
+
+			console.log( "error constructing survey tree" );
+
 		}
 
 	}
 
-	var json = bufferGeometry.toJSON();
+	function readDataPtr() {
 
-	// support transferable objects where possible
-	// convertion from Array to ArrayBuffer improves main script side performance
+		var m_position = readUint();
+		var m_size     = readUint();
 
-	var transferable = [];
-
-	for ( var attributeName in json.data.attributes ) {
-
-		var attribute = json.data.attributes[ attributeName ];
-		var fBuffer = new Float32Array( attribute.array );
-
-		attribute.arrayBuffer = fBuffer.buffer;
-		attribute.array = null;
-
-		transferable.push( attribute.arrayBuffer );
+		return { position: m_position, size: m_size };
 
 	}
 
-	postMessage( { status: "ok", json: json, x: x, y: y, boundingBox: boundingBox }, transferable );
+	function readString ( ptr ) {
+
+		var bytes = new Uint8Array( source, dataStart + ptr.position, ptr.size );
+
+		return String.fromCharCode.apply( null, bytes );
+
+	}
+
+	function readStation () {
+
+		var m_id       = readUint();
+		var m_surveyId = readUint();
+		var namePtr    = readDataPtr();
+
+		readDataPtr(); // commentPtr
+
+		var m_flags    = readUint();
+		var coords     = readCoords();
+
+		stations[ m_id ]  = coords;
+
+		// add non surface stations to surveyTree
+
+		if ( ! ( m_flags & 0x01 ) ) surveyTree.addById( readString( namePtr ),  m_id, m_surveyId, { p: coords } );
+
+		if ( m_flags & 0x02 ) {
+
+			// entrance
+			self.entrances.push( { position: coords, label: readString(namePtr), survey: m_surveyId } );
+
+		}
+
+	}
+
+	function readCoords () {
+
+		var f = new DataView( source, pos );
+		var coords = {};
+
+		coords.x = f.getFloat64( 0,  true );
+		coords.y = f.getFloat64( 8,  true );
+		coords.z = f.getFloat64( 16, true );
+		pos += 24;
+
+		return coords;
+
+	}
+
+	function readShot () {
+
+		var m_from = readUint();
+		var m_to   = readUint();
+
+		var fromLRUD = readLRUD();
+		var toLRUD   = readLRUD();
+
+		var m_flags       = readUint();
+		var m_sectionType = readUint();
+		var m_surveyId    = readUint();
+		var m_threshold   = f.getFloat64( pos, true );
+		var type          = NORMAL;
+
+		pos += 8;
+
+
+		if ( m_flags && 0x01 ) type = SURFACE;
+		if ( m_flags && 0x08 ) type = SPLAY;
+
+		if ( m_flags === 0x16 ) {
+
+			xSects[ m_from ] = fromLRUD;
+			xSects[ m_to ]   = toLRUD;
+
+		}
+
+		lineSegments.push( { from: stations[ m_from ], to: stations[ m_to ], type: type, survey: m_surveyId } );
+
+	}
+
+	function readLRUD () {
+
+		var f          = new DataView( source, pos );
+		var L		   = f.getFloat64( 0,  true );
+		var R		   = f.getFloat64( 8,  true );
+		var U		   = f.getFloat64( 16, true );
+		var D   	   = f.getFloat64( 24, true );
+
+		pos += 32;
+
+		return { l: L, r: R, u: U, d: D };
+
+	}
+
+	function readScrap () {
+
+		var m_id         = readUint();
+		var m_surveyId   = readUint();
+
+		var m_numPoints  = readUint();
+		var pointsPtr    = readDataPtr();
+
+		var m_num3Angles = readUint();
+		var facesPtr     = readDataPtr();
+
+		var scrap = { vertices: [], faces: [], survey: m_surveyId };
+		var lastFace;
+		var i;
+
+		for ( i = 0; i < m_numPoints; i++ ) {
+
+			var offset = dataStart + pointsPtr.position + i * 24; // 24 = 3 * sizeof(double)
+			var f = new DataView( source, offset );
+			var vertex = {};
+
+			vertex.x = f.getFloat64( 0,  true );
+			vertex.y = f.getFloat64( 8,  true );
+			vertex.z = f.getFloat64( 16, true );
+
+			scrap.vertices.push( vertex );
+
+		}
+
+		// read faces from out of line data area
+
+		for ( i = 0; i < m_num3Angles; i++ ) {
+
+			var offset = dataStart + facesPtr.position + i * 12; // 12 = 3 * sizeof(uint32)
+			var f = new DataView( source, offset );
+			var face = [];
+
+			face[0] = f.getUint32( 0, true );
+			face[1] = f.getUint32( 4, true );
+			face[2] = f.getUint32( 8, true );
+
+			// check for face winding order == orientation
+
+			fix_direction: { if ( lastFace !== undefined ) {
+
+				var j;
+
+				for ( j = 0; j < 3; j++ ) { // this case triggers more often than those below.
+
+					if (face[ j ] == lastFace[ ( j + 2 ) % 3 ] && face[ ( j + 1 ) % 3 ] == lastFace[ ( j + 3 ) % 3 ] ) {
+
+						face.reverse();
+						break fix_direction;
+
+					}
+
+				}
+
+				for ( j = 0; j < 3; j++ ) {
+
+					if ( face[ j ] == lastFace[ j ] && face[ ( j + 1 ) % 3 ] == lastFace[ ( j + 1 ) % 3 ] ) {
+
+						face.reverse();
+						break fix_direction;
+
+					}
+
+				}
+
+				for ( j = 0; j < 3; j++ ) {
+
+					if ( face[ j ] == lastFace[ ( j + 1 ) % 3 ] && face[ ( j + 1 ) % 3 ] == lastFace[ ( j + 2 ) % 3] ) {
+
+						face.reverse();
+						break fix_direction;
+
+					}
+
+				}
+			} }
+
+			scrap.faces.push( face );
+			lastFace = face;
+		}
+
+		self.scraps.push( scrap );
+
+	}
+
+	function readSurface () {
+
+		var m_id       = readUint();
+		var m_width    = readUint();
+		var m_height   = readUint();
+
+		var surfacePtr = readDataPtr(); 
+		var m_calib    = readCalibration();
+
+		var ab = source.slice( pos, pos + surfacePtr.size ); // required for 64b alignment
+
+		self.terrain = new Float64Array( ab, 0 );
+
+		self.terrainDimensions.samples = m_width;
+		self.terrainDimensions.lines   = m_height;
+		self.terrainDimensions.xOrigin = m_calib[ 0 ];
+		self.terrainDimensions.yOrigin = m_calib[ 1 ];
+		self.terrainDimensions.xDelta  = m_calib[ 2 ];
+		self.terrainDimensions.yDelta  = m_calib[ 5 ];
+
+	}
+
+	function readCalibration () {
+
+		var f = new DataView( source, pos );
+		var m_calib = [];
+
+		m_calib[ 0 ] = f.getFloat64( 0,  true );
+		m_calib[ 1 ] = f.getFloat64( 8,  true );
+		m_calib[ 2 ] = f.getFloat64( 16, true );
+		m_calib[ 3 ] = f.getFloat64( 24, true );
+		m_calib[ 4 ] = f.getFloat64( 32, true );
+		m_calib[ 5 ] = f.getFloat64( 40, true );
+
+		pos += 48;
+
+		return m_calib;
+
+	}
+
+	function readSurfaceBMP () {
+
+		var m_type      = readUint();
+		var m_surfaceId = readUint();
+
+		var imagePtr = readDataPtr();
+		var m_calib  = readCalibration();
+
+		self.terrainBitmap = extractImage( imagePtr );
+	}
+
+	function extractImage ( imagePtr ) {
+
+		var imgData = new Uint8Array( source, dataStart + imagePtr.position, imagePtr.size );
+		var type;
+
+		var b1 = imgData[ 0 ];
+		var b2 = imgData[ 1 ];
+
+		if ( b1 === 0xff && b2 === 0xd8 ) {
+
+			type = "image/jpeg";
+
+		} else if ( b1 === 0x89 && b2 === 0x50 ) {
+
+			type = "image/png";
+
+		}
+
+		if ( !type ) {
+
+			return "";
+
+		}
+
+		var blob = new Blob( [ imgData ], { type: type } );
+		var blobURL = URL.createObjectURL( blob );
+
+		return blobURL;
+
+	}
+}
+
+loxHandler.prototype.constructor = loxHandler;
+
+loxHandler.prototype.getSurveyTree = function () {
+
+	return this.surveyTree;
 
 }
 
-function mapError () {
+loxHandler.prototype.getTerrainDimensions = function () {
 
-	postMessage( { status: "nomap" } );
+	return this.terrainDimensions;
 
 }
 
-// EOF
+loxHandler.prototype.getTerrainData = function () {
+
+	// flip y direction 
+	var flippedTerrain = [];
+	var lines   = this.terrainDimensions.lines;
+	var samples = this.terrainDimensions.samples;
+
+	for ( var i = 0; i < lines; i++ ) {
+
+		var offset = ( lines - 1 - i ) * samples;
+
+		for ( var j = 0; j < samples; j++ ) {
+
+			flippedTerrain.push( this.terrain[offset + j] );
+
+		}
+
+	}
+
+	return flippedTerrain;
+
+}
+
+loxHandler.prototype.getTerrainBitmap = function () {
+
+	return this.terrainBitmap;
+
+}
+
+loxHandler.prototype.getName = function () {
+
+  return this.fileName;
+
+}
+
+loxHandler.prototype.getSurvey = function () {
+
+	return {
+		title: this.fileName,
+		lineSegments: this.lineSegments,
+		crossSections: [],
+		scraps: this.scraps,
+		entrances: this.entrances,
+		hasTerrain: false
+	}
+
+}
+
+function RegionHandler ( filename, dataStream ) {
+
+	this.isRegion = true;
+	this.data = dataStream;
+	this.box = new Box3();
+
+}
+
+RegionHandler.prototype.constructor = RegionHandler;
+
+RegionHandler.prototype.getSurvey = function () {
+
+	return this.data;
+
+}
+
+RegionHandler.prototype.getEntrances = function () {
+
+	var entrances = [];
+	var caves = this.data.caves;
+	var caveName;
+
+	var min = this.box.min;
+	var max = this.box.max;
+
+	for ( caveName in caves ) {
+
+		var i;
+		var e = caves[ caveName ].entrances;
+
+		for ( i = 0; i < e.length; i++ ) {
+
+			var entrance = e[ i ];
+
+			min.min( entrance.position );
+			max.max( entrance.position );
+
+			entrances.push( entrance );
+
+		}
+
+	}
+
+	return entrances;
+
+}
+
+RegionHandler.prototype.getName = function () {
+
+	return this.data.title;
+
+}
+
+RegionHandler.prototype.getLimits = function () {
+
+	return this.box;
+
+}
+
+function CaveLoader ( callback, progress ) {
+
+	if (!callback) {
+
+		alert( "No callback specified");
+
+	}
+
+	this.callback = callback;
+	this.progress = progress;
+
+}
+
+CaveLoader.prototype.constructor = CaveLoader;
+
+CaveLoader.prototype.parseName = function ( name ) {
+
+	var rev = name.split( "." ).reverse();
+
+	this.extention = rev.shift();
+	this.basename  = rev.reverse().join( "." );
+
+	switch ( this.extention ) {
+
+	case '3d':
+
+		this.dataType = "arraybuffer";
+
+		break;
+
+	case 'lox':
+
+		this.dataType = "arraybuffer";
+
+		break;
+
+	case 'reg':
+
+		this.dataType = "json";
+
+		break;
+
+	default:
+
+		alert( "Cave: unknown response extension [", self.extention, "]" );
+
+	}
+
+}
+
+CaveLoader.prototype.loadURL = function ( cave ) {
+
+	var self     = this;
+	var fileName = cave;
+	var xhr;
+	var prefix   = getEnvironmentValue( "surveyDirectory", "" );
+
+	// parse file name
+	this.parseName( cave );
+
+	// load this file
+	var type = this.dataType;
+
+	if (!type) {
+
+		alert( "Cave: unknown file extension [", self.extention, "]");
+		return false;
+
+	}
+
+	xhr = new XMLHttpRequest();
+
+	xhr.addEventListener( "load", _loaded );
+	xhr.addEventListener( "progress", _progress );
+
+	xhr.open( "GET", prefix + cave );
+
+	if (type) {
+
+		xhr.responseType = type; // Must be after open() to keep IE happy.
+
+	}
+
+	xhr.send();
+
+	return true;
+
+	function _loaded ( request ) {
+
+		self.callHandler( fileName, xhr.response );
+
+	}
+
+	function _progress( e ) {
+
+		if ( self.progress) self.progress( Math.round( 100 * e.loaded / e.total ) );
+
+	}
+}
+
+CaveLoader.prototype.loadFile = function ( file ) {
+
+	var self = this;
+	var fileName = file.name;
+
+	this.parseName( fileName );
+
+	var type = this.dataType;
+
+	if ( !type ) {
+
+		alert( "Cave: unknown file extension [", self.extention, "]");
+		return false;
+
+	}
+
+	var fLoader = new FileReader();
+
+	fLoader.addEventListener( "load",     _loaded );
+	fLoader.addEventListener( "progress", _progress );
+
+	switch ( type ) {
+
+	case "arraybuffer":
+
+		fLoader.readAsArrayBuffer( file );
+
+		break;
+
+	/*case "arraybuffer":
+
+		fLoader.readAsArrayText( file );
+
+		break;*/
+
+	default:
+
+		alert( "unknown file data type" );
+		return false;
+
+	}
+
+	return true;
+
+	function _loaded () {
+
+		self.callHandler( fileName, fLoader.result );
+
+	}
+
+	function _progress( e ) {
+
+		if (self.progress) self.progress( Math.round( 100 * e.loaded / e.total ) );
+
+	}
+}
+
+CaveLoader.prototype.callHandler = function( fileName, data) {
+
+	var handler;
+
+	switch ( this.extention ) {
+
+	case '3d':
+
+		handler = new Svx3dHandler( fileName, data );
+
+		break;
+
+	case 'lox':
+
+		handler = new loxHandler( fileName, data );
+
+		break;
+
+	case 'reg':
+
+		handler = new RegionHandler( fileName, data );
+
+		break;
+
+	default:
+
+		alert( "Cave: unknown response extension [", this.extention, "]" );
+		handler = false;
+
+	}
+
+	this.callback( handler );
+
+}
+
+onmessage = onMessage;
+
+function onMessage ( event ) {
+
+	var file = event.data;
+
+	var loader = new CaveLoader( _caveLoaded );
+
+	loader.loadURL( file );
+
+	function _caveLoaded( cave ) {
+
+		postMessage( { status: "ok", survey: cave.getSurvey() } );
+
+	}
+
+}
 
 })));

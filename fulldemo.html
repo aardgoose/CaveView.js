@@ -6,14 +6,16 @@
 	<link type="text/css" href="/CaveView.js/build/CaveView/css/caveview.css" rel="stylesheet"/>
 </head>
 <body onload="onload();" >
-<script type="text/javascript" src="build/CaveView/lib/three.js" ></script>
-<script type="text/javascript" src="build/CaveView/lib/OrbitControls.js" ></script>
 <script type="text/javascript" src="build/CaveView/js/CaveView.js" ></script>
 <script type="text/javascript" >
 
 function onload () {
 
-	CV.setEnvironment( { cvDirectory: "/CaveView.js/build/", terrainDirectory: "/CaveView.js/build/terrain/", surveyDirectory: "/CaveView.js/build/surveys/" } );
+	CV.setEnvironment( { 
+	 home: "/CaveView.js/build/CaveView/", 
+	 terrainDirectory: "/CaveView.js/build/terrain/",
+	 surveyDirectory: "/CaveView.js/build/surveys/"
+	} );
 
 	CV.UI.init( "scene" );
 	CV.UI.loadCaveList( [ "P8_Master.3d", "Giants_Oxlow_Maskhill_System.3d", "Castleton_Master.3d", "Cheddar.lox", "Peak_Master.3d", "all.3d" ] );

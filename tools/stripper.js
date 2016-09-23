@@ -169,53 +169,40 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	var fd;
 	var start = pos;
+
 	var move = false;
-	var lastMove = null;
+	var lastMove = 0;
 
 	var cave;
-	var caves = {};
-	var insertCmd;
 	var newCmd;
 	var entrance = false;
-	var skip = false;
+
+	fd = writeHeader( "xxx.3d", "Peak Speedwell System" );
+
+	cave = {
+		fd: fd,
+		lastLabel: null,
+		surfaceLeg: false
+	};
 
 	while ( pos < dataLength ) {
 
 		start = pos;
 
 		newCmd = null;
-		insertCmd = null;
 
 		if ( cmd[ data[ pos ] ]( data[ pos++ ] ) ) {
 
-			if ( skip ) {
+			var s = label.split( ".");
 
-				skip = false;
+			if ( s[2] !== undefined && s[2] == "peak_surface_5_dtm" ) {
+
+				lastMove = 0;
+				move = false;
+
 				continue;
 
 			}
-
-			caveName = label.split( "." )[ 1 ];
-
-//			console.log(" cn:", caveName, move, lastMove );
-
-			if ( caveName !== undefined ) {
-
-				if ( caves[ caveName ] === undefined ) {
-
-					fd = writeHeader( caveName + ".3d", caveName );
-
-					caves[ caveName ] = {
-						fd: fd,
-						lastLabel: null,
-						live: false
-					};
-
-				}
-
-			}
-
-			cave = caves[ caveName ];
 
 			if ( move ) {
 
@@ -225,47 +212,29 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 			} else {
 
-				if ( cave ) {
+				cave.lastLabel = label;
 
-					if ( !cave.live && lastMove === null ) {
-						console.log("wrong start", caveName );
-//						quit();
-					}
+				if ( lastMove ) {
 
-					cave.live = true;
-
-					if ( lastMove !== null ) {
-
-						// write deferred move
-
-						fs.writeSync( cave.fd, source, lastMove, start - lastMove );
-						lastMove = null;
-
-					}
-
-					//	console.log(" write @ ", start, " len ", pos - start );
-					cave.lastLabel = label;
-
-					if ( insertCmd !== null ) {
-
-						// insert cmd to correct label
-						fs.writeSync( cave.fd, new Buffer( insertCmd ), 0, insertCmd.length );	// new LINE with new LABEL
-						insertCmd = null;
-
-					}
-
-					if ( newCmd === null ) {
-
-						fs.writeSync( cave.fd, source, start, pos - start );
-
-					} else {
-
-						// replace command with new command to correct initial label
-						fs.writeSync( cave.fd, new Buffer( newCmd ), 0, newCmd.length );	// new LINE with new LABEL
-						newCmd = null;
-					}
+					// write deferred move
+					fs.writeSync( cave.fd, source, lastMove, start - lastMove );
 
 				}
+
+				//	console.log(" write @ ", start, " len ", pos - start );
+
+				if ( newCmd === null ) {
+
+					fs.writeSync( cave.fd, source, start, pos - start );
+
+				} else {
+
+					// replace command with new command to correct initial label
+					fs.writeSync( cave.fd, new Buffer( newCmd ), 0, newCmd.length );	// new LINE with new LABEL
+
+				}
+
+				lastMove = 0;
 
 			}
 
@@ -275,38 +244,32 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	// close all cave files
 
-	for ( name in caves ) { 
+	newCmd = [];
 
-		cave = caves[ name ];
+	newCmd.push( 0xA0 ); // anonymous label
+	newCmd.push( 0x00 );
+	newCmd.push( cave.lastLabel.length );
+	newCmd.push( 0x00 );
 
-		newCmd = [];
+	// fake coordinates
 
-		newCmd.push( 0xA0 ); // anonymous label
-		newCmd.push( 0x00 );
-		newCmd.push( cave.lastLabel.length );
-		newCmd.push( 0x00 );
+	for ( var i = 0; i < 6; i++ ) {
 
-		// fake coordinates
-
-		for ( var i = 0; i < 6; i++ ) {
-
-			newCmd.push( 0xCA );
-			newCmd.push( 0xFE );
-
-		}
-
-		fs.writeSync( cave.fd, new Buffer( newCmd ), 0, newCmd.length );
-
-		fs.writeSync( cave.fd, new Buffer( [ 0x00 ] ), 0, 1 ); // style = NORMAL
-		fs.writeSync( cave.fd, new Buffer( [ 0x00 ] ), 0, 1 ); // EOF
-
-		fs.closeSync( cave.fd );
+		newCmd.push( 0xCA );
+		newCmd.push( 0xFE );
 
 	}
 
+	fs.writeSync( cave.fd, new Buffer( newCmd ), 0, newCmd.length );
+
+	fs.writeSync( cave.fd, new Buffer( [ 0x00 ] ), 0, 1 ); // style = NORMAL
+	fs.writeSync( cave.fd, new Buffer( [ 0x00 ] ), 0, 1 ); // EOF
+
+	fs.closeSync( cave.fd );
+
+
 	console.log ( "END l : ", dataLength, " pos: ", pos, " start: ", start );
 
-	fs.writeFileSync( "region.js", JSON.stringify( region ) );
 
 	return;
 
@@ -323,7 +286,6 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 		fs.writeSync( fd, new Buffer( [ 0x00 ] ), 0, 1 );
 
 		return fd;
-
 	}
 
 	function readLabelV7 () {
@@ -375,11 +337,9 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	function readLabelV8 ( flags ) {
 
-		if ( flags & 0x20 )  return false; // no label change
+		if ( flags & 0x20 ) return false; // no label change
 
-		var oldLabel    = label;
-		var oldCaveName = oldLabel.split( "." )[1];
-
+		var oldLabel   = label;
 		var startOfCmd = pos - 1;
 
 		var b = data[ pos++ ];
@@ -425,7 +385,6 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 				pos +=4;
 
 			}
-
 		}
 
 		if ( add === 0 && del === 0 ) return;
@@ -446,54 +405,31 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 		}
 
-		var caveName = label.split( "." )[ 1 ];
+		var s = label.split( "." );
 
-		if ( caves[ caveName ] === undefined ) {
+		if ( s[2] !== undefined && s[2] == "patch_surface_10m_dtm" ) {
 
-			// insert new label and add coordinates
-			newCmd = [];
+			return true;
 
-			newCmd.push( data[ startOfCmd ] );
-			newCmd.push( 0x00 ); 			// 4 bit coding 
+		}
 
-			// delete label count
+		if ( add && cave.lastLabel !== null && cave.lastLabel !== oldLabel ) {
 
-			newCmd.push( 0x00 );
-
-			// add label count
-
-			newCmd.push( label.length );
- 
-			for ( i = 0; i < label.length; i++ ) {
-
-				newCmd.push( label.charCodeAt( i ) );
-
-			}
-
-			// copy xyz coordinates following the orignal command
-
-			for ( i = 0; i < 12; i++ ) {
-
-				newCmd.push( data[ pos + i ] );
-
-			}
-
-		} else if ( add && caveName !== oldCaveName ) {
-
-			var cave = caves[ caveName ];
-
+			console.log( "wrong last label: ", oldLabel, cave.lastLabel );
 			// insert fake record to correct label buffer
 
-			insertCmd = [];
+			newCmd = [];
 
-			insertCmd.push( 0xA0 ); // anonymous label
-			insertCmd.push( 0x00 );
-			insertCmd.push( cave.lastLabel.length );
-			insertCmd.push( oldLabel.length );
+			newCmd.push( 0xA0 ); // anonymous label
+			newCmd.push( 0x00 );
+			newCmd.push( cave.lastLabel.length );
+
+			newCmd.push( oldLabel.length );
 
 			for ( i = 0; i < oldLabel.length; i++ ) {
 
-				insertCmd.push( oldLabel.charCodeAt( i ) );
+				newCmd.push(  oldLabel.charCodeAt( i ) );
+//				newCmd.push( 0x68 );
 
 			}
 
@@ -501,21 +437,63 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 			for ( i = 0; i < 6; i++ ) {
 
-				insertCmd.push( 0xDE );
-				insertCmd.push( 0xAD );
+				newCmd.push( 0xDE );
+				newCmd.push( 0xAD );
 
 			}
 
+			fs.writeSync( cave.fd, new Buffer( newCmd ), 0, newCmd.length );
+
+			cave.lastLabel = oldLabel;
+			newCmd = null; // don't replace current command'
+
 		}
 
+/*
+		var caveName = label.split( "." )[ 1 ];
+
+		if ( add && caveName != oldCaveName ) {
+
+			var cave = caves[ caveName ];
+
+		//	console.log(" oc: ", oldCaveName, " nc: ", caveName );
+
+			// insert fake record to correct label buffer
+
+			newCmd = [];
+
+			newCmd.push( 0xA0 ); // anonymouus label
+			newCmd.push( 0x00 );
+			newCmd.push( cave.lastLabel.length );
+			newCmd.push( oldLabel.length );
+
+			for ( i = 0; i < oldLabel.length; i++ ) {
+
+				newCmd.push(  oldLabel.charCodeAt( i ) );
+
+			}
+
+			// fake coordinates
+
+			for ( i = 0; i < 6; i++ ) {
+
+				newCmd.push( 0xDE );
+				newCmd.push( 0xAD );
+
+			}
+
+			fs.writeSync( cave.fd, new Buffer( newCmd ), 0, newCmd.length );
+
+			newCmd = null; // don't replace current command'
+
+		}
+*/
 		return true;
 
 	}
 
 	function cmd_STOP ( c ) {
 
-		if ( lastMove !== null ) skip = true;
-//console.log("STOP:", pos);
 		if ( label ) label = "";
 
 		return true;
@@ -541,8 +519,6 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	function cmd_TRIM ( c ) {  // v7 and previous
 
-		if ( lastMove !== null ) skip = true;
-//console.log("TRIM:", pos);
 		var trim = c - 15;
 
 		label = label.slice( 0, -trim );
@@ -553,8 +529,6 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
  
 	function cmd_DATE_V4 ( c ) {
 
-		if ( lastMove !== null ) skip = true;
-//console.log("DATE:", pos);
 		pos += 4;
 
 		return true;
@@ -562,9 +536,6 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 	}
 
 	function cmd_DATE_V7 ( c ) {
-
-		if ( lastMove !== null ) skip = true;
-//console.log("DATE:", pos);
 
 		pos += 2;
 
@@ -574,8 +545,6 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	function cmd_DATE2_V4 ( c ) {
 
-		if ( lastMove !== null ) skip = true;
-//console.log("DATE:", pos);
 		pos += 8;
 
 		return true;
@@ -584,8 +553,6 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	function cmd_DATE2_V7 ( c ) {
 
-		if ( lastMove !== null ) skip = true;
-//console.log("DATE:", pos);
 		pos += 3;
 
 		return true;
@@ -593,8 +560,6 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 	}
 
 	function cmd_STYLE ( c ) {
-		if ( lastMove !== null ) skip = true;
-//console.log("STYLE:", pos);
 
 		return true;
 
@@ -602,8 +567,6 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	function cmd_DATEV8_1 ( c ) {
 
-		if ( lastMove !== null ) skip = true;
-//console.log("DATE1:", pos);
 		pos += 2;
 
 		return true;
@@ -611,9 +574,6 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 	}
 
 	function cmd_DATEV8_2 ( c ) {
-
-		if ( lastMove !== null ) skip = true;
-//console.log("DATE2:", pos);
 
 		pos += 3;
 
@@ -623,9 +583,6 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	function cmd_DATEV8_3 ( c ) {
 
-		if ( lastMove !== null ) skip = true;
-//console.log("DATE:", pos);
-
 		pos += 4;
 
 		return true;
@@ -633,15 +590,12 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	function cmd_DATE_NODATE ( c ) {
 
-		if ( lastMove !== null ) skip = true;
-//console.log("DATE:", pos);
-
 		return true;
 
 	}
 
 	function cmd_LINE ( c ) {
-//console.log("LINE: ", pos);
+
 		readLabel( c & 0x3f );
 
 		readCoordinates();
@@ -651,20 +605,14 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 	}
 
 	function cmd_MOVE ( c ) {
-		if ( lastMove !== null ) skip = true;
-//console.log("MOVE: ", pos);
 
-		readCoordinates();
+		readCoordinates()
 		move = true;
-
 		return true;
 
 	}
 
 	function cmd_ERROR ( c ) {
-
-		if ( lastMove !== null ) skip = true;
-//console.log("ERROR: ", pos);
 
 		pos += 20;
 
@@ -674,7 +622,9 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	function cmd_LABEL ( c ) {
 
-		entrance = c & 0x04;
+		var flags = c & 0x7f;
+
+		entrance = flags & 0x04;
 
 		readLabel( 0 );
 
@@ -686,29 +636,17 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 	function cmd_XSECT16 ( c ) {
 
-		entrance = false;
 		readLabel( c & 0x01 );
 
 		pos += 8;
-
-		return commonXSECT();
 
 	}
 
 	function cmd_XSECT32 ( c ) {
 
-		entrance = false;
 		readLabel( c & 0x01 );
 
 		pos += 16;
-
-		return commonXSECT();
-
-	}
-
-	function commonXSECT() {
-
-		return true;
 
 	}
 
@@ -751,7 +689,7 @@ Svx3dEditor.prototype.handleVx = function ( source, pos, version ) {
 
 }
 
-var buffer = fs.readFileSync( "Peak_Master.3d");
+var buffer = fs.readFileSync( "giants_oxlow_maskhill_system.3d");
 
 var e = new Svx3dEditor( buffer );
 

@@ -39,7 +39,7 @@ function TiledTerrain ( limits3, onLoaded ) {
 	this.currentLimits;
 	this.dying = false;
 
-	this.workerPool = new WorkerPool( "js/workers/tileWorker.js" );
+	this.workerPool = new WorkerPool( "tileWorker.js" );
 
 	if ( HUD !== undefined ) {
 

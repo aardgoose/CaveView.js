@@ -2,7 +2,7 @@ import { getEnvironmentValue } from '../core/constants.js';
 
 function WorkerPool ( script ) {
 
-	this.script = getEnvironmentValue( "home", "" ) + script;
+	this.script = getEnvironmentValue( "home", "" ) + "js/workers/" + script;
 	this.workers = [];
 
 }

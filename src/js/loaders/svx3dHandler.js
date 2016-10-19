@@ -24,7 +24,7 @@ function Svx3dHandler ( fileName, dataStream ) {
 	var title     = readLF(); // Title
 	var date      = readLF(); // Date
 
-	console.log( "title: ", title) ;
+	console.log( "title: ", title);
 
 	this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
 
@@ -45,7 +45,7 @@ function Svx3dHandler ( fileName, dataStream ) {
 			b = bytes[ pos++ ];
 			lfString.push( b );
 
-		} while ( b != 0x0a && b != 0x00 )
+		} while ( b != 0x0a )
 
 		var s = String.fromCharCode.apply( null, lfString ).trim();
 

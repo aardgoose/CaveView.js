@@ -5,7 +5,7 @@ import { HudObject } from './HudObject.js';
 import {
 	Vector3, Math as _Math,
 	Geometry, RingBufferGeometry, SphereBufferGeometry,
-	LineBasicMaterial, MeshBasicMaterial, MeshPhongMaterial,
+	LineBasicMaterial, MeshBasicMaterial, MeshStandardMaterial,
 	NoColors, FrontSide,
 	Mesh, LineSegments, Group
 } from '../../../../three.js/src/Three.js'; 
@@ -65,8 +65,8 @@ function AHI ( container ) {
 	}
 
 	var mRing  = new Mesh( ring, new MeshBasicMaterial( { color: 0x333333, vertexColors: NoColors, side: FrontSide } ) );
-	var mSky   = new Mesh( sky,  new MeshPhongMaterial( { color: 0x106f8d, vertexColors: NoColors, side: FrontSide } ) );
-	var mLand  = new Mesh( land, new MeshPhongMaterial( { color: 0x802100, vertexColors: NoColors, side: FrontSide } ) );
+	var mSky   = new Mesh( sky,  new MeshStandardMaterial( { color: 0x106f8d, vertexColors: NoColors, side: FrontSide } ) );
+	var mLand  = new Mesh( land, new MeshStandardMaterial( { color: 0x802100, vertexColors: NoColors, side: FrontSide } ) );
 	var mBar   = new LineSegments( bar,   new LineBasicMaterial( { color: 0xcccc00 } ) );
 	var mMarks = new LineSegments( marks, new LineBasicMaterial( { color: 0xffffff } ) );
 

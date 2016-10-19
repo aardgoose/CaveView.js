@@ -5,7 +5,6 @@ import {
 	Vector3, Color,
 	BufferAttribute,
 	BufferGeometry,
-	DirectGeometry,
 	TextureLoader,
 	MultiMaterial,
 	PointsMaterial,

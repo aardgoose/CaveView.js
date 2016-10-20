@@ -3,10 +3,10 @@ import { upAxis } from '../core/constants.js';
 import { HudObject } from './HudObject.js';
 
 import {
-	Vector3, Math as _Math,
-	Geometry, RingBufferGeometry, SphereBufferGeometry,
-	LineBasicMaterial, MeshBasicMaterial, MeshStandardMaterial,
-	NoColors, FrontSide,
+	Vector3, Color, Math as _Math,
+	Geometry, RingBufferGeometry, SphereBufferGeometry, BufferAttribute,
+	LineBasicMaterial, MeshBasicMaterial, MeshStandardMaterial, MeshPhysicalMaterial,
+	NoColors, FrontSide, VertexColors,
 	Mesh, LineSegments, Group
 } from '../../../../three.js/src/Three.js'; 
 
@@ -28,11 +28,30 @@ function AHI ( container ) {
 	// artificial horizon instrument
 	var globe = new Group();
 
-	var ring  = new RingBufferGeometry( stdWidth * 0.9, stdWidth, 20, 4 );
-	var sky   = new SphereBufferGeometry( stdWidth - 10, 20, 20, 0, 2 * Math.PI, 0 , Math.PI / 2 );
-	var land  = new SphereBufferGeometry( stdWidth - 10, 20, 20, 0, 2 * Math.PI, Math.PI / 2, Math.PI / 2 );
+	var ring  = new RingBufferGeometry( stdWidth * 0.9, stdWidth, 32, 4 );
+	var sphere = new SphereBufferGeometry( stdWidth - 10, 31, 31 );
 	var bar   = new Geometry();
 	var marks = new Geometry();
+
+	var sv = sphere.getAttribute( 'position' ).count;
+
+	var sphereColors = new BufferAttribute( new Float32Array( sv * 3 ), 3 );
+
+	var colours = [];
+
+	var c1 = new Color( 0x106f8d );
+	var c2 = new Color( 0x802100 );
+
+	for ( var i = 0; i < sv; i++ ) {
+
+		if ( i < sv/2 )
+			colours.push(  c1 );
+		else 
+			colours.push(  c2 );
+
+	}
+
+	sphere.addAttribute( 'color', sphereColors.copyColorsArray( colours ) );
 
 	// view orinetation line
 	bar.vertices.push( new Vector3( 4 - stdWidth, 0, stdWidth ) );
@@ -65,18 +84,15 @@ function AHI ( container ) {
 	}
 
 	var mRing  = new Mesh( ring, new MeshBasicMaterial( { color: 0x333333, vertexColors: NoColors, side: FrontSide } ) );
-	var mSky   = new Mesh( sky,  new MeshStandardMaterial( { color: 0x106f8d, vertexColors: NoColors, side: FrontSide } ) );
-	var mLand  = new Mesh( land, new MeshStandardMaterial( { color: 0x802100, vertexColors: NoColors, side: FrontSide } ) );
+	var mSphere  = new Mesh( sphere, new MeshPhysicalMaterial( { vertexColors: VertexColors, side: FrontSide, metalness: 0.3, clearCoat: 0.9, clearCoatRoughness: 0.3  } ) );
 	var mBar   = new LineSegments( bar,   new LineBasicMaterial( { color: 0xcccc00 } ) );
 	var mMarks = new LineSegments( marks, new LineBasicMaterial( { color: 0xffffff } ) );
 
-	mSky.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
-	mLand.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
+	mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 	mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );
 	mRing.rotateOnAxis( new Vector3( 0, 0, 1 ), Math.PI / 8 );
 
-	globe.add( mSky );
-	globe.add( mLand );
+	globe.add( mSphere );
 	globe.add( mMarks );
 
 	this.add( mRing );

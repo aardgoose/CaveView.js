@@ -4,8 +4,8 @@ import { padDigits } from '../core/lib.js';
 
 import {
 	Vector3, Math as _Math, Face3, Color,
-	Geometry, RingBufferGeometry, RingGeometry,
-	MeshBasicMaterial, MeshStandardMaterial,
+	Geometry, RingBufferGeometry, RingGeometry, CylinderBufferGeometry,
+	MeshBasicMaterial, MeshStandardMaterial, MeshPhysicalMaterial,
 	FrontSide, VertexColors, FlatShading,
 	Mesh, Group
 } from '../../../../three.js/src/Three.js';
@@ -23,10 +23,14 @@ function Compass ( container ) {
 	this.name = "CV.Compass";
 	this.domObjects = [];
 
-	var cg1 = new RingGeometry( stdWidth * 0.9, stdWidth, 32 );
-	var c1  = new Mesh( cg1, new MeshBasicMaterial( { color: 0x333333 } ) );
+	var cg1 = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth,  2, 32, 1, true );
+	cg1.rotateX( Math.PI / 2 );
+
+	var c1  = new Mesh( cg1, new MeshStandardMaterial( { color: 0x888888, side: FrontSide } ) );
 
 	var cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
+	cg2.translate( 0, 0, 5 );
+
 	var c2  = new Mesh( cg2, new MeshBasicMaterial( { color: 0xb03a14 } ) );
 
 	var r1 = _makeRose( stdWidth * 0.8, 0.141, 0x581d0a, 0x0c536a );
@@ -35,7 +39,7 @@ function Compass ( container ) {
 	r1.rotateZ( Math.PI / 4 );
 	r1.merge( r2 );
 
-	var rMesh = new Mesh( r1, new MeshStandardMaterial( { vertexColors: VertexColors, side: FrontSide, shading: FlatShading } ) );
+	var rMesh = new Mesh( r1, new MeshPhysicalMaterial( { vertexColors: VertexColors, side: FrontSide, shading: FlatShading, clearCoat: 0.8, clearCoatRoughness: 0.9 } ) );
 
 	this.add( c1 );
 	this.add( c2 );
@@ -71,11 +75,11 @@ function Compass ( container ) {
 
 		g.vertices.push( new Vector3( 0, radius, 0 ) );
 		g.vertices.push( new Vector3( innerR ,innerR, 0 ) );
-		g.vertices.push( new Vector3( 0, 0, 4 * scale ) );
+		g.vertices.push( new Vector3( 0, 0, 8 * scale ) );
 		g.vertices.push( new Vector3( -innerR, innerR, 0 ) );
 
-		var f1 = new Face3( 0, 2, 1, new Vector3( 0, 0, 1 ), new Color( color1 ), 0 );  
-		var f2 = new Face3( 0, 3, 2, new Vector3( 0, 0, 1 ), new Color( color2 ), 0 );
+		var f1 = new Face3( 0, 2, 1, new Vector3( 0, 0, 1 ), color1, 0 );  
+		var f2 = new Face3( 0, 3, 2, new Vector3( 0, 0, 1 ), color2, 0 );
 
 		g.faces.push( f1 );
 		g.faces.push( f2 );
@@ -86,7 +90,7 @@ function Compass ( container ) {
 
 	function _makeRose ( radius, scale, color1, color2 ) {
 
-		var p1 = _makePetal( radius, scale, color1, color2 );
+		var p1 = _makePetal( radius, scale, new Color( color1 ), new Color( color2 ) );
 		var p2 = p1.clone();
 		var p3 = p1.clone();
 		var p4 = p1.clone();

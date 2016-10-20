@@ -4,8 +4,8 @@ import { HudObject } from './HudObject.js';
 
 import {
 	Vector3, Color, Math as _Math,
-	Geometry, RingBufferGeometry, SphereBufferGeometry, BufferAttribute,
-	LineBasicMaterial, MeshBasicMaterial, MeshPhysicalMaterial,
+	Geometry, RingBufferGeometry, SphereBufferGeometry, BufferAttribute, CylinderBufferGeometry,
+	LineBasicMaterial, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial,
 	FrontSide, VertexColors,
 	Mesh, LineSegments, Group
 } from '../../../../three.js/src/Three.js'; 
@@ -28,7 +28,9 @@ function AHI ( container ) {
 	// artificial horizon instrument
 	var globe = new Group();
 
-	var ring   = new RingBufferGeometry( stdWidth * 0.9, stdWidth, 32, 4 );
+	var ring = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth,  2, 32, 1, true );
+	ring.rotateX( Math.PI / 2 );
+
 	var sphere = new SphereBufferGeometry( stdWidth - 10, 31, 31 );
 	var bar    = new Geometry();
 	var marks  = new Geometry();
@@ -83,7 +85,7 @@ function AHI ( container ) {
 
 	}
 
-	var mRing  = new Mesh( ring, new MeshBasicMaterial( { color: 0x333333, side: FrontSide } ) );
+	var mRing  = new Mesh( ring, new MeshStandardMaterial( { color: 0x888888, side: FrontSide } ) );
 	var mSphere  = new Mesh( sphere, new MeshPhysicalMaterial( { vertexColors: VertexColors, side: FrontSide, metalness: 0.3, clearCoat: 0.9, clearCoatRoughness: 0.3  } ) );
 	var mBar   = new LineSegments( bar,   new LineBasicMaterial( { color: 0xcccc00 } ) );
 	var mMarks = new LineSegments( marks, new LineBasicMaterial( { color: 0xffffff } ) );

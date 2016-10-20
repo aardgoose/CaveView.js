@@ -105,7 +105,7 @@ Tile.prototype.create = function ( geometry, terrainData ) {
 
 	function _onUpload( name ) {
 
-		this.discard();
+		this.disposeArray();
 
 	}
 
@@ -138,7 +138,7 @@ Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 
 	function _onUpload( name ) {
 
-		this.discard();
+		this.disposeArray();
 
 	}
 

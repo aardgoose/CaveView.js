@@ -5,8 +5,8 @@ import { padDigits } from '../core/lib.js';
 import {
 	Vector3, Math as _Math, Face3, Color,
 	Geometry, RingBufferGeometry, RingGeometry,
-	MeshBasicMaterial,
-	FrontSide, VertexColors,
+	MeshBasicMaterial, MeshStandardMaterial,
+	FrontSide, VertexColors, FlatShading,
 	Mesh, Group
 } from '../../../../three.js/src/Three.js';
 
@@ -35,7 +35,7 @@ function Compass ( container ) {
 	r1.rotateZ( Math.PI / 4 );
 	r1.merge( r2 );
 
-	var rMesh = new Mesh( r1, new MeshBasicMaterial( { vertexColors: VertexColors, side: FrontSide } ) );
+	var rMesh = new Mesh( r1, new MeshStandardMaterial( { vertexColors: VertexColors, side: FrontSide, shading: FlatShading } ) );
 
 	this.add( c1 );
 	this.add( c2 );
@@ -71,7 +71,7 @@ function Compass ( container ) {
 
 		g.vertices.push( new Vector3( 0, radius, 0 ) );
 		g.vertices.push( new Vector3( innerR ,innerR, 0 ) );
-		g.vertices.push( new Vector3( 0, 0, 0 ) );
+		g.vertices.push( new Vector3( 0, 0, 4 * scale ) );
 		g.vertices.push( new Vector3( -innerR, innerR, 0 ) );
 
 		var f1 = new Face3( 0, 2, 1, new Vector3( 0, 0, 1 ), new Color( color1 ), 0 );  
@@ -98,6 +98,8 @@ function Compass ( container ) {
 		p1.merge( p2 );
 		p1.merge( p3 );
 		p1.merge( p4 );
+
+		p1.computeFaceNormals();
 
 		return p1;
 

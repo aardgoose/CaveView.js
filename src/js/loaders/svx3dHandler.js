@@ -151,6 +151,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		cmd[ 0x00 ] = cmd_STOP;
 		cmd[ 0x20 ] = cmd_DATE_V7;
 		cmd[ 0x21 ] = cmd_DATE2_V7;
+		cmd[ 0x23 ] = cmd_DATE3_V7;
 		cmd[ 0x24 ] = cmd_DATE_NODATE;
 		cmd[ 0x22 ] = cmd_ERROR;
 
@@ -366,6 +367,14 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	function cmd_DATE_V7 ( c ) {
 
 		pos += 2;
+
+		return true;
+
+	}
+
+	function cmd_DATE3_V7 ( c ) {
+
+		pos += 4;
 
 		return true;
 

@@ -28,7 +28,7 @@ function AHI ( container ) {
 	// artificial horizon instrument
 	var globe = new Group();
 
-	var ring = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth,  2, 32, 1, true );
+	var ring = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth,  3, 32, 1, true );
 	ring.rotateX( Math.PI / 2 );
 
 	var sphere = new SphereBufferGeometry( stdWidth - 10, 31, 31 );
@@ -85,8 +85,8 @@ function AHI ( container ) {
 
 	}
 
-	var mRing  = new Mesh( ring, new MeshStandardMaterial( { color: 0x888888, side: FrontSide } ) );
-	var mSphere  = new Mesh( sphere, new MeshPhysicalMaterial( { vertexColors: VertexColors, side: FrontSide, metalness: 0.3, clearCoat: 0.9, clearCoatRoughness: 0.3  } ) );
+	var mRing  = new Mesh( ring, new MeshStandardMaterial( { color: 0x888888, metalness: 0.3 } ) );
+	var mSphere  = new Mesh( sphere, new MeshPhysicalMaterial( { vertexColors: VertexColors, metalness: 0.3, clearCoat: 0.9, clearCoatRoughness: 0.3  } ) );
 	var mBar   = new LineSegments( bar,   new LineBasicMaterial( { color: 0xcccc00 } ) );
 	var mMarks = new LineSegments( marks, new LineBasicMaterial( { color: 0xffffff } ) );
 

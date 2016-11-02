@@ -437,7 +437,6 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
-		geometry.computeFaceNormals();
 		geometry.computeVertexNormals();
 		geometry.computeBoundingBox();
 

@@ -75,7 +75,7 @@ function Compass ( container ) {
 
 		g.vertices.push( new Vector3( 0, radius, 0 ) );
 		g.vertices.push( new Vector3( innerR ,innerR, 0 ) );
-		g.vertices.push( new Vector3( 0, 0, 8 * scale ) );
+		g.vertices.push( new Vector3( 0, 0, 14 * scale ) );
 		g.vertices.push( new Vector3( -innerR, innerR, 0 ) );
 
 		var f1 = new Face3( 0, 2, 1, new Vector3( 0, 0, 1 ), color1, 0 );  

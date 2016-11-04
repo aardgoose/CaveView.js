@@ -22,7 +22,7 @@ import {
 	Vector3, Face3, Color, Box3,
 	Geometry, PlaneGeometry,
 	MeshLambertMaterial, MeshBasicMaterial, MultiMaterial, LineBasicMaterial,
-	FaceColors, NoColors, FrontSide,
+	FaceColors, NoColors, FrontSide, VertexColors,
 	Object3D, Mesh, Group, LineSegments,
 	BoxHelper
 } from '../../../../three.js/src/Three.js';
@@ -57,6 +57,7 @@ function Survey ( cave ) {
 	this.isRegion = cave.isRegion;
 	this.legMeshes = [];
 	this.workerPool = new WorkerPool( "caveWorker.js" );
+	this.ballGeometry = new Geometry();
 
 	var self = this;
 
@@ -490,6 +491,8 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		var geometry;
 
+		var ballGeometry = self.ballGeometry;
+
 		var currentType;
 		var currentSurvey;
 
@@ -513,9 +516,9 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			if ( geometry === undefined ) {
 
-				console.log("unknown segment type: ", type );
+				console.log( "unknown segment type: ", type );
 				break;
-
+ 
 			}
 
 			if ( survey !== currentSurvey || type !== currentType ) {
@@ -524,7 +527,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				if ( run !== undefined ) {
 
-					run.end = legGeometries[ currentType].vertices.length / 2;
+					run.end = legGeometries[ currentType ].vertices.length / 2;
 
 					legRuns[ currentType ].push( run );
 
@@ -564,7 +567,41 @@ Survey.prototype.loadCave = function ( cave ) {
 		_addModelSegments( SPLAY   , "CV.Survey:legs:cave:splay",      LEG_SPLAY );
 
 		self.stats = legStats;
+/*
+		var normalStats = legStats[ NORMAL ];
+		var colours = ColourCache.gradient;
+		var bias = colours.length - 1;
 
+		for ( var i = 0; i < l; i++ ) {
+
+			var leg    = srcSegments[ i ];
+			var type   = leg.type;
+
+			// first pass of passage direction visulisation
+
+			if ( type === NORMAL ) {
+
+				var vertex1 = new Vector3( leg.from.x, leg.from.y, leg.from.z );
+				var vertex2 = new Vector3( leg.to.x,   leg.to.y,   leg.to.z );
+
+				var ballVector = new Vector3().subVectors( vertex1, vertex2 );
+
+				var rLength = ( ballVector.length() - normalStats.minLegLength ) / normalStats.legLengthRange;
+
+				var color = colours[ Math.max( 0, Math.floor( bias * ( 1 + Math.log(  rLength * 10 ) * Math.LOG10E ) / 2 ) ) ];
+
+				ballVector.setLength( 40 );
+
+				ballGeometry.vertices.push( ballVector.clone().negate() );
+				ballGeometry.vertices.push( ballVector );
+
+				ballGeometry.colors.push( color );
+				ballGeometry.colors.push( color );
+
+			}
+
+		}
+*/
 		return;
 
 		function _addModelSegments ( tag, name, layerTag ) {
@@ -578,7 +615,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				geometry.name = name + ":g";
 
-				mesh = new LineSegments( geometry, new LineBasicMaterial( { color: 0x88FF88 } ) );
+				mesh = new LineSegments( geometry, new LineBasicMaterial( { color: 0x88FF88, vertexColors: VertexColors } ) );
 
 				mesh.name = name;
 				mesh.userData = legRuns[ tag ];
@@ -1241,7 +1278,7 @@ Survey.prototype.hasFeature = function ( layerTag ) {
 }
 
 Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
-
+console.log("H1");
 	var mesh;
 
 	switch ( legType ) {
@@ -1249,6 +1286,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	case LEG_CAVE:
 
 		mesh = this.legMeshes[ NORMAL ];
+console.log("H2");
 
 		break;
 
@@ -1273,7 +1311,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	}
 
 	if ( mesh === undefined ) return;
-
+console.log("hx");
 	switch ( legShadingMode ) {
 
 	case SHADING_HEIGHT:
@@ -1283,12 +1321,13 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 		break;
 
 	case SHADING_LENGTH:
-
+console.log("H3");
 		this.setLegColourByLength( mesh );
 
 		break;
 
 	case SHADING_INCLINATION:
+console.log("H3");
 
 		this.setLegColourByInclination( mesh, upAxis );
 
@@ -1301,6 +1340,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 		break;
 
 	case SHADING_SINGLE:
+console.log("H3");
 
 		this.setLegColourByColour( mesh, ColourCache.red );
 

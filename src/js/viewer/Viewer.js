@@ -22,6 +22,7 @@ import {
 	EventDispatcher,
 	Vector2, Vector3, Matrix4, Quaternion, Euler,  Box3,
 	Scene, Group, Raycaster,
+	Points, PointsMaterial, VertexColors, SphereBufferGeometry, MeshBasicMaterial, Mesh, // ballGeometry
 	AmbientLight, DirectionalLight,
 	LinearFilter, NearestFilter, RGBFormat,
 	OrthographicCamera, PerspectiveCamera, 
@@ -749,6 +750,11 @@ function loadSurvey ( newSurvey ) {
 	scene.up = upAxis;
 
 	scene.add( survey );
+
+	// add ball visualisation
+	// remove imports if moved to HUD
+//	scene.add( new Mesh( new SphereBufferGeometry( 39.9, 20, 20 ), new MeshBasicMaterial( { color: 0x000000 } ) ));
+//	scene.add( new Points( survey.ballGeometry, new PointsMaterial( { size: 1.0, opacity: 0.5, transparent: true,  vertexColors: VertexColors  } ) ) );
 
 	// light the model for Lambert Shaded surface
 

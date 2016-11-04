@@ -1657,7 +1657,7 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 	}
 
-	geometry.colorsNeedUpdate = true; 
+	geometry.colorsNeedUpdate = true;
 
 }
 

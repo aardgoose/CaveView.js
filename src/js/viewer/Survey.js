@@ -567,7 +567,7 @@ Survey.prototype.loadCave = function ( cave ) {
 		_addModelSegments( SPLAY   , "CV.Survey:legs:cave:splay",      LEG_SPLAY );
 
 		self.stats = legStats;
-/*
+
 		var normalStats = legStats[ NORMAL ];
 		var colours = ColourCache.gradient;
 		var bias = colours.length - 1;
@@ -601,7 +601,7 @@ Survey.prototype.loadCave = function ( cave ) {
 			}
 
 		}
-*/
+
 		return;
 
 		function _addModelSegments ( tag, name, layerTag ) {

@@ -13,7 +13,7 @@ function EntranceNearPointer () {
 
 	var geometry = new Geometry();
 	var bufferGeometry;
-
+// FIXME - only make the geometry once
 	geometry.vertices.push( new Vector3( 0, 0, 0 ) );
 	geometry.vertices.push( new Vector3( -width, 0, height ) );
 	geometry.vertices.push( new Vector3( width, 0, height ) );

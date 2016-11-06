@@ -22,7 +22,7 @@ import {
 	Vector3, Face3, Color, Box3,
 	Geometry, PlaneGeometry,
 	MeshLambertMaterial, MeshBasicMaterial, MultiMaterial, LineBasicMaterial,
-	FaceColors, NoColors, FrontSide,
+	FaceColors, NoColors, FrontSide, VertexColors,
 	Object3D, Mesh, Group, LineSegments,
 	BoxHelper
 } from '../../../../three.js/src/Three.js';
@@ -242,8 +242,6 @@ Survey.prototype.loadCave = function ( cave ) {
 		geometry.computeFaceNormals();
 		geometry.computeBoundingBox();
 
-		geometry.onUploadBuffers( _onUploadBuffer );
-
 		return;
 
 		function _loadScrap ( scrap ) {
@@ -440,8 +438,6 @@ Survey.prototype.loadCave = function ( cave ) {
 		geometry.computeVertexNormals();
 		geometry.computeBoundingBox();
 
-		geometry.onUploadBuffers( _onUploadBuffer );
-
 		return;
 
 		function _getLRUD ( crossSection ) {
@@ -490,6 +486,8 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		var geometry;
 
+		var ballGeometry = self.ballGeometry;
+
 		var currentType;
 		var currentSurvey;
 
@@ -513,9 +511,9 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			if ( geometry === undefined ) {
 
-				console.log("unknown segment type: ", type );
+				console.log( "unknown segment type: ", type );
 				break;
-
+ 
 			}
 
 			if ( survey !== currentSurvey || type !== currentType ) {
@@ -524,7 +522,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				if ( run !== undefined ) {
 
-					run.end = legGeometries[ currentType].vertices.length / 2;
+					run.end = legGeometries[ currentType ].vertices.length / 2;
 
 					legRuns[ currentType ].push( run );
 
@@ -578,7 +576,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				geometry.name = name + ":g";
 
-				mesh = new LineSegments( geometry, new LineBasicMaterial( { color: 0x88FF88 } ) );
+				mesh = new LineSegments( geometry, new LineBasicMaterial( { color: 0x88FF88, vertexColors: VertexColors } ) );
 
 				mesh.name = name;
 				mesh.userData = legRuns[ tag ];
@@ -599,7 +597,6 @@ Survey.prototype.loadCave = function ( cave ) {
 			}
 
 			geometry.computeBoundingBox();
-			geometry.onUploadBuffers( _onUploadBuffer );
 
 			legStats[ tag ] = self.getLegStats( mesh );
 
@@ -641,12 +638,6 @@ Survey.prototype.loadCave = function ( cave ) {
 		oldGeometry.dispose();
 
 		return newGeometry;
-
-	}
-
-	function _onUploadBuffer ( name ) {
-
-		if ( name !== "color" ) this.disposeArray();
 
 	}
 
@@ -707,6 +698,12 @@ Survey.prototype.getSelectedBox = function () {
 Survey.prototype.getStats = function () {
 
 	return this.stats[ NORMAL ];
+
+}
+
+Survey.prototype.getLegs = function () {
+
+	return this.legMeshes[ NORMAL ].geometry.vertices;
 
 }
 
@@ -788,6 +785,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 	var selectedSectionIds = this.selectedSectionIds;
 	var self = this;
+	var legMeshes = this.legMeshes;
 
 	if ( selectedSectionIds.size === 0 ) return;
 
@@ -803,9 +801,9 @@ Survey.prototype.cutSection = function ( id ) {
 
 	// update stats
 
-	this.stats[ NORMAL  ] = this.getLegStats( this.getObjectByName( "CV.Survey:legs:cave:cave" ) );
-	this.stats[ SURFACE ] = this.getLegStats( this.getObjectByName( "CV.Survey:legs:cave:surface" ) );
-	this.stats[ SPLAY   ] = this.getLegStats( this.getObjectByName( "CV.Survey:legs:surface:surface" ) );
+	this.stats[ NORMAL  ] = this.getLegStats( this.legMeshes[ NORMAL  ] );
+	this.stats[ SURFACE ] = this.getLegStats( this.legMeshes[ SURFACE ] );
+	this.stats[ SPLAY   ] = this.getLegStats( this.legMeshes[ SPLAY   ] );
 
 	this.limits = this.getBounds();
 

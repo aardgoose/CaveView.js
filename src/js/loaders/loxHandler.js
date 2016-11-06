@@ -296,7 +296,7 @@ function loxHandler  ( fileName, dataStream ) {
 
 				for ( j = 0; j < 3; j++ ) { // this case triggers more often than those below.
 
-					if (face[ j ] == lastFace[ ( j + 2 ) % 3 ] && face[ ( j + 1 ) % 3 ] == lastFace[ ( j + 3 ) % 3 ] ) {
+					if ( face[ j ] == lastFace[ ( j + 2 ) % 3 ] && face[ ( j + 1 ) % 3 ] == lastFace[ ( j + 3 ) % 3 ] ) {
 
 						face.reverse();
 						break fix_direction;
@@ -318,7 +318,7 @@ function loxHandler  ( fileName, dataStream ) {
 
 				for ( j = 0; j < 3; j++ ) {
 
-					if ( face[ j ] == lastFace[ ( j + 1 ) % 3 ] && face[ ( j + 1 ) % 3 ] == lastFace[ ( j + 2 ) % 3] ) {
+					if ( face[ j ] == lastFace[ ( j + 1 ) % 3 ] && face[ ( j + 1 ) % 3 ] == lastFace[ ( j + 2 ) % 3 ] ) {
 
 						face.reverse();
 						break fix_direction;
@@ -440,7 +440,7 @@ loxHandler.prototype.getTerrainData = function () {
 
 		for ( var j = 0; j < samples; j++ ) {
 
-			flippedTerrain.push( this.terrain[offset + j] );
+			flippedTerrain.push( this.terrain[ offset + j ] );
 
 		}
 

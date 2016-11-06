@@ -15,6 +15,7 @@ import { HUD } from '../hud/HUD.js';
 import { Materials } from '../materials/Materials.js';
 import { Survey } from './Survey.js';
 import { TiledTerrain } from '../terrain/TiledTerrain.js';
+import { DirectionGlobe } from '../analysis/DirectionGlobe.js';
 
 import { OrbitControls } from '../core/OrbitControls.js';
 
@@ -749,6 +750,7 @@ function loadSurvey ( newSurvey ) {
 	scene.up = upAxis;
 
 	scene.add( survey );
+	scene.add( new DirectionGlobe( survey ) );
 
 	// light the model for Lambert Shaded surface
 

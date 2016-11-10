@@ -464,8 +464,8 @@ function initSettingsPage () {
 	if ( viewState.hasSurfaceLegs )  page.addCheckbox( "Surface Legs",  viewState, "surfaceLegs" );
 	if ( viewState.hasTerrain )      page.addCheckbox( "Terrain",       viewState, "terrain" );
 	if ( viewState.hasWalls )        page.addCheckbox( "Walls (LRUD)",  viewState, "walls" );
-	if ( viewState.hasHUD )          page.addCheckbox( "Indicators",    viewState, "HUD" );
 
+	page.addCheckbox( "Indicators",   viewState, "HUD" );
 	page.addCheckbox( "Bounding Box", viewState, "box" );
 
 	if ( viewState.hasTerrain ) {

@@ -12,6 +12,8 @@ import depthVertexShader from './depthVertexShader.glsl';
 import depthFragmentShader from './depthFragmentShader.glsl';
 import pwVertexShader from './pwVertexShader.glsl';
 import pwFragmentShader from './pwFragmentShader.glsl';
+import extendedPointsVertexShader from './extendedPointsVertexShader.glsl';
+import extendedPointsFragmentShader from './extendedPointsFragmentShader.glsl';
 
 export var Shaders =  {
 	testVertexShader:        testVertexShader,
@@ -25,7 +27,9 @@ export var Shaders =  {
 	depthVertexShader:       depthVertexShader,
 	depthFragmentShader:     depthFragmentShader,
 	pwVertexShader:          pwVertexShader,
-	pwFragmentShader:        pwFragmentShader
+	pwFragmentShader:        pwFragmentShader,
+	extendedPointsVertexShader:          extendedPointsVertexShader,
+	extendedPointsFragmentShader:        extendedPointsFragmentShader
 
 };
 

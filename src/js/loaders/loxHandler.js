@@ -137,9 +137,9 @@ function loxHandler  ( fileName, dataStream ) {
 		var m_parent = readUint();
 		var titlePtr = readDataPtr();
 
-		if ( m_parent != m_id && !surveyTree.addById( readString( namePtr ), m_id, m_parent ) ) {
+		if ( m_parent != m_id ) {
 
-			console.log( "error constructing survey tree" );
+			if ( !surveyTree.addById( readString( namePtr ), m_id, m_parent ) ) console.log( "error constructing survey tree" );
 
 		}
 

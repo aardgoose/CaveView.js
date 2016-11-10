@@ -128,120 +128,123 @@ function init ( domID ) { // public method
 
 	} );
 
-	Object.defineProperty( viewState, "terrain", {
+	Object.defineProperties( viewState, {
+
+	"terrain": {
 		writeable: true,
 		get: function () { return testCameraLayer( FEATURE_TERRAIN ); },
 		set: function ( x ) { loadTerrain( x ); setCameraLayer( FEATURE_TERRAIN, x ); this.dispatchEvent( { type: "change", name: "terrain" } ); }
-	} );
+	},
 
-	Object.defineProperty( viewState, "terrainShading", {
+	 "terrainShading": {
 		writeable: true,
 		get: function () { return terrainShadingMode; },
 		set: function ( x ) { _viewStateSetter( setTerrainShadingMode, "terrainShading", x ); }
-	} );
+	},
 
-	Object.defineProperty( viewState, "hasTerrain", {
+	 "hasTerrain": {
 		get: function () { return !!terrain; }
-	} );
+	},
 
-	Object.defineProperty( viewState, "terrainOverlays", {
+	 "terrainOverlays": {
 		get: function () { return terrain && terrain.getOverlays(); }
-	} );
+	},
 
-	Object.defineProperty( viewState, "terrainOverlay", {
+	 "terrainOverlay": {
 		writeable: true,
 		get: function () { return terrain.getOverlay(); },
 		set: function ( x ) { _viewStateSetter( setTerrainOverlay, "terrainOverlay", x ); }
-	} );
+	},
 
-	Object.defineProperty( viewState, "terrainOpacity", {
+	"terrainOpacity": {
 		writeable: true,
 		get: function () { return terrain.getOpacity(); },
 		set: function ( x ) { setTerrainOpacity( x ); }
-	} );
+	},
 
-	Object.defineProperty( viewState, "shadingMode", {
+	"shadingMode": {
 		writeable: true,
 		get: function () { return shadingMode; },
 		set: function ( x ) { _viewStateSetter( setShadingMode, "shadingMode", x ); }
-	} );
+	},
 
-	Object.defineProperty( viewState, "surfaceShading", {
+	"surfaceShading": {
 		writeable: true,
 		get: function () { return surfaceShadingMode; },
 		set: function ( x ) { _viewStateSetter( setSurfaceShadingMode, "surfaceShading", x ); }
-	} );
+	},
 
-	Object.defineProperty( viewState, "cameraType", {
+	"cameraType": {
 		writeable: true,
 		get: function () { return cameraMode; },
 		set: function ( x ) { _viewStateSetter( setCameraMode, "cameraType", x ); }
-	} );
+	},
 
-	Object.defineProperty( viewState, "view", {
+	"view": {
 		writeable: true,
 		get: function () { return VIEW_NONE; },
 		set: function ( x ) { _viewStateSetter( setViewMode, "view", x ); }
-	} );
+	},
 
-	Object.defineProperty( viewState, "cursorHeight", {
+	"cursorHeight": {
 		writeable: true,
 		get: function () { return cursorHeight; },
 		set: function ( x ) { setCursorHeight( x ); }
-	} );
+	},
 
-	Object.defineProperty( viewState, "maxHeight", {
+	"maxHeight": {
 		get: function () { return limits.max.z; },
-	} );
+	},
 
-	Object.defineProperty( viewState, "minHeight", {
+	"minHeight": {
 		get: function () { return limits.min.z; },
-	} );
+	},
 
-	Object.defineProperty( viewState, "maxLegLength", {
+	 "maxLegLength": {
 		get: function () { return stats.maxLegLength; },
-	} );
+	},
 
-	Object.defineProperty( viewState, "minLegLength", {
+	 "minLegLength": {
 		get: function () { return stats.minLegLength; },
-	} );
+	},
 
-	Object.defineProperty( viewState, "section", {
+	"section": {
 		writeable: true,
 		get: function () { return selectedSection; },
 		set: function ( x ) { _viewStateSetter( selectSection, "section", x ); }
-	} );
+	},
 
-	Object.defineProperty( viewState, "setPOI", {
+	"setPOI": {
 		writeable: true,
 		get: function () { return targetPOI.name; },
 		set: function ( x ) { _viewStateSetter( setCameraPOI, "setPOI", x ); }
-	} );
+	},
 
-	Object.defineProperty( viewState, "developerInfo", {
+	"developerInfo": {
 		writeable: true,
 		get: function () { return true; },
 		set: function ( x ) { showDeveloperInfo( x ); }
-	} );
+	},
 
-	if ( HUD === undefined ) {
-
-		Object.defineProperty( viewState, "hasHUD", {
-			value: false,
-		} );
-
-	} else {
-
-		Object.defineProperty( viewState, "hasHUD", {
-			value: true,
-		} );
-
-		Object.defineProperty( viewState, "HUD", {
+	"HUD": {
 			writeable: true,
 			get: function () { return HUD.getVisibility(); },
 			set: function ( x ) { HUD.setVisibility( x ); }
-		} );
-	}
+	},
+
+	"cut": {
+		writeable: true,
+		get: function () { return true; },
+		set: function ( x ) { cutSection( x ) }
+	},
+
+	"zScale": {
+		writeable: true,
+		get: function () { return zScale; },
+		set: function ( x ) { setZScale( x ) }
+	} 
+
+	} );
 
 	_enableLayer( FEATURE_BOX,       "box" );
 	_enableLayer( FEATURE_ENTRANCES, "entrances" );
@@ -255,18 +258,6 @@ function init ( domID ) { // public method
 	_hasLayer( FACE_WALLS,        "hasWalls" );
 	_hasLayer( LEG_SPLAY,         "hasSplays" );
 	_hasLayer( LEG_SURFACE,       "hasSurfaceLegs" );
-
-	Object.defineProperty( viewState, "cut", {
-		writeable: true,
-		get: function () { return true; },
-		set: function ( x ) { cutSection( x ) }
-	} );
-
-	Object.defineProperty( viewState, "zScale", {
-		writeable: true,
-		get: function () { return zScale; },
-		set: function ( x ) { setZScale( x ) }
-	} );
 
 	Materials.initCache( viewState );
 

@@ -51,7 +51,7 @@ function DirectionGlobe ( survey ) {
 
 		color = colours[ Math.max( 0, Math.floor( bias * ( 1 + Math.log(  rLength * 10 ) * Math.LOG10E ) / 2 ) ) ];
 
-		legVector.setLength( 40 + rLength );
+		legVector.setLength( 41 - rLength  );
 
 		geometry.vertices.push( legVector.clone().negate() );
 		geometry.vertices.push( legVector );
@@ -69,7 +69,7 @@ function DirectionGlobe ( survey ) {
 	bufferGeometry.addAttribute( 'color', colors.copyColorsArray( geometry.colors ) );
 
 	survey.addEventListener( "removed", _onSurveyRemoved );
-
+ 
 	function _onSurveyRemoved( event ) {
 
 		var survey = event.target;

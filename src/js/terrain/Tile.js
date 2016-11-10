@@ -96,7 +96,9 @@ Tile.prototype.create = function ( geometry, terrainData ) {
 
 	bufferGeometry.computeBoundingBox();
 
-	bufferGeometry.onUploadBuffers( _onUpload );
+	var attributes = bufferGeometry.attributes;
+
+	for ( var name in attributes ) attributes[ name ].onUpload( _onUpload );
 
 	this.geometry = bufferGeometry;
 	this.layers.set ( FEATURE_TERRAIN );
@@ -126,7 +128,10 @@ Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 
 	);
 
-	bufferGeometry.onUploadBuffers( _onUpload );
+
+	var attributes = bufferGeometry.attributes;
+
+	for ( var name in attributes ) attributes[ name ].onUpload( _onUpload );
 
 	this.geometry = bufferGeometry;
 	this.layers.set ( FEATURE_TERRAIN );

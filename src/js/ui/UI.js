@@ -1,6 +1,6 @@
 import {
 	CAMERA_ORTHOGRAPHIC,CAMERA_PERSPECTIVE, 
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_PW, SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY,
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_PW, SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH,
 	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W
 } from '../core/constants.js';
 
@@ -735,6 +735,12 @@ function keyDown ( event ) {
 	case 67: // toggle scraps visibility - 'c'
 
 		if ( viewState.hasScraps ) viewState.scraps = !viewState.scraps;
+
+		break;
+
+	case 68: // change colouring scheme to per survey path - 'd'
+
+		viewState.shadingMode = SHADING_PATH;
 
 		break;
 

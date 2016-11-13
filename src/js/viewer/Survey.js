@@ -21,9 +21,9 @@ import { WorkerPool } from '../workers/WorkerPool.js';
 import {
 	Vector3, Face3, Color, Box3,
 	Geometry, PlaneGeometry,
-	MeshLambertMaterial, MeshBasicMaterial, MultiMaterial, LineBasicMaterial,
+	MeshLambertMaterial, MeshBasicMaterial, MultiMaterial, LineBasicMaterial, PointsMaterial,
 	FaceColors, NoColors, FrontSide, VertexColors,
-	Object3D, Mesh, Group, LineSegments,
+	Object3D, Mesh, Group, LineSegments, Points,
 	BoxHelper
 } from '../../../../three.js/src/Three.js';
 
@@ -161,6 +161,7 @@ Survey.prototype.loadCave = function ( cave ) {
 	_loadScraps( cave.scraps );
 	_loadCrossSections( cave.crossSections );
 	_loadTerrain( cave );
+	_loadStations( cave.surveyTree );
 
 	return;
 
@@ -170,7 +171,7 @@ Survey.prototype.loadCave = function ( cave ) {
 	
 			// surveyTree from worker loading  - add Tree methods to all objects in tree.
 
-			Object.assign( surveyTree, Tree.prototype );
+			_restore( surveyTree );
 
 			surveyTree.forEachChild( _restore,  true );
 		}
@@ -638,6 +639,61 @@ Survey.prototype.loadCave = function ( cave ) {
 		oldGeometry.dispose();
 
 		return newGeometry;
+
+	}
+
+	function _loadStations( surveyTree ) {
+
+		var geometry = new Geometry();
+		var map = new Map();
+		var i;
+		var baseColor     = new Color( 0xff0000 );
+		var junctionColor = new Color( 0xffff00 );
+
+		i = 0;
+
+		surveyTree.traverse( _addStation );
+
+
+		function _addStation( node ) {
+
+			var point = node.p;
+
+			if ( point === undefined ) return;
+
+			geometry.vertices.push( point );
+			geometry.colors.push( baseColor );
+
+			map.set ( point.x.toString() + ":" + point.y.toString() + ":" + point.z.toString(), node );
+
+			node.hitCount = 0;
+			node.stationVertexIndex = i++;
+
+		}
+
+		// 
+		var legs = self.getLegs();
+		var station;
+
+		for ( i = 0; i < legs.length; i++ ) {
+
+			var vertex = legs[i];
+
+			station = map.get( vertex.x.toString() + ":" + vertex.y.toString() + ":" + vertex.z.toString() );
+
+			if ( station !== undefined ) { 
+
+				station.hitCount++;
+
+				if ( station.hitCount > 2 ) geometry.colors[ station.stationVertexIndex ] = junctionColor;
+
+			}
+
+		}
+
+		var stations = new Points( geometry, new PointsMaterial( { vertexColors: VertexColors } ) );
+
+		self.add ( stations );
 
 	}
 

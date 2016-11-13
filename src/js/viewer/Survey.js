@@ -5,7 +5,7 @@ import {
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED,
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH,
 	upAxis
 } from '../core/constants.js';
 
@@ -225,7 +225,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			mesh.name = "CV.Survey:faces:scraps";
 			mesh.layers.set( FACE_SCRAPS );
-			mesh.userData = faceRuns;
+			mesh.userData = { faceRuns: faceRuns };
 
 			self.add( mesh );
 			self.layers.enable( FACE_SCRAPS );
@@ -236,7 +236,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			mesh = self.scrapMesh;
 
-			mesh.userData = mesh.userData.concat( faceRuns );
+			mesh.userData.faceRuns = mesh.userData.faceRuns.concat( faceRuns );
 
 		}
 
@@ -420,7 +420,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			var mesh = new Mesh( geometry, new MeshBasicMaterial( { color: 0xff0000, vertexColors: NoColors, side: FrontSide } ) );
 
-			mesh.userData = faceRuns;
+			mesh.userData = { faceRuns: faceRuns };
 			mesh.name = "CV.Survey:faces:walls";
 			mesh.layers.set( FACE_WALLS );
 
@@ -432,7 +432,7 @@ Survey.prototype.loadCave = function ( cave ) {
 		} else {
 
 			mesh = self.crossSectionMesh;
-			mesh.userData = mesh.userData.concat( faceRuns );
+			mesh.userData.faceRuns = mesh.userData.faceRuns.concat( faceRuns );
 
 		}
 
@@ -481,9 +481,9 @@ Survey.prototype.loadCave = function ( cave ) {
 		legGeometries[ SURFACE ] = ( legMeshes[ SURFACE ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ SURFACE ] );
 		legGeometries[ SPLAY   ] = ( legMeshes[ SPLAY   ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ SPLAY   ] );
 
-		legRuns[ NORMAL  ] = ( legMeshes[ NORMAL  ] === undefined ) ? [] : legMeshes[ NORMAL  ].userData;
-		legRuns[ SURFACE ] = ( legMeshes[ SURFACE ] === undefined ) ? [] : legMeshes[ SURFACE ].userData;
-		legRuns[ SPLAY   ] = ( legMeshes[ SPLAY   ] === undefined ) ? [] : legMeshes[ SPLAY   ].userData;
+		legRuns[ NORMAL  ] = ( legMeshes[ NORMAL  ] === undefined ) ? [] : legMeshes[ NORMAL  ].userData.legRuns;
+		legRuns[ SURFACE ] = ( legMeshes[ SURFACE ] === undefined ) ? [] : legMeshes[ SURFACE ].userData.legRuns;
+		legRuns[ SPLAY   ] = ( legMeshes[ SPLAY   ] === undefined ) ? [] : legMeshes[ SPLAY   ].userData.legRuns;
 
 		var geometry;
 
@@ -580,7 +580,7 @@ Survey.prototype.loadCave = function ( cave ) {
 				mesh = new LineSegments( geometry, new LineBasicMaterial( { color: 0x88FF88, vertexColors: VertexColors } ) );
 
 				mesh.name = name;
-				mesh.userData = legRuns[ tag ];
+				mesh.userData = { legRuns: legRuns[ tag ] };
 
 				mesh.layers.set( layerTag );
 
@@ -593,7 +593,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				mesh = legMeshes[ tag ];
 
-				mesh.userData = mesh.userData.concat( legRuns[ tag ] );
+				mesh.userData.legRuns = mesh.userData.legRuns.concat( legRuns[ tag ] );
 
 			}
 
@@ -675,15 +675,18 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
-		var stations = new Points( geometry, new PointsMaterial( { vertexColors: VertexColors } ) );
+//		var stations = new Points( geometry, new PointsMaterial( { vertexColors: VertexColors } ) );
 
 //		self.add ( stations );
+
+
+		// determine segments between junctions and entrances/passage ends.
 
 		var geometry = new Geometry();
 		var newSegment = true;
 
-		var segment;
-		var segments = []
+		var segment = 0;
+		var segments = [];
 		var v1, v2, l;
 
 		var l = legs.length;
@@ -693,11 +696,12 @@ Survey.prototype.loadCave = function ( cave ) {
 			v1 = legs[ i ];
 			v2 = legs[ i + 1 ];
 
+			segments.push( segment );
+			segments.push( segment );
+
 			if ( newSegment ) {
 
 				geometry.vertices.push( v1 );
-
-				segment = { start: i, end: null };
 
 				newSegment = false;
 
@@ -707,12 +711,14 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			if ( ( station && station.hitCount > 2 ) || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) {
 
+				// we have found a junction or a passage end
+
 				geometry.vertices.push( v2 );
 
-				segment.end = i;
-				segments.push( segment );
+				segment++;
 
 				newSegment = true;
+
 			}
 	
 		}
@@ -721,10 +727,12 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			geometry.vertices.push( v2 );
 
-			segment.end = legs.length - 2;
 			segments.push( segment );
 
 		}
+
+		self.legMeshes[ NORMAL ].userData.segments = segments;
+		console.log( segments );
 
 		self.add ( new LineSegments( geometry ) );
 
@@ -988,7 +996,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 	function _cutLineGeometry ( mesh ) {
 
-		var vertexRuns = mesh.userData;
+		var vertexRuns = mesh.userData.legRuns;
 
 		if ( ! vertexRuns ) return;
 
@@ -1059,7 +1067,7 @@ Survey.prototype.cutSection = function ( id ) {
 		newGeometry.computeBoundingBox();
 
 		mesh.geometry = newGeometry;
-		mesh.userData = newVertexRuns;
+		mesh.userData.legRuns = newVertexRuns;
 
 		geometry.dispose();
 
@@ -1067,7 +1075,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 	function _cutMeshGeometry ( mesh ) {
 
-		var faceRuns = mesh.userData;
+		var faceRuns = mesh.userData.faceRuns;
 
 		if ( mesh.name === "" ) return;
 
@@ -1143,7 +1151,7 @@ Survey.prototype.cutSection = function ( id ) {
 		newGeometry.computeBoundingBox();
 
 		mesh.geometry = newGeometry;
-		mesh.userData = newFaceRuns;
+		mesh.userData.faceRuns = newFaceRuns;
 
 		geometry.dispose();
 
@@ -1276,7 +1284,7 @@ Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
 	if ( !mesh ) return;
 
-	var faceRuns = mesh.userData;
+	var faceRuns = mesh.userData.faceRuns;
 	var faces    = mesh.geometry.faces;
 	var	selectedSectionIds = this.selectedSectionIds;
 	var surveyColours;
@@ -1418,6 +1426,12 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	case SHADING_SURVEY:
 
 		this.setLegColourBySurvey( mesh );
+
+		break;
+
+	case SHADING_PATH:
+
+		this.setLegColourByPath( mesh );
 
 		break;
 
@@ -1647,6 +1661,40 @@ Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
 }
 
+Survey.prototype.setLegColourByPath = function ( mesh ) {
+
+	mesh.material = Materials.getLineMaterial();
+
+	var segments = mesh.userData.segments;
+	console.log( segments );
+
+	var c1 = new Color( 0xffff00 );
+	var c2 = new Color( 0x444444 );
+
+	var colour;
+	console.log( "XXXX-------" );
+
+	this.setLegSelected ( mesh, _colourSegment );
+
+	function _colourSegment ( geometry, v1, v2, survey ) {
+
+		if ( segments[ v1 ] === 22 ) {
+			console.log( "XXXX" );
+			colour = c1;
+
+		} else {
+
+			colour = c2;
+
+		}
+
+		geometry.colors[ v1 ] = colour;
+		geometry.colors[ v2 ] = colour;
+
+	}
+
+}
+
 Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 	var colours = ColourCache.inclination;
@@ -1680,7 +1728,7 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 	// pNormal = normal of reference plane in model space 
 	var geometry   = mesh.geometry;
-	var vertexRuns = mesh.userData;
+	var vertexRuns = mesh.userData.legRuns;
 
 	var vertices = geometry.vertices;
 	var colors   = geometry.colors;

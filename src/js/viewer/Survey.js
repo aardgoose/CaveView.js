@@ -647,13 +647,92 @@ Survey.prototype.loadCave = function ( cave ) {
 		var geometry = new Geometry();
 		var map = new Map();
 		var i;
-		var baseColor     = new Color( 0xff0000 );
+		var baseColor     = new Color( 0x880000 );
 		var junctionColor = new Color( 0xffff00 );
 
 		i = 0;
 
 		surveyTree.traverse( _addStation );
 
+
+		// 
+		var legs = self.getLegs();
+		var station;
+
+		for ( i = 0; i < legs.length; i++ ) {
+
+			var vertex = legs[i];
+
+			station = _getStation( vertex );
+
+			if ( station !== undefined ) { 
+
+				station.hitCount++;
+
+				if ( station.hitCount > 2 ) geometry.colors[ station.stationVertexIndex ] = junctionColor;
+
+			}
+
+		}
+
+		var stations = new Points( geometry, new PointsMaterial( { vertexColors: VertexColors } ) );
+
+//		self.add ( stations );
+
+		var geometry = new Geometry();
+		var newSegment = true;
+
+		var segment;
+		var segments = []
+		var v1, v2, l;
+
+		var l = legs.length;
+
+		for ( i = 0; i < l; i = i + 2 ) {
+
+			v1 = legs[ i ];
+			v2 = legs[ i + 1 ];
+
+			if ( newSegment ) {
+
+				geometry.vertices.push( v1 );
+
+				segment = { start: i, end: null };
+
+				newSegment = false;
+
+			}
+
+			station = _getStation( v2 );
+
+			if ( ( station && station.hitCount > 2 ) || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) {
+
+				geometry.vertices.push( v2 );
+
+				segment.end = i;
+				segments.push( segment );
+
+				newSegment = true;
+			}
+	
+		}
+
+		if ( ! newSegment ) {
+
+			geometry.vertices.push( v2 );
+
+			segment.end = legs.length - 2;
+			segments.push( segment );
+
+		}
+
+		self.add ( new LineSegments( geometry ) );
+
+		function _getStation( vertex ) {
+
+			return map.get( vertex.x.toString() + ":" + vertex.y.toString() + ":" + vertex.z.toString() );
+
+		}
 
 		function _addStation( node ) {
 
@@ -670,30 +749,6 @@ Survey.prototype.loadCave = function ( cave ) {
 			node.stationVertexIndex = i++;
 
 		}
-
-		// 
-		var legs = self.getLegs();
-		var station;
-
-		for ( i = 0; i < legs.length; i++ ) {
-
-			var vertex = legs[i];
-
-			station = map.get( vertex.x.toString() + ":" + vertex.y.toString() + ":" + vertex.z.toString() );
-
-			if ( station !== undefined ) { 
-
-				station.hitCount++;
-
-				if ( station.hitCount > 2 ) geometry.colors[ station.stationVertexIndex ] = junctionColor;
-
-			}
-
-		}
-
-		var stations = new Points( geometry, new PointsMaterial( { vertexColors: VertexColors } ) );
-
-		self.add ( stations );
 
 	}
 

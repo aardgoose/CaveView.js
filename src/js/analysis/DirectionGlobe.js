@@ -14,8 +14,7 @@ function DirectionGlobe ( survey ) {
 	var geometry = new Geometry();
 	var bufferGeometry = new BufferGeometry();
 
-	var material = new ExtendedPointsMaterial( { size: 1.0, opacity: 0.5, transparent: true,  vertexColors: VertexColors  } );
-	Points.call( this, bufferGeometry, material );
+	Points.call( this, bufferGeometry, new ExtendedPointsMaterial( { size: 1.0, opacity: 0.5, transparent: true,  vertexColors: VertexColors  } ) );
 
 	this.type = "DirectionGlobe";
 
@@ -69,7 +68,7 @@ function DirectionGlobe ( survey ) {
 	bufferGeometry.addAttribute( 'color', colors.copyColorsArray( geometry.colors ) );
 
 	survey.addEventListener( "removed", _onSurveyRemoved );
- 
+
 	function _onSurveyRemoved( event ) {
 
 		var survey = event.target;

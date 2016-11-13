@@ -741,7 +741,7 @@ function loadSurvey ( newSurvey ) {
 	scene.up = upAxis;
 
 	scene.add( survey );
-	scene.add( new DirectionGlobe( survey ) );
+//	scene.add( new DirectionGlobe( survey ) );
 
 	// light the model for Lambert Shaded surface
 

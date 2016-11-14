@@ -58,6 +58,7 @@ function Survey ( cave ) {
 	this.isRegion = cave.isRegion;
 	this.legMeshes = [];
 	this.segmentMap = new Map();
+	this.route = new Set();
 	this.stations = new Stations();
 	this.workerPool = new WorkerPool( "caveWorker.js" );
 
@@ -651,7 +652,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		var stations = self.stations;
 
-		surveyTree.traverse( _addStation );
+		surveyTree.traverse( function _addStation ( node ) { stations.addStation( node ) } );
 
 		var legs = self.getLegs();
 		var station;
@@ -664,83 +665,152 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		self.add( stations );
 
-		function _addStation( node ) {
+		self.mapSegments();
 
-			stations.addStation( node );
+	}
+
+
+}
+
+Survey.prototype.dumpRoute = function () {
+
+	var route = this.route;
+	var stations = this.stations;
+
+	this.segmentMap.forEach( _addRoute );
+
+	function _addRoute( value, key ) {
+
+		if ( route.has( value.segment ) ) {
+
+			var p1 = stations.getStation( value.startVertex ).getPath();
+			var p2 = stations.getStation( value.endVertex ).getPath();
+
+			console.log( "PATH: ", p1, p2 );
 
 		}
 
 	}
 
-	function _findSegments() {
-		// determine segments between junctions and entrances/passage ends.
+}
 
-		var geometry = new Geometry();
-		var newSegment = true;
-		var stations = self.stations;
+Survey.prototype.toggleSegment = function ( index ) {
 
-		var segment = 0;
-		var segments = [];
-		var segmentMap = self.segmentMap;
+	console.log( index );
 
-		var v1, v2, l;
+	var mesh = this.legMeshes[ NORMAL ];
+	var segment = mesh.userData.segments[ index ];
+	var route = this.route;
 
-		var l = legs.length;
+	route.has( segment ) ? route.delete( segment ) : route.add( segment );
 
-		var startStationId;
-		var endStationId;
+	this.dumpRoute();
 
-		for ( i = 0; i < l; i = i + 2 ) {
+}
 
-			v1 = legs[ i ];
-			v2 = legs[ i + 1 ];
+Survey.prototype.mapSegments = function () {
 
-			segments.push( segment );
-			segments.push( segment );
+	// determine segments between junctions and entrances/passage ends.
 
-			if ( newSegment ) {
+	var newSegment = true;
+	var stations = this.stations;
+	var station;
 
-				geometry.vertices.push( v1 );
+	var segment = 0;
+	var segments = [];
+	var segmentMap = this.segmentMap;
 
-				station = Stations.getStation( v1 );
-				startStationId = station.id;
+	var mesh = this.legMeshes[ NORMAL ];
+	var legs = mesh.geometry.vertices;
 
-				newSegment = false;
+	var v1, v2;
 
-			}
+	var l = legs.length;
 
-			station = Stations.getStation( v2 );
+	var startStationId;
+	var startVertex;
 
-			if ( ( station && station.hitCount > 2 ) || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) {
+	for ( var i = 0; i < l; i = i + 2 ) {
 
-				// we have found a junction or a passage end
-				endStationId = station.id;
-				geometry.vertices.push( v2 );
+		v1 = legs[ i ];
+		v2 = legs[ i + 1 ];
 
-				segmentMap.set( startStationId + ":" + endStationId, segment );
+		segments.push( segment );
+		segments.push( segment );
 
-				segment++;
+		if ( newSegment ) {
 
-				newSegment = true;
+			station = stations.getStation( v1 );
 
-			}
+			startStationId = station.id;
+			startVertex = v1;
 
-		}
-
-		if ( ! newSegment ) {
-
-			endStationId = station.id;
-			geometry.vertices.push( v2 );
-
-			segmentMap.set( startStationId + ":" + endStationId, segment );
+			newSegment = false;
 
 		}
 
-		self.legMeshes[ NORMAL ].userData.segments = segments;
+		station = stations.getStation( v2 );
 
-		console.log( segmentMap );
+		if ( ( station && station.hitCount > 2 ) || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) {
 
-		self.add ( new LineSegments( geometry ) );
+			// we have found a junction or a passage end
+
+			segmentMap.set( startStationId + ":" + station.id, { segment: segment, startVertex: startVertex, endVertex: v2 } );
+
+			segment++;
+
+			newSegment = true;
+
+		}
+
+	}
+
+	if ( ! newSegment ) {
+
+		segmentMap.set( startStationId + ":" + station.id, { segment: segment, startVertex: startVertex, endVertex: v2 } );
+
+	}
+
+	mesh.userData.segments = segments;
+
+	this.mouseTargets = [ mesh ];   // temp mech FIXME
+
+//	this.addSegments();
+
+}
+
+Survey.prototype.addSegments = function () {
+
+	var geometry = new Geometry();
+	var vertices = geometry.vertices;
+
+	this.segmentMap.forEach( _addSegment );
+
+	this.add ( new LineSegments( geometry , new LineBasicMaterial( { color: 0x00ff00 } ) ) );
+
+	function _addSegment( value, key ) {
+
+		vertices.push( value.startVertex );
+		vertices.push( value.endVertex );
+
+	}
+
+}
+
+Survey.prototype.logSegments = function () {
+
+	var surveyTree = this.surveyTree;
+	var stations = this.stations;
+	var p1, p2;
+
+	this.segmentMap.forEach( _logSegment );
+
+	function _logSegment( value, key ) {
+
+		p1 = stations.getStation( value.startVertex ).getPath();
+		p2 = stations.getStation( value.endVertex ).getPath();
+
+		console.log( "PATH: ", p1, p2 );
 
 	}
 
@@ -1650,7 +1720,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 	mesh.material = Materials.getLineMaterial();
 
 	var segments = mesh.userData.segments;
-	console.log( segments );
+	var route = this.route;
 
 	var c1 = new Color( 0xffff00 );
 	var c2 = new Color( 0x444444 );
@@ -1661,7 +1731,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	function _colourSegment ( geometry, v1, v2, survey ) {
 
-		if ( segments[ v1 ] === 22 ) {
+		if ( route.has( segments[ v1 ] ) ) {
 
 			colour = c1;
 

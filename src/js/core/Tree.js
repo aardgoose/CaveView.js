@@ -154,6 +154,22 @@ Tree.prototype.addPath = function ( path, properties ) {
 
 }
 
+Tree.prototype.getPath = function () {
+
+	var node = this;
+	var path = [];
+
+	do {
+
+		path.push( node.name );
+		node = node.parent;
+
+	} while ( node !== null );
+
+	return path.reverse().join( "." );
+
+}
+
 Tree.prototype.getSubtreeIds = function ( id, idSet ) {
 
 	var node = this.findById( id );

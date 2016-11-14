@@ -6,7 +6,7 @@ import  {
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY,
-	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, 
+	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
 	upAxis 
 } from '../core/constants.js';
@@ -248,6 +248,7 @@ function init ( domID ) { // public method
 
 	_enableLayer( FEATURE_BOX,       "box" );
 	_enableLayer( FEATURE_ENTRANCES, "entrances" );
+	_enableLayer( FEATURE_STATIONS,  "stations" );
 	_enableLayer( FACE_SCRAPS,       "scraps" );
 	_enableLayer( FACE_WALLS,        "walls" );
 	_enableLayer( LEG_SPLAY,         "splays" );

@@ -5,7 +5,7 @@ import  {
 	FACE_WALLS, FACE_SCRAPS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
-	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY,
+	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY, SHADING_PATH,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
 	upAxis 
@@ -867,10 +867,21 @@ function entranceClick ( event ) {
 
 	if ( intersects.length > 0 ) {
 
+		survey.toggleSegment( intersects[ 0 ].index );
+
+		setShadingMode( SHADING_PATH );
+
+		renderView();
+
+	}
+
+/*
+	if ( intersects.length > 0 ) {
+
 		var entrance = intersects[ 0 ].object;
 		var position = entrance.getWorldPosition();
 
-/*		targetPOI = {
+		targetPOI = {
 			tAnimate:    80,
 			object:      entrance,
 			position:    position,
@@ -879,7 +890,7 @@ function entranceClick ( event ) {
 			boundingBox: new Box3().expandByPoint( entrance.position ),
 			quaternion:  new Quaternion()
 		};
-*/
+
 		activePOIPosition = controls.target;
 
 		console.log( entrance.type, entrance.name );
@@ -896,6 +907,7 @@ function entranceClick ( event ) {
 		}
 
 	}
+*/
 
 	function _loaded () {
 

@@ -14,6 +14,7 @@ import { ColourCache } from '../core/ColourCache.js';
 import { Tree } from '../core/Tree.js';
 import { Materials } from '../materials/Materials.js';
 import { Marker } from './Marker.js';
+import { Stations } from './Stations.js';
 import { Terrain } from '../terrain/Terrain.js';
 import { CaveLoader } from '../loaders/CaveLoader.js';
 import { WorkerPool } from '../workers/WorkerPool.js';
@@ -56,6 +57,8 @@ function Survey ( cave ) {
 	this.terrain = null;
 	this.isRegion = cave.isRegion;
 	this.legMeshes = [];
+	this.segmentMap = new Map();
+	this.stations = new Stations();
 	this.workerPool = new WorkerPool( "caveWorker.js" );
 
 	var self = this;
@@ -644,13 +647,9 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadStations( surveyTree ) {
 
-		var geometry = new Geometry();
-		var map = new Map();
-		var i;
-		var baseColor     = new Color( 0x880000 );
-		var junctionColor = new Color( 0xffff00 );
+		var i = 0;
 
-		i = 0;
+		var stations = self.stations;
 
 		surveyTree.traverse( _addStation );
 
@@ -659,35 +658,37 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		for ( i = 0; i < legs.length; i++ ) {
 
-			var vertex = legs[i];
-
-			station = _getStation( vertex );
-
-			if ( station !== undefined ) { 
-
-				station.hitCount++;
-
-				if ( station.hitCount > 2 ) geometry.colors[ station.stationVertexIndex ] = junctionColor;
-
-			}
+			stations.updateStation( legs[ i ] );
 
 		}
 
-//		var stations = new Points( geometry, new PointsMaterial( { vertexColors: VertexColors } ) );
+		self.add( stations );
 
-//		self.add ( stations );
+		function _addStation( node ) {
 
+			stations.addStation( node );
 
+		}
+
+	}
+
+	function _findSegments() {
 		// determine segments between junctions and entrances/passage ends.
 
 		var geometry = new Geometry();
 		var newSegment = true;
+		var stations = self.stations;
 
 		var segment = 0;
 		var segments = [];
+		var segmentMap = self.segmentMap;
+
 		var v1, v2, l;
 
 		var l = legs.length;
+
+		var startStationId;
+		var endStationId;
 
 		for ( i = 0; i < l; i = i + 2 ) {
 
@@ -701,60 +702,45 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				geometry.vertices.push( v1 );
 
+				station = Stations.getStation( v1 );
+				startStationId = station.id;
+
 				newSegment = false;
 
 			}
 
-			station = _getStation( v2 );
+			station = Stations.getStation( v2 );
 
 			if ( ( station && station.hitCount > 2 ) || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) {
 
 				// we have found a junction or a passage end
-
+				endStationId = station.id;
 				geometry.vertices.push( v2 );
+
+				segmentMap.set( startStationId + ":" + endStationId, segment );
 
 				segment++;
 
 				newSegment = true;
 
 			}
-	
+
 		}
 
 		if ( ! newSegment ) {
 
+			endStationId = station.id;
 			geometry.vertices.push( v2 );
 
-			segments.push( segment );
+			segmentMap.set( startStationId + ":" + endStationId, segment );
 
 		}
 
 		self.legMeshes[ NORMAL ].userData.segments = segments;
-		console.log( segments );
+
+		console.log( segmentMap );
 
 		self.add ( new LineSegments( geometry ) );
-
-		function _getStation( vertex ) {
-
-			return map.get( vertex.x.toString() + ":" + vertex.y.toString() + ":" + vertex.z.toString() );
-
-		}
-
-		function _addStation( node ) {
-
-			var point = node.p;
-
-			if ( point === undefined ) return;
-
-			geometry.vertices.push( point );
-			geometry.colors.push( baseColor );
-
-			map.set ( point.x.toString() + ":" + point.y.toString() + ":" + point.z.toString(), node );
-
-			node.hitCount = 0;
-			node.stationVertexIndex = i++;
-
-		}
 
 	}
 

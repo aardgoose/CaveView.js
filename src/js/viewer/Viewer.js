@@ -242,6 +242,12 @@ function init ( domID ) { // public method
 		writeable: true,
 		get: function () { return zScale; },
 		set: function ( x ) { setZScale( x ) }
+	},
+
+	"dumpRoute": {
+		writeable: true,
+		get: function () { return true; },
+		set: function ( x ) { dumpRoute( x ) }
 	} 
 
 	} );
@@ -290,6 +296,12 @@ function init ( domID ) { // public method
 		viewState.dispatchEvent( { type: "change", name: name } );
 
 	}
+
+}
+
+function dumpRoute( value ) {
+
+	if ( survey ) survey.dumpRoute();
 
 }
 

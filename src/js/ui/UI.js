@@ -729,9 +729,15 @@ function keyDown ( event ) {
 
 		break;
 
-	case 55: // change colouring scheme to per survey section - 'y'
+	case 55: // change colouring scheme to per survey section - '7'
 
 		viewState.shadingMode = SHADING_DEPTH;
+
+		break;
+
+	case 56: // change colouring scheme to per survey section - '8'
+
+		viewState.shadingMode = SHADING_PATH;
 
 		break;
 
@@ -741,9 +747,9 @@ function keyDown ( event ) {
 
 		break;
 
-	case 68: // change colouring scheme to per survey path - 'd'
+	case 68: // dump a contructed route to a window - 'd'
 
-		viewState.shadingMode = SHADING_PATH;
+		viewState.dumpRoute = true;
 
 		break;
 

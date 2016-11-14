@@ -654,8 +654,6 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		surveyTree.traverse( _addStation );
 
-
-		// 
 		var legs = self.getLegs();
 		var station;
 
@@ -1672,14 +1670,13 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 	var c2 = new Color( 0x444444 );
 
 	var colour;
-	console.log( "XXXX-------" );
 
 	this.setLegSelected ( mesh, _colourSegment );
 
 	function _colourSegment ( geometry, v1, v2, survey ) {
 
 		if ( segments[ v1 ] === 22 ) {
-			console.log( "XXXX" );
+
 			colour = c1;
 
 		} else {

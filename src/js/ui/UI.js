@@ -459,7 +459,10 @@ function initSettingsPage () {
 	page.addHeader( "Visibility" );
 
 	if ( viewState.hasEntrances )    page.addCheckbox( "Entrances",     viewState, "entrances" );
-	if ( viewState.hasScraps )       page.addCheckbox( "Scraps",        viewState, "scraps" );
+
+	page.addCheckbox( "Stations", viewState, "stations" );
+
+	if ( viewState.hasEntrances )    page.addCheckbox( "Entrances",     viewState, "entrances" );
 	if ( viewState.hasSplays )       page.addCheckbox( "Splay Legs",    viewState, "splays" );
 	if ( viewState.hasSurfaceLegs )  page.addCheckbox( "Surface Legs",  viewState, "surfaceLegs" );
 	if ( viewState.hasTerrain )      page.addCheckbox( "Terrain",       viewState, "terrain" );

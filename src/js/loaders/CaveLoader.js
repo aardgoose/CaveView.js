@@ -3,12 +3,13 @@ import { getEnvironmentValue } from '../core/constants.js';
 import { Svx3dHandler } from './svx3dHandler.js';
 import { loxHandler } from './loxHandler.js';
 import { RegionHandler } from './RegionHandler.js';
+import { RouteHandler } from './RouteHandler.js';
 
 function CaveLoader ( callback, progress ) {
 
-	if (!callback) {
+	if ( !callback ) {
 
-		alert( "No callback specified");
+		alert( "No callback specified" );
 
 	}
 
@@ -41,6 +42,7 @@ CaveLoader.prototype.parseName = function ( name ) {
 		break;
 
 	case 'reg':
+	case 'json':
 
 		this.dataType = "json";
 
@@ -48,7 +50,7 @@ CaveLoader.prototype.parseName = function ( name ) {
 
 	default:
 
-		alert( "Cave: unknown response extension [", self.extention, "]" );
+		console.log( "Cave: unknown response extension [", self.extention, "]" );
 
 	}
 
@@ -67,7 +69,7 @@ CaveLoader.prototype.loadURL = function ( cave ) {
 	// load this file
 	var type = this.dataType;
 
-	if (!type) {
+	if ( !type ) {
 
 		alert( "Cave: unknown file extension [", self.extention, "]");
 		return false;
@@ -81,7 +83,7 @@ CaveLoader.prototype.loadURL = function ( cave ) {
 
 	xhr.open( "GET", prefix + cave );
 
-	if (type) {
+	if ( type ) {
 
 		xhr.responseType = type; // Must be after open() to keep IE happy.
 
@@ -97,7 +99,7 @@ CaveLoader.prototype.loadURL = function ( cave ) {
 
 	}
 
-	function _progress( e ) {
+	function _progress ( e ) {
 
 		if ( self.progress) self.progress( Math.round( 100 * e.loaded / e.total ) );
 
@@ -156,12 +158,12 @@ CaveLoader.prototype.loadFile = function ( file ) {
 
 	function _progress( e ) {
 
-		if (self.progress) self.progress( Math.round( 100 * e.loaded / e.total ) );
+		if ( self.progress ) self.progress( Math.round( 100 * e.loaded / e.total ) );
 
 	}
 }
 
-CaveLoader.prototype.callHandler = function( fileName, data) {
+CaveLoader.prototype.callHandler = function( fileName, data ) {
 
 	var handler;
 
@@ -182,6 +184,12 @@ CaveLoader.prototype.callHandler = function( fileName, data) {
 	case 'reg':
 
 		handler = new RegionHandler( fileName, data );
+
+		break;
+
+	case 'json':
+
+		handler = new RouteHandler( fileName, data );
 
 		break;
 

@@ -221,6 +221,10 @@ div.linear-scale-caption {
 	background-image: url(../images/ic_info.png);
 }
 
+#icon_route {
+	background-image: url(../images/ic_route.png);
+}
+
 #icon_help {
 	background-image: url(../images/ic_help.png);
 }

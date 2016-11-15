@@ -244,10 +244,14 @@ function init ( domID ) { // public method
 		set: function ( x ) { setZScale( x ) }
 	},
 
-	"dumpRoute": {
+	"loadRoute": {
 		writeable: true,
 		get: function () { return true; },
-		set: function ( x ) { dumpRoute( x ) }
+		set: function ( x ) { loadRoute( x ) }
+	},
+
+	"getRouteNames": {
+		get: function () { return survey.getRouteNames(); },
 	} 
 
 	} );
@@ -299,9 +303,9 @@ function init ( domID ) { // public method
 
 }
 
-function dumpRoute( value ) {
+function loadRoute( value ) {
 
-	if ( survey ) survey.dumpRoute();
+	if ( survey ) survey.loadRoute( value );
 
 }
 

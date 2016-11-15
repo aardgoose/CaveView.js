@@ -15,6 +15,7 @@ import { Tree } from '../core/Tree.js';
 import { Materials } from '../materials/Materials.js';
 import { Marker } from './Marker.js';
 import { Stations } from './Stations.js';
+import { Routes } from './Routes.js';
 import { Terrain } from '../terrain/Terrain.js';
 import { CaveLoader } from '../loaders/CaveLoader.js';
 import { WorkerPool } from '../workers/WorkerPool.js';
@@ -57,8 +58,7 @@ function Survey ( cave ) {
 	this.terrain = null;
 	this.isRegion = cave.isRegion;
 	this.legMeshes = [];
-	this.segmentMap = new Map();
-	this.route = new Set();
+	this.routes = null;
 	this.stations = new Stations();
 	this.workerPool = new WorkerPool( "caveWorker.js" );
 
@@ -80,6 +80,14 @@ function Survey ( cave ) {
 
 		this.loadCave( survey );
 		this.limits = this.getBounds();
+
+		console.log( survey.title );
+
+		this.routes = new Routes( this, this.legMeshes[ NORMAL ] );
+
+		self.add( this.routes.createWireframe() ); // FIXME
+
+		this.mouseTargets = [ this.legMeshes[ NORMAL ] ];   // temp mech FIXME
 
 	}
 
@@ -665,154 +673,22 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		self.add( stations );
 
-		self.mapSegments();
-
 	}
-
 
 }
 
 Survey.prototype.dumpRoute = function () {
 
-	var route = this.route;
-	var stations = this.stations;
-
-	this.segmentMap.forEach( _addRoute );
-
-	function _addRoute( value, key ) {
-
-		if ( route.has( value.segment ) ) {
-
-			var p1 = stations.getStation( value.startVertex ).getPath();
-			var p2 = stations.getStation( value.endVertex ).getPath();
-
-			console.log( "PATH: ", p1, p2 );
-
-		}
-
-	}
+	this.routes.loadRoute(); // FIXME
 
 }
 
 Survey.prototype.toggleSegment = function ( index ) {
 
-	console.log( index );
-
 	var mesh = this.legMeshes[ NORMAL ];
 	var segment = mesh.userData.segments[ index ];
-	var route = this.route;
 
-	route.has( segment ) ? route.delete( segment ) : route.add( segment );
-
-	this.dumpRoute();
-
-}
-
-Survey.prototype.mapSegments = function () {
-
-	// determine segments between junctions and entrances/passage ends.
-
-	var newSegment = true;
-	var stations = this.stations;
-	var station;
-
-	var segment = 0;
-	var segments = [];
-	var segmentMap = this.segmentMap;
-
-	var mesh = this.legMeshes[ NORMAL ];
-	var legs = mesh.geometry.vertices;
-
-	var v1, v2;
-
-	var l = legs.length;
-
-	var startStationId;
-	var startVertex;
-
-	for ( var i = 0; i < l; i = i + 2 ) {
-
-		v1 = legs[ i ];
-		v2 = legs[ i + 1 ];
-
-		segments.push( segment );
-		segments.push( segment );
-
-		if ( newSegment ) {
-
-			station = stations.getStation( v1 );
-
-			startStationId = station.id;
-			startVertex = v1;
-
-			newSegment = false;
-
-		}
-
-		station = stations.getStation( v2 );
-
-		if ( ( station && station.hitCount > 2 ) || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) {
-
-			// we have found a junction or a passage end
-
-			segmentMap.set( startStationId + ":" + station.id, { segment: segment, startVertex: startVertex, endVertex: v2 } );
-
-			segment++;
-
-			newSegment = true;
-
-		}
-
-	}
-
-	if ( ! newSegment ) {
-
-		segmentMap.set( startStationId + ":" + station.id, { segment: segment, startVertex: startVertex, endVertex: v2 } );
-
-	}
-
-	mesh.userData.segments = segments;
-
-	this.mouseTargets = [ mesh ];   // temp mech FIXME
-
-//	this.addSegments();
-
-}
-
-Survey.prototype.addSegments = function () {
-
-	var geometry = new Geometry();
-	var vertices = geometry.vertices;
-
-	this.segmentMap.forEach( _addSegment );
-
-	this.add ( new LineSegments( geometry , new LineBasicMaterial( { color: 0x00ff00 } ) ) );
-
-	function _addSegment( value, key ) {
-
-		vertices.push( value.startVertex );
-		vertices.push( value.endVertex );
-
-	}
-
-}
-
-Survey.prototype.logSegments = function () {
-
-	var surveyTree = this.surveyTree;
-	var stations = this.stations;
-	var p1, p2;
-
-	this.segmentMap.forEach( _logSegment );
-
-	function _logSegment( value, key ) {
-
-		p1 = stations.getStation( value.startVertex ).getPath();
-		p2 = stations.getStation( value.endVertex ).getPath();
-
-		console.log( "PATH: ", p1, p2 );
-
-	}
+	this.routes.toggleSegment( segment );
 
 }
 
@@ -1720,7 +1596,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 	mesh.material = Materials.getLineMaterial();
 
 	var segments = mesh.userData.segments;
-	var route = this.route;
+	var route = this.routes.getCurrentRoute();
 
 	var c1 = new Color( 0xffff00 );
 	var c2 = new Color( 0x444444 );

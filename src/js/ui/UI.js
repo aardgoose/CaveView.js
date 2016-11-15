@@ -327,6 +327,14 @@ function initSelectionPage () {
 
 }
 
+function initRoutePage () {
+
+	var route = new Page( frame, "icon_route" );
+
+	route.addHeader( "Routes" );
+
+}
+
 function initHelpPage () {
 
 	var help = new Page( frame, "icon_help" );
@@ -344,6 +352,8 @@ function initHelpPage () {
 	_addKey( "4", "depth cursor " );
 	_addKey( "5", "single colour" );
 	_addKey( "6", "survey section" );
+	_addKey( "7", "depth from surface" );
+	_addKey( "8", "route" );
 
 	_addKey( "[", "move depth cursor up" );
 	_addKey( "]", "move depth cursor down" );
@@ -527,6 +537,7 @@ function initUI () {
 
 	initSettingsPage();
 	initSelectionPage();
+	initRoutePage();
 	initInfoPage();
 	initHelpPage();
 

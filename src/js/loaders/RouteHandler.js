@@ -15,6 +15,13 @@ RouteHandler.prototype.getSurvey = function () {
 
 }
 
+RouteHandler.prototype.getRoutes = function () {
+
+	return this.data;
+
+}
+
+
 export { RouteHandler };
 
 // EOF

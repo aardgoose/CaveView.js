@@ -242,17 +242,7 @@ function init ( domID ) { // public method
 		writeable: true,
 		get: function () { return zScale; },
 		set: function ( x ) { setZScale( x ) }
-	},
-
-	"loadRoute": {
-		writeable: true,
-		get: function () { return true; },
-		set: function ( x ) { loadRoute( x ) }
-	},
-
-	"getRouteNames": {
-		get: function () { return survey.getRouteNames(); },
-	} 
+	}
 
 	} );
 
@@ -303,9 +293,9 @@ function init ( domID ) { // public method
 
 }
 
-function loadRoute( value ) {
+function addRoutes( routes ) {
 
-	if ( survey ) survey.loadRoute( value );
+	if ( survey ) survey.addRoutes( routes );
 
 }
 
@@ -1152,6 +1142,7 @@ export var Viewer = {
 	init:          init,
 	clearView:     clearView,
 	loadCave:      loadCave,
+	addRoutes:     addRoutes,
 	getStats:      getStats,
 	getSurveyTree: getSurveyTree,
 	getControls:   getControls,

@@ -10,9 +10,11 @@ import { ProgressBar } from './ProgressBar.js';
 import { CaveLoader } from '../loaders/CaveLoader.js';
 
 import { Viewer } from '../viewer/Viewer.js';
+import { Routes } from '../viewer/Routes.js';
 
 var cave;
 var caveLoader;
+var routes = null;
 
 var caveIndex = Infinity;
 var caveList = [];
@@ -544,8 +546,6 @@ function initUI () {
 	frame.style.display = "block";
 	container.appendChild( frame );
 
-	console.log( viewState.getRouteNames );
-
 }
 
 function handleDragover ( event ) {
@@ -683,22 +683,28 @@ function viewComplete () {
 	surveyTree = Viewer.getSurveyTree();
 	isCaveLoaded = true;
 
+	routes = new Routes( file, _routesLoaded );
+
+	Viewer.addRoutes( routes );
+
 	// drop reference to cave to free heap space
 	cave = null;
 
 	initUI();
-/*
-	var v = Viewer.getControls();
-	v.autoRotate = true;
-	v.autoRotateRate = 2;
-*/
+
+	function _routesLoaded( routeNames ) {
+
+		console.log( routeNames );
+
+	}
+
 }
 
-function shadingModeChanged () {
+/*function shadingModeChanged () {
 
 	var stats = Viewer.getStats();
 
-}
+}*/ // FIXME
 
 function keyDown ( event ) {
 

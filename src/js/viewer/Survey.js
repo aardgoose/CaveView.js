@@ -81,13 +81,7 @@ function Survey ( cave ) {
 		this.loadCave( survey );
 		this.limits = this.getBounds();
 
-		console.log( survey.title );
-
-		this.routes = new Routes( this, this.legMeshes[ NORMAL ] );
-
-//		self.add( this.routes.createWireframe() ); // FIXME
-
-		this.mouseTargets = [ this.legMeshes[ NORMAL ] ];   // temp mech FIXME
+		this.mouseTargets = [ this.legMeshes[ NORMAL ] ]; // temp mech FIXME
 
 	}
 
@@ -677,15 +671,12 @@ Survey.prototype.loadCave = function ( cave ) {
 
 }
 
-Survey.prototype.loadRoute = function ( routeName ) {
+Survey.prototype.addRoutes = function ( routes ) {
 
-	this.routes.loadRoute( routeName );
+	this.legMeshes[ NORMAL ].userData.segments = routes.mapSurvey( this.stations, this.getLegs() );
+	this.routes = routes;
 
-}
-
-Survey.prototype.getRouteNames = function () {
-
-	this.routes.getRouteNames();
+	this.add( routes.createWireframe() ); // FIXME
 
 }
 

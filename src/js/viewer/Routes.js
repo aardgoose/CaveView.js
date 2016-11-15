@@ -7,29 +7,85 @@ import {
 } from '../../../../three.js/src/Three.js';
 
 import { getEnvironmentValue } from '../core/constants.js';
+import { CaveLoader } from '../loaders/CaveLoader.js';
 
-function Routes ( survey, mesh ) {
+
+function Routes ( surveyName, callback ) {
 
 	// determine segments between junctions and entrances/passage ends and create mapping array.
-
-	this.surveyTree = survey.surveyTree;
-	this.workerPool = survey.workerPool;
 
 	this.segmentMap = new Map();
 	this.currentRoute = new Set();
 	this.routes = new Map();
 	this.routeNames = [];
 
+	var prefix = getEnvironmentValue( "surveyDirectory", "" );
+
+	var self = this;
+	var name = surveyName.split( "." ).shift() + ".json";
+
+	var segmentMap = this.segmentMap;
+
+	console.log( "loading route file: ", name );
+
+	var loader = new CaveLoader( _routesLoaded );
+
+	loader.loadURL( name );
+
+	function _routesLoaded( routes ) {
+
+		if ( routes === null ) {
+
+			callback( [] );
+			return;
+
+		}
+
+		var routesJSON = routes.getRoutes();
+
+		var routes = routesJSON.routes;
+
+		console.log( routes );
+
+		if ( ! routes ) {
+
+			alert( "invalid route file - no routes" );
+
+			callback( [] );
+			return;
+
+		}
+
+		var route;
+
+		for ( var i = 0; i < routes.length; i++ ) {
+
+			route = routes[ i ]
+
+			self.routeNames.push( route.name );
+			self.routes.set( route.name, route.segments );
+
+		}
+
+		callback( self.routeNames );
+
+	}
+
+}
+
+Routes.prototype.constructor = Routes;
+
+Routes.prototype.mapSurvey = function ( stations, legs ) {
+
+	// determine segments between junctions and entrances/passage ends and create mapping array.
+
 	var segmentMap = this.segmentMap;
 	var newSegment = true;
 
-	var stations = survey.stations;
 	var station;
 
 	var segment = 0;
 	var segments = [];
-
-	var legs = mesh.geometry.vertices;
 
 	var v1, v2;
 
@@ -79,13 +135,9 @@ function Routes ( survey, mesh ) {
 
 	}
 
-	mesh.userData.segments = segments;
-
-	this.loadRoutes( survey.name.split( "." ).shift() );
+	return segments;
 
 }
-
-Routes.prototype.constructor = Routes;
 
 Routes.prototype.createWireframe = function () {
 
@@ -105,66 +157,12 @@ Routes.prototype.createWireframe = function () {
 
 }
 
-Routes.prototype.loadRoutes = function ( surveyName ) {
-
-	var self = this;
-	var name = surveyName + ".json";
-
-	var prefix = getEnvironmentValue( "surveyDirectory", "" );
-	var segmentMap = this.segmentMap;
-	var surveyTree = this.surveyTree;
-
-	this.currentRoute.clear();
-
-	console.log( "loading route file: ", name );
-
-	var worker = this.workerPool.getWorker();
-
-	worker.onmessage = _routesLoaded;
-
-	worker.postMessage( prefix + name );
-
-	return;
-
-	function _routesLoaded ( event ) {
-
-		var routeData = event.data.survey; // FIXME check for ok;
-
-		self.workerPool.putWorker( worker );
-
-		console.log( event.data );
-
-		var routes = routeData.routes;
-
-		if ( ! routes ) {
-
-			alert( "invalid route file - no routes" );
-			return;
-
-		}
-
-		var route;
-
-		for ( var i = 0; i < routes.length; i++ ) {
-
-			route = routes[ i ]
-
-			self.routeNames.push( route.name );
-			self.routes.set( route.name, route.segments );
-
-		}
-
-	}
-
-}
-
-Routes.prototype.loadRoute = function ( routeName ) { // FIXME
+Routes.prototype.loadRoute = function ( routeName, surveyTree ) {
 
 	var self = this;
 
 	var currentRoute = this.currentRoute;
 	var segmentMap = this.segmentMap;
-	var surveyTree = this.surveyTree;
 	var routes = this.routes;
 
 	var map;

@@ -17,7 +17,8 @@ function Routes ( survey, mesh ) {
 
 	this.segmentMap = new Map();
 	this.currentRoute = new Set();
-	this.routes = null;
+	this.routes = new Map();
+	this.routeNames = [];
 
 	var segmentMap = this.segmentMap;
 	var newSegment = true;
@@ -133,7 +134,25 @@ Routes.prototype.loadRoutes = function ( surveyName ) {
 
 		console.log( event.data );
 
-		self.routes = routeData.segments;
+		var routes = routeData.routes;
+
+		if ( ! routes ) {
+
+			alert( "invalid route file - no routes" );
+			return;
+
+		}
+
+		var route;
+
+		for ( var i = 0; i < routes.length; i++ ) {
+
+			route = routes[ i ]
+
+			self.routeNames.push( route.name );
+			self.routes.set( route.name, route.segments );
+
+		}
 
 	}
 
@@ -146,14 +165,21 @@ Routes.prototype.loadRoute = function ( routeName ) { // FIXME
 	var currentRoute = this.currentRoute;
 	var segmentMap = this.segmentMap;
 	var surveyTree = this.surveyTree;
-	var routeSegments = this.routes;
-
-	currentRoute.clear();
-
-	if ( routeSegments === null ) return;
+	var routes = this.routes;
 
 	var map;
 	var segment;
+
+	var routeSegments = this.routes.get( routeName );
+
+	if ( ! routeSegments ) {
+
+		 alert( "route " + routeName + " does not exist" );
+		 return false;
+
+	 }
+
+	currentRoute.clear();
 
 	for ( var i = 0; i < routeSegments.length; i++ ) {
 
@@ -164,6 +190,8 @@ Routes.prototype.loadRoute = function ( routeName ) { // FIXME
 		if ( map !== undefined ) currentRoute.add( map.segment );
 
 	}
+
+	return true;
 
 }
 
@@ -206,6 +234,12 @@ Routes.prototype.dumpRoute = function () {
 		}
 
 	}
+
+}
+
+Routes.prototype.getRouteNames = function() {
+
+	return this.routeNames;
 
 }
 

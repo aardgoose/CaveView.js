@@ -85,7 +85,7 @@ function Survey ( cave ) {
 
 		this.routes = new Routes( this, this.legMeshes[ NORMAL ] );
 
-		self.add( this.routes.createWireframe() ); // FIXME
+//		self.add( this.routes.createWireframe() ); // FIXME
 
 		this.mouseTargets = [ this.legMeshes[ NORMAL ] ];   // temp mech FIXME
 
@@ -677,9 +677,15 @@ Survey.prototype.loadCave = function ( cave ) {
 
 }
 
-Survey.prototype.dumpRoute = function () {
+Survey.prototype.loadRoute = function ( routeName ) {
 
-	this.routes.loadRoute(); // FIXME
+	this.routes.loadRoute( routeName );
+
+}
+
+Survey.prototype.getRouteNames = function () {
+
+	this.routes.getRouteNames();
 
 }
 

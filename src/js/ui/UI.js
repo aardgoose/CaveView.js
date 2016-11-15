@@ -544,6 +544,8 @@ function initUI () {
 	frame.style.display = "block";
 	container.appendChild( frame );
 
+	console.log( viewState.getRouteNames );
+
 }
 
 function handleDragover ( event ) {
@@ -760,7 +762,7 @@ function keyDown ( event ) {
 
 	case 68: // dump a contructed route to a window - 'd'
 
-		viewState.dumpRoute = true;
+		viewState.loadRoute = "to sump";
 
 		break;
 

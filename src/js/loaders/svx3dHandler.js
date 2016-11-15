@@ -28,9 +28,6 @@ function Svx3dHandler ( fileName, dataStream ) {
 
 	this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
 
-	// strip empty/single top nodes of tree and add title as top node name if empty
-	this.surveyTree = surveyTree.reduce( title );
-
 	return;
 
 	function readLF () { // read until Line feed

@@ -184,19 +184,6 @@ Tree.prototype.getSubtreeIds = function ( id, idSet ) {
 
 }
 
-Tree.prototype.reduce = function ( name ) {
-
-	var node = this;
-
-	// remove single child nodes from top of tree.
-	while ( node.children.length === 1 ) node = node.children[ 0 ];
-
-	if ( !node.name ) node.name = name;
-
-	return node;
-
-}
-
 Tree.prototype.getIdByPath = function ( path ) {
 
 	var node = this.getByPath ( path );

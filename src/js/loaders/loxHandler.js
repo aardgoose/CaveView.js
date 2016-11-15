@@ -39,9 +39,6 @@ function loxHandler  ( fileName, dataStream ) {
 	// Drop data to give GC a chance ASAP
 	source = null;
 
-	// strip empty/single top nodes of tree
-	this.surveyTree = surveyTree.reduce( "unknown" );
-
 	return;
 
 	// .lox parsing functions

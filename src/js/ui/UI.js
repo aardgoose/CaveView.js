@@ -685,7 +685,6 @@ function viewComplete () {
 
 	routes = new Routes( file, _routesLoaded );
 
-	Viewer.addRoutes( routes );
 
 	// drop reference to cave to free heap space
 	cave = null;
@@ -694,6 +693,7 @@ function viewComplete () {
 
 	function _routesLoaded( routeNames ) {
 
+		Viewer.addRoutes( routes );
 		console.log( routeNames );
 
 	}

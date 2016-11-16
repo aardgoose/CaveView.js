@@ -300,6 +300,14 @@ function addRoutes( newRoutes ) {
 
 	if ( survey ) survey.addRoutes( newRoutes );
 
+	routes.addEventListener( "changed", _routesChanged );
+
+	function _routesChanged( event ) {
+
+		setShadingMode( shadingMode );
+
+	}
+
 }
 
 function setZScale ( scale ) {

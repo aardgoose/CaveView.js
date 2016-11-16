@@ -673,18 +673,18 @@ Survey.prototype.loadCave = function ( cave ) {
 
 Survey.prototype.addRoutes = function ( routes ) {
 
-	routes.mapSurvey( this.stations, this.getLegs() );
+	routes.mapSurvey( this.stations, this.getLegs(), this.surveyTree );
 
 	this.routes = routes;
 
-	this.add( routes.createWireframe() ); // FIXME
+//	this.add( routes.createWireframe() ); // FIXME
 
 }
 
 Survey.prototype.loadFromEntrance = function ( entrance, loadedCallback ) {
 
 	var self = this;
-	var name = entrance.name.split( "." )[0] + ".3d";
+	var name = entrance.name.split( "." )[ 0 ] + ".3d";
 	var prefix = getEnvironmentValue( "surveyDirectory", "" );
 
 	if ( entrance.loaded ) return;
@@ -789,7 +789,7 @@ Survey.prototype.setFeatureBox = function () {
 
 Survey.prototype.getLegStats = function ( mesh ) {
 
-	if ( !mesh ) return;
+	if ( ! mesh ) return;
 
 	var stats = { maxLegLength: -Infinity, minLegLength: Infinity, legCount: 0, legLength: 0 };
 	var vertices = mesh.geometry.vertices;
@@ -919,7 +919,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 		if ( ! vertexRuns ) return;
 
-		var geometry   = mesh.geometry;
+		var geometry = mesh.geometry;
 
 		var vertices = geometry.vertices;
 		var colors   = geometry.colors;
@@ -1182,7 +1182,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	function _setFaceShading ( mesh, mode, material ) {
 
-		if ( !mesh ) return;
+		if ( ! mesh ) return;
 
 		if ( material ) {
 
@@ -1201,7 +1201,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
-	if ( !mesh ) return;
+	if ( ! mesh ) return;
 
 	var faceRuns = mesh.userData.faceRuns;
 	var faces    = mesh.geometry.faces;
@@ -1215,7 +1215,7 @@ Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
 	var count = 0; // check final face count is select to detect faults in constructed mesh.userData
 
-	if (selectedSectionIds.size && faceRuns) {
+	if ( selectedSectionIds.size && faceRuns ) {
 
 		for ( var run = 0, l = faceRuns.length; run < l; run++ ) {
 
@@ -1252,7 +1252,7 @@ Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
 		}
 
-		if ( faces.length != count ) console.log("error: faces.length", faces.length, "count : ", count ); // TMP ASSERT
+		if ( faces.length != count ) console.log( "error: faces.length", faces.length, "count : ", count ); // TMP ASSERT
 
 	} else {
 
@@ -1415,6 +1415,7 @@ Survey.prototype.getSurveyColours = function () { // FIXME - cache save recalc f
 	var children = surveyTree.findById( survey ).children;
 
 	colour = this.getSurveyColour( survey );
+
 	_setSurveyColour( survey );
 
 	for ( var i = 0, l = children.length; i < l; i++ ) {
@@ -1444,7 +1445,7 @@ Survey.prototype.setEntrancesSelected = function () {
 
 	var entrances = this.getObjectByName( "CV.Survey:entrances" );
 
-	if ( !entrances ) return;
+	if ( ! entrances ) return;
 
 	var children = entrances.children;
 	var selectedSectionIds = this.selectedSectionIds;
@@ -1586,8 +1587,8 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	var routes = this.routes;
 
-	var c1 = new Color( 0xffff00 );
-	var c2 = new Color( 0xaaaaaa );
+	var c1 = ColourCache.yellow;
+	var c2 = ColourCache.white;
 
 	var colour;
 
@@ -1595,7 +1596,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	function _colourSegment ( geometry, v1, v2, survey ) {
 
-		color = ( routes.inCurrentRoute( v1 ) ? c1 : c2 );
+		colour = ( routes.inCurrentRoute( v1 ) ? c1 : c2 );
 
 		geometry.colors[ v1 ] = colour;
 		geometry.colors[ v2 ] = colour;

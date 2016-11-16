@@ -14,7 +14,8 @@ function Routes ( surveyName, callback ) {
 
 	// determine segments between junctions and entrances/passage ends and create mapping array.
 
-	this.segmentMap = new Map();
+	this.segments = []; // maps vertex index to segment membership
+	this.segmentMap = new Map(); // maps segments of survey between ends of passages and junctions.
 	this.currentRoute = new Set();
 	this.routes = new Map();
 	this.routeNames = [];
@@ -44,8 +45,6 @@ function Routes ( surveyName, callback ) {
 		var routesJSON = routes.getRoutes();
 
 		var routes = routesJSON.routes;
-
-		console.log( routes );
 
 		if ( ! routes ) {
 
@@ -85,7 +84,7 @@ Routes.prototype.mapSurvey = function ( stations, legs ) {
 	var station;
 
 	var segment = 0;
-	var segments = [];
+	var segments = this.segments;
 
 	var v1, v2;
 
@@ -134,8 +133,6 @@ Routes.prototype.mapSurvey = function ( stations, legs ) {
 		segmentMap.set( startStationId + ":" + station.id, { segment: segment, startVertex: startVertex, endVertex: v2 } );
 
 	}
-
-	return segments;
 
 }
 
@@ -199,26 +196,36 @@ Routes.prototype.getCurrentRoute = function () {
 
 }
 
-Routes.prototype.dumpRoute = function () {
+Routes.prototype.toDownload = function () {
 
 	// dump dump of json top window for cut and paste capture
 
 	var route = this.currentRoute;
 	var stations = this.stations;
+	var segmentMap = this.segmentMap;
+
 	var routeName = "test";
-	var routeSegments = [];
+	var routeSegments;
 
-	this.segmentMap.forEach( _addRoute );
 
-	var routeJSON = {
-		name: routeName,
-		segments: routeSegments
+	var routesJSON = {
+		name: "test",
+		routes: []
 	}
 
-	var url = 'data:text/json;charset=utf8,' + encodeURIComponent( JSON.stringify( routeJSON ) );
+	this.routes.forEach( _addRoutes );
 
-	window.open(url, '_blank');
-	window.focus();
+	return 'data:text/json;charset=utf8,' + encodeURIComponent( JSON.stringify( routesJSON ) );
+
+	function _addRoutes( route, routeName ) {
+
+		routeSegments = [];
+
+		segmentMap.forEach( _addRoute );
+
+		routesJSON.routes.push( { name: routeName, segments: RouteSegments } );
+
+	}
 
 	function _addRoute( value, key ) {
 
@@ -241,11 +248,18 @@ Routes.prototype.getRouteNames = function() {
 
 }
 
-Routes.prototype.toggleSegment = function ( segment ) {
+Routes.prototype.toggleSegment = function ( index ) {
 
 	var route = this.currentRoute;
+	var segment = this.segments[ index ];
 
 	route.has( segment ) ? route.delete( segment ) : route.add( segment );
+
+}
+
+Routes.prototype.inCurrentRoute = function ( index ) {
+
+	return this.currentRoute.has( this.segments[ index ] );
 
 }
 

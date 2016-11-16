@@ -15,11 +15,15 @@ function Routes ( surveyName, callback ) {
 
 	// determine segments between junctions and entrances/passage ends and create mapping array.
 
+	this.surveyTree = null;
 	this.segments = []; // maps vertex index to segment membership
 	this.segmentMap = new Map(); // maps segments of survey between ends of passages and junctions.
-	this.currentRoute = new Set();
+
 	this.routes = new Map();
 	this.routeNames = [];
+
+	this.currentRoute = new Set();
+	this.currentRouteName;
 
 	var prefix = getEnvironmentValue( "surveyDirectory", "" );
 
@@ -34,9 +38,14 @@ function Routes ( surveyName, callback ) {
 
 	loader.loadURL( name );
 
+	Object.defineProperty( this, "setRoute", {
+		set: function ( x ) { this.loadRoute( x ) },
+		get: function () { return this.currentRouteName }
+	} );
+
 	function _routesLoaded( routes ) {
 
-		if ( routes === null ) {
+		if ( ! routes ) {
 
 			callback( [] );
 			return;
@@ -69,6 +78,8 @@ function Routes ( surveyName, callback ) {
 
 		callback( self.routeNames );
 
+		self.dispatchEvent( { type: "changed" } );
+
 	}
 
 }
@@ -77,9 +88,11 @@ Routes.prototype.constructor = Routes;
 
 Object.assign( Routes.prototype, EventDispatcher.prototype );
 
-Routes.prototype.mapSurvey = function ( stations, legs ) {
+Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 	// determine segments between junctions and entrances/passage ends and create mapping array.
+
+	this.surveyTree = surveyTree;
 
 	var segmentMap = this.segmentMap;
 	var newSegment = true;
@@ -157,10 +170,11 @@ Routes.prototype.createWireframe = function () {
 
 }
 
-Routes.prototype.loadRoute = function ( routeName, surveyTree ) {
+Routes.prototype.loadRoute = function ( routeName ) {
 
 	var self = this;
 
+	var surveyTree = this.surveyTree;
 	var currentRoute = this.currentRoute;
 	var segmentMap = this.segmentMap;
 	var routes = this.routes;
@@ -188,6 +202,12 @@ Routes.prototype.loadRoute = function ( routeName, surveyTree ) {
 		if ( map !== undefined ) currentRoute.add( map.segment );
 
 	}
+
+	this.currentRouteName = routeName;
+
+	console.log(" route ", routeName, " loaded." );
+
+	self.dispatchEvent( { type: "changed" } );
 
 	return true;
 

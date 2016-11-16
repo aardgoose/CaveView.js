@@ -165,6 +165,13 @@ CaveLoader.prototype.loadFile = function ( file ) {
 
 CaveLoader.prototype.callHandler = function( fileName, data ) {
 
+	if ( data === null ) {
+
+		this.callback( false );
+		return;
+
+	}
+
 	var handler;
 
 	switch ( this.extention ) {

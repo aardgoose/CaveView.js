@@ -75,7 +75,7 @@ Page.clear = function () {
 
 		var frame = event.target;
 
-		frame.removeEventListener( "transitionend", afterReset );
+		frame.removeEventListener( "transitionend", _afterReset );
 
 		if ( frame !== null ) frame.parentElement.removeChild( frame );
 

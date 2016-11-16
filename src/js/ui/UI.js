@@ -40,7 +40,8 @@ var legShadingModes = {
 	"by leg inclination": SHADING_INCLINATION,
 	"height cursor":      SHADING_CURSOR,
 	"fixed":              SHADING_SINGLE,
-	"survey":             SHADING_SURVEY
+	"survey":             SHADING_SURVEY,
+	"route":              SHADING_PATH
 }
 
 var surfaceShadingModes = {
@@ -330,6 +331,15 @@ function initRoutePage () {
 	var routeFile = file.split( "." ).shift() + ".json";
 
 	route.addDownloadButton( "Download", routeFile, routes.toDownload() );
+
+	routes.addEventListener( "changed", _routesChanged );
+
+	function _routesChanged( event ) {
+
+		console.log( "routes changed" );
+		route.addSelect( "routes", routes.getRouteNames(), routes, "setRoute" );
+
+	}
 
 }
 
@@ -657,9 +667,7 @@ function viewComplete () {
 
 	routes = new Routes( file, _routesLoaded );
 
-
-	// drop reference to cave to free heap space
-	cave = null;
+	cave = null; // drop reference to cave to free heap space
 
 	initUI();
 
@@ -733,9 +741,9 @@ function keyDown ( event ) {
 
 		break;
 
-	case 68: // dump a contructed route to a window - 'd'
+	case 68: //  - 'd'
 
-		routes.loadRoute( "to sump", surveyTree );
+		// place holder
 
 		break;
 

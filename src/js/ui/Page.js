@@ -147,7 +147,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 		}
 
-		select.addEventListener( "change", function ( event ) { Page.inHandler = true; trgObj[property] = obj[event.target.value]; Page.inHandler = false; } );
+		select.addEventListener( "change", function ( event ) { Page.inHandler = true; trgObj[ property ] = obj[ event.target.value ]; Page.inHandler = false; } );
 
 	} else {
 
@@ -164,7 +164,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 		}
 
-		select.addEventListener( "change", function ( event ) { Page.inHandler = true; trgObj[property] = event.target.value; Page.inHandler = false; } );
+		select.addEventListener( "change", function ( event ) { Page.inHandler = true; trgObj[ property ] = event.target.value; Page.inHandler = false; } );
 
 	}
 
@@ -320,16 +320,31 @@ Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 	function afterSlideOut () {
 
 		oldSlide.removeEventListener( "transitionend", afterSlideOut );
-		page.removeChild(oldSlide);
+		page.removeChild( oldSlide );
 
 	}
 
 	function afterSlideIn () {
 
-		page.removeChild(oldSlide);
+		page.removeChild( oldSlide );
 		newSlide.removeEventListener( "transitionend", afterSlideIn );
 
 	}
+
+}
+
+
+Page.prototype.addDownloadButton = function ( title, fileName, content ) {
+
+	var a = document.createElement( "a" );
+
+	if ( typeof a.download === "undefined" ) return false;
+
+	a.textContent = title;
+	a.download = fileName;
+	a.href = content;
+
+	this.page.appendChild( a );
 
 }
 

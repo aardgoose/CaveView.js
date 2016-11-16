@@ -23,6 +23,7 @@ var viewState;
 var surveyTree;
 
 var isCaveLoaded = false;
+var isRoutesLoaded = false;
 
 var container;
 var frame = null;
@@ -334,6 +335,16 @@ function initRoutePage () {
 	var route = new Page( frame, "icon_route" );
 
 	route.addHeader( "Routes" );
+
+	if ( isRoutesLoaded ) {
+
+		route.addSelect( "routes", routes.getRouteNames(), routes );
+
+	}
+
+	var routeFile = file.split( "." ).shift() + ".json";
+
+	route.addDownloadButton( "Download", routeFile, routes.toDownload() );
 
 }
 
@@ -694,17 +705,12 @@ function viewComplete () {
 	function _routesLoaded( routeNames ) {
 
 		Viewer.addRoutes( routes );
-		console.log( routeNames );
+
+		isRoutesLoaded = true;
 
 	}
 
 }
-
-/*function shadingModeChanged () {
-
-	var stats = Viewer.getStats();
-
-}*/ // FIXME
 
 function keyDown ( event ) {
 
@@ -768,7 +774,7 @@ function keyDown ( event ) {
 
 	case 68: // dump a contructed route to a window - 'd'
 
-		viewState.loadRoute = "to sump";
+		routes.loadRoute( "to sump", surveyTree );
 
 		break;
 

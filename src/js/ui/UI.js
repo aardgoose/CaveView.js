@@ -26,7 +26,6 @@ var isCaveLoaded = false;
 var isRoutesLoaded = false;
 
 var container;
-var frame = null;
 
 var heightCursorGui;
 var file;
@@ -75,7 +74,7 @@ function init ( domID ) { // public method
 
 	container = document.getElementById( domID );
 
-	if (!container) {
+	if ( ! container ) {
 
 		alert( "No container DOM object [" + domID + "] available" );
 		return;
@@ -117,15 +116,7 @@ function handleChange( event ) {
 	case "terrain":
 
 		// only show overlay selection when terrain shading is set to overlay
-		if ( viewState.terrain ) {
-
-			display = "block";
-
-		} else {
-
-			display = "none";
-
-		}
+		display = ( viewState.terrain ? "block" : "none" );
 
 		for ( var i = 0, l = terrainControls.length; i < l; i++ ) {
 
@@ -154,12 +145,6 @@ function handleChange( event ) {
 
 }
 
-function closeFrame ( event ) {
-
-	event.target.parentElement.classList.remove( "onscreen" );
-
-}
-
 function initSelectionPage () {
 
 	var titleBar  = document.createElement( "div" )
@@ -168,9 +153,9 @@ function initSelectionPage () {
 	var lastSelected  = false;
 	var page;
 
-	if ( !isCaveLoaded ) return;
+	if ( ! isCaveLoaded ) return;
 
-	page = new Page( frame, "icon_explore" );
+	page = new Page( "icon_explore" );
 
 	page.addHeader( "Selection" );
 
@@ -229,8 +214,8 @@ function initSelectionPage () {
 
 		function _addLine( child ) {
 
-			var li    = document.createElement( "li" );
-			var txt   = document.createTextNode( child.name );
+			var li  = document.createElement( "li" );
+			var txt = document.createTextNode( child.name );
 
 			li.id = "sv" + child.id;
 			
@@ -332,7 +317,7 @@ function initSelectionPage () {
 
 function initRoutePage () {
 
-	var route = new Page( frame, "icon_route" );
+	var route = new Page( "icon_route" );
 
 	route.addHeader( "Routes" );
 
@@ -350,7 +335,7 @@ function initRoutePage () {
 
 function initHelpPage () {
 
-	var help = new Page( frame, "icon_help" );
+	var help = new Page( "icon_help" );
 	var dl;
 
 	help.addHeader( "Help - key commands" );
@@ -429,7 +414,7 @@ function initHelpPage () {
 
 function initInfoPage() {
 
-	var page = new Page( frame, "icon_info" );
+	var page = new Page( "icon_info" );
 
 	page.addHeader( "Information" );
 
@@ -456,7 +441,7 @@ function initSettingsPage () {
 
 	if ( viewState.hasTerrain ) legShadingModesActive.depth = SHADING_DEPTH;
 
-	var page = new Page( frame, "icon_settings" );
+	var page = new Page( "icon_settings" );
 
 	page.addHeader( "Survey" );
 
@@ -534,19 +519,6 @@ function initUI () {
 	Page.reset();
 
 	// create UI side panel and reveal tabs
-	frame = document.createElement( "div" );
-
-	frame.id = "frame";
-
-	// close button
-
-	var close = document.createElement( "div" );
-
-	close.id = "close";
-
-	close.addEventListener( "click", closeFrame );
-
-	frame.appendChild( close );
 
 	initSettingsPage();
 	initSelectionPage();
@@ -554,8 +526,7 @@ function initUI () {
 	initInfoPage();
 	initHelpPage();
 
-	frame.style.display = "block";
-	container.appendChild( frame );
+	container.appendChild( Page.frame );
 
 }
 
@@ -594,22 +565,12 @@ function resetUI () {
 	if ( isCaveLoaded ) {
 
 		isCaveLoaded = false;
-		frame.addEventListener( "transitionend", afterReset );
-		frame.classList.remove( "onscreen" );
+
+		Page.clear();
 
 		surveyTree  = null;
 
 	}
-
-}
-
-function afterReset ( event ) {
-
-	var frame = event.target;
-
-	frame.removeEventListener( "transitionend", afterReset );
-
-	if ( frame !== null ) container.removeChild( frame );
 
 }
 

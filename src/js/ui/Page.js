@@ -1,9 +1,11 @@
 
 
-function Page( frame, id ) {
+function Page( id ) {
 
 	var tab  = document.createElement( "div" );
 	var page = document.createElement( "div" );
+
+	var frame = Page.frame;
 
 	page.classList.add( "page" );
 
@@ -11,6 +13,26 @@ function Page( frame, id ) {
 	tab.classList.add( "tab" );
 	tab.addEventListener( "click", this.tabHandleClick );
 	tab.style.top = ( Page.position++ * 40 ) + "px";
+
+	if ( frame === null ) {
+
+		// create UI side panel and reveal tabs
+		frame = document.createElement( "div" );
+
+		frame.id = "frame";
+		frame.style.display = "block";
+
+		Page.frame = frame;
+
+		var close = document.createElement( "div" );
+
+		close.id = "close";
+
+		close.addEventListener( "click", _closeFrame );
+
+		frame.appendChild( close );
+
+	}
 
 	frame.appendChild( tab );
 	frame.appendChild( page );
@@ -20,12 +42,19 @@ function Page( frame, id ) {
 	this.page = page;
 	this.slide = undefined;
 
+	function _closeFrame ( event ) {
+
+		event.target.parentElement.classList.remove( "onscreen" );
+
+	}
+
 }
 
 Page.pages     = [];
 Page.position  = 0;
 Page.inHandler = false;
 Page.controls  = [];
+Page.frame = null;
 
 Page.reset = function () {
 
@@ -33,6 +62,24 @@ Page.reset = function () {
 	Page.position  = 0;
 	Page.inHandler = false;
 	Page.controls  = [];
+	Page.frame     = null;
+
+}
+
+Page.clear = function () {
+
+	Page.frame.addEventListener( "transitionend", _afterReset );
+	Page.frame.classList.remove( "onscreen" );
+
+	function _afterReset ( event ) {
+
+		var frame = event.target;
+
+		frame.removeEventListener( "transitionend", afterReset );
+
+		if ( frame !== null ) frame.parentElement.removeChild( frame );
+
+	}
 
 }
 

@@ -1,7 +1,7 @@
 
 import {
 	MATERIAL_LINE,
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_SINGLE, SHADING_SURVEY
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_SINGLE, SHADING_SURVEY, SHADING_PATH,
 } from '../core/constants.js';
 
 import { Viewer } from '../viewer/Viewer.js';
@@ -20,7 +20,7 @@ import {
 	Scene, Group,
 	AmbientLight, DirectionalLight,
 	OrthographicCamera, PerspectiveCamera
-} from '../../../../three.js/src/Three.js'; 
+} from '../../../../three.js/src/Three.js';
 
  
 // THREE objects
@@ -66,7 +66,7 @@ function init ( domId, viewRenderer ) {
 
 	scene = new Scene();
 
-	// group to simplyfy resize handling 
+	// group to simplyfy resize handling
 	attitudeGroup = new Group();
 	attitudeGroup.position.set( hWidth, -hHeight, 0 );
 
@@ -301,12 +301,11 @@ function viewChanged ( event ) {
 
 		break;
 
-
-	case SHADING_CURSOR:
-
 	case SHADING_SINGLE:
 
 	case SHADING_SURVEY:
+
+	case SHADING_PATH:
 
 		if ( angleScale ) angleScale.setVisibility( false );
 
@@ -317,7 +316,7 @@ function viewChanged ( event ) {
 
 	}
 
-	viewState.refresh();	
+	viewState.refresh();
 
 }
 

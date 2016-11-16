@@ -24,6 +24,7 @@ export var ColourCache = {
 	gradient:    createCache( Colours.gradientColours ),
 	survey:      createCache( Colours.surveyColours ),
 	red:         new Color( 0xff0000 ),
+	yellow:	     new Color( 0xffff00 ),
 	white:       new Color( 0xffffff ),
 	grey:        new Color( 0x444444 )
 };

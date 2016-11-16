@@ -54,6 +54,7 @@ var raycaster;
 var terrain = null;
 var directionalLight;
 var survey;
+var routes;
 var limits;
 var stats  = {};
 var zScale;
@@ -293,9 +294,11 @@ function init ( domID ) { // public method
 
 }
 
-function addRoutes( routes ) {
+function addRoutes( newRoutes ) {
 
-	if ( survey ) survey.addRoutes( routes );
+	routes = newRoutes;
+
+	if ( survey ) survey.addRoutes( newRoutes );
 
 }
 
@@ -873,7 +876,7 @@ function entranceClick ( event ) {
 
 	if ( intersects.length > 0 ) {
 
-		survey.toggleSegment( intersects[ 0 ].index );
+		routes.toggleSegment( intersects[ 0 ].index );
 
 		setShadingMode( SHADING_PATH );
 

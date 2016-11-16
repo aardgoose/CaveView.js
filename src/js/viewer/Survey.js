@@ -673,19 +673,11 @@ Survey.prototype.loadCave = function ( cave ) {
 
 Survey.prototype.addRoutes = function ( routes ) {
 
-	this.legMeshes[ NORMAL ].userData.segments = routes.mapSurvey( this.stations, this.getLegs() );
+	routes.mapSurvey( this.stations, this.getLegs() );
+
 	this.routes = routes;
 
 	this.add( routes.createWireframe() ); // FIXME
-
-}
-
-Survey.prototype.toggleSegment = function ( index ) {
-
-	var mesh = this.legMeshes[ NORMAL ];
-	var segment = mesh.userData.segments[ index ];
-
-	this.routes.toggleSegment( segment );
 
 }
 
@@ -1592,8 +1584,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	mesh.material = Materials.getLineMaterial();
 
-	var segments = mesh.userData.segments;
-	var route = this.routes.getCurrentRoute();
+	var routes = this.routes;
 
 	var c1 = new Color( 0xffff00 );
 	var c2 = new Color( 0x444444 );
@@ -1604,15 +1595,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	function _colourSegment ( geometry, v1, v2, survey ) {
 
-		if ( route.has( segments[ v1 ] ) ) {
-
-			colour = c1;
-
-		} else {
-
-			colour = c2;
-
-		}
+		routes.inCurrentRoute( v1 ) ? colour = c1 : colour = c2;
 
 		geometry.colors[ v1 ] = colour;
 		geometry.colors[ v2 ] = colour;

@@ -3,7 +3,8 @@ import {
 	Vector3,
 	Geometry,
 	LineBasicMaterial,
-	LineSegments
+	LineSegments,
+	EventDispatcher
 } from '../../../../three.js/src/Three.js';
 
 import { getEnvironmentValue } from '../core/constants.js';
@@ -73,6 +74,8 @@ function Routes ( surveyName, callback ) {
 }
 
 Routes.prototype.constructor = Routes;
+
+Object.assign( Routes.prototype, EventDispatcher.prototype );
 
 Routes.prototype.mapSurvey = function ( stations, legs ) {
 

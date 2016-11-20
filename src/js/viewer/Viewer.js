@@ -8,7 +8,8 @@ import  {
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY, SHADING_PATH,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	upAxis 
+	upAxis,
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL
 } from '../core/constants.js';
 
 import { HUD } from '../hud/HUD.js';
@@ -49,6 +50,7 @@ var pCamera;
 var camera;
 
 var mouse = new Vector2();
+var mouseMode = MOUSE_MODE_NORMAL;
 
 var raycaster;
 var terrain = null;
@@ -215,6 +217,12 @@ function init ( domID ) { // public method
 		set: function ( x ) { _viewStateSetter( selectSection, "section", x ); }
 	},
 
+	"routeEdit": {
+		writeable: true,
+		get: function () { return ( mouseMode === MOUSE_MODE_ROUTE_EDIT ); },
+		set: function ( x ) { _setRouteEdit( x ); }
+	},
+
 	"setPOI": {
 		writeable: true,
 		get: function () { return targetPOI.name; },
@@ -289,6 +297,12 @@ function init ( domID ) { // public method
 
 		modeFunction( Number( newMode ) );
 		viewState.dispatchEvent( { type: "change", name: name } );
+
+	}
+
+	function _setRouteEdit( x ) {
+
+		mouseMode = x ? MOUSE_MODE_ROUTE_EDIT : MOUSE_MODE_NORMAL;
 
 	}
 
@@ -884,19 +898,37 @@ function entranceClick ( event ) {
 
 	if ( intersects.length > 0 ) {
 
-		routes.toggleSegment( intersects[ 0 ].index );
+		switch ( mouseMode ) {
+	
+		case MOUSE_MODE_NORMAL:
+
+			_selectEntrance( intersects[ 0 ].object );
+
+			break;
+
+		case MOUSE_MODE_ROUTE_EDIT:
+
+			_selectSegment( intersects[ 0 ].index );
+
+			break;
+
+		}
+
+	}
+
+	function _selectSegment( index ) {
+
+		routes.toggleSegment( index );
 
 		setShadingMode( SHADING_PATH );
-
 		renderView();
 
 	}
 
-/*
-	if ( intersects.length > 0 ) {
+	function _selectEntrance( entrance ) {
 
-		var entrance = intersects[ 0 ].object;
 		var position = entrance.getWorldPosition();
+		return;
 
 		targetPOI = {
 			tAnimate:    80,
@@ -911,6 +943,7 @@ function entranceClick ( event ) {
 		activePOIPosition = controls.target;
 
 		console.log( entrance.type, entrance.name );
+		return;
 
 		if ( survey.isRegion === true ) {
 
@@ -924,7 +957,6 @@ function entranceClick ( event ) {
 		}
 
 	}
-*/
 
 	function _loaded () {
 

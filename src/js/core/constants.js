@@ -16,6 +16,10 @@ export var VIEW_ELEVATION_S    = 3;
 export var VIEW_ELEVATION_E    = 4;
 export var VIEW_ELEVATION_W    = 5;
 
+// mouse selection operation mode
+
+export var MOUSE_MODE_NORMAL     = 0;
+export var MOUSE_MODE_ROUTE_EDIT = 1;
 // shading types
 
 export var SHADING_HEIGHT      = 1;

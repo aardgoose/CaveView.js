@@ -1,5 +1,5 @@
 
-import { MATERIAL_SURFACE, SHADING_CURSOR, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED, SHADING_PW } from '../core/constants.js';
+import { MATERIAL_SURFACE, SHADING_CURSOR, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED } from '../core/constants.js';
 import { Materials } from '../materials/Materials.js';
 
 import {
@@ -64,12 +64,6 @@ CommonTerrain.prototype.setShadingMode = function ( mode, imageLoadedCallback ) 
 			transparent:  true,
 			opacity:      this.opacity }
 		);
-
-		break;
-
-	case SHADING_PW:
-
-		material = new PWMaterial();
 
 		break;
 

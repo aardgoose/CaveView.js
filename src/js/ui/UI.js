@@ -1,6 +1,6 @@
 import {
 	CAMERA_ORTHOGRAPHIC,CAMERA_PERSPECTIVE, 
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_PW, SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH,
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH,
 	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
 } from '../core/constants.js';
 
@@ -794,12 +794,6 @@ function keyDown ( event ) {
 	case 84: // switch terrain on/off 't'
 
 		if ( viewState.hasTerrain ) viewState.terrain = !viewState.terrain;
-
-		break;
-
-	case 85: // switch terrain on/off 'u'
-
-		if ( viewState.hasTerrain ) viewState.terrainShading = SHADING_PW;
 
 		break;
 

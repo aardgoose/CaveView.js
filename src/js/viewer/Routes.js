@@ -19,12 +19,16 @@ function Routes ( surveyName, callback ) {
 	this.surveyTree = null;
 	this.segments = []; // maps vertex index to segment membership
 	this.segmentMap = new Map(); // maps segments of survey between ends of passages and junctions.
+	this.segmentToInfo = {};
+
+	this.adjacencies = new Map();
 
 	this.routes = new Map();
 	this.routeNames = [];
 
 	this.currentRoute = new Set();
 	this.currentRouteName;
+	this.adjacentSegments = new Set();
 
 	var prefix = getEnvironmentValue( "surveyDirectory", "" );
 
@@ -102,6 +106,8 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 	var segment = 0;
 	var segments = this.segments;
+	var adjacencies = this.adjacencies;
+	var segmentToInfo = this.segmentToInfo;
 
 	var v1, v2;
 
@@ -109,6 +115,7 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 	var startStationId;
 	var startVertex;
+	var segmentInfo;
 
 	for ( var i = 0; i < l; i = i + 2 ) {
 
@@ -126,6 +133,8 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 			newSegment = false;
 
+			_addAdjacency( v1 );
+
 		}
 
 		station = stations.getStation( v2 );
@@ -133,8 +142,12 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 		if ( ( station && station.hitCount > 2 ) || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) {
 
 			// we have found a junction or a passage end
+			segmentInfo = { segment: segment, startVertex: startVertex, endVertex: v2 };
 
-			segmentMap.set( startStationId + ":" + station.id, { segment: segment, startVertex: startVertex, endVertex: v2 } );
+			segmentMap.set( startStationId + ":" + station.id, segmentInfo );
+			segmentToInfo[ segment ] = segmentInfo;
+
+			_addAdjacency( v2 );
 
 			segment++;
 
@@ -147,6 +160,24 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 	if ( ! newSegment ) {
 
 		segmentMap.set( startStationId + ":" + station.id, { segment: segment, startVertex: startVertex, endVertex: v2 } );
+
+		_addAdjacency( v2 );
+
+	}
+
+	function _addAdjacency( vertex ) {
+
+		var vertexKey = vertex.x + ":" + vertex.y + ":" + vertex.z;
+
+		if ( adjacencies.has( vertexKey ) ) {
+
+			adjacencies.get( vertexKey ).push( segment );
+
+		} else {
+
+			adjacencies.set( vertexKey, [ segment ] );
+
+		}
 
 	}
 
@@ -272,16 +303,58 @@ Routes.prototype.getRouteNames = function() {
 
 Routes.prototype.toggleSegment = function ( index ) {
 
+	var self = this;
 	var route = this.currentRoute;
 	var segment = this.segments[ index / 2 ];
 
-	route.has( segment ) ? route.delete( segment ) : route.add( segment );
+	this.adjacentSegments.clear();
+
+	if ( route.has( segment ) ) {
+
+		route.delete( segment );
+
+	} else {
+
+		route.add( segment );
+
+		// handle adjacent segments to the latest segment toggled "on"
+
+		var segmentInfo = this.segmentToInfo[ segment ];
+
+		if ( segmentInfo !== undefined ) {
+
+			this.adjacencies.get( _vertexKey( segmentInfo.startVertex ) ).forEach( _setAdjacentSegments );
+			this.adjacencies.get( _vertexKey( segmentInfo.endVertex ) ).forEach( _setAdjacentSegments );
+
+		}
+
+	}
+
+	return;
+
+	function _vertexKey( vertex ) {
+
+		return vertex.x + ":" + vertex.y + ":" + vertex.z;
+
+	}
+
+	function _setAdjacentSegments( segment ) {
+
+		if  ( ! route.has( segment ) ) self.adjacentSegments.add( segment );
+
+	}
 
 }
 
 Routes.prototype.inCurrentRoute = function ( index ) {
 
 	return this.currentRoute.has( this.segments[ index / 2 ] );
+
+}
+
+Routes.prototype.adjacentToRoute = function ( index ) {
+
+	return this.adjacentSegments.has( this.segments[ index / 2 ] );
 
 }
 

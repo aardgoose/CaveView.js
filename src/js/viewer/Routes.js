@@ -116,7 +116,6 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 		v2 = legs[ i + 1 ];
 
 		segments.push( segment );
-		segments.push( segment );
 
 		if ( newSegment ) {
 
@@ -275,7 +274,7 @@ Routes.prototype.getRouteNames = function() {
 Routes.prototype.toggleSegment = function ( index ) {
 
 	var route = this.currentRoute;
-	var segment = this.segments[ index ];
+	var segment = this.segments[ index / 2 ];
 
 	route.has( segment ) ? route.delete( segment ) : route.add( segment );
 
@@ -283,7 +282,7 @@ Routes.prototype.toggleSegment = function ( index ) {
 
 Routes.prototype.inCurrentRoute = function ( index ) {
 
-	return this.currentRoute.has( this.segments[ index ] );
+	return this.currentRoute.has( this.segments[ index / 2 ] );
 
 }
 

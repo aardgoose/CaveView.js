@@ -1589,7 +1589,8 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 	var routes = this.routes;
 
 	var c1 = ColourCache.yellow;
-	var c2 = ColourCache.white;
+	var c2 = ColourCache.red;
+	var c3 = ColourCache.white;
 
 	var colour;
 
@@ -1597,7 +1598,18 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	function _colourSegment ( geometry, v1, v2, survey ) {
 
-		colour = ( routes.inCurrentRoute( v1 ) ? c1 : c2 );
+		if ( routes.inCurrentRoute( v1 ) ) {
+
+			colour =  c1;
+
+		} else if ( routes.adjacentToRoute( v1 ) ) {
+
+			colour = c2;
+
+		} else {
+
+			colour = c3;
+		}
 
 		geometry.colors[ v1 ] = colour;
 		geometry.colors[ v2 ] = colour;

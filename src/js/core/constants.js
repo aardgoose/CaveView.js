@@ -31,8 +31,7 @@ export var SHADING_SURVEY      = 6;
 export var SHADING_OVERLAY     = 7;
 export var SHADING_SHADED      = 8;
 export var SHADING_DEPTH       = 9;
-export var SHADING_PW          = 10;
-export var SHADING_PATH        = 11;
+export var SHADING_PATH        = 10;
 
 // layer tags for scene objects
 

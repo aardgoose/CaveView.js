@@ -230,7 +230,6 @@ Routes.prototype.toDownload = function () {
 	var routeName = "test";
 	var routeSegments;
 
-
 	var routesJSON = {
 		name: "test",
 		routes: []

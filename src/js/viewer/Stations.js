@@ -44,6 +44,7 @@ Stations.prototype.addStation = function ( node ) {
 
 	node.hitCount = 0;
 	node.stationVertexIndex = this.stationCount++;
+	node.linkedSegments = [];
 
 }
 

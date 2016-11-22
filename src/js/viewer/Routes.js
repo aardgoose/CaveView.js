@@ -21,8 +21,6 @@ function Routes ( surveyName, callback ) {
 	this.segmentMap = new Map(); // maps segments of survey between ends of passages and junctions.
 	this.segmentToInfo = {};
 
-	this.adjacencies = new Map();
-
 	this.routes = new Map();
 	this.routeNames = [];
 
@@ -106,15 +104,12 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 	var segment = 0;
 	var segments = this.segments;
-	var adjacencies = this.adjacencies;
 	var segmentToInfo = this.segmentToInfo;
 
 	var v1, v2;
 
 	var l = legs.length;
 
-	var startStationId;
-	var startVertex;
 	var segmentInfo;
 
 	for ( var i = 0; i < l; i = i + 2 ) {
@@ -128,12 +123,15 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 			station = stations.getStation( v1 );
 
-			startStationId = station.id;
-			startVertex = v1;
+			segmentInfo = {
+				segment: segment,
+				startStation: station,
+				endStation: null
+			}
+
+			station.linkedSegments.push( segment );
 
 			newSegment = false;
-
-			_addAdjacency( v1 );
 
 		}
 
@@ -142,12 +140,12 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 		if ( ( station && station.hitCount > 2 ) || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) {
 
 			// we have found a junction or a passage end
-			segmentInfo = { segment: segment, startVertex: startVertex, endVertex: v2 };
+			segmentInfo.endStation = station;
 
-			segmentMap.set( startStationId + ":" + station.id, segmentInfo );
+			segmentMap.set( segmentInfo.startStation.id + ":" + station.id, segmentInfo );
 			segmentToInfo[ segment ] = segmentInfo;
 
-			_addAdjacency( v2 );
+			station.linkedSegments.push( segment );
 
 			segment++;
 
@@ -159,25 +157,12 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 	if ( ! newSegment ) {
 
-		segmentMap.set( startStationId + ":" + station.id, { segment: segment, startVertex: startVertex, endVertex: v2 } );
+		segmentInfo.endVertex = v2;
+		segmentInfo.endStation = station;
 
-		_addAdjacency( v2 );
+		segmentMap.set( segmentInfo.startStation.id + ":" + station.id, segmentInfo );
 
-	}
-
-	function _addAdjacency( vertex ) {
-
-		var vertexKey = vertex.x + ":" + vertex.y + ":" + vertex.z;
-
-		if ( adjacencies.has( vertexKey ) ) {
-
-			adjacencies.get( vertexKey ).push( segment );
-
-		} else {
-
-			adjacencies.set( vertexKey, [ segment ] );
-
-		}
+		station.linkedSegments.push( segment );
 
 	}
 
@@ -194,8 +179,8 @@ Routes.prototype.createWireframe = function () {
 
 	function _addSegment( value, key ) {
 
-		vertices.push( value.startVertex );
-		vertices.push( value.endVertex );
+		vertices.push( value.startStation.p );
+		vertices.push( value.endStation.p );
 
 	}
 
@@ -285,8 +270,8 @@ Routes.prototype.toDownload = function () {
 		if ( route.has( value.segment ) ) {
 
 			routeSegments.push( { 
-				start: stations.getStation( value.startVertex ).getPath(), 
-				end: stations.getStation( value.endVertex ).getPath()
+				start: value.startStation.getPath(),
+				end: value.endStation.getPath()
 			} );
 
 		}
@@ -323,20 +308,14 @@ Routes.prototype.toggleSegment = function ( index ) {
 
 		if ( segmentInfo !== undefined ) {
 
-			this.adjacencies.get( _vertexKey( segmentInfo.startVertex ) ).forEach( _setAdjacentSegments );
-			this.adjacencies.get( _vertexKey( segmentInfo.endVertex ) ).forEach( _setAdjacentSegments );
+			segmentInfo.startStation.linkedSegments.forEach( _setAdjacentSegments );
+			segmentInfo.endStation.linkedSegments.forEach( _setAdjacentSegments );
 
 		}
 
 	}
 
 	return;
-
-	function _vertexKey( vertex ) {
-
-		return vertex.x + ":" + vertex.y + ":" + vertex.z;
-
-	}
 
 	function _setAdjacentSegments( segment ) {
 

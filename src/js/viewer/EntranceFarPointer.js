@@ -50,8 +50,6 @@ function FarPointers ( survey ) {
 
 }
 
-// FIXME - move to BufferGeometry for simplicity
-
 FarPointers.prototype = Object.create( Points.prototype );
 
 FarPointers.prototype.constructor = FarPointers;

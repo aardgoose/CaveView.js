@@ -7,10 +7,9 @@ import {
 	EventDispatcher
 } from '../../../../three.js/src/Three.js';
 
-import { replaceExtention } from '../core/lib.js';
+import { replaceExtension } from '../core/lib.js';
 import { getEnvironmentValue } from '../core/constants.js';
 import { CaveLoader } from '../loaders/CaveLoader.js';
-
 
 function Routes ( surveyName, callback ) {
 
@@ -31,7 +30,7 @@ function Routes ( surveyName, callback ) {
 	var prefix = getEnvironmentValue( "surveyDirectory", "" );
 
 	var self = this;
-	var name = replaceExtention( surveyName, "json" );
+	var name = replaceExtension( surveyName, "json" );
 
 	var segmentMap = this.segmentMap;
 

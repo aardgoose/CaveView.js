@@ -5,6 +5,7 @@ import {
 } from '../core/constants.js';
 
 import { Colours } from '../core/Colours.js';
+import { replaceExtension } from '../core/lib.js';
 import { Page } from './Page.js';
 import { ProgressBar } from './ProgressBar.js';
 import { CaveLoader } from '../loaders/CaveLoader.js';
@@ -331,7 +332,7 @@ function initRoutePage () {
 
 	}
 
-	var routeFile = file.split( "." ).shift() + ".json";
+	var routeFile = replaceExtension( file, "json" );
 
 	route.addDownloadButton( "Download", routeFile, routes.toDownload() );
 

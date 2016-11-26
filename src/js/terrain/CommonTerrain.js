@@ -12,7 +12,7 @@ function CommonTerrain () {
 
 	Group.call( this );
 
-	this.addEventListener( "removed", function () { this.removed() } );
+	this.addEventListener( "removed", function removeTerrain() { this.removed() } );
 
 };
 
@@ -51,9 +51,9 @@ CommonTerrain.prototype.setShadingMode = function ( mode, imageLoadedCallback ) 
 
 	case SHADING_CURSOR:
 
-		 material = Materials.getCursorMaterial( MATERIAL_SURFACE, 5.0 );
+		material = Materials.getCursorMaterial( MATERIAL_SURFACE, 5.0 );
 
-		 break;
+		break;
 
 	case SHADING_SHADED:
 

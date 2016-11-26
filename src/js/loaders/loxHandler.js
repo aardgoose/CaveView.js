@@ -172,9 +172,9 @@ function loxHandler  ( fileName, dataStream ) {
 
 		stations[ m_id ]  = coords;
 
-		// add non surface stations to surveyTree
+		// add non surface stations to surveyTree make station id negative to avoid clashes with survey id space.
 
-		if ( ! ( m_flags & 0x01 ) ) surveyTree.addById( readString( namePtr ),  m_id, m_surveyId, { p: coords } );
+		if ( ! ( m_flags & 0x01 ) ) surveyTree.addById( readString( namePtr ), - m_id, m_surveyId, { p: coords } );
 
 		if ( m_flags & 0x02 ) {
 
@@ -214,7 +214,6 @@ function loxHandler  ( fileName, dataStream ) {
 		var type          = NORMAL;
 
 		pos += 8;
-
 
 		if ( m_flags && 0x01 ) type = SURFACE;
 		if ( m_flags && 0x08 ) type = SPLAY;
@@ -327,6 +326,7 @@ function loxHandler  ( fileName, dataStream ) {
 
 			scrap.faces.push( face );
 			lastFace = face;
+
 		}
 
 		self.scraps.push( scrap );
@@ -382,6 +382,7 @@ function loxHandler  ( fileName, dataStream ) {
 		var m_calib  = readCalibration();
 
 		self.terrainBitmap = extractImage( imagePtr );
+
 	}
 
 	function extractImage ( imagePtr ) {
@@ -414,6 +415,7 @@ function loxHandler  ( fileName, dataStream ) {
 		return blobURL;
 
 	}
+
 }
 
 loxHandler.prototype.constructor = loxHandler;

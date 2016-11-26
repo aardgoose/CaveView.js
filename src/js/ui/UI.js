@@ -319,6 +319,7 @@ function initSelectionPage () {
 function initRoutePage () {
 
 	var route = new Page( "icon_route" );
+	var routeSelect = false;
 
 	route.addHeader( "Routes" );
 
@@ -338,7 +339,9 @@ function initRoutePage () {
 
 	function _routesChanged( event ) {
 
-		console.log( "routes changed" );
+		if ( routeSelect ) return;
+
+		routeSelect = true;
 		route.addSelect( "routes", routes.getRouteNames(), routes, "setRoute" );
 
 	}

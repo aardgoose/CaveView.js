@@ -24,7 +24,7 @@ import {
 	EventDispatcher,
 	Vector2, Vector3, Matrix4, Quaternion, Euler,  Box3,
 	Scene, Group, Raycaster,
-	AmbientLight, DirectionalLight,
+	AmbientLight, DirectionalLight, HemisphereLight,
 	LinearFilter, NearestFilter, RGBFormat,
 	OrthographicCamera, PerspectiveCamera, 
 	WebGLRenderer, WebGLRenderTarget,
@@ -782,7 +782,8 @@ function loadSurvey ( newSurvey ) {
 
 	scene.add( directionalLight );
 
-	scene.add( new AmbientLight( 0x303030 ) );
+	scene.add( new HemisphereLight( 0xffffff, 0x00ffff, 0.3 ) );
+//	scene.add( new AmbientLight( 0x303030 ) );
 
 	caveIsLoaded = true;
 

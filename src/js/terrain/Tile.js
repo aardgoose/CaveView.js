@@ -134,10 +134,10 @@ Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 	for ( var name in attributes ) attributes[ name ].onUpload( _onUpload );
 
 	this.geometry = bufferGeometry;
-	this.layers.set ( FEATURE_TERRAIN );
+	this.layers.set( FEATURE_TERRAIN );
 
 	this.geometry = bufferGeometry;
-	this.layers.set ( FEATURE_TERRAIN );
+	this.layers.set( FEATURE_TERRAIN );
 
 	return this;
 

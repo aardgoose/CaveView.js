@@ -9,7 +9,7 @@ import {
 	upAxis
 } from '../core/constants.js';
 
-import { replaceExtention } from '../core/lib.js';
+import { replaceExtension } from '../core/lib.js';
 import { getEnvironmentValue } from '../core/constants.js';
 import { ColourCache } from '../core/ColourCache.js';
 import { Tree } from '../core/Tree.js';
@@ -685,7 +685,7 @@ Survey.prototype.addRoutes = function ( routes ) {
 Survey.prototype.loadFromEntrance = function ( entrance, loadedCallback ) {
 
 	var self = this;
-	var name = replaceExtention( entrance.name, "3d" );
+	var name = replaceExtension( entrance.name, "3d" );
 	var prefix = getEnvironmentValue( "surveyDirectory", "" );
 
 	if ( entrance.loaded ) return;

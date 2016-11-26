@@ -19,7 +19,7 @@ function toOSref ( coordinate ) {
 }
 
 
-function replaceExtention( fileName, newExtention ) {
+function replaceExtension( fileName, newExtention ) {
 
 	return fileName.split( "." ).shift() + "." + newExtention;
 
@@ -31,6 +31,6 @@ function padDigits ( number, digits ) {
 
 }
 
-export { toOSref, replaceExtention ,padDigits };
+export { toOSref, replaceExtension ,padDigits };
 
 // EOF

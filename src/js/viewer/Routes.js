@@ -45,6 +45,10 @@ function Routes ( surveyName, callback ) {
 		get: function () { return this.currentRouteName }
 	} );
 
+	Object.defineProperty( this, "download", {
+		get: function () { return this.toDownload() }
+	} );
+
 	function _routesLoaded( routes ) {
 
 		if ( ! routes ) {
@@ -80,7 +84,7 @@ function Routes ( surveyName, callback ) {
 
 		callback( self.routeNames );
 
-		self.dispatchEvent( { type: "changed" } );
+		self.dispatchEvent( { type: "changed", name: "download" } );
 
 	}
 
@@ -222,7 +226,7 @@ Routes.prototype.loadRoute = function ( routeName ) {
 
 	console.log(" route ", routeName, " loaded." );
 
-	self.dispatchEvent( { type: "changed" } );
+	self.dispatchEvent( { type: "changed", name: "" } );
 
 	return true;
 
@@ -238,13 +242,6 @@ Routes.prototype.toDownload = function () {
 
 	// dump dump of json top window for cut and paste capture
 
-	var route = this.currentRoute;
-	var stations = this.stations;
-	var segmentMap = this.segmentMap;
-
-	var routeName = "test";
-	var routeSegments;
-
 	var routesJSON = {
 		name: "test",
 		routes: []
@@ -256,13 +253,20 @@ Routes.prototype.toDownload = function () {
 
 	function _addRoutes( route, routeName ) {
 
-		routeSegments = [];
-
-		segmentMap.forEach( _addRoute );
-
-		routesJSON.routes.push( { name: routeName, segments: RouteSegments } );
+		routesJSON.routes.push( { name: routeName, segments: route } );
 
 	}
+
+}
+
+Routes.prototype.saveCurrent = function () {
+
+	var segmentMap = this.segmentMap;
+	var route = this.currentRoute;
+
+	var routeSegments = [];
+ 
+	segmentMap.forEach( _addRoute );
 
 	function _addRoute( value, key ) {
 

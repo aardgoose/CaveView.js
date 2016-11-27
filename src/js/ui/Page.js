@@ -114,6 +114,12 @@ Page.handleChange = function ( event ) {
 
 				break;
 
+			case "download":
+
+				ctrl.href = obj[ property ];
+
+				break;
+
 			}
 
 		}
@@ -381,15 +387,18 @@ Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 }
 
 
-Page.prototype.addDownloadButton = function ( title, fileName, content ) {
+Page.prototype.addDownloadButton = function ( title, obj, property, fileName ) {
 
 	var a = document.createElement( "a" );
 
 	if ( typeof a.download === "undefined" ) return false;
 
 	a.textContent = title;
+	a.type = "download";
 	a.download = fileName;
-	a.href = content;
+	a.href = obj[ property ];
+
+	Page.controls[ property ] = a;
 
 	this.page.appendChild( a );
 

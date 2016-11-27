@@ -324,7 +324,7 @@ function initRoutePage () {
 
 	route.addHeader( "Routes" );
 
-	route.addCheckbox( "edit route",   viewState, "routeEdit" );
+	route.addCheckbox( "edit route", viewState, "routeEdit" );
 
 	if ( isRoutesLoaded ) {
 
@@ -334,9 +334,10 @@ function initRoutePage () {
 
 	var routeFile = replaceExtension( file, "json" );
 
-	route.addDownloadButton( "Download", routeFile, routes.toDownload() );
+	route.addDownloadButton( "Download", routes, "download", routeFile );
 
 	routes.addEventListener( "changed", _routesChanged );
+	routes.addEventListener( "changed", Page.handleChange );
 
 	function _routesChanged( event ) {
 

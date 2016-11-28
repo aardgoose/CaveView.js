@@ -678,7 +678,7 @@ Survey.prototype.addRoutes = function ( routes ) {
 
 	this.routes = routes;
 
-//	this.add( routes.createWireframe() ); // FIXME
+	this.add( routes.createTest() ); // FIXME
 
 }
 

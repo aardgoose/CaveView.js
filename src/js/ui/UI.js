@@ -96,7 +96,7 @@ function init ( domID ) { // public method
 	container.addEventListener( "dragover", handleDragover );
 
 	Object.defineProperty( guiState, "file", {
-		get: function ()  { return file; },
+		get: function () { return file; },
 		set: function ( value ) { loadCave( value ); file = value; },
 	} );
 
@@ -449,7 +449,7 @@ function initInfoPage() {
 
 function initSettingsPage () {
 
-	// reset 
+	// reset
 	terrainOverlay = null;
 	terrainControls = [];
 
@@ -852,6 +852,7 @@ function keyDown ( event ) {
 		if ( viewState.hasTerrain ) viewState.terrainOpacity = Math.min( viewState.terrainOpacity + 0.05, 1 );
 
 		break;
+
 	}
 
 }

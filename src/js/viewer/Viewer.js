@@ -680,7 +680,7 @@ function resize () {
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
-	//  adjust the renderer to the new canvas size
+	// adjust the renderer to the new canvas size
 	renderer.setSize( width, height );
 
 	if ( oCamera === undefined ) return;
@@ -900,7 +900,7 @@ function entranceClick ( event ) {
 	if ( intersects.length > 0 ) {
 
 		switch ( mouseMode ) {
-	
+
 		case MOUSE_MODE_NORMAL:
 
 			_selectEntrance( intersects[ 0 ].object );

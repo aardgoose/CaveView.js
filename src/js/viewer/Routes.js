@@ -4,7 +4,7 @@ import {
 	Geometry,
 	LineBasicMaterial,
 	LineSegments,
-	EventDispatcher
+	EventDispatcher, Mesh, MeshBasicMaterial, Face3, DoubleSide
 } from '../../../../three.js/src/Three.js';
 
 import { replaceExtension } from '../core/lib.js';
@@ -189,6 +189,35 @@ Routes.prototype.createWireframe = function () {
 
 }
 
+Routes.prototype.createTest = function () {
+
+	var geometry = new Geometry();
+	var vertices = geometry.vertices;
+	var faces = geometry.faces;
+	var segmentCount = 0;
+
+	this.segmentMap.forEach( _addSegment );
+
+	return new Mesh( geometry , new MeshBasicMaterial( { color: 0x0000ff, side: DoubleSide, transparent: true, opacity: 0.5 } ) );
+
+	function _addSegment( value, key ) {
+
+		var v = new Vector3().subVectors( value.endStation.p, value.startStation.p ).cross( new Vector3( 0, 0, 1 ) ).setLength( 2 );
+//		var v = new Vector3();
+
+		var v1 = new Vector3().add( value.startStation.p ).add( v );
+		var v2 = new Vector3().add( value.startStation.p ).sub( v );
+
+		vertices.push( v1 );
+		vertices.push( v2 );
+		vertices.push( new Vector3().copy( value.endStation.p ) );
+
+		faces.push( new Face3( segmentCount++, segmentCount++, segmentCount++ ) );
+
+	}
+
+}
+
 Routes.prototype.loadRoute = function ( routeName ) {
 
 	var self = this;
@@ -205,10 +234,10 @@ Routes.prototype.loadRoute = function ( routeName ) {
 
 	if ( ! routeSegments ) {
 
-		 alert( "route " + routeName + " does not exist" );
-		 return false;
+		alert( "route " + routeName + " does not exist" );
+		return false;
 
-	 }
+	}
 
 	currentRoute.clear();
 
@@ -265,7 +294,7 @@ Routes.prototype.saveCurrent = function () {
 	var route = this.currentRoute;
 
 	var routeSegments = [];
- 
+
 	segmentMap.forEach( _addRoute );
 
 	function _addRoute( value, key ) {
@@ -322,7 +351,7 @@ Routes.prototype.toggleSegment = function ( index ) {
 
 	function _setAdjacentSegments( segment ) {
 
-		if  ( ! route.has( segment ) ) self.adjacentSegments.add( segment );
+		if ( ! route.has( segment ) ) self.adjacentSegments.add( segment );
 
 	}
 

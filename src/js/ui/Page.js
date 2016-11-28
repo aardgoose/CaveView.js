@@ -92,7 +92,7 @@ Page.handleChange = function ( event ) {
 
 		if ( Page.controls[ property ] ) {
 
-			var ctrl = Page.controls[ property] ;
+			var ctrl = Page.controls[ property ];
 
 			switch ( ctrl.type ) {
 
@@ -103,11 +103,6 @@ Page.handleChange = function ( event ) {
 				break;
 
 			case "select-one":
-
-				ctrl.value = obj[ property ];
-
-				break;
-
 			case "range":
 
 				ctrl.value = obj[ property ];
@@ -284,7 +279,7 @@ Page.prototype.addRange = function ( title, obj, property ) {
 
 	range.addEventListener( "input", _rangeChanged );
 	range.addEventListener( "change", _rangeChanged ); // for IE11 support
-	
+
 	label.textContent = title;
 
 	Page.controls[ property ] = range;
@@ -300,7 +295,7 @@ Page.prototype.addRange = function ( title, obj, property ) {
 
 		Page.inHandler = true;
 
-		obj[ property ] = event.target.value; 
+		obj[ property ] = event.target.value;
 
 		Page.inHandler = false;
 
@@ -338,7 +333,7 @@ Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 	newSlide.style.zIndex = 200 - depth;
 	newSlide.addEventListener( "click", handleClick );
 
-	if (depth < this.slideDepth) {
+	if ( depth < this.slideDepth ) {
 
 		newSlide.classList.add( "slide-out" );
 

@@ -5,7 +5,7 @@ import { padDigits } from '../core/lib.js';
 import {
 	Vector3, Math as _Math, Face3, Color,
 	Geometry, RingBufferGeometry, RingGeometry, CylinderBufferGeometry,
-	MeshBasicMaterial, MeshStandardMaterial, MeshPhysicalMaterial,
+	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
 	FrontSide, VertexColors, FlatShading,
 	Mesh, Group
 } from '../../../../three.js/src/Three.js';
@@ -26,7 +26,7 @@ function Compass ( container ) {
 	var cg1 = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth,  3, 32, 1, true );
 	cg1.rotateX( Math.PI / 2 );
 
-	var c1  = new Mesh( cg1, new MeshStandardMaterial( { color: 0x888888,  metalness: 0.3 } ) );
+	var c1  = new Mesh( cg1, new MeshPhongMaterial( { color: 0x888888, specular: 0x888888 } ) );
 
 	var cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 	cg2.translate( 0, 0, 5 );
@@ -39,7 +39,7 @@ function Compass ( container ) {
 	r1.rotateZ( Math.PI / 4 );
 	r1.merge( r2 );
 
-	var rMesh = new Mesh( r1, new MeshPhysicalMaterial( { vertexColors: VertexColors, side: FrontSide, shading: FlatShading, clearCoat: 0.8, clearCoatRoughness: 0.9 } ) );
+	var rMesh = new Mesh( r1, new MeshLambertMaterial( { vertexColors: VertexColors, side: FrontSide, shading: FlatShading } ) );
 
 	this.add( c1 );
 	this.add( c2 );

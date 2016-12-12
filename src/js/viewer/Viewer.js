@@ -251,6 +251,18 @@ function init ( domID ) { // public method
 		writeable: true,
 		get: function () { return zScale; },
 		set: function ( x ) { setZScale( x ) }
+	},
+
+	"autoRotate": {
+		writeable: true,
+		get: function () { return controls.autoRotate },
+		set: function ( x ) { setAutoRotate( !! x ) }
+	},
+
+	"autoRotateSpeed": {
+		writeable: true,
+		get: function () { return controls.autoRotateSpeed / 11 },
+		set: function ( x ) { controls.autoRotateSpeed = x * 11 }
 	}
 
 	} );
@@ -336,6 +348,22 @@ function setZScale ( scale ) {
 	zScale = scale;
 
 	renderView();
+
+}
+
+function setAutoRotate( state ) {
+
+	controls.autoRotate = state;
+
+	if ( state ) {
+
+		startAnimation( 2592000 );
+
+	} else {
+
+		stopAnimation();
+
+	}
 
 }
 
@@ -1122,6 +1150,12 @@ function startAnimation( frames ) {
 		frameCount = Math.max( frameCount, frames );
 
 	}
+
+}
+
+function stopAnimation() {
+
+	frameCount = 0;
 
 }
 

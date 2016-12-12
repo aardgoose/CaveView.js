@@ -31,7 +31,9 @@ import {
 	Math as _Math
 } from '../../../../three.js/src/Three.js'; 
 
-import { LeakWatch } from '../../../../LeakWatch/src/LeakWatch.js';
+import { toOSref } from '../core/lib';
+
+//import { LeakWatch } from '../../../../LeakWatch/src/LeakWatch.js';
 
 var lightPosition = new Vector3( -1, -1, 0.5 );
 var CAMERA_OFFSET = 600;
@@ -81,7 +83,7 @@ var controls;
 
 var lastActivityTime = 0;
 var frameCount = 0;
-var leakWatcher;
+//var leakWatcher;
 
 function init ( domID ) { // public method
 
@@ -384,7 +386,7 @@ function setTerrainOpacity( x ) {
 	renderView();
 
 }
-
+/*
 function showDeveloperInfo( x ) {
 
 	var info = renderer.getResourceInfo();
@@ -401,7 +403,7 @@ function showDeveloperInfo( x ) {
 	}
 
 }
-
+*/
 function renderDepthTexture () {
 
 	if ( terrain === null || !terrain.isLoaded() ) return;
@@ -923,7 +925,8 @@ function entranceClick ( event ) {
 
 	raycaster.setFromCamera( mouse, camera );
 
-	var intersects = raycaster.intersectObjects( survey.mouseTargets, false );
+//	var intersects = raycaster.intersectObjects( survey.mouseTargets, false );
+	var intersects = raycaster.intersectObjects( [ survey.stations ], false );
 
 	if ( intersects.length > 0 ) {
 
@@ -931,7 +934,8 @@ function entranceClick ( event ) {
 
 		case MOUSE_MODE_NORMAL:
 
-			_selectEntrance( intersects[ 0 ].object );
+//			_selectEntrance( intersects[ 0 ].object );
+			_selectStation( intersects[ 0 ].index );
 
 			break;
 
@@ -942,6 +946,15 @@ function entranceClick ( event ) {
 			break;
 
 		}
+
+	}
+
+	function _selectStation( index ) {
+
+		console.log( index );
+
+		var station = survey.stations.getStationByIndex( index );
+		console.log( station.getPath(), toOSref( station.p ), ' height ', station.p.z + 'm' );
 
 	}
 

@@ -660,6 +660,8 @@ Survey.prototype.loadCave = function ( cave ) {
 		var legs = self.getLegs();
 		var station;
 
+		// count number of legs linked to each station
+
 		for ( i = 0; i < legs.length; i++ ) {
 
 			stations.updateStation( legs[ i ] );
@@ -678,7 +680,7 @@ Survey.prototype.addRoutes = function ( routes ) {
 
 	this.routes = routes;
 
-	this.add( routes.createTest() ); // FIXME
+//	this.add( routes.createTest() ); // FIXME
 
 }
 

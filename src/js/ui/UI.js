@@ -471,6 +471,10 @@ function initSettingsPage () {
 
 	page.addRange( "Vertical scaling", viewState, "zScale" );
 
+	page.addCheckbox( "Auto Rotate", viewState, "autoRotate" );
+
+	page.addRange( "Rotation Speed", viewState, "autoRotateSpeed" );
+
 	page.addHeader( "Shading" );
 
 	page.addSelect( "Underground Legs", legShadingModesActive, viewState, "shadingMode" );

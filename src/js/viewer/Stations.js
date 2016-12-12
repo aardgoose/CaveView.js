@@ -54,6 +54,13 @@ Stations.prototype.getStation = function ( vertex ) {
 
 }
 
+
+Stations.prototype.getStationByIndex = function ( index ) {
+
+	return this.getStation( this.geometry.vertices[ index ] );
+
+}
+
 Stations.prototype.updateStation = function ( vertex ) {
 
 	var	station = this.getStation( vertex );

@@ -762,7 +762,7 @@ function clearView () {
 	// remove event listeners
 
 	unloadTerrainListeners();
-	container.removeEventListener( "click", entranceClick );
+	container.removeEventListener( "mousedown", mouseDown );
 
 	scene.add( pCamera );
 	scene.add( oCamera );
@@ -847,7 +847,7 @@ function loadSurvey ( newSurvey ) {
 
 	scene.matrixAutoUpdate = false;
 
-	container.addEventListener( "click", entranceClick, false );
+	container.addEventListener( "mousedown", mouseDown, false );
 
 	HUD.setVisibility( true );
 
@@ -918,7 +918,9 @@ function clockStop ( event ) {
 
 }
 
-function entranceClick ( event ) {
+function mouseDown ( event ) {
+
+	var popup = null;
 
 	mouse.x =   ( event.clientX / container.clientWidth  ) * 2 - 1;
 	mouse.y = - ( event.clientY / container.clientHeight ) * 2 + 1;
@@ -955,6 +957,38 @@ function entranceClick ( event ) {
 
 		var station = survey.stations.getStationByIndex( index );
 		console.log( station.getPath(), toOSref( station.p ), ' height ', station.p.z + 'm' );
+
+
+		container.addEventListener( 'mouseup' , _mouseUp );
+
+		popup = document.createElement( "div" );
+
+		popup.classList.add( "station-info" );
+
+		var text;
+		var point = station.p;
+
+		text = document.createElement( 'div' );
+		text.textContent = station.getPath();
+		popup.appendChild( text );
+	
+		text = document.createElement( 'div' );
+		text.textContent = 'x: ' + point.x + 'm';
+		popup.appendChild( text );
+
+		text = document.createElement( 'div' );
+		text.textContent = 'y: ' + point.y + 'm';
+		popup.appendChild( text );
+
+		text = document.createElement( 'div' );
+		text.textContent = 'z: ' + point.z + 'm';
+
+		popup.appendChild( text );
+
+		popup.style.left = event.clientX + "px";
+		popup.style.top = event.clientY + "px";
+
+		container.appendChild( popup );
 
 	}
 
@@ -1005,6 +1039,14 @@ function entranceClick ( event ) {
 		setShadingMode( shadingMode );
 
 		renderView();
+
+	}
+
+
+	function _mouseUp( event ) {
+
+		container.removeEventListener( 'mouseup', _mouseUp );
+		container.removeChild ( popup );
 
 	}
 

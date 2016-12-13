@@ -313,3 +313,11 @@ div.linear-scale-caption {
 	font-size: 12px;
 	line-height: 18px;
 }
+
+div.station-info {
+	position: absolute;
+	border: 1px solid white;
+	background-color: #222222;
+	color: white;
+	padding: 4px;
+}

@@ -668,6 +668,9 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
+		// we have finished adding stations.
+		stations.finalise();
+
 		self.add( stations );
 
 	}

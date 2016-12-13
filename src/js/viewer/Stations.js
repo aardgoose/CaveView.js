@@ -1,10 +1,12 @@
 import {
 	Vector3, Color,
-	Geometry,
-	PointsMaterial,
+	BufferGeometry, Geometry,
 	VertexColors,
-	Points
+	Points,
+	Float32BufferAttribute
 } from '../../../../three.js/src/Three.js';
+
+import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
 import {
 	NORMAL, SPLAY, SURFACE,
@@ -13,7 +15,7 @@ import {
 
 function Stations () {
 
-	Points.call( this,  new Geometry(), new PointsMaterial( { vertexColors: VertexColors } ) );
+	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial( { size: 1.0, opacity: 0.5, transparent: true,  vertexColors: VertexColors  } ) );
 
 	this.type = "CV.Stations";
 	this.map = new Map();
@@ -24,6 +26,11 @@ function Stations () {
 
 	this.layers.set( FEATURE_STATIONS );
 
+	this.tmpGeometry = new Geometry();
+	this.tmpGeometry.pointSizes = [];
+
+	this.stations = [];
+
 }
 
 Stations.prototype = Object.create ( Points.prototype );
@@ -33,14 +40,16 @@ Stations.prototype.contructor = Stations;
 Stations.prototype.addStation = function ( node ) {
 
 	var point = node.p;
-	var geometry = this.geometry;
+	var geometry = this.tmpGeometry;
 
 	if ( point === undefined ) return;
 
 	geometry.vertices.push( point );
 	geometry.colors.push( this.baseColor );
+	geometry.pointSizes.push( 2.0 ); 
 
 	this.map.set( point.x.toString() + ":" + point.y.toString() + ":" + point.z.toString(), node );
+	this.stations.push( node );
 
 	node.hitCount = 0;
 	node.stationVertexIndex = this.stationCount++;
@@ -57,22 +66,45 @@ Stations.prototype.getStation = function ( vertex ) {
 
 Stations.prototype.getStationByIndex = function ( index ) {
 
-	return this.getStation( this.geometry.vertices[ index ] );
+	return this.stations[ index ];
 
 }
 
 Stations.prototype.updateStation = function ( vertex ) {
 
 	var	station = this.getStation( vertex );
+	var geometry = this.tmpGeometry;
 
 	if ( station !== undefined ) { 
 
 		station.hitCount++;
 
-		if ( station.hitCount > 2 ) this.geometry.colors[ station.stationVertexIndex ] = this.junctionColor;
+		if ( station.hitCount > 2 ) { 
+
+			geometry.colors[ station.stationVertexIndex ] = this.junctionColor;
+			geometry.pointSizes[ station.stationVertexIndex ] = 4.0;
+
+		}
 
 	}
 
 }
 
+Stations.prototype.finalise = function () {
+
+	var geometry = this.tmpGeometry;
+	var bufferGeometry = this.geometry;
+
+	var positions = new Float32BufferAttribute( geometry.vertices.length * 3, 3 );
+	var colors = new Float32BufferAttribute( geometry.colors.length * 3, 3 );
+
+	bufferGeometry.addAttribute( "pSize", new Float32BufferAttribute( geometry.pointSizes, 1 ) );
+	bufferGeometry.addAttribute( 'position', positions.copyVector3sArray( geometry.vertices ) );
+	bufferGeometry.addAttribute( 'color', colors.copyColorsArray( geometry.colors ) );
+
+	this.tmpGeometry = null;
+
+}
+
 export { Stations };
+

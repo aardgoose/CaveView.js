@@ -23,7 +23,7 @@ function FarPointers ( survey ) {
 	var yellowTexture = loader.load( getEnvironmentValue( "home", "" ) + "images/marker-yellow.png" );
 
 //	var nullMaterial   = new PointsMaterial( { visible: false } );
-	var yellowMaterial = new PointsMaterial( { size: 10, map: yellowTexture, transparent : true, sizeAttenuation: true } );
+	var yellowMaterial = new PointsMaterial( { size: 10, map: yellowTexture, transparent : true, sizeAttenuation: true, alphaTest: 0.8 } );
 
 //	var material = new MultiMaterial( [ nullMaterial, yellowMaterial ] );
 

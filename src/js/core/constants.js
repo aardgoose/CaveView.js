@@ -55,6 +55,9 @@ export var SURFACE = 1;
 export var SPLAY   = 2;
 export var DIVING  = 3;
 
+export var STATION_NORMAL = 0;
+export var STATION_ENTRANCE = 1;
+
 export var upAxis = new Vector3( 0, 0, 1 );
 
 var environment = new Map();

@@ -558,7 +558,7 @@ function testCameraLayer ( layerTag ) {
 
 function setViewMode ( mode, t ) {
 
-	var position = new  Vector3();
+	var position = new Vector3();
 	var tAnimate = t || 240;
 
 	switch ( mode ) {
@@ -706,7 +706,14 @@ function selectSection ( id ) {
 
 	} else {
 
-		console.log( 'selected station' );
+		targetPOI = {
+			tAnimate: 0,
+			position: new Vector3().copy( node.p ).applyMatrix4( survey.matrixWorld ),
+			cameraPosition: camera.position,
+			cameraZoom: 1
+		}
+
+		selectedSection = 0;
 
 	}
 
@@ -972,6 +979,13 @@ function mouseDown ( event ) {
 
 		popup.display( container, event.clientX, event.clientY, camera, p );
 
+		targetPOI = {
+			tAnimate: 0,
+			position: p.clone(),
+			cameraPosition: camera.position,
+			cameraZoom: 1
+		}
+
 	}
 
 	function _selectSegment( index ) {
@@ -1127,40 +1141,45 @@ function setCameraPOI ( x ) {
 
 	targetPOI.tAnimate = 80;
 
-	var size = targetPOI.boundingBox.getSize();
+	if ( targetPOI.boundingBox ) {
 
-	if ( camera instanceof PerspectiveCamera ) {
+		var size = targetPOI.boundingBox.getSize();
 
-		var tan = Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
+		if ( camera instanceof PerspectiveCamera ) {
 
-		var e1 = 1.5 * tan * size.y / 2 + size.z;
-		var e2 = tan * camera.aspect * size.x / 2 + size.z;
+			var tan = Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
 
-		elevation = Math.max( e1, e2 );
+			var e1 = 1.5 * tan * size.y / 2 + size.z;
+			var e2 = tan * camera.aspect * size.x / 2 + size.z;
 
-		targetPOI.cameraZoom = 1;
+			elevation = Math.max( e1, e2 );
 
-		if ( elevation === 0 ) elevation = 100;
+			targetPOI.cameraZoom = 1;
 
-	} else {
+			if ( elevation === 0 ) elevation = 100;
 
-		var hRatio = ( camera.right - camera.left ) / size.x;
-		var vRatio = ( camera.top - camera.bottom ) / size.y;
+		} else {
 
-		targetPOI.cameraZoom = Math.min( hRatio, vRatio );
-		elevation = 600;
+			var hRatio = ( camera.right - camera.left ) / size.x;
+			var vRatio = ( camera.top - camera.bottom ) / size.y;
+
+			targetPOI.cameraZoom = Math.min( hRatio, vRatio );
+			elevation = 600;
+
+		}
+
+		activePOIPosition = controls.target;
+
+		targetPOI.cameraPosition   = targetPOI.position.clone();
+		targetPOI.cameraPosition.z = targetPOI.cameraPosition.z + elevation;
+		targetPOI.quaternion = new Quaternion();
 
 	}
-
-	activePOIPosition = controls.target;
-
-	targetPOI.cameraPosition   = targetPOI.position.clone();
-	targetPOI.cameraPosition.z = targetPOI.cameraPosition.z + elevation;
-	targetPOI.quaternion = new Quaternion();
 
 	// disable orbit controls until move to selected POI is conplete
 
 	controls.enabled = false;
+
 	startAnimation( targetPOI.tAnimate + 1 );
 
 }

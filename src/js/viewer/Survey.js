@@ -784,11 +784,16 @@ Survey.prototype.selectSection = function ( id ) {
 	if ( id ) {
 
 		node = surveyTree.findById( id );
+		selectedSectionIds.clear();
 
 		if ( node.p === undefined) {
 
-			selectedSectionIds.clear();
 			surveyTree.getSubtreeIds( id, selectedSectionIds );
+
+		} else {
+
+			// stations cannot be bounded
+			id = 0;
 
 		}
 

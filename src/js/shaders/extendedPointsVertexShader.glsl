@@ -1,5 +1,6 @@
 uniform float size;
 uniform float scale;
+uniform float pScale;
 
 attribute float pSize;
 
@@ -16,9 +17,9 @@ void main() {
 	#include <project_vertex>
 
 	#ifdef USE_SIZEATTENUATION
-		gl_PointSize = pSize * ( scale / - mvPosition.z );
+		gl_PointSize = pScale * pSize * ( scale / - mvPosition.z );
 	#else
-		gl_PointSize = pSize;
+		gl_PointSize = pScale * pSize;
 	#endif
 
 	#include <logdepthbuf_vertex>

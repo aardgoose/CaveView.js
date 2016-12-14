@@ -13,6 +13,7 @@ function ExtendedPointsMaterial () {
 			opacity: { value: 1.0 },
 			size: { value: 1.0 },
 			scale: { value: 1.0 },
+			pScale: { value: 1.0 },
 			offsetRepeat: { value: new Vector4() },
 			map: { value: null }
 		},

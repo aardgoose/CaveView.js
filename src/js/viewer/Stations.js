@@ -106,5 +106,13 @@ Stations.prototype.finalise = function () {
 
 }
 
+Stations.prototype.setScale = function ( scale ) {
+
+	this.material.uniforms.pScale.value = scale;
+	this.material.needsUpdate = true;
+
+}
+
+
 export { Stations };
 

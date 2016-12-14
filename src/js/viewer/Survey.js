@@ -773,12 +773,24 @@ Survey.prototype.selectSection = function ( id ) {
 
 	var selectedSectionIds = this.selectedSectionIds;
 	var surveyTree = this.surveyTree;
+	var node;
 
-	selectedSectionIds.clear();
+	if ( id ) {
 
-	if ( id ) surveyTree.getSubtreeIds( id, selectedSectionIds );
+		node = surveyTree.findById( id );
+
+		if ( node.p === undefined) {
+
+			selectedSectionIds.clear();
+			surveyTree.getSubtreeIds( id, selectedSectionIds );
+
+		}
+
+	}
 
 	this.selectedSection = id;
+
+	return node;
 
 }
 

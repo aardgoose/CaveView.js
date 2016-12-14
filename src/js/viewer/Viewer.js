@@ -15,8 +15,9 @@ import  {
 import { HUD } from '../hud/HUD.js';
 import { Materials } from '../materials/Materials.js';
 import { Survey } from './Survey.js';
+import { Popup } from './Popup';
 import { TiledTerrain } from '../terrain/TiledTerrain.js';
-import { DirectionGlobe } from '../analysis/DirectionGlobe.js';
+//import { DirectionGlobe } from '../analysis/DirectionGlobe.js';
 
 import { OrbitControls } from '../core/OrbitControls.js';
 
@@ -664,7 +665,7 @@ function cutSection () {
 function selectSection ( id ) {
 
 	survey.clearSectionSelection();
-	survey.selectSection( id );
+	var node = survey.selectSection( id );
 
 	var entranceBox = survey.setEntrancesSelected();
 
@@ -674,32 +675,40 @@ function selectSection ( id ) {
 
 	if ( id === 0 ) return;
 
-	var box = survey.getSelectedBox();
-	var boundingBox;
-	var obj;
+	if ( node.p === undefined ) {
 
-	if ( box ) {
+		var box = survey.getSelectedBox();
+		var boundingBox;
+		var obj;
 
-		box.geometry.computeBoundingBox();
+		if ( box ) {
 
-		boundingBox = box.geometry.boundingBox;
-		obj = box;
+			box.geometry.computeBoundingBox();
+
+			boundingBox = box.geometry.boundingBox;
+			obj = box;
+
+		} else {
+
+			boundingBox = entranceBox;
+			obj = null;
+
+		}
+
+		boundingBox.applyMatrix4( survey.matrixWorld );
+
+		targetPOI = {
+			tAnimate: 0,
+			object:      obj,
+			position:    boundingBox.getCenter(),
+			boundingBox: boundingBox
+		};
 
 	} else {
 
-		boundingBox = entranceBox;
-		obj = null;
+		console.log( 'selected station' );
 
 	}
-
-	boundingBox.applyMatrix4( survey.matrixWorld );
-
-	targetPOI = {
-		tAnimate: 0,
-		object:      obj,
-		position:    boundingBox.getCenter(),
-		boundingBox: boundingBox
-	};
 
 	renderView();
 
@@ -744,8 +753,6 @@ function clearView () {
 
 		survey.remove( terrain );
 		scene.remove( survey );
-
-		scene.dispose();
 
 	}
 
@@ -953,42 +960,17 @@ function mouseDown ( event ) {
 
 	function _selectStation( index ) {
 
-		console.log( index );
-
 		var station = survey.stations.getStationByIndex( index );
-		console.log( station.getPath(), toOSref( station.p ), ' height ', station.p.z + 'm' );
 
-
-		container.addEventListener( 'mouseup' , _mouseUp );
-
-		popup = document.createElement( "div" );
-
-		popup.classList.add( "station-info" );
-
-		var text;
 		var point = station.p;
+		var p = new Vector3().copy( point ).applyMatrix4( survey.matrixWorld );
 
-		text = document.createElement( 'div' );
-		text.textContent = station.getPath();
-		popup.appendChild( text );
-	
-		text = document.createElement( 'div' );
-		text.textContent = 'x: ' + point.x + 'm';
-		popup.appendChild( text );
+		var popup = new Popup();
 
-		text = document.createElement( 'div' );
-		text.textContent = 'y: ' + point.y + 'm';
-		popup.appendChild( text );
+		popup.addLine( station.getPath() );
+		popup.addLine( 'x: ' + point.x + ' m' ).addLine( 'y: ' + point.y + ' m' ).addLine( 'z: ' + point.z + ' m' );
 
-		text = document.createElement( 'div' );
-		text.textContent = 'z: ' + point.z + 'm';
-
-		popup.appendChild( text );
-
-		popup.style.left = event.clientX + "px";
-		popup.style.top = event.clientY + "px";
-
-		container.appendChild( popup );
+		popup.display( container, event.clientX, event.clientY, camera, p );
 
 	}
 
@@ -1004,7 +986,6 @@ function mouseDown ( event ) {
 	function _selectEntrance( entrance ) {
 
 		var position = entrance.getWorldPosition();
-		return;
 
 		targetPOI = {
 			tAnimate:    80,
@@ -1019,7 +1000,6 @@ function mouseDown ( event ) {
 		activePOIPosition = controls.target;
 
 		console.log( entrance.type, entrance.name );
-		return;
 
 		if ( survey.isRegion === true ) {
 
@@ -1039,14 +1019,6 @@ function mouseDown ( event ) {
 		setShadingMode( shadingMode );
 
 		renderView();
-
-	}
-
-
-	function _mouseUp( event ) {
-
-		container.removeEventListener( 'mouseup', _mouseUp );
-		container.removeChild ( popup );
 
 	}
 

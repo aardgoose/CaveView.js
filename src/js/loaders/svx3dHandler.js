@@ -1,6 +1,6 @@
 // Survex 3d file handler
 
-import { NORMAL, SPLAY, SURFACE } from '../core/constants.js';
+import { NORMAL, SPLAY, SURFACE, STATION_NORMAL, STATION_ENTRANCE } from '../core/constants.js';
 import { Tree } from '../core/Tree.js';
 
 function Svx3dHandler ( fileName, dataStream ) {
@@ -511,7 +511,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		stations.set( label, coords );
 
-		if ( flags & 0x02 ) surveyTree.addPath ( path, { p: coords } );
+		if ( flags & 0x02 ) surveyTree.addPath ( path, { p: coords, type: ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL } );
 
 		if ( flags & 0x04 ) {
 

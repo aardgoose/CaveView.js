@@ -751,6 +751,12 @@ Survey.prototype.getLegs = function () {
 
 }
 
+Survey.prototype.setScale = function ( scale ) {
+
+	this.stations.setScale( scale );
+
+}
+
 Survey.prototype.clearSectionSelection = function () {
 
 	this.selectedSection = 0;

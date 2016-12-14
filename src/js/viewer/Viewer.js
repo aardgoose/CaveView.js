@@ -1219,7 +1219,12 @@ function setScale ( obj ) {
 	obj.scale.set( scale, scale, scale );
 	obj.position.set( -center.x * scale, -center.y * scale, -center.z * scale );
 
+
 	HUD.setScale( scale );
+
+	// pass to survey to adjust size of symbology
+
+	obj.setScale( scale );
 
 }
 

@@ -41,13 +41,28 @@ function Marker ( survey, entrance ) {
 
 	this.position.copy( entrance.position );
 
+	this.addEventListener( "removed", this.onRemove );
+
 	return this;
 
 }
 
+
 Marker.prototype = Object.create( LOD.prototype );
 
 Marker.prototype.constructor = Marker;
+
+Marker.prototype.onRemove = function( event ) {
+
+	var levels = this.levels;
+
+	for ( var i = 0, l = levels.length; i < l; i++ ) {
+
+		levels[ i ].object.dispatchEvent( { type: 'removed' } );
+
+	}
+
+}
 
 Marker.prototype.raycast = function ( raycaster, intersects ) {
 

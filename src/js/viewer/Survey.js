@@ -920,15 +920,6 @@ Survey.prototype.cutSection = function ( id ) {
 
 			} else {
 
-				var levels = obj.levels;
-
-				// FIXME move this into remove handler
-				for ( var i = 0, l = levels.length; i < l; i++ ) {
-
-					cutList.push ( levels[ i  ].object );
-
-				}
-
 				cutList.push( obj );
 
 			}

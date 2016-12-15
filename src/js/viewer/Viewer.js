@@ -974,7 +974,26 @@ function mouseDown ( event ) {
 
 		var popup = new Popup();
 
-		popup.addLine( station.getPath() );
+		var name = station.getPath();
+
+		// reduce name length if too long
+
+		var long = false;
+		var tmp;
+
+		while ( name.length > 20 ) {
+
+			tmp = name.split( '.' );
+			tmp.shift();
+
+			name = tmp.join( '.' );
+			long = true;
+
+		}
+
+		if ( long ) name = '...' + name;
+
+		popup.addLine( name );
 		popup.addLine( 'x: ' + point.x + ' m' ).addLine( 'y: ' + point.y + ' m' ).addLine( 'z: ' + point.z + ' m' );
 
 		popup.display( container, event.clientX, event.clientY, camera, p );

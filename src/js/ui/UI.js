@@ -691,12 +691,6 @@ function keyDown ( event ) {
 
 		break;
 
-	case 56: // change colouring scheme to per survey section - '8'
-
-		viewState.shadingMode = SHADING_PATH;
-
-		break;
-
 	case 67: // toggle scraps visibility - 'c'
 
 		if ( viewState.hasScraps ) viewState.scraps = !viewState.scraps;

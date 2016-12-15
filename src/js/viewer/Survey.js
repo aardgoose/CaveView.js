@@ -1385,12 +1385,6 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 		break;
 
-	case SHADING_PATH:
-
-		this.setLegColourByPath( mesh );
-
-		break;
-
 	case SHADING_OVERLAY:
 
 		break;

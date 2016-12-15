@@ -22,10 +22,7 @@ function FarPointers ( survey ) {
 
 	var yellowTexture = loader.load( getEnvironmentValue( "home", "" ) + "images/marker-yellow.png" );
 
-//	var nullMaterial   = new PointsMaterial( { visible: false } );
 	var yellowMaterial = new PointsMaterial( { size: 10, map: yellowTexture, transparent : true, sizeAttenuation: true, alphaTest: 0.8 } );
-
-//	var material = new MultiMaterial( [ nullMaterial, yellowMaterial ] );
 
 	Points.call( this, new BufferGeometry(), yellowMaterial );
 
@@ -56,21 +53,28 @@ FarPointers.prototype.constructor = FarPointers;
 
 FarPointers.prototype.updateGeometry = function () {
 
-	// sort by material and update BufferGeometry.
+	// update BufferGeometry, virtually trucate buffer attribute
 
+	var geometry = this.geometry;
 	var points = this.points;
 	var vertices = new Float32Array( points.length * 3 );
 	var offset = 0;
 
+//	geometry.clearGroups();
+
 	for ( var i = 0; i < points.length; i++ ) {
 
-		if ( points[i].materialIndex > 0 ) {
+		var point = points[ i ];
 
-			var position = points[i].position;
+		if ( point.materialIndex > 0 ) {
+
+			var position = point.position;
 
 			vertices[ offset++ ] = position.x;
 			vertices[ offset++ ] = position.y;
 			vertices[ offset++ ] = position.z + 5;
+
+//			geometry.addGroup( offset / 3, 1, 1 );
 
 		}
 
@@ -78,8 +82,11 @@ FarPointers.prototype.updateGeometry = function () {
 
 	this.visible = ( offset > 0 );
 
-	this.geometry.addAttribute( 'position', new BufferAttribute( vertices, 3 ) );
-	this.geometry.setDrawRange( 0, offset / 3 );
+	geometry.addAttribute( 'position', new BufferAttribute( vertices, 3 ) );
+
+	// only draw the points that have not been removed.
+
+	geometry.setDrawRange( 0, offset / 3 );
 
 }
 
@@ -98,14 +105,14 @@ FarPointers.prototype.addPointer = function ( position ) {
 
 FarPointers.prototype.setMaterialIndex = function ( index, materialIndex ) {
 
-	this.points[index].materialIndex = materialIndex;
+	this.points[ index ].materialIndex = materialIndex;
 	this.updateGeometry();
 
 }
 
 FarPointers.prototype.getMaterialIndex = function ( index ) {
 
-	return  this.points[index].materialIndex;
+	return  this.points[ index ].materialIndex;
 
 }
 
@@ -152,38 +159,21 @@ function EntranceFarPointer ( survey, position ) {
 		set: function ( x ) { _setVisibility( x ); }
 	} );
 
-	var fp = farPointers;
-
-	this.addEventListener( "removed", _onRemoved );
-
-	function _onRemoved( event ) {
-
-		var obj = event.target;
-
-		obj.removeEventListener( 'dispose', _onRemoved );
-
-		// hide from view - avoid need to recreate farPointers 
-		// and traverse all visible EntranceFarPointers and reset index values
-
-		self.hidden = true;
-
-		fp.setMaterialIndex( self.index, 0 );
-
-	}
+	this.addEventListener( "removed", this.onRemove );
 
 	function _getVisibility () {
 
-		fp.getMaterialIndex( self.index );
+		farPointers.getMaterialIndex( self.index );
 
 	}
 
 	function _setVisibility ( visible ) {
 
-		var newIndex = ( visible === false || self.hidden ) ? 0 : 1;
+		var newMaterialIndex = ( visible === false || self.hidden ) ? 0 : 1;
 
-		if ( newIndex !== fp.getMaterialIndex( self.index ) ) {
+		if ( newMaterialIndex !== farPointers.getMaterialIndex( self.index ) ) {
 
-			fp.setMaterialIndex( self.index, newIndex );
+			farPointers.setMaterialIndex( self.index, newMaterialIndex );
 
 		}
 
@@ -194,6 +184,19 @@ function EntranceFarPointer ( survey, position ) {
 EntranceFarPointer.prototype = Object.create( Object3D.prototype );
 
 EntranceFarPointer.prototype.constructor = EntranceFarPointer;
+
+EntranceFarPointer.prototype.onRemove = function ( event ) {
+
+		this.removeEventListener( 'removed', this.onRemove );
+
+		// hide from view - avoid need to recreate farPointers 
+		// and traverse all visible EntranceFarPointers and reset index values
+
+		this.hidden = true;
+
+		farPointers.setMaterialIndex( this.index, 0 );
+
+}
 
 // todo - add on visible property to intercept and use to select non visible/alternate colour for marker
 

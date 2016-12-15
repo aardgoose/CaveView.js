@@ -253,9 +253,9 @@ function runDemo() {
 
 	captionDiv.textContent = d.caption;
 
-	var view     = d.view;
+	var view = d.view;
 
-	if ( view ) for ( p in view ) viewState[p] = view[p];
+	if ( view ) for ( p in view ) viewState[ p ] = view[ p ];
 
 	setTimeout(runDemo, d.delay * 1000 );
 
@@ -271,13 +271,14 @@ function caveLoaded ( newCave ) {
 
 	cave = newCave;
 
-	if ( !demoRunning ) {
+	if ( ! demoRunning ) {
 
 		viewState = CV.Viewer.getState;
 		viewState.addEventListener( "newCave", viewComplete );
 
 	}
 
+	CV.Viewer.clearView();
 	CV.Viewer.loadCave( cave );
 
 }
@@ -316,7 +317,7 @@ function onload () {
 	} );
 
 	CV.Viewer.init( "scene" );
-	CV.Viewer.clearView();
+//	CV.Viewer.clearView();
 
 	caveLoader.loadURL( "P8_Master.3d" );
 	

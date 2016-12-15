@@ -679,19 +679,16 @@ function selectSection ( id ) {
 
 		var box = survey.getSelectedBox();
 		var boundingBox;
-		var obj;
 
 		if ( box ) {
 
 			box.geometry.computeBoundingBox();
 
 			boundingBox = box.geometry.boundingBox;
-			obj = box;
 
 		} else {
 
 			boundingBox = entranceBox;
-			obj = null;
 
 		}
 
@@ -699,7 +696,6 @@ function selectSection ( id ) {
 
 		targetPOI = {
 			tAnimate: 0,
-			object:      obj,
 			position:    boundingBox.getCenter(),
 			boundingBox: boundingBox
 		};
@@ -935,39 +931,55 @@ function clockStop ( event ) {
 function mouseDown ( event ) {
 
 	var popup = null;
+	var picked;
 
 	mouse.x =   ( event.clientX / container.clientWidth  ) * 2 - 1;
 	mouse.y = - ( event.clientY / container.clientHeight ) * 2 + 1;
 
 	raycaster.setFromCamera( mouse, camera );
 
-//	var intersects = raycaster.intersectObjects( survey.mouseTargets, false );
-	var intersects = raycaster.intersectObjects( [ survey.stations ], false );
+	survey.mouseTargets.push( survey.stations );
 
-	if ( intersects.length > 0 ) {
+	var intersects = raycaster.intersectObjects( survey.mouseTargets, false );
+	var result;
+
+	for ( var i = 0, l = intersects.length; i < l; i++ ) {
+
+		picked = intersects[ i ];
 
 		switch ( mouseMode ) {
 
 		case MOUSE_MODE_NORMAL:
 
-//			_selectEntrance( intersects[ 0 ].object );
-			_selectStation( intersects[ 0 ].index );
+			console.log( intersects[ i ] );
+
+			if ( picked.object.isPoints ) {
+
+				result = _selectStation( picked );
+
+			} else {
+
+				result = _selectEntrance( picked );
+
+			}
 
 			break;
 
 		case MOUSE_MODE_ROUTE_EDIT:
 
-			_selectSegment( intersects[ 0 ].index );
+			result = _selectSegment( picked );
 
 			break;
 
 		}
 
+		if ( result ) break;
+
 	}
 
-	function _selectStation( index ) {
+	function _selectStation( picked ) {
 
-		var station = survey.stations.getStationByIndex( index );
+		var station = survey.stations.getStationByIndex( picked.index );
 
 		var point = station.p;
 		var p = new Vector3().copy( point ).applyMatrix4( survey.matrixWorld );
@@ -1005,24 +1017,30 @@ function mouseDown ( event ) {
 			cameraZoom: 1
 		}
 
+		return true;
+
 	}
 
-	function _selectSegment( index ) {
+	function _selectSegment( picked ) {
 
-		routes.toggleSegment( index );
+		routes.toggleSegment( picked.index );
 
 		setShadingMode( SHADING_PATH );
 		renderView();
 
+		return true;
+
 	}
 
-	function _selectEntrance( entrance ) {
+	function _selectEntrance( picked ) {
 
+		if ( ! viewState.entrances ) return false;
+
+		var entrance = picked.object;
 		var position = entrance.getWorldPosition();
 
 		targetPOI = {
 			tAnimate:    80,
-			object:      entrance,
 			position:    position,
 			cameraPosition: position.clone().add( new Vector3( 0, 0, 5 ) ),
 			cameraZoom: 1,
@@ -1044,6 +1062,8 @@ function mouseDown ( event ) {
 			startAnimation( targetPOI.tAnimate + 1 );
 
 		}
+
+		return true;
 
 	}
 

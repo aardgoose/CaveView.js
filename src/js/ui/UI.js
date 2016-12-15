@@ -398,6 +398,7 @@ function initHelpPage () {
 	_addKey( "S", "surface legs on/off" );
 	_addKey( "T", "terrain on/off" );
 	_addKey( "W", "LRUD walls on/off" );
+	_addKey( "Z", "stations on/off" );
 
 	_addKey( "", "-" );
 
@@ -824,9 +825,9 @@ function keyDown ( event ) {
 
 		break;
 
-	case 90: // dev info - 'z'
+	case 90: // show station markers - 'z'
 
-		viewState.developerInfo = true; // actual value here is ignored.
+		viewState.stations = ! viewState.stations;
 
 		break;
 

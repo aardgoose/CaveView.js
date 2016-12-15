@@ -907,29 +907,13 @@ function mouseDown ( event ) {
 
 		picked = intersects[ i ];
 
-		switch ( mouseMode ) {
+		if ( picked.object.isPoints ) {
 
-		case MOUSE_MODE_NORMAL:
+			result = _selectStation( picked );
 
-			console.log( intersects[ i ] );
+		} else {
 
-			if ( picked.object.isPoints ) {
-
-				result = _selectStation( picked );
-
-			} else {
-
-				result = _selectEntrance( picked );
-
-			}
-
-			break;
-
-		case MOUSE_MODE_ROUTE_EDIT:
-
-			result = _selectSegment( picked );
-
-			break;
+			result = _selectEntrance( picked );
 
 		}
 

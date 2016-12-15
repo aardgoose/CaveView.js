@@ -11,11 +11,9 @@ import { ProgressBar } from './ProgressBar.js';
 import { CaveLoader } from '../loaders/CaveLoader.js';
 
 import { Viewer } from '../viewer/Viewer.js';
-import { Routes } from '../viewer/Routes.js';
 
 var cave;
 var caveLoader;
-var routes = null;
 
 var caveIndex = Infinity;
 var caveList = [];
@@ -24,7 +22,6 @@ var viewState;
 var surveyTree;
 
 var isCaveLoaded = false;
-var isRoutesLoaded = false;
 
 var container;
 
@@ -41,8 +38,7 @@ var legShadingModes = {
 	"by leg inclination": SHADING_INCLINATION,
 	"height cursor":      SHADING_CURSOR,
 	"fixed":              SHADING_SINGLE,
-	"survey":             SHADING_SURVEY,
-	"route":              SHADING_PATH
+	"survey":             SHADING_SURVEY
 }
 
 var surfaceShadingModes = {
@@ -317,39 +313,6 @@ function initSelectionPage () {
 
 }
 
-function initRoutePage () {
-
-	var route = new Page( "icon_route" );
-	var routeSelect = false;
-
-	route.addHeader( "Routes" );
-
-	route.addCheckbox( "edit route", viewState, "routeEdit" );
-
-	if ( isRoutesLoaded ) {
-
-		route.addSelect( "routes", routes.getRouteNames(), routes );
-
-	}
-
-	var routeFile = replaceExtension( file, "json" );
-
-	route.addDownloadButton( "Download", routes, "download", routeFile );
-
-	routes.addEventListener( "changed", _routesChanged );
-	routes.addEventListener( "changed", Page.handleChange );
-
-	function _routesChanged( event ) {
-
-		if ( routeSelect ) return;
-
-		routeSelect = true;
-		route.addSelect( "routes", routes.getRouteNames(), routes, "setRoute" );
-
-	}
-
-}
-
 function initHelpPage () {
 
 	var help = new Page( "icon_help" );
@@ -368,7 +331,6 @@ function initHelpPage () {
 	_addKey( "5", "single colour" );
 	_addKey( "6", "survey section" );
 	_addKey( "7", "depth from surface" );
-	_addKey( "8", "route" );
 
 	_addKey( "[", "move depth cursor up" );
 	_addKey( "]", "move depth cursor down" );
@@ -543,7 +505,6 @@ function initUI () {
 
 	initSettingsPage();
 	initSelectionPage();
-	initRoutePage();
 	initInfoPage();
 	initHelpPage();
 
@@ -676,19 +637,9 @@ function viewComplete () {
 	surveyTree = Viewer.getSurveyTree();
 	isCaveLoaded = true;
 
-	routes = new Routes( file, _routesLoaded );
-
 	cave = null; // drop reference to cave to free heap space
 
 	initUI();
-
-	function _routesLoaded( routeNames ) {
-
-		Viewer.addRoutes( routes );
-
-		isRoutesLoaded = true;
-
-	}
 
 }
 

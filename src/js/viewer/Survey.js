@@ -17,7 +17,6 @@ import { Materials } from '../materials/Materials.js';
 import { Marker } from './Marker.js';
 import { farPointers } from './EntranceFarPointer.js';
 import { Stations } from './Stations.js';
-import { Routes } from './Routes.js';
 import { Terrain } from '../terrain/Terrain.js';
 import { CaveLoader } from '../loaders/CaveLoader.js';
 import { WorkerPool } from '../workers/WorkerPool.js';
@@ -60,7 +59,6 @@ function Survey ( cave ) {
 	this.terrain = null;
 	this.isRegion = cave.isRegion;
 	this.legMeshes = [];
-	this.routes = null;
 	this.stations = new Stations();
 	this.workerPool = new WorkerPool( "caveWorker.js" );
 
@@ -83,7 +81,7 @@ function Survey ( cave ) {
 		this.loadCave( survey );
 		this.limits = this.getBounds();
 
-		this.mouseTargets = [ this.legMeshes[ NORMAL ] ]; // temp mech FIXME
+//		this.mouseTargets = [ this.legMeshes[ NORMAL ] ]; // FIXME - route setting hack
 
 	}
 
@@ -675,16 +673,6 @@ Survey.prototype.loadCave = function ( cave ) {
 		self.add( stations );
 
 	}
-
-}
-
-Survey.prototype.addRoutes = function ( routes ) {
-
-	routes.mapSurvey( this.stations, this.getLegs(), this.surveyTree );
-
-	this.routes = routes;
-
-//	this.add( routes.createTest() ); // FIXME
 
 }
 
@@ -1622,42 +1610,6 @@ Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 	function _colourSegment ( geometry, v1, v2, survey ) {
 
 		var colour = surveyColours[ survey ];
-
-		geometry.colors[ v1 ] = colour;
-		geometry.colors[ v2 ] = colour;
-
-	}
-
-}
-
-Survey.prototype.setLegColourByPath = function ( mesh ) {
-
-	mesh.material = Materials.getLineMaterial();
-
-	var routes = this.routes;
-
-	var c1 = ColourCache.yellow;
-	var c2 = ColourCache.red;
-	var c3 = ColourCache.white;
-
-	var colour;
-
-	this.setLegSelected ( mesh, _colourSegment );
-
-	function _colourSegment ( geometry, v1, v2, survey ) {
-
-		if ( routes.inCurrentRoute( v1 ) ) {
-
-			colour =  c1;
-
-		} else if ( routes.adjacentToRoute( v1 ) ) {
-
-			colour = c2;
-
-		} else {
-
-			colour = c3;
-		}
 
 		geometry.colors[ v1 ] = colour;
 		geometry.colors[ v2 ] = colour;

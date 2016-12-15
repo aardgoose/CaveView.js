@@ -59,7 +59,6 @@ var raycaster;
 var terrain = null;
 var directionalLight;
 var survey;
-var routes;
 var limits;
 var stats  = {};
 var zScale;
@@ -315,28 +314,6 @@ function init ( domID ) { // public method
 
 	}
 
-	function _setRouteEdit( x ) {
-
-		mouseMode = x ? MOUSE_MODE_ROUTE_EDIT : MOUSE_MODE_NORMAL;
-
-	}
-
-}
-
-function addRoutes( newRoutes ) {
-
-	routes = newRoutes;
-
-	if ( survey ) survey.addRoutes( newRoutes );
-
-	routes.addEventListener( "changed", _routesChanged );
-
-	function _routesChanged( event ) {
-
-		setShadingMode( shadingMode );
-
-	}
-
 }
 
 function setZScale ( scale ) {
@@ -387,24 +364,7 @@ function setTerrainOpacity( x ) {
 	renderView();
 
 }
-/*
-function showDeveloperInfo( x ) {
 
-	var info = renderer.getResourceInfo();
-
-	if ( leakWatcher === undefined ) {
-
-		leakWatcher = new LeakWatch();
-		leakWatcher.setBaseline( scene, info );
-
-	} else {
-
-		leakWatcher.compare( scene, info );
-
-	}
-
-}
-*/
 function renderDepthTexture () {
 
 	if ( terrain === null || !terrain.isLoaded() ) return;
@@ -1021,17 +981,6 @@ function mouseDown ( event ) {
 
 	}
 
-	function _selectSegment( picked ) {
-
-		routes.toggleSegment( picked.index );
-
-		setShadingMode( SHADING_PATH );
-		renderView();
-
-		return true;
-
-	}
-
 	function _selectEntrance( picked ) {
 
 		if ( ! viewState.entrances ) return false;
@@ -1310,7 +1259,6 @@ export var Viewer = {
 	init:          init,
 	clearView:     clearView,
 	loadCave:      loadCave,
-	addRoutes:     addRoutes,
 	getStats:      getStats,
 	getSurveyTree: getSurveyTree,
 	getControls:   getControls,

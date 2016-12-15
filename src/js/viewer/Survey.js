@@ -15,6 +15,7 @@ import { ColourCache } from '../core/ColourCache.js';
 import { Tree } from '../core/Tree.js';
 import { Materials } from '../materials/Materials.js';
 import { Marker } from './Marker.js';
+import { farPointers } from './EntranceFarPointer.js';
 import { Stations } from './Stations.js';
 import { Routes } from './Routes.js';
 import { Terrain } from '../terrain/Terrain.js';
@@ -811,6 +812,7 @@ Survey.prototype.setFeatureBox = function () {
 
 	box.layers.set( FEATURE_BOX );
 	box.name = "survey-boundingbox";
+	box.type = "BoxHelper";
 
 	this.add( box );
 
@@ -863,8 +865,27 @@ Survey.prototype.cutSection = function ( id ) {
 
 	// iterate through objects replace geometries and remove bounding boxes;
 
-	this.traverseReverse( _cutObject );
-	this.clearSectionSelection();
+	var cutList = []; // list of Object3D's to remove from survey - workaround for lack of traverseReverse
+
+	this.traverse( _cutObject );
+
+	for ( var i = 0, l = cutList.length; i < l; i++ ) {
+
+		var obj = cutList[ i ];
+		var parent;
+
+		parent = obj.parent;
+		if ( parent ) parent.remove( obj );
+
+		//dispose of all geometry of this objext and descendants
+
+		if ( obj.geometry ) obj.geometry.dispose();
+
+	}
+
+	// update far pointers - held in single geometry to reduce draw call count
+
+	if ( farPointers ) farPointers.removeDeleted();
 
 	// update stats
 
@@ -899,7 +920,16 @@ Survey.prototype.cutSection = function ( id ) {
 
 			} else {
 
-				obj.traverseReverse( _remove );
+				var levels = obj.levels;
+
+				// FIXME move this into remove handler
+				for ( var i = 0, l = levels.length; i < l; i++ ) {
+
+					cutList.push ( levels[ i  ].object );
+
+				}
+
+				cutList.push( obj );
 
 			}
 
@@ -919,7 +949,16 @@ Survey.prototype.cutSection = function ( id ) {
 
 		case "BoxHelper":
 
-			obj.traverseReverse( _remove );
+			cutList.push( obj );
+
+			break;
+
+		case "CV.EntranceFarPointer":
+		case "CV.EntranceNearPointer":
+		case "CV.Label":
+		case "CV.Stations":
+		case "CV.FarPointers":
+		case "Group":
 
 			break;
 
@@ -928,17 +967,6 @@ Survey.prototype.cutSection = function ( id ) {
 			console.log("unexpected object type in survey cut", obj.type );
 
 		}
-
-	}
-
-	function _remove ( obj ) {
-
-		var parent;
-
-		parent = obj.parent;
-		parent.remove( obj );
-
-		if ( obj.geometry ) obj.geometry.dispose();
 
 	}
 
@@ -1006,7 +1034,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 				self.layers.mask &= ~ mesh.layers.mask; // remove this from survey layer mask
 
-				mesh.parent.remove( mesh );
+				cutList.push( mesh );
 
 				return;
 
@@ -1088,7 +1116,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 				self.layers.mask &= ~ mesh.layers.mask; // remove this from survey layer mask
 
-				mesh.parent.remove( mesh );
+				cutList.push( mesh );
 
 				return;
 
@@ -1143,6 +1171,7 @@ Survey.prototype.getBounds = function ()  {
 
 		if ( obj.type === "CV.EntranceNearPointer" ) return; // skip sprites which have abnormal bounding boxes
 		if ( obj.type === "CV.EntranceFarPointer" ) return; // skip sprites which have abnormal bounding boxes
+		if ( obj.type === "CV.Survey" ) return; // skip survey which is positioned/scaled into world space
 
 		var geometry = obj.geometry;
 
@@ -1748,6 +1777,7 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 			this.selectedBox.layers.set( FEATURE_SELECTED_BOX );
 			this.selectedBox.name = "selectedBox";
+			this.selectedBox.type = "BoxHelper";
 
 			this.add( this.selectedBox );
 

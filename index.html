@@ -49,7 +49,6 @@
 
 var	caveLoader = new CV.CaveLoader( caveLoaded, progress );
 var	viewState;
-var viewControls;
 var captionDiv;
 var cave;
 var index = 0;
@@ -241,7 +240,6 @@ function runDemo() {
 
 		index = 0;
 
-		CV.Viewer.clearView();
 		caveLoaded( cave );
 		return;
 
@@ -253,10 +251,8 @@ function runDemo() {
 	captionDiv.textContent = d.caption;
 
 	var view     = d.view;
-	var controls = d.controls;
 
 	if ( view ) for ( p in view ) viewState[p] = view[p];
-	if ( controls ) for ( p in controls ) viewControls[p] = controls[p];
 
 	setTimeout(runDemo, d.delay * 1000 );
 
@@ -296,8 +292,6 @@ function viewComplete () {
 	viewState.HUD        = false;
 	viewState.walls      = false;
 
-	viewControls = CV.Viewer.getControls();
-
 	demoRunning = true;
 	runDemo();
 
@@ -319,9 +313,7 @@ function onload () {
 	} );
 
 	CV.Viewer.init( "scene" );
-	CV.HUD.init( "scene" );
-
-	CV.Viewer.clearView();
+//	CV.HUD.init( "scene" );
 
 	caveLoader.loadURL( "P8_Master.3d" );
 	
@@ -338,10 +330,10 @@ function onload () {
 <ul><li><a href="http://survex.com/" >Survex</a> .3d</li><li><a href="http://therion.speleo.sk/" >Therion</a> .lox models</li></ul>
 <p>Tested with the following browsers:</p>
 <ul>
-<li>Google Chrome 51</li>
-<li>Firefox 47</li>
-<li>Internet Explorer 11</li>
-<li>Microsoft Edge</li>
+<li>Google Chrome 55</li>
+<li>Firefox 50</li>
+<li>Internet Explorer 11 (station popups do not appear, slider control cosmetic faults)</li>
+<li>Microsoft Edge (station popups do not appear, slider control cosmetic faults)</li>
 <li>Opera 38</li>
 <li>Safari 9.1 (on iOS and OS X)</li>
 </ul>

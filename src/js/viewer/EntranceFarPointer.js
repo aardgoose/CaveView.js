@@ -109,6 +109,26 @@ FarPointers.prototype.getMaterialIndex = function ( index ) {
 
 }
 
+
+FarPointers.prototype.removeDeleted = function ( index ) {
+
+	var oldPoints = this.points;
+	var newPoints = [];
+
+	var i;
+	var l = oldPoints.length;
+
+	for ( i = 0; i < l; i++ ) {
+
+		if ( oldPoints[ i ].materialIndex !== -1 ) newPoints.push( oldPoints[ i ] );
+
+	}
+
+	this.points = newPoints;
+	this.updateGeometry();
+
+}
+
 function EntranceFarPointer ( survey, position ) {
 
 	var self = this;
@@ -177,6 +197,6 @@ EntranceFarPointer.prototype.constructor = EntranceFarPointer;
 
 // todo - add on visible property to intercept and use to select non visible/alternate colour for marker
 
-export { EntranceFarPointer };
+export { EntranceFarPointer, farPointers };
 
 // EOF

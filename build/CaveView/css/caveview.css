@@ -25,7 +25,7 @@ div.cv-compass, div.cv-ahi {
 	text-align: center;
 	width: 78px;
 	height: 19px;
-	z-index: 10;
+	z-index: 50;
 	background-color: rgba(50,50,50,0.5);
 	background-color: black;
 	color: white;
@@ -287,10 +287,7 @@ div.linear-scale-caption {
 
 #frame div.page input[type="range"] {
 	display: block;
-/*	position: relative;
-	width: 184px;
-	box-sizing: border-box;
-*/
+	width: 180px;
 	margin-left: 8px;
 }
 

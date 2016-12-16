@@ -14,6 +14,7 @@ import  {
 
 import { HUD } from '../hud/HUD.js';
 import { Materials } from '../materials/Materials.js';
+import { CameraMove } from './CameraMove.js';
 import { Survey } from './Survey.js';
 import { Popup } from './Popup';
 import { TiledTerrain } from '../terrain/TiledTerrain.js';
@@ -76,14 +77,11 @@ var selectedSection = 0;
 
 // Point of interest tracking
 
-var activePOIPosition;
-
-var targetPOI = null;
-
 var controls;
 
+var cameraMove;
+
 var lastActivityTime = 0;
-var frameCount = 0;
 //var leakWatcher;
 
 function init ( domID ) { // public method
@@ -122,7 +120,10 @@ function init ( domID ) { // public method
 
 	controls = new OrbitControls( camera, renderer.domElement );
 
-	controls.addEventListener( "change", function () { startAnimation( 60 ); } );
+	var cameraAnimate = new CameraMove( controls, null, null );
+
+	controls.addEventListener( "change", function () { cameraAnimate.start( renderView, function () { clockStart() }, 800 ) } );
+
 	controls.enableDamping = true;
 
 	// event handler
@@ -228,7 +229,7 @@ function init ( domID ) { // public method
 
 	"setPOI": {
 		writeable: true,
-		get: function () { return targetPOI.name; },
+		get: function () { return true; },
 		set: function ( x ) { _viewStateSetter( setCameraPOI, "setPOI", x ); }
 	},
 
@@ -360,11 +361,12 @@ function setAutoRotate( state ) {
 
 	if ( state ) {
 
-		startAnimation( 2592000 );
+		cameraMove = new CameraMove( controls, null, null );
+		cameraMove.start( renderView, null, 2952000 )
 
 	} else {
 
-		stopAnimation();
+		cameraMove.stop();
 
 	}
 
@@ -601,17 +603,11 @@ function setViewMode ( mode, t ) {
 
 	}
 
-	activePOIPosition = new Vector3();
+	var origin = new Vector3();
 
-	targetPOI = {
-		tAnimate: tAnimate,
-		position: activePOIPosition,
-		cameraPosition: position,
-		cameraZoom: 1
-	};
+	cameraMove = new CameraMove( controls, position, origin, 1 );
 
-	controls.enabled = false;
-	startAnimation( tAnimate + 1 );
+	cameraMove.start( renderView, cameraMoveEnded, tAnimate + 1 );
 
 }
 
@@ -694,20 +690,17 @@ function selectSection ( id ) {
 
 		boundingBox.applyMatrix4( survey.matrixWorld );
 
+		cameraMove = new CameraMove( controls, null, boundingBox );
+/*
 		targetPOI = {
 			tAnimate: 0,
 			position:    boundingBox.getCenter(),
 			boundingBox: boundingBox
 		};
-
+*/
 	} else {
 
-		targetPOI = {
-			tAnimate: 0,
-			position: new Vector3().copy( node.p ).applyMatrix4( survey.matrixWorld ),
-			cameraPosition: camera.position,
-			cameraZoom: 1
-		}
+		cameraMove = new CameraMove( controls, camera.position, new Vector3().copy( node.p ).applyMatrix4( survey.matrixWorld ) );
 
 		selectedSection = 0;
 
@@ -765,7 +758,6 @@ function clearView () {
 	terrain         = null;
 	selectedSection = 0;
 	scene           = new Scene();
-	targetPOI       = null;
 
 	shadingMode = SHADING_HEIGHT;
 
@@ -908,7 +900,7 @@ function loadTerrainListeners () {
 
 function unloadTerrainListeners () {
 
-	if ( !controls ) return;
+	if ( ! controls ) return;
 
 	controls.removeEventListener( "end", clockStart );
 
@@ -1008,12 +1000,7 @@ function mouseDown ( event ) {
 
 		popup.display( container, event.clientX, event.clientY, camera, p );
 
-		targetPOI = {
-			tAnimate: 0,
-			position: p.clone(),
-			cameraPosition: camera.position,
-			cameraZoom: 1
-		}
+		cameraMove = new CameraMove( controls, camera.position, p.clone() );
 
 		return true;
 
@@ -1037,16 +1024,12 @@ function mouseDown ( event ) {
 		var entrance = picked.object;
 		var position = entrance.getWorldPosition();
 
-		targetPOI = {
-			tAnimate:    80,
-			position:    position,
-			cameraPosition: position.clone().add( new Vector3( 0, 0, 5 ) ),
-			cameraZoom: 1,
+/*		targetPOI = {
 			boundingBox: new Box3().expandByPoint( entrance.position ),
 			quaternion:  new Quaternion()
 		};
-
-		activePOIPosition = controls.target;
+*/
+		cameraMove = new CameraMove( controls, position.clone().add( new Vector3( 0, 0, 5 ) ), position );
 
 		console.log( entrance.type, entrance.name );
 
@@ -1056,8 +1039,7 @@ function mouseDown ( event ) {
 
 		} else {
 
-			controls.enabled = false;
-			startAnimation( targetPOI.tAnimate + 1 );
+			cameraMove.start( RenderView, cameraMoveEnded, 80 );
 
 		}
 
@@ -1082,7 +1064,7 @@ var renderView = function () {
 
 	return function renderView () {
 
-		if ( !caveIsLoaded ) return;
+		if ( ! caveIsLoaded ) return;
 
 		camera.getWorldRotation( rotation );
 
@@ -1110,12 +1092,7 @@ var renderView = function () {
 
 		}
 
-		if ( targetPOI !== null && targetPOI.tAnimate > 0 ) {
-
-			// handle move to new Point of Interest (POI)
-			_moveToPOI();
-
-		} else {
+		if ( ! cameraMove || ! cameraMove.isActive() ) {
 
 			if ( terrain && terrain.isTiled() && viewState.terrain ) {
 
@@ -1128,55 +1105,27 @@ var renderView = function () {
 
 			}
 
-			controls.update();
-
-		}
-
-		return;
-
-		function _moveToPOI () {
-
-			targetPOI.tAnimate--;
-
-			var t = 1 - targetPOI.tAnimate / ( targetPOI.tAnimate + 1 );
-
-			activePOIPosition.lerp( targetPOI.position, t );
-
-			camera.position.lerp( targetPOI.cameraPosition, t );
-			camera.lookAt( activePOIPosition );
-
-			camera.zoom = camera.zoom + ( targetPOI.cameraZoom - camera.zoom ) * t;
-
-			if ( targetPOI.quaternion ) camera.quaternion.slerp( targetPOI.quaternion, t );
-
-			camera.updateProjectionMatrix();
-			HUD.update();
-
-			if ( targetPOI.tAnimate === 0 ) {
-
-				controls.target = targetPOI.position;
-				controls.enabled = true;
-
-				// restart the clock to trigger refresh of terrain
-				clockStart();
-				targetPOI = null;
-
-			}
-
 		}
 
 	}
 
 } ();
 
+
+function cameraMoveEnded () {
+
+	clockStart();
+	cameraMove = null;
+
+}
+
 function setCameraPOI ( x ) {
 
 	var boundingBox;
 	var elevation;
 
-	if ( targetPOI === null ) return;
-
-	targetPOI.tAnimate = 80;
+	if ( cameraMove === null ) return;
+/*
 
 	if ( targetPOI.boundingBox ) {
 
@@ -1215,43 +1164,8 @@ function setCameraPOI ( x ) {
 
 	// disable orbit controls until move to selected POI is conplete
 
-	controls.enabled = false;
-
-	startAnimation( targetPOI.tAnimate + 1 );
-
-}
-
-function startAnimation( frames ) {
-
-	if ( frameCount === 0 ) {
-
-		frameCount = frames;
-		animate();
-
-	} else {
-
-		frameCount = Math.max( frameCount, frames );
-
-	}
-
-}
-
-function stopAnimation() {
-
-	frameCount = 0;
-
-}
-
-function animate () {
-
-	if ( frameCount > 0 ) {
-
-		requestAnimationFrame( animate );
-
-		frameCount--;
-		renderView();
-
-	}
+*/
+	cameraMove.start( renderView, cameraMoveEnded, 600 );
 
 }
 

@@ -951,8 +951,6 @@ function mouseDown ( event ) {
 
 		case MOUSE_MODE_NORMAL:
 
-			console.log( intersects[ i ] );
-
 			if ( picked.object.isPoints ) {
 
 				result = _selectStation( picked );

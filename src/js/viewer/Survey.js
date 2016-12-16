@@ -61,7 +61,7 @@ function Survey ( cave ) {
 	this.isRegion = cave.isRegion;
 	this.legMeshes = [];
 	this.routes = null;
-	this.stations = new Stations();
+	this.stations;
 	this.workerPool = new WorkerPool( "caveWorker.js" );
 
 	var self = this;
@@ -83,7 +83,7 @@ function Survey ( cave ) {
 		this.loadCave( survey );
 		this.limits = this.getBounds();
 
-		this.mouseTargets = [ this.legMeshes[ NORMAL ] ]; // temp mech FIXME
+//		this.mouseTargets = [ this.legMeshes[ NORMAL ] ]; // temp mech FIXME
 
 	}
 
@@ -657,7 +657,7 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 
 	var i = 0;
 
-	var stations = this.stations;
+	var stations = new Stations();
 
 	surveyTree.traverse( function _addStation ( node ) { stations.addStation( node ) } );
 
@@ -676,6 +676,8 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 	stations.finalise();
 
 	this.add( stations );
+
+	this.stations = stations;
 
 }
 
@@ -901,6 +903,8 @@ Survey.prototype.cutSection = function ( id ) {
 
 	this.surveyTree = this.surveyTree.findById( id );
 
+	this.loadStations( this.surveyTree );
+
 	this.clearSectionSelection();
 
 	this.cutInProgress = true;
@@ -941,6 +945,7 @@ Survey.prototype.cutSection = function ( id ) {
 			break;
 
 		case "BoxHelper":
+		case "CV.Stations":
 
 			cutList.push( obj );
 
@@ -949,7 +954,6 @@ Survey.prototype.cutSection = function ( id ) {
 		case "CV.EntranceFarPointer":
 		case "CV.EntranceNearPointer":
 		case "CV.Label":
-		case "CV.Stations":
 		case "CV.FarPointers":
 		case "Group":
 

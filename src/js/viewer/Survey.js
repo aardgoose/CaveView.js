@@ -44,8 +44,6 @@ function Survey ( cave ) {
 	this.selectedSectionIds = new Set();
 	this.selectedSection = 0;
 	this.selectedBox = null;
-	this.scrapMesh = null;
-	this.crossSectionMesh = null;
 	this.surveyTree = null;
 
 	// objects targetted by raycasters and objects with variable LOD
@@ -73,7 +71,7 @@ function Survey ( cave ) {
 
 	if ( this.isRegion === true ) {
 
-		this.stats[ NORMAL ] = {};
+		this.stats[ LEG_CAVE ] = {};
 		this.surveyTree = survey.surveyTree;
 		this.limits = cave.getLimits();
 
@@ -207,7 +205,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadScraps ( scrapList ) {
 
-		var geometry = ( self.scrapMesh === null ) ? new Geometry() : _replaceGeometry( self.scrapMesh );
+		var geometry = self.getMeshGeometry( FACE_SCRAPS );
 		var vertices = geometry.vertices;
 		var faces    = geometry.faces;
 
@@ -225,28 +223,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
-		if ( self.scrapMesh === null ) {
-
-			geometry.name = "CV.Survey:faces:scraps:g";
-
-			var mesh = new Mesh( geometry );
-
-			mesh.name = "CV.Survey:faces:scraps";
-			mesh.layers.set( FACE_SCRAPS );
-			mesh.userData = { faceRuns: faceRuns };
-
-			self.add( mesh );
-			self.layers.enable( FACE_SCRAPS );
-
-			self.scrapMesh = mesh;
-
-		} else {
-
-			mesh = self.scrapMesh;
-
-			mesh.userData.faceRuns = mesh.userData.faceRuns.concat( faceRuns );
-
-		}
+		self.addMesh( geometry, FACE_SCRAPS, faceRuns, 'CV.Survey:faces:scraps' );
 
 		geometry.computeFaceNormals();
 		geometry.computeBoundingBox();
@@ -286,7 +263,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadCrossSections ( crossSectionGroups ) {
 
-		var geometry = ( self.crossSectionMesh === null ) ? new Geometry() : _replaceGeometry( self.crossSectionMesh );
+		var geometry = self.getMeshGeometry( FACE_WALLS );
 
 		var faces    = geometry.faces;
 		var vertices = geometry.vertices;
@@ -422,27 +399,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
-		if ( self.crossSectionMesh === null ) {
-
-			geometry.name = "CV.Survey:faces:walls:g";
-
-			var mesh = new Mesh( geometry, new MeshBasicMaterial( { color: 0xff0000, vertexColors: NoColors, side: FrontSide } ) );
-
-			mesh.userData = { faceRuns: faceRuns };
-			mesh.name = "CV.Survey:faces:walls";
-			mesh.layers.set( FACE_WALLS );
-
-			self.add( mesh );
-			self.layers.enable( FACE_WALLS );
-
-			self.crossSectionMesh = mesh;
-
-		} else {
-
-			mesh = self.crossSectionMesh;
-			mesh.userData.faceRuns = mesh.userData.faceRuns.concat( faceRuns );
-
-		}
+		self.addMesh( geometry, FACE_WALLS, faceRuns, 'CV.Survey:faces:walls' );
 
 		geometry.computeVertexNormals();
 		geometry.computeBoundingBox();
@@ -485,9 +442,9 @@ Survey.prototype.loadCave = function ( cave ) {
 		var legRuns       = [];
 		var legMeshes     = self.legMeshes;
 
-		legGeometries[ LEG_CAVE    ] = ( legMeshes[ LEG_CAVE    ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ LEG_CAVE  ] );
-		legGeometries[ LEG_SURFACE ] = ( legMeshes[ LEG_SURFACE ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ LEG_SURFACE ] );
-		legGeometries[ LEG_SPLAY   ] = ( legMeshes[ LEG_SPLAY   ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ LEG_SPLAY   ] );
+		legGeometries[ LEG_CAVE    ] = self.getMeshGeometry( LEG_CAVE );
+		legGeometries[ LEG_SURFACE ] = self.getMeshGeometry( LEG_SURFACE );
+		legGeometries[ LEG_SPLAY   ] = self.getMeshGeometry( LEG_SPLAY );
 
 		legRuns[ LEG_CAVE    ] = ( legMeshes[ LEG_CAVE    ] === undefined ) ? [] : legMeshes[ LEG_CAVEL  ].userData.legRuns;
 		legRuns[ LEG_SURFACE ] = ( legMeshes[ LEG_SURFACE ] === undefined ) ? [] : legMeshes[ LEG_SURFACE ].userData.legRuns;
@@ -637,7 +594,19 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	}
 
-	function _replaceGeometry( mesh ) {
+}
+
+Survey.prototype.getMeshGeometry = function ( tag ) {
+
+	var mesh = this.legMeshes[ tag ];
+
+	if ( mesh === undefined ) {
+
+		return new Geometry();
+
+	} else {
+
+		// swap a new geometry in. (to ensure direct and buffer geometries in three.js are replaced )
 
 		var oldGeometry = mesh.geometry;
 		var newGeometry = oldGeometry.clone();
@@ -647,6 +616,32 @@ Survey.prototype.loadCave = function ( cave ) {
 		oldGeometry.dispose();
 
 		return newGeometry;
+
+	}
+
+}
+
+Survey.prototype.addMesh = function ( geometry, tag, runs, name ) {
+
+	if ( this.legMeshes[ tag ] === undefined ) {
+
+		geometry.name = name + ":g";
+
+		var mesh = new Mesh( geometry, new MeshBasicMaterial( { color: 0xff0000, vertexColors: NoColors, side: FrontSide } ) );
+
+		mesh.userData = { faceRuns: runs };
+		mesh.name = name;
+		mesh.layers.set( tag );
+
+		this.add( mesh );
+		this.layers.enable( tag );
+
+		this.legMeshes[ tag ] = mesh;
+
+	} else {
+
+		mesh = this.legMeshes[ tag ];
+		mesh.userData.faceRuns = mesh.userData.faceRuns.concat( runs );
 
 	}
 
@@ -1225,8 +1220,8 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	if ( this.setLegShading( LEG_CAVE, mode ) ) {
 
-		_setFaceShading( this.getObjectByName( "CV.Survey:faces:walls" ), mode, material );
-		_setFaceShading( this.getObjectByName( "CV.Survey:faces:scraps" ), mode, material );
+		_setFaceShading( this.legMeshes[ FACE_WALLS  ], mode, material );
+		_setFaceShading( this.legMeshes[ FACE_SCRAPS ], mode, material );
 
 		return true;
 

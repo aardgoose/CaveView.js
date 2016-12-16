@@ -169,7 +169,8 @@ Survey.prototype.loadCave = function ( cave ) {
 	_loadScraps( cave.scraps );
 	_loadCrossSections( cave.crossSections );
 	_loadTerrain( cave );
-	_loadStations( cave.surveyTree );
+
+	this.loadStations( cave.surveyTree );
 
 	return;
 
@@ -650,33 +651,34 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	}
 
-	function _loadStations( surveyTree ) {
+}
 
-		var i = 0;
+Survey.prototype.loadStations = function ( surveyTree ) {
 
-		var stations = self.stations;
+	var i = 0;
 
-		surveyTree.traverse( stations.addStation );
+	var stations = this.stations;
 
-		var legs = self.getLegs();
-		var station;
+	surveyTree.traverse( function _addStation ( node ) { stations.addStation( node ) } );
 
-		// count number of legs linked to each station
+	var legs = this.getLegs();
+	var station;
 
-		for ( i = 0; i < legs.length; i++ ) {
+	// count number of legs linked to each station
 
-			stations.updateStation( legs[ i ] );
+	for ( i = 0; i < legs.length; i++ ) {
 
-		}
-
-		// we have finished adding stations.
-		stations.finalise();
-
-		self.add( stations );
+		stations.updateStation( legs[ i ] );
 
 	}
 
+	// we have finished adding stations.
+	stations.finalise();
+
+	this.add( stations );
+
 }
+
 
 Survey.prototype.addRoutes = function ( routes ) {
 

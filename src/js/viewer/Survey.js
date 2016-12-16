@@ -656,7 +656,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		var stations = self.stations;
 
-		surveyTree.traverse( function _addStation ( node ) { stations.addStation( node ) } );
+		surveyTree.traverse( stations.addStation );
 
 		var legs = self.getLegs();
 		var station;

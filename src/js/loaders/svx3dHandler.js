@@ -1,6 +1,6 @@
 // Survex 3d file handler
 
-import { NORMAL, SPLAY, SURFACE, STATION_NORMAL, STATION_ENTRANCE } from '../core/constants.js';
+import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE } from '../core/constants.js';
 import { Tree } from '../core/Tree.js';
 
 function Svx3dHandler ( fileName, dataStream ) {
@@ -446,15 +446,15 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		if ( flags & 0x01 ) {
 
-			legs.push( { coords: coords, type: SURFACE, survey: sectionId } );
+			legs.push( { coords: coords, type: LEG_SURFACE, survey: sectionId } );
 
 		} else if ( flags & 0x04 ) {
 
-			legs.push( { coords: coords, type: SPLAY, survey: sectionId } );
+			legs.push( { coords: coords, type: LEG_SPLAY, survey: sectionId } );
 
 		} else {
 
-			legs.push( { coords: coords, type: NORMAL, survey: sectionId } );
+			legs.push( { coords: coords, type: LEG_CAVE, survey: sectionId } );
 
 		}
 

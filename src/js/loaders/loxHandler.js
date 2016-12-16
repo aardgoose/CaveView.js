@@ -1,5 +1,5 @@
 
-import { NORMAL, SPLAY, SURFACE } from '../core/constants.js';
+import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE } from '../core/constants.js';
 import { Tree } from '../core/Tree.js';
 
 function loxHandler  ( fileName, dataStream ) {
@@ -211,12 +211,12 @@ function loxHandler  ( fileName, dataStream ) {
 		var m_sectionType = readUint();
 		var m_surveyId    = readUint();
 		var m_threshold   = f.getFloat64( pos, true );
-		var type          = NORMAL;
+		var type          = LEG_CAVE;
 
 		pos += 8;
 
-		if ( m_flags && 0x01 ) type = SURFACE;
-		if ( m_flags && 0x08 ) type = SPLAY;
+		if ( m_flags && 0x01 ) type = LEG_SURFACE;
+		if ( m_flags && 0x08 ) type = LEG_SPLAY;
 
 		if ( m_flags === 0x16 ) {
 

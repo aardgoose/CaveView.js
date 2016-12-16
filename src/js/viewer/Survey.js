@@ -1,6 +1,5 @@
 
 import {
-	NORMAL, SPLAY, SURFACE,
 	FACE_SCRAPS, FACE_WALLS,
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
@@ -486,13 +485,13 @@ Survey.prototype.loadCave = function ( cave ) {
 		var legRuns       = [];
 		var legMeshes     = self.legMeshes;
 
-		legGeometries[ NORMAL  ] = ( legMeshes[ NORMAL  ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ NORMAL  ] );
-		legGeometries[ SURFACE ] = ( legMeshes[ SURFACE ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ SURFACE ] );
-		legGeometries[ SPLAY   ] = ( legMeshes[ SPLAY   ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ SPLAY   ] );
+		legGeometries[ LEG_CAVE    ] = ( legMeshes[ LEG_CAVE    ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ LEG_CAVE  ] );
+		legGeometries[ LEG_SURFACE ] = ( legMeshes[ LEG_SURFACE ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ LEG_SURFACE ] );
+		legGeometries[ LEG_SPLAY   ] = ( legMeshes[ LEG_SPLAY   ] === undefined ) ? new Geometry() : _replaceGeometry( legMeshes[ LEG_SPLAY   ] );
 
-		legRuns[ NORMAL  ] = ( legMeshes[ NORMAL  ] === undefined ) ? [] : legMeshes[ NORMAL  ].userData.legRuns;
-		legRuns[ SURFACE ] = ( legMeshes[ SURFACE ] === undefined ) ? [] : legMeshes[ SURFACE ].userData.legRuns;
-		legRuns[ SPLAY   ] = ( legMeshes[ SPLAY   ] === undefined ) ? [] : legMeshes[ SPLAY   ].userData.legRuns;
+		legRuns[ LEG_CAVE    ] = ( legMeshes[ LEG_CAVE    ] === undefined ) ? [] : legMeshes[ LEG_CAVEL  ].userData.legRuns;
+		legRuns[ LEG_SURFACE ] = ( legMeshes[ LEG_SURFACE ] === undefined ) ? [] : legMeshes[ LEG_SURFACE ].userData.legRuns;
+		legRuns[ LEG_SPLAY   ] = ( legMeshes[ LEG_SPLAY   ] === undefined ) ? [] : legMeshes[ LEG_SPLAY   ].userData.legRuns;
 
 		var geometry;
 
@@ -567,15 +566,15 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
-		_addModelSegments( NORMAL  , "CV.Survey:legs:cave:cave",       LEG_CAVE );
-		_addModelSegments( SURFACE , "CV.Survey:legs:surface:surface", LEG_SURFACE );
-		_addModelSegments( SPLAY   , "CV.Survey:legs:cave:splay",      LEG_SPLAY );
+		_addModelSegments( LEG_CAVE, "CV.Survey:legs:cave:cave" );
+		_addModelSegments( LEG_SURFACE, "CV.Survey:legs:surface:surface" );
+		_addModelSegments( LEG_SPLAY, "CV.Survey:legs:cave:splay" );
 
 		self.stats = legStats;
 
 		return;
 
-		function _addModelSegments ( tag, name, layerTag ) {
+		function _addModelSegments ( tag, name ) {
 
 			var geometry = legGeometries[ tag ];
 			var mesh;
@@ -591,10 +590,10 @@ Survey.prototype.loadCave = function ( cave ) {
 				mesh.name = name;
 				mesh.userData = { legRuns: legRuns[ tag ] };
 
-				mesh.layers.set( layerTag );
+				mesh.layers.set( tag );
 
 				self.add( mesh );
-				self.layers.enable( layerTag );
+				self.layers.enable( tag );
 
 				legMeshes[ tag ] = mesh;
 
@@ -746,13 +745,13 @@ Survey.prototype.getSelectedBox = function () {
 
 Survey.prototype.getStats = function () {
 
-	return this.stats[ NORMAL ];
+	return this.stats[ LEG_CAVE ];
 
 }
 
 Survey.prototype.getLegs = function () {
 
-	return this.legMeshes[ NORMAL ].geometry.vertices;
+	return this.legMeshes[ LEG_CAVE ].geometry.vertices;
 
 }
 
@@ -893,9 +892,9 @@ Survey.prototype.cutSection = function ( id ) {
 
 	// update stats
 
-	this.stats[ NORMAL  ] = this.getLegStats( this.legMeshes[ NORMAL  ] );
-	this.stats[ SURFACE ] = this.getLegStats( this.legMeshes[ SURFACE ] );
-	this.stats[ SPLAY   ] = this.getLegStats( this.legMeshes[ SPLAY   ] );
+	this.stats[ LEG_CAVE    ] = this.getLegStats( this.legMeshes[ LEG_CAVE    ] );
+	this.stats[ LEG_SURFACE ] = this.getLegStats( this.legMeshes[ LEG_SURFACE ] );
+	this.stats[ LEG_SPLAY   ] = this.getLegStats( this.legMeshes[ LEG_SPLAY   ] );
 
 	this.limits = this.getBounds();
 
@@ -1333,35 +1332,7 @@ Survey.prototype.hasFeature = function ( layerTag ) {
 
 Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
-	var mesh;
-
-	switch ( legType ) {
-
-	case LEG_CAVE:
-
-		mesh = this.legMeshes[ NORMAL ];
-
-		break;
-
-	case LEG_SPLAY:
-
-		mesh = this.legMeshes[ SPLAY ];
-
-		break;
-
-	case LEG_SURFACE:
-
-		mesh = this.legMeshes[ SURFACE ];
-
-		break;
-
-	default:
-
-		console.log( "invalid leg type" );
-
-		return;
-
-	}
+	var mesh = this.legMeshes[ legType ];
 
 	if ( mesh === undefined ) return;
 

@@ -1,37 +1,48 @@
 
 
-function CameraMove( controls, cameraTarget, targetPOI ) {
+function CameraMove( controls, renderFunction, endCallback ) {
 
-	this.cameraTarget = cameraTarget;
-	this.targetPOI = targetPOI;
+	this.cameraTarget = null;
+	this.targetPOI = null;
 
 	this.controls = controls;
-	this.renderFunction = null;
-	this.endCallback = null;
+	this.renderFunction = renderFunction;
+	this.endCallback = endCallback;
 	this.frameCount = 0;
 	this.targetZoom = 1;
 
-	this.moveRequired = ( cameraTarget !== null || targetPOI !== null );
+	this.moveRequired = false;
 
 }
 
 CameraMove.prototype.constructor = CameraMove;
 
-CameraMove.prototype.start = function( renderFunction, endCallback, time ) {
+CameraMove.prototype.prepare = function ( cameraTarget, targetPOI ) {
+
+	if ( this.frameCount !== 0 ) return;
+
+	this.cameraTarget = cameraTarget;
+	this.targetPOI = targetPOI;
+
+	this.moveRequired = ( this.cameraTarget !== null || this.targetPOI !== null );
+
+}
+
+
+CameraMove.prototype.start = function( time ) {
 
 	if ( this.frameCount === 0 ) {
 
-		this.renderFunction = renderFunction;
-		this.endCallback = endCallback;
-
-		this.frameCount = time;
+		this.frameCount = time + 1;
 		this.controls.enabled = ! this.moveRequired;
 
 		this.animate();
 
 	} else {
 
-		this.frameCount = Math.max( time, this.frameCount );
+		// animation already running - just extend time
+
+		// this.frameCount = Math.max( time, this.frameCount );
 
 	}
 
@@ -63,17 +74,22 @@ CameraMove.prototype.animate = function () {
 
 		camera.updateProjectionMatrix();
 
-	} else {
-
-		controls.update();
-
 	}
+
+	controls.update();
 
 	if ( tRemaining === 0 ) {
 
-		this.controls.enabled = true;
+		// end of animationt
 
-		if ( this.endCallback ) this.endCallback();
+		this.controls.enabled = true;
+		this.moveRequired = false;
+
+		this.cameraTarget = null;
+		this.targetPOI = null;
+
+		this.renderFunction();
+		this.endCallback();
 
 		return;
 
@@ -94,7 +110,7 @@ CameraMove.prototype.stop = function () {
 }
 
 CameraMove.prototype.isActive = function () {
-
+console.log(( this.frameCount > 0 ) );
 	return ( this.frameCount > 0 );
 
 }

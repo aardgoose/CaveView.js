@@ -75,8 +75,6 @@ var terrainShadingMode = SHADING_SHADED;
 var cameraMode;
 var selectedSection = 0;
 
-// Point of interest tracking
-
 var controls;
 
 var cameraMove;
@@ -120,9 +118,9 @@ function init ( domID ) { // public method
 
 	controls = new OrbitControls( camera, renderer.domElement );
 
-	var cameraAnimate = new CameraMove( controls, null, null );
+	cameraMove = new CameraMove( controls, renderView, onCameraMoveEnd );
 
-	controls.addEventListener( "change", function () { cameraAnimate.start( renderView, function () { clockStart() }, 800 ) } );
+	controls.addEventListener( "change", function () { cameraMove.prepare( null, null ); cameraMove.start( 80 ) } );
 
 	controls.enableDamping = true;
 
@@ -361,8 +359,8 @@ function setAutoRotate( state ) {
 
 	if ( state ) {
 
-		cameraMove = new CameraMove( controls, null, null );
-		cameraMove.start( renderView, null, 2952000 )
+		cameraMove.prepare( null, null );
+		cameraMove.start( 2952000 )
 
 	} else {
 
@@ -605,9 +603,9 @@ function setViewMode ( mode, t ) {
 
 	var origin = new Vector3();
 
-	cameraMove = new CameraMove( controls, position, origin, 1 );
+	cameraMove.prepare( position, origin );
 
-	cameraMove.start( renderView, cameraMoveEnded, tAnimate + 1 );
+	cameraMove.start( tAnimate );
 
 }
 
@@ -690,7 +688,7 @@ function selectSection ( id ) {
 
 		boundingBox.applyMatrix4( survey.matrixWorld );
 
-		cameraMove = new CameraMove( controls, null, boundingBox );
+		cameraMove.prepare( null, boundingBox );
 /*
 		targetPOI = {
 			tAnimate: 0,
@@ -700,7 +698,7 @@ function selectSection ( id ) {
 */
 	} else {
 
-		cameraMove = new CameraMove( controls, camera.position, new Vector3().copy( node.p ).applyMatrix4( survey.matrixWorld ) );
+		cameraMove.prepare( camera.position, new Vector3().copy( node.p ).applyMatrix4( survey.matrixWorld ) );
 
 		selectedSection = 0;
 
@@ -1000,7 +998,7 @@ function mouseDown ( event ) {
 
 		popup.display( container, event.clientX, event.clientY, camera, p );
 
-		cameraMove = new CameraMove( controls, camera.position, p.clone() );
+		cameraMove.prepare( camera.position, p.clone() );
 
 		return true;
 
@@ -1029,7 +1027,7 @@ function mouseDown ( event ) {
 			quaternion:  new Quaternion()
 		};
 */
-		cameraMove = new CameraMove( controls, position.clone().add( new Vector3( 0, 0, 5 ) ), position );
+		cameraMove.prepare( position.clone().add( new Vector3( 0, 0, 5 ) ), position );
 
 		console.log( entrance.type, entrance.name );
 
@@ -1092,39 +1090,38 @@ var renderView = function () {
 
 		}
 
-		if ( ! cameraMove || ! cameraMove.isActive() ) {
-
-			if ( terrain && terrain.isTiled() && viewState.terrain ) {
-
-				if ( lastActivityTime && performance.now() - lastActivityTime > 500 ) {
-
-					clockStop();
-					terrain.zoomCheck( camera );
-
-				}
-
-			}
-
-		}
+		clockStart();
 
 	}
 
 } ();
 
 
-function cameraMoveEnded () {
+function onCameraMoveEnd () {
 
-	clockStart();
-	cameraMove = null;
+	if ( terrain && terrain.isTiled() && viewState.terrain ) setTimeout( updateTerrain, 500 );
 
 }
+
+function updateTerrain () {
+
+	if ( lastActivityTime && performance.now() - lastActivityTime > 500 ) {
+
+		clockStop();
+		terrain.zoomCheck( camera );
+
+	}
+
+}
+
 
 function setCameraPOI ( x ) {
 
 	var boundingBox;
 	var elevation;
 
-	if ( cameraMove === null ) return;
+	cameraMove.start( 600 );
+
 /*
 
 	if ( targetPOI.boundingBox ) {
@@ -1165,7 +1162,6 @@ function setCameraPOI ( x ) {
 	// disable orbit controls until move to selected POI is conplete
 
 */
-	cameraMove.start( renderView, cameraMoveEnded, 600 );
 
 }
 
@@ -1188,7 +1184,6 @@ function setScale ( obj ) {
 
 	obj.scale.set( scale, scale, scale );
 	obj.position.set( -center.x * scale, -center.y * scale, -center.z * scale );
-
 
 	HUD.setScale( scale );
 

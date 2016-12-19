@@ -1,4 +1,8 @@
 
+import {
+	Vector3, Quaternion, Box3,
+	CubicBezierCurve3, Geometry, Line, LineBasicMaterial, LineSegments
+} from '../../../../three.js/src/Three.js'; 
 
 function CameraMove( controls, renderFunction, endCallback ) {
 
@@ -9,7 +13,9 @@ function CameraMove( controls, renderFunction, endCallback ) {
 	this.renderFunction = renderFunction;
 	this.endCallback = endCallback;
 	this.frameCount = 0;
+	this.frames = 0;
 	this.targetZoom = 1;
+	this.curve = null;
 
 	this.moveRequired = false;
 
@@ -19,6 +25,8 @@ CameraMove.prototype.constructor = CameraMove;
 
 CameraMove.prototype.prepare = function ( cameraTarget, targetPOI ) {
 
+	// FIXME handle non vector3 target
+
 	if ( this.frameCount !== 0 ) return;
 
 	this.cameraTarget = cameraTarget;
@@ -26,23 +34,45 @@ CameraMove.prototype.prepare = function ( cameraTarget, targetPOI ) {
 
 	this.moveRequired = ( this.cameraTarget !== null || this.targetPOI !== null );
 
+
+	if ( cameraTarget !== null ) {
+
+		var startPOI = this.controls.target;
+
+		if ( targetPOI === null ) targetPOI = startPOI;
+
+		var cameraStart = this.controls.object.position;
+
+		var cp1 = this.getCP( startPOI, cameraStart, cameraTarget );
+		var cp2 = this.getCP( targetPOI, cameraTarget, cameraStart );
+
+		this.curve = new CubicBezierCurve3( cameraStart, cp1, cp2, cameraTarget )
+
+	}
+
 }
 
+
+CameraMove.prototype.getCP = function ( common, p1 , p2 ) {
+
+	var v1 = new Vector3().copy( p1 ).sub( common );
+	var v2 = new Vector3().copy( p2 ).sub( common );
+
+	var normal = new Vector3().crossVectors( v1, v2 );
+
+	return new Vector3().crossVectors( normal, v1 ).setLength( v1.length() / 2 ).add( v1 ); 
+
+}
 
 CameraMove.prototype.start = function( time ) {
 
 	if ( this.frameCount === 0 ) {
 
 		this.frameCount = time + 1;
+		this.frames = this.frameCount;
 		this.controls.enabled = ! this.moveRequired;
 
 		this.animate();
-
-	} else {
-
-		// animation already running - just extend time
-
-		// this.frameCount = Math.max( time, this.frameCount );
 
 	}
 
@@ -52,6 +82,8 @@ CameraMove.prototype.animate = function () {
 
 	var tRemaining = --this.frameCount;
 	var controls = this.controls;
+	var cameraTarget = this.cameraTarget;
+	var curve = this.curve;
 
 	if ( this.moveRequired ) {
 
@@ -59,14 +91,15 @@ CameraMove.prototype.animate = function () {
 
 		var camera = controls.object;
 
-		var t = 1 - tRemaining / ( tRemaining + 1 );
+		var t = 1 - tRemaining / this.frames;
 
 		controls.target.lerp( this.targetPOI, t );
 
-		camera.position.lerp( this.cameraTarget, t );
+		if ( curve !== null ) {
 
-		//	controls.update();
-		//	camera.lookAt( activePOIPosition );
+			camera.position.copy( this.curve.getPoint( t ) );
+
+		}
 
 		camera.zoom = camera.zoom + ( this.targetZoom - camera.zoom ) * t;
 
@@ -110,7 +143,7 @@ CameraMove.prototype.stop = function () {
 }
 
 CameraMove.prototype.isActive = function () {
-console.log(( this.frameCount > 0 ) );
+
 	return ( this.frameCount > 0 );
 
 }

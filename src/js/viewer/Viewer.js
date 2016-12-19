@@ -601,9 +601,7 @@ function setViewMode ( mode, t ) {
 
 	}
 
-	var origin = new Vector3();
-
-	cameraMove.prepare( position, origin );
+	cameraMove.prepare( position, new Vector3() );
 
 	cameraMove.start( tAnimate );
 
@@ -998,7 +996,7 @@ function mouseDown ( event ) {
 
 		popup.display( container, event.clientX, event.clientY, camera, p );
 
-		cameraMove.prepare( camera.position, p.clone() );
+		cameraMove.prepare( null, p.clone() );
 
 		return true;
 

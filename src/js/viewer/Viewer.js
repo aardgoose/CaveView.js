@@ -435,7 +435,7 @@ function renderDepthTexture () {
 
 	var rtCamera = new OrthographicCamera( -width / 2, width / 2,  height / 2, -height / 2, -10000, 10000 );
 
-	rtCamera.layers.enable( FEATURE_TERRAIN ); // just render the terrain
+	rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
 
 	scene.overrideMaterial = Materials.getDepthMapMaterial();
 
@@ -1001,6 +1001,7 @@ function mouseDown ( event ) {
 		routes.toggleSegment( picked.index );
 
 		setShadingMode( SHADING_PATH );
+
 		renderView();
 
 		return true;
@@ -1024,7 +1025,7 @@ function mouseDown ( event ) {
 
 		} else {
 
-			cameraMove.start( RenderView, cameraMoveEnded, 80 );
+			cameraMove.start( 80 );
 
 		}
 
@@ -1101,10 +1102,9 @@ function updateTerrain () {
 
 }
 
-
 function setCameraPOI ( x ) {
 
-	cameraMove.start( 600 );
+	cameraMove.start( 200 );
 
 }
 

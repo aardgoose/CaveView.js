@@ -91,8 +91,10 @@ CameraMove.prototype.prepare = function ( cameraTarget, targetPOI ) {
 
 			if ( targetPOI === null ) targetPOI = startPOI;
 
-			var cp1 = this.getControlPoint( startPOI, cameraStart, cameraTarget );
-			var cp2 = this.getControlPoint( targetPOI, cameraTarget, cameraStart );
+			var distance = cameraStart.distanceTo( cameraTarget );
+
+			var cp1 = this.getControlPoint( startPOI, cameraStart, cameraTarget, distance );
+			var cp2 = this.getControlPoint( targetPOI, cameraTarget, cameraStart, distance );
 
 			this.curve = new CubicBezierCurve3( cameraStart, cp1, cp2, cameraTarget )
 
@@ -101,7 +103,7 @@ CameraMove.prototype.prepare = function ( cameraTarget, targetPOI ) {
 	}
 }
 
-CameraMove.prototype.getControlPoint = function ( common, p1, p2 ) {
+CameraMove.prototype.getControlPoint = function ( common, p1, p2, distance ) {
 
 	var v1 = new Vector3();
 	var v2 = new Vector3();
@@ -128,8 +130,10 @@ CameraMove.prototype.getControlPoint = function ( common, p1, p2 ) {
 
 	}
 
-	var candidate1 = new Vector3().crossVectors( normal, v1 ).setLength( v1.length() / 3 ).add( v1 ); 
-	var candidate2 = new Vector3().crossVectors( normal, v1 ).setLength( v1.length() / 3 ).negate().add( v1 ); 
+	var adjust = new Vector3().crossVectors( normal, v1 ).setLength( Math.min( distance, v1.length() ) / 3 );
+
+	var candidate1 = new Vector3().copy( adjust ).add( v1 ); 
+	var candidate2 = new Vector3().copy( adjust ).negate().add( v1 ); 
 
 	return ( v2.distanceTo( candidate1 ) < v2.distanceTo( candidate2 ) ) ? candidate1 : candidate2;
 

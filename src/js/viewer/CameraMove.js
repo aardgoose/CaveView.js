@@ -128,7 +128,10 @@ CameraMove.prototype.getControlPoint = function ( common, p1, p2 ) {
 
 	}
 
-	return new Vector3().crossVectors( normal, v1 ).setLength( v1.length() / 2 ).add( v1 ); 
+	var candidate1 = new Vector3().crossVectors( normal, v1 ).setLength( v1.length() / 3 ).add( v1 ); 
+	var candidate2 = new Vector3().crossVectors( normal, v1 ).setLength( v1.length() / 3 ).negate().add( v1 ); 
+
+	return ( v2.distanceTo( candidate1 ) < v2.distanceTo( candidate2 ) ) ? candidate1 : candidate2;
 
 }
 

@@ -687,16 +687,10 @@ function selectSection ( id ) {
 		boundingBox.applyMatrix4( survey.matrixWorld );
 
 		cameraMove.prepare( null, boundingBox );
-/*
-		targetPOI = {
-			tAnimate: 0,
-			position:    boundingBox.getCenter(),
-			boundingBox: boundingBox
-		};
-*/
+
 	} else {
 
-		cameraMove.prepare( camera.position, new Vector3().copy( node.p ).applyMatrix4( survey.matrixWorld ) );
+		cameraMove.prepare( null, new Vector3().copy( node.p ).applyMatrix4( survey.matrixWorld ) );
 
 		selectedSection = 0;
 
@@ -1020,11 +1014,6 @@ function mouseDown ( event ) {
 		var entrance = picked.object;
 		var position = entrance.getWorldPosition();
 
-/*		targetPOI = {
-			boundingBox: new Box3().expandByPoint( entrance.position ),
-			quaternion:  new Quaternion()
-		};
-*/
 		cameraMove.prepare( position.clone().add( new Vector3( 0, 0, 5 ) ), position );
 
 		console.log( entrance.type, entrance.name );
@@ -1115,51 +1104,7 @@ function updateTerrain () {
 
 function setCameraPOI ( x ) {
 
-	var boundingBox;
-	var elevation;
-
 	cameraMove.start( 600 );
-
-/*
-
-	if ( targetPOI.boundingBox ) {
-
-		var size = targetPOI.boundingBox.getSize();
-
-		if ( camera instanceof PerspectiveCamera ) {
-
-			var tan = Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
-
-			var e1 = 1.5 * tan * size.y / 2 + size.z;
-			var e2 = tan * camera.aspect * size.x / 2 + size.z;
-
-			elevation = Math.max( e1, e2 );
-
-			targetPOI.cameraZoom = 1;
-
-			if ( elevation === 0 ) elevation = 100;
-
-		} else {
-
-			var hRatio = ( camera.right - camera.left ) / size.x;
-			var vRatio = ( camera.top - camera.bottom ) / size.y;
-
-			targetPOI.cameraZoom = Math.min( hRatio, vRatio );
-			elevation = 600;
-
-		}
-
-		activePOIPosition = controls.target;
-
-		targetPOI.cameraPosition   = targetPOI.position.clone();
-		targetPOI.cameraPosition.z = targetPOI.cameraPosition.z + elevation;
-		targetPOI.quaternion = new Quaternion();
-
-	}
-
-	// disable orbit controls until move to selected POI is conplete
-
-*/
 
 }
 

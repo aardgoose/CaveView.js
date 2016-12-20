@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>CaveView installation</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<style>
+
+	h1, h2 {
+
+		margin-left: 20px;
+
+	}
+
+	h3, p, pre {
+
+		margin-left: 40px;
+
+	}
+
+	* {
+		font-family: sans-serif;
+	}
+
+	pre {
+		font-family: monospace;
+	}
+	</style>
+</head>
+<body>
+<h1>Cave View - installation instructions</h1>
+<h2>Install CaveView files</h2>
+	<p>A zip archive containing the required files can be found in the <a href="https://github.com/aardgoose/CaveView.js/tree/master/build" >'master' git branch</a>.</p>
+	<p>There is no need to build the JavaScript application from source files unless you would like to modify the application.</p>
+	<p>Unzip the archive in a convenient location on your web server </p>
+<h2>Using in a web page</h2>
+
+<p>CaveView requires two files to be included in the page. Replace the placeholder %...% elements with path to the unzipped files on the server in the following examples.<p>
+
+<h3>caveview.css</h3>
+<p>The side panel interface and on screen indicators are styled with caveview.css. This must be included in the <strong>head</strong> section of the page.</p>
+
+<pre>	&lt;link type="text/css" href="%location of unzipped files%/CaveView/css/caveview.css" rel="stylesheet" /&gt;</pre>
+
+<h3>CaveView.js</h3>
+
+<p>The CaveView application is provided in one javascript file.  Include this in the <strong>body</strong> section of the page.</p>
+
+<pre>	&lt;script type="text/javascript" src="%location of unzipped files%/CaveView/js/CaveView.js" &gt;&lt;/script&gt;</pre>
+
+<h3>Add a container element</h3>
+
+<p>Add an empty block element to the page, with a suitable <strong>id</strong> attribute. This contains the application, and be sized as required.</p>
+
+<h3>Create a script to run the application</h3>
+
+<p>The application can be loaded using javascript, typically using an load event handler. Replace the placeholder %...% elements with values appropriate for your site.</P>
+<pre>
+&lt;script type="text/javascript" &gt;
+
+	function onLoad () {
+
+
+		// set the location of software and survey files
+
+		CV.setEnvironment( {
+			home: '% location of the unzipped CaveView directory on the survey %',
+			surveyDirectory: '% location of the survey files on the server %'
+		} );
+
+
+		// display the user interface - and a blank canvas
+
+		CV.UI.init( '% id of empty block element %' );
+
+
+		// load a single survey to display
+
+		CV.UI.loadCave( '% survey filename %' );
+
+	}
+
+&lt;/script&gt;
+</pre>
+
+<p>alternatively provide a list of surveys to display, by replacing the loadCave() function call with loadCaveList() :</p>
+
+<pre>
+	CV.loadCaveList( [ '% survey filename 1 %', '% survey filename 2 %', '% survey filename 3 %' ] );
+</pre>
+
+<p>This can be automatically executed on page load by including a page load handler in the page <strong>body</strong> tag:</p>
+<pre>&lt;body onload="onload();" &gt;</pre>
+
+<p>CaveView should now display when the page is viewed.</p>
+</body>
+</html>

@@ -1,7 +1,7 @@
 
 import {
 	Vector3,
-	Geometry,
+	BufferGeometry, Float32BufferAttribute,
 	LineBasicMaterial,
 	LineSegments,
 	EventDispatcher, Mesh, MeshBasicMaterial, Face3, DoubleSide
@@ -10,6 +10,7 @@ import {
 import { replaceExtension } from '../core/lib.js';
 import { getEnvironmentValue } from '../core/constants.js';
 import { CaveLoader } from '../loaders/CaveLoader.js';
+import { WaterMaterial } from '../materials/WaterMaterial.js';
 
 function Routes ( surveyName, callback ) {
 
@@ -191,28 +192,47 @@ Routes.prototype.createWireframe = function () {
 
 Routes.prototype.createTest = function () {
 
-	var geometry = new Geometry();
-	var vertices = geometry.vertices;
-	var faces = geometry.faces;
+	var geometry = new BufferGeometry();
+	var vertices = [];
+	var ends = [];
 	var segmentCount = 0;
 
 	this.segmentMap.forEach( _addSegment );
 
-	return new Mesh( geometry , new MeshBasicMaterial( { color: 0x0000ff, side: DoubleSide, transparent: true, opacity: 0.5 } ) );
+	var positions = new Float32BufferAttribute( vertices.length * 3, 3 );
+	var sinks = new Float32BufferAttribute( ends.length * 3, 3 );
+
+	geometry.addAttribute( 'position', positions.copyVector3sArray( vertices ) );
+	geometry.addAttribute( 'sinks', sinks.copyVector3sArray( ends ) );
+
+	var mesh = new Mesh( geometry , new WaterMaterial( new Vector3() ) );
+
+	mesh.onBeforeRender = beforeRender;
+
+	return mesh;
+
+	function beforeRender (renderer, scene, camera, geometry, material, group ) {
+
+		material.uniforms.offset.value += 0.1;
+
+	}
 
 	function _addSegment( value, key ) {
 
+		var end = new Vector3().copy( value.endStation.p );
+
 		var v = new Vector3().subVectors( value.endStation.p, value.startStation.p ).cross( new Vector3( 0, 0, 1 ) ).setLength( 2 );
-//		var v = new Vector3();
 
 		var v1 = new Vector3().add( value.startStation.p ).add( v );
 		var v2 = new Vector3().add( value.startStation.p ).sub( v );
 
 		vertices.push( v1 );
 		vertices.push( v2 );
-		vertices.push( new Vector3().copy( value.endStation.p ) );
+		vertices.push( end );
 
-		faces.push( new Face3( segmentCount++, segmentCount++, segmentCount++ ) );
+		ends.push ( end );
+		ends.push ( end );
+		ends.push ( end );
 
 	}
 

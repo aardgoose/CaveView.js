@@ -7,13 +7,13 @@
 
 	h1, h2 {
 
-		margin-left: 20px;
+		margin-left: 16px;
 
 	}
 
 	h3, p, pre {
 
-		margin-left: 40px;
+		margin-left: 32px;
 
 	}
 
@@ -23,6 +23,9 @@
 
 	pre {
 		font-family: monospace;
+		font-weight: bold;
+		background-color: #eeeeee;
+		padding: 8px 8px;
 	}
 	</style>
 </head>
@@ -34,22 +37,24 @@
 	<p>Unzip the archive in a convenient location on your web server </p>
 <h2>Using in a web page</h2>
 
-<p>CaveView requires two files to be included in the page. Replace the placeholder %...% elements with path to the unzipped files on the server in the following examples.<p>
+<p>CaveView requires two files to be included in the page. Replace the placeholder %path% with the path to the unzipped files on the server in the following examples.<p>
 
 <h3>caveview.css</h3>
-<p>The side panel interface and on screen indicators are styled with caveview.css. This must be included in the <strong>head</strong> section of the page.</p>
+<p>The side panel interface and on screen indicators are styled with caveview.css. Include this in the <strong>head</strong> section of the page.</p>
 
-<pre>	&lt;link type="text/css" href="%location of unzipped files%/CaveView/css/caveview.css" rel="stylesheet" /&gt;</pre>
+<pre>	&lt;link type="text/css" href="%path%/CaveView/css/caveview.css" rel="stylesheet" /&gt;</pre>
 
 <h3>CaveView.js</h3>
 
-<p>The CaveView application is provided in one javascript file.  Include this in the <strong>body</strong> section of the page.</p>
+<p>The CaveView application is provided in one javascript file. Include this in the <strong>body</strong> section of the page.</p>
 
-<pre>	&lt;script type="text/javascript" src="%location of unzipped files%/CaveView/js/CaveView.js" &gt;&lt;/script&gt;</pre>
+<pre>	&lt;script type="text/javascript" src="%path%/CaveView/js/CaveView.js" &gt;&lt;/script&gt;</pre>
 
 <h3>Add a container element</h3>
 
-<p>Add an empty block element to the page, with a suitable <strong>id</strong> attribute. This contains the application, and be sized as required.</p>
+<p>Add an empty block element to the page, with a suitable <strong>id</strong> attribute. This contains the application, and be sized as required. For example a <strong>div</strong> element:</p>
+
+<pre>&lt;div id='% element-id %' &gt;&lt;/div&gt;</pre>
 
 <h3>Create a script to run the application</h3>
 
@@ -70,7 +75,7 @@
 
 		// display the user interface - and a blank canvas
 
-		CV.UI.init( '% id of empty block element %' );
+		CV.UI.init( '% element-id %' );
 
 
 		// load a single survey to display

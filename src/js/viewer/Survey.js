@@ -682,7 +682,7 @@ Survey.prototype.addRoutes = function ( routes ) {
 
 	this.routes = routes;
 
-//	this.add( routes.createTest() ); // FIXME
+	this.add( routes.createTest() ); // FIXME
 
 }
 

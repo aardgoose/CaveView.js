@@ -1,5 +1,4 @@
 var gulp    = require( 'gulp' );
-var pump    = require( 'pump' );
 var connect = require( 'gulp-connect' );
 
 

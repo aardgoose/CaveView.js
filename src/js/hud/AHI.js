@@ -1,6 +1,6 @@
 
-import { upAxis } from '../core/constants.js';
-import { HudObject } from './HudObject.js';
+import { upAxis } from '../core/constants';
+import { HudObject } from './HudObject';
 
 import {
 	Vector3, Color, Math as _Math,
@@ -8,7 +8,7 @@ import {
 	LineBasicMaterial, MeshBasicMaterial, MeshPhongMaterial,
 	FrontSide, VertexColors,
 	Mesh, LineSegments, Group
-} from '../../../../three.js/src/Three.js'; 
+} from '../../../../three.js/src/Three'; 
 
 function AHI ( container ) {
 

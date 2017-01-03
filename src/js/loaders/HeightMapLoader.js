@@ -1,5 +1,5 @@
 
-import { padDigits } from '../core/lib.js';
+import { padDigits } from '../core/lib';
 
 function HeightMapLoader ( tileSet, resolution, x, y, loadCallback, errorCallback ) {
 

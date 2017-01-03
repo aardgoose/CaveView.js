@@ -1,13 +1,13 @@
 
-import { HudObject } from './HudObject.js';
-import { Colours } from '../core/Colours.js';
+import { HudObject } from './HudObject';
+import { Colours } from '../core/Colours';
 import {
 	Vector3, Color,
 	Geometry, RingGeometry,
 	MeshBasicMaterial,
 	VertexColors, FrontSide,
 	Mesh, Group
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function AngleScale ( container ) {
 

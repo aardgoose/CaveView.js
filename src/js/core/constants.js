@@ -1,5 +1,5 @@
 
-import { Vector3 }  from '../../../../three.js/src/Three.js';
+import { Vector3 }  from '../../../../three.js/src/Three';
 
 export var MATERIAL_LINE       = 1;
 export var MATERIAL_SURFACE    = 2;

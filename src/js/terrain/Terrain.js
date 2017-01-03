@@ -1,12 +1,12 @@
 
-import { CommonTerrain } from './CommonTerrain.js';
-import { Tile } from './Tile.js';
+import { CommonTerrain } from './CommonTerrain';
+import { Tile } from './Tile';
 
 import {
 	MeshLambertMaterial,
 	TextureLoader,
 	Group
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function Terrain () {
 

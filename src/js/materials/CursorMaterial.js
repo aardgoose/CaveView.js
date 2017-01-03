@@ -1,8 +1,8 @@
 
-import { Shaders } from '../shaders/Shaders.js';
-import { MATERIAL_LINE } from '../core/constants.js';
+import { Shaders } from '../shaders/Shaders';
+import { MATERIAL_LINE } from '../core/constants';
 
-import { Vector3, Color, ShaderMaterial } from '../../../../three.js/src/Three.js';
+import { Vector3, Color, ShaderMaterial } from '../../../../three.js/src/Three';
 
 function CursorMaterial ( type, initialHeight ) {
 

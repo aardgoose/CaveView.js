@@ -1,10 +1,10 @@
 
-import { CursorMaterial } from './CursorMaterial.js';
-import { DepthMaterial } from './DepthMaterial.js';
-import { DepthMapMaterial } from './DepthMapMaterial.js';
-import { HeightMaterial } from './HeightMaterial.js';
+import { CursorMaterial } from './CursorMaterial';
+import { DepthMaterial } from './DepthMaterial';
+import { DepthMapMaterial } from './DepthMapMaterial';
+import { HeightMaterial } from './HeightMaterial';
 
-import { LineBasicMaterial, VertexColors } from '../../../../three.js/src/Three.js';
+import { LineBasicMaterial, VertexColors } from '../../../../three.js/src/Three';
 
 var cache = new Map();
 var viewState;

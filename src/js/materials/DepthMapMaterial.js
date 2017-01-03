@@ -1,6 +1,6 @@
 
-import { Shaders } from '../shaders/Shaders.js';
-import { ShaderMaterial } from '../../../../three.js/src/Three.js';
+import { Shaders } from '../shaders/Shaders';
+import { ShaderMaterial } from '../../../../three.js/src/Three';
 
 function DepthMapMaterial ( minHeight, maxHeight ) {
 

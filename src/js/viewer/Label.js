@@ -2,7 +2,7 @@ import {
 	SpriteMaterial,
 	Texture,
 	Sprite
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function Label ( text ) {
 

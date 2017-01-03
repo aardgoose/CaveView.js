@@ -1,7 +1,7 @@
 // Survex 3d file handler
 
-import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE } from '../core/constants.js';
-import { Tree } from '../core/Tree.js';
+import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE } from '../core/constants';
+import { Tree } from '../core/Tree';
 
 function Svx3dHandler ( fileName, dataStream ) {
 

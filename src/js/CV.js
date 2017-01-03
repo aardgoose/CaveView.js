@@ -1,7 +1,6 @@
 
 
-export * from './core/constants.js';
-export { Viewer } from './viewer/Viewer.js';
-export { UI } from './ui/UI.js';
-export { HUD } from './hud/HUD.js';
-export { CaveLoader } from './loaders/CaveLoader.js';
+export * from './core/constants';
+export { Viewer } from './viewer/Viewer';
+export { UI } from './ui/UI';
+export { CaveLoader } from './loaders/CaveLoader';

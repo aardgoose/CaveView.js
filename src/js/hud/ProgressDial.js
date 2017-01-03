@@ -1,6 +1,6 @@
 
-import { upAxis } from '../core/constants.js';
-import { HudObject } from './HudObject.js';
+import { upAxis } from '../core/constants';
+import { HudObject } from './HudObject';
 
 import {
 	Vector3,
@@ -8,7 +8,7 @@ import {
 	MeshBasicMaterial,
 	FaceColors,
 	Mesh
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function ProgressDial ( container ) {
 

@@ -1,6 +1,6 @@
 
-import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE } from '../core/constants.js';
-import { Tree } from '../core/Tree.js';
+import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE } from '../core/constants';
+import { Tree } from '../core/Tree';
 
 function loxHandler  ( fileName, dataStream ) {
 

@@ -3,7 +3,7 @@ import {
 	Vector3, Quaternion, Box3,
 	CubicBezierCurve3, Geometry, Line, LineBasicMaterial, LineSegments,
 	Math as _Math
-} from '../../../../three.js/src/Three.js'; 
+} from '../../../../three.js/src/Three'; 
 
 function CameraMove( controls, renderFunction, endCallback ) {
 

@@ -2,16 +2,16 @@ import {
 	CAMERA_ORTHOGRAPHIC,CAMERA_PERSPECTIVE, 
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH,
 	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
-} from '../core/constants.js';
+} from '../core/constants';
 
-import { Colours } from '../core/Colours.js';
-import { replaceExtension } from '../core/lib.js';
-import { Page } from './Page.js';
-import { ProgressBar } from './ProgressBar.js';
-import { CaveLoader } from '../loaders/CaveLoader.js';
+import { Colours } from '../core/Colours';
+import { replaceExtension } from '../core/lib';
+import { Page } from './Page';
+import { ProgressBar } from './ProgressBar';
+import { CaveLoader } from '../loaders/CaveLoader';
 
-import { Viewer } from '../viewer/Viewer.js';
-import { Routes } from '../viewer/Routes.js';
+import { Viewer } from '../viewer/Viewer';
+import { Routes } from '../viewer/Routes';
 
 var cave;
 var caveLoader;

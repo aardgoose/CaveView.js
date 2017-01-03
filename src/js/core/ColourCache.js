@@ -1,6 +1,6 @@
 
-import { Color }  from '../../../../three.js/src/Three.js';
-import { Colours } from './Colours.js';
+import { Color }  from '../../../../three.js/src/Three';
+import { Colours } from './Colours';
 
 // define colors to share THREE.Color objects
 

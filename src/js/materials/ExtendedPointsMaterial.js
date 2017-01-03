@@ -1,7 +1,7 @@
 
-import { VertexColors, ShaderMaterial, Color, TextureLoader, Vector4 } from '../../../../three.js/src/Three.js';
-import { Shaders } from '../shaders/Shaders.js';
-import { getEnvironmentValue } from '../core/constants.js';
+import { VertexColors, ShaderMaterial, Color, TextureLoader, Vector4 } from '../../../../three.js/src/Three';
+import { Shaders } from '../shaders/Shaders';
+import { getEnvironmentValue } from '../core/constants';
 
 function ExtendedPointsMaterial () {
 

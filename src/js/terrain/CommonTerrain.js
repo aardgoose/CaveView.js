@@ -1,12 +1,12 @@
 
-import { MATERIAL_SURFACE, SHADING_CURSOR, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED } from '../core/constants.js';
-import { Materials } from '../materials/Materials.js';
+import { MATERIAL_SURFACE, SHADING_CURSOR, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED } from '../core/constants';
+import { Materials } from '../materials/Materials';
 
 import {
 	MeshLambertMaterial,
 	VertexColors, FrontSide,
 	Group
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function CommonTerrain () {
 

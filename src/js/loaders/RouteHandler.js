@@ -1,5 +1,5 @@
 
-import { getEnvironmentValue } from '../core/constants.js';
+import { getEnvironmentValue } from '../core/constants';
 
 function RouteHandler ( filename, dataStream ) {
 

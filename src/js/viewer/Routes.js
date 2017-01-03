@@ -5,12 +5,12 @@ import {
 	LineBasicMaterial,
 	LineSegments,
 	EventDispatcher, Mesh, MeshBasicMaterial, Face3, DoubleSide
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
-import { replaceExtension } from '../core/lib.js';
-import { getEnvironmentValue } from '../core/constants.js';
-import { CaveLoader } from '../loaders/CaveLoader.js';
-import { WaterMaterial } from '../materials/WaterMaterial.js';
+import { replaceExtension } from '../core/lib';
+import { getEnvironmentValue } from '../core/constants';
+import { CaveLoader } from '../loaders/CaveLoader';
+import { WaterMaterial } from '../materials/WaterMaterial';
 
 function Routes ( surveyName, callback ) {
 

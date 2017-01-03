@@ -1,6 +1,6 @@
 
-import { Shaders } from '../shaders/Shaders.js';
-import { ShaderMaterial, DoubleSide } from '../../../../three.js/src/Three.js';
+import { Shaders } from '../shaders/Shaders';
+import { ShaderMaterial, DoubleSide } from '../../../../three.js/src/Three';
 
 function WaterMaterial () {
 

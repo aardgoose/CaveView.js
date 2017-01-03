@@ -1,5 +1,5 @@
 
-import { HudObject } from './HudObject.js';
+import { HudObject } from './HudObject';
 
 import {
 	Vector3, Color,
@@ -7,7 +7,7 @@ import {
 	LineBasicMaterial, MeshBasicMaterial,
 	FaceColors, FrontSide,
 	LineSegments, Group, Mesh
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function ScaleBar ( container, hScale, rightMargin ) {
 

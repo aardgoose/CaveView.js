@@ -1,8 +1,8 @@
 
-import { getEnvironmentValue } from '../core/constants.js';
-import { Tree } from '../core/Tree.js';
-import { Vector3 } from '../../../../three.js/src/math/Vector3.js';
-import { Box3    } from '../../../../three.js/src/math/Box3.js';
+import { getEnvironmentValue } from '../core/constants';
+import { Tree } from '../core/Tree';
+import { Vector3 } from '../../../../three.js/src/math/Vector3';
+import { Box3    } from '../../../../three.js/src/math/Box3';
 
 function RegionHandler ( filename, dataStream ) {
 

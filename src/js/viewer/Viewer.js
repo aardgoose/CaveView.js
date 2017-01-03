@@ -10,17 +10,17 @@ import  {
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
 	upAxis,
 	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL
-} from '../core/constants.js';
+} from '../core/constants';
 
-import { HUD } from '../hud/HUD.js';
-import { Materials } from '../materials/Materials.js';
-import { CameraMove } from './CameraMove.js';
-import { Survey } from './Survey.js';
+import { HUD } from '../hud/HUD';
+import { Materials } from '../materials/Materials';
+import { CameraMove } from './CameraMove';
+import { Survey } from './Survey';
 import { Popup } from './Popup';
-import { TiledTerrain } from '../terrain/TiledTerrain.js';
-//import { DirectionGlobe } from '../analysis/DirectionGlobe.js';
+import { TiledTerrain } from '../terrain/TiledTerrain';
+//import { DirectionGlobe } from '../analysis/DirectionGlobe';
 
-import { OrbitControls } from '../core/OrbitControls.js';
+import { OrbitControls } from '../core/OrbitControls';
 
 import {
 	EventDispatcher,
@@ -31,11 +31,11 @@ import {
 	OrthographicCamera, PerspectiveCamera, 
 	WebGLRenderer, WebGLRenderTarget,
 	Math as _Math
-} from '../../../../three.js/src/Three.js'; 
+} from '../../../../three.js/src/Three'; 
 
 import { toOSref } from '../core/lib';
 
-//import { LeakWatch } from '../../../../LeakWatch/src/LeakWatch.js';
+//import { LeakWatch } from '../../../../LeakWatch/src/LeakWatch';
 
 var lightPosition = new Vector3( -1, -1, 0.5 );
 var CAMERA_OFFSET = 600;

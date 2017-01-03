@@ -4,7 +4,7 @@ import {
 	MeshBasicMaterial,
 	FaceColors, DoubleSide,
 	Mesh
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function EntranceNearPointer () {
 

@@ -1,9 +1,9 @@
 
-import { Shaders } from '../shaders/Shaders.js';
-import { MATERIAL_LINE } from '../core/constants.js';
-import { Colours } from '../core/Colours.js';
+import { Shaders } from '../shaders/Shaders';
+import { MATERIAL_LINE } from '../core/constants';
+import { Colours } from '../core/Colours';
 
-import { ShaderMaterial, Vector3 } from '../../../../three.js/src/Three.js';
+import { ShaderMaterial, Vector3 } from '../../../../three.js/src/Three';
 
 function DepthMaterial ( type, limits, texture ) {
 

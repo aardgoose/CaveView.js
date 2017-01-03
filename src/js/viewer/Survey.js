@@ -6,20 +6,20 @@ import {
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH,
 	upAxis
-} from '../core/constants.js';
+} from '../core/constants';
 
-import { replaceExtension } from '../core/lib.js';
-import { getEnvironmentValue } from '../core/constants.js';
-import { ColourCache } from '../core/ColourCache.js';
-import { Tree } from '../core/Tree.js';
-import { Materials } from '../materials/Materials.js';
-import { Marker } from './Marker.js';
-import { farPointers } from './EntranceFarPointer.js';
-import { Stations } from './Stations.js';
-import { Routes } from './Routes.js';
-import { Terrain } from '../terrain/Terrain.js';
-import { CaveLoader } from '../loaders/CaveLoader.js';
-import { WorkerPool } from '../workers/WorkerPool.js';
+import { replaceExtension } from '../core/lib';
+import { getEnvironmentValue } from '../core/constants';
+import { ColourCache } from '../core/ColourCache';
+import { Tree } from '../core/Tree';
+import { Materials } from '../materials/Materials';
+import { Marker } from './Marker';
+import { farPointers } from './EntranceFarPointer';
+import { Stations } from './Stations';
+import { Routes } from './Routes';
+import { Terrain } from '../terrain/Terrain';
+import { CaveLoader } from '../loaders/CaveLoader';
+import { WorkerPool } from '../workers/WorkerPool';
 
 import {
 	Vector3, Face3, Color, Box3,
@@ -28,7 +28,7 @@ import {
 	FaceColors, NoColors, FrontSide, VertexColors,
 	Object3D, Mesh, Group, LineSegments, Points,
 	BoxHelper
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function Survey ( cave ) {
 

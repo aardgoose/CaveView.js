@@ -1,11 +1,11 @@
 
 import  {
 	Points, VertexColors, SphereBufferGeometry, MeshBasicMaterial, Mesh, Geometry, Vector3, BufferGeometry, Float32BufferAttribute,
-} from '../../../../three.js/src/Three.js'; 
+} from '../../../../three.js/src/Three'; 
 
-import  { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial.js'; 
+import  { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial'; 
 
-import { ColourCache } from '../core/ColourCache.js';
+import { ColourCache } from '../core/ColourCache';
 
 function DirectionGlobe ( survey ) {
 

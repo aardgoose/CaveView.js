@@ -1,13 +1,13 @@
 
-import { HudObject } from './HudObject.js';
-import { Materials } from '../materials/Materials.js';
-import { MATERIAL_LINE } from '../core/constants.js';
+import { HudObject } from './HudObject';
+import { Materials } from '../materials/Materials';
+import { MATERIAL_LINE } from '../core/constants';
 
 import {
 	Vector3, Matrix4,
 	PlaneBufferGeometry,
 	NoColors, FrontSide, Mesh
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function LinearScale ( container, viewState ) {
 

@@ -1,6 +1,6 @@
 
-import { HudObject } from './HudObject.js';
-import { padDigits } from '../core/lib.js';
+import { HudObject } from './HudObject';
+import { padDigits } from '../core/lib';
 
 import {
 	Vector3, Math as _Math, Face3, Color,
@@ -8,7 +8,7 @@ import {
 	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
 	FrontSide, VertexColors, FlatShading,
 	Mesh, Group
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function Compass ( container ) {
 

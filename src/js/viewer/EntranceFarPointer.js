@@ -1,5 +1,5 @@
 
-import { getEnvironmentValue, FEATURE_ENTRANCES } from '../core/constants.js';
+import { getEnvironmentValue, FEATURE_ENTRANCES } from '../core/constants';
 
 import {
 	Vector3, Color,
@@ -10,7 +10,7 @@ import {
 	PointsMaterial,
 	Points,
 	Object3D,
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 var farPointers = null;
 

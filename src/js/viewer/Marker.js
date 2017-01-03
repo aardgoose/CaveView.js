@@ -1,10 +1,10 @@
 
-import { FEATURE_ENTRANCES } from '../core/constants.js';
-import { EntranceFarPointer } from './EntranceFarPointer.js';
-import { EntranceNearPointer} from './EntranceNearPointer.js';
-import { Label } from './Label.js';
+import { FEATURE_ENTRANCES } from '../core/constants';
+import { EntranceFarPointer } from './EntranceFarPointer';
+import { EntranceNearPointer} from './EntranceNearPointer';
+import { Label } from './Label';
 
-import { LOD } from '../../../../three.js/src/Three.js';
+import { LOD } from '../../../../three.js/src/Three';
 
 var labelOffset = 30;
 var nearPointerCached;

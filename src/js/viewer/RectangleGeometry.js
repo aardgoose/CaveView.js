@@ -2,7 +2,7 @@
 import {
 	Vector3,
 	Geometry
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function RectangleGeometry ( box, z ) {
 

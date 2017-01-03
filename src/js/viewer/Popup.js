@@ -1,5 +1,5 @@
 
-import { Vector3 } from '../../../../three.js/src/Three.js';
+import { Vector3 } from '../../../../three.js/src/Three';
 
 function Popup() {
 

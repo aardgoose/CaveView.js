@@ -1,9 +1,9 @@
 
-import { MATERIAL_LINE } from '../core/constants.js';
-import { Shaders } from '../shaders/Shaders.js';
-import { Colours } from '../core/Colours.js';
+import { MATERIAL_LINE } from '../core/constants';
+import { Shaders } from '../shaders/Shaders';
+import { Colours } from '../core/Colours';
 
-import { Vector3, ShaderMaterial } from '../../../../three.js/src/Three.js';
+import { Vector3, ShaderMaterial } from '../../../../three.js/src/Three';
 
 function HeightMaterial ( type, minHeight, maxHeight ) {
 

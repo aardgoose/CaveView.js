@@ -4,14 +4,14 @@ import {
 	VertexColors,
 	Points,
 	Float32BufferAttribute
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
 import {
 	NORMAL, SPLAY, SURFACE,
 	FEATURE_STATIONS, STATION_NORMAL, STATION_ENTRANCE,
-} from '../core/constants.js';
+} from '../core/constants';
 
 function Stations () {
 

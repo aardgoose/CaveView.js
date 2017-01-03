@@ -1,14 +1,14 @@
-import { CommonTerrain } from './CommonTerrain.js';
-import { Tile } from './Tile.js';
-import { TileSet } from './TileSet.js';
-import { HUD } from '../hud/HUD.js';
-import { WorkerPool } from '../workers/WorkerPool.js';
-import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants.js';
+import { CommonTerrain } from './CommonTerrain';
+import { Tile } from './Tile';
+import { TileSet } from './TileSet';
+import { HUD } from '../hud/HUD';
+import { WorkerPool } from '../workers/WorkerPool';
+import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants';
 
 import {
 	Vector2, Frustum, Box2, Matrix4,
 	Group
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function TiledTerrain ( limits3, onLoaded ) {
 

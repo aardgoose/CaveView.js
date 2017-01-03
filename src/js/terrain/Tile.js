@@ -1,7 +1,7 @@
 
-import { FEATURE_TERRAIN, upAxis } from '../core/constants.js';
-import { padDigits } from '../core/lib.js';
-import { ColourCache } from '../core/ColourCache.js';
+import { FEATURE_TERRAIN, upAxis } from '../core/constants';
+import { padDigits } from '../core/lib';
+import { ColourCache } from '../core/ColourCache';
 
 import {
 	Vector2, Vector3, Triangle, Box3,
@@ -11,7 +11,7 @@ import {
 	MeshBasicMaterial, MeshLambertMaterial,
 	RepeatWrapping,
 	Mesh
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function Tile ( x, y, resolution, tileSet, clip ) {
 

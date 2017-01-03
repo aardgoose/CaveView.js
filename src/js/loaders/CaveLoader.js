@@ -1,9 +1,9 @@
 
-import { getEnvironmentValue } from '../core/constants.js';
-import { Svx3dHandler } from './svx3dHandler.js';
-import { loxHandler } from './loxHandler.js';
-import { RegionHandler } from './RegionHandler.js';
-import { RouteHandler } from './RouteHandler.js';
+import { getEnvironmentValue } from '../core/constants';
+import { Svx3dHandler } from './svx3dHandler';
+import { loxHandler } from './loxHandler';
+import { RegionHandler } from './RegionHandler';
+import { RouteHandler } from './RouteHandler';
 
 function CaveLoader ( callback, progress ) {
 

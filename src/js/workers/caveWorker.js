@@ -1,4 +1,4 @@
-import { CaveLoader } from '../loaders/CaveLoader.js';
+import { CaveLoader } from '../loaders/CaveLoader';
 
 onmessage = onMessage;
 

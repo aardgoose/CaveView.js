@@ -497,6 +497,7 @@ function initSettingsPage () {
 	if ( viewState.hasTerrain )      page.addCheckbox( "Terrain",       viewState, "terrain" );
 	if ( viewState.hasWalls )        page.addCheckbox( "Walls (LRUD)",  viewState, "walls" );
 	if ( viewState.hasScraps )       page.addCheckbox( "Scraps",        viewState, "scraps" );
+	if ( viewState.hasTraces )       page.addCheckbox( "Dye Traces",    viewState, "traces" );
 
 	page.addCheckbox( "Indicators",   viewState, "HUD" );
 	page.addCheckbox( "Bounding Box", viewState, "box" );
@@ -689,6 +690,8 @@ function viewComplete () {
 
 		isRoutesLoaded = true;
 
+		initUI();
+
 	}
 
 }
@@ -753,9 +756,9 @@ function keyDown ( event ) {
 
 		break;
 
-	case 68: //  - 'd'
+	case 68: //  toggle dye traces visibility - 'd'
 
-		// place holder
+		if ( viewState.hasTraces ) viewState.traces = !viewState.traces;
 
 		break;
 

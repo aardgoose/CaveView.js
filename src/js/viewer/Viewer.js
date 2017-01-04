@@ -2,7 +2,7 @@
 
 import  {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE,
-	FACE_WALLS, FACE_SCRAPS,
+	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY, SHADING_PATH,
@@ -272,12 +272,14 @@ function init ( domID ) { // public method
 	_enableLayer( FEATURE_BOX,       "box" );
 	_enableLayer( FEATURE_ENTRANCES, "entrances" );
 	_enableLayer( FEATURE_STATIONS,  "stations" );
+	_enableLayer( FEATURE_TRACES,    "traces" );
 	_enableLayer( FACE_SCRAPS,       "scraps" );
 	_enableLayer( FACE_WALLS,        "walls" );
 	_enableLayer( LEG_SPLAY,         "splays" );
 	_enableLayer( LEG_SURFACE,       "surfaceLegs" );
 	
 	_hasLayer( FEATURE_ENTRANCES, "hasEntrances" );
+	_hasLayer( FEATURE_TRACES,    "hasTraces" );
 	_hasLayer( FACE_SCRAPS,       "hasScraps" );
 	_hasLayer( FACE_WALLS,        "hasWalls" );
 	_hasLayer( LEG_SPLAY,         "hasSplays" );

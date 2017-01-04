@@ -1,7 +1,7 @@
 
 import {
 	FACE_SCRAPS, FACE_WALLS,
-	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX,
+	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH,
@@ -690,6 +690,8 @@ Survey.prototype.addRoutes = function ( routes ) {
 
 Survey.prototype.loadDyeTraces = function ( traces ) {
 
+	if ( traces.length === 0 ) return;
+
 	var surveyTree = this.surveyTree;
 
 	var geometry = new BufferGeometry();
@@ -707,6 +709,9 @@ Survey.prototype.loadDyeTraces = function ( traces ) {
 	var mesh = new Mesh( geometry , new WaterMaterial( new Vector3() ) );
 
 	mesh.onBeforeRender = beforeRender;
+	mesh.layers.set( FEATURE_TRACES );
+
+	this.layers.enable( FEATURE_TRACES );
 
 	this.add( mesh );
 

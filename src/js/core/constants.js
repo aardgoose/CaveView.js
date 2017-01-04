@@ -40,13 +40,14 @@ export var FEATURE_SELECTED_BOX  = 2;
 export var FEATURE_ENTRANCES     = 3;
 export var FEATURE_TERRAIN       = 4;
 export var FEATURE_STATIONS      = 5;
+export var FEATURE_TRACES        = 6;
 
-export var FACE_WALLS            = 6;
-export var FACE_SCRAPS           = 7;
+export var FACE_WALLS            = 7;
+export var FACE_SCRAPS           = 8;
 
-export var LEG_CAVE              = 8;
-export var LEG_SPLAY             = 9;
-export var LEG_SURFACE           = 10;
+export var LEG_CAVE              = 9;
+export var LEG_SPLAY             = 10;
+export var LEG_SURFACE           = 11;
 
 // flags in legs exported by Cave models
 

@@ -771,7 +771,7 @@ function clearView () {
 
 function loadCave ( cave ) {
 
-	if (!cave) {
+	if ( ! cave ) {
 
 		alert( "failed loading cave information" );
 		return;

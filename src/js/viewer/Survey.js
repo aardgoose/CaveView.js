@@ -20,19 +20,22 @@ import { Routes } from './Routes';
 import { Terrain } from '../terrain/Terrain';
 import { CaveLoader } from '../loaders/CaveLoader';
 import { WorkerPool } from '../workers/WorkerPool';
+import { WaterMaterial } from '../materials/WaterMaterial';
 
 import {
 	Vector3, Face3, Color, Box3,
-	Geometry, PlaneGeometry,
+	Geometry, PlaneGeometry, BufferGeometry,
+	Float32BufferAttribute,
 	MeshLambertMaterial, MeshBasicMaterial, MultiMaterial, LineBasicMaterial, PointsMaterial,
 	FaceColors, NoColors, FrontSide, VertexColors,
 	Object3D, Mesh, Group, LineSegments, Points,
-	BoxHelper
+	BoxHelper,
+	DoubleSide
 } from '../../../../three.js/src/Three';
 
 function Survey ( cave ) {
 
-	if ( !cave ) {
+	if ( !  cave ) {
 
 		alert( "failed loading cave information" );
 		return;
@@ -675,16 +678,70 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 
 }
 
-
 Survey.prototype.addRoutes = function ( routes ) {
 
 	routes.mapSurvey( this.stations, this.getLegs(), this.surveyTree );
 
 	this.routes = routes;
 
-	this.add( routes.createTest() ); // FIXME
+	this.loadDyeTraces( routes.getDyeTraces() );
 
 }
+
+Survey.prototype.loadDyeTraces = function ( traces ) {
+
+	var surveyTree = this.surveyTree;
+
+	var geometry = new BufferGeometry();
+	var vertices = [];
+	var ends = [];
+
+	traces.forEach( _addTrace );
+
+	var positions = new Float32BufferAttribute( vertices.length * 3, 3 );
+	var sinks = new Float32BufferAttribute( ends.length * 3, 3 );
+
+	geometry.addAttribute( 'position', positions.copyVector3sArray( vertices ) );
+	geometry.addAttribute( 'sinks', sinks.copyVector3sArray( ends ) );
+
+	var mesh = new Mesh( geometry , new WaterMaterial( new Vector3() ) );
+
+	mesh.onBeforeRender = beforeRender;
+
+	this.add( mesh );
+
+	return;
+
+	function beforeRender (renderer, scene, camera, geometry, material, group ) {
+
+		material.uniforms.offset.value += 0.1;
+
+	}
+
+	function _addTrace( trace, key ) {
+
+		var startStation = surveyTree.getByPath( trace.start );
+		var endStation   = surveyTree.getByPath( trace.end );
+
+		var end = new Vector3().copy( endStation.p );
+
+		var v = new Vector3().subVectors( endStation.p, startStation.p ).cross( new Vector3( 0, 0, 1 ) ).setLength( 2 );
+
+		var v1 = new Vector3().add( startStation.p ).add( v );
+		var v2 = new Vector3().add( startStation.p ).sub( v );
+
+		vertices.push( v1 );
+		vertices.push( v2 );
+		vertices.push( end );
+
+		ends.push ( end );
+		ends.push ( end );
+		ends.push ( end );
+
+	}
+
+}
+
 
 Survey.prototype.loadFromEntrance = function ( entrance, loadedCallback ) {
 

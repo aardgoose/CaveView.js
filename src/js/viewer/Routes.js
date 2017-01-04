@@ -1,16 +1,13 @@
 
 import {
-	Vector3,
-	BufferGeometry, Float32BufferAttribute,
 	LineBasicMaterial,
 	LineSegments,
-	EventDispatcher, Mesh, MeshBasicMaterial, Face3, DoubleSide
+	EventDispatcher,
 } from '../../../../three.js/src/Three';
 
 import { replaceExtension } from '../core/lib';
 import { getEnvironmentValue } from '../core/constants';
 import { CaveLoader } from '../loaders/CaveLoader';
-import { WaterMaterial } from '../materials/WaterMaterial';
 
 function Routes ( surveyName, callback ) {
 
@@ -27,6 +24,8 @@ function Routes ( surveyName, callback ) {
 	this.currentRoute = new Set();
 	this.currentRouteName;
 	this.adjacentSegments = new Set();
+
+	this.traces = [];
 
 	var prefix = getEnvironmentValue( "surveyDirectory", "" );
 
@@ -52,6 +51,8 @@ function Routes ( surveyName, callback ) {
 
 	function _routesLoaded( routes ) {
 
+		var i;
+
 		if ( ! routes ) {
 
 			callback( [] );
@@ -74,7 +75,7 @@ function Routes ( surveyName, callback ) {
 
 		var route;
 
-		for ( var i = 0; i < routes.length; i++ ) {
+		for ( i = 0; i < routes.length; i++ ) {
 
 			route = routes[ i ]
 
@@ -82,6 +83,8 @@ function Routes ( surveyName, callback ) {
 			self.routes.set( route.name, route.segments );
 
 		}
+
+		if ( routesJSON.traces !== undefined ) self.traces = routesJSON.traces;
 
 		callback( self.routeNames );
 
@@ -112,11 +115,11 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 	var v1, v2;
 
-	var l = legs.length;
+	var i, l = legs.length;
 
 	var segmentInfo;
 
-	for ( var i = 0; i < l; i = i + 2 ) {
+	for ( i = 0; i < l; i = i + 2 ) {
 
 		v1 = legs[ i ];
 		v2 = legs[ i + 1 ];
@@ -190,54 +193,6 @@ Routes.prototype.createWireframe = function () {
 
 }
 
-Routes.prototype.createTest = function () {
-
-	var geometry = new BufferGeometry();
-	var vertices = [];
-	var ends = [];
-	var segmentCount = 0;
-
-	this.segmentMap.forEach( _addSegment );
-
-	var positions = new Float32BufferAttribute( vertices.length * 3, 3 );
-	var sinks = new Float32BufferAttribute( ends.length * 3, 3 );
-
-	geometry.addAttribute( 'position', positions.copyVector3sArray( vertices ) );
-	geometry.addAttribute( 'sinks', sinks.copyVector3sArray( ends ) );
-
-	var mesh = new Mesh( geometry , new WaterMaterial( new Vector3() ) );
-
-	mesh.onBeforeRender = beforeRender;
-
-	return mesh;
-
-	function beforeRender (renderer, scene, camera, geometry, material, group ) {
-
-		material.uniforms.offset.value += 0.1;
-
-	}
-
-	function _addSegment( value, key ) {
-
-		var end = new Vector3().copy( value.endStation.p );
-
-		var v = new Vector3().subVectors( value.endStation.p, value.startStation.p ).cross( new Vector3( 0, 0, 1 ) ).setLength( 2 );
-
-		var v1 = new Vector3().add( value.startStation.p ).add( v );
-		var v2 = new Vector3().add( value.startStation.p ).sub( v );
-
-		vertices.push( v1 );
-		vertices.push( v2 );
-		vertices.push( end );
-
-		ends.push ( end );
-		ends.push ( end );
-		ends.push ( end );
-
-	}
-
-}
-
 Routes.prototype.loadRoute = function ( routeName ) {
 
 	var self = this;
@@ -284,6 +239,12 @@ Routes.prototype.loadRoute = function ( routeName ) {
 Routes.prototype.getCurrentRoute = function () {
 
 	return this.currentRoute;
+
+}
+
+Routes.prototype.getDyeTraces = function () {
+
+	return this.traces;
 
 }
 

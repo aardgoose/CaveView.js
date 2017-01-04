@@ -97,6 +97,15 @@ Tree.prototype.findById = function ( id ) {
 
 Tree.prototype.getByPath = function ( path ) {
 
+	var pathArray = path.split( '.' );
+	var node = this.getByPathArray( pathArray );
+
+	return pathArray.length === 0 ? node : undefined;
+
+}
+
+Tree.prototype.getByPathArray = function ( path ) {
+
 	var node  = this;
 	var search = true;
 
@@ -133,7 +142,7 @@ Tree.prototype.addPath = function ( path, properties ) {
 
 	// find part of path that exists already
 
-	node = this.getByPath( path );
+	node = this.getByPathArray( path );
 
 	if ( path.length === 0 ) return node.id;
 
@@ -186,7 +195,7 @@ Tree.prototype.getSubtreeIds = function ( id, idSet ) {
 
 Tree.prototype.getIdByPath = function ( path ) {
 
-	var node = this.getByPath ( path );
+	var node = this.getByPathArray( path );
 
 	if ( path.length === 0 ) {
 

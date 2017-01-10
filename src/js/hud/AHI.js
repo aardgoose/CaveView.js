@@ -4,23 +4,20 @@ import { HudObject } from './HudObject';
 
 import {
 	Vector3, Color, Math as _Math,
-	Geometry, RingBufferGeometry, SphereBufferGeometry, BufferAttribute, CylinderBufferGeometry,
-	LineBasicMaterial, MeshBasicMaterial, MeshPhongMaterial,
-	FrontSide, VertexColors,
+	Geometry, SphereBufferGeometry, BufferAttribute, CylinderBufferGeometry,
+	LineBasicMaterial, MeshPhongMaterial,
+	VertexColors,
 	Mesh, LineSegments, Group
 } from '../../../../three.js/src/Three'; 
 
 function AHI ( container ) {
-
-	var width  = container.clientWidth;
-	var height = container.clientHeight;
 
 	var stdWidth  = HudObject.stdWidth;
 	var stdMargin = HudObject.stdMargin;
 
 	Group.call( this );
 
-	this.name = "CV.AHI";
+	this.name = 'CV.AHI';
 	this.domObjects = [];
 
 	this.lastPitch = 0;
@@ -44,7 +41,9 @@ function AHI ( container ) {
 	var c1 = new Color( 0x106f8d );
 	var c2 = new Color( 0x802100 );
 
-	for ( var i = 0; i < sv; i++ ) {
+	var i;
+
+	for ( i = 0; i < sv; i++ ) {
 
 		if ( i < sv/2 )
 			colours.push(  c1 );
@@ -65,7 +64,7 @@ function AHI ( container ) {
 
 	var xAxis = new Vector3( 1, 0, 0 );
 
-	for ( var i = 0; i < 12; i++ ) {
+	for ( i = 0; i < 12; i++ ) {
 
 		var mn1 = m1.clone();
 		var mn2 = m2.clone();
@@ -106,10 +105,10 @@ function AHI ( container ) {
 	this.translateX( -3 * offset );
 	this.translateY( offset );
 
-	var panel = document.createElement( "div" );
+	var panel = document.createElement( 'div' );
 
-	panel.classList.add( "cv-ahi" );
-	panel.textContent = "";
+	panel.classList.add( 'cv-ahi' );
+	panel.textContent = '';
 
 	container.appendChild( panel );
 
@@ -118,7 +117,7 @@ function AHI ( container ) {
 
 	this.domObjects.push( panel );
 
-	this.addEventListener( "removed", this.removeDomObjects );
+	this.addEventListener( 'removed', this.removeDomObjects );
 
 	return this;
 
@@ -146,9 +145,9 @@ AHI.prototype.set = function () {
 		this.globe.rotateOnAxis( xAxis, pitch - this.lastPitch );
 		this.lastPitch = pitch;
 
-		this.txt.textContent = Math.round( _Math.radToDeg( pitch ) )  + "\u00B0";
+		this.txt.textContent = Math.round( _Math.radToDeg( pitch ) )  + '\u00B0';
 
-	}
+	};
 
 } ();
 

@@ -13,7 +13,7 @@ function Marker ( survey, entrance ) {
 
 	LOD.call( this );
 
-	this.type = "CV.Marker";
+	this.type = 'CV.Marker';
 
 	var text = entrance.label;
 
@@ -41,7 +41,7 @@ function Marker ( survey, entrance ) {
 
 	this.position.copy( entrance.position );
 
-	this.addEventListener( "removed", this.onRemove );
+	this.addEventListener( 'removed', this.onRemove );
 
 	return this;
 
@@ -52,7 +52,7 @@ Marker.prototype = Object.create( LOD.prototype );
 
 Marker.prototype.constructor = Marker;
 
-Marker.prototype.onRemove = function( event ) {
+Marker.prototype.onRemove = function( /* event */ ) {
 
 	var levels = this.levels;
 
@@ -62,7 +62,7 @@ Marker.prototype.onRemove = function( event ) {
 
 	}
 
-}
+};
 
 Marker.prototype.raycast = function ( raycaster, intersects ) {
 

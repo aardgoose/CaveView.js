@@ -42,10 +42,10 @@ function DepthMaterial ( type, limits, texture ) {
 		fragmentShader: Shaders.depthFragmentShader
 	} );
 
-	this.type = "CV.DepthMaterial";
+	this.type = 'CV.DepthMaterial';
 	this.depthMap = texture;
 
-	this.addEventListener( "dispose", _onDispose );
+	this.addEventListener( 'dispose', _onDispose );
 
 	return this;
 

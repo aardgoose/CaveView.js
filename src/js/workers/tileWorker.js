@@ -36,22 +36,23 @@ function mapLoaded ( data, x, y ) {
 	var xDivisions = divisions - clip.left - clip.right;
 	var yDivisions = divisions - clip.top - clip.bottom;
 
+	var i, j, l, l1, l2;
+
 	// clip excess left and right columns from height map
 
 	if ( clip.left || clip.right ) {
 
 		var columns = tileSet.TILESIZE;
-		var rows;
 		var rowStart;
 
 		terrainData = [];
 
-		for ( var i = 0, l1 = yDivisions + 1; i < l1; i++ ) {
+		for ( i = 0, l1 = yDivisions + 1; i < l1; i++ ) {
 
 			// per row of data
 			rowStart = i * columns + clip.left;
 
-			for ( var j = 0, l2 = xDivisions + 1; j < l2; j++ ) {
+			for ( j = 0, l2 = xDivisions + 1; j < l2; j++ ) {
 
 				terrainData.push( terrainDataTyped[ rowStart + j ] );
 
@@ -83,17 +84,18 @@ function mapLoaded ( data, x, y ) {
 
 	var vertices = plane.vertices;
 	var faces    = plane.faces;
-	var colors   = plane.colors;
+//	var colors   = plane.colors;
 
-	var l1 = terrainData.length;
-	var l2 = vertices.length;
 	var scale = 1;
 
-	var l = Math.min( l1, l2 ); // FIXME
+	l1 = terrainData.length;
+	l2 = vertices.length;
+
+	l = Math.min( l1, l2 ); // FIXME
 
 	scale = tileSet.SCALE;
 
-	for ( var i = 0; i < l; i++ ) {
+	for ( i = 0; i < l; i++ ) {
 
 		vertices[i].setZ( terrainData[ i ] / scale );
 
@@ -105,13 +107,13 @@ function mapLoaded ( data, x, y ) {
 	var colourCache = ColourCache.terrain;
 	var colourRange = colourCache.length - 1;
 
-	for ( var i = 0, l = faces.length; i < l; i++ ) {
+	for ( i = 0, l = faces.length; i < l; i++ ) {
 
 		var face = faces[ i ];
 
 		// compute vertex colour per vertex normal
 
-		for ( var j = 0; j < 3; j++  ) {
+		for ( j = 0; j < 3; j++  ) {
 
 			var dotProduct = face.vertexNormals[ j ].dot( upAxis );
 			var colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
@@ -147,7 +149,7 @@ function mapLoaded ( data, x, y ) {
 			z: bb.max.z
 		}
 
-	}
+	};
 
 	var json = bufferGeometry.toJSON();
 
@@ -168,13 +170,13 @@ function mapLoaded ( data, x, y ) {
 
 	}
 
-	postMessage( { status: "ok", json: json, x: x, y: y, boundingBox: boundingBox }, transferable );
+	postMessage( { status: 'ok', json: json, x: x, y: y, boundingBox: boundingBox }, transferable );
 
 }
 
 function mapError () {
 
-	postMessage( { status: "nomap" } );
+	postMessage( { status: 'nomap' } );
 
 }
 

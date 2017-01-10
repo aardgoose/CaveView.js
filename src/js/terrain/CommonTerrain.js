@@ -12,9 +12,9 @@ function CommonTerrain () {
 
 	Group.call( this );
 
-	this.addEventListener( "removed", function removeTerrain() { this.removed() } );
+	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
 
-};
+}
 
 CommonTerrain.prototype = Object.create( Group.prototype );
 
@@ -29,7 +29,7 @@ CommonTerrain.prototype.getOpacity = function () {
 
 	return this.opacity;
 
-}
+};
 
 CommonTerrain.prototype.setShadingMode = function ( mode, imageLoadedCallback ) {
 
@@ -69,7 +69,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, imageLoadedCallback ) 
 
 	default:
 
-		console.log( "unknown mode", mode );
+		console.log( 'unknown mode', mode );
 		return false;
 
 	}
@@ -80,7 +80,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, imageLoadedCallback ) 
 
 	return true;
 
-}
+};
 
 export { CommonTerrain };
 

@@ -17,7 +17,7 @@ function Tree( name, id, root, parent ) { // root parameter only used internally
 
 	}
 
-	this.name     = name || "";
+	this.name     = name || '';
 	this.children = [];
 
 }
@@ -36,7 +36,7 @@ Tree.prototype.traverse = function ( func ) {
 
 	}
 
-}
+};
 
 Tree.prototype.forEachChild = function ( func, recurse ) {
 
@@ -52,7 +52,7 @@ Tree.prototype.forEachChild = function ( func, recurse ) {
 
 	}
 
-}
+};
 
 Tree.prototype.addById = function ( name, id, parentId, properties ) {
 
@@ -75,7 +75,7 @@ Tree.prototype.addById = function ( name, id, parentId, properties ) {
 
 	return null;
 
-}
+};
 
 Tree.prototype.findById = function ( id ) {
 
@@ -93,7 +93,7 @@ Tree.prototype.findById = function ( id ) {
 
 	return undefined;
 
-}
+};
 
 Tree.prototype.getByPath = function ( path ) {
 
@@ -102,7 +102,7 @@ Tree.prototype.getByPath = function ( path ) {
 
 	return pathArray.length === 0 ? node : undefined;
 
-}
+};
 
 Tree.prototype.getByPathArray = function ( path ) {
 
@@ -133,7 +133,7 @@ Tree.prototype.getByPathArray = function ( path ) {
 
 	return node;
 
-}
+};
 
 Tree.prototype.addPath = function ( path, properties ) {
 
@@ -161,7 +161,7 @@ Tree.prototype.addPath = function ( path, properties ) {
 
 	return node.id;
 
-}
+};
 
 Tree.prototype.getPath = function () {
 
@@ -175,9 +175,9 @@ Tree.prototype.getPath = function () {
 
 	} while ( node !== null );
 
-	return path.reverse().join( "." );
+	return path.reverse().join( '.' );
 
-}
+};
 
 Tree.prototype.getSubtreeIds = function ( id, idSet ) {
 
@@ -191,7 +191,7 @@ Tree.prototype.getSubtreeIds = function ( id, idSet ) {
 
 	}
 
-}
+};
 
 Tree.prototype.getIdByPath = function ( path ) {
 
@@ -207,7 +207,7 @@ Tree.prototype.getIdByPath = function ( path ) {
 
 	}
 
-}
+};
 
 export { Tree };
 

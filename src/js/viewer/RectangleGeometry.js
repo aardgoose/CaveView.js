@@ -8,7 +8,7 @@ function RectangleGeometry ( box, z ) {
 
 	Geometry.call( this );
 
-	this.type = "CV.RectangleGeometry";
+	this.type = 'CV.RectangleGeometry';
 
 	var min = box.min;
 	var max = box.max;
@@ -19,7 +19,7 @@ function RectangleGeometry ( box, z ) {
 	this.vertices.push( new Vector3( max.x, min.y, z ) );
 	this.vertices.push( new Vector3( min.x, min.y, z ) );
 
-};
+}
 
 RectangleGeometry.prototype = Object.create( Geometry.prototype );
 

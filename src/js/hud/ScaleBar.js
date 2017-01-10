@@ -15,7 +15,7 @@ function ScaleBar ( container, hScale, rightMargin ) {
 
 	Group.call( this );
 
-	this.name = "CV.ScaleBar";
+	this.name = 'CV.ScaleBar';
 	this.domObjects = [];
 
 	this.hScale        = hScale;
@@ -25,17 +25,17 @@ function ScaleBar ( container, hScale, rightMargin ) {
 	this.position.set( -container.clientWidth / 2 +  5,  -container.clientHeight / 2 + leftMargin, 0 );
 	this.scaleMax = container.clientWidth - ( leftMargin + rightMargin );
 
-	var legend = document.createElement( "div" );
+	var legend = document.createElement( 'div' );
 
-	legend.classList.add( "scale-legend" );
-	legend.textContent = "";
+	legend.classList.add( 'scale-legend' );
+	legend.textContent = '';
 
 	container.appendChild( legend );
 
 	this.legend = legend;
 	this.domObjects.push( legend );
 
-	this.addEventListener( "removed", this.removeDomObjects );
+	this.addEventListener( 'removed', this.removeDomObjects );
 
 	return this;
 
@@ -112,8 +112,8 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	var legend = this.legend;
 
-	legend.style.display = "block";
-	legend.style.left = ( scale * scaleBars[ length ].topRight - legend.clientWidth ) + "px";
+	legend.style.display = 'block';
+	legend.style.left = ( scale * scaleBars[ length ].topRight - legend.clientWidth ) + 'px';
 
 	legend.textContent = legendText;
 
@@ -168,7 +168,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	}
 
-}
+};
 
 export { ScaleBar };
 

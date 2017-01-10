@@ -1,5 +1,5 @@
 import {
-	Vector3, Color,
+	Color,
 	BufferGeometry, Geometry,
 	VertexColors,
 	Points,
@@ -8,16 +8,13 @@ import {
 
 import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
-import {
-	NORMAL, SPLAY, SURFACE,
-	FEATURE_STATIONS, STATION_NORMAL, STATION_ENTRANCE,
-} from '../core/constants';
+import { FEATURE_STATIONS, STATION_ENTRANCE } from '../core/constants';
 
 function Stations () {
 
 	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial( { size: 1.0, opacity: 0.5, transparent: true,  vertexColors: VertexColors  } ) );
 
-	this.type = "CV.Stations";
+	this.type = 'CV.Stations';
 	this.map = new Map();
 	this.stationCount = 0;
 
@@ -48,27 +45,27 @@ Stations.prototype.addStation = function ( node ) {
 	geometry.colors.push( this.baseColor );
 	geometry.pointSizes.push( point.type === STATION_ENTRANCE ? 8.0 : 2.0 ); 
 
-	this.map.set( point.x.toString() + ":" + point.y.toString() + ":" + point.z.toString(), node );
+	this.map.set( point.x.toString() + ':' + point.y.toString() + ':' + point.z.toString(), node );
 	this.stations.push( node );
 
 	node.hitCount = 0;
 	node.stationVertexIndex = this.stationCount++;
 	node.linkedSegments = [];
 
-}
+};
 
 Stations.prototype.getStation = function ( vertex ) {
 
-		return this.map.get( vertex.x.toString() + ":" + vertex.y.toString() + ":" + vertex.z.toString() );
+	return this.map.get( vertex.x.toString() + ':' + vertex.y.toString() + ':' + vertex.z.toString() );
 
-}
+};
 
 
 Stations.prototype.getStationByIndex = function ( index ) {
 
 	return this.stations[ index ];
 
-}
+};
 
 Stations.prototype.updateStation = function ( vertex ) {
 
@@ -88,7 +85,7 @@ Stations.prototype.updateStation = function ( vertex ) {
 
 	}
 
-}
+};
 
 Stations.prototype.finalise = function () {
 
@@ -98,20 +95,20 @@ Stations.prototype.finalise = function () {
 	var positions = new Float32BufferAttribute( geometry.vertices.length * 3, 3 );
 	var colors = new Float32BufferAttribute( geometry.colors.length * 3, 3 );
 
-	bufferGeometry.addAttribute( "pSize", new Float32BufferAttribute( geometry.pointSizes, 1 ) );
+	bufferGeometry.addAttribute( 'pSize', new Float32BufferAttribute( geometry.pointSizes, 1 ) );
 	bufferGeometry.addAttribute( 'position', positions.copyVector3sArray( geometry.vertices ) );
 	bufferGeometry.addAttribute( 'color', colors.copyColorsArray( geometry.colors ) );
 
 	this.tmpGeometry = null;
 
-}
+};
 
 Stations.prototype.setScale = function ( scale ) {
 
 	this.material.uniforms.pScale.value = scale;
 	this.material.needsUpdate = true;
 
-}
+};
 
 
 export { Stations };

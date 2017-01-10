@@ -2,11 +2,11 @@
 import {
 	LineBasicMaterial,
 	LineSegments,
+	Geometry,
 	EventDispatcher,
 } from '../../../../three.js/src/Three';
 
 import { replaceExtension } from '../core/lib';
-import { getEnvironmentValue } from '../core/constants';
 import { CaveLoader } from '../loaders/CaveLoader';
 
 function Routes ( surveyName, callback ) {
@@ -27,46 +27,42 @@ function Routes ( surveyName, callback ) {
 
 	this.traces = [];
 
-	var prefix = getEnvironmentValue( "surveyDirectory", "" );
-
 	var self = this;
-	var name = replaceExtension( surveyName, "json" );
+	var name = replaceExtension( surveyName, 'json' );
 
-	var segmentMap = this.segmentMap;
-
-	console.log( "loading route file: ", name );
+	console.log( 'loading route file: ', name );
 
 	var loader = new CaveLoader( _routesLoaded );
 
 	loader.loadURL( name );
 
-	Object.defineProperty( this, "setRoute", {
-		set: function ( x ) { this.loadRoute( x ) },
-		get: function () { return this.currentRouteName }
+	Object.defineProperty( this, 'setRoute', {
+		set: function ( x ) { this.loadRoute( x ); },
+		get: function () { return this.currentRouteName; }
 	} );
 
-	Object.defineProperty( this, "download", {
-		get: function () { return this.toDownload() }
+	Object.defineProperty( this, 'download', {
+		get: function () { return this.toDownload(); }
 	} );
 
-	function _routesLoaded( routes ) {
+	function _routesLoaded( routesData ) {
 
 		var i;
 
-		if ( ! routes ) {
+		if ( ! routesData ) {
 
 			callback( [] );
 			return;
 
 		}
 
-		var routesJSON = routes.getRoutes();
+		var routesJSON = routesData.getRoutes();
 
 		var routes = routesJSON.routes;
 
 		if ( ! routes ) {
 
-			alert( "invalid route file - no routes" );
+			alert( 'invalid route file - no routes' );
 
 			callback( [] );
 			return;
@@ -77,7 +73,7 @@ function Routes ( surveyName, callback ) {
 
 		for ( i = 0; i < routes.length; i++ ) {
 
-			route = routes[ i ]
+			route = routes[ i ];
 
 			self.routeNames.push( route.name );
 			self.routes.set( route.name, route.segments );
@@ -86,9 +82,9 @@ function Routes ( surveyName, callback ) {
 
 		if ( routesJSON.traces !== undefined ) self.traces = routesJSON.traces;
 
-		callback( self.routeNames );
+		callback();
 
-		self.dispatchEvent( { type: "changed", name: "download" } );
+		self.dispatchEvent( { type: 'changed', name: 'download' } );
 
 	}
 
@@ -134,7 +130,7 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 				segment: segment,
 				startStation: station,
 				endStation: null
-			}
+			};
 
 			station.linkedSegments.push( segment );
 
@@ -149,7 +145,7 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 			// we have found a junction or a passage end
 			segmentInfo.endStation = station;
 
-			segmentMap.set( segmentInfo.startStation.id + ":" + station.id, segmentInfo );
+			segmentMap.set( segmentInfo.startStation.id + ':' + station.id, segmentInfo );
 			segmentToInfo[ segment ] = segmentInfo;
 
 			station.linkedSegments.push( segment );
@@ -167,13 +163,13 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 		segmentInfo.endVertex = v2;
 		segmentInfo.endStation = station;
 
-		segmentMap.set( segmentInfo.startStation.id + ":" + station.id, segmentInfo );
+		segmentMap.set( segmentInfo.startStation.id + ':' + station.id, segmentInfo );
 
 		station.linkedSegments.push( segment );
 
 	}
 
-}
+};
 
 Routes.prototype.createWireframe = function () {
 
@@ -184,14 +180,14 @@ Routes.prototype.createWireframe = function () {
 
 	return new LineSegments( geometry , new LineBasicMaterial( { color: 0x00ff00 } ) );
 
-	function _addSegment( value, key ) {
+	function _addSegment( value /*, key */ ) {
 
 		vertices.push( value.startStation.p );
 		vertices.push( value.endStation.p );
 
 	}
 
-}
+};
 
 Routes.prototype.loadRoute = function ( routeName ) {
 
@@ -200,7 +196,6 @@ Routes.prototype.loadRoute = function ( routeName ) {
 	var surveyTree = this.surveyTree;
 	var currentRoute = this.currentRoute;
 	var segmentMap = this.segmentMap;
-	var routes = this.routes;
 
 	var map;
 	var segment;
@@ -209,7 +204,7 @@ Routes.prototype.loadRoute = function ( routeName ) {
 
 	if ( ! routeSegments ) {
 
-		alert( "route " + routeName + " does not exist" );
+		alert( 'route ' + routeName + ' does not exist' );
 		return false;
 
 	}
@@ -220,7 +215,7 @@ Routes.prototype.loadRoute = function ( routeName ) {
 
 		segment = routeSegments[ i ];
 
-		map = segmentMap.get( surveyTree.getIdByPath( segment.start.split( "." ) ) + ":" + surveyTree.getIdByPath( segment.end.split( "." ) ) );
+		map = segmentMap.get( surveyTree.getIdByPath( segment.start.split( '.' ) ) + ':' + surveyTree.getIdByPath( segment.end.split( '.' ) ) );
 
 		if ( map !== undefined ) currentRoute.add( map.segment );
 
@@ -228,34 +223,34 @@ Routes.prototype.loadRoute = function ( routeName ) {
 
 	this.currentRouteName = routeName;
 
-	console.log(" route ", routeName, " loaded." );
+	console.log(' route ', routeName, ' loaded.' );
 
-	self.dispatchEvent( { type: "changed", name: "" } );
+	self.dispatchEvent( { type: 'changed', name: '' } );
 
 	return true;
 
-}
+};
 
 Routes.prototype.getCurrentRoute = function () {
 
 	return this.currentRoute;
 
-}
+};
 
 Routes.prototype.getDyeTraces = function () {
 
 	return this.traces;
 
-}
+};
 
 Routes.prototype.toDownload = function () {
 
 	// dump dump of json top window for cut and paste capture
 
 	var routesJSON = {
-		name: "test",
+		name: 'test',
 		routes: []
-	}
+	};
 
 	this.routes.forEach( _addRoutes );
 
@@ -267,7 +262,7 @@ Routes.prototype.toDownload = function () {
 
 	}
 
-}
+};
 
 Routes.prototype.saveCurrent = function () {
 
@@ -278,7 +273,7 @@ Routes.prototype.saveCurrent = function () {
 
 	segmentMap.forEach( _addRoute );
 
-	function _addRoute( value, key ) {
+	function _addRoute( value /*, key */ ) {
 
 		if ( route.has( value.segment ) ) {
 
@@ -291,13 +286,13 @@ Routes.prototype.saveCurrent = function () {
 
 	}
 
-}
+};
 
 Routes.prototype.getRouteNames = function() {
 
 	return this.routeNames;
 
-}
+};
 
 Routes.prototype.toggleSegment = function ( index ) {
 
@@ -315,7 +310,7 @@ Routes.prototype.toggleSegment = function ( index ) {
 
 		route.add( segment );
 
-		// handle adjacent segments to the latest segment toggled "on"
+		// handle adjacent segments to the latest segment toggled 'on'
 
 		var segmentInfo = this.segmentToInfo[ segment ];
 
@@ -336,19 +331,19 @@ Routes.prototype.toggleSegment = function ( index ) {
 
 	}
 
-}
+};
 
 Routes.prototype.inCurrentRoute = function ( index ) {
 
 	return this.currentRoute.has( this.segments[ index / 2 ] );
 
-}
+};
 
 Routes.prototype.adjacentToRoute = function ( index ) {
 
 	return this.adjacentSegments.has( this.segments[ index / 2 ] );
 
-}
+};
 
 export { Routes };
 

@@ -23,7 +23,7 @@ Popup.prototype.display = function ( container, x, y, camera, p ) {
 	container.addEventListener( 'mouseup', _mouseUp );
 	container.addEventListener( 'mousemove', _mouseMove );
 
-	function _mouseMove ( event ) {
+	function _mouseMove ( /* event */ ) {
 
 		camera.updateMatrixWorld();
 
@@ -48,7 +48,7 @@ Popup.prototype.display = function ( container, x, y, camera, p ) {
 
 	}
 
-	function _mouseUp ( event ) {
+	function _mouseUp ( /* event */ ) {
 
 		container.removeChild( div );
 
@@ -57,7 +57,7 @@ Popup.prototype.display = function ( container, x, y, camera, p ) {
 
 	}
 
-}
+};
 
 Popup.prototype.addLine = function ( line ) {
 
@@ -69,6 +69,6 @@ Popup.prototype.addLine = function ( line ) {
 
 	return this;
 
-}
+};
 
-export { Popup }
+export { Popup };

@@ -8,15 +8,15 @@ export var TileSet = {
 	W: 400000,
 
 	TILESIZE: 256,
-	BASEDIR: "SK/heightmaps/",
-	OVERLAYDIR: "SK/overlays/",
-	OVERLAYS: [ "OS", "BGS" ],
+	BASEDIR: 'SK/heightmaps/',
+	OVERLAYDIR: 'SK/overlays/',
+	OVERLAYS: [ 'OS', 'BGS' ],
 	OVERLAY_RESOLUTION: 32,
-	PREFIX: "SK",
+	PREFIX: 'SK',
 	RESOLUTION_MIN: 4,
 	RESOLUTION_MAX: 32,
 	SCALE: 64
 
-}
+};
 
 // EOF

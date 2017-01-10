@@ -6,7 +6,7 @@ import { MATERIAL_LINE } from '../core/constants';
 import {
 	Vector3, Matrix4,
 	PlaneBufferGeometry,
-	NoColors, FrontSide, Mesh
+	Mesh
 } from '../../../../three.js/src/Three';
 
 function LinearScale ( container, viewState ) {
@@ -17,7 +17,7 @@ function LinearScale ( container, viewState ) {
 	var stdWidth  = HudObject.stdWidth;
 	var stdMargin = HudObject.stdMargin;
 
-	this.name = "CV.LinearScale";
+	this.name = 'CV.LinearScale';
 	this.domObjects = [];
 
 	var barOffset = 3 * ( stdWidth + stdMargin );
@@ -46,35 +46,35 @@ function LinearScale ( container, viewState ) {
 	this.rotateOnAxis( new Vector3( 1, 0, 0 ), -Math.PI / 2 );
 
 	// add labels
-	var maxdiv  = document.createElement( "div" );
-	var mindiv  = document.createElement( "div" );
+	var maxdiv  = document.createElement( 'div' );
+	var mindiv  = document.createElement( 'div' );
 
-	var caption = document.createElement( "div" );
+	var caption = document.createElement( 'div' );
 
-	maxdiv.classList.add( "linear-scale" );
-	mindiv.classList.add( "linear-scale" );
+	maxdiv.classList.add( 'linear-scale' );
+	mindiv.classList.add( 'linear-scale' );
 
-	caption.classList.add( "linear-scale-caption" );
+	caption.classList.add( 'linear-scale-caption' );
 
-	maxdiv.id = "max-div";
-	mindiv.id = "min-div";
+	maxdiv.id = 'max-div';
+	mindiv.id = 'min-div';
 
-	caption.id = "linear-caption";
+	caption.id = 'linear-caption';
 
-	maxdiv.style.top    = barHeight + "px";
-	mindiv.style.bottom = barOffset + "px";
+	maxdiv.style.top    = barHeight + 'px';
+	mindiv.style.bottom = barOffset + 'px';
 
-	caption.style.bottom = height - barHeight + "px";
+	caption.style.bottom = height - barHeight + 'px';
 
 	container.appendChild( maxdiv );
 	container.appendChild( mindiv );
 
 	container.appendChild( caption );
 
-	maxdiv.textContent = "---";
-	mindiv.textContent = "---";
+	maxdiv.textContent = '---';
+	mindiv.textContent = '---';
 
-	caption.textContent = "xxxx";
+	caption.textContent = 'xxxx';
 
 	this.maxDiv = maxdiv;
 	this.minDiv = mindiv;
@@ -86,7 +86,7 @@ function LinearScale ( container, viewState ) {
 
 	this.domObjects.push( caption );
 
-	this.addEventListener( "removed", this.removeDomObjects );
+	this.addEventListener( 'removed', this.removeDomObjects );
 
 	return this;
 
@@ -100,14 +100,14 @@ LinearScale.prototype.constructor = LinearScale;
 
 LinearScale.prototype.setRange = function ( min, max, caption ) {
 
-	this.maxDiv.textContent = Math.round( max ) + "m";
-	this.minDiv.textContent = Math.round( min ) + "m";
+	this.maxDiv.textContent = Math.round( max ) + 'm';
+	this.minDiv.textContent = Math.round( min ) + 'm';
 
-	this.caption.textContent = caption;;
+	this.caption.textContent = caption;
 
 	return this;
 
-}
+};
 
 LinearScale.prototype.setMaterial = function ( material ) {
 
@@ -115,7 +115,7 @@ LinearScale.prototype.setMaterial = function ( material ) {
 
 	return this;
 
-}
+};
 
 export { LinearScale };
 

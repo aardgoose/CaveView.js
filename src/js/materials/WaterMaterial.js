@@ -11,7 +11,7 @@ function WaterMaterial () {
 		vertexShader:    Shaders.waterVertexShader,
 		fragmentShader:  Shaders.waterFragmentShader,
 		depthWrite:      false,
-		type:            "CV.WaterMaterial",
+		type:            'CV.WaterMaterial',
 		side: DoubleSide
 	} );
 

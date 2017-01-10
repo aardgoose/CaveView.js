@@ -1,6 +1,6 @@
 
 
-function HudObject () {};
+function HudObject () {}
 
 HudObject.stdWidth  = 40;
 HudObject.stdMargin = 5;
@@ -19,7 +19,7 @@ HudObject.prototype.removeDomObjects = function () {
 
 	this.domObjects = [];
 
-}
+};
 
 HudObject.prototype.setVisibility = function ( visible ) {
 
@@ -27,7 +27,7 @@ HudObject.prototype.setVisibility = function ( visible ) {
 
 	this.visible = visible;
 
-	style = ( visible ? style = "block" : style = "none" );
+	style = ( visible ? style = 'block' : style = 'none' );
 
 	for ( var i = 0, l = this.domObjects.length; i < l; i++ ) {
 
@@ -35,7 +35,7 @@ HudObject.prototype.setVisibility = function ( visible ) {
 
 	}
 
-}
+};
 
 export { HudObject };
 

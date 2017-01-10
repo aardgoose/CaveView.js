@@ -19,7 +19,7 @@ import { Materials } from '../materials/Materials';
 import {
 	Scene, Group,
 	AmbientLight, DirectionalLight,
-	OrthographicCamera, PerspectiveCamera
+	OrthographicCamera
 } from '../../../../three.js/src/Three';
 
  
@@ -88,14 +88,14 @@ function init ( domId, viewRenderer ) {
 	attitudeGroup.add( ahi );
 	attitudeGroup.add( progressDial );
 
-	window.addEventListener( "resize", resize );
+	window.addEventListener( 'resize', resize );
 
-	viewState.addEventListener( "newCave", caveChanged );
-	viewState.addEventListener( "change", viewChanged );
+	viewState.addEventListener( 'newCave', caveChanged );
+	viewState.addEventListener( 'change', viewChanged );
 
 	controls = Viewer.getControls();
 
-	controls.addEventListener( "change", update );
+	controls.addEventListener( 'change', update );
 
 }
 
@@ -112,7 +112,7 @@ function setVisibility ( visible ) {
 	isVisible = visible;
 
 	// reset correct disposition of keys etc.
-	if ( visible ) viewChanged ( { type: "change", name: "shadingMode" } );
+	if ( visible ) viewChanged ( { type: 'change', name: 'shadingMode' } );
 
 }
 
@@ -205,7 +205,7 @@ function renderHUD () {
 
 }
 
-function caveChanged ( event ) {
+function caveChanged ( /* event */ ) {
 
 	if ( linearScale ) {
 
@@ -231,13 +231,13 @@ function caveChanged ( event ) {
 
 	}
 
-	viewChanged ( { type: "change", name: "shadingMode" } );
+	viewChanged ( { type: 'change', name: 'shadingMode' } );
 
 }
 
 function viewChanged ( event ) {
 
-	if ( event.name !== "shadingMode" || !isVisible ) return;
+	if ( event.name !== 'shadingMode' || !isVisible ) return;
 
 	switch ( viewState.shadingMode ) {
 
@@ -245,8 +245,8 @@ function viewChanged ( event ) {
 
 		if ( angleScale ) angleScale.setVisibility( false );
 
-		if ( linearScale ) linearScale.setRange( viewState.minHeight, viewState.maxHeight, "Height above Datum" ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
-		viewState.removeEventListener( "cursorChange",  cursorChanged );
+		if ( linearScale ) linearScale.setRange( viewState.minHeight, viewState.maxHeight, 'Height above Datum' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
+		viewState.removeEventListener( 'cursorChange',  cursorChanged );
 
 		break;
 
@@ -254,8 +254,8 @@ function viewChanged ( event ) {
 
 		if ( angleScale ) angleScale.setVisibility( false );
 
-		if ( linearScale ) linearScale.setRange( viewState.maxHeight - viewState.minHeight, 0, "Depth below surface" ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
-		viewState.removeEventListener( "cursorChange",  cursorChanged );
+		if ( linearScale ) linearScale.setRange( viewState.maxHeight - viewState.minHeight, 0, 'Depth below surface' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
+		viewState.removeEventListener( 'cursorChange',  cursorChanged );
 
 		break;
 
@@ -269,7 +269,7 @@ function viewChanged ( event ) {
 
 			cursorChanged();
 
-			viewState.addEventListener( "cursorChange",  cursorChanged );
+			viewState.addEventListener( 'cursorChange',  cursorChanged );
 
 		}
 
@@ -279,8 +279,8 @@ function viewChanged ( event ) {
 
 		if ( angleScale ) angleScale.setVisibility( false );
 
-		linearScale.setRange( viewState.minLegLength, viewState.maxLegLength, "Leg length" ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
-		viewState.removeEventListener( "cursorChange",  cursorChanged );
+		linearScale.setRange( viewState.minLegLength, viewState.maxLegLength, 'Leg length' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
+		viewState.removeEventListener( 'cursorChange',  cursorChanged );
 
 		break;
 
@@ -297,20 +297,20 @@ function viewChanged ( event ) {
 		}
 
 		angleScale.setVisibility( true );
-		viewState.removeEventListener( "cursorChange",  cursorChanged );
+		viewState.removeEventListener( 'cursorChange',  cursorChanged );
 
 		break;
 
-	case SHADING_SINGLE:
+	case SHADING_SINGLE: // eslint-disable-line no-fallthrough
 
-	case SHADING_SURVEY:
+	case SHADING_SURVEY: // eslint-disable-line no-fallthrough
 
 	case SHADING_PATH:
 
 		if ( angleScale ) angleScale.setVisibility( false );
 
 		linearScale.setVisibility( false );
-		viewState.removeEventListener( "cursorChange",  cursorChanged );
+		viewState.removeEventListener( 'cursorChange',  cursorChanged );
 
 		break;
 
@@ -320,10 +320,10 @@ function viewChanged ( event ) {
 
 }
 
-function cursorChanged ( event ) {
+function cursorChanged ( /* event */ ) {
 
 	var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
-	linearScale.setRange( viewState.minHeight, viewState.maxHeight, "Cursor:" + Math.round( cursorHeight ) );
+	linearScale.setRange( viewState.minHeight, viewState.maxHeight, 'Cursor:' + Math.round( cursorHeight ) );
 
 }
 

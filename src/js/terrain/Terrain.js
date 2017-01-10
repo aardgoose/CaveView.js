@@ -12,7 +12,7 @@ function Terrain () {
 
 	Group.call( this );
 
-	this.type     = "CV.Terrain";
+	this.type     = 'CV.Terrain';
 	this.tile = null;
 	this.overlay;
 
@@ -30,13 +30,13 @@ Terrain.prototype.isTiled = function () {
 
 	return false;
 
-}
+};
 
 Terrain.prototype.isLoaded = function () {
 
 	return true;
 
-}
+};
 
 Terrain.prototype.addTile = function ( plane, terrainData, bitmap ) {
 
@@ -49,13 +49,13 @@ Terrain.prototype.addTile = function ( plane, terrainData, bitmap ) {
 
 	return this;
 
-}
+};
 
 Terrain.prototype.getOverlays = function () {
 
 	if ( this.overlay ) {
 
-		return ["built in"];
+		return ['built in'];
 
 	} else {
 
@@ -63,13 +63,13 @@ Terrain.prototype.getOverlays = function () {
 
 	}
 
-}
+};
 
 Terrain.prototype.getOverlay = function () {
 
-	return "built in";
+	return 'built in';
 
-}
+};
 
 Terrain.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
 
@@ -86,26 +86,26 @@ Terrain.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
 
 	) );
 
-}
+};
 
 Terrain.prototype.removed = function () {
 
 	this.tile.removed();
 
-}
+};
 
 Terrain.prototype.setMaterial = function ( material ) {
 
 	this.tile.setMaterial( material );
 
-}
+};
 
 Terrain.prototype.setOpacity = function ( opacity ) {
 
 	this.tile.setOpacity( opacity );
 	this.opacity = opacity;
 
-}
+};
 
 export { Terrain };
 

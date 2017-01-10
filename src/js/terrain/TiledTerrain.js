@@ -6,16 +6,15 @@ import { WorkerPool } from '../workers/WorkerPool';
 import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants';
 
 import {
-	Vector2, Frustum, Box2, Matrix4,
-	Group
+	Vector2, Frustum, Box2, Matrix4
 } from '../../../../three.js/src/Three';
 
 function TiledTerrain ( limits3, onLoaded ) {
 
 	CommonTerrain.call( this );
 
-	this.name = "TiledTerrain";
-	this.type = "CV.TiledTerrain";
+	this.name = 'TiledTerrain';
+	this.type = 'CV.TiledTerrain';
 
 	this.limits = new Box2(
 
@@ -39,7 +38,7 @@ function TiledTerrain ( limits3, onLoaded ) {
 	this.currentLimits;
 	this.dying = false;
 
-	this.workerPool = new WorkerPool( "tileWorker.js" );
+	this.workerPool = new WorkerPool( 'tileWorker.js' );
 
 	if ( HUD !== undefined ) {
 
@@ -47,8 +46,8 @@ function TiledTerrain ( limits3, onLoaded ) {
 
 	}
 
-	 this.tileSet.BASEDIR = getEnvironmentValue( "terrainDirectory", "" ) + this.tileSet.BASEDIR;
-	 this.tileSet.OVERLAYDIR = getEnvironmentValue( "terrainDirectory", "" ) + this.tileSet.OVERLAYDIR;
+	this.tileSet.BASEDIR = getEnvironmentValue( 'terrainDirectory', '' ) + this.tileSet.BASEDIR;
+	this.tileSet.OVERLAYDIR = getEnvironmentValue( 'terrainDirectory', '' ) + this.tileSet.OVERLAYDIR;
 
 }
 
@@ -60,13 +59,13 @@ TiledTerrain.prototype.isTiled = function () {
 
 	return true;
 
-}
+};
 
 TiledTerrain.prototype.isLoaded = function () {
 
 	return this.terrainLoaded;
 
-}
+};
 
 TiledTerrain.prototype.hasCoverage = function () {
 
@@ -74,11 +73,11 @@ TiledTerrain.prototype.hasCoverage = function () {
 	var tileSet = this.tileSet;
 
 	return ( (limits.min.x >= tileSet.W && limits.min.x <= tileSet.E) || 
-	         (limits.max.x >= tileSet.W && limits.max.x <= tileSet.E) ) &&
-		   ( (limits.min.y >= tileSet.S && limits.min.y <= tileSet.N) ||
-		     (limits.max.y >= tileSet.S && limits.max.y <= tileSet.N));
+		(limits.max.x >= tileSet.W && limits.max.x <= tileSet.E) ) &&
+		( (limits.min.y >= tileSet.S && limits.min.y <= tileSet.N) ||
+		(limits.max.y >= tileSet.S && limits.max.y <= tileSet.N));
 
-}
+};
 
 TiledTerrain.prototype.getCoverage = function ( limits, resolution ) {
 
@@ -100,7 +99,7 @@ TiledTerrain.prototype.getCoverage = function ( limits, resolution ) {
 
 	return coverage;
 
-}
+};
 
 TiledTerrain.prototype.pickCoverage = function ( limits, maxResolution ) {
 
@@ -119,11 +118,11 @@ TiledTerrain.prototype.pickCoverage = function ( limits, maxResolution ) {
 
 	return coverage;
 
-}
+};
 
 TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
-	console.log("load ", resolutionIn, ": [ ", x, ",", y, "]" );
+	console.log('load ', resolutionIn, ': [ ', x, ',', y, ']' );
 
 	var self       = this;
 	var resolution = resolutionIn;
@@ -160,7 +159,7 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 		tileX: x,
 		tileY: y,
 		clip: clip
-	}
+	};
 
 	// get a web worker from the pool and create new geometry in it
 
@@ -190,7 +189,7 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 		}
 
-		if ( tileData.status !== "ok" ) ++self.errors;
+		if ( tileData.status !== 'ok' ) ++self.errors;
 
 		if ( self.errors ) {
 
@@ -247,7 +246,7 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 	}
 
-}
+};
 
 TiledTerrain.prototype.endLoad = function ( tile ) {
 
@@ -263,7 +262,6 @@ TiledTerrain.prototype.endLoad = function ( tile ) {
 
 			// display loaded tiles and add to tileTree
 
-
 			if ( replaceTileMesh ) {
 
 				parent = replaceTileMesh;
@@ -275,16 +273,16 @@ TiledTerrain.prototype.endLoad = function ( tile ) {
 			}
 
 			for ( var i = 0, l = loadedTiles.length; i < l; i++ ) {
-	
-				var tile = loadedTiles[ i ];
+
+				var loadedTile = loadedTiles[ i ];
 
 				if ( ! tile.parent ) parent.add( tile );
 
-				tile.replaced = false;
-				tile.evicted = false;
-				tile.isMesh = true;
+				loadedTile.replaced = false;
+				loadedTile.evicted = false;
+				loadedTile.isMesh = true;
 
-				Tile.liveTiles++;
+				loadedTile.liveTiles++;
 
 			}
 
@@ -297,12 +295,12 @@ TiledTerrain.prototype.endLoad = function ( tile ) {
 			// mark this tile so we don't continually try to reload
 			if ( this.resolution === this.initialResolution ) {
 
-				console.log("oops");
+				console.log('oops');
 				this.tileArea(  this.currentLimits, null, resolution * 2 );
 
 			}
 
-			if ( replaceTile ) replaceTile.canZoom = false;
+			if ( replaceTileMesh ) replaceTileMesh.canZoom = false;
 
 		}
 
@@ -315,13 +313,13 @@ TiledTerrain.prototype.endLoad = function ( tile ) {
 
 	}
 
-}
+};
 
 TiledTerrain.prototype.resurrectTile = function ( tile ) {
 
 	if ( tile.isMesh ) {
 
-		console.log( "resurrecting the undead!" );
+		console.log( 'resurrecting the undead!' );
 		return;
 
 	}
@@ -329,8 +327,7 @@ TiledTerrain.prototype.resurrectTile = function ( tile ) {
 	// reload tile (use exiting tile object to preserve canZoom).
 	this.loadTile( tile.x, tile.y, tile.resolution, tile );
 
-}
-
+};
 
 TiledTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
 
@@ -339,7 +336,7 @@ TiledTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
 
 	if ( tile && tile.resolution == resolution ) {
 
-		console.log("BOING!");
+		console.log('BOING!');
 		return;
 
 	}
@@ -365,20 +362,20 @@ TiledTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
 
 	if ( this.tilesLoading > 0 && this.progressDial !== undefined ) {
  
-		this.progressDial.start( "Loading "  + this.tilesLoading + " terrain tiles" );
+		this.progressDial.start( 'Loading '  + this.tilesLoading + ' terrain tiles' );
 		this.progressInc = 100 / ( this.tilesLoading * 2 );
 
 	}
 
 	return;
 
-}
+};
 
 TiledTerrain.prototype.getOverlays = function () {
 
 	return this.tileSet.OVERLAYS;
 
-}
+};
 
 TiledTerrain.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
 
@@ -398,7 +395,7 @@ TiledTerrain.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
 
 	}
 
-}
+};
 
 TiledTerrain.prototype.getOverlay = function () {
 
@@ -408,11 +405,11 @@ TiledTerrain.prototype.getOverlay = function () {
 
 	} else {
 
-		return "OS"; // FIXME
+		return 'OS'; // FIXME
 
 	}
 
-}
+};
 
 TiledTerrain.prototype.removed = function () {
 
@@ -432,7 +429,7 @@ TiledTerrain.prototype.removed = function () {
 
 	}
 
-}
+};
 
 TiledTerrain.prototype.setMaterial = function ( material ) {
 
@@ -459,7 +456,7 @@ TiledTerrain.prototype.setMaterial = function ( material ) {
 
 	}
 
-}
+};
 
 TiledTerrain.prototype.setOpacity = function ( opacity ) {
 
@@ -491,7 +488,7 @@ TiledTerrain.prototype.setOpacity = function ( opacity ) {
 
 	}
 
-}
+};
 
 TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
@@ -526,7 +523,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 	if ( resurrectCount !== 0 ) {
 
-		if ( this.progressDial ) this.progressDial.start( "Resurrecting tiles" );
+		if ( this.progressDial ) this.progressDial.start( 'Resurrecting tiles' );
 
 		for ( i = 0; i < resurrectCount; i++ ) {
 
@@ -590,7 +587,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 				if ( tile.parent.ResurrectionPending && this.isMesh ) {
 
 					// remove tile - will be replaced with parent
-					console.log(" should not get here");
+					console.log(' should not get here');
 
 				}
 
@@ -624,7 +621,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 				var pressure = Tile.liveTiles / EVICT_PRESSURE;
 				var tilePressure = tile.evictionCount * tile.resolution / initialResolution;
 
-				// console.log( "ir", initialResolution, "p: ", pressure, " tp: ", tilePressure );
+				// console.log( 'ir', initialResolution, 'p: ', pressure, ' tp: ', tilePressure );
 
 				if ( pressure > tilePressure ) tile.evict();
  
@@ -640,7 +637,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 	}
 
-}
+};
 
 export { TiledTerrain };
 

@@ -16,7 +16,7 @@ function DepthMapMaterial ( minHeight, maxHeight ) {
 		vertexShader:    Shaders.depthMapVertexShader,
 		fragmentShader:  Shaders.depthMapFragmentShader,
 		depthWrite:      false,
-		type:            "CV.DepthMapMaterial"
+		type:            'CV.DepthMapMaterial'
 
 	} );
 

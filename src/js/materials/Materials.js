@@ -11,7 +11,7 @@ var viewState;
 
 function getHeightMaterial ( type ) {
 
-	var name = "height" + type;
+	var name = 'height' + type;
 
 	if ( cache.has( name ) ) return cache.get( name );
 
@@ -19,11 +19,11 @@ function getHeightMaterial ( type ) {
 
 	cache.set( name, material );
 
-	viewState.addEventListener( "newCave",  _updateHeightMaterial );
+	viewState.addEventListener( 'newCave',  _updateHeightMaterial );
 
 	return material;
 
-	function _updateHeightMaterial ( event ) {
+	function _updateHeightMaterial ( /* event */ ) {
 
 		var minHeight = viewState.minHeight;
 		var maxHeight = viewState.maxHeight;
@@ -43,21 +43,21 @@ function getDepthMapMaterial () {
 
 function createDepthMaterial ( type, limits, texture ) {
 
-	var name = "depth" + type;
+	var name = 'depth' + type;
 
-	if ( cache.has( name ) ) console.warn( "createDepthMaterial - already exists" );
+	if ( cache.has( name ) ) console.warn( 'createDepthMaterial - already exists' );
 
 	var material = new DepthMaterial( type, limits, texture );
 
 	cache.set( name, material );
 
-	viewState.addEventListener( "newCave",  _updateDepthMaterial );
+	viewState.addEventListener( 'newCave',  _updateDepthMaterial );
 
 	return material;
 
-	function _updateDepthMaterial ( event ) {
+	function _updateDepthMaterial ( /* event */ ) {
 
-		viewState.removeEventListener( "newCave",  _updateDepthMaterial );
+		viewState.removeEventListener( 'newCave',  _updateDepthMaterial );
 
 		material.dispose();
 		cache.delete( name );
@@ -68,13 +68,13 @@ function createDepthMaterial ( type, limits, texture ) {
 
 function getDepthMaterial ( type ) {
 
-	 return cache.get( "depth" + type );	
+	return cache.get( 'depth' + type );	
 
 }
 
-function getCursorMaterial ( type, halfWidth ) {
+function getCursorMaterial ( type ) {
 
-	var name = "cursor" + type;
+	var name = 'cursor' + type;
 
 	if ( cache.has( name ) ) return cache.get( name );
 
@@ -84,11 +84,11 @@ function getCursorMaterial ( type, halfWidth ) {
 
 	cache.set( name, material );
 
-	viewState.addEventListener( "cursorChange",  _updateCursorMaterial );
+	viewState.addEventListener( 'cursorChange',  _updateCursorMaterial );
 
 	return material;
 
-	function _updateCursorMaterial ( event ) {
+	function _updateCursorMaterial ( /* event */ ) {
 
 		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
 
@@ -100,7 +100,7 @@ function getCursorMaterial ( type, halfWidth ) {
 
 function getLineMaterial () {
 
-	var name = "line";
+	var name = 'line';
 
 	if ( cache.has( name ) ) return cache.get(name);
 

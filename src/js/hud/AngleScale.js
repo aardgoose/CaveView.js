@@ -3,10 +3,10 @@ import { HudObject } from './HudObject';
 import { Colours } from '../core/Colours';
 import {
 	Vector3, Color,
-	Geometry, RingGeometry,
+	RingGeometry,
 	MeshBasicMaterial,
 	VertexColors, FrontSide,
-	Mesh, Group
+	Mesh
 } from '../../../../three.js/src/Three';
 
 function AngleScale ( container ) {
@@ -54,20 +54,20 @@ function AngleScale ( container ) {
 	this.translateY( -height / 2 + 3 * ( stdWidth + stdMargin ) + stdMargin + 30 );
 	this.translateX(  width / 2 - 40 - 5 );
 
-	this.name = "CV.AngleScale";
+	this.name = 'CV.AngleScale';
 	this.domObjects = [];
 
-	var legend = document.createElement( "div" );
+	var legend = document.createElement( 'div' );
 
-	legend.id = "angle-legend";
-	legend.textContent = "Inclination";
+	legend.id = 'angle-legend';
+	legend.textContent = 'Inclination';
 
 	container.appendChild( legend );
 
 	this.txt = legend;
 	this.domObjects.push( legend );
 
-	this.addEventListener( "removed", this.removeDomObjects );
+	this.addEventListener( 'removed', this.removeDomObjects );
 
 	return this;
 

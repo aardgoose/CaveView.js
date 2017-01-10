@@ -9,7 +9,7 @@ function CaveLoader ( callback, progress ) {
 
 	if ( !callback ) {
 
-		alert( "No callback specified" );
+		alert( 'No callback specified' );
 
 	}
 
@@ -22,46 +22,46 @@ CaveLoader.prototype.constructor = CaveLoader;
 
 CaveLoader.prototype.parseName = function ( name ) {
 
-	var rev = name.split( "." ).reverse();
+	var rev = name.split( '.' ).reverse();
 
 	this.extention = rev.shift();
-	this.basename  = rev.reverse().join( "." );
+	this.basename  = rev.reverse().join( '.' );
 
 	switch ( this.extention ) {
 
 	case '3d':
 
-		this.dataType = "arraybuffer";
+		this.dataType = 'arraybuffer';
 
 		break;
 
 	case 'lox':
 
-		this.dataType = "arraybuffer";
+		this.dataType = 'arraybuffer';
 
 		break;
 
 	case 'reg':
 	case 'json':
 
-		this.dataType = "json";
+		this.dataType = 'json';
 
 		break;
 
 	default:
 
-		console.log( "Cave: unknown response extension [", self.extention, "]" );
+		console.log( 'Cave: unknown response extension [', self.extention, ']' );
 
 	}
 
-}
+};
 
 CaveLoader.prototype.loadURL = function ( cave ) {
 
 	var self     = this;
 	var fileName = cave;
 	var xhr;
-	var prefix   = getEnvironmentValue( "surveyDirectory", "" );
+	var prefix   = getEnvironmentValue( 'surveyDirectory', '' );
 
 	// parse file name
 	this.parseName( cave );
@@ -71,17 +71,17 @@ CaveLoader.prototype.loadURL = function ( cave ) {
 
 	if ( !type ) {
 
-		alert( "Cave: unknown file extension [", self.extention, "]");
+		alert( 'Cave: unknown file extension [', self.extention, ']');
 		return false;
 
 	}
 
 	xhr = new XMLHttpRequest();
 
-	xhr.addEventListener( "load", _loaded );
-	xhr.addEventListener( "progress", _progress );
+	xhr.addEventListener( 'load', _loaded );
+	xhr.addEventListener( 'progress', _progress );
 
-	xhr.open( "GET", prefix + cave );
+	xhr.open( 'GET', prefix + cave );
 
 	if ( type ) {
 
@@ -93,7 +93,7 @@ CaveLoader.prototype.loadURL = function ( cave ) {
 
 	return true;
 
-	function _loaded ( request ) {
+	function _loaded ( /* request */ ) {
 
 		self.callHandler( fileName, xhr.response );
 
@@ -104,7 +104,7 @@ CaveLoader.prototype.loadURL = function ( cave ) {
 		if ( self.progress) self.progress( Math.round( 100 * e.loaded / e.total ) );
 
 	}
-}
+};
 
 CaveLoader.prototype.loadFile = function ( file ) {
 
@@ -117,25 +117,25 @@ CaveLoader.prototype.loadFile = function ( file ) {
 
 	if ( !type ) {
 
-		alert( "Cave: unknown file extension [", self.extention, "]");
+		alert( 'Cave: unknown file extension [', self.extention, ']');
 		return false;
 
 	}
 
 	var fLoader = new FileReader();
 
-	fLoader.addEventListener( "load",     _loaded );
-	fLoader.addEventListener( "progress", _progress );
+	fLoader.addEventListener( 'load',     _loaded );
+	fLoader.addEventListener( 'progress', _progress );
 
 	switch ( type ) {
 
-	case "arraybuffer":
+	case 'arraybuffer':
 
 		fLoader.readAsArrayBuffer( file );
 
 		break;
 
-	/*case "arraybuffer":
+	/*case 'arraybuffer':
 
 		fLoader.readAsArrayText( file );
 
@@ -143,7 +143,7 @@ CaveLoader.prototype.loadFile = function ( file ) {
 
 	default:
 
-		alert( "unknown file data type" );
+		alert( 'unknown file data type' );
 		return false;
 
 	}
@@ -161,7 +161,7 @@ CaveLoader.prototype.loadFile = function ( file ) {
 		if ( self.progress ) self.progress( Math.round( 100 * e.loaded / e.total ) );
 
 	}
-}
+};
 
 CaveLoader.prototype.callHandler = function( fileName, data ) {
 
@@ -202,14 +202,14 @@ CaveLoader.prototype.callHandler = function( fileName, data ) {
 
 	default:
 
-		alert( "Cave: unknown response extension [", this.extention, "]" );
+		alert( 'Cave: unknown response extension [', this.extention, ']' );
 		handler = false;
 
 	}
 
 	this.callback( handler );
 
-}
+};
 
 export { CaveLoader };
 

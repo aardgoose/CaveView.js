@@ -28,7 +28,6 @@ var isRoutesLoaded = false;
 
 var container;
 
-var heightCursorGui;
 var file;
 var progressBar;
 
@@ -36,41 +35,41 @@ var terrainControls = [];
 var terrainOverlay = null;
 
 var legShadingModes = {
-	"by height":          SHADING_HEIGHT,
-	"by leg length":      SHADING_LENGTH,
-	"by leg inclination": SHADING_INCLINATION,
-	"height cursor":      SHADING_CURSOR,
-	"fixed":              SHADING_SINGLE,
-	"survey":             SHADING_SURVEY,
-	"route":              SHADING_PATH
-}
+	'by height':          SHADING_HEIGHT,
+	'by leg length':      SHADING_LENGTH,
+	'by leg inclination': SHADING_INCLINATION,
+	'height cursor':      SHADING_CURSOR,
+	'fixed':              SHADING_SINGLE,
+	'survey':             SHADING_SURVEY,
+	'route':              SHADING_PATH
+};
 
 var surfaceShadingModes = {
-	"by height":          SHADING_HEIGHT,
-	"by leg inclination": SHADING_INCLINATION,
-	"height cursor":      SHADING_CURSOR,
-	"fixed":              SHADING_SINGLE
-}
+	'by height':          SHADING_HEIGHT,
+	'by leg inclination': SHADING_INCLINATION,
+	'height cursor':      SHADING_CURSOR,
+	'fixed':              SHADING_SINGLE
+};
 
 var terrainShadingModes = {
-	"Relief shading":     SHADING_SHADED,
-	"by height":          SHADING_HEIGHT,
-	"height cursor":      SHADING_CURSOR
-}
+	'Relief shading':     SHADING_SHADED,
+	'by height':          SHADING_HEIGHT,
+	'height cursor':      SHADING_CURSOR
+};
 
 var cameraViews = {
-	"<select viewpoint>": VIEW_NONE,
-	"Plan":               VIEW_PLAN,
-	"N Elevation":        VIEW_ELEVATION_N,
-	"S Elevation":        VIEW_ELEVATION_S,
-	"E Elevation":        VIEW_ELEVATION_E,
-	"W Elevation":        VIEW_ELEVATION_W
-}
+	'<select viewpoint>': VIEW_NONE,
+	'Plan':               VIEW_PLAN,
+	'N Elevation':        VIEW_ELEVATION_N,
+	'S Elevation':        VIEW_ELEVATION_S,
+	'E Elevation':        VIEW_ELEVATION_E,
+	'W Elevation':        VIEW_ELEVATION_W
+};
 
 var cameraModes = {
-	"Orthographic": CAMERA_ORTHOGRAPHIC,
-	"Perspective":  CAMERA_PERSPECTIVE
-}
+	'Orthographic': CAMERA_ORTHOGRAPHIC,
+	'Perspective':  CAMERA_PERSPECTIVE
+};
 
 function init ( domID ) { // public method
 
@@ -78,7 +77,7 @@ function init ( domID ) { // public method
 
 	if ( ! container ) {
 
-		alert( "No container DOM object [" + domID + "] available" );
+		alert( 'No container DOM object [' + domID + '] available' );
 		return;
 
 	}
@@ -90,21 +89,21 @@ function init ( domID ) { // public method
 	caveLoader = new CaveLoader( caveLoaded, progress );
 
 	// event handlers
-	document.addEventListener( "keydown", function ( event ) { keyDown( event ); } );
+	document.addEventListener( 'keydown', function ( event ) { keyDown( event ); } );
 
-	container.addEventListener( "drop", handleDrop );
-	container.addEventListener( "dragover", handleDragover );
+	container.addEventListener( 'drop', handleDrop );
+	container.addEventListener( 'dragover', handleDragover );
 
-	Object.defineProperty( guiState, "file", {
+	Object.defineProperty( guiState, 'file', {
 		get: function () { return file; },
 		set: function ( value ) { loadCave( value ); file = value; },
 	} );
 
 	viewState = Viewer.getState;
 
-	viewState.addEventListener( "change",  Page.handleChange );
-	viewState.addEventListener( "change",  handleChange );
-	viewState.addEventListener( "newCave", viewComplete );
+	viewState.addEventListener( 'change',  Page.handleChange );
+	viewState.addEventListener( 'change',  handleChange );
+	viewState.addEventListener( 'newCave', viewComplete );
 
 }
 
@@ -115,10 +114,10 @@ function handleChange( event ) {
 	// change UI dynamicly to only display useful controls
 	switch ( event.name ) {
 
-	case "terrain":
+	case 'terrain':
 
 		// only show overlay selection when terrain shading is set to overlay
-		display = ( viewState.terrain ? "block" : "none" );
+		display = ( viewState.terrain ? 'block' : 'none' );
 
 		for ( var i = 0, l = terrainControls.length; i < l; i++ ) {
 
@@ -126,18 +125,16 @@ function handleChange( event ) {
 
 		}
 
-		// drop through here is deliberate. Do not add "break"
-
-	case "terrainShading":
+	case 'terrainShading': // eslint-disable-line no-fallthrough
 
 		// only show overlay selection when terrain shading is set to overlay
 		if ( viewState.terrain && terrainOverlay && viewState.terrainShading === SHADING_OVERLAY ) {
 
-			terrainOverlay.style.display = "block";
+			terrainOverlay.style.display = 'block';
 
 		} else if ( terrainOverlay ) {
 
-			terrainOverlay.style.display = "none";
+			terrainOverlay.style.display = 'none';
 
 		}
  
@@ -149,7 +146,7 @@ function handleChange( event ) {
 
 function initSelectionPage () {
 
-	var titleBar  = document.createElement( "div" )
+	var titleBar  = document.createElement( 'div' );
 	var rootId    = surveyTree.id;
 	var track     = [];
 	var lastSelected  = false;
@@ -157,18 +154,18 @@ function initSelectionPage () {
 
 	if ( ! isCaveLoaded ) return;
 
-	page = new Page( "icon_explore" );
+	page = new Page( 'icon_explore' );
 
-	page.addHeader( "Selection" );
+	page.addHeader( 'Selection' );
 
-	titleBar.id = "ui-path";
-	titleBar.addEventListener( "click", _handleSelectSurveyBack );
+	titleBar.id = 'ui-path';
+	titleBar.addEventListener( 'click', _handleSelectSurveyBack );
 
 	page.appendChild( titleBar );
 
 	page.addSlide( _displayPanel( rootId ), track.length, _handleSelectSurvey );
 
-	var redraw = container.clientHeight;
+	var redraw = container.clientHeight; // eslint-disable-line no-unused-vars
 
 	return;
 
@@ -178,7 +175,6 @@ function initSelectionPage () {
 
 		var ul;
 		var tmp;
-		var i;
 		var l;
 		var surveyColours      = Colours.surveyColoursCSS;
 		var surveyColoursRange = surveyColours.length;
@@ -191,18 +187,18 @@ function initSelectionPage () {
 		l = track.length;
 		var footprint = track[ l - 1 ];
 
-		titleBar.textContent = footprint.name;;
+		titleBar.textContent = footprint.name;
 
 		if ( l > 1) {
 
-			span = document.createElement( "span" );
-			span.textContent = " \u25C4";
+			span = document.createElement( 'span' );
+			span.textContent = ' \u25C4';
 
 			titleBar.appendChild( span );
 
 		}
 
-		ul = document.createElement( "ul" );
+		ul = document.createElement( 'ul' );
 
 		var children = top.children;
 
@@ -216,26 +212,26 @@ function initSelectionPage () {
 
 		function _addLine( child ) {
 
-			var li  = document.createElement( "li" );
+			var li  = document.createElement( 'li' );
 			var txt = document.createTextNode( child.name );
 
-			li.id = "sv" + child.id;
+			li.id = 'sv' + child.id;
 			
-			var key = document.createElement( "span" );
+			var key = document.createElement( 'span' );
 
 			key.style.color = surveyColours[ child.id % surveyColoursRange ];
-			key.textContent = "\u2588 ";
+			key.textContent = '\u2588 ';
 
 			li.appendChild( key );
 			li.appendChild( txt );
 
 			if ( child.children.length > 0 ) {
 
-				var descend = document.createElement( "div" );
+				var descend = document.createElement( 'div' );
 
-				descend.classList.add( "descend-tree" );
-				descend.id = "ssv" + child.id;
-				descend.textContent = "\u25bA";
+				descend.classList.add( 'descend-tree' );
+				descend.id = 'ssv' + child.id;
+				descend.textContent = '\u25bA';
 
 				li.appendChild( descend );
 
@@ -253,7 +249,7 @@ function initSelectionPage () {
 
 	}
 
-	function _handleSelectSurveyBack ( event ) {
+	function _handleSelectSurveyBack ( /* event */ ) {
 
 		if ( track.length === 1 ) return;
 
@@ -268,23 +264,23 @@ function initSelectionPage () {
 	function _handleSelectSurvey ( event ) {
 
 		var target = event.target;
-		var id = target.id.split( "v" )[ 1 ];
+		var id = target.id.split( 'v' )[ 1 ];
 
 		event.stopPropagation();
 
 		switch ( target.nodeName ) {
 
-		case "LI":
+		case 'LI':
 
 			if ( viewState.section !== Number( id ) ) {
 
 				viewState.section = id;
 
-				target.classList.add( "selected" );
+				target.classList.add( 'selected' );
 
 				if ( lastSelected && lastSelected !== target ) {
 
-					lastSelected.classList.remove( "selected" );
+					lastSelected.classList.remove( 'selected' );
 
 				}
 
@@ -293,13 +289,13 @@ function initSelectionPage () {
 			} else {
 
 				viewState.section = 0;
-				target.classList.remove( "selected" );
+				target.classList.remove( 'selected' );
 
 			}
 
 			break;
 
-		case "DIV":
+		case 'DIV':
 
 			// FIXME - detect entries with no children.....
 
@@ -319,32 +315,32 @@ function initSelectionPage () {
 
 function initRoutePage () {
 
-	var route = new Page( "icon_route" );
+	var route = new Page( 'icon_route' );
 	var routeSelect = false;
 
-	route.addHeader( "Routes" );
+	route.addHeader( 'Routes' );
 
-	route.addCheckbox( "edit route", viewState, "routeEdit" );
+	route.addCheckbox( 'edit route', viewState, 'routeEdit' );
 
 	if ( isRoutesLoaded ) {
 
-		route.addSelect( "routes", routes.getRouteNames(), routes );
+		route.addSelect( 'routes', routes.getRouteNames(), routes );
 
 	}
 
-	var routeFile = replaceExtension( file, "json" );
+	var routeFile = replaceExtension( file, 'json' );
 
-	route.addDownloadButton( "Download", routes, "download", routeFile );
+	route.addDownloadButton( 'Download', routes, 'download', routeFile );
 
-	routes.addEventListener( "changed", _routesChanged );
-	routes.addEventListener( "changed", Page.handleChange );
+	routes.addEventListener( 'changed', _routesChanged );
+	routes.addEventListener( 'changed', Page.handleChange );
 
-	function _routesChanged( event ) {
+	function _routesChanged( /* event */ ) {
 
 		if ( routeSelect ) return;
 
 		routeSelect = true;
-		route.addSelect( "routes", routes.getRouteNames(), routes, "setRoute" );
+		route.addSelect( 'routes', routes.getRouteNames(), routes, 'setRoute' );
 
 	}
 
@@ -352,73 +348,73 @@ function initRoutePage () {
 
 function initHelpPage () {
 
-	var help = new Page( "icon_help" );
+	var help = new Page( 'icon_help' );
 	var dl;
 
-	help.addHeader( "Help - key commands" );
+	help.addHeader( 'Help - key commands' );
 
-	help.addHeader( "Shading" );
+	help.addHeader( 'Shading' );
 
-	dl = document.createElement( "dl" );
+	dl = document.createElement( 'dl' );
 
-	_addKey( "1", "depth" );
-	_addKey( "2", "leg angle" );
-	_addKey( "3", "leg length" );
-	_addKey( "4", "depth cursor " );
-	_addKey( "5", "single colour" );
-	_addKey( "6", "survey section" );
-	_addKey( "7", "depth from surface" );
-	_addKey( "8", "route" );
+	_addKey( '1', 'depth' );
+	_addKey( '2', 'leg angle' );
+	_addKey( '3', 'leg length' );
+	_addKey( '4', 'depth cursor ' );
+	_addKey( '5', 'single colour' );
+	_addKey( '6', 'survey section' );
+	_addKey( '7', 'depth from surface' );
+	_addKey( '8', 'route' );
 
-	_addKey( "[", "move depth cursor up" );
-	_addKey( "]", "move depth cursor down" );
+	_addKey( '[', 'move depth cursor up' );
+	_addKey( ']', 'move depth cursor down' );
 
-	if ( caveList.length > 0 ) _addKey( "n", "next cave" );
-
-	help.appendChild( dl );
-
-	help.addHeader( "View" );
-
-	dl = document.createElement( "dl" );
-
-	_addKey( "O", "orthogonal view" );
-	_addKey( "P", "perspective view" );
-	_addKey( "R", "reset to plan view" );
-	_addKey( ".", "center view on last feature selected" );
+	if ( caveList.length > 0 ) _addKey( 'n', 'next cave' );
 
 	help.appendChild( dl );
 
-	help.addHeader( "Visibility" );
+	help.addHeader( 'View' );
 
-	dl = document.createElement( "dl" );
+	dl = document.createElement( 'dl' );
 
-	_addKey( "C", "scraps on/off [lox only]" );
-	_addKey( "L", "labels on/off" );
-	_addKey( "Q", "splay legs on/off" );
-	_addKey( "S", "surface legs on/off" );
-	_addKey( "T", "terrain on/off" );
-	_addKey( "W", "LRUD walls on/off" );
-	_addKey( "Z", "stations on/off" );
-
-	_addKey( "", "-" );
-
-	_addKey( "<", "Decrease terrain opacity" );
-	_addKey( ">", "Increase terrain opacity" );
+	_addKey( 'O', 'orthogonal view' );
+	_addKey( 'P', 'perspective view' );
+	_addKey( 'R', 'reset to plan view' );
+	_addKey( '.', 'center view on last feature selected' );
 
 	help.appendChild( dl );
 
-	help.addHeader( "Selection" );
+	help.addHeader( 'Visibility' );
 
-	dl = document.createElement( "dl" );
+	dl = document.createElement( 'dl' );
 
-	_addKey( "V", "Remove all except selected section" );
+	_addKey( 'C', 'scraps on/off [lox only]' );
+	_addKey( 'L', 'labels on/off' );
+	_addKey( 'Q', 'splay legs on/off' );
+	_addKey( 'S', 'surface legs on/off' );
+	_addKey( 'T', 'terrain on/off' );
+	_addKey( 'W', 'LRUD walls on/off' );
+	_addKey( 'Z', 'stations on/off' );
+
+	_addKey( '', '-' );
+
+	_addKey( '<', 'Decrease terrain opacity' );
+	_addKey( '>', 'Increase terrain opacity' );
+
+	help.appendChild( dl );
+
+	help.addHeader( 'Selection' );
+
+	dl = document.createElement( 'dl' );
+
+	_addKey( 'V', 'Remove all except selected section' );
 
 	help.appendChild( dl );
 
 	function _addKey( key, description ) {
 
-		var dt = document.createElement( "dt" );
-		var dd = document.createElement( "dd" );
+		var dt = document.createElement( 'dt' );
+		var dd = document.createElement( 'dd' );
 
 		dt.textContent = key;
 		dd.textContent = description;
@@ -432,18 +428,18 @@ function initHelpPage () {
 
 function initInfoPage() {
 
-	var page = new Page( "icon_info" );
+	var page = new Page( 'icon_info' );
 
-	page.addHeader( "Information" );
+	page.addHeader( 'Information' );
 
-	var p = document.createElement( "p" );
+	var p = document.createElement( 'p' );
 
-	p.textContent = "Viewer - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.";
+	p.textContent = 'Viewer - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.';
 	page.appendChild( p );
 
-	p = document.createElement( "p" );
+	p = document.createElement( 'p' );
 
-	p.textContent = "Requires a browser supporting WebGL (IE 11+ and most other recent browsers), no plugins required. Created using the THREE.js 3D library and chroma,js colour handling library.";
+	p.textContent = 'Requires a browser supporting WebGL (IE 11+ and most other recent browsers), no plugins required. Created using the THREE.js 3D library and chroma,js colour handling library.';
 	page.appendChild( p );
 
 }
@@ -459,77 +455,77 @@ function initSettingsPage () {
 
 	if ( viewState.hasTerrain ) legShadingModesActive.depth = SHADING_DEPTH;
 
-	var page = new Page( "icon_settings" );
+	var page = new Page( 'icon_settings' );
 
-	page.addHeader( "Survey" );
+	page.addHeader( 'Survey' );
 
-	if ( caveList.length > 0 ) page.addSelect( "File", caveList, guiState, "file" );
+	if ( caveList.length > 0 ) page.addSelect( 'File', caveList, guiState, 'file' );
 
-	page.addHeader( "View" );
+	page.addHeader( 'View' );
 
-	page.addSelect( "Camera Type", cameraModes, viewState, "cameraType" );
-	page.addSelect( "View",        cameraViews, viewState, "view" );
+	page.addSelect( 'Camera Type', cameraModes, viewState, 'cameraType' );
+	page.addSelect( 'View',        cameraViews, viewState, 'view' );
 
-	page.addRange( "Vertical scaling", viewState, "zScale" );
+	page.addRange( 'Vertical scaling', viewState, 'zScale' );
 
-	page.addCheckbox( "Auto Rotate", viewState, "autoRotate" );
+	page.addCheckbox( 'Auto Rotate', viewState, 'autoRotate' );
 
-	page.addRange( "Rotation Speed", viewState, "autoRotateSpeed" );
+	page.addRange( 'Rotation Speed', viewState, 'autoRotateSpeed' );
 
-	page.addHeader( "Shading" );
+	page.addHeader( 'Shading' );
 
-	page.addSelect( "Underground Legs", legShadingModesActive, viewState, "shadingMode" );
+	page.addSelect( 'Underground Legs', legShadingModesActive, viewState, 'shadingMode' );
 
 	if ( viewState.hasSurfaceLegs ) {
 
-		page.addSelect( "Surface Legs", surfaceShadingModes, viewState, "surfaceShading" );
+		page.addSelect( 'Surface Legs', surfaceShadingModes, viewState, 'surfaceShading' );
 
 	}
 
-	page.addHeader( "Visibility" );
+	page.addHeader( 'Visibility' );
 
-	if ( viewState.hasEntrances )    page.addCheckbox( "Entrances",     viewState, "entrances" );
+	if ( viewState.hasEntrances )    page.addCheckbox( 'Entrances',     viewState, 'entrances' );
 
-	page.addCheckbox( "Stations", viewState, "stations" );
+	page.addCheckbox( 'Stations', viewState, 'stations' );
 
-	if ( viewState.hasSplays )       page.addCheckbox( "Splay Legs",    viewState, "splays" );
-	if ( viewState.hasSurfaceLegs )  page.addCheckbox( "Surface Legs",  viewState, "surfaceLegs" );
-	if ( viewState.hasTerrain )      page.addCheckbox( "Terrain",       viewState, "terrain" );
-	if ( viewState.hasWalls )        page.addCheckbox( "Walls (LRUD)",  viewState, "walls" );
-	if ( viewState.hasScraps )       page.addCheckbox( "Scraps",        viewState, "scraps" );
-	if ( viewState.hasTraces )       page.addCheckbox( "Dye Traces",    viewState, "traces" );
+	if ( viewState.hasSplays )       page.addCheckbox( 'Splay Legs',    viewState, 'splays' );
+	if ( viewState.hasSurfaceLegs )  page.addCheckbox( 'Surface Legs',  viewState, 'surfaceLegs' );
+	if ( viewState.hasTerrain )      page.addCheckbox( 'Terrain',       viewState, 'terrain' );
+	if ( viewState.hasWalls )        page.addCheckbox( 'Walls (LRUD)',  viewState, 'walls' );
+	if ( viewState.hasScraps )       page.addCheckbox( 'Scraps',        viewState, 'scraps' );
+	if ( viewState.hasTraces )       page.addCheckbox( 'Dye Traces',    viewState, 'traces' );
 
-	page.addCheckbox( "Indicators",   viewState, "HUD" );
-	page.addCheckbox( "Bounding Box", viewState, "box" );
+	page.addCheckbox( 'Indicators',   viewState, 'HUD' );
+	page.addCheckbox( 'Bounding Box', viewState, 'box' );
 
 	if ( viewState.hasTerrain ) {
 
 		var control;
 
-		control = page.addHeader( "Terrain" );
+		control = page.addHeader( 'Terrain' );
 		terrainControls.push( control );
 
 		var overlays = viewState.terrainOverlays;
 
-		if ( overlays.length > 0 ) terrainShadingModesActive[ "map overlay" ] = SHADING_OVERLAY;
+		if ( overlays.length > 0 ) terrainShadingModesActive[ 'map overlay' ] = SHADING_OVERLAY;
 
-		control = page.addSelect( "Shading", terrainShadingModesActive, viewState, "terrainShading" );
+		control = page.addSelect( 'Shading', terrainShadingModesActive, viewState, 'terrainShading' );
 		terrainControls.push( control );
 
 		if ( overlays.length > 1 ) {
 
-			terrainOverlay = page.addSelect( "Overlay", overlays, viewState, "terrainOverlay" );
-			terrainOverlay.style.display = "none";
+			terrainOverlay = page.addSelect( 'Overlay', overlays, viewState, 'terrainOverlay' );
+			terrainOverlay.style.display = 'none';
 			terrainControls.push( terrainOverlay );
 
 		}
 
-		control = page.addRange( "Terrain opacity", viewState, "terrainOpacity" );
+		control = page.addRange( 'Terrain opacity', viewState, 'terrainOpacity' );
 		terrainControls.push( control );
 
 		for ( var i = 0, l = terrainControls.length; i < l; i++ ) {
 
-			terrainControls[ i ].style.display = "none";
+			terrainControls[ i ].style.display = 'none';
 
 		}
 
@@ -556,7 +552,7 @@ function initUI () {
 function handleDragover ( event ) {
 
 	event.preventDefault();
-	event.dataTransfer.dropEffect = "copy";
+	event.dataTransfer.dropEffect = 'copy';
 
 }
 
@@ -620,7 +616,7 @@ function loadCave ( file ) {
 	resetUI();
 	Viewer.clearView();
 
-	progressBar.Start( "Loading file " + file + " ..." );
+	progressBar.Start( 'Loading file ' + file + ' ...' );
 
 	caveLoader.loadURL( file );
 
@@ -631,7 +627,7 @@ function loadCaveLocalFile ( file ) {
 	resetUI();
 	Viewer.clearView();
 
-	progressBar.Start( "Loading file " + file.name + " ..." );
+	progressBar.Start( 'Loading file ' + file.name + ' ...' );
 
 	caveLoader.loadFile( file );
 
@@ -653,7 +649,7 @@ function caveLoaded ( inCave ) {
 	function _delayedTasks1 () {
 
 		progressBar.End();
-		progressBar.Start( "Rendering..." );
+		progressBar.Start( 'Rendering...' );
 
 		setTimeout( _delayedTasks2, 100 );
 
@@ -664,7 +660,7 @@ function caveLoaded ( inCave ) {
 		Viewer.loadCave( cave );
 		progressBar.End();
 
-		// viewComplete executed as "newCave"" event handler
+		// viewComplete executed as 'newCave'' event handler
 	}
 
 }
@@ -684,7 +680,7 @@ function viewComplete () {
 
 	initUI();
 
-	function _routesLoaded( routeNames ) {
+	function _routesLoaded() {
 
 		Viewer.addRoutes( routes );
 
@@ -849,13 +845,13 @@ function keyDown ( event ) {
 
 		break;
 
-	case 188: // decrease terrain opacity "<" key
+	case 188: // decrease terrain opacity '<' key
 
 		if ( viewState.hasTerrain ) viewState.terrainOpacity = Math.max( viewState.terrainOpacity - 0.05, 0 );
 
 		break;
 
-	case 190: // increase terrain opacity ">" key
+	case 190: // increase terrain opacity '>' key
 
 		if ( viewState.hasTerrain ) viewState.terrainOpacity = Math.min( viewState.terrainOpacity + 0.05, 1 );
 

@@ -2,11 +2,9 @@
 import { getEnvironmentValue, FEATURE_ENTRANCES } from '../core/constants';
 
 import {
-	Vector3, Color,
 	BufferAttribute,
 	BufferGeometry,
 	TextureLoader,
-	MultiMaterial,
 	PointsMaterial,
 	Points,
 	Object3D,
@@ -20,19 +18,19 @@ function FarPointers ( survey ) {
 
 	var loader = new TextureLoader();
 
-	var yellowTexture = loader.load( getEnvironmentValue( "home", "" ) + "images/marker-yellow.png" );
+	var yellowTexture = loader.load( getEnvironmentValue( 'home', '' ) + 'images/marker-yellow.png' );
 
 	var yellowMaterial = new PointsMaterial( { size: 10, map: yellowTexture, transparent : true, sizeAttenuation: true, alphaTest: 0.8 } );
 
 	Points.call( this, new BufferGeometry(), yellowMaterial );
 
-	this.type = "CV.FarPointers";
+	this.type = 'CV.FarPointers';
 
 	this.layers.set( FEATURE_ENTRANCES );
 
 	survey.add( this );
 
-	survey.addEventListener( "removed", _onSurveyRemoved );
+	survey.addEventListener( 'removed', _onSurveyRemoved );
 
 	function _onSurveyRemoved( event ) {
 
@@ -88,7 +86,7 @@ FarPointers.prototype.updateGeometry = function () {
 
 	geometry.setDrawRange( 0, offset / 3 );
 
-}
+};
 
 FarPointers.prototype.addPointer = function ( position ) {
 
@@ -101,23 +99,22 @@ FarPointers.prototype.addPointer = function ( position ) {
 
 	return index;
 
-}
+};
 
 FarPointers.prototype.setMaterialIndex = function ( index, materialIndex ) {
 
 	this.points[ index ].materialIndex = materialIndex;
 	this.updateGeometry();
 
-}
+};
 
 FarPointers.prototype.getMaterialIndex = function ( index ) {
 
 	return  this.points[ index ].materialIndex;
 
-}
+};
 
-
-FarPointers.prototype.removeDeleted = function ( index ) {
+FarPointers.prototype.removeDeleted = function () {
 
 	var oldPoints = this.points;
 	var newPoints = [];
@@ -134,7 +131,7 @@ FarPointers.prototype.removeDeleted = function ( index ) {
 	this.points = newPoints;
 	this.updateGeometry();
 
-}
+};
 
 function EntranceFarPointer ( survey, position ) {
 
@@ -149,17 +146,17 @@ function EntranceFarPointer ( survey, position ) {
 	Object3D.call( this );
 
 	this.index = farPointers.addPointer( position );
-	this.type = "CV.EntranceFarPointer";
+	this.type = 'CV.EntranceFarPointer';
 
 	this.hidden = false;
 
-	Object.defineProperty( this, "visible", {
+	Object.defineProperty( this, 'visible', {
 		writeable: true,
 		get: function () { _getVisibility(); },
 		set: function ( x ) { _setVisibility( x ); }
 	} );
 
-	this.addEventListener( "removed", this.onRemove );
+	this.addEventListener( 'removed', this.onRemove );
 
 	function _getVisibility () {
 
@@ -185,18 +182,18 @@ EntranceFarPointer.prototype = Object.create( Object3D.prototype );
 
 EntranceFarPointer.prototype.constructor = EntranceFarPointer;
 
-EntranceFarPointer.prototype.onRemove = function ( event ) {
+EntranceFarPointer.prototype.onRemove = function ( /* event */ ) {
 
-		this.removeEventListener( 'removed', this.onRemove );
+	this.removeEventListener( 'removed', this.onRemove );
 
-		// hide from view - avoid need to recreate farPointers 
-		// and traverse all visible EntranceFarPointers and reset index values
+	// hide from view - avoid need to recreate farPointers 
+	// and traverse all visible EntranceFarPointers and reset index values
 
-		this.hidden = true;
+	this.hidden = true;
 
-		farPointers.setMaterialIndex( this.index, 0 );
+	farPointers.setMaterialIndex( this.index, 0 );
 
-}
+};
 
 // todo - add on visible property to intercept and use to select non visible/alternate colour for marker
 

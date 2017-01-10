@@ -1,7 +1,7 @@
 
 import {
-	Vector3, Quaternion, Box3,
-	CubicBezierCurve3, Geometry, Line, LineBasicMaterial, LineSegments,
+	Vector3,
+	CubicBezierCurve3,
 	Math as _Math
 } from '../../../../three.js/src/Three'; 
 
@@ -96,12 +96,13 @@ CameraMove.prototype.prepare = function ( cameraTarget, targetPOI ) {
 			var cp1 = this.getControlPoint( startPOI, cameraStart, cameraTarget, distance );
 			var cp2 = this.getControlPoint( targetPOI, cameraTarget, cameraStart, distance );
 
-			this.curve = new CubicBezierCurve3( cameraStart, cp1, cp2, cameraTarget )
+			this.curve = new CubicBezierCurve3( cameraStart, cp1, cp2, cameraTarget );
 
 		}
 
 	}
-}
+
+};
 
 CameraMove.prototype.getControlPoint = function ( common, p1, p2, distance ) {
 
@@ -137,7 +138,7 @@ CameraMove.prototype.getControlPoint = function ( common, p1, p2, distance ) {
 
 	return ( v2.distanceTo( candidate1 ) < v2.distanceTo( candidate2 ) ) ? candidate1 : candidate2;
 
-}
+};
 
 CameraMove.prototype.start = function( time ) {
 
@@ -151,13 +152,12 @@ CameraMove.prototype.start = function( time ) {
 
 	}
 
-}
+};
 
 CameraMove.prototype.animate = function () {
 
 	var tRemaining = --this.frameCount;
 	var controls = this.controls;
-	var cameraTarget = this.cameraTarget;
 	var curve = this.curve;
 
 	if ( this.moveRequired ) {
@@ -198,36 +198,35 @@ CameraMove.prototype.animate = function () {
 
 	var self = this;
 
-	requestAnimationFrame( function () { self.animate() } );
+	requestAnimationFrame( function () { self.animate(); } );
 
 	this.renderFunction();
 
-}
-
+};
 
 CameraMove.prototype.endAnimation = function () {
 
-		this.controls.enabled = true;
-		this.moveRequired = false;
+	this.controls.enabled = true;
+	this.moveRequired = false;
+	
+	this.cameraTarget = null;
+	this.targetPOI = null;
 
-		this.cameraTarget = null;
-		this.targetPOI = null;
+	this.renderFunction();
+	this.endCallback();
 
-		this.renderFunction();
-		this.endCallback();
-
-}
+};
 
 CameraMove.prototype.stop = function () {
 
 	this.frameCount = 1;
 
-}
+};
 
 CameraMove.prototype.isActive = function () {
 
 	return ( this.frameCount > 0 );
 
-}
+};
 
-export { CameraMove }
+export { CameraMove };

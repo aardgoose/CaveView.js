@@ -7,13 +7,13 @@ function loxHandler  ( fileName, dataStream ) {
 	this.fileName          = fileName;
 	this.entrances         = [];
 	this.terrain           = [];
-	this.terrainBitmap     = "";
+	this.terrainBitmap     = '';
 	this.terrainDimensions = {};
 	this.scraps            = [];
 	this.faults            = [];
 	this.lineSegments      = [];
 	this.sections          = new Map();
-	this.surveyTree        = new Tree( "", 0 );
+	this.surveyTree        = new Tree( '', 0 );
 	this.isRegion		   = false;
 
 	var lineSegments = [];
@@ -94,7 +94,7 @@ function loxHandler  ( fileName, dataStream ) {
 
 		default:
 
-			console.log( "unknown chunk header. type : ", m_type );
+			console.log( 'unknown chunk header. type : ', m_type );
 
 		}
 
@@ -127,7 +127,7 @@ function loxHandler  ( fileName, dataStream ) {
 
 	}
 
-	function readSurvey ( i ) {
+	function readSurvey ( /* i */ ) {
 
 		var m_id     = readUint();
 		var namePtr  = readDataPtr();
@@ -136,7 +136,7 @@ function loxHandler  ( fileName, dataStream ) {
 
 		if ( m_parent != m_id ) {
 
-			if ( !surveyTree.addById( readString( namePtr ), m_id, m_parent ) ) console.log( "error constructing survey tree" );
+			if ( !surveyTree.addById( readString( namePtr ), m_id, m_parent ) ) console.log( 'error constructing survey tree' );
 
 		}
 
@@ -256,12 +256,13 @@ function loxHandler  ( fileName, dataStream ) {
 
 		var scrap = { vertices: [], faces: [], survey: m_surveyId };
 		var lastFace;
-		var i;
+		var i, offset, f;
 
 		for ( i = 0; i < m_numPoints; i++ ) {
 
-			var offset = dataStart + pointsPtr.position + i * 24; // 24 = 3 * sizeof(double)
-			var f = new DataView( source, offset );
+			offset = dataStart + pointsPtr.position + i * 24; // 24 = 3 * sizeof(double)
+			f = new DataView( source, offset );
+
 			var vertex = {};
 
 			vertex.x = f.getFloat64( 0,  true );
@@ -276,8 +277,9 @@ function loxHandler  ( fileName, dataStream ) {
 
 		for ( i = 0; i < m_num3Angles; i++ ) {
 
-			var offset = dataStart + facesPtr.position + i * 12; // 12 = 3 * sizeof(uint32)
-			var f = new DataView( source, offset );
+			offset = dataStart + facesPtr.position + i * 12; // 12 = 3 * sizeof(uint32)
+			f = new DataView( source, offset );
+
 			var face = [];
 
 			face[ 0 ] = f.getUint32( 0, true );
@@ -378,7 +380,7 @@ function loxHandler  ( fileName, dataStream ) {
 		var m_type      = readUint();
 		var m_surfaceId = readUint();
 
-		var imagePtr = readDataPtr();
+		var imagePtr = readDataPtr(); 
 		var m_calib  = readCalibration();
 
 		self.terrainBitmap = extractImage( imagePtr );
@@ -395,17 +397,17 @@ function loxHandler  ( fileName, dataStream ) {
 
 		if ( b1 === 0xff && b2 === 0xd8 ) {
 
-			type = "image/jpeg";
+			type = 'image/jpeg';
 
 		} else if ( b1 === 0x89 && b2 === 0x50 ) {
 
-			type = "image/png";
+			type = 'image/png';
 
 		}
 
 		if ( !type ) {
 
-			return "";
+			return '';
 
 		}
 
@@ -424,7 +426,7 @@ loxHandler.prototype.getTerrainDimensions = function () {
 
 	return this.terrainDimensions;
 
-}
+};
 
 loxHandler.prototype.getTerrainData = function () {
 
@@ -447,13 +449,13 @@ loxHandler.prototype.getTerrainData = function () {
 
 	return flippedTerrain;
 
-}
+};
 
 loxHandler.prototype.getTerrainBitmap = function () {
 
 	return this.terrainBitmap;
 
-}
+};
 
 loxHandler.prototype.getSurvey = function () {
 
@@ -465,9 +467,9 @@ loxHandler.prototype.getSurvey = function () {
 		scraps: this.scraps,
 		entrances: this.entrances,
 		hasTerrain: false
-	}
+	};
 
-}
+};
 
 export { loxHandler };
 

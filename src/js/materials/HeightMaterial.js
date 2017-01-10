@@ -24,22 +24,22 @@ function HeightMaterial ( type, minHeight, maxHeight ) {
 	
 	this.uniforms = {
 
-			// pseudo light source somewhere over viewer's left shoulder.
-			uLight:         { value: new Vector3( -1, -1, 2 ) },
+		// pseudo light source somewhere over viewer's left shoulder.
+		uLight:         { value: new Vector3( -1, -1, 2 ) },
 
-			minZ:           { value: minHeight },
-			scaleZ:         { value: 1 / ( maxHeight - minHeight ) },
-			cmap:           { value: Colours.gradientTexture },
-			surfaceOpacity: { value: 0.5 }
+		minZ:           { value: minHeight },
+		scaleZ:         { value: 1 / ( maxHeight - minHeight ) },
+		cmap:           { value: Colours.gradientTexture },
+		surfaceOpacity: { value: 0.5 }
 
-		};
+	};
 
 	this.vertexShader   = Shaders.heightVertexShader;
 	this.fragmentShader = Shaders.heightFragmentShader;
 
-	this.type = "CV.HeightMaterial";
+	this.type = 'CV.HeightMaterial';
 
-	this.addEventListener( "update", _update );
+	this.addEventListener( 'update', _update );
 
 	return this;
 

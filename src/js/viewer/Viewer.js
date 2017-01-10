@@ -24,16 +24,13 @@ import { OrbitControls } from '../core/OrbitControls';
 
 import {
 	EventDispatcher,
-	Vector2, Vector3, Matrix4, Quaternion, Euler,  Box3,
-	Scene, Group, Raycaster,
-	AmbientLight, DirectionalLight, HemisphereLight,
+	Vector2, Vector3, Matrix4, Euler,
+	Scene, Raycaster,
+	DirectionalLight, HemisphereLight,
 	LinearFilter, NearestFilter, RGBFormat,
 	OrthographicCamera, PerspectiveCamera, 
-	WebGLRenderer, WebGLRenderTarget,
-	Math as _Math
-} from '../../../../three.js/src/Three'; 
-
-import { toOSref } from '../core/lib';
+	WebGLRenderer, WebGLRenderTarget
+} from '../../../../three.js/src/Three';
 
 //import { LeakWatch } from '../../../../LeakWatch/src/LeakWatch';
 
@@ -48,7 +45,6 @@ var container;
 
 var renderer;
 var scene;
-var model;
 var oCamera;
 var pCamera;
 var camera;
@@ -86,7 +82,7 @@ function init ( domID ) { // public method
 
 	container = document.getElementById( domID );
 
-	if ( !container ) alert( "No container DOM object [" + domID + "] available" );
+	if ( !container ) alert( 'No container DOM object [' + domID + '] available' );
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
@@ -120,12 +116,12 @@ function init ( domID ) { // public method
 
 	cameraMove = new CameraMove( controls, renderView, onCameraMoveEnd );
 
-	controls.addEventListener( "change", function () { cameraMove.prepare( null, null ); cameraMove.start( 80 ) } );
+	controls.addEventListener( 'change', function () { cameraMove.prepare( null, null ); cameraMove.start( 80 ); } );
 
 	controls.enableDamping = true;
 
 	// event handler
-	window.addEventListener( "resize", resize );
+	window.addEventListener( 'resize', resize );
 
 	Object.assign( viewState, EventDispatcher.prototype, {
 
@@ -135,155 +131,157 @@ function init ( domID ) { // public method
 
 	Object.defineProperties( viewState, {
 
-	"terrain": {
-		writeable: true,
-		get: function () { return testCameraLayer( FEATURE_TERRAIN ); },
-		set: function ( x ) { loadTerrain( x ); setCameraLayer( FEATURE_TERRAIN, x ); this.dispatchEvent( { type: "change", name: "terrain" } ); }
-	},
+		'terrain': {
+			writeable: true,
+			get: function () { return testCameraLayer( FEATURE_TERRAIN ); },
+			set: function ( x ) { loadTerrain( x ); setCameraLayer( FEATURE_TERRAIN, x ); this.dispatchEvent( { type: 'change', name: 'terrain' } ); }
+		},
 
-	 "terrainShading": {
-		writeable: true,
-		get: function () { return terrainShadingMode; },
-		set: function ( x ) { _viewStateSetter( setTerrainShadingMode, "terrainShading", x ); }
-	},
+		'terrainShading': {
+			writeable: true,
+			get: function () { return terrainShadingMode; },
+			set: function ( x ) { _viewStateSetter( setTerrainShadingMode, 'terrainShading', x ); }
+		},
 
-	 "hasTerrain": {
-		get: function () { return !!terrain; }
-	},
+		'hasTerrain': {
+			get: function () { return !!terrain; }
+		},
 
-	 "terrainOverlays": {
-		get: function () { return terrain && terrain.getOverlays(); }
-	},
+		'terrainOverlays': {
+			get: function () { return terrain && terrain.getOverlays(); }
+		},
 
-	 "terrainOverlay": {
-		writeable: true,
-		get: function () { return terrain.getOverlay(); },
-		set: function ( x ) { _viewStateSetter( setTerrainOverlay, "terrainOverlay", x ); }
-	},
+		'terrainOverlay': {
+			writeable: true,
+			get: function () { return terrain.getOverlay(); },
+			set: function ( x ) { _viewStateSetter( setTerrainOverlay, 'terrainOverlay', x ); }
+		},
 
-	"terrainOpacity": {
-		writeable: true,
-		get: function () { return terrain.getOpacity(); },
-		set: function ( x ) { setTerrainOpacity( x ); }
-	},
+		'terrainOpacity': {
+			writeable: true,
+			get: function () { return terrain.getOpacity(); },
+			set: function ( x ) { setTerrainOpacity( x ); }
+		},
 
-	"shadingMode": {
-		writeable: true,
-		get: function () { return shadingMode; },
-		set: function ( x ) { _viewStateSetter( setShadingMode, "shadingMode", x ); }
-	},
+		'shadingMode': {
+			writeable: true,
+			get: function () { return shadingMode; },
+			set: function ( x ) { _viewStateSetter( setShadingMode, 'shadingMode', x ); }
+		},
 
-	"surfaceShading": {
-		writeable: true,
-		get: function () { return surfaceShadingMode; },
-		set: function ( x ) { _viewStateSetter( setSurfaceShadingMode, "surfaceShading", x ); }
-	},
+		'surfaceShading': {
+			writeable: true,
+			get: function () { return surfaceShadingMode; },
+			set: function ( x ) { _viewStateSetter( setSurfaceShadingMode, 'surfaceShading', x ); }
+		},
 
-	"cameraType": {
-		writeable: true,
-		get: function () { return cameraMode; },
-		set: function ( x ) { _viewStateSetter( setCameraMode, "cameraType", x ); }
-	},
+		'cameraType': {
+			writeable: true,
+			get: function () { return cameraMode; },
+			set: function ( x ) { _viewStateSetter( setCameraMode, 'cameraType', x ); }
+		},
 
-	"view": {
-		writeable: true,
-		get: function () { return VIEW_NONE; },
-		set: function ( x ) { _viewStateSetter( setViewMode, "view", x ); }
-	},
+		'view': {
+			writeable: true,
+			get: function () { return VIEW_NONE; },
+			set: function ( x ) { _viewStateSetter( setViewMode, 'view', x ); }
+		},
 
-	"cursorHeight": {
-		writeable: true,
-		get: function () { return cursorHeight; },
-		set: function ( x ) { setCursorHeight( x ); }
-	},
+		'cursorHeight': {
+			writeable: true,
+			get: function () { return cursorHeight; },
+			set: function ( x ) { setCursorHeight( x ); }
+		},
 
-	"maxHeight": {
-		get: function () { return limits.max.z; },
-	},
+		'maxHeight': {
+			get: function () { return limits.max.z; },
+		},
 
-	"minHeight": {
-		get: function () { return limits.min.z; },
-	},
+		'minHeight': {
+			get: function () { return limits.min.z; },
+		},
 
-	 "maxLegLength": {
-		get: function () { return stats.maxLegLength; },
-	},
+		'maxLegLength': {
+			get: function () { return stats.maxLegLength; },
+		},
 
-	 "minLegLength": {
-		get: function () { return stats.minLegLength; },
-	},
+		'minLegLength': {
+			get: function () { return stats.minLegLength; },
+		},
 
-	"section": {
-		writeable: true,
-		get: function () { return selectedSection; },
-		set: function ( x ) { _viewStateSetter( selectSection, "section", x ); }
-	},
+		'section': {
+			writeable: true,
+			get: function () { return selectedSection; },
+			set: function ( x ) { _viewStateSetter( selectSection, 'section', x ); }
+		},
 
-	"routeEdit": {
-		writeable: true,
-		get: function () { return ( mouseMode === MOUSE_MODE_ROUTE_EDIT ); },
-		set: function ( x ) { _setRouteEdit( x ); }
-	},
+		'routeEdit': {
+			writeable: true,
+			get: function () { return ( mouseMode === MOUSE_MODE_ROUTE_EDIT ); },
+			set: function ( x ) { _setRouteEdit( x ); }
+		},
 
-	"setPOI": {
-		writeable: true,
-		get: function () { return true; },
-		set: function ( x ) { _viewStateSetter( setCameraPOI, "setPOI", x ); }
-	},
+		'setPOI': {
+			writeable: true,
+			get: function () { return true; },
+			set: function ( x ) { _viewStateSetter( setCameraPOI, 'setPOI', x ); }
+		},
 
-	"developerInfo": {
-		writeable: true,
-		get: function () { return true; },
-		set: function ( x ) { showDeveloperInfo( x ); }
-	},
+/*
+		'developerInfo': {
+			writeable: true,
+			get: function () { return true; },
+			set: function ( x ) { showDeveloperInfo( x ); }
+		},
+*/
 
-	"HUD": {
+		'HUD': {
 			writeable: true,
 			get: function () { return HUD.getVisibility(); },
 			set: function ( x ) { HUD.setVisibility( x ); }
-	},
+		},
 
-	"cut": {
-		writeable: true,
-		get: function () { return true; },
-		set: function ( x ) { cutSection( x ) }
-	},
+		'cut': {
+			writeable: true,
+			get: function () { return true; },
+			set: function ( x ) { cutSection( x ); }
+		},
 
-	"zScale": {
-		writeable: true,
-		get: function () { return zScale; },
-		set: function ( x ) { setZScale( x ) }
-	},
+		'zScale': {
+			writeable: true,
+			get: function () { return zScale; },
+			set: function ( x ) { setZScale( x ); }
+		},
 
-	"autoRotate": {
-		writeable: true,
-		get: function () { return controls.autoRotate },
-		set: function ( x ) { setAutoRotate( !! x ) }
-	},
+		'autoRotate': {
+			writeable: true,
+			get: function () { return controls.autoRotate; },
+			set: function ( x ) { setAutoRotate( !! x ); }
+		},
 
-	"autoRotateSpeed": {
-		writeable: true,
-		get: function () { return controls.autoRotateSpeed / 11 },
-		set: function ( x ) { controls.autoRotateSpeed = x * 11 }
-	}
+		'autoRotateSpeed': {
+			writeable: true,
+			get: function () { return controls.autoRotateSpeed / 11; },
+			set: function ( x ) { controls.autoRotateSpeed = x * 11; }
+		}
 
 	} );
 
-	_enableLayer( FEATURE_BOX,       "box" );
-	_enableLayer( FEATURE_ENTRANCES, "entrances" );
-	_enableLayer( FEATURE_STATIONS,  "stations" );
-	_enableLayer( FEATURE_TRACES,    "traces" );
-	_enableLayer( FACE_SCRAPS,       "scraps" );
-	_enableLayer( FACE_WALLS,        "walls" );
-	_enableLayer( LEG_SPLAY,         "splays" );
-	_enableLayer( LEG_SURFACE,       "surfaceLegs" );
+	_enableLayer( FEATURE_BOX,       'box' );
+	_enableLayer( FEATURE_ENTRANCES, 'entrances' );
+	_enableLayer( FEATURE_STATIONS,  'stations' );
+	_enableLayer( FEATURE_TRACES,    'traces' );
+	_enableLayer( FACE_SCRAPS,       'scraps' );
+	_enableLayer( FACE_WALLS,        'walls' );
+	_enableLayer( LEG_SPLAY,         'splays' );
+	_enableLayer( LEG_SURFACE,       'surfaceLegs' );
 	
-	_hasLayer( FEATURE_ENTRANCES, "hasEntrances" );
-	_hasLayer( FEATURE_TRACES,    "hasTraces" );
-	_hasLayer( FACE_SCRAPS,       "hasScraps" );
-	_hasLayer( FACE_WALLS,        "hasWalls" );
-	_hasLayer( LEG_SPLAY,         "hasSplays" );
-	_hasLayer( LEG_SURFACE,       "hasSurfaceLegs" );
+	_hasLayer( FEATURE_ENTRANCES, 'hasEntrances' );
+	_hasLayer( FEATURE_TRACES,    'hasTraces' );
+	_hasLayer( FACE_SCRAPS,       'hasScraps' );
+	_hasLayer( FACE_WALLS,        'hasWalls' );
+	_hasLayer( LEG_SPLAY,         'hasSplays' );
+	_hasLayer( LEG_SURFACE,       'hasSurfaceLegs' );
 
 	Materials.initCache( viewState );
 
@@ -296,7 +294,7 @@ function init ( domID ) { // public method
 		Object.defineProperty( viewState, name, {
 			writeable: true,
 			get: function () { return testCameraLayer( layerTag ); },
-			set: function ( x ) { setCameraLayer( layerTag, x ); this.dispatchEvent( { type: "change", name: name } ); }
+			set: function ( x ) { setCameraLayer( layerTag, x ); this.dispatchEvent( { type: 'change', name: name } ); }
 		} );
 
 	}
@@ -312,7 +310,7 @@ function init ( domID ) { // public method
 	function _viewStateSetter ( modeFunction, name, newMode ) {
 
 		modeFunction( Number( newMode ) );
-		viewState.dispatchEvent( { type: "change", name: name } );
+		viewState.dispatchEvent( { type: 'change', name: name } );
 
 	}
 
@@ -330,9 +328,9 @@ function addRoutes( newRoutes ) {
 
 	if ( survey ) survey.addRoutes( newRoutes );
 
-	routes.addEventListener( "changed", _routesChanged );
+	routes.addEventListener( 'changed', _routesChanged );
 
-	function _routesChanged( event ) {
+	function _routesChanged( /* event */ ) {
 
 		setShadingMode( shadingMode );
 
@@ -362,7 +360,7 @@ function setAutoRotate( state ) {
 	if ( state ) {
 
 		cameraMove.prepare( null, null );
-		cameraMove.start( 2952000 )
+		cameraMove.start( 2952000 );
 
 	} else {
 
@@ -375,7 +373,7 @@ function setAutoRotate( state ) {
 function setCursorHeight( x ) {
 
 	cursorHeight = x;
-	viewState.dispatchEvent( { type: "cursorChange", name: "cursorHeight" } );
+	viewState.dispatchEvent( { type: 'cursorChange', name: 'cursorHeight' } );
 
 	renderView();
 
@@ -384,7 +382,7 @@ function setCursorHeight( x ) {
 function setTerrainOpacity( x ) {
 
 	terrain.setOpacity( x );
-	viewState.dispatchEvent( { type: "change", name: "terrainOpacity" } )
+	viewState.dispatchEvent( { type: 'change', name: 'terrainOpacity' } );
 
 	renderView();
 
@@ -444,7 +442,7 @@ function renderDepthTexture () {
 	var renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBFormat } );
 
 	renderTarget.texture.generateMipmaps = false;
-	renderTarget.texture.name = "CV.DepthMapTexture";
+	renderTarget.texture.name = 'CV.DepthMapTexture';
 
 	Materials.createDepthMaterial( MATERIAL_LINE, limits, renderTarget.texture );
 	Materials.createDepthMaterial( MATERIAL_SURFACE, limits, renderTarget.texture );
@@ -496,7 +494,7 @@ function setCameraMode ( mode ) {
 
 	default:
 
-		console.log( "unknown camera mode", mode );
+		console.log( 'unknown camera mode', mode );
 		return;
 
 	}
@@ -598,7 +596,7 @@ function setViewMode ( mode, t ) {
 
 	default:
 
-		console.log( "invalid view mode specified: ", mode );
+		console.log( 'invalid view mode specified: ', mode );
 		return;
 
 	}
@@ -756,7 +754,7 @@ function clearView () {
 	// remove event listeners
 
 	unloadTerrainListeners();
-	container.removeEventListener( "mousedown", mouseDown );
+	container.removeEventListener( 'mousedown', mouseDown );
 
 	scene.add( pCamera );
 	scene.add( oCamera );
@@ -775,7 +773,7 @@ function loadCave ( cave ) {
 
 	if ( ! cave ) {
 
-		alert( "failed loading cave information" );
+		alert( 'failed loading cave information' );
 		return;
 
 	}
@@ -841,12 +839,12 @@ function loadSurvey ( newSurvey ) {
 
 	scene.matrixAutoUpdate = false;
 
-	container.addEventListener( "mousedown", mouseDown, false );
+	container.addEventListener( 'mousedown', mouseDown, false );
 
 	HUD.setVisibility( true );
 
 	// signal any listeners that we have a new cave
-	viewState.dispatchEvent( { type: "newCave", name: "newCave" } );
+	viewState.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 	controls.object = camera;
 	controls.enabled = true;
@@ -886,7 +884,7 @@ function loadTerrainListeners () {
 
 	clockStart();
 
-	controls.addEventListener( "end", clockStart );
+	controls.addEventListener( 'end', clockStart );
 
 }
 
@@ -894,19 +892,19 @@ function unloadTerrainListeners () {
 
 	if ( ! controls ) return;
 
-	controls.removeEventListener( "end", clockStart );
+	controls.removeEventListener( 'end', clockStart );
 
 	clockStop();
 
 }
 
-function clockStart ( event ) {
+function clockStart ( /* event */ ) {
 
 	lastActivityTime = performance.now();
 
 }
 
-function clockStop ( event ) {
+function clockStop ( /* event */ ) {
 
 	lastActivityTime = 0;
 
@@ -914,7 +912,6 @@ function clockStop ( event ) {
 
 function mouseDown ( event ) {
 
-	var popup = null;
 	var picked;
 
 	mouse.x =   ( event.clientX / container.clientWidth  ) * 2 - 1;
@@ -1082,7 +1079,7 @@ var renderView = function () {
 
 		clockStart();
 
-	}
+	};
 
 } ();
 
@@ -1104,7 +1101,7 @@ function updateTerrain () {
 
 }
 
-function setCameraPOI ( x ) {
+function setCameraPOI ( /* fixme */ ) {
 
 	cameraMove.start( 200 );
 

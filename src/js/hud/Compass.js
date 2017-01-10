@@ -4,7 +4,7 @@ import { padDigits } from '../core/lib';
 
 import {
 	Vector3, Math as _Math, Face3, Color,
-	Geometry, RingBufferGeometry, RingGeometry, CylinderBufferGeometry,
+	Geometry, RingGeometry, CylinderBufferGeometry,
 	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
 	FrontSide, VertexColors, FlatShading,
 	Mesh, Group
@@ -12,15 +12,15 @@ import {
 
 function Compass ( container ) {
 
-	var width  = container.clientWidth;
-	var height = container.clientHeight;
+//	var width  = container.clientWidth;
+//	var height = container.clientHeight;
 
 	var stdWidth  = HudObject.stdWidth;
 	var stdMargin = HudObject.stdMargin;
 
 	Group.call( this );
 
-	this.name = "CV.Compass";
+	this.name = 'CV.Compass';
 	this.domObjects = [];
 
 	var cg1 = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth,  3, 32, 1, true );
@@ -52,18 +52,18 @@ function Compass ( container ) {
 
 	this.lastRotation = 0;
 
-	var panel = document.createElement( "div" );
+	var panel = document.createElement( 'div' );
 
-	panel.classList.add( "cv-compass" );
-	panel.textContent = "";
+	panel.classList.add( 'cv-compass' );
+	panel.textContent = '';
 
 	container.appendChild( panel );
 
 	this.txt = panel;
 	this.domObjects.push( panel );
 
-	this.addEventListener( "removed", this.removeDomObjects );
-	this.txt.textContent = "000\u00B0";
+	this.addEventListener( 'removed', this.removeDomObjects );
+	this.txt.textContent = '000\u00B0';
 
 	return this;
 
@@ -107,7 +107,7 @@ function Compass ( container ) {
 
 		return p1;
 
-	};
+	}
 
 }
 
@@ -145,13 +145,13 @@ Compass.prototype.set = function () {
 
 		var degrees = 360 - Math.round( _Math.radToDeg( a ) );
 
-		this.txt.textContent = padDigits( degrees, 3 ) + "\u00B0"; // unicode degree symbol
+		this.txt.textContent = padDigits( degrees, 3 ) + '\u00B0'; // unicode degree symbol
 
 		this.rotateOnAxis( negativeZAxis, a - this.lastRotation );
 
 		this.lastRotation = a;
 
-	}
+	};
 
 } ();
 

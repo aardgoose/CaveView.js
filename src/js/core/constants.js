@@ -65,11 +65,11 @@ var environment = new Map();
 
 function setEnvironment ( envs ) {
 
-	var pName
+	var pName;
 
 	for ( pName in envs ) {
 
-			environment.set ( pName , envs[ pName ] );
+		environment.set ( pName , envs[ pName ] );
 
 	}
 

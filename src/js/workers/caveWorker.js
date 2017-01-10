@@ -12,7 +12,7 @@ function onMessage ( event ) {
 
 	function _caveLoaded( cave ) {
 
-		postMessage( { status: "ok", survey: cave.getSurvey() } );
+		postMessage( { status: 'ok', survey: cave.getSurvey() } );
 
 	}
 

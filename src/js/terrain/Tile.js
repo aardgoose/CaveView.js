@@ -8,7 +8,7 @@ import {
 	BufferGeometry,
 	BufferGeometryLoader, ImageLoader,
 	Texture,
-	MeshBasicMaterial, MeshLambertMaterial,
+	MeshLambertMaterial,
 	RepeatWrapping,
 	Mesh
 } from '../../../../three.js/src/Three';
@@ -33,7 +33,7 @@ function Tile ( x, y, resolution, tileSet, clip ) {
 
 	Mesh.call( this );
 
-	this.type = "Tile";
+	this.type = 'Tile';
 
 	return this;
 
@@ -46,12 +46,10 @@ Tile.prototype.constructor = Tile;
 Tile.liveTiles = 0;
 Tile.overlayImages = new Map();
 
-
 Tile.prototype.create = function ( geometry, terrainData ) {
 
 	var vertices = geometry.vertices;
 	var faces    = geometry.faces;
-	var colors   = geometry.colors;
 
 	var l1 = terrainData.length;
 	var l2 = vertices.length;
@@ -105,13 +103,13 @@ Tile.prototype.create = function ( geometry, terrainData ) {
 
 	return this;
 
-	function _onUpload( name ) {
+	function _onUpload() {
 
 		this.array = null;
 
 	}
 
-}
+};
 
 Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 
@@ -141,14 +139,13 @@ Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 
 	return this;
 
-	function _onUpload( name ) {
+	function _onUpload() {
 
 		this.array = null;
 
 	}
 
-}
-
+};
 
 Tile.prototype.getWorldBoundingBox = function () {
 
@@ -167,7 +164,7 @@ Tile.prototype.getWorldBoundingBox = function () {
 
 	return this.worldBoundingBox;
 
-}
+};
 
 Tile.prototype.getBoundingBox = function () {
 
@@ -190,7 +187,7 @@ Tile.prototype.getBoundingBox = function () {
 
 	return this.boundingBox;
 
-}
+};
 
 Tile.prototype.evict = function () {
 
@@ -201,7 +198,7 @@ Tile.prototype.evict = function () {
 
 	if ( !this.boundingBox ) {
 
-		console.log( "FIXUP :", this.x, this.y );
+		console.log( 'FIXUP :', this.x, this.y );
 		this.getWorldBoundingBox();
 
 	}
@@ -210,7 +207,7 @@ Tile.prototype.evict = function () {
 
 	--Tile.liveTiles;
 
-}
+};
 
 Tile.prototype.setReplaced = function () {
 
@@ -222,26 +219,26 @@ Tile.prototype.setReplaced = function () {
 
 	if ( !this.boundingBox ) {
 
-		console.log( "FIXUP :", this.x, this.y );
+		console.log( 'FIXUP :', this.x, this.y );
 		this.getWorldBoundingBox();
 
 	}
 
 	--Tile.liveTiles;
 
-}
+};
 
 Tile.prototype.removed = function () {
 
 	if ( this.geometry ) this.geometry.dispose();
 
-}
+};
 
 Tile.prototype.setMaterial = function ( material ) {
 
 	this.material = material;
 
-}
+};
 
 Tile.prototype.setOpacity = function ( opacity ) {
 
@@ -250,7 +247,7 @@ Tile.prototype.setOpacity = function ( opacity ) {
 	material.opacity = opacity;
 	material.needsUpdate = true;
 
-}
+};
 
 Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
@@ -277,7 +274,7 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 	var xRepeat = repeat * ( ( tileWidth - clip.left - clip.right ) / tileWidth );
 	var yRepeat = repeat * ( ( tileWidth - clip.top  - clip.bottom ) / tileWidth );
 
-	var imageFile = tileSet.OVERLAYDIR + overlay + "/" + tileSet.PREFIX + tileSet.OVERLAY_RESOLUTION + "MX-" + padDigits( y, 3 ) + "-" + padDigits( x, 3 ) + ".jpg";
+	var imageFile = tileSet.OVERLAYDIR + overlay + '/' + tileSet.PREFIX + tileSet.OVERLAY_RESOLUTION + 'MX-' + padDigits( y, 3 ) + '-' + padDigits( x, 3 ) + '.jpg';
 
 	if ( Tile.overlayImages.has( imageFile ) ) {
 
@@ -323,13 +320,13 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
 	}
 
-}
+};
 
 Tile.prototype.getParent = function () {
 
 	return this.parent;
 
-}
+};
 
 Tile.prototype.projectedArea = function ( camera ) {
 
@@ -356,8 +353,7 @@ Tile.prototype.projectedArea = function ( camera ) {
 
 	return t1.area() + t2.area();
 
-}
-
+};
 
 export { Tile };
 

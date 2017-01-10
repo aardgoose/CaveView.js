@@ -22,7 +22,7 @@ function ExtendedPointsMaterial () {
 		vertexColors: VertexColors
 	} );
 
-	this.map = new TextureLoader().load( getEnvironmentValue( "home", "" ) + "images/disc.png" );
+	this.map = new TextureLoader().load( getEnvironmentValue( 'home', '' ) + 'images/disc.png' );
 
 	this.color = new Color();
 	this.opacity = 1.0;
@@ -33,7 +33,7 @@ function ExtendedPointsMaterial () {
 	this.sizeAttenuation = true;
 	this.transparent = true;
 
-	this.type = "CV.ExtendedPointsMaterial";
+	this.type = 'CV.ExtendedPointsMaterial';
 
 	this.isPointsMaterial = true;
 

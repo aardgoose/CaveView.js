@@ -13,18 +13,16 @@ function Svx3dHandler ( fileName, dataStream ) {
 	this.surveyTree = new Tree();
 	this.isRegion   = false;
 
-	var surveyTree  = this.surveyTree;
-
 	var source    = dataStream;  // file data as arrrayBuffer
 	var pos       = 0;	         // file position
 
 	// read file header
-	var stdHeader = readLF(); // Survex 3D Image File
-	var version   = readLF(); // 3d version
-	var title     = readLF(); // Title
-	var date      = readLF(); // Date
+	readLF(); // Survex 3D Image File
+	var version = readLF(); // 3d version
+	var title   = readLF();
+	readLF(); // Date
 
-	console.log( "title: ", title);
+	console.log( 'title: ', title);
 
 	this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
 
@@ -42,11 +40,9 @@ function Svx3dHandler ( fileName, dataStream ) {
 			b = bytes[ pos++ ];
 			lfString.push( b );
 
-		} while ( b != 0x0a )
+		} while ( b != 0x0a );
 
 		var s = String.fromCharCode.apply( null, lfString ).trim();
-
-		console.log( s  );
 
 		return s;
 	}
@@ -63,7 +59,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	var cmd         = [];
 	var legs        = [];
-	var label       = "";
+	var label       = '';
 	var readLabel;
 	var fileFlags   = 0;
 	var style       = 0;
@@ -209,27 +205,28 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		switch ( data[ pos ] ) {
 
-			case 0xfe:
+		case 0xfe:
 
-				l = new DataView( source, pos );
+			l = new DataView( source, pos );
 
-				len = l.getUint16( 0, true ) + data[ pos ];
-				pos += 2;
+			len = l.getUint16( 0, true ) + data[ pos ];
+			pos += 2;
 
-				break;
+			break;
 
-			case 0xff:
+		case 0xff:
 
-				l = new DataView( source, pos );
+			l = new DataView( source, pos );
 
-				len = l.getUint32( 0, true );
-				pos +=4;
+			len = l.getUint32( 0, true );
+			pos +=4;
 
-				break;
+			break;
 
-			default:
+		default:
 
-				len = data[ pos++ ];
+			len = data[ pos++ ];
+
 		}
 
 		if ( len === 0 ) return false; // no label
@@ -255,6 +252,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		var b = data[ pos++ ];
 		var add = 0;
 		var del = 0;
+		var l;
 
 		if ( b !== 0 ) {
 
@@ -273,7 +271,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 			} else {
 
-				var l = new DataView( source, pos );
+				l = new DataView( source, pos );
 
 				del = l.getUint32( 0, true );
 				pos +=4;
@@ -288,7 +286,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 			} else {
 
-				var l = new DataView( source, pos );
+				l = new DataView( source, pos );
 
 				add = l.getUint32( 0, true );
 				pos +=4;
@@ -318,9 +316,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_STOP ( c ) {
+	function cmd_STOP ( /* c */ ) {
 
-		if ( label ) label = "";
+		if ( label ) label = '';
 
 		return true;
 
@@ -330,14 +328,14 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		label = label.slice( 0, -16 );
 
-		if ( label.charAt( label.length - 1 ) == ".") label = label.slice( 0, -1 ); // strip trailing "."
+		if ( label.charAt( label.length - 1 ) == '.') label = label.slice( 0, -1 ); // strip trailing '.'
 
-		var parts = label.split( "." );
+		var parts = label.split( '.' );
 
 		parts.splice( -( c ) );
-		label = parts.join( "." );
+		label = parts.join( '.' );
 
-		if ( label ) label = label + ".";
+		if ( label ) label = label + '.';
 
 		return true;
 
@@ -353,7 +351,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
  
-	function cmd_DATE_V4 ( c ) {
+	function cmd_DATE_V4 ( /* c */ ) {
 
 		pos += 4;
 
@@ -361,7 +359,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_DATE_V7 ( c ) {
+	function cmd_DATE_V7 ( /* c */ ) {
 
 		pos += 2;
 
@@ -369,7 +367,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_DATE3_V7 ( c ) {
+	function cmd_DATE3_V7 ( /* c */ ) {
 
 		pos += 4;
 
@@ -377,7 +375,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_DATE2_V4 ( c ) {
+	function cmd_DATE2_V4 ( /* c */ ) {
 
 		pos += 8;
 
@@ -385,7 +383,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_DATE2_V7 ( c ) {
+	function cmd_DATE2_V7 ( /* c */ ) {
 
 		pos += 3;
 
@@ -401,7 +399,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_DATEV8_1 ( c ) {
+	function cmd_DATEV8_1 ( /* c */ ) {
 
 		pos += 2;
 
@@ -409,23 +407,22 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_DATEV8_2 ( c ) {
+	function cmd_DATEV8_2 ( /* c */ ) {
 
-		console.log( "v8d2" );
 		pos += 3;
 
 		return true;
 
 	}
 
-	function cmd_DATEV8_3 ( c ) {
+	function cmd_DATEV8_3 ( /* c */ ) {
 
 		pos += 4;
 
 		return true;
 	}
 
-	function cmd_DATE_NODATE ( c ) {
+	function cmd_DATE_NODATE ( /* c */ ) {
 
 		return true;
 
@@ -438,11 +435,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		if ( readLabel( flags ) ) {
 
 			// we have a new section name, add it to the survey tree
-			sectionId = surveyTree.addPath( label.split( "." ) );
+			sectionId = surveyTree.addPath( label.split( '.' ) );
 
 		}
 
-		var coords = readCoordinates( flags );
+		var coords = readCoordinates();
 
 		if ( flags & 0x01 ) {
 
@@ -464,7 +461,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_MOVE ( c ) {
+	function cmd_MOVE ( /* c */ ) {
 
 		// new set of line segments
 		if ( legs.length > 1 ) groups.push( legs );
@@ -476,7 +473,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		lineEnds.add( [ lastPosition.x, lastPosition.y, lastPosition.z ].toString() );
 
-		var coords = readCoordinates( 0x00 );
+		var coords = readCoordinates();
 
 		legs.push( { coords: coords } );
 
@@ -486,14 +483,14 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_ERROR ( c ) {
+	function cmd_ERROR ( /* c */ ) {
 		//var l = new DataView(source, pos);
 
-		//console.log("legs   : ", l.getInt32(0, true));
-		//console.log("length : ", l.getInt32(4, true));
-		//console.log("E      : ", l.getInt32(8, true));
-		//console.log("H      : ", l.getInt32(12, true));
-		//console.log("V      : ", l.getInt32(16, true));
+		//console.log('legs   : ', l.getInt32(0, true));
+		//console.log('length : ', l.getInt32(4, true));
+		//console.log('E      : ', l.getInt32(8, true));
+		//console.log('H      : ', l.getInt32(12, true));
+		//console.log('V      : ', l.getInt32(16, true));
 		pos += 20;
 
 		return true;
@@ -506,8 +503,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		readLabel( 0 );
 
-		var coords = readCoordinates( flags );
-		var path = label.split( "." );
+		var coords = readCoordinates();
+		var path = label.split( '.' );
 
 		stations.set( label, coords );
 
@@ -577,7 +574,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		if ( !position ) return;
 
-		var station = label.split( "." );
+		var station = label.split( '.' );
 
 		// get survey path by removing last component of station name
 		station.pop();
@@ -607,7 +604,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function readCoordinates ( flags ) {
+	function readCoordinates () {
 
 		var l = new DataView( source, pos );
 		var coords = {};
@@ -621,7 +618,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-}
+};
 
 Svx3dHandler.prototype.getLineSegments = function () {
 
@@ -646,19 +643,19 @@ Svx3dHandler.prototype.getLineSegments = function () {
 
 	return lineSegments;
 
-}
+};
 
 Svx3dHandler.prototype.getTerrainDimensions = function () {
 
 	return { lines: 0, samples: 0 };
 
-}
+};
 
 Svx3dHandler.prototype.getTerrainBitmap = function () {
 
 	return false;
 
-}
+};
 
 Svx3dHandler.prototype.getSurvey = function () {
 
@@ -670,9 +667,9 @@ Svx3dHandler.prototype.getSurvey = function () {
 		scraps: [],
 		entrances: this.entrances,
 		hasTerrain: false
-	}
+	};
 
-}
+};
 
 export { Svx3dHandler };
 

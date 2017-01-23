@@ -13,6 +13,7 @@
 //    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
 //    Pan - right mouse, or arrow keys / touch: three finter swipe
 
+/* eslint-disable */
 
 import {
 	Vector2, Vector3, Quaternion, Spherical,

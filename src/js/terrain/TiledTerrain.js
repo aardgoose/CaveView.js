@@ -292,13 +292,14 @@ TiledTerrain.prototype.endLoad = function ( tile ) {
 
 		} else {
 
-			// mark this tile so we don't continually try to reload
 			if ( this.resolution === this.initialResolution ) {
 
 				console.log('oops');
 				this.tileArea(  this.currentLimits, null, resolution * 2 );
 
 			}
+
+			// mark this tile so we don't continually try to reload
 
 			if ( replaceTileMesh ) replaceTileMesh.canZoom = false;
 

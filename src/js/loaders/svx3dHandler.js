@@ -61,8 +61,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	var legs        = [];
 	var label       = '';
 	var readLabel;
-	var fileFlags   = 0;
-	var style       = 0;
 	var stations    = new Map();
 	var lineEnds    = new Set(); // implied line ends to fixnup xsects
 	var xSects      = [];
@@ -120,8 +118,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		readLabel = readLabelV8;	
 
-		// v8 file wide flags after header
-		fileFlags = data[ pos++ ];
+		// skip v8 file wide flags after header
+		pos++;
 
 	} else {
 
@@ -391,9 +389,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_STYLE ( c ) {
-
-		style = c;
+	function cmd_STYLE ( /* c */ ) {
 
 		return true;
 

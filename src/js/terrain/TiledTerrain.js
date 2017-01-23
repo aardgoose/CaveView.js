@@ -276,7 +276,7 @@ TiledTerrain.prototype.endLoad = function ( tile ) {
 
 				var loadedTile = loadedTiles[ i ];
 
-				if ( ! tile.parent ) parent.add( tile );
+				if ( ! loadedTile.parent ) parent.add( loadedTile );
 
 				loadedTile.replaced = false;
 				loadedTile.evicted = false;

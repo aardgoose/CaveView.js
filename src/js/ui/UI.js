@@ -182,7 +182,7 @@ function initSelectionPage () {
 
 		track.push( { name: top.name, id: id } );
 
-		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp );
+		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
 
 		l = track.length;
 		var footprint = track[ l - 1 ];

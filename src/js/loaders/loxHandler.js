@@ -19,8 +19,6 @@ function loxHandler  ( fileName, dataStream ) {
 	var lineSegments = [];
 	var xSects       = [];
 	var stations     = [];
-	var lines        = 0;
-	var samples      = 0;
 	var self         = this;
 	var surveyTree   = this.surveyTree;
 
@@ -136,7 +134,7 @@ function loxHandler  ( fileName, dataStream ) {
 
 		if ( m_parent != m_id ) {
 
-			if ( !surveyTree.addById( readString( namePtr ), m_id, m_parent ) ) console.log( 'error constructing survey tree' );
+			if ( ! surveyTree.addById( readString( namePtr ), m_id, m_parent ) ) console.log( 'error constructing survey tree for', readString( titlePtr ) );
 
 		}
 
@@ -207,11 +205,15 @@ function loxHandler  ( fileName, dataStream ) {
 		var fromLRUD = readLRUD();
 		var toLRUD   = readLRUD();
 
-		var m_flags       = readUint();
-		var m_sectionType = readUint();
-		var m_surveyId    = readUint();
-		var m_threshold   = f.getFloat64( pos, true );
-		var type          = LEG_CAVE;
+		var m_flags = readUint();
+
+		readUint(); // m_sectionType
+
+		var m_surveyId = readUint();
+
+		f.getFloat64( pos, true ); // m_threshold
+
+		var type = LEG_CAVE;
 
 		pos += 8;
 
@@ -245,7 +247,8 @@ function loxHandler  ( fileName, dataStream ) {
 
 	function readScrap () {
 
-		var m_id         = readUint();
+		readUint(); // m_id
+
 		var m_surveyId   = readUint();
 
 		var m_numPoints  = readUint();
@@ -337,7 +340,8 @@ function loxHandler  ( fileName, dataStream ) {
 
 	function readSurface () {
 
-		var m_id       = readUint();
+		readUint(); // m_id
+
 		var m_width    = readUint();
 		var m_height   = readUint();
 
@@ -377,11 +381,12 @@ function loxHandler  ( fileName, dataStream ) {
 
 	function readSurfaceBMP () {
 
-		var m_type      = readUint();
-		var m_surfaceId = readUint();
+		readUint(); // m_type
+		readUint(); // m_surfaceId
 
-		var imagePtr = readDataPtr(); 
-		var m_calib  = readCalibration();
+		var imagePtr = readDataPtr();
+
+		readCalibration(); // m_calib
 
 		self.terrainBitmap = extractImage( imagePtr );
 

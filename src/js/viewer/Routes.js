@@ -7,9 +7,8 @@ import {
 } from '../../../../three.js/src/Three';
 
 import { replaceExtension } from '../core/lib';
-import { CaveLoader } from '../loaders/CaveLoader';
 
-function Routes ( surveyName, callback ) {
+function Routes ( routes ) {
 
 	// determine segments between junctions and entrances/passage ends and create mapping array.
 
@@ -25,17 +24,6 @@ function Routes ( surveyName, callback ) {
 	this.currentRouteName;
 	this.adjacentSegments = new Set();
 
-	this.traces = [];
-
-	var self = this;
-	var name = replaceExtension( surveyName, 'json' );
-
-	console.log( 'loading route file: ', name );
-
-	var loader = new CaveLoader( _routesLoaded );
-
-	loader.loadURL( name );
-
 	Object.defineProperty( this, 'setRoute', {
 		set: function ( x ) { this.loadRoute( x ); },
 		get: function () { return this.currentRouteName; }
@@ -45,48 +33,20 @@ function Routes ( surveyName, callback ) {
 		get: function () { return this.toDownload(); }
 	} );
 
-	function _routesLoaded( routesData ) {
 
-		var i;
+	var i;
+	var route;
 
-		if ( ! routesData ) {
+	for ( i = 0; i < routes.length; i++ ) {
 
-			callback( [] );
-			return;
+		route = routes[ i ];
 
-		}
-
-		var routesJSON = routesData.getRoutes();
-
-		var routes = routesJSON.routes;
-
-		if ( ! routes ) {
-
-			alert( 'invalid route file - no routes' );
-
-			callback( [] );
-			return;
-
-		}
-
-		var route;
-
-		for ( i = 0; i < routes.length; i++ ) {
-
-			route = routes[ i ];
-
-			self.routeNames.push( route.name );
-			self.routes.set( route.name, route.segments );
-
-		}
-
-		if ( routesJSON.traces !== undefined ) self.traces = routesJSON.traces;
-
-		callback();
-
-		self.dispatchEvent( { type: 'changed', name: 'download' } );
+		this.routeNames.push( route.name );
+		this.routes.set( route.name, route.segments );
 
 	}
+
+	this.dispatchEvent( { type: 'changed', name: 'download' } );
 
 }
 
@@ -234,12 +194,6 @@ Routes.prototype.loadRoute = function ( routeName ) {
 Routes.prototype.getCurrentRoute = function () {
 
 	return this.currentRoute;
-
-};
-
-Routes.prototype.getDyeTraces = function () {
-
-	return this.traces;
 
 };
 

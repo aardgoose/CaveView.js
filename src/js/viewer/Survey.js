@@ -16,6 +16,7 @@ import { Materials } from '../materials/Materials';
 import { Marker } from './Marker';
 import { farPointers } from './EntranceFarPointer';
 import { Stations } from './Stations';
+import { Routes } from './Routes';
 import { Terrain } from '../terrain/Terrain';
 import { WorkerPool } from '../workers/WorkerPool';
 import { WaterMaterial } from '../materials/WaterMaterial';
@@ -168,6 +169,28 @@ Survey.prototype.loadCave = function ( cave ) {
 	_loadTerrain( cave );
 
 	this.loadStations( cave.surveyTree );
+
+	console.log( cave );
+
+	if ( cave.metadata ) {
+
+		if ( cave.metadata.routes ) {
+
+			var routes = new Routes( cave.metadata.routes );
+
+			routes.mapSurvey( this.stations, this.getLegs(), this.surveyTree );
+
+			this.routes = routes;
+
+		}
+
+		if ( cave.metadata.traces ) {
+
+			this.loadDyeTraces( cave.metadata.traces );
+
+		}
+
+	}
 
 	return;
 
@@ -670,16 +693,6 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 	this.add( stations );
 
 	this.stations = stations;
-
-};
-
-Survey.prototype.addRoutes = function ( routes ) {
-
-	routes.mapSurvey( this.stations, this.getLegs(), this.surveyTree );
-
-	this.routes = routes;
-
-	this.loadDyeTraces( routes.getDyeTraces() );
 
 };
 

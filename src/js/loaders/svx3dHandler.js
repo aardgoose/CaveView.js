@@ -3,7 +3,7 @@
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE } from '../core/constants';
 import { Tree } from '../core/Tree';
 
-function Svx3dHandler ( fileName, dataStream ) {
+function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	this.fileName   = fileName;
 	this.groups     = [];
@@ -12,6 +12,7 @@ function Svx3dHandler ( fileName, dataStream ) {
 	this.xGroups    = [];
 	this.surveyTree = new Tree();
 	this.isRegion   = false;
+	this.metadata   = metadata;
 
 	var source    = dataStream;  // file data as arrrayBuffer
 	var pos       = 0;	         // file position
@@ -662,7 +663,8 @@ Svx3dHandler.prototype.getSurvey = function () {
 		crossSections: this.xGroups,
 		scraps: [],
 		entrances: this.entrances,
-		hasTerrain: false
+		hasTerrain: false,
+		metadata: this.metadata
 	};
 
 };

@@ -2,7 +2,7 @@
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE } from '../core/constants';
 import { Tree } from '../core/Tree';
 
-function loxHandler  ( fileName, dataStream ) {
+function loxHandler  ( fileName, dataStream, metadata ) {
 
 	this.fileName          = fileName;
 	this.entrances         = [];
@@ -15,6 +15,7 @@ function loxHandler  ( fileName, dataStream ) {
 	this.sections          = new Map();
 	this.surveyTree        = new Tree( '', 0 );
 	this.isRegion		   = false;
+	this.metadata          = metadata;
 
 	var lineSegments = [];
 	var xSects       = [];
@@ -471,7 +472,8 @@ loxHandler.prototype.getSurvey = function () {
 		crossSections: [],
 		scraps: this.scraps,
 		entrances: this.entrances,
-		hasTerrain: false
+		hasTerrain: false,
+		metadata: this.metadata
 	};
 
 };

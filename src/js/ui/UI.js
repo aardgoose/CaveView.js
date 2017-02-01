@@ -541,7 +541,7 @@ function initUI () {
 
 	initSettingsPage();
 	initSelectionPage();
-	initRoutePage();
+//	initRoutePage(); // FIXME
 	initInfoPage();
 	initHelpPage();
 
@@ -674,27 +674,15 @@ function viewComplete () {
 	surveyTree = Viewer.getSurveyTree();
 	isCaveLoaded = true;
 
-	routes = new Routes( file, _routesLoaded );
-
 	cave = null; // drop reference to cave to free heap space
 
 	initUI();
-
-	function _routesLoaded() {
-
-		Viewer.addRoutes( routes );
-
-		isRoutesLoaded = true;
-
-		initUI();
-
-	}
 
 }
 
 function keyDown ( event ) {
 
-	if ( !isCaveLoaded ) return;
+	if ( ! isCaveLoaded ) return;
 
 	switch ( event.keyCode ) {
 

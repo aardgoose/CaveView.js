@@ -170,8 +170,6 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.loadStations( cave.surveyTree );
 
-	console.log( cave );
-
 	if ( cave.metadata ) {
 
 		if ( cave.metadata.routes ) {

@@ -4,18 +4,17 @@ import { Tree } from '../core/Tree';
 
 function loxHandler  ( fileName, dataStream, metadata ) {
 
-	this.fileName          = fileName;
-	this.entrances         = [];
-	this.terrain           = [];
-	this.terrainBitmap     = '';
-	this.terrainDimensions = {};
-	this.scraps            = [];
-	this.faults            = [];
-	this.lineSegments      = [];
-	this.sections          = new Map();
-	this.surveyTree        = new Tree( '', 0 );
-	this.isRegion		   = false;
-	this.metadata          = metadata;
+	this.fileName     = fileName;
+	this.entrances    = [];
+	this.scraps       = [];
+	this.faults       = [];
+	this.lineSegments = [];
+	this.sections     = new Map();
+	this.surveyTree   = new Tree( '', 0 );
+	this.isRegion     = false;
+	this.metadata     = metadata;
+	this.terrain      = {};
+	this.hasTerrain   = false;
 
 	var lineSegments = [];
 	var xSects       = [];
@@ -328,6 +327,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 					}
 
 				}
+
 			} }
 
 			scrap.faces.push( face );
@@ -351,14 +351,39 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		var ab = source.slice( pos, pos + surfacePtr.size ); // required for 64b alignment
 
-		self.terrain = new Float64Array( ab, 0 );
+		var dtm = new Float64Array( ab, 0 );
 
-		self.terrainDimensions.samples = m_width;
-		self.terrainDimensions.lines   = m_height;
-		self.terrainDimensions.xOrigin = m_calib[ 0 ];
-		self.terrainDimensions.yOrigin = m_calib[ 1 ];
-		self.terrainDimensions.xDelta  = m_calib[ 2 ];
-		self.terrainDimensions.yDelta  = m_calib[ 5 ];
+		// flip y direction 
+
+		var data = [];
+
+		for ( var i = 0; i < m_height; i++ ) {
+
+			var offset = ( m_height - 1 - i ) * m_width;
+
+			for ( var j = 0; j < m_width; j++ ) {
+
+				data.push( dtm[ offset + j ] );
+
+			}
+
+		}
+
+		var terrain = self.terrain;
+
+		terrain.data = data;
+		terrain.dimensions = {};
+
+		var dimensions = terrain.dimensions;
+
+		dimensions.samples = m_width;
+		dimensions.lines   = m_height;
+		dimensions.xOrigin = m_calib[ 0 ];
+		dimensions.yOrigin = m_calib[ 1 ];
+		dimensions.xDelta  = m_calib[ 2 ];
+		dimensions.yDelta  = m_calib[ 5 ];
+
+		self.hasTerrain = true;
 
 	}
 
@@ -389,7 +414,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		readCalibration(); // m_calib
 
-		self.terrainBitmap = extractImage( imagePtr );
+		self.terrain.bitmap = extractImage( imagePtr );
 
 	}
 
@@ -428,41 +453,6 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 loxHandler.prototype.constructor = loxHandler;
 
-loxHandler.prototype.getTerrainDimensions = function () {
-
-	return this.terrainDimensions;
-
-};
-
-loxHandler.prototype.getTerrainData = function () {
-
-	// flip y direction 
-	var flippedTerrain = [];
-	var lines   = this.terrainDimensions.lines;
-	var samples = this.terrainDimensions.samples;
-
-	for ( var i = 0; i < lines; i++ ) {
-
-		var offset = ( lines - 1 - i ) * samples;
-
-		for ( var j = 0; j < samples; j++ ) {
-
-			flippedTerrain.push( this.terrain[ offset + j ] );
-
-		}
-
-	}
-
-	return flippedTerrain;
-
-};
-
-loxHandler.prototype.getTerrainBitmap = function () {
-
-	return this.terrainBitmap;
-
-};
-
 loxHandler.prototype.getSurvey = function () {
 
 	return {
@@ -472,8 +462,9 @@ loxHandler.prototype.getSurvey = function () {
 		crossSections: [],
 		scraps: this.scraps,
 		entrances: this.entrances,
-		hasTerrain: false,
-		metadata: this.metadata
+		hasTerrain: this.hasTerrain,
+		metadata: this.metadata,
+		terrain: this.terrain
 	};
 
 };

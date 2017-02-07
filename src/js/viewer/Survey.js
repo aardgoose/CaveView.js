@@ -412,7 +412,7 @@ Survey.prototype.loadCave = function ( cave ) {
 		}
 
 		l = faces.length;
-		
+
 		if ( l === 0 ) return;
 
 		for ( i = 0; i < l; i++ ) {
@@ -599,7 +599,9 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
-		var dim = cave.getTerrainDimensions();
+		var terrain = cave.terrain;
+
+		var dim = terrain.dimensions;
 
 		var width  = ( dim.samples - 1 ) * dim.xDelta;
 		var height = ( dim.lines   - 1 ) * dim.yDelta;
@@ -608,7 +610,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		plane.translate( dim.xOrigin + width / 2, dim.yOrigin + height / 2, 0 );
 
-		self.terrain =  new Terrain().addTile( plane, cave.getTerrainData(), cave.getTerrainBitmap() );
+		self.terrain =  new Terrain().addTile( plane, terrain.data, terrain.bitmap );
 
 		return;
 

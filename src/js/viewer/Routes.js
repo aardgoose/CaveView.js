@@ -6,8 +6,6 @@ import {
 	EventDispatcher,
 } from '../../../../three.js/src/Three';
 
-import { replaceExtension } from '../core/lib';
-
 function Routes ( routes ) {
 
 	// determine segments between junctions and entrances/passage ends and create mapping array.

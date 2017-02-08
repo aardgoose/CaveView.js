@@ -9,7 +9,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 	this.scraps       = [];
 	this.faults       = [];
 	this.lineSegments = [];
-	this.sections     = new Map();
+	this.xGroups      = [];
 	this.surveyTree   = new Tree( '', 0 );
 	this.isRegion     = false;
 	this.metadata     = metadata;
@@ -17,7 +17,6 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 	this.hasTerrain   = false;
 
 	var lineSegments = [];
-	var xSects       = [];
 	var stations     = [];
 	var self         = this;
 	var surveyTree   = this.surveyTree;
@@ -29,6 +28,9 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 	var dataStart;
 	var f = new DataView( source, 0 );
 	var l = source.byteLength;
+
+	var xGroup = [];
+	var lastTo;
 
 	while ( pos < l ) readChunkHdr();
 
@@ -186,14 +188,14 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 	function readCoords () {
 
 		var f = new DataView( source, pos );
-		var coords = {};
 
-		coords.x = f.getFloat64( 0,  true );
-		coords.y = f.getFloat64( 8,  true );
-		coords.z = f.getFloat64( 16, true );
 		pos += 24;
 
-		return coords;
+		return {
+			x: f.getFloat64( 0,  true ),
+			y: f.getFloat64( 8,  true ),
+			z: f.getFloat64( 16, true )
+		};
 
 	}
 
@@ -207,7 +209,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		var m_flags = readUint();
 
-		readUint(); // m_sectionType
+		var m_sectionType = readUint();
 
 		var m_surveyId = readUint();
 
@@ -220,28 +222,41 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		if ( m_flags && 0x01 ) type = LEG_SURFACE;
 		if ( m_flags && 0x08 ) type = LEG_SPLAY;
 
-		if ( m_flags === 0x16 ) {
+		if ( m_sectionType !== 0x00 ) {
 
-			xSects[ m_from ] = fromLRUD;
-			xSects[ m_to ]   = toLRUD;
+			if ( m_from !== lastTo ) {
+
+				// new set of shots
+
+				xGroup = [];
+				self.xGroups.push( xGroup );
+
+				xGroup.push( { start: stations[ m_to ], end: stations[ m_from ], lrud: fromLRUD, survey: m_surveyId } );
+
+			}
+
+			xGroup.push( { start: stations[ m_from ], end: stations[ m_to ], lrud: toLRUD, survey: m_surveyId } );
 
 		}
 
 		lineSegments.push( { from: stations[ m_from ], to: stations[ m_to ], type: type, survey: m_surveyId } );
+
+		lastTo = m_to;
 
 	}
 
 	function readLRUD () {
 
 		var f = new DataView( source, pos );
-		var L = f.getFloat64( 0,  true );
-		var R = f.getFloat64( 8,  true );
-		var U = f.getFloat64( 16, true );
-		var D = f.getFloat64( 24, true );
 
 		pos += 32;
 
-		return { l: L, r: R, u: U, d: D };
+		return {
+			l: f.getFloat64( 0,  true ),
+			r: f.getFloat64( 8,  true ),
+			u: f.getFloat64( 16, true ),
+			d: f.getFloat64( 24, true )
+		}
 
 	}
 
@@ -459,7 +474,7 @@ loxHandler.prototype.getSurvey = function () {
 		title: this.fileName,
 		surveyTree: this.surveyTree,
 		lineSegments: this.lineSegments,
-		crossSections: [],
+		crossSections: this.xGroups,
 		scraps: this.scraps,
 		entrances: this.entrances,
 		hasTerrain: this.hasTerrain,

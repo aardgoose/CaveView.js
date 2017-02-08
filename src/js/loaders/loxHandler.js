@@ -281,13 +281,11 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 			offset = dataStart + pointsPtr.position + i * 24; // 24 = 3 * sizeof(double)
 			f = new DataView( source, offset );
 
-			var vertex = {};
-
-			vertex.x = f.getFloat64( 0,  true );
-			vertex.y = f.getFloat64( 8,  true );
-			vertex.z = f.getFloat64( 16, true );
-
-			scrap.vertices.push( vertex );
+			scrap.vertices.push( {
+				x: f.getFloat64( 0,  true ),
+				y: f.getFloat64( 8,  true ),
+				z: f.getFloat64( 16, true )
+			} );
 
 		}
 
@@ -298,11 +296,11 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 			offset = dataStart + facesPtr.position + i * 12; // 12 = 3 * sizeof(uint32)
 			f = new DataView( source, offset );
 
-			var face = [];
-
-			face[ 0 ] = f.getUint32( 0, true );
-			face[ 1 ] = f.getUint32( 4, true );
-			face[ 2 ] = f.getUint32( 8, true );
+			var face = [
+				f.getUint32( 0, true ),
+				f.getUint32( 4, true ),
+				f.getUint32( 8, true )
+			];
 
 			// check for face winding order == orientation
 

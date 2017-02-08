@@ -530,17 +530,17 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		var l = new DataView( source, pos );
 
-		var lrud = {
-			l: l.getInt16( 0, true ) / 100,
-			r: l.getInt16( 2, true ) / 100,
-			u: l.getInt16( 4, true ) / 100,
-			d: l.getInt16( 6, true ) / 100
-		};
-
 		pos += 8;
 
-		return commonXSECT( flags, lrud );
-
+		return commonXSECT(
+			flags,
+			{
+				l: l.getInt16( 0, true ) / 100,
+				r: l.getInt16( 2, true ) / 100,
+				u: l.getInt16( 4, true ) / 100,
+				d: l.getInt16( 6, true ) / 100
+			}
+		);
 
 	}
 
@@ -552,16 +552,17 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		var l = new DataView( source, pos );
 
-		var lrud = {
-			l: l.getInt32( 0, true ) / 100,
-			r: l.getInt32( 0, true ) / 100,
-			u: l.getInt32( 0, true ) / 100,
-			d: l.getInt32( 0, true ) / 100
-		};
-
 		pos += 16;
 
-		return commonXSECT( flags, lrud );
+		return commonXSECT( 
+			flags,
+			{
+				l: l.getInt32( 0, true ) / 100,
+				r: l.getInt32( 0, true ) / 100,
+				u: l.getInt32( 0, true ) / 100,
+				d: l.getInt32( 0, true ) / 100
+			}
+		);
 
 	}
 

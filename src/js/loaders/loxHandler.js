@@ -256,7 +256,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 			r: f.getFloat64( 8,  true ),
 			u: f.getFloat64( 16, true ),
 			d: f.getFloat64( 24, true )
-		}
+		};
 
 	}
 

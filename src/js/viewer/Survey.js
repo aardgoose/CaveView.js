@@ -25,7 +25,7 @@ import {
 	Vector3, Face3, Color, Box3,
 	Geometry, PlaneGeometry, BufferGeometry,
 	Float32BufferAttribute,
-	MeshLambertMaterial, MeshBasicMaterial, MultiMaterial, LineBasicMaterial,
+	MeshLambertMaterial, MeshBasicMaterial, LineBasicMaterial,
 	FaceColors, NoColors, FrontSide, VertexColors,
 	Object3D, Mesh, Group, LineSegments,
 	BoxHelper
@@ -322,6 +322,7 @@ Survey.prototype.loadCave = function ( cave ) {
 			for ( j = 0; j < m; j++ ) {
 
 				var survey = crossSectionGroup[ j ].survey;
+
 				lrud = _getLRUD( crossSectionGroup[ j ] );
 
 				if ( survey !== currentSurvey ) {
@@ -435,8 +436,19 @@ Survey.prototype.loadCave = function ( cave ) {
 			var cross    = _getCrossProduct( crossSection );
 			var stationV = new Vector3( station.x, station.y, station.z );
 
-			var L = cross.clone().setLength(  lrud.l ).add( stationV );
-			var R = cross.clone().setLength( -lrud.r ).add( stationV ); 
+			var L, R;
+
+			if ( cross.length() == 0 ) {
+
+				L = stationV;
+				R = stationV;
+
+			} else {
+
+				L = cross.clone().setLength(  lrud.l ).add( stationV );
+				R = cross.clone().setLength( -lrud.r ).add( stationV ); 
+
+			}
 
 			var U = new Vector3( station.x, station.y, station.z + lrud.u );
 			var D = new Vector3( station.x, station.y, station.z - lrud.d );
@@ -1326,7 +1338,7 @@ Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
 	if ( mode === SHADING_SURVEY ) surveyColours = this.getSurveyColours();
 
-	mesh.material = new MultiMaterial( [ selected, unselected ] );
+	mesh.material = [ selected, unselected ];
 
 	var count = 0; // check final face count is select to detect faults in constructed mesh.userData
 	var f, l, run;

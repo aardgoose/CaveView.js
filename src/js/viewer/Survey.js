@@ -1734,7 +1734,16 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 		var vertex1 = geometry.vertices[ v1 ];
 		var vertex2 = geometry.vertices[ v2 ];
 
-		var legNormal  = new Vector3().subVectors( vertex1, vertex2 ).normalize();
+		if ( vertex1.equals( vertex2 ) ) {
+
+			geometry.colors[ v1 ] = ColourCache.grey;
+			geometry.colors[ v2 ] = ColourCache.grey;
+
+			return;
+
+		}
+
+		var legNormal = new Vector3().subVectors( vertex1, vertex2 ).normalize();
 		var dotProduct = legNormal.dot( pNormal );
 
 		var hueIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );

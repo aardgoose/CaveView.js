@@ -31,6 +31,8 @@ import {
 	BoxHelper
 } from '../../../../three.js/src/Three';
 
+var zeroVector = new Vector3();
+
 function Survey ( cave ) {
 
 	if ( !  cave ) {
@@ -300,6 +302,8 @@ Survey.prototype.loadCave = function ( cave ) {
 		var l1, r1, u1, d1, l2, r2, u2, d2, lrud;
 		var i, j;
 
+		var lastCross = new Vector3();
+
 		var run = null;
 
 		if ( l === 0 ) return;
@@ -436,12 +440,27 @@ Survey.prototype.loadCave = function ( cave ) {
 			var cross    = _getCrossProduct( crossSection );
 			var stationV = new Vector3( station.x, station.y, station.z );
 
-			var L, R;
+			var L, R, U, D;
 
-			if ( cross.length() == 0 ) {
+			if ( cross.equals( zeroVector ) ) {
 
-				L = stationV;
-				R = stationV;
+				// leg is vertical
+
+				if ( lastCross.equals( zeroVector ) ) {
+
+					// previous leg was vertical
+
+					L = stationV;
+					R = stationV;
+
+				} else {
+
+					// use previous leg to determine passage orientation for L and R for vertical legs
+
+					L = lastCross.clone().setLength(  lrud.l ).add( stationV );
+					R = lastCross.clone().setLength( -lrud.r ).add( stationV ); 
+
+				}
 
 			} else {
 
@@ -450,8 +469,10 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			}
 
-			var U = new Vector3( station.x, station.y, station.z + lrud.u );
-			var D = new Vector3( station.x, station.y, station.z - lrud.d );
+			U = new Vector3( station.x, station.y, station.z + lrud.u );
+			D = new Vector3( station.x, station.y, station.z - lrud.d );
+
+			lastCross = cross;
 
 			return { l: L, r: R, u: U, d: D };
 

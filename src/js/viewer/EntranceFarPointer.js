@@ -32,7 +32,7 @@ function FarPointers ( survey ) {
 
 	survey.addEventListener( 'removed', _onSurveyRemoved );
 
-	function _onSurveyRemoved( event ) {
+	function _onSurveyRemoved ( event ) {
 
 		var survey = event.target;
 

@@ -253,7 +253,7 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 		Page.inHandler = true;
 
-		obj[ property ] = event.target.checked; 
+		obj[ property ] = event.target.checked;
 
 		Page.inHandler = false;
 
@@ -363,7 +363,7 @@ Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 	this.slide = newSlide;
 	this.slideDepth = depth;
 
-	return;	
+	return;
 
 	function afterSlideOut () {
 

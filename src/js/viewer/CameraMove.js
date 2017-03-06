@@ -140,7 +140,7 @@ CameraMove.prototype.getControlPoint = function ( common, p1, p2, distance ) {
 
 };
 
-CameraMove.prototype.start = function( time ) {
+CameraMove.prototype.start = function ( time ) {
 
 	if ( this.frameCount === 0 && ! this.skipNext ) {
 
@@ -185,7 +185,7 @@ CameraMove.prototype.animate = function () {
 	}
 
 	controls.update();
- 
+
 	if ( tRemaining === 0 ) {
 
 		// end of animation

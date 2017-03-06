@@ -17,14 +17,12 @@ function TiledTerrain ( limits3, onLoaded ) {
 	this.type = 'CV.TiledTerrain';
 
 	this.limits = new Box2(
-
 		new Vector2( limits3.min.x, limits3.min.y ),
 		new Vector2( limits3.max.x, limits3.max.y )
-
 	);
 
-	this.tileSet         = Object.assign( {}, TileSet);
-	this.tile        = null;
+	this.tileSet = Object.assign( {}, TileSet );
+	this.tile = null;
 
 	this.onLoaded        = onLoaded;
 	this.tilesLoading    = 0;
@@ -72,10 +70,10 @@ TiledTerrain.prototype.hasCoverage = function () {
 	var limits  = this.limits;
 	var tileSet = this.tileSet;
 
-	return ( (limits.min.x >= tileSet.W && limits.min.x <= tileSet.E) || 
-		(limits.max.x >= tileSet.W && limits.max.x <= tileSet.E) ) &&
-		( (limits.min.y >= tileSet.S && limits.min.y <= tileSet.N) ||
-		(limits.max.y >= tileSet.S && limits.max.y <= tileSet.N));
+	return ( ( limits.min.x >= tileSet.W && limits.min.x <= tileSet.E ) || 
+		     ( limits.max.x >= tileSet.W && limits.max.x <= tileSet.E ) ) &&
+		   ( ( limits.min.y >= tileSet.S && limits.min.y <= tileSet.N ) ||
+		     ( limits.max.y >= tileSet.S && limits.max.y <= tileSet.N ) );
 
 };
 
@@ -122,7 +120,7 @@ TiledTerrain.prototype.pickCoverage = function ( limits, maxResolution ) {
 
 TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
-	console.log('load ', resolutionIn, ': [ ', x, ',', y, ']' );
+	console.log( 'load ', resolutionIn, ': [ ', x, ',', y, ']' );
 
 	var self       = this;
 	var resolution = resolutionIn;
@@ -132,7 +130,7 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 	var limits    = this.limits;
 	var tileSet   = this.tileSet;
-	var tileWidth = (tileSet.TILESIZE - 1 ) * resolution;
+	var tileWidth = ( tileSet.TILESIZE - 1 ) * resolution;
 	var clip      = { top: 0, bottom: 0, left: 0, right: 0 };
 
 	var N = tileSet.N;
@@ -224,7 +222,7 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 		var tile;
 
-		if ( !oldTile ) {
+		if ( ! oldTile ) {
 
 			tile = new Tile( x, y, resolution, self.tileSet, clip );
 
@@ -337,7 +335,7 @@ TiledTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
 
 	if ( tile && tile.resolution == resolution ) {
 
-		console.log('BOING!');
+		console.log( 'BOING!' );
 		return;
 
 	}
@@ -424,7 +422,7 @@ TiledTerrain.prototype.removed = function () {
 
 	return;
 
-	function _disposeTileMesh ( obj) {
+	function _disposeTileMesh ( obj ) {
 
 		if ( obj !== self ) obj.removed( obj );
 
@@ -564,7 +562,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 			if ( tile.children.length === 0 ) {
 
-				if ( !tile.isMesh  ) {
+				if ( ! tile.isMesh  ) {
 
 					// this tile is not loaded, but has been previously
 					resurrectTiles.push( tile );
@@ -578,7 +576,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 			} else {
 
-				if ( !tile.isMesh && tile.evicted && !this.parent.resurrectionPending ) {
+				if ( ! tile.isMesh && tile.evicted && ! this.parent.resurrectionPending ) {
 
 					tile.resurrectionPending = true;
 					resurrectTiles.push( tile );
@@ -588,7 +586,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 				if ( tile.parent.ResurrectionPending && this.isMesh ) {
 
 					// remove tile - will be replaced with parent
-					console.log(' should not get here' );
+					console.log( ' should not get here' );
 
 				}
 
@@ -615,7 +613,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 			for ( i = 0; i < evictCount; i++ ) {
 
-				var tile = candidateEvictTiles[i];
+				var tile = candidateEvictTiles[ i  ];
 
 				// heuristics for evicting tiles - needs refinement
 

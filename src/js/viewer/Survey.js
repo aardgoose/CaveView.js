@@ -93,7 +93,7 @@ function Survey ( cave ) {
 
 	return;
 
-	function _onSurveyRemoved( event ) {
+	function _onSurveyRemoved ( event ) {
 
 		var survey = event.target;
 
@@ -112,7 +112,7 @@ function Survey ( cave ) {
 
 		survey.traverse( _dispose );
 
-		function _dispose( object ) {
+		function _dispose ( object ) {
 
 			if ( object.geometry ) object.geometry.dispose();
 
@@ -194,7 +194,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	return;
 
-	function _restoreSurveyTree( surveyTree ) {
+	function _restoreSurveyTree ( surveyTree ) {
 
 		if ( surveyTree.forEachChild === undefined ) {
 	
@@ -1001,7 +1001,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 	return;
 
-	function _cutObject( obj ) {
+	function _cutObject ( obj ) {
 
 		switch ( obj.type ) {
 
@@ -1215,7 +1215,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 		geometry.dispose();
 
-		function _remapVertex( vi ) {
+		function _remapVertex ( vi ) {
 
 			// see if we have already remapped this vertex index (vi)
 

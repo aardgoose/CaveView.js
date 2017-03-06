@@ -107,7 +107,7 @@ function init ( domID ) { // public method
 
 }
 
-function handleChange( event ) {
+function handleChange ( event ) {
 
 	var display;
 
@@ -176,7 +176,7 @@ function initSelectionPage () {
 		var ul;
 		var tmp;
 		var l;
-		var surveyColours      = Colours.surveyColoursCSS;
+		var surveyColours = Colours.surveyColoursCSS;
 		var surveyColoursRange = surveyColours.length;
 		var span;
 
@@ -189,7 +189,7 @@ function initSelectionPage () {
 
 		titleBar.textContent = footprint.name;
 
-		if ( l > 1) {
+		if ( l > 1 ) {
 
 			span = document.createElement( 'span' );
 			span.textContent = ' \u25C4';
@@ -210,7 +210,7 @@ function initSelectionPage () {
 	
 		return ul;
 
-		function _addLine( child ) {
+		function _addLine ( child ) {
 
 			var li  = document.createElement( 'li' );
 			var txt = document.createTextNode( child.name );
@@ -426,7 +426,7 @@ function initHelpPage () {
 
 }
 
-function initInfoPage() {
+function initInfoPage () {
 
 	var page = new Page( 'icon_info' );
 
@@ -464,7 +464,7 @@ function initSettingsPage () {
 	page.addHeader( 'View' );
 
 	page.addSelect( 'Camera Type', cameraModes, viewState, 'cameraType' );
-	page.addSelect( 'View',        cameraViews, viewState, 'view' );
+	page.addSelect( 'View', cameraViews, viewState, 'view' );
 
 	page.addRange( 'Vertical scaling', viewState, 'zScale' );
 
@@ -495,7 +495,7 @@ function initSettingsPage () {
 	if ( viewState.hasScraps )       page.addCheckbox( 'Scraps',        viewState, 'scraps' );
 	if ( viewState.hasTraces )       page.addCheckbox( 'Dye Traces',    viewState, 'traces' );
 
-	page.addCheckbox( 'Indicators',   viewState, 'HUD' );
+	page.addCheckbox( 'Indicators', viewState, 'HUD' );
 	page.addCheckbox( 'Bounding Box', viewState, 'box' );
 
 	if ( viewState.hasTerrain ) {
@@ -639,7 +639,7 @@ function progress ( pcent ) {
 
 }
 
-function caveLoaded ( inCave ) { 
+function caveLoaded ( inCave ) {
 
 	cave = inCave;
 
@@ -736,19 +736,19 @@ function keyDown ( event ) {
 
 	case 67: // toggle scraps visibility - 'c'
 
-		if ( viewState.hasScraps ) viewState.scraps = !viewState.scraps;
+		if ( viewState.hasScraps ) viewState.scraps = ! viewState.scraps;
 
 		break;
 
 	case 68: //  toggle dye traces visibility - 'd'
 
-		if ( viewState.hasTraces ) viewState.traces = !viewState.traces;
+		if ( viewState.hasTraces ) viewState.traces = ! viewState.traces;
 
 		break;
 
 	case 76: //toggle entrance labels - 'l'
 
-		if ( viewState.hasEntrances ) viewState.entrances = !viewState.entrances;
+		if ( viewState.hasEntrances ) viewState.entrances = ! viewState.entrances;
 
 		break;
 
@@ -772,7 +772,7 @@ function keyDown ( event ) {
 
 	case 81: // switch view to perspective -'q'
 
-		if ( viewState.hasSplays ) viewState.splays = !viewState.splays;
+		if ( viewState.hasSplays ) viewState.splays = ! viewState.splays;
 
 		break;
 
@@ -784,13 +784,13 @@ function keyDown ( event ) {
 
 	case 83: // switch view to perspective -'s'
 
-		if ( viewState.hasSurfaceLegs ) viewState.surfaceLegs = !viewState.surfaceLegs;
+		if ( viewState.hasSurfaceLegs ) viewState.surfaceLegs = ! viewState.surfaceLegs;
 
 		break;
 
 	case 84: // switch terrain on/off 't'
 
-		if ( viewState.hasTerrain ) viewState.terrain = !viewState.terrain;
+		if ( viewState.hasTerrain ) viewState.terrain = ! viewState.terrain;
 
 		break;
 
@@ -803,7 +803,7 @@ function keyDown ( event ) {
 
 	case 87: // switch walls on/off 'w'
 
-		if ( viewState.hasWalls ) viewState.walls = !viewState.walls;
+		if ( viewState.hasWalls ) viewState.walls = ! viewState.walls;
 
 		break;
 

@@ -203,6 +203,7 @@ Survey.prototype.loadCave = function ( cave ) {
 			_restore( surveyTree );
 
 			surveyTree.forEachChild( _restore,  true );
+
 		}
 
 
@@ -302,6 +303,7 @@ Survey.prototype.loadCave = function ( cave ) {
 		var l1, r1, u1, d1, l2, r2, u2, d2, lrud;
 		var i, j;
 
+		var cross = new Vector3();
 		var lastCross = new Vector3();
 
 		var run = null;
@@ -390,7 +392,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 					// handle first section of run
 
-					//  start tube with two triangles to form cap
+					// start tube with two triangles to form cap
 					faces.push( new Face3( u1, r1, d1 ) );
 					faces.push( new Face3( u1, d1, l1 ) );
 
@@ -422,7 +424,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		for ( i = 0; i < l; i++ ) {
 
-			faces[ i ].color =  new Color( 0x00ffff );
+			faces[ i ].color = new Color( 0x00ffff );
 
 		}
 
@@ -472,7 +474,7 @@ Survey.prototype.loadCave = function ( cave ) {
 			U = new Vector3( station.x, station.y, station.z + lrud.u );
 			D = new Vector3( station.x, station.y, station.z - lrud.d );
 
-			lastCross = cross;
+			lastCross.copy( cross );
 
 			return { l: L, r: R, u: U, d: D };
 
@@ -484,7 +486,7 @@ Survey.prototype.loadCave = function ( cave ) {
 			var s1 = crossSection.start;
 			var s2 = crossSection.end;
 
-			return new Vector3( s1.x - s2.x, s1.y - s2.y, s1.z - s2.z ).cross( upAxis );
+			return cross.set( s1.x - s2.x, s1.y - s2.y, s1.z - s2.z ).cross( upAxis );
 
 		}
 

@@ -1745,6 +1745,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 	var colours = ColourCache.inclination;
 	var colourRange = colours.length - 1;
+	var legNormal = new Vector3();
 
 	// pNormal = normal of reference plane in model space 
 
@@ -1766,7 +1767,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 		}
 
-		var legNormal = new Vector3().subVectors( vertex1, vertex2 ).normalize();
+		legNormal.subVectors( vertex1, vertex2 ).normalize();
 		var dotProduct = legNormal.dot( pNormal );
 
 		var hueIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );

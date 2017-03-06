@@ -120,12 +120,9 @@ Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 	// use precalculated bounding box rather than recalculating it here.
 
 	bufferGeometry.boundingBox = new Box3(
-
 		new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ), 
 		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
-
 	);
-
 
 	var attributes = bufferGeometry.attributes;
 
@@ -139,7 +136,7 @@ Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 
 	return this;
 
-	function _onUpload() {
+	function _onUpload () {
 
 		this.array = null;
 
@@ -217,7 +214,7 @@ Tile.prototype.setReplaced = function () {
 
 	if ( this.geometry ) this.geometry.dispose();
 
-	if ( !this.boundingBox ) {
+	if ( ! this.boundingBox ) {
 
 		console.log( 'FIXUP :', this.x, this.y );
 		this.getWorldBoundingBox();
@@ -339,7 +336,7 @@ Tile.prototype.projectedArea = function ( camera ) {
 	v3.z = 0;
 
 	var v2 = new Vector3( v3.x, v1.y, 0 );
-	var v4 = new Vector3( v1.x, v3.y, 0 ) ;
+	var v4 = new Vector3( v1.x, v3.y, 0 );
 
 	// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
 

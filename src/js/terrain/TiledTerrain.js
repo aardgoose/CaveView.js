@@ -343,7 +343,7 @@ TiledTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
 	}
 
 	this.replaceTileMesh = tile;
-	this.currentLimits   = limits;
+	this.currentLimits = limits;
 
 	if ( this.initialResolution === undefined ) {
 
@@ -495,7 +495,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 	var maxResolution     = this.tileSet.RESOLUTION_MIN;
 	var initialResolution = this.initialResolution;
-	var self              = this;
+	var self = this;
 
 	var frustum  = new Frustum();
 
@@ -564,7 +564,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 			if ( tile.children.length === 0 ) {
 
-				if ( !tile.isMesh  ) { 
+				if ( !tile.isMesh  ) {
 
 					// this tile is not loaded, but has been previously
 					resurrectTiles.push( tile );
@@ -588,7 +588,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 				if ( tile.parent.ResurrectionPending && this.isMesh ) {
 
 					// remove tile - will be replaced with parent
-					console.log(' should not get here');
+					console.log(' should not get here' );
 
 				}
 

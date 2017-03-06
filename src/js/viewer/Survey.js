@@ -424,7 +424,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		for ( i = 0; i < l; i++ ) {
 
-			faces[ i ].color = new Color( 0x00ffff );
+			faces[ i ].color = ColourCache.white;
 
 		}
 
@@ -439,8 +439,10 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			var station  = crossSection.end;
 			var lrud     = crossSection.lrud;
-			var cross    = _getCrossProduct( crossSection );
 			var stationV = new Vector3( station.x, station.y, station.z );
+
+			// cross product of leg and up AXIS to give direction of LR vector
+			cross.subVectors( crossSection.start, crossSection.end ).cross( upAxis );
 
 			var L, R, U, D;
 
@@ -477,16 +479,6 @@ Survey.prototype.loadCave = function ( cave ) {
 			lastCross.copy( cross );
 
 			return { l: L, r: R, u: U, d: D };
-
-		}
-
-		// derive vector in LR direction perpendicular to approach leg and up axis
-		function _getCrossProduct ( crossSection ) {
-
-			var s1 = crossSection.start;
-			var s2 = crossSection.end;
-
-			return cross.set( s1.x - s2.x, s1.y - s2.y, s1.z - s2.z ).cross( upAxis );
 
 		}
 
@@ -773,7 +765,7 @@ Survey.prototype.loadDyeTraces = function ( traces ) {
 
 		var end = new Vector3().copy( endStation.p );
 
-		var v = new Vector3().subVectors( endStation.p, startStation.p ).cross( new Vector3( 0, 0, 1 ) ).setLength( 2 );
+		var v = new Vector3().subVectors( endStation.p, startStation.p ).cross( upAxis ).setLength( 2 );
 
 		var v1 = new Vector3().add( startStation.p ).add( v );
 		var v2 = new Vector3().add( startStation.p ).sub( v );

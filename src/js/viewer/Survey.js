@@ -35,7 +35,7 @@ var zeroVector = new Vector3();
 
 function Survey ( cave ) {
 
-	if ( !  cave ) {
+	if ( ! cave ) {
 
 		alert( 'failed loading cave information' );
 		return;
@@ -198,11 +198,11 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		if ( surveyTree.forEachChild === undefined ) {
 	
-			// surveyTree from worker loading  - add Tree methods to all objects in tree.
+			// surveyTree from worker loading - add Tree methods to all objects in tree.
 
 			_restore( surveyTree );
 
-			surveyTree.forEachChild( _restore,  true );
+			surveyTree.forEachChild( _restore, true );
 
 		}
 
@@ -243,7 +243,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		for ( var i = 0; i < l; i++ ) {
 
-			_loadScrap(  scrapList[i] );
+			_loadScrap( scrapList[i] );
 
 		}
 
@@ -298,8 +298,8 @@ Survey.prototype.loadCave = function ( cave ) {
 		// survey to face index mapping 
 		var currentSurvey;
 		var faceRuns = [];
-		var faceSet  = 0;
-		var lastEnd  = faces.length;
+		var faceSet = 0;
+		var lastEnd = faces.length;
 		var l1, r1, u1, d1, l2, r2, u2, d2, lrud;
 		var i, j;
 
@@ -520,7 +520,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		for ( var i = 0; i < l; i++ ) {
 
-			var leg    = srcSegments[ i ];
+			var leg = srcSegments[ i ];
 
 			var type   = leg.type;
 			var survey = leg.survey;
@@ -645,7 +645,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		plane.translate( dim.xOrigin + width / 2, dim.yOrigin + height / 2, 0 );
 
-		self.terrain =  new Terrain().addTile( plane, terrain.data, terrain.bitmap );
+		self.terrain = new Terrain().addTile( plane, terrain.data, terrain.bitmap );
 
 		return;
 
@@ -1147,10 +1147,10 @@ Survey.prototype.cutSection = function ( id ) {
 
 		if ( mesh.name === '' ) return;
 
-		var geometry           = mesh.geometry;
+		var geometry = mesh.geometry;
 
-		var faces              = geometry.faces;
-		var vertices           = geometry.vertices;
+		var faces = geometry.faces;
+		var vertices = geometry.vertices;
 
 		var	selectedSectionIds = self.selectedSectionIds;
 
@@ -1166,7 +1166,7 @@ Survey.prototype.cutSection = function ( id ) {
 		var vMap = new Map();
 		var face;
 
-		var nextVertex  = 0, vertexIndex;
+		var nextVertex = 0, vertexIndex;
 
 		for ( var run = 0, l = faceRuns.length; run < l; run++ ) {
 
@@ -1194,7 +1194,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 				fp += end - start;
 
-				faceRun.end   = fp;
+				faceRun.end = fp;
 
 				newFaceRuns.push( faceRun );
 
@@ -1248,7 +1248,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 };
 
-Survey.prototype.getBounds = function ()  {
+Survey.prototype.getBounds = function () {
 
 	var box = new Box3();
 
@@ -1313,7 +1313,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 		material = Materials.getDepthMaterial( MATERIAL_SURFACE );
 
-		if ( ! material )  return false;
+		if ( ! material ) return false;
 
 		break;
 
@@ -1543,7 +1543,7 @@ Survey.prototype.getSurveyColours = function () { // FIXME - cache save recalc f
 
 	for ( var i = 0, l = children.length; i < l; i++ ) {
 
-		var childId    = children[ i ].id;
+		var childId = children[ i ].id;
 		var childIdSet = new Set();
 
 		surveyTree.getSubtreeIds( childId, childIdSet );
@@ -1723,7 +1723,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 		if ( routes.inCurrentRoute( v1 ) ) {
 
-			colour =  c1;
+			colour = c1;
 
 		} else if ( routes.adjacentToRoute( v1 ) ) {
 
@@ -1770,7 +1770,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 		var dotProduct = legNormal.dot( pNormal );
 
 		var hueIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
-		var colour   = colours[ hueIndex ];
+		var colour = colours[ hueIndex ];
 
 		geometry.colors[ v1 ] = colour;
 		geometry.colors[ v2 ] = colour;
@@ -1862,7 +1862,7 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 		for ( v = 0, l = geometry.vertices.length / 2; v < l; v++ ) {
 
-			k  = v * 2;
+			k = v * 2;
 
 			colourSegment( geometry, k, k + 1 );
 

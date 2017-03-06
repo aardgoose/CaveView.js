@@ -240,7 +240,7 @@ Routes.prototype.saveCurrent = function () {
 
 };
 
-Routes.prototype.getRouteNames = function() {
+Routes.prototype.getRouteNames = function () {
 
 	return this.routeNames;
 

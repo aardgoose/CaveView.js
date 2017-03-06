@@ -22,7 +22,7 @@ function ScaleBar ( container, hScale, rightMargin ) {
 	this.scaleBars     = [];
 	this.currentLength = 0;
 
-	this.position.set( -container.clientWidth / 2 +  5,  -container.clientHeight / 2 + leftMargin, 0 );
+	this.position.set( -container.clientWidth / 2 + 5, -container.clientHeight / 2 + leftMargin, 0 );
 	this.scaleMax = container.clientWidth - ( leftMargin + rightMargin );
 
 	var legend = document.createElement( 'div' );
@@ -51,7 +51,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	var scaleBars = this.scaleBars;
 	var length = 0;
-	var self   = this;
+	var self = this;
 
 	var maxVisible = this.scaleMax / ( scale * this.hScale );
 	var exponent = Math.ceil( Math.log( maxVisible ) / Math.LN10 ) - 1;
@@ -84,7 +84,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	}
 
-	scale = scale * Math.pow( 10, exponent );	
+	scale = scale * Math.pow( 10, exponent );
 
 	if ( this.currentLength !== length ) {
 

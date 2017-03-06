@@ -26,10 +26,12 @@ function AngleScale ( container ) {
 	var hues = Colours.inclinationColours;
 
 	var vertices = geometry.vertices;
+	var legNormal = new Vector3();
 
 	for ( i = 0, l = vertices.length; i < l; i++ ) {
 
-		var legNormal  = vertices[ i ].clone().normalize();
+		legNormal.copy( vertices[ i ] ).normalize();
+
 		var dotProduct = legNormal.dot( pNormal );
 		var hueIndex = Math.floor( 127 * 2 * Math.asin( Math.abs( dotProduct ) ) / Math.PI );
 
@@ -37,11 +39,11 @@ function AngleScale ( container ) {
 
 	}
 
-	var faces = geometry.faces;
+	var faces = geometry.faces, f;
 
 	for ( i = 0, l = faces.length; i < l; i++ ) {
 
-		var f = faces[ i ];
+		f = faces[ i ];
 
 		f.vertexColors = [ c[ f.a ], c[ f.b ], c[ f.c ] ];
 

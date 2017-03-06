@@ -30,8 +30,8 @@ Popup.prototype.display = function ( container, x, y, camera, p ) {
 		screenPosition.copy( p );
 		screenPosition.project( camera );
 
-		var X = container.clientWidth * (screenPosition.x + 1) / 2;
-		var Y = container.clientHeight * (-screenPosition.y + 1) / 2;
+		var X = container.clientWidth * ( screenPosition.x + 1 ) / 2;
+		var Y = container.clientHeight * ( -screenPosition.y + 1 ) / 2;
 
 
 		if ( X + div.clientWidth > container.clientWidth || Y + div.clientHeight > container.clientHeight ) {

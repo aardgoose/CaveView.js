@@ -72,7 +72,7 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 
 	if ( ! type ) {
 
-		alert( 'Cave: unknown file extension [', self.extention, ']');
+		alert( 'Cave: unknown file extension [', self.extention, ']' );
 		return false;
 
 	}
@@ -159,14 +159,14 @@ CaveLoader.prototype.loadFile = function ( file ) {
 
 	if ( ! type ) {
 
-		alert( 'Cave: unknown file extension [', self.extention, ']');
+		alert( 'Cave: unknown file extension [', self.extention, ']' );
 		return false;
 
 	}
 
 	var fLoader = new FileReader();
 
-	fLoader.addEventListener( 'load',     _loaded );
+	fLoader.addEventListener( 'load', _loaded );
 	fLoader.addEventListener( 'progress', _progress );
 
 	switch ( type ) {
@@ -204,6 +204,7 @@ CaveLoader.prototype.loadFile = function ( file ) {
 		if ( self.progress ) self.progress( Math.round( 100 * e.loaded / e.total ) );
 
 	}
+
 };
 
 CaveLoader.prototype.callHandler = function( fileName ) {

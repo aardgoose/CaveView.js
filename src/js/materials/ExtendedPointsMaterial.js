@@ -17,7 +17,7 @@ function ExtendedPointsMaterial () {
 			offsetRepeat: { value: new Vector4() },
 			map: { value: null }
 		},
-		vertexShader:   Shaders.extendedPointsVertexShader,	
+		vertexShader: Shaders.extendedPointsVertexShader,	
 		fragmentShader: Shaders.extendedPointsFragmentShader,
 		vertexColors: VertexColors
 	} );

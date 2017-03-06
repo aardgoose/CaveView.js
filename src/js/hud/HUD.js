@@ -34,7 +34,7 @@ var hScale = 0;
 var attitudeGroup;
 
 var linearScale = null;
-var angleScale  = null ;
+var angleScale  = null;
 var scaleBar    = null;
 
 var compass;
@@ -246,7 +246,7 @@ function viewChanged ( event ) {
 		if ( angleScale ) angleScale.setVisibility( false );
 
 		if ( linearScale ) linearScale.setRange( viewState.minHeight, viewState.maxHeight, 'Height above Datum' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
-		viewState.removeEventListener( 'cursorChange',  cursorChanged );
+		viewState.removeEventListener( 'cursorChange', cursorChanged );
 
 		break;
 
@@ -255,7 +255,7 @@ function viewChanged ( event ) {
 		if ( angleScale ) angleScale.setVisibility( false );
 
 		if ( linearScale ) linearScale.setRange( viewState.maxHeight - viewState.minHeight, 0, 'Depth below surface' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
-		viewState.removeEventListener( 'cursorChange',  cursorChanged );
+		viewState.removeEventListener( 'cursorChange', cursorChanged );
 
 		break;
 
@@ -269,7 +269,7 @@ function viewChanged ( event ) {
 
 			cursorChanged();
 
-			viewState.addEventListener( 'cursorChange',  cursorChanged );
+			viewState.addEventListener( 'cursorChange', cursorChanged );
 
 		}
 
@@ -280,7 +280,7 @@ function viewChanged ( event ) {
 		if ( angleScale ) angleScale.setVisibility( false );
 
 		linearScale.setRange( viewState.minLegLength, viewState.maxLegLength, 'Leg length' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
-		viewState.removeEventListener( 'cursorChange',  cursorChanged );
+		viewState.removeEventListener( 'cursorChange', cursorChanged );
 
 		break;
 
@@ -297,7 +297,7 @@ function viewChanged ( event ) {
 		}
 
 		angleScale.setVisibility( true );
-		viewState.removeEventListener( 'cursorChange',  cursorChanged );
+		viewState.removeEventListener( 'cursorChange', cursorChanged );
 
 		break;
 
@@ -310,7 +310,7 @@ function viewChanged ( event ) {
 		if ( angleScale ) angleScale.setVisibility( false );
 
 		linearScale.setVisibility( false );
-		viewState.removeEventListener( 'cursorChange',  cursorChanged );
+		viewState.removeEventListener( 'cursorChange', cursorChanged );
 
 		break;
 

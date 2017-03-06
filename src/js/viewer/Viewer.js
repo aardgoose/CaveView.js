@@ -314,7 +314,7 @@ function init ( domID ) { // public method
 
 	}
 
-	function _setRouteEdit( x ) {
+	function _setRouteEdit ( x ) {
 
 		mouseMode = x ? MOUSE_MODE_ROUTE_EDIT : MOUSE_MODE_NORMAL;
 
@@ -322,7 +322,7 @@ function init ( domID ) { // public method
 
 }
 
-function addRoutes( newRoutes ) {
+function addRoutes ( newRoutes ) {
 
 	routes = newRoutes;
 
@@ -330,7 +330,7 @@ function addRoutes( newRoutes ) {
 
 	routes.addEventListener( 'changed', _routesChanged );
 
-	function _routesChanged( /* event */ ) {
+	function _routesChanged ( /* event */ ) {
 
 		setShadingMode( shadingMode );
 
@@ -353,7 +353,7 @@ function setZScale ( scale ) {
 
 }
 
-function setAutoRotate( state ) {
+function setAutoRotate ( state ) {
 
 	controls.autoRotate = state;
 
@@ -370,7 +370,7 @@ function setAutoRotate( state ) {
 
 }
 
-function setCursorHeight( x ) {
+function setCursorHeight ( x ) {
 
 	cursorHeight = x;
 	viewState.dispatchEvent( { type: 'cursorChange', name: 'cursorHeight' } );
@@ -379,7 +379,7 @@ function setCursorHeight( x ) {
 
 }
 
-function setTerrainOpacity( x ) {
+function setTerrainOpacity ( x ) {
 
 	terrain.setOpacity( x );
 	viewState.dispatchEvent( { type: 'change', name: 'terrainOpacity' } );
@@ -956,7 +956,7 @@ function mouseDown ( event ) {
 
 	}
 
-	function _selectStation( picked ) {
+	function _selectStation ( picked ) {
 
 		var station = survey.stations.getStationByIndex( picked.index );
 
@@ -995,7 +995,7 @@ function mouseDown ( event ) {
 
 	}
 
-	function _selectSegment( picked ) {
+	function _selectSegment ( picked ) {
 
 		routes.toggleSegment( picked.index );
 
@@ -1007,7 +1007,7 @@ function mouseDown ( event ) {
 
 	}
 
-	function _selectEntrance( picked ) {
+	function _selectEntrance ( picked ) {
 
 		if ( ! viewState.entrances ) return false;
 

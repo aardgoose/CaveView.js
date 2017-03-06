@@ -8,10 +8,10 @@ function WaterMaterial () {
 		uniforms: {
 			offset: { value: 0 }
 		},
-		vertexShader:    Shaders.waterVertexShader,
-		fragmentShader:  Shaders.waterFragmentShader,
-		depthWrite:      false,
-		type:            'CV.WaterMaterial',
+		vertexShader: Shaders.waterVertexShader,
+		fragmentShader: Shaders.waterFragmentShader,
+		depthWrite: false,
+		type: 'CV.WaterMaterial',
 		side: DoubleSide
 	} );
 

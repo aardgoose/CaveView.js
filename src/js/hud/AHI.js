@@ -25,7 +25,7 @@ function AHI ( container ) {
 	// artificial horizon instrument
 	var globe = new Group();
 
-	var ring = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth,  3, 32, 1, true );
+	var ring = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth, 3, 32, 1, true );
 	ring.rotateX( Math.PI / 2 );
 
 	var sphere = new SphereBufferGeometry( stdWidth - 10, 31, 31 );
@@ -45,10 +45,7 @@ function AHI ( container ) {
 
 	for ( i = 0; i < sv; i++ ) {
 
-		if ( i < sv/2 )
-			colours.push(  c1 );
-		else 
-			colours.push(  c2 );
+		colours.push( ( i < sv / 2 ) ? c1 : c2 );
 
 	}
 
@@ -77,7 +74,7 @@ function AHI ( container ) {
 		}
 
 		mn1.applyAxisAngle( xAxis, i * Math.PI / 6 );
-		mn2.applyAxisAngle( xAxis, i * Math.PI / 6 ); 
+		mn2.applyAxisAngle( xAxis, i * Math.PI / 6 );
 
 		marks.vertices.push( mn1 );
 		marks.vertices.push( mn2 );
@@ -145,7 +142,7 @@ AHI.prototype.set = function () {
 		this.globe.rotateOnAxis( xAxis, pitch - this.lastPitch );
 		this.lastPitch = pitch;
 
-		this.txt.textContent = Math.round( _Math.radToDeg( pitch ) )  + '\u00B0';
+		this.txt.textContent = Math.round( _Math.radToDeg( pitch ) ) + '\u00B0';
 
 	};
 

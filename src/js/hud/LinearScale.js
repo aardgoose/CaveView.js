@@ -46,8 +46,8 @@ function LinearScale ( container, viewState ) {
 	this.rotateOnAxis( new Vector3( 1, 0, 0 ), -Math.PI / 2 );
 
 	// add labels
-	var maxdiv  = document.createElement( 'div' );
-	var mindiv  = document.createElement( 'div' );
+	var maxdiv = document.createElement( 'div' );
+	var mindiv = document.createElement( 'div' );
 
 	var caption = document.createElement( 'div' );
 

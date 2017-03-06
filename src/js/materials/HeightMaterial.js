@@ -26,7 +26,6 @@ function HeightMaterial ( type, minHeight, maxHeight ) {
 
 		// pseudo light source somewhere over viewer's left shoulder.
 		uLight:         { value: new Vector3( -1, -1, 2 ) },
-
 		minZ:           { value: minHeight },
 		scaleZ:         { value: 1 / ( maxHeight - minHeight ) },
 		cmap:           { value: Colours.gradientTexture },
@@ -34,7 +33,7 @@ function HeightMaterial ( type, minHeight, maxHeight ) {
 
 	};
 
-	this.vertexShader   = Shaders.heightVertexShader;
+	this.vertexShader = Shaders.heightVertexShader;
 	this.fragmentShader = Shaders.heightFragmentShader;
 
 	this.type = 'CV.HeightMaterial';

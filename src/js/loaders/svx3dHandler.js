@@ -119,7 +119,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		// dispatch table end
 
-		readLabel = readLabelV8;	
+		readLabel = readLabelV8;
 
 		// skip v8 file wide flags after header
 		pos++;

@@ -359,7 +359,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		var m_width    = readUint();
 		var m_height   = readUint();
 
-		var surfacePtr = readDataPtr(); 
+		var surfacePtr = readDataPtr();
 		var m_calib    = readCalibration();
 
 		var ab = source.slice( pos, pos + surfacePtr.size ); // required for 64b alignment

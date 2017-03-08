@@ -72,7 +72,7 @@ ProgressDial.prototype.start = function () {
 
 	for ( var i = 0; i < 100; i++ ) {
 
-		faces[i].color.set( 0x333333 );
+		faces[ i ].color.set( 0x333333 );
 
 	}
 

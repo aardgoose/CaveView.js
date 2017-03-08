@@ -97,7 +97,7 @@ function mapLoaded ( data, x, y ) {
 
 	for ( i = 0; i < l; i++ ) {
 
-		vertices[i].setZ( terrainData[ i ] / scale );
+		vertices[ i ].setZ( terrainData[ i ] / scale );
 
 	}
 

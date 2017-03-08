@@ -10,7 +10,7 @@ function createCache ( colours ) {
 
 	for ( var i = 0, l = colours.length; i < l; i++ ) {
 
-		cache[i] = new Color( colours[i] );
+		cache[ i ] = new Color( colours[ i ] );
 
 	}
 

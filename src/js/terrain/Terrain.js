@@ -55,7 +55,7 @@ Terrain.prototype.getOverlays = function () {
 
 	if ( this.overlay ) {
 
-		return ['built in'];
+		return [ 'built in' ];
 
 	} else {
 

@@ -88,7 +88,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	if ( this.currentLength !== length ) {
 
-		if ( !scaleBars[ length ] ) {
+		if ( ! scaleBars[ length ] ) {
 
 			var bar = _makeScaleBar( length );
 

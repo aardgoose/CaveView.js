@@ -243,7 +243,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		for ( var i = 0; i < l; i++ ) {
 
-			_loadScrap( scrapList[i] );
+			_loadScrap( scrapList[ i ] );
 
 		}
 
@@ -270,7 +270,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				var face = scrap.faces[ i ];
 
-				geometry.faces.push( new Face3( face[0] + vertexOffset, face[1] + vertexOffset, face[2] + vertexOffset ) );
+				geometry.faces.push( new Face3( face[ 0 ] + vertexOffset, face[ 1 ] + vertexOffset, face[ 2 ] + vertexOffset ) );
 
 			}
 
@@ -1362,7 +1362,7 @@ Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
 		for ( run = 0, l = faceRuns.length; run < l; run++ ) {
 
-			var faceRun = faceRuns[run];
+			var faceRun = faceRuns[ run ];
 			var survey  = faceRun.survey;
 			var start   = faceRun.start;
 			var end     = faceRun.end;

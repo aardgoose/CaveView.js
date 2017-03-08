@@ -305,7 +305,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 			for ( var i = 0; i < add; i++ ) {
 
-				db.push( data[pos++] );
+				db.push( data[ pos++ ] );
 
 			}
 

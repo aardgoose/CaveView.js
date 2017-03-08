@@ -80,7 +80,7 @@ Tile.prototype.create = function ( geometry, terrainData ) {
 
 		for ( var j = 0; j < 3; j++ ) {
 
-			var dotProduct = face.vertexNormals[j].dot( upAxis );
+			var dotProduct = face.vertexNormals[ j ].dot( upAxis );
 			var colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
 
 			face.vertexColors[ j ] = colourCache[ colourIndex ];

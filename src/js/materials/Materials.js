@@ -1,4 +1,5 @@
 
+import { AspectMaterial } from './AspectMaterial';
 import { CursorMaterial } from './CursorMaterial';
 import { DepthMaterial } from './DepthMaterial';
 import { DepthMapMaterial } from './DepthMapMaterial';
@@ -112,6 +113,21 @@ function getLineMaterial () {
 
 }
 
+
+function getAspectMaterial () {
+
+	var name = 'aspect';
+
+	if ( cache.has( name ) ) return cache.get(name);
+
+	var material = new AspectMaterial();
+
+	cache.set( name, material );
+
+	return material;
+
+}
+
 function initCache ( viewerViewState ) {
 
 	cache.clear();
@@ -119,16 +135,15 @@ function initCache ( viewerViewState ) {
 
 }
 
-export var Materials =  {
-
+export var Materials = {
 	createDepthMaterial: createDepthMaterial,
 	getHeightMaterial:   getHeightMaterial,
 	getDepthMapMaterial: getDepthMapMaterial,
 	getDepthMaterial:    getDepthMaterial,
 	getCursorMaterial:   getCursorMaterial,
 	getLineMaterial:     getLineMaterial,
+	getAspectMaterial:   getAspectMaterial,
 	initCache:           initCache
-
 };
 
 // EOF

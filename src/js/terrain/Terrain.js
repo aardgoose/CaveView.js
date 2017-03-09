@@ -38,11 +38,11 @@ Terrain.prototype.isLoaded = function () {
 
 };
 
-Terrain.prototype.addTile = function ( plane, terrainData, bitmap ) {
+Terrain.prototype.addTile = function ( terrainTileGeometry, bitmap ) {
 
 	this.overlay = bitmap;
 
-	var tile = new Tile().create( plane, terrainData );
+	var tile = new Tile().create( terrainTileGeometry );
 
 	this.add( tile );
 	this.tile = tile;

@@ -1,7 +1,5 @@
 
 import { HeightMapLoader } from '../loaders/HeightMapLoader';
-import { ColourCache } from '../core/ColourCache';
-import { upAxis } from '../core/constants';
 import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
 
 var tileSpec;
@@ -82,39 +80,6 @@ function mapLoaded ( data, x, y ) {
 	var terrainTile = new TerrainTileGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions, terrainData, scale );
 
 	terrainTile.translate( X, Y, 0 );
-
-//	var faces    = terrainTile.faces;
-//	var colors   = plane.colors;
-/*
-	l1 = terrainData.length;
-	l2 = vertices.length;
-
-	l = Math.min( l1, l2 ); // FIXME
-*/
-//	terrainTile.computeFaceNormals();
-//	terrainTile.computeVertexNormals();
-
-	var colourCache = ColourCache.terrain;
-	var colourRange = colourCache.length - 1;
-
-/*
-	for ( i = 0, l = faces.length; i < l; i++ ) {
-
-		var face = faces[ i ];
-
-		// compute vertex colour per vertex normal
-
-		for ( j = 0; j < 3; j++ ) {
-
-			var dotProduct = face.vertexNormals[ j ].dot( upAxis );
-			var colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
-
-			face.vertexColors[ j ] = colourCache[ colourIndex ];
-
-		}
-
-	}
-*/
 
 	// avoid calculating bounding box in main thread.
 	// however it isn't preserved in json serialisation.

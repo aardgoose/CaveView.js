@@ -71,9 +71,22 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 			var d = ( ix + 1 ) + gridX1 * iy;
 
 			// faces
+			// diagonals b - d, a - c
 
-			indices.push( a, b, d );
-			indices.push( b, c, d );
+			var d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] );  // diff in Z values between diagonal vertices
+			var d2 = Math.abs( vertices[ b * 3 + 2 ] - vertices[ c * 3 + 2 ] );  // diff in Z values between diagonal vertices
+
+			if ( d1 < d2 ) {
+
+				indices.push( a, b, d );
+				indices.push( b, c, d );
+
+			} else {
+
+				indices.push( a, b, c );
+				indices.push( c, d, a );
+
+			}
 
 		}
 

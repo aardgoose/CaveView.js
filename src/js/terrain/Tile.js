@@ -46,59 +46,16 @@ Tile.prototype.constructor = Tile;
 Tile.liveTiles = 0;
 Tile.overlayImages = new Map();
 
-Tile.prototype.create = function ( geometry, terrainData ) {
+Tile.prototype.create = function ( terrainTileGeometry ) {
 
-	var vertices = geometry.vertices;
-	var faces    = geometry.faces;
+	terrainTileGeometry.computeBoundingBox();
 
-	var l1 = terrainData.length;
-	var l2 = vertices.length;
-	var scale = 1;
-	var i;
+	var attributes = terrainTileGeometry.attributes;
 
-	var l = Math.min( l1, l2 ); // FIXME
-
-	if ( this.tileSet !== undefined ) scale = this.tileSet.SCALE;
-
-	for ( i = 0; i < l; i++ ) {
-
-		vertices[ i ].setZ( terrainData[ i ] / scale );
-
-	}
-
-	geometry.computeFaceNormals();
-	geometry.computeVertexNormals();
-
-	var colourCache = ColourCache.terrain;
-	var colourRange = colourCache.length - 1;
-
-	for ( i = 0, l = faces.length; i < l; i++ ) {
-
-		var face = faces[ i ];
-
-		// compute vertex colour per vertex normal
-
-		for ( var j = 0; j < 3; j++ ) {
-
-			var dotProduct = face.vertexNormals[ j ].dot( upAxis );
-			var colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
-
-			face.vertexColors[ j ] = colourCache[ colourIndex ];
-
-		}
-
-	}
-
-	// reduce memory consumption by transferring to buffer object
-	var bufferGeometry = new BufferGeometry().fromGeometry( geometry );
-
-	bufferGeometry.computeBoundingBox();
-
-	var attributes = bufferGeometry.attributes;
-
+	// discard javascript attribute buffers after upload to GPU
 	for ( var name in attributes ) attributes[ name ].onUpload( _onUpload );
 
-	this.geometry = bufferGeometry;
+	this.geometry = terrainTileGeometry;
 	this.layers.set ( FEATURE_TERRAIN );
 
 	return this;

@@ -20,10 +20,11 @@ import { Routes } from './Routes';
 import { Terrain } from '../terrain/Terrain';
 import { WorkerPool } from '../workers/WorkerPool';
 import { WaterMaterial } from '../materials/WaterMaterial';
+import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
 
 import {
 	Vector3, Face3, Color, Box3,
-	Geometry, PlaneGeometry, BufferGeometry,
+	Geometry, BufferGeometry,
 	Float32BufferAttribute,
 	MeshLambertMaterial, MeshBasicMaterial, LineBasicMaterial,
 	FaceColors, NoColors, FrontSide, VertexColors,
@@ -633,11 +634,11 @@ Survey.prototype.loadCave = function ( cave ) {
 		var width  = ( dim.samples - 1 ) * dim.xDelta;
 		var height = ( dim.lines   - 1 ) * dim.yDelta;
 
-		var plane = new PlaneGeometry( width, height, dim.samples - 1, dim.lines - 1 );
+		var terrainTileGeometry = new TerrainTileGeometry( width, height, dim.samples - 1, dim.lines - 1, terrain.data, 1 );
 
-		plane.translate( dim.xOrigin + width / 2, dim.yOrigin + height / 2, 0 );
+		terrainTileGeometry.translate( dim.xOrigin + width / 2, dim.yOrigin + height / 2, 0 );
 
-		self.terrain = new Terrain().addTile( plane, terrain.data, terrain.bitmap );
+		self.terrain = new Terrain().addTile( terrainTileGeometry, terrain.bitmap );
 
 		return;
 

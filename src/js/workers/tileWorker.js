@@ -2,8 +2,7 @@
 import { HeightMapLoader } from '../loaders/HeightMapLoader';
 import { ColourCache } from '../core/ColourCache';
 import { upAxis } from '../core/constants';
-import { PlaneGeometry }  from '../../../../three.js/src/geometries/PlaneGeometry';
-import { BufferGeometry }  from '../../../../three.js/src/core/BufferGeometry';
+import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
 
 var tileSpec;
 
@@ -78,42 +77,34 @@ function mapLoaded ( data, x, y ) {
 	var X = W + xTileOffset + resolution * ( tileSpec.tileX * divisions + clip.left );
 	var Y = N - yTileOffset - resolution * ( tileSpec.tileY * divisions + clip.top );
 
-	var plane = new PlaneGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions );
+	var scale = tileSet.SCALE;
 
-	plane.translate( X, Y, 0 );
+	var terrainTile = new TerrainTileGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions, terrainData, scale );
 
-	var vertices = plane.vertices;
-	var faces    = plane.faces;
+	terrainTile.translate( X, Y, 0 );
+
+//	var faces    = terrainTile.faces;
 //	var colors   = plane.colors;
-
-	var scale = 1;
-
+/*
 	l1 = terrainData.length;
 	l2 = vertices.length;
 
 	l = Math.min( l1, l2 ); // FIXME
-
-	scale = tileSet.SCALE;
-
-	for ( i = 0; i < l; i++ ) {
-
-		vertices[ i ].setZ( terrainData[ i ] / scale );
-
-	}
-
-	plane.computeFaceNormals();
-	plane.computeVertexNormals();
+*/
+//	terrainTile.computeFaceNormals();
+//	terrainTile.computeVertexNormals();
 
 	var colourCache = ColourCache.terrain;
 	var colourRange = colourCache.length - 1;
 
+/*
 	for ( i = 0, l = faces.length; i < l; i++ ) {
 
 		var face = faces[ i ];
 
 		// compute vertex colour per vertex normal
 
-		for ( j = 0; j < 3; j++  ) {
+		for ( j = 0; j < 3; j++ ) {
 
 			var dotProduct = face.vertexNormals[ j ].dot( upAxis );
 			var colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
@@ -123,16 +114,14 @@ function mapLoaded ( data, x, y ) {
 		}
 
 	}
-
-	// reduce memory consumption by transferring to buffer object + a JSON de serializable form
-	var bufferGeometry = new BufferGeometry().fromGeometry( plane );
+*/
 
 	// avoid calculating bounding box in main thread.
 	// however it isn't preserved in json serialisation.
 
-	bufferGeometry.computeBoundingBox();
+	terrainTile.computeBoundingBox();
 
-	var bb = bufferGeometry.boundingBox;
+	var bb = terrainTile.boundingBox;
 	
 	var boundingBox = {
 
@@ -151,7 +140,7 @@ function mapLoaded ( data, x, y ) {
 
 	};
 
-	var json = bufferGeometry.toJSON();
+	var json = terrainTile.toJSON();
 
 	// support transferable objects where possible
 	// convertion from Array to ArrayBuffer improves main script side performance

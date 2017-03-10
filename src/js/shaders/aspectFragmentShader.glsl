@@ -6,14 +6,11 @@ uniform float surfaceOpacity;
 varying float vAspect;
 varying vec3 vNormal;
 
-uniform vec3 uLight;
-
 void main() {
 
-	float nDot = dot( normalize( vNormal ), normalize( uLight ) );
-	float light = abs( acos( nDot ) * RECIPROCAL_PI ) * 5.5;
+	float nDot = dot( normalize( vNormal ), vec3( 0.0, 0.0, 1.0 ) );
 
-//	gl_FragColor = texture2D( cmap, vec2( vAspect, 1.0 ) );
-	gl_FragColor = texture2D( cmap, vec2( vAspect, 1.0 ) ) * vec4( light, light, light, surfaceOpacity );
+	gl_FragColor = mix( texture2D( cmap, vec2( vAspect, 1.0 ) ), vec4( 1.0, 1.0, 1.0, surfaceOpacity ), ( abs( nDot ) ) * 0.4 );
+
 
 }

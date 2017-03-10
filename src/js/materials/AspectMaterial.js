@@ -8,14 +8,12 @@ function AspectMaterial () {
 
 	ShaderMaterial.call( this );
 
-//	this.defines = {};
 	this.transparent = true;
 	
 	this.uniforms = {
 		// pseudo light source somewhere over viewer's left shoulder.
-		uLight:         { value: new Vector3( 0, 0, 2 ) },
-		cmap:           { value: Colours.gradientTexture },
-		surfaceOpacity: { value: 0.5 }
+		cmap:           { value: Colours.spectrumTexture },
+		surfaceOpacity: { value: 1.0 }
 	};
 
 	this.vertexShader = Shaders.aspectVertexShader;

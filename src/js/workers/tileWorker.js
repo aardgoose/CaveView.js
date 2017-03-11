@@ -84,8 +84,6 @@ function mapLoaded ( data, x, y ) {
 	// avoid calculating bounding box in main thread.
 	// however it isn't preserved in json serialisation.
 
-	terrainTile.computeBoundingBox();
-
 	var bb = terrainTile.boundingBox;
 	
 	var boundingBox = {
@@ -104,6 +102,8 @@ function mapLoaded ( data, x, y ) {
 		}
 
 	};
+
+	// FIXME avoid JSON convertion
 
 	var json = terrainTile.toJSON();
 

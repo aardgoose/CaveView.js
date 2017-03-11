@@ -7,7 +7,7 @@
  * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
  */
 
-import { Float32BufferAttribute, BufferGeometry, Vector3 } from '../../../../three.js/src/Three';
+import { Float32BufferAttribute, BufferGeometry, Vector3, Box3 } from '../../../../three.js/src/Three';
 import { ColourCache } from '../core/ColourCache';
 import { upAxis } from '../core/constants';
 
@@ -29,7 +29,7 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 	var segment_width = width / gridX;
 	var segment_height = height / gridY;
 
-	var ix, iy, i;
+	var ix, iy, i, z;
 
 	// buffers
 
@@ -39,6 +39,9 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 	var uvs = [];
 
 	var vertexCount = 0;
+
+	var minZ = Infinity;
+	var maxZ = -Infinity;
 
 	// generate vertices and uvs
 
@@ -50,7 +53,12 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 			var x = ix * segment_width - width_half;
 
-			vertices.push( x, - y, terrainData[ vertexCount++ ] / scale );
+			z = terrainData[ vertexCount++ ] / scale;
+
+			vertices.push( x, - y, z );
+
+			if ( z < minZ ) minZ = z;
+			if ( z > maxZ ) maxZ = z;
 
 			uvs.push( ix / gridX );
 			uvs.push( 1 - ( iy / gridY ) );
@@ -58,6 +66,10 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 		}
 
 	}
+
+	// avoid overhead of computeBoundingBox since we know x & y min and max values;
+
+	this.boundingBox = new Box3().set( new Vector3( -width_half, -height_half, minZ ), new Vector3( -width_half, -height_half, maxZ ) );
 
 	// indices
 
@@ -91,6 +103,7 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 		}
 
 	}
+
 
 	// build geometry
 

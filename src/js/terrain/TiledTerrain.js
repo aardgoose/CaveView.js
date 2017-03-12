@@ -53,11 +53,7 @@ TiledTerrain.prototype = Object.create( CommonTerrain.prototype );
 
 TiledTerrain.prototype.constructor = TiledTerrain;
 
-TiledTerrain.prototype.isTiled = function () {
-
-	return true;
-
-};
+TiledTerrain.prototype.isTiled = true;
 
 TiledTerrain.prototype.isLoaded = function () {
 
@@ -298,7 +294,7 @@ TiledTerrain.prototype.resurrectTile = function ( tile ) {
 
 TiledTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
 
-	var coverage   = this.pickCoverage( limits, maxResolution );
+	var coverage = this.pickCoverage( limits, maxResolution );
 	var resolution = coverage.resolution;
 
 	if ( tile && tile.resolution == resolution ) {

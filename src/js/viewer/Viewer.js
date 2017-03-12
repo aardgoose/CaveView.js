@@ -1086,7 +1086,7 @@ var renderView = function () {
 
 function onCameraMoveEnd () {
 
-	if ( terrain && terrain.isTiled() && viewState.terrain ) setTimeout( updateTerrain, 500 );
+	if ( terrain && terrain.isTiled && viewState.terrain ) setTimeout( updateTerrain, 500 );
 
 }
 

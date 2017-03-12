@@ -177,7 +177,7 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 		self.workerPool.putWorker( tileLoader );
 
-		// the survey/region in the viewer may have changed while the height maos are being loaded.
+		// the survey/region in the viewer may have changed while the height maps are being loaded.
 		// bail out in this case to avoid errors
 
 		if ( self.dying ) {
@@ -198,17 +198,7 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 		}
 
-		var tile;
-
-		if ( ! oldTile ) {
-
-			tile = new Tile( x, y, resolution, self.tileSet, clip );
-
-		} else {
-
-			tile = oldTile;
-
-		}
+		var tile = ( oldTile ? oldTile : new Tile( x, y, resolution, self.tileSet, clip ) );
 
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
@@ -230,7 +220,7 @@ TiledTerrain.prototype.endLoad = function ( tile ) {
 
 	if ( --this.tilesLoading === 0 ) {
 
-		var loadedTiles     = this.loadedTiles;
+		var loadedTiles = this.loadedTiles;
 		var replaceTileMesh = this.replaceTileMesh;
 		var parent = null;
 

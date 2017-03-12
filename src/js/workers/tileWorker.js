@@ -116,7 +116,7 @@ function mapLoaded ( data, x, y ) {
 		var attribute = srcAttributes[ attributeName ];
 		var arrayBuffer = attribute.array.buffer;
 
-		attributes[ attributeName ] = arrayBuffer;
+		attributes[ attributeName ] = { array: arrayBuffer, itemSize: attribute.itemSize };
 
 		transferable.push( arrayBuffer );
 

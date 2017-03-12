@@ -1,6 +1,7 @@
 
 import { upAxis } from '../core/constants';
 import { HudObject } from './HudObject';
+import { Viewer } from '../viewer/Viewer';
 
 import {
 	RingGeometry,
@@ -86,7 +87,7 @@ ProgressDial.prototype.end = function () {
 
 	var self = this;
 
-	setTimeout( function () { self.visible = false; }, 500 );
+	setTimeout( function () { self.visible = false; Viewer.renderView() }, 500 );
 
 };
 

@@ -1163,7 +1163,8 @@ export var Viewer = {
 	getStats:      getStats,
 	getSurveyTree: getSurveyTree,
 	getControls:   getControls,
-	getState:      viewState
+	getState:      viewState,
+	renderView:    renderView
 };
 
 

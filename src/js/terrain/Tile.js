@@ -6,12 +6,21 @@ import { ColourCache } from '../core/ColourCache';
 import {
 	Vector2, Vector3, Triangle, Box3,
 	BufferGeometry,
-	BufferGeometryLoader, ImageLoader,
+	Float32BufferAttribute,
+	Uint16BufferAttribute,
+	ImageLoader,
 	Texture,
 	MeshLambertMaterial,
 	RepeatWrapping,
 	Mesh
 } from '../../../../three.js/src/Three';
+
+function onUploadDropBuffer() {
+
+	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
+	this.array = null;
+
+}
 
 function Tile ( x, y, resolution, tileSet, clip ) {
 
@@ -50,29 +59,39 @@ Tile.prototype.create = function ( terrainTileGeometry ) {
 
 	terrainTileGeometry.computeBoundingBox();
 
-	var attributes = terrainTileGeometry.attributes;
-
-	// discard javascript attribute buffers after upload to GPU
-	for ( var name in attributes ) attributes[ name ].onUpload( _onUpload );
-
 	this.geometry = terrainTileGeometry;
-	this.layers.set ( FEATURE_TERRAIN );
+
+	this.createCommon();
 
 	return this;
 
-	function _onUpload() {
+};
 
-		this.array = null;
+Tile.prototype.createCommon = function () {
+
+	var attributes = this.geometry.attributes;
+
+	// discard javascript attribute buffers after upload to GPU
+	for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
+
+	this.layers.set ( FEATURE_TERRAIN );
+
+}
+
+Tile.prototype.createFromBufferGeometryJSON = function ( index, attributes, boundingBox ) {
+
+	var attributeName;
+	var bufferGeometry = new BufferGeometry();
+
+	// assemble BufferGeometry from binary buffer objects transfered from worker
+
+	for ( attributeName in attributes ) {
+
+		bufferGeometry.addAttribute( attributeName, new Float32BufferAttribute( attributes[ attributeName ], 3 ) );
 
 	}
 
-};
-
-Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
-
-	var loader = new BufferGeometryLoader();
-
-	var bufferGeometry = loader.parse( json, boundingBox );
+	bufferGeometry.setIndex( new Uint16BufferAttribute( index, 1 ) );
 
 	// use precalculated bounding box rather than recalculating it here.
 
@@ -81,23 +100,11 @@ Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
 		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
 	);
 
-	var attributes = bufferGeometry.attributes;
-
-	for ( var name in attributes ) attributes[ name ].onUpload( _onUpload );
-
 	this.geometry = bufferGeometry;
-	this.layers.set( FEATURE_TERRAIN );
 
-	this.geometry = bufferGeometry;
-	this.layers.set( FEATURE_TERRAIN );
+	this.createCommon();
 
 	return this;
-
-	function _onUpload () {
-
-		this.array = null;
-
-	}
 
 };
 

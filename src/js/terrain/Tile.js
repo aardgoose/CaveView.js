@@ -78,7 +78,7 @@ Tile.prototype.createCommon = function () {
 
 }
 
-Tile.prototype.createFromBufferGeometryJSON = function ( index, attributes, boundingBox ) {
+Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox ) {
 
 	var attributeName;
 	var bufferGeometry = new BufferGeometry();
@@ -152,7 +152,7 @@ Tile.prototype.getBoundingBox = function () {
 
 Tile.prototype.evict = function () {
 
-	this.evictionCount++;
+	this.evictionCount++; 
 	this.evicted  = true;
 	this.replaced = false;
 	this.isMesh   = false;

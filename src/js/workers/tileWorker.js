@@ -103,28 +103,26 @@ function mapLoaded ( data, x, y ) {
 
 	};
 
-	// FIXME avoid JSON convertion
+	// support transferable objects where possible 
 
-	var json = terrainTile.toJSON();
-
-	// support transferable objects where possible
-	// convertion from Array to ArrayBuffer improves main script side performance
-
+	var indexBuffer = terrainTile.index.array.buffer;
+	var attributes = {};
 	var transferable = [];
 
-	for ( var attributeName in json.data.attributes ) {
+	var srcAttributes = terrainTile.attributes;
 
-		var attribute = json.data.attributes[ attributeName ];
-		var fBuffer = new Float32Array( attribute.array );
+	for ( var attributeName in srcAttributes ) {
 
-		attribute.arrayBuffer = fBuffer.buffer;
-		attribute.array = null;
+		var attribute = srcAttributes[ attributeName ];
+		var arrayBuffer = attribute.array.buffer;
 
-		transferable.push( attribute.arrayBuffer );
+		attributes[ attributeName ] = arrayBuffer;
+
+		transferable.push( arrayBuffer );
 
 	}
 
-	postMessage( { status: 'ok', json: json, x: x, y: y, boundingBox: boundingBox }, transferable );
+	postMessage( { status: 'ok', index: indexBuffer, attributes: attributes, x: x, y: y, boundingBox: boundingBox }, transferable );
 
 }
 

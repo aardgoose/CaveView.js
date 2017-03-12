@@ -198,28 +198,6 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 		}
 
-		var attributes = tileData.json.data.attributes;
-
-		// large arrays in source were translated to ArrayBuffers to allow transferable objects to 
-		// be used, to decrease execution time for this handler.
-
-		// retype and move arrays back to useable format
-		// note: the standard JSON bufferGeometry format uses Array but accepts TypedArray
-		// Float32 is the target type so functionality is equivalent
-
-		for ( var attributeName in attributes ) {
-
-			var attribute = attributes[ attributeName ];
-
-			if ( attribute.arrayBuffer !== undefined ) {
-
-				attribute.array = new Float32Array( attribute.arrayBuffer );
-				attribute.arrayBuffer = null;
-
-			}
-
-		}
-
 		var tile;
 
 		if ( ! oldTile ) {
@@ -234,7 +212,7 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
-		tile.createFromBufferGeometryJSON( tileData.json, tileData.boundingBox );
+		tile.createFromBufferGeometryJSON( tileData.index, tileData.attributes, tileData.boundingBox );
 
 		if ( self.activeOverlay ) tile.setOverlay( self.activeOverlay, self.opacity );
 

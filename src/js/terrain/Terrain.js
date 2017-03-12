@@ -26,11 +26,7 @@ Object.assign( Terrain.prototype, CommonTerrain.prototype );
 
 Terrain.prototype.constructor = Terrain;
 
-Terrain.prototype.isTiled = function () {
-
-	return false;
-
-};
+Terrain.prototype.isTiled = false;
 
 Terrain.prototype.isLoaded = function () {
 

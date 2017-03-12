@@ -502,7 +502,7 @@ TiledTerrain.prototype.zoomCheck = function ( camera ) {
 
 		for ( i = 0; i < candidateCount; i++ ) {
 
-			if ( candidateTiles[ i ].area/total.area > 0.7 ) {
+			if ( candidateTiles[ i ].area / total.area > 0.7 ) {
 
 				tile = candidateTiles[ i ].tile;
 

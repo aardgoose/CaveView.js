@@ -212,7 +212,7 @@ TiledTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
-		tile.createFromBufferGeometryJSON( tileData.index, tileData.attributes, tileData.boundingBox );
+		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox );
 
 		if ( self.activeOverlay ) tile.setOverlay( self.activeOverlay, self.opacity );
 

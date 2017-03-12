@@ -81,13 +81,15 @@ Tile.prototype.createCommon = function () {
 Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox ) {
 
 	var attributeName;
+	var attribute;
 	var bufferGeometry = new BufferGeometry();
 
 	// assemble BufferGeometry from binary buffer objects transfered from worker
 
 	for ( attributeName in attributes ) {
 
-		bufferGeometry.addAttribute( attributeName, new Float32BufferAttribute( attributes[ attributeName ], 3 ) );
+		attribute = attributes[ attributeName ];
+		bufferGeometry.addAttribute( attributeName, new Float32BufferAttribute( attribute.array, attribute.itemSize ) );
 
 	}
 

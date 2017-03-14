@@ -1147,6 +1147,12 @@ function getControls () {
 
 }
 
+function getRoutes () {
+
+	return survey.getRoutes();
+
+}
+
 function getSurveyTree () {
 
 	return survey.getSurveyTree();
@@ -1160,6 +1166,7 @@ export var Viewer = {
 	clearView:     clearView,
 	loadCave:      loadCave,
 	addRoutes:     addRoutes,
+	getRoutes:     getRoutes,
 	getStats:      getStats,
 	getSurveyTree: getSurveyTree,
 	getControls:   getControls,

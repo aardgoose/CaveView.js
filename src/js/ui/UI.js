@@ -10,9 +10,7 @@ import { replaceExtension } from '../core/lib';
 import { Page } from './Page';
 import { ProgressBar } from './ProgressBar';
 import { CaveLoader } from '../loaders/CaveLoader';
-
 import { Viewer } from '../viewer/Viewer';
-import { Routes } from '../viewer/Routes';
 
 var cave;
 var caveLoader;
@@ -543,7 +541,7 @@ function initUI () {
 
 	initSettingsPage();
 	initSelectionPage();
-//	initRoutePage(); // FIXME
+	initRoutePage();
 	initInfoPage();
 	initHelpPage();
 
@@ -674,6 +672,8 @@ function viewComplete () {
 	viewState.shadingMode = SHADING_HEIGHT;
 
 	surveyTree = Viewer.getSurveyTree();
+	routes = Viewer.getRoutes();
+
 	isCaveLoaded = true;
 
 	cave = null; // drop reference to cave to free heap space

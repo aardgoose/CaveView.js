@@ -74,7 +74,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	// init cmd handler table withh  error handler for unsupported records or invalid records
 
-	function _errorHandler ( e ) { console.log ('unhandled command: ', e.toString( 16 ) ); return false; };
+	function _errorHandler ( e ) { console.log ('unhandled command: ', e.toString( 16 ) ); return false; }
 
 	for ( i = 0; i < 256; i++ ) {
 

@@ -2,7 +2,7 @@
 import { Shaders } from '../shaders/Shaders';
 import { Colours } from '../core/Colours';
 
-import { Vector3, ShaderMaterial } from '../../../../three.js/src/Three';
+import { ShaderMaterial } from '../../../../three.js/src/Three';
 
 function AspectMaterial () {
 

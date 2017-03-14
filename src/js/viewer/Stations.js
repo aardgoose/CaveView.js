@@ -1,6 +1,6 @@
 import {
 	Color,
-	BufferGeometry, Geometry,
+	BufferGeometry,
 	VertexColors,
 	Points,
 	Float32BufferAttribute

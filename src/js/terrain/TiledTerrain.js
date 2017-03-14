@@ -66,10 +66,13 @@ TiledTerrain.prototype.hasCoverage = function () {
 	var limits  = this.limits;
 	var tileSet = this.tileSet;
 
-	return ( ( limits.min.x >= tileSet.W && limits.min.x <= tileSet.E ) || 
-		     ( limits.max.x >= tileSet.W && limits.max.x <= tileSet.E ) ) &&
-		   ( ( limits.min.y >= tileSet.S && limits.min.y <= tileSet.N ) ||
-		     ( limits.max.y >= tileSet.S && limits.max.y <= tileSet.N ) );
+	return (
+		( limits.min.x >= tileSet.W && limits.min.x <= tileSet.E ) || 
+		( limits.max.x >= tileSet.W && limits.max.x <= tileSet.E )
+	) && (
+		( limits.min.y >= tileSet.S && limits.min.y <= tileSet.N ) ||
+		( limits.max.y >= tileSet.S && limits.max.y <= tileSet.N )
+	);
 
 };
 
@@ -256,8 +259,8 @@ TiledTerrain.prototype.endLoad = function ( tile ) {
 
 			if ( this.resolution === this.initialResolution ) {
 
-				console.log('oops');
-				this.tileArea(  this.currentLimits, null, resolution * 2 );
+				console.log( 'oops' );
+				this.tileArea( this.currentLimits, null, this.resolution * 2 );
 
 			}
 

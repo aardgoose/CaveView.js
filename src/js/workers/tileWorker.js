@@ -33,7 +33,7 @@ function mapLoaded ( data, x, y ) {
 	var xDivisions = divisions - clip.left - clip.right;
 	var yDivisions = divisions - clip.top - clip.bottom;
 
-	var i, j, l, l1, l2;
+	var i, j, l1, l2;
 
 	// clip excess left and right columns from height map
 

@@ -1,7 +1,6 @@
 
-import { FEATURE_TERRAIN, upAxis } from '../core/constants';
+import { FEATURE_TERRAIN } from '../core/constants';
 import { padDigits } from '../core/lib';
-import { ColourCache } from '../core/ColourCache';
 
 import {
 	Vector2, Vector3, Triangle, Box3,
@@ -76,7 +75,7 @@ Tile.prototype.createCommon = function () {
 
 	this.layers.set ( FEATURE_TERRAIN );
 
-}
+};
 
 Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox ) {
 

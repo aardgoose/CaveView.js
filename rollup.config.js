@@ -23,6 +23,4 @@ export default {
 	plugins: [
 		glsl()
 	]
-
-
-};
+}

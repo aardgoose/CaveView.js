@@ -23,7 +23,7 @@ import { WaterMaterial } from '../materials/WaterMaterial';
 import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
 
 import {
-	Vector3, Face3, Color, Box3,
+	Vector3, Face3, Box3,
 	Geometry, BufferGeometry,
 	Float32BufferAttribute,
 	MeshLambertMaterial, MeshBasicMaterial, LineBasicMaterial,
@@ -1703,6 +1703,13 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 	mesh.material = Materials.getLineMaterial();
 
 	var routes = this.routes;
+
+	if ( routes === null ) {
+
+		routes = new Routes();
+		this.routes = routes;
+
+	}
 
 	var c1 = ColourCache.yellow;
 	var c2 = ColourCache.red;

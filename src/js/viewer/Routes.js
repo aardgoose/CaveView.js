@@ -10,6 +10,7 @@ function Routes ( routes ) {
 
 	// determine segments between junctions and entrances/passage ends and create mapping array.
 
+	if ( routes === undefined ) routes = [];
 	this.surveyTree = null;
 	this.segments = []; // maps vertex index to segment membership
 	this.segmentMap = new Map(); // maps segments of survey between ends of passages and junctions.

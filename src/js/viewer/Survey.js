@@ -847,6 +847,14 @@ Survey.prototype.getLegs = function () {
 
 };
 
+Survey.prototype.getRoutes = function () {
+
+	if ( this.routes === null ) this.routes = new Routes();
+
+	return this.routes;
+
+};
+
 Survey.prototype.setScale = function ( scale ) {
 
 	this.stations.setScale( scale );
@@ -1702,14 +1710,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	mesh.material = Materials.getLineMaterial();
 
-	var routes = this.routes;
-
-	if ( routes === null ) {
-
-		routes = new Routes();
-		this.routes = routes;
-
-	}
+	var routes = this.getRoutes();
 
 	var c1 = ColourCache.yellow;
 	var c2 = ColourCache.red;

@@ -52,7 +52,8 @@ function Survey ( cave ) {
 
 	// objects targetted by raycasters and objects with variable LOD
 
-	this.mouseTargets = [];
+	this.pointTargets = [];
+	this.legTargets = [];
 	this.lodTargets = [];
 
 	this.type = 'CV.Survey';
@@ -84,7 +85,7 @@ function Survey ( cave ) {
 		this.loadCave( survey );
 		this.limits = this.getBounds();
 
-//		this.mouseTargets = [ this.legMeshes[ NORMAL ] ]; // temp mech FIXME
+		this.legTargets = [ this.legMeshes[ LEG_CAVE ] ];
 
 	}
 
@@ -145,7 +146,7 @@ function Survey ( cave ) {
 
 			marker.userData = entrance.survey;
 
-			self.mouseTargets.push( marker );
+			self.pointTargets.push( marker );
 			self.lodTargets.push( marker );
 
 		}
@@ -172,6 +173,8 @@ Survey.prototype.loadCave = function ( cave ) {
 	_loadTerrain( cave );
 
 	this.loadStations( cave.surveyTree );
+
+	this.pointTargets.push( this.stations );
 
 	if ( cave.metadata ) {
 
@@ -849,9 +852,19 @@ Survey.prototype.getLegs = function () {
 
 Survey.prototype.getRoutes = function () {
 
-	if ( this.routes === null ) this.routes = new Routes();
+	var routes = this.routes;
 
-	return this.routes;
+	if ( this.routes === null ) {
+
+		var routes = new Routes();
+
+		routes.mapSurvey( this.stations, this.getLegs(), this.surveyTree );
+
+		this.routes = routes;
+
+	}
+
+	return routes;
 
 };
 
@@ -963,7 +976,8 @@ Survey.prototype.cutSection = function ( id ) {
 
 	// clear target lists
 
-	this.mouseTargets = [];
+	this.PointTargets = [];
+	this.legTargets   = [];
 	this.lodTargets   = [];
 
 	// iterate through objects replace geometries and remove bounding boxes;
@@ -1018,7 +1032,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 			if ( selectedSectionIds.has( obj.userData ) ) {
 
-				self.mouseTargets.push( obj );
+				self.pointTargets.push( obj );
 				self.lodTargets.push( obj );
 
 			} else {

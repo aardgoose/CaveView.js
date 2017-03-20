@@ -636,9 +636,15 @@ Svx3dHandler.prototype.getLineSegments = function () {
 			var from = g[ v ];
 			var to   = g[ v + 1 ];
 
+			var fromCoords = from.coords;
+			var toCoords = to.coords;
+
+			if ( fromCoords.x === toCoords.x && fromCoords.y === toCoords.y && fromCoords.z === toCoords.z ) continue;
+
 			lineSegments.push( { from: from.coords, to: to.coords, type: to.type, survey: to.survey } );
 
 		}
+
 	}
 
 	return lineSegments;

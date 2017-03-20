@@ -109,6 +109,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		}
 
 		skipData( m_dataSize );
+
 	}
 
 	function readUint () {
@@ -222,6 +223,9 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		if ( m_flags && 0x01 ) type = LEG_SURFACE;
 		if ( m_flags && 0x08 ) type = LEG_SPLAY;
 
+		var from = stations[ m_from ];
+		var to   = stations[ m_to ];
+
 		if ( m_sectionType !== 0x00 ) {
 
 			if ( m_from !== lastTo ) {
@@ -231,15 +235,17 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 				xGroup = [];
 				self.xGroups.push( xGroup );
 
-				xGroup.push( { start: stations[ m_to ], end: stations[ m_from ], lrud: fromLRUD, survey: m_surveyId } );
+				xGroup.push( { start: to, end: from, lrud: fromLRUD, survey: m_surveyId } );
 
 			}
 
-			xGroup.push( { start: stations[ m_from ], end: stations[ m_to ], lrud: toLRUD, survey: m_surveyId } );
+			xGroup.push( { start: from, end: to, lrud: toLRUD, survey: m_surveyId } );
 
 		}
 
-		lineSegments.push( { from: stations[ m_from ], to: stations[ m_to ], type: type, survey: m_surveyId } );
+		if ( from.x === to.x && from.y === to.y && from.z === to.z ) return;
+
+		lineSegments.push( { from: from, to: to, type: type, survey: m_surveyId } );
 
 		lastTo = m_to;
 

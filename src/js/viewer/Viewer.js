@@ -51,6 +51,7 @@ var camera;
 
 var mouse = new Vector2();
 var mouseMode = MOUSE_MODE_NORMAL;
+var mouseTargets = [];
 
 var raycaster;
 var terrain = null;
@@ -317,6 +318,26 @@ function init ( domID ) { // public method
 	function _setRouteEdit ( x ) {
 
 		mouseMode = x ? MOUSE_MODE_ROUTE_EDIT : MOUSE_MODE_NORMAL;
+
+		switch ( mouseMode ) {
+
+			case MOUSE_MODE_NORMAL:
+
+				mouseTargets = survey.pointTargets;
+
+				break;
+
+			case MOUSE_MODE_ROUTE_EDIT:
+
+				mouseTargets = survey.legTargets;
+
+				break;
+
+			default:
+
+				console.log( 'invalid mouse mode' ); 
+
+		}
 
 	}
 
@@ -748,6 +769,8 @@ function clearView () {
 	terrain         = null;
 	selectedSection = 0;
 	scene           = new Scene();
+	mouseMode       = MOUSE_MODE_NORMAL;
+	mouseTargets    = [];
 
 	shadingMode = SHADING_HEIGHT;
 
@@ -810,6 +833,8 @@ function loadSurvey ( newSurvey ) {
 	caveIsLoaded = true;
 
 	selectSection( 0 );
+
+	mouseTargets = survey.pointTargets;
 
 	setSurfaceShadingMode( surfaceShadingMode );
 	// set if we have independant terrain maps
@@ -912,17 +937,14 @@ function clockStop ( /* event */ ) {
 
 function mouseDown ( event ) {
 
-	var picked;
+	var picked, result;
 
 	mouse.x =   ( event.clientX / container.clientWidth  ) * 2 - 1;
 	mouse.y = - ( event.clientY / container.clientHeight ) * 2 + 1;
 
 	raycaster.setFromCamera( mouse, camera );
 
-	survey.mouseTargets.push( survey.stations );
-
-	var intersects = raycaster.intersectObjects( survey.mouseTargets, false );
-	var result;
+	var intersects = raycaster.intersectObjects( mouseTargets, false );
 
 	for ( var i = 0, l = intersects.length; i < l; i++ ) {
 
@@ -996,6 +1018,8 @@ function mouseDown ( event ) {
 	}
 
 	function _selectSegment ( picked ) {
+
+		var routes = getRoutes();
 
 		routes.toggleSegment( picked.index );
 

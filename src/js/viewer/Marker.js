@@ -52,7 +52,7 @@ Marker.prototype = Object.create( LOD.prototype );
 
 Marker.prototype.constructor = Marker;
 
-Marker.prototype.onRemove = function( /* event */ ) {
+Marker.prototype.onRemove = function ( /* event */ ) {
 
 	var levels = this.levels;
 

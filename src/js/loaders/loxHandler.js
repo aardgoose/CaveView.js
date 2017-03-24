@@ -455,7 +455,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		}
 
-		if ( !type ) {
+		if ( ! type ) {
 
 			return '';
 

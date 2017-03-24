@@ -75,7 +75,7 @@ Stations.prototype.updateStation = function ( vertex ) {
 
 		station.hitCount++;
 
-		if ( station.hitCount > 2 ) { 
+		if ( station.hitCount > 2 ) {
 
 			this.colors[ station.stationVertexIndex ] = this.junctionColor;
 			this.pointSizes[ station.stationVertexIndex ] = 4.0;

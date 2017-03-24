@@ -32,7 +32,6 @@ function Routes ( routes ) {
 		get: function () { return this.toDownload(); }
 	} );
 
-
 	var i;
 	var route;
 
@@ -115,6 +114,8 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 		}
 
+		return this;
+
 	}
 
 	if ( ! newSegment ) {
@@ -137,7 +138,7 @@ Routes.prototype.createWireframe = function () {
 
 	this.segmentMap.forEach( _addSegment );
 
-	return new LineSegments( geometry , new LineBasicMaterial( { color: 0x00ff00 } ) );
+	return new LineSegments( geometry, new LineBasicMaterial( { color: 0x00ff00 } ) );
 
 	function _addSegment( value /*, key */ ) {
 
@@ -209,7 +210,7 @@ Routes.prototype.toDownload = function () {
 
 	return 'data:text/json;charset=utf8,' + encodeURIComponent( JSON.stringify( routesJSON ) );
 
-	function _addRoutes( route, routeName ) {
+	function _addRoutes ( route, routeName ) {
 
 		routesJSON.routes.push( { name: routeName, segments: route } );
 
@@ -226,7 +227,7 @@ Routes.prototype.saveCurrent = function () {
 
 	segmentMap.forEach( _addRoute );
 
-	function _addRoute( value /*, key */ ) {
+	function _addRoute ( value /*, key */ ) {
 
 		if ( route.has( value.segment ) ) {
 
@@ -278,7 +279,7 @@ Routes.prototype.toggleSegment = function ( index ) {
 
 	return;
 
-	function _setAdjacentSegments( segment ) {
+	function _setAdjacentSegments ( segment ) {
 
 		if ( ! route.has( segment ) ) self.adjacentSegments.add( segment );
 

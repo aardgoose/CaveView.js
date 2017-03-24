@@ -5,7 +5,7 @@ import {
 	Math as _Math
 } from '../../../../three.js/src/Three'; 
 
-function CameraMove( controls, renderFunction, endCallback ) {
+function CameraMove ( controls, renderFunction, endCallback ) {
 
 	this.cameraTarget = null;
 	this.targetPOI = null;

@@ -38,7 +38,7 @@ function LinearScale ( container, viewState ) {
 
 	var ms = new Matrix4().makeScale( 1,  1, zScale );
 
-	ms.multiply( new Matrix4().makeTranslation( width/2 - stdMargin, -height/2 + barOffset - viewState.minHeight * zScale, 0 ) );
+	ms.multiply( new Matrix4().makeTranslation( width / 2 - stdMargin, -height / 2 + barOffset - viewState.minHeight * zScale, 0 ) );
 
 	this.applyMatrix( ms );
 

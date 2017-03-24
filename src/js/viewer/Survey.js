@@ -180,11 +180,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		if ( cave.metadata.routes ) {
 
-			var routes = new Routes( cave.metadata.routes );
-
-			routes.mapSurvey( this.stations, this.getLegs(), this.surveyTree );
-
-			this.routes = routes;
+			this.routes = new Routes( cave.metadata.routes ).mapSurvey( this.stations, this.getLegs(), this.surveyTree );
 
 		}
 
@@ -854,11 +850,9 @@ Survey.prototype.getRoutes = function () {
 
 	var routes = this.routes;
 
-	if ( this.routes === null ) {
+	if ( routes === null ) {
 
-		var routes = new Routes();
-
-		routes.mapSurvey( this.stations, this.getLegs(), this.surveyTree );
+		routes = new Routes().mapSurvey( this.stations, this.getLegs(), this.surveyTree );
 
 		this.routes = routes;
 
@@ -1374,7 +1368,7 @@ Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 	var surveyColours;
 	var unselected = new MeshLambertMaterial( { side: FrontSide, color: 0x444444, vertexColors: FaceColors } );
 
-	if ( mode === SHADING_SURVEY ) surveyColours = this.getSurveyColours();
+	if ( mode === SHADING_SURVEY ) surveyColours = this.mapSurveyColours();
 
 	mesh.material = [ selected, unselected ];
 
@@ -1400,7 +1394,7 @@ Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
 					if ( mode === SHADING_SURVEY ) {
 
-						faces[ f ].color.copy( surveyColours[ survey ] );
+						faces[ f ].color = surveyColours[ survey ];
 
 					}
 
@@ -1526,7 +1520,7 @@ Survey.prototype.getSurveyColour = function ( surveyId ) {
 
 };
 
-Survey.prototype.getSurveyColours = function () { // FIXME - cache save recalc for faces and lines,
+Survey.prototype.mapSurveyColours = function () { // FIXME - cache save recalc for faces and lines,
 
 	var survey;
 	var surveyColours = [];
@@ -1543,7 +1537,6 @@ Survey.prototype.getSurveyColours = function () { // FIXME - cache save recalc f
 	} else {
 
 		survey = surveyTree.id;
-		surveyTree.getSubtreeIds( survey, selectedSectionIds );
 
 	}
 
@@ -1632,7 +1625,7 @@ Survey.prototype.setLegColourByMaterial = function ( mesh, material ) {
 	mesh.material = material;
 	mesh.material.needsUpdate = true;
 
-	this.setLegSelected( mesh, _colourSegment );
+	this.setLegSelected( mesh, _colourSegment, false );
 
 	function _colourSegment ( geometry, v1, v2 ) {
 
@@ -1665,7 +1658,7 @@ Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
 
 	mesh.material = Materials.getLineMaterial();
 
-	this.setLegSelected( mesh, _colourSegment );
+	this.setLegSelected( mesh, _colourSegment, false );
 
 	function _colourSegment ( geometry, v1, v2 ) {
 
@@ -1684,7 +1677,7 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 	mesh.material = Materials.getLineMaterial();
 
-	this.setLegSelected( mesh, _colourSegment );
+	this.setLegSelected( mesh, _colourSegment, false );
 
 	function _colourSegment ( geometry, v1, v2 ) {
 
@@ -1703,11 +1696,11 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
-	var surveyColours = this.getSurveyColours();
+	var surveyColours = this.mapSurveyColours();
 
 	mesh.material = Materials.getLineMaterial();
 
-	this.setLegSelected ( mesh, _colourSegment );
+	this.setLegSelected ( mesh, _colourSegment, true );
 
 	function _colourSegment ( geometry, v1, v2, survey ) {
 
@@ -1732,7 +1725,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	var colour;
 
-	this.setLegSelected ( mesh, _colourSegment );
+	this.setLegSelected ( mesh, _colourSegment, false );
 
 	function _colourSegment ( geometry, v1, v2 /*, survey */ ) {
 
@@ -1766,21 +1759,12 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 	mesh.material = Materials.getLineMaterial();
 
-	this.setLegSelected ( mesh, _colourSegment );
+	this.setLegSelected ( mesh, _colourSegment, false );
 
 	function _colourSegment ( geometry, v1, v2 ) {
 
 		var vertex1 = geometry.vertices[ v1 ];
 		var vertex2 = geometry.vertices[ v2 ];
-
-		if ( vertex1.equals( vertex2 ) ) {
-
-			geometry.colors[ v1 ] = ColourCache.grey;
-			geometry.colors[ v2 ] = ColourCache.grey;
-
-			return;
-
-		}
 
 		legNormal.subVectors( vertex1, vertex2 ).normalize();
 		var dotProduct = legNormal.dot( pNormal );
@@ -1795,7 +1779,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 };
 
-Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
+Survey.prototype.setLegSelected = function ( mesh, colourSegment, bySurvey ) {
 
 	// pNormal = normal of reference plane in model space 
 	var geometry   = mesh.geometry;
@@ -1815,7 +1799,7 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 	var selectedSectionIds = this.selectedSectionIds;
 
-	if ( selectedSectionIds.size && vertexRuns ) {
+	if ( ( selectedSectionIds.size && vertexRuns ) || bySurvey ) {
 
 		for ( run = 0, l = vertexRuns.length; run < l; run++ ) {
 
@@ -1824,7 +1808,7 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 			var start     = vertexRun.start;
 			var end       = vertexRun.end;
 
-			if ( selectedSectionIds.has( survey ) ) {
+			if ( selectedSectionIds.has( survey ) || bySurvey ) {
 
 				runsSelected++;
 

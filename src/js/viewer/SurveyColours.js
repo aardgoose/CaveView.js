@@ -28,18 +28,8 @@ SurveyColours.prototype.getSurveyColourMap = function ( surveyTree, selectedSect
 
 	}
 
-	var survey;
 	var map = [];
-
-	if ( selectedSection !== 0 ) {
-
-		survey = selectedSection;
-
-	} else {
-
-		survey = surveyTree.id;
-
-	}
+	var survey = ( selectedSection !== 0 ) ? selectedSection : surveyTree.id;
 
 	// create mapping of survey id to colour
 	// map each child id _and_ all its lower level survey ids to the same colour
@@ -48,7 +38,7 @@ SurveyColours.prototype.getSurveyColourMap = function ( surveyTree, selectedSect
 
 	var colour = this.getSurveyColour( survey );
 
-	_addMapping( survey );
+	_addMapping( subTree );
 
 	var children = subTree.children;
 

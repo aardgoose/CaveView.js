@@ -17,6 +17,7 @@ import { Marker } from './Marker';
 import { farPointers } from './EntranceFarPointer';
 import { Stations } from './Stations';
 import { Routes } from './Routes';
+import { SurveyColours } from './SurveyColours';
 import { Terrain } from '../terrain/Terrain';
 import { WorkerPool } from '../workers/WorkerPool';
 import { WaterMaterial } from '../materials/WaterMaterial';
@@ -65,6 +66,7 @@ function Survey ( cave ) {
 	this.routes = null;
 	this.stations;
 	this.workerPool = new WorkerPool( 'caveWorker.js' );
+	this.surveyColours = new SurveyColours();
 
 	var self = this;
 
@@ -1365,10 +1367,10 @@ Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 	var faceRuns = mesh.userData.faceRuns;
 	var faces    = mesh.geometry.faces;
 	var	selectedSectionIds = this.selectedSectionIds;
-	var surveyColours;
+	var surveyToColourMap;
 	var unselected = new MeshLambertMaterial( { side: FrontSide, color: 0x444444, vertexColors: FaceColors } );
 
-	if ( mode === SHADING_SURVEY ) surveyColours = this.mapSurveyColours();
+	if ( mode === SHADING_SURVEY ) surveyToColourMap = this.surveyColours.getSurveyColourMap( this.surveyTree, this.selectedSection );
 
 	mesh.material = [ selected, unselected ];
 
@@ -1394,7 +1396,7 @@ Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
 					if ( mode === SHADING_SURVEY ) {
 
-						faces[ f ].color = surveyColours[ survey ];
+						faces[ f ].color = surveyToColourMap[ survey ];
 
 					}
 
@@ -1509,66 +1511,6 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	}
 
 	return true;
-
-};
-
-Survey.prototype.getSurveyColour = function ( surveyId ) {
-
-	var surveyColours = ColourCache.survey;
-
-	return surveyColours[ surveyId % surveyColours.length ];
-
-};
-
-Survey.prototype.mapSurveyColours = function () { // FIXME - cache save recalc for faces and lines,
-
-	var survey;
-	var surveyColours = [];
-	var selectedSection    = this.selectedSection;
-	var selectedSectionIds = this.selectedSectionIds;
-	var surveyTree = this.surveyTree;
-
-	var colour;
-
-	if ( selectedSectionIds.size > 0 && selectedSection !== 0 ) {
-
-		survey = selectedSection;
-
-	} else {
-
-		survey = surveyTree.id;
-
-	}
-
-	// create mapping of survey id to colour
-	// map each child id _and_ all its lower level survey ids to the same colour
-
-	var children = surveyTree.findById( survey ).children;
-
-	colour = this.getSurveyColour( survey );
-
-	_setSurveyColour( survey );
-
-	for ( var i = 0, l = children.length; i < l; i++ ) {
-
-		var childId = children[ i ].id;
-		var childIdSet = new Set();
-
-		surveyTree.getSubtreeIds( childId, childIdSet );
-
-		colour = this.getSurveyColour( childId );
-
-		childIdSet.forEach( _setSurveyColour );
-
-	}
-
-	return surveyColours;
-
-	function _setSurveyColour ( value ) {
-
-		surveyColours[ value ] = colour;
-
-	}
 
 };
 
@@ -1696,15 +1638,15 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
-	var surveyColours = this.mapSurveyColours();
-
+	var surveyToColourMap = this.surveyColours.getSurveyColourMap( this.surveyTree, this.selectedSection );
+ 
 	mesh.material = Materials.getLineMaterial();
 
 	this.setLegSelected ( mesh, _colourSegment, true );
 
 	function _colourSegment ( geometry, v1, v2, survey ) {
 
-		var colour = surveyColours[ survey ];
+		var colour = surveyToColourMap[ survey ];
 
 		geometry.colors[ v1 ] = colour;
 		geometry.colors[ v2 ] = colour;

@@ -140,15 +140,15 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 		for ( i = 0, l = bar.faces.length; i < l; i = i + 4 ) {
 
-			bar.faces[ i ].color   = cRed;
-			bar.faces[ i+1 ].color = cRed;
+			bar.faces[ i ].color = cRed;
+			bar.faces[ i + 1 ].color = cRed;
 
 		}
 
 		for ( i = 0, l = bar2.faces.length; i < l; i = i + 4 ) {
 
-			bar2.faces[ i ].color   = cRed;
-			bar2.faces[ i+1 ].color = cRed;
+			bar2.faces[ i ].color = cRed;
+			bar2.faces[ i + 1 ].color = cRed;
 
 		}
 

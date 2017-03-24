@@ -83,7 +83,7 @@ function init ( domID ) { // public method
 
 	container = document.getElementById( domID );
 
-	if ( !container ) alert( 'No container DOM object [' + domID + '] available' );
+	if ( ! container ) alert( 'No container DOM object [' + domID + '] available' );
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
@@ -321,21 +321,21 @@ function init ( domID ) { // public method
 
 		switch ( mouseMode ) {
 
-			case MOUSE_MODE_NORMAL:
+		case MOUSE_MODE_NORMAL:
 
-				mouseTargets = survey.pointTargets;
+			mouseTargets = survey.pointTargets;
 
-				break;
+			break;
 
-			case MOUSE_MODE_ROUTE_EDIT:
+		case MOUSE_MODE_ROUTE_EDIT:
 
-				mouseTargets = survey.legTargets;
+			mouseTargets = survey.legTargets;
 
-				break;
+			break;
 
-			default:
+		default:
 
-				console.log( 'invalid mouse mode' ); 
+			console.log( 'invalid mouse mode' );
 
 		}
 
@@ -428,7 +428,7 @@ function showDeveloperInfo( x ) {
 */
 function renderDepthTexture () {
 
-	if ( terrain === null || !terrain.isLoaded() ) return;
+	if ( terrain === null || ! terrain.isLoaded() ) return;
 
 	var dim = 512;
 
@@ -828,7 +828,6 @@ function loadSurvey ( newSurvey ) {
 	scene.add( directionalLight );
 
 	scene.add( new HemisphereLight( 0xffffff, 0x00ffff, 0.3 ) );
-//	scene.add( new AmbientLight( 0x303030 ) );
 
 	caveIsLoaded = true;
 
@@ -843,7 +842,7 @@ function loadSurvey ( newSurvey ) {
 
 		terrain = new TiledTerrain( survey.limits, _tilesLoaded );
 
-		if ( !terrain.hasCoverage() ) {
+		if ( ! terrain.hasCoverage() ) {
 
 			terrain = null;
 

@@ -184,7 +184,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	while ( pos < dataLength ) {
 
-		if ( !cmd[ data[ pos ] ]( data[ pos++ ] ) ) break;
+		if ( ! cmd[ data[ pos ] ]( data[ pos++ ] ) ) break;
 
 	}
 
@@ -220,7 +220,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 			l = new DataView( source, pos );
 
 			len = l.getUint32( 0, true );
-			pos +=4;
+			pos += 4;
 
 			break;
 
@@ -240,7 +240,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		}
 
-		label = label + String.fromCharCode.apply( null, db  );
+		label += String.fromCharCode.apply( null, db );
 
 		return true;
 
@@ -275,7 +275,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 				l = new DataView( source, pos );
 
 				del = l.getUint32( 0, true );
-				pos +=4;
+				pos += 4;
 
 			}
 
@@ -290,7 +290,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 				l = new DataView( source, pos );
 
 				add = l.getUint32( 0, true );
-				pos +=4;
+				pos += 4;
 
 			}
 		}
@@ -309,7 +309,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 			}
 
-			label = label + String.fromCharCode.apply( null, db );
+			label += String.fromCharCode.apply( null, db );
 
 		}
 
@@ -329,14 +329,14 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		label = label.slice( 0, -16 );
 
-		if ( label.charAt( label.length - 1 ) == '.') label = label.slice( 0, -1 ); // strip trailing '.'
+		if ( label.charAt( label.length - 1 ) === '.') label = label.slice( 0, -1 ); // strip trailing '.'
 
 		var parts = label.split( '.' );
 
 		parts.splice( -( c ) );
 		label = parts.join( '.' );
 
-		if ( label ) label = label + '.';
+		if ( label ) label += '.';
 
 		return true;
 
@@ -568,11 +568,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function commonXSECT( flags, lrud ) {
+	function commonXSECT ( flags, lrud ) {
 
 		var position = stations.get( label );
 
-		if ( !position ) return;
+		if ( ! position ) return;
 
 		var station = label.split( '.' );
 
@@ -641,7 +641,7 @@ Svx3dHandler.prototype.getLineSegments = function () {
 
 			if ( fromCoords.x === toCoords.x && fromCoords.y === toCoords.y && fromCoords.z === toCoords.z ) continue;
 
-			lineSegments.push( { from: from.coords, to: to.coords, type: to.type, survey: to.survey } );
+			lineSegments.push( { from: fromCoords, to: toCoords, type: to.type, survey: to.survey } );
 
 		}
 

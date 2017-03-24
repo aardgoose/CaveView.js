@@ -7,7 +7,7 @@ import { RegionHandler } from './RegionHandler';
 
 function CaveLoader ( callback, progress ) {
 
-	if ( !callback ) {
+	if ( ! callback ) {
 
 		alert( 'No callback specified' );
 
@@ -138,7 +138,7 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 
 	}
 
-	function _error( event ) {
+	function _error ( event ) {
 
 		self.doneCount++;
 
@@ -199,7 +199,7 @@ CaveLoader.prototype.loadFile = function ( file ) {
 
 	}
 
-	function _progress( e ) {
+	function _progress ( e ) {
 
 		if ( self.progress ) self.progress( Math.round( 100 * e.loaded / e.total ) );
 
@@ -207,7 +207,7 @@ CaveLoader.prototype.loadFile = function ( file ) {
 
 };
 
-CaveLoader.prototype.callHandler = function( fileName ) {
+CaveLoader.prototype.callHandler = function ( fileName ) {
 
 	if ( this.dataResponse === null ) {
 

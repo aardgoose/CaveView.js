@@ -350,13 +350,17 @@ Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 
 		redraw = oldSlide.clientHeight;
 
-	} else {
+	} else if ( depth < this.slideDepth ) {
 
 		newSlide.addEventListener( 'transitionend', afterSlideIn );
 
 		redraw = newSlide.clientHeight;
 
 		newSlide.classList.remove( 'slide-out' );
+
+	} else {
+
+		page.removeChild( oldSlide );
 
 	}
 

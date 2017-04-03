@@ -219,8 +219,21 @@ function initSelectionPage () {
 			
 			var key = document.createElement( 'span' );
 
-			key.style.color = surveyColours[ child.id % surveyColoursRange ];
-			key.textContent = '\u2588 ';
+			if ( child.hitCount === undefined ) {
+
+				key.style.color = surveyColours[ child.id % surveyColoursRange ];
+				key.textContent = '\u2588 ';
+
+			} else if ( child.hitCount > 2 ) {
+
+				key.style.color = 'red';
+				key.textContent = '\u25cf ';
+
+			} else {
+
+				key.style.color = 'yellow';
+				key.textContent = '\u25cf ';
+			}
 
 			li.appendChild( key );
 			li.appendChild( txt );

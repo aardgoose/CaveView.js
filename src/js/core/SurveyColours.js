@@ -1,11 +1,11 @@
 
 
-import { ColourCache } from '../core/ColourCache';
+import { ColourCache } from './ColourCache';
+
+var map = [];
+var selectedSection = 0;
 
 function SurveyColours () {
-
-	this.selectedSection = 0;
-	this.map = [];
 
 }
 
@@ -19,16 +19,18 @@ SurveyColours.prototype.getSurveyColour = function ( surveyId ) {
 
 };
 
-SurveyColours.prototype.getSurveyColourMap = function ( surveyTree, selectedSection ) {
+SurveyColours.prototype.getSurveyColourMap = function ( surveyTree, newSelectedSection ) {
 
-	if ( this.selectedSection === selectedSection && this.map.length > 0 ) {
+	if ( selectedSection === newSelectedSection && map.length > 0 ) {
 
 		// use cached mapping
-		return this.map;
+		return map;
 
 	}
 
-	var map = [];
+	map = [];
+	selectedSection = newSelectedSection;
+
 	var survey = ( selectedSection !== 0 ) ? selectedSection : surveyTree.id;
 
 	// create mapping of survey id to colour
@@ -53,9 +55,6 @@ SurveyColours.prototype.getSurveyColourMap = function ( surveyTree, selectedSect
 		subTree.traverse( _addMapping );
 
 	}
-
-	this.map = map;
-	this.selectedSection = selectedSection;
 
 	return map;
 

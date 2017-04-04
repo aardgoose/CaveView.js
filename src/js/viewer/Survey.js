@@ -17,7 +17,7 @@ import { Marker } from './Marker';
 import { farPointers } from './EntranceFarPointer';
 import { Stations } from './Stations';
 import { Routes } from './Routes';
-import { SurveyColours } from './SurveyColours';
+import { SurveyColours } from '../core/SurveyColours';
 import { Terrain } from '../terrain/Terrain';
 import { WorkerPool } from '../workers/WorkerPool';
 import { WaterMaterial } from '../materials/WaterMaterial';

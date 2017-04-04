@@ -5,12 +5,12 @@ import {
 	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
 } from '../core/constants';
 
-import { Colours } from '../core/Colours';
 import { replaceExtension } from '../core/lib';
 import { Page } from './Page';
 import { ProgressBar } from './ProgressBar';
 import { CaveLoader } from '../loaders/CaveLoader';
 import { Viewer } from '../viewer/Viewer';
+import { SurveyColours } from '../core/SurveyColours';
 
 var cave;
 var caveLoader;
@@ -21,6 +21,7 @@ var caveList = [];
 var guiState = {};
 var viewState;
 var surveyTree;
+var surveyColours;
 
 var isCaveLoaded = false;
 var isRoutesLoaded = false;
@@ -83,6 +84,7 @@ function init ( domID ) { // public method
 	}
 
 	progressBar = new ProgressBar( container );
+	surveyColours = new SurveyColours();
 
 	Viewer.init( domID );
 
@@ -149,7 +151,6 @@ function initSelectionPage () {
 	var titleBar  = document.createElement( 'div' );
 	var rootId    = surveyTree.id;
 	var track     = [];
-	var lastSelected  = false;
 	var page;
 
 	if ( ! isCaveLoaded ) return;
@@ -167,20 +168,32 @@ function initSelectionPage () {
 
 	var redraw = container.clientHeight; // eslint-disable-line no-unused-vars
 
+	viewState.addEventListener( 'change',  _handleChange );
+
 	return;
 
-	function _displayPanel ( id ) {
+	function _handleChange( event ) {
+
+		if ( event.name === 'section' ) {
+
+			page.replaceSlide( _displayPanel( track[ track.length - 1 ].id, true ), track.length, _handleSelectSurvey );
+
+		}
+
+	}
+
+	function _displayPanel ( id, replacement ) {
 
 		var top = surveyTree.findById( id );
 
 		var ul;
 		var tmp;
 		var l;
-		var surveyColours = Colours.surveyColoursCSS;
-		var surveyColoursRange = surveyColours.length;
 		var span;
 
-		track.push( { name: top.name, id: id } );
+		var surveyColourMap = surveyColours.getSurveyColourMap( surveyTree, viewState.section );
+
+		if ( ! replacement ) track.push( { name: top.name, id: id } );
 
 		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
 
@@ -214,25 +227,27 @@ function initSelectionPage () {
 
 			var li  = document.createElement( 'li' );
 			var txt = document.createTextNode( child.name );
+			var key = document.createElement( 'span' );
 
 			li.id = 'sv' + child.id;
-			
-			var key = document.createElement( 'span' );
+
+			if ( viewState.section === child.id ) li.classList.add( 'selected' );
 
 			if ( child.hitCount === undefined ) {
 
-				key.style.color = surveyColours[ child.id % surveyColoursRange ];
+				key.style.color = '#' + surveyColourMap[ child.id ].getHexString();
 				key.textContent = '\u2588 ';
 
 			} else if ( child.hitCount > 2 ) {
 
-				key.style.color = 'red';
+				key.style.color = 'yellow';
 				key.textContent = '\u25cf ';
 
 			} else {
 
-				key.style.color = 'yellow';
+				key.style.color = 'red';
 				key.textContent = '\u25cf ';
+
 			}
 
 			li.appendChild( key );
@@ -289,20 +304,9 @@ function initSelectionPage () {
 
 				viewState.section = id;
 
-				target.classList.add( 'selected' );
-
-				if ( lastSelected && lastSelected !== target ) {
-
-					lastSelected.classList.remove( 'selected' );
-
-				}
-
-				lastSelected = target;
-
 			} else {
 
 				viewState.section = 0;
-				target.classList.remove( 'selected' );
 
 			}
 

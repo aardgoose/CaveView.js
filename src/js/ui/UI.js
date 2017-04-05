@@ -21,7 +21,6 @@ var caveList = [];
 var guiState = {};
 var viewState;
 var surveyTree;
-var surveyColours;
 
 var isCaveLoaded = false;
 var isRoutesLoaded = false;
@@ -84,7 +83,6 @@ function init ( domID ) { // public method
 	}
 
 	progressBar = new ProgressBar( container );
-	surveyColours = new SurveyColours();
 
 	Viewer.init( domID );
 
@@ -191,7 +189,7 @@ function initSelectionPage () {
 		var l;
 		var span;
 
-		var surveyColourMap = surveyColours.getSurveyColourMap( surveyTree, viewState.section );
+		var surveyColourMap = SurveyColours.getSurveyColourMap( surveyTree, viewState.section );
 
 		if ( ! replacement ) track.push( { name: top.name, id: id } );
 

@@ -10,6 +10,7 @@ var SurveyColours = {};
 SurveyColours.clearMap = function () {
 
 	map = [];
+	selectedSection = 0;
 
 };
 
@@ -33,7 +34,7 @@ SurveyColours.getSurveyColourMap = function ( surveyTree, newSelectedSection ) {
 	map = [];
 	selectedSection = newSelectedSection;
 
-	var survey = ( selectedSection !== 0 ) ? selectedSection : surveyTree.id;
+	var survey = ( selectedSection === 0 ) ? surveyTree.id : selectedSection;
 
 	// create mapping of survey id to colour
 	// map each child id _and_ all its lower level survey ids to the same colour
@@ -62,7 +63,8 @@ SurveyColours.getSurveyColourMap = function ( surveyTree, newSelectedSection ) {
 
 	function _addMapping ( node ) {
 
-		map[ node.id ] = colour;
+		// only add values for sections - not stations
+		if ( node.p === undefined ) map[ node.id ] = colour;
 
 	}
 

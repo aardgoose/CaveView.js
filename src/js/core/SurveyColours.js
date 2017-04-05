@@ -47,6 +47,14 @@ SurveyColours.getSurveyColourMap = function ( surveyTree, newSelectedSection ) {
 
 	var children = subTree.children;
 
+	while ( children.length === 1 ) {
+
+		subTree = children[ 0 ];
+		_addMapping( subTree );
+		children = subTree.children;
+
+	}
+
 	for ( var i = 0, l = children.length; i < l; i++ ) {
 
 		var childId = children[ i ].id;

@@ -172,7 +172,7 @@ function initSelectionPage () {
 
 	function _handleChange( event ) {
 
-		if ( event.name === 'section' ) {
+		if ( event.name === 'section' || event.name === 'shadingMode' ) {
 
 			page.replaceSlide( _displayPanel( track[ track.length - 1 ].id, true ), track.length, _handleSelectSurvey );
 
@@ -233,7 +233,19 @@ function initSelectionPage () {
 
 			if ( child.hitCount === undefined ) {
 
-				key.style.color = '#' + surveyColourMap[ child.id ].getHexString();
+				var colour;
+
+				if ( viewState.shadingMode === SHADING_SURVEY && surveyColourMap[ child.id ] !== undefined  ) {
+
+					colour = surveyColourMap[ child.id ].getHexString();
+
+				} else {
+
+					colour = '444444';
+
+				}
+
+				key.style.color = '#' + colour;
 				key.textContent = '\u2588 ';
 
 			} else if ( child.hitCount > 2 ) {

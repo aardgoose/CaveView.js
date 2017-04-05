@@ -172,6 +172,8 @@ function initSelectionPage () {
 
 	function _handleChange( event ) {
 
+		if ( ! isCaveLoaded ) return;
+
 		if ( event.name === 'section' || event.name === 'shadingMode' ) {
 
 			page.replaceSlide( _displayPanel( track[ track.length - 1 ].id, true ), track.length, _handleSelectSurvey );

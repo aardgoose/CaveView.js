@@ -66,9 +66,10 @@ function Survey ( cave ) {
 	this.routes = null;
 	this.stations;
 	this.workerPool = new WorkerPool( 'caveWorker.js' );
-	this.surveyColours = new SurveyColours();
 
 	var self = this;
+
+	SurveyColours.clearMap(); // clear cache of survey section to colour
 
 	var survey = cave.getSurvey();
 
@@ -1370,7 +1371,7 @@ Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 	var surveyToColourMap;
 	var unselected = new MeshLambertMaterial( { side: FrontSide, color: 0x444444, vertexColors: FaceColors } );
 
-	if ( mode === SHADING_SURVEY ) surveyToColourMap = this.surveyColours.getSurveyColourMap( this.surveyTree, this.selectedSection );
+	if ( mode === SHADING_SURVEY ) surveyToColourMap = SurveyColours.getSurveyColourMap( this.surveyTree, this.selectedSection );
 
 	mesh.material = [ selected, unselected ];
 
@@ -1638,7 +1639,7 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
-	var surveyToColourMap = this.surveyColours.getSurveyColourMap( this.surveyTree, this.selectedSection );
+	var surveyToColourMap = SurveyColours.getSurveyColourMap( this.surveyTree, this.selectedSection );
 
 	if ( this.selectedSectionIds.size === 0 ) this.surveyTree.getSubtreeIds( this.selectedSection, this.selectedSectionIds );
 

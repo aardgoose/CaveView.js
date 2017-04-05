@@ -5,13 +5,15 @@ import { ColourCache } from './ColourCache';
 var map = [];
 var selectedSection = 0;
 
-function SurveyColours () {
+var SurveyColours = {};
 
-}
+SurveyColours.clearMap = function () {
 
-SurveyColours.prototype.constructor = SurveyColours;
+	map = [];
 
-SurveyColours.prototype.getSurveyColour = function ( surveyId ) {
+};
+
+SurveyColours.getSurveyColour = function ( surveyId ) {
 
 	var surveyColours = ColourCache.survey;
 
@@ -19,7 +21,7 @@ SurveyColours.prototype.getSurveyColour = function ( surveyId ) {
 
 };
 
-SurveyColours.prototype.getSurveyColourMap = function ( surveyTree, newSelectedSection ) {
+SurveyColours.getSurveyColourMap = function ( surveyTree, newSelectedSection ) {
 
 	if ( selectedSection === newSelectedSection && map.length > 0 ) {
 

@@ -89,7 +89,7 @@ function init ( domID ) { // public method
 	caveLoader = new CaveLoader( caveLoaded, progress );
 
 	// event handlers
-	document.addEventListener( 'keydown', function ( event ) { keyDown( event ); } );
+	document.addEventListener( 'keydown', keyDown );
 
 	container.addEventListener( 'drop', handleDrop );
 	container.addEventListener( 'dragover', handleDragover );
@@ -513,28 +513,22 @@ function initSettingsPage () {
 
 	if ( viewState.hasTerrain ) {
 
-		var control;
-
-		control = page.addHeader( 'Terrain' );
-		terrainControls.push( control );
+		terrainControls.push( page.addHeader( 'Terrain' ) );
 
 		var overlays = viewState.terrainOverlays;
 
 		if ( overlays.length > 0 ) terrainShadingModesActive[ 'map overlay' ] = SHADING_OVERLAY;
 
-		control = page.addSelect( 'Shading', terrainShadingModesActive, viewState, 'terrainShading' );
-		terrainControls.push( control );
+		terrainControls.push( page.addSelect( 'Shading', terrainShadingModesActive, viewState, 'terrainShading' ) );
 
 		if ( overlays.length > 1 ) {
 
 			terrainOverlay = page.addSelect( 'Overlay', overlays, viewState, 'terrainOverlay' );
-			terrainOverlay.style.display = 'none';
 			terrainControls.push( terrainOverlay );
 
 		}
 
-		control = page.addRange( 'Terrain opacity', viewState, 'terrainOpacity' );
-		terrainControls.push( control );
+		terrainControls.push( page.addRange( 'Terrain opacity', viewState, 'terrainOpacity' ) );
 
 		for ( var i = 0, l = terrainControls.length; i < l; i++ ) {
 
@@ -575,20 +569,7 @@ function handleDrop ( event ) {
 
 	event.preventDefault();
 
-	for ( var i = 0; i < dt.files.length; i++ ) {
-
-		var file = dt.files[ i ];
-
-		if ( i === 0 ) {
-
-			loadCaveLocalFile( file );
-
-		} else {
-
-			// FIXME load other drag and drop into local file list or ignore??
-		}
-
-	}
+	if ( dt.files.length === 1 ) loadCaveLocalFile( dt.files[ 0 ] );
 
 }
 

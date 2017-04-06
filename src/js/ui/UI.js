@@ -158,7 +158,7 @@ function initSelectionPage () {
 	page.addHeader( 'Selection' );
 
 	titleBar.id = 'ui-path';
-	titleBar.addEventListener( 'click', _handleSelectSurveyBack );
+	titleBar.addEventListener( 'click', _handleSelectTopSurvey );
 
 	page.appendChild( titleBar );
 
@@ -198,14 +198,15 @@ function initSelectionPage () {
 		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
 
 		l = track.length;
-		var footprint = track[ l - 1 ];
 
-		titleBar.textContent = footprint.name;
+		titleBar.textContent = track[ l - 1 ].name;
+		titleBar.id = 'bv' + id;
 
 		if ( l > 1 ) {
 
 			span = document.createElement( 'span' );
 			span.textContent = ' \u25C4';
+			span.addEventListener( 'click', _handleSelectSurveyBack );
 
 			titleBar.appendChild( span );
 
@@ -289,7 +290,9 @@ function initSelectionPage () {
 
 	}
 
-	function _handleSelectSurveyBack ( /* event */ ) {
+	function _handleSelectSurveyBack ( event ) {
+
+		event.stopPropagation();
 
 		if ( track.length === 1 ) return;
 
@@ -298,6 +301,22 @@ function initSelectionPage () {
 		var id = track.pop().id;
 
 		page.replaceSlide( _displayPanel( id ), track.length, _handleSelectSurvey );
+
+	}
+
+	function _handleSelectTopSurvey ( event ) {
+
+		var id = Number( event.target.id.split( 'v' )[ 1 ] );
+
+		if ( viewState.section !== Number( id ) ) {
+
+			viewState.section = id;
+
+		} else {
+
+			viewState.section = 0;
+
+		}
 
 	}
 
@@ -325,8 +344,6 @@ function initSelectionPage () {
 			break;
 
 		case 'DIV':
-
-			// FIXME - detect entries with no children.....
 
 			if ( id ) {
 

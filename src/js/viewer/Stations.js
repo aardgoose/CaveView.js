@@ -43,7 +43,7 @@ Stations.prototype.addStation = function ( node ) {
 
 	this.vertices.push( point );
 	this.colors.push( this.baseColor );
-	this.pointSizes.push( point.type === STATION_ENTRANCE ? 8.0 : 2.0 ); 
+	this.pointSizes.push( point.type === STATION_ENTRANCE ? 8.0 : 1.0 ); 
 
 	this.map.set( point.x.toString() + ':' + point.y.toString() + ':' + point.z.toString(), node );
 	this.stations.push( node );
@@ -71,7 +71,7 @@ Stations.prototype.updateStation = function ( vertex ) {
 
 	var	station = this.getStation( vertex );
 
-	if ( station !== undefined ) { 
+	if ( station !== undefined ) {
 
 		station.hitCount++;
 
@@ -79,6 +79,10 @@ Stations.prototype.updateStation = function ( vertex ) {
 
 			this.colors[ station.stationVertexIndex ] = this.junctionColor;
 			this.pointSizes[ station.stationVertexIndex ] = 4.0;
+
+		} else if ( station.hitCount > 0 ) {
+
+			this.pointSizes[ station.stationVertexIndex ] = 2.0;
 
 		}
 

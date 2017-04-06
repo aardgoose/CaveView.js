@@ -5,12 +5,12 @@ import {
 	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
 } from '../core/constants';
 
-import { Colours } from '../core/Colours';
 import { replaceExtension } from '../core/lib';
 import { Page } from './Page';
 import { ProgressBar } from './ProgressBar';
 import { CaveLoader } from '../loaders/CaveLoader';
 import { Viewer } from '../viewer/Viewer';
+import { SurveyColours } from '../core/SurveyColours';
 
 var cave;
 var caveLoader;
@@ -146,11 +146,10 @@ function handleChange ( event ) {
 
 function initSelectionPage () {
 
-	var titleBar  = document.createElement( 'div' );
-	var rootId    = surveyTree.id;
-	var track     = [];
-	var lastSelected  = false;
+	var titleBar = document.createElement( 'div' );
 	var page;
+	var currentTop = surveyTree;
+	var depth = 0;
 
 	if ( ! isCaveLoaded ) return;
 
@@ -159,40 +158,47 @@ function initSelectionPage () {
 	page.addHeader( 'Selection' );
 
 	titleBar.id = 'ui-path';
-	titleBar.addEventListener( 'click', _handleSelectSurveyBack );
+	titleBar.addEventListener( 'click', _handleSelectTopSurvey );
 
 	page.appendChild( titleBar );
 
-	page.addSlide( _displayPanel( rootId ), track.length, _handleSelectSurvey );
+	page.addSlide( _displayPanel( currentTop ), depth, _handleSelectSurvey );
 
 	var redraw = container.clientHeight; // eslint-disable-line no-unused-vars
 
+	viewState.addEventListener( 'change', _handleChange );
+
 	return;
 
-	function _displayPanel ( id ) {
+	function _handleChange( event ) {
 
-		var top = surveyTree.findById( id );
+		if ( ! isCaveLoaded ) return;
+
+		if ( event.name === 'section' || event.name === 'shadingMode' ) {
+
+			page.replaceSlide( _displayPanel( currentTop ), depth, _handleSelectSurvey );
+
+		}
+
+	}
+
+	function _displayPanel ( top ) {
 
 		var ul;
 		var tmp;
-		var l;
-		var surveyColours = Colours.surveyColoursCSS;
-		var surveyColoursRange = surveyColours.length;
 		var span;
 
-		track.push( { name: top.name, id: id } );
+		var surveyColourMap = SurveyColours.getSurveyColourMap( surveyTree, viewState.section );
 
 		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
 
-		l = track.length;
-		var footprint = track[ l - 1 ];
+		titleBar.textContent = top.name;
 
-		titleBar.textContent = footprint.name;
-
-		if ( l > 1 ) {
+		if ( top.parent !== null ) {
 
 			span = document.createElement( 'span' );
 			span.textContent = ' \u25C4';
+			span.addEventListener( 'click', _handleSelectSurveyBack );
 
 			titleBar.appendChild( span );
 
@@ -208,31 +214,52 @@ function initSelectionPage () {
 
 		top.forEachChild( _addLine );
 	
+		currentTop = top;
+
 		return ul;
 
 		function _addLine ( child ) {
 
 			var li  = document.createElement( 'li' );
 			var txt = document.createTextNode( child.name );
+			var key = document.createElement( 'span' );
 
 			li.id = 'sv' + child.id;
-			
-			var key = document.createElement( 'span' );
+
+			if ( viewState.section === child.id ) li.classList.add( 'selected' );
 
 			if ( child.hitCount === undefined ) {
 
-				key.style.color = surveyColours[ child.id % surveyColoursRange ];
+				var colour;
+
+				if ( viewState.shadingMode === SHADING_SURVEY && surveyColourMap[ child.id ] !== undefined ) {
+
+					colour = surveyColourMap[ child.id ].getHexString();
+
+				} else {
+
+					colour = '444444';
+
+				}
+
+				key.style.color = '#' + colour;
 				key.textContent = '\u2588 ';
 
 			} else if ( child.hitCount > 2 ) {
 
+				key.style.color = 'yellow';
+				key.textContent = '\u25fc ';
+
+			} else if ( child.hitCount === 0 ) {
+
 				key.style.color = 'red';
-				key.textContent = '\u25cf ';
+				key.textContent = '\u25fb ';
 
 			} else {
 
-				key.style.color = 'yellow';
-				key.textContent = '\u25cf ';
+				key.style.color = 'red';
+				key.textContent = '\u25fc ';
+
 			}
 
 			li.appendChild( key );
@@ -262,22 +289,26 @@ function initSelectionPage () {
 
 	}
 
-	function _handleSelectSurveyBack ( /* event */ ) {
+	function _handleSelectSurveyBack ( event ) {
 
-		if ( track.length === 1 ) return;
+		event.stopPropagation();
 
-		track.pop();
+		if ( currentTop.parent === null ) return;
 
-		var id = track.pop().id;
+		page.replaceSlide( _displayPanel( currentTop.parent ), --depth, _handleSelectSurvey );
 
-		page.replaceSlide( _displayPanel( id ), track.length, _handleSelectSurvey );
+	}
+
+	function _handleSelectTopSurvey ( /* event */ ) {
+
+		viewState.section = currentTop.id;
 
 	}
 
 	function _handleSelectSurvey ( event ) {
 
 		var target = event.target;
-		var id = target.id.split( 'v' )[ 1 ];
+		var id = Number( target.id.split( 'v' )[ 1 ] );
 
 		event.stopPropagation();
 
@@ -285,38 +316,13 @@ function initSelectionPage () {
 
 		case 'LI':
 
-			if ( viewState.section !== Number( id ) ) {
-
-				viewState.section = id;
-
-				target.classList.add( 'selected' );
-
-				if ( lastSelected && lastSelected !== target ) {
-
-					lastSelected.classList.remove( 'selected' );
-
-				}
-
-				lastSelected = target;
-
-			} else {
-
-				viewState.section = 0;
-				target.classList.remove( 'selected' );
-
-			}
+			viewState.section = ( viewState.section !== id ) ? id : 0;
 
 			break;
 
 		case 'DIV':
 
-			// FIXME - detect entries with no children.....
-
-			if ( id ) {
-
-				page.replaceSlide( _displayPanel( id ), track.length, _handleSelectSurvey );
-
-			}
+			if ( id ) page.replaceSlide( _displayPanel( currentTop.findById( id ) ), ++depth, _handleSelectSurvey );
 
 			break;
 
@@ -445,15 +451,9 @@ function initInfoPage () {
 
 	page.addHeader( 'Information' );
 
-	var p = document.createElement( 'p' );
+	page.addText( 'Viewer - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.' );
 
-	p.textContent = 'Viewer - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.';
-	page.appendChild( p );
-
-	p = document.createElement( 'p' );
-
-	p.textContent = 'Requires a browser supporting WebGL (IE 11+ and most other recent browsers), no plugins required. Created using the THREE.js 3D library and chroma,js colour handling library.';
-	page.appendChild( p );
+	page.addText( 'Requires a browser supporting WebGL (IE 11+ and most other recent browsers), no plugins required. Created using the THREE.js 3D library and chroma,js colour handling library.' );
 
 }
 

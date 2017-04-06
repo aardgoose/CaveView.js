@@ -1012,6 +1012,7 @@ Survey.prototype.cutSection = function ( id ) {
 	this.setFeatureBox();
 
 	this.surveyTree = this.surveyTree.findById( id );
+	this.surveyTree.parent = null;
 
 	this.loadStations( this.surveyTree );
 

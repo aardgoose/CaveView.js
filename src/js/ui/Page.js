@@ -171,6 +171,17 @@ Page.prototype.addHeader = function ( text ) {
 
 };
 
+Page.prototype.addText = function ( text ) {
+
+	var p = document.createElement( 'p' );
+
+	p.textContent = text;
+	this.page.appendChild( p );
+
+	return p;
+
+};
+
 Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 	var div    = document.createElement( 'div' );

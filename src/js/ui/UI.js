@@ -146,10 +146,10 @@ function handleChange ( event ) {
 
 function initSelectionPage () {
 
-	var titleBar  = document.createElement( 'div' );
-	var rootId    = surveyTree.id;
-	var track     = [];
+	var titleBar = document.createElement( 'div' );
 	var page;
+	var currentTop = surveyTree;
+	var depth = 0;
 
 	if ( ! isCaveLoaded ) return;
 
@@ -162,11 +162,11 @@ function initSelectionPage () {
 
 	page.appendChild( titleBar );
 
-	page.addSlide( _displayPanel( rootId ), track.length, _handleSelectSurvey );
+	page.addSlide( _displayPanel( currentTop ), depth, _handleSelectSurvey );
 
 	var redraw = container.clientHeight; // eslint-disable-line no-unused-vars
 
-	viewState.addEventListener( 'change',  _handleChange );
+	viewState.addEventListener( 'change', _handleChange );
 
 	return;
 
@@ -176,33 +176,25 @@ function initSelectionPage () {
 
 		if ( event.name === 'section' || event.name === 'shadingMode' ) {
 
-			page.replaceSlide( _displayPanel( track[ track.length - 1 ].id, true ), track.length, _handleSelectSurvey );
+			page.replaceSlide( _displayPanel( currentTop ), depth, _handleSelectSurvey );
 
 		}
 
 	}
 
-	function _displayPanel ( id, replacement ) {
-
-		var top = surveyTree.findById( id );
+	function _displayPanel ( top ) {
 
 		var ul;
 		var tmp;
-		var l;
 		var span;
 
 		var surveyColourMap = SurveyColours.getSurveyColourMap( surveyTree, viewState.section );
 
-		if ( ! replacement ) track.push( { name: top.name, id: id } );
-
 		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
 
-		l = track.length;
+		titleBar.textContent = top.name;
 
-		titleBar.textContent = track[ l - 1 ].name;
-		titleBar.id = 'bv' + id;
-
-		if ( l > 1 ) {
+		if ( top.parent !== null ) {
 
 			span = document.createElement( 'span' );
 			span.textContent = ' \u25C4';
@@ -222,6 +214,8 @@ function initSelectionPage () {
 
 		top.forEachChild( _addLine );
 	
+		currentTop = top;
+
 		return ul;
 
 		function _addLine ( child ) {
@@ -238,7 +232,7 @@ function initSelectionPage () {
 
 				var colour;
 
-				if ( viewState.shadingMode === SHADING_SURVEY && surveyColourMap[ child.id ] !== undefined  ) {
+				if ( viewState.shadingMode === SHADING_SURVEY && surveyColourMap[ child.id ] !== undefined ) {
 
 					colour = surveyColourMap[ child.id ].getHexString();
 
@@ -254,12 +248,17 @@ function initSelectionPage () {
 			} else if ( child.hitCount > 2 ) {
 
 				key.style.color = 'yellow';
-				key.textContent = '\u25cf ';
+				key.textContent = '\u25fc ';
+
+			} else if ( child.hitCount === 0 ) {
+
+				key.style.color = 'red';
+				key.textContent = '\u25fb ';
 
 			} else {
 
 				key.style.color = 'red';
-				key.textContent = '\u25cf ';
+				key.textContent = '\u25fc ';
 
 			}
 
@@ -294,36 +293,22 @@ function initSelectionPage () {
 
 		event.stopPropagation();
 
-		if ( track.length === 1 ) return;
+		if ( currentTop.parent === null ) return;
 
-		track.pop();
-
-		var id = track.pop().id;
-
-		page.replaceSlide( _displayPanel( id ), track.length, _handleSelectSurvey );
+		page.replaceSlide( _displayPanel( currentTop.parent ), --depth, _handleSelectSurvey );
 
 	}
 
-	function _handleSelectTopSurvey ( event ) {
+	function _handleSelectTopSurvey ( /* event */ ) {
 
-		var id = Number( event.target.id.split( 'v' )[ 1 ] );
-
-		if ( viewState.section !== Number( id ) ) {
-
-			viewState.section = id;
-
-		} else {
-
-			viewState.section = 0;
-
-		}
+		viewState.section = currentTop.id;
 
 	}
 
 	function _handleSelectSurvey ( event ) {
 
 		var target = event.target;
-		var id = target.id.split( 'v' )[ 1 ];
+		var id = Number( target.id.split( 'v' )[ 1 ] );
 
 		event.stopPropagation();
 
@@ -331,25 +316,13 @@ function initSelectionPage () {
 
 		case 'LI':
 
-			if ( viewState.section !== Number( id ) ) {
-
-				viewState.section = id;
-
-			} else {
-
-				viewState.section = 0;
-
-			}
+			viewState.section = ( viewState.section !== id ) ? id : 0;
 
 			break;
 
 		case 'DIV':
 
-			if ( id ) {
-
-				page.replaceSlide( _displayPanel( id ), track.length, _handleSelectSurvey );
-
-			}
+			if ( id ) page.replaceSlide( _displayPanel( currentTop.findById( id ) ), ++depth, _handleSelectSurvey );
 
 			break;
 
@@ -478,15 +451,9 @@ function initInfoPage () {
 
 	page.addHeader( 'Information' );
 
-	var p = document.createElement( 'p' );
+	page.addText( 'Viewer - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.' );
 
-	p.textContent = 'Viewer - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.';
-	page.appendChild( p );
-
-	p = document.createElement( 'p' );
-
-	p.textContent = 'Requires a browser supporting WebGL (IE 11+ and most other recent browsers), no plugins required. Created using the THREE.js 3D library and chroma,js colour handling library.';
-	page.appendChild( p );
+	page.addText( 'Requires a browser supporting WebGL (IE 11+ and most other recent browsers), no plugins required. Created using the THREE.js 3D library and chroma,js colour handling library.' );
 
 }
 

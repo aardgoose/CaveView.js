@@ -209,6 +209,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
+		surveyTree.traverse( _prepareNames );
 
 		if ( self.surveyTree === null ) {
 
@@ -225,6 +226,22 @@ Survey.prototype.loadCave = function ( cave ) {
 		function _restore ( child ) {
 
 			Object.assign( child, Tree.prototype );
+
+		}
+
+		function _prepareNames( node ) {
+
+			// pad numeric names to give correct sorting
+			// FIXME - needs padding removing in routes
+
+			var split = node.name.replace( /([0-9]*)([^0-9]*)/, '$1~$2' ).split( '~' );
+			var newName = '';
+
+			if ( split[ 0 ] !== '' ) newName = split[ 0 ].padStart( 5, ' ' );
+
+			newName += split[ 1 ];
+
+			node.name = newName;
 
 		}
 

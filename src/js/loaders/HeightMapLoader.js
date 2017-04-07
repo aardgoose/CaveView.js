@@ -1,5 +1,4 @@
 
-import { padDigits } from '../core/lib';
 
 function HeightMapLoader ( tileSet, resolution, x, y, loadCallback, errorCallback ) {
 
@@ -11,7 +10,7 @@ function HeightMapLoader ( tileSet, resolution, x, y, loadCallback, errorCallbac
 	this.errorCallback = errorCallback;
 	this.x = x;
 	this.y = y;
-	this.tileFile = prefix + padDigits( y, 3 ) + '-' + padDigits( x, 3 ) + '.bin';
+	this.tileFile = prefix + y.toString().padStart( 3, '0' ) + '-' + x.toString().padStart( 3, '0' ) + '.bin';
 	this.basedir = tileSet.BASEDIR;
 
 }

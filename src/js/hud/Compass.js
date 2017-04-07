@@ -1,6 +1,5 @@
 
 import { HudObject } from './HudObject';
-import { padDigits } from '../core/lib';
 
 import {
 	Vector3, Math as _Math, Face3, Color,
@@ -145,7 +144,7 @@ Compass.prototype.set = function () {
 
 		var degrees = 360 - Math.round( _Math.radToDeg( a ) );
 
-		this.txt.textContent = padDigits( degrees, 3 ) + '\u00B0'; // unicode degree symbol
+		this.txt.textContent = degrees.toString().padStart( 3, '0' ) + '\u00B0'; // unicode degree symbol
 
 		this.rotateOnAxis( negativeZAxis, a - this.lastRotation );
 

@@ -1,6 +1,5 @@
 
 import { FEATURE_TERRAIN } from '../core/constants';
-import { padDigits } from '../core/lib';
 
 import {
 	Vector2, Vector3, Triangle, Box3,
@@ -236,7 +235,7 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 	var xRepeat = repeat * ( ( tileWidth - clip.left - clip.right ) / tileWidth );
 	var yRepeat = repeat * ( ( tileWidth - clip.top  - clip.bottom ) / tileWidth );
 
-	var imageFile = tileSet.OVERLAYDIR + overlay + '/' + tileSet.PREFIX + tileSet.OVERLAY_RESOLUTION + 'MX-' + padDigits( y, 3 ) + '-' + padDigits( x, 3 ) + '.jpg';
+	var imageFile = tileSet.OVERLAYDIR + overlay + '/' + tileSet.PREFIX + tileSet.OVERLAY_RESOLUTION + 'MX-' + y.toString().padStart( 3, '0' ) + '-' + x.toString().padStart( 3, '0' ) + '.jpg';
 
 	if ( Tile.overlayImages.has( imageFile ) ) {
 

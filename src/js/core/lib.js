@@ -25,9 +25,11 @@ function replaceExtension( fileName, newExtention ) {
 
 }
 
-function padDigits ( number, digits ) {
+function padDigits ( number, digits, replacement ) {
 
-	return Array( Math.max( digits - String( number ).length + 1, 0 ) ).join( 0 ) + number;
+	if ( replacement === undefined ) replacement = '0';
+
+	return Array( Math.max( digits - String( number ).length + 1, 0 ) ).join( replacement ) + number;
 
 }
 

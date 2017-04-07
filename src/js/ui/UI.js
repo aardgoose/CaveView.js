@@ -283,7 +283,7 @@ function initSelectionPage () {
 
 		function _sortSurveys ( s1, s2 ) {
 
-			return s1.name.localeCompare( s2.name );
+			return s1.name.localeCompare( s2.name, 'en-GB', { numeric: true } );
 
 		}
 

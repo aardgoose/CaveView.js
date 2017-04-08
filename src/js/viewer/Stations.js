@@ -9,6 +9,7 @@ import {
 import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
 import { FEATURE_STATIONS, STATION_ENTRANCE } from '../core/constants';
+import { Viewer } from '../viewer/Viewer';
 
 function Stations () {
 
@@ -29,6 +30,39 @@ function Stations () {
 
 	this.stations = [];
 
+	var viewState = Viewer.getState;
+	var self = this;
+
+	viewState.addEventListener( 'change', _viewChanged );
+
+	function _viewChanged( event ) {
+
+		if ( event.name === 'splays' ) {
+
+			var splaySize = viewState.splays ? 1.0 : 0.0;
+
+			var stations = self.stations;
+			var pSize = self.geometry.getAttribute( 'pSize' );
+			var i;
+			var l = stations.length;
+
+			for ( i = 0; i < l; i++ ) {
+
+				if ( stations[ i ].hitCount === 0 ) {
+
+					pSize.setX( i, splaySize );
+
+				}
+
+			}
+
+			pSize.needsUpdate = true;
+			Viewer.renderView();
+
+		}
+
+	}
+
 }
 
 Stations.prototype = Object.create ( Points.prototype );
@@ -43,7 +77,7 @@ Stations.prototype.addStation = function ( node ) {
 
 	this.vertices.push( point );
 	this.colors.push( this.baseColor );
-	this.pointSizes.push( point.type === STATION_ENTRANCE ? 8.0 : 1.0 ); 
+	this.pointSizes.push( point.type === STATION_ENTRANCE ? 8.0 : 0.0 ); 
 
 	this.map.set( point.x.toString() + ':' + point.y.toString() + ':' + point.z.toString(), node );
 	this.stations.push( node );

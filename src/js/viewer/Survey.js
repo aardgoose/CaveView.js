@@ -1435,7 +1435,7 @@ Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
 
 Survey.prototype.hasFeature = function ( layerTag ) {
 
-	return !( ( this.layers.mask & 1 << layerTag ) === 0 );
+	return ! ( ( this.layers.mask & 1 << layerTag ) === 0 );
 
 };
 

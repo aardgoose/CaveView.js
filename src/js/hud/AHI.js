@@ -115,6 +115,7 @@ function AHI ( container ) {
 	this.domObjects.push( panel );
 
 	this.addEventListener( 'removed', this.removeDomObjects );
+	this.txt.textContent = '-90\u00B0';
 
 	return this;
 

@@ -174,7 +174,7 @@ function initSelectionPage () {
 
 		if ( ! isCaveLoaded ) return;
 
-		if ( event.name === 'section' || event.name === 'shadingMode' ) {
+		if ( event.name === 'section' || event.name === 'shadingMode' || event.name === 'splays' ) {
 
 			page.replaceSlide( _displayPanel( currentTop ), depth, _handleSelectSurvey );
 
@@ -219,6 +219,8 @@ function initSelectionPage () {
 		return ul;
 
 		function _addLine ( child ) {
+
+			if ( child.hitCount === 0 && ! viewState.splays ) return; // skip spays if not displayed
 
 			var li  = document.createElement( 'li' );
 			var txt = document.createTextNode( child.name );

@@ -85,7 +85,7 @@ function mapLoaded ( data, x, y ) {
 	// however it isn't preserved in json serialisation.
 
 	var bb = terrainTile.boundingBox;
-	
+
 	var boundingBox = {
 
 		min: {

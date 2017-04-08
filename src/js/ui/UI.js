@@ -117,7 +117,7 @@ function handleChange ( event ) {
 	case 'terrain':
 
 		// only show overlay selection when terrain shading is set to overlay
-		display = ( viewState.terrain ? 'block' : 'none' );
+		display = viewState.terrain ? 'block' : 'none';
 
 		for ( var i = 0, l = terrainControls.length; i < l; i++ ) {
 
@@ -192,15 +192,18 @@ function initSelectionPage () {
 
 		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
 
-		titleBar.textContent = top.name;
+		if ( top.parent === null ) {
 
-		if ( top.parent !== null ) {
+			titleBar.textContent = ( top.name === '' ) ? '[model]' : top.name;
+
+		} else {
 
 			span = document.createElement( 'span' );
 			span.textContent = ' \u25C4';
 			span.addEventListener( 'click', _handleSelectSurveyBack );
 
 			titleBar.appendChild( span );
+			titleBar.appendChild( document.createTextNode( top.name ) );
 
 		}
 
@@ -738,13 +741,13 @@ function keyDown ( event ) {
 
 		break;
 
-	case 68: //  toggle dye traces visibility - 'd'
+	case 68: // toggle dye traces visibility - 'd'
 
 		if ( viewState.hasTraces ) viewState.traces = ! viewState.traces;
 
 		break;
 
-	case 76: //toggle entrance labels - 'l'
+	case 76: // toggle entrance labels - 'l'
 
 		if ( viewState.hasEntrances ) viewState.entrances = ! viewState.entrances;
 
@@ -756,7 +759,7 @@ function keyDown ( event ) {
 
 		break;
 
-	case 79: //switch view to orthoganal - 'o'
+	case 79: // switch view to orthoganal - 'o'
 
 		viewState.cameraType = CAMERA_ORTHOGRAPHIC;
 

@@ -12,18 +12,22 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 	this.xGroups    = [];
 	this.surveyTree = new Tree();
 	this.isRegion   = false;
+
 	this.metadata   = metadata;
 
 	var source    = dataStream;  // file data as arrrayBuffer
 	var pos       = 0;	         // file position
 
 	// read file header
+
 	readLF(); // Survex 3D Image File
 	var version = readLF(); // 3d version
-	var title   = readLF();
+	var auxInfo = readNSLF();
 	readLF(); // Date
 
-	console.log( 'title: ', title);
+	console.log( 'title: ', auxInfo[ 0 ] );
+
+	this.crs = ( auxInfo[ 1 ] === undefined ) ? null : auxInfo[ 1 ]; // coordinate reference system ( proj4 format )
 
 	this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
 
@@ -31,22 +35,39 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	function readLF () { // read until Line feed
 
+		return readNSLF()[ 0 ];
+
+	}
+
+	function readNSLF () { // read until Line feed and split by null bytes
+
 		var bytes = new Uint8Array( source, 0 );
 
 		var lfString = [];
 		var b;
+		var strings = [];
 
 		do {
 
 			b = bytes[ pos++ ];
-			lfString.push( b );
+
+			if ( b === 0x0a || b === 0 ) {
+
+				strings.push( String.fromCharCode.apply( null, lfString ).trim() )
+				lfString = [];
+
+			} else {
+
+				lfString.push( b );
+
+			}
 
 		} while ( b != 0x0a );
 
-		var s = String.fromCharCode.apply( null, lfString ).trim();
+		return strings;
 
-		return s;
 	}
+
 }
 
 Svx3dHandler.prototype.constructor = Svx3dHandler;
@@ -668,6 +689,7 @@ Svx3dHandler.prototype.getSurvey = function () {
 	return {
 		title: this.fileName,
 		surveyTree: this.surveyTree,
+		CRS: this.crs,
 		lineSegments: this.getLineSegments(),
 		crossSections: this.xGroups,
 		scraps: [],

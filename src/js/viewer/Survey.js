@@ -74,6 +74,9 @@ function Survey ( cave ) {
 	var survey = cave.getSurvey();
 
 	this.name = survey.title;
+	this.CRS = ( survey.CRS === null ) ? getEnvironmentValue( 'CRS', 'fred' ) : survey.CRS;
+
+	console.log( 'CRS:', this.CRS );
 
 	_loadEntrances( survey.entrances );
 

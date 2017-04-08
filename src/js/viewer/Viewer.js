@@ -573,7 +573,7 @@ function setCameraLayer ( layerTag, enable ) {
 
 function testCameraLayer ( layerTag ) {
 
-	return ( ( oCamera.layers.mask & 1 << layerTag ) > 0 );
+	return ( ( camera.layers.mask & 1 << layerTag ) > 0 );
 
 }
 

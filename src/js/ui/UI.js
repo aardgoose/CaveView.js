@@ -203,7 +203,7 @@ function initSelectionPage () {
 			span.addEventListener( 'click', _handleSelectSurveyBack );
 
 			titleBar.appendChild( span );
-			titleBar.appendChild( document.createTextNode( top.name ) );
+			titleBar.appendChild( document.createTextNode( ' ' + top.name ) );
 
 		}
 

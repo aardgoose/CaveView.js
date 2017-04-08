@@ -53,7 +53,7 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 			if ( b === 0x0a || b === 0 ) {
 
-				strings.push( String.fromCharCode.apply( null, lfString ).trim() )
+				strings.push( String.fromCharCode.apply( null, lfString ).trim() );
 				lfString = [];
 
 			} else {

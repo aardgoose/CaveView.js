@@ -18,6 +18,7 @@ import { CameraMove } from './CameraMove';
 import { Survey } from './Survey';
 import { Popup } from './Popup';
 import { TiledTerrain } from '../terrain/TiledTerrain';
+import { WebTerrain } from '../terrain/WebTerrain';
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
 
 import { OrbitControls } from '../core/OrbitControls';
@@ -840,6 +841,10 @@ function loadSurvey ( newSurvey ) {
 
 	if ( terrain === null ) {
 
+		console.log( survey.limits );
+
+		terrain = new WebTerrain( survey.limits, _tilesLoaded );
+/*
 		terrain = new TiledTerrain( survey.limits, _tilesLoaded );
 
 		if ( ! terrain.hasCoverage() ) {
@@ -852,7 +857,7 @@ function loadSurvey ( newSurvey ) {
 			survey.add( terrain );
 
 		}
-
+*/
 	} else {
 
 		survey.add( terrain );
@@ -1140,15 +1145,15 @@ function setScale ( obj ) {
 
 	var range  = limits.getSize();
 	var center = limits.getCenter();
-
+console.log( range );
 	// initialize cursor height to be mid range of heights
 	cursorHeight = center.z;
 
 	// scale and translate model coordiniates into THREE.js world view
 	var scale = Math.min( width / range.x, height / range.y );
 
-	obj.scale.set( scale, scale, scale );
-	obj.position.set( -center.x * scale, -center.y * scale, -center.z * scale );
+	obj.scale.set( scale, scale, scale / 10000000 ); // FIXME - fudge to scale long/lat to metres (needs lattitude settings ) also LRUD needs converting 
+	obj.position.set( -center.x * scale, -center.y * scale, -center.z * scale / 10000000 );
 
 	HUD.setScale( scale );
 

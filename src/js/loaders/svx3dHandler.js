@@ -12,7 +12,8 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 	this.xGroups    = [];
 	this.surveyTree = new Tree();
 	this.isRegion   = false;
-
+	this.targetCRS  = 'EPSG:3857';
+	this.projection = null;
 	this.metadata   = metadata;
 
 	var source    = dataStream;  // file data as arrrayBuffer
@@ -27,7 +28,18 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	console.log( 'title: ', auxInfo[ 0 ] );
 
-	this.crs = ( auxInfo[ 1 ] === undefined ) ? null : auxInfo[ 1 ]; // coordinate reference system ( proj4 format )
+	this.sourceCRS = ( auxInfo[ 1 ] === undefined ) ? null : auxInfo[ 1 ]; // coordinate reference system ( proj4 format )
+
+	// EPSG27700 hardwire for testing
+	// FIXME use NAD grid corrections OSTM15 etc ( UK Centric )
+
+	this.sourceCRS	= '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs';
+
+	console.log( 'Reprojecting' );
+	console.log( 'from: ', this.sourceCRS );
+	console.log( 'to:   ', this.targetCRS );
+
+	this.projection = proj4( this.sourceCRS, this.targetCRS );
 
 	this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
 
@@ -78,6 +90,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	var entrances  = this.entrances;
 	var xGroups    = this.xGroups;
 	var surveyTree = this.surveyTree;
+
+	var self = this;
 
 	var cmd         = [];
 	var legs        = [];
@@ -635,6 +649,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		coords.z = l.getInt32( 8, true ) / 100;
 		pos += 12;
 
+		// FIXME make variant cmd handler for no reprojection for speed
+		self.projection.forward( coords );
+
 		return coords;
 
 	}
@@ -689,7 +706,8 @@ Svx3dHandler.prototype.getSurvey = function () {
 	return {
 		title: this.fileName,
 		surveyTree: this.surveyTree,
-		CRS: this.crs,
+		sourceCRS: this.sourceCRS,
+		targetCRS: this.targetCRS,
 		lineSegments: this.getLineSegments(),
 		crossSections: this.xGroups,
 		scraps: [],

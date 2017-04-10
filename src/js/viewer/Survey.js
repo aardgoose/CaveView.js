@@ -50,6 +50,7 @@ function Survey ( cave ) {
 	this.selectedSection = 0;
 	this.selectedBox = null;
 	this.surveyTree = null;
+	this.projection = null;
 
 	// objects targetted by raycasters and objects with variable LOD
 
@@ -74,9 +75,11 @@ function Survey ( cave ) {
 	var survey = cave.getSurvey();
 
 	this.name = survey.title;
-	this.CRS = ( survey.CRS === null ) ? getEnvironmentValue( 'CRS', 'fred' ) : survey.CRS;
+	this.CRS = ( survey.sourceCRS === null ) ? getEnvironmentValue( 'CRS', 'fred' ) : survey.sourceCRS;
 
 	console.log( 'CRS:', this.CRS );
+
+	this.isLongLat = true; // FIXME
 
 	_loadEntrances( survey.entrances );
 
@@ -1282,7 +1285,7 @@ Survey.prototype.getBounds = function () {
 
 		var geometry = obj.geometry;
 
-		if ( geometry && geometry.boundingBox ) {
+		if ( geometry && geometry.boundingBox && geometry.name !== 'CV.Survey:faces:walls:g' ) {
 
 			min.min( geometry.boundingBox.min );
 			max.max( geometry.boundingBox.max );

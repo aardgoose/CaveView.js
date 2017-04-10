@@ -81,10 +81,10 @@ function AHI ( container ) {
 
 	}
 
-	var mRing  = new Mesh( ring, new MeshPhongMaterial( { color: 0x888888, specular: 0x888888 } ) );
-	var mSphere  = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: VertexColors, specular: 0x666666, shininess: 20 } ) );
-	var mBar   = new LineSegments( bar,   new LineBasicMaterial( { color: 0xcccc00 } ) );
-	var mMarks = new LineSegments( marks, new LineBasicMaterial( { color: 0xffffff } ) );
+	var mRing   = new Mesh( ring, new MeshPhongMaterial( { color: 0x888888, specular: 0x888888 } ) );
+	var mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: VertexColors, specular: 0x666666, shininess: 20 } ) );
+	var mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: 0xcccc00 } ) );
+	var mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: 0xffffff } ) );
 
 	mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 	mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );

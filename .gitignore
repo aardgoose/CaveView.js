@@ -2,5 +2,6 @@
 node_modules
 build/
 tools/*.3d
+tools/dtm/*
 !build/terrain/README.txt
 !build/surveys/README.txt

@@ -1,17 +1,44 @@
 
+function HeightMapLoader ( tileSpec, loadCallback, errorCallback ) {
 
-function HeightMapLoader ( tileSet, resolution, x, y, loadCallback, errorCallback ) {
+	if ( ! loadCallback ) alert( 'No callback specified' );
 
-	if ( !loadCallback ) alert( 'No callback specified' );
-
-	var prefix = tileSet.PREFIX + resolution + 'M' + tileSet.TILESIZE + '-';
+	var tileSet = tileSpec.tileSet;
+	var clip = tileSpec.clip;
 
 	this.loadCallback  = loadCallback;
 	this.errorCallback = errorCallback;
-	this.x = x;
-	this.y = y;
-	this.tileFile = prefix + y.toString().padStart( 3, '0' ) + '-' + x.toString().padStart( 3, '0' ) + '.bin';
-	this.basedir = tileSet.BASEDIR;
+
+	if ( tileSpec.z > tileSet.dtmMaxZoom ) {
+
+		var scale = Math.pow( 2, tileSpec.z - tileSet.dtmMaxZoom );
+
+		this.x = Math.floor( tileSpec.x / scale );
+		this.y = Math.floor( tileSpec.y / scale );
+		this.z = tileSet.dtmMaxZoom;
+
+		// calculate offset in terrain cells of covering DTM tile for this smaller image tile.
+
+		var divisions = tileSet.divisions;
+
+		var dtmOffsetX =  ( divisions * ( tileSpec.x % scale ) ) / scale;
+		var dtmOffsetY =  ( divisions + 1 ) * ( divisions * ( tileSpec.y % scale ) ) / scale;
+
+		clip.dtmOffset = dtmOffsetY + dtmOffsetX;
+		clip.dtmWidth = tileSet.divisions + 1;
+
+	} else {
+
+		this.x = tileSpec.x;
+		this.y = tileSpec.y;
+		this.z = tileSpec.z;
+
+		clip.dtmOffset = 0;
+
+
+	}
+
+	this.tileFile = tileSet.baseDirectory + '/' + this.z + '/DTM-' + this.x + '-' + this.y + '.bin';
 
 }
 
@@ -29,7 +56,7 @@ HeightMapLoader.prototype.load = function () {
 	xhr.addEventListener( 'load', _loaded);
 	xhr.addEventListener( 'error', this.errorCallback );
 
-	xhr.open( 'GET', this.basedir + this.tileFile );
+	xhr.open( 'GET', this.tileFile );
 	xhr.responseType = 'arraybuffer'; // Must be after open() to keep IE happy.
 
 	xhr.send();

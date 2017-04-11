@@ -77,8 +77,6 @@ function Survey ( cave ) {
 	this.name = survey.title;
 	this.CRS = ( survey.sourceCRS === null ) ? getEnvironmentValue( 'CRS', 'fred' ) : survey.sourceCRS;
 
-	console.log( 'CRS:', this.CRS );
-
 	this.isLongLat = true; // FIXME
 
 	_loadEntrances( survey.entrances );
@@ -100,9 +98,42 @@ function Survey ( cave ) {
 
 	this.setFeatureBox();
 
+	_setProjectionScale();
+
 	this.addEventListener( 'removed', _onSurveyRemoved );
 
 	return;
+
+	function _setProjectionScale () {
+
+		// calculate scaling distortion if we have required CRS definitions
+
+		if ( survey.sourceCRS === null || survey.targetCRS === null ) {
+
+			self.scaleFactor = 1;
+
+			return;
+
+		}
+
+		var p1 = self.limits.min.clone();
+		var p2 = self.limits.max.clone();
+
+		p1.z = 0;
+		p2.z = 0;
+
+		var l1 = p1.distanceTo( p2 );
+
+		var transform = proj4( survey.targetCRS, survey.sourceCRS ); // eslint-disable-line no-undef
+
+		p1.copy( transform.forward( p1 ) );
+		p2.copy( transform.forward( p2 ) );
+
+		var l2 = p1.distanceTo( p2 );
+
+		self.scaleFactor = l1 / l2;
+
+	}
 
 	function _onSurveyRemoved ( event ) {
 
@@ -640,10 +671,11 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		var width  = ( dim.samples - 1 ) * dim.xDelta;
 		var height = ( dim.lines   - 1 ) * dim.yDelta;
+		var clip = { top: 0, bottom: 0, left: 0, right: 0, dtmOffset: 0 };
 
-		var terrainTileGeometry = new TerrainTileGeometry( width, height, dim.samples - 1, dim.lines - 1, terrain.data, 1 );
+		var terrainTileGeometry = new TerrainTileGeometry( width, height, dim.samples - 1, dim.lines - 1, terrain.data, 1, clip );
 
-		terrainTileGeometry.translate( dim.xOrigin + width / 2, dim.yOrigin + height / 2, 0 );
+		terrainTileGeometry.translate( dim.xOrigin, dim.yOrigin + height, 0 );
 
 		self.terrain = new Terrain().addTile( terrainTileGeometry, terrain.bitmap );
 
@@ -926,7 +958,7 @@ Survey.prototype.selectSection = function ( id ) {
 
 Survey.prototype.setFeatureBox = function () {
 
-	var box = new BoxHelper( this.limits, 0xffffff );
+	var box = new BoxHelper( this, 0xffffff );
 
 	box.layers.set( FEATURE_BOX );
 	box.name = 'survey-boundingbox';
@@ -1285,7 +1317,7 @@ Survey.prototype.getBounds = function () {
 
 		var geometry = obj.geometry;
 
-		if ( geometry && geometry.boundingBox && geometry.name !== 'CV.Survey:faces:walls:g' ) {
+		if ( geometry && geometry.boundingBox && geometry.name ) {
 
 			min.min( geometry.boundingBox.min );
 			max.max( geometry.boundingBox.max );

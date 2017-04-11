@@ -17,7 +17,6 @@ import { Materials } from '../materials/Materials';
 import { CameraMove } from './CameraMove';
 import { Survey } from './Survey';
 import { Popup } from './Popup';
-import { TiledTerrain } from '../terrain/TiledTerrain';
 import { WebTerrain } from '../terrain/WebTerrain';
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
 
@@ -532,6 +531,8 @@ function setCameraMode ( mode ) {
 
 	cameraMode = mode;
 
+//	HUD.update();
+
 	renderView();
 
 }
@@ -841,23 +842,19 @@ function loadSurvey ( newSurvey ) {
 
 	if ( terrain === null ) {
 
-		console.log( survey.limits );
+		terrain = new WebTerrain( survey.limits, _tilesLoaded, renderView );
 
-		terrain = new WebTerrain( survey.limits, _tilesLoaded );
-/*
-		terrain = new TiledTerrain( survey.limits, _tilesLoaded );
-
-		if ( ! terrain.hasCoverage() ) {
-
-			terrain = null;
-
-		} else {
+		if ( terrain.hasCoverage() ) {
 
 			terrain.tileArea( survey.limits );
 			survey.add( terrain );
 
+		} else {
+
+			terrain = null;
+
 		}
-*/
+
 	} else {
 
 		survey.add( terrain );
@@ -1140,26 +1137,29 @@ function setScale ( obj ) {
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
+	// scaling to compensate distortion introduced by projection ( x and y coords only ) - approx only
+	var scaleFactor = survey.scaleFactor; 
+
 	limits = survey.limits;
 	zScale = 0.5;
 
 	var range  = limits.getSize();
 	var center = limits.getCenter();
-console.log( range );
+
 	// initialize cursor height to be mid range of heights
 	cursorHeight = center.z;
 
-	// scale and translate model coordiniates into THREE.js world view
 	var scale = Math.min( width / range.x, height / range.y );
+	var verticalScale = scale * scaleFactor;
 
-	obj.scale.set( scale, scale, scale / 10000000 ); // FIXME - fudge to scale long/lat to metres (needs lattitude settings ) also LRUD needs converting 
-	obj.position.set( -center.x * scale, -center.y * scale, -center.z * scale / 10000000 );
+	obj.scale.set( scale, scale, verticalScale );
+	obj.position.set( -center.x * scale, -center.y * scale, -center.z * verticalScale );
 
-	HUD.setScale( scale );
+	HUD.setScale( verticalScale );
 
 	// pass to survey to adjust size of symbology
 
-	obj.setScale( scale );
+	obj.setScale( verticalScale );
 
 }
 

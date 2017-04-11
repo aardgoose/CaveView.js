@@ -4,7 +4,7 @@
   "description": "3D Cave Survey Viewer",
   "main": "gulpfile.js",
   "scripts": {
-    "build": "rollup -c && rollup -c rollup-tileWorker.config.js && rollup -c rollup-caveWorker.config.js",
+    "build": "rollup -c && rollup -c rollup-webTileWorker.config.js && rollup -c rollup-caveWorker.config.js",
     "lint": "eslint src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

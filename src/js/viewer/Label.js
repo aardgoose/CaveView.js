@@ -8,7 +8,7 @@ function Label ( text ) {
 
 	var canvas = document.createElement( 'canvas' );
 
-	if ( !canvas ) alert( 'OOPS' );
+	if ( ! canvas ) console.error( 'creating canvas for label failed' );
 
 	var ctx = canvas.getContext( '2d' );
 

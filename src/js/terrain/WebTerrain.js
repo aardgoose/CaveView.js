@@ -8,19 +8,9 @@ import {
 	Vector2, Frustum, Box2, Matrix4
 } from '../../../../three.js/src/Three';
 
+var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-function getTile( lon, lat, zoom ) {
-
-	return {
-
-		x: ( 1 + lon / Math.PI ) / 2,
-		y: ( 1 - lat / Math.PI ) / 2
-
-	};
-
-}
-
-function WebTerrain ( limits3, onLoaded ) {
+function WebTerrain ( limits3, onLoaded, overlayLoadedCallback ) {
 
 	CommonTerrain.call( this );
 
@@ -32,7 +22,18 @@ function WebTerrain ( limits3, onLoaded ) {
 		new Vector2( limits3.max.x, limits3.max.y )
 	);
 
-	console.log( getTile( limits3.min.x, limits3.min.y, 1 ) );
+	this.tileSet = {
+		N:  halfMapExtent,
+		E:  halfMapExtent,
+		S: -halfMapExtent,
+		W: -halfMapExtent,
+		dtmMaxZoom: 14,
+		zoomMax: 18,
+		zoomMin: 1,
+		divisions: 128,
+		baseDirectory: getEnvironmentValue( 'terrainDirectory', '' ) + 'default',
+		dtmScale: 64
+	};
 
 	this.tile = null;
 
@@ -44,11 +45,14 @@ function WebTerrain ( limits3, onLoaded ) {
 	this.replaceTileMesh = null;
 	this.activeOverlay   = null;
 	this.material        = null;
-	this.initialResolution;
+	this.initialZoom     = null;
+	this.currentZoom     = null;
 	this.currentLimits;
 	this.dying = false;
+	this.overlayLoadedCallback = overlayLoadedCallback;
+	this.overlaysLoading = 0;
 
-	this.workerPool = new WorkerPool( 'tileWorker.js' );
+	this.workerPool = new WorkerPool( 'webTileWorker.js' );
 
 	if ( HUD !== undefined ) {
 
@@ -85,87 +89,88 @@ WebTerrain.prototype.hasCoverage = function () {
 
 };
 
-WebTerrain.prototype.getCoverage = function ( limits, resolution ) {
+WebTerrain.prototype.getCoverage = function ( limits, zoom ) {
 
 	var tileSet  = this.tileSet;
-	var coverage = { resolution: resolution };
+	var coverage = { zoom: zoom };
 
 	var N = tileSet.N;
 	var W = tileSet.W;
 
-	var tileWidth = ( tileSet.TILESIZE - 1 ) * resolution; 
+	var tileCount = Math.pow( 2, zoom - 1 ) / halfMapExtent; // tile count per metre
 
-	coverage.min_x = Math.max( Math.floor( ( limits.min.x - W ) / tileWidth ), 0 );
-	coverage.max_x = Math.floor( ( limits.max.x - W ) / tileWidth ) + 1;
- 
-	coverage.max_y = Math.floor( ( N - limits.min.y ) / tileWidth ) + 1;
-	coverage.min_y = Math.max( Math.floor( ( N - limits.max.y ) / tileWidth ), 0 );
+	coverage.min_x = Math.floor( ( limits.min.x - W ) * tileCount );
+	coverage.max_x = Math.floor( ( limits.max.x - W ) * tileCount );
 
-	coverage.count = ( coverage.max_x - coverage.min_x ) * ( coverage.max_y - coverage.min_y );
+	coverage.max_y = Math.floor( ( N - limits.min.y ) * tileCount );
+	coverage.min_y = Math.floor( ( N - limits.max.y ) * tileCount );
+
+	coverage.count = ( coverage.max_x - coverage.min_x + 1 ) * ( coverage.max_y - coverage.min_y + 1 );
 
 	return coverage;
 
 };
 
-WebTerrain.prototype.pickCoverage = function ( limits, maxResolution ) {
+WebTerrain.prototype.pickCoverage = function ( limits, zoom ) {
 
 	var tileSet = this.tileSet;
-	var resolution = maxResolution || tileSet.RESOLUTION_MIN;
 	var coverage;
 
-	resolution = resolution / 2;
+	zoom = zoom || tileSet.zoomMax;
+	zoom++;
 
 	do {
 
-		resolution *= 2;
-		coverage = this.getCoverage( limits, resolution );
+		--zoom;
+		coverage = this.getCoverage( limits, zoom );
 
-	} while ( coverage.count > 4 && resolution < tileSet.RESOLUTION_MAX );
+	} while ( coverage.count > 4 && zoom > tileSet.zoomMin );
 
 	return coverage;
 
 };
 
-WebTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
+WebTerrain.prototype.loadTile = function ( x, y, z, oldTileIn ) {
 
-	console.log( 'load ', resolutionIn, ': [ ', x, ',', y, ']' );
+	// account for limits of DTM resolution
 
-	var self       = this;
-	var resolution = resolutionIn;
-	var oldTile    = oldTileIn;
+	var tileSet = this.tileSet;
+	var scale = ( z > tileSet.dtmMaxZoom ) ? Math.pow( 2, tileSet.dtmMaxZoom - z ) : 1; 
+
+	// don't zoom in with no overlay - no improvement of terrain rendering in this case
+
+	if ( scale !== 1 && this.activeOverlay === null && this.currentZoom !== null ) return;
+
+	console.log( 'load: [ ', z +'/' +  x + '/' +  y, ']' );
+
+	var self = this;
+	var oldTile = oldTileIn;
+
+	var limits    = this.limits;
+	var tileWidth = halfMapExtent / Math.pow( 2, z - 1 );
+	var clip      = { top: 0, bottom: 0, left: 0, right: 0 };
+
+	var tileMinX = tileSet.W + tileWidth * x;
+	var tileMaxX = tileMinX + tileWidth;
+
+	var tileMaxY = tileSet.N - tileWidth * y;
+	var tileMinY = tileMaxY - tileWidth;
+
+	var divisions = ( tileSet.divisions ) * scale ;
+	var resolution = tileWidth / divisions;
 
 	++this.tilesLoading;
 
-	var limits    = this.limits;
-	var tileSet   = this.tileSet;
-	var tileWidth = ( tileSet.TILESIZE - 1 ) * resolution;
-	var clip      = { top: 0, bottom: 0, left: 0, right: 0 };
-
-	var N = tileSet.N;
-	var W = tileSet.W;
-
-	var bottomLeft = new Vector2( W + tileWidth * x,          N - tileWidth * ( y + 1 ) );
-	var topRight   = new Vector2( W + tileWidth * ( x + 1 ) , N - tileWidth * y );
-
-	var tileLimits = new Box2( bottomLeft, topRight );
-
 	// trim excess off sides of tile where overlapping with region
 
-	if ( tileLimits.max.y > limits.max.y ) clip.top = Math.floor( ( tileLimits.max.y - limits.max.y ) / resolution );
+	if ( tileMaxY > limits.max.y ) clip.top = Math.floor( ( tileMaxY - limits.max.y ) / resolution );
 
-	if ( tileLimits.min.y < limits.min.y ) clip.bottom = Math.floor( ( limits.min.y - tileLimits.min.y ) / resolution );
+	if ( tileMinY < limits.min.y ) clip.bottom = Math.floor( ( limits.min.y - tileMinY ) / resolution );
 
-	if ( tileLimits.min.x < limits.min.x ) clip.left = Math.floor( ( limits.min.x - tileLimits.min.x ) / resolution );
+	if ( tileMinX < limits.min.x ) clip.left = Math.floor( ( limits.min.x - tileMinX ) / resolution );
 
-	if ( tileLimits.max.x > limits.max.x ) clip.right = Math.floor( ( tileLimits.max.x - limits.max.x ) / resolution );
+	if ( tileMaxX > limits.max.x ) clip.right = Math.floor( ( tileMaxX - limits.max.x ) / resolution );
 
-	var tileSpec = {
-		tileSet: tileSet,
-		resolution: resolution,
-		tileX: x,
-		tileY: y,
-		clip: clip
-	};
 
 	// get a web worker from the pool and create new geometry in it
 
@@ -173,7 +178,15 @@ WebTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 	tileLoader.onmessage = _mapLoaded;
 
-	tileLoader.postMessage( tileSpec );
+	tileLoader.postMessage( {
+		tileSet: tileSet,
+		divisions: divisions,
+		resolution: resolution,
+		x: x,
+		y: y,
+		z: z,
+		clip: clip
+	} );
 
 	return;
 
@@ -206,17 +219,28 @@ WebTerrain.prototype.loadTile = function ( x, y, resolutionIn, oldTileIn ) {
 
 		}
 
-		var tile = ( oldTile ? oldTile : new Tile( x, y, resolution, self.tileSet, clip ) );
+		var tile =  oldTile ? oldTile : new Tile( x, y, z, self.tileSet, clip );
 
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
 		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox );
 
-		if ( self.activeOverlay ) tile.setOverlay( self.activeOverlay, self.opacity );
+		if ( self.activeOverlay ) {
+
+			tile.setOverlay( self.activeOverlay, self.opacity, _overlayLoaded );
+			self.overlaysLoading++;
+
+		}
 
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
 		self.endLoad( tile );
+
+	}
+
+	function _overlayLoaded () {
+
+		if ( --self.overlaysLoading === 0 ) self.overlayLoadedCallback();
 
 	}
 
@@ -266,10 +290,10 @@ WebTerrain.prototype.endLoad = function ( tile ) {
 
 		} else {
 
-			if ( this.resolution === this.initialResolution ) {
+			if ( this.currentZoom === this.initialZoom ) {
 
-				console.log( 'oops' );
-				this.tileArea( this.currentLimits, null, this.resolution * 2 );
+				console.warn( 'oops' );
+				return;
 
 			}
 
@@ -300,18 +324,18 @@ WebTerrain.prototype.resurrectTile = function ( tile ) {
 	}
 
 	// reload tile (use exiting tile object to preserve canZoom).
-	this.loadTile( tile.x, tile.y, tile.resolution, tile );
+	this.loadTile( tile.x, tile.y, tile.z, tile );
 
 };
 
-WebTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
+WebTerrain.prototype.tileArea = function ( limits, tile, maxZoom ) {
 
-	var coverage = this.pickCoverage( limits, maxResolution );
-	var resolution = coverage.resolution;
+	var coverage = this.pickCoverage( limits, maxZoom );
+	var zoom = coverage.zoom;
 
-	if ( tile && tile.resolution == resolution ) {
+	if ( tile && tile.zoom == zoom ) {
 
-		console.log( 'BOING!' );
+		console.error( 'ERROR - looping on tile replacement' );
 		return;
 
 	}
@@ -319,17 +343,17 @@ WebTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
 	this.replaceTileMesh = tile;
 	this.currentLimits = limits;
 
-	if ( this.initialResolution === undefined ) {
+	if ( this.initialZoom === null ) {
 
-		this.initialResolution = resolution;
+		this.initialZoom = zoom;
 
 	}
 
-	for ( var x = coverage.min_x; x < coverage.max_x; x++ ) {
+	for ( var x = coverage.min_x; x < coverage.max_x + 1; x++ ) {
 
-		for ( var y = coverage.min_y; y < coverage.max_y; y++ ) {
+		for ( var y = coverage.min_y; y < coverage.max_y + 1; y++ ) {
 
-			this.loadTile( x, y, resolution );
+			this.loadTile( x, y, zoom );
 
 		}
 
@@ -342,6 +366,8 @@ WebTerrain.prototype.tileArea = function ( limits, tile, maxResolution ) {
 
 	}
 
+	this.currentZoom = zoom;
+
 	return;
 
 };
@@ -352,7 +378,7 @@ WebTerrain.prototype.getOverlays = function () {
 
 };
 
-WebTerrain.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
+WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	var self = this;
 
@@ -366,7 +392,18 @@ WebTerrain.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
 
 	function _setTileOverlays ( obj ) {
 
-		if ( obj !== self ) obj.setOverlay( overlay, self.opacity, imageLoadedCallback );
+		if ( obj !== self ) {
+
+			obj.setOverlay( overlay, self.opacity, _overlayLoaded );
+			self.overlaysLoading++;
+
+		}
+
+	}
+
+	function _overlayLoaded () {
+
+		if ( --self.overlaysLoading === 0 ) overlayLoadedCallback();
 
 	}
 
@@ -467,8 +504,8 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 WebTerrain.prototype.zoomCheck = function ( camera ) {
 
-	var maxResolution     = this.tileSet.RESOLUTION_MIN;
-	var initialResolution = this.initialResolution;
+	var maxZoom     = this.tileSet.zoomMax;
+	var initialZoom = this.initialZoom;
 	var self = this;
 
 	var frustum  = new Frustum();
@@ -515,10 +552,11 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 		for ( i = 0; i < candidateCount; i++ ) {
 
 			if ( candidateTiles[ i ].area / total.area > 0.7 ) {
+				console.log( 'candidate', i );
 
 				tile = candidateTiles[ i ].tile;
 
-				if ( tile.resolution > maxResolution ) this.tileArea( tile.getBoundingBox(), tile );
+				if ( tile.zoom < maxZoom ) this.tileArea( tile.getBoundingBox(), tile );
 
 			}
 
@@ -562,7 +600,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 				if ( tile.parent.ResurrectionPending && this.isMesh ) {
 
 					// remove tile - will be replaced with parent
-					console.log( ' should not get here' );
+					console.warn( ' should not get here' );
 
 				}
 
@@ -594,9 +632,9 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 				// heuristics for evicting tiles - needs refinement
 
 				var pressure = Tile.liveTiles / EVICT_PRESSURE;
-				var tilePressure = tile.evictionCount * tile.resolution / initialResolution;
+				var tilePressure = tile.evictionCount * initialZoom / tile.zoom; // FIXME
 
-				// console.log( 'ir', initialResolution, 'p: ', pressure, ' tp: ', tilePressure );
+				// console.log( 'ir', initialZoom, 'p: ', pressure, ' tp: ', tilePressure );
 
 				if ( pressure > tilePressure ) tile.evict();
  
@@ -606,7 +644,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		function _sortByPressure( tileA, tileB ) {
 
-			return tileA.evictionCount * tileA.resolution - tileB.evictionCount * tileB.resolution;
+			return tileA.evictionCount / tileA.zoom - tileB.evictionCount / tileB.zoom; // FIXME was by resoution ie 2^zoom
 
 		}
 

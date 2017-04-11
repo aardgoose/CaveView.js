@@ -1,66 +1,75 @@
 "use strict";
 
-function padDigits ( number, digits ) {
+var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
+var mapSet = 'PeakDistrict';
 
-	return Array( Math.max( digits - String( number ).length + 1, 0 ) ).join( 0 ) + number;
+function tileArea( x, y, z, maxZoom ) {
 
-}
+	var x1, y1, z1;
+	var tileWidth = halfMapExtent / Math.pow( 2, z - 1 );
+	var resolution = tileWidth / 128; // note: tile area extended by resolution / 2 all round givving 256 sample row & columns
+	var offset = resolution / 2;
 
-var region = {
-	"N": 390000,
-	"S": 340000,
-	"E": 430000,
-	"W": 400000,
+	var n, s, e, w;
+	var cmd;
 
-	"TILESIZE": 256,
-	"BASEDIR": "SK",
-	"PREFIX": "SK",
-	"RESOLUTION_MIN": 2,
-	"RESOLUTION_MAX": 64,
-	"SCALE": 64
-}
+	n = halfMapExtent - y * tileWidth + offset;
+	s = halfMapExtent - ( y + 1 ) * tileWidth - offset
 
-var i, j, outFile, cmd;
-var n, s, e, w;
+	w = - halfMapExtent + x * tileWidth - offset;
+	e = - halfMapExtent + ( x + 1 ) * tileWidth + offset
 
-var resolution = 2;
-var tileSize   = 256;
-var left       = region.W - resolution / 2;
-var top        = region.N + resolution / 2;
+	//console.log( 'create tile: [', x, ',', y , '] @ zoom ' + z + ' width:', tileWidth );
 
-var tileWidth  = resolution * tileSize;
-var tileOffset = tileWidth - resolution;
+	if ( z > 10 ) {
 
-var prefix = region.PREFIX + resolution + "M" + tileSize + "-";
-
-for ( i = 0; left < region.E; i++ ) {
-
-	top = region.N;
-
-	for ( j = 0; top > region.S; j++ ) {
-
-		w = left;
-		n = top;
-		e = w + tileWidth;
-		s = n - tileWidth;
-
-		cmd =  "g.region n=" +  n + " s=" + s + " w=" +  w + " e=" + e + " nsres=" + resolution + " ewres=" + resolution;
-
+		cmd =  'g.region n=' + n + ' s=' + s + ' w=' +  w + ' e=' + e + ' nsres=' + resolution + ' ewres=' + resolution;
 		console.log( cmd );
 
-		outFile = prefix + padDigits( j, 3 ) + "-" + padDigits( i, 3 ) + ".bin";
-		cmd = "r.out.bin -b bytes=2 input=SK" + resolution + "X@SK output=" + outFile;
+		outFile = 'dtm\\' + z + '\\DTM-' + x + "-" + y + '.bin';
 
+		cmd = 'r.out.bin -b bytes=2 input=DTM' + z + 'X@' + mapSet +  ' output=' + outFile;
 		console.log( cmd );
-
-		top = top - tileOffset;
 
 	}
 
-	left = left + tileOffset;
+	if ( z < maxZoom ) {
+
+		x1 = x * 2;
+		y1 = y * 2;
+		z1 = z + 1;
+
+		tileArea( x1,     y1,     z1, maxZoom );
+		tileArea( x1 + 1, y1,     z1, maxZoom );
+		tileArea( x1,     y1 + 1, z1, maxZoom );
+		tileArea( x1 + 1, y1 + 1, z1, maxZoom );
+
+	}
 
 }
 
-console.log("del *.hdr");
-console.log("del *.wld");
+
+// EPSG:3875 "Web Mercator" tile range
+
+var minX = 1013;
+var maxX = 1014;
+
+var minY = 663;
+var maxY = 665;
+
+var minZoom = 11;
+var maxZoom = 14;
+
+var x, y, outFile, cmd;
+var n, s, e, w;
+
+for ( x = minX; x <= maxX; x++ ) {
+
+	for ( y = minY; y <= maxY; y++ ) {
+
+		tileArea( x, y, minZoom, maxZoom );
+
+	}
+
+}
 

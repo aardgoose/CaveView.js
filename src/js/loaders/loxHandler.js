@@ -477,7 +477,8 @@ loxHandler.prototype.getSurvey = function () {
 	return {
 		title: this.fileName,
 		surveyTree: this.surveyTree,
-		CRS: null,
+		sourceCRS: null,
+		targetCRS: null,
 		lineSegments: this.lineSegments,
 		crossSections: this.xGroups,
 		scraps: this.scraps,

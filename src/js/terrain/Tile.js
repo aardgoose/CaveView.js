@@ -1,15 +1,14 @@
 
 import { FEATURE_TERRAIN } from '../core/constants';
+// import { MapBoxOverlay } from './MapBoxOverlay';
+// import { NLSOverlay } from './NLSOverlay';
+import { OSMOverlay } from './OSMOverlay';
 
 import {
-	Vector2, Vector3, Triangle, Box3,
+	Vector3, Triangle, Box3,
 	BufferGeometry,
 	Float32BufferAttribute,
 	Uint16BufferAttribute,
-	ImageLoader,
-	Texture,
-	MeshLambertMaterial,
-	RepeatWrapping,
 	Mesh
 } from '../../../../three.js/src/Three';
 
@@ -20,14 +19,14 @@ function onUploadDropBuffer() {
 
 }
 
-function Tile ( x, y, resolution, tileSet, clip ) {
+function Tile ( x, y, zoom, tileSet, clip ) {
 
 	this.x = x;
 	this.y = y;
 
-	this.resolution = resolution;
-	this.tileSet    = tileSet;
-	this.clip       = clip;
+	this.zoom    = zoom;
+	this.tileSet = tileSet;
+	this.clip    = clip;
 
 	this.canZoom       = true;
 	this.evicted       = false;
@@ -72,7 +71,7 @@ Tile.prototype.createCommon = function () {
 	// discard javascript attribute buffers after upload to GPU
 	for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
 
-	this.layers.set ( FEATURE_TERRAIN );
+	this.layers.set( FEATURE_TERRAIN );
 
 };
 
@@ -135,7 +134,7 @@ Tile.prototype.getBoundingBox = function () {
 
 		boundingBox = this.geometry.boundingBox.clone();
 
-		var adj = this.resolution; // adjust to cope with overlaps
+		var adj = 5; // adjust to cope with overlaps // FIXME - was resolution
 
 		boundingBox.min.x += adj;
 		boundingBox.min.y += adj;
@@ -213,69 +212,14 @@ Tile.prototype.setOpacity = function ( opacity ) {
 Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
 	var self = this;
-	var tileSet = this.tileSet;
-	var resolution = this.resolution;
-	var texture;
-	var clip = this.clip;
 
-	var ratio = tileSet.OVERLAY_RESOLUTION / resolution;
-	var repeat = 1 / ratio;
-
-	var x = Math.floor( this.x / ratio );
-	var y = Math.floor( this.y / ratio );
-
-	var xOffset = ( this.x % ratio ) / ratio;
-	var yOffset = ( ratio - 1 - this.y % ratio ) / ratio;
-
-	var tileWidth = tileSet.TILESIZE - 1; // in grid units
-
-	xOffset = xOffset + ( repeat * clip.left / tileWidth );
-	yOffset = yOffset + ( repeat * clip.bottom / tileWidth );
-
-	var xRepeat = repeat * ( ( tileWidth - clip.left - clip.right ) / tileWidth );
-	var yRepeat = repeat * ( ( tileWidth - clip.top  - clip.bottom ) / tileWidth );
-
-	var imageFile = tileSet.OVERLAYDIR + overlay + '/' + tileSet.PREFIX + tileSet.OVERLAY_RESOLUTION + 'MX-' + y.toString().padStart( 3, '0' ) + '-' + x.toString().padStart( 3, '0' ) + '.jpg';
-
-	if ( Tile.overlayImages.has( imageFile ) ) {
-
-		_imageLoaded( Tile.overlayImages.get( imageFile ) );
-
-	} else {
-
-		var loader = new ImageLoader();
-
-		loader.load( imageFile, _imageLoaded );
-
-	}
+	new OSMOverlay( this.x, this.y, this.zoom, opacity, _overlayLoaded );
 
 	return;
 
-	function _imageLoaded ( image ) {
-
-		var material = new MeshLambertMaterial( { transparent: true, opacity: opacity } );
-
-		Tile.overlayImages.set( imageFile, image );
-
-		texture = new Texture();
-
-		texture.image = image;
-
-		texture.wrapS = RepeatWrapping;
-		texture.wrapT = RepeatWrapping;
-
-		texture.offset = new Vector2( xOffset, yOffset );
-		texture.repeat = new Vector2( xRepeat, yRepeat );
-
-		texture.needsUpdate = true;
-
-		material.map = texture;
-		material.needsUpdate = true;
+	function _overlayLoaded ( material ) {
 
 		self.material = material;
-
-		// add images to cache
-		Tile.overlayImages.set( imageFile, image );
 
 		imageLoadedCallback();
 

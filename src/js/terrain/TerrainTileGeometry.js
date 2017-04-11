@@ -11,14 +11,11 @@ import { Float32BufferAttribute, BufferGeometry, Vector3, Box3 } from '../../../
 import { ColourCache } from '../core/ColourCache';
 import { upAxis } from '../core/constants';
 
-function TerrainTileGeometry( width, height, widthSegments, heightSegments, terrainData, scale ) {
+function TerrainTileGeometry( width, height, widthSegments, heightSegments, terrainData, scale, clip ) {
 
 	BufferGeometry.call( this );
 
 	this.type = 'TerrainTileGeometry';
-
-	var width_half = width / 2;
-	var height_half = height / 2;
 
 	var gridX = Math.floor( widthSegments ) || 1;
 	var gridY = Math.floor( heightSegments ) || 1;
@@ -45,31 +42,59 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 	// generate vertices and uvs
 
-	for ( iy = 0; iy < gridY1; iy ++ ) {
+	var zIndex;
 
-		var y = iy * segment_height - height_half;
+	var x = 0;
+	var y = 0;
 
-		for ( ix = 0; ix < gridX1; ix ++ ) {
+	if ( clip.terrainWidth === undefined ) {
 
-			var x = ix * segment_width - width_half;
+		clip.terrainWidth  = gridX;
+		clip.terrainHeight = gridY;
 
-			z = terrainData[ vertexCount++ ] / scale;
+	}
+
+	if ( clip.dtmWidth === undefined ) {
+
+		clip.dtmWidth = clip.terrainWidth + 1;
+
+	}
+
+	var ixMax = gridX1 + clip.left;
+	var iyMax = gridY1 + clip.top;
+
+	for ( iy = clip.top; iy < iyMax; iy++ ) {
+
+		x = 0;
+
+		// dtmOffset adjusts for tiles smaller than DTM height maps
+
+		zIndex = iy * clip.dtmWidth + clip.left + clip.dtmOffset; 
+
+		for ( ix = clip.left; ix < ixMax; ix++ ) {
+
+			z = terrainData[ zIndex++ ] / scale;
 
 			vertices.push( x, - y, z );
+			vertexCount++;
 
 			if ( z < minZ ) minZ = z;
 			if ( z > maxZ ) maxZ = z;
 
-			uvs.push( ix / gridX );
-			uvs.push( 1 - ( iy / gridY ) );
+			uvs.push( ix / clip.terrainWidth );
+			uvs.push( 1 - ( iy / clip.terrainHeight ) );
+
+			x += segment_width;
 
 		}
+
+		y += segment_height;
 
 	}
 
 	// avoid overhead of computeBoundingBox since we know x & y min and max values;
 
-	this.boundingBox = new Box3().set( new Vector3( -width_half, -height_half, minZ ), new Vector3( -width_half, -height_half, maxZ ) );
+	this.boundingBox = new Box3().set( new Vector3( 0, 0, minZ ), new Vector3( width, -height, maxZ ) );
 
 	// indices
 
@@ -103,7 +128,6 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 		}
 
 	}
-
 
 	// build geometry
 

@@ -67,10 +67,10 @@ Terrain.prototype.getOverlay = function () {
 
 };
 
-Terrain.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
+Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	var loader  = new TextureLoader();
-	var	texture = loader.load( this.overlay, imageLoadedCallback );
+	var	texture = loader.load( this.overlay, overlayLoadedCallback );
 
 	this.setMaterial( new MeshLambertMaterial(
 

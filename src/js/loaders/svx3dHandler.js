@@ -12,7 +12,7 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 	this.xGroups    = [];
 	this.surveyTree = new Tree();
 	this.isRegion   = false;
-	this.targetCRS  = 'EPSG:3857';
+	this.targetCRS  = 'EPSG:3857'; // "web mercator"
 	this.projection = null;
 	this.metadata   = metadata;
 
@@ -39,7 +39,7 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 	console.log( 'from: ', this.sourceCRS );
 	console.log( 'to:   ', this.targetCRS );
 
-	this.projection = proj4( this.sourceCRS, this.targetCRS );
+	this.projection = proj4( this.sourceCRS, this.targetCRS ); // eslint-disable-line no-undef
 
 	this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
 
@@ -642,15 +642,19 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	function readCoordinates () {
 
 		var l = new DataView( source, pos );
-		var coords = {};
 
-		coords.x = l.getInt32( 0, true ) / 100;
-		coords.y = l.getInt32( 4, true ) / 100;
-		coords.z = l.getInt32( 8, true ) / 100;
+		var projectedCoords = self.projection.forward( {
+			x: l.getInt32( 0, true ) / 100,
+			y: l.getInt32( 4, true ) / 100
+		} );
+
+		var coords = {
+			x: projectedCoords.x,
+			y: projectedCoords.y,
+			z: l.getInt32( 8, true ) / 100
+		};
+
 		pos += 12;
-
-		// FIXME make variant cmd handler for no reprojection for speed
-		self.projection.forward( coords );
 
 		return coords;
 

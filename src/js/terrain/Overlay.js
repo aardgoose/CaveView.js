@@ -1,7 +1,8 @@
 
 import {
 	TextureLoader,
-	MeshLambertMaterial
+	MeshLambertMaterial,
+	NearestFilter
 } from '../../../../three.js/src/Three';
 
 
@@ -14,6 +15,8 @@ function Overlay ( x, y, z, opacity, overlayLoaded, url ) {
 	function _textureLoaded( texture ) {
 
 		var material = new MeshLambertMaterial( { transparent: true, opacity: opacity, color: 0xffffff } );
+
+		texture.magFilter = NearestFilter;
 
 		material.map = texture;
 		material.needsUpdate = true;

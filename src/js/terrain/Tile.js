@@ -1,6 +1,5 @@
 
 import { FEATURE_TERRAIN } from '../core/constants';
-import { Overlay } from './Overlay';
 
 import {
 	Vector3, Triangle, Box3,

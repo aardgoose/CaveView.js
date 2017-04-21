@@ -310,7 +310,8 @@ function init ( domID ) { // public method
 
 	function _viewStateSetter ( modeFunction, name, newMode ) {
 
-		modeFunction( Number( newMode ) );
+		modeFunction( isNaN( newMode ) ? newMode : Number( newMode ) );
+
 		viewState.dispatchEvent( { type: 'change', name: name } );
 
 	}
@@ -866,12 +867,12 @@ function loadSurvey ( newSurvey ) {
 
 	renderView();
 
-	function _terrainReady ( terrain) {
+	function _terrainReady ( newTerrain ) {
 
-		if ( terrain.hasCoverage() ) {
+		if ( newTerrain.hasCoverage() ) {
 
-			terrain.tileArea( survey.limits );
-			survey.add( terrain );
+			newTerrain.tileArea( survey.limits );
+			survey.add( newTerrain );
 
 		} else {
 
@@ -886,7 +887,7 @@ function loadSurvey ( newSurvey ) {
 		setTerrainShadingMode( terrainShadingMode );
 		loadTerrainListeners();
 
-		if ( !Materials.getDepthMaterial( MATERIAL_LINE ) ) renderDepthTexture();
+		if ( ! Materials.getDepthMaterial( MATERIAL_LINE ) ) renderDepthTexture();
 
 	}
 
@@ -1094,7 +1095,7 @@ var renderView = function () {
 		// update LOD Scene Objects
 
 		var lods = survey.lodTargets;
-		var l    = lods.length;
+		var l = lods.length;
 
 		if ( l > 0 ) {
 

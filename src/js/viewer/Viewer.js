@@ -18,6 +18,8 @@ import { CameraMove } from './CameraMove';
 import { Survey } from './Survey';
 import { Popup } from './Popup';
 import { WebTerrain } from '../terrain/WebTerrain';
+import { Overlay } from '../terrain/Overlay';
+
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
 
 import { OrbitControls } from '../core/OrbitControls';
@@ -68,6 +70,9 @@ var cursorHeight;
 var shadingMode        = SHADING_HEIGHT;
 var surfaceShadingMode = SHADING_SINGLE;
 var terrainShadingMode = SHADING_SHADED;
+
+var overlays = {};
+var activeOverlay = null;
 
 var cameraMode;
 var selectedSection = 0;
@@ -145,16 +150,16 @@ function init ( domID ) { // public method
 		},
 
 		'hasTerrain': {
-			get: function () { return !!terrain; }
+			get: function () { return !! terrain; }
 		},
 
 		'terrainOverlays': {
-			get: function () { return terrain && terrain.getOverlays(); }
+			get: function () { return terrain && Object.keys( overlays ); } // FIXME - support for lox overlays
 		},
 
 		'terrainOverlay': {
 			writeable: true,
-			get: function () { return terrain.getOverlay(); },
+			get: function () { return activeOverlay; },
 			set: function ( x ) { _viewStateSetter( setTerrainOverlay, 'terrainOverlay', x ); }
 		},
 
@@ -633,7 +638,7 @@ function setViewMode ( mode, t ) {
 
 function setTerrainShadingMode ( mode ) {
 
-	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
+	if ( terrain.setShadingMode( mode ) ) terrainShadingMode = mode;
 
 	renderView();
 
@@ -657,7 +662,24 @@ function setSurfaceShadingMode ( mode ) {
 
 function setTerrainOverlay ( overlay ) {
 
-	if ( terrainShadingMode === SHADING_OVERLAY ) terrain.setOverlay( overlay, renderView );
+	if ( terrainShadingMode === SHADING_OVERLAY ) {
+
+		activeOverlay = overlay;
+		terrain.setOverlay( overlays[ overlay ] );
+
+	}
+
+}
+
+function addOverlay ( name, overlayFunc ) {
+
+	overlays[ name ] = new Overlay( overlayFunc );
+
+	if ( Object.keys( overlays ).length === 1 ) { 
+
+		activeOverlay = name;
+
+	}
 
 }
 
@@ -867,12 +889,14 @@ function loadSurvey ( newSurvey ) {
 
 	renderView();
 
-	function _terrainReady ( newTerrain ) {
+	function _terrainReady () {
 
-		if ( newTerrain.hasCoverage() ) {
+		if ( terrain.hasCoverage() ) {
 
-			newTerrain.tileArea( survey.limits );
-			survey.add( newTerrain );
+			terrain.tileArea( survey.limits );
+			terrain.setDefaultOverlay( overlays[ activeOverlay ] );
+
+			survey.add( terrain );
 
 		} else {
 
@@ -1204,7 +1228,8 @@ export var Viewer = {
 	getSurveyTree: getSurveyTree,
 	getControls:   getControls,
 	getState:      viewState,
-	renderView:    renderView
+	renderView:    renderView,
+	addOverlay:    addOverlay,
 };
 
 

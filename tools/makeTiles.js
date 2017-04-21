@@ -19,8 +19,6 @@ function tileArea( x, y, z, maxZoom ) {
 	w = - halfMapExtent + x * tileWidth - offset;
 	e = - halfMapExtent + ( x + 1 ) * tileWidth + offset
 
-	//console.log( 'create tile: [', x, ',', y , '] @ zoom ' + z + ' width:', tileWidth );
-
 	if ( z > 8 ) {
 
 		cmd =  'g.region n=' + n + ' s=' + s + ' w=' +  w + ' e=' + e + ' nsres=' + resolution + ' ewres=' + resolution;

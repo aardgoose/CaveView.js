@@ -1,8 +1,6 @@
 
 import { FEATURE_TERRAIN } from '../core/constants';
-// import { MapBoxOverlay } from './MapBoxOverlay';
-// import { NLSOverlay } from './NLSOverlay';
-import { OSMOverlay } from './OSMOverlay';
+import { Overlay } from './Overlay';
 
 import {
 	Vector3, Triangle, Box3,
@@ -156,9 +154,9 @@ Tile.prototype.evict = function () {
 	this.replaced = false;
 	this.isMesh   = false;
 
-	if ( !this.boundingBox ) {
+	if ( ! this.boundingBox ) {
 
-		console.log( 'FIXUP :', this.x, this.y );
+		console.warn( 'FIXUP :', this.x, this.y );
 		this.getWorldBoundingBox();
 
 	}
@@ -179,7 +177,7 @@ Tile.prototype.setReplaced = function () {
 
 	if ( ! this.boundingBox ) {
 
-		console.log( 'FIXUP :', this.x, this.y );
+		console.warn( 'FIXUP :', this.x, this.y );
 		this.getWorldBoundingBox();
 
 	}
@@ -213,7 +211,7 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
 	var self = this;
 
-	new OSMOverlay( this.x, this.y, this.zoom, opacity, _overlayLoaded );
+	overlay.getTile( this.x, this.y, this.zoom, opacity, _overlayLoaded );
 
 	return;
 

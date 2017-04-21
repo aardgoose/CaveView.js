@@ -3,6 +3,7 @@ import { Tile } from './Tile';
 import { HUD } from '../hud/HUD';
 import { WorkerPool } from '../workers/WorkerPool';
 import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants';
+import { Overlay } from './Overlay';
 
 import {
 	Vector2, Frustum, Box2, Matrix4, FileLoader
@@ -37,6 +38,7 @@ function WebTerrain ( limits3, onReady, onLoaded, overlayLoadedCallback ) {
 	this.currentZoom     = null;
 	this.currentLimits;
 	this.dying = false;
+	this.overlays = {};
 	this.overlayLoadedCallback = overlayLoadedCallback;
 	this.overlaysLoading = 0;
 
@@ -47,6 +49,11 @@ function WebTerrain ( limits3, onReady, onLoaded, overlayLoadedCallback ) {
 		this.progressDial = HUD.getProgressDial();
 
 	}
+
+	this.addOverlay( 'OSM', new Overlay( function ( x, y, z ) { return 'https://b.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; } ) );
+	this.addOverlay( 'NLS', new Overlay( function ( x, y, z ) { return NLSTileUrlOS( x, y, z ); } ) ); // eslint-disable-line no-undef
+
+	this.defaultOverlay = 'OSM';
 
 	var self = this;
 
@@ -241,9 +248,9 @@ WebTerrain.prototype.loadTile = function ( x, y, z, oldTileIn ) {
 
 		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox );
 
-		if ( self.activeOverlay ) {
+		if ( self.activeOverlay !== null ) {
 
-			tile.setOverlay( self.activeOverlay, self.opacity, _overlayLoaded );
+			tile.setOverlay( self.overlays[ self.activeOverlay ], self.opacity, _overlayLoaded );
 			self.overlaysLoading++;
 
 		}
@@ -388,20 +395,26 @@ WebTerrain.prototype.tileArea = function ( limits, tile, maxZoom ) {
 
 };
 
-WebTerrain.prototype.getOverlays = function () {
+WebTerrain.prototype.addOverlay = function ( name, overlay ) {
 
-	return [ 'TEST' ];
+	this.overlays[ name ] = overlay;
 
 };
 
-WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
+WebTerrain.prototype.getOverlays = function () {
 
-	var self = this;
+	return Object.keys( this.overlays );
+
+};
+
+WebTerrain.prototype.setOverlay = function ( overlayName, overlayLoadedCallback ) {
 
 	if ( this.tilesLoading > 0 ) return;
 
-	this.activeOverlay = overlay;
+	var self = this;
+	var overlay = this.overlays[ overlayName ];
 
+	this.activeOverlay = overlayName;
 	this.traverse( _setTileOverlays );
 
 	return;
@@ -427,15 +440,7 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 WebTerrain.prototype.getOverlay = function () {
 
-	if ( this.activeOverlay ) {
-
-		return this.activeOverlay;
-
-	} else {
-
-		return 'OS'; // FIXME
-
-	}
+	return ( this.activeOverlay === null ) ? this.defaultOverlay : this.activeOverlay;
 
 };
 

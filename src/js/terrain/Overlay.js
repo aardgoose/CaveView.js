@@ -6,7 +6,15 @@ import {
 } from '../../../../three.js/src/Three';
 
 
-function Overlay ( x, y, z, opacity, overlayLoaded, url ) {
+function Overlay ( getUrl ) {
+
+	this.getUrl = getUrl;
+
+}
+
+Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
+
+	var url = this.getUrl( x, y, z );
 
 	new TextureLoader().setCrossOrigin( 'anonymous' ).load( url, _textureLoaded );
 
@@ -25,7 +33,7 @@ function Overlay ( x, y, z, opacity, overlayLoaded, url ) {
 
 	}
 
-}
+};
 
 Overlay.prototype.contructor = Overlay;
 

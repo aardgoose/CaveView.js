@@ -2,34 +2,40 @@
 
 var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-var mapSet = 'PeakDistrict';
-var sourceRaster = 'SK2M';
+var mapSet = 'UK';
+var sourceRaster = 'gdem_uk';
 
-var minX = 1013;
-var maxX = 1014;
-
-var minY = 663;
-var maxY = 665;
-
-var minZoom = 11;
-var maxZoom = 14;
+var tileSet = {
+		title: 'Dales 1',
+		dtmMaxZoom: 13,
+		zoomMax: 18,
+		zoomMin: 10,
+		divisions: 128,
+		directory: '',
+		subdirectory: 'dales1',
+		dtmScale: 64,
+		minX: 504,
+		maxX: 505,
+		minY: 327,
+		maxY: 327
+	};
 
 var n,s,e,w, zoom;
 var cmd;
 
-var maxTileWidth = halfMapExtent / Math.pow( 2, minZoom - 1 );
+var maxTileWidth = halfMapExtent / Math.pow( 2, tileSet.zoomMin - 1 );
 
-for ( zoom = minZoom; zoom <= maxZoom; zoom++ ) {
+for ( zoom = tileSet.zoomMin; zoom <= tileSet.dtmMaxZoom; zoom++ ) {
 
 	var tileWidth = halfMapExtent / Math.pow( 2, zoom - 1 );
-	var resolution = tileWidth / 128; // note: tile area extended by resolution/2 all round giving 129 sample row & columns
+	var resolution = tileWidth / tileSet.divisions; // note: tile area extended by resolution/2 all round giving 129 sample row & columns
 	var offset = resolution / 2;
 
-	n =   halfMapExtent - minY * maxTileWidth + offset; //
-	s =   halfMapExtent - ( maxY + 1) * maxTileWidth - offset;
+	n =   halfMapExtent - tileSet.minY * maxTileWidth + offset; //
+	s =   halfMapExtent - ( tileSet.maxY + 1) * maxTileWidth - offset;
 
-	e = - halfMapExtent + ( maxX + 1 ) * maxTileWidth + offset;
-	w = - halfMapExtent + minX * maxTileWidth - offset;
+	e = - halfMapExtent + ( tileSet.maxX + 1 ) * maxTileWidth + offset;
+	w = - halfMapExtent + tileSet.minX * maxTileWidth - offset;
 
 	cmd =  'g.region n=' + n + ' s=' + s + ' w=' +  w + ' e=' + e + ' nsres=' + resolution + ' ewres=' + resolution;
 	console.log( cmd );

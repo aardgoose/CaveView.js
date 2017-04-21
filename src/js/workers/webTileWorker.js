@@ -3,6 +3,7 @@ import { HeightMapLoader } from '../loaders/HeightMapLoader';
 import { TerrainTileGeometry } from '../terrain/TerrainTileGeometry';
 
 var tileSpec;
+var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
 onmessage = onMessage;
 
@@ -37,8 +38,8 @@ function mapLoaded ( data ) {
 
 	var terrainTile = new TerrainTileGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions, terrainData, tileSet.dtmScale, clip );
 
-	var X = tileSet.W + resolution * ( tileSpec.x * divisions + clip.left );
-	var Y = tileSet.N - resolution * ( tileSpec.y * divisions + clip.top );
+	var X = resolution * ( tileSpec.x * divisions + clip.left ) - halfMapExtent;
+	var Y = halfMapExtent - resolution * ( tileSpec.y * divisions + clip.top );
 
 	terrainTile.translate( X, Y, 0 );
 

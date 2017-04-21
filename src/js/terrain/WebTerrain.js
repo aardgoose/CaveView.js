@@ -8,6 +8,53 @@ import {
 	Vector2, Frustum, Box2, Matrix4
 } from '../../../../three.js/src/Three';
 
+
+
+var tileSets = [
+	{
+		title: 'Peak District',
+		dtmMaxZoom: 14,
+		zoomMax: 18,
+		zoomMin: 11,
+		divisions: 128,
+		directory: '',
+		subdirectory: 'default',
+		dtmScale: 64,
+		minX: 1013,
+		maxX: 1014,
+		minY: 663,
+		maxY: 665
+	},
+	{
+		title: 'Neath',
+		dtmMaxZoom: 13,
+		zoomMax: 18,
+		zoomMin: 11,
+		divisions: 128,
+		directory: '',
+		subdirectory: 'neath',
+		dtmScale: 64,
+		minX: 1002,
+		maxX: 1003,
+		minY: 677,
+		maxY: 678
+	},
+	{
+		title: 'Dales 1',
+		dtmMaxZoom: 13,
+		zoomMax: 18,
+		zoomMin: 10,
+		divisions: 128,
+		directory: '',
+		subdirectory: 'dales1',
+		dtmScale: 64,
+		minX: 504,
+		maxX: 505,
+		minY: 327,
+		maxY: 327
+	}
+];
+
 var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
 function WebTerrain ( limits3, onLoaded, overlayLoadedCallback ) {
@@ -21,19 +68,6 @@ function WebTerrain ( limits3, onLoaded, overlayLoadedCallback ) {
 		new Vector2( limits3.min.x, limits3.min.y ),
 		new Vector2( limits3.max.x, limits3.max.y )
 	);
-
-	this.tileSet = {
-		N:  halfMapExtent,
-		E:  halfMapExtent,
-		S: -halfMapExtent,
-		W: -halfMapExtent,
-		dtmMaxZoom: 14,
-		zoomMax: 18,
-		zoomMin: 1,
-		divisions: 128,
-		baseDirectory: getEnvironmentValue( 'terrainDirectory', '' ) + 'default',
-		dtmScale: 64
-	};
 
 	this.tile = null;
 
@@ -77,25 +111,40 @@ WebTerrain.prototype.isLoaded = function () {
 WebTerrain.prototype.hasCoverage = function () {
 
 	var limits  = this.limits;
-	var tileSet = this.tileSet;
+	var tileSet;
+	var coverage;
 
-	return (
-		( limits.min.x >= tileSet.W && limits.min.x <= tileSet.E ) || 
-		( limits.max.x >= tileSet.W && limits.max.x <= tileSet.E )
-	) && (
-		( limits.min.y >= tileSet.S && limits.min.y <= tileSet.N ) ||
-		( limits.max.y >= tileSet.S && limits.max.y <= tileSet.N )
-	);
+	// iterate through available tileSets and pick the first match
+	var baseDirectory =  getEnvironmentValue( 'terrainDirectory', '' );
+
+	for ( var i = 0, l = tileSets.length; i < l; i++ ) {
+
+		tileSet = tileSets[ i ];
+
+		coverage = this.getCoverage( limits, tileSet.zoomMin );
+
+		if ( ( coverage.min_x >= tileSet.minX && coverage.max_x <= tileSet.maxX )
+				&& (
+			( coverage.min_y >= tileSet.minY && coverage.max_y <= tileSet.maxY ) ) ) {
+
+			tileSet.directory = baseDirectory + tileSet.subdirectory;
+			this.tileSet = tileSet;
+			return true;
+
+		}
+
+	}
+
+	return false;
 
 };
 
 WebTerrain.prototype.getCoverage = function ( limits, zoom ) {
 
-	var tileSet  = this.tileSet;
 	var coverage = { zoom: zoom };
 
-	var N = tileSet.N;
-	var W = tileSet.W;
+	var N =  halfMapExtent;
+	var W = -halfMapExtent;
 
 	var tileCount = Math.pow( 2, zoom - 1 ) / halfMapExtent; // tile count per metre
 
@@ -150,10 +199,10 @@ WebTerrain.prototype.loadTile = function ( x, y, z, oldTileIn ) {
 	var tileWidth = halfMapExtent / Math.pow( 2, z - 1 );
 	var clip      = { top: 0, bottom: 0, left: 0, right: 0 };
 
-	var tileMinX = tileSet.W + tileWidth * x;
+	var tileMinX = tileWidth * x - halfMapExtent;
 	var tileMaxX = tileMinX + tileWidth;
 
-	var tileMaxY = tileSet.N - tileWidth * y;
+	var tileMaxY = halfMapExtent - tileWidth * y;
 	var tileMinY = tileMaxY - tileWidth;
 
 	var divisions = ( tileSet.divisions ) * scale ;

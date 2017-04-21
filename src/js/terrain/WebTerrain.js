@@ -5,59 +5,13 @@ import { WorkerPool } from '../workers/WorkerPool';
 import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants';
 
 import {
-	Vector2, Frustum, Box2, Matrix4
+	Vector2, Frustum, Box2, Matrix4, FileLoader
 } from '../../../../three.js/src/Three';
 
 
-
-var tileSets = [
-	{
-		title: 'Peak District',
-		dtmMaxZoom: 14,
-		zoomMax: 18,
-		zoomMin: 11,
-		divisions: 128,
-		directory: '',
-		subdirectory: 'default',
-		dtmScale: 64,
-		minX: 1013,
-		maxX: 1014,
-		minY: 663,
-		maxY: 665
-	},
-	{
-		title: 'Neath',
-		dtmMaxZoom: 13,
-		zoomMax: 18,
-		zoomMin: 11,
-		divisions: 128,
-		directory: '',
-		subdirectory: 'neath',
-		dtmScale: 64,
-		minX: 1002,
-		maxX: 1003,
-		minY: 677,
-		maxY: 678
-	},
-	{
-		title: 'Dales 1',
-		dtmMaxZoom: 13,
-		zoomMax: 18,
-		zoomMin: 10,
-		divisions: 128,
-		directory: '',
-		subdirectory: 'dales1',
-		dtmScale: 64,
-		minX: 504,
-		maxX: 505,
-		minY: 327,
-		maxY: 327
-	}
-];
-
 var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-function WebTerrain ( limits3, onLoaded, overlayLoadedCallback ) {
+function WebTerrain ( limits3, onReady, onLoaded, overlayLoadedCallback ) {
 
 	CommonTerrain.call( this );
 
@@ -94,6 +48,18 @@ function WebTerrain ( limits3, onLoaded, overlayLoadedCallback ) {
 
 	}
 
+	var self = this;
+
+	new FileLoader().setResponseType( 'json' ).load( getEnvironmentValue( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded );
+
+	function _tileSetLoaded( json ) {
+
+		self.tileSets = json;
+
+		onReady( self ); // call handler
+
+	}
+
 }
 
 WebTerrain.prototype = Object.create( CommonTerrain.prototype );
@@ -111,11 +77,12 @@ WebTerrain.prototype.isLoaded = function () {
 WebTerrain.prototype.hasCoverage = function () {
 
 	var limits  = this.limits;
+	var tileSets = this.tileSets;
 	var tileSet;
 	var coverage;
 
 	// iterate through available tileSets and pick the first match
-	var baseDirectory =  getEnvironmentValue( 'terrainDirectory', '' );
+	var baseDirectory = getEnvironmentValue( 'terrainDirectory', '' );
 
 	for ( var i = 0, l = tileSets.length; i < l; i++ ) {
 

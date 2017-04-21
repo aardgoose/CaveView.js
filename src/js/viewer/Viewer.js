@@ -842,18 +842,7 @@ function loadSurvey ( newSurvey ) {
 
 	if ( terrain === null ) {
 
-		terrain = new WebTerrain( survey.limits, _tilesLoaded, renderView );
-
-		if ( terrain.hasCoverage() ) {
-
-			terrain.tileArea( survey.limits );
-			survey.add( terrain );
-
-		} else {
-
-			terrain = null;
-
-		}
+		terrain = new WebTerrain( survey.limits, _terrainReady, _tilesLoaded, renderView );
 
 	} else {
 
@@ -876,6 +865,21 @@ function loadSurvey ( newSurvey ) {
 	controls.enabled = true;
 
 	renderView();
+
+	function _terrainReady ( terrain) {
+
+		if ( terrain.hasCoverage() ) {
+
+			terrain.tileArea( survey.limits );
+			survey.add( terrain );
+
+		} else {
+
+			terrain = null;
+
+		}
+
+	}
 
 	function _tilesLoaded () {
 

@@ -3,7 +3,6 @@ import { Tile } from './Tile';
 import { HUD } from '../hud/HUD';
 import { WorkerPool } from '../workers/WorkerPool';
 import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants';
-import { Overlay } from './Overlay';
 
 import {
 	Vector2, Frustum, Box2, Matrix4, FileLoader
@@ -38,7 +37,6 @@ function WebTerrain ( limits3, onReady, onLoaded, overlayLoadedCallback ) {
 	this.currentZoom     = null;
 	this.currentLimits;
 	this.dying = false;
-	this.overlays = {};
 	this.overlayLoadedCallback = overlayLoadedCallback;
 	this.overlaysLoading = 0;
 
@@ -49,11 +47,6 @@ function WebTerrain ( limits3, onReady, onLoaded, overlayLoadedCallback ) {
 		this.progressDial = HUD.getProgressDial();
 
 	}
-
-	this.addOverlay( 'OSM', new Overlay( function ( x, y, z ) { return 'https://b.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; } ) );
-	this.addOverlay( 'NLS', new Overlay( function ( x, y, z ) { return NLSTileUrlOS( x, y, z ); } ) ); // eslint-disable-line no-undef
-
-	this.defaultOverlay = 'OSM';
 
 	var self = this;
 
@@ -248,9 +241,9 @@ WebTerrain.prototype.loadTile = function ( x, y, z, oldTileIn ) {
 
 		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox );
 
-		if ( self.activeOverlay !== null ) {
+		if ( self.activeOverlay !== null && self.shadingMode === SHADING_OVERLAY ) {
 
-			tile.setOverlay( self.overlays[ self.activeOverlay ], self.opacity, _overlayLoaded );
+			tile.setOverlay( self.activeOverlay, self.opacity, _overlayLoaded );
 			self.overlaysLoading++;
 
 		}
@@ -395,26 +388,36 @@ WebTerrain.prototype.tileArea = function ( limits, tile, maxZoom ) {
 
 };
 
-WebTerrain.prototype.addOverlay = function ( name, overlay ) {
+WebTerrain.prototype.setDefaultOverlay = function ( overlay ) {
 
-	this.overlays[ name ] = overlay;
+	this.activeOverlay = overlay;
 
-};
+}
 
-WebTerrain.prototype.getOverlays = function () {
-
-	return Object.keys( this.overlays );
-
-};
-
-WebTerrain.prototype.setOverlay = function ( overlayName, overlayLoadedCallback ) {
+WebTerrain.prototype.setOverlay = function ( overlay ) {
 
 	if ( this.tilesLoading > 0 ) return;
 
 	var self = this;
-	var overlay = this.overlays[ overlayName ];
 
-	this.activeOverlay = overlayName;
+	if ( overlay === null ) {
+
+		if ( this.activeOverlay !== null ) {
+
+			overlay = this.activeOverlay;
+
+		} else {
+
+			return;
+
+		}
+
+	} else {
+
+		this.activeOverlay = overlay;
+
+	}
+
 	this.traverse( _setTileOverlays );
 
 	return;
@@ -432,15 +435,9 @@ WebTerrain.prototype.setOverlay = function ( overlayName, overlayLoadedCallback 
 
 	function _overlayLoaded () {
 
-		if ( --self.overlaysLoading === 0 ) overlayLoadedCallback();
+		if ( --self.overlaysLoading === 0 ) self.overlayLoadedCallback();
 
 	}
-
-};
-
-WebTerrain.prototype.getOverlay = function () {
-
-	return ( this.activeOverlay === null ) ? this.defaultOverlay : this.activeOverlay;
 
 };
 
@@ -469,8 +466,6 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 	if ( this.tilesLoading > 0 ) return;
 
 	var self = this;
-
-	this.activeOverlay = null;
 
 	this.traverse( _setTileMeshMaterial );
 

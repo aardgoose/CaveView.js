@@ -31,7 +31,7 @@ CommonTerrain.prototype.getOpacity = function () {
 
 };
 
-CommonTerrain.prototype.setShadingMode = function ( mode, imageLoadedCallback ) {
+CommonTerrain.prototype.setShadingMode = function ( mode ) {
 
 	var material;
 
@@ -45,7 +45,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, imageLoadedCallback ) 
 
 	case SHADING_OVERLAY:
 
-		if ( this.getOverlays() ) this.setOverlay( this.getOverlay(), imageLoadedCallback );
+		this.setOverlay( null );
 
 		break;
 

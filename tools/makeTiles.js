@@ -1,7 +1,7 @@
 "use strict";
 
 var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
-var mapSet = 'PeakDistrict';
+var mapSet = 'UK';
 
 function tileArea( x, y, z, maxZoom ) {
 
@@ -21,7 +21,7 @@ function tileArea( x, y, z, maxZoom ) {
 
 	//console.log( 'create tile: [', x, ',', y , '] @ zoom ' + z + ' width:', tileWidth );
 
-	if ( z > 10 ) {
+	if ( z > 8 ) {
 
 		cmd =  'g.region n=' + n + ' s=' + s + ' w=' +  w + ' e=' + e + ' nsres=' + resolution + ' ewres=' + resolution;
 		console.log( cmd );
@@ -51,23 +51,29 @@ function tileArea( x, y, z, maxZoom ) {
 
 // EPSG:3875 "Web Mercator" tile range
 
-var minX = 1013;
-var maxX = 1014;
-
-var minY = 663;
-var maxY = 665;
-
-var minZoom = 11;
-var maxZoom = 14;
+var tileSet = {
+		title: 'Dales 1',
+		dtmMaxZoom: 13,
+		zoomMax: 18,
+		zoomMin: 10,
+		divisions: 128,
+		directory: '',
+		subdirectory: 'dales1',
+		dtmScale: 64,
+		minX: 504,
+		maxX: 505,
+		minY: 327,
+		maxY: 327
+	};
 
 var x, y, outFile, cmd;
 var n, s, e, w;
 
-for ( x = minX; x <= maxX; x++ ) {
+for ( x = tileSet.minX; x <= tileSet.maxX; x++ ) {
 
-	for ( y = minY; y <= maxY; y++ ) {
+	for ( y = tileSet.minY; y <= tileSet.maxY; y++ ) {
 
-		tileArea( x, y, minZoom, maxZoom );
+		tileArea( x, y, tileSet.zoomMin, tileSet.dtmMaxZoom );
 
 	}
 

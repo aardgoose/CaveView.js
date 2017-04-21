@@ -38,7 +38,7 @@ function HeightMapLoader ( tileSpec, loadCallback, errorCallback ) {
 
 	}
 
-	this.tileFile = tileSet.baseDirectory + '/' + this.z + '/DTM-' + this.x + '-' + this.y + '.bin';
+	this.tileFile = tileSet.directory + '/' + this.z + '/DTM-' + this.x + '-' + this.y + '.bin';
 
 }
 

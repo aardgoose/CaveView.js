@@ -107,7 +107,7 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 			var c = ( ix + 1 ) + gridX1 * ( iy + 1 );
 			var d = ( ix + 1 ) + gridX1 * iy;
 
-			// faces
+			// faces - render each quad such that the shared diagonal edge has the minimum length - gives a smother terrain surface
 			// diagonals b - d, a - c
 
 			var d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] );  // diff in Z values between diagonal vertices

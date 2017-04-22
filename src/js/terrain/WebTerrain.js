@@ -392,7 +392,7 @@ WebTerrain.prototype.setDefaultOverlay = function ( overlay ) {
 
 	this.activeOverlay = overlay;
 
-}
+};
 
 WebTerrain.prototype.setOverlay = function ( overlay ) {
 
@@ -400,23 +400,7 @@ WebTerrain.prototype.setOverlay = function ( overlay ) {
 
 	var self = this;
 
-	if ( overlay === null ) {
-
-		if ( this.activeOverlay !== null ) {
-
-			overlay = this.activeOverlay;
-
-		} else {
-
-			return;
-
-		}
-
-	} else {
-
-		this.activeOverlay = overlay;
-
-	}
+	this.activeOverlay = overlay;
 
 	this.traverse( _setTileOverlays );
 

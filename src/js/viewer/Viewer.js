@@ -154,7 +154,7 @@ function init ( domID ) { // public method
 		},
 
 		'terrainOverlays': {
-			get: function () { return terrain && Object.keys( overlays ); } // FIXME - support for lox overlays
+			get: function () { if ( terrain.isTiled ) return Object.keys( overlays ); else return terrain.hasOverlay ? [ true ] : []; }
 		},
 
 		'terrainOverlay': {

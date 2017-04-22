@@ -197,7 +197,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 			opt = document.createElement( 'option' );
 
-			opt.value = i;
+			opt.value = obj[ i ];
 			opt.text  = obj[ i ];
 
 			if ( opt.text === trgObj[ property ] ) opt.selected = true;
@@ -205,8 +205,6 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 			select.add( opt, null );
 
 		}
-
-		select.addEventListener( 'change', function ( event ) { Page.inHandler = true; trgObj[ property ] = obj[ event.target.value ]; Page.inHandler = false; } );
 
 	} else {
 
@@ -223,9 +221,9 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 		}
 
-		select.addEventListener( 'change', function ( event ) { Page.inHandler = true; trgObj[ property ] = event.target.value; Page.inHandler = false; } );
-
 	}
+
+	select.addEventListener( 'change', function ( event ) { Page.inHandler = true; trgObj[ property ] = event.target.value; Page.inHandler = false; } );
 
 	label.textContent = title;
 

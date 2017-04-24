@@ -1,5 +1,6 @@
 import { CommonTerrain } from './CommonTerrain';
 import { Tile } from './Tile';
+import { Box3Helper } from '../core/Box3';
 import { HUD } from '../hud/HUD';
 import { WorkerPool } from '../workers/WorkerPool';
 import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants';
@@ -39,6 +40,7 @@ function WebTerrain ( limits3, onReady, onLoaded, overlayLoadedCallback ) {
 	this.dying = false;
 	this.overlayLoadedCallback = overlayLoadedCallback;
 	this.overlaysLoading = 0;
+	this.debug = true;
 
 	this.workerPool = new WorkerPool( 'webTileWorker.js' );
 
@@ -408,12 +410,10 @@ WebTerrain.prototype.setOverlay = function ( overlay ) {
 
 	function _setTileOverlays ( obj ) {
 
-		if ( obj !== self ) {
+		if ( ! obj.isTile ) return;
 
-			obj.setOverlay( overlay, self.opacity, _overlayLoaded );
-			self.overlaysLoading++;
-
-		}
+		obj.setOverlay( overlay, self.opacity, _overlayLoaded );
+		self.overlaysLoading++;
 
 	}
 
@@ -464,7 +464,7 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 
 	function _setTileMeshMaterial ( obj ) {
 
-		if ( obj !== self ) obj.setMaterial( material );
+		if ( obj.isTile ) obj.setMaterial( material );
 
 	}
 
@@ -496,7 +496,7 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 	function _setTileOpacity ( obj ) {
 
-		if ( obj !== self ) obj.setOpacity( opacity );
+		if ( obj.isTile ) obj.setOpacity( opacity );
 
 	}
 
@@ -556,7 +556,17 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 				tile = candidateTiles[ i ].tile;
 
-				if ( tile.zoom < maxZoom ) this.tileArea( tile.getBoundingBox(), tile );
+				if ( tile.zoom < maxZoom ) {
+
+					if ( this.debug ) {
+
+							this.add( new Box3Helper( tile.boundingBox ) );
+
+					}
+
+					this.tileArea( tile.getBoundingBox(), tile );
+
+				}
 
 			}
 
@@ -568,7 +578,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 	function _scanTiles( tile ) {
 
-		if ( tile === self ) return;
+		if ( tile === self || ! tile.isTile) return;
 
 		if ( frustum.intersectsBox( tile.getWorldBoundingBox() ) ) {
 

@@ -28,18 +28,43 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	console.log( 'title: ', auxInfo[ 0 ] );
 
-	this.sourceCRS = ( auxInfo[ 1 ] === undefined ) ? null : auxInfo[ 1 ]; // coordinate reference system ( proj4 format )
+	var sourceCRS = ( auxInfo[ 1 ] === undefined ) ? null : auxInfo[ 1 ]; // coordinate reference system ( proj4 format )
 
-	// EPSG27700 hardwire for testing
+	if ( sourceCRS ) {
+
+	 	var matches = sourceCRS.match( /\+init=(.*)\s/);
+
+		if ( matches.length === 2 ) {
+
+			switch( matches[ 1 ] ) {
+
+			case 'epsg:27700' :
+
+				sourceCRS = '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs';
+
+				break;
+
+			default:
+
+				sourceCRS = '';
+				console.warn( 'unsupported projection' );
+
+			}
+
+		}
+
+	}
+
 	// FIXME use NAD grid corrections OSTM15 etc ( UK Centric )
 
-	this.sourceCRS	= '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs';
+	this.sourceCRS = sourceCRS;
 
-	console.log( 'Reprojecting' );
-	console.log( 'from: ', this.sourceCRS );
-	console.log( 'to:   ', this.targetCRS );
+	if ( sourceCRS !== null ) {
 
-	this.projection = proj4( this.sourceCRS, this.targetCRS ); // eslint-disable-line no-undef
+		console.log( 'Reprojecting from', this.sourceCRS, 'to', this.targetCRS );
+		this.projection = proj4( this.sourceCRS, this.targetCRS ); // eslint-disable-line no-undef
+
+	}
 
 	this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
 
@@ -96,7 +121,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	var cmd         = [];
 	var legs        = [];
 	var label       = '';
-	var readLabel;
 	var stations    = new Map();
 	var lineEnds    = new Set(); // implied line ends to fixnup xsects
 	var xSects      = [];
@@ -106,6 +130,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	var dataLength = data.length;
 	var lastPosition = { x: 0, y:0, z: 0 }; // value to allow approach vector for xsect coord frame
 	var i;
+
+	// functions
+
+	var readLabel;
+	var readCoordinates;
 
 	// init cmd handler table withh  error handler for unsupported records or invalid records
 
@@ -213,6 +242,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		cmd[ 0x21 ] = cmd_DATE2_V4;
 
 	}
+
+	// selected correct read coordinates function
+
+	readCoordinates = ( this.projection === null ) ? __readCoordinates : __readCoordinatesProjected;
 
 	// common record iterator
 	// loop though data, handling record types as required.
@@ -639,7 +672,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function readCoordinates () {
+	function __readCoordinatesProjected () {
 
 		var l = new DataView( source, pos );
 
@@ -651,6 +684,22 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		var coords = {
 			x: projectedCoords.x,
 			y: projectedCoords.y,
+			z: l.getInt32( 8, true ) / 100
+		};
+
+		pos += 12;
+
+		return coords;
+
+	}
+
+	function __readCoordinates () {
+
+		var l = new DataView( source, pos );
+
+		var coords = {
+			x: l.getInt32( 0, true ) / 100,
+			y: l.getInt32( 4, true ) / 100,
 			z: l.getInt32( 8, true ) / 100
 		};
 

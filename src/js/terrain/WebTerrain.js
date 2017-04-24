@@ -1,6 +1,6 @@
 import { CommonTerrain } from './CommonTerrain';
 import { Tile } from './Tile';
-import { Box3Helper } from '../core/Box3';
+//import { Box3Helper } from '../core/Box3';
 import { HUD } from '../hud/HUD';
 import { WorkerPool } from '../workers/WorkerPool';
 import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants';
@@ -243,6 +243,8 @@ WebTerrain.prototype.loadTile = function ( x, y, z, oldTileIn ) {
 
 		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox );
 
+//		self.add( new Box3Helper( tile.getBoundingBox() ) );
+
 		if ( self.activeOverlay !== null && self.shadingMode === SHADING_OVERLAY ) {
 
 			tile.setOverlay( self.activeOverlay, self.opacity, _overlayLoaded );
@@ -449,8 +451,6 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 
 	if ( this.tilesLoading > 0 ) return;
 
-	var self = this;
-
 	this.traverse( _setTileMeshMaterial );
 
 	material.opacity = this.opacity;
@@ -473,8 +473,6 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 	if ( this.shadingMode === SHADING_OVERLAY ) {
-
-		var self = this;
 
 		// each tile has its own material, therefore need setting separately
 		this.traverse( _setTileOpacity );
@@ -556,17 +554,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 				tile = candidateTiles[ i ].tile;
 
-				if ( tile.zoom < maxZoom ) {
-
-					if ( this.debug ) {
-
-							this.add( new Box3Helper( tile.boundingBox ) );
-
-					}
-
-					this.tileArea( tile.getBoundingBox(), tile );
-
-				}
+				if ( tile.zoom < maxZoom ) this.tileArea( tile.getBoundingBox(), tile );
 
 			}
 

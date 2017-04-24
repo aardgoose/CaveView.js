@@ -736,6 +736,8 @@ function selectSection ( id ) {
 
 	} else {
 
+		survey.stations.selectStation( node );
+
 		cameraMove.prepare( null, new Vector3().copy( node.p ).applyMatrix4( survey.matrixWorld ) );
 
 		selectedSection = 0;
@@ -1010,7 +1012,13 @@ function mouseDown ( event ) {
 
 	function _selectStation ( picked ) {
 
-		var station = survey.stations.getStationByIndex( picked.index );
+		var stations = survey.stations;
+
+		var station = stations.getStationByIndex( picked.index );
+
+		stations.selectStation( station );
+
+		renderView();
 
 		var point = station.p;
 		var p = new Vector3().copy( point ).applyMatrix4( survey.matrixWorld );

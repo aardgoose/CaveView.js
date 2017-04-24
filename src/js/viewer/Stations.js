@@ -30,6 +30,9 @@ function Stations () {
 
 	this.stations = [];
 
+	this.selected = null;
+	this.selectedSize = 0;
+
 	var viewState = Viewer.getState;
 	var self = this;
 
@@ -98,6 +101,35 @@ Stations.prototype.getStation = function ( vertex ) {
 Stations.prototype.getStationByIndex = function ( index ) {
 
 	return this.stations[ index ];
+
+};
+
+Stations.prototype.selectStation = function ( node ) {
+
+	this.selectStationByIndex( node.stationVertexIndex );
+
+};
+
+Stations.prototype.selectStationByIndex = function ( index ) {
+
+	var pSize = this.geometry.getAttribute( 'pSize' );
+
+	if ( this.selected !== null ) {
+
+		pSize.setX( this.selected, this.selectedSize );
+
+	}
+
+	this.selectedSize = pSize.getX( index );
+
+	pSize.setX( index, 20 );
+
+//	pSize.updateRange.offset = index;
+//	pSize.updateRange.count  = 1;
+
+	pSize.needsUpdate = true;
+
+	this.selected = index;
 
 };
 

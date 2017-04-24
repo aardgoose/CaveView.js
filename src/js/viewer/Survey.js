@@ -12,6 +12,7 @@ import { replaceExtension } from '../core/lib';
 import { getEnvironmentValue } from '../core/constants';
 import { ColourCache } from '../core/ColourCache';
 import { Tree } from '../core/Tree';
+import { Box3Helper } from '../core/Box3';
 import { Materials } from '../materials/Materials';
 import { Marker } from './Marker';
 import { farPointers } from './EntranceFarPointer';
@@ -29,8 +30,7 @@ import {
 	Float32BufferAttribute,
 	MeshLambertMaterial, MeshBasicMaterial, LineBasicMaterial,
 	FaceColors, NoColors, FrontSide, VertexColors,
-	Object3D, Mesh, Group, LineSegments,
-	BoxHelper
+	Object3D, Mesh, Group, LineSegments
 } from '../../../../three.js/src/Three';
 
 var zeroVector = new Vector3();
@@ -958,11 +958,10 @@ Survey.prototype.selectSection = function ( id ) {
 
 Survey.prototype.setFeatureBox = function () {
 
-	var box = new BoxHelper( this, 0xffffff );
+	var box = new Box3Helper( this.limits, 0xffffff );
 
 	box.layers.set( FEATURE_BOX );
 	box.name = 'survey-boundingbox';
-	box.type = 'BoxHelper';
 
 	this.add( box );
 
@@ -1090,7 +1089,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 			break;
 
-		case 'BoxHelper':
+		case 'Box3Helper':
 		case 'CV.Stations':
 
 			cutList.push( obj );
@@ -1828,11 +1827,10 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 		if ( this.selectedSection > 0 && runsSelected > 0 ) {
 
-			this.selectedBox = new BoxHelper( box, 0x0000ff );
+			this.selectedBox = new Box3Helper( box, 0x0000ff );
 
 			this.selectedBox.layers.set( FEATURE_SELECTED_BOX );
 			this.selectedBox.name = 'selectedBox';
-			this.selectedBox.type = 'BoxHelper';
 
 			this.add( this.selectedBox );
 

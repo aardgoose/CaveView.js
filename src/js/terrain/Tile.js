@@ -36,8 +36,6 @@ function Tile ( x, y, zoom, tileSet, clip ) {
 
 	Mesh.call( this );
 
-	this.type = 'Tile';
-
 	return this;
 
 }
@@ -45,6 +43,9 @@ function Tile ( x, y, zoom, tileSet, clip ) {
 Tile.prototype = Object.create( Mesh.prototype );
 
 Tile.prototype.constructor = Tile;
+
+Tile.prototype.type = 'Tile';
+Tile.prototype.isTile = true;
 
 Tile.liveTiles = 0;
 Tile.overlayImages = new Map();

@@ -31,7 +31,7 @@ import {
 	DirectionalLight, HemisphereLight,
 	LinearFilter, NearestFilter, RGBFormat,
 	OrthographicCamera, PerspectiveCamera, 
-	WebGLRenderer, WebGLRenderTarget
+	WebGLRenderer, WebGLRenderTarget,
 } from '../../../../three.js/src/Three';
 
 //import { LeakWatch } from '../../../../LeakWatch/src/LeakWatch';

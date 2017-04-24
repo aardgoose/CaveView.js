@@ -5,7 +5,7 @@
  * @author Mugen87 / http://github.com/Mugen87
  */
 
-import { Box3, LineSegments, LineBasicMaterial, BufferAttribute, BufferGeometry, Float32BufferAttribute, Vector3 } from '../../../../three.js/src/Three';
+import { LineSegments, LineBasicMaterial, BufferAttribute, BufferGeometry } from '../../../../three.js/src/Three';
 
 function Box3Helper( box3, color ) {
 
@@ -77,7 +77,10 @@ Box3Helper.prototype.update = function () {
 
 };
 
+Box3Helper.prototype.removed = function () {
 
+	if ( this.geometry ) this.geometry.dispose();
 
+};
 
 export { Box3Helper };

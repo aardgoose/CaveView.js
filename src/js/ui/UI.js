@@ -465,11 +465,8 @@ function initInfoPage () {
 function initSettingsPage () {
 
 	// reset
-	terrainOverlay = null;
-	terrainControls = [];
 
-	var legShadingModesActive     = Object.assign( {}, legShadingModes );
-	var terrainShadingModesActive = Object.assign( {}, terrainShadingModes );
+	var legShadingModesActive = Object.assign( {}, legShadingModes );
 
 	if ( viewState.hasTerrain ) legShadingModesActive.depth = SHADING_DEPTH;
 
@@ -494,33 +491,47 @@ function initSettingsPage () {
 
 	page.addSelect( 'Underground Legs', legShadingModesActive, viewState, 'shadingMode' );
 
-	if ( viewState.hasSurfaceLegs ) {
-
-		page.addSelect( 'Surface Legs', surfaceShadingModes, viewState, 'surfaceShading' );
-
-	}
-
 	page.addHeader( 'Visibility' );
 
-	if ( viewState.hasEntrances )    page.addCheckbox( 'Entrances',     viewState, 'entrances' );
+	if ( viewState.hasEntrances ) page.addCheckbox( 'Entrances',     viewState, 'entrances' );
 
 	page.addCheckbox( 'Stations', viewState, 'stations' );
 
-	if ( viewState.hasSplays )       page.addCheckbox( 'Splay Legs',    viewState, 'splays' );
-	if ( viewState.hasSurfaceLegs )  page.addCheckbox( 'Surface Legs',  viewState, 'surfaceLegs' );
-	if ( viewState.hasTerrain )      page.addCheckbox( 'Terrain',       viewState, 'terrain' );
-	if ( viewState.hasWalls )        page.addCheckbox( 'Walls (LRUD)',  viewState, 'walls' );
-	if ( viewState.hasScraps )       page.addCheckbox( 'Scraps',        viewState, 'scraps' );
-	if ( viewState.hasTraces )       page.addCheckbox( 'Dye Traces',    viewState, 'traces' );
+	if ( viewState.hasSplays ) page.addCheckbox( 'Splay Legs',    viewState, 'splays' );
+	if ( viewState.hasWalls )  page.addCheckbox( 'Walls (LRUD)',  viewState, 'walls' );
+	if ( viewState.hasScraps ) page.addCheckbox( 'Scraps',        viewState, 'scraps' );
+	if ( viewState.hasTraces ) page.addCheckbox( 'Dye Traces',    viewState, 'traces' );
 
 	page.addCheckbox( 'Indicators', viewState, 'HUD' );
 	page.addCheckbox( 'Bounding Box', viewState, 'box' );
 
+}
+
+function initSurfacePage () {
+
+	// reset
+	terrainOverlay = null;
+	terrainControls = [];
+
+	var page = new Page( 'icon_terrain' );
+
+	page.addHeader( 'Surface Features' );
+
+	if ( viewState.hasSurfaceLegs ) {
+
+		page.addCheckbox( 'Surface Legs', viewState, 'surfaceLegs' );
+		page.addSelect( 'Leg Shading', surfaceShadingModes, viewState, 'surfaceShading' );
+
+	}
+
 	if ( viewState.hasTerrain ) {
 
-		terrainControls.push( page.addHeader( 'Terrain' ) );
+		page.addHeader( 'Terrain' );
+
+		page.addCheckbox( 'Terrain', viewState, 'terrain' );
 
 		var overlays = viewState.terrainOverlays;
+		var terrainShadingModesActive = Object.assign( {}, terrainShadingModes );
 
 		if ( overlays.length > 0 ) terrainShadingModesActive[ 'map overlay' ] = SHADING_OVERLAY;
 
@@ -552,6 +563,7 @@ function initUI () {
 	// create UI side panel and reveal tabs
 
 	initSettingsPage();
+	initSurfacePage();
 	initSelectionPage();
 	initRoutePage();
 	initInfoPage();

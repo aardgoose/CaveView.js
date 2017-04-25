@@ -1,10 +1,10 @@
 
 import { Vector3 } from '../../../../three.js/src/Three';
 
-function Popup() {
+function Popup( cssClass ) {
 
 	this.div = document.createElement( 'div' );
-	this.div.classList.add( 'station-info');
+	this.div.classList.add( cssClass );
 
 }
 

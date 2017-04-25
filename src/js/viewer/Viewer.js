@@ -16,7 +16,7 @@ import { HUD } from '../hud/HUD';
 import { Materials } from '../materials/Materials';
 import { CameraMove } from './CameraMove';
 import { Survey } from './Survey';
-import { Popup } from './Popup';
+import { StationPopup } from './StationPopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { Overlay } from '../terrain/Overlay';
 
@@ -1020,32 +1020,11 @@ function mouseDown ( event ) {
 
 		renderView();
 
-		var point = station.p;
-		var p = new Vector3().copy( point ).applyMatrix4( survey.matrixWorld );
+		// p - world position of station
 
-		var popup = new Popup();
+		var p = new Vector3().copy( station.p ).applyMatrix4( survey.matrixWorld );
 
-		var name = station.getPath();
-
-		// reduce name length if too long
-
-		var long = false;
-		var tmp;
-
-		while ( name.length > 20 ) {
-
-			tmp = name.split( '.' );
-			tmp.shift();
-
-			name = tmp.join( '.' );
-			long = true;
-
-		}
-
-		if ( long ) name = '...' + name;
-
-		popup.addLine( name );
-		popup.addLine( 'x: ' + point.x + ' m' ).addLine( 'y: ' + point.y + ' m' ).addLine( 'z: ' + point.z + ' m' );
+		var popup = new StationPopup( station );
 
 		popup.display( container, event.clientX, event.clientY, camera, p );
 

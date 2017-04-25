@@ -12,6 +12,7 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 	this.xGroups    = [];
 	this.surveyTree = new Tree();
 	this.isRegion   = false;
+	this.sourceCRS  = null;
 	this.targetCRS  = 'EPSG:3857'; // "web mercator"
 	this.projection = null;
 	this.metadata   = metadata;
@@ -30,11 +31,13 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	var sourceCRS = ( auxInfo[ 1 ] === undefined ) ? null : auxInfo[ 1 ]; // coordinate reference system ( proj4 format )
 
-	if ( sourceCRS ) {
+	if ( sourceCRS !== null ) {
 
-	 	var matches = sourceCRS.match( /\+init=(.*)\s/);
+		// work around lack of +init string support in proj4js
 
-		if ( matches.length === 2 ) {
+		var matches = sourceCRS.match( /\+init=(.*)\s/);
+
+		if ( matches && matches.length === 2 ) {
 
 			switch( matches[ 1 ] ) {
 
@@ -46,7 +49,7 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 			default:
 
-				sourceCRS = '';
+				sourceCRS = null;
 				console.warn( 'unsupported projection' );
 
 			}
@@ -57,11 +60,11 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	// FIXME use NAD grid corrections OSTM15 etc ( UK Centric )
 
-	this.sourceCRS = sourceCRS;
-
 	if ( sourceCRS !== null ) {
 
 		console.log( 'Reprojecting from', this.sourceCRS, 'to', this.targetCRS );
+
+		this.sourceCRS = sourceCRS;
 		this.projection = proj4( this.sourceCRS, this.targetCRS ); // eslint-disable-line no-undef
 
 	}
@@ -134,7 +137,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	// functions
 
 	var readLabel;
-	var readCoordinates;
+
+	// selected correct read coordinates function
+
+	var readCoordinates = ( this.projection === null ) ? __readCoordinates : __readCoordinatesProjected;
 
 	// init cmd handler table withh  error handler for unsupported records or invalid records
 
@@ -242,10 +248,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		cmd[ 0x21 ] = cmd_DATE2_V4;
 
 	}
-
-	// selected correct read coordinates function
-
-	readCoordinates = ( this.projection === null ) ? __readCoordinates : __readCoordinatesProjected;
 
 	// common record iterator
 	// loop though data, handling record types as required.
@@ -659,9 +661,22 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		// cmd_MOVE saves these in the set lineEnds.
 		// this fixes up surveys that display incorrectly withg 'fly-back' artefacts in Aven and Loch.
 
-		if ( flags || lineEnds.has( [ position.x, position.y, position.z ].toString() ) ) {
+		var endRun = false;
 
-			if ( xSects.length > 1 ) xGroups.push( xSects );
+		if ( flags ) {
+
+			endRun = true;
+
+		} else if ( lineEnds.has( [ position.x, position.y, position.z ].toString() ) ) {
+
+			endRun = true;
+//			console.log( 'unterminated LRUD passage at ', label );
+
+		}
+
+		if ( endRun ) {
+
+			if ( xSects.length > 0 ) xGroups.push( xSects );
 
 			lastPosition = { x: 0, y: 0, z: 0 };
 			xSects = [];
@@ -671,6 +686,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		return true;
 
 	}
+
+	// functions aliased at runtime as required
 
 	function __readCoordinatesProjected () {
 
@@ -714,7 +731,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 Svx3dHandler.prototype.getLineSegments = function () {
 
 	var lineSegments = [];
-	var groups       = this.groups;
+	var groups = this.groups;
 
 	for ( var i = 0, l = groups.length; i < l; i++ ) {
 

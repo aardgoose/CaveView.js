@@ -212,6 +212,10 @@ div.linear-scale-caption {
 	background-image: url(../images/ic_settings.png);
 }
 
+#icon_terrain {
+	background-image: url(../images/ic_terrain.png);
+}
+
 #icon_explore {
 	background-image: url(../images/ic_explore.png);
 }

@@ -62,7 +62,7 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	if ( sourceCRS !== null ) {
 
-		console.log( 'Reprojecting from', this.sourceCRS, 'to', this.targetCRS );
+		console.log( 'Reprojecting from', sourceCRS, 'to', this.targetCRS );
 
 		this.sourceCRS = sourceCRS;
 		this.projection = proj4( this.sourceCRS, this.targetCRS ); // eslint-disable-line no-undef

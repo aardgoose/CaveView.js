@@ -740,8 +740,6 @@ function selectSection ( id ) {
 
 		cameraMove.prepare( null, new Vector3().copy( node.p ).applyMatrix4( survey.matrixWorld ) );
 
-		selectedSection = 0;
-
 	}
 
 	renderView();

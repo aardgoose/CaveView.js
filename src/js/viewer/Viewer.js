@@ -1024,7 +1024,7 @@ function mouseDown ( event ) {
 
 		var p = new Vector3().copy( station.p ).applyMatrix4( survey.matrixWorld );
 
-		var popup = new StationPopup( station );
+		var popup = new StationPopup( station, survey.getProjection() );
 
 		popup.display( container, event.clientX, event.clientY, camera, p );
 

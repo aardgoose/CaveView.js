@@ -129,6 +129,8 @@ function Survey ( cave ) {
 		p1.copy( transform.forward( p1 ) );
 		p2.copy( transform.forward( p2 ) );
 
+		self.projection = transform;
+
 		var l2 = p1.distanceTo( p2 );
 
 		self.scaleFactor = l1 / l2;
@@ -208,11 +210,12 @@ Survey.prototype.loadCave = function ( cave ) {
 	_restoreSurveyTree( cave.surveyTree );
 
 	_loadSegments( cave.lineSegments );
+
+	this.loadStations( cave.surveyTree );
+
 	_loadScraps( cave.scraps );
 	_loadCrossSections( cave.crossSections );
 	_loadTerrain( cave );
-
-	this.loadStations( cave.surveyTree );
 
 	this.pointTargets.push( this.stations );
 
@@ -853,6 +856,12 @@ Survey.prototype.loadFromEntrance = function ( entrance, loadedCallback ) {
 		loadedCallback();
 
 	}
+
+};
+
+Survey.prototype.getProjection = function () {
+
+	return this.projection;
 
 };
 

@@ -1,7 +1,7 @@
 import { Popup } from './Popup.js';
 
 
-function StationPopup ( station ) {
+function StationPopup ( station, projection ) {
 
 	Popup.call( this, 'station-info' );
 
@@ -10,8 +10,13 @@ function StationPopup ( station ) {
 	var long = false;
 	var tmp;
 
-	// reduce name length if too long
+	var originalPoint = { x: point.x, y: point.y };
 
+	// convert to original survey CRS
+
+	if  ( projection !== null ) originalPoint = projection.forward( originalPoint );
+
+	// reduce name length if too long
 
 	while ( name.length > 20 ) {
 
@@ -26,7 +31,7 @@ function StationPopup ( station ) {
 	if ( long ) name = '...' + name;
 
 	this.addLine( name );
-	this.addLine( 'x: ' + point.x + ' m' ).addLine( 'y: ' + point.y + ' m' ).addLine( 'z: ' + point.z + ' m' );
+	this.addLine( 'x: ' + originalPoint.x + ' m' ).addLine( 'y: ' + originalPoint.y + ' m' ).addLine( 'z: ' + point.z + ' m' );
 
 }
 

@@ -703,6 +703,8 @@ function cutSection () {
 function selectSection ( id ) {
 
 	survey.clearSectionSelection();
+	survey.stations.clearSelected();
+
 	var node = survey.selectSection( id );
 
 	var entranceBox = survey.setEntrancesSelected();
@@ -714,6 +716,8 @@ function selectSection ( id ) {
 	if ( id === 0 ) return;
 
 	if ( node.p === undefined ) {
+
+		// a section of the survey rather than a station
 
 		var box = survey.getSelectedBox();
 		var boundingBox;
@@ -735,6 +739,8 @@ function selectSection ( id ) {
 		cameraMove.prepare( null, boundingBox );
 
 	} else {
+
+		// a single station
 
 		survey.stations.selectStation( node );
 

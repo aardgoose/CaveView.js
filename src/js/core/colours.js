@@ -147,9 +147,9 @@ function scaleToTexture ( colours ) {
 	var l = colours.length;
 	var data = new Uint8Array( l * 3 );
 
-	for ( var i = 0; i < l; i++ ) {
+	for ( var i = 0; i < l; ) {
 
-		var c      = colours[ i ];
+		var c = colours[ l - ++i ];
 		var offset = i * 3;
 
 		data[ offset ]     = c[0];

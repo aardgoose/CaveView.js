@@ -104,6 +104,21 @@ Stations.prototype.getStationByIndex = function ( index ) {
 
 };
 
+Stations.prototype.clearSelected = function () {
+
+	if ( this.selected !== null ) {
+
+		var pSize = this.geometry.getAttribute( 'pSize' );
+
+		pSize.setX( this.selected, this.selectedSize );
+		pSize.needsUpdate = true;
+
+		this.selected = null;
+
+	}
+
+};
+
 Stations.prototype.selectStation = function ( node ) {
 
 	this.selectStationByIndex( node.stationVertexIndex );

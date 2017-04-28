@@ -36,19 +36,18 @@ export var SHADING_ASPECT      = 11;
 
 // layer tags for scene objects
 
-export var FEATURE_BOX           = 1;
-export var FEATURE_SELECTED_BOX  = 2;
-export var FEATURE_ENTRANCES     = 3;
-export var FEATURE_TERRAIN       = 4;
-export var FEATURE_STATIONS      = 5;
-export var FEATURE_TRACES        = 6;
+export var LEG_CAVE              = 1;
+export var LEG_SPLAY             = 2;
+export var LEG_SURFACE           = 3;
+export var FEATURE_BOX           = 4;
+export var FEATURE_SELECTED_BOX  = 5;
+export var FEATURE_ENTRANCES     = 6;
+export var FEATURE_TERRAIN       = 7;
+export var FEATURE_STATIONS      = 8;
+export var FEATURE_TRACES        = 9;
 
-export var FACE_WALLS            = 7;
-export var FACE_SCRAPS           = 8;
-
-export var LEG_CAVE              = 9;
-export var LEG_SPLAY             = 10;
-export var LEG_SURFACE           = 11;
+export var FACE_WALLS            = 10;
+export var FACE_SCRAPS           = 11;
 
 // flags in legs exported by Cave models
 

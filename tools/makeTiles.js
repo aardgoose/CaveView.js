@@ -49,20 +49,23 @@ function tileArea( x, y, z, maxZoom ) {
 
 // EPSG:3875 "Web Mercator" tile range
 
+var mapSet = 'Mulu';
+var sourceRaster = 'mulu1';
+
 var tileSet = {
-		title: 'Dales 1',
-		dtmMaxZoom: 13,
-		zoomMax: 18,
-		zoomMin: 10,
-		divisions: 128,
-		directory: '',
-		subdirectory: 'dales1',
-		dtmScale: 64,
-		minX: 504,
-		maxX: 505,
-		minY: 327,
-		maxY: 327
-	};
+	title: 'Mulu',
+	dtmMaxZoom: 13,
+	maxZoom: 18,
+	minZoom: 10,
+	divisions: 128,
+	directory: '',
+	subdirectory: 'mulu',
+	dtmScale: 64,
+	minX: 838,
+	maxX: 839,
+	minY: 499,
+	maxY: 500
+};
 
 var x, y, outFile, cmd;
 var n, s, e, w;

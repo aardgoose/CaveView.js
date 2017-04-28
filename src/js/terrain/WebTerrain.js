@@ -90,7 +90,7 @@ WebTerrain.prototype.hasCoverage = function () {
 
 		tileSet = tileSets[ i ];
 
-		coverage = this.getCoverage( limits, tileSet.zoomMin );
+		coverage = this.getCoverage( limits, tileSet.minZoom );
 
 		if ( ( coverage.min_x >= tileSet.minX && coverage.max_x <= tileSet.maxX )
 				&& (
@@ -134,7 +134,7 @@ WebTerrain.prototype.pickCoverage = function ( limits, zoom ) {
 	var tileSet = this.tileSet;
 	var coverage;
 
-	zoom = zoom || tileSet.zoomMax;
+	zoom = zoom || tileSet.maxZoom;
 	zoom++;
 
 	do {
@@ -142,7 +142,7 @@ WebTerrain.prototype.pickCoverage = function ( limits, zoom ) {
 		--zoom;
 		coverage = this.getCoverage( limits, zoom );
 
-	} while ( coverage.count > 4 && zoom > tileSet.zoomMin );
+	} while ( coverage.count > 4 && zoom > tileSet.minZoom );
 
 	return coverage;
 
@@ -502,7 +502,7 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 WebTerrain.prototype.zoomCheck = function ( camera ) {
 
-	var maxZoom     = this.tileSet.zoomMax;
+	var maxZoom     = this.tileSet.maxZoom;
 	var initialZoom = this.initialZoom;
 	var self = this;
 

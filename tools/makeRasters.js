@@ -2,30 +2,30 @@
 
 var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-var mapSet = 'UK';
-var sourceRaster = 'gdem_uk';
+var mapSet = 'Mulu';
+var sourceRaster = 'mulu3';
 
 var tileSet = {
-		title: 'Dales 1',
-		dtmMaxZoom: 13,
-		zoomMax: 18,
-		zoomMin: 10,
-		divisions: 128,
-		directory: '',
-		subdirectory: 'dales1',
-		dtmScale: 64,
-		minX: 504,
-		maxX: 505,
-		minY: 327,
-		maxY: 327
-	};
+	title: 'Mulu',
+	dtmMaxZoom: 13,
+	maxZoom: 18,
+	minZoom: 10,
+	divisions: 128,
+	directory: '',
+	subdirectory: 'mulu',
+	dtmScale: 64,
+	minX: 838,
+	maxX: 839,
+	minY: 499,
+	maxY: 500
+};
 
 var n,s,e,w, zoom;
 var cmd;
 
-var maxTileWidth = halfMapExtent / Math.pow( 2, tileSet.zoomMin - 1 );
+var maxTileWidth = halfMapExtent / Math.pow( 2, tileSet.minZoom - 1 );
 
-for ( zoom = tileSet.zoomMin; zoom <= tileSet.dtmMaxZoom; zoom++ ) {
+for ( zoom = tileSet.minZoom; zoom <= tileSet.dtmMaxZoom; zoom++ ) {
 
 	var tileWidth = halfMapExtent / Math.pow( 2, zoom - 1 );
 	var resolution = tileWidth / tileSet.divisions; // note: tile area extended by resolution/2 all round giving 129 sample row & columns

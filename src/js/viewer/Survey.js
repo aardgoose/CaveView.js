@@ -49,6 +49,7 @@ function Survey ( cave ) {
 	this.selectedSectionIds = new Set();
 	this.selectedSection = 0;
 	this.selectedBox = null;
+	this.featureBox = null;
 	this.surveyTree = null;
 	this.projection = null;
 
@@ -972,6 +973,7 @@ Survey.prototype.setFeatureBox = function () {
 	box.layers.set( FEATURE_BOX );
 	box.name = 'survey-boundingbox';
 
+	this.featureBox = box;
 	this.add( box );
 
 };
@@ -1036,7 +1038,7 @@ Survey.prototype.cutSection = function ( id ) {
 		parent = obj.parent;
 		if ( parent ) parent.remove( obj );
 
-		//dispose of all geometry of this objext and descendants
+		// dispose of all geometry of this object and descendants
 
 		if ( obj.geometry ) obj.geometry.dispose();
 
@@ -1052,16 +1054,18 @@ Survey.prototype.cutSection = function ( id ) {
 	this.stats[ LEG_SURFACE ] = this.getLegStats( legMeshes[ LEG_SURFACE ] );
 	this.stats[ LEG_SPLAY   ] = this.getLegStats( legMeshes[ LEG_SPLAY   ] );
 
-	this.limits = this.getBounds();
-
-	this.setFeatureBox();
-
 	this.surveyTree = this.surveyTree.findById( id );
 	this.surveyTree.parent = null;
 
 	this.loadStations( this.surveyTree );
 
+	// ordering is important here
+
 	this.clearSectionSelection();
+
+	this.limits = this.getBounds();
+
+	this.featureBox.update( this.limits );
 
 	this.cutInProgress = true;
 
@@ -1115,7 +1119,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 		default:
 
-			console.log('unexpected object type in survey cut', obj.type );
+//			console.log('unexpected object type in survey cut', obj.type );
 
 		}
 
@@ -1325,7 +1329,7 @@ Survey.prototype.getBounds = function () {
 
 		var geometry = obj.geometry;
 
-		if ( geometry && geometry.boundingBox && geometry.name ) {
+		if ( geometry && geometry.boundingBox ) {
 
 			min.min( geometry.boundingBox.min );
 			max.max( geometry.boundingBox.max );

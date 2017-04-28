@@ -24,7 +24,7 @@ function Box3Helper( box3, color ) {
 
 	this.matrixAutoUpdate = false;
 
-	this.update();
+	this.update( box3 );
 
 }
 
@@ -33,14 +33,14 @@ Box3Helper.prototype.type = 'Box3Helper';
 Box3Helper.prototype = Object.create( LineSegments.prototype );
 Box3Helper.prototype.constructor = Box3Helper;
 
-Box3Helper.prototype.update = function () {
+Box3Helper.prototype.update = function ( box3 ) {
 
-	var box = this.box3;
+	this.box3 = box3;
 
-	if ( box.isEmpty() ) return;
+	if ( box3.isEmpty() ) return;
 
-	var min = box.min;
-	var max = box.max;
+	var min = box3.min;
+	var max = box3.max;
 
 	/*
 		   5____4

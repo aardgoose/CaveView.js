@@ -968,13 +968,21 @@ Survey.prototype.selectSection = function ( id ) {
 
 Survey.prototype.setFeatureBox = function () {
 
-	var box = new Box3Helper( this.limits, 0xffffff );
+	if ( this.featureBox === null ) {
 
-	box.layers.set( FEATURE_BOX );
-	box.name = 'survey-boundingbox';
+		var box = new Box3Helper( this.limits, 0xffffff );
 
-	this.featureBox = box;
-	this.add( box );
+		box.layers.set( FEATURE_BOX );
+		box.name = 'survey-boundingbox';
+
+		this.featureBox = box;
+		this.add( box );
+
+	} else {
+
+		this.featureBox.update( this.limits );
+
+	}
 
 };
 
@@ -1065,7 +1073,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 	this.limits = this.getBounds();
 
-	this.featureBox.update( this.limits );
+	this.setFeatureBox();
 
 	this.cutInProgress = true;
 
@@ -1838,7 +1846,7 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 		}
 
-		if ( this.selectedSection > 0 && runsSelected > 0 ) {
+		if ( this.selectedSection > 0 && runsSelected > 0  && this.selectedBox === null ) {
 
 			this.selectedBox = new Box3Helper( box, 0x0000ff );
 

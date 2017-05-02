@@ -1,7 +1,7 @@
 import {
 	CAMERA_ORTHOGRAPHIC,CAMERA_PERSPECTIVE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, 
-	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_ASPECT,
+	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_ASPECT, SHADING_DEPTH_CURSOR,
 	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
 } from '../core/constants';
 
@@ -468,7 +468,12 @@ function initSettingsPage () {
 
 	var legShadingModesActive = Object.assign( {}, legShadingModes );
 
-	if ( viewState.hasTerrain ) legShadingModesActive.depth = SHADING_DEPTH;
+	if ( viewState.hasTerrain ) {
+
+		legShadingModesActive[ 'depth' ] = SHADING_DEPTH;
+		legShadingModesActive[ 'depth cursor' ] = SHADING_DEPTH_CURSOR;
+
+	}
 
 	var page = new Page( 'icon_settings' );
 

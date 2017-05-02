@@ -473,6 +473,7 @@ function renderDepthTexture () {
 
 	Materials.createDepthMaterial( MATERIAL_LINE, limits, renderTarget.texture );
 	Materials.createDepthMaterial( MATERIAL_SURFACE, limits, renderTarget.texture );
+	Materials.createDepthCursorMaterial( limits, renderTarget.texture, 100 ); // FXIMRE initial depth
 
 	renderer.setSize( dim, dim );
 	renderer.setPixelRatio( 1 );
@@ -630,8 +631,8 @@ function setViewMode ( mode, t ) {
 
 	}
 
+	cameraMove.cancel();
 	cameraMove.prepare( position, new Vector3() );
-
 	cameraMove.start( tAnimate );
 
 }

@@ -3,7 +3,8 @@ import { Tile } from './Tile';
 //import { Box3Helper } from '../core/Box3';
 import { HUD } from '../hud/HUD';
 import { WorkerPool } from '../workers/WorkerPool';
-import { SHADING_OVERLAY, getEnvironmentValue } from '../core/constants';
+import { getEnvironmentValue } from '../core/lib';
+import { SHADING_OVERLAY } from '../core/constants';
 
 import {
 	Vector2, Frustum, Box2, Matrix4, FileLoader

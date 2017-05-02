@@ -1,4 +1,32 @@
 
+var environment = new Map();
+
+function setEnvironment ( envs ) {
+
+	var pName;
+
+	for ( pName in envs ) {
+
+		environment.set ( pName , envs[ pName ] );
+
+	}
+
+}
+
+function getEnvironmentValue ( item, defaultValue ) {
+
+	if ( environment.has( item ) ) {
+
+		return environment.get( item );
+
+	} else {
+
+		return defaultValue;
+
+	}
+
+}
+
 function toOSref ( coordinate ) {
 
 	var easting  = coordinate.x;
@@ -106,6 +134,6 @@ if ( ! String.prototype.repeat ) {
 }
 
 
-export { toOSref, replaceExtension };
+export { toOSref, replaceExtension, setEnvironment, getEnvironmentValue };
 
 // EOF

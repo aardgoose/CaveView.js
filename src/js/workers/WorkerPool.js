@@ -1,4 +1,4 @@
-import { getEnvironmentValue } from '../core/constants';
+import { getEnvironmentValue } from '../core/lib';
 
 function WorkerPool ( script ) {
 

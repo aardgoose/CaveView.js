@@ -1,6 +1,5 @@
 
-import { getEnvironmentValue } from '../core/constants';
-import { replaceExtension } from '../core/lib';
+import { getEnvironmentValue, replaceExtension } from '../core/lib';
 import { Svx3dHandler } from './svx3dHandler';
 import { loxHandler } from './loxHandler';
 import { RegionHandler } from './RegionHandler';

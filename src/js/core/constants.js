@@ -62,35 +62,4 @@ export var STATION_ENTRANCE = 1;
 
 export var upAxis = new Vector3( 0, 0, 1 );
 
-var environment = new Map();
-
-function setEnvironment ( envs ) {
-
-	var pName;
-
-	for ( pName in envs ) {
-
-		environment.set ( pName , envs[ pName ] );
-
-	}
-
-}
-
-function getEnvironmentValue ( item, defaultValue ) {
-
-	if ( environment.has( item ) ) {
-
-		return environment.get( item );
-
-	} else {
-
-		return defaultValue;
-
-	}
-
-}
-
-export { setEnvironment };
-export { getEnvironmentValue };
-
 // EOF

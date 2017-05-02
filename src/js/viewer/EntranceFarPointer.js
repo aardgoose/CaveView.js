@@ -1,5 +1,6 @@
 
-import { getEnvironmentValue, FEATURE_ENTRANCES } from '../core/constants';
+import { FEATURE_ENTRANCES } from '../core/constants';
+import { getEnvironmentValue } from '../core/lib';
 
 import {
 	BufferAttribute,

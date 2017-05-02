@@ -71,7 +71,7 @@ var cameraModes = {
 	'Perspective':  CAMERA_PERSPECTIVE
 };
 
-function init ( domID ) { // public method
+function init ( domID, configuration ) { // public method
 
 	container = document.getElementById( domID );
 
@@ -84,7 +84,7 @@ function init ( domID ) { // public method
 
 	progressBar = new ProgressBar( container );
 
-	Viewer.init( domID );
+	Viewer.init( domID, configuration );
 
 	caveLoader = new CaveLoader( caveLoaded, progress );
 

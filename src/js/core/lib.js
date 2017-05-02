@@ -3,6 +3,8 @@ var environment = new Map();
 
 function setEnvironment ( envs ) {
 
+	if ( envs === undefined ) return;
+
 	var pName;
 
 	for ( pName in envs ) {

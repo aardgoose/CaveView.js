@@ -19,6 +19,7 @@ import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { Overlay } from '../terrain/Overlay';
+import { setEnvironment } from '../core/lib';
 
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
 
@@ -84,11 +85,13 @@ var cameraMove;
 var lastActivityTime = 0;
 //var leakWatcher;
 
-function init ( domID ) { // public method
+function init ( domID, configuration ) { // public method
 
 	container = document.getElementById( domID );
 
 	if ( ! container ) alert( 'No container DOM object [' + domID + '] available' );
+
+	setEnvironment( configuration );
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
@@ -473,7 +476,7 @@ function renderDepthTexture () {
 
 	Materials.createDepthMaterial( MATERIAL_LINE, limits, renderTarget.texture );
 	Materials.createDepthMaterial( MATERIAL_SURFACE, limits, renderTarget.texture );
-	Materials.createDepthCursorMaterial( limits, renderTarget.texture, 100 ); // FXIMRE initial depth
+	Materials.createDepthCursorMaterial( limits, renderTarget.texture, 20 ); // FXIMRE initial depth
 
 	renderer.setSize( dim, dim );
 	renderer.setPixelRatio( 1 );

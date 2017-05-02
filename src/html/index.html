@@ -14,9 +14,7 @@
 
 function onload () {
 
-	CV.setEnvironment( { terrainDirectory: "/terrain/", surveyDirectory: "/surveys/", home: "/CaveView/" } );
-
-	CV.UI.init( "scene" );
+	CV.UI.init( "scene", { terrainDirectory: "/terrain/", surveyDirectory: "/surveys/", home: "/CaveView/" } );
 
 	CV.Viewer.addOverlay( 'OSM', function ( x, y, z ) { return 'https://b.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; } );
 	CV.Viewer.addOverlay( 'NLS', function ( x, y, z ) { return NLSTileUrlOS( x, y, z ); } ) ); // eslint-disable-line no-undef

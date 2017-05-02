@@ -2,6 +2,7 @@
 import { AspectMaterial } from './AspectMaterial';
 import { CursorMaterial } from './CursorMaterial';
 import { DepthMaterial } from './DepthMaterial';
+import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMapMaterial } from './DepthMapMaterial';
 import { HeightMaterial } from './HeightMaterial';
 
@@ -20,7 +21,7 @@ function getHeightMaterial ( type ) {
 
 	cache.set( name, material );
 
-	viewState.addEventListener( 'newCave',  _updateHeightMaterial );
+	viewState.addEventListener( 'newCave', _updateHeightMaterial );
 
 	return material;
 
@@ -52,13 +53,13 @@ function createDepthMaterial ( type, limits, texture ) {
 
 	cache.set( name, material );
 
-	viewState.addEventListener( 'newCave',  _updateDepthMaterial );
+	viewState.addEventListener( 'newCave', _updateDepthMaterial );
 
 	return material;
 
 	function _updateDepthMaterial ( /* event */ ) {
 
-		viewState.removeEventListener( 'newCave',  _updateDepthMaterial );
+		viewState.removeEventListener( 'newCave', _updateDepthMaterial );
 
 		material.dispose();
 		cache.delete( name );
@@ -85,7 +86,7 @@ function getCursorMaterial ( type ) {
 
 	cache.set( name, material );
 
-	viewState.addEventListener( 'cursorChange',  _updateCursorMaterial );
+	viewState.addEventListener( 'cursorChange', _updateCursorMaterial );
 
 	return material;
 
@@ -96,6 +97,49 @@ function getCursorMaterial ( type ) {
 		material.uniforms.cursor.value = cursorHeight;
 
 	}
+
+}
+
+function createDepthCursorMaterial ( limits, texture, initialHeight ) {
+
+	var name = 'depthCursor';
+
+	if ( cache.has( name ) ) return cache.get( name );
+
+	var initialDepth = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
+
+	var material = new DepthCursorMaterial( limits, texture, 20 );
+
+	cache.set( name, material );
+
+	viewState.addEventListener( 'cursorChange', _updateDepthCursorMaterial );
+	viewState.addEventListener( 'newCave', _deleteDepthCursorMaterial );
+
+	return material;
+
+	function _updateDepthCursorMaterial ( /* event */ ) {
+
+		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
+
+		material.uniforms.cursor.value = cursorHeight;
+
+	}
+
+	function _deleteDepthCursorMaterial ( /* event */ ) {
+
+		viewState.removeEventListener( 'newCave', _deleteDepthCursorMaterial );
+		viewState.removeEventListener( 'cursorChange', _updateDepthCursorMaterial );
+
+		material.dispose();
+		cache.delete( name );
+
+	}
+
+}
+
+function getDepthCursorMaterial () {
+
+	return cache.get( 'depthCursor' );
 
 }
 
@@ -136,14 +180,16 @@ function initCache ( viewerViewState ) {
 }
 
 export var Materials = {
-	createDepthMaterial: createDepthMaterial,
-	getHeightMaterial:   getHeightMaterial,
-	getDepthMapMaterial: getDepthMapMaterial,
-	getDepthMaterial:    getDepthMaterial,
-	getCursorMaterial:   getCursorMaterial,
-	getLineMaterial:     getLineMaterial,
-	getAspectMaterial:   getAspectMaterial,
-	initCache:           initCache
+	createDepthMaterial:       createDepthMaterial,
+	createDepthCursorMaterial: createDepthCursorMaterial,
+	getHeightMaterial:      getHeightMaterial,
+	getDepthMapMaterial:    getDepthMapMaterial,
+	getDepthMaterial:       getDepthMaterial,
+	getDepthCursorMaterial: getDepthCursorMaterial,
+	getCursorMaterial:      getCursorMaterial,
+	getLineMaterial:        getLineMaterial,
+	getAspectMaterial:      getAspectMaterial,
+	initCache:              initCache
 };
 
 // EOF

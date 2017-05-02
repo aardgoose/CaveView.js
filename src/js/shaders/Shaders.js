@@ -12,6 +12,9 @@ import depthMapFragmentShader from './depthMapFragmentShader.glsl';
 import depthVertexShader from './depthVertexShader.glsl';
 import depthFragmentShader from './depthFragmentShader.glsl';
 
+import depthCursorVertexShader from './depthCursorVertexShader.glsl';
+import depthCursorFragmentShader from './depthCursorFragmentShader.glsl';
+
 import extendedPointsVertexShader from './extendedPointsVertexShader.glsl';
 import extendedPointsFragmentShader from './extendedPointsFragmentShader.glsl';
 
@@ -30,6 +33,8 @@ export var Shaders =  {
 	depthMapFragmentShader:	depthMapFragmentShader,
 	depthVertexShader:		depthVertexShader,
 	depthFragmentShader:	depthFragmentShader,
+	depthCursorVertexShader:		depthCursorVertexShader,
+	depthCursorFragmentShader:		depthCursorFragmentShader,
 	extendedPointsVertexShader:		extendedPointsVertexShader,
 	extendedPointsFragmentShader:	extendedPointsFragmentShader,
 	heightVertexShader:		heightVertexShader,

@@ -4,7 +4,8 @@ import {
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH,
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, 
+	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR,
 	upAxis
 } from '../core/constants';
 
@@ -1387,6 +1388,14 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 		break;
 
+	case SHADING_DEPTH_CURSOR:
+
+		material = Materials.getDepthCursorMaterial();
+
+		if ( ! material ) return false;
+
+		break;
+
 	}
 
 	if ( this.setLegShading( LEG_CAVE, mode ) ) {
@@ -1529,6 +1538,12 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 		break;
 
+	case SHADING_DEPTH_CURSOR:
+
+		this.setLegColourByDepthCursor( mesh );
+
+		break;
+
 	case SHADING_SINGLE:
 
 		this.setLegColourByColour( mesh, ColourCache.red );
@@ -1640,6 +1655,12 @@ Survey.prototype.setLegColourByMaterial = function ( mesh, material ) {
 Survey.prototype.setLegColourByDepth = function ( mesh ) {
 
 	this.setLegColourByMaterial( mesh, Materials.getDepthMaterial( MATERIAL_LINE ) );
+
+};
+
+Survey.prototype.setLegColourByDepthCursor = function ( mesh ) {
+
+	this.setLegColourByMaterial( mesh, Materials.getDepthCursorMaterial( MATERIAL_LINE ) );
 
 };
 

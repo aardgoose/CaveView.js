@@ -22,17 +22,18 @@ export var MOUSE_MODE_NORMAL     = 0;
 export var MOUSE_MODE_ROUTE_EDIT = 1;
 // shading types
 
-export var SHADING_HEIGHT      = 1;
-export var SHADING_LENGTH      = 2;
-export var SHADING_INCLINATION = 3;
-export var SHADING_CURSOR      = 4;
-export var SHADING_SINGLE      = 5;
-export var SHADING_SURVEY      = 6; 
-export var SHADING_OVERLAY     = 7;
-export var SHADING_SHADED      = 8;
-export var SHADING_DEPTH       = 9;
-export var SHADING_PATH        = 10;
-export var SHADING_ASPECT      = 11;
+export var SHADING_HEIGHT       = 1;
+export var SHADING_LENGTH       = 2;
+export var SHADING_INCLINATION  = 3;
+export var SHADING_CURSOR       = 4;
+export var SHADING_SINGLE       = 5;
+export var SHADING_SURVEY       = 6;
+export var SHADING_OVERLAY      = 7;
+export var SHADING_SHADED       = 8;
+export var SHADING_DEPTH        = 9;
+export var SHADING_PATH         = 10;
+export var SHADING_ASPECT       = 11;
+export var SHADING_DEPTH_CURSOR = 12;
 
 // layer tags for scene objects
 

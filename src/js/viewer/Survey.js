@@ -9,8 +9,7 @@ import {
 	upAxis
 } from '../core/constants';
 
-import { replaceExtension } from '../core/lib';
-import { getEnvironmentValue } from '../core/constants';
+import { replaceExtension, getEnvironmentValue } from '../core/lib';
 import { ColourCache } from '../core/ColourCache';
 import { Tree } from '../core/Tree';
 import { Box3Helper } from '../core/Box3';

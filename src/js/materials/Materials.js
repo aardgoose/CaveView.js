@@ -106,11 +106,13 @@ function createDepthCursorMaterial ( limits, texture, initialDepth ) {
 
 	if ( cache.has( name ) ) return cache.get( name );
 
-//	var initialDepth = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), 0 );
+	var maxDepth = viewState.maxHeight - viewState.minHeight;
 
-	viewState.cursorHeight = 20;
+	initialDepth = Math.max( Math.min( initialDepth, maxDepth ), 0 );
 
-	var material = new DepthCursorMaterial( limits, texture, 20 );
+	viewState.cursorHeight = initialDepth;
+
+	var material = new DepthCursorMaterial( limits, texture, initialDepth );
 
 	cache.set( name, material );
 
@@ -121,7 +123,7 @@ function createDepthCursorMaterial ( limits, texture, initialDepth ) {
 
 	function _updateDepthCursorMaterial ( /* event */ ) {
 
-		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight - viewState.minHeight ), 0 );
+		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, maxDepth ), 0 );
 
 		material.uniforms.cursor.value = cursorHeight;
 

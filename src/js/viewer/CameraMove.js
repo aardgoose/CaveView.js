@@ -160,6 +160,15 @@ CameraMove.prototype.animate = function () {
 	var controls = this.controls;
 	var curve = this.curve;
 
+	if ( tRemaining < 0 ) {
+
+		this.frameCount = 0;
+		this.endAnimation();
+
+		return;
+
+	}
+
 	if ( this.moveRequired ) {
 
 		// update camera position and controls.target
@@ -220,6 +229,13 @@ CameraMove.prototype.endAnimation = function () {
 CameraMove.prototype.stop = function () {
 
 	this.frameCount = 1;
+
+};
+
+CameraMove.prototype.cancel = function () {
+
+	this.frameCount = 0;
+	this.skipNext = false;
 
 };
 

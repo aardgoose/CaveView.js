@@ -39,4 +39,4 @@ StationPopup.prototype = Object.create( Popup.prototype );
 
 StationPopup.prototype.constructor = StationPopup;
 
-export { StationPopup }
+export { StationPopup };

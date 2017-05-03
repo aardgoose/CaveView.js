@@ -8,18 +8,18 @@
 </head>
 <body onload="onload();" >
 <script type="text/javascript" src="http://nls.tileserver.com/api.js"></script>
-<script type="text/javascript" src="CaveView/lib/proj4.js" ></script>
-<script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
+<script type="text/javascript" src="/CaveView.js/CaveView/lib/proj4.js" ></script>
+<script type="text/javascript" src="/CaveView.js/CaveView/js/CaveView.js" ></script>
 <script type="text/javascript" >
 
 function onload () {
 
-	CV.UI.init( "scene", { home: "/CaveView/", terrainDirectory: "/terrain/", surveyDirectory: "/surveys/" } );
+	CV.UI.init( 'scene', { home: '/CaveView.js/CaveView/', terrainDirectory: '/CaveView.js/terrain/', surveyDirectory: '/CaveView.js/surveys/' } );
 
 	CV.Viewer.addOverlay( 'OSM', function ( x, y, z ) { return 'https://b.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; } );
 	CV.Viewer.addOverlay( 'NLS', NLSTileUrlOS ); // eslint-disable-line no-undef
 
-	CV.UI.loadCaveList( [ "Giants_Oxlow_Maskhill_System.3d", "Castleton_Master.3d", "Cheddar.lox", "Peak_Master.3d", "all.3d" ] );
+	CV.UI.loadCaveList( [ 'Giants_Oxlow_Maskhill_System.3d', 'Castleton_Master.3d', 'Cheddar.lox', 'Peak_Master.3d', 'all.3d' ] );
 
 }
 

@@ -271,7 +271,7 @@ function runDemo() {
 
 	}
 
-	var d = demo[index++];
+	var d = demo[ index++ ];
 	var p;
 
 	captionDiv.textContent = d.caption;
@@ -280,13 +280,13 @@ function runDemo() {
 
 	if ( view ) for ( p in view ) viewState[ p ] = view[ p ];
 
-	setTimeout(runDemo, d.delay * 1000 );
+	setTimeout( runDemo, d.delay * 1000 );
 
 }
 
 function progress ( pcent ) {
 
-	captionDiv.textContent = "Loading ... [ " +  pcent + "%";
+	captionDiv.textContent = 'Loading ... [ ' +  pcent + '%';
 
 }
 
@@ -297,7 +297,7 @@ function caveLoaded ( newCave ) {
 	if ( ! demoRunning ) {
 
 		viewState = CV.Viewer.getState;
-		viewState.addEventListener( "newCave", viewComplete );
+		viewState.addEventListener( 'newCave', viewComplete );
 
 	}
 
@@ -328,18 +328,18 @@ function onload () {
 
 	if ( ! Detector.webgl ) {
 
-		Detector.addGetWebGLMessage( { parent: document.getElementById( "scene" ) } );
+		Detector.addGetWebGLMessage( { parent: document.getElementById( 'scene' ) } );
 		return;
 
 	}
 
-	CV.Viewer.init( "scene", { home: 'CaveView/', /* terrainDirectory: "terrain/", */  terrainDirectory: '/terrain/', surveyDirectory: 'surveys/' } );
+	CV.Viewer.init( 'scene', { home: 'CaveView/', /* terrainDirectory: "terrain/", */  terrainDirectory: '/terrain/', surveyDirectory: 'surveys/' } );
 
 	CV.Viewer.addOverlay( 'OSM', function ( x, y, z ) { return 'https://b.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; } );
 
-	caveLoader.loadURL( "P8_Master.3d" );
+	caveLoader.loadURL( 'P8_Master.3d' );
 	
-	captionDiv = document.getElementById( "scene-caption" );
+	captionDiv = document.getElementById( 'scene-caption' );
 
 }
 
@@ -372,4 +372,3 @@ function onload () {
 <p>Contains DTM data &copy; Environment Agency copyright and/or database right 2015.</p>
 </body>
 </html>
-

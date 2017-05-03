@@ -3,8 +3,7 @@
 <head>
 	<title>demo 3d cave viewer</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<!--	<link type="text/css" href="/CaveView.js/CaveView/css/caveview.css" rel="stylesheet"/> -->
-	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+	<link type="text/css" href="/CaveView.js/CaveView/css/caveview.css" rel="stylesheet"/>
 	<style>
 
 		h1, h2, p {
@@ -43,9 +42,9 @@
 	</style>
 </head>
 <body onload="onload();" >
-<script type="text/javascript" src="CaveView/lib/Detector.js"></script>
-<script type="text/javascript" src="CaveView/lib/proj4.js" ></script>
-<script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
+<script type="text/javascript" src="/CaveView.js/CaveView/lib/Detector.js"></script>
+<script type="text/javascript" src="/CaveView.js/CaveView/lib/proj4.js" ></script>
+<script type="text/javascript" src="/CaveView.js/CaveView/js/CaveView.js" ></script>
 <script type="text/javascript" >
 "use strict";
 
@@ -333,7 +332,7 @@ function onload () {
 
 	}
 
-	CV.Viewer.init( 'scene', { home: 'CaveView/', /* terrainDirectory: "terrain/", */  terrainDirectory: '/terrain/', surveyDirectory: 'surveys/' } );
+	CV.Viewer.init( 'scene', { home: 'CaveView/', terrainDirectory: '/CaveView.js/terrain/', surveyDirectory: '/CaveView.js/surveys/' } );
 
 	CV.Viewer.addOverlay( 'OSM', function ( x, y, z ) { return 'https://b.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; } );
 

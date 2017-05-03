@@ -3,7 +3,8 @@
 <head>
 	<title>demo 3d cave viewer</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<link type="text/css" href="/CaveView.js/build/CaveView/css/caveview.css" rel="stylesheet"/>
+<!--	<link type="text/css" href="/CaveView.js/CaveView/css/caveview.css" rel="stylesheet"/> -->
+	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
 	<style>
 
 		h1, h2, p {
@@ -42,8 +43,9 @@
 	</style>
 </head>
 <body onload="onload();" >
-<script type="text/javascript" src="build/CaveView/lib/Detector.js"></script>
-<script type="text/javascript" src="build/CaveView/js/CaveView.js" ></script>
+<script type="text/javascript" src="CaveView/lib/Detector.js"></script>
+<script type="text/javascript" src="CaveView/lib/proj4.js" ></script>
+<script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
 <script type="text/javascript" >
 "use strict";
 
@@ -78,7 +80,7 @@ var demo = [
 	},
 	{
 		caption: "passage walls ...",
-		delay: 2,
+		delay: 5,
 		view: {
 			splays: false,
 			walls: true
@@ -87,7 +89,7 @@ var demo = [
 	{
 		caption: "...",
 		delay: 2,
-		controls: {
+		view: {
 			autoRotate: true,
 			autoRotateRate: 2.0
 		}
@@ -138,11 +140,11 @@ var demo = [
 		}
 	},
 	{
-		caption: "Entrance markers",
-		delay: 5,
+		caption: "Terrain",
+		delay: 3,
 		view: {
-			view: CV.VIEW_ELEVATION_N,
-			entrances: true
+			autoRotate: false,
+			view: CV.VIEW_PLAN
 		}
 	},
 	{
@@ -155,17 +157,26 @@ var demo = [
 		}
 	},
 	{
+		caption: "Map Overlays",
+		delay: 5,
+		view: {
+			terrainOpacity: 1,
+			terrain: true,
+			terrainShading: CV.SHADING_OVERLAY
+		}
+	},
+	{
 		caption: "Adjustable terrain transparency",
 		delay: 5,
 		view: {
 			terrainOpacity: 0.4,
-			view: CV.VIEW_ELEVATION_S
 		}
 	},
 	{
 		caption: "On screen indicators",
 		delay: 5,
 		view: {
+			view: CV.VIEW_ELEVATION_S,
 			HUD: true
 		}
 	},
@@ -212,22 +223,24 @@ var demo = [
 			view: CV.VIEW_ELEVATION_S
 		}
 	},
-/*	{
+	{
 		caption: "Station markers",
 		delay: 5,
 		view: {
 			box: false,
 			walls: false,
 			shadingMode: CV.SHADING_HEIGHT,
+			autoRotate: true,
+			autoRotateRate: 1.0,
 			stations: true
 		}
-	}, */
+	},
 	{
 		caption: "Orthographic view",
 		delay: 5,
 		view: {
-			cameraType: CV.CAMERA_ORTHOGRAPHIC,
-			view: CV.VIEW_ELEVATION_S
+			view: CV.VIEW_ELEVATION_N,
+			cameraType: CV.CAMERA_ORTHOGRAPHIC
 		}
 	},
 	{
@@ -239,10 +252,9 @@ var demo = [
 			cameraType: CV.CAMERA_PERSPECTIVE,
 			box: false,
 			shadingMode: CV.SHADING_SINGLE,
+			terrainShading: CV.SHADING_SHADED,
 			walls: false,
-			HUD: false
-		},
-		controls: {
+			HUD: false,
 			autoRotate: false
 		}
 	},
@@ -302,10 +314,10 @@ function viewComplete () {
 
 	viewState.shadingMode = CV.SHADING_SINGLE;
 
-	viewState.entrances  = false;
-	viewState.box        = false;
-	viewState.HUD        = false;
-	viewState.walls      = false;
+	viewState.entrances = false;
+	viewState.box       = false;
+	viewState.HUD       = false;
+	viewState.walls     = false;
 
 	demoRunning = true;
 	runDemo();
@@ -321,14 +333,9 @@ function onload () {
 
 	}
 
-	CV.setEnvironment( { 
-	 home: "/CaveView.js/build/CaveView/", 
-	 terrainDirectory: "/CaveView.js/build/terrain/",
-	 surveyDirectory: "/CaveView.js/build/surveys/"
-	} );
+	CV.Viewer.init( "scene", { home: 'CaveView/', /* terrainDirectory: "terrain/", */  terrainDirectory: '/terrain/', surveyDirectory: 'surveys/' } );
 
-	CV.Viewer.init( "scene" );
-//	CV.Viewer.clearView();
+	CV.Viewer.addOverlay( 'OSM', function ( x, y, z ) { return 'https://b.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; } );
 
 	caveLoader.loadURL( "P8_Master.3d" );
 	
@@ -343,20 +350,21 @@ function onload () {
 <div id="info" >
 <p>Displays:</p>
 <ul><li><a href="http://survex.com/" >Survex</a> .3d</li><li><a href="http://therion.speleo.sk/" >Therion</a> .lox models</li></ul>
+<p>No plugins required.</p>
+<p><a href="fulldemo.html" >Full Demo with UI</a></p>
+<p><a href="installation.html" >Installation instructions</a></p>
+<p><a href="build.html" >Building instructions</a></p>
+<p><a href="https://github.com/aardgoose/CaveView.js/tree/master" >Source code available here.</a></p>
+<p><a href="https://threejs.org/" >Built with three.js r85</a></p>
 <p>Tested with the following browsers:</p>
 <ul>
-<li>Google Chrome 55</li>
-<li>Firefox 50</li>
+<li>Google Chrome 58</li>
+<li>Firefox 53</li>
 <li>Internet Explorer 11</li>
 <li>Microsoft Edge</li>
 <li>Opera 38</li>
 <li>Safari 9.1 (on iOS and OS X)</li>
 </ul>
-<p>No plugins required.</p>
-<p><a href="fulldemo.html" >Full Demo with UI</a></p>
-<p><a href="installation.html" >Installation instructions</a></p>
-<p><a href="https://github.com/aardgoose/CaveView.js/tree/master" >Source code available here.</a></p>
-<p><a href="https://threejs.org/" >Built with three.js r83</a></p>
 </div>
 <div id="scene-caption" ></div>
 </div>

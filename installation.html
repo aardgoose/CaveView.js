@@ -50,6 +50,10 @@
 
 <pre>	&lt;script type="text/javascript" src="%path%/CaveView/js/CaveView.js" &gt;&lt;/script&gt;</pre>
 
+<p>The proj4js library is used by CaveView to transform from local to EPSG:3857 (Web Mercator) coordinate reference systems when CRS information is present in the survey model (currently only supported by the Survex .3d format). To include the proj4js library use:</p>
+
+<pre>	&lt;script type="text/javascript" src="%path%/CaveView/lib/proj4.js" &gt;&lt;/script&gt;</pre>
+
 <h3>Add a container element</h3>
 
 <p>Add an empty block element to the page, with a suitable <strong>id</strong> attribute. This contains the application, and be sized as required. For example a <strong>div</strong> element:</p>
@@ -64,18 +68,15 @@
 
 	function onLoad () {
 
-
-		// set the location of software and survey files
-
-		CV.setEnvironment( {
-			home: '% location of the unzipped CaveView directory on the survey %',
-			surveyDirectory: '% location of the survey files on the server %'
-		} );
-
-
 		// display the user interface - and a blank canvas
 
-		CV.UI.init( '% element-id %' );
+		// the configuration object specifies the location of CaveView, surveys and terrain files
+
+		CV.UI.init( '% element-id %', {
+			home: '% location of the unzipped CaveView directory on the survey %',
+			surveyDirectory: '% location of the survey files on the server %',
+			terrainDirectory: '% location of the terrain files on the server %'
+		} );
 
 
 		// load a single survey to display

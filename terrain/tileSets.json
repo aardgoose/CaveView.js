@@ -1,0 +1,31 @@
+
+[
+	{
+		"title": "Peak District",
+		"dtmMaxZoom": 14,
+		"maxZoom": 18,
+		"minZoom": 11,
+		"divisions": 128,
+		"directory": "",
+		"subdirectory": "peakDistrict",
+		"dtmScale": 64,
+		"minX": 1013,
+		"maxX": 1014,
+		"minY": 663,
+		"maxY": 665
+	},
+	{
+		"title": "Dales 1",
+		"dtmMaxZoom": 13,
+		"maxZoom": 18,
+		"minZoom": 10,
+		"divisions": 128,
+		"directory": "",
+		"subdirectory": "dales",
+		"dtmScale": 64,
+		"minX": 504,
+		"maxX": 505,
+		"minY": 327,
+		"maxY": 327
+	}
+]

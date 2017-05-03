@@ -220,8 +220,8 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		pos += 8;
 
-		if ( m_flags && 0x01 ) type = LEG_SURFACE;
-		if ( m_flags && 0x08 ) type = LEG_SPLAY;
+		if ( m_flags & 0x01 ) type = LEG_SURFACE;
+		if ( m_flags & 0x08 ) type = LEG_SPLAY;
 
 		var from = stations[ m_from ];
 		var to   = stations[ m_to ];

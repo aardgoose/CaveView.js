@@ -1,7 +1,7 @@
 
 import {
 	MATERIAL_LINE,
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_SINGLE, SHADING_SURVEY, SHADING_PATH,
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_SINGLE, SHADING_SURVEY, SHADING_PATH,
 } from '../core/constants';
 
 import { Viewer } from '../viewer/Viewer';
@@ -275,6 +275,22 @@ function viewChanged ( event ) {
 
 		break;
 
+	case SHADING_DEPTH_CURSOR:
+
+		if ( angleScale ) angleScale.setVisibility( false );
+
+		if ( linearScale ) {
+
+			linearScale.setMaterial( Materials.getDepthCursorMaterial( MATERIAL_LINE ) ).setVisibility( true );
+			linearScale.setRange( viewState.maxHeight - viewState.minHeight, 0, 'Depth' );
+			cursorChanged();
+
+			viewState.addEventListener( 'cursorChange', cursorChanged );
+
+		}
+
+		break;
+
 	case SHADING_LENGTH:
 
 		if ( angleScale ) angleScale.setVisibility( false );
@@ -322,8 +338,19 @@ function viewChanged ( event ) {
 
 function cursorChanged ( /* event */ ) {
 
-	var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
-	linearScale.setRange( viewState.minHeight, viewState.maxHeight, 'Cursor:' + Math.round( cursorHeight ) );
+	var cursorHeight;
+
+	if ( viewState.shadingMode === SHADING_CURSOR ) {
+
+		cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
+
+	} else {
+
+		cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight - viewState.minHeight ), 0 );
+
+	}
+
+	linearScale.setCaption( 'Cursor: ' + Math.round( cursorHeight ) );
 
 }
 

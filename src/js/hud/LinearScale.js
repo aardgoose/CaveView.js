@@ -103,6 +103,15 @@ LinearScale.prototype.setRange = function ( min, max, caption ) {
 	this.maxDiv.textContent = Math.round( max ) + 'm';
 	this.minDiv.textContent = Math.round( min ) + 'm';
 
+	this.setCaption( caption );
+
+	return this;
+
+};
+
+
+LinearScale.prototype.setCaption = function ( caption ) {
+
 	this.caption.textContent = caption;
 
 	return this;

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>demo 3d cave viewer</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+</head>
+<body onload="onload();" >
+
+<script type="text/javascript" src="http://nls.tileserver.com/api.js"></script>
+<script type="text/javascript" src="CaveView/js/proj4-src.js" ></script>
+<script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
+<script type="text/javascript" >
+
+function onload () {
+
+	CV.UI.init( "scene", { terrainDirectory: "/terrain/", surveyDirectory: "/surveys/", home: "/CaveView/" } );
+
+	CV.Viewer.addOverlay( 'OSM', function ( x, y, z ) { return 'https://b.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; } );
+	CV.Viewer.addOverlay( 'NLS', NLSTileUrlOS ); // eslint-disable-line no-undef
+	CV.Viewer.addOverlay( 'Satellite', function ( x, y, z ) { return 'https://api.mapbox.com/v4/mapbox.satellite/' + z + '/' + x + '/' + y + '@2x.jpg70?access_token=pk.eyJ1IjoiYWFyZGdvb3NlIiwiYSI6ImNqMWh2dHR2MTAwMXIycW4yMmg2MHJidHcifQ.eenH12R7X8Eq-Ekb_K4dDQ'; } );
+
+	CV.UI.loadCaveList( ["P8_Master.3d",  "all.3d", "Giants_Oxlow_Maskhill_System.3d", "Castleton_Master.3d", "Cheddar.lox", "Peak_Master.3d", "loser.3d" ] );
+
+}
+
+</script>
+<div id="scene"></div>
+<p>Mouse: left button down - rotate, right button down pan, mouse wheel - zoom</p>
+<p>The Cheddar Survey "Therion" 3D file by University of Bristol Spelaeological Society is released under a
+<a rel="license" title="Creative Commons Attribution-Non-Commercial-Share Alike 2.0 UK: England &amp; Wales License" href="http://creativecommons.org/licenses/by-nc-sa/2.0/uk/">Creative Commons</a> license.
+<br>
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.0/uk/"><img alt="Creative Commons License" src="http://i.creativecommons.org/l/by-nc-sa/2.0/uk/88x31.png"></a>
+</p>
+<p>Contains Ordnance Survey data &copy; Crown copyright and database right 2015.</p>
+<p>Contains DTM data &copy; Environment Agency copyright and/or database right 2015.</p>
+<p>Contains British Geological Survey materials &copy;NERC 2016.</p>
+</body>
+</html>

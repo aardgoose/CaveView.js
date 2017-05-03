@@ -134,10 +134,9 @@ div.linear-scale-caption {
 #frame div.page div#ui-path {
 	font-size: 12px;
 	border-top: 1px solid grey;
+	border-bottom: 1px solid grey;
 	margin-top: 8px;
-	padding: 12px 0 0 16px;
-	margin: 0;
-	bottom: 44px;
+	padding: 2px 0 2px 12px;
 }
 
 #frame div.page div#ui-path span {
@@ -211,6 +210,10 @@ div.linear-scale-caption {
 
 #icon_settings {
 	background-image: url(../images/ic_settings.png);
+}
+
+#icon_terrain {
+	background-image: url(../images/ic_terrain.png);
 }
 
 #icon_explore {

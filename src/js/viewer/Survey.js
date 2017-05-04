@@ -787,7 +787,7 @@ Survey.prototype.loadDyeTraces = function ( traces ) {
 
 	var mesh = new Mesh( geometry , new WaterMaterial( new Vector3() ) );
 
-	mesh.onBeforeRender = beforeRender;
+	mesh.onBeforeRender = _beforeRender;
 	mesh.layers.set( FEATURE_TRACES );
 
 	this.layers.enable( FEATURE_TRACES );
@@ -796,7 +796,7 @@ Survey.prototype.loadDyeTraces = function ( traces ) {
 
 	return;
 
-	function beforeRender ( renderer, scene, camera, geometry, material ) {
+	function _beforeRender ( renderer, scene, camera, geometry, material ) {
 
 		material.uniforms.offset.value += 0.1;
 

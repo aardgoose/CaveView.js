@@ -842,6 +842,8 @@ function loadCave ( cave ) {
 
 function loadSurvey ( newSurvey ) {
 
+	var asyncTerrainLoading = false;
+
 	survey = newSurvey;
 
 	stats = survey.getStats();
@@ -876,6 +878,7 @@ function loadSurvey ( newSurvey ) {
 	if ( terrain === null ) {
 
 		terrain = new WebTerrain( survey.limits, _terrainReady, _tilesLoaded, renderView );
+		asyncTerrainLoading = true;
 
 	} else {
 
@@ -892,7 +895,7 @@ function loadSurvey ( newSurvey ) {
 	HUD.setVisibility( true );
 
 	// signal any listeners that we have a new cave
-	viewState.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+	if ( ! asyncTerrainLoading ) viewState.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 	controls.object = camera;
 	controls.enabled = true;
@@ -913,6 +916,9 @@ function loadSurvey ( newSurvey ) {
 			terrain = null;
 
 		}
+
+		// delayed notification to ensure and event listeners get accurate terrain information
+		viewState.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 	}
 

@@ -11,27 +11,26 @@ import { LineBasicMaterial, VertexColors } from '../../../../three.js/src/Three'
 var cache = new Map();
 var viewState;
 
-function getHeightMaterial ( type ) {
+function getHeightMaterial ( type, limits ) {
 
 	var name = 'height' + type;
 
 	if ( cache.has( name ) ) return cache.get( name );
 
-	var material = new HeightMaterial( type, viewState.minHeight, viewState.maxHeight );
+	var material = new HeightMaterial( type, limits );
 
 	cache.set( name, material );
 
-	viewState.addEventListener( 'newCave', _updateHeightMaterial );
+	viewState.addEventListener( 'newCave', _deleteHeightMaterial );
 
 	return material;
 
-	function _updateHeightMaterial ( /* event */ ) {
+	function _deleteHeightMaterial ( /* event */ ) {
 
-		var minHeight = viewState.minHeight;
-		var maxHeight = viewState.maxHeight;
+		viewState.removeEventListener( 'newCave', _deleteHeightMaterial );
 
-		material.uniforms.minZ.value = minHeight;
-		material.uniforms.scaleZ.value =  1 / ( maxHeight - minHeight );
+		material.dispose();
+		cache.delete( name );
 
 	}
 
@@ -53,13 +52,13 @@ function createDepthMaterial ( type, limits, texture ) {
 
 	cache.set( name, material );
 
-	viewState.addEventListener( 'newCave', _updateDepthMaterial );
+	viewState.addEventListener( 'newCave', _deleteDepthMaterial );
 
 	return material;
 
-	function _updateDepthMaterial ( /* event */ ) {
+	function _deleteDepthMaterial ( /* event */ ) {
 
-		viewState.removeEventListener( 'newCave', _updateDepthMaterial );
+		viewState.removeEventListener( 'newCave', _deleteDepthMaterial );
 
 		material.dispose();
 		cache.delete( name );
@@ -74,45 +73,60 @@ function getDepthMaterial ( type ) {
 
 }
 
-function getCursorMaterial ( type ) {
+function getCursorMaterial ( type, limits ) {
 
 	var name = 'cursor' + type;
 
-	if ( cache.has( name ) ) return cache.get( name );
+	var material = cache.get( name );
 
-	var initialHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
+	if ( material !== undefined ) {
 
-	var material = new CursorMaterial( type, initialHeight );
+		// restore current cursor
+
+		viewState.initCursorHeight = material.getCursor();
+
+		return material;
+
+	}
+
+	material = new CursorMaterial( type, limits );
+
+	viewState.initCursorHeight = material.getCursor();
 
 	cache.set( name, material );
 
 	viewState.addEventListener( 'cursorChange', _updateCursorMaterial );
+	viewState.addEventListener( 'newCave', _deleteCursorMaterial );
 
 	return material;
 
+	function _deleteCursorMaterial ( /* event */ ) {
+
+		viewState.removeEventListener( 'cursorChange', _updateCursorMaterial );
+		viewState.removeEventListener( 'newCave', _deleteCursorhMaterial );
+
+		material.dispose();
+		cache.delete( name );
+
+	}
+
 	function _updateCursorMaterial ( /* event */ ) {
 
-		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
-
-		material.uniforms.cursor.value = cursorHeight;
+		material.setCursor( viewState.cursorHeight );
 
 	}
 
 }
 
-function createDepthCursorMaterial ( limits, texture, initialDepth ) {
+function createDepthCursorMaterial ( type, limits, texture ) {
 
-	var name = 'depthCursor';
+	var name = 'depthCursor' + type;
 
 	if ( cache.has( name ) ) return cache.get( name );
 
-	var maxDepth = viewState.maxHeight - viewState.minHeight;
+	var material = new DepthCursorMaterial( type, limits, texture );
 
-	initialDepth = Math.max( Math.min( initialDepth, maxDepth ), 0 );
-
-	viewState.cursorHeight = initialDepth;
-
-	var material = new DepthCursorMaterial( limits, texture, initialDepth );
+	viewState.initCursorHeight = material.getCursor();
 
 	cache.set( name, material );
 
@@ -123,16 +137,14 @@ function createDepthCursorMaterial ( limits, texture, initialDepth ) {
 
 	function _updateDepthCursorMaterial ( /* event */ ) {
 
-		var cursorHeight = Math.max( Math.min( viewState.cursorHeight, maxDepth ), 0 );
-
-		material.uniforms.cursor.value = cursorHeight;
+		material.setCursor( viewState.cursorHeight ); // FIXME get value from event
 
 	}
 
 	function _deleteDepthCursorMaterial ( /* event */ ) {
 
-		viewState.removeEventListener( 'newCave', _deleteDepthCursorMaterial );
 		viewState.removeEventListener( 'cursorChange', _updateDepthCursorMaterial );
+		viewState.removeEventListener( 'newCave', _deleteDepthCursorMaterial );
 
 		material.dispose();
 		cache.delete( name );
@@ -141,21 +153,29 @@ function createDepthCursorMaterial ( limits, texture, initialDepth ) {
 
 }
 
-function getDepthCursorMaterial () {
+function getDepthCursorMaterial( type ) {
 
-	return cache.get( 'depthCursor' );
+	var material = cache.get( 'depthCursor' + type );
+
+	if ( material !== undefined ) {
+
+		// restore current cursor
+
+		viewState.initCursorHeight = material.getCursor();
+
+		return material;
+
+	}
 
 }
 
 function getLineMaterial () {
 
-	var name = 'line';
-
-	if ( cache.has( name ) ) return cache.get(name);
+	if ( cache.has( 'line' ) ) return cache.get( 'line' );
 
 	var material = new LineBasicMaterial( { color: 0xFFFFFF, vertexColors: VertexColors } );
 
-	cache.set( name, material );
+	cache.set( 'line', material );
 
 	return material;
 

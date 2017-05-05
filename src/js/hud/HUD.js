@@ -1,7 +1,7 @@
 
 import {
 	MATERIAL_LINE,
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_SINGLE, SHADING_SURVEY, SHADING_PATH,
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH,
 } from '../core/constants';
 
 import { Viewer } from '../viewer/Viewer';
@@ -10,6 +10,7 @@ import { AHI } from './AHI';
 import { AngleScale } from './AngleScale';
 import { Compass } from './Compass';
 import { LinearScale } from './LinearScale';
+import { CursorScale } from './CursorScale';
 import { ProgressDial } from './ProgressDial';
 import { ScaleBar } from './ScaleBar';
 import { HudObject } from './HudObject';
@@ -35,6 +36,7 @@ var attitudeGroup;
 
 var linearScale = null;
 var angleScale  = null;
+var cursorScale = null;
 var scaleBar    = null;
 
 var compass;
@@ -105,14 +107,20 @@ function setVisibility ( visible ) {
 	ahi.setVisibility( visible );
 	progressDial.setVisibility( visible );
 
-	if ( linearScale ) linearScale.setVisibility( visible );
-	if ( angleScale ) angleScale.setVisibility( visible );
+	if ( linearScale ) {
+
+		linearScale.setVisibility( visible );
+		cursorScale.setVisibility( visible );
+		angleScale.setVisibility( visible );
+
+	}
+
 	if ( scaleBar ) scaleBar.setVisibility( visible );
 
 	isVisible = visible;
 
 	// reset correct disposition of keys etc.
-	if ( visible ) viewChanged ( { type: 'change', name: 'shadingMode' } );
+	if ( visible && linearScale ) viewChanged ( { type: 'change', name: 'shadingMode' } );
 
 }
 
@@ -149,37 +157,7 @@ function resize () {
 
 	attitudeGroup.position.set( hWidth, -hHeight, 0 );
 
-	// remove and add a new scale, simpler than rescaling
-
-	if ( linearScale ) {
-
-		scene.remove( linearScale );
-
-		linearScale = new LinearScale( container, viewState );
-
-		scene.add( linearScale );
-
-	}
-
-	if ( angleScale ) {
-
-		scene.remove( angleScale );
-
-		angleScale = new AngleScale( container );
-
-		scene.add( angleScale );
-
-	}
-
-	if ( scaleBar ) {
-
-		scene.remove( scaleBar );
-
-		scaleBar = new ScaleBar( container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
-
-		scene.add( scaleBar );
-
-	}
+	newScales();
 
 	setVisibility ( isVisible ); // set correct visibility of elements
 
@@ -207,31 +185,41 @@ function renderHUD () {
 
 function caveChanged ( /* event */ ) {
 
-	if ( linearScale ) {
+	newScales();
 
-		scene.remove( linearScale );
+	viewChanged ( { type: 'change', name: 'shadingMode' } );
 
-	}
+}
+
+
+function newScales () {
+
+	if ( linearScale ) scene.remove( linearScale );
 
 	linearScale = new LinearScale( container, viewState );
 
 	scene.add( linearScale );
 
-	if ( angleScale ) {
 
-		scene.remove( angleScale );
-		angleScale = null;
+	if ( cursorScale ) scene.remove( cursorScale );
 
-	}
+	cursorScale = new CursorScale( container );
 
-	if ( scaleBar ) {
+	scene.add( cursorScale );
 
-		scene.remove( scaleBar );
-		scaleBar = null;
 
-	}
+	if ( angleScale ) scene.remove( angleScale );
+	
+	angleScale = new AngleScale( container );
 
-	viewChanged ( { type: 'change', name: 'shadingMode' } );
+	scene.add( angleScale );
+
+
+	if ( scaleBar ) scene.remove( scaleBar );
+
+	scaleBar = new ScaleBar( container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
+
+	scene.add( scaleBar );
 
 }
 
@@ -239,96 +227,77 @@ function viewChanged ( event ) {
 
 	if ( event.name !== 'shadingMode' || !isVisible ) return;
 
+	// hide all - and only make required elements visible
+
+	var useAngleScale = false;
+	var useLinearScale = false;
+	var useCursorScale = false;
+
 	switch ( viewState.shadingMode ) {
 
 	case SHADING_HEIGHT:
 
-		if ( angleScale ) angleScale.setVisibility( false );
+		useLinearScale = true;
 
-		if ( linearScale ) linearScale.setRange( viewState.minHeight, viewState.maxHeight, 'Height above Datum' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
-		viewState.removeEventListener( 'cursorChange', cursorChanged );
+		linearScale.setRange( viewState.minHeight, viewState.maxHeight, 'Height above Datum' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 
 	case SHADING_DEPTH:
 
-		if ( angleScale ) angleScale.setVisibility( false );
+		useLinearScale = true;
 
-		if ( linearScale ) linearScale.setRange( viewState.maxHeight - viewState.minHeight, 0, 'Depth below surface' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
-		viewState.removeEventListener( 'cursorChange', cursorChanged );
+		linearScale.setRange( viewState.maxHeight - viewState.minHeight, 0, 'Depth below surface' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 
 	case SHADING_CURSOR:
 
-		if ( angleScale ) angleScale.setVisibility( false );
+		useCursorScale = true;
 
-		if ( linearScale ) {
+		cursorScale.setRange( viewState.minHeight, viewState.maxHeight, 'Height' );
 
-			linearScale.setMaterial( Materials.getCursorMaterial( MATERIAL_LINE ) ).setVisibility( true );
-
-			cursorChanged();
-
-			viewState.addEventListener( 'cursorChange', cursorChanged );
-
-		}
+		cursorChanged();
 
 		break;
 
 	case SHADING_DEPTH_CURSOR:
 
-		if ( angleScale ) angleScale.setVisibility( false );
+		useCursorScale = true;
 
-		if ( linearScale ) {
+		cursorScale.setRange( viewState.maxHeight - viewState.minHeight, 0, 'Depth' );
 
-			linearScale.setMaterial( Materials.getDepthCursorMaterial( MATERIAL_LINE ) ).setVisibility( true );
-			linearScale.setRange( viewState.maxHeight - viewState.minHeight, 0, 'Depth' );
-			cursorChanged();
-
-			viewState.addEventListener( 'cursorChange', cursorChanged );
-
-		}
+		cursorChanged();
 
 		break;
 
 	case SHADING_LENGTH:
 
-		if ( angleScale ) angleScale.setVisibility( false );
+		useLinearScale = true;
 
-		linearScale.setRange( viewState.minLegLength, viewState.maxLegLength, 'Leg length' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
-		viewState.removeEventListener( 'cursorChange', cursorChanged );
+		linearScale.setRange( viewState.minLegLength, viewState.maxLegLength, 'Leg length' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE, true ) ).setVisibility( true );
 
 		break;
 
 	case SHADING_INCLINATION:
 
-		linearScale.setVisibility( false );
-
-		if ( ! angleScale ) {
-
-			angleScale = new AngleScale( container );
-
-			scene.add( angleScale );
-
-		}
-
-		angleScale.setVisibility( true );
-		viewState.removeEventListener( 'cursorChange', cursorChanged );
+		useAngleScale = true;
 
 		break;
 
-	case SHADING_SINGLE: // eslint-disable-line no-fallthrough
+	}
 
-	case SHADING_SURVEY: // eslint-disable-line no-fallthrough
+	angleScale.setVisibility( useAngleScale );
+	linearScale.setVisibility( useLinearScale );
+	cursorScale.setVisibility( useCursorScale );
 
-	case SHADING_PATH:
+	if ( useCursorScale ) {
 
-		if ( angleScale ) angleScale.setVisibility( false );
+		viewState.addEventListener( 'cursorChange', cursorChanged );
 
-		linearScale.setVisibility( false );
+	} else {
+
 		viewState.removeEventListener( 'cursorChange', cursorChanged );
-
-		break;
 
 	}
 
@@ -338,19 +307,23 @@ function viewChanged ( event ) {
 
 function cursorChanged ( /* event */ ) {
 
-	var cursorHeight;
+	var cursorHeight = viewState.cursorHeight;
+	var range = viewState.maxHeight - viewState.minHeight;
+	var scaledHeight = 0;
 
 	if ( viewState.shadingMode === SHADING_CURSOR ) {
 
-		cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
+		scaledHeight = ( viewState.cursorHeight - viewState.minHeight ) / range;
 
 	} else {
 
-		cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight - viewState.minHeight ), 0 );
+		scaledHeight = 1 - cursorHeight / range;
 
 	}
 
-	linearScale.setCaption( 'Cursor: ' + Math.round( cursorHeight ) );
+	scaledHeight = Math.max( Math.min( scaledHeight, 1 ), 0 );
+
+	cursorScale.setCursor( scaledHeight, Math.round( cursorHeight ) );
 
 }
 

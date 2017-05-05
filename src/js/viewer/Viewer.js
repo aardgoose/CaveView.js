@@ -679,7 +679,7 @@ function addOverlay ( name, overlayFunc ) {
 
 	overlays[ name ] = new Overlay( overlayFunc );
 
-	if ( Object.keys( overlays ).length === 1 ) { 
+	if ( Object.keys( overlays ).length === 1 ) {
 
 		activeOverlay = name;
 

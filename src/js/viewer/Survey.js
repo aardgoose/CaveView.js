@@ -1357,13 +1357,13 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_HEIGHT:
 
-		material = Materials.getHeightMaterial( MATERIAL_SURFACE );
+		material = Materials.getHeightMaterial( MATERIAL_SURFACE, this.limits );
 
 		break;
 
 	case SHADING_CURSOR:
 
-		material = Materials.getCursorMaterial( MATERIAL_SURFACE );
+		material = Materials.getCursorMaterial( MATERIAL_SURFACE, this.limits );
 
 		break;
 
@@ -1389,7 +1389,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_DEPTH_CURSOR:
 
-		material = Materials.getDepthCursorMaterial();
+		material = Materials.getDepthCursorMaterial( MATERIAL_SURFACE );
 
 		if ( ! material ) return false;
 
@@ -1665,13 +1665,13 @@ Survey.prototype.setLegColourByDepthCursor = function ( mesh ) {
 
 Survey.prototype.setLegColourByHeight = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getHeightMaterial( MATERIAL_LINE ) );
+	this.setLegColourByMaterial( mesh, Materials.getHeightMaterial( MATERIAL_LINE, this.limits ) );
 
 };
 
 Survey.prototype.setLegColourByCursor = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getCursorMaterial( MATERIAL_LINE, 5.0 ) );
+	this.setLegColourByMaterial( mesh, Materials.getCursorMaterial( MATERIAL_LINE, this.limits ) );
 
 };
 

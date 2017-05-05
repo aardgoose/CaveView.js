@@ -1,9 +1,10 @@
 
 import { Shaders } from '../shaders/Shaders';
+import { MATERIAL_LINE } from '../core/constants';
 
 import { ShaderMaterial, Color } from '../../../../three.js/src/Three';
 
-function DepthCursorMaterial ( limits, texture, initialDepth ) {
+function DepthCursorMaterial ( type, limits, texture ) {
 
 	var range = limits.getSize();
 
@@ -17,7 +18,7 @@ function DepthCursorMaterial ( limits, texture, initialDepth ) {
 			scaleY:         { value: 1 / range.y },
 			scaleZ:         { value: range.z },
 			depthMap:       { value: texture },
-			cursor:         { value: initialDepth },
+			cursor:         { value: ( limits.max.z - limits.min.z ) / 2 },
 			cursorWidth:    { value: 5.0 },
 			baseColor:      { value: new Color( 0x888888 ) },
 			cursorColor:    { value: new Color( 0x00ff00 ) }
@@ -26,9 +27,21 @@ function DepthCursorMaterial ( limits, texture, initialDepth ) {
 		fragmentShader: Shaders.depthCursorFragmentShader
 	} );
 
+	this.defines = {};
+
+	if ( type === MATERIAL_LINE ) {
+
+		this.defines.USE_COLOR = true;
+
+	} else {
+
+		this.defines.SURFACE = true;
+
+	}
+
 	this.type = 'CV.DepthCursorMaterial';
 	this.depthMap = texture;
-	this.defines = { USE_COLOR: true };
+	this.max = range.z;
 
 	this.addEventListener( 'dispose', _onDispose );
 
@@ -51,6 +64,18 @@ function DepthCursorMaterial ( limits, texture, initialDepth ) {
 DepthCursorMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 DepthCursorMaterial.prototype.constructor = DepthCursorMaterial;
+
+DepthCursorMaterial.prototype.setCursor = function ( value ) {
+
+	this.uniforms.cursor.value = Math.max( Math.min( value, this.max ), 0 );
+
+}
+
+DepthCursorMaterial.prototype.getCursor = function () {
+
+	return this.uniforms.cursor.value;
+
+}
 
 export { DepthCursorMaterial };
 

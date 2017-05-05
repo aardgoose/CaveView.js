@@ -5,7 +5,7 @@ import { Colours } from '../core/Colours';
 
 import { Vector3, ShaderMaterial } from '../../../../three.js/src/Three';
 
-function HeightMaterial ( type, minHeight, maxHeight ) {
+function HeightMaterial ( type, limits ) {
 
 	ShaderMaterial.call( this );
 
@@ -21,16 +21,13 @@ function HeightMaterial ( type, minHeight, maxHeight ) {
 		this.transparent = true;
 
 	}
-	
-	this.uniforms = {
 
-		// pseudo light source somewhere over viewer's left shoulder.
-		uLight:         { value: new Vector3( -1, -1, 2 ) },
-		minZ:           { value: minHeight },
-		scaleZ:         { value: 1 / ( maxHeight - minHeight ) },
+	this.uniforms = {
+		uLight:         { value: new Vector3( -1, -1, 2 ) }, // pseudo light source somewhere over viewer's left shoulder.
+		minZ:           { value: limits.min.z },
+		scaleZ:         { value: 1 / ( limits.max.z - limits.min.z ) },
 		cmap:           { value: Colours.gradientTexture },
 		surfaceOpacity: { value: 0.5 }
-
 	};
 
 	this.vertexShader = Shaders.heightVertexShader;

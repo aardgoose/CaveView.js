@@ -202,6 +202,12 @@ function init ( domID, configuration ) { // public method
 			set: function ( x ) { setCursorHeight( x ); }
 		},
 
+		'initCursorHeight': {
+			writeable: true,
+			get: function () { return cursorHeight; },
+			set: function ( x ) { cursorHeight = x; }
+		},
+
 		'maxHeight': {
 			get: function () { return limits.max.z; },
 		},
@@ -476,7 +482,9 @@ function renderDepthTexture () {
 
 	Materials.createDepthMaterial( MATERIAL_LINE, limits, renderTarget.texture );
 	Materials.createDepthMaterial( MATERIAL_SURFACE, limits, renderTarget.texture );
-	Materials.createDepthCursorMaterial( limits, renderTarget.texture, 20 ); // FXIMRE initial depth
+
+	Materials.createDepthCursorMaterial( MATERIAL_LINE, limits, renderTarget.texture );
+	Materials.createDepthCursorMaterial( MATERIAL_SURFACE, limits, renderTarget.texture );
 
 	renderer.setSize( dim, dim );
 	renderer.setPixelRatio( 1 );

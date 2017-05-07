@@ -56,7 +56,11 @@ CursorMaterial.prototype.constructor = CursorMaterial;
 
 CursorMaterial.prototype.setCursor = function ( value ) {
 
-	this.uniforms.cursor.value = Math.max( Math.min( value, this.max ), this.min );
+	var newValue = Math.max( Math.min( value, this.max ), this.min );
+
+	this.uniforms.cursor.value = newValue;
+
+	return newValue; // return value clamped to material range
 
 }
 

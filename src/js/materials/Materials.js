@@ -11,6 +11,21 @@ import { LineBasicMaterial, VertexColors } from '../../../../three.js/src/Three'
 var cache = new Map();
 var viewState;
 
+var cursorMaterials = [];
+var perSurveyMaterials = {};
+
+function updateMaterialCursor ( material ) {
+
+	viewState.initCursorHeight = material.setCursor( viewState.cursorHeight );
+
+}
+
+function updateCursors( event ) {
+
+	cursorMaterials.forEach( updateMaterialCursor );
+
+}
+
 function getHeightMaterial ( type, limits ) {
 
 	var name = 'height' + type;
@@ -21,18 +36,9 @@ function getHeightMaterial ( type, limits ) {
 
 	cache.set( name, material );
 
-	viewState.addEventListener( 'newCave', _deleteHeightMaterial );
+	perSurveyMaterials[ name ] = material;
 
 	return material;
-
-	function _deleteHeightMaterial ( /* event */ ) {
-
-		viewState.removeEventListener( 'newCave', _deleteHeightMaterial );
-
-		material.dispose();
-		cache.delete( name );
-
-	}
 
 }
 
@@ -52,18 +58,9 @@ function createDepthMaterial ( type, limits, texture ) {
 
 	cache.set( name, material );
 
-	viewState.addEventListener( 'newCave', _deleteDepthMaterial );
+	perSurveyMaterials[ name ] = material;
 
 	return material;
-
-	function _deleteDepthMaterial ( /* event */ ) {
-
-		viewState.removeEventListener( 'newCave', _deleteDepthMaterial );
-
-		material.dispose();
-		cache.delete( name );
-
-	}
 
 }
 
@@ -82,8 +79,10 @@ function getCursorMaterial ( type, limits ) {
 	if ( material !== undefined ) {
 
 		// restore current cursor
-
 		viewState.initCursorHeight = material.getCursor();
+
+		// set active cursor material for updating
+		cursorMaterials[ type ] = material;
 
 		return material;
 
@@ -95,26 +94,12 @@ function getCursorMaterial ( type, limits ) {
 
 	cache.set( name, material );
 
-	viewState.addEventListener( 'cursorChange', _updateCursorMaterial );
-	viewState.addEventListener( 'newCave', _deleteCursorMaterial );
+	perSurveyMaterials[ name ] = material;
+
+	// set active cursor material for updating
+	cursorMaterials[ type ] = material;
 
 	return material;
-
-	function _deleteCursorMaterial ( /* event */ ) {
-
-		viewState.removeEventListener( 'cursorChange', _updateCursorMaterial );
-		viewState.removeEventListener( 'newCave', _deleteCursorhMaterial );
-
-		material.dispose();
-		cache.delete( name );
-
-	}
-
-	function _updateCursorMaterial ( /* event */ ) {
-
-		material.setCursor( viewState.cursorHeight );
-
-	}
 
 }
 
@@ -122,34 +107,15 @@ function createDepthCursorMaterial ( type, limits, texture ) {
 
 	var name = 'depthCursor' + type;
 
-	if ( cache.has( name ) ) return cache.get( name );
+	if ( cache.has( name ) ) console.warn( 'unexpected material cache entry' );
 
 	var material = new DepthCursorMaterial( type, limits, texture );
 
-	viewState.initCursorHeight = material.getCursor();
-
 	cache.set( name, material );
 
-	viewState.addEventListener( 'cursorChange', _updateDepthCursorMaterial );
-	viewState.addEventListener( 'newCave', _deleteDepthCursorMaterial );
+	perSurveyMaterials[ name ] = material;
 
 	return material;
-
-	function _updateDepthCursorMaterial ( /* event */ ) {
-
-		material.setCursor( viewState.cursorHeight ); // FIXME get value from event
-
-	}
-
-	function _deleteDepthCursorMaterial ( /* event */ ) {
-
-		viewState.removeEventListener( 'cursorChange', _updateDepthCursorMaterial );
-		viewState.removeEventListener( 'newCave', _deleteDepthCursorMaterial );
-
-		material.dispose();
-		cache.delete( name );
-
-	}
 
 }
 
@@ -162,6 +128,9 @@ function getDepthCursorMaterial( type ) {
 		// restore current cursor
 
 		viewState.initCursorHeight = material.getCursor();
+
+		// set active cursor material for updating
+		cursorMaterials[ type ] = material;
 
 		return material;
 
@@ -181,7 +150,6 @@ function getLineMaterial () {
 
 }
 
-
 function getAspectMaterial () {
 
 	var name = 'aspect';
@@ -199,7 +167,25 @@ function getAspectMaterial () {
 function initCache ( viewerViewState ) {
 
 	cache.clear();
+
 	viewState = viewerViewState;
+
+	viewState.addEventListener( 'cursorChange', updateCursors );
+
+}
+
+function flushCache( event ) {
+
+	for ( name in perSurveyMaterials ) {
+
+		var material = perSurveyMaterials[ name ];
+
+		material.dispose();
+		cache.delete( name );
+
+	}
+
+	perSurveyMaterials = {};
 
 }
 
@@ -213,7 +199,9 @@ export var Materials = {
 	getCursorMaterial:      getCursorMaterial,
 	getLineMaterial:        getLineMaterial,
 	getAspectMaterial:      getAspectMaterial,
-	initCache:              initCache
+	initCache:              initCache,
+	flushCache:             flushCache,
+
 };
 
 // EOF

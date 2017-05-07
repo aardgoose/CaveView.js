@@ -820,6 +820,9 @@ function clearView () {
 	// remove event listeners
 
 	unloadTerrainListeners();
+
+	Materials.flushCache();
+
 	container.removeEventListener( 'mousedown', mouseDown );
 
 	scene.add( pCamera );
@@ -892,7 +895,8 @@ function loadSurvey ( newSurvey ) {
 
 		survey.add( terrain );
 		setTerrainShadingMode( terrainShadingMode );
-		setTimeout( renderDepthTexture, 0 ); // delay to after newCave event - after material cache is flushed
+
+		renderDepthTexture();
 
 	}
 

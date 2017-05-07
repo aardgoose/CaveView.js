@@ -67,7 +67,11 @@ DepthCursorMaterial.prototype.constructor = DepthCursorMaterial;
 
 DepthCursorMaterial.prototype.setCursor = function ( value ) {
 
-	this.uniforms.cursor.value = Math.max( Math.min( value, this.max ), 0 );
+	var newValue = Math.max( Math.min( value, this.max ), 0 );
+
+	this.uniforms.cursor.value = newValue;
+
+	return newValue; // return value clamped to material range
 
 }
 

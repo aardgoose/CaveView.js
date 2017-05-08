@@ -22,15 +22,15 @@ function Compass ( container ) {
 	this.name = 'CV.Compass';
 	this.domObjects = [];
 
-	var cg1 = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth,  3, 32, 1, true );
+	var cg1 = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth, 3, 32, 1, true );
 	cg1.rotateX( Math.PI / 2 );
 
-	var c1  = new Mesh( cg1, new MeshPhongMaterial( { color: 0x888888, specular: 0x888888 } ) );
+	var c1 = new Mesh( cg1, new MeshPhongMaterial( { color: 0x888888, specular: 0x888888 } ) );
 
 	var cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 	cg2.translate( 0, 0, 5 );
 
-	var c2  = new Mesh( cg2, new MeshBasicMaterial( { color: 0xb03a14 } ) );
+	var c2 = new Mesh( cg2, new MeshBasicMaterial( { color: 0xb03a14 } ) );
 
 	var r1 = _makeRose( stdWidth * 0.8, 0.141, 0x581d0a, 0x0c536a );
 	var r2 = _makeRose( stdWidth * 0.9, 0.141, 0xb03a14, 0x1ab4e5 );

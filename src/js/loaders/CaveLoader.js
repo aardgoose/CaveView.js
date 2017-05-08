@@ -3,6 +3,7 @@ import { getEnvironmentValue, replaceExtension } from '../core/lib';
 import { Svx3dHandler } from './svx3dHandler';
 import { loxHandler } from './loxHandler';
 import { RegionHandler } from './RegionHandler';
+import { FileLoader } from '../../../../three.js/src/Three';
 
 function CaveLoader ( callback, progress ) {
 
@@ -63,7 +64,6 @@ CaveLoader.prototype.parseName = function ( name ) {
 CaveLoader.prototype.loadURL = function ( fileName ) {
 
 	var self = this;
-	var xhr1, xhr2;
 	var prefix = getEnvironmentValue( 'surveyDirectory', '' );
 
 	// parse file name
@@ -78,54 +78,29 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 
 	this.doneCount = 0;
 
-	xhr1 = new XMLHttpRequest();
+	var loader = new FileLoader().setPath( prefix );
 
-	xhr1.addEventListener( 'load', _dataLoaded );
-	xhr1.addEventListener( 'progress', _progress );
-	xhr1.addEventListener( 'error', _error );
-
-	xhr1.open( 'GET', prefix + fileName );
-
-	if ( type ) xhr1.responseType = type; // Must be after open() to keep IE happy.
-
-	xhr1.send();
+	loader.setResponseType( type ).load( fileName, _dataLoaded, _progress, _error );
 
 	// request metadata file
 
-	var metadataFileName = replaceExtension( fileName, 'json' );
-
-	xhr2 = new XMLHttpRequest();
-
-	xhr2.addEventListener( 'load', _metadataLoaded );
-	xhr2.addEventListener( 'error', _error );
-
-	xhr2.open( 'GET', prefix + metadataFileName );
-
-	xhr2.responseType = 'json';
-
-	xhr2.send();
+	loader.setResponseType( 'json' ).load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _error );
 
 	return true;
 
-	function _dataLoaded ( event ) {
-
-		var xhr = event.target;
+	function _dataLoaded ( result ) {
 
 		self.doneCount++;
-
-		self.dataResponse = xhr.response;
+		self.dataResponse = result;
 
 		if ( self.doneCount === 2 ) self.callHandler( fileName );
 
 	}
 
-	function _metadataLoaded ( event ) {
-
-		var xhr = event.target;
+	function _metadataLoaded ( result ) {
 
 		self.doneCount++;
-
-		self.metadataResponse = xhr.response;
+		self.metadataResponse = result;
 
 		if ( self.doneCount === 2 ) self.callHandler( fileName );
 

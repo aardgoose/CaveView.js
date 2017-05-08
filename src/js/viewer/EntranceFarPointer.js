@@ -8,7 +8,7 @@ import {
 	TextureLoader,
 	PointsMaterial,
 	Points,
-	Object3D,
+	Object3D
 } from '../../../../three.js/src/Three';
 
 var farPointers = null;
@@ -111,7 +111,7 @@ FarPointers.prototype.setMaterialIndex = function ( index, materialIndex ) {
 
 FarPointers.prototype.getMaterialIndex = function ( index ) {
 
-	return  this.points[ index ].materialIndex;
+	return this.points[ index ].materialIndex;
 
 };
 

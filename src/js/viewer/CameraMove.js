@@ -217,7 +217,7 @@ CameraMove.prototype.endAnimation = function () {
 
 	this.controls.enabled = true;
 	this.moveRequired = false;
-	
+
 	this.cameraTarget = null;
 	this.targetPOI = null;
 

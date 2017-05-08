@@ -12,7 +12,7 @@ function Label ( text ) {
 
 	var ctx = canvas.getContext( '2d' );
 
-	if ( !ctx ) alert( 'OOPS' );
+	if ( ! ctx ) alert( 'OOPS' );
 
 	var fontSize = 44;
 	var textHeight = 64;

@@ -381,14 +381,15 @@ function initHelpPage () {
 
 	dl = document.createElement( 'dl' );
 
-	_addKey( '1', 'depth' );
+	_addKey( '1', 'height' );
 	_addKey( '2', 'leg angle' );
 	_addKey( '3', 'leg length' );
-	_addKey( '4', 'depth cursor ' );
+	_addKey( '4', 'height cursor ' );
 	_addKey( '5', 'single colour' );
 	_addKey( '6', 'survey section' );
 	_addKey( '7', 'depth from surface' );
-	_addKey( '8', 'route' );
+	_addKey( '8', 'depth cursor' );
+	_addKey( '9', 'route' );
 
 	_addKey( '[', 'move depth cursor up' );
 	_addKey( ']', 'move depth cursor down' );
@@ -748,6 +749,12 @@ function keyDown ( event ) {
 
 	case 56: // change colouring scheme to per survey section - '8'
 
+		viewState.shadingMode = SHADING_DEPTH_CURSOR;
+
+		break;
+
+	case 57: // change colouring scheme to depth - '9'
+
 		viewState.shadingMode = SHADING_PATH;
 
 		break;
@@ -800,26 +807,26 @@ function keyDown ( event ) {
 
 		break;
 
-	case 83: // switch view to perspective -'s'
+	case 83: // switch view to perspective - 's'
 
 		if ( viewState.hasSurfaceLegs ) viewState.surfaceLegs = ! viewState.surfaceLegs;
 
 		break;
 
-	case 84: // switch terrain on/off 't'
+	case 84: // switch terrain on/off - 't'
 
 		if ( viewState.hasTerrain ) viewState.terrain = ! viewState.terrain;
 
 		break;
 
-	case 86: // cut selected survey section 'v'  
+	case 86: // cut selected survey section - 'v'
 
 		resetUI();
 		viewState.cut = true;
 
 		break;
 
-	case 87: // switch walls on/off 'w'
+	case 87: // switch walls on/off - 'w'
 
 		if ( viewState.hasWalls ) viewState.walls = ! viewState.walls;
 

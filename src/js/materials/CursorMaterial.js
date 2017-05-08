@@ -62,13 +62,13 @@ CursorMaterial.prototype.setCursor = function ( value ) {
 
 	return newValue; // return value clamped to material range
 
-}
+};
 
 CursorMaterial.prototype.getCursor = function () {
 
 	return this.uniforms.cursor.value;
 
-}
+};
 
 export { CursorMaterial };
 

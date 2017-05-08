@@ -45,21 +45,7 @@ function DepthMaterial ( type, limits, texture ) {
 	this.type = 'CV.DepthMaterial';
 	this.depthMap = texture;
 
-	this.addEventListener( 'dispose', _onDispose );
-
 	return this;
-
-	function _onDispose( event ) {
-
-		var obj = event.target;
-
-		obj.removeEventListener( 'dispose', _onDispose );
-
-		// dispose of depthMap texture
-
-		obj.depthMap.dispose();
-
-	}
 
 }
 

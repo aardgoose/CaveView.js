@@ -13,6 +13,7 @@ var viewState;
 
 var cursorMaterials = [];
 var perSurveyMaterials = {};
+var depthTexture = null;
 
 function updateMaterialCursor ( material ) {
 
@@ -20,7 +21,7 @@ function updateMaterialCursor ( material ) {
 
 }
 
-function updateCursors( event ) {
+function updateCursors( /* event */ ) {
 
 	cursorMaterials.forEach( updateMaterialCursor );
 
@@ -48,25 +49,22 @@ function getDepthMapMaterial () {
 
 }
 
-function createDepthMaterial ( type, limits, texture ) {
+function getDepthMaterial ( type, limits ) {
 
 	var name = 'depth' + type;
+	var material = cache.get( name );
 
-	if ( cache.has( name ) ) console.warn( 'createDepthMaterial - already exists' );
+	if ( material === undefined ) {
 
-	var material = new DepthMaterial( type, limits, texture );
+		material = new DepthMaterial( type, limits, depthTexture );
 
-	cache.set( name, material );
+		cache.set( name, material );
 
-	perSurveyMaterials[ name ] = material;
+		perSurveyMaterials[ name ] = material;
+
+	}
 
 	return material;
-
-}
-
-function getDepthMaterial ( type ) {
-
-	return cache.get( 'depth' + type );	
 
 }
 
@@ -76,65 +74,53 @@ function getCursorMaterial ( type, limits ) {
 
 	var material = cache.get( name );
 
-	if ( material !== undefined ) {
+	if ( material === undefined ) {
 
-		// restore current cursor
-		viewState.initCursorHeight = material.getCursor();
+		material = new CursorMaterial( type, limits );
 
-		// set active cursor material for updating
-		cursorMaterials[ type ] = material;
+		perSurveyMaterials[ name ] = material;
 
-		return material;
+		cache.set( name, material );
 
 	}
 
-	material = new CursorMaterial( type, limits );
+	// restore current cursor
 
 	viewState.initCursorHeight = material.getCursor();
 
-	cache.set( name, material );
-
-	perSurveyMaterials[ name ] = material;
-
 	// set active cursor material for updating
+
 	cursorMaterials[ type ] = material;
 
 	return material;
 
 }
 
-function createDepthCursorMaterial ( type, limits, texture ) {
+function getDepthCursorMaterial( type, limits ) {
 
 	var name = 'depthCursor' + type;
 
-	if ( cache.has( name ) ) console.warn( 'unexpected material cache entry' );
+	var material = cache.get( name );
 
-	var material = new DepthCursorMaterial( type, limits, texture );
+	if ( material === undefined ) {
 
-	cache.set( name, material );
+		material = new DepthCursorMaterial( type, limits, depthTexture );
 
-	perSurveyMaterials[ name ] = material;
+		perSurveyMaterials[ name ] = material;
 
-	return material;
-
-}
-
-function getDepthCursorMaterial( type ) {
-
-	var material = cache.get( 'depthCursor' + type );
-
-	if ( material !== undefined ) {
-
-		// restore current cursor
-
-		viewState.initCursorHeight = material.getCursor();
-
-		// set active cursor material for updating
-		cursorMaterials[ type ] = material;
-
-		return material;
+		cache.set( name, material );
 
 	}
+
+	// restore current cursor
+
+	viewState.initCursorHeight = material.getCursor();
+
+	// set active cursor material for updating
+
+	cursorMaterials[ type ] = material;
+
+	return material;
 
 }
 
@@ -164,6 +150,12 @@ function getAspectMaterial () {
 
 }
 
+function setDepthTexture( texture ) {
+
+	depthTexture = texture;
+
+}
+
 function initCache ( viewerViewState ) {
 
 	cache.clear();
@@ -174,7 +166,9 @@ function initCache ( viewerViewState ) {
 
 }
 
-function flushCache( event ) {
+function flushCache() {
+
+	var name;
 
 	for ( name in perSurveyMaterials ) {
 
@@ -185,13 +179,18 @@ function flushCache( event ) {
 
 	}
 
+	if ( depthTexture !== null ) {
+
+		depthTexture.dispose();
+		depthTexture = null;
+
+	}
+
 	perSurveyMaterials = {};
 
 }
 
 export var Materials = {
-	createDepthMaterial:       createDepthMaterial,
-	createDepthCursorMaterial: createDepthCursorMaterial,
 	getHeightMaterial:      getHeightMaterial,
 	getDepthMapMaterial:    getDepthMapMaterial,
 	getDepthMaterial:       getDepthMaterial,
@@ -199,6 +198,7 @@ export var Materials = {
 	getCursorMaterial:      getCursorMaterial,
 	getLineMaterial:        getLineMaterial,
 	getAspectMaterial:      getAspectMaterial,
+	setDepthTexture:        setDepthTexture,
 	initCache:              initCache,
 	flushCache:             flushCache,
 

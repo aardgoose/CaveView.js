@@ -108,7 +108,7 @@ CursorScale.prototype.setRange = function ( min, max, caption ) {
 };
 
 
-CursorScale.prototype.setCursor = function ( scaledValue, displayValue ) {
+CursorScale.prototype.setCursor = function ( scaledValue /*, displayValue */ ) {
 
 	this.cursor.position.setY( this.barHeight * scaledValue );
 

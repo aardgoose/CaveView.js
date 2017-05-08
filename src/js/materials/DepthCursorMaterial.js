@@ -43,21 +43,7 @@ function DepthCursorMaterial ( type, limits, texture ) {
 	this.depthMap = texture;
 	this.max = range.z;
 
-	this.addEventListener( 'dispose', _onDispose );
-
 	return this;
-
-	function _onDispose( event ) {
-
-		var obj = event.target;
-
-		obj.removeEventListener( 'dispose', _onDispose );
-
-		// dispose of depthMap texture
-
-		obj.depthMap.dispose();
-
-	}
 
 }
 
@@ -73,13 +59,13 @@ DepthCursorMaterial.prototype.setCursor = function ( value ) {
 
 	return newValue; // return value clamped to material range
 
-}
+};
 
 DepthCursorMaterial.prototype.getCursor = function () {
 
 	return this.uniforms.cursor.value;
 
-}
+};
 
 export { DepthCursorMaterial };
 

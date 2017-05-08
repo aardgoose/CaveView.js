@@ -4,7 +4,6 @@ import  {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
-	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY, SHADING_PATH,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
@@ -71,6 +70,8 @@ var cursorHeight;
 var shadingMode        = SHADING_HEIGHT;
 var surfaceShadingMode = SHADING_SINGLE;
 var terrainShadingMode = SHADING_SHADED;
+
+var depthTextureCreated = false;
 
 var overlays = {};
 var activeOverlay = null;
@@ -480,11 +481,7 @@ function renderDepthTexture () {
 	renderTarget.texture.generateMipmaps = false;
 	renderTarget.texture.name = 'CV.DepthMapTexture';
 
-	Materials.createDepthMaterial( MATERIAL_LINE, limits, renderTarget.texture );
-	Materials.createDepthMaterial( MATERIAL_SURFACE, limits, renderTarget.texture );
-
-	Materials.createDepthCursorMaterial( MATERIAL_LINE, limits, renderTarget.texture );
-	Materials.createDepthCursorMaterial( MATERIAL_SURFACE, limits, renderTarget.texture );
+	Materials.setDepthTexture( renderTarget.texture );
 
 	renderer.setSize( dim, dim );
 	renderer.setPixelRatio( 1 );
@@ -498,6 +495,8 @@ function renderDepthTexture () {
 	renderer.setPixelRatio( window.devicePixelRatio );
 
 	scene.overrideMaterial = null;
+
+	depthTextureCreated = true;
 
 	renderView();
 
@@ -816,6 +815,7 @@ function clearView () {
 	mouseTargets    = [];
 
 	shadingMode = SHADING_HEIGHT;
+	depthTextureCreated = false;
 
 	// remove event listeners
 
@@ -939,7 +939,7 @@ function loadSurvey ( newSurvey ) {
 		setTerrainShadingMode( terrainShadingMode );
 		loadTerrainListeners();
 
-		if ( ! Materials.getDepthMaterial( MATERIAL_LINE ) ) renderDepthTexture();
+		if ( ! depthTextureCreated ) renderDepthTexture();
 
 	}
 

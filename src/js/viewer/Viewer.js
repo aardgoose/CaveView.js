@@ -38,6 +38,7 @@ import {
 
 var lightPosition = new Vector3( -1, -1, 0.5 );
 var CAMERA_OFFSET = 600;
+var RETILE_TIMEOUT = 150; // ms pause after last movement before attempting retiling
 
 var caveIsLoaded = false;
 
@@ -97,7 +98,7 @@ function init ( domID, configuration ) { // public method
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
-	renderer = new WebGLRenderer( { antialias: true } ) ;
+	renderer = new WebGLRenderer( { antialias: true, logarithmicDepthBuffer: true } ) ;
 
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
@@ -1153,13 +1154,15 @@ var renderView = function () {
 
 function onCameraMoveEnd () {
 
-	if ( terrain && terrain.isTiled && viewState.terrain ) setTimeout( updateTerrain, 500 );
+	if ( terrain && terrain.isTiled && viewState.terrain ) setTimeout( updateTerrain, RETILE_TIMEOUT );
+
+
 
 }
 
 function updateTerrain () {
 
-	if ( lastActivityTime && performance.now() - lastActivityTime > 500 ) {
+	if ( lastActivityTime && performance.now() - lastActivityTime > RETILE_TIMEOUT ) {
 
 		clockStop();
 		terrain.zoomCheck( camera );

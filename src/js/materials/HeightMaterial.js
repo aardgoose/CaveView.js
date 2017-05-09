@@ -18,7 +18,6 @@ function HeightMaterial ( type, limits ) {
 	} else {
 
 		this.defines.SURFACE = true;
-		this.transparent = true;
 
 	}
 
@@ -27,7 +26,6 @@ function HeightMaterial ( type, limits ) {
 		minZ:           { value: limits.min.z },
 		scaleZ:         { value: 1 / ( limits.max.z - limits.min.z ) },
 		cmap:           { value: Colours.gradientTexture },
-		surfaceOpacity: { value: 0.5 }
 	};
 
 	this.vertexShader = Shaders.heightVertexShader;
@@ -35,15 +33,7 @@ function HeightMaterial ( type, limits ) {
 
 	this.type = 'CV.HeightMaterial';
 
-	this.addEventListener( 'update', _update );
-
 	return this;
-
-	function _update() {
-
-		this.uniforms.surfaceOpacity.value = this.opacity;
-
-	}
 
 }
 

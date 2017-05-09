@@ -4,7 +4,6 @@ uniform float cursorWidth;
 
 uniform vec3 baseColor;
 uniform vec3 cursorColor;
-uniform float surfaceOpacity;
 
 varying float vHeight;
 
@@ -44,7 +43,7 @@ void main() {
 
 	} else {
 
-		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, surfaceOpacity );
+		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 );
 
 	}
 

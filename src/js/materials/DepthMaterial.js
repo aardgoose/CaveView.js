@@ -25,7 +25,6 @@ function DepthMaterial ( type, limits, texture ) {
 		uniforms: {
 			// pseudo light source somewhere over viewer's left shoulder.
 			uLight: { value: new Vector3( -1, -1, 2 ) },
-
 			minX:     { value: limits.min.x },
 			minY:     { value: limits.min.y },
 			minZ:     { value: limits.min.z },
@@ -34,7 +33,6 @@ function DepthMaterial ( type, limits, texture ) {
 			scaleZ:   { value: 1 / range.z },
 			cmap:     { value: Colours.gradientTexture },
 			depthMap: { value: texture }
-
 		},
 
 		defines: defines,
@@ -43,7 +41,6 @@ function DepthMaterial ( type, limits, texture ) {
 	} );
 
 	this.type = 'CV.DepthMaterial';
-	this.depthMap = texture;
 
 	return this;
 

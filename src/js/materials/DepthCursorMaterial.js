@@ -41,7 +41,6 @@ function DepthCursorMaterial ( type, limits, texture ) {
 	}
 
 	this.type = 'CV.DepthCursorMaterial';
-	this.depthMap = texture;
 	this.max = range.z;
 
 	return this;

@@ -29,13 +29,11 @@ function CursorMaterial ( type, limits ) {
 		cursorWidth:    { value: 5.0 },
 		baseColor:      { value: new Color( 0x888888 ) },
 		cursorColor:    { value: new Color( 0x00ff00 ) },
-		surfaceOpacity: { value: 0.5 }
 	};
 
 	this.vertexShader   = Shaders.cursorVertexShader;
 	this.fragmentShader = Shaders.cursorFragmentShader;
 
-	this.transparent = true;
 	this.type = 'CV.CursorMaterial';
 
 	this.addEventListener( 'update', _update );

@@ -297,11 +297,7 @@ WebTerrain.prototype.endLoad = function ( tile ) {
 
 				if ( ! loadedTile.parent ) parent.add( loadedTile );
 
-				loadedTile.replaced = false;
-				loadedTile.evicted = false;
-				loadedTile.isMesh = true;
-
-				loadedTile.liveTiles++;
+				loadedTile.setLive();
 
 			}
 
@@ -345,7 +341,7 @@ WebTerrain.prototype.resurrectTile = function ( tile ) {
 	}
 
 	// reload tile (use exiting tile object to preserve canZoom).
-	this.loadTile( tile.x, tile.y, tile.z, tile );
+	this.loadTile( tile.x, tile.y, tile.zoom, tile );
 
 };
 
@@ -550,12 +546,12 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		for ( i = 0; i < candidateCount; i++ ) {
 
-			if ( candidateTiles[ i ].area / total.area > 0.7 ) {
-				console.log( 'candidate', i );
+			if ( candidateTiles[ i ].area / total.area > 0.4 ) { // FIXME - weight by tile resolution to balance view across all visible areas first.
 
 				tile = candidateTiles[ i ].tile;
 
 				if ( tile.zoom < maxZoom ) this.tileArea( tile.getBoundingBox(), tile );
+				break; // FIXME : can only replace one tile per scan.
 
 			}
 
@@ -626,14 +622,14 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 			for ( i = 0; i < evictCount; i++ ) {
 
-				var tile = candidateEvictTiles[ i  ];
+				var tile = candidateEvictTiles[ i ];
 
 				// heuristics for evicting tiles - needs refinement
 
 				var pressure = Tile.liveTiles / EVICT_PRESSURE;
-				var tilePressure = tile.evictionCount * initialZoom / tile.zoom; // FIXME
+				var tilePressure = tile.evictionCount * Math.pow( 2, initialZoom - tile.zoom );
 
-				// console.log( 'ir', initialZoom, 'p: ', pressure, ' tp: ', tilePressure );
+				//console.log( 'ir', initialZoom, 'p: ', pressure, ' tp: ', tilePressure, ( pressure > tilePressure ? '*** EVICTING ***' : 'KEEP' ) );
 
 				if ( pressure > tilePressure ) tile.evict();
  
@@ -643,7 +639,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		function _sortByPressure( tileA, tileB ) {
 
-			return tileA.evictionCount / tileA.zoom - tileB.evictionCount / tileB.zoom; // FIXME was by resoution ie 2^zoom
+			return tileA.evictionCount / tileA.zoom - tileB.evictionCount / tileB.zoom;
 
 		}
 

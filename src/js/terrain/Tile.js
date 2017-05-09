@@ -150,9 +150,9 @@ Tile.prototype.getBoundingBox = function () {
 Tile.prototype.evict = function () {
 
 	this.evictionCount++; 
-	this.evicted  = true;
+	this.evicted = true;
 	this.replaced = false;
-	this.isMesh   = false;
+	this.isMesh = false;
 
 	if ( ! this.boundingBox ) {
 
@@ -183,6 +183,16 @@ Tile.prototype.setReplaced = function () {
 	}
 
 	--Tile.liveTiles;
+
+};
+
+Tile.prototype.setLive = function () {
+
+	this.replaced = false;
+	this.evicted = false;
+	this.isMesh = true;
+
+	Tile.liveTiles++;
 
 };
 

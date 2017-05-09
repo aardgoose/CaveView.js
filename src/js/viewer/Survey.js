@@ -1369,7 +1369,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_SINGLE:
 
-		material = new MeshLambertMaterial( { color: 0xff0000, vertexColors: NoColors } );
+		material = new MeshLambertMaterial( { color: 0xffff000, vertexColors: NoColors } );
 
 		break;
 
@@ -1545,7 +1545,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	case SHADING_SINGLE:
 
-		this.setLegColourByColour( mesh, ColourCache.red );
+		this.setLegColourByColour( mesh, ColourCache.yellow );
 
 		break;
 

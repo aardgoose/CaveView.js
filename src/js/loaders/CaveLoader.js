@@ -116,7 +116,7 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 
 		self.doneCount++;
 
-		console.log( ' error event', event );
+		if ( event.currentTarget.responseType !== 'json' ) console.log( ' error event', event );
 
 		if ( self.doneCount === 2 ) self.callHandler( fileName );
 

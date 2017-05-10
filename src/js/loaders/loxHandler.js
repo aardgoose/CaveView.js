@@ -455,11 +455,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		}
 
-		if ( ! type ) {
-
-			return '';
-
-		}
+		if ( ! type ) return '';
 
 		var blob = new Blob( [ imgData ], { type: type } );
 		var blobURL = URL.createObjectURL( blob );

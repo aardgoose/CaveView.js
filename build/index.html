@@ -21,7 +21,7 @@ function onload () {
 	CV.Viewer.addOverlay( 'NLS', NLSTileUrlOS ); // eslint-disable-line no-undef
 	CV.Viewer.addOverlay( 'Satellite', function ( x, y, z ) { return 'https://api.mapbox.com/v4/mapbox.satellite/' + z + '/' + x + '/' + y + '@2x.jpg70?access_token=pk.eyJ1IjoiYWFyZGdvb3NlIiwiYSI6ImNqMWh2dHR2MTAwMXIycW4yMmg2MHJidHcifQ.eenH12R7X8Eq-Ekb_K4dDQ'; } );
 
-	CV.UI.loadCaveList( ["P8_Master.3d",  "all.3d", "Giants_Oxlow_Maskhill_System.3d", "Castleton_Master.3d", "Cheddar.lox", "Peak_Master.3d", "loser.3d" ] );
+	CV.UI.loadCaveList( ["P8_Master.3d", "all.3d", "Giants_Oxlow_Maskhill_System.3d", "Castleton_Master.3d", "Cheddar.lox", "Peak_Master_NoSurface.3d", "loser.3d" ] );
 
 }
 

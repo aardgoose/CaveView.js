@@ -75,7 +75,7 @@ WebTerrain.prototype.isLoaded = function () {
 
 WebTerrain.prototype.hasCoverage = function () {
 
-	var limits  = this.limits;
+	var limits = this.limits;
 	var tileSets = this.tileSets;
 	var tileSet;
 	var coverage;
@@ -390,7 +390,9 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 
 	function _setTileMeshMaterial ( obj ) {
 
-		if ( obj.isTile ) obj.setMaterial( material );
+		if ( ! obj.isTile ) return;
+
+		obj.setMaterial( material );
 
 	}
 

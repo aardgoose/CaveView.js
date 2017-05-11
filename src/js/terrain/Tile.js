@@ -6,7 +6,7 @@ import {
 	BufferGeometry,
 	Float32BufferAttribute,
 	Uint16BufferAttribute,
-	Mesh
+	Mesh, MeshLambertMaterial
 } from '../../../../three.js/src/Three';
 
 function onUploadDropBuffer() {
@@ -15,6 +15,8 @@ function onUploadDropBuffer() {
 	this.array = null;
 
 }
+
+var blankOverlay = new MeshLambertMaterial( { transparent: true, opacity: 0.5, color: 0x888888 } )
 
 function Tile ( x, y, zoom, tileSet, clip ) {
 
@@ -67,9 +69,12 @@ Tile.prototype.create = function ( terrainTileGeometry ) {
 Tile.prototype.createCommon = function () {
 
 	var attributes = this.geometry.attributes;
+	var index = this.geometry.getIndex();
 
 	// discard javascript attribute buffers after upload to GPU
 	for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
+
+	//index.onUpload( onUploadDropBuffer );
 
 	this.layers.set( FEATURE_TERRAIN );
 
@@ -238,7 +243,6 @@ Tile.prototype.setLoaded = function () {
 
 				sibling.isMesh = true;
 				Tile.liveTiles++;
-				
 
 			}
 
@@ -282,13 +286,14 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 	var self = this;
 
 	overlay.getTile( this.x, this.y, this.zoom, opacity, _overlayLoaded );
+	this.material = blankOverlay;
 
 	return;
 
 	function _overlayLoaded ( material ) {
 
 		self.material = material;
-
+		self.visible = true;
 		imageLoadedCallback();
 
 	}

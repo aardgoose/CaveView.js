@@ -16,7 +16,7 @@ function onUploadDropBuffer() {
 
 }
 
-var blankOverlay = new MeshLambertMaterial( { transparent: true, opacity: 0.5, color: 0x888888 } )
+var blankOverlay = new MeshLambertMaterial( { transparent: true, opacity: 0.5, color: 0x888888 } );
 
 function Tile ( x, y, zoom, tileSet, clip ) {
 
@@ -69,12 +69,9 @@ Tile.prototype.create = function ( terrainTileGeometry ) {
 Tile.prototype.createCommon = function () {
 
 	var attributes = this.geometry.attributes;
-	var index = this.geometry.getIndex();
 
 	// discard javascript attribute buffers after upload to GPU
 	for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
-
-	//index.onUpload( onUploadDropBuffer );
 
 	this.layers.set( FEATURE_TERRAIN );
 

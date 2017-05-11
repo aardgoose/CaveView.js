@@ -25,14 +25,10 @@ function WebTerrain ( limits3, onReady, onLoaded, overlayLoadedCallback ) {
 		new Vector2( limits3.max.x, limits3.max.y )
 	);
 
-	this.tile = null;
-
 	this.onLoaded        = onLoaded;
-	this.tilesLoading    = 0;
-	this.loadedTiles     = [];
-	this.errors          = 0;
+	this.childrenLoading = 0;
+	this.childErrors     = 0;
 	this.terrainLoaded   = false;
-	this.replaceTileMesh = null;
 	this.activeOverlay   = null;
 	this.material        = null;
 	this.initialZoom     = null;
@@ -149,7 +145,7 @@ WebTerrain.prototype.pickCoverage = function ( limits, zoom ) {
 
 };
 
-WebTerrain.prototype.loadTile = function ( x, y, z, oldTileIn ) {
+WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 	// account for limits of DTM resolution
 
@@ -163,7 +159,6 @@ WebTerrain.prototype.loadTile = function ( x, y, z, oldTileIn ) {
 	console.log( 'load: [ ', z +'/' +  x + '/' +  y, ']' );
 
 	var self = this;
-	var oldTile = oldTileIn;
 
 	var limits    = this.limits;
 	var tileWidth = halfMapExtent / Math.pow( 2, z - 1 );
@@ -190,6 +185,12 @@ WebTerrain.prototype.loadTile = function ( x, y, z, oldTileIn ) {
 
 	if ( tileMaxX > limits.max.x ) clip.right = Math.floor( ( tileMaxX - limits.max.x ) / resolution );
 
+	// get Tile instance.
+
+	var tile = existingTile ? existingTile : new Tile( x, y, z, self.tileSet, clip );
+	var parent = parentTile ? parentTile : this;
+
+	tile.setPending( parent ); // tile load/reload pending
 
 	// get a web worker from the pool and create new geometry in it
 
@@ -217,6 +218,8 @@ WebTerrain.prototype.loadTile = function ( x, y, z, oldTileIn ) {
 
 		self.workerPool.putWorker( tileLoader );
 
+		--self.tilesLoading;
+
 		// the survey/region in the viewer may have changed while the height maps are being loaded.
 		// bail out in this case to avoid errors
 
@@ -227,105 +230,32 @@ WebTerrain.prototype.loadTile = function ( x, y, z, oldTileIn ) {
 
 		}
 
-		if ( tileData.status !== 'ok' ) ++self.errors;
+		// error out early if we or other tiles have failed to load.
 
-		if ( self.errors ) {
+		if ( tileData.status !== 'ok' || tile.parent.childErrors !== 0 ) {
 
-			// error out early if we or other tiles have failed to load.
+			tile.setFailed();
 
-			self.endLoad();
+			if ( self.progressDial ) self.progressDial.end();
+
 			return;
 
 		}
-
-		var tile =  oldTile ? oldTile : new Tile( x, y, z, self.tileSet, clip );
 
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
 		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox );
 
-//		self.add( new Box3Helper( tile.getBoundingBox() ) );
-
-		if ( self.activeOverlay !== null && self.shadingMode === SHADING_OVERLAY ) {
-
-			tile.setOverlay( self.activeOverlay, self.opacity, _overlayLoaded );
-			self.overlaysLoading++;
-
-		}
-
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
-		self.endLoad( tile );
+		if ( tile.setLoaded() ) {
 
-	}
+			self.onLoaded();
+			self.terrainLoaded = true;
 
-	function _overlayLoaded () {
-
-		if ( --self.overlaysLoading === 0 ) self.overlayLoadedCallback();
-
-	}
-
-};
-
-WebTerrain.prototype.endLoad = function ( tile ) {
-
-	if ( tile !== undefined ) this.loadedTiles.push( tile );
-
-	if ( --this.tilesLoading === 0 ) {
-
-		var loadedTiles = this.loadedTiles;
-		var replaceTileMesh = this.replaceTileMesh;
-		var parent = null;
-
-		if ( this.errors === 0 ) {
-
-			// display loaded tiles and add to tileTree
-
-			if ( replaceTileMesh ) {
-
-				parent = replaceTileMesh;
-
-			} else if ( tile.parent === null ) {
-
-				parent = this;
-
-			}
-
-			for ( var i = 0, l = loadedTiles.length; i < l; i++ ) {
-
-				var loadedTile = loadedTiles[ i ];
-
-				if ( ! loadedTile.parent ) parent.add( loadedTile );
-
-				loadedTile.setLive();
-
-			}
-
-			if ( replaceTileMesh ) replaceTileMesh.setReplaced();
-
-			this.terrainLoaded = true;
-
-		} else {
-
-			if ( this.currentZoom === this.initialZoom ) {
-
-				console.warn( 'oops' );
-				return;
-
-			}
-
-			// mark this tile so we don't continually try to reload
-
-			if ( replaceTileMesh ) replaceTileMesh.canZoom = false;
+			if ( self.progressDial ) self.progressDial.end();
 
 		}
-
-		this.errors = 0;
-		this.replaceTileMesh = null;
-		this.loadedTiles = [];
-
-		this.onLoaded();
-		this.progressDial.end();
 
 	}
 
@@ -335,7 +265,7 @@ WebTerrain.prototype.resurrectTile = function ( tile ) {
 
 	if ( tile.isMesh ) {
 
-		console.log( 'resurrecting the undead!' );
+		console.warn( 'resurrecting the undead!' );
 		return;
 
 	}
@@ -357,7 +287,6 @@ WebTerrain.prototype.tileArea = function ( limits, tile, maxZoom ) {
 
 	}
 
-	this.replaceTileMesh = tile;
 	this.currentLimits = limits;
 
 	if ( this.initialZoom === null ) {
@@ -370,7 +299,7 @@ WebTerrain.prototype.tileArea = function ( limits, tile, maxZoom ) {
 
 		for ( var y = coverage.min_y; y < coverage.max_y + 1; y++ ) {
 
-			this.loadTile( x, y, zoom );
+			this.loadTile( x, y, zoom, null, tile );
 
 		}
 
@@ -378,7 +307,7 @@ WebTerrain.prototype.tileArea = function ( limits, tile, maxZoom ) {
 
 	if ( this.tilesLoading > 0 && this.progressDial !== undefined ) {
  
-		this.progressDial.start( 'Loading '  + this.tilesLoading + ' terrain tiles' );
+		this.progressDial.start( 'Loading ' + this.tilesLoading + ' terrain tiles' );
 		this.progressInc = 100 / ( this.tilesLoading * 2 );
 
 	}
@@ -550,8 +479,11 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 				tile = candidateTiles[ i ].tile;
 
-				if ( tile.zoom < maxZoom ) this.tileArea( tile.getBoundingBox(), tile );
-				break; // FIXME : can only replace one tile per scan.
+				if ( tile.zoom < maxZoom ) {
+
+					this.tileArea( tile.getBoundingBox(), tile );
+
+				}
 
 			}
 

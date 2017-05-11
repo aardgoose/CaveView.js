@@ -1156,8 +1156,6 @@ function onCameraMoveEnd () {
 
 	if ( terrain && terrain.isTiled && viewState.terrain ) setTimeout( updateTerrain, RETILE_TIMEOUT );
 
-
-
 }
 
 function updateTerrain () {
@@ -1165,7 +1163,11 @@ function updateTerrain () {
 	if ( lastActivityTime && performance.now() - lastActivityTime > RETILE_TIMEOUT ) {
 
 		clockStop();
-		terrain.zoomCheck( camera );
+		if ( terrain.zoomCheck( camera ) ) {
+
+			setTimeout( updateTerrain, RETILE_TIMEOUT * 5 );
+
+		}
 
 	}
 

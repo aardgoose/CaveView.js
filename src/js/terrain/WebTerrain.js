@@ -437,10 +437,11 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 	var candidateTiles      = [];
 	var candidateEvictTiles = [];
 	var resurrectTiles      = [];
+	var retry = false;
 
 	var total, tile, i;
 
-	if ( this.tilesLoading > 0 ) return;
+	if ( this.tilesLoading > 0 ) return true;
 
 	camera.updateMatrix(); // make sure camera's local matrix is updated
 	camera.updateMatrixWorld(); // make sure camera's world matrix is updated
@@ -464,6 +465,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 		for ( i = 0; i < resurrectCount; i++ ) {
 
 			this.resurrectTile( resurrectTiles[ i ] );
+			retry = true;
 
 		}
 
@@ -475,13 +477,14 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		for ( i = 0; i < candidateCount; i++ ) {
 
-			if ( candidateTiles[ i ].area / total.area > 0.4 ) { // FIXME - weight by tile resolution to balance view across all visible areas first.
+			if ( candidateTiles[ i ].area / total.area > 0.3 ) { // FIXME - weight by tile resolution to balance view across all visible areas first.
 
 				tile = candidateTiles[ i ].tile;
 
 				if ( tile.zoom < maxZoom ) {
 
 					this.tileArea( tile.getBoundingBox(), tile );
+					retry = true;
 
 				}
 
@@ -491,11 +494,11 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 	}
 
-	return;
+	return retry;
 
 	function _scanTiles( tile ) {
 
-		if ( tile === self || ! tile.isTile) return;
+		if ( tile === self || ! tile.isTile ) return;
 
 		if ( frustum.intersectsBox( tile.getWorldBoundingBox() ) ) {
 
@@ -503,7 +506,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 			if ( tile.children.length === 0 ) {
 
-				if ( ! tile.isMesh  ) {
+				if ( ! tile.isMesh ) {
 
 					// this tile is not loaded, but has been previously
 					resurrectTiles.push( tile );

@@ -30,6 +30,8 @@ function Tile ( x, y, zoom, tileSet, clip ) {
 	this.replaced      = false;
 	this.evictionCount = 1;
 	this.resurrectionPending = false;
+	this.childrenLoading = 0;
+	this.childErrors     = 0;
 
 	this.boundingBox = null;
 	this.worldBoundingBox = null;
@@ -147,11 +149,8 @@ Tile.prototype.getBoundingBox = function () {
 
 };
 
-Tile.prototype.evict = function () {
+Tile.prototype.empty = function () {
 
-	this.evictionCount++; 
-	this.evicted = true;
-	this.replaced = false;
 	this.isMesh = false;
 
 	if ( ! this.boundingBox ) {
@@ -161,9 +160,24 @@ Tile.prototype.evict = function () {
 
 	}
 
-	this.geometry.dispose();
+	if ( this.geometry ) {
+
+		this.geometry.dispose();
+		this.geometry = null;
+
+	}
 
 	--Tile.liveTiles;
+
+};
+
+Tile.prototype.evict = function () {
+
+	this.evictionCount++; 
+	this.evicted = true;
+	this.replaced = false;
+
+	this.empty();
 
 };
 
@@ -171,28 +185,71 @@ Tile.prototype.setReplaced = function () {
 
 	this.evicted = false;
 	this.replaced = true;
-	this.isMesh = false;
 
-	if ( this.geometry ) this.geometry.dispose();
-
-	if ( ! this.boundingBox ) {
-
-		console.warn( 'FIXUP :', this.x, this.y );
-		this.getWorldBoundingBox();
-
-	}
-
-	--Tile.liveTiles;
+	this.empty();
 
 };
 
-Tile.prototype.setLive = function () {
 
-	this.replaced = false;
+Tile.prototype.setPending = function ( parentTile ) {
+
+	if ( parentTile && this.parent === null ) {
+
+		parentTile.add( this );
+
+	}
+
+	this.parent.childrenLoading++;
+
+	this.isMesh = false;
 	this.evicted = false;
-	this.isMesh = true;
 
-	Tile.liveTiles++;
+};
+
+Tile.prototype.setFailed = function () {
+
+	var parent = this.parent;
+
+	parent.childErrors++;
+	parent.childrenLoading--;
+	parent.canZoom = false;
+
+	parent.remove( this );
+
+};
+
+Tile.prototype.setLoaded = function () {
+
+	var parent = this.parent;
+
+	if ( --parent.childrenLoading === 0 ) { // this tile and all siblings loaded
+
+		if ( parent.childErrors === 0 ) { // all loaded without error
+
+			if ( parent.isTile ) parent.setReplaced();
+
+			parent.traverse( _setChildren );
+
+			return true;
+
+		} else {
+
+			parent.remove( this );
+
+		}
+
+	}
+
+	return false;
+
+	function _setChildren( child ) {
+
+		if ( child === parent || child.parent !== parent || child.replaced || child.evicted ) return;
+
+		child.isMesh = true;
+		Tile.liveTiles++;
+
+	}
 
 };
 
@@ -232,12 +289,6 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 		imageLoadedCallback();
 
 	}
-
-};
-
-Tile.prototype.getParent = function () {
-
-	return this.parent;
 
 };
 

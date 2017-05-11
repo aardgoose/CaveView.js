@@ -228,7 +228,19 @@ Tile.prototype.setLoaded = function () {
 
 			if ( parent.isTile ) parent.setReplaced();
 
-			parent.traverse( _setChildren );
+			var siblings = parent.children;
+
+			for ( var i = 0, l = siblings.length; i < l; i++ ) {
+
+				var sibling = siblings[ i ];
+
+				if ( sibling.replaced || sibling.evicted ) continue;
+
+				sibling.isMesh = true;
+				Tile.liveTiles++;
+				
+
+			}
 
 			return true;
 
@@ -241,15 +253,6 @@ Tile.prototype.setLoaded = function () {
 	}
 
 	return false;
-
-	function _setChildren( child ) {
-
-		if ( child === parent || child.parent !== parent || child.replaced || child.evicted ) return;
-
-		child.isMesh = true;
-		Tile.liveTiles++;
-
-	}
 
 };
 

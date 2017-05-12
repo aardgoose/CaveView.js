@@ -6,7 +6,7 @@ import {
 	BufferGeometry,
 	Float32BufferAttribute,
 	Uint16BufferAttribute,
-	Mesh, MeshLambertMaterial
+	Mesh
 } from '../../../../three.js/src/Three';
 
 function onUploadDropBuffer() {
@@ -15,8 +15,6 @@ function onUploadDropBuffer() {
 	this.array = null;
 
 }
-
-var blankOverlay = new MeshLambertMaterial( { transparent: true, opacity: 0.5, color: 0x888888 } );
 
 function Tile ( x, y, zoom, tileSet, clip ) {
 
@@ -77,7 +75,7 @@ Tile.prototype.createCommon = function () {
 
 };
 
-Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox ) {
+Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox, material ) {
 
 	var attributeName;
 	var attribute;
@@ -104,6 +102,7 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 	this.geometry = bufferGeometry;
 
 	this.createCommon();
+	this.material = material;
 
 	return this;
 
@@ -220,9 +219,10 @@ Tile.prototype.setFailed = function () {
 
 };
 
-Tile.prototype.setLoaded = function () {
+Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
 
 	var parent = this.parent;
+	var tilesWaiting = 0;
 
 	if ( --parent.childrenLoading === 0 ) { // this tile and all siblings loaded
 
@@ -238,10 +238,22 @@ Tile.prototype.setLoaded = function () {
 
 				if ( sibling.replaced || sibling.evicted ) continue;
 
-				sibling.isMesh = true;
-				Tile.liveTiles++;
+				if ( overlay === null ) {
+
+					sibling.isMesh = true;
+					Tile.liveTiles++;
+
+				} else {
+
+					// delay finalising until overlays loaded - avoids flash of raw surface
+					sibling.setOverlay( overlay, opacity, _completed );
+					tilesWaiting++;
+
+				}
 
 			}
+
+			if ( tilesWaiting === 0 ) renderCallback();
 
 			return true;
 
@@ -254,6 +266,15 @@ Tile.prototype.setLoaded = function () {
 	}
 
 	return false;
+
+	function _completed( tile ) {
+
+		tile.isMesh = true;
+		Tile.liveTiles++;
+
+		if ( --tilesWaiting === 0 ) renderCallback();
+
+	}
 
 };
 
@@ -283,15 +304,13 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 	var self = this;
 
 	overlay.getTile( this.x, this.y, this.zoom, opacity, _overlayLoaded );
-	this.material = blankOverlay;
 
 	return;
 
 	function _overlayLoaded ( material ) {
 
 		self.material = material;
-		self.visible = true;
-		imageLoadedCallback();
+		imageLoadedCallback( self );
 
 	}
 

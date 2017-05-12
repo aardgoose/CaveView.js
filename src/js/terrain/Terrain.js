@@ -14,7 +14,6 @@ function Terrain () {
 
 	this.type = 'CV.Terrain';
 	this.tile = null;
-	this.activeOverlay = null;
 
 	return this;
 

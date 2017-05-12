@@ -68,9 +68,9 @@ var zScale;
 var viewState = {};
 var cursorHeight;
 
-var shadingMode        = SHADING_HEIGHT;
+var shadingMode;
 var surfaceShadingMode = SHADING_SINGLE;
-var terrainShadingMode = SHADING_SHADED;
+var terrainShadingMode;
 
 var depthTextureCreated = false;
 
@@ -816,6 +816,9 @@ function clearView () {
 	mouseTargets    = [];
 
 	shadingMode = SHADING_HEIGHT;
+	surfaceShadingMode = SHADING_SINGLE;
+	terrainShadingMode = SHADING_SHADED;
+
 	depthTextureCreated = false;
 
 	// remove event listeners
@@ -919,6 +922,8 @@ function loadSurvey ( newSurvey ) {
 
 		if ( terrain.hasCoverage() ) {
 
+			setTerrainShadingMode( terrainShadingMode );
+
 			terrain.tileArea( survey.limits );
 			terrain.setDefaultOverlay( overlays[ activeOverlay ] );
 
@@ -937,7 +942,7 @@ function loadSurvey ( newSurvey ) {
 
 	function _tilesLoaded () {
 
-		setTerrainShadingMode( terrainShadingMode );
+		renderView();
 		loadTerrainListeners();
 
 		if ( ! depthTextureCreated ) renderDepthTexture();

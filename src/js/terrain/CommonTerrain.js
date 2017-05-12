@@ -13,6 +13,8 @@ function CommonTerrain () {
 	Group.call( this );
 
 	this.hasOverlay = false;
+	this.defaultOverlay = null;
+	this.activeOverlay = null;
 
 	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
 
@@ -47,7 +49,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_OVERLAY:
 
-		this.setOverlay( this.activeOverlay );
+		this.setOverlay( ( this.activeOverlay === null ? this.defaultOverlay : this.activeOverlay ) );
 
 		break;
 

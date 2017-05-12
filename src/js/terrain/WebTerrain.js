@@ -29,7 +29,6 @@ function WebTerrain ( limits3, onReady, onLoaded, overlayLoadedCallback ) {
 	this.childrenLoading = 0;
 	this.childErrors     = 0;
 	this.terrainLoaded   = false;
-	this.activeOverlay   = null;
 	this.material        = null;
 	this.initialZoom     = null;
 	this.currentZoom     = null;
@@ -244,18 +243,17 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
-		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox );
+		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox, self.material );
 
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
-		if ( tile.setLoaded() ) {
-
-			self.onLoaded();
-			self.terrainLoaded = true;
+		if ( tile.setLoaded( self.activeOverlay, self.opacity, self.onLoaded ) ) {
 
 			if ( self.progressDial ) self.progressDial.end();
 
 		}
+
+		self.terrainLoaded = true;
 
 	}
 
@@ -320,7 +318,7 @@ WebTerrain.prototype.tileArea = function ( limits, tile, maxZoom ) {
 
 WebTerrain.prototype.setDefaultOverlay = function ( overlay ) {
 
-	this.activeOverlay = overlay;
+	this.defaultOverlay = overlay;
 
 };
 
@@ -385,6 +383,7 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 	// use for commmon material access for opacity
 
 	this.material = material;
+	this.activeOverlay = null;
 
 	return;
 

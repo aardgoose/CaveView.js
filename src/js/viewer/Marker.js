@@ -2,7 +2,6 @@
 import { FEATURE_ENTRANCES } from '../core/constants';
 import { EntranceFarPointer } from './EntranceFarPointer';
 import { EntranceNearPointer} from './EntranceNearPointer';
-import { Label } from './Label';
 import { GlyphAtlas } from './GlyphAtlas';
 import { GlyphString } from './GlyphString';
 
@@ -29,10 +28,6 @@ function Marker ( survey, entrance ) {
 	var nearPointer = nearPointerCached.clone();
 
 	nearPointer.layers.set( FEATURE_ENTRANCES );
-
-/*
-	var label = new Label( text );
-*/
 
 	var label = new GlyphString( text, glyphAtlas );
 

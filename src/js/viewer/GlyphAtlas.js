@@ -23,7 +23,7 @@ function GlyphAtlas () {
 
 	// set background
 
-	ctx.fillStyle = 'rgba( 255, 0, 0, 1 )';
+	ctx.fillStyle = 'rgba( 0, 0, 0, 1 )';
 	ctx.fillRect( 0, 0, atlasSize, atlasSize );
 
 	// populate with glyphs

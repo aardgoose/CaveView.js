@@ -2,6 +2,7 @@ import {
 	InstancedBufferGeometry,
 	InstancedBufferAttribute,
 	Float32BufferAttribute,
+	Uint16BufferAttribute,
 	Mesh
 } from '../../../../three.js/src/Three';
 
@@ -13,9 +14,9 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 	this.type = 'GlyphStringGeometry';
 	this.name = text;
 
-	var index = [ 0, 2, 1, 0, 3, 2 ];
+	if ( GlyphStringGeometry.indexAttribute === null ) {
 
-	if ( GlyphStringGeometry.positionAttribute === null ) {
+		GlyphStringGeometry.indexAttribute = new Uint16BufferAttribute( [ 0, 2, 1, 0, 3, 2 ], 1 );
 
 		var positions = [ 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0 ];
 
@@ -23,7 +24,7 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 	}
 
-	this.setIndex( index );
+	this.setIndex( GlyphStringGeometry.indexAttribute );
 	this.addAttribute( 'position', GlyphStringGeometry.positionAttribute );
 
 	var i, l, glyphData;

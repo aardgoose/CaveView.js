@@ -34,7 +34,7 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 	var uvs = new Float32Array( l * 2 );
 	var widths = new Float32Array( l );
-	var offsets = new Float32Array( l * 2 );
+	var offsets = new Float32Array( l );
 
 	for ( i = 0; i < l; i++ ) {
 
@@ -45,15 +45,14 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 		widths[ i ] = glyphData.width;
 
-		offsets[ i * 2 ] = offset;
-		offsets[ i * 2 + 1 ] = 0;
+		offsets[ i ] = offset;
 
 		offset += glyphData.width; // FIXME need translating into correct space
 
 	}
 
 	this.addAttribute( 'instanceUvs', new InstancedBufferAttribute( uvs, 2, 1 ) );
-	this.addAttribute( 'instanceOffsets', new InstancedBufferAttribute( offsets, 2, 1 ) );
+	this.addAttribute( 'instanceOffsets', new InstancedBufferAttribute( offsets, 1, 1 ) );
 	this.addAttribute( 'instanceWidths', new InstancedBufferAttribute( widths, 1, 1 ) );
 
 }

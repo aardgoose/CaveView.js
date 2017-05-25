@@ -18,6 +18,9 @@ import depthCursorFragmentShader from './depthCursorFragmentShader.glsl';
 import extendedPointsVertexShader from './extendedPointsVertexShader.glsl';
 import extendedPointsFragmentShader from './extendedPointsFragmentShader.glsl';
 
+import glyphVertexShader from './glyphVertexShader.glsl';
+import glyphFragmentShader from './glyphFragmentShader.glsl';
+
 import heightVertexShader from './heightVertexShader.glsl';
 import heightFragmentShader from './heightFragmentShader.glsl';
 
@@ -37,6 +40,8 @@ export var Shaders =  {
 	depthCursorFragmentShader:		depthCursorFragmentShader,
 	extendedPointsVertexShader:		extendedPointsVertexShader,
 	extendedPointsFragmentShader:	extendedPointsFragmentShader,
+	glyphVertexShader:		glyphVertexShader,
+	glyphFragmentShader:	glyphFragmentShader,
 	heightVertexShader:		heightVertexShader,
 	heightFragmentShader:	heightFragmentShader,
 	waterVertexShader:		waterVertexShader,

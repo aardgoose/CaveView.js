@@ -3,11 +3,14 @@ import { FEATURE_ENTRANCES } from '../core/constants';
 import { EntranceFarPointer } from './EntranceFarPointer';
 import { EntranceNearPointer} from './EntranceNearPointer';
 import { Label } from './Label';
+import { GlyphAtlas } from './GlyphAtlas';
+import { GlyphString } from './GlyphString';
 
 import { LOD } from '../../../../three.js/src/Three';
 
 var labelOffset = 30;
 var nearPointerCached;
+var glyphAtlas = new GlyphAtlas();
 
 function Marker ( survey, entrance ) {
 
@@ -27,7 +30,11 @@ function Marker ( survey, entrance ) {
 
 	nearPointer.layers.set( FEATURE_ENTRANCES );
 
+/*
 	var label = new Label( text );
+*/
+
+	var label = new GlyphString( text, glyphAtlas );
 
 	label.position.setZ( labelOffset );
 	label.layers.set( FEATURE_ENTRANCES );

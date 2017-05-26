@@ -14,24 +14,20 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 	this.type = 'GlyphStringGeometry';
 	this.name = text;
 
-	if ( GlyphStringGeometry.indexAttribute === null ) {
+	var indexAttribute = new Uint16BufferAttribute( [ 0, 2, 1, 0, 3, 2 ], 1 );
 
-		GlyphStringGeometry.indexAttribute = new Uint16BufferAttribute( [ 0, 2, 1, 0, 3, 2 ], 1 );
+	// unit square 
+	var positions = [
+		0, 0, 0,
+		0, 1, 0,
+		1, 1, 0,
+		1, 0, 0
+	];
 
-		// unit square 
-		var positions = [
-			0, 0, 0,
-			0, 1, 0,
-			1, 1, 0,
-			1, 0, 0
-		];
+	var positionAttribute = new Float32BufferAttribute( positions, 3 );
 
-		GlyphStringGeometry.positionAttribute = new Float32BufferAttribute( positions, 3 );
-
-	}
-
-	this.setIndex( GlyphStringGeometry.indexAttribute );
-	this.addAttribute( 'position', GlyphStringGeometry.positionAttribute );
+	this.setIndex( indexAttribute );
+	this.addAttribute( 'position', positionAttribute );
 
 	var i, l, glyphData;
 	var offset = 0;

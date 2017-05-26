@@ -1,8 +1,6 @@
 import { CanvasTexture } from '../../../../three.js/src/Three';
 
-import { GlyphMaterial } from '../materials/GlyphMaterial';
-
-function GlyphAtlas ( container, rotation ) {
+function GlyphAtlas ( glyphAtlasSpec ) {
 
 	var atlasSize = 512;
 	var cellSize = 32;
@@ -65,16 +63,23 @@ function GlyphAtlas ( container, rotation ) {
 
 	}
 
-	var texture = new CanvasTexture( canvas );
-
+	this.texture = new CanvasTexture( canvas );
 	this.map = map;
-	this.material = new GlyphMaterial( texture, cellSize / atlasSize, container, rotation );
+	this.cellScale = cellSize / atlasSize;
 
 }
 
-GlyphAtlas.prototype.getMaterial = function () {
+GlyphAtlas.prototype.constructor = GlyphAtlas;
 
-	return this.material;
+GlyphAtlas.prototype.getTexture = function () {
+
+	return this.texture;
+
+};
+
+GlyphAtlas.prototype.getCellScale = function () {
+
+	return this.cellScale;
 
 };
 
@@ -93,9 +98,25 @@ GlyphAtlas.prototype.getGlyph = function ( glyph ) {
 
 };
 
-GlyphAtlas.prototype.constructor = GlyphAtlas;
 
+var atlasCache = {};
+var AtlasFactory = {};
 
-export { GlyphAtlas };
+AtlasFactory.getAtlas = function ( glyphAtlasSpec ) {
+
+	var atlas = atlasCache[ glyphAtlasSpec ];
+
+	if ( atlas === undefined ) {
+
+		atlas = new GlyphAtlas( glyphAtlasSpec );
+		atlasCache[ glyphAtlasSpec ] = atlas;
+
+	}
+
+	return atlas;
+
+};
+
+export { GlyphAtlas, AtlasFactory };
 
 // EOF

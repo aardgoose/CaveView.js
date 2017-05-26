@@ -72,11 +72,11 @@ GlyphStringGeometry.prototype = Object.assign( Object.create( InstancedBufferGeo
 
 } );
 
-function GlyphString ( text, glyphAtlas ) {
+function GlyphString ( text, glyphMaterial ) {
 
-	var geometry = new GlyphStringGeometry( text, glyphAtlas );
+	var geometry = new GlyphStringGeometry( text, glyphMaterial.getAtlas() );
 
-	Mesh.call( this, geometry, glyphAtlas.getMaterial() );
+	Mesh.call( this, geometry, glyphMaterial );
 
 	this.type = 'GlyphString';
 	this.frustumCulled = false;

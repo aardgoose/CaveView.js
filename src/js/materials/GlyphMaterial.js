@@ -1,15 +1,18 @@
 
 import { ShaderMaterial, Matrix4 } from '../../../../three.js/src/Three';
 import { Shaders } from '../shaders/Shaders';
+import { AtlasFactory } from '../materials/GlyphAtlas';
 
-function GlyphMaterial ( glyphAtlasTexture, cellScale, container, rotation ) {
+function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 
-	console.log( container );
+	var glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec );
+
+	var cellScale = glyphAtlas.getCellScale();
 
 	ShaderMaterial.call( this, {
 		uniforms: {
 			cellScale: { value: cellScale },
-			atlas: { value: glyphAtlasTexture },
+			atlas: { value: glyphAtlas.getTexture() },
 			rotate: { value: new Matrix4().makeRotationZ( rotation ) },
 			scale: { value: container.clientHeight / container.clientWidth }
 		},
@@ -24,6 +27,7 @@ function GlyphMaterial ( glyphAtlasTexture, cellScale, container, rotation ) {
 
 	this.defaultAttributeValues.color = [ 1, 1, 0 ];
 	this.type = 'CV.GlyphMaterial';
+	this.atlas = glyphAtlas;
 
 
 	// event handler
@@ -44,6 +48,12 @@ function GlyphMaterial ( glyphAtlasTexture, cellScale, container, rotation ) {
 GlyphMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 GlyphMaterial.prototype.constructor = GlyphMaterial;
+
+GlyphMaterial.prototype.getAtlas = function () {
+
+	return this.atlas;
+
+};
 
 export { GlyphMaterial };
 

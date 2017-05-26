@@ -2,13 +2,16 @@
 import { ShaderMaterial, Matrix4 } from '../../../../three.js/src/Three';
 import { Shaders } from '../shaders/Shaders';
 
-function GlyphMaterial ( glyphAtlasTexture, cellScale ) {
+function GlyphMaterial ( glyphAtlasTexture, cellScale, container ) {
+
+	console.log( container );
 
 	ShaderMaterial.call( this, {
 		uniforms: {
 			cellScale: { value: cellScale },
 			atlas: { value: glyphAtlasTexture },
-			rotate: { value: new Matrix4().makeRotationZ( -5.5 ) }
+			rotate: { value: new Matrix4().makeRotationZ( Math.PI / 4 ) },
+			scale: { value: container.clientHeight / container.clientWidth }
 		},
 		vertexShader: Shaders.glyphVertexShader,
 		fragmentShader: Shaders.glyphFragmentShader,
@@ -22,7 +25,19 @@ function GlyphMaterial ( glyphAtlasTexture, cellScale ) {
 	this.defaultAttributeValues.color = [ 1, 1, 0 ];
 	this.type = 'CV.GlyphMaterial';
 
+
+	// event handler
+	window.addEventListener( 'resize', _resize );
+
+	var self = this;
+
 	return this;
+
+	function _resize() {
+
+		self.uniforms.scale.value = container.clientHeight / container.clientWidth;
+
+	}
 
 }
 

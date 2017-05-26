@@ -28,7 +28,7 @@ function GlyphAtlas ( container, rotation ) {
 
 	// populate with glyphs
 
-	var glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-_';
+	var glyphs = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-_';
 
 	var divisions = atlasSize / cellSize;
 
@@ -84,7 +84,7 @@ GlyphAtlas.prototype.getGlyph = function ( glyph ) {
 
 	if ( glyphData === undefined ) {
 
-		console.warn( 'unavailable glyph' );
+		console.warn( 'unavailable glyph [' + glyph + ']', glyph.codePointAt() );
 		glyphData = {}; // FIXME add placeholder to atlas.
 
 	}

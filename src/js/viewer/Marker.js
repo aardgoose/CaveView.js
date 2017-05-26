@@ -6,7 +6,6 @@ import { GlyphString } from './GlyphString';
 
 import { LOD } from '../../../../three.js/src/Three';
 
-var labelOffset = 30;
 var nearPointerCached;
 
 function Marker ( survey, entrance ) {
@@ -29,7 +28,6 @@ function Marker ( survey, entrance ) {
 
 	var label = new GlyphString( text, window.glyphAtlas );
 
-//	label.position.setZ( labelOffset );
 	label.layers.set( FEATURE_ENTRANCES );
 
 	nearPointer.add( label );

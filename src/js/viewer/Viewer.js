@@ -840,10 +840,8 @@ function clearView () {
 	viewState.cameraType = CAMERA_PERSPECTIVE;
 	setViewMode( VIEW_PLAN, 1 );
 
-	if ( ! window.glyphAtlas ) {
-		console.log( 'xxx' );
-		window.glyphAtlas = new GlyphAtlas( container );
-	}
+	if ( ! window.glyphAtlas ) window.glyphAtlas = new GlyphAtlas( container, Math.PI / 4 );
+	// FIXME - sort out glyph atlas creation
 
 	renderView();
 

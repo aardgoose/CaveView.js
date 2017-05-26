@@ -18,7 +18,13 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 		GlyphStringGeometry.indexAttribute = new Uint16BufferAttribute( [ 0, 2, 1, 0, 3, 2 ], 1 );
 
-		var positions = [ 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0 ];
+		// unit square 
+		var positions = [
+			0, 0, 0,
+			0, 1, 0,
+			1, 1, 0,
+			1, 0, 0
+		];
 
 		GlyphStringGeometry.positionAttribute = new Float32BufferAttribute( positions, 3 );
 
@@ -47,7 +53,7 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 		offsets[ i ] = offset;
 
-		offset += glyphData.width; // FIXME need translating into correct space
+		offset += glyphData.width;
 
 	}
 
@@ -73,7 +79,7 @@ function GlyphString ( text, glyphAtlas ) {
 	Mesh.call( this, geometry, glyphAtlas.getMaterial() );
 
 	this.type = 'GlyphString';
-//	this.frustumCulled = false;
+	this.frustumCulled = false;
 
 }
 

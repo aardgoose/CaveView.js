@@ -2,7 +2,7 @@ import { CanvasTexture } from '../../../../three.js/src/Three';
 
 import { GlyphMaterial } from '../materials/GlyphMaterial';
 
-function GlyphAtlas ( container ) {
+function GlyphAtlas ( container, rotation ) {
 
 	var atlasSize = 512;
 	var cellSize = 32;
@@ -65,23 +65,14 @@ function GlyphAtlas ( container ) {
 
 	}
 
-	this.texture = new CanvasTexture( canvas );
-	this.map = map;
-	this.cellSize = cellSize;
-	this.atlasSize = atlasSize;
-	this.material = undefined;
+	var texture = new CanvasTexture( canvas );
 
-	this.container = container;
+	this.map = map;
+	this.material = new GlyphMaterial( texture, cellSize / atlasSize, container, rotation );
 
 }
 
 GlyphAtlas.prototype.getMaterial = function () {
-
-	if ( this.material === undefined ) {
-
-		this.material = new GlyphMaterial( this.texture, this.cellSize / this.atlasSize, this.container );
-
-	}
 
 	return this.material;
 

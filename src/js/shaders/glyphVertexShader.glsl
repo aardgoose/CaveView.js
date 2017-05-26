@@ -33,7 +33,7 @@ void main() {
 
 	newPosition = rotate * newPosition;
 
-	// position of GlyphString object on screen
+	// position of GlyphString object on screeno
 
 	vec4 offset = projectionMatrix * modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
 

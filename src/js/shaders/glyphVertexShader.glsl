@@ -31,7 +31,7 @@ void main() {
 
 	// rotate as required
 
-	newPosition = rotate * newPosition;
+//	newPosition = rotate * newPosition;
 
 	// position of GlyphString object on screeno
 
@@ -48,6 +48,7 @@ void main() {
 	// move to clip space
 
 	newPosition.xy *= offset.w;
+	newPosition.w = 0.0;
 
 	gl_Position = newPosition + offset;
 

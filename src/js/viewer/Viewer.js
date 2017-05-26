@@ -20,6 +20,8 @@ import { WebTerrain } from '../terrain/WebTerrain';
 import { Overlay } from '../terrain/Overlay';
 import { setEnvironment } from '../core/lib';
 
+import { GlyphAtlas } from './GlyphAtlas';
+
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
 
 import { OrbitControls } from '../core/OrbitControls';
@@ -837,6 +839,11 @@ function clearView () {
 
 	viewState.cameraType = CAMERA_PERSPECTIVE;
 	setViewMode( VIEW_PLAN, 1 );
+
+	if ( ! window.glyphAtlas ) {
+		console.log( 'xxx' );
+		window.glyphAtlas = new GlyphAtlas( container );
+	}
 
 	renderView();
 

@@ -2,7 +2,7 @@ import { CanvasTexture } from '../../../../three.js/src/Three';
 
 import { GlyphMaterial } from '../materials/GlyphMaterial';
 
-function GlyphAtlas () {
+function GlyphAtlas ( container ) {
 
 	var atlasSize = 512;
 	var cellSize = 32;
@@ -71,13 +71,15 @@ function GlyphAtlas () {
 	this.atlasSize = atlasSize;
 	this.material = undefined;
 
+	this.container = container;
+
 }
 
 GlyphAtlas.prototype.getMaterial = function () {
 
 	if ( this.material === undefined ) {
 
-		this.material = new GlyphMaterial( this.texture, this.cellSize / this.atlasSize );
+		this.material = new GlyphMaterial( this.texture, this.cellSize / this.atlasSize, this.container );
 
 	}
 

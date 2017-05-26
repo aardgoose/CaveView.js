@@ -26,7 +26,7 @@ function Marker ( survey, entrance ) {
 
 	nearPointer.layers.set( FEATURE_ENTRANCES );
 
-	var label = new GlyphString( text, window.glyphAtlas );
+	var label = new GlyphString( text, window.glyphMaterial );
 
 	label.layers.set( FEATURE_ENTRANCES );
 

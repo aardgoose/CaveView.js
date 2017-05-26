@@ -20,7 +20,7 @@ import { WebTerrain } from '../terrain/WebTerrain';
 import { Overlay } from '../terrain/Overlay';
 import { setEnvironment } from '../core/lib';
 
-import { GlyphAtlas } from './GlyphAtlas';
+import { GlyphMaterial } from '../materials/GlyphMaterial';
 
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
 
@@ -527,6 +527,7 @@ function setCameraMode ( mode ) {
 
 		// calculate zoom from ratio of pCamera distance from target to base distance.
 		oCamera.zoom = CAMERA_OFFSET / offset.length();
+		console.log( oCamera.zoom );
 		offset.setLength( CAMERA_OFFSET );
 
 		camera = oCamera;
@@ -840,8 +841,12 @@ function clearView () {
 	viewState.cameraType = CAMERA_PERSPECTIVE;
 	setViewMode( VIEW_PLAN, 1 );
 
-	if ( ! window.glyphAtlas ) window.glyphAtlas = new GlyphAtlas( container, Math.PI / 4 );
-	// FIXME - sort out glyph atlas creation
+	if ( ! window.glyphMaterial ) {
+
+		// FIXME - sort out glyph atlas creation
+		window.glyphMaterial = new GlyphMaterial( 'test', container, Math.PI / 4 );
+
+	}
 
 	renderView();
 

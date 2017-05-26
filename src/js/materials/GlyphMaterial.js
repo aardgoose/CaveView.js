@@ -2,7 +2,7 @@
 import { ShaderMaterial, Matrix4 } from '../../../../three.js/src/Three';
 import { Shaders } from '../shaders/Shaders';
 
-function GlyphMaterial ( glyphAtlasTexture, cellScale, container ) {
+function GlyphMaterial ( glyphAtlasTexture, cellScale, container, rotation ) {
 
 	console.log( container );
 
@@ -10,7 +10,7 @@ function GlyphMaterial ( glyphAtlasTexture, cellScale, container ) {
 		uniforms: {
 			cellScale: { value: cellScale },
 			atlas: { value: glyphAtlasTexture },
-			rotate: { value: new Matrix4().makeRotationZ( Math.PI / 4 ) },
+			rotate: { value: new Matrix4().makeRotationZ( rotation ) },
 			scale: { value: container.clientHeight / container.clientWidth }
 		},
 		vertexShader: Shaders.glyphVertexShader,

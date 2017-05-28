@@ -1,5 +1,5 @@
 
-import { ShaderMaterial, Matrix4 } from '../../../../three.js/src/Three';
+import { ShaderMaterial } from '../../../../three.js/src/Three';
 import { Shaders } from '../shaders/Shaders';
 import { AtlasFactory } from '../materials/GlyphAtlas';
 
@@ -9,11 +9,16 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 
 	var cellScale = glyphAtlas.getCellScale();
 
+	var cos = Math.cos( rotation );
+	var sin = Math.sin( rotation );
+
+	var rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
+
 	ShaderMaterial.call( this, {
 		uniforms: {
 			cellScale: { value: cellScale },
 			atlas: { value: glyphAtlas.getTexture() },
-			rotate: { value: new Matrix4().makeRotationZ( rotation ) },
+			rotate: { value: rotationMatrix },
 			scale: { value: container.clientHeight / container.clientWidth }
 		},
 		vertexShader: Shaders.glyphVertexShader,

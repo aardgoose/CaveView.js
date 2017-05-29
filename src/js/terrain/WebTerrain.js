@@ -32,7 +32,7 @@ function WebTerrain ( limits3, onReady, onLoaded, overlayLoadedCallback ) {
 	this.material        = null;
 	this.initialZoom     = null;
 	this.currentZoom     = null;
-	this.currentLimits;
+	this.currentLimits   = null;
 	this.dying = false;
 	this.overlayLoadedCallback = overlayLoadedCallback;
 	this.overlaysLoading = 0;

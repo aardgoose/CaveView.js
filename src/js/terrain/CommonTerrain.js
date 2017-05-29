@@ -24,7 +24,7 @@ CommonTerrain.prototype = Object.create( Group.prototype );
 
 CommonTerrain.prototype.constructor = CommonTerrain;
 
-CommonTerrain.prototype.shadingMode;
+CommonTerrain.prototype.shadingMode = SHADING_SHADED;
 CommonTerrain.prototype.opacity = 0.5;
 
 CommonTerrain.prototype.removed = function () {};

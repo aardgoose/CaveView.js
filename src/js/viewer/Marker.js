@@ -45,7 +45,6 @@ function Marker ( survey, entrance ) {
 
 }
 
-
 Marker.prototype = Object.create( LOD.prototype );
 
 Marker.prototype.constructor = Marker;

@@ -1,7 +1,6 @@
 import {
 	Color,
 	BufferGeometry,
-	VertexColors,
 	Points,
 	Float32BufferAttribute
 } from '../../../../three.js/src/Three';

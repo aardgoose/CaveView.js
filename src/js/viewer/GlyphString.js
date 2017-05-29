@@ -13,6 +13,7 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 	this.type = 'GlyphStringGeometry';
 	this.name = text;
+	this.width = 0;
 
 	var indexAttribute = new Uint16BufferAttribute( [ 0, 2, 1, 0, 3, 2 ], 1 );
 
@@ -57,6 +58,8 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 	}
 
+	this.width = offset;
+
 	this.addAttribute( 'instanceUvs', new InstancedBufferAttribute( uvs, 2, 1 ) );
 	this.addAttribute( 'instanceOffsets', new InstancedBufferAttribute( offsets, 1, 1 ) );
 	this.addAttribute( 'instanceWidths', new InstancedBufferAttribute( widths, 1, 1 ) );
@@ -71,6 +74,7 @@ GlyphStringGeometry.prototype = Object.assign( Object.create( InstancedBufferGeo
 	constructor: GlyphStringGeometry
 
 } );
+
 
 function GlyphString ( text, glyphMaterial ) {
 
@@ -87,7 +91,13 @@ GlyphString.prototype = Object.assign( Object.create( Mesh.prototype ), {
 
 	constructor: GlyphString,
 
-	isGlyphString: true
+	isGlyphString: true,
+
+	getWidth: function () {
+
+		return this.geometry.width;
+
+	}
 
 } );
 

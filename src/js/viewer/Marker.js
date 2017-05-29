@@ -34,7 +34,7 @@ function Marker ( survey, entrance ) {
 
 	this.name = text;
 
-	this.addLevel( nearPointer, 0 );
+	this.addLevel( label, 0 );
 	this.addLevel( farPointer, 100 );
 
 	this.position.copy( entrance.position );

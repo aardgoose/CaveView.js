@@ -137,7 +137,7 @@ Tree.prototype.getByPathArray = function ( path ) {
 
 Tree.prototype.addPath = function ( path, properties ) {
 
-	var node = this;
+	var node;
 	var newNode;
 
 	// find part of path that exists already

@@ -71,6 +71,8 @@ Tile.prototype.createCommon = function () {
 	// discard javascript attribute buffers after upload to GPU
 	for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
 
+	this.geometry.index.onUpload( onUploadDropBuffer );
+
 	this.layers.set( FEATURE_TERRAIN );
 
 };

@@ -27,7 +27,7 @@ HudObject.prototype.setVisibility = function ( visible ) {
 
 	this.visible = visible;
 
-	style = ( visible ? style = 'block' : style = 'none' );
+	style = ( visible ? 'block' : 'none' );
 
 	for ( var i = 0, l = this.domObjects.length; i < l; i++ ) {
 

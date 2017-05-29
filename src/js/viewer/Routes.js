@@ -114,8 +114,6 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 		}
 
-		return this;
-
 	}
 
 	if ( ! newSegment ) {
@@ -128,6 +126,8 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 		station.linkedSegments.push( segment );
 
 	}
+
+	return this;
 
 };
 

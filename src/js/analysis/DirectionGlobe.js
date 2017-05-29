@@ -1,6 +1,6 @@
 
 import  {
-	Points, VertexColors, SphereBufferGeometry, MeshBasicMaterial, Mesh, Geometry, Vector3, BufferGeometry, Float32BufferAttribute,
+	Points, SphereBufferGeometry, MeshBasicMaterial, Mesh, Geometry, Vector3, BufferGeometry, Float32BufferAttribute,
 } from '../../../../three.js/src/Three'; 
 
 import  { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial'; 

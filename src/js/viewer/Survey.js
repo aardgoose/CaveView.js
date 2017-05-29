@@ -66,7 +66,7 @@ function Survey ( cave ) {
 	this.isRegion = cave.isRegion;
 	this.legMeshes = [];
 	this.routes = null;
-	this.stations;
+	this.stations = null;
 	this.workerPool = new WorkerPool( 'caveWorker.js' );
 
 	var self = this;

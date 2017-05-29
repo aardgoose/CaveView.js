@@ -263,7 +263,7 @@ function init ( domID, configuration ) { // public method
 		'cut': {
 			writeable: true,
 			get: function () { return true; },
-			set: function ( x ) { cutSection( x ); }
+			set: function () { cutSection(); }
 		},
 
 		'zScale': {

@@ -17,6 +17,7 @@ function CaveLoader ( callback, progress ) {
 	this.progress = progress;
 	this.dataResponse = null;
 	this.metadataResponse = null;
+	this.taskCount = 0;
 
 }
 
@@ -77,14 +78,19 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 	}
 
 	this.doneCount = 0;
+	this.taskCount = type === 'json' ? 1 : 2;
 
 	var loader = new FileLoader().setPath( prefix );
 
 	loader.setResponseType( type ).load( fileName, _dataLoaded, _progress, _error );
 
-	// request metadata file
+	// request metadata file if not a region (ie json file)
 
-	loader.setResponseType( 'json' ).load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _error );
+	if ( type !== 'json' ) {
+
+		loader.setResponseType( 'json' ).load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _error );
+
+	}
 
 	return true;
 
@@ -93,7 +99,7 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 		self.doneCount++;
 		self.dataResponse = result;
 
-		if ( self.doneCount === 2 ) self.callHandler( fileName );
+		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
 
 	}
 
@@ -102,7 +108,7 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 		self.doneCount++;
 		self.metadataResponse = result;
 
-		if ( self.doneCount === 2 ) self.callHandler( fileName );
+		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
 
 	}
 
@@ -118,7 +124,7 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 
 		if ( event.currentTarget.responseType !== 'json' ) console.log( ' error event', event );
 
-		if ( self.doneCount === 2 ) self.callHandler( fileName );
+		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
 
 	}
 
@@ -210,7 +216,7 @@ CaveLoader.prototype.callHandler = function ( fileName ) {
 
 	case 'reg':
 
-		handler = new RegionHandler( fileName, data, metadata );
+		handler = new RegionHandler( fileName, data );
 
 		break;
 

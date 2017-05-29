@@ -785,7 +785,7 @@ Survey.prototype.loadDyeTraces = function ( traces ) {
 	geometry.addAttribute( 'position', positions.copyVector3sArray( vertices ) );
 	geometry.addAttribute( 'sinks', sinks.copyVector3sArray( ends ) );
 
-	var mesh = new Mesh( geometry , new WaterMaterial();
+	var mesh = new Mesh( geometry , new WaterMaterial() );
 
 	mesh.onBeforeRender = _beforeRender;
 	mesh.layers.set( FEATURE_TRACES );

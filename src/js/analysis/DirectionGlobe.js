@@ -12,7 +12,7 @@ function DirectionGlobe ( survey ) {
 	var geometry = new Geometry();
 	var bufferGeometry = new BufferGeometry();
 
-	Points.call( this, bufferGeometry, new ExtendedPointsMaterial( { size: 1.0, opacity: 0.5, transparent: true,  vertexColors: VertexColors  } ) );
+	Points.call( this, bufferGeometry, new ExtendedPointsMaterial() );
 
 	this.type = 'DirectionGlobe';
 

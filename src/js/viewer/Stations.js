@@ -13,7 +13,7 @@ import { Viewer } from '../viewer/Viewer';
 
 function Stations () {
 
-	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial( { size: 1.0, opacity: 0.5, transparent: true,  vertexColors: VertexColors  } ) );
+	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial() );
 
 	this.type = 'CV.Stations';
 	this.map = new Map();

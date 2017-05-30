@@ -234,6 +234,11 @@ function init ( domID, configuration ) { // public method
 			set: function ( x ) { _viewStateSetter( selectSection, 'section', x ); }
 		},
 
+		'highlight': {
+			writeable: true,
+			set: function ( x ) { _viewStateSetter( highlightSection, 'highlight', x ); }
+		},
+
 		'routeEdit': {
 			writeable: true,
 			get: function () { return ( mouseMode === MOUSE_MODE_ROUTE_EDIT ); },
@@ -712,6 +717,14 @@ function cutSection () {
 	clearView();
 
 	loadSurvey( cutSurvey );
+
+}
+
+function highlightSection ( id ) {
+
+	survey.highlightSection( id );
+
+	renderView();
 
 }
 

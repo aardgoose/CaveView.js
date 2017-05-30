@@ -38,6 +38,21 @@ Tree.prototype.traverse = function ( func ) {
 
 };
 
+Tree.prototype.traverseDepthFirst = function ( func ) {
+
+	var children = this.children;
+
+
+	for ( var i = 0; i < children.length; i++ ) {
+
+		children[ i ].traverseDepthFirst( func );
+
+	}
+
+	func ( this );
+
+};
+
 Tree.prototype.forEachChild = function ( func, recurse ) {
 
 	var children = this.children;
@@ -48,6 +63,7 @@ Tree.prototype.forEachChild = function ( func, recurse ) {
 		child = children[ i ];
 
 		func( child );
+
 		if ( recurse === true ) child.forEachChild( func, true );
 
 	}

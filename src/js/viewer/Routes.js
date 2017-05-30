@@ -20,7 +20,7 @@ function Routes ( routes ) {
 	this.routeNames = [];
 
 	this.currentRoute = new Set();
-	this.currentRouteName;
+	this.currentRouteName = null;
 	this.adjacentSegments = new Set();
 
 	Object.defineProperty( this, 'setRoute', {

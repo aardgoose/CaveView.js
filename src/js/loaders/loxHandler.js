@@ -102,7 +102,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 			for ( var i = 0; i < m_recCount; i++ ) {
 
-				doFunction( i );
+				doFunction();
 
 			}
 
@@ -128,7 +128,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 	}
 
-	function readSurvey ( /* i */ ) {
+	function readSurvey () {
 
 		var m_id     = readUint();
 		var namePtr  = readDataPtr();
@@ -143,7 +143,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 	}
 
-	function readDataPtr() {
+	function readDataPtr () {
 
 		var m_position = readUint();
 		var m_size     = readUint();

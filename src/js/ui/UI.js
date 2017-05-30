@@ -101,8 +101,9 @@ function init ( domID, configuration ) { // public method
 
 	viewState = Viewer.getState;
 
-	viewState.addEventListener( 'change',  Page.handleChange );
-	viewState.addEventListener( 'change',  handleChange );
+	viewState.addEventListener( 'change', Page.handleChange );
+	viewState.addEventListener( 'change', handleChange );
+
 	viewState.addEventListener( 'newCave', viewComplete );
 
 }
@@ -150,6 +151,7 @@ function initSelectionPage () {
 	var page;
 	var currentTop = surveyTree;
 	var depth = 0;
+	var currentHover = 0;
 
 	if ( ! isCaveLoaded ) return;
 
@@ -218,6 +220,8 @@ function initSelectionPage () {
 		top.forEachChild( _addLine );
 	
 		currentTop = top;
+
+		ul.addEventListener( 'mouseover', _handleMouseover );
 
 		return ul;
 
@@ -294,6 +298,27 @@ function initSelectionPage () {
 
 	}
 
+	function _handleMouseover ( event ) {
+
+		event.stopPropagation();
+
+		var target = event.target;
+
+		if ( target.nodeName !== 'LI' ) return;
+
+		var id = Number( target.id.split( 'v' )[ 1 ] );
+
+		if ( id !== currentHover ) {
+
+			viewState.highlight = ( viewState.section !== id ) ? id : 0;
+			currentHover = id;
+
+		}
+
+		return false;
+
+	}
+
 	function _handleSelectSurveyBack ( event ) {
 
 		event.stopPropagation();
@@ -322,6 +347,7 @@ function initSelectionPage () {
 		case 'LI':
 
 			viewState.section = ( viewState.section !== id ) ? id : 0;
+			viewState.setPOI = true;
 
 			break;
 
@@ -499,14 +525,14 @@ function initSettingsPage () {
 
 	page.addHeader( 'Visibility' );
 
-	if ( viewState.hasEntrances ) page.addCheckbox( 'Entrances',     viewState, 'entrances' );
+	if ( viewState.hasEntrances ) page.addCheckbox( 'Entrances', viewState, 'entrances' );
 
 	page.addCheckbox( 'Stations', viewState, 'stations' );
 
-	if ( viewState.hasSplays ) page.addCheckbox( 'Splay Legs',    viewState, 'splays' );
-	if ( viewState.hasWalls )  page.addCheckbox( 'Walls (LRUD)',  viewState, 'walls' );
-	if ( viewState.hasScraps ) page.addCheckbox( 'Scraps',        viewState, 'scraps' );
-	if ( viewState.hasTraces ) page.addCheckbox( 'Dye Traces',    viewState, 'traces' );
+	if ( viewState.hasSplays ) page.addCheckbox( 'Splay Legs', viewState, 'splays' );
+	if ( viewState.hasWalls  ) page.addCheckbox( 'Walls (LRUD)', viewState, 'walls' );
+	if ( viewState.hasScraps ) page.addCheckbox( 'Scraps', viewState, 'scraps' );
+	if ( viewState.hasTraces ) page.addCheckbox( 'Dye Traces', viewState, 'traces' );
 
 	page.addCheckbox( 'Indicators', viewState, 'HUD' );
 	page.addCheckbox( 'Bounding Box', viewState, 'box' );
@@ -604,7 +630,7 @@ function resetUI () {
 
 		Page.clear();
 
-		surveyTree  = null;
+		surveyTree = null;
 
 	}
 

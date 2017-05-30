@@ -30,7 +30,8 @@ import {
 	Float32BufferAttribute,
 	MeshLambertMaterial, MeshBasicMaterial, LineBasicMaterial,
 	FaceColors, NoColors, FrontSide, VertexColors,
-	Object3D, Mesh, Group, LineSegments
+	Object3D, Mesh, Group, LineSegments,
+	Points, PointsMaterial
 } from '../../../../three.js/src/Three';
 
 var zeroVector = new Vector3();
@@ -68,6 +69,19 @@ function Survey ( cave ) {
 	this.routes = null;
 	this.stations = null;
 	this.workerPool = new WorkerPool( 'caveWorker.js' );
+
+	// highlit point marker
+
+	var g = new Geometry();
+	g.vertices.push( new Vector3() );
+
+	var point = new Points( g, new PointsMaterial( { color: 0xffffff } ) );
+
+	point.visible = false;
+
+	this.add( point );
+
+	this.stationHighlight = point;
 
 	var self = this;
 
@@ -217,6 +231,8 @@ Survey.prototype.loadCave = function ( cave ) {
 	_loadScraps( cave.scraps );
 	_loadCrossSections( cave.crossSections );
 	_loadTerrain( cave );
+
+	this.computeBoundingBoxes( cave.surveyTree );
 
 	this.pointTargets.push( this.stations );
 
@@ -767,6 +783,35 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 
 };
 
+Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
+
+	surveyTree.traverseDepthFirst( _computeBoundingBox );
+
+	return;
+
+	function _computeBoundingBox ( node ) {
+
+		var parent = node.parent;
+
+		if ( parent && parent.boundingBox === undefined ) parent.boundingBox = new Box3();
+
+		if ( node.p !== undefined ) {
+
+			parent.boundingBox.expandByPoint( node.p );
+
+		} else if ( parent ) {
+
+			if ( node.children.length === 0 || ( node.boundingBox !== undefined && node.boundingBox.isEmpty() ) ) return;
+
+			parent.boundingBox.expandByPoint( node.boundingBox.min );
+			parent.boundingBox.expandByPoint( node.boundingBox.max );
+
+		}
+
+	}
+
+}
+
 Survey.prototype.loadDyeTraces = function ( traces ) {
 
 	if ( traces.length === 0 ) return;
@@ -931,6 +976,51 @@ Survey.prototype.clearSectionSelection = function () {
 		this.selectedBox = null;
 
 		box.geometry.dispose();
+
+	}
+
+};
+
+Survey.prototype.highlightSection = function ( id ) {
+
+	var surveyTree = this.surveyTree;
+	var node;
+	var box = this.selectedBox;
+
+	if ( id ) {
+
+		node = surveyTree.findById( id );
+
+		if ( node.p === undefined && node.boundingBox !== undefined ) {
+
+			if ( box === null ) {
+// FIXME distinguish between current selection and highlit selection.
+				box = new Box3Helper( node.boundingBox, 0xffff00 );
+
+				box.layers.set( FEATURE_SELECTED_BOX );
+				box.name = 'selectedBox';
+
+				this.selectedBox = box;
+
+				this.add( box );
+
+			} else {
+
+				box.update( node.boundingBox );
+
+			}
+
+		} else {
+// FIXME - make cleaner and use bufferAttribute
+			var highlight = this.stationHighlight;
+			var geometry = highlight.geometry;
+
+			geometry.vertices[ 0 ].copy( node.p );
+			geometry.verticesNeedUpdate = true;
+
+			highlight.visible = true;
+
+		}
 
 	}
 
@@ -1811,11 +1901,6 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 	var vertices = geometry.vertices;
 	var colors   = geometry.colors;
 
-	var box = new Box3();
-
-	var min = box.min;
-	var max = box.max;
-
 	var runsSelected = 0;
 
 	var k, l, run, v, v1, v2;
@@ -1844,11 +1929,6 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 
 					colourSegment( geometry, k, k + 1, survey );
 
-					min.min( v1 );
-					min.min( v2 );
-					max.max( v1 );
-					max.max( v2 );
-
 				}
 
 			} else {
@@ -1863,17 +1943,6 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 				}
 
 			}
-
-		}
-
-		if ( this.selectedSection > 0 && runsSelected > 0  && this.selectedBox === null ) {
-
-			this.selectedBox = new Box3Helper( box, 0x0000ff );
-
-			this.selectedBox.layers.set( FEATURE_SELECTED_BOX );
-			this.selectedBox.name = 'selectedBox';
-
-			this.add( this.selectedBox );
 
 		}
 

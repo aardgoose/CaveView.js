@@ -14,7 +14,7 @@ import { ColourCache } from '../core/ColourCache';
 import { Tree } from '../core/Tree';
 import { Box3Helper } from '../core/Box3';
 import { Materials } from '../materials/Materials';
-import { Marker } from './Marker';
+import { ClusterMarkers } from './ClusterMarkers';
 import { farPointers } from './EntranceFarPointer';
 import { Stations } from './Stations';
 import { Routes } from './Routes';
@@ -30,7 +30,7 @@ import {
 	Float32BufferAttribute,
 	MeshLambertMaterial, MeshBasicMaterial, LineBasicMaterial,
 	FaceColors, NoColors, FrontSide, VertexColors,
-	Object3D, Mesh, Group, LineSegments,
+	Object3D, Mesh, LineSegments,
 	Points, PointsMaterial
 } from '../../../../three.js/src/Three';
 
@@ -94,8 +94,6 @@ function Survey ( cave ) {
 
 	this.isLongLat = true; // FIXME
 
-	_loadEntrances( survey.entrances );
-
 	if ( this.isRegion === true ) {
 
 		this.stats[ LEG_CAVE ] = {};
@@ -110,6 +108,8 @@ function Survey ( cave ) {
 		this.legTargets = [ this.legMeshes[ LEG_CAVE ] ];
 
 	}
+
+	_loadEntrances( survey.entrances );
 
 	this.setFeatureBox();
 
@@ -185,7 +185,8 @@ function Survey ( cave ) {
 
 		if ( l === 0 ) return null;
 
-		var entrances = new Group();
+		var marker;
+		var entrances = new ClusterMarkers( self.limits );
 
 		entrances.name = 'CV.Survey:entrances';
 		entrances.layers.set( FEATURE_ENTRANCES );
@@ -197,11 +198,9 @@ function Survey ( cave ) {
 
 			var entrance = entranceList[ i ];
 
-			var marker = new Marker( self, entrance );
+			marker = entrances.addMarker( entrance );
 
-			entrances.add( marker );
-
-			marker.userData = entrance.survey;
+//			marker.userData = entrance.survey;
 
 			self.pointTargets.push( marker );
 			self.lodTargets.push( marker );
@@ -810,7 +809,7 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 
 	}
 
-}
+};
 
 Survey.prototype.loadDyeTraces = function ( traces ) {
 
@@ -1898,12 +1897,9 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
 	var geometry   = mesh.geometry;
 	var vertexRuns = mesh.userData.legRuns;
 
-	var vertices = geometry.vertices;
 	var colors   = geometry.colors;
 
-	var runsSelected = 0;
-
-	var k, l, run, v, v1, v2;
+	var k, l, run, v;
 
 	var selectedSectionIds = this.selectedSectionIds;
 
@@ -1918,14 +1914,9 @@ Survey.prototype.setLegSelected = function ( mesh, colourSegment ) {
  
 			if ( selectedSectionIds.has( survey ) ) {
 
-				runsSelected++;
-
 				for ( v = start; v < end; v++ ) {
 
 					k = v * 2;
-
-					v1 = vertices[ k ];
-					v2 = vertices[ k + 1 ];
 
 					colourSegment( geometry, k, k + 1, survey );
 

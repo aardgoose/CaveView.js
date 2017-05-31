@@ -202,6 +202,8 @@ function Survey ( cave ) {
 
 		}
 
+		self.entrances = entrances;
+
 		return;
 
 	}

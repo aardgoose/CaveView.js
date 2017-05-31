@@ -83,6 +83,7 @@ function GlyphString ( text, glyphMaterial ) {
 	Mesh.call( this, geometry, glyphMaterial );
 
 	this.type = 'GlyphString';
+	this.name = text;
 	this.frustumCulled = false;
 
 }

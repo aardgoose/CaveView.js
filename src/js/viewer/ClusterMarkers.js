@@ -8,6 +8,7 @@ import { Object3D, Vector3, Triangle } from '../../../../three.js/src/Three';
 function ClusterMarkers ( limits ) {
 
 	this.limits = limits;
+	this.labels = [];
 
 	this.xMin = limits.min.x;
 	this.yMin = limits.min.y;
@@ -62,13 +63,78 @@ ClusterMarkers.prototype.addMarker = function ( entrance ) {
 
 	label.layers.set( FEATURE_ENTRANCES );
 	label.position.copy( entrance.position );
-	label.quadKey = quadKey;
+
+	// add to quadkey index to allow quick lookup.
+	this.labels.push( { key: quadKey, label: label } );
 
 	this.add( label );
 
 	return label;
 
 };
+
+ClusterMarkers.prototype.cluster = function ( camera ) {
+
+	// determine which labels are too close together to be usefully displayed as separate objects.
+
+	// immediate exit if only a single label.
+//	if ( this.labels.length === 1 ) return;
+
+	console.log( 'cluster', this.labels.length );
+
+	var mask = 3 << 14; // top two bits
+
+	this.checkQuad( 0, 0, 0, 0, 7 );
+	this.checkQuad( 0, 0, 0, 1, 7 );
+	this.checkQuad( 0, 0, 1, 0, 7 );
+	this.checkQuad( 0, 0, 1, 1, 7 );
+
+	return;
+
+}
+
+ClusterMarkers.prototype.checkQuad = function ( prefix, mask, x, y, order ) {
+
+	var labels = this.labels;
+
+	// quadkey prefix for this quad
+	prefix = prefix | ( ( x << 1 ) | y ) << ( order * 2 );
+
+	var mask = mask | ( 3 << ( order * 2 ) );
+
+	var labelCount = 0;
+
+	// check for labels in this quad
+
+	for ( var i = 0, l = labels.length; i < l; i++ ) {
+
+		var key = labels[ i ].key;
+
+		console.log( key.toString( 2 ).padStart( 16, 0 ), mask.toString( 2 ).padStart( 16, 0 ) );
+
+		if ( ( key & mask ) === prefix ) {
+
+			console.log( labels[ i ].label.name );
+			labelCount++;
+
+		}
+	}
+
+	console.log( prefix.toString( 2 ).padStart( 16, '0' ), 'order', order, x, y, 'entranceCount:', labelCount );
+	console.log( '' );
+
+	if ( labelCount < 2 ) return;
+
+	order--;
+
+	if ( order < 6 ) return;
+
+	this.checkQuad( prefix, mask, 0, 0, order );
+	this.checkQuad( prefix, mask, 0, 1, order );
+	this.checkQuad( prefix, mask, 1, 0, order );
+	this.checkQuad( prefix, mask, 1, 1, order );
+
+}
 
 ClusterMarkers.prototype.projectedArea = function ( camera ) {
 

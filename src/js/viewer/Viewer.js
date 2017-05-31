@@ -1158,21 +1158,11 @@ var renderView = function () {
 
 		HUD.renderHUD();
 
-		// update LOD Scene Objects
-/*
-		var lods = survey.lodTargets;
-		var l = lods.length;
+		// FIXME - replace with more generic handler
+		//       - is it required every frame?
 
-		if ( l > 0 ) {
+		survey.entrances.cluster( camera );
 
-			for ( var i = 0; i < l; i++ ) {
-
-				lods[ i ].update( camera );
-
-			}
-
-		}
-*/
 		clockStart();
 
 	};
@@ -1191,6 +1181,7 @@ function updateTerrain () {
 	if ( lastActivityTime && performance.now() - lastActivityTime > RETILE_TIMEOUT ) {
 
 		clockStop();
+
 		if ( terrain.zoomCheck( camera ) ) {
 
 			setTimeout( updateTerrain, RETILE_TIMEOUT * 5 );

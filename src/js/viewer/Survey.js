@@ -15,7 +15,6 @@ import { Tree } from '../core/Tree';
 import { Box3Helper } from '../core/Box3';
 import { Materials } from '../materials/Materials';
 import { ClusterMarkers } from './ClusterMarkers';
-import { farPointers } from './EntranceFarPointer';
 import { Stations } from './Stations';
 import { Routes } from './Routes';
 import { SurveyColours } from '../core/SurveyColours';
@@ -58,7 +57,6 @@ function Survey ( cave ) {
 
 	this.pointTargets = [];
 	this.legTargets = [];
-	this.lodTargets = [];
 
 	this.type = 'CV.Survey';
 	this.cutInProgress = false;
@@ -200,10 +198,7 @@ function Survey ( cave ) {
 
 			marker = entrances.addMarker( entrance );
 
-//			marker.userData = entrance.survey;
-
 			self.pointTargets.push( marker );
-			self.lodTargets.push( marker );
 
 		}
 
@@ -1141,10 +1136,6 @@ Survey.prototype.cutSection = function ( id ) {
 
 	}
 
-	// update far pointers - held in single geometry to reduce draw call count
-
-	if ( farPointers ) farPointers.removeDeleted();
-
 	// update stats
 
 	this.stats[ LEG_CAVE    ] = this.getLegStats( legMeshes[ LEG_CAVE    ] );
@@ -1206,10 +1197,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 			break;
 
-		case 'CV.EntranceFarPointer':
-		case 'CV.EntranceNearPointer':
 		case 'CV.Label':
-		case 'CV.FarPointers':
 		case 'Group':
 
 			break;
@@ -1420,8 +1408,6 @@ Survey.prototype.getBounds = function () {
 
 	function _addObjectBounds ( obj ) {
 
-		if ( obj.type === 'CV.EntranceNearPointer' ) return; // skip sprites which have abnormal bounding boxes
-		if ( obj.type === 'CV.EntranceFarPointer' ) return; // skip sprites which have abnormal bounding boxes
 		if ( obj.type === 'CV.Survey' ) return; // skip survey which is positioned/scaled into world space
 
 		var geometry = obj.geometry;

@@ -1159,7 +1159,7 @@ var renderView = function () {
 		HUD.renderHUD();
 
 		// update LOD Scene Objects
-
+/*
 		var lods = survey.lodTargets;
 		var l = lods.length;
 
@@ -1172,7 +1172,7 @@ var renderView = function () {
 			}
 
 		}
-
+*/
 		clockStart();
 
 	};

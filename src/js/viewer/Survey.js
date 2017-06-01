@@ -184,7 +184,7 @@ function Survey ( cave ) {
 		if ( l === 0 ) return null;
 
 		var marker;
-		var entrances = new ClusterMarkers( self.limits );
+		var entrances = new ClusterMarkers( self.limits, 4 );
 
 		entrances.name = 'CV.Survey:entrances';
 		entrances.layers.set( FEATURE_ENTRANCES );

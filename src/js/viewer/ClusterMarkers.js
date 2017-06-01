@@ -2,13 +2,14 @@
 import { FEATURE_ENTRANCES } from '../core/constants';
 import { GlyphString } from './GlyphString';
 
-import { Object3D, Vector3, Triangle } from '../../../../three.js/src/Three';
+import { Object3D, Vector3, Triangle, Mesh, SphereBufferGeometry } from '../../../../three.js/src/Three';
 
 
 var A = new Vector3();
 var B = new Vector3();
 var C = new Vector3();
 var D = new Vector3();
+
 
 function ClusterMarkers ( limits, maxOrder ) {
 
@@ -30,6 +31,7 @@ function ClusterMarkers ( limits, maxOrder ) {
 	this.yScale = maxQuads / ( limits.max.y - limits.min.y );
 
 	this.type = 'CV.ClusterMarker';
+	this.sphere = new SphereBufferGeometry( 100 );
 
 	var quadCache = [];
 
@@ -94,12 +96,18 @@ ClusterMarkers.prototype.addMarker = function ( entrance ) {
 
 		if ( quadLookup.bucket[ quadKey ] === undefined ) {
 
-			quadLookup.bucket[ quadKey ] = { count: 1, clusterMarker: null, markers: [ label ] };
+			quadLookup.bucket[ quadKey ] = { 
+				count: 1, 
+				clusterMarker: null,
+				markers: [ label ], 
+				tmp: new Vector3().copy( label.position )
+			};
 
 		} else {
 
 			quadLookup.bucket[ quadKey ].count++;
 			quadLookup.bucket[ quadKey ].markers.push( label );
+			quadLookup.bucket[ quadKey ].tmp.add( label.position );
 
 		}
 
@@ -191,6 +199,20 @@ ClusterMarkers.prototype.checkQuad = function ( prefix, quad, x, y, order ) {
 		for ( i = 0, l = markers.length; i < l; i++ ) {
 
 			markers[ i ].visible = false;
+
+		}
+
+		if ( quadInfo.clusterMarker === null ) {
+
+			var clusterMarker = new Mesh( this.sphere );
+
+			// set to center of distribution of markers in this quad.
+
+			clusterMarker.position.copy( quadInfo.tmp ).divideScalar( quadInfo.count );
+
+			this.add( clusterMarker );
+
+			quadInfo.clusterMarker = clusterMarker;
 
 		}
 

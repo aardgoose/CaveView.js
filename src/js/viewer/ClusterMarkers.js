@@ -5,22 +5,43 @@ import { GlyphString } from './GlyphString';
 import { Object3D, Vector3, Triangle } from '../../../../three.js/src/Three';
 
 
-function ClusterMarkers ( limits ) {
+var A = new Vector3();
+var B = new Vector3();
+var C = new Vector3();
+var D = new Vector3();
+
+function ClusterMarkers ( limits, maxOrder ) {
+
+	Object3D.call( this );
 
 	this.limits = limits;
+	this.maxOrder = maxOrder;
 	this.labels = [];
 
 	this.xMin = limits.min.x;
 	this.yMin = limits.min.y;
 
-	this.xScale = 256 / ( limits.max.x - limits.min.x );
-	this.yScale = 256 / ( limits.max.y - limits.min.y );
+	this.xRange = limits.max.x - limits.min.x;
+	this.yRange = limits.max.y - limits.min.y;
 
-	Object3D.call( this );
+	var maxQuads = Math.pow( 2, maxOrder + 1 );
+
+	this.xScale = maxQuads / ( limits.max.x - limits.min.x );
+	this.yScale = maxQuads / ( limits.max.y - limits.min.y );
 
 	this.type = 'CV.ClusterMarker';
 
-	this.addEventListener( 'removed', this.onRemove );
+	var quadCache = [];
+
+	// build empty cache for each order of quadKey prefix length
+
+	for ( var i = maxOrder; i >= 0; i-- ) {
+
+		quadCache[ i ] = { bucket: [] }
+
+	}
+
+	this.quadCache = quadCache;
 
 	return this;
 
@@ -33,7 +54,6 @@ ClusterMarkers.prototype.constructor = ClusterMarkers;
 ClusterMarkers.prototype.addMarker = function ( entrance ) {
 
 	var x, y;
-//	var limits = this.limits;
 
 	var xMin = this.xMin;
 	var yMin = this.yMin;
@@ -41,31 +61,55 @@ ClusterMarkers.prototype.addMarker = function ( entrance ) {
 	var xScale = this.xScale;
 	var yScale = this.yScale;
 
-	// normalised x / y
+	// normalised x / y in range 0 - 255
+
 	x = Math.floor( ( entrance.position.x - xMin ) * xScale );
 	y = Math.floor( ( entrance.position.y - yMin ) * yScale );
 
-	var mask;
-	var quadKey = 0;
-
-	for ( var j = 7; j >= 0; j-- ) {
-
-		mask = 1 << j;
-
-		quadKey = ( quadKey << 1 ) + ( ( mask & x ) ? 1 : 0 );
-		quadKey = ( quadKey << 1 ) + ( ( mask & y ) ? 1 : 0 );
-
-	}
-
-	console.log( 'entrance', entrance.label, x, y, x.toString( 2 ), y.toString( 2 ), quadKey.toString( 2 ) );
+	// create label
 
 	var label = new GlyphString( entrance.label, window.glyphMaterial );
 
 	label.layers.set( FEATURE_ENTRANCES );
 	label.position.copy( entrance.position );
 
+	// calculate quadkey prefixes for this marker
+
+	var mask;
+	var quadKey = 0;
+
+	var quadCache = this.quadCache;
+	var quadLookup;
+
+	for ( var i = this.maxOrder; i >= 0; i-- ) {
+
+		mask = 1 << i;
+
+		quadKey = ( quadKey << 1 ) + ( ( mask & x ) ? 1 : 0 );
+		quadKey = ( quadKey << 1 ) + ( ( mask & y ) ? 1 : 0 );
+
+		// record marker in each order lookup bucket for this partial quadKey
+
+		quadLookup = quadCache[ i ];
+
+		if ( quadLookup.bucket[ quadKey ] === undefined ) {
+
+			quadLookup.bucket[ quadKey ] = { count: 1, clusterMarker: null, markers: [ label ] };
+
+		} else {
+
+			quadLookup.bucket[ quadKey ].count++;
+			quadLookup.bucket[ quadKey ].markers.push( label );
+
+		}
+
+	}
+
+//	console.log( 'entrance', entrance.label, x, y, x.toString( 2 ), y.toString( 2 ), quadKey.toString( 2 ) );
+
 	// add to quadkey index to allow quick lookup.
-	this.labels.push( { key: quadKey, label: label } );
+
+//	this.labels.push( { key: quadKey, label: label } );
 
 	this.add( label );
 
@@ -78,98 +122,106 @@ ClusterMarkers.prototype.cluster = function ( camera ) {
 	// determine which labels are too close together to be usefully displayed as separate objects.
 
 	// immediate exit if only a single label.
-//	if ( this.labels.length === 1 ) return;
+	var children = this.children;
 
-	console.log( 'cluster', this.labels.length );
+	if ( children.length === 1 ) return;
 
-	var mask = 3 << 14; // top two bits
+	this.camera = camera;
 
-	this.checkQuad( 0, 0, 0, 0, 7 );
-	this.checkQuad( 0, 0, 0, 1, 7 );
-	this.checkQuad( 0, 0, 1, 0, 7 );
-	this.checkQuad( 0, 0, 1, 1, 7 );
+	for ( var i = 0, l = children.length; i < l; i++ ) {
+
+		children[ i ].visible = true;
+
+	}
+
+	var maxOrder = this.maxOrder;
+
+	// search initial 4 quads
+
+	var xMin = this.xMin;
+	var yMin = this.yMin;
+
+	var xMid = xMin + this.xRange / 2;
+	var yMid = yMin + this.yRange / 2;
+
+	this.checkQuad( 0, 0, xMin, yMin, maxOrder );
+	this.checkQuad( 0, 1, xMin, yMid, maxOrder );
+	this.checkQuad( 0, 2, xMid, yMin, maxOrder );
+	this.checkQuad( 0, 3, xMid, yMid, maxOrder );
 
 	return;
 
 }
 
-ClusterMarkers.prototype.checkQuad = function ( prefix, mask, x, y, order ) {
+ClusterMarkers.prototype.checkQuad = function ( prefix, quad, x, y, order ) {
 
-	var labels = this.labels;
+	var i, l;
+	var quadLookup = this.quadCache[ order ];
 
-	// quadkey prefix for this quad
-	prefix = prefix | ( ( x << 1 ) | y ) << ( order * 2 );
+	// quadkey prefix and mask for this quad
 
-	var mask = mask | ( 3 << ( order * 2 ) );
-
-	var labelCount = 0;
+	prefix = prefix << 2 | quad;
 
 	// check for labels in this quad
 
-	for ( var i = 0, l = labels.length; i < l; i++ ) {
+	var quadInfo = quadLookup.bucket[ prefix ];
 
-		var key = labels[ i ].key;
+	if ( quadInfo === undefined  || quadInfo.count === 1 ) return;
 
-		console.log( key.toString( 2 ).padStart( 16, 0 ), mask.toString( 2 ).padStart( 16, 0 ) );
+	// calculate vertices of quad
 
-		if ( ( key & mask ) === prefix ) {
+	var width = Math.pow( 2, order - this.maxOrder - 1 );
 
-			console.log( labels[ i ].label.name );
-			labelCount++;
+	var xSize = width * this.xRange;
+	var ySize = width * this.yRange;
+
+	var xMax = x + xSize;
+	var yMax = y + ySize;
+
+	// calculate projected area of quad
+
+	var area = this.projectedArea( x, y, xMax, yMax );
+
+	if ( area < 0.05 ) {  // FIXME adjust to give best clustering
+
+//		console.log( 'area:', area );
+
+		var markers = quadInfo.markers;
+
+		for ( i = 0, l = markers.length; i < l; i++ ) {
+
+			markers[ i ].visible = false;
 
 		}
+
 	}
 
-	console.log( prefix.toString( 2 ).padStart( 16, '0' ), 'order', order, x, y, 'entranceCount:', labelCount );
-	console.log( '' );
+	if ( --order < 3 ) return;
 
-	if ( labelCount < 2 ) return;
+	var xMid = ( x + xMax ) / 2;
+	var yMid = ( y + yMax ) / 2;
 
-	order--;
-
-	if ( order < 6 ) return;
-
-	this.checkQuad( prefix, mask, 0, 0, order );
-	this.checkQuad( prefix, mask, 0, 1, order );
-	this.checkQuad( prefix, mask, 1, 0, order );
-	this.checkQuad( prefix, mask, 1, 1, order );
+	this.checkQuad( prefix, 0,    x,    y, order );
+	this.checkQuad( prefix, 1,    x, yMid, order );
+	this.checkQuad( prefix, 2, xMid,    y, order );
+	this.checkQuad( prefix, 3, xMid, yMid, order );
 
 }
 
-ClusterMarkers.prototype.projectedArea = function ( camera ) {
+ClusterMarkers.prototype.projectedArea = function ( xMin, yMin, xMax, yMax ) {
 
-	var v1; //= boundingBox.min.clone();
-	var v3; // = boundingBox.max.clone();
+	var camera = this.camera;
+	var matrixWorld = this.matrixWorld;
 
-	v1.z = 0;
-	v3.z = 0;
+	A.set( xMin, yMin, 0 ).applyMatrix4( matrixWorld ).project( camera );
+	B.set( xMin, yMax, 0 ).applyMatrix4( matrixWorld ).project( camera );
+	C.set( xMax, yMax, 0 ).applyMatrix4( matrixWorld ).project( camera );
+	D.set( xMax, yMin, 0 ).applyMatrix4( matrixWorld ).project( camera );
 
-	var v2 = new Vector3( v3.x, v1.y, 0 );
-	var v4 = new Vector3( v1.x, v3.y, 0 );
-
-	// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
-
-	v1.project( camera );
-	v2.project( camera );
-	v3.project( camera );
-	v4.project( camera );
-
-	var t1 = new Triangle( v1, v3, v4 );
-	var t2 = new Triangle( v1, v2, v3 );
+	var t1 = new Triangle( A, B, C );
+	var t2 = new Triangle( A, C, D );
 
 	return t1.area() + t2.area();
-
-};
-
-ClusterMarkers.prototype.onRemove = function ( /* event */ ) {
-
-	var levels = this.levels;
-
-	for ( var i = 0, l = levels.length; i < l; i++ ) {
-
-//		levels[ i ].object.dispatchEvent( { type: 'removed' } );
-
-	}
 
 };
 

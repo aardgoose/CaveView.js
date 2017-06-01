@@ -532,7 +532,7 @@ function setCameraMode ( mode ) {
 
 		// calculate zoom from ratio of pCamera distance from target to base distance.
 		oCamera.zoom = CAMERA_OFFSET / offset.length();
-		console.log( oCamera.zoom );
+
 		offset.setLength( CAMERA_OFFSET );
 
 		camera = oCamera;

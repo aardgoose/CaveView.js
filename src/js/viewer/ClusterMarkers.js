@@ -10,40 +10,198 @@ var B = new Vector3();
 var C = new Vector3();
 var D = new Vector3();
 
+var sphere = new SphereBufferGeometry( 100 );
 
-function ClusterMarkers ( limits, maxOrder ) {
+function QuadTree ( xMin, xMax, yMin, yMax ) {
+
+	this.nodes = new Array( 4 );
+	this.count = 0;
+	this.markers = [];
+	this.quadMarker = null;
+	this.centroid = new Vector3();
+
+	this.xMin = xMin;
+	this.xMax = xMax;
+
+	this.yMin = yMin;
+	this.yMax = yMax;
+
+}
+
+QuadTree.prototype.addNode = function ( marker, depth ) {
+
+	// add marker into this quad and recurse to inner quads
+
+	var index = 0;
+	var position = marker.position;
+
+	this.markers.push( marker );
+	this.centroid.add( marker.position );
+
+	this.count++;
+
+	if ( depth-- === 0 ) return;
+
+	var xMid = ( this.xMin + this.xMax ) / 2;
+	var yMid = ( this.yMin + this.yMax ) / 2;
+
+	if ( position.x > xMid ) index += 1;
+	if ( position.y > yMid ) index += 2;
+
+	var subQuad = this.nodes[ index ];
+
+	if ( subQuad === undefined ) {
+
+		switch ( index ) {
+
+		case 0:
+
+			subQuad = new QuadTree( this.xMin, xMid, this.yMin, yMid );
+			break;
+
+		case 1:
+
+			subQuad = new QuadTree( xMid, this.xMax, this.yMin, yMid );
+			break;
+
+		case 2:
+
+			subQuad = new QuadTree( this.xMin, xMid, yMid, this.yMax );
+			break;
+
+		case 3:
+
+			subQuad = new QuadTree( xMid, this.xMax, yMid, this.yMax );
+			break;
+
+		}
+
+		this.nodes[ index ] = subQuad;
+
+	}
+
+	subQuad.addNode( marker, depth );
+
+};
+
+QuadTree.prototype.check = function ( cluster ) {
+
+	var subQuad;
+
+	for ( var i = 0; i < 4; i++ ) {
+
+		subQuad = this.nodes[ i ];
+
+		if ( subQuad !== undefined ) {
+
+			// prune quads that will never be clustered. will not be checked after first pass
+
+			if ( subQuad.count < 2 ) {
+
+				this.nodes[ i ] === undefined;
+
+				continue;
+
+			}
+
+			// test for projected area for quad containing multiple markers
+
+			var area = subQuad.projectedArea( cluster );
+
+//			console.log( 'area', area );
+
+			if ( area < 0.05 ) { // FIXME calibrate by screen size ???
+
+				subQuad.clusterMarkers( cluster );
+
+			} else {
+
+				subQuad.showMarkers();
+				subQuad.check( cluster );
+
+			}
+
+		}
+
+	}
+
+};
+
+QuadTree.prototype.showMarkers = function () {
+
+	var markers = this.markers;
+
+	// hide the indiviual markers in this quad
+
+	for ( var i = 0, l = markers.length; i < l; i++ ) {
+
+		markers[ i ].visible = true;
+
+	}
+
+	if ( this.quadMarker !== null ) this.quadMarker.visible = false;
+
+};
+
+QuadTree.prototype.clusterMarkers = function ( cluster ) {
+
+	var markers = this.markers;
+
+	// hide the indiviual markers in this quad
+	for ( var i = 0, l = markers.length; i < l; i++ ) {
+
+		markers[ i ].visible = false;
+
+	}
+
+	if ( this.quadMarker === null ) {
+
+		var quadMarker = new Mesh( sphere );
+
+		// set to center of distribution of markers in this quad.
+
+		quadMarker.position.copy( this.centroid ).divideScalar( this.count );
+
+		cluster.add( quadMarker );
+
+		this.quadMarker = quadMarker;
+
+	}
+
+	this.quadMarker.visible = true;
+
+};
+
+QuadTree.prototype.projectedArea = function ( cluster ) {
+
+	var camera = cluster.camera;
+	var matrixWorld = cluster.matrixWorld;
+
+	A.set( this.xMin, this.yMin, 0 ).applyMatrix4( matrixWorld ).project( camera );
+	B.set( this.xMin, this.yMax, 0 ).applyMatrix4( matrixWorld ).project( camera );
+	C.set( this.xMax, this.yMax, 0 ).applyMatrix4( matrixWorld ).project( camera );
+	D.set( this.xMax, this.yMin, 0 ).applyMatrix4( matrixWorld ).project( camera );
+
+	var t1 = new Triangle( A, B, C );
+	var t2 = new Triangle( A, C, D );
+
+	return t1.area() + t2.area();
+
+};
+
+function ClusterMarkers ( limits, maxDepth ) {
 
 	Object3D.call( this );
 
-	this.limits = limits;
-	this.maxOrder = maxOrder;
-	this.labels = [];
-
-	this.xMin = limits.min.x;
-	this.yMin = limits.min.y;
-
-	this.xRange = limits.max.x - limits.min.x;
-	this.yRange = limits.max.y - limits.min.y;
-
-	var maxQuads = Math.pow( 2, maxOrder + 1 );
-
-	this.xScale = maxQuads / ( limits.max.x - limits.min.x );
-	this.yScale = maxQuads / ( limits.max.y - limits.min.y );
+	this.maxDepth = maxDepth;
 
 	this.type = 'CV.ClusterMarker';
 	this.sphere = new SphereBufferGeometry( 100 );
 
-	var quadCache = [];
+	var min = limits.min;
+	var max = limits.max;
 
-	// build empty cache for each order of quadKey prefix length
-
-	for ( var i = maxOrder; i >= 0; i-- ) {
-
-		quadCache[ i ] = { bucket: [] }
-
-	}
-
-	this.quadCache = quadCache;
+	this.quadTree = new QuadTree( min.x, max.x, min.y, max.y );
 
 	return this;
 
@@ -55,73 +213,18 @@ ClusterMarkers.prototype.constructor = ClusterMarkers;
 
 ClusterMarkers.prototype.addMarker = function ( entrance ) {
 
-	var x, y;
+	// create marker
 
-	var xMin = this.xMin;
-	var yMin = this.yMin;
+	var marker = new GlyphString( entrance.label, window.glyphMaterial );
 
-	var xScale = this.xScale;
-	var yScale = this.yScale;
+	marker.layers.set( FEATURE_ENTRANCES );
+	marker.position.copy( entrance.position );
 
-	// normalised x / y in range 0 - 255
+	this.quadTree.addNode( marker, this.maxDepth );
 
-	x = Math.floor( ( entrance.position.x - xMin ) * xScale );
-	y = Math.floor( ( entrance.position.y - yMin ) * yScale );
+	this.add( marker );
 
-	// create label
-
-	var label = new GlyphString( entrance.label, window.glyphMaterial );
-
-	label.layers.set( FEATURE_ENTRANCES );
-	label.position.copy( entrance.position );
-
-	// calculate quadkey prefixes for this marker
-
-	var mask;
-	var quadKey = 0;
-
-	var quadCache = this.quadCache;
-	var quadLookup;
-
-	for ( var i = this.maxOrder; i >= 0; i-- ) {
-
-		mask = 1 << i;
-
-		quadKey = ( quadKey << 1 ) + ( ( mask & x ) ? 1 : 0 );
-		quadKey = ( quadKey << 1 ) + ( ( mask & y ) ? 1 : 0 );
-
-		// record marker in each order lookup bucket for this partial quadKey
-
-		quadLookup = quadCache[ i ];
-
-		if ( quadLookup.bucket[ quadKey ] === undefined ) {
-
-			quadLookup.bucket[ quadKey ] = { 
-				count: 1, 
-				clusterMarker: null,
-				markers: [ label ], 
-				tmp: new Vector3().copy( label.position )
-			};
-
-		} else {
-
-			quadLookup.bucket[ quadKey ].count++;
-			quadLookup.bucket[ quadKey ].markers.push( label );
-			quadLookup.bucket[ quadKey ].tmp.add( label.position );
-
-		}
-
-	}
-
-//	console.log( 'entrance', entrance.label, x, y, x.toString( 2 ), y.toString( 2 ), quadKey.toString( 2 ) );
-
-	// add to quadkey index to allow quick lookup.
-
-//	this.labels.push( { key: quadKey, label: label } );
-
-	this.add( label );
-
-	return label;
+	return marker;
 
 };
 
@@ -130,120 +233,14 @@ ClusterMarkers.prototype.cluster = function ( camera ) {
 	// determine which labels are too close together to be usefully displayed as separate objects.
 
 	// immediate exit if only a single label.
-	var children = this.children;
 
-	if ( children.length === 1 ) return;
+	if ( this.children.length === 1 ) return;
 
 	this.camera = camera;
 
-	for ( var i = 0, l = children.length; i < l; i++ ) {
-
-		children[ i ].visible = true;
-
-	}
-
-	var maxOrder = this.maxOrder;
-
-	// search initial 4 quads
-
-	var xMin = this.xMin;
-	var yMin = this.yMin;
-
-	var xMid = xMin + this.xRange / 2;
-	var yMid = yMin + this.yRange / 2;
-
-	this.checkQuad( 0, 0, xMin, yMin, maxOrder );
-	this.checkQuad( 0, 1, xMin, yMid, maxOrder );
-	this.checkQuad( 0, 2, xMid, yMin, maxOrder );
-	this.checkQuad( 0, 3, xMid, yMid, maxOrder );
+	this.quadTree.check( this ) ;
 
 	return;
-
-}
-
-ClusterMarkers.prototype.checkQuad = function ( prefix, quad, x, y, order ) {
-
-	var i, l;
-	var quadLookup = this.quadCache[ order ];
-
-	// quadkey prefix and mask for this quad
-
-	prefix = prefix << 2 | quad;
-
-	// check for labels in this quad
-
-	var quadInfo = quadLookup.bucket[ prefix ];
-
-	if ( quadInfo === undefined  || quadInfo.count === 1 ) return;
-
-	// calculate vertices of quad
-
-	var width = Math.pow( 2, order - this.maxOrder - 1 );
-
-	var xSize = width * this.xRange;
-	var ySize = width * this.yRange;
-
-	var xMax = x + xSize;
-	var yMax = y + ySize;
-
-	// calculate projected area of quad
-
-	var area = this.projectedArea( x, y, xMax, yMax );
-
-	if ( area < 0.05 ) {  // FIXME adjust to give best clustering
-
-//		console.log( 'area:', area );
-
-		var markers = quadInfo.markers;
-
-		for ( i = 0, l = markers.length; i < l; i++ ) {
-
-			markers[ i ].visible = false;
-
-		}
-
-		if ( quadInfo.clusterMarker === null ) {
-
-			var clusterMarker = new Mesh( this.sphere );
-
-			// set to center of distribution of markers in this quad.
-
-			clusterMarker.position.copy( quadInfo.tmp ).divideScalar( quadInfo.count );
-
-			this.add( clusterMarker );
-
-			quadInfo.clusterMarker = clusterMarker;
-
-		}
-
-	}
-
-	if ( --order < 3 ) return;
-
-	var xMid = ( x + xMax ) / 2;
-	var yMid = ( y + yMax ) / 2;
-
-	this.checkQuad( prefix, 0,    x,    y, order );
-	this.checkQuad( prefix, 1,    x, yMid, order );
-	this.checkQuad( prefix, 2, xMid,    y, order );
-	this.checkQuad( prefix, 3, xMid, yMid, order );
-
-}
-
-ClusterMarkers.prototype.projectedArea = function ( xMin, yMin, xMax, yMax ) {
-
-	var camera = this.camera;
-	var matrixWorld = this.matrixWorld;
-
-	A.set( xMin, yMin, 0 ).applyMatrix4( matrixWorld ).project( camera );
-	B.set( xMin, yMax, 0 ).applyMatrix4( matrixWorld ).project( camera );
-	C.set( xMax, yMax, 0 ).applyMatrix4( matrixWorld ).project( camera );
-	D.set( xMax, yMin, 0 ).applyMatrix4( matrixWorld ).project( camera );
-
-	var t1 = new Triangle( A, B, C );
-	var t2 = new Triangle( A, C, D );
-
-	return t1.area() + t2.area();
 
 };
 

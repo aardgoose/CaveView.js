@@ -2,8 +2,10 @@
 import { FEATURE_ENTRANCES } from '../core/constants';
 import { GlyphString } from './GlyphString';
 
-import { Object3D, Vector3, Triangle, Mesh, SphereBufferGeometry } from '../../../../three.js/src/Three';
+import { Object3D, Vector3, Triangle, Geometry, Points, PointsMaterial, CanvasTexture } from '../../../../three.js/src/Three';
 
+
+// preallocated objects for projected area calculation
 
 var A = new Vector3();
 var B = new Vector3();
@@ -13,7 +15,61 @@ var D = new Vector3();
 var T1 = new Triangle( A, B, C );
 var T2 = new Triangle( A, C, D );
 
-var sphere = new SphereBufferGeometry( 100 );
+function makeClusterMarker ( count ) {
+
+	var markerSize = 64;
+	var halfSize = markerSize / 2;
+
+	var canvas = document.createElement( 'canvas' );
+
+	if ( ! canvas ) console.error( 'creating canvas for glyph atlas failed' );
+
+	canvas.width  = markerSize;
+	canvas.height = markerSize;
+
+//	document.body.appendChild( canvas ); // FIXME debug code
+
+	var ctx = canvas.getContext( '2d' );
+
+	if ( ! ctx ) console.error( 'cannot obtain 2D canvas' );
+
+	// set transparent background
+
+	ctx.fillStyle = 'rgba( 0, 0, 0, 0 )';
+	ctx.fillRect( 0, 0, markerSize, markerSize );
+
+	var fontSize = 40;
+
+	ctx.textAlign = 'center';
+	ctx.font = 'bold ' + fontSize + 'px helvetica,sans-serif';
+	ctx.fillStyle = '#ffffff';
+
+	var gradient = ctx.createRadialGradient( halfSize, halfSize, 30, halfSize, halfSize, 0 );
+
+	gradient.addColorStop( 0.0, 'rgba( 255, 128, 0, 64 )' );
+	gradient.addColorStop( 0.3, 'rgba( 255, 200, 0, 255 )' );
+	gradient.addColorStop( 1.0, 'rgba( 255, 255, 0, 255 )' );
+
+	ctx.fillStyle = gradient;
+//	ctx.fillStyle = 'rgba( 255, 255, 0, 255 )';
+
+	ctx.beginPath();
+	ctx.arc( halfSize, halfSize, 30, 0, Math.PI * 2 );
+	ctx.fill();
+
+	ctx.fillStyle = 'rgba( 0, 0, 0, 255 )';
+
+	ctx.fillText( count, halfSize, halfSize + 15 );
+
+	var geometry = new Geometry();
+	geometry.vertices.push( new Vector3( 0, 0, halfSize ) );
+
+	var material = new PointsMaterial( { map: new CanvasTexture( canvas ), size: 32, alphaTest: 0.8 } );
+
+	return new Points( geometry, material );
+
+}
+
 
 function QuadTree ( xMin, xMax, yMin, yMax ) {
 
@@ -171,7 +227,7 @@ QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
 	if ( this.quadMarker === null ) {
 
-		var quadMarker = new Mesh( sphere );
+		var quadMarker = makeClusterMarker( this.count );
 
 		// set to center of distribution of markers in this quad.
 
@@ -202,7 +258,7 @@ QuadTree.prototype.hideQuadMarkers = function () {
 
 	}
 
-}
+};
 
 QuadTree.prototype.projectedArea = function ( cluster ) {
 
@@ -225,7 +281,6 @@ function ClusterMarkers ( limits, maxDepth ) {
 	this.maxDepth = maxDepth;
 
 	this.type = 'CV.ClusterMarker';
-	this.sphere = new SphereBufferGeometry( 100 );
 
 	var min = limits.min;
 	var max = limits.max;

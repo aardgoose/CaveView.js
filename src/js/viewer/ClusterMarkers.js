@@ -161,6 +161,7 @@ QuadTree.prototype.clusterMarkers = function ( cluster ) {
 		// set to center of distribution of markers in this quad.
 
 		quadMarker.position.copy( this.centroid ).divideScalar( this.count );
+		quadMarker.layers.set( FEATURE_ENTRANCES );
 
 		cluster.add( quadMarker );
 

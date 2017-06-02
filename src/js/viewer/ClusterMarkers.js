@@ -15,7 +15,16 @@ var D = new Vector3();
 var T1 = new Triangle( A, B, C );
 var T2 = new Triangle( A, C, D );
 
-function makeClusterMarker ( count ) {
+var clusterMaterialCache = [];
+var markerGeometry = new Geometry();
+
+markerGeometry.vertices.push( new Vector3( 0, 0, 32 ) );
+
+function getClusterMaterial ( count ) {
+
+	var material = clusterMaterialCache[ count ];
+
+	if ( material !== undefined ) return material;
 
 	var markerSize = 64;
 	var halfSize = markerSize / 2;
@@ -61,12 +70,17 @@ function makeClusterMarker ( count ) {
 
 	ctx.fillText( count, halfSize, halfSize + 15 );
 
-	var geometry = new Geometry();
-	geometry.vertices.push( new Vector3( 0, 0, halfSize ) );
+	material = new PointsMaterial( { map: new CanvasTexture( canvas ), size: 32, alphaTest: 0.8 } );
 
-	var material = new PointsMaterial( { map: new CanvasTexture( canvas ), size: 32, alphaTest: 0.8 } );
+	clusterMaterialCache[ count ] = material;
 
-	return new Points( geometry, material );
+	return material;
+
+}
+
+function makeClusterMarker ( count ) {
+
+	return new Points( markerGeometry, getClusterMaterial( count ) );
 
 }
 

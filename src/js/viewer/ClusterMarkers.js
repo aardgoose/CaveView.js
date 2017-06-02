@@ -10,6 +10,9 @@ var B = new Vector3();
 var C = new Vector3();
 var D = new Vector3();
 
+var T1 = new Triangle( A, B, C );
+var T2 = new Triangle( A, C, D );
+
 var sphere = new SphereBufferGeometry( 100 );
 
 function QuadTree ( xMin, xMax, yMin, yMax ) {
@@ -145,12 +148,24 @@ QuadTree.prototype.showMarkers = function () {
 
 QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
+	var i, l, subQuad;
 	var markers = this.markers;
 
 	// hide the indiviual markers in this quad
-	for ( var i = 0, l = markers.length; i < l; i++ ) {
+
+	for ( i = 0, l = markers.length; i < l; i++ ) {
 
 		markers[ i ].visible = false;
+
+	}
+
+	// hide quadMarkers for contained quads
+
+	for ( i = 0; i < 4; i++ ) {
+
+		subQuad = this.nodes[ i ];
+
+		if ( subQuad !== undefined ) subQuad.hideQuadMarkers();
 
 	}
 
@@ -173,6 +188,22 @@ QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
 };
 
+QuadTree.prototype.hideQuadMarkers = function () {
+
+	var subQuad;
+
+	if ( this.quadMarker ) this.quadMarker.visible = false;
+
+	for ( var i = 0; i < 4; i++ ) {
+
+		subQuad = this.nodes[ i ];
+
+		if ( subQuad !== undefined ) subQuad.hideQuadMarkers();
+
+	}
+
+}
+
 QuadTree.prototype.projectedArea = function ( cluster ) {
 
 	var camera = cluster.camera;
@@ -183,10 +214,7 @@ QuadTree.prototype.projectedArea = function ( cluster ) {
 	C.set( this.xMax, this.yMax, 0 ).applyMatrix4( matrixWorld ).project( camera );
 	D.set( this.xMax, this.yMin, 0 ).applyMatrix4( matrixWorld ).project( camera );
 
-	var t1 = new Triangle( A, B, C );
-	var t2 = new Triangle( A, C, D );
-
-	return t1.area() + t2.area();
+	return T1.area() + T2.area();
 
 };
 

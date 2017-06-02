@@ -60,7 +60,6 @@ function getClusterMaterial ( count ) {
 	gradient.addColorStop( 1.0, 'rgba( 255, 255, 0, 255 )' );
 
 	ctx.fillStyle = gradient;
-//	ctx.fillStyle = 'rgba( 255, 255, 0, 255 )';
 
 	ctx.beginPath();
 	ctx.arc( halfSize, halfSize, 30, 0, Math.PI * 2 );

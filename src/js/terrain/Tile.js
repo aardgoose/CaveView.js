@@ -9,6 +9,17 @@ import {
 	Mesh
 } from '../../../../three.js/src/Three';
 
+
+// preallocated for projected area calculations
+
+var A = new Vector3();
+var B = new Vector3();
+var C = new Vector3();
+var D = new Vector3();
+
+var T1 = new Triangle( A, B, C );
+var T2 = new Triangle( A, C, D );
+
 function onUploadDropBuffer() {
 
 	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
@@ -322,26 +333,19 @@ Tile.prototype.projectedArea = function ( camera ) {
 
 	var boundingBox = this.getWorldBoundingBox();
 
-	var v1 = boundingBox.min.clone();
-	var v3 = boundingBox.max.clone();
+	A.copy( boundingBox.min ).project( camera );
+	C.copy( boundingBox.max ).project( camera );
 
-	v1.z = 0;
-	v3.z = 0;
+	A.z = 0;
+	C.z = 0;
 
-	var v2 = new Vector3( v3.x, v1.y, 0 );
-	var v4 = new Vector3( v1.x, v3.y, 0 );
+	B.set( A.x, C.y, 0 ).project( camera );
+	D.set( C.x, A.y, 0 ).project( camera );
 
-	// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
+// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
+// .clampScalar( -1, 1 );
 
-	v1.project( camera ).clampScalar( -1, 1 );
-	v2.project( camera ).clampScalar( -1, 1 );
-	v3.project( camera ).clampScalar( -1, 1 );
-	v4.project( camera ).clampScalar( -1, 1 );
-
-	var t1 = new Triangle( v1, v3, v4 );
-	var t2 = new Triangle( v1, v2, v3 );
-
-	return t1.area() + t2.area();
+	return T1.area() + T2.area();
 
 };
 

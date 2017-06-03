@@ -107,6 +107,8 @@ function Survey ( cave ) {
 
 	}
 
+	this.entrances = new ClusterMarkers( this.limits, 4 );
+
 	_loadEntrances( survey.entrances );
 
 	this.setFeatureBox();
@@ -184,10 +186,10 @@ function Survey ( cave ) {
 		if ( l === 0 ) return null;
 
 		var marker;
-		var entrances = new ClusterMarkers( self.limits, 4 );
+		var entrances = self.entrances;
 
 		entrances.name = 'CV.Survey:entrances';
-		entrances.layers.set( FEATURE_ENTRANCES );
+//		entrances.layers.set( FEATURE_ENTRANCES );
 
 		self.add( entrances );
 		self.layers.enable( FEATURE_ENTRANCES );
@@ -201,8 +203,6 @@ function Survey ( cave ) {
 			self.pointTargets.push( marker );
 
 		}
-
-		self.entrances = entrances;
 
 		return;
 
@@ -797,7 +797,7 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 
 		} else if ( parent ) {
 
-			if ( node.children.length === 0 || ( node.boundingBox !== undefined && node.boundingBox.isEmpty() ) ) return;
+			if ( node.children.length === 0 || node.boundingBox === undefined ||( node.boundingBox !== undefined && node.boundingBox.isEmpty() ) ) return;
 
 			parent.boundingBox.expandByPoint( node.boundingBox.min );
 			parent.boundingBox.expandByPoint( node.boundingBox.max );

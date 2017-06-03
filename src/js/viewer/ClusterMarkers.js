@@ -329,9 +329,9 @@ ClusterMarkers.prototype.cluster = function ( camera ) {
 
 	// determine which labels are too close together to be usefully displayed as separate objects.
 
-	// immediate exit if only a single label.
+	// immediate exit if only a single label or none.
 
-	if ( this.children.length === 1 ) return;
+	if ( this.children.length < 2 ) return;
 
 	this.camera = camera;
 

@@ -98,7 +98,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		}
 
-		if ( doFunction !== undefined) {
+		if ( doFunction !== undefined ) {
 
 			for ( var i = 0; i < m_recCount; i++ ) {
 
@@ -180,7 +180,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		if ( m_flags & 0x02 ) {
 
 			// entrance
-			self.entrances.push( { position: coords, label: readString(namePtr), survey: m_surveyId } );
+			self.entrances.push( { position: coords, label: readString( namePtr ), survey: m_surveyId } );
 
 		}
 
@@ -284,7 +284,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		for ( i = 0; i < m_numPoints; i++ ) {
 
-			offset = dataStart + pointsPtr.position + i * 24; // 24 = 3 * sizeof(double)
+			offset = dataStart + pointsPtr.position + i * 24; // 24 = 3 * sizeof( double )
 			f = new DataView( source, offset );
 
 			scrap.vertices.push( {
@@ -299,7 +299,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		for ( i = 0; i < m_num3Angles; i++ ) {
 
-			offset = dataStart + facesPtr.position + i * 12; // 12 = 3 * sizeof(uint32)
+			offset = dataStart + facesPtr.position + i * 12; // 12 = 3 * sizeof( uint32 )
 			f = new DataView( source, offset );
 
 			var face = [

@@ -333,17 +333,22 @@ Tile.prototype.projectedArea = function ( camera ) {
 
 	var boundingBox = this.getWorldBoundingBox();
 
-	A.copy( boundingBox.min ).project( camera );
-	C.copy( boundingBox.max ).project( camera );
+	var z = boundingBox.max.z
 
-	A.z = 0;
-	C.z = 0;
+	A.copy( boundingBox.min ).setZ( z );
+	C.copy( boundingBox.max );
 
-	B.set( A.x, C.y, 0 ).project( camera );
-	D.set( C.x, A.y, 0 ).project( camera );
+	B.set( A.x, C.y, z );
+	D.set( C.x, A.y, z );
 
 // clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
 // .clampScalar( -1, 1 );
+
+	A.project( camera );
+	B.project( camera );
+	C.project( camera );
+	D.project( camera );
+
 
 	return T1.area() + T2.area();
 

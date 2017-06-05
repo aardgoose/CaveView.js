@@ -13,7 +13,7 @@ function Tree( name, id, root, parent ) { // root parameter only used internally
 
 		this.root = root;
 		this.parent = parent;
-		this.id =  ( id === null ) ? ++root.maxId : id;
+		this.id = ( id === null ) ? ++root.maxId : id;
 
 	}
 
@@ -80,7 +80,7 @@ Tree.prototype.addById = function ( name, id, parentId, properties ) {
 
 		if ( properties !== undefined ) Object.assign( node, properties );
 
-		parentNode.children.push ( node );
+		parentNode.children.push( node );
 
 		var root = this.root;
 		root.maxId = Math.max( root.maxId, id );

@@ -277,11 +277,12 @@ QuadTree.prototype.projectedArea = function ( cluster ) {
 
 	var camera = cluster.camera;
 	var matrixWorld = cluster.matrixWorld;
+	var zAverage = this.centroid.z / this.count;
 
-	A.set( this.xMin, this.yMin, 0 ).applyMatrix4( matrixWorld ).project( camera );
-	B.set( this.xMin, this.yMax, 0 ).applyMatrix4( matrixWorld ).project( camera );
-	C.set( this.xMax, this.yMax, 0 ).applyMatrix4( matrixWorld ).project( camera );
-	D.set( this.xMax, this.yMin, 0 ).applyMatrix4( matrixWorld ).project( camera );
+	A.set( this.xMin, this.yMin, zAverage ).applyMatrix4( matrixWorld ).project( camera );
+	B.set( this.xMin, this.yMax, zAverage ).applyMatrix4( matrixWorld ).project( camera );
+	C.set( this.xMax, this.yMax, zAverage ).applyMatrix4( matrixWorld ).project( camera );
+	D.set( this.xMax, this.yMin, zAverage ).applyMatrix4( matrixWorld ).project( camera );
 
 	return T1.area() + T2.area();
 

@@ -797,7 +797,7 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 
 		} else if ( parent ) {
 
-			if ( node.children.length === 0 || node.boundingBox === undefined ||( node.boundingBox !== undefined && node.boundingBox.isEmpty() ) ) return;
+			if ( node.children.length === 0 || ( node.boundingBox !== undefined && node.boundingBox.isEmpty() ) ) return;
 
 			parent.boundingBox.expandByPoint( node.boundingBox.min );
 			parent.boundingBox.expandByPoint( node.boundingBox.max );
@@ -1007,6 +1007,7 @@ Survey.prototype.highlightSection = function ( id ) {
 			}
 
 		} else {
+			console.log( node );
 // FIXME - make cleaner and use bufferAttribute
 			var highlight = this.stationHighlight;
 			var geometry = highlight.geometry;

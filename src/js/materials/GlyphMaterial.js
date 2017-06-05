@@ -27,6 +27,7 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 
 	this.opacity = 1.0;
 	this.alphaTest = 0.8;
+	this.depthTest = false;
 	this.transparent = true;
 	this.defines = { USE_COLOR: true };
 

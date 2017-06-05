@@ -333,7 +333,7 @@ Tile.prototype.projectedArea = function ( camera ) {
 
 	var boundingBox = this.getWorldBoundingBox();
 
-	var z = boundingBox.max.z
+	var z = boundingBox.max.z;
 
 	A.copy( boundingBox.min ).setZ( z );
 	C.copy( boundingBox.max );

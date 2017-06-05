@@ -76,7 +76,7 @@ Tree.prototype.addById = function ( name, id, parentId, properties ) {
 
 	if ( parentNode ) {
 
-		var node = new Tree( name, id, this.root, this );
+		var node = new Tree( name, id, this.root, parentNode );
 
 		if ( properties !== undefined ) Object.assign( node, properties );
 

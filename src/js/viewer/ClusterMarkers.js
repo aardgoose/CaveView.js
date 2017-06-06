@@ -69,7 +69,7 @@ function getClusterMaterial ( count ) {
 
 	ctx.fillText( count, halfSize, halfSize + 15 );
 
-	material = new PointsMaterial( { map: new CanvasTexture( canvas ), size: 32, alphaTest: 0.8 } );
+	material = new PointsMaterial( { map: new CanvasTexture( canvas ), size: 32, depthTest: false, transparent: true, alphaTest: 0.8, sizeAttenuation: false } );
 
 	clusterMaterialCache[ count ] = material;
 
@@ -182,7 +182,7 @@ QuadTree.prototype.check = function ( cluster ) {
 
 //			console.log( 'area', area );
 
-			if ( area < 0.05 ) { // FIXME calibrate by screen size ???
+			if ( area < 0.80 ) { // FIXME calibrate by screen size ???
 
 				subQuad.clusterMarkers( cluster );
 
@@ -309,14 +309,14 @@ ClusterMarkers.prototype = Object.create( Object3D.prototype );
 
 ClusterMarkers.prototype.constructor = ClusterMarkers;
 
-ClusterMarkers.prototype.addMarker = function ( entrance ) {
+ClusterMarkers.prototype.addMarker = function ( position, label ) {
 
 	// create marker
 
-	var marker = new GlyphString( entrance.label, window.glyphMaterial );
+	var marker = new GlyphString( label, window.glyphMaterial );
 
 	marker.layers.set( FEATURE_ENTRANCES );
-	marker.position.copy( entrance.position );
+	marker.position.copy( position );
 
 	this.quadTree.addNode( marker, this.maxDepth );
 

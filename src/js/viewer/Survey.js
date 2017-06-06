@@ -196,11 +196,12 @@ function Survey ( cave ) {
 
 		for ( var i = 0; i < l; i++ ) {
 
-			var entrance = entranceList[ i ];
+			var entranceId = entranceList[ i ];
 
-			var label = self.surveyTree.findById( entrance.station ).getPath();
+			var node = self.surveyTree.findById( entranceId )
+			var label = node.getPath();
 
-			marker = entrances.addMarker( entrance.position, label );
+			marker = entrances.addMarker( node.p, label );
 
 			self.pointTargets.push( marker );
 
@@ -1119,7 +1120,6 @@ Survey.prototype.cutSection = function ( id ) {
 
 	this.PointTargets = [];
 	this.legTargets   = [];
-	this.lodTargets   = [];
 
 	// iterate through objects replace geometries and remove bounding boxes;
 
@@ -1170,10 +1170,10 @@ Survey.prototype.cutSection = function ( id ) {
 
 		case 'CV.Marker':
 
+			// FIXME cutting needs fixing with new entrance code.
 			if ( selectedSectionIds.has( obj.userData ) ) {
 
 				self.pointTargets.push( obj );
-				self.lodTargets.push( obj );
 
 			} else {
 
@@ -1664,54 +1664,6 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	}
 
 	return true;
-
-};
-
-Survey.prototype.setEntrancesSelected = function () {
-
-	var entrances = this.getObjectByName( 'CV.Survey:entrances' );
-
-	if ( ! entrances ) return;
-
-	var children = entrances.children;
-	var selectedSectionIds = this.selectedSectionIds;
-	var boundingBox = null;
-	var i, l, entrance;
-
-	if ( selectedSectionIds.size > 0 ) {
-
-		boundingBox = new Box3();
-
-		for ( i = 0, l = children.length; i < l; i++ ) {
-
-			entrance = children[ i ];
-
-			if ( selectedSectionIds.has( entrance.userData ) ) {
-
-				entrance.visible = true;
-				boundingBox.expandByPoint( entrance.position );
-
-			} else {
-
-				entrance.visible = false;
-
-			}
-
-		}
-
-	} else {
-
-		for ( i = 0, l = children.length; i < l; i++ ) {
-
-			entrance = children[ i ];
-
-			entrance.visible = true;
-
-		}
-
-	}
-
-	return boundingBox;
 
 };
 

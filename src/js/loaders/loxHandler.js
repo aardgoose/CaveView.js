@@ -177,12 +177,12 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		// m_flags & 0x01 = surface
 
-		var stationNode = surveyTree.addById( readString( namePtr ), - m_id, m_surveyId, { p: coords } );
+		surveyTree.addById( readString( namePtr ), - m_id, m_surveyId, { p: coords } );
 
 		if ( m_flags & 0x02 ) {
 
 			// entrance
-			self.entrances.push( { position: coords, station: stationNode.id, survey: m_surveyId } );
+			self.entrances.push( - m_id );
 
 		}
 

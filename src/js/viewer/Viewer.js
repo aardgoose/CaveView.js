@@ -735,8 +735,6 @@ function selectSection ( id ) {
 
 	var node = survey.selectSection( id );
 
-	var entranceBox = survey.setEntrancesSelected();
-
 	setShadingMode( shadingMode );
 
 	selectedSection = id;
@@ -745,11 +743,10 @@ function selectSection ( id ) {
 
 	if ( node.p === undefined ) {
 
+		if ( node.boundingBox === undefined ) return;
 		// a section of the survey rather than a station
 
 		var boundingBox = node.boundingBox.clone();
-
-		if ( ! boundingBox ) boundingBox = entranceBox;
 
 		cameraMove.prepare( null, boundingBox.applyMatrix4( survey.matrixWorld ) );
 

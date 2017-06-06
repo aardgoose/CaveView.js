@@ -222,6 +222,7 @@ function initSelectionPage () {
 		currentTop = top;
 
 		ul.addEventListener( 'mouseover', _handleMouseover );
+		ul.addEventListener( 'mouseleave', _handleMouseleave );
 
 		return ul;
 
@@ -295,6 +296,13 @@ function initSelectionPage () {
 			return s1.name.localeCompare( s2.name, 'en-GB', { numeric: true } );
 
 		}
+
+	}
+
+	function _handleMouseleave ( event ) {
+
+		event.stopPropagation();
+		viewState.highlight = 0;
 
 	}
 

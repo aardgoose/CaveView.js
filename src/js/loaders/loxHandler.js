@@ -182,7 +182,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		if ( m_flags & 0x02 ) {
 
 			// entrance
-			self.entrances.push( { position: coords, label: stationNode.getPath(), survey: m_surveyId } );
+			self.entrances.push( { position: coords, station: stationNode.id, survey: m_surveyId } );
 
 		}
 

@@ -198,7 +198,9 @@ function Survey ( cave ) {
 
 			var entrance = entranceList[ i ];
 
-			marker = entrances.addMarker( entrance );
+			var label = self.surveyTree.findById( entrance.station ).getPath();
+
+			marker = entrances.addMarker( entrance.position, label );
 
 			self.pointTargets.push( marker );
 
@@ -1006,8 +1008,8 @@ Survey.prototype.highlightSection = function ( id ) {
 
 			}
 
-		} else {
-			console.log( node );
+		} else if ( node.p ) {
+
 // FIXME - make cleaner and use bufferAttribute
 			var highlight = this.stationHighlight;
 			var geometry = highlight.geometry;

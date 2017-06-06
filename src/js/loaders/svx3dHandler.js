@@ -577,7 +577,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		stations.set( label, coords );
 
-		if ( flags & 0x02 ) surveyTree.addPath( path, { p: coords, type: ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL } );
+		var stationId;
+
+
+		stationId = surveyTree.addPath( path, { p: coords, type: ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL } );
 
 		if ( flags & 0x04 ) {
 
@@ -586,7 +589,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 			var surveyId = surveyTree.getIdByPath( path );
 
-			entrances.push( { position: coords, label: label, survey: surveyId } );
+			entrances.push( { position: coords, survey: surveyId, station: stationId } );
 
 		}
 

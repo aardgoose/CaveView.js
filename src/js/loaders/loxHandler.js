@@ -171,16 +171,18 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		var m_flags    = readUint();
 		var coords     = readCoords();
 
-		stations[ m_id ]  = coords;
+		stations[ m_id ] = coords;
 
-		// add non surface stations to surveyTree make station id negative to avoid clashes with survey id space.
+		// add stations to surveyTree make station id negative to avoid clashes with survey id space.
 
-		if ( ! ( m_flags & 0x01 ) ) surveyTree.addById( readString( namePtr ), - m_id, m_surveyId, { p: coords } );
+		// m_flags & 0x01 = surface
+
+		var stationNode = surveyTree.addById( readString( namePtr ), - m_id, m_surveyId, { p: coords } );
 
 		if ( m_flags & 0x02 ) {
 
 			// entrance
-			self.entrances.push( { position: coords, label: readString( namePtr ), survey: m_surveyId } );
+			self.entrances.push( { position: coords, label: stationNode.getPath(), survey: m_surveyId } );
 
 		}
 

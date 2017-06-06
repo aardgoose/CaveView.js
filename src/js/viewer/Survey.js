@@ -49,6 +49,7 @@ function Survey ( cave ) {
 	this.selectedSectionIds = new Set();
 	this.selectedSection = 0;
 	this.selectedBox = null;
+	this.highlightBox = null;
 	this.featureBox = null;
 	this.surveyTree = null;
 	this.projection = null;
@@ -189,19 +190,15 @@ function Survey ( cave ) {
 		var entrances = self.entrances;
 
 		entrances.name = 'CV.Survey:entrances';
-//		entrances.layers.set( FEATURE_ENTRANCES );
 
 		self.add( entrances );
 		self.layers.enable( FEATURE_ENTRANCES );
 
 		for ( var i = 0; i < l; i++ ) {
 
-			var entranceId = entranceList[ i ];
+			var node = self.surveyTree.findById( entranceList[ i ] );
 
-			var node = self.surveyTree.findById( entranceId )
-			var label = node.getPath();
-
-			marker = entrances.addMarker( node.p, label );
+			marker = entrances.addMarker( node.p, node.getPath() );
 
 			self.pointTargets.push( marker );
 
@@ -922,12 +919,6 @@ Survey.prototype.getSurveyTree = function () {
 
 };
 
-Survey.prototype.getSelectedBox = function () {
-
-	return this.selectedBox;
-
-};
-
 Survey.prototype.getStats = function () {
 
 	return this.stats[ LEG_CAVE ];
@@ -969,14 +960,28 @@ Survey.prototype.clearSectionSelection = function () {
 
 	var box = this.selectedBox;
 
-	if ( box !== null ) {
+	if ( box !== null ) box.visible = false;
 
-		this.remove( box );
-		this.selectedBox = null;
+};
 
-		box.geometry.dispose();
+Survey.prototype.boxSection = function ( node, box, colour ) {
+
+	if ( box === null ) {
+
+		box = new Box3Helper( node.boundingBox, colour );
+
+		box.layers.set( FEATURE_SELECTED_BOX );
+
+		this.add( box );
+
+	} else {
+
+		box.visible = true;
+		box.update( node.boundingBox );
 
 	}
+
+	return box;
 
 };
 
@@ -984,7 +989,7 @@ Survey.prototype.highlightSection = function ( id ) {
 
 	var surveyTree = this.surveyTree;
 	var node;
-	var box = this.selectedBox;
+	var box = this.highlightBox;
 
 	if ( id ) {
 
@@ -992,22 +997,7 @@ Survey.prototype.highlightSection = function ( id ) {
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
-			if ( box === null ) {
-// FIXME distinguish between current selection and highlit selection.
-				box = new Box3Helper( node.boundingBox, 0xffff00 );
-
-				box.layers.set( FEATURE_SELECTED_BOX );
-				box.name = 'selectedBox';
-
-				this.selectedBox = box;
-
-				this.add( box );
-
-			} else {
-
-				box.update( node.boundingBox );
-
-			}
+			this.highlightBox = this.boxSection( node, box, 0xffff00 );
 
 		} else if ( node.p ) {
 
@@ -1021,6 +1011,10 @@ Survey.prototype.highlightSection = function ( id ) {
 			highlight.visible = true;
 
 		}
+
+	} else {
+
+		if ( box !== null ) box.visible = false;
 
 	}
 
@@ -1037,8 +1031,9 @@ Survey.prototype.selectSection = function ( id ) {
 		node = surveyTree.findById( id );
 		selectedSectionIds.clear();
 
-		if ( node.p === undefined) {
+		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
+			this.selectedBox = this.boxSection( node, this.selectedBox, 0x00ff00 );
 			surveyTree.getSubtreeIds( id, selectedSectionIds );
 
 		} else {

@@ -85,7 +85,7 @@ Tree.prototype.addById = function ( name, id, parentId, properties ) {
 		var root = this.root;
 		root.maxId = Math.max( root.maxId, id );
 
-		return id;
+		return node;
 
 	}
 

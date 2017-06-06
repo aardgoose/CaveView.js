@@ -747,24 +747,11 @@ function selectSection ( id ) {
 
 		// a section of the survey rather than a station
 
-		var box = survey.getSelectedBox();
-		var boundingBox;
+		var boundingBox = node.boundingBox.clone();
 
-		if ( box ) {
+		if ( ! boundingBox ) boundingBox = entranceBox;
 
-			box.geometry.computeBoundingBox();
-
-			boundingBox = box.geometry.boundingBox;
-
-		} else {
-
-			boundingBox = entranceBox;
-
-		}
-
-		boundingBox.applyMatrix4( survey.matrixWorld );
-
-		cameraMove.prepare( null, boundingBox );
+		cameraMove.prepare( null, boundingBox.applyMatrix4( survey.matrixWorld ) );
 
 	} else {
 

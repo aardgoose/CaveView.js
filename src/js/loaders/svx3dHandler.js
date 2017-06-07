@@ -572,6 +572,13 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		readLabel( 0 );
 
+		if ( ! ( flags & 0x0E ) ) { // skip surface only stations
+
+			pos += 12; //skip coordinates
+			return true;
+
+		}
+
 		var coords = readCoordinates();
 		var path = label.split( '.' );
 

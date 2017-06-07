@@ -194,11 +194,16 @@ function Survey ( cave ) {
 		self.add( entrances );
 		self.layers.enable( FEATURE_ENTRANCES );
 
+		// remove common elements from station names
+		var endNode = self.surveyTree;
+
+		while ( endNode.children.length === 1 ) endNode = endNode.children [ 0 ];
+
 		for ( var i = 0; i < l; i++ ) {
 
 			var node = self.surveyTree.findById( entranceList[ i ] );
 
-			marker = entrances.addMarker( node.p, node.getPath() );
+			marker = entrances.addMarker( node.p, node.getPath( endNode ) );
 
 			self.pointTargets.push( marker );
 

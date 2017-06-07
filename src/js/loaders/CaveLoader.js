@@ -77,9 +77,6 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 
 	}
 
-	this.dataResponse = null;
-	this.metadataResponse = null;
-
 	this.doneCount = 0;
 	this.taskCount = type === 'json' ? 1 : 2;
 
@@ -229,6 +226,9 @@ CaveLoader.prototype.callHandler = function ( fileName ) {
 		handler = false;
 
 	}
+
+	this.dataResponse = null;
+	this.metadataResponse = null;
 
 	this.callback( handler );
 

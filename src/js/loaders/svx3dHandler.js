@@ -540,7 +540,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		// heuristic to detect line ends. lastPosition was presumably set in a line sequence therefore is at the end 
 		// of a line, Add the current label, presumably specified in the last LINE, to a Set of lineEnds.
 
-		lineEnds.add( [ lastPosition.x, lastPosition.y, lastPosition.z ].toString() );
+		lineEnds.add( lastPosition.x + ':' + lastPosition.y + ':' + lastPosition.z );
 
 		var coords = readCoordinates();
 

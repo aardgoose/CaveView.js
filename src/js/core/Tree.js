@@ -179,17 +179,19 @@ Tree.prototype.addPath = function ( path, properties ) {
 
 };
 
-Tree.prototype.getPath = function () {
+Tree.prototype.getPath = function ( endNode ) {
 
 	var node = this;
 	var path = [];
+
+	if ( endNode === undefined ) endNode = this.root;
 
 	do {
 
 		path.push( node.name );
 		node = node.parent;
 
-	} while ( node !== null );
+	} while ( node !== endNode );
 
 	return path.reverse().join( '.' );
 

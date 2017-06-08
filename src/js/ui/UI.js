@@ -1,5 +1,5 @@
 import {
-	CAMERA_ORTHOGRAPHIC,CAMERA_PERSPECTIVE,
+	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, STATION_ENTRANCE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, 
 	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_ASPECT, SHADING_DEPTH_CURSOR,
 	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
@@ -21,6 +21,7 @@ var caveList = [];
 var guiState = {};
 var viewState;
 var surveyTree;
+var currentTop;
 
 var isCaveLoaded = false;
 var isRoutesLoaded = false;
@@ -149,9 +150,10 @@ function initSelectionPage () {
 
 	var titleBar = document.createElement( 'div' );
 	var page;
-	var currentTop = surveyTree;
 	var depth = 0;
 	var currentHover = 0;
+
+	currentTop = surveyTree;
 
 	if ( ! isCaveLoaded ) return;
 
@@ -254,6 +256,11 @@ function initSelectionPage () {
 
 				key.style.color = '#' + colour;
 				key.textContent = '\u2588 ';
+
+			} else if ( child.type !== undefined && child.type === STATION_ENTRANCE ) {
+
+				key.style.color = 'yellow';
+				key.textContent = '\u2229 ';
 
 			} else if ( child.hitCount > 2 ) {
 

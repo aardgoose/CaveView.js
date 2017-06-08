@@ -49,7 +49,7 @@ var container;
 // THREE.js objects
 
 var renderer;
-var scene;
+var scene = new Scene();
 var oCamera;
 var pCamera;
 var camera;
@@ -118,6 +118,16 @@ function init ( domID, configuration ) { // public method
 	initCamera( pCamera );
 
 	camera = pCamera;
+
+	scene.add( pCamera );
+	scene.add( oCamera );
+
+	directionalLight = new DirectionalLight( 0xffffff );
+	directionalLight.position.copy( lightPosition );
+
+	scene.add( directionalLight );
+
+	scene.add( new HemisphereLight( 0xffffff, 0x00ffff, 0.3 ) );
 
 	raycaster = new Raycaster();
 
@@ -811,7 +821,6 @@ function clearView () {
 	survey          = null;
 	terrain         = null;
 	selectedSection = 0;
-	scene           = new Scene();
 	mouseMode       = MOUSE_MODE_NORMAL;
 	mouseTargets    = [];
 
@@ -828,9 +837,6 @@ function clearView () {
 	Materials.flushCache();
 
 	container.removeEventListener( 'mousedown', mouseDown );
-
-	scene.add( pCamera );
-	scene.add( oCamera );
 
 	initCamera( pCamera );
 	initCamera( oCamera );
@@ -881,12 +887,7 @@ function loadSurvey ( newSurvey ) {
 
 	// light the model for Lambert Shaded surface
 
-	directionalLight = new DirectionalLight( 0xffffff );
-	directionalLight.position.copy( lightPosition );
 
-	scene.add( directionalLight );
-
-	scene.add( new HemisphereLight( 0xffffff, 0x00ffff, 0.3 ) );
 
 	caveIsLoaded = true;
 

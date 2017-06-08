@@ -51,6 +51,7 @@ function Page( id ) {
 }
 
 Page.pages     = [];
+Page.listeners = [];
 Page.position  = 0;
 Page.inHandler = false;
 Page.controls  = [];
@@ -58,6 +59,7 @@ Page.frame = null;
 
 Page.reset = function () {
 
+	Page.listeners = [];
 	Page.pages     = [];
 	Page.position  = 0;
 	Page.inHandler = false;
@@ -71,6 +73,18 @@ Page.clear = function () {
 	Page.frame.addEventListener( 'transitionend', _afterReset );
 	Page.frame.classList.remove( 'onscreen' );
 
+	var i, l, listener;
+
+	for ( var i = 0, l = Page.listeners.length; i < l; i++ ) {
+
+		listener = Page.listeners[ i ];
+
+		listener.obj.removeEventListener( listener.name, listener.handler );
+
+	}
+
+	Page.listeners = [];
+
 	function _afterReset ( event ) {
 
 		var frame = event.target;
@@ -83,12 +97,25 @@ Page.clear = function () {
 
 };
 
+
+Page.addListener = function ( obj, name, handler ) {
+
+	obj.addEventListener( name, handler );
+
+	Page.listeners.push( {
+		obj: obj,
+		name: name,
+		handler: handler
+	})
+
+}
+
 Page.handleChange = function ( event ) {
 
 	var obj = event.target;
 	var property = event.name;
 
-	if ( !Page.inHandle ) {
+	if ( ! Page.inHandle ) {
 
 		if ( Page.controls[ property ] ) {
 
@@ -124,6 +151,12 @@ Page.handleChange = function ( event ) {
 };
 
 Page.prototype.constructor = Page;
+
+Page.prototype.addListener = function ( obj, name, handler ) {
+
+	Page.addListener( obj, name, handler ); // redirect to :: method - allows later rework to page specific destruction
+
+}
 
 Page.prototype.tabHandleClick = function ( event ) {
 
@@ -165,6 +198,7 @@ Page.prototype.addHeader = function ( text ) {
 
 	div.classList.add( 'header' );
 	div.textContent = text;
+
 	this.page.appendChild( div );
 
 	return div;
@@ -223,7 +257,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 	}
 
-	select.addEventListener( 'change', function ( event ) { Page.inHandler = true; trgObj[ property ] = event.target.value; Page.inHandler = false; } );
+	this.addListener( select, 'change', function ( event ) { Page.inHandler = true; trgObj[ property ] = event.target.value; Page.inHandler = false; } );
 
 	label.textContent = title;
 
@@ -248,7 +282,7 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 	cb.type    = 'checkbox';
 	cb.checked = obj[ property ];
 
-	cb.addEventListener( 'change', _checkboxChanged );
+	this.addListener( cb, 'change', _checkboxChanged );
 
 	Page.controls[ property ] = cb;
 
@@ -280,14 +314,14 @@ Page.prototype.addRange = function ( title, obj, property ) {
 
 	range.type = 'range';
 
-	range.min  = 0;
-	range.max  = 1;
+	range.min = 0;
+	range.max = 1;
 
 	range.step = 0.05;
 	range.value = obj[ property ];
 
-	range.addEventListener( 'input', _rangeChanged );
-	range.addEventListener( 'change', _rangeChanged ); // for IE11 support
+	this.addListener( range, 'input', _rangeChanged );
+	this.addListener( range, 'change', _rangeChanged ); // for IE11 support
 
 	label.textContent = title;
 

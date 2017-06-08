@@ -37,6 +37,8 @@ function Stations () {
 
 	viewState.addEventListener( 'change', _viewChanged );
 
+	this.addEventListener( 'removed', _removed );
+
 	function _viewChanged( event ) {
 
 		if ( event.name === 'splays' ) {
@@ -62,6 +64,13 @@ function Stations () {
 			Viewer.renderView();
 
 		}
+
+	}
+
+
+	function _removed ( ) {
+
+		viewState.removeEventListener( 'change', _viewChanged );
 
 	}
 

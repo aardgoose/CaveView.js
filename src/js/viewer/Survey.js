@@ -207,6 +207,8 @@ function Survey ( cave ) {
 
 			marker = entrances.addMarker( node.p, node.getPath( endNode ) );
 
+			self.limits.expandByPoint( marker.position );
+
 			self.pointTargets.push( marker );
 
 		}
@@ -1418,8 +1420,6 @@ Survey.prototype.getBounds = function () {
 	var max = box.max;
 
 	this.traverse( _addObjectBounds );
-
-//	return this.surveyTree.boundingBox;
 
 	return box;
 

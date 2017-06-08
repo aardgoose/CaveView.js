@@ -162,7 +162,8 @@ function initSelectionPage () {
 	page.addHeader( 'Selection' );
 
 	titleBar.id = 'ui-path';
-	titleBar.addEventListener( 'click', _handleSelectTopSurvey );
+
+	page.addListener( titleBar, 'click', _handleSelectTopSurvey );
 
 	page.appendChild( titleBar );
 
@@ -170,7 +171,7 @@ function initSelectionPage () {
 
 	var redraw = container.clientHeight; // eslint-disable-line no-unused-vars
 
-	viewState.addEventListener( 'change', _handleChange );
+	page.addListener( viewState, 'change', _handleChange );
 
 	return;
 
@@ -204,7 +205,8 @@ function initSelectionPage () {
 
 			span = document.createElement( 'span' );
 			span.textContent = ' \u25C4';
-			span.addEventListener( 'click', _handleSelectSurveyBack );
+
+			page.addListener( span, 'click', _handleSelectSurveyBack );
 
 			titleBar.appendChild( span );
 			titleBar.appendChild( document.createTextNode( ' ' + top.name ) );
@@ -223,8 +225,8 @@ function initSelectionPage () {
 	
 		currentTop = top;
 
-		ul.addEventListener( 'mouseover', _handleMouseover );
-		ul.addEventListener( 'mouseleave', _handleMouseleave );
+		page.addListener( ul, 'mouseover', _handleMouseover );
+		page.addListener( ul, 'mouseleave', _handleMouseleave );
 
 		return ul;
 
@@ -380,32 +382,32 @@ function initSelectionPage () {
 
 function initRoutePage () {
 
-	var route = new Page( 'icon_route' );
+	var page = new Page( 'icon_route' );
 	var routeSelect = false;
 
-	route.addHeader( 'Routes' );
+	page.addHeader( 'Routes' );
 
-	route.addCheckbox( 'edit route', viewState, 'routeEdit' );
+	page.addCheckbox( 'edit route', viewState, 'routeEdit' );
 
 	if ( isRoutesLoaded ) {
 
-		route.addSelect( 'routes', routes.getRouteNames(), routes );
+		page.addSelect( 'routes', routes.getRouteNames(), routes );
 
 	}
 
 	var routeFile = replaceExtension( file, 'json' );
 
-	route.addDownloadButton( 'Download', routes, 'download', routeFile );
+	page.addDownloadButton( 'Download', routes, 'download', routeFile );
 
-	routes.addEventListener( 'changed', _routesChanged );
-	routes.addEventListener( 'changed', Page.handleChange );
+	page.addListener( routes, 'changed', _routesChanged );
+	page.addListener( routes, 'changed', Page.handleChange );
 
 	function _routesChanged( /* event */ ) {
 
 		if ( routeSelect ) return;
 
 		routeSelect = true;
-		route.addSelect( 'routes', routes.getRouteNames(), routes, 'setRoute' );
+		page.addSelect( 'routes', routes.getRouteNames(), routes, 'setRoute' );
 
 	}
 

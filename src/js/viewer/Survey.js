@@ -1419,6 +1419,8 @@ Survey.prototype.getBounds = function () {
 
 	this.traverse( _addObjectBounds );
 
+//	return this.surveyTree.boundingBox;
+
 	return box;
 
 	function _addObjectBounds ( obj ) {

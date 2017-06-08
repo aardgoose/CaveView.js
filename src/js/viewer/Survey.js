@@ -172,6 +172,8 @@ function Survey ( cave ) {
 
 		survey.traverse( _dispose );
 
+		this.remove( this.stations );
+
 		function _dispose ( object ) {
 
 			if ( object.geometry ) object.geometry.dispose();
@@ -565,10 +567,13 @@ Survey.prototype.loadCave = function ( cave ) {
 		var currentSurvey;
 
 		var run;
-
 		var l = srcSegments.length;
 
 		if ( l === 0 ) return null;
+
+		var vertex1, vertex2;
+
+		var lastVertex = new Vector3();
 
 		for ( var i = 0; i < l; i++ ) {
 
@@ -577,8 +582,12 @@ Survey.prototype.loadCave = function ( cave ) {
 			var type   = leg.type;
 			var survey = leg.survey;
 
-			var vertex1 = new Vector3( leg.from.x, leg.from.y, leg.from.z );
-			var vertex2 = new Vector3( leg.to.x,   leg.to.y,   leg.to.z );
+			// most line segments will share vertices - avoid allocating new Vector3() in this case.
+
+			vertex1 = lastVertex.equals( leg.from ) ? lastVertex : new Vector3( leg.from.x, leg.from.y, leg.from.z );
+			vertex2 = new Vector3( leg.to.x,   leg.to.y,   leg.to.z );
+
+			lastVertex = vertex2;
 
 			geometry = legGeometries[ type ];
 
@@ -612,6 +621,7 @@ Survey.prototype.loadCave = function ( cave ) {
 				currentType   = type;
 
 			}
+
 
 			geometry.vertices.push( vertex1 );
 			geometry.vertices.push( vertex2 );

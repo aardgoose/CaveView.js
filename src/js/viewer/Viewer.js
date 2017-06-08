@@ -52,6 +52,7 @@ var renderer;
 var scene = new Scene();
 var oCamera;
 var pCamera;
+var rtCamera;
 var camera;
 
 var mouse = new Vector2();
@@ -488,9 +489,23 @@ function renderDepthTexture () {
 
 	// render the terrain to a new canvas square canvas and extract image data
 
-	var rtCamera = new OrthographicCamera( -width / 2, width / 2,  height / 2, -height / 2, -10000, 10000 );
+	if ( rtCamera === undefined ) {
 
-	rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
+		rtCamera = new OrthographicCamera( -width / 2, width / 2,  height / 2, -height / 2, -10000, 10000 );
+		rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
+
+	} else {
+
+		rtCamera.left   = -width / 2;
+		rtCamera.right  =  width / 2;
+		rtCamera.top    =  height / 2;
+		rtCamera.bottom = -height / 2;
+		rtCamera.near   = -10000;
+		rtCamera.far    =  10000;
+		
+		rtCamera.updateProjectionMatrix();
+
+	}
 
 	scene.overrideMaterial = Materials.getDepthMapMaterial();
 

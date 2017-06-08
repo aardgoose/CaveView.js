@@ -572,7 +572,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		readLabel( 0 );
 
-		if ( ! ( flags & 0x0E ) ) { // skip surface only stations
+		if ( ! ( flags & 0x0E ) || flags & 0x20 ) { // skip surface only stations
 
 			pos += 12; //skip coordinates
 			return true;

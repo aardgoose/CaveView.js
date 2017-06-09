@@ -1,5 +1,5 @@
 
-import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE } from '../core/constants';
+import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_ENTRANCE, STATION_NORMAL } from '../core/constants';
 import { Tree } from '../core/Tree';
 
 function loxHandler  ( fileName, dataStream, metadata ) {
@@ -177,7 +177,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		// m_flags & 0x01 = surface
 
-		surveyTree.addById( readString( namePtr ), - m_id, m_surveyId, { p: coords } );
+		surveyTree.addById( readString( namePtr ), - m_id, m_surveyId, { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
 
 		if ( m_flags & 0x02 ) {
 

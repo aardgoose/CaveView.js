@@ -264,17 +264,17 @@ function initSelectionPage () {
 				key.style.color = 'yellow';
 				key.textContent = '\u2229 ';
 
-			} else if ( child.hitCount > 2 ) {
+			} else if ( child.hitCount > 2 ) { // station at junction
 
 				key.style.color = 'yellow';
 				key.textContent = '\u25fc ';
 
-			} else if ( child.hitCount === 0 ) {
+			} else if ( child.hitCount === 0 ) { // end of splay
 
 				key.style.color = 'red';
 				key.textContent = '\u25fb ';
 
-			} else {
+			} else { // normal station in middle or end of leg
 
 				key.style.color = 'red';
 				key.textContent = '\u25fc ';

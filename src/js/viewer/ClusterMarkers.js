@@ -170,7 +170,7 @@ QuadTree.prototype.check = function ( cluster ) {
 
 			if ( subQuad.count < 2 ) {
 
-				this.nodes[ i ] === undefined;
+				this.nodes[ i ] = undefined;
 
 				continue;
 

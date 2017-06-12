@@ -154,7 +154,8 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 	function readString ( ptr ) {
 
-		var bytes = new Uint8Array( source, dataStart + ptr.position, ptr.size );
+		// strings are null terminated. Igore last byte in string
+		var bytes = new Uint8Array( source, dataStart + ptr.position, ptr.size - 1 );
 
 		return String.fromCharCode.apply( null, bytes );
 

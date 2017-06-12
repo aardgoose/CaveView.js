@@ -84,6 +84,8 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 			station = stations.getStation( v1 );
 
+			if ( station === undefined ) continue; // possible use of separator in station name.
+
 			segmentInfo = {
 				segment: segment,
 				startStation: station,

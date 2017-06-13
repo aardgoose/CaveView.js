@@ -3,7 +3,7 @@ import {
 } from '../../../../three.js/src/Three';
 
 import { WaterMaterial } from '../materials/WaterMaterial';
-import  { FEATURE_TRACES, upAxis } from '../core/constants';
+import { FEATURE_TRACES, upAxis } from '../core/constants';
 
 function beforeRender ( renderer, scene, camera, geometry, material ) {
 

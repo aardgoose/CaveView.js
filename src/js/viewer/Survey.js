@@ -17,16 +17,15 @@ import { Materials } from '../materials/Materials';
 import { ClusterMarkers } from './ClusterMarkers';
 import { Stations } from './Stations';
 import { Routes } from './Routes';
+import { DyeTraces } from './DyeTraces';
 import { SurveyColours } from '../core/SurveyColours';
 import { Terrain } from '../terrain/Terrain';
 import { WorkerPool } from '../workers/WorkerPool';
-import { WaterMaterial } from '../materials/WaterMaterial';
 import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
 
 import {
 	Vector3, Face3, Box3,
-	Geometry, BufferGeometry,
-	Float32BufferAttribute,
+	Geometry,
 	MeshLambertMaterial, MeshBasicMaterial, LineBasicMaterial,
 	FaceColors, NoColors, FrontSide, VertexColors,
 	Object3D, Mesh, LineSegments,
@@ -830,57 +829,28 @@ Survey.prototype.loadDyeTraces = function ( traces ) {
 	if ( traces.length === 0 ) return;
 
 	var surveyTree = this.surveyTree;
+	var dyeTraces = new DyeTraces();
 
-	var geometry = new BufferGeometry();
-	var vertices = [];
-	var ends = [];
+	for ( var i = 0, l = traces.length; i < l; i++ ) {
 
-	traces.forEach( _addTrace );
-
-	var positions = new Float32BufferAttribute( vertices.length * 3, 3 );
-	var sinks = new Float32BufferAttribute( ends.length * 3, 3 );
-
-	geometry.addAttribute( 'position', positions.copyVector3sArray( vertices ) );
-	geometry.addAttribute( 'sinks', sinks.copyVector3sArray( ends ) );
-
-	var mesh = new Mesh( geometry , new WaterMaterial() );
-
-	mesh.onBeforeRender = _beforeRender;
-	mesh.layers.set( FEATURE_TRACES );
-
-	this.layers.enable( FEATURE_TRACES );
-
-	this.add( mesh );
-
-	return;
-
-	function _beforeRender ( renderer, scene, camera, geometry, material ) {
-
-		material.uniforms.offset.value += 0.1;
-
-	}
-
-	function _addTrace( trace /* , key */ ) {
+		var trace = traces[ i ];
 
 		var startStation = surveyTree.getByPath( trace.start );
 		var endStation   = surveyTree.getByPath( trace.end );
 
-		var end = new Vector3().copy( endStation.p );
+		if ( endStation === undefined || startStation === undefined ) continue;
 
-		var v = new Vector3().subVectors( endStation.p, startStation.p ).cross( upAxis ).setLength( 2 );
-
-		var v1 = new Vector3().add( startStation.p ).add( v );
-		var v2 = new Vector3().add( startStation.p ).sub( v );
-
-		vertices.push( v1 );
-		vertices.push( v2 );
-		vertices.push( end );
-
-		ends.push ( end );
-		ends.push ( end );
-		ends.push ( end );
+		dyeTraces.addTrace( startStation.p, endStation.p );
 
 	}
+
+	dyeTraces.finish();
+
+	this.layers.enable( FEATURE_TRACES );
+
+	this.add( dyeTraces );
+
+	return;
 
 };
 

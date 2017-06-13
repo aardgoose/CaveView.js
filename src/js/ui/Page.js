@@ -75,7 +75,7 @@ Page.clear = function () {
 
 	var i, l, listener;
 
-	for ( var i = 0, l = Page.listeners.length; i < l; i++ ) {
+	for ( i = 0, l = Page.listeners.length; i < l; i++ ) {
 
 		listener = Page.listeners[ i ];
 
@@ -106,9 +106,9 @@ Page.addListener = function ( obj, name, handler ) {
 		obj: obj,
 		name: name,
 		handler: handler
-	})
+	} );
 
-}
+};
 
 Page.handleChange = function ( event ) {
 
@@ -156,7 +156,7 @@ Page.prototype.addListener = function ( obj, name, handler ) {
 
 	Page.addListener( obj, name, handler ); // redirect to :: method - allows later rework to page specific destruction
 
-}
+};
 
 Page.prototype.tabHandleClick = function ( event ) {
 

@@ -519,7 +519,8 @@ function renderDepthTexture () {
 
 	renderView();
 
-	renderer.renderLists.dispose();
+	// clear renderList to release objects on heap
+	renderer.renderLists.clear();
 
 }
 

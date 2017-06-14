@@ -291,7 +291,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	}
 
-	function _loadScraps ( scrapList ) {
+	function _loadScraps ( scrapList ) { // FIXME - sort out faceRuns -> indexRuns
 
 		var l = scrapList.length;
 
@@ -363,8 +363,8 @@ Survey.prototype.loadCave = function ( cave ) {
 		// survey to face index mapping 
 		var currentSurvey;
 		var faceRuns = [];
-		var faceSet = 0;
-		var lastEnd = 0; // faces.length;
+
+		var lastEnd = 0;
 		var l1, r1, u1, d1, l2, r2, u2, d2, lrud;
 		var i, j;
 
@@ -406,19 +406,17 @@ Survey.prototype.loadCave = function ( cave ) {
 						indices.push( u2, r2, d2 );
 						indices.push( u2, d2, l2 );
 
-						lastEnd = lastEnd + faceSet * 8 + 4;
+						lastEnd = indices.length;
 
 						run.end = lastEnd;
+
 						faceRuns.push( run );
 
 						run = null;
-						faceSet = 0;
 
 					}
 
 				}
-
-				faceSet++;
 
 				// next station vertices
 				vertices.push( lrud.l );
@@ -457,11 +455,12 @@ Survey.prototype.loadCave = function ( cave ) {
 
 					// handle first section of run
 
+					run = { start: lastEnd, survey: survey };
+
 					// start tube with two triangles to form cap
 					indices.push( u1, r1, d1 );
 					indices.push( u1, d1, l1 );
 
-					run = { start: lastEnd, survey: survey };
 
 				}
 
@@ -478,7 +477,8 @@ Survey.prototype.loadCave = function ( cave ) {
 			indices.push( u2, r2, d2 );
 			indices.push( u2, d2, l2 );
 
-			run.end = lastEnd + faceSet * 8 + 4;
+			run.end = indices.length;
+
 			faceRuns.push( run );
 
 		}

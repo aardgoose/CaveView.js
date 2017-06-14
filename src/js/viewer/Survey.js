@@ -17,6 +17,7 @@ import { Materials } from '../materials/Materials';
 import { ClusterMarkers } from './ClusterMarkers';
 import { Stations } from './Stations';
 import { Routes } from './Routes';
+import { Walls } from './Walls';
 import { DyeTraces } from './DyeTraces';
 import { SurveyColours } from '../core/SurveyColours';
 import { Terrain } from '../terrain/Terrain';
@@ -26,9 +27,9 @@ import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
 import {
 	Vector3, Face3, Box3,
 	Geometry,
-	MeshLambertMaterial, MeshBasicMaterial, LineBasicMaterial,
+	MeshLambertMaterial, LineBasicMaterial,
 	FaceColors, NoColors, FrontSide, VertexColors,
-	Object3D, Mesh, LineSegments,
+	Object3D, LineSegments,
 	Points, PointsMaterial
 } from '../../../../three.js/src/Three';
 
@@ -292,17 +293,19 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadScraps ( scrapList ) {
 
-		var geometry = self.getMeshGeometry( FACE_SCRAPS );
-		var vertices = geometry.vertices;
-		var faces    = geometry.faces;
-
-		var vertexOffset = vertices.length;
-		var facesOffset  = faces.length;
-		var faceRuns     = [];
-
 		var l = scrapList.length;
 
 		if ( l === 0 ) return null;
+
+		var mesh = self.getMesh( FACE_SCRAPS );
+
+		var indices = [];
+		var vertices = [];
+
+		var vertexOffset = 0;
+		var facesOffset  = 0;
+
+		var faceRuns = [];
 
 		for ( var i = 0; i < l; i++ ) {
 
@@ -310,10 +313,9 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
-		self.addMesh( geometry, FACE_SCRAPS, faceRuns, 'CV.Survey:faces:scraps' );
+		mesh.addWalls( vertices, indices, faceRuns );
 
-		geometry.computeFaceNormals();
-		geometry.computeBoundingBox();
+		self.addMesh( mesh, FACE_SCRAPS, 'CV.Survey:faces:scraps' );
 
 		return;
 
@@ -325,7 +327,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				var vertex = scrap.vertices[ i ];
 
-				geometry.vertices.push( new Vector3( vertex.x, vertex.y, vertex.z ) );
+				vertices.push( new Vector3( vertex.x, vertex.y, vertex.z ) );
 
 			}
 
@@ -333,7 +335,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				var face = scrap.faces[ i ];
 
-				geometry.faces.push( new Face3( face[ 0 ] + vertexOffset, face[ 1 ] + vertexOffset, face[ 2 ] + vertexOffset ) );
+				indices.push( face[ 0 ] + vertexOffset, face[ 1 ] + vertexOffset, face[ 2 ] + vertexOffset );
 
 			}
 
@@ -350,19 +352,19 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadCrossSections ( crossSectionGroups ) {
 
-		var geometry = self.getMeshGeometry( FACE_WALLS );
+		var mesh = self.getMesh( FACE_WALLS );
 
-		var faces    = geometry.faces;
-		var vertices = geometry.vertices;
+		var indices = [];
+		var vertices = [];
 
-		var v = vertices.length;
+		var v = 0;
 		var l = crossSectionGroups.length;
 
 		// survey to face index mapping 
 		var currentSurvey;
 		var faceRuns = [];
 		var faceSet = 0;
-		var lastEnd = faces.length;
+		var lastEnd = 0; // faces.length;
 		var l1, r1, u1, d1, l2, r2, u2, d2, lrud;
 		var i, j;
 
@@ -401,8 +403,8 @@ Survey.prototype.loadCave = function ( cave ) {
 					if ( run !== null ) {
 
 						// close section with two triangles to form cap.
-						faces.push( new Face3( u2, r2, d2 ) );
-						faces.push( new Face3( u2, d2, l2 ) );
+						indices.push( u2, r2, d2 );
+						indices.push( u2, d2, l2 );
 
 						lastEnd = lastEnd + faceSet * 8 + 4;
 
@@ -438,16 +440,16 @@ Survey.prototype.loadCave = function ( cave ) {
 				// all face vertices specified in CCW winding order to define front side.
 
 				// top faces
-				faces.push( new Face3( u1, r1, r2 ) );
-				faces.push( new Face3( u1, r2, u2 ) );
-				faces.push( new Face3( u1, u2, l2 ) );
-				faces.push( new Face3( u1, l2, l1 ) );
+				indices.push( u1, r1, r2 );
+				indices.push( u1, r2, u2 );
+				indices.push( u1, u2, l2 );
+				indices.push( u1, l2, l1 );
 
 				// bottom faces
-				faces.push( new Face3( d1, r2, r1 ) );
-				faces.push( new Face3( d1, d2, r2 ) );
-				faces.push( new Face3( d1, l2, d2 ) );
-				faces.push( new Face3( d1, l1, l2 ) );
+				indices.push( d1, r2, r1 );
+				indices.push( d1, d2, r2 );
+				indices.push( d1, l2, d2 );
+				indices.push( d1, l1, l2 );
 
 				v = v - 4; // rewind to allow current vertices to be start of next box section.
 
@@ -456,8 +458,8 @@ Survey.prototype.loadCave = function ( cave ) {
 					// handle first section of run
 
 					// start tube with two triangles to form cap
-					faces.push( new Face3( u1, r1, d1 ) );
-					faces.push( new Face3( u1, d1, l1 ) );
+					indices.push( u1, r1, d1 );
+					indices.push( u1, d1, l1 );
 
 					run = { start: lastEnd, survey: survey };
 
@@ -473,28 +475,21 @@ Survey.prototype.loadCave = function ( cave ) {
 		if ( run !== null ) {
 
 			// close tube with two triangles
-			faces.push( new Face3( u2, r2, d2 ) );
-			faces.push( new Face3( u2, d2, l2 ) );
+			indices.push( u2, r2, d2 );
+			indices.push( u2, d2, l2 );
 
 			run.end = lastEnd + faceSet * 8 + 4;
 			faceRuns.push( run );
 
 		}
 
-		l = faces.length;
+		l = indices.length;
 
 		if ( l === 0 ) return;
 
-		for ( i = 0; i < l; i++ ) {
+		mesh.addWalls( vertices, indices, faceRuns );
 
-			faces[ i ].color = ColourCache.white;
-
-		}
-
-		self.addMesh( geometry, FACE_WALLS, faceRuns, 'CV.Survey:faces:walls' );
-
-		geometry.computeVertexNormals();
-		geometry.computeBoundingBox();
+		self.addMesh( mesh, FACE_WALLS, 'CV.Survey:faces:walls' );
 
 		return;
 
@@ -554,9 +549,9 @@ Survey.prototype.loadCave = function ( cave ) {
 		var legRuns       = [];
 		var legMeshes     = self.legMeshes;
 
-		legGeometries[ LEG_CAVE    ] = self.getMeshGeometry( LEG_CAVE );
-		legGeometries[ LEG_SURFACE ] = self.getMeshGeometry( LEG_SURFACE );
-		legGeometries[ LEG_SPLAY   ] = self.getMeshGeometry( LEG_SPLAY );
+		legGeometries[ LEG_CAVE    ] = self.getLineGeometry( LEG_CAVE );
+		legGeometries[ LEG_SURFACE ] = self.getLineGeometry( LEG_SURFACE );
+		legGeometries[ LEG_SPLAY   ] = self.getLineGeometry( LEG_SPLAY );
 
 		legRuns[ LEG_CAVE    ] = ( legMeshes[ LEG_CAVE    ] === undefined ) ? [] : legMeshes[ LEG_CAVE    ].userData.legRuns;
 		legRuns[ LEG_SURFACE ] = ( legMeshes[ LEG_SURFACE ] === undefined ) ? [] : legMeshes[ LEG_SURFACE ].userData.legRuns;
@@ -717,7 +712,21 @@ Survey.prototype.loadCave = function ( cave ) {
 
 };
 
-Survey.prototype.getMeshGeometry = function ( tag ) {
+Survey.prototype.getMesh = function ( tag ) {
+
+	var mesh = this.legMeshes[ tag ];
+
+	if ( mesh === undefined ) {
+
+		mesh = new Walls( tag );
+
+	}
+
+	return mesh;
+
+};
+
+Survey.prototype.getLineGeometry = function ( tag ) {
 
 	var mesh = this.legMeshes[ tag ];
 
@@ -742,29 +751,14 @@ Survey.prototype.getMeshGeometry = function ( tag ) {
 
 };
 
-Survey.prototype.addMesh = function ( geometry, tag, runs, name ) {
+Survey.prototype.addMesh = function ( mesh, tag, name ) {
 
-	if ( this.legMeshes[ tag ] === undefined ) {
+	mesh.name = name;
 
-		geometry.name = name + ':g';
+	this.layers.enable( tag );
+	this.legMeshes[ tag ] = mesh;
 
-		var mesh = new Mesh( geometry, new MeshBasicMaterial( { color: 0xff0000, vertexColors: NoColors, side: FrontSide } ) );
-
-		mesh.userData = { faceRuns: runs };
-		mesh.name = name;
-		mesh.layers.set( tag );
-
-		this.add( mesh );
-		this.layers.enable( tag );
-
-		this.legMeshes[ tag ] = mesh;
-
-	} else {
-
-		mesh = this.legMeshes[ tag ];
-		mesh.userData.faceRuns = mesh.userData.faceRuns.concat( runs );
-
-	}
+	this.add( mesh );
 
 };
 
@@ -1173,7 +1167,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 		case 'Mesh':
 
-			_cutMeshGeometry( obj );
+			obj.cutRuns( self.selectedSectionIds );
 
 			break;
 
@@ -1275,111 +1269,6 @@ Survey.prototype.cutSection = function ( id ) {
 
 	}
 
-	function _cutMeshGeometry ( mesh ) {
-
-		var faceRuns = mesh.userData.faceRuns;
-
-		if ( mesh.name === '' ) return;
-
-		var geometry = mesh.geometry;
-
-		var faces = geometry.faces;
-		var vertices = geometry.vertices;
-
-		var	selectedSectionIds = self.selectedSectionIds;
-
-		var newGeometry = new Geometry();
-
-		var newFaces    = newGeometry.faces;
-		var newVertices = newGeometry.vertices;
-
-		var newFaceRuns = [];
-
-		var fp = 0;
-
-		var vMap = new Map();
-		var face;
-
-		var nextVertex = 0, vertexIndex;
-
-		for ( var run = 0, l = faceRuns.length; run < l; run++ ) {
-
-			var faceRun = faceRuns[ run ];
-			var survey  = faceRun.survey;
-			var start   = faceRun.start;
-			var end     = faceRun.end;
-
-			if ( selectedSectionIds.has( survey ) ) {
-
-				for ( var f = start; f < end; f++ ) {
-
-					face = faces[ f ];
-
-					// remap face vertices into new vertex array
-					face.a = _remapVertex( face.a );
-					face.b = _remapVertex( face.b );
-					face.c = _remapVertex( face.c );
-
-					newFaces.push( face );
-
-				}
-
-				faceRun.start = fp;
-
-				fp += end - start;
-
-				faceRun.end = fp;
-
-				newFaceRuns.push( faceRun );
-
-			}
-
-		}
-
-		if ( newGeometry.vertices.length === 0 ) {
-
-			// this type of leg has no instances in selected section.
-
-			self.layers.mask &= ~ mesh.layers.mask; // remove this from survey layer mask
-
-			cutList.push( mesh );
-
-			return;
-
-		}
-
-		newGeometry.computeFaceNormals();
-		newGeometry.computeVertexNormals();
-		newGeometry.computeBoundingBox();
-
-		mesh.geometry = newGeometry;
-		mesh.userData.faceRuns = newFaceRuns;
-
-		geometry.dispose();
-
-		function _remapVertex ( vi ) {
-
-			// see if we have already remapped this vertex index (vi)
-
-			vertexIndex = vMap.get( vi );
-
-			if ( vertexIndex === undefined ) {
-
-				vertexIndex = nextVertex++;
-
-				// insert new index in map
-				vMap.set( vi, vertexIndex );
-
-				newVertices.push( vertices[ vi ] );
-
-			}
-
-			return vertexIndex;
-
-		}
-
-	}
-
 };
 
 Survey.prototype.getBounds = function () {
@@ -1437,7 +1326,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_SURVEY:
 
-		material = new MeshLambertMaterial( { color: 0xffffff, vertexColors: FaceColors } );
+		// FIXME make multiple material for survey - > color and pass to Walls().
 
 		break;
 
@@ -1461,8 +1350,8 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	if ( this.setLegShading( LEG_CAVE, mode ) ) {
 
-		_setFaceShading( this.legMeshes[ FACE_WALLS  ], mode, material );
-		_setFaceShading( this.legMeshes[ FACE_SCRAPS ], mode, material );
+		this.setWallShading( this.legMeshes[ FACE_WALLS  ], mode, material );
+		this.setWallShading( this.legMeshes[ FACE_SCRAPS ], mode, material );
 
 		return true;
 
@@ -1470,94 +1359,24 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	return false;
 
-	function _setFaceShading ( mesh, mode, material ) {
-
-		if ( ! mesh ) return;
-
-		if ( material ) {
-
-			self.setFacesSelected( mesh, material, mode );
-			mesh.visible = true;
-
-		} else {
-
-			mesh.visible = false;
-
-		}
-
-	}
-
 };
 
-Survey.prototype.setFacesSelected = function ( mesh, selected, mode ) {
+Survey.prototype.setWallShading = function ( mesh, node, selectedMaterial ) {
 
 	if ( ! mesh ) return;
 
-	var faceRuns = mesh.userData.faceRuns;
-	var faces    = mesh.geometry.faces;
-	var	selectedSectionIds = this.selectedSectionIds;
-	var surveyToColourMap;
-	var unselected = new MeshLambertMaterial( { side: FrontSide, color: 0x444444, vertexColors: FaceColors } );
+	if ( selectedMaterial ) {
 
-	if ( mode === SHADING_SURVEY ) surveyToColourMap = SurveyColours.getSurveyColourMap( this.surveyTree, this.selectedSection );
-
-	mesh.material = [ selected, unselected ];
-
-	var count = 0; // check final face count is select to detect faults in constructed mesh.userData
-	var f, l, run;
-
-	if ( selectedSectionIds.size && faceRuns ) {
-
-		for ( run = 0, l = faceRuns.length; run < l; run++ ) {
-
-			var faceRun = faceRuns[ run ];
-			var survey  = faceRun.survey;
-			var start   = faceRun.start;
-			var end     = faceRun.end;
-
-			count = count + end - start;
-	
-			if ( selectedSectionIds.has( survey ) ) {
-
-				for ( f = start; f < end; f++ ) {
-
-					faces[ f ].materialIndex = 0;
-
-					if ( mode === SHADING_SURVEY ) {
-
-						faces[ f ].color = surveyToColourMap[ survey ];
-
-					}
-
-				}
-
-			} else {
-
-				for ( f = start; f < end; f++ ) {
-
-					faces[ f ].materialIndex = 1;
-
-				}
-
-			}
-
-		}
-
-		if ( faces.length != count ) console.log( 'error: faces.length', faces.length, 'count : ', count ); // TMP ASSERT
+		mesh.setShading( this.selectedSectionIds, selectedMaterial )
+		mesh.visible = true;
 
 	} else {
 
-		for ( f = 0, end = faces.length; f < end; f++ ) {
-
-			faces[ f ].materialIndex = 0;
-
-		}
+		mesh.visible = false;
 
 	}
 
-	mesh.geometry.groupsNeedUpdate = true;
-
-	if ( mode === SHADING_SURVEY ) mesh.geometry.colorsNeedUpdate = true;
+	// FIXME - ressurect SHADING_SURVEY ???
 
 };
 

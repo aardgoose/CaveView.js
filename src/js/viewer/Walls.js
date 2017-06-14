@@ -23,7 +23,7 @@ Walls.prototype = Object.create( Mesh.prototype );
 
 Walls.prototype.constructor = Walls;
 
-Walls.prototype.addWalls = function ( vertices, indices, runs ) {
+Walls.prototype.addWalls = function ( vertices, indices, indexRuns ) {
 
 	var geometry = this.geometry; // FIXME handle adding new bits
 
@@ -48,7 +48,7 @@ Walls.prototype.addWalls = function ( vertices, indices, runs ) {
 	geometry.computeVertexNormals();
 	geometry.computeBoundingBox();
 
-	this.userData = { faceRuns: runs };
+	this.indexRuns = indexRuns;
 
 	return this;
 
@@ -64,20 +64,18 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
 	this.material = [ selectedMaterial, unselectedMaterial ];
 
-	var f, l, run;
+	var indexRuns = this.indexRuns;
 
-	var faceRuns = this.userData.faceRuns;
+	if ( selectedRuns.size && indexRuns ) {
 
-	if ( selectedRuns.size && faceRuns ) {
+		for ( var run = 0, l = indexRuns.length; run < l; run++ ) {
 
-		for ( run = 0, l = faceRuns.length; run < l; run++ ) {
+			var indexRun = indexRuns[ run ];
 
-			var faceRun = faceRuns[ run ];
-			var survey  = faceRun.survey;
-			var start   = faceRun.start;
-			var end     = faceRun.end;
+			var start = indexRun.start;
+			var end   = indexRun.end;
 
-			if ( selectedRuns.has( survey ) ) {
+			if ( selectedRuns.has( indexRun.survey ) ) {
 
 				geometry.addGroup( start * 3, ( end - start ) * 3, 0 );
 
@@ -99,58 +97,65 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
 Walls.prototype.cutRuns = function ( selectedRuns ) {
 
-	var faceRuns = this.userData.faceRuns;
+	var indexRuns = this.indexRuns;
 
 	var geometry = this.geometry;
 
-	var position = geometry.getAttribute( 'position' );
-	var index = geometry.index;
+	var vertices = geometry.getAttribute( 'position' );
+	var indices = geometry.index;
 
-	var newVertices = newGeometry.vertices;
+	var newIndices = [];
+	var newVertices = [];
 
-	var newFaceRuns = [];
+	var newIndexRuns = [];
 
 	var fp = 0;
 
 	var vMap = new Map();
-	var face;
+	var index, newIndex;
 
-	var nextVertex = 0, vertexIndex;
+	for ( var run = 0, l = indexRuns.length; run < l; run++ ) {
 
-	for ( var run = 0, l = faceRuns.length; run < l; run++ ) {
+		var indexRun = indexRuns[ run ];
 
-		var faceRun = faceRuns[ run ];
-		var survey  = faceRun.survey;
-		var start   = faceRun.start;
-		var end     = faceRun.end;
+		if ( selectedRuns.has( indexRun.survey ) ) {
 
-		if ( selectedSectionIds.has( survey ) ) {
+			var start = indexRun.start;
+			var end   = indexRun.end;
 
-			for ( var f = start; f < end; f++ ) {
+			for ( var i = start; i < end; i++ ) {
 
-				face = faces[ f ];
+				index = indices.getX( i );
 
-				// remap face vertices into new vertex array
-				face.a = _remapVertex( face.a );
-				face.b = _remapVertex( face.b );
-				face.c = _remapVertex( face.c );
+				newIndex = vMap.get( index );
 
-				newFaces.push( face );
+				if ( newIndex === undefined ) {
+
+					newIndex = newVertices.length;
+
+					vMap.set( index, newIndex );
+
+//					newVertices.push( vertices.getX[ index ] ); // needs fixing up - copy vertex (3)
+
+				}
+
+				newIndices.push( newIndex );
 
 			}
 
-			faceRun.start = fp;
+			indexRun.start = fp;
 
 			fp += end - start;
 
-			faceRun.end = fp;
+			indexRun.end = fp;
 
-			newFaceRuns.push( faceRun );
+			newIndexRuns.push( indexRun );
 
 		}
 
 	}
 
+/*
 	if ( newGeometry.vertices.length === 0 ) {
 
 		// this type of leg has no instances in selected section.
@@ -162,32 +167,12 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 		return;
 
 	}
+*/
 
 	geometry.computeVertexNormals();
 	geometry.computeBoundingBox();
 
-	this.userData.faceRuns = newFaceRuns;
-
-	function _remapVertex ( vi ) {
-
-		// see if we have already remapped this vertex index (vi)
-
-		vertexIndex = vMap.get( vi );
-
-		if ( vertexIndex === undefined ) {
-
-			vertexIndex = nextVertex++;
-
-			// insert new index in map
-			vMap.set( vi, vertexIndex );
-
-			newVertices.push( vertices[ vi ] );
-
-		}
-
-		return vertexIndex;
-
-	}
+	this.userData.faceRuns = newIndexRuns;
 
 };
 

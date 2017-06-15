@@ -460,7 +460,6 @@ Survey.prototype.loadCave = function ( cave ) {
 					indices.push( u1, r1, d1 );
 					indices.push( u1, d1, l1 );
 
-
 				}
 
 			}

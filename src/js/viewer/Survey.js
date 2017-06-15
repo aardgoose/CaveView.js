@@ -302,10 +302,10 @@ Survey.prototype.loadCave = function ( cave ) {
 		var indices = [];
 		var vertices = [];
 
-		var vertexOffset = 0;
-		var facesOffset  = 0;
+		var indexRuns = [];
 
-		var faceRuns = [];
+		var vertexOffset = 0;
+		var lastEnd = 0;
 
 		for ( var i = 0; i < l; i++ ) {
 
@@ -313,7 +313,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
-		mesh.addWalls( vertices, indices, faceRuns );
+		mesh.addWalls( vertices, indices, indexRuns );
 
 		self.addMesh( mesh, FACE_SCRAPS, 'CV.Survey:faces:scraps' );
 
@@ -335,14 +335,14 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				var face = scrap.faces[ i ];
 
-				indices.push( face[ 0 ] + vertexOffset, face[ 1 ] + vertexOffset, face[ 2 ] + vertexOffset );
+				indices.push( face[ 0 ] + vertexOffset, face[ 2 ] + vertexOffset, face[ 1 ] + vertexOffset );
 
 			}
 
-			var end = facesOffset + scrap.faces.length;
+			var end = indices.length;
 
-			faceRuns.push( { start: facesOffset , end: end, survey: scrap.survey } );
-			facesOffset = end;
+			indexRuns.push( { start: lastEnd, count: end - lastEnd, survey: scrap.survey } );
+			lastEnd = end;
 
 			vertexOffset += scrap.vertices.length;
 
@@ -362,7 +362,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		// survey to face index mapping 
 		var currentSurvey;
-		var faceRuns = [];
+		var indexRuns = [];
 
 		var lastEnd = 0;
 		var l1, r1, u1, d1, l2, r2, u2, d2, lrud;
@@ -408,9 +408,9 @@ Survey.prototype.loadCave = function ( cave ) {
 
 						lastEnd = indices.length;
 
-						run.end = lastEnd;
+						run.count = lastEnd - run.start;
 
-						faceRuns.push( run );
+						indexRuns.push( run );
 
 						run = null;
 
@@ -477,9 +477,9 @@ Survey.prototype.loadCave = function ( cave ) {
 			indices.push( u2, r2, d2 );
 			indices.push( u2, d2, l2 );
 
-			run.end = indices.length;
+			run.count = indices.length - run.start;
 
-			faceRuns.push( run );
+			indexRuns.push( run );
 
 		}
 
@@ -487,7 +487,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		if ( l === 0 ) return;
 
-		mesh.addWalls( vertices, indices, faceRuns );
+		mesh.addWalls( vertices, indices, indexRuns );
 
 		self.addMesh( mesh, FACE_WALLS, 'CV.Survey:faces:walls' );
 
@@ -1167,7 +1167,14 @@ Survey.prototype.cutSection = function ( id ) {
 
 		case 'Mesh':
 
-			obj.cutRuns( self.selectedSectionIds );
+			if ( ! obj.cutRuns( self.selectedSectionIds ) ) {
+
+				// remove this from survey layer mask
+				self.layers.mask &= ~ obj.layers.mask; 
+
+				cutList.push( obj );
+
+			}
 
 			break;
 

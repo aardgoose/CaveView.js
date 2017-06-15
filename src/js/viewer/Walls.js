@@ -60,36 +60,23 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
 	geometry.clearGroups();
 
-	var vertexCount = geometry.index.count;
-
-	this.material = [ selectedMaterial, unselectedMaterial ];
-
 	var indexRuns = this.indexRuns;
 
 	if ( selectedRuns.size && indexRuns ) {
+
+		this.material = [ selectedMaterial, unselectedMaterial ];
 
 		for ( var run = 0, l = indexRuns.length; run < l; run++ ) {
 
 			var indexRun = indexRuns[ run ];
 
-			var start = indexRun.start;
-			var end   = indexRun.end;
-
-			if ( selectedRuns.has( indexRun.survey ) ) {
-
-				geometry.addGroup( start * 3, ( end - start ) * 3, 0 );
-
-			} else {
-
-				geometry.addGroup( start * 3, ( end - start ) * 3, 1 );
-
-			}
+			geometry.addGroup( indexRun.start, indexRun.count, selectedRuns.has( indexRun.survey ) ? 0 : 1 );
 
 		}
 
 	} else {
 
-		geometry.addGroup( 0, vertexCount, 0 );
+		this.material = selectedMaterial;
 
 	}
 
@@ -155,24 +142,17 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 
 	}
 
-/*
-	if ( newGeometry.vertices.length === 0 ) {
 
-		// this type of leg has no instances in selected section.
+	if ( newIndices.length === 0 ) return false;
 
-		self.layers.mask &= ~ mesh.layers.mask; // remove this from survey layer mask
-
-		cutList.push( mesh );
-
-		return;
-
-	}
-*/
+	// replace position and index attributes - dispose of old attributes
 
 	geometry.computeVertexNormals();
 	geometry.computeBoundingBox();
 
-	this.userData.faceRuns = newIndexRuns;
+	this.indexRuns = newIndexRuns;
+
+	return true;
 
 };
 

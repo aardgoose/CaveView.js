@@ -100,6 +100,8 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 
 	var vMap = new Map();
 	var index, newIndex;
+	var newVertexIndex = 0;
+	var offset;
 
 	for ( var run = 0, l = indexRuns.length; run < l; run++ ) {
 
@@ -108,7 +110,12 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 		if ( selectedRuns.has( indexRun.survey ) ) {
 
 			var start = indexRun.start;
-			var end   = indexRun.end;
+			var count = indexRun.count;
+
+			var end = start + count;
+
+			var itemSize = vertices.itemSize;
+			var oldVertices = vertices.array;
 
 			for ( var i = start; i < end; i++ ) {
 
@@ -118,11 +125,13 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 
 				if ( newIndex === undefined ) {
 
-					newIndex = newVertices.length;
+					newIndex = newVertexIndex++;
 
 					vMap.set( index, newIndex );
 
-//					newVertices.push( vertices.getX[ index ] ); // needs fixing up - copy vertex (3)
+					offset = index * itemSize;
+
+					newVertices.push( oldVertices[ offset ], oldVertices[ offset + 1 ], oldVertices[ offset + 2 ] );
 
 				}
 
@@ -132,9 +141,7 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 
 			indexRun.start = fp;
 
-			fp += end - start;
-
-			indexRun.end = fp;
+			fp += count;
 
 			newIndexRuns.push( indexRun );
 
@@ -142,10 +149,17 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 
 	}
 
-
 	if ( newIndices.length === 0 ) return false;
 
+
+	console.log( indices.count, newIndices.length );
+
 	// replace position and index attributes - dispose of old attributes
+	geometry.index.setArray( new indices.array.constructor( newIndices ) );
+	geometry.index.needsUpdate = true;
+
+	vertices.setArray( new Float32Array( newVertices ) );
+	vertices.needsUpdate = true;
 
 	geometry.computeVertexNormals();
 	geometry.computeBoundingBox();

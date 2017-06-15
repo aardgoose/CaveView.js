@@ -25,10 +25,10 @@ import { WorkerPool } from '../workers/WorkerPool';
 import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
 
 import {
-	Vector3, Face3, Box3,
+	Vector3, Box3,
 	Geometry,
 	MeshLambertMaterial, LineBasicMaterial,
-	FaceColors, NoColors, FrontSide, VertexColors,
+	NoColors, VertexColors,
 	Object3D, LineSegments,
 	Points, PointsMaterial
 } from '../../../../three.js/src/Three';
@@ -1167,7 +1167,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 		case 'Mesh':
 
-			if ( ! obj.cutRuns( self.selectedSectionIds ) ) {
+			if ( obj.cutRuns !== undefined && ! obj.cutRuns( self.selectedSectionIds ) ) {
 
 				// remove this from survey layer mask
 				self.layers.mask &= ~ obj.layers.mask; 
@@ -1185,7 +1185,6 @@ Survey.prototype.cutSection = function ( id ) {
 
 			break;
 
-		case 'CV.Label':
 		case 'Group':
 
 			break;
@@ -1309,7 +1308,6 @@ Survey.prototype.getBounds = function () {
 Survey.prototype.setShadingMode = function ( mode ) {
 
 	var material;
-	var self = this;
 
 	switch ( mode ) {
 
@@ -1374,7 +1372,7 @@ Survey.prototype.setWallShading = function ( mesh, node, selectedMaterial ) {
 
 	if ( selectedMaterial ) {
 
-		mesh.setShading( this.selectedSectionIds, selectedMaterial )
+		mesh.setShading( this.selectedSectionIds, selectedMaterial );
 		mesh.visible = true;
 
 	} else {

@@ -13,7 +13,7 @@ function Walls ( layer ) {
 	Mesh.call( this, geometry, unselectedMaterial );
 
 	this.layers.set( layer );
-	this.visible = true;
+	this.type = 'Walls';
 
 	return this;
 
@@ -25,7 +25,7 @@ Walls.prototype.constructor = Walls;
 
 Walls.prototype.addWalls = function ( vertices, indices, indexRuns ) {
 
-	var geometry = this.geometry; // FIXME handle adding new bits
+	var geometry = this.geometry;
 
 	var position = geometry.getAttribute( 'position' );
 
@@ -150,9 +150,6 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 	}
 
 	if ( newIndices.length === 0 ) return false;
-
-
-	console.log( indices.count, newIndices.length );
 
 	// replace position and index attributes - dispose of old attributes
 	geometry.index.setArray( new indices.array.constructor( newIndices ) );

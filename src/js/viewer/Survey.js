@@ -26,12 +26,7 @@ import { Terrain } from '../terrain/Terrain';
 import { WorkerPool } from '../workers/WorkerPool';
 import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
 
-import {
-	Vector3, Box3,
-	MeshLambertMaterial,
-	NoColors,
-	Object3D,
-} from '../../../../three.js/src/Three';
+import { Vector3, Box3, Object3D } from '../../../../three.js/src/Three';
 
 var zeroVector = new Vector3();
 
@@ -1121,7 +1116,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_SINGLE:
 
-		material = new MeshLambertMaterial( { color: 0xffff000, vertexColors: NoColors } );
+		material = Materials.getSurfaceMaterial();
 
 		break;
 
@@ -1221,7 +1216,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	case SHADING_SINGLE:
 
-		this.setLegColourByColour( mesh, ColourCache.yellow );
+		this.setLegColourByColour( mesh, ColourCache.white );
 
 		break;
 

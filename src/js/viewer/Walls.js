@@ -6,50 +6,6 @@ import {
 
 var unselectedMaterial = new MeshLambertMaterial( { color: 0x444444, vertexColors: FaceColors } );
 
-
-function sortGroups ( a, b ) {
-
-	if ( a.materialIndex !== b.materialIndex ) {
-
-		return a.materialIndex - b.materialIndex;
-
-	} else {
-
-		return a.start - b.start;
-
-	}
-
-}
-
-function mergeGroups ( groups ) {
-
-	var group;
-	var lastGroup = groups[ 0 ];
-	var groupIndex = 1;
-
-	for ( var i = 1, l = groups.length; i < l; i++ ) {
-
-		group = groups[ i ];
-
-		if ( group.materialIndex === lastGroup.materialIndex && lastGroup.start + lastGroup.count === group.start ) {
-
-			lastGroup.count += group.count;
-
-		} else {
-
-			groups[ groupIndex++ ] = group;
-			lastGroup = group;
-
-		}
-
-	}
-
-	groups.length = groupIndex; // truncate
-
-	return groups;
-
-}
-
 function Walls ( layer ) {
 
 	var geometry = new BufferGeometry();
@@ -106,19 +62,48 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
 	var indexRuns = this.indexRuns;
 
+
+	var lastMaterial = 0;
+	var currentMaterial;
+
 	if ( selectedRuns.size && indexRuns ) {
 
 		this.material = [ selectedMaterial, unselectedMaterial ];
 
-		for ( var run = 0, l = indexRuns.length; run < l; run++ ) {
+		var indexRun = indexRuns[ 0 ];
 
-			var indexRun = indexRuns[ run ];
+		var start = indexRun.start;
+		var count = indexRun.count;
 
-			geometry.addGroup( indexRun.start, indexRun.count, selectedRuns.has( indexRun.survey ) ? 0 : 1 );
+		var lastMaterial = selectedRuns.has( indexRun.survey ) ? 0 : 1
+
+
+		// merge adjacent runs with shared material.
+
+		for ( var run = 1, l = indexRuns.length; run < l; run++ ) {
+
+			indexRun = indexRuns[ run ];
+
+			currentMaterial = selectedRuns.has( indexRun.survey ) ? 0 : 1;
+
+			if ( currentMaterial === lastMaterial && indexRun.start === start + count ) {
+
+				count += indexRun.count;
+
+			} else {
+
+				geometry.addGroup( start, count, lastMaterial );
+
+				start = indexRun.start;
+				count = indexRun.count;
+
+				lastMaterial = currentMaterial;
+
+			}
 
 		}
 
-		geometry.groups = mergeGroups( geometry.groups.sort( sortGroups ) );
+		geometry.addGroup( start, count, lastMaterial );
 
 	} else {
 

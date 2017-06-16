@@ -6,6 +6,51 @@ import {
 
 var unselectedMaterial = new MeshLambertMaterial( { color: 0x444444, vertexColors: FaceColors } );
 
+
+function sortGroups ( a, b ) {
+
+	if ( a.materialIndex !== b.materialIndex ) {
+
+		return a.materialIndex - b.materialIndex;
+
+	} else {
+
+		return a.start - b.start;
+
+	}
+
+}
+
+function mergeGroups ( groups ) {
+
+	var group;
+	var newGroups = [];
+
+	var lastGroup = groups[ 0 ];
+
+	newGroups.push( lastGroup );
+
+	for ( var i = 1, l = groups.length; i < l; i++ ) {
+
+		group = groups[ i ];
+
+		if ( group.materialIndex === lastGroup.materialIndex && lastGroup.start + lastGroup.count === group.start ) {
+
+			lastGroup.count += group.count;
+
+		} else {
+
+			newGroups.push( group );
+			lastGroup = group;
+
+		}
+
+	}
+
+	return newGroups;
+
+}
+
 function Walls ( layer ) {
 
 	var geometry = new BufferGeometry();
@@ -73,6 +118,12 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 			geometry.addGroup( indexRun.start, indexRun.count, selectedRuns.has( indexRun.survey ) ? 0 : 1 );
 
 		}
+
+		console.log( geometry.groups );
+
+		geometry.groups = mergeGroups( geometry.groups.sort( sortGroups ) );
+
+		console.log( geometry.groups );
 
 	} else {
 

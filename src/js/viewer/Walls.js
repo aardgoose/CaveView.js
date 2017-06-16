@@ -118,11 +118,7 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
 		}
 
-		console.log( geometry.groups );
-
 		geometry.groups = mergeGroups( geometry.groups.sort( sortGroups ) );
-
-		console.log( geometry.groups );
 
 	} else {
 

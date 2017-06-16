@@ -24,11 +24,8 @@ function sortGroups ( a, b ) {
 function mergeGroups ( groups ) {
 
 	var group;
-	var newGroups = [];
-
 	var lastGroup = groups[ 0 ];
-
-	newGroups.push( lastGroup );
+	var groupIndex = 1;
 
 	for ( var i = 1, l = groups.length; i < l; i++ ) {
 
@@ -40,14 +37,16 @@ function mergeGroups ( groups ) {
 
 		} else {
 
-			newGroups.push( group );
+			groups[ groupIndex++ ] = group;
 			lastGroup = group;
 
 		}
 
 	}
 
-	return newGroups;
+	groups.length = groupIndex; // truncate
+
+	return groups;
 
 }
 

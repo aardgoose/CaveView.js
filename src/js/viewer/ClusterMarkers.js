@@ -301,7 +301,27 @@ function ClusterMarkers ( limits, maxDepth ) {
 
 	this.quadTree = new QuadTree( min.x, max.x, min.y, max.y );
 
+	this.addEventListener( 'removed', _removed );
+
+	var self = this;
+
 	return this;
+
+	function _removed () {
+
+		// dispose of all GlyphString objects
+
+		self.traverse( 
+
+			function _traverse ( obj ) {
+
+				if ( obj.type === 'GlyphString' ) obj.geometry.dispose();
+
+			}
+
+		);
+
+	};
 
 }
 

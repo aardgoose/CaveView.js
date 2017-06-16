@@ -18,6 +18,7 @@ import { ClusterMarkers } from './ClusterMarkers';
 import { Stations } from './Stations';
 import { Routes } from './Routes';
 import { Legs } from './Legs';
+import { Point } from './Point';
 import { Walls } from './Walls';
 import { DyeTraces } from './DyeTraces';
 import { SurveyColours } from '../core/SurveyColours';
@@ -27,11 +28,9 @@ import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
 
 import {
 	Vector3, Box3,
-	Geometry,
 	MeshLambertMaterial,
 	NoColors,
 	Object3D,
-	Points, PointsMaterial
 } from '../../../../three.js/src/Three';
 
 var zeroVector = new Vector3();
@@ -71,10 +70,7 @@ function Survey ( cave ) {
 
 	// highlit point marker
 
-	var g = new Geometry();
-	g.vertices.push( new Vector3() );
-
-	var point = new Points( g, new PointsMaterial( { color: 0xffffff } ) );
+	var point = new Point( new Vector3() );
 
 	point.visible = false;
 
@@ -908,13 +904,9 @@ Survey.prototype.highlightSection = function ( id ) {
 
 		} else if ( node.p ) {
 
-// FIXME - make cleaner and use bufferAttribute
 			var highlight = this.stationHighlight;
-			var geometry = highlight.geometry;
 
-			geometry.vertices[ 0 ].copy( node.p );
-			geometry.verticesNeedUpdate = true;
-
+			highlight.position.copy( node.p );
 			highlight.visible = true;
 
 		}

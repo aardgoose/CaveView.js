@@ -103,7 +103,9 @@ function Survey ( cave ) {
 
 	}
 
-	_loadEntrances( survey.entrances );
+	this.entrances = survey.entrances;
+
+	this.loadEntrances();
 
 	this.setFeatureBox();
 
@@ -175,45 +177,54 @@ function Survey ( cave ) {
 
 	}
 
-	function _loadEntrances ( entranceList ) {
-
-		var l = entranceList.length;
-
-		if ( l === 0 ) return null;
-
-		var marker;
-
-		var entrances = self.getFeature( FEATURE_ENTRANCES );
-		if ( entrances === undefined ) entrances = new ClusterMarkers( self.limits, 4 );
-
-		self.addFeature( entrances, FEATURE_ENTRANCES, 'CV.Survey:entrances' );
-
-		// remove common elements from station names
-		var endNode = self.surveyTree;
-
-		while ( endNode.children.length === 1 ) endNode = endNode.children [ 0 ];
-
-		for ( var i = 0; i < l; i++ ) {
-
-			var node = self.surveyTree.findById( entranceList[ i ] );
-
-			marker = entrances.addMarker( node.p, node.getPath( endNode ) );
-
-			self.limits.expandByPoint( marker.position );
-
-			self.pointTargets.push( marker );
-
-		}
-
-		return;
-
-	}
-
 }
 
 Survey.prototype = Object.create( Object3D.prototype );
 
 Survey.prototype.constructor = Survey;
+
+Survey.prototype.loadEntrances = function () {
+
+	var entrances = this.entrances;
+	var l = entrances.length;
+
+	if ( l === 0 ) return null;
+
+	var marker;
+	var surveyTree = this.surveyTree;
+
+	var clusterMarkers = this.getFeature( FEATURE_ENTRANCES );
+
+	if ( clusterMarkers ) this.remove( clusterMarkers );
+
+	clusterMarkers = new ClusterMarkers( this.limits, 4 );
+
+	// remove common elements from station names
+
+	var endNode = surveyTree;
+
+	while ( endNode.children.length === 1 ) endNode = endNode.children [ 0 ];
+
+	// add entrance markers
+
+	for ( var i = 0; i < l; i++ ) {
+
+		var node = surveyTree.findById( entrances[ i ] );
+
+		if ( node !== undefined ) {
+
+			marker = clusterMarkers.addMarker( node.p, node.getPath( endNode ) );
+
+			this.limits.expandByPoint( marker.position );
+			this.pointTargets.push( marker );
+
+		}
+
+	}
+
+	this.addFeature( clusterMarkers, FEATURE_ENTRANCES, 'CV.Survey:entrances' );
+
+};
 
 Survey.prototype.loadCave = function ( cave ) {
 
@@ -1015,6 +1026,10 @@ Survey.prototype.cutSection = function ( id ) {
 
 	this.setFeatureBox();
 
+	// reload entrances - omitting any not in newly truncated surveyTree
+
+	this.loadEntrances();
+
 	this.cutInProgress = true;
 
 	return;
@@ -1022,21 +1037,6 @@ Survey.prototype.cutSection = function ( id ) {
 	function _cutObject ( obj ) {
 
 		switch ( obj.type ) {
-
-		case 'CV.Marker':
-
-			// FIXME cutting needs fixing with new entrance code.
-			if ( selectedSectionIds.has( obj.userData ) ) {
-
-				self.pointTargets.push( obj );
-
-			} else {
-
-				cutList.push( obj );
-
-			}
-
-			break;
 
 		case 'Legs':
 		case 'Walls':

@@ -698,7 +698,7 @@ Survey.prototype.update = function ( camera ) {
 
 	}
 
-}
+};
 
 Survey.prototype.addFeature = function ( obj, tag, name ) {
 

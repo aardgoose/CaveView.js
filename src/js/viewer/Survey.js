@@ -64,7 +64,7 @@ function Survey ( cave ) {
 	this.cutInProgress = false;
 	this.terrain = null;
 	this.isRegion = cave.isRegion;
-	this.legMeshes = [];
+	this.features = [];
 	this.routes = null;
 	this.stations = null;
 	this.workerPool = new WorkerPool( 'caveWorker.js' );
@@ -103,7 +103,7 @@ function Survey ( cave ) {
 		this.loadCave( survey );
 		this.limits = this.getBounds();
 
-		this.legTargets = [ this.legMeshes[ LEG_CAVE ] ];
+		this.legTargets = [ this.features[ LEG_CAVE ] ];
 
 	}
 
@@ -681,7 +681,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 Survey.prototype.getObject = function ( obj, tag ) {
 
-	var o = this.legMeshes[ tag ];
+	var o = this.features[ tag ];
 
 	if ( o === undefined ) {
 
@@ -698,7 +698,7 @@ Survey.prototype.addObject = function ( obj, tag, name ) {
 	obj.name = name;
 
 	this.layers.enable( tag );
-	this.legMeshes[ tag ] = obj;
+	this.features[ tag ] = obj;
 
 	this.add( obj );
 
@@ -844,13 +844,13 @@ Survey.prototype.getSurveyTree = function () {
 
 Survey.prototype.getStats = function () {
 
-	return this.legMeshes[ LEG_CAVE ].stats;
+	return this.features[ LEG_CAVE ].stats;
 
 };
 
 Survey.prototype.getLegs = function () {
 
-	return this.legMeshes[ LEG_CAVE ].geometry.vertices;
+	return this.features[ LEG_CAVE ].geometry.vertices;
 
 };
 
@@ -1175,8 +1175,8 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	if ( this.setLegShading( LEG_CAVE, mode ) ) {
 
-		this.setWallShading( this.legMeshes[ FACE_WALLS  ], mode, material );
-		this.setWallShading( this.legMeshes[ FACE_SCRAPS ], mode, material );
+		this.setWallShading( this.features[ FACE_WALLS  ], mode, material );
+		this.setWallShading( this.features[ FACE_SCRAPS ], mode, material );
 
 		return true;
 
@@ -1213,7 +1213,7 @@ Survey.prototype.hasFeature = function ( layerTag ) {
 
 Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
-	var mesh = this.legMeshes[ legType ];
+	var mesh = this.features[ legType ];
 
 	if ( mesh === undefined ) return;
 

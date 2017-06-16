@@ -301,33 +301,29 @@ function ClusterMarkers ( limits, maxDepth ) {
 
 	this.quadTree = new QuadTree( min.x, max.x, min.y, max.y );
 
-	this.addEventListener( 'removed', _removed );
-
-	var self = this;
+	this.addEventListener( 'removed', this.onRemoved );
 
 	return this;
-
-	function _removed () {
-
-		// dispose of all GlyphString objects
-
-		self.traverse( 
-
-			function _traverse ( obj ) {
-
-				if ( obj.type === 'GlyphString' ) obj.geometry.dispose();
-
-			}
-
-		);
-
-	};
 
 }
 
 ClusterMarkers.prototype = Object.create( Object3D.prototype );
 
 ClusterMarkers.prototype.constructor = ClusterMarkers;
+
+ClusterMarkers.prototype.onRemoved = function () {
+
+	this.traverse( 
+
+		function _traverse ( obj ) {
+
+			if ( obj.type === 'GlyphString' ) { obj.geometry.dispose(); }
+
+		}
+
+	);
+
+};
 
 ClusterMarkers.prototype.addMarker = function ( position, label ) {
 

@@ -6,7 +6,7 @@ import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMapMaterial } from './DepthMapMaterial';
 import { HeightMaterial } from './HeightMaterial';
 
-import { LineBasicMaterial, VertexColors } from '../../../../three.js/src/Three';
+import { LineBasicMaterial, MeshLambertMaterial, NoColors, VertexColors } from '../../../../three.js/src/Three';
 
 var cache = new Map();
 var viewState;
@@ -124,6 +124,18 @@ function getDepthCursorMaterial( type, limits ) {
 
 }
 
+function getSurfaceMaterial () {
+
+	if ( cache.has( 'surface' ) ) return cache.get( 'surface' );
+
+	var material = new MeshLambertMaterial( { color: 0xFFFFFF, vertexColors: NoColors } );
+
+	cache.set( 'surface', material );
+
+	return material;
+
+}
+
 function getLineMaterial () {
 
 	if ( cache.has( 'line' ) ) return cache.get( 'line' );
@@ -196,6 +208,7 @@ export var Materials = {
 	getDepthMaterial:       getDepthMaterial,
 	getDepthCursorMaterial: getDepthCursorMaterial,
 	getCursorMaterial:      getCursorMaterial,
+	getSurfaceMaterial:     getSurfaceMaterial,
 	getLineMaterial:        getLineMaterial,
 	getAspectMaterial:      getAspectMaterial,
 	setDepthTexture:        setDepthTexture,

@@ -302,21 +302,15 @@ function init ( domID, configuration ) { // public method
 
 	} );
 
-	_enableLayer( FEATURE_BOX,       'box' );
-	_enableLayer( FEATURE_ENTRANCES, 'entrances' );
-	_enableLayer( FEATURE_STATIONS,  'stations' );
-	_enableLayer( FEATURE_TRACES,    'traces' );
-	_enableLayer( FACE_SCRAPS,       'scraps' );
-	_enableLayer( FACE_WALLS,        'walls' );
-	_enableLayer( LEG_SPLAY,         'splays' );
-	_enableLayer( LEG_SURFACE,       'surfaceLegs' );
-	
-	_hasLayer( FEATURE_ENTRANCES, 'hasEntrances' );
-	_hasLayer( FEATURE_TRACES,    'hasTraces' );
-	_hasLayer( FACE_SCRAPS,       'hasScraps' );
-	_hasLayer( FACE_WALLS,        'hasWalls' );
-	_hasLayer( LEG_SPLAY,         'hasSplays' );
-	_hasLayer( LEG_SURFACE,       'hasSurfaceLegs' );
+	_enableLayer( FEATURE_BOX, 'box' );
+
+	_conditionalLayer( FEATURE_ENTRANCES, 'entrances' );
+	_conditionalLayer( FEATURE_STATIONS,  'stations' );
+	_conditionalLayer( FEATURE_TRACES,    'traces' );
+	_conditionalLayer( FACE_SCRAPS,       'scraps' );
+	_conditionalLayer( FACE_WALLS,        'walls' );
+	_conditionalLayer( LEG_SPLAY,         'splays' );
+	_conditionalLayer( LEG_SURFACE,       'surfaceLegs' );
 
 	Materials.initCache( viewState );
 
@@ -334,7 +328,11 @@ function init ( domID, configuration ) { // public method
 
 	}
 
-	function _hasLayer ( layerTag, name ) {
+	function _conditionalLayer ( layerTag, name ) {
+
+		_enableLayer ( layerTag, name );
+
+		name = 'has' + name.substr( 0, 1 ).toUpperCase() + name.substr( 1 );
 
 		Object.defineProperty( viewState, name, {
 			get: function () { return survey.hasFeature( layerTag ); }
@@ -878,11 +876,11 @@ function loadSurvey ( newSurvey ) {
 
 	survey = newSurvey;
 
-	stats = survey.getStats();
+	stats = survey.getFeature( LEG_CAVE ).stats;
 
 	setScale( survey );
 
-	terrain = survey.getTerrain();
+	terrain = survey.terrain;
 
 	scene.up = upAxis;
 
@@ -1068,7 +1066,7 @@ function mouseDown ( event ) {
 
 		var p = new Vector3().copy( station.p ).applyMatrix4( survey.matrixWorld );
 
-		var popup = new StationPopup( station, survey.getProjection() );
+		var popup = new StationPopup( station, survey.projection );
 
 		popup.display( container, event.clientX, event.clientY, camera, p );
 
@@ -1147,10 +1145,7 @@ var renderView = function () {
 
 		HUD.renderHUD();
 
-		// FIXME - replace with more generic handler
-		//       - is it required every frame?
-
-		survey.entrances.cluster( camera );
+		survey.update( camera );
 
 		clockStart();
 
@@ -1238,7 +1233,7 @@ function getRoutes () {
 
 function getSurveyTree () {
 
-	return survey.getSurveyTree();
+	return survey.surveyTree;
 
 }
 

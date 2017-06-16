@@ -107,8 +107,6 @@ function Survey ( cave ) {
 
 	}
 
-	this.entrances = new ClusterMarkers( this.limits, 4 );
-
 	_loadEntrances( survey.entrances );
 
 	this.setFeatureBox();
@@ -188,12 +186,11 @@ function Survey ( cave ) {
 		if ( l === 0 ) return null;
 
 		var marker;
-		var entrances = self.entrances;
 
-		entrances.name = 'CV.Survey:entrances';
+		var entrances = self.getFeature( FEATURE_ENTRANCES );
+		if ( entrances === undefined ) entrances = new ClusterMarkers( self.limits, 4 );
 
-		self.add( entrances );
-		self.layers.enable( FEATURE_ENTRANCES );
+		self.addFeature( entrances, FEATURE_ENTRANCES, 'CV.Survey:entrances' );
 
 		// remove common elements from station names
 		var endNode = self.surveyTree;
@@ -296,7 +293,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		if ( l === 0 ) return null;
 
-		var mesh = self.getObject( Walls, FACE_SCRAPS );
+		var mesh = self.getFeature( FACE_SCRAPS, Walls );
 
 		var indices = [];
 		var vertices = [];
@@ -314,7 +311,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		mesh.addWalls( vertices, indices, indexRuns );
 
-		self.addObject( mesh, FACE_SCRAPS, 'CV.Survey:faces:scraps' );
+		self.addFeature( mesh, FACE_SCRAPS, 'CV.Survey:faces:scraps' );
 
 		return;
 
@@ -351,7 +348,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadCrossSections ( crossSectionGroups ) {
 
-		var mesh = self.getObject( Walls, FACE_WALLS );
+		var mesh = self.getFeature( FACE_WALLS, Walls );
 
 		var indices = [];
 		var vertices = [];
@@ -487,7 +484,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		mesh.addWalls( vertices, indices, indexRuns );
 
-		self.addObject( mesh, FACE_WALLS, 'CV.Survey:faces:walls' );
+		self.addFeature( mesh, FACE_WALLS, 'CV.Survey:faces:walls' );
 
 		return;
 
@@ -640,11 +637,11 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			if ( legs.vertices.length === 0 ) return;
 
-			var legObject = self.getObject( Legs, tag );
+			var legObject = self.getFeature( tag, Legs );
 
 			legObject.addLegs( legs.vertices, legs.colors, legs.runs );
 
-			self.addObject( legObject, tag, name + ':g' );
+			self.addFeature( legObject, tag, name + ':g' );
 
 		}
 
@@ -679,11 +676,11 @@ Survey.prototype.loadCave = function ( cave ) {
 
 };
 
-Survey.prototype.getObject = function ( obj, tag ) {
+Survey.prototype.getFeature = function ( tag, obj ) {
 
 	var o = this.features[ tag ];
 
-	if ( o === undefined ) {
+	if ( o === undefined && obj ) {
 
 		o = new obj ( tag );
 
@@ -693,14 +690,29 @@ Survey.prototype.getObject = function ( obj, tag ) {
 
 };
 
-Survey.prototype.addObject = function ( obj, tag, name ) {
+Survey.prototype.update = function ( camera ) {
+
+	if ( this.features[ FEATURE_ENTRANCES ] ) {
+
+		this.getFeature( FEATURE_ENTRANCES ).cluster( camera );
+
+	}
+
+}
+
+Survey.prototype.addFeature = function ( obj, tag, name ) {
 
 	obj.name = name;
 
-	this.layers.enable( tag );
 	this.features[ tag ] = obj;
 
 	this.add( obj );
+
+};
+
+Survey.prototype.hasFeature = function ( tag ) {
+
+	return ! ( this.features[ tag ] === undefined );
 
 };
 
@@ -725,7 +737,7 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 	// we have finished adding stations.
 	stations.finalise();
 
-	this.add( stations );
+	this.addFeature( stations );
 
 	this.stations = stations;
 
@@ -782,11 +794,7 @@ Survey.prototype.loadDyeTraces = function ( traces ) {
 
 	dyeTraces.finish();
 
-	this.layers.enable( FEATURE_TRACES );
-
-	this.add( dyeTraces );
-
-	return;
+	this.addFeature( dyeTraces, FEATURE_TRACES, 'CV.DyeTraces' );
 
 };
 
@@ -824,33 +832,9 @@ Survey.prototype.loadFromEntrance = function ( entrance, loadedCallback ) {
 
 };
 
-Survey.prototype.getProjection = function () {
-
-	return this.projection;
-
-};
-
-Survey.prototype.getTerrain = function () {
-
-	return this.terrain;
-
-};
-
-Survey.prototype.getSurveyTree = function () {
-
-	return this.surveyTree;
-
-};
-
-Survey.prototype.getStats = function () {
-
-	return this.features[ LEG_CAVE ].stats;
-
-};
-
 Survey.prototype.getLegs = function () {
 
-	return this.features[ LEG_CAVE ].geometry.vertices;
+	return this.getFeature( LEG_CAVE ).geometry.vertices;
 
 };
 
@@ -1205,12 +1189,6 @@ Survey.prototype.setWallShading = function ( mesh, node, selectedMaterial ) {
 
 };
 
-Survey.prototype.hasFeature = function ( layerTag ) {
-
-	return ! ( ( this.layers.mask & 1 << layerTag ) === 0 );
-
-};
-
 Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	var mesh = this.features[ legType ];
@@ -1425,6 +1403,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 	var colours = ColourCache.inclination;
 	var colourRange = colours.length - 1;
+	var hueFactor = colourRange * 2 / Math.PI;
 	var legNormal = new Vector3();
 
 	// pNormal = normal of reference plane in model space 
@@ -1439,7 +1418,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 		legNormal.subVectors( vertex1, vertex2 ).normalize();
 		var dotProduct = legNormal.dot( pNormal );
 
-		var hueIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
+		var hueIndex = Math.floor( hueFactor * Math.acos( Math.abs( dotProduct ) ) );
 		var colour = colours[ hueIndex ];
 
 		geometry.colors[ v1 ] = colour;

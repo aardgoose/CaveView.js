@@ -62,10 +62,6 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
 	var indexRuns = this.indexRuns;
 
-
-	var lastMaterial = 0;
-	var currentMaterial;
-
 	if ( selectedRuns.size && indexRuns ) {
 
 		this.material = [ selectedMaterial, unselectedMaterial ];
@@ -75,7 +71,8 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 		var start = indexRun.start;
 		var count = indexRun.count;
 
-		var lastMaterial = selectedRuns.has( indexRun.survey ) ? 0 : 1
+		var currentMaterial;
+		var lastMaterial = selectedRuns.has( indexRun.survey ) ? 0 : 1;
 
 
 		// merge adjacent runs with shared material.

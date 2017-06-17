@@ -20,8 +20,6 @@ import { WebTerrain } from '../terrain/WebTerrain';
 import { Overlay } from '../terrain/Overlay';
 import { setEnvironment } from '../core/lib';
 
-import { GlyphMaterial } from '../materials/GlyphMaterial';
-
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
 
 import { OrbitControls } from '../core/OrbitControls';
@@ -154,6 +152,10 @@ function init ( domID, configuration ) { // public method
 	} );
 
 	Object.defineProperties( viewState, {
+
+		'container': {
+			value: container,
+		},
 
 		'terrain': {
 			writeable: true,
@@ -845,13 +847,6 @@ function clearView () {
 
 	viewState.cameraType = CAMERA_PERSPECTIVE;
 	setViewMode( VIEW_PLAN, 1 );
-
-	if ( ! window.glyphMaterial ) {
-
-		// FIXME - sort out glyph atlas creation
-		window.glyphMaterial = new GlyphMaterial( 'test', container, Math.PI / 4 );
-
-	}
 
 	renderView();
 

@@ -65,7 +65,7 @@ function Survey ( cave ) {
 
 	// highlit point marker
 
-	var point = new Point( new Vector3() );
+	var point = new Point();
 
 	point.visible = false;
 
@@ -81,8 +81,6 @@ function Survey ( cave ) {
 
 	this.name = survey.title;
 	this.CRS = ( survey.sourceCRS === null ) ? getEnvironmentValue( 'CRS', 'fred' ) : survey.sourceCRS;
-
-	this.isLongLat = true; // FIXME
 
 	if ( this.isRegion === true ) {
 
@@ -122,8 +120,10 @@ function Survey ( cave ) {
 
 		}
 
-		var p1 = self.limits.min.clone();
-		var p2 = self.limits.max.clone();
+		var limits = self.limits;
+
+		var p1 = limits.min.clone();
+		var p2 = limits.max.clone();
 
 		p1.z = 0;
 		p2.z = 0;
@@ -289,7 +289,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	}
 
-	function _loadScraps ( scrapList ) { // FIXME - sort out faceRuns -> indexRuns
+	function _loadScraps ( scrapList ) {
 
 		var l = scrapList.length;
 

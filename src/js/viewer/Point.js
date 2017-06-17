@@ -2,13 +2,15 @@ import {
 	Points, PointsMaterial, BufferGeometry, Float32BufferAttribute
 } from '../../../../three.js/src/Three';
 
-function Point ( position ) {
+function Point ( material ) {
 
 	var geometry = new BufferGeometry();
 
-	geometry.addAttribute( 'position', new Float32BufferAttribute( [ position.x, position.y, position.z ], 3 ) );
+	material = material || new PointsMaterial( { color: 0xffffff } );
 
-	Points.call( this, geometry );
+	geometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0 ], 3 ) );
+
+	Points.call( this, geometry, material );
 
 	this.type = 'Point';
 

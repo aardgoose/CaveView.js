@@ -13,8 +13,6 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 	canvas.width  = atlasSize;
 	canvas.height = atlasSize;
 
-//	document.body.appendChild( canvas ); // FIXME debug code
-
 	var ctx = canvas.getContext( '2d' );
 
 	if ( ! ctx ) console.error( 'cannot obtain 2D canvas' );
@@ -26,7 +24,7 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 	// populate with glyphs
 
-	var glyphs = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-_';
+	var glyphs = '\u2610 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-_';
 
 	var divisions = atlasSize / cellSize;
 
@@ -43,7 +41,7 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 	var fontSize = 20;
 
 	ctx.textAlign = 'left';
-	ctx.font = 'normal ' + fontSize + 'px helvetica,sans-serif';
+	ctx.font = fontSize + 'px ' + glyphAtlasSpec;
 	ctx.fillStyle = '#ffffff';
 
 	var row, column;
@@ -90,7 +88,7 @@ GlyphAtlas.prototype.getGlyph = function ( glyph ) {
 	if ( glyphData === undefined ) {
 
 		console.warn( 'unavailable glyph [' + glyph + ']', glyph.codePointAt() );
-		glyphData = {}; // FIXME add placeholder to atlas.
+		glyphData = this.map[ '\u2610' ];  // substitute empty box
 
 	}
 

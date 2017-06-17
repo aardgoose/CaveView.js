@@ -5,6 +5,7 @@ import { DepthMaterial } from './DepthMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMapMaterial } from './DepthMapMaterial';
 import { HeightMaterial } from './HeightMaterial';
+import { GlyphMaterial } from './GlyphMaterial';
 
 import { LineBasicMaterial, MeshLambertMaterial, NoColors, VertexColors } from '../../../../three.js/src/Three';
 
@@ -148,6 +149,20 @@ function getLineMaterial () {
 
 }
 
+function getGlyphMaterial ( glyphAtlasSpec, rotation ) {
+
+	var name = glyphAtlasSpec + ':' + rotation.toString();
+
+	if ( cache.has( name ) ) return cache.get( name );
+
+	var material = new GlyphMaterial( glyphAtlasSpec, viewState.container, rotation );
+
+	cache.set( name, material );
+
+	return material;
+
+}
+
 function getAspectMaterial () {
 
 	var name = 'aspect';
@@ -210,6 +225,7 @@ export var Materials = {
 	getCursorMaterial:      getCursorMaterial,
 	getSurfaceMaterial:     getSurfaceMaterial,
 	getLineMaterial:        getLineMaterial,
+	getGlyphMaterial:       getGlyphMaterial,
 	getAspectMaterial:      getAspectMaterial,
 	setDepthTexture:        setDepthTexture,
 	initCache:              initCache,

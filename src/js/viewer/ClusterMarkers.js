@@ -1,8 +1,10 @@
 
 import { FEATURE_ENTRANCES } from '../core/constants';
 import { GlyphString } from './GlyphString';
+import { Materials } from '../materials/Materials';
+import { Point } from './Point';
 
-import { Object3D, Vector3, Triangle, Geometry, Points, PointsMaterial, CanvasTexture } from '../../../../three.js/src/Three';
+import { Object3D, Vector3, Triangle, PointsMaterial, CanvasTexture } from '../../../../three.js/src/Three';
 
 
 // preallocated objects for projected area calculation
@@ -16,9 +18,6 @@ var T1 = new Triangle( A, B, C );
 var T2 = new Triangle( A, C, D );
 
 var clusterMaterialCache = [];
-var markerGeometry = new Geometry();
-
-markerGeometry.vertices.push( new Vector3( 0, 0, 32 ) );
 
 function getClusterMaterial ( count ) {
 
@@ -35,8 +34,6 @@ function getClusterMaterial ( count ) {
 
 	canvas.width  = markerSize;
 	canvas.height = markerSize;
-
-//	document.body.appendChild( canvas ); // FIXME debug code
 
 	var ctx = canvas.getContext( '2d' );
 
@@ -79,7 +76,7 @@ function getClusterMaterial ( count ) {
 
 function makeClusterMarker ( count ) {
 
-	return new Points( markerGeometry, getClusterMaterial( count ) );
+	return new Point( getClusterMaterial( count ) );
 
 }
 
@@ -328,8 +325,8 @@ ClusterMarkers.prototype.onRemoved = function () {
 ClusterMarkers.prototype.addMarker = function ( position, label ) {
 
 	// create marker
-
-	var marker = new GlyphString( label, window.glyphMaterial );
+	var material = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', Math.PI / 4 );
+	var marker = new GlyphString( label, material );
 
 	marker.layers.set( FEATURE_ENTRANCES );
 	marker.position.copy( position );

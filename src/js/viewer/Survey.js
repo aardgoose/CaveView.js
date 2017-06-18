@@ -26,7 +26,7 @@ import { Terrain } from '../terrain/Terrain';
 import { WorkerPool } from '../workers/WorkerPool';
 import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
 
-import { Vector3, Box3, Object3D } from '../../../../three.js/src/Three';
+import { Vector3, Box3, Object3D, TextureLoader, PointsMaterial } from '../../../../three.js/src/Three';
 
 var zeroVector = new Vector3();
 
@@ -64,8 +64,11 @@ function Survey ( cave ) {
 	this.workerPool = new WorkerPool( 'caveWorker.js' );
 
 	// highlit point marker
+ 
+	var pointerTexture = new TextureLoader().load( getEnvironmentValue( 'home', '' ) + 'images/ic_location.png' );
+	var pointerMaterial = new PointsMaterial( { size: 32, map: pointerTexture, transparent : true, sizeAttenuation: false, alphaTest: 0.8 } );
 
-	var point = new Point();
+	var point = new Point( pointerMaterial );
 
 	point.visible = false;
 

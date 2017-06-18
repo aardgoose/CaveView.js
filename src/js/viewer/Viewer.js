@@ -1172,11 +1172,6 @@ export var Viewer = {
 	init:          init,
 	clearView:     clearView,
 	loadCave:      loadCave,
-<<<<<<< HEAD
-=======
-	addRoutes:     addRoutes,
-	getRoutes:     getRoutes,
->>>>>>> dev
 	getStats:      getStats,
 	getSurveyTree: getSurveyTree,
 	getControls:   getControls,

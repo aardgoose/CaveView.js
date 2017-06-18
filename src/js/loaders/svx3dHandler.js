@@ -1,9 +1,9 @@
 // Survex 3d file handler
 
-import { NORMAL, SPLAY, SURFACE, STATION_NORMAL, STATION_ENTRANCE } from '../core/constants.js';
-import { Tree } from '../core/Tree.js';
+import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE } from '../core/constants';
+import { Tree } from '../core/Tree';
 
-function Svx3dHandler ( fileName, dataStream ) {
+function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	this.fileName   = fileName;
 	this.groups     = [];
@@ -12,19 +12,62 @@ function Svx3dHandler ( fileName, dataStream ) {
 	this.xGroups    = [];
 	this.surveyTree = new Tree();
 	this.isRegion   = false;
-
-	var surveyTree  = this.surveyTree;
+	this.sourceCRS  = null;
+	this.targetCRS  = 'EPSG:3857'; // "web mercator"
+	this.projection = null;
+	this.metadata   = metadata;
 
 	var source    = dataStream;  // file data as arrrayBuffer
 	var pos       = 0;	         // file position
 
 	// read file header
-	var stdHeader = readLF(); // Survex 3D Image File
-	var version   = readLF(); // 3d version
-	var title     = readLF(); // Title
-	var date      = readLF(); // Date
 
-	console.log( "title: ", title);
+	readLF(); // Survex 3D Image File
+	var version = readLF(); // 3d version
+	var auxInfo = readNSLF();
+	readLF(); // Date
+
+	console.log( 'title: ', auxInfo[ 0 ] );
+
+	var sourceCRS = ( auxInfo[ 1 ] === undefined ) ? null : auxInfo[ 1 ]; // coordinate reference system ( proj4 format )
+
+	if ( sourceCRS !== null ) {
+
+		// work around lack of +init string support in proj4js
+
+		var matches = sourceCRS.match( /\+init=(.*)\s/);
+
+		if ( matches && matches.length === 2 ) {
+
+			switch( matches[ 1 ] ) {
+
+			case 'epsg:27700' :
+
+				sourceCRS = '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs';
+
+				break;
+
+			default:
+
+				sourceCRS = null;
+				console.warn( 'unsupported projection' );
+
+			}
+
+		}
+
+	}
+
+	// FIXME use NAD grid corrections OSTM15 etc ( UK Centric )
+
+	if ( sourceCRS !== null ) {
+
+		console.log( 'Reprojecting from', sourceCRS, 'to', this.targetCRS );
+
+		this.sourceCRS = sourceCRS;
+		this.projection = proj4( this.sourceCRS, this.targetCRS ); // eslint-disable-line no-undef
+
+	}
 
 	this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
 
@@ -32,24 +75,39 @@ function Svx3dHandler ( fileName, dataStream ) {
 
 	function readLF () { // read until Line feed
 
+		return readNSLF()[ 0 ];
+
+	}
+
+	function readNSLF () { // read until Line feed and split by null bytes
+
 		var bytes = new Uint8Array( source, 0 );
 
 		var lfString = [];
 		var b;
+		var strings = [];
 
 		do {
 
 			b = bytes[ pos++ ];
-			lfString.push( b );
 
-		} while ( b != 0x0a )
+			if ( b === 0x0a || b === 0 ) {
 
-		var s = String.fromCharCode.apply( null, lfString ).trim();
+				strings.push( String.fromCharCode.apply( null, lfString ).trim() );
+				lfString = [];
 
-		console.log( s  );
+			} else {
 
-		return s;
+				lfString.push( b );
+
+			}
+
+		} while ( b != 0x0a );
+
+		return strings;
+
 	}
+
 }
 
 Svx3dHandler.prototype.constructor = Svx3dHandler;
@@ -61,12 +119,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	var xGroups    = this.xGroups;
 	var surveyTree = this.surveyTree;
 
+	var self = this;
+
 	var cmd         = [];
 	var legs        = [];
-	var label       = "";
-	var readLabel;
-	var fileFlags   = 0;
-	var style       = 0;
+	var label       = '';
 	var stations    = new Map();
 	var lineEnds    = new Set(); // implied line ends to fixnup xsects
 	var xSects      = [];
@@ -77,11 +134,21 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	var lastPosition = { x: 0, y:0, z: 0 }; // value to allow approach vector for xsect coord frame
 	var i;
 
+	// functions
+
+	var readLabel;
+
+	// selected correct read coordinates function
+
+	var readCoordinates = ( this.projection === null ) ? __readCoordinates : __readCoordinatesProjected;
+
 	// init cmd handler table withh  error handler for unsupported records or invalid records
+
+	function _errorHandler ( e ) { console.log ('unhandled command: ', e.toString( 16 ) ); return false; }
 
 	for ( i = 0; i < 256; i++ ) {
 
-		cmd[ i ] = function ( e ) { console.log ('unhandled command: ', e.toString( 16 ) ); return false; };	
+		cmd[ i ] = _errorHandler;
 
 	}
 
@@ -122,10 +189,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		// dispatch table end
 
-		readLabel = readLabelV8;	
+		readLabel = readLabelV8;
 
-		// v8 file wide flags after header
-		fileFlags = data[ pos++ ];
+		// skip v8 file wide flags after header
+		pos++;
 
 	} else {
 
@@ -187,7 +254,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	while ( pos < dataLength ) {
 
-		if ( !cmd[ data[ pos ] ]( data[ pos++ ] ) ) break;
+		if ( ! cmd[ data[ pos ] ]( data[ pos++ ] ) ) break;
 
 	}
 
@@ -209,27 +276,28 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		switch ( data[ pos ] ) {
 
-			case 0xfe:
+		case 0xfe:
 
-				l = new DataView( source, pos );
+			l = new DataView( source, pos );
 
-				len = l.getUint16( 0, true ) + data[ pos ];
-				pos += 2;
+			len = l.getUint16( 0, true ) + data[ pos ];
+			pos += 2;
 
-				break;
+			break;
 
-			case 0xff:
+		case 0xff:
 
-				l = new DataView( source, pos );
+			l = new DataView( source, pos );
 
-				len = l.getUint32( 0, true );
-				pos +=4;
+			len = l.getUint32( 0, true );
+			pos += 4;
 
-				break;
+			break;
 
-			default:
+		default:
 
-				len = data[ pos++ ];
+			len = data[ pos++ ];
+
 		}
 
 		if ( len === 0 ) return false; // no label
@@ -242,7 +310,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		}
 
-		label = label + String.fromCharCode.apply( null, db  );
+		label += String.fromCharCode.apply( null, db );
 
 		return true;
 
@@ -255,6 +323,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		var b = data[ pos++ ];
 		var add = 0;
 		var del = 0;
+		var l;
 
 		if ( b !== 0 ) {
 
@@ -273,10 +342,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 			} else {
 
-				var l = new DataView( source, pos );
+				l = new DataView( source, pos );
 
 				del = l.getUint32( 0, true );
-				pos +=4;
+				pos += 4;
 
 			}
 
@@ -288,10 +357,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 			} else {
 
-				var l = new DataView( source, pos );
+				l = new DataView( source, pos );
 
 				add = l.getUint32( 0, true );
-				pos +=4;
+				pos += 4;
 
 			}
 		}
@@ -306,11 +375,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 			for ( var i = 0; i < add; i++ ) {
 
-				db.push( data[pos++] );
+				db.push( data[ pos++ ] );
 
 			}
 
-			label = label + String.fromCharCode.apply( null, db );
+			label += String.fromCharCode.apply( null, db );
 
 		}
 
@@ -318,9 +387,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_STOP ( c ) {
+	function cmd_STOP ( /* c */ ) {
 
-		if ( label ) label = "";
+		if ( label ) label = '';
 
 		return true;
 
@@ -330,14 +399,14 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		label = label.slice( 0, -16 );
 
-		if ( label.charAt( label.length - 1 ) == ".") label = label.slice( 0, -1 ); // strip trailing "."
+		if ( label.charAt( label.length - 1 ) === '.') label = label.slice( 0, -1 ); // strip trailing '.'
 
-		var parts = label.split( "." );
+		var parts = label.split( '.' );
 
 		parts.splice( -( c ) );
-		label = parts.join( "." );
+		label = parts.join( '.' );
 
-		if ( label ) label = label + ".";
+		if ( label ) label += '.';
 
 		return true;
 
@@ -353,7 +422,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
  
-	function cmd_DATE_V4 ( c ) {
+	function cmd_DATE_V4 ( /* c */ ) {
 
 		pos += 4;
 
@@ -361,7 +430,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_DATE_V7 ( c ) {
+	function cmd_DATE_V7 ( /* c */ ) {
 
 		pos += 2;
 
@@ -369,7 +438,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_DATE3_V7 ( c ) {
+	function cmd_DATE3_V7 ( /* c */ ) {
 
 		pos += 4;
 
@@ -377,7 +446,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_DATE2_V4 ( c ) {
+	function cmd_DATE2_V4 ( /* c */ ) {
 
 		pos += 8;
 
@@ -385,7 +454,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_DATE2_V7 ( c ) {
+	function cmd_DATE2_V7 ( /* c */ ) {
 
 		pos += 3;
 
@@ -393,15 +462,13 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_STYLE ( c ) {
-
-		style = c;
+	function cmd_STYLE ( /* c */ ) {
 
 		return true;
 
 	}
 
-	function cmd_DATEV8_1 ( c ) {
+	function cmd_DATEV8_1 ( /* c */ ) {
 
 		pos += 2;
 
@@ -409,23 +476,22 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_DATEV8_2 ( c ) {
+	function cmd_DATEV8_2 ( /* c */ ) {
 
-		console.log( "v8d2" );
 		pos += 3;
 
 		return true;
 
 	}
 
-	function cmd_DATEV8_3 ( c ) {
+	function cmd_DATEV8_3 ( /* c */ ) {
 
 		pos += 4;
 
 		return true;
 	}
 
-	function cmd_DATE_NODATE ( c ) {
+	function cmd_DATE_NODATE ( /* c */ ) {
 
 		return true;
 
@@ -438,23 +504,23 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		if ( readLabel( flags ) ) {
 
 			// we have a new section name, add it to the survey tree
-			sectionId = surveyTree.addPath( label.split( "." ) );
+			sectionId = surveyTree.addPath( label.split( '.' ) );
 
 		}
 
-		var coords = readCoordinates( flags );
+		var coords = readCoordinates();
 
 		if ( flags & 0x01 ) {
 
-			legs.push( { coords: coords, type: SURFACE, survey: sectionId } );
+			legs.push( { coords: coords, type: LEG_SURFACE, survey: sectionId } );
 
 		} else if ( flags & 0x04 ) {
 
-			legs.push( { coords: coords, type: SPLAY, survey: sectionId } );
+			legs.push( { coords: coords, type: LEG_SPLAY, survey: sectionId } );
 
 		} else {
 
-			legs.push( { coords: coords, type: NORMAL, survey: sectionId } );
+			legs.push( { coords: coords, type: LEG_CAVE, survey: sectionId } );
 
 		}
 
@@ -464,7 +530,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_MOVE ( c ) {
+	function cmd_MOVE ( /* c */ ) {
 
 		// new set of line segments
 		if ( legs.length > 1 ) groups.push( legs );
@@ -474,9 +540,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		// heuristic to detect line ends. lastPosition was presumably set in a line sequence therefore is at the end 
 		// of a line, Add the current label, presumably specified in the last LINE, to a Set of lineEnds.
 
-		lineEnds.add( [ lastPosition.x, lastPosition.y, lastPosition.z ].toString() );
+		lineEnds.add( lastPosition.x + ':' + lastPosition.y + ':' + lastPosition.z );
 
-		var coords = readCoordinates( 0x00 );
+		var coords = readCoordinates();
 
 		legs.push( { coords: coords } );
 
@@ -486,14 +552,14 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function cmd_ERROR ( c ) {
+	function cmd_ERROR ( /* c */ ) {
 		//var l = new DataView(source, pos);
 
-		//console.log("legs   : ", l.getInt32(0, true));
-		//console.log("length : ", l.getInt32(4, true));
-		//console.log("E      : ", l.getInt32(8, true));
-		//console.log("H      : ", l.getInt32(12, true));
-		//console.log("V      : ", l.getInt32(16, true));
+		//console.log('legs   : ', l.getInt32(0, true));
+		//console.log('length : ', l.getInt32(4, true));
+		//console.log('E      : ', l.getInt32(8, true));
+		//console.log('H      : ', l.getInt32(12, true));
+		//console.log('V      : ', l.getInt32(16, true));
 		pos += 20;
 
 		return true;
@@ -506,23 +572,23 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		readLabel( 0 );
 
-		var coords = readCoordinates( flags );
-		var path = label.split( "." );
+		if ( ! ( flags & 0x0E ) || flags & 0x20 ) { // skip surface only stations
+
+			pos += 12; //skip coordinates
+			return true;
+
+		}
+
+		var coords = readCoordinates();
+		var path = label.split( '.' );
 
 		stations.set( label, coords );
 
-		if ( flags & 0x02 ) surveyTree.addPath ( path, { p: coords, type: ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL } );
+		var stationId = surveyTree.addPath( path, { p: coords, type: ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL } );
 
-		if ( flags & 0x04 ) {
+		// track entrance stations
 
-			// get survey path by removing last component of station name
-			path.pop();
-
-			var surveyId = surveyTree.getIdByPath( path );
-
-			entrances.push( { position: coords, label: label, survey: surveyId } );
-
-		}
+		if ( flags & 0x04 ) entrances.push( stationId );
 
 		return true;
 
@@ -536,17 +602,17 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		var l = new DataView( source, pos );
 
-		var lrud = {
-			l: l.getInt16( 0, true ) / 100,
-			r: l.getInt16( 2, true ) / 100,
-			u: l.getInt16( 4, true ) / 100,
-			d: l.getInt16( 6, true ) / 100
-		};
-
 		pos += 8;
 
-		return commonXSECT( flags, lrud );
-
+		return commonXSECT(
+			flags,
+			{
+				l: l.getInt16( 0, true ) / 100,
+				r: l.getInt16( 2, true ) / 100,
+				u: l.getInt16( 4, true ) / 100,
+				d: l.getInt16( 6, true ) / 100
+			}
+		);
 
 	}
 
@@ -558,26 +624,27 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		var l = new DataView( source, pos );
 
-		var lrud = {
-			l: l.getInt32( 0, true ) / 100,
-			r: l.getInt32( 0, true ) / 100,
-			u: l.getInt32( 0, true ) / 100,
-			d: l.getInt32( 0, true ) / 100
-		};
-
 		pos += 16;
 
-		return commonXSECT( flags, lrud );
+		return commonXSECT( 
+			flags,
+			{
+				l: l.getInt32( 0, true ) / 100,
+				r: l.getInt32( 0, true ) / 100,
+				u: l.getInt32( 0, true ) / 100,
+				d: l.getInt32( 0, true ) / 100
+			}
+		);
 
 	}
 
-	function commonXSECT( flags, lrud ) {
+	function commonXSECT ( flags, lrud ) {
 
 		var position = stations.get( label );
 
-		if ( !position ) return;
+		if ( ! position ) return;
 
-		var station = label.split( "." );
+		var station = label.split( '.' );
 
 		// get survey path by removing last component of station name
 		station.pop();
@@ -594,9 +661,22 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		// cmd_MOVE saves these in the set lineEnds.
 		// this fixes up surveys that display incorrectly withg 'fly-back' artefacts in Aven and Loch.
 
-		if ( flags || lineEnds.has( [ position.x, position.y, position.z ].toString() ) ) {
+		var endRun = false;
 
-			if ( xSects.length > 1 ) xGroups.push( xSects );
+		if ( flags ) {
+
+			endRun = true;
+
+		} else if ( lineEnds.has( [ position.x, position.y, position.z ].toString() ) ) {
+
+			endRun = true;
+//			console.log( 'unterminated LRUD passage at ', label );
+
+		}
+
+		if ( endRun ) {
+
+			if ( xSects.length > 0 ) xGroups.push( xSects );
 
 			lastPosition = { x: 0, y: 0, z: 0 };
 			xSects = [];
@@ -607,26 +687,51 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	}
 
-	function readCoordinates ( flags ) {
+	// functions aliased at runtime as required
+
+	function __readCoordinatesProjected () {
 
 		var l = new DataView( source, pos );
-		var coords = {};
 
-		coords.x = l.getInt32( 0, true ) / 100;
-		coords.y = l.getInt32( 4, true ) / 100;
-		coords.z = l.getInt32( 8, true ) / 100;
+		var projectedCoords = self.projection.forward( {
+			x: l.getInt32( 0, true ) / 100,
+			y: l.getInt32( 4, true ) / 100
+		} );
+
+		var coords = {
+			x: projectedCoords.x,
+			y: projectedCoords.y,
+			z: l.getInt32( 8, true ) / 100
+		};
+
 		pos += 12;
 
 		return coords;
 
 	}
 
-}
+	function __readCoordinates () {
+
+		var l = new DataView( source, pos );
+
+		var coords = {
+			x: l.getInt32( 0, true ) / 100,
+			y: l.getInt32( 4, true ) / 100,
+			z: l.getInt32( 8, true ) / 100
+		};
+
+		pos += 12;
+
+		return coords;
+
+	}
+
+};
 
 Svx3dHandler.prototype.getLineSegments = function () {
 
 	var lineSegments = [];
-	var groups       = this.groups;
+	var groups = this.groups;
 
 	for ( var i = 0, l = groups.length; i < l; i++ ) {
 
@@ -639,40 +744,49 @@ Svx3dHandler.prototype.getLineSegments = function () {
 			var from = g[ v ];
 			var to   = g[ v + 1 ];
 
-			lineSegments.push( { from: from.coords, to: to.coords, type: to.type, survey: to.survey } );
+			var fromCoords = from.coords;
+			var toCoords = to.coords;
+
+			if ( fromCoords.x === toCoords.x && fromCoords.y === toCoords.y && fromCoords.z === toCoords.z ) continue;
+
+			lineSegments.push( { from: fromCoords, to: toCoords, type: to.type, survey: to.survey } );
 
 		}
+
 	}
 
 	return lineSegments;
 
-}
+};
 
 Svx3dHandler.prototype.getTerrainDimensions = function () {
 
 	return { lines: 0, samples: 0 };
 
-}
+};
 
 Svx3dHandler.prototype.getTerrainBitmap = function () {
 
 	return false;
 
-}
+};
 
 Svx3dHandler.prototype.getSurvey = function () {
 
 	return {
 		title: this.fileName,
 		surveyTree: this.surveyTree,
+		sourceCRS: this.sourceCRS,
+		targetCRS: this.targetCRS,
 		lineSegments: this.getLineSegments(),
 		crossSections: this.xGroups,
 		scraps: [],
 		entrances: this.entrances,
-		hasTerrain: false
-	}
+		hasTerrain: false,
+		metadata: this.metadata
+	};
 
-}
+};
 
 export { Svx3dHandler };
 

@@ -2,42 +2,44 @@
 
 import  {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE,
-	FACE_WALLS, FACE_SCRAPS,
+	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
-	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY, SHADING_PATH,
+	SHADING_DEPTH, SHADING_DEPTH_CURSOR,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
 	upAxis,
 	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL
-} from '../core/constants.js';
+} from '../core/constants';
 
-import { HUD } from '../hud/HUD.js';
-import { Materials } from '../materials/Materials.js';
-import { Survey } from './Survey.js';
-import { Popup } from './Popup';
-import { TiledTerrain } from '../terrain/TiledTerrain.js';
-//import { DirectionGlobe } from '../analysis/DirectionGlobe.js';
+import { HUD } from '../hud/HUD';
+import { Materials } from '../materials/Materials';
+import { CameraMove } from './CameraMove';
+import { Survey } from './Survey';
+import { StationPopup } from './StationPopup';
+import { WebTerrain } from '../terrain/WebTerrain';
+import { Overlay } from '../terrain/Overlay';
+import { setEnvironment } from '../core/lib';
 
-import { OrbitControls } from '../core/OrbitControls.js';
+//import { DirectionGlobe } from '../analysis/DirectionGlobe';
+
+import { OrbitControls } from '../core/OrbitControls';
 
 import {
 	EventDispatcher,
-	Vector2, Vector3, Matrix4, Quaternion, Euler,  Box3,
-	Scene, Group, Raycaster,
-	AmbientLight, DirectionalLight, HemisphereLight,
+	Vector2, Vector3, Matrix4, Euler,
+	Scene, Raycaster,
+	DirectionalLight, HemisphereLight,
 	LinearFilter, NearestFilter, RGBFormat,
 	OrthographicCamera, PerspectiveCamera, 
 	WebGLRenderer, WebGLRenderTarget,
-	Math as _Math
-} from '../../../../three.js/src/Three.js'; 
+} from '../../../../three.js/src/Three';
 
-import { toOSref } from '../core/lib';
-
-//import { LeakWatch } from '../../../../LeakWatch/src/LeakWatch.js';
+//import { LeakWatch } from '../../../../LeakWatch/src/LeakWatch';
 
 var lightPosition = new Vector3( -1, -1, 0.5 );
 var CAMERA_OFFSET = 600;
+var RETILE_TIMEOUT = 150; // ms pause after last movement before attempting retiling
 
 var caveIsLoaded = false;
 
@@ -46,14 +48,15 @@ var container;
 // THREE.js objects
 
 var renderer;
-var scene;
-var model;
+var scene = new Scene();
 var oCamera;
 var pCamera;
+
 var camera;
 
 var mouse = new Vector2();
 var mouseMode = MOUSE_MODE_NORMAL;
+var mouseTargets = [];
 
 var raycaster;
 var terrain = null;
@@ -66,35 +69,37 @@ var zScale;
 var viewState = {};
 var cursorHeight;
 
-var shadingMode        = SHADING_HEIGHT;
+var shadingMode;
 var surfaceShadingMode = SHADING_SINGLE;
-var terrainShadingMode = SHADING_SHADED;
+var terrainShadingMode;
+
+var depthTextureCreated = false;
+
+var overlays = {};
+var activeOverlay = null;
 
 var cameraMode;
 var selectedSection = 0;
 
-// Point of interest tracking
-
-var activePOIPosition;
-
-var targetPOI = null;
-
 var controls;
 
+var cameraMove;
+
 var lastActivityTime = 0;
-var frameCount = 0;
 //var leakWatcher;
 
-function init ( domID ) { // public method
+function init ( domID, configuration ) { // public method
 
 	container = document.getElementById( domID );
 
-	if ( !container ) alert( "No container DOM object [" + domID + "] available" );
+	if ( ! container ) alert( 'No container DOM object [' + domID + '] available' );
+
+	setEnvironment( configuration );
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
-	renderer = new WebGLRenderer( { antialias: true } ) ;
+	renderer = new WebGLRenderer( { antialias: true, logarithmicDepthBuffer: true } ) ;
 
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
@@ -113,6 +118,16 @@ function init ( domID ) { // public method
 
 	camera = pCamera;
 
+	scene.add( pCamera );
+	scene.add( oCamera );
+
+	directionalLight = new DirectionalLight( 0xffffff );
+	directionalLight.position.copy( lightPosition );
+
+	scene.add( directionalLight );
+
+	scene.add( new HemisphereLight( 0xffffff, 0x00ffff, 0.3 ) );
+
 	raycaster = new Raycaster();
 
 	renderer.clear();
@@ -121,11 +136,14 @@ function init ( domID ) { // public method
 
 	controls = new OrbitControls( camera, renderer.domElement );
 
-	controls.addEventListener( "change", function () { startAnimation( 60 ); } );
+	cameraMove = new CameraMove( controls, renderView, onCameraMoveEnd );
+
+	controls.addEventListener( 'change', function () { cameraMove.prepare( null, null ); cameraMove.start( 80 ); } );
+
 	controls.enableDamping = true;
 
 	// event handler
-	window.addEventListener( "resize", resize );
+	window.addEventListener( 'resize', resize );
 
 	Object.assign( viewState, EventDispatcher.prototype, {
 
@@ -135,153 +153,166 @@ function init ( domID ) { // public method
 
 	Object.defineProperties( viewState, {
 
-	"terrain": {
-		writeable: true,
-		get: function () { return testCameraLayer( FEATURE_TERRAIN ); },
-		set: function ( x ) { loadTerrain( x ); setCameraLayer( FEATURE_TERRAIN, x ); this.dispatchEvent( { type: "change", name: "terrain" } ); }
-	},
+		'container': {
+			value: container,
+		},
 
-	 "terrainShading": {
-		writeable: true,
-		get: function () { return terrainShadingMode; },
-		set: function ( x ) { _viewStateSetter( setTerrainShadingMode, "terrainShading", x ); }
-	},
+		'terrain': {
+			writeable: true,
+			get: function () { return testCameraLayer( FEATURE_TERRAIN ); },
+			set: function ( x ) { loadTerrain( x ); setCameraLayer( FEATURE_TERRAIN, x ); this.dispatchEvent( { type: 'change', name: 'terrain' } ); }
+		},
 
-	 "hasTerrain": {
-		get: function () { return !!terrain; }
-	},
+		'terrainShading': {
+			writeable: true,
+			get: function () { return terrainShadingMode; },
+			set: function ( x ) { _viewStateSetter( setTerrainShadingMode, 'terrainShading', x ); }
+		},
 
-	 "terrainOverlays": {
-		get: function () { return terrain && terrain.getOverlays(); }
-	},
+		'hasTerrain': {
+			get: function () { return !! terrain; }
+		},
 
-	 "terrainOverlay": {
-		writeable: true,
-		get: function () { return terrain.getOverlay(); },
-		set: function ( x ) { _viewStateSetter( setTerrainOverlay, "terrainOverlay", x ); }
-	},
+		'terrainOverlays': {
+			get: function () { if ( terrain.isTiled ) return Object.keys( overlays ); else return terrain.hasOverlay ? [ true ] : []; }
+		},
 
-	"terrainOpacity": {
-		writeable: true,
-		get: function () { return terrain.getOpacity(); },
-		set: function ( x ) { setTerrainOpacity( x ); }
-	},
+		'terrainOverlay': {
+			writeable: true,
+			get: function () { return activeOverlay; },
+			set: function ( x ) { _viewStateSetter( setTerrainOverlay, 'terrainOverlay', x ); }
+		},
 
-	"shadingMode": {
-		writeable: true,
-		get: function () { return shadingMode; },
-		set: function ( x ) { _viewStateSetter( setShadingMode, "shadingMode", x ); }
-	},
+		'terrainOpacity': {
+			writeable: true,
+			get: function () { return terrain.getOpacity(); },
+			set: function ( x ) { setTerrainOpacity( x ); }
+		},
 
-	"surfaceShading": {
-		writeable: true,
-		get: function () { return surfaceShadingMode; },
-		set: function ( x ) { _viewStateSetter( setSurfaceShadingMode, "surfaceShading", x ); }
-	},
+		'shadingMode': {
+			writeable: true,
+			get: function () { return shadingMode; },
+			set: function ( x ) { _viewStateSetter( setShadingMode, 'shadingMode', x ); }
+		},
 
-	"cameraType": {
-		writeable: true,
-		get: function () { return cameraMode; },
-		set: function ( x ) { _viewStateSetter( setCameraMode, "cameraType", x ); }
-	},
+		'surfaceShading': {
+			writeable: true,
+			get: function () { return surfaceShadingMode; },
+			set: function ( x ) { _viewStateSetter( setSurfaceShadingMode, 'surfaceShading', x ); }
+		},
 
-	"view": {
-		writeable: true,
-		get: function () { return VIEW_NONE; },
-		set: function ( x ) { _viewStateSetter( setViewMode, "view", x ); }
-	},
+		'cameraType': {
+			writeable: true,
+			get: function () { return cameraMode; },
+			set: function ( x ) { _viewStateSetter( setCameraMode, 'cameraType', x ); }
+		},
 
-	"cursorHeight": {
-		writeable: true,
-		get: function () { return cursorHeight; },
-		set: function ( x ) { setCursorHeight( x ); }
-	},
+		'view': {
+			writeable: true,
+			get: function () { return VIEW_NONE; },
+			set: function ( x ) { _viewStateSetter( setViewMode, 'view', x ); }
+		},
 
-	"maxHeight": {
-		get: function () { return limits.max.z; },
-	},
+		'cursorHeight': {
+			writeable: true,
+			get: function () { return cursorHeight; },
+			set: function ( x ) { setCursorHeight( x ); }
+		},
 
-	"minHeight": {
-		get: function () { return limits.min.z; },
-	},
+		'initCursorHeight': {
+			writeable: true,
+			get: function () { return cursorHeight; },
+			set: function ( x ) { cursorHeight = x; }
+		},
 
-	 "maxLegLength": {
-		get: function () { return stats.maxLegLength; },
-	},
+		'maxHeight': {
+			get: function () { return limits.max.z; },
+		},
 
-	 "minLegLength": {
-		get: function () { return stats.minLegLength; },
-	},
+		'minHeight': {
+			get: function () { return limits.min.z; },
+		},
 
-	"section": {
-		writeable: true,
-		get: function () { return selectedSection; },
-		set: function ( x ) { _viewStateSetter( selectSection, "section", x ); }
-	},
+		'maxLegLength': {
+			get: function () { return stats.maxLegLength; },
+		},
 
-	"routeEdit": {
-		writeable: true,
-		get: function () { return ( mouseMode === MOUSE_MODE_ROUTE_EDIT ); },
-		set: function ( x ) { _setRouteEdit( x ); }
-	},
+		'minLegLength': {
+			get: function () { return stats.minLegLength; },
+		},
 
-	"setPOI": {
-		writeable: true,
-		get: function () { return targetPOI.name; },
-		set: function ( x ) { _viewStateSetter( setCameraPOI, "setPOI", x ); }
-	},
+		'section': {
+			writeable: true,
+			get: function () { return selectedSection; },
+			set: function ( x ) { _viewStateSetter( selectSection, 'section', x ); }
+		},
 
-	"developerInfo": {
-		writeable: true,
-		get: function () { return true; },
-		set: function ( x ) { showDeveloperInfo( x ); }
-	},
+		'highlight': {
+			writeable: true,
+			set: function ( x ) { _viewStateSetter( highlightSection, 'highlight', x ); }
+		},
 
-	"HUD": {
+		'routeEdit': {
+			writeable: true,
+			get: function () { return ( mouseMode === MOUSE_MODE_ROUTE_EDIT ); },
+			set: function ( x ) { _setRouteEdit( x ); }
+		},
+
+		'setPOI': {
+			writeable: true,
+			get: function () { return true; },
+			set: function ( x ) { _viewStateSetter( setCameraPOI, 'setPOI', x ); }
+		},
+
+/*
+		'developerInfo': {
+			writeable: true,
+			get: function () { return true; },
+			set: function ( x ) { showDeveloperInfo( x ); }
+		},
+*/
+
+		'HUD': {
 			writeable: true,
 			get: function () { return HUD.getVisibility(); },
 			set: function ( x ) { HUD.setVisibility( x ); }
-	},
+		},
 
-	"cut": {
-		writeable: true,
-		get: function () { return true; },
-		set: function ( x ) { cutSection( x ) }
-	},
+		'cut': {
+			writeable: true,
+			get: function () { return true; },
+			set: function () { cutSection(); }
+		},
 
-	"zScale": {
-		writeable: true,
-		get: function () { return zScale; },
-		set: function ( x ) { setZScale( x ) }
-	},
+		'zScale': {
+			writeable: true,
+			get: function () { return zScale; },
+			set: function ( x ) { setZScale( x ); }
+		},
 
-	"autoRotate": {
-		writeable: true,
-		get: function () { return controls.autoRotate },
-		set: function ( x ) { setAutoRotate( !! x ) }
-	},
+		'autoRotate': {
+			writeable: true,
+			get: function () { return controls.autoRotate; },
+			set: function ( x ) { setAutoRotate( !! x ); }
+		},
 
-	"autoRotateSpeed": {
-		writeable: true,
-		get: function () { return controls.autoRotateSpeed / 11 },
-		set: function ( x ) { controls.autoRotateSpeed = x * 11 }
-	}
+		'autoRotateSpeed': {
+			writeable: true,
+			get: function () { return controls.autoRotateSpeed / 11; },
+			set: function ( x ) { controls.autoRotateSpeed = x * 11; }
+		}
 
 	} );
 
-	_enableLayer( FEATURE_BOX,       "box" );
-	_enableLayer( FEATURE_ENTRANCES, "entrances" );
-	_enableLayer( FEATURE_STATIONS,  "stations" );
-	_enableLayer( FACE_SCRAPS,       "scraps" );
-	_enableLayer( FACE_WALLS,        "walls" );
-	_enableLayer( LEG_SPLAY,         "splays" );
-	_enableLayer( LEG_SURFACE,       "surfaceLegs" );
-	
-	_hasLayer( FEATURE_ENTRANCES, "hasEntrances" );
-	_hasLayer( FACE_SCRAPS,       "hasScraps" );
-	_hasLayer( FACE_WALLS,        "hasWalls" );
-	_hasLayer( LEG_SPLAY,         "hasSplays" );
-	_hasLayer( LEG_SURFACE,       "hasSurfaceLegs" );
+	_enableLayer( FEATURE_BOX, 'box' );
+
+	_conditionalLayer( FEATURE_ENTRANCES, 'entrances' );
+	_conditionalLayer( FEATURE_STATIONS,  'stations' );
+	_conditionalLayer( FEATURE_TRACES,    'traces' );
+	_conditionalLayer( FACE_SCRAPS,       'scraps' );
+	_conditionalLayer( FACE_WALLS,        'walls' );
+	_conditionalLayer( LEG_SPLAY,         'splays' );
+	_conditionalLayer( LEG_SURFACE,       'surfaceLegs' );
 
 	Materials.initCache( viewState );
 
@@ -294,12 +325,16 @@ function init ( domID ) { // public method
 		Object.defineProperty( viewState, name, {
 			writeable: true,
 			get: function () { return testCameraLayer( layerTag ); },
-			set: function ( x ) { setCameraLayer( layerTag, x ); this.dispatchEvent( { type: "change", name: name } ); }
+			set: function ( x ) { setCameraLayer( layerTag, x ); this.dispatchEvent( { type: 'change', name: name } ); }
 		} );
 
 	}
 
-	function _hasLayer ( layerTag, name ) {
+	function _conditionalLayer ( layerTag, name ) {
+
+		_enableLayer ( layerTag, name );
+
+		name = 'has' + name.substr( 0, 1 ).toUpperCase() + name.substr( 1 );
 
 		Object.defineProperty( viewState, name, {
 			get: function () { return survey.hasFeature( layerTag ); }
@@ -309,8 +344,9 @@ function init ( domID ) { // public method
 
 	function _viewStateSetter ( modeFunction, name, newMode ) {
 
-		modeFunction( Number( newMode ) );
-		viewState.dispatchEvent( { type: "change", name: name } );
+		modeFunction( isNaN( newMode ) ? newMode : Number( newMode ) );
+
+		viewState.dispatchEvent( { type: 'change', name: name } );
 
 	}
 
@@ -331,35 +367,36 @@ function setZScale ( scale ) {
 
 }
 
-function setAutoRotate( state ) {
+function setAutoRotate ( state ) {
 
 	controls.autoRotate = state;
 
 	if ( state ) {
 
-		startAnimation( 2592000 );
+		cameraMove.prepare( null, null );
+		cameraMove.start( 2952000 );
 
 	} else {
 
-		stopAnimation();
+		cameraMove.stop();
 
 	}
 
 }
 
-function setCursorHeight( x ) {
+function setCursorHeight ( x ) {
 
 	cursorHeight = x;
-	viewState.dispatchEvent( { type: "cursorChange", name: "cursorHeight" } );
+	viewState.dispatchEvent( { type: 'cursorChange', name: 'cursorHeight' } );
 
 	renderView();
 
 }
 
-function setTerrainOpacity( x ) {
+function setTerrainOpacity ( x ) {
 
 	terrain.setOpacity( x );
-	viewState.dispatchEvent( { type: "change", name: "terrainOpacity" } )
+	viewState.dispatchEvent( { type: 'change', name: 'terrainOpacity' } );
 
 	renderView();
 
@@ -367,7 +404,7 @@ function setTerrainOpacity( x ) {
 
 function renderDepthTexture () {
 
-	if ( terrain === null || !terrain.isLoaded() ) return;
+	if ( terrain === null || ! terrain.isLoaded() ) return;
 
 	var dim = 512;
 
@@ -393,19 +430,18 @@ function renderDepthTexture () {
 
 	// render the terrain to a new canvas square canvas and extract image data
 
-	var rtCamera = new OrthographicCamera( -width / 2, width / 2,  height / 2, -height / 2, -10000, 10000 );
+	var	rtCamera = new OrthographicCamera( -width / 2, width / 2,  height / 2, -height / 2, -10000, 10000 );
 
-	rtCamera.layers.enable( FEATURE_TERRAIN ); // just render the terrain
+	rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
 
 	scene.overrideMaterial = Materials.getDepthMapMaterial();
 
 	var renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBFormat } );
 
 	renderTarget.texture.generateMipmaps = false;
-	renderTarget.texture.name = "CV.DepthMapTexture";
+	renderTarget.texture.name = 'CV.DepthMapTexture';
 
-	Materials.createDepthMaterial( MATERIAL_LINE, limits, renderTarget.texture );
-	Materials.createDepthMaterial( MATERIAL_SURFACE, limits, renderTarget.texture );
+	Materials.setDepthTexture( renderTarget.texture );
 
 	renderer.setSize( dim, dim );
 	renderer.setPixelRatio( 1 );
@@ -420,7 +456,12 @@ function renderDepthTexture () {
 
 	scene.overrideMaterial = null;
 
+	depthTextureCreated = true;
+
 	renderView();
+
+	// clear renderList to release objects on heap
+	renderer.renderLists.dispose();
 
 }
 
@@ -446,6 +487,7 @@ function setCameraMode ( mode ) {
 
 		// calculate zoom from ratio of pCamera distance from target to base distance.
 		oCamera.zoom = CAMERA_OFFSET / offset.length();
+
 		offset.setLength( CAMERA_OFFSET );
 
 		camera = oCamera;
@@ -454,7 +496,7 @@ function setCameraMode ( mode ) {
 
 	default:
 
-		console.log( "unknown camera mode", mode );
+		console.log( 'unknown camera mode', mode );
 		return;
 
 	}
@@ -469,6 +511,8 @@ function setCameraMode ( mode ) {
 	controls.object = camera;
 
 	cameraMode = mode;
+
+//	HUD.update();
 
 	renderView();
 
@@ -512,7 +556,7 @@ function setCameraLayer ( layerTag, enable ) {
 
 function testCameraLayer ( layerTag ) {
 
-	return ( ( oCamera.layers.mask & 1 << layerTag ) > 0 );
+	return ( ( camera.layers.mask & 1 << layerTag ) > 0 );
 
 }
 
@@ -556,28 +600,20 @@ function setViewMode ( mode, t ) {
 
 	default:
 
-		console.log( "invalid view mode specified: ", mode );
+		console.log( 'invalid view mode specified: ', mode );
 		return;
 
 	}
 
-	activePOIPosition = new Vector3();
-
-	targetPOI = {
-		tAnimate: tAnimate,
-		position: activePOIPosition,
-		cameraPosition: position,
-		cameraZoom: 1
-	};
-
-	controls.enabled = false;
-	startAnimation( tAnimate + 1 );
+	cameraMove.cancel();
+	cameraMove.prepare( position, new Vector3() );
+	cameraMove.start( tAnimate );
 
 }
 
 function setTerrainShadingMode ( mode ) {
 
-	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
+	if ( terrain.setShadingMode( mode ) ) terrainShadingMode = mode;
 
 	renderView();
 
@@ -585,6 +621,7 @@ function setTerrainShadingMode ( mode ) {
 
 function setShadingMode ( mode ) {
 
+	if ( terrain === null && ( mode === SHADING_DEPTH || mode === SHADING_DEPTH_CURSOR ) ) return;
 	if ( survey.setShadingMode( mode ) ) shadingMode = mode;
 
 	renderView();
@@ -601,7 +638,24 @@ function setSurfaceShadingMode ( mode ) {
 
 function setTerrainOverlay ( overlay ) {
 
-	if ( terrainShadingMode === SHADING_OVERLAY ) terrain.setOverlay( overlay, renderView );
+	if ( terrainShadingMode === SHADING_OVERLAY ) {
+
+		activeOverlay = overlay;
+		terrain.setOverlay( overlays[ overlay ] );
+
+	}
+
+}
+
+function addOverlay ( name, overlayFunc ) {
+
+	overlays[ name ] = new Overlay( overlayFunc );
+
+	if ( Object.keys( overlays ).length === 1 ) {
+
+		activeOverlay = name;
+
+	}
 
 }
 
@@ -622,12 +676,20 @@ function cutSection () {
 
 }
 
+function highlightSection ( id ) {
+
+	survey.highlightSection( id );
+
+	renderView();
+
+}
+
 function selectSection ( id ) {
 
 	survey.clearSectionSelection();
-	var node = survey.selectSection( id );
+	survey.stations.clearSelected();
 
-	var entranceBox = survey.setEntrancesSelected();
+	var node = survey.selectSection( id );
 
 	setShadingMode( shadingMode );
 
@@ -637,39 +699,20 @@ function selectSection ( id ) {
 
 	if ( node.p === undefined ) {
 
-		var box = survey.getSelectedBox();
-		var boundingBox;
+		if ( node.boundingBox === undefined ) return;
+		// a section of the survey rather than a station
 
-		if ( box ) {
+		var boundingBox = node.boundingBox.clone();
 
-			box.geometry.computeBoundingBox();
-
-			boundingBox = box.geometry.boundingBox;
-
-		} else {
-
-			boundingBox = entranceBox;
-
-		}
-
-		boundingBox.applyMatrix4( survey.matrixWorld );
-
-		targetPOI = {
-			tAnimate: 0,
-			position:    boundingBox.getCenter(),
-			boundingBox: boundingBox
-		};
+		cameraMove.prepare( null, boundingBox.applyMatrix4( survey.matrixWorld ) );
 
 	} else {
 
-		targetPOI = {
-			tAnimate: 0,
-			position: new Vector3().copy( node.p ).applyMatrix4( survey.matrixWorld ),
-			cameraPosition: camera.position,
-			cameraZoom: 1
-		}
+		// a single station
 
-		selectedSection = 0;
+		survey.stations.selectStation( node );
+
+		cameraMove.prepare( null, new Vector3().copy( node.p ).applyMatrix4( survey.matrixWorld ) );
 
 	}
 
@@ -724,18 +767,22 @@ function clearView () {
 	survey          = null;
 	terrain         = null;
 	selectedSection = 0;
-	scene           = new Scene();
-	targetPOI       = null;
+	mouseMode       = MOUSE_MODE_NORMAL;
+	mouseTargets    = [];
 
 	shadingMode = SHADING_HEIGHT;
+	surfaceShadingMode = SHADING_SINGLE;
+	terrainShadingMode = SHADING_SHADED;
+
+	depthTextureCreated = false;
 
 	// remove event listeners
 
 	unloadTerrainListeners();
-	container.removeEventListener( "mousedown", mouseDown );
 
-	scene.add( pCamera );
-	scene.add( oCamera );
+	Materials.flushCache();
+
+	container.removeEventListener( 'mousedown', mouseDown );
 
 	initCamera( pCamera );
 	initCamera( oCamera );
@@ -749,9 +796,9 @@ function clearView () {
 
 function loadCave ( cave ) {
 
-	if (!cave) {
+	if ( ! cave ) {
 
-		alert( "failed loading cave information" );
+		alert( 'failed loading cave information' );
 		return;
 
 	}
@@ -762,13 +809,15 @@ function loadCave ( cave ) {
 
 function loadSurvey ( newSurvey ) {
 
+	var asyncTerrainLoading = false;
+
 	survey = newSurvey;
 
-	stats = survey.getStats();
+	stats = survey.getFeature( LEG_CAVE ).stats;
 
 	setScale( survey );
 
-	terrain = survey.getTerrain();
+	terrain = survey.terrain;
 
 	scene.up = upAxis;
 
@@ -777,64 +826,73 @@ function loadSurvey ( newSurvey ) {
 
 	// light the model for Lambert Shaded surface
 
-	directionalLight = new DirectionalLight( 0xffffff );
-	directionalLight.position.copy( lightPosition );
 
-	scene.add( directionalLight );
-
-	scene.add( new HemisphereLight( 0xffffff, 0x00ffff, 0.3 ) );
-//	scene.add( new AmbientLight( 0x303030 ) );
 
 	caveIsLoaded = true;
 
 	selectSection( 0 );
+
+	mouseTargets = survey.pointTargets;
 
 	setSurfaceShadingMode( surfaceShadingMode );
 	// set if we have independant terrain maps
 
 	if ( terrain === null ) {
 
-		terrain = new TiledTerrain( survey.limits, _tilesLoaded );
-
-		if ( !terrain.hasCoverage() ) {
-
-			terrain = null;
-
-		} else {
-
-			terrain.tileArea( survey.limits );
-			survey.add( terrain );
-
-		}
+		terrain = new WebTerrain( survey.limits, _terrainReady, _tilesLoaded, renderView );
+		asyncTerrainLoading = true;
 
 	} else {
 
 		survey.add( terrain );
 		setTerrainShadingMode( terrainShadingMode );
-		setTimeout( renderDepthTexture, 0 ); // delay to after newCave event - after material cache is flushed
+
+		renderDepthTexture();
 
 	}
 
 	scene.matrixAutoUpdate = false;
 
-	container.addEventListener( "mousedown", mouseDown, false );
+	container.addEventListener( 'mousedown', mouseDown, false );
 
 	HUD.setVisibility( true );
 
 	// signal any listeners that we have a new cave
-	viewState.dispatchEvent( { type: "newCave", name: "newCave" } );
+	if ( ! asyncTerrainLoading ) viewState.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 	controls.object = camera;
 	controls.enabled = true;
 
 	renderView();
 
+	function _terrainReady () {
+
+		if ( terrain.hasCoverage() ) {
+
+			setTerrainShadingMode( terrainShadingMode );
+
+			terrain.tileArea( survey.limits );
+			terrain.setDefaultOverlay( overlays[ activeOverlay ] );
+
+			survey.add( terrain );
+
+		} else {
+
+			terrain = null;
+
+		}
+
+		// delayed notification to ensure and event listeners get accurate terrain information
+		viewState.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+
+	}
+
 	function _tilesLoaded () {
 
-		setTerrainShadingMode( terrainShadingMode );
+		renderView();
 		loadTerrainListeners();
 
-		if ( !Materials.getDepthMaterial( MATERIAL_LINE ) ) renderDepthTexture();
+		if ( ! depthTextureCreated ) renderDepthTexture();
 
 	}
 
@@ -862,27 +920,27 @@ function loadTerrainListeners () {
 
 	clockStart();
 
-	controls.addEventListener( "end", clockStart );
+	controls.addEventListener( 'end', clockStart );
 
 }
 
 function unloadTerrainListeners () {
 
-	if ( !controls ) return;
+	if ( ! controls ) return;
 
-	controls.removeEventListener( "end", clockStart );
+	controls.removeEventListener( 'end', clockStart );
 
 	clockStop();
 
 }
 
-function clockStart ( event ) {
+function clockStart ( /* event */ ) {
 
 	lastActivityTime = performance.now();
 
 }
 
-function clockStop ( event ) {
+function clockStop ( /* event */ ) {
 
 	lastActivityTime = 0;
 
@@ -890,30 +948,32 @@ function clockStop ( event ) {
 
 function mouseDown ( event ) {
 
-	var popup = null;
-	var picked;
+	var picked, result;
 
 	mouse.x =   ( event.clientX / container.clientWidth  ) * 2 - 1;
 	mouse.y = - ( event.clientY / container.clientHeight ) * 2 + 1;
 
 	raycaster.setFromCamera( mouse, camera );
 
-	survey.mouseTargets.push( survey.stations );
-
-	var intersects = raycaster.intersectObjects( survey.mouseTargets, false );
-	var result;
+	var intersects = raycaster.intersectObjects( mouseTargets, false );
 
 	for ( var i = 0, l = intersects.length; i < l; i++ ) {
 
 		picked = intersects[ i ];
 
-		if ( picked.object.isPoints ) {
+		switch ( mouseMode ) {
 
-			result = _selectStation( picked );
+		case MOUSE_MODE_NORMAL:
 
-		} else {
+			if ( picked.object.isPoints ) {
 
-			result = _selectEntrance( picked );
+				result = _selectStation( picked );
+
+			} else {
+
+				result = _selectEntrance( picked );
+
+			}
 
 		}
 
@@ -921,67 +981,52 @@ function mouseDown ( event ) {
 
 	}
 
-	function _selectStation( picked ) {
+	function _selectStation ( picked ) {
 
-		var station = survey.stations.getStationByIndex( picked.index );
+		var stations = survey.stations;
 
-		var point = station.p;
-		var p = new Vector3().copy( point ).applyMatrix4( survey.matrixWorld );
+		var station = stations.getStationByIndex( picked.index );
 
-		var popup = new Popup();
+		stations.selectStation( station );
 
-		var name = station.getPath();
+		renderView();
 
-		// reduce name length if too long
+		// p - world position of station
 
-		var long = false;
-		var tmp;
+		var p = new Vector3().copy( station.p ).applyMatrix4( survey.matrixWorld );
 
-		while ( name.length > 20 ) {
-
-			tmp = name.split( '.' );
-			tmp.shift();
-
-			name = tmp.join( '.' );
-			long = true;
-
-		}
-
-		if ( long ) name = '...' + name;
-
-		popup.addLine( name );
-		popup.addLine( 'x: ' + point.x + ' m' ).addLine( 'y: ' + point.y + ' m' ).addLine( 'z: ' + point.z + ' m' );
+		var popup = new StationPopup( station, survey.projection );
 
 		popup.display( container, event.clientX, event.clientY, camera, p );
 
-		targetPOI = {
-			tAnimate: 0,
-			position: p.clone(),
-			cameraPosition: camera.position,
-			cameraZoom: 1
-		}
+		cameraMove.prepare( null, p.clone() );
 
 		return true;
 
 	}
 
-	function _selectEntrance( picked ) {
+	function _selectSegment ( picked ) {
+
+		var routes = getRoutes();
+
+		routes.toggleSegment( picked.index );
+
+		setShadingMode( SHADING_PATH );
+
+		renderView();
+
+		return true;
+
+	}
+
+	function _selectEntrance ( picked ) {
 
 		if ( ! viewState.entrances ) return false;
 
 		var entrance = picked.object;
 		var position = entrance.getWorldPosition();
 
-		targetPOI = {
-			tAnimate:    80,
-			position:    position,
-			cameraPosition: position.clone().add( new Vector3( 0, 0, 5 ) ),
-			cameraZoom: 1,
-			boundingBox: new Box3().expandByPoint( entrance.position ),
-			quaternion:  new Quaternion()
-		};
-
-		activePOIPosition = controls.target;
+		cameraMove.prepare( position.clone().add( new Vector3( 0, 0, 5 ) ), position );
 
 		console.log( entrance.type, entrance.name );
 
@@ -991,8 +1036,7 @@ function mouseDown ( event ) {
 
 		} else {
 
-			controls.enabled = false;
-			startAnimation( targetPOI.tAnimate + 1 );
+			cameraMove.start( 80 );
 
 		}
 
@@ -1017,7 +1061,7 @@ var renderView = function () {
 
 	return function renderView () {
 
-		if ( !caveIsLoaded ) return;
+		if ( ! caveIsLoaded ) return;
 
 		camera.getWorldRotation( rotation );
 
@@ -1030,163 +1074,40 @@ var renderView = function () {
 
 		HUD.renderHUD();
 
-		// update LOD Scene Objects
+		survey.update( camera );
 
-		var lods = survey.lodTargets;
-		var l    = lods.length;
+		clockStart();
 
-		if ( l > 0 ) {
-
-			for ( var i = 0; i < l; i++ ) {
-
-				lods[ i ].update( camera );
-
-			}
-
-		}
-
-		if ( targetPOI !== null && targetPOI.tAnimate > 0 ) {
-
-			// handle move to new Point of Interest (POI)
-			_moveToPOI();
-
-		} else {
-
-			if ( terrain && terrain.isTiled() && viewState.terrain ) {
-
-				if ( lastActivityTime && performance.now() - lastActivityTime > 500 ) {
-
-					clockStop();
-					terrain.zoomCheck( camera );
-
-				}
-
-			}
-
-			controls.update();
-
-		}
-
-		return;
-
-		function _moveToPOI () {
-
-			targetPOI.tAnimate--;
-
-			var t = 1 - targetPOI.tAnimate / ( targetPOI.tAnimate + 1 );
-
-			activePOIPosition.lerp( targetPOI.position, t );
-
-			camera.position.lerp( targetPOI.cameraPosition, t );
-			camera.lookAt( activePOIPosition );
-
-			camera.zoom = camera.zoom + ( targetPOI.cameraZoom - camera.zoom ) * t;
-
-			if ( targetPOI.quaternion ) camera.quaternion.slerp( targetPOI.quaternion, t );
-
-			camera.updateProjectionMatrix();
-			HUD.update();
-
-			if ( targetPOI.tAnimate === 0 ) {
-
-				controls.target = targetPOI.position;
-				controls.enabled = true;
-
-				// restart the clock to trigger refresh of terrain
-				clockStart();
-				targetPOI = null;
-
-			}
-
-		}
-
-	}
+	};
 
 } ();
 
-function setCameraPOI ( x ) {
 
-	var boundingBox;
-	var elevation;
+function onCameraMoveEnd () {
 
-	if ( targetPOI === null ) return;
+	if ( terrain && terrain.isTiled && viewState.terrain ) setTimeout( updateTerrain, RETILE_TIMEOUT );
 
-	targetPOI.tAnimate = 80;
+}
 
-	if ( targetPOI.boundingBox ) {
+function updateTerrain () {
 
-		var size = targetPOI.boundingBox.getSize();
+	if ( lastActivityTime && performance.now() - lastActivityTime > RETILE_TIMEOUT ) {
 
-		if ( camera instanceof PerspectiveCamera ) {
+		clockStop();
 
-			var tan = Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
+		if ( terrain.zoomCheck( camera ) ) {
 
-			var e1 = 1.5 * tan * size.y / 2 + size.z;
-			var e2 = tan * camera.aspect * size.x / 2 + size.z;
-
-			elevation = Math.max( e1, e2 );
-
-			targetPOI.cameraZoom = 1;
-
-			if ( elevation === 0 ) elevation = 100;
-
-		} else {
-
-			var hRatio = ( camera.right - camera.left ) / size.x;
-			var vRatio = ( camera.top - camera.bottom ) / size.y;
-
-			targetPOI.cameraZoom = Math.min( hRatio, vRatio );
-			elevation = 600;
+			setTimeout( updateTerrain, RETILE_TIMEOUT * 5 );
 
 		}
 
-		activePOIPosition = controls.target;
-
-		targetPOI.cameraPosition   = targetPOI.position.clone();
-		targetPOI.cameraPosition.z = targetPOI.cameraPosition.z + elevation;
-		targetPOI.quaternion = new Quaternion();
-
-	}
-
-	// disable orbit controls until move to selected POI is conplete
-
-	controls.enabled = false;
-
-	startAnimation( targetPOI.tAnimate + 1 );
-
-}
-
-function startAnimation( frames ) {
-
-	if ( frameCount === 0 ) {
-
-		frameCount = frames;
-		animate();
-
-	} else {
-
-		frameCount = Math.max( frameCount, frames );
-
 	}
 
 }
 
-function stopAnimation() {
+function setCameraPOI ( /* fixme */ ) {
 
-	frameCount = 0;
-
-}
-
-function animate () {
-
-	if ( frameCount > 0 ) {
-
-		requestAnimationFrame( animate );
-
-		frameCount--;
-		renderView();
-
-	}
+	cameraMove.start( 200 );
 
 }
 
@@ -1194,6 +1115,9 @@ function setScale ( obj ) {
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
+
+	// scaling to compensate distortion introduced by projection ( x and y coords only ) - approx only
+	var scaleFactor = survey.scaleFactor; 
 
 	limits = survey.limits;
 	zScale = 0.5;
@@ -1204,18 +1128,17 @@ function setScale ( obj ) {
 	// initialize cursor height to be mid range of heights
 	cursorHeight = center.z;
 
-	// scale and translate model coordiniates into THREE.js world view
 	var scale = Math.min( width / range.x, height / range.y );
+	var verticalScale = scale * scaleFactor;
 
-	obj.scale.set( scale, scale, scale );
-	obj.position.set( -center.x * scale, -center.y * scale, -center.z * scale );
+	obj.scale.set( scale, scale, verticalScale );
+	obj.position.set( -center.x * scale, -center.y * scale, -center.z * verticalScale );
 
-
-	HUD.setScale( scale );
+	HUD.setScale( verticalScale );
 
 	// pass to survey to adjust size of symbology
 
-	obj.setScale( scale );
+	obj.setScale( verticalScale );
 
 }
 
@@ -1231,9 +1154,15 @@ function getControls () {
 
 }
 
+function getRoutes () {
+
+	return survey.getRoutes();
+
+}
+
 function getSurveyTree () {
 
-	return survey.getSurveyTree();
+	return survey.surveyTree;
 
 }
 
@@ -1243,10 +1172,17 @@ export var Viewer = {
 	init:          init,
 	clearView:     clearView,
 	loadCave:      loadCave,
+<<<<<<< HEAD
+=======
+	addRoutes:     addRoutes,
+	getRoutes:     getRoutes,
+>>>>>>> dev
 	getStats:      getStats,
 	getSurveyTree: getSurveyTree,
 	getControls:   getControls,
-	getState:      viewState
+	getState:      viewState,
+	renderView:    renderView,
+	addOverlay:    addOverlay,
 };
 
 

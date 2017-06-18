@@ -1,23 +1,20 @@
 import {
-	Vector3, Color,
-	BufferGeometry, Geometry,
-	VertexColors,
+	Color,
+	BufferGeometry,
 	Points,
 	Float32BufferAttribute
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
-import {
-	NORMAL, SPLAY, SURFACE,
-	FEATURE_STATIONS, STATION_NORMAL, STATION_ENTRANCE,
-} from '../core/constants.js';
+import { FEATURE_STATIONS, STATION_ENTRANCE } from '../core/constants';
+import { Viewer } from '../viewer/Viewer';
 
 function Stations () {
 
-	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial( { size: 1.0, opacity: 0.5, transparent: true,  vertexColors: VertexColors  } ) );
+	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial() );
 
-	this.type = "CV.Stations";
+	this.type = 'CV.Stations';
 	this.map = new Map();
 	this.stationCount = 0;
 
@@ -26,10 +23,56 @@ function Stations () {
 
 	this.layers.set( FEATURE_STATIONS );
 
-	this.tmpGeometry = new Geometry();
-	this.tmpGeometry.pointSizes = [];
+	this.pointSizes = [];
+	this.vertices   = [];
+	this.colors     = [];
 
 	this.stations = [];
+
+	this.selected = null;
+	this.selectedSize = 0;
+
+	var viewState = Viewer.getState;
+	var self = this;
+
+	viewState.addEventListener( 'change', _viewChanged );
+
+	this.addEventListener( 'removed', _removed );
+
+	function _viewChanged( event ) {
+
+		if ( event.name === 'splays' ) {
+
+			var splaySize = viewState.splays ? 1.0 : 0.0;
+
+			var stations = self.stations;
+			var pSize = self.geometry.getAttribute( 'pSize' );
+			var i;
+			var l = stations.length;
+
+			for ( i = 0; i < l; i++ ) {
+
+				if ( stations[ i ].hitCount === 0 ) {
+
+					pSize.setX( i, splaySize );
+
+				}
+
+			}
+
+			pSize.needsUpdate = true;
+			Viewer.renderView();
+
+		}
+
+	}
+
+
+	function _removed ( ) {
+
+		viewState.removeEventListener( 'change', _viewChanged );
+
+	}
 
 }
 
@@ -40,78 +83,125 @@ Stations.prototype.contructor = Stations;
 Stations.prototype.addStation = function ( node ) {
 
 	var point = node.p;
-	var geometry = this.tmpGeometry;
 
 	if ( point === undefined ) return;
 
-	geometry.vertices.push( point );
-	geometry.colors.push( this.baseColor );
-	geometry.pointSizes.push( point.type === STATION_ENTRANCE ? 8.0 : 2.0 ); 
+	this.vertices.push( point );
+	this.colors.push( this.baseColor );
+	this.pointSizes.push( point.type === STATION_ENTRANCE ? 8.0 : 0.0 ); 
 
-	this.map.set( point.x.toString() + ":" + point.y.toString() + ":" + point.z.toString(), node );
+	this.map.set( point.x.toString() + ':' + point.y.toString() + ':' + point.z.toString(), node );
 	this.stations.push( node );
 
 	node.hitCount = 0;
 	node.stationVertexIndex = this.stationCount++;
 	node.linkedSegments = [];
 
-}
+};
 
 Stations.prototype.getStation = function ( vertex ) {
 
-		return this.map.get( vertex.x.toString() + ":" + vertex.y.toString() + ":" + vertex.z.toString() );
+	return this.map.get( vertex.x.toString() + ':' + vertex.y.toString() + ':' + vertex.z.toString() );
 
-}
+};
 
 
 Stations.prototype.getStationByIndex = function ( index ) {
 
 	return this.stations[ index ];
 
-}
+};
+
+Stations.prototype.clearSelected = function () {
+
+	if ( this.selected !== null ) {
+
+		var pSize = this.geometry.getAttribute( 'pSize' );
+
+		pSize.setX( this.selected, this.selectedSize );
+		pSize.needsUpdate = true;
+
+		this.selected = null;
+
+	}
+
+};
+
+Stations.prototype.selectStation = function ( node ) {
+
+	this.selectStationByIndex( node.stationVertexIndex );
+
+};
+
+Stations.prototype.selectStationByIndex = function ( index ) {
+
+	var pSize = this.geometry.getAttribute( 'pSize' );
+
+	if ( this.selected !== null ) {
+
+		pSize.setX( this.selected, this.selectedSize );
+
+	}
+
+	this.selectedSize = pSize.getX( index );
+
+	pSize.setX( index, this.selectedSize * 2 );
+
+//	pSize.updateRange.offset = index;
+//	pSize.updateRange.count  = 1;
+
+	pSize.needsUpdate = true;
+
+	this.selected = index;
+
+};
 
 Stations.prototype.updateStation = function ( vertex ) {
 
 	var	station = this.getStation( vertex );
-	var geometry = this.tmpGeometry;
 
-	if ( station !== undefined ) { 
+	if ( station !== undefined ) {
 
 		station.hitCount++;
 
-		if ( station.hitCount > 2 ) { 
+		if ( station.hitCount > 2 ) {
 
-			geometry.colors[ station.stationVertexIndex ] = this.junctionColor;
-			geometry.pointSizes[ station.stationVertexIndex ] = 4.0;
+			this.colors[ station.stationVertexIndex ] = this.junctionColor;
+			this.pointSizes[ station.stationVertexIndex ] = 4.0;
+
+		} else if ( station.hitCount > 0 ) {
+
+			this.pointSizes[ station.stationVertexIndex ] = 2.0;
 
 		}
 
 	}
 
-}
+};
 
 Stations.prototype.finalise = function () {
 
-	var geometry = this.tmpGeometry;
 	var bufferGeometry = this.geometry;
 
-	var positions = new Float32BufferAttribute( geometry.vertices.length * 3, 3 );
-	var colors = new Float32BufferAttribute( geometry.colors.length * 3, 3 );
+	var positions = new Float32BufferAttribute(this.vertices.length * 3, 3 );
+	var colors = new Float32BufferAttribute( this.colors.length * 3, 3 );
 
-	bufferGeometry.addAttribute( "pSize", new Float32BufferAttribute( geometry.pointSizes, 1 ) );
-	bufferGeometry.addAttribute( 'position', positions.copyVector3sArray( geometry.vertices ) );
-	bufferGeometry.addAttribute( 'color', colors.copyColorsArray( geometry.colors ) );
+	bufferGeometry.addAttribute( 'pSize', new Float32BufferAttribute( this.pointSizes, 1 ) );
+	bufferGeometry.addAttribute( 'position', positions.copyVector3sArray( this.vertices ) );
+	bufferGeometry.addAttribute( 'color', colors.copyColorsArray( this.colors ) );
 
-	this.tmpGeometry = null;
+	this.pointSizes = null;
+	this.vertices   = null;
+	this.colors     = null;
 
-}
+};
 
 Stations.prototype.setScale = function ( scale ) {
 
 	this.material.uniforms.pScale.value = scale;
 	this.material.needsUpdate = true;
 
-}
+};
 
 
 export { Stations };

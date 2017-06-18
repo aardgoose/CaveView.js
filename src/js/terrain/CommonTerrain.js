@@ -1,26 +1,30 @@
 
-import { MATERIAL_SURFACE, SHADING_CURSOR, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED } from '../core/constants.js';
-import { Materials } from '../materials/Materials.js';
+import { MATERIAL_SURFACE, SHADING_CURSOR, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED, SHADING_ASPECT } from '../core/constants';
+import { Materials } from '../materials/Materials';
 
 import {
 	MeshLambertMaterial,
 	VertexColors, FrontSide,
 	Group
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function CommonTerrain () {
 
 	Group.call( this );
 
-	this.addEventListener( "removed", function removeTerrain() { this.removed() } );
+	this.hasOverlay = false;
+	this.defaultOverlay = null;
+	this.activeOverlay = null;
 
-};
+	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
+
+}
 
 CommonTerrain.prototype = Object.create( Group.prototype );
 
 CommonTerrain.prototype.constructor = CommonTerrain;
 
-CommonTerrain.prototype.shadingMode;
+CommonTerrain.prototype.shadingMode = SHADING_SHADED;
 CommonTerrain.prototype.opacity = 0.5;
 
 CommonTerrain.prototype.removed = function () {};
@@ -29,9 +33,9 @@ CommonTerrain.prototype.getOpacity = function () {
 
 	return this.opacity;
 
-}
+};
 
-CommonTerrain.prototype.setShadingMode = function ( mode, imageLoadedCallback ) {
+CommonTerrain.prototype.setShadingMode = function ( mode ) {
 
 	var material;
 
@@ -45,7 +49,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, imageLoadedCallback ) 
 
 	case SHADING_OVERLAY:
 
-		if ( this.getOverlays() ) this.setOverlay( this.getOverlay(), imageLoadedCallback );
+		this.setOverlay( ( this.activeOverlay === null ? this.defaultOverlay : this.activeOverlay ) );
 
 		break;
 
@@ -67,9 +71,15 @@ CommonTerrain.prototype.setShadingMode = function ( mode, imageLoadedCallback ) 
 
 		break;
 
+	case SHADING_ASPECT:
+
+		material = Materials.getAspectMaterial();
+
+		break;
+
 	default:
 
-		console.log( "unknown mode", mode );
+		console.log( 'unknown mode', mode );
 		return false;
 
 	}
@@ -80,7 +90,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, imageLoadedCallback ) 
 
 	return true;
 
-}
+};
 
 export { CommonTerrain };
 

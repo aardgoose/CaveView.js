@@ -1,37 +1,36 @@
 
-import { HudObject } from './HudObject.js';
-import { padDigits } from '../core/lib.js';
+import { HudObject } from './HudObject';
 
 import {
 	Vector3, Math as _Math, Face3, Color,
-	Geometry, RingBufferGeometry, RingGeometry, CylinderBufferGeometry,
+	Geometry, RingGeometry, CylinderBufferGeometry,
 	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
 	FrontSide, VertexColors, FlatShading,
 	Mesh, Group
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function Compass ( container ) {
 
-	var width  = container.clientWidth;
-	var height = container.clientHeight;
+//	var width  = container.clientWidth;
+//	var height = container.clientHeight;
 
 	var stdWidth  = HudObject.stdWidth;
 	var stdMargin = HudObject.stdMargin;
 
 	Group.call( this );
 
-	this.name = "CV.Compass";
+	this.name = 'CV.Compass';
 	this.domObjects = [];
 
-	var cg1 = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth,  3, 32, 1, true );
+	var cg1 = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth, 3, 32, 1, true );
 	cg1.rotateX( Math.PI / 2 );
 
-	var c1  = new Mesh( cg1, new MeshPhongMaterial( { color: 0x888888, specular: 0x888888 } ) );
+	var c1 = new Mesh( cg1, new MeshPhongMaterial( { color: 0x888888, specular: 0x888888 } ) );
 
 	var cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 	cg2.translate( 0, 0, 5 );
 
-	var c2  = new Mesh( cg2, new MeshBasicMaterial( { color: 0xb03a14 } ) );
+	var c2 = new Mesh( cg2, new MeshBasicMaterial( { color: 0xb03a14 } ) );
 
 	var r1 = _makeRose( stdWidth * 0.8, 0.141, 0x581d0a, 0x0c536a );
 	var r2 = _makeRose( stdWidth * 0.9, 0.141, 0xb03a14, 0x1ab4e5 );
@@ -52,18 +51,18 @@ function Compass ( container ) {
 
 	this.lastRotation = 0;
 
-	var panel = document.createElement( "div" );
+	var panel = document.createElement( 'div' );
 
-	panel.classList.add( "cv-compass" );
-	panel.textContent = "";
+	panel.classList.add( 'cv-compass' );
+	panel.textContent = '';
 
 	container.appendChild( panel );
 
 	this.txt = panel;
 	this.domObjects.push( panel );
 
-	this.addEventListener( "removed", this.removeDomObjects );
-	this.txt.textContent = "000\u00B0";
+	this.addEventListener( 'removed', this.removeDomObjects );
+	this.txt.textContent = '000\u00B0';
 
 	return this;
 
@@ -78,7 +77,7 @@ function Compass ( container ) {
 		g.vertices.push( new Vector3( 0, 0, 14 * scale ) );
 		g.vertices.push( new Vector3( -innerR, innerR, 0 ) );
 
-		var f1 = new Face3( 0, 2, 1, new Vector3( 0, 0, 1 ), color1, 0 );  
+		var f1 = new Face3( 0, 2, 1, new Vector3( 0, 0, 1 ), color1, 0 );
 		var f2 = new Face3( 0, 3, 2, new Vector3( 0, 0, 1 ), color2, 0 );
 
 		g.faces.push( f1 );
@@ -107,7 +106,7 @@ function Compass ( container ) {
 
 		return p1;
 
-	};
+	}
 
 }
 
@@ -145,13 +144,13 @@ Compass.prototype.set = function () {
 
 		var degrees = 360 - Math.round( _Math.radToDeg( a ) );
 
-		this.txt.textContent = padDigits( degrees, 3 ) + "\u00B0"; // unicode degree symbol
+		this.txt.textContent = degrees.toString().padStart( 3, '0' ) + '\u00B0'; // unicode degree symbol
 
 		this.rotateOnAxis( negativeZAxis, a - this.lastRotation );
 
 		this.lastRotation = a;
 
-	}
+	};
 
 } ();
 

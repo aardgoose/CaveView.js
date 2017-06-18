@@ -1,26 +1,27 @@
 
 import {
 	MATERIAL_LINE,
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_SINGLE, SHADING_SURVEY, SHADING_PATH,
-} from '../core/constants.js';
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH,
+} from '../core/constants';
 
-import { Viewer } from '../viewer/Viewer.js';
+import { Viewer } from '../viewer/Viewer';
 
-import { AHI } from './AHI.js';
-import { AngleScale } from './AngleScale.js';
-import { Compass } from './Compass.js';
-import { LinearScale } from './LinearScale.js';
-import { ProgressDial } from './ProgressDial.js';
-import { ScaleBar } from './ScaleBar.js';
-import { HudObject } from './HudObject.js';
+import { AHI } from './AHI';
+import { AngleScale } from './AngleScale';
+import { Compass } from './Compass';
+import { LinearScale } from './LinearScale';
+import { CursorScale } from './CursorScale';
+import { ProgressDial } from './ProgressDial';
+import { ScaleBar } from './ScaleBar';
+import { HudObject } from './HudObject';
 
-import { Materials } from '../materials/Materials.js';
+import { Materials } from '../materials/Materials';
 
 import {
 	Scene, Group,
 	AmbientLight, DirectionalLight,
-	OrthographicCamera, PerspectiveCamera
-} from '../../../../three.js/src/Three.js';
+	OrthographicCamera
+} from '../../../../three.js/src/Three';
 
  
 // THREE objects
@@ -34,7 +35,8 @@ var hScale = 0;
 var attitudeGroup;
 
 var linearScale = null;
-var angleScale  = null ;
+var angleScale  = null;
+var cursorScale = null;
 var scaleBar    = null;
 
 var compass;
@@ -88,14 +90,14 @@ function init ( domId, viewRenderer ) {
 	attitudeGroup.add( ahi );
 	attitudeGroup.add( progressDial );
 
-	window.addEventListener( "resize", resize );
+	window.addEventListener( 'resize', resize );
 
-	viewState.addEventListener( "newCave", caveChanged );
-	viewState.addEventListener( "change", viewChanged );
+	viewState.addEventListener( 'newCave', caveChanged );
+	viewState.addEventListener( 'change', viewChanged );
 
 	controls = Viewer.getControls();
 
-	controls.addEventListener( "change", update );
+	controls.addEventListener( 'change', update );
 
 }
 
@@ -105,14 +107,20 @@ function setVisibility ( visible ) {
 	ahi.setVisibility( visible );
 	progressDial.setVisibility( visible );
 
-	if ( linearScale ) linearScale.setVisibility( visible );
-	if ( angleScale ) angleScale.setVisibility( visible );
+	if ( linearScale ) {
+
+		linearScale.setVisibility( visible );
+		cursorScale.setVisibility( visible );
+		angleScale.setVisibility( visible );
+
+	}
+
 	if ( scaleBar ) scaleBar.setVisibility( visible );
 
 	isVisible = visible;
 
 	// reset correct disposition of keys etc.
-	if ( visible ) viewChanged ( { type: "change", name: "shadingMode" } );
+	if ( visible && linearScale ) viewChanged ( { type: 'change', name: 'shadingMode' } );
 
 }
 
@@ -149,37 +157,7 @@ function resize () {
 
 	attitudeGroup.position.set( hWidth, -hHeight, 0 );
 
-	// remove and add a new scale, simpler than rescaling
-
-	if ( linearScale ) {
-
-		scene.remove( linearScale );
-
-		linearScale = new LinearScale( container, viewState );
-
-		scene.add( linearScale );
-
-	}
-
-	if ( angleScale ) {
-
-		scene.remove( angleScale );
-
-		angleScale = new AngleScale( container );
-
-		scene.add( angleScale );
-
-	}
-
-	if ( scaleBar ) {
-
-		scene.remove( scaleBar );
-
-		scaleBar = new ScaleBar( container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
-
-		scene.add( scaleBar );
-
-	}
+	newScales();
 
 	setVisibility ( isVisible ); // set correct visibility of elements
 
@@ -205,114 +183,121 @@ function renderHUD () {
 
 }
 
-function caveChanged ( event ) {
+function caveChanged ( /* event */ ) {
 
-	if ( linearScale ) {
+	newScales();
 
-		scene.remove( linearScale );
+	viewChanged ( { type: 'change', name: 'shadingMode' } );
 
-	}
+}
+
+
+function newScales () {
+
+	if ( linearScale ) scene.remove( linearScale );
 
 	linearScale = new LinearScale( container, viewState );
 
 	scene.add( linearScale );
 
-	if ( angleScale ) {
 
-		scene.remove( angleScale );
-		angleScale = null;
+	if ( cursorScale ) scene.remove( cursorScale );
 
-	}
+	cursorScale = new CursorScale( container );
 
-	if ( scaleBar ) {
+	scene.add( cursorScale );
 
-		scene.remove( scaleBar );
-		scaleBar = null;
 
-	}
+	if ( angleScale ) scene.remove( angleScale );
+	
+	angleScale = new AngleScale( container );
 
-	viewChanged ( { type: "change", name: "shadingMode" } );
+	scene.add( angleScale );
+
+
+	if ( scaleBar ) scene.remove( scaleBar );
+
+	scaleBar = new ScaleBar( container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
+
+	scene.add( scaleBar );
 
 }
 
 function viewChanged ( event ) {
 
-	if ( event.name !== "shadingMode" || !isVisible ) return;
+	if ( event.name !== 'shadingMode' || !isVisible ) return;
+
+	// hide all - and only make required elements visible
+
+	var useAngleScale = false;
+	var useLinearScale = false;
+	var useCursorScale = false;
 
 	switch ( viewState.shadingMode ) {
 
 	case SHADING_HEIGHT:
 
-		if ( angleScale ) angleScale.setVisibility( false );
+		useLinearScale = true;
 
-		if ( linearScale ) linearScale.setRange( viewState.minHeight, viewState.maxHeight, "Height above Datum" ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
-		viewState.removeEventListener( "cursorChange",  cursorChanged );
+		linearScale.setRange( viewState.minHeight, viewState.maxHeight, 'Height above Datum' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 
 	case SHADING_DEPTH:
 
-		if ( angleScale ) angleScale.setVisibility( false );
+		useLinearScale = true;
 
-		if ( linearScale ) linearScale.setRange( viewState.maxHeight - viewState.minHeight, 0, "Depth below surface" ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
-		viewState.removeEventListener( "cursorChange",  cursorChanged );
+		linearScale.setRange( viewState.maxHeight - viewState.minHeight, 0, 'Depth below surface' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 
 	case SHADING_CURSOR:
 
-		if ( angleScale ) angleScale.setVisibility( false );
+		useCursorScale = true;
 
-		if ( linearScale ) {
+		cursorScale.setRange( viewState.minHeight, viewState.maxHeight, 'Height' );
 
-			linearScale.setMaterial( Materials.getCursorMaterial( MATERIAL_LINE ) ).setVisibility( true );
+		cursorChanged();
 
-			cursorChanged();
+		break;
 
-			viewState.addEventListener( "cursorChange",  cursorChanged );
+	case SHADING_DEPTH_CURSOR:
 
-		}
+		useCursorScale = true;
+
+		cursorScale.setRange( viewState.maxHeight - viewState.minHeight, 0, 'Depth' );
+
+		cursorChanged();
 
 		break;
 
 	case SHADING_LENGTH:
 
-		if ( angleScale ) angleScale.setVisibility( false );
+		useLinearScale = true;
 
-		linearScale.setRange( viewState.minLegLength, viewState.maxLegLength, "Leg length" ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) ).setVisibility( true );
-		viewState.removeEventListener( "cursorChange",  cursorChanged );
+		linearScale.setRange( viewState.minLegLength, viewState.maxLegLength, 'Leg length' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE, true ) ).setVisibility( true );
 
 		break;
 
 	case SHADING_INCLINATION:
 
-		linearScale.setVisibility( false );
-
-		if ( ! angleScale ) {
-
-			angleScale = new AngleScale( container );
-
-			scene.add( angleScale );
-
-		}
-
-		angleScale.setVisibility( true );
-		viewState.removeEventListener( "cursorChange",  cursorChanged );
+		useAngleScale = true;
 
 		break;
 
-	case SHADING_SINGLE:
+	}
 
-	case SHADING_SURVEY:
+	angleScale.setVisibility( useAngleScale );
+	linearScale.setVisibility( useLinearScale );
+	cursorScale.setVisibility( useCursorScale );
 
-	case SHADING_PATH:
+	if ( useCursorScale ) {
 
-		if ( angleScale ) angleScale.setVisibility( false );
+		viewState.addEventListener( 'cursorChange', cursorChanged );
 
-		linearScale.setVisibility( false );
-		viewState.removeEventListener( "cursorChange",  cursorChanged );
+	} else {
 
-		break;
+		viewState.removeEventListener( 'cursorChange', cursorChanged );
 
 	}
 
@@ -320,10 +305,25 @@ function viewChanged ( event ) {
 
 }
 
-function cursorChanged ( event ) {
+function cursorChanged ( /* event */ ) {
 
-	var cursorHeight = Math.max( Math.min( viewState.cursorHeight, viewState.maxHeight ), viewState.minHeight );
-	linearScale.setRange( viewState.minHeight, viewState.maxHeight, "Cursor:" + Math.round( cursorHeight ) );
+	var cursorHeight = viewState.cursorHeight;
+	var range = viewState.maxHeight - viewState.minHeight;
+	var scaledHeight = 0;
+
+	if ( viewState.shadingMode === SHADING_CURSOR ) {
+
+		scaledHeight = ( viewState.cursorHeight - viewState.minHeight ) / range;
+
+	} else {
+
+		scaledHeight = 1 - cursorHeight / range;
+
+	}
+
+	scaledHeight = Math.max( Math.min( scaledHeight, 1 ), 0 );
+
+	cursorScale.setCursor( scaledHeight, Math.round( cursorHeight ) );
 
 }
 

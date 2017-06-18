@@ -1,6 +1,5 @@
 
 uniform sampler2D cmap;
-uniform float surfaceOpacity;
 
 varying float zMap;
 
@@ -23,7 +22,7 @@ void main() {
 	float light;
 	light = 0.5 * ( nDot + 1.0 );
 
-	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * vec4( light, light, light, surfaceOpacity );
+	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * vec4( light, light, light, 1.0 );
 
 #else
 

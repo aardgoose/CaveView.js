@@ -1,13 +1,13 @@
 
-import { HudObject } from './HudObject.js';
-import { Colours } from '../core/Colours.js';
+import { HudObject } from './HudObject';
+import { Colours } from '../core/Colours';
 import {
 	Vector3, Color,
-	Geometry, RingGeometry,
+	RingGeometry,
 	MeshBasicMaterial,
 	VertexColors, FrontSide,
-	Mesh, Group
-} from '../../../../three.js/src/Three.js';
+	Mesh
+} from '../../../../three.js/src/Three';
 
 function AngleScale ( container ) {
 
@@ -26,10 +26,12 @@ function AngleScale ( container ) {
 	var hues = Colours.inclinationColours;
 
 	var vertices = geometry.vertices;
+	var legNormal = new Vector3();
 
 	for ( i = 0, l = vertices.length; i < l; i++ ) {
 
-		var legNormal  = vertices[ i ].clone().normalize();
+		legNormal.copy( vertices[ i ] ).normalize();
+
 		var dotProduct = legNormal.dot( pNormal );
 		var hueIndex = Math.floor( 127 * 2 * Math.asin( Math.abs( dotProduct ) ) / Math.PI );
 
@@ -37,11 +39,11 @@ function AngleScale ( container ) {
 
 	}
 
-	var faces = geometry.faces;
+	var faces = geometry.faces, f;
 
 	for ( i = 0, l = faces.length; i < l; i++ ) {
 
-		var f = faces[ i ];
+		f = faces[ i ];
 
 		f.vertexColors = [ c[ f.a ], c[ f.b ], c[ f.c ] ];
 
@@ -54,20 +56,20 @@ function AngleScale ( container ) {
 	this.translateY( -height / 2 + 3 * ( stdWidth + stdMargin ) + stdMargin + 30 );
 	this.translateX(  width / 2 - 40 - 5 );
 
-	this.name = "CV.AngleScale";
+	this.name = 'CV.AngleScale';
 	this.domObjects = [];
 
-	var legend = document.createElement( "div" );
+	var legend = document.createElement( 'div' );
 
-	legend.id = "angle-legend";
-	legend.textContent = "Inclination";
+	legend.id = 'angle-legend';
+	legend.textContent = 'Inclination';
 
 	container.appendChild( legend );
 
 	this.txt = legend;
 	this.domObjects.push( legend );
 
-	this.addEventListener( "removed", this.removeDomObjects );
+	this.addEventListener( 'removed', this.removeDomObjects );
 
 	return this;
 

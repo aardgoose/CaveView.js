@@ -1,39 +1,53 @@
 
-import { FEATURE_TERRAIN, upAxis } from '../core/constants.js';
-import { padDigits } from '../core/lib.js';
-import { ColourCache } from '../core/ColourCache.js';
+import { FEATURE_TERRAIN } from '../core/constants';
 
 import {
-	Vector2, Vector3, Triangle, Box3,
+	Vector3, Triangle, Box3,
 	BufferGeometry,
-	BufferGeometryLoader, ImageLoader,
-	Texture,
-	MeshBasicMaterial, MeshLambertMaterial,
-	RepeatWrapping,
+	Float32BufferAttribute,
+	Uint16BufferAttribute,
 	Mesh
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
-function Tile ( x, y, resolution, tileSet, clip ) {
+
+// preallocated for projected area calculations
+
+var A = new Vector3();
+var B = new Vector3();
+var C = new Vector3();
+var D = new Vector3();
+
+var T1 = new Triangle( A, B, C );
+var T2 = new Triangle( A, C, D );
+
+function onUploadDropBuffer() {
+
+	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
+	this.array = null;
+
+}
+
+function Tile ( x, y, zoom, tileSet, clip ) {
 
 	this.x = x;
 	this.y = y;
 
-	this.resolution = resolution;
-	this.tileSet    = tileSet;
-	this.clip       = clip;
+	this.zoom    = zoom;
+	this.tileSet = tileSet;
+	this.clip    = clip;
 
 	this.canZoom       = true;
 	this.evicted       = false;
 	this.replaced      = false;
 	this.evictionCount = 1;
 	this.resurrectionPending = false;
+	this.childrenLoading = 0;
+	this.childErrors     = 0;
 
 	this.boundingBox = null;
 	this.worldBoundingBox = null;
 
 	Mesh.call( this );
-
-	this.type = "Tile";
 
 	return this;
 
@@ -43,112 +57,69 @@ Tile.prototype = Object.create( Mesh.prototype );
 
 Tile.prototype.constructor = Tile;
 
+Tile.prototype.type = 'Tile';
+Tile.prototype.isTile = true;
+
 Tile.liveTiles = 0;
 Tile.overlayImages = new Map();
 
+Tile.prototype.create = function ( terrainTileGeometry ) {
 
-Tile.prototype.create = function ( geometry, terrainData ) {
+	terrainTileGeometry.computeBoundingBox();
 
-	var vertices = geometry.vertices;
-	var faces    = geometry.faces;
-	var colors   = geometry.colors;
+	this.geometry = terrainTileGeometry;
 
-	var l1 = terrainData.length;
-	var l2 = vertices.length;
-	var scale = 1;
-	var i;
-
-	var l = Math.min( l1, l2 ); // FIXME
-
-	if ( this.tileSet !== undefined ) scale = this.tileSet.SCALE;
-
-	for ( i = 0; i < l; i++ ) {
-
-		vertices[ i ].setZ( terrainData[ i ] / scale );
-
-	}
-
-	geometry.computeFaceNormals();
-	geometry.computeVertexNormals();
-
-	var colourCache = ColourCache.terrain;
-	var colourRange = colourCache.length - 1;
-
-	for ( i = 0, l = faces.length; i < l; i++ ) {
-
-		var face = faces[ i ];
-
-		// compute vertex colour per vertex normal
-
-		for ( var j = 0; j < 3; j++ ) {
-
-			var dotProduct = face.vertexNormals[j].dot( upAxis );
-			var colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
-
-			face.vertexColors[ j ] = colourCache[ colourIndex ];
-
-		}
-
-	}
-
-	// reduce memory consumption by transferring to buffer object
-	var bufferGeometry = new BufferGeometry().fromGeometry( geometry );
-
-	bufferGeometry.computeBoundingBox();
-
-	var attributes = bufferGeometry.attributes;
-
-	for ( var name in attributes ) attributes[ name ].onUpload( _onUpload );
-
-	this.geometry = bufferGeometry;
-	this.layers.set ( FEATURE_TERRAIN );
+	this.createCommon();
 
 	return this;
 
-	function _onUpload( name ) {
+};
 
-		this.array = null;
+Tile.prototype.createCommon = function () {
+
+	var attributes = this.geometry.attributes;
+
+	// discard javascript attribute buffers after upload to GPU
+	for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
+
+	this.geometry.index.onUpload( onUploadDropBuffer );
+
+	this.layers.set( FEATURE_TERRAIN );
+
+};
+
+Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox, material ) {
+
+	var attributeName;
+	var attribute;
+	var bufferGeometry = new BufferGeometry();
+
+	// assemble BufferGeometry from binary buffer objects transfered from worker
+
+	for ( attributeName in attributes ) {
+
+		attribute = attributes[ attributeName ];
+		bufferGeometry.addAttribute( attributeName, new Float32BufferAttribute( attribute.array, attribute.itemSize ) );
 
 	}
 
-}
-
-Tile.prototype.createFromBufferGeometryJSON = function ( json, boundingBox ) {
-
-	var loader = new BufferGeometryLoader();
-
-	var bufferGeometry = loader.parse( json, boundingBox );
+	bufferGeometry.setIndex( new Uint16BufferAttribute( index, 1 ) );
 
 	// use precalculated bounding box rather than recalculating it here.
 
 	bufferGeometry.boundingBox = new Box3(
-
 		new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ), 
 		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
-
 	);
 
-
-	var attributes = bufferGeometry.attributes;
-
-	for ( var name in attributes ) attributes[ name ].onUpload( _onUpload );
-
 	this.geometry = bufferGeometry;
-	this.layers.set( FEATURE_TERRAIN );
 
-	this.geometry = bufferGeometry;
-	this.layers.set( FEATURE_TERRAIN );
+	this.createCommon();
+	this.material = material;
 
 	return this;
 
-	function _onUpload( name ) {
-
-		this.array = null;
-
-	}
-
-}
-
+};
 
 Tile.prototype.getWorldBoundingBox = function () {
 
@@ -167,7 +138,7 @@ Tile.prototype.getWorldBoundingBox = function () {
 
 	return this.worldBoundingBox;
 
-}
+};
 
 Tile.prototype.getBoundingBox = function () {
 
@@ -177,7 +148,7 @@ Tile.prototype.getBoundingBox = function () {
 
 		boundingBox = this.geometry.boundingBox.clone();
 
-		var adj = this.resolution; // adjust to cope with overlaps
+		var adj = 5; // adjust to cope with overlaps // FIXME - was resolution
 
 		boundingBox.min.x += adj;
 		boundingBox.min.y += adj;
@@ -190,58 +161,147 @@ Tile.prototype.getBoundingBox = function () {
 
 	return this.boundingBox;
 
-}
+};
 
-Tile.prototype.evict = function () {
+Tile.prototype.empty = function () {
 
-	this.evictionCount++;
-	this.evicted  = true;
-	this.replaced = false;
-	this.isMesh   = false;
+	this.isMesh = false;
 
-	if ( !this.boundingBox ) {
+	if ( ! this.boundingBox ) {
 
-		console.log( "FIXUP :", this.x, this.y );
+		console.warn( 'FIXUP :', this.x, this.y );
 		this.getWorldBoundingBox();
 
 	}
 
-	this.geometry.dispose();
+	if ( this.geometry ) {
+
+		this.geometry.dispose();
+		this.geometry = null;
+
+	}
 
 	--Tile.liveTiles;
 
-}
+};
+
+Tile.prototype.evict = function () {
+
+	this.evictionCount++; 
+	this.evicted = true;
+	this.replaced = false;
+
+	this.empty();
+
+};
 
 Tile.prototype.setReplaced = function () {
 
 	this.evicted = false;
 	this.replaced = true;
-	this.isMesh = false;
 
-	if ( this.geometry ) this.geometry.dispose();
+	this.empty();
 
-	if ( !this.boundingBox ) {
+};
 
-		console.log( "FIXUP :", this.x, this.y );
-		this.getWorldBoundingBox();
+
+Tile.prototype.setPending = function ( parentTile ) {
+
+	if ( parentTile && this.parent === null ) {
+
+		parentTile.add( this );
 
 	}
 
-	--Tile.liveTiles;
+	this.parent.childrenLoading++;
 
-}
+	this.isMesh = false;
+	this.evicted = false;
+
+};
+
+Tile.prototype.setFailed = function () {
+
+	var parent = this.parent;
+
+	parent.childErrors++;
+	parent.childrenLoading--;
+	parent.canZoom = false;
+
+	parent.remove( this );
+
+};
+
+Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
+
+	var parent = this.parent;
+	var tilesWaiting = 0;
+
+	if ( --parent.childrenLoading === 0 ) { // this tile and all siblings loaded
+
+		if ( parent.childErrors === 0 ) { // all loaded without error
+
+			if ( parent.isTile ) parent.setReplaced();
+
+			var siblings = parent.children;
+
+			for ( var i = 0, l = siblings.length; i < l; i++ ) {
+
+				var sibling = siblings[ i ];
+
+				if ( sibling.replaced || sibling.evicted ) continue;
+
+				if ( overlay === null ) {
+
+					sibling.isMesh = true;
+					Tile.liveTiles++;
+
+				} else {
+
+					// delay finalising until overlays loaded - avoids flash of raw surface
+					sibling.setOverlay( overlay, opacity, _completed );
+					tilesWaiting++;
+
+				}
+
+			}
+
+			if ( tilesWaiting === 0 ) renderCallback();
+
+			return true;
+
+		} else {
+
+			parent.remove( this );
+
+		}
+
+	}
+
+	return false;
+
+	function _completed( tile ) {
+
+		tile.isMesh = true;
+		Tile.liveTiles++;
+
+		if ( --tilesWaiting === 0 ) renderCallback();
+
+	}
+
+};
 
 Tile.prototype.removed = function () {
 
 	if ( this.geometry ) this.geometry.dispose();
 
-}
+};
 
 Tile.prototype.setMaterial = function ( material ) {
 
 	this.material = material;
 
-}
+};
 
 Tile.prototype.setOpacity = function ( opacity ) {
 
@@ -250,114 +310,49 @@ Tile.prototype.setOpacity = function ( opacity ) {
 	material.opacity = opacity;
 	material.needsUpdate = true;
 
-}
+};
 
 Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
 	var self = this;
-	var tileSet = this.tileSet;
-	var resolution = this.resolution;
-	var texture;
-	var clip = this.clip;
 
-	var ratio = tileSet.OVERLAY_RESOLUTION / resolution;
-	var repeat = 1 / ratio;
-
-	var x = Math.floor( this.x / ratio );
-	var y = Math.floor( this.y / ratio );
-
-	var xOffset = ( this.x % ratio ) / ratio;
-	var yOffset = ( ratio - 1 - this.y % ratio ) / ratio;
-
-	var tileWidth = tileSet.TILESIZE - 1; // in grid units
-
-	xOffset = xOffset + ( repeat * clip.left / tileWidth );
-	yOffset = yOffset + ( repeat * clip.bottom / tileWidth );
-
-	var xRepeat = repeat * ( ( tileWidth - clip.left - clip.right ) / tileWidth );
-	var yRepeat = repeat * ( ( tileWidth - clip.top  - clip.bottom ) / tileWidth );
-
-	var imageFile = tileSet.OVERLAYDIR + overlay + "/" + tileSet.PREFIX + tileSet.OVERLAY_RESOLUTION + "MX-" + padDigits( y, 3 ) + "-" + padDigits( x, 3 ) + ".jpg";
-
-	if ( Tile.overlayImages.has( imageFile ) ) {
-
-		_imageLoaded( Tile.overlayImages.get( imageFile ) );
-
-	} else {
-
-		var loader = new ImageLoader();
-
-		loader.load( imageFile, _imageLoaded );
-
-	}
+	overlay.getTile( this.x, this.y, this.zoom, opacity, _overlayLoaded );
 
 	return;
 
-	function _imageLoaded ( image ) {
-
-		var material = new MeshLambertMaterial( { transparent: true, opacity: opacity } );
-
-		Tile.overlayImages.set( imageFile, image );
-
-		texture = new Texture();
-
-		texture.image = image;
-
-		texture.wrapS = RepeatWrapping;
-		texture.wrapT = RepeatWrapping;
-
-		texture.offset = new Vector2( xOffset, yOffset );
-		texture.repeat = new Vector2( xRepeat, yRepeat );
-
-		texture.needsUpdate = true;
-
-		material.map = texture;
-		material.needsUpdate = true;
+	function _overlayLoaded ( material ) {
 
 		self.material = material;
-
-		// add images to cache
-		Tile.overlayImages.set( imageFile, image );
-
-		imageLoadedCallback();
+		imageLoadedCallback( self );
 
 	}
 
-}
-
-Tile.prototype.getParent = function () {
-
-	return this.parent;
-
-}
+};
 
 Tile.prototype.projectedArea = function ( camera ) {
 
 	var boundingBox = this.getWorldBoundingBox();
 
-	var v1 = boundingBox.min.clone();
-	var v3 = boundingBox.max.clone();
+	var z = boundingBox.max.z;
 
-	v1.z = 0;
-	v3.z = 0;
+	A.copy( boundingBox.min ).setZ( z );
+	C.copy( boundingBox.max );
 
-	var v2 = new Vector3( v3.x, v1.y, 0 );
-	var v4 = new Vector3( v1.x, v3.y, 0 ) ;
+	B.set( A.x, C.y, z );
+	D.set( C.x, A.y, z );
 
-	// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
+// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
+// .clampScalar( -1, 1 );
 
-	v1.project( camera ).clampScalar( -1, 1 );
-	v2.project( camera ).clampScalar( -1, 1 );
-	v3.project( camera ).clampScalar( -1, 1 );
-	v4.project( camera ).clampScalar( -1, 1 );
+	A.project( camera );
+	B.project( camera );
+	C.project( camera );
+	D.project( camera );
 
-	var t1 = new Triangle( v1, v3, v4 );
-	var t2 = new Triangle( v1, v2, v3 );
 
-	return t1.area() + t2.area();
+	return T1.area() + T2.area();
 
-}
-
+};
 
 export { Tile };
 

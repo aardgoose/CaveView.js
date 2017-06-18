@@ -2,33 +2,33 @@
 
 function Page( id ) {
 
-	var tab  = document.createElement( "div" );
-	var page = document.createElement( "div" );
+	var tab  = document.createElement( 'div' );
+	var page = document.createElement( 'div' );
 
 	var frame = Page.frame;
 
-	page.classList.add( "page" );
+	page.classList.add( 'page' );
 
 	tab.id = id;
-	tab.classList.add( "tab" );
-	tab.addEventListener( "click", this.tabHandleClick );
-	tab.style.top = ( Page.position++ * 40 ) + "px";
+	tab.classList.add( 'tab' );
+	tab.addEventListener( 'click', this.tabHandleClick );
+	tab.style.top = ( Page.position++ * 40 ) + 'px';
 
 	if ( frame === null ) {
 
 		// create UI side panel and reveal tabs
-		frame = document.createElement( "div" );
+		frame = document.createElement( 'div' );
 
-		frame.id = "frame";
-		frame.style.display = "block";
+		frame.id = 'frame';
+		frame.style.display = 'block';
 
 		Page.frame = frame;
 
-		var close = document.createElement( "div" );
+		var close = document.createElement( 'div' );
 
-		close.id = "close";
+		close.id = 'close';
 
-		close.addEventListener( "click", _closeFrame );
+		close.addEventListener( 'click', _closeFrame );
 
 		frame.appendChild( close );
 
@@ -44,13 +44,14 @@ function Page( id ) {
 
 	function _closeFrame ( event ) {
 
-		event.target.parentElement.classList.remove( "onscreen" );
+		event.target.parentElement.classList.remove( 'onscreen' );
 
 	}
 
 }
 
 Page.pages     = [];
+Page.listeners = [];
 Page.position  = 0;
 Page.inHandler = false;
 Page.controls  = [];
@@ -58,37 +59,63 @@ Page.frame = null;
 
 Page.reset = function () {
 
+	Page.listeners = [];
 	Page.pages     = [];
 	Page.position  = 0;
 	Page.inHandler = false;
 	Page.controls  = [];
 	Page.frame     = null;
 
-}
+};
 
 Page.clear = function () {
 
-	Page.frame.addEventListener( "transitionend", _afterReset );
-	Page.frame.classList.remove( "onscreen" );
+	Page.frame.addEventListener( 'transitionend', _afterReset );
+	Page.frame.classList.remove( 'onscreen' );
+
+	var i, l, listener;
+
+	for ( i = 0, l = Page.listeners.length; i < l; i++ ) {
+
+		listener = Page.listeners[ i ];
+
+		listener.obj.removeEventListener( listener.name, listener.handler );
+
+	}
+
+	Page.listeners = [];
 
 	function _afterReset ( event ) {
 
 		var frame = event.target;
 
-		frame.removeEventListener( "transitionend", _afterReset );
+		frame.removeEventListener( 'transitionend', _afterReset );
 
 		if ( frame !== null ) frame.parentElement.removeChild( frame );
 
 	}
 
-}
+};
+
+
+Page.addListener = function ( obj, name, handler ) {
+
+	obj.addEventListener( name, handler );
+
+	Page.listeners.push( {
+		obj: obj,
+		name: name,
+		handler: handler
+	} );
+
+};
 
 Page.handleChange = function ( event ) {
 
 	var obj = event.target;
 	var property = event.name;
 
-	if ( !Page.inHandle ) {
+	if ( ! Page.inHandle ) {
 
 		if ( Page.controls[ property ] ) {
 
@@ -96,20 +123,20 @@ Page.handleChange = function ( event ) {
 
 			switch ( ctrl.type ) {
 
-			case "checkbox":
+			case 'checkbox':
 
 				ctrl.checked = obj[ property ];
 
 				break;
 
-			case "select-one":
-			case "range":
+			case 'select-one':
+			case 'range':
 
 				ctrl.value = obj[ property ];
 
 				break;
 
-			case "download":
+			case 'download':
 
 				ctrl.href = obj[ property ];
 
@@ -121,17 +148,23 @@ Page.handleChange = function ( event ) {
 
 	}
 
-}
+};
 
 Page.prototype.constructor = Page;
+
+Page.prototype.addListener = function ( obj, name, handler ) {
+
+	Page.addListener( obj, name, handler ); // redirect to :: method - allows later rework to page specific destruction
+
+};
 
 Page.prototype.tabHandleClick = function ( event ) {
 
 	var tab = event.target;
 	var pages = Page.pages;
 
-	tab.classList.add( "toptab" );
-	tab.parentElement.classList.add( "onscreen" );
+	tab.classList.add( 'toptab' );
+	tab.parentElement.classList.add( 'onscreen' );
 
 	for ( var i = 0, l = pages.length; i < l; i++ ) {
 
@@ -140,53 +173,65 @@ Page.prototype.tabHandleClick = function ( event ) {
 
 		if ( otherTab === tab ) {
 
-			otherPage.style.display = "block";
+			otherPage.style.display = 'block';
 
 		} else {
 
-			otherTab.classList.remove( "toptab" );
-			otherPage.style.display = "none";
+			otherTab.classList.remove( 'toptab' );
+			otherPage.style.display = 'none';
 
 		}
 
 	}
 
-}
+};
 
 Page.prototype.appendChild = function ( domElement ) {
 
 	this.page.appendChild( domElement );
 
-}
+};
 
 Page.prototype.addHeader = function ( text ) {
 
-	var div = document.createElement( "div" );
+	var div = document.createElement( 'div' );
 
-	div.classList.add( "header" );
+	div.classList.add( 'header' );
 	div.textContent = text;
+
 	this.page.appendChild( div );
 
 	return div;
 
-}
+};
+
+Page.prototype.addText = function ( text ) {
+
+	var p = document.createElement( 'p' );
+
+	p.textContent = text;
+	this.page.appendChild( p );
+
+	return p;
+
+};
 
 Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
-	var div    = document.createElement( "div" );
-	var label  = document.createElement( "label" );
-	var select = document.createElement( "select" );
+	var div    = document.createElement( 'div' );
+	var label  = document.createElement( 'label' );
+	var select = document.createElement( 'select' );
 	var opt;
 
-	div.classList.add( "control" );
+	div.classList.add( 'control' );
 
 	if ( obj instanceof Array ) {
 
 		for ( var i = 0, l = obj.length; i < l; i++ ) {
 
-			opt = document.createElement( "option" );
+			opt = document.createElement( 'option' );
 
-			opt.value = i;
+			opt.value = obj[ i ];
 			opt.text  = obj[ i ];
 
 			if ( opt.text === trgObj[ property ] ) opt.selected = true;
@@ -195,13 +240,11 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 		}
 
-		select.addEventListener( "change", function ( event ) { Page.inHandler = true; trgObj[ property ] = obj[ event.target.value ]; Page.inHandler = false; } );
-
 	} else {
 
 		for ( var p in obj ) {
 
-			opt = document.createElement( "option" );
+			opt = document.createElement( 'option' );
 
 			opt.text  = p;
 			opt.value = obj[ p ];
@@ -212,9 +255,9 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 		}
 
-		select.addEventListener( "change", function ( event ) { Page.inHandler = true; trgObj[ property ] = event.target.value; Page.inHandler = false; } );
-
 	}
+
+	this.addListener( select, 'change', function ( event ) { Page.inHandler = true; trgObj[ property ] = event.target.value; Page.inHandler = false; } );
 
 	label.textContent = title;
 
@@ -227,19 +270,19 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 
 	return div;
 
-}
+};
 
 Page.prototype.addCheckbox = function ( title, obj, property ) {
 
-	var label = document.createElement( "label" );
-	var cb    = document.createElement( "input" );
+	var label = document.createElement( 'label' );
+	var cb    = document.createElement( 'input' );
 
 	label.textContent = title;
 
-	cb.type    = "checkbox";
+	cb.type    = 'checkbox';
 	cb.checked = obj[ property ];
 
-	cb.addEventListener( "change", _checkboxChanged );
+	this.addListener( cb, 'change', _checkboxChanged );
 
 	Page.controls[ property ] = cb;
 
@@ -253,32 +296,32 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 		Page.inHandler = true;
 
-		obj[ property ] = event.target.checked; 
+		obj[ property ] = event.target.checked;
 
 		Page.inHandler = false;
 
 	}
 
-}
+};
 
 Page.prototype.addRange = function ( title, obj, property ) {
 
-	var div = document.createElement( "div" );
-	var label = document.createElement( "label" );
-	var range = document.createElement( "input" );
+	var div = document.createElement( 'div' );
+	var label = document.createElement( 'label' );
+	var range = document.createElement( 'input' );
 
-	div.classList.add( "control" );
+	div.classList.add( 'control' );
 
-	range.type = "range";
+	range.type = 'range';
 
-	range.min  = 0;
-	range.max  = 1;
+	range.min = 0;
+	range.max = 1;
 
 	range.step = 0.05;
 	range.value = obj[ property ];
 
-	range.addEventListener( "input", _rangeChanged );
-	range.addEventListener( "change", _rangeChanged ); // for IE11 support
+	this.addListener( range, 'input', _rangeChanged );
+	this.addListener( range, 'change', _rangeChanged ); // for IE11 support
 
 	label.textContent = title;
 
@@ -301,16 +344,16 @@ Page.prototype.addRange = function ( title, obj, property ) {
 
 	}
 
-}
+};
 
 Page.prototype.addSlide = function ( domElement, depth, handleClick ) {
 
-	var slide = document.createElement( "div" );
+	var slide = document.createElement( 'div' );
 
-	slide.classList.add( "slide" );
+	slide.classList.add( 'slide' );
 	slide.style.zIndex = 200 - depth;
 
-	slide.addEventListener( "click", handleClick );
+	slide.addEventListener( 'click', handleClick );
 	slide.appendChild( domElement );
 
 	this.page.appendChild( slide );
@@ -320,22 +363,22 @@ Page.prototype.addSlide = function ( domElement, depth, handleClick ) {
 
 	return slide;
 
-}
+};
 
 Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 
-	var newSlide = document.createElement( "div" );
+	var newSlide = document.createElement( 'div' );
 	var oldSlide = this.slide;
 	var page = this.page;
-	var redraw;
+	var redraw; // eslint-disable-line no-unused-vars
 
-	newSlide.classList.add( "slide" );
+	newSlide.classList.add( 'slide' );
 	newSlide.style.zIndex = 200 - depth;
-	newSlide.addEventListener( "click", handleClick );
+	newSlide.addEventListener( 'click', handleClick );
 
 	if ( depth < this.slideDepth ) {
 
-		newSlide.classList.add( "slide-out" );
+		newSlide.classList.add( 'slide-out' );
 
 	}
 
@@ -345,29 +388,33 @@ Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 
 	if ( depth > this.slideDepth ) {
 
-		oldSlide.addEventListener( "transitionend", afterSlideOut );
-		oldSlide.classList.add( "slide-out" );
+		oldSlide.addEventListener( 'transitionend', afterSlideOut );
+		oldSlide.classList.add( 'slide-out' );
 
 		redraw = oldSlide.clientHeight;
 
-	} else {
+	} else if ( depth < this.slideDepth ) {
 
-		newSlide.addEventListener( "transitionend", afterSlideIn );
+		newSlide.addEventListener( 'transitionend', afterSlideIn );
 
 		redraw = newSlide.clientHeight;
 
-		newSlide.classList.remove( "slide-out" );
+		newSlide.classList.remove( 'slide-out' );
+
+	} else {
+
+		page.removeChild( oldSlide );
 
 	}
 
 	this.slide = newSlide;
 	this.slideDepth = depth;
 
-	return;	
+	return;
 
 	function afterSlideOut () {
 
-		oldSlide.removeEventListener( "transitionend", afterSlideOut );
+		oldSlide.removeEventListener( 'transitionend', afterSlideOut );
 		page.removeChild( oldSlide );
 
 	}
@@ -375,21 +422,20 @@ Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 	function afterSlideIn () {
 
 		page.removeChild( oldSlide );
-		newSlide.removeEventListener( "transitionend", afterSlideIn );
+		newSlide.removeEventListener( 'transitionend', afterSlideIn );
 
 	}
 
-}
-
+};
 
 Page.prototype.addDownloadButton = function ( title, obj, property, fileName ) {
 
-	var a = document.createElement( "a" );
+	var a = document.createElement( 'a' );
 
-	if ( typeof a.download === "undefined" ) return false;
+	if ( typeof a.download === 'undefined' ) return false;
 
 	a.textContent = title;
-	a.type = "download";
+	a.type = 'download';
 	a.download = fileName;
 	a.href = obj[ property ];
 
@@ -397,7 +443,7 @@ Page.prototype.addDownloadButton = function ( title, obj, property, fileName ) {
 
 	this.page.appendChild( a );
 
-}
+};
 
 export { Page };
 

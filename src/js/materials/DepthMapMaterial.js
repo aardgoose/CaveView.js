@@ -1,6 +1,6 @@
 
-import { Shaders } from '../shaders/Shaders.js';
-import { ShaderMaterial } from '../../../../three.js/src/Three.js';
+import { Shaders } from '../shaders/Shaders';
+import { ShaderMaterial } from '../../../../three.js/src/Three';
 
 function DepthMapMaterial ( minHeight, maxHeight ) {
 
@@ -16,7 +16,7 @@ function DepthMapMaterial ( minHeight, maxHeight ) {
 		vertexShader:    Shaders.depthMapVertexShader,
 		fragmentShader:  Shaders.depthMapFragmentShader,
 		depthWrite:      false,
-		type:            "CV.DepthMapMaterial"
+		type:            'CV.DepthMapMaterial'
 
 	} );
 

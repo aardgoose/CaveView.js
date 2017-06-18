@@ -1,8 +1,8 @@
-import { getEnvironmentValue } from '../core/constants.js';
+import { getEnvironmentValue } from '../core/lib';
 
 function WorkerPool ( script ) {
 
-	this.script = getEnvironmentValue( "home", "" ) + "js/workers/" + script;
+	this.script = getEnvironmentValue( 'home', '' ) + 'js/workers/' + script;
 	this.workers = [];
 
 }
@@ -21,7 +21,7 @@ WorkerPool.prototype.getWorker = function () {
 
 	}
 
-}
+};
 
 WorkerPool.prototype.putWorker = function ( worker ) {
 
@@ -35,7 +35,7 @@ WorkerPool.prototype.putWorker = function ( worker ) {
 
 	}
 
-}
+};
 
 WorkerPool.prototype.dispose = function () {
 
@@ -45,6 +45,6 @@ WorkerPool.prototype.dispose = function () {
 
 	}
 
-}
+};
 
 export { WorkerPool };

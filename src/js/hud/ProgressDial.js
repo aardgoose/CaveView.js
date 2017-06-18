@@ -1,16 +1,16 @@
 
-import { upAxis } from '../core/constants.js';
-import { HudObject } from './HudObject.js';
+import { upAxis } from '../core/constants';
+import { HudObject } from './HudObject';
+import { Viewer } from '../viewer/Viewer';
 
 import {
-	Vector3,
 	RingGeometry,
 	MeshBasicMaterial,
 	FaceColors,
 	Mesh
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
-function ProgressDial ( container ) {
+function ProgressDial () {
 
 	var stdWidth  = HudObject.stdWidth;
 	var stdMargin = HudObject.stdMargin;
@@ -19,7 +19,7 @@ function ProgressDial ( container ) {
 
 	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors } ) );
 
-	this.name = "CV.ProgressDial";
+	this.name = 'CV.ProgressDial';
 	this.domObjects = [];
 
 	var offset = stdWidth + stdMargin;
@@ -32,7 +32,7 @@ function ProgressDial ( container ) {
 	this.visible  = false;
 	this.isVisible = true;
 
-	this.addEventListener( "removed", this.removeDomObjects );
+	this.addEventListener( 'removed', this.removeDomObjects );
 
 	return this;
 
@@ -59,13 +59,13 @@ ProgressDial.prototype.set = function ( progress ) {
 
 	this.geometry.colorsNeedUpdate = true;
 
-}
+};
 
 ProgressDial.prototype.add = function ( progress ) {
 
 	this.set( this.progress + progress );
 
-}
+};
 
 ProgressDial.prototype.start = function () {
 
@@ -73,7 +73,7 @@ ProgressDial.prototype.start = function () {
 
 	for ( var i = 0; i < 100; i++ ) {
 
-		faces[i].color.set( 0x333333 );
+		faces[ i ].color.set( 0x333333 );
 
 	}
 
@@ -81,22 +81,22 @@ ProgressDial.prototype.start = function () {
 	this.progress = 0;
 	this.visible = this.isVisible;
 
-}
+};
 
 ProgressDial.prototype.end = function () {
 
 	var self = this;
 
-	setTimeout( function () { self.visible = false; }, 500 );
+	setTimeout( function () { self.visible = false; Viewer.renderView(); }, 500 );
 
-}
+};
 
 ProgressDial.prototype.setVisibility = function ( visibility ) {
 
 	this.isVisible = visibility;
 	this.visible = ( this.visible && visibility );
 
-}
+};
 
 export { ProgressDial };
 

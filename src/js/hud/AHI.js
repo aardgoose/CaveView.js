@@ -1,26 +1,23 @@
 
-import { upAxis } from '../core/constants.js';
-import { HudObject } from './HudObject.js';
+import { upAxis } from '../core/constants';
+import { HudObject } from './HudObject';
 
 import {
 	Vector3, Color, Math as _Math,
-	Geometry, RingBufferGeometry, SphereBufferGeometry, BufferAttribute, CylinderBufferGeometry,
-	LineBasicMaterial, MeshBasicMaterial, MeshPhongMaterial,
-	FrontSide, VertexColors,
+	Geometry, SphereBufferGeometry, BufferAttribute, CylinderBufferGeometry,
+	LineBasicMaterial, MeshPhongMaterial,
+	VertexColors,
 	Mesh, LineSegments, Group
-} from '../../../../three.js/src/Three.js'; 
+} from '../../../../three.js/src/Three'; 
 
 function AHI ( container ) {
-
-	var width  = container.clientWidth;
-	var height = container.clientHeight;
 
 	var stdWidth  = HudObject.stdWidth;
 	var stdMargin = HudObject.stdMargin;
 
 	Group.call( this );
 
-	this.name = "CV.AHI";
+	this.name = 'CV.AHI';
 	this.domObjects = [];
 
 	this.lastPitch = 0;
@@ -28,7 +25,7 @@ function AHI ( container ) {
 	// artificial horizon instrument
 	var globe = new Group();
 
-	var ring = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth,  3, 32, 1, true );
+	var ring = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth, 3, 32, 1, true );
 	ring.rotateX( Math.PI / 2 );
 
 	var sphere = new SphereBufferGeometry( stdWidth - 10, 31, 31 );
@@ -44,12 +41,11 @@ function AHI ( container ) {
 	var c1 = new Color( 0x106f8d );
 	var c2 = new Color( 0x802100 );
 
-	for ( var i = 0; i < sv; i++ ) {
+	var i;
 
-		if ( i < sv/2 )
-			colours.push(  c1 );
-		else 
-			colours.push(  c2 );
+	for ( i = 0; i < sv; i++ ) {
+
+		colours.push( ( i < sv / 2 ) ? c1 : c2 );
 
 	}
 
@@ -65,7 +61,7 @@ function AHI ( container ) {
 
 	var xAxis = new Vector3( 1, 0, 0 );
 
-	for ( var i = 0; i < 12; i++ ) {
+	for ( i = 0; i < 12; i++ ) {
 
 		var mn1 = m1.clone();
 		var mn2 = m2.clone();
@@ -78,17 +74,17 @@ function AHI ( container ) {
 		}
 
 		mn1.applyAxisAngle( xAxis, i * Math.PI / 6 );
-		mn2.applyAxisAngle( xAxis, i * Math.PI / 6 ); 
+		mn2.applyAxisAngle( xAxis, i * Math.PI / 6 );
 
 		marks.vertices.push( mn1 );
 		marks.vertices.push( mn2 );
 
 	}
 
-	var mRing  = new Mesh( ring, new MeshPhongMaterial( { color: 0x888888, specular: 0x888888 } ) );
-	var mSphere  = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: VertexColors, specular: 0x666666, shininess: 20 } ) );
-	var mBar   = new LineSegments( bar,   new LineBasicMaterial( { color: 0xcccc00 } ) );
-	var mMarks = new LineSegments( marks, new LineBasicMaterial( { color: 0xffffff } ) );
+	var mRing   = new Mesh( ring, new MeshPhongMaterial( { color: 0x888888, specular: 0x888888 } ) );
+	var mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: VertexColors, specular: 0x666666, shininess: 20 } ) );
+	var mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: 0xcccc00 } ) );
+	var mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: 0xffffff } ) );
 
 	mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 	mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );
@@ -106,10 +102,10 @@ function AHI ( container ) {
 	this.translateX( -3 * offset );
 	this.translateY( offset );
 
-	var panel = document.createElement( "div" );
+	var panel = document.createElement( 'div' );
 
-	panel.classList.add( "cv-ahi" );
-	panel.textContent = "";
+	panel.classList.add( 'cv-ahi' );
+	panel.textContent = '';
 
 	container.appendChild( panel );
 
@@ -118,7 +114,8 @@ function AHI ( container ) {
 
 	this.domObjects.push( panel );
 
-	this.addEventListener( "removed", this.removeDomObjects );
+	this.addEventListener( 'removed', this.removeDomObjects );
+	this.txt.textContent = '-90\u00B0';
 
 	return this;
 
@@ -146,9 +143,9 @@ AHI.prototype.set = function () {
 		this.globe.rotateOnAxis( xAxis, pitch - this.lastPitch );
 		this.lastPitch = pitch;
 
-		this.txt.textContent = Math.round( _Math.radToDeg( pitch ) )  + "\u00B0";
+		this.txt.textContent = Math.round( _Math.radToDeg( pitch ) ) + '\u00B0';
 
-	}
+	};
 
 } ();
 

@@ -1,10 +1,10 @@
 
-import { Vector3 } from '../../../../three.js/src/Three.js';
+import { Vector3 } from '../../../../three.js/src/Three';
 
-function Popup() {
+function Popup( cssClass ) {
 
 	this.div = document.createElement( 'div' );
-	this.div.classList.add( 'station-info');
+	this.div.classList.add( cssClass );
 
 }
 
@@ -23,15 +23,15 @@ Popup.prototype.display = function ( container, x, y, camera, p ) {
 	container.addEventListener( 'mouseup', _mouseUp );
 	container.addEventListener( 'mousemove', _mouseMove );
 
-	function _mouseMove ( event ) {
+	function _mouseMove ( /* event */ ) {
 
 		camera.updateMatrixWorld();
 
 		screenPosition.copy( p );
 		screenPosition.project( camera );
 
-		var X = container.clientWidth * (screenPosition.x + 1) / 2;
-		var Y = container.clientHeight * (-screenPosition.y + 1) / 2;
+		var X = container.clientWidth * ( screenPosition.x + 1 ) / 2;
+		var Y = container.clientHeight * ( -screenPosition.y + 1 ) / 2;
 
 
 		if ( X + div.clientWidth > container.clientWidth || Y + div.clientHeight > container.clientHeight ) {
@@ -48,7 +48,7 @@ Popup.prototype.display = function ( container, x, y, camera, p ) {
 
 	}
 
-	function _mouseUp ( event ) {
+	function _mouseUp ( /* event */ ) {
 
 		container.removeChild( div );
 
@@ -57,7 +57,7 @@ Popup.prototype.display = function ( container, x, y, camera, p ) {
 
 	}
 
-}
+};
 
 Popup.prototype.addLine = function ( line ) {
 
@@ -69,6 +69,6 @@ Popup.prototype.addLine = function ( line ) {
 
 	return this;
 
-}
+};
 
-export { Popup }
+export { Popup };

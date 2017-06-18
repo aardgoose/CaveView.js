@@ -4,20 +4,20 @@ function ProgressBar ( container ) {
 
 	var offset = ( container.clientWidth - 300 ) / 2;
 
-	var statusText  = document.createElement( "div" );
+	var statusText  = document.createElement( 'div' );
 
-	statusText.id  = "status-text";
-	statusText.style.width = "300px";
-	statusText.style.left  = offset + "px";
+	statusText.id  = 'status-text';
+	statusText.style.width = '300px';
+	statusText.style.left  = offset + 'px';
 
-	var progressBar = document.createElement( "progress" );
+	var progressBar = document.createElement( 'progress' );
 
-	progressBar.id = "progress-bar";
+	progressBar.id = 'progress-bar';
 
-	progressBar.style.width = "300px";
-	progressBar.style.left  = offset + "px";
+	progressBar.style.width = '300px';
+	progressBar.style.left  = offset + 'px';
 
-	progressBar.setAttribute( "max", "100" );
+	progressBar.setAttribute( 'max', '100' );
 
 	this.container   = container;
 	this.progressBar = progressBar;
@@ -38,19 +38,19 @@ ProgressBar.prototype.Start = function ( text ) {
 	this.container.appendChild( statusText );
 	this.container.appendChild( progressBar );
 
-}
+};
 
 ProgressBar.prototype.Update = function ( pcent ) {
 
 	this.progressBar.value = pcent;
 
-}
+};
 
 ProgressBar.prototype.Add = function ( pcent ) {
 
 	this.progressBar.value += pcent;
 
-}
+};
 
 ProgressBar.prototype.End = function () {
 
@@ -59,7 +59,7 @@ ProgressBar.prototype.End = function () {
 	container.removeChild( this.statusText );
 	container.removeChild( this.progressBar );
 
-}
+};
 
 export { ProgressBar };
 

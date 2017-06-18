@@ -13,11 +13,11 @@ function Tree( name, id, root, parent ) { // root parameter only used internally
 
 		this.root = root;
 		this.parent = parent;
-		this.id =  ( id === null ) ? ++root.maxId : id;
+		this.id = ( id === null ) ? ++root.maxId : id;
 
 	}
 
-	this.name     = name || "";
+	this.name = name || '';
 	this.children = [];
 
 }
@@ -36,7 +36,22 @@ Tree.prototype.traverse = function ( func ) {
 
 	}
 
-}
+};
+
+Tree.prototype.traverseDepthFirst = function ( func ) {
+
+	var children = this.children;
+
+
+	for ( var i = 0; i < children.length; i++ ) {
+
+		children[ i ].traverseDepthFirst( func );
+
+	}
+
+	func ( this );
+
+};
 
 Tree.prototype.forEachChild = function ( func, recurse ) {
 
@@ -48,11 +63,12 @@ Tree.prototype.forEachChild = function ( func, recurse ) {
 		child = children[ i ];
 
 		func( child );
+
 		if ( recurse === true ) child.forEachChild( func, true );
 
 	}
 
-}
+};
 
 Tree.prototype.addById = function ( name, id, parentId, properties ) {
 
@@ -60,22 +76,22 @@ Tree.prototype.addById = function ( name, id, parentId, properties ) {
 
 	if ( parentNode ) {
 
-		var node = new Tree( name, id, this.root, this );
+		var node = new Tree( name, id, this.root, parentNode );
 
 		if ( properties !== undefined ) Object.assign( node, properties );
 
-		parentNode.children.push ( node );
+		parentNode.children.push( node );
 
-		var root = this.root;		
+		var root = this.root;
 		root.maxId = Math.max( root.maxId, id );
 
-		return id;
+		return node.id;
 
 	}
 
 	return null;
 
-}
+};
 
 Tree.prototype.findById = function ( id ) {
 
@@ -93,9 +109,18 @@ Tree.prototype.findById = function ( id ) {
 
 	return undefined;
 
-}
+};
 
 Tree.prototype.getByPath = function ( path ) {
+
+	var pathArray = path.split( '.' );
+	var node = this.getByPathArray( pathArray );
+
+	return pathArray.length === 0 ? node : undefined;
+
+};
+
+Tree.prototype.getByPathArray = function ( path ) {
 
 	var node  = this;
 	var search = true;
@@ -124,16 +149,16 @@ Tree.prototype.getByPath = function ( path ) {
 
 	return node;
 
-}
+};
 
 Tree.prototype.addPath = function ( path, properties ) {
 
-	var node = this;
+	var node;
 	var newNode;
 
 	// find part of path that exists already
 
-	node = this.getByPath( path );
+	node = this.getByPathArray( path );
 
 	if ( path.length === 0 ) return node.id;
 
@@ -152,23 +177,25 @@ Tree.prototype.addPath = function ( path, properties ) {
 
 	return node.id;
 
-}
+};
 
-Tree.prototype.getPath = function () {
+Tree.prototype.getPath = function ( endNode ) {
 
 	var node = this;
 	var path = [];
+
+	if ( endNode === undefined ) endNode = this.root;
 
 	do {
 
 		path.push( node.name );
 		node = node.parent;
 
-	} while ( node !== null );
+	} while ( node !== endNode );
 
-	return path.reverse().join( "." );
+	return path.reverse().join( '.' );
 
-}
+};
 
 Tree.prototype.getSubtreeIds = function ( id, idSet ) {
 
@@ -182,11 +209,11 @@ Tree.prototype.getSubtreeIds = function ( id, idSet ) {
 
 	}
 
-}
+};
 
 Tree.prototype.getIdByPath = function ( path ) {
 
-	var node = this.getByPath ( path );
+	var node = this.getByPathArray( path );
 
 	if ( path.length === 0 ) {
 
@@ -198,7 +225,7 @@ Tree.prototype.getIdByPath = function ( path ) {
 
 	}
 
-}
+};
 
 export { Tree };
 

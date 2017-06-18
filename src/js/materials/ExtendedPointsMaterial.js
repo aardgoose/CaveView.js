@@ -1,7 +1,7 @@
 
-import { VertexColors, ShaderMaterial, Color, TextureLoader, Vector4 } from '../../../../three.js/src/Three.js';
-import { Shaders } from '../shaders/Shaders.js';
-import { getEnvironmentValue } from '../core/constants.js';
+import { VertexColors, ShaderMaterial, Color, TextureLoader, Vector4 } from '../../../../three.js/src/Three';
+import { Shaders } from '../shaders/Shaders';
+import { getEnvironmentValue } from '../core/lib';
 
 function ExtendedPointsMaterial () {
 
@@ -17,12 +17,12 @@ function ExtendedPointsMaterial () {
 			offsetRepeat: { value: new Vector4() },
 			map: { value: null }
 		},
-		vertexShader:   Shaders.extendedPointsVertexShader,	
+		vertexShader: Shaders.extendedPointsVertexShader,	
 		fragmentShader: Shaders.extendedPointsFragmentShader,
 		vertexColors: VertexColors
 	} );
 
-	this.map = new TextureLoader().load( getEnvironmentValue( "home", "" ) + "images/disc.png" );
+	this.map = new TextureLoader().load( getEnvironmentValue( 'home', '' ) + 'images/disc.png' );
 
 	this.color = new Color();
 	this.opacity = 1.0;
@@ -33,7 +33,7 @@ function ExtendedPointsMaterial () {
 	this.sizeAttenuation = true;
 	this.transparent = true;
 
-	this.type = "CV.ExtendedPointsMaterial";
+	this.type = 'CV.ExtendedPointsMaterial';
 
 	this.isPointsMaterial = true;
 

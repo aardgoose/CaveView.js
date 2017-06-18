@@ -1,8 +1,6 @@
 
-import { getEnvironmentValue } from '../core/constants.js';
-import { Tree } from '../core/Tree.js';
-import { Vector3 } from '../../../../three.js/src/math/Vector3.js';
-import { Box3    } from '../../../../three.js/src/math/Box3.js';
+import { Tree } from '../core/Tree';
+import { Box3    } from '../../../../three.js/src/math/Box3';
 
 function RegionHandler ( filename, dataStream ) {
 
@@ -46,13 +44,13 @@ RegionHandler.prototype.getSurvey = function () {
 
 	return this.data;
 
-}
+};
 
 RegionHandler.prototype.getLimits = function () {
 
 	return this.box;
 
-}
+};
 
 export { RegionHandler };
 

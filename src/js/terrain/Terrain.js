@@ -1,20 +1,19 @@
 
-import { CommonTerrain } from './CommonTerrain.js';
-import { Tile } from './Tile.js';
+import { CommonTerrain } from './CommonTerrain';
+import { Tile } from './Tile';
 
 import {
 	MeshLambertMaterial,
 	TextureLoader,
 	Group
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function Terrain () {
 
 	Group.call( this );
 
-	this.type     = "CV.Terrain";
+	this.type = 'CV.Terrain';
 	this.tile = null;
-	this.overlay;
 
 	return this;
 
@@ -26,55 +25,33 @@ Object.assign( Terrain.prototype, CommonTerrain.prototype );
 
 Terrain.prototype.constructor = Terrain;
 
-Terrain.prototype.isTiled = function () {
-
-	return false;
-
-}
+Terrain.prototype.isTiled = false;
 
 Terrain.prototype.isLoaded = function () {
 
 	return true;
 
-}
+};
 
-Terrain.prototype.addTile = function ( plane, terrainData, bitmap ) {
+Terrain.prototype.addTile = function ( terrainTileGeometry, bitmap ) {
 
-	this.overlay = bitmap;
+	this.activeOverlay = bitmap;
 
-	var tile = new Tile().create( plane, terrainData );
+	if ( this.activeOverlay !== undefined ) this.hasOverlay = true;
+
+	var tile = new Tile().create( terrainTileGeometry );
 
 	this.add( tile );
 	this.tile = tile;
 
 	return this;
 
-}
+};
 
-Terrain.prototype.getOverlays = function () {
-
-	if ( this.overlay ) {
-
-		return ["built in"];
-
-	} else {
-
-		return [];
-
-	}
-
-}
-
-Terrain.prototype.getOverlay = function () {
-
-	return "built in";
-
-}
-
-Terrain.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
+Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	var loader  = new TextureLoader();
-	var	texture = loader.load( this.overlay, imageLoadedCallback );
+	var	texture = loader.load( overlay, overlayLoadedCallback );
 
 	this.setMaterial( new MeshLambertMaterial(
 
@@ -86,26 +63,26 @@ Terrain.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
 
 	) );
 
-}
+};
 
 Terrain.prototype.removed = function () {
 
 	this.tile.removed();
 
-}
+};
 
 Terrain.prototype.setMaterial = function ( material ) {
 
 	this.tile.setMaterial( material );
 
-}
+};
 
 Terrain.prototype.setOpacity = function ( opacity ) {
 
 	this.tile.setOpacity( opacity );
 	this.opacity = opacity;
 
-}
+};
 
 export { Terrain };
 

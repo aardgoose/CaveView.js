@@ -1,18 +1,44 @@
 
-import { padDigits } from '../core/lib.js';
+function HeightMapLoader ( tileSpec, loadCallback, errorCallback ) {
 
-function HeightMapLoader ( tileSet, resolution, x, y, loadCallback, errorCallback ) {
+	if ( ! loadCallback ) alert( 'No callback specified' );
 
-	if ( !loadCallback ) alert( "No callback specified" );
-
-	var prefix = tileSet.PREFIX + resolution + "M" + tileSet.TILESIZE + "-";
+	var tileSet = tileSpec.tileSet;
+	var clip = tileSpec.clip;
 
 	this.loadCallback  = loadCallback;
 	this.errorCallback = errorCallback;
-	this.x = x;
-	this.y = y;
-	this.tileFile = prefix + padDigits( y, 3 ) + "-" + padDigits( x, 3 ) + ".bin";
-	this.basedir = tileSet.BASEDIR;
+
+	if ( tileSpec.z > tileSet.dtmMaxZoom ) {
+
+		var scale = Math.pow( 2, tileSpec.z - tileSet.dtmMaxZoom );
+
+		this.x = Math.floor( tileSpec.x / scale );
+		this.y = Math.floor( tileSpec.y / scale );
+		this.z = tileSet.dtmMaxZoom;
+
+		// calculate offset in terrain cells of covering DTM tile for this smaller image tile.
+
+		var divisions = tileSet.divisions;
+
+		var dtmOffsetX =  ( divisions * ( tileSpec.x % scale ) ) / scale;
+		var dtmOffsetY =  ( divisions + 1 ) * ( divisions * ( tileSpec.y % scale ) ) / scale;
+
+		clip.dtmOffset = dtmOffsetY + dtmOffsetX;
+		clip.dtmWidth = tileSet.divisions + 1;
+
+	} else {
+
+		this.x = tileSpec.x;
+		this.y = tileSpec.y;
+		this.z = tileSpec.z;
+
+		clip.dtmOffset = 0;
+
+
+	}
+
+	this.tileFile = tileSet.directory + '/' + this.z + '/DTM-' + this.x + '-' + this.y + '.bin';
 
 }
 
@@ -23,21 +49,21 @@ HeightMapLoader.prototype.load = function () {
 	var self = this;
 	var xhr;
 
-	// console.log( "loading: ", this.tileFile );
+	// console.log( 'loading: ', this.tileFile );
 
 	xhr = new XMLHttpRequest();
 
-	xhr.addEventListener( "load", _loaded);
-	xhr.addEventListener( "error", this.errorCallback );
+	xhr.addEventListener( 'load', _loaded);
+	xhr.addEventListener( 'error', this.errorCallback );
 
-	xhr.open( "GET", this.basedir + this.tileFile );
-	xhr.responseType = "arraybuffer"; // Must be after open() to keep IE happy.
+	xhr.open( 'GET', this.tileFile );
+	xhr.responseType = 'arraybuffer'; // Must be after open() to keep IE happy.
 
 	xhr.send();
 
 	return true;
 
-	function _loaded ( request ) {
+	function _loaded ( /* request */ ) {
 
 		if (xhr.status === 200) {
 
@@ -48,8 +74,10 @@ HeightMapLoader.prototype.load = function () {
 			self.errorCallback( xhr.response, self.x, self.y );
 
 		}
+
 	}
-}
+
+};
 
 export { HeightMapLoader };
 

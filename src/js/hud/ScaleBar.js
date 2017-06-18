@@ -1,5 +1,5 @@
 
-import { HudObject } from './HudObject.js';
+import { HudObject } from './HudObject';
 
 import {
 	Vector3, Color,
@@ -7,7 +7,7 @@ import {
 	LineBasicMaterial, MeshBasicMaterial,
 	FaceColors, FrontSide,
 	LineSegments, Group, Mesh
-} from '../../../../three.js/src/Three.js';
+} from '../../../../three.js/src/Three';
 
 function ScaleBar ( container, hScale, rightMargin ) {
 
@@ -15,27 +15,27 @@ function ScaleBar ( container, hScale, rightMargin ) {
 
 	Group.call( this );
 
-	this.name = "CV.ScaleBar";
+	this.name = 'CV.ScaleBar';
 	this.domObjects = [];
 
 	this.hScale        = hScale;
 	this.scaleBars     = [];
 	this.currentLength = 0;
 
-	this.position.set( -container.clientWidth / 2 +  5,  -container.clientHeight / 2 + leftMargin, 0 );
+	this.position.set( -container.clientWidth / 2 + 5, -container.clientHeight / 2 + leftMargin, 0 );
 	this.scaleMax = container.clientWidth - ( leftMargin + rightMargin );
 
-	var legend = document.createElement( "div" );
+	var legend = document.createElement( 'div' );
 
-	legend.classList.add( "scale-legend" );
-	legend.textContent = "";
+	legend.classList.add( 'scale-legend' );
+	legend.textContent = '';
 
 	container.appendChild( legend );
 
 	this.legend = legend;
 	this.domObjects.push( legend );
 
-	this.addEventListener( "removed", this.removeDomObjects );
+	this.addEventListener( 'removed', this.removeDomObjects );
 
 	return this;
 
@@ -51,7 +51,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	var scaleBars = this.scaleBars;
 	var length = 0;
-	var self   = this;
+	var self = this;
 
 	var maxVisible = this.scaleMax / ( scale * this.hScale );
 	var exponent = Math.ceil( Math.log( maxVisible ) / Math.LN10 ) - 1;
@@ -84,11 +84,11 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	}
 
-	scale = scale * Math.pow( 10, exponent );	
+	scale = scale * Math.pow( 10, exponent );
 
 	if ( this.currentLength !== length ) {
 
-		if ( !scaleBars[ length ] ) {
+		if ( ! scaleBars[ length ] ) {
 
 			var bar = _makeScaleBar( length );
 
@@ -112,8 +112,8 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	var legend = this.legend;
 
-	legend.style.display = "block";
-	legend.style.left = ( scale * scaleBars[ length ].topRight - legend.clientWidth ) + "px";
+	legend.style.display = 'block';
+	legend.style.left = ( scale * scaleBars[ length ].topRight - legend.clientWidth ) + 'px';
 
 	legend.textContent = legendText;
 
@@ -140,15 +140,15 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 		for ( i = 0, l = bar.faces.length; i < l; i = i + 4 ) {
 
-			bar.faces[ i ].color   = cRed;
-			bar.faces[ i+1 ].color = cRed;
+			bar.faces[ i ].color = cRed;
+			bar.faces[ i + 1 ].color = cRed;
 
 		}
 
 		for ( i = 0, l = bar2.faces.length; i < l; i = i + 4 ) {
 
-			bar2.faces[ i ].color   = cRed;
-			bar2.faces[ i+1 ].color = cRed;
+			bar2.faces[ i ].color = cRed;
+			bar2.faces[ i + 1 ].color = cRed;
 
 		}
 
@@ -168,7 +168,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	}
 
-}
+};
 
 export { ScaleBar };
 

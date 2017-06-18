@@ -691,7 +691,6 @@ function viewComplete () {
 	viewState.shadingMode = SHADING_HEIGHT;
 
 	surveyTree = Viewer.getSurveyTree();
-	routes = Viewer.getRoutes();
 
 	isCaveLoaded = true;
 

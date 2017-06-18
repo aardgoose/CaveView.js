@@ -145,7 +145,7 @@ Stations.prototype.selectStationByIndex = function ( index ) {
 
 	this.selectedSize = pSize.getX( index );
 
-	pSize.setX( index, 20 );
+	pSize.setX( index, this.selectedSize * 2 );
 
 //	pSize.updateRange.offset = index;
 //	pSize.updateRange.count  = 1;

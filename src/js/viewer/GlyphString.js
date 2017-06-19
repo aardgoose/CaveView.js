@@ -41,11 +41,9 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 	for ( i = 0; i < l; i++ ) {
 
-		var glyph = text[ i ];
+		if ( text.charCodeAt() === 0 ) continue; // skip null characters
 
-		if ( glyph.codePointAt() === 0 ) continue; // skip null characters
-
-		glyphData = glyphAtlas.getGlyph( glyph );
+		glyphData = glyphAtlas.getGlyph( text[ i ] );
 
 		uvs[ i * 2 ] = glyphData.column;
 		uvs[ i * 2 + 1 ] = glyphData.row;

@@ -332,7 +332,11 @@ function onload () {
 
 	}
 
-	CV.Viewer.init( 'scene', { home: 'CaveView/', terrainDirectory: '/CaveView.js/terrain/', surveyDirectory: '/CaveView.js/surveys/' } );
+	CV.Viewer.init( 'scene', {
+		home: 'CaveView/',
+		terrainDirectory: '/CaveView.js/terrain/',
+		surveyDirectory: '/CaveView.js/surveys/'
+	} );
 
 	CV.Viewer.addOverlay( 'OSM', function ( x, y, z ) { return 'https://b.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; } );
 
@@ -363,7 +367,7 @@ function onload () {
 <ul>
 <li>Google Chrome 59</li>
 <li>Firefox 53</li>
-<li>Internet Explorer 11 (pending minor fixes)</li>
+<li>Internet Explorer 11</li>
 <li>Microsoft Edge</li>
 <li>Opera 38</li>
 <li>Safari 9.1 (on iOS and OS X)</li>

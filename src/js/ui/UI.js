@@ -1,11 +1,10 @@
 import {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, STATION_ENTRANCE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, 
-	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_ASPECT, SHADING_DEPTH_CURSOR,
+	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_ASPECT, SHADING_DEPTH_CURSOR,
 	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
 } from '../core/constants';
 
-import { replaceExtension } from '../core/lib';
 import { Page } from './Page';
 import { ProgressBar } from './ProgressBar';
 import { CaveLoader } from '../loaders/CaveLoader';
@@ -28,18 +27,17 @@ var container;
 
 var file;
 var progressBar;
-
 var terrainControls = [];
 var terrainOverlay = null;
 
 var legShadingModes = {
-	"by height":          SHADING_HEIGHT,
-	"by leg length":      SHADING_LENGTH,
-	"by leg inclination": SHADING_INCLINATION,
-	"height cursor":      SHADING_CURSOR,
-	"fixed":              SHADING_SINGLE,
-	"survey":             SHADING_SURVEY
-}
+	'by height':          SHADING_HEIGHT,
+	'by leg length':      SHADING_LENGTH,
+	'by leg inclination': SHADING_INCLINATION,
+	'height cursor':      SHADING_CURSOR,
+	'fixed':              SHADING_SINGLE,
+	'survey':             SHADING_SURVEY
+};
 
 var surfaceShadingModes = {
 	'by height':          SHADING_HEIGHT,
@@ -388,13 +386,13 @@ function initHelpPage () {
 
 	dl = document.createElement( 'dl' );
 
-	_addKey( "1", "depth" );
-	_addKey( "2", "leg angle" );
-	_addKey( "3", "leg length" );
-	_addKey( "4", "depth cursor " );
-	_addKey( "5", "single colour" );
-	_addKey( "6", "survey section" );
-	_addKey( "7", "depth from surface" );
+	_addKey( '1', 'depth' );
+	_addKey( '2', 'leg angle' );
+	_addKey( '3', 'leg length' );
+	_addKey( '4', 'depth cursor ' );
+	_addKey( '5', 'single colour' );
+	_addKey( '6', 'survey section' );
+	_addKey( '7', 'depth from surface' );
 
 	_addKey( '[', 'move depth cursor up' );
 	_addKey( ']', 'move depth cursor down' );

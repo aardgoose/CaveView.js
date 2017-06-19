@@ -4,12 +4,12 @@ import  {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
-	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY, SHADING_PATH,
+	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY,
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
 	upAxis,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL
+	MOUSE_MODE_NORMAL
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -250,12 +250,6 @@ function init ( domID, configuration ) { // public method
 		'highlight': {
 			writeable: true,
 			set: function ( x ) { _viewStateSetter( highlightSection, 'highlight', x ); }
-		},
-
-		'routeEdit': {
-			writeable: true,
-			get: function () { return ( mouseMode === MOUSE_MODE_ROUTE_EDIT ); },
-			set: function ( x ) { _setRouteEdit( x ); }
 		},
 
 		'setPOI': {
@@ -1005,20 +999,6 @@ function mouseDown ( event ) {
 
 	}
 
-	function _selectSegment ( picked ) {
-
-		var routes = getRoutes();
-
-		routes.toggleSegment( picked.index );
-
-		setShadingMode( SHADING_PATH );
-
-		renderView();
-
-		return true;
-
-	}
-
 	function _selectEntrance ( picked ) {
 
 		if ( ! viewState.entrances ) return false;
@@ -1151,12 +1131,6 @@ function getStats () {
 function getControls () {
 
 	return controls;
-
-}
-
-function getRoutes () {
-
-	return survey.getRoutes();
 
 }
 

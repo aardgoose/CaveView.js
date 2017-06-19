@@ -7,7 +7,7 @@
  * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
  */
 
-import { Float32BufferAttribute, BufferGeometry, Vector3, Box3 } from '../../../../three.js/src/Three';
+import { Float32BufferAttribute, BufferGeometry, Vector3, Box3 } from '../../../../three.js/src/Three-workers';
 import { ColourCache } from '../core/ColourCache';
 import { upAxis } from '../core/constants';
 

@@ -7,7 +7,11 @@
  * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
  */
 
-import { Float32BufferAttribute, BufferGeometry, Vector3, Box3 } from '../../../../three.js/src/Three-workers';
+import { BufferGeometry } from '../../../../three.js/src/core/BufferGeometry';
+import { Float32BufferAttribute } from '../../../../three.js/src/core/BufferAttribute';
+import { Vector3 } from '../../../../three.js/src/math/Vector3';
+import { Box3 } from '../../../../three.js/src/math/Box3';
+
 import { ColourCache } from '../core/ColourCache';
 import { upAxis } from '../core/constants';
 

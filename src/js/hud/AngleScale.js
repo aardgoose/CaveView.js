@@ -1,6 +1,6 @@
 
 import { HudObject } from './HudObject';
-import { Colours } from '../core/Colours';
+import { ColourCache } from '../core/ColourCache';
 import {
 	Vector3, Color,
 	RingGeometry,
@@ -23,7 +23,7 @@ function AngleScale ( container ) {
 	var c = [];
 
 	var pNormal = new Vector3( 1, 0, 0 );
-	var hues = Colours.inclinationColours;
+	var hues = ColourCache.getColors( 'inclination' );
 
 	var vertices = geometry.vertices;
 	var legNormal = new Vector3();

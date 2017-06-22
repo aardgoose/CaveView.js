@@ -1,7 +1,7 @@
 
 import { MATERIAL_LINE } from '../core/constants';
 import { Shaders } from '../shaders/Shaders';
-import { Colours } from '../core/Colours';
+import { ColourCache } from '../core/ColourCache';
 
 import { Vector3, ShaderMaterial } from '../../../../three.js/src/Three';
 
@@ -25,7 +25,7 @@ function HeightMaterial ( type, limits ) {
 		uLight:         { value: new Vector3( -1, -1, 2 ) }, // pseudo light source somewhere over viewer's left shoulder.
 		minZ:           { value: limits.min.z },
 		scaleZ:         { value: 1 / ( limits.max.z - limits.min.z ) },
-		cmap:           { value: Colours.gradientTexture },
+		cmap:           { value: ColourCache.getTexture( 'gradient' ) },
 	};
 
 	this.vertexShader = Shaders.heightVertexShader;

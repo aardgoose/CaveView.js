@@ -1315,7 +1315,7 @@ Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
 
 Survey.prototype.setLegColourByLength = function ( mesh ) {
 
-	var colours = ColourCache.gradient;
+	var colours = ColourCache.getColors( 'gradient' );
 	var colourRange = colours.length - 1;
 	var stats = mesh.stats;
 
@@ -1391,7 +1391,8 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
-	var colours = ColourCache.inclination;
+	var colours = ColourCache.getColors( 'inclination' );
+
 	var colourRange = colours.length - 1;
 	var hueFactor = colourRange * 2 / Math.PI;
 	var legNormal = new Vector3();

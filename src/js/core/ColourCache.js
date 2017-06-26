@@ -87,8 +87,12 @@ function getColors( name ) {
 export var ColourCache = {
 	getTexture: getTexture,
 	getColors: getColors,
-	red:         new Color( 0xff0000 ),
-	yellow:      new Color( 0xffff00 ),
-	white:       new Color( 0xffffff ),
-	grey:        new Color( 0x444444 )
+	red:       new Color( 0xff0000 ),
+	yellow:    new Color( 0xffff00 ),
+	green:     new Color( 0x00ff00 ),
+	white:     new Color( 0xffffff ),
+	grey:      new Color( 0x444444 ),
+	lightGrey: new Color( 0x888888 ),
+	hudBlue:   new Color( 0x106f8d ),
+	hudRed:    new Color( 0x802100 )
 };

@@ -1,8 +1,9 @@
 
 import { Shaders } from '../shaders/Shaders';
 import { MATERIAL_LINE } from '../core/constants';
+import { ColourCache } from '../core/ColourCache';
 
-import { Vector3, Color, ShaderMaterial } from '../../../../three.js/src/Three';
+import { Vector3, ShaderMaterial } from '../../../../three.js/src/Three';
 
 function CursorMaterial ( type, limits ) {
 
@@ -24,11 +25,11 @@ function CursorMaterial ( type, limits ) {
 	}
 
 	this.uniforms = {
-		uLight:         { value: new Vector3( -1, -1, 2 ) },
-		cursor:         { value: ( limits.max.z + limits.min.z ) / 2 },
-		cursorWidth:    { value: 5.0 },
-		baseColor:      { value: new Color( 0x888888 ) },
-		cursorColor:    { value: new Color( 0x00ff00 ) },
+		uLight:      { value: new Vector3( -1, -1, 2 ) },
+		cursor:      { value: ( limits.max.z + limits.min.z ) / 2 },
+		cursorWidth: { value: 5.0 },
+		baseColor:   { value: ColourCache.lightGrey },
+		cursorColor: { value: ColourCache.green }
 	};
 
 	this.vertexShader   = Shaders.cursorVertexShader;

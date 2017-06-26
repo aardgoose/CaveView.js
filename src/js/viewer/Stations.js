@@ -1,5 +1,4 @@
 import {
-	Color,
 	BufferGeometry,
 	Points,
 	Float32BufferAttribute
@@ -9,6 +8,7 @@ import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
 import { FEATURE_STATIONS, STATION_ENTRANCE } from '../core/constants';
 import { Viewer } from '../viewer/Viewer';
+import { ColourCache } from '../core/ColourCache';
 
 function Stations () {
 
@@ -18,8 +18,8 @@ function Stations () {
 	this.map = new Map();
 	this.stationCount = 0;
 
-	this.baseColor     = new Color( 0x880000 );
-	this.junctionColor = new Color( 0xffff00 );
+	this.baseColor     = ColourCache.red;
+	this.junctionColor = ColourCache.yellow;
 
 	this.layers.set( FEATURE_STATIONS );
 

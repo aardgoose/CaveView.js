@@ -1,8 +1,9 @@
 
 import { Shaders } from '../shaders/Shaders';
 import { MATERIAL_LINE } from '../core/constants';
+import { ColourCache } from '../core/ColourCache';
 
-import { ShaderMaterial, Color, Vector3 } from '../../../../three.js/src/Three';
+import { ShaderMaterial, Vector3 } from '../../../../three.js/src/Three';
 
 function DepthCursorMaterial ( type, limits, texture ) {
 
@@ -21,8 +22,8 @@ function DepthCursorMaterial ( type, limits, texture ) {
 			depthMap:    { value: texture },
 			cursor:      { value: ( limits.max.z - limits.min.z ) / 2 },
 			cursorWidth: { value: 5.0 },
-			baseColor:   { value: new Color( 0x888888 ) },
-			cursorColor: { value: new Color( 0x00ff00 ) }
+			baseColor:   { value: ColourCache.lightGrey },
+			cursorColor: { value: ColourCache.green }
 		},
 		vertexShader: Shaders.depthCursorVertexShader,
 		fragmentShader: Shaders.depthCursorFragmentShader

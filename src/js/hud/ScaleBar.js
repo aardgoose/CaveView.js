@@ -1,8 +1,9 @@
 
 import { HudObject } from './HudObject';
+import { ColourCache } from '../core/ColourCache';
 
 import {
-	Vector3, Color,
+	Vector3,
 	Geometry, PlaneGeometry,
 	LineBasicMaterial, MeshBasicMaterial,
 	FaceColors, FrontSide,
@@ -136,19 +137,17 @@ ScaleBar.prototype.setScale = function ( scale ) {
 		var mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
 		var mLine = new LineSegments( line, new LineBasicMaterial( { color: 0xff0000 } ) );
 
-		var cRed = new Color( 0xff0000 );
-
 		for ( i = 0, l = bar.faces.length; i < l; i = i + 4 ) {
 
-			bar.faces[ i ].color = cRed;
-			bar.faces[ i + 1 ].color = cRed;
+			bar.faces[ i ].color = ColourCache.red;
+			bar.faces[ i + 1 ].color = ColourCache.red;
 
 		}
 
 		for ( i = 0, l = bar2.faces.length; i < l; i = i + 4 ) {
 
-			bar2.faces[ i ].color = cRed;
-			bar2.faces[ i + 1 ].color = cRed;
+			bar2.faces[ i ].color = ColourCache.red;
+			bar2.faces[ i + 1 ].color = ColourCache.red;
 
 		}
 

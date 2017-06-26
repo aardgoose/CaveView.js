@@ -36,7 +36,6 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 	var indices = [];
 	var vertices = [];
-	var colours = [];
 	var uvs = [];
 
 	var vertexCount = 0;
@@ -152,13 +151,14 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 	var buffer = new Float32Array( vertexCount * 3 );
 	var colours = [];
+	var colour;
 
 	// convert scale to float values
 
-	for ( i = 0, l = colourScale.length; i < l;  i++ ) {
+	for ( i = 0, l = colourScale.length; i < l; i++ ) {
 
-		var c = colourScale[ i ];
-		colours.push( [ c[ 0 ] / 255 , c[ 1 ] / 255 , c [ 2 ] / 255 ] );
+		colour = colourScale[ i ];
+		colours.push( [ colour[ 0 ] / 255, colour[ 1 ] / 255, colour[ 2 ] / 255 ] );
 
 	}
 
@@ -169,7 +169,7 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 		dotProduct = vNormal.dot( upAxis );
 		colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
 
-		var colour = colours[ colourIndex ];
+		colour = colours[ colourIndex ];
 		var offset = i * 3;
 
 		buffer[ offset     ] = colour[ 0 ];

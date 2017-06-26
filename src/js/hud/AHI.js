@@ -1,9 +1,10 @@
 
 import { upAxis } from '../core/constants';
 import { HudObject } from './HudObject';
+import { ColourCache } from '../core/ColourCache';
 
 import {
-	Vector3, Color, Math as _Math,
+	Vector3, Math as _Math,
 	Geometry, SphereBufferGeometry, BufferAttribute, CylinderBufferGeometry,
 	LineBasicMaterial, MeshPhongMaterial,
 	VertexColors,
@@ -38,8 +39,8 @@ function AHI ( container ) {
 
 	var colours = [];
 
-	var c1 = new Color( 0x106f8d );
-	var c2 = new Color( 0x802100 );
+	var c1 = ColourCache.hudBlue;
+	var c2 = ColourCache.hudRed;
 
 	var i;
 

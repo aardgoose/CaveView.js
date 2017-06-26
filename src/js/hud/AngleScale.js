@@ -2,7 +2,7 @@
 import { HudObject } from './HudObject';
 import { ColourCache } from '../core/ColourCache';
 import {
-	Vector3, Color,
+	Vector3,
 	RingGeometry,
 	MeshBasicMaterial,
 	VertexColors, FrontSide,
@@ -35,7 +35,7 @@ function AngleScale ( container ) {
 		var dotProduct = legNormal.dot( pNormal );
 		var hueIndex = Math.floor( 127 * 2 * Math.asin( Math.abs( dotProduct ) ) / Math.PI );
 
-		c[ i ] = new Color( hues[ hueIndex ] );
+		c[ i ] = hues[ hueIndex ];
 
 	}
 

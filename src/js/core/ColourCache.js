@@ -9,7 +9,7 @@ import { RGBFormat, UnsignedByteType }  from '../../../../three.js/src/constants
 var caches = {
 	'colors': [],
 	'texture' : []
-}
+};
 
 function createTexture ( scale ) {
 
@@ -40,9 +40,9 @@ function createColors ( scale ) {
 	var cache = [];
 	var c;
 
-	for ( var i = 0, l = scale.length; i < l; i++ ) {3
+	for ( var i = 0, l = scale.length; i < l; i++ ) {
 
-		var c = scale[ i ];
+		c = scale[ i ];
 
 		cache[ i ] = new Color( c[ 0 ] / 255, c[ 1 ] / 255, c[ 2 ] / 255 );
 
@@ -52,9 +52,9 @@ function createColors ( scale ) {
 
 }
 
-function getCacheEntry( cache, createFunc, name ) {
+function getCacheEntry( cacheName, createFunc, name ) {
 
-	var cache = caches[ cache ];
+	var cache = caches[ cacheName ];
 	var entry = cache[ name ];
 
 	if ( entry === undefined ) {

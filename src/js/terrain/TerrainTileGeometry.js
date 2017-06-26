@@ -12,7 +12,7 @@ import { Float32BufferAttribute } from '../../../../three.js/src/core/BufferAttr
 import { Vector3 } from '../../../../three.js/src/math/Vector3';
 import { Box3 } from '../../../../three.js/src/math/Box3';
 
-import { ColourCache } from '../core/ColourCache';
+import { Colours } from '../core/Colours';
 import { upAxis } from '../core/constants';
 
 function TerrainTileGeometry( width, height, widthSegments, heightSegments, terrainData, scale, clip ) {
@@ -30,7 +30,7 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 	var segment_width = width / gridX;
 	var segment_height = height / gridY;
 
-	var ix, iy, i, z;
+	var ix, iy, i, z, l;
 
 	// buffers
 
@@ -141,14 +141,26 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 	this.computeVertexNormals();
 
-	var colourCache = ColourCache.terrain;
-	var colourRange = colourCache.length - 1;
+	var colourScale = Colours.terrain;
+	var colourRange = colourScale.length - 1;
 
 	var colourIndex;
 	var dotProduct;
 
 	var normal = this.getAttribute( 'normal' );
 	var vNormal = new Vector3();
+
+	var buffer = new Float32Array( vertexCount * 3 );
+	var colours = [];
+
+	// convert scale to float values
+
+	for ( i = 0, l = colourScale.length; i < l;  i++ ) {
+
+		var c = colourScale[ i ];
+		colours.push( [ c[ 0 ] / 255 , c[ 1 ] / 255 , c [ 2 ] / 255 ] );
+
+	}
 
 	for ( i = 0; i < vertexCount; i++ ) {
 
@@ -157,11 +169,16 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 		dotProduct = vNormal.dot( upAxis );
 		colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
 
-		colours.push( colourCache[ colourIndex ] );
+		var colour = colours[ colourIndex ];
+		var offset = i * 3;
+
+		buffer[ offset     ] = colour[ 0 ];
+		buffer[ offset + 1 ] = colour[ 1 ];
+		buffer[ offset + 2 ] = colour[ 2 ];
 
 	}
 
-	this.addAttribute( 'color', new Float32BufferAttribute( vertexCount * 3, 3 ).copyColorsArray( colours ) );
+	this.addAttribute( 'color', new Float32BufferAttribute( buffer, 3 ) );
 
 }
 

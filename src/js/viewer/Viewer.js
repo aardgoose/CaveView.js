@@ -62,9 +62,8 @@ var raycaster;
 var terrain = null;
 var directionalLight;
 var survey;
-var routes;
 var limits;
-var stats  = {};
+var stats = {};
 var zScale;
 
 var viewState = {};
@@ -155,7 +154,7 @@ function init ( domID, configuration ) { // public method
 	Object.defineProperties( viewState, {
 
 		'container': {
-			value: container,
+			value: container
 		},
 
 		'terrain': {
@@ -227,19 +226,19 @@ function init ( domID, configuration ) { // public method
 		},
 
 		'maxHeight': {
-			get: function () { return limits.max.z; },
+			get: function () { return limits.max.z; }
 		},
 
 		'minHeight': {
-			get: function () { return limits.min.z; },
+			get: function () { return limits.min.z; }
 		},
 
 		'maxLegLength': {
-			get: function () { return stats.maxLegLength; },
+			get: function () { return stats.maxLegLength; }
 		},
 
 		'minLegLength': {
-			get: function () { return stats.minLegLength; },
+			get: function () { return stats.minLegLength; }
 		},
 
 		'section': {
@@ -374,22 +373,6 @@ function init ( domID, configuration ) { // public method
 			console.log( 'invalid mouse mode' );
 
 		}
-
-	}
-
-}
-
-function addRoutes ( newRoutes ) {
-
-	routes = newRoutes;
-
-	if ( survey ) survey.addRoutes( newRoutes );
-
-	routes.addEventListener( 'changed', _routesChanged );
-
-	function _routesChanged ( /* event */ ) {
-
-		setShadingMode( shadingMode );
 
 	}
 
@@ -919,6 +902,8 @@ function loadSurvey ( newSurvey ) {
 	controls.object = camera;
 	controls.enabled = true;
 
+	survey.getRoutes().addEventListener( 'changed', _routesChanged );
+
 	renderView();
 
 	function _terrainReady () {
@@ -949,6 +934,13 @@ function loadSurvey ( newSurvey ) {
 		loadTerrainListeners();
 
 		if ( ! depthTextureCreated ) renderDepthTexture();
+
+	}
+
+	function _routesChanged ( /* event */ ) {
+
+		setShadingMode( shadingMode );
+		renderView();
 
 	}
 
@@ -1236,7 +1228,6 @@ export var Viewer = {
 	init:          init,
 	clearView:     clearView,
 	loadCave:      loadCave,
-	addRoutes:     addRoutes,
 	getRoutes:     getRoutes,
 	getStats:      getStats,
 	getSurveyTree: getSurveyTree,

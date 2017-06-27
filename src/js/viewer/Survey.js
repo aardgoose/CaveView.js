@@ -249,7 +249,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.loadDyeTraces();
 
-	this.routes = new Routes( metadata.getRoutes() ).mapSurvey( this.stations, this.getLegs(), this.surveyTree );
+	this.routes = new Routes( metadata ).mapSurvey( this.stations, this.getLegs(), this.surveyTree );
 
 	return;
 

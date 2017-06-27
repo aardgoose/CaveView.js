@@ -6,11 +6,11 @@ import {
 	EventDispatcher,
 } from '../../../../three.js/src/Three';
 
-function Routes ( routes ) {
+function Routes ( metadataSource ) {
 
 	// determine segments between junctions and entrances/passage ends and create mapping array.
 
-	if ( routes === undefined ) routes = [];
+	this.metadataSource = metadataSource;
 	this.surveyTree = null;
 	this.segments = []; // maps vertex index to segment membership
 	this.segmentMap = new Map(); // maps segments of survey between ends of passages and junctions.
@@ -32,15 +32,15 @@ function Routes ( routes ) {
 		get: function () { return this.toDownload(); }
 	} );
 
-	var i;
-	var route;
+	var routes = metadataSource.getRoutes();
+	var routeName;
 
-	for ( i = 0; i < routes.length; i++ ) {
+	for ( routeName in routes ) {
 
-		route = routes[ i ];
+		var route = routes[ routeName ];
 
-		this.routeNames.push( route.name );
-		this.routes.set( route.name, route.segments );
+		this.routeNames.push( routeName );
+		this.routes.set( routeName, route.segments );
 
 	}
 
@@ -55,7 +55,6 @@ Object.assign( Routes.prototype, EventDispatcher.prototype );
 Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 	// determine segments between junctions and entrances/passage ends and create mapping array.
-
 	this.surveyTree = surveyTree;
 
 	var segmentMap = this.segmentMap;
@@ -199,18 +198,11 @@ Routes.prototype.getCurrentRoute = function () {
 
 };
 
+/*
 Routes.prototype.toDownload = function () {
-
-	// dump dump of json top window for cut and paste capture
-
-	var routesJSON = {
-		name: 'test',
-		routes: []
-	};
 
 	this.routes.forEach( _addRoutes );
 
-	return 'data:text/json;charset=utf8,' + encodeURIComponent( JSON.stringify( routesJSON ) );
 
 	function _addRoutes ( route, routeName ) {
 
@@ -219,6 +211,7 @@ Routes.prototype.toDownload = function () {
 	}
 
 };
+*/
 
 Routes.prototype.saveCurrent = function () {
 
@@ -229,11 +222,13 @@ Routes.prototype.saveCurrent = function () {
 
 	segmentMap.forEach( _addRoute );
 
+	this.metadataSource.saveRoute( this.currentRouteName, { segments: routeSegments } );
+
 	function _addRoute ( value /*, key */ ) {
 
 		if ( route.has( value.segment ) ) {
 
-			routeSegments.push( { 
+			routeSegments.push( {
 				start: value.startStation.getPath(),
 				end: value.endStation.getPath()
 			} );

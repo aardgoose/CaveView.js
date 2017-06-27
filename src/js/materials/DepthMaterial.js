@@ -1,7 +1,7 @@
 
 import { Shaders } from '../shaders/Shaders';
 import { MATERIAL_LINE } from '../core/constants';
-import { Colours } from '../core/Colours';
+import { ColourCache } from '../core/ColourCache';
 
 import { ShaderMaterial, Vector3 } from '../../../../three.js/src/Three';
 
@@ -31,7 +31,7 @@ function DepthMaterial ( type, limits, texture ) {
 			scaleX:   { value: 1 / range.x },
 			scaleY:   { value: 1 / range.y },
 			scaleZ:   { value: 1 / range.z },
-			cmap:     { value: Colours.gradientTexture },
+			cmap:     { value: ColourCache.getTexture( 'gradient' ) },
 			depthMap: { value: texture }
 		},
 

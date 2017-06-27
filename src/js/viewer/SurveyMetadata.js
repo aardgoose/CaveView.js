@@ -61,6 +61,22 @@ SurveyMetadata.prototype.getRoutes = function () {
 
 };
 
+SurveyMetadata.prototype.saveRoute = function ( routeName, route ) {
+
+	this.routes[ routeName ] = route;
+
+	this.saveLocal();
+
+};
+
+SurveyMetadata.prototype.saveLocal = function () {
+
+	var localMetadata = { routes: this.routes, traces: this.traces };
+
+	localStorage.setItem( this.name, JSON.stringify( localMetadata ) );
+
+}
+
 SurveyMetadata.prototype.toDownload = function () {
 
 	// dump of json top window for cut and paste capture

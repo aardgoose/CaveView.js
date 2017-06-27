@@ -884,10 +884,6 @@ function loadSurvey ( newSurvey ) {
 	scene.add( survey );
 //	scene.add( new DirectionGlobe( survey ) );
 
-	// light the model for Lambert Shaded surface
-
-
-
 	caveIsLoaded = true;
 
 	selectSection( 0 );

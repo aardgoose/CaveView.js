@@ -29,7 +29,7 @@ function ProgressDial () {
 
 	this.rotateOnAxis( upAxis, Math.PI / 2 );
 
-	this.visible  = false;
+	this.visible = false;
 	this.isVisible = true;
 
 	this.addEventListener( 'removed', this.removeDomObjects );

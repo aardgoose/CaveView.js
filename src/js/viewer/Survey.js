@@ -21,6 +21,7 @@ import { Legs } from './Legs';
 import { Point } from './Point';
 import { Walls } from './Walls';
 import { DyeTraces } from './DyeTraces';
+import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
 import { Terrain } from '../terrain/Terrain';
 import { WorkerPool } from '../workers/WorkerPool';
@@ -242,21 +243,13 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.pointTargets.push( this.stations );
 
-	if ( cave.metadata ) {
+	var metadata = new SurveyMetadata( this.name, cave.metadata );
 
-		if ( cave.metadata.routes ) {
+	this.metadata = metadata;
 
-			this.routes = new Routes( cave.metadata.routes ).mapSurvey( this.stations, this.getLegs(), this.surveyTree );
+	this.loadDyeTraces();
 
-		}
-
-		if ( cave.metadata.traces ) {
-
-			this.loadDyeTraces( cave.metadata.traces );
-
-		}
-
-	}
+	this.routes = new Routes( metadata.getRoutes() ).mapSurvey( this.stations, this.getLegs(), this.surveyTree );
 
 	return;
 
@@ -777,7 +770,9 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 
 };
 
-Survey.prototype.loadDyeTraces = function ( traces ) {
+Survey.prototype.loadDyeTraces = function () {
+
+	var traces = this.metadata.getTraces();
 
 	if ( traces.length === 0 ) return;
 
@@ -845,17 +840,7 @@ Survey.prototype.getLegs = function () {
 
 Survey.prototype.getRoutes = function () {
 
-	var routes = this.routes;
-
-	if ( routes === null ) {
-
-		routes = new Routes().mapSurvey( this.stations, this.getLegs(), this.surveyTree );
-
-		this.routes = routes;
-
-	}
-
-	return routes;
+	return this.routes;
 
 };
 

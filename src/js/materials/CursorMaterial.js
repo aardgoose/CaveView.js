@@ -12,17 +12,7 @@ function CursorMaterial ( type, limits ) {
 	this.min = limits.min.z;
 	this.max = limits.max.z;
 
-	this.defines = {};
-
-	if ( type === MATERIAL_LINE ) {
-
-		this.defines.USE_COLOR = true;
-
-	} else {
-
-		this.defines.SURFACE = true;
-
-	}
+	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
 
 	this.uniforms = {
 		uLight:      { value: new Vector3( -1, -1, 2 ) },

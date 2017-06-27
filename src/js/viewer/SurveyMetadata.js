@@ -23,9 +23,6 @@ function SurveyMetadata( name, metadata ) {
 
 		localMetadata = JSON.parse( localMetadata );
 
-		console.log( 'reading local metadata' );
-		console.log( localMetadata );
-
 		var localRoutes = localMetadata.routes;
 		var routeName, route;
 
@@ -75,7 +72,7 @@ SurveyMetadata.prototype.saveLocal = function () {
 
 	localStorage.setItem( this.name, JSON.stringify( localMetadata ) );
 
-}
+};
 
 SurveyMetadata.prototype.toDownload = function () {
 
@@ -90,6 +87,6 @@ SurveyMetadata.prototype.toDownload = function () {
 
 	return 'data:text/json;charset=utf8,' + encodeURIComponent( JSON.stringify( routesJSON ) );
 
-}
+};
 
 export { SurveyMetadata };

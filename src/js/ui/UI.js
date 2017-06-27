@@ -24,7 +24,6 @@ var surveyTree;
 var currentTop;
 
 var isCaveLoaded = false;
-var isRoutesLoaded = false;
 
 var container;
 
@@ -389,15 +388,16 @@ function initRoutePage () {
 
 	page.addCheckbox( 'edit route', viewState, 'routeEdit' );
 
-	if ( isRoutesLoaded ) {
+	var routeNames = routes.getRouteNames();
 
-		page.addSelect( 'routes', routes.getRouteNames(), routes );
+	if ( routeNames.length > 0 ) {
+
+		page.addSelect( 'routes', routeNames, routes, 'setRoute' );
 
 	}
 
-	var routeFile = replaceExtension( file, 'json' );
-
-	page.addDownloadButton( 'Download', routes, 'download', routeFile );
+//	var routeFile = replaceExtension( file, 'json' );
+//	page.addDownloadButton( 'Download', routes, 'download', routeFile );
 
 	page.addListener( routes, 'changed', _routesChanged );
 	page.addListener( routes, 'changed', Page.handleChange );
@@ -430,9 +430,9 @@ function initHelpPage () {
 	_addKey( '4', 'height cursor ' );
 	_addKey( '5', 'single colour' );
 	_addKey( '6', 'survey section' );
-	_addKey( '7', 'depth from surface' );
-	_addKey( '8', 'depth cursor' );
-	_addKey( '9', 'route' );
+	_addKey( '7', 'route' );
+	_addKey( '8', 'depth from surface' );
+	_addKey( '9', 'depth cursor' );
 
 	_addKey( '[', 'move depth cursor up' );
 	_addKey( ']', 'move depth cursor down' );
@@ -784,19 +784,19 @@ function keyDown ( event ) {
 
 	case 55: // change colouring scheme to per survey section - '7'
 
-		viewState.shadingMode = SHADING_DEPTH;
+		viewState.shadingMode = SHADING_PATH;
 
 		break;
 
 	case 56: // change colouring scheme to per survey section - '8'
 
-		viewState.shadingMode = SHADING_DEPTH_CURSOR;
+		viewState.shadingMode = SHADING_DEPTH;
 
 		break;
 
 	case 57: // change colouring scheme to depth - '9'
 
-		viewState.shadingMode = SHADING_PATH;
+		viewState.shadingMode = SHADING_DEPTH_CURSOR;
 
 		break;
 

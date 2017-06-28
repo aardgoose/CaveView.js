@@ -5,7 +5,7 @@ function SurveyMetadata( name, metadata ) {
 	var routes = [];
 	var traces = [];
 
-	if ( metadata !== undefined ) {
+	if ( metadata !== null ) {
 
 		if ( metadata.routes ) routes = metadata.routes;
 		if ( metadata.traces ) traces = metadata.traces;

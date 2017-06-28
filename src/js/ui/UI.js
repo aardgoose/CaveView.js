@@ -386,15 +386,17 @@ function initRoutePage () {
 
 	page.addHeader( 'Routes' );
 
-	page.addCheckbox( 'edit route', viewState, 'routeEdit' );
+	page.addCheckbox( 'Edit Route', viewState, 'routeEdit' );
 
 	var routeNames = routes.getRouteNames();
 
 	if ( routeNames.length > 0 ) {
 
-		page.addSelect( 'routes', routeNames, routes, 'setRoute' );
+		page.addSelect( 'Route', routeNames, routes, 'setRoute' );
 
 	}
+
+	page.addButton( 'Save active route', _saveRoute );
 
 //	var routeFile = replaceExtension( file, 'json' );
 //	page.addDownloadButton( 'Download', routes, 'download', routeFile );
@@ -404,10 +406,16 @@ function initRoutePage () {
 
 	function _routesChanged( /* event */ ) {
 
-		if ( routeSelect ) return;
+//		if ( routeSelect ) return;
 
-		routeSelect = true;
-		page.addSelect( 'routes', routes.getRouteNames(), routes, 'setRoute' );
+//		routeSelect = true;
+//		page.addSelect( 'routes', routes.getRouteNames(), routes, 'setRoute' );
+
+	}
+
+	function _saveRoute() {
+
+		routes.saveCurrent();
 
 	}
 

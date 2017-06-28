@@ -428,6 +428,19 @@ Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 
 };
 
+Page.prototype.addButton = function ( title, func ) {
+
+	var button = document.createElement( 'button' );
+
+	button.type = 'button';
+	button.textContent = title;
+
+	this.addListener( button, 'click', func );
+
+	this.page.appendChild( button );
+
+};
+
 Page.prototype.addDownloadButton = function ( title, obj, property, fileName ) {
 
 	var a = document.createElement( 'a' );

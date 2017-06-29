@@ -150,6 +150,23 @@ Routes.prototype.createWireframe = function () {
 
 };
 
+Routes.prototype.addRoute = function ( routeName ) {
+
+	if ( routeName === this.currentRouteName ) return;
+
+	if ( this.routeNames.indexOf( routeName) < 0 ) {
+
+		// create entry for empty route if a new name
+
+		this.routeNames.push( routeName );
+		this.routes.set( routeName, [] );
+
+	}
+
+	this.loadRoute( routeName );
+
+}
+
 Routes.prototype.loadRoute = function ( routeName ) {
 
 	var self = this;

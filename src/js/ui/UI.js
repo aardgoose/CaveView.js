@@ -388,19 +388,13 @@ function initRoutePage () {
 
 	page.addCheckbox( 'Edit Route', viewState, 'routeEdit' );
 
-	var routeNames = routes.getRouteNames();
+	routeSelector = page.addSelect( 'Current Route', routes.getRouteNames(), routes, 'setRoute' );
 
-	if ( routeNames.length > 0 ) {
-
-		routeSelector = page.addSelect( 'Route', routeNames, routes, 'setRoute' );
-
-	}
-
-	page.addButton( 'Save active route', _saveRoute );
+	page.addButton( 'Save', _saveRoute );
 
 	var getNewRouteName = page.addTextBox( 'New Route', '---' );
 
-	page.addButton( 'Create new route', _newRoute );
+	page.addButton( 'Add', _newRoute );
 
 //	var routeFile = replaceExtension( file, 'json' );
 //	page.addDownloadButton( 'Download', routes, 'download', routeFile );
@@ -413,7 +407,7 @@ function initRoutePage () {
 
 		// update selector
 
-		routeSelector = page.addSelect( 'Route', routeNames, routes, 'setRoute', routeSelector );
+		routeSelector = page.addSelect( 'Current Route', routes.getRouteNames(), routes, 'setRoute', routeSelector );
 
 	}
 

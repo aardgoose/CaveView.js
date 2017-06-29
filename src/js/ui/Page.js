@@ -1,6 +1,6 @@
 
 
-function Page( id ) {
+function Page( id, onTop ) {
 
 	var tab  = document.createElement( 'div' );
 	var page = document.createElement( 'div' );
@@ -11,8 +11,16 @@ function Page( id ) {
 
 	tab.id = id;
 	tab.classList.add( 'tab' );
-	tab.addEventListener( 'click', this.tabHandleClick );
 	tab.style.top = ( Page.position++ * 40 ) + 'px';
+
+	tab.addEventListener( 'click', this.tabHandleClick );
+
+	if ( onTop !== undefined ) {
+
+		// callback when this page is made visible
+		tab.addEventListener( 'click', onTop );
+
+	}
 
 	if ( frame === null ) {
 

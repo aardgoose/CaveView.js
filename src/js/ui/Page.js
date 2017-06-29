@@ -449,7 +449,8 @@ Page.prototype.addButton = function ( title, func ) {
 
 };
 
-Page.prototype.addTextBox = function ( labelText, placeholder, func ) {
+
+Page.prototype.addTextBox = function ( labelText, placeholder ) {
 
 	var label = document.createElement( 'label' );
 
@@ -471,6 +472,7 @@ Page.prototype.addTextBox = function ( labelText, placeholder, func ) {
 
 	function _result() {
 
+		input.value = '';
 		return value;
 
 	}

@@ -255,7 +255,7 @@ function init ( domID, configuration ) { // public method
 		'routeEdit': {
 			writeable: true,
 			get: function () { return ( mouseMode === MOUSE_MODE_ROUTE_EDIT ); },
-			set: function ( x ) { _setRouteEdit( x ); }
+			set: function ( x ) { _setRouteEdit( x ); this.dispatchEvent( { type: 'change', name: 'routeEdit' } ); }
 		},
 
 		'setPOI': {

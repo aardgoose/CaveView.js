@@ -216,7 +216,7 @@ Page.prototype.addText = function ( text ) {
 
 };
 
-Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
+Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 	var div    = document.createElement( 'div' );
 	var label  = document.createElement( 'label' );
@@ -266,7 +266,15 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property ) {
 	div.appendChild( label );
 	div.appendChild( select );
 
-	this.page.appendChild( div );
+	if ( replace === undefined ) {
+
+		this.page.appendChild( div );
+
+	} else {
+
+		this.page.replaceChild( div, replace );
+
+	}
 
 	return div;
 
@@ -438,6 +446,34 @@ Page.prototype.addButton = function ( title, func ) {
 	this.addListener( button, 'click', func );
 
 	this.page.appendChild( button );
+
+};
+
+Page.prototype.addTextBox = function ( labelText, placeholder, func ) {
+
+	var label = document.createElement( 'label' );
+
+	label.textContent = labelText;
+
+	var input = document.createElement( 'input' );
+	var value;
+
+	input.type = 'text';
+
+	input.placeholder = placeholder;
+
+	this.page.appendChild( label );
+	this.page.appendChild( input );
+
+	this.addListener( input, 'change', function ( e ) { value = e.target.value; return true; } ) ;
+
+	return _result;
+
+	function _result() {
+
+		return value;
+
+	}
 
 };
 

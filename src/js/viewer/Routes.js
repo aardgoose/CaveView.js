@@ -154,7 +154,7 @@ Routes.prototype.addRoute = function ( routeName ) {
 
 	if ( routeName === this.currentRouteName || routeName === undefined ) return;
 
-	if ( this.routeNames.indexOf( routeName) < 0 ) {
+	if ( this.routeNames.indexOf( routeName ) < 0 ) {
 
 		// create entry for empty route if a new name
 
@@ -232,6 +232,10 @@ Routes.prototype.toDownload = function () {
 
 Routes.prototype.saveCurrent = function () {
 
+	var routeName = this.currentRouteName;
+
+	if ( ! routeName ) return;
+
 	var segmentMap = this.segmentMap;
 	var route = this.currentRoute;
 
@@ -239,7 +243,13 @@ Routes.prototype.saveCurrent = function () {
 
 	segmentMap.forEach( _addRoute );
 
-	this.metadataSource.saveRoute( this.currentRouteName, { segments: routeSegments } );
+	// update in memory route
+
+	this.routes.set( routeName, routeSegments );
+
+	// update persistant browser storage
+
+	this.metadataSource.saveRoute( routeName, { segments: routeSegments } );
 
 	function _addRoute ( value /*, key */ ) {
 

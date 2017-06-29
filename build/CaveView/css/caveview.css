@@ -128,7 +128,7 @@ div.linear-scale-caption {
 }
 
 #frame div.page li.selected {
-	color: lime;
+	color: #1ab4e5;
 }
 
 #frame div.page li:hover {
@@ -144,7 +144,7 @@ div.linear-scale-caption {
 }
 
 #frame div.page div#ui-path span {
-	color: lime;
+	color: #1ab4e5;
 }
 
 #frame div.page div.slide {
@@ -168,7 +168,7 @@ div.linear-scale-caption {
 	top: 0px;
 	right: 0px;
 	margin: 0;
-	color: lime;
+	color: #1ab4e5;
 	z-index: 110;
 }
 
@@ -289,9 +289,27 @@ div.linear-scale-caption {
 	display: block;
 	width: 180px;
 	box-sizing: border-box;
-	margin-top: 2px;
-	margin-bottom: 2px;
+	margin-top: 4px;
+	margin-bottom: 4px;
 	margin-left: 8px;
+	border: none;
+	border-bottom: 4px solid #1ab4e5;
+	color: #dddddd;
+	background-color: black;
+	padding-bottom: 4px;
+	box-shadow: 1px 1px 8px 0px #888888;
+	outline: none;
+}
+
+#frame div.page button:hover {
+	color: white;
+}
+
+#frame div.page button:active {
+	color: #dddddd;
+	border-bottom: 4px solid #0c536a;
+	box-shadow: none;
+	box-shadow: inset 1px 1px 8px 0px #888888;
 }
 
 #frame div.page input[type="text"] {

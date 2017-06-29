@@ -394,7 +394,7 @@ function initSelectionPage () {
 
 function initRoutePage () {
 
-	var page = new Page( 'icon_route' );
+	var page = new Page( 'icon_route', _onTop );
 	var routeSelector;
 	var getNewRouteName;
 
@@ -417,7 +417,7 @@ function initRoutePage () {
 
 	page.addListener( routes, 'changed', Page.handleChange );
 
-	function _newRoute() {
+	function _newRoute () {
 
 		routes.addRoute( getNewRouteName() );
 
@@ -427,9 +427,16 @@ function initRoutePage () {
 
 	}
 
-	function _saveRoute() {
+	function _saveRoute () {
 
 		routes.saveCurrent();
+
+	}
+
+	function _onTop () {
+
+		// when selecting route editing mode - select correct leg shading mode
+		viewState.shadingMode = SHADING_PATH;
 
 	}
 

@@ -447,11 +447,14 @@ Page.prototype.addButton = function ( title, func ) {
 
 	this.page.appendChild( button );
 
+	return button;
+
 };
 
 
-Page.prototype.addTextBox = function ( labelText, placeholder ) {
+Page.prototype.addTextBox = function ( labelText, placeholder, getResultGetter ) {
 
+	var div = document.createElement( 'div' );
 	var label = document.createElement( 'label' );
 
 	label.textContent = labelText;
@@ -463,12 +466,16 @@ Page.prototype.addTextBox = function ( labelText, placeholder ) {
 
 	input.placeholder = placeholder;
 
-	this.page.appendChild( label );
-	this.page.appendChild( input );
+	div.appendChild( label );
+	div.appendChild( input );
+
+	this.page.appendChild( div );
 
 	this.addListener( input, 'change', function ( e ) { value = e.target.value; return true; } ) ;
 
-	return _result;
+	getResultGetter( _result );
+
+	return div;
 
 	function _result() {
 

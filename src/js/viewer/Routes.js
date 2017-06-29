@@ -34,15 +34,18 @@ function Routes ( metadataSource ) {
 
 	var routes = metadataSource.getRoutes();
 	var routeName;
+	var routeNames = this.routeNames;
 
 	for ( routeName in routes ) {
 
 		var route = routes[ routeName ];
 
-		this.routeNames.push( routeName );
+		routeNames.push( routeName );
 		this.routes.set( routeName, route.segments );
 
 	}
+
+	routeNames.sort();
 
 	this.dispatchEvent( { type: 'changed', name: 'download' } );
 
@@ -200,8 +203,6 @@ Routes.prototype.loadRoute = function ( routeName ) {
 	}
 
 	this.currentRouteName = routeName;
-
-	console.log(' route ', routeName, ' loaded.' );
 
 	self.dispatchEvent( { type: 'changed', name: '' } );
 

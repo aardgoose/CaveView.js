@@ -397,12 +397,13 @@ function initRoutePage () {
 	var page = new Page( 'icon_route', _onTop );
 	var routeSelector;
 	var getNewRouteName;
+	var routeNames = routes.getRouteNames();
 
 	page.addHeader( 'Routes' );
 
 	page.addCheckbox( 'Edit Routes', viewState, 'routeEdit' );
 
-	routeSelector = page.addSelect( 'Current Route', routes.getRouteNames(), routes, 'setRoute' );
+	routeSelector = page.addSelect( 'Current Route', routeNames, routes, 'setRoute' );
 
 	routeControls.push( page.addButton( 'Save', _saveRoute ) );
 
@@ -416,6 +417,8 @@ function initRoutePage () {
 	setControlsVisibility( routeControls, false );
 
 	page.addListener( routes, 'changed', Page.handleChange );
+
+	return;
 
 	function _newRoute () {
 
@@ -437,6 +440,10 @@ function initRoutePage () {
 
 		// when selecting route editing mode - select correct leg shading mode
 		viewState.shadingMode = SHADING_PATH;
+
+		// display first route if present
+
+		if ( ! routes.setRoute && routeNames.length > 0 ) routes.setRoute = routeNames[ 0 ];
 
 	}
 

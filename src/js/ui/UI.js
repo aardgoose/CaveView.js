@@ -382,7 +382,7 @@ function initSelectionPage () {
 function initRoutePage () {
 
 	var page = new Page( 'icon_route' );
-	var routeSelect = false;
+	var routeSelector;
 
 	page.addHeader( 'Routes' );
 
@@ -392,24 +392,28 @@ function initRoutePage () {
 
 	if ( routeNames.length > 0 ) {
 
-		page.addSelect( 'Route', routeNames, routes, 'setRoute' );
+		routeSelector = page.addSelect( 'Route', routeNames, routes, 'setRoute' );
 
 	}
 
 	page.addButton( 'Save active route', _saveRoute );
 
+	var getNewRouteName = page.addTextBox( 'New Route', '---' );
+
+	page.addButton( 'Create new route', _newRoute );
+
 //	var routeFile = replaceExtension( file, 'json' );
 //	page.addDownloadButton( 'Download', routes, 'download', routeFile );
 
-	page.addListener( routes, 'changed', _routesChanged );
 	page.addListener( routes, 'changed', Page.handleChange );
 
-	function _routesChanged( /* event */ ) {
+	function _newRoute() {
 
-//		if ( routeSelect ) return;
+		routes.addRoute( getNewRouteName() );
 
-//		routeSelect = true;
-//		page.addSelect( 'routes', routes.getRouteNames(), routes, 'setRoute' );
+		// update selector
+
+		routeSelector = page.addSelect( 'Route', routeNames, routes, 'setRoute', routeSelector );
 
 	}
 

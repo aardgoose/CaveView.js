@@ -152,7 +152,7 @@ Routes.prototype.createWireframe = function () {
 
 Routes.prototype.addRoute = function ( routeName ) {
 
-	if ( routeName === this.currentRouteName ) return;
+	if ( routeName === this.currentRouteName || routeName === undefined ) return;
 
 	if ( this.routeNames.indexOf( routeName) < 0 ) {
 
@@ -165,7 +165,7 @@ Routes.prototype.addRoute = function ( routeName ) {
 
 	this.loadRoute( routeName );
 
-}
+};
 
 Routes.prototype.loadRoute = function ( routeName ) {
 

@@ -31,6 +31,8 @@ var file;
 var progressBar;
 
 var terrainControls = [];
+var routeControls = [];
+
 var terrainOverlay = null;
 
 var legShadingModes = {
@@ -108,23 +110,34 @@ function init ( domID, configuration ) { // public method
 
 }
 
+function setControlsVisibility( list, visible ) {
+
+	var display = visible ? 'block' : 'none';
+
+	for ( var i = 0, l = list.length; i < l; i++ ) {
+
+		list[ i ].style.display = display;
+
+	}
+
+}
+
 function handleChange ( event ) {
 
-	var display;
+	var display, i, l;
 
 	// change UI dynamicly to only display useful controls
 	switch ( event.name ) {
 
+	case 'routeEdit':
+
+		setControlsVisibility( routeControls, viewState.routeEdit );
+
+		break;
+
 	case 'terrain':
 
-		// only show overlay selection when terrain shading is set to overlay
-		display = viewState.terrain ? 'block' : 'none';
-
-		for ( var i = 0, l = terrainControls.length; i < l; i++ ) {
-
-			terrainControls[ i ].style.display = display;
-
-		}
+		setControlsVisibility( terrainControls, viewState.terrain );
 
 	case 'terrainShading': // eslint-disable-line no-fallthrough
 
@@ -383,21 +396,24 @@ function initRoutePage () {
 
 	var page = new Page( 'icon_route' );
 	var routeSelector;
+	var getNewRouteName;
 
 	page.addHeader( 'Routes' );
 
-	page.addCheckbox( 'Edit Route', viewState, 'routeEdit' );
+	page.addCheckbox( 'Edit Routes', viewState, 'routeEdit' );
 
 	routeSelector = page.addSelect( 'Current Route', routes.getRouteNames(), routes, 'setRoute' );
 
-	page.addButton( 'Save', _saveRoute );
+	routeControls.push( page.addButton( 'Save', _saveRoute ) );
 
-	var getNewRouteName = page.addTextBox( 'New Route', '---' );
+	routeControls.push( page.addTextBox( 'New Route', '---', function ( getter ) { getNewRouteName = getter; } ) );
 
-	page.addButton( 'Add', _newRoute );
+	routeControls.push( page.addButton( 'Add', _newRoute ) );
 
 //	var routeFile = replaceExtension( file, 'json' );
 //	page.addDownloadButton( 'Download', routes, 'download', routeFile );
+
+	setControlsVisibility( routeControls, false );
 
 	page.addListener( routes, 'changed', Page.handleChange );
 
@@ -599,11 +615,7 @@ function initSurfacePage () {
 
 		terrainControls.push( page.addRange( 'Terrain opacity', viewState, 'terrainOpacity' ) );
 
-		for ( var i = 0, l = terrainControls.length; i < l; i++ ) {
-
-			terrainControls[ i ].style.display = 'none';
-
-		}
+		setControlsVisibility( terrainControls, false );
 
 	}
 

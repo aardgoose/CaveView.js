@@ -2,7 +2,7 @@ function SurveyMetadata( name, metadata ) {
 
 	this.name = name;
 
-	var routes = [];
+	var routes = {};
 	var traces = [];
 
 	if ( metadata !== null ) {
@@ -14,12 +14,7 @@ function SurveyMetadata( name, metadata ) {
 
 	var localMetadata = localStorage.getItem( name );
 
-	if ( localMetadata === null ) {
-
-		localMetadata = { routes: {}, traces: [] };
-		localStorage.setItem( name, JSON.stringify( localMetadata ) );
-
-	} else {
+	if ( localMetadata !== null ) {
 
 		localMetadata = JSON.parse( localMetadata );
 

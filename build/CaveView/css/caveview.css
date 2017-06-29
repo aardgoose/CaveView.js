@@ -285,6 +285,10 @@ div.linear-scale-caption {
 	margin-left: 8px;
 }
 
+#frame div.page select:empty {
+	background-color: #888888;
+}
+
 #frame div.page button {
 	display: block;
 	width: 180px;

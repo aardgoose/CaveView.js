@@ -832,6 +832,12 @@ Survey.prototype.loadFromEntrance = function ( entrance, loadedCallback ) {
 
 };
 
+Survey.prototype.getMetadataURL = function () {
+
+	return this.metadata.getURL();
+
+};
+
 Survey.prototype.getLegs = function () {
 
 	return this.getFeature( LEG_CAVE ).geometry.vertices;

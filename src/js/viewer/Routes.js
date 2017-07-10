@@ -28,10 +28,6 @@ function Routes ( metadataSource ) {
 		get: function () { return this.currentRouteName; }
 	} );
 
-	Object.defineProperty( this, 'download', {
-		get: function () { return this.toDownload(); }
-	} );
-
 	var routes = metadataSource.getRoutes();
 	var routeName;
 	var routeNames = this.routeNames;
@@ -215,21 +211,6 @@ Routes.prototype.getCurrentRoute = function () {
 	return this.currentRoute;
 
 };
-
-/*
-Routes.prototype.toDownload = function () {
-
-	this.routes.forEach( _addRoutes );
-
-
-	function _addRoutes ( route, routeName ) {
-
-		routesJSON.routes.push( { name: routeName, segments: route } );
-
-	}
-
-};
-*/
 
 Routes.prototype.saveCurrent = function () {
 

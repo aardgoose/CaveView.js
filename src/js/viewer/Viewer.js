@@ -264,13 +264,11 @@ function init ( domID, configuration ) { // public method
 			set: function ( x ) { _viewStateSetter( setCameraPOI, 'setPOI', x ); }
 		},
 
-/*
 		'developerInfo': {
 			writeable: true,
 			get: function () { return true; },
 			set: function ( x ) { showDeveloperInfo( x ); }
 		},
-*/
 
 		'HUD': {
 			writeable: true,
@@ -427,9 +425,11 @@ function setTerrainOpacity ( x ) {
 	renderView();
 
 }
-/*
+
 function showDeveloperInfo( x ) {
 
+	console.log( renderer.info );
+/*
 	var info = renderer.getResourceInfo();
 
 	if ( leakWatcher === undefined ) {
@@ -442,9 +442,10 @@ function showDeveloperInfo( x ) {
 		leakWatcher.compare( scene, info );
 
 	}
+*/
 
 }
-*/
+
 function renderDepthTexture () {
 
 	if ( terrain === null || ! terrain.isLoaded() ) return;
@@ -1234,7 +1235,7 @@ export var Viewer = {
 	getControls:   getControls,
 	getState:      viewState,
 	renderView:    renderView,
-	addOverlay:    addOverlay,
+	addOverlay:    addOverlay
 };
 
 

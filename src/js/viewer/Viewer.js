@@ -426,7 +426,7 @@ function setTerrainOpacity ( x ) {
 
 }
 
-function showDeveloperInfo( x ) {
+function showDeveloperInfo( /* x */ ) {
 
 	console.log( renderer.info );
 /*

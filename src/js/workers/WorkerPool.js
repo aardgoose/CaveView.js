@@ -1,11 +1,23 @@
 import { getEnvironmentValue } from '../core/lib';
 
+
 function WorkerPool ( script ) {
 
 	this.script = getEnvironmentValue( 'home', '' ) + 'js/workers/' + script;
-	this.workers = [];
+
+	if ( WorkerPool.workers[ script ] === undefined ) {
+
+		// no existing workers running
+		WorkerPool.workers[ script ] = [];
+
+	}
+
+	this.workers = WorkerPool.workers[ script ];
 
 }
+
+
+WorkerPool.workers = {};
 
 WorkerPool.prototype.constructor = WorkerPool;
 

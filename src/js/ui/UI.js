@@ -411,8 +411,7 @@ function initRoutePage () {
 
 	routeControls.push( page.addButton( 'Add', _newRoute ) );
 
-//	var routeFile = replaceExtension( file, 'json' );
-//	page.addDownloadButton( 'Download', routes, 'download', routeFile );
+	routeControls.push( page.addDownloadButton( 'Download', Viewer.getMetadata, replaceExtension( file, 'json' ) ) );
 
 	setControlsVisibility( routeControls, false );
 

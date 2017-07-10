@@ -494,20 +494,30 @@ Page.prototype.addTextBox = function ( labelText, placeholder, getResultGetter )
 
 };
 
-Page.prototype.addDownloadButton = function ( title, obj, property, fileName ) {
+Page.prototype.addDownloadButton = function ( title, urlProvider, fileName ) {
 
 	var a = document.createElement( 'a' );
 
 	if ( typeof a.download === 'undefined' ) return false;
 
+	this.addListener( a, 'click', _setHref );
+
 	a.textContent = title;
 	a.type = 'download';
 	a.download = fileName;
-	a.href = obj[ property ];
+	a.href = "javascript:void();";
 
-	Page.controls[ property ] = a;
+	a.classList.add( 'download' );
 
 	this.page.appendChild( a );
+
+	return a;
+
+	function _setHref() {
+
+		a.href = urlProvider();
+
+	}
 
 };
 

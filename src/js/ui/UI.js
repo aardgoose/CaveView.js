@@ -844,6 +844,12 @@ function keyDown ( event ) {
 
 		break;
 
+	case 73: // toggle entrance labels - 'i'
+
+		viewState.developerInfo = true;
+
+		break;
+
 	case 76: // toggle entrance labels - 'l'
 
 		if ( viewState.hasEntrances ) viewState.entrances = ! viewState.entrances;

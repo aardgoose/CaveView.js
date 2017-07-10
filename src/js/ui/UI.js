@@ -124,8 +124,6 @@ function setControlsVisibility( list, visible ) {
 
 function handleChange ( event ) {
 
-	var display, i, l;
-
 	// change UI dynamicly to only display useful controls
 	switch ( event.name ) {
 

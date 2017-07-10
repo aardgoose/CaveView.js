@@ -505,7 +505,7 @@ Page.prototype.addDownloadButton = function ( title, urlProvider, fileName ) {
 	a.textContent = title;
 	a.type = 'download';
 	a.download = fileName;
-	a.href = "javascript:void();";
+	a.href = 'javascript:void();';
 
 	a.classList.add( 'download' );
 

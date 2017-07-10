@@ -188,6 +188,35 @@ div.linear-scale-caption {
 	transition: transform 0.25s ease-out;
 }
 
+#frame a.download {
+	border: 1px solid green;
+	display: block;
+	width: 180px;
+	box-sizing: border-box;
+	margin-top: 6px;
+	margin-bottom: 4px;
+	margin-left: 8px;
+	border: none;
+	border-bottom: 4px solid #1ab4e5;
+	color: #dddddd;
+	background-color: black;
+	padding-bottom: 4px;
+	box-shadow: 1px 1px 8px 0px #888888;
+	outline: none;
+	text-decoration: none;
+	text-align: center;
+}
+
+#frame a.download:hover {
+	color: white;
+}
+
+#frame a.download:active {
+	color: #dddddd;
+	border-bottom: 4px solid #0c536a;
+	box-shadow: none;
+	box-shadow: inset 1px 1px 8px 0px #888888;
+}
 #frame .tab {
 	position: absolute;
 	right: 0px;

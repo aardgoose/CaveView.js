@@ -1211,6 +1211,12 @@ function getControls () {
 
 }
 
+function getMetadata () {
+
+	return survey.getMetadataURL();
+
+}
+
 function getRoutes () {
 
 	return survey.getRoutes();
@@ -1229,6 +1235,7 @@ export var Viewer = {
 	init:          init,
 	clearView:     clearView,
 	loadCave:      loadCave,
+	getMetadata:   getMetadata,
 	getRoutes:     getRoutes,
 	getStats:      getStats,
 	getSurveyTree: getSurveyTree,

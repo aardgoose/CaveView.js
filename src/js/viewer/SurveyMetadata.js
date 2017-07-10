@@ -69,7 +69,7 @@ SurveyMetadata.prototype.saveLocal = function () {
 
 };
 
-SurveyMetadata.prototype.toDownload = function () {
+SurveyMetadata.prototype.getURL = function () {
 
 	// dump of json top window for cut and paste capture
 

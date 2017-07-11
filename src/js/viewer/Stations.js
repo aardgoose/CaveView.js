@@ -39,6 +39,12 @@ function Stations () {
 
 	this.addEventListener( 'removed', _removed );
 
+	Object.defineProperty( this, 'count', {
+
+		get: function () { return this.stations.length; }
+
+	} );
+
 	function _viewChanged( event ) {
 
 		if ( event.name === 'splays' ) {
@@ -83,8 +89,6 @@ Stations.prototype.contructor = Stations;
 Stations.prototype.addStation = function ( node ) {
 
 	var point = node.p;
-
-	if ( point === undefined ) return;
 
 	this.vertices.push( point );
 	this.colors.push( this.baseColor );

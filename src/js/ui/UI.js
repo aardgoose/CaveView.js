@@ -575,12 +575,13 @@ function initSettingsPage () {
 
 	page.addHeader( 'Visibility' );
 
-	if ( viewState.hasEntrances ) page.addCheckbox( 'Entrances', viewState, 'entrances' );
-	if ( viewState.hasStations  ) page.addCheckbox( 'Stations', viewState, 'stations' );
-	if ( viewState.hasSplays    ) page.addCheckbox( 'Splay Legs', viewState, 'splays' );
-	if ( viewState.hasWalls     ) page.addCheckbox( 'Walls (LRUD)', viewState, 'walls' );
-	if ( viewState.hasScraps    ) page.addCheckbox( 'Scraps', viewState, 'scraps' );
-	if ( viewState.hasTraces    ) page.addCheckbox( 'Dye Traces', viewState, 'traces' );
+	if ( viewState.hasEntrances     ) page.addCheckbox( 'Entrances', viewState, 'entrances' );
+	if ( viewState.hasStations      ) page.addCheckbox( 'Stations', viewState, 'stations' );
+	if ( viewState.hasStationLabels ) page.addCheckbox( 'Station Labels', viewState, 'stationLabels' );
+	if ( viewState.hasSplays        ) page.addCheckbox( 'Splay Legs', viewState, 'splays' );
+	if ( viewState.hasWalls         ) page.addCheckbox( 'Walls (LRUD)', viewState, 'walls' );
+	if ( viewState.hasScraps        ) page.addCheckbox( 'Scraps', viewState, 'scraps' );
+	if ( viewState.hasTraces        ) page.addCheckbox( 'Dye Traces', viewState, 'traces' );
 
 	page.addCheckbox( 'Indicators', viewState, 'HUD' );
 	page.addCheckbox( 'Bounding Box', viewState, 'box' );

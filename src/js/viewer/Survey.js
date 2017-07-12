@@ -1,5 +1,6 @@
 
 import {
+	CAMERA_OFFSET,
 	FACE_SCRAPS, FACE_WALLS,
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES, FEATURE_STATIONS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
@@ -32,7 +33,6 @@ import { Matrix4, Vector3, Group, Box3, Object3D, TextureLoader, PointsMaterial 
 
 var zeroVector = new Vector3();
 var _tmpVector3 = new Vector3();
-var _tmpMatrix4 = new Matrix4();
 
 function Survey ( cave ) {
 
@@ -692,7 +692,7 @@ Survey.prototype.getFeature = function ( tag, obj ) {
 
 };
 
-Survey.prototype.update = function ( camera ) {
+Survey.prototype.update = function ( camera, target ) {
 
 	var cameraLayers = camera.layers;
 
@@ -702,8 +702,6 @@ Survey.prototype.update = function ( camera ) {
 
 	}
 
-	// FIXME - adjust for Orthogonal camera
-
 	if ( this.features[ LABEL_STATION ] && cameraLayers.mask & 1 << LABEL_STATION ) {
 
 		if ( this.inverseWorld === null ) {
@@ -712,10 +710,22 @@ Survey.prototype.update = function ( camera ) {
 
 		}
 
-		var wCamera = _tmpMatrix4.copy( camera.matrixWorld ).premultiply( this.inverseWorld );
+		var cameraPosition = _tmpVector3.copy( camera.position );
 
-		var matrixElements = wCamera.elements;
-		var cameraPosition = _tmpVector3.set( matrixElements[ 12 ], matrixElements[ 13 ], matrixElements[ 14 ] );
+		if ( camera.isOrthographicCamera ) {
+
+			// if orthographic, calculate 'virtual' camera position
+
+			cameraPosition.sub( target ); // now vector from target
+
+			cameraPosition.setLength( CAMERA_OFFSET / camera.zoom ); // scale for zoom factor
+			cameraPosition.add( target ); // relocate in world space
+
+		}
+
+		// transform camera position into model coordinate system
+
+		cameraPosition.applyMatrix4( this.inverseWorld );
 
 		var labels = this.getFeature( LABEL_STATION );
 		var label, limit;

@@ -6,6 +6,7 @@ export var MATERIAL_SURFACE    = 2;
 
 export var CAMERA_ORTHOGRAPHIC = 1;
 export var CAMERA_PERSPECTIVE  = 2;
+export var CAMERA_OFFSET       = 600;
 
 // preset camera views
 

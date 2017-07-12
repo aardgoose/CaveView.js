@@ -1,7 +1,7 @@
 
 
 import  {
-	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE,
+	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_OFFSET,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY, SHADING_PATH,
@@ -38,7 +38,6 @@ import {
 //import { LeakWatch } from '../../../../LeakWatch/src/LeakWatch';
 
 var lightPosition = new Vector3( -1, -1, 0.5 );
-var CAMERA_OFFSET = 600;
 var RETILE_TIMEOUT = 150; // ms pause after last movement before attempting retiling
 
 var caveIsLoaded = false;
@@ -1132,7 +1131,7 @@ var renderView = function () {
 
 		HUD.renderHUD();
 
-		survey.update( camera );
+		survey.update( camera, controls.target );
 
 		clockStart();
 

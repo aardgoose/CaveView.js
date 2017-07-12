@@ -546,7 +546,7 @@ function setCameraMode ( mode ) {
 
 	}
 
-	// update new camera with position to give same apparent zoomm and view
+	// update new camera with position to give same apparent zoom and view
 
 	camera.position.copy( offset.add( controls.target ) );
 

@@ -50,6 +50,8 @@ export var FEATURE_TRACES        = 9;
 export var FACE_WALLS            = 10;
 export var FACE_SCRAPS           = 11;
 
+export var LABEL_STATION         = 12;
+
 // flags in legs exported by Cave models
 
 export var NORMAL  = 0;

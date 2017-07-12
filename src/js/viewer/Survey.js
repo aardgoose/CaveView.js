@@ -1,8 +1,8 @@
 
 import {
 	FACE_SCRAPS, FACE_WALLS,
-	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES,
-	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
+	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES, FEATURE_STATIONS,
+	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, 
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR,
@@ -26,10 +26,13 @@ import { SurveyColours } from '../core/SurveyColours';
 import { Terrain } from '../terrain/Terrain';
 import { WorkerPool } from '../workers/WorkerPool';
 import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
+import { GlyphString } from '../viewer/GlyphString';
 
-import { Vector3, Box3, Object3D, TextureLoader, PointsMaterial } from '../../../../three.js/src/Three';
+import { Matrix4, Vector3, Group, Box3, Object3D, TextureLoader, PointsMaterial } from '../../../../three.js/src/Three';
 
 var zeroVector = new Vector3();
+var _tmpVector3 = new Vector3();
+var _tmpMatrix4 = new Matrix4();
 
 function Survey ( cave ) {
 
@@ -63,6 +66,7 @@ function Survey ( cave ) {
 	this.routes = null;
 	this.stations = null;
 	this.workerPool = new WorkerPool( 'caveWorker.js' );
+	this.inverseWorld = null;
 
 	// highlit point marker
  
@@ -690,9 +694,51 @@ Survey.prototype.getFeature = function ( tag, obj ) {
 
 Survey.prototype.update = function ( camera ) {
 
-	if ( this.features[ FEATURE_ENTRANCES ] ) {
+	var cameraLayers = camera.layers;
+
+	if ( this.features[ FEATURE_ENTRANCES ] && cameraLayers.mask & 1 << FEATURE_ENTRANCES ) {
 
 		this.getFeature( FEATURE_ENTRANCES ).cluster( camera );
+
+	}
+
+	// FIXME - adjust for Orthogonal camera
+
+	if ( this.features[ LABEL_STATION ] && cameraLayers.mask & 1 << LABEL_STATION ) {
+
+		if ( this.inverseWorld === null ) {
+
+			this.inverseWorld = new Matrix4().getInverse( this.matrixWorld );
+
+		}
+
+		var wCamera = _tmpMatrix4.copy( camera.matrixWorld ).premultiply( this.inverseWorld );
+
+		var matrixElements = wCamera.elements;
+		var cameraPosition = _tmpVector3.set( matrixElements[ 12 ], matrixElements[ 13 ], matrixElements[ 14 ] );
+
+		var labels = this.getFeature( LABEL_STATION );
+		var label, limit;
+		var splaysVisible = cameraLayers.mask & 1 << LEG_SPLAY;
+
+		for ( var i = 0, l = labels.children.length; i < l; i++ ) {
+
+			label = labels.children[ i ];
+
+			// only show labels for splay end stations if splays visible
+			if ( label.hitCount === 0 && ! splaysVisible ) {
+
+				label.visible = false;
+
+			} else {
+
+				// show labels for network vertices at greater distance than intermediate stations
+				limit = ( label.hitCount < 3 ) ? 10000 : 20000;
+				label.visible =  ( label.position.distanceToSquared( cameraPosition) < limit );
+
+			}
+
+		}
 
 	}
 
@@ -716,11 +762,13 @@ Survey.prototype.hasFeature = function ( tag ) {
 
 Survey.prototype.loadStations = function ( surveyTree ) {
 
-	var i;
+	var i, l, station, label;
 
 	var stations = new Stations();
+	var stationLabels = new Group();
+	var material = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', 0 );
 
-	surveyTree.traverse( function _addStation ( node ) { stations.addStation( node ); } );
+	surveyTree.traverse( _addStation );
 
 	var legs = this.getLegs();
 
@@ -735,9 +783,41 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 	// we have finished adding stations.
 	stations.finalise();
 
-	this.addFeature( stations );
+
+	// add labels for stations
+
+	for ( i = 0, l = stations.count; i < l; i++ ) {
+
+		station = stations.getStationByIndex( i );
+
+		label = new GlyphString( station.name, material );
+
+		label.layers.set( LABEL_STATION );
+
+		label.position.copy( station.p );
+
+		label.hitCount = station.hitCount;
+		label.visible = false;
+
+		stationLabels.add( label );
+
+	}
+
+	this.addFeature( stations, FEATURE_STATIONS, 'CV.Stations' );
+	this.addFeature( stationLabels, LABEL_STATION, 'CV.StationLabels' );
 
 	this.stations = stations;
+	this.stationLabels = stationLabels;
+
+	return;
+
+	function _addStation ( node ) {
+
+		if ( node.p === undefined ) return;
+
+		stations.addStation( node );
+
+	}
 
 };
 

@@ -3,7 +3,7 @@
 import  {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
-	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
+	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY, SHADING_PATH,
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
@@ -311,6 +311,7 @@ function init ( domID, configuration ) { // public method
 	_conditionalLayer( FACE_WALLS,        'walls' );
 	_conditionalLayer( LEG_SPLAY,         'splays' );
 	_conditionalLayer( LEG_SURFACE,       'surfaceLegs' );
+	_conditionalLayer( LABEL_STATION,     'stationLabels' );
 
 	Materials.initCache( viewState );
 

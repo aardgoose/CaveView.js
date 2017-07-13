@@ -1,6 +1,6 @@
 import { CanvasTexture } from '../../../../three.js/src/Three';
 
-function GlyphAtlas ( glyphAtlasSpec ) {
+function GlyphAtlas ( glyphAtlasSpec, colour ) {
 
 	var atlasSize = 512;
 	var cellSize = 32;
@@ -12,6 +12,8 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 	canvas.width  = atlasSize;
 	canvas.height = atlasSize;
+
+	colour = colour || '#ffffff';
 
 	var ctx = canvas.getContext( '2d' );
 
@@ -42,7 +44,7 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 	ctx.textAlign = 'left';
 	ctx.font = fontSize + 'px ' + glyphAtlasSpec;
-	ctx.fillStyle = '#ffffff';
+	ctx.fillStyle = colour;
 
 	var row, column;
 
@@ -100,14 +102,15 @@ GlyphAtlas.prototype.getGlyph = function ( glyph ) {
 var atlasCache = {};
 var AtlasFactory = {};
 
-AtlasFactory.getAtlas = function ( glyphAtlasSpec ) {
+AtlasFactory.getAtlas = function ( glyphAtlasSpec, colour ) {
 
-	var atlas = atlasCache[ glyphAtlasSpec ];
+	var key = glyphAtlasSpec + ':' + colour;
+	var atlas = atlasCache[ key ];
 
 	if ( atlas === undefined ) {
 
-		atlas = new GlyphAtlas( glyphAtlasSpec );
-		atlasCache[ glyphAtlasSpec ] = atlas;
+		atlas = new GlyphAtlas( glyphAtlasSpec, colour );
+		atlasCache[ key ] = atlas;
 
 	}
 

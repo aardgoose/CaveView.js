@@ -149,13 +149,13 @@ function getLineMaterial () {
 
 }
 
-function getGlyphMaterial ( glyphAtlasSpec, rotation ) {
+function getGlyphMaterial ( glyphAtlasSpec, rotation, colour ) {
 
-	var name = glyphAtlasSpec + ':' + rotation.toString();
+	var name = glyphAtlasSpec + ':' + rotation.toString() + ':' + colour;
 
 	if ( cache.has( name ) ) return cache.get( name );
 
-	var material = new GlyphMaterial( glyphAtlasSpec, viewState.container, rotation );
+	var material = new GlyphMaterial( glyphAtlasSpec, viewState.container, rotation, colour );
 
 	cache.set( name, material );
 

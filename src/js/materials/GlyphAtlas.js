@@ -1,6 +1,6 @@
 import { CanvasTexture } from '../../../../three.js/src/Three';
 
-function GlyphAtlas ( glyphAtlasSpec, colour ) {
+function GlyphAtlas ( glyphAtlasSpec ) {
 
 	var atlasSize = 512;
 	var cellSize = 32;

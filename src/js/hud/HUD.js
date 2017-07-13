@@ -167,11 +167,11 @@ function update () {
 
 	// update HUD components
 
-	var camera = controls.object;
+	var currentCamera = controls.object;
 
-	compass.set( camera );
-	ahi.set( camera );
-	updateScaleBar( camera );
+	compass.set( currentCamera );
+	ahi.set( currentCamera );
+	updateScaleBar( currentCamera );
 
 }
 

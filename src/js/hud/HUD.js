@@ -107,20 +107,28 @@ function setVisibility ( visible ) {
 	ahi.setVisibility( visible );
 	progressDial.setVisibility( visible );
 
-	if ( linearScale ) {
-
-		linearScale.setVisibility( visible );
-		cursorScale.setVisibility( visible );
-		angleScale.setVisibility( visible );
-
-	}
-
 	if ( scaleBar ) scaleBar.setVisibility( visible );
 
 	isVisible = visible;
 
-	// reset correct disposition of keys etc.
-	if ( visible && linearScale ) viewChanged ( { type: 'change', name: 'shadingMode' } );
+	// reset correct disposition of colour keys etc.
+	if ( linearScale ) {
+
+		if ( visible ) {
+
+			viewChanged ( { type: 'change', name: 'shadingMode' } );
+
+		} else {
+
+			linearScale.setVisibility( false );
+			cursorScale.setVisibility( false );
+			angleScale.setVisibility( false );
+
+		}
+
+	}
+
+	viewState.refresh();
 
 }
 
@@ -214,18 +222,20 @@ function newScales () {
 
 	scene.add( angleScale );
 
+	if ( scaleBar ) { 
 
-	if ( scaleBar ) scene.remove( scaleBar );
+		scene.remove( scaleBar );
+		scaleBar = null;
 
-	scaleBar = new ScaleBar( container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
+	}
 
-	scene.add( scaleBar );
+	updateScaleBar( controls.object );
 
 }
 
 function viewChanged ( event ) {
 
-	if ( event.name !== 'shadingMode' || !isVisible ) return;
+	if ( event.name !== 'shadingMode' || ! isVisible ) return;
 
 	// hide all - and only make required elements visible
 
@@ -338,11 +348,13 @@ function updateScaleBar ( camera ) {
 
 		}
 
-		scaleBar.setScale( camera.zoom ).setVisibility( true );
+		if ( isVisible !== scaleBar.visible ) scaleBar.setVisibility( isVisible );
+
+		scaleBar.setScale( camera.zoom );
 
 	} else {
 
-		if ( scaleBar ) scaleBar.setVisibility( false );
+		if ( scaleBar !== null && scaleBar.visible ) scaleBar.setVisibility( false );
 
 	}
 

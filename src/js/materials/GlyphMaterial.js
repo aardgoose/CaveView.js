@@ -3,9 +3,9 @@ import { ShaderMaterial } from '../../../../three.js/src/Three';
 import { Shaders } from '../shaders/Shaders';
 import { AtlasFactory } from '../materials/GlyphAtlas';
 
-function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
+function GlyphMaterial ( glyphAtlasSpec, container, rotation, colour ) {
 
-	var glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec );
+	var glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec, colour );
 
 	var cellScale = glyphAtlas.getCellScale();
 
@@ -31,7 +31,7 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 	this.transparent = true;
 	this.defines = { USE_COLOR: true };
 
-	this.defaultAttributeValues.color = [ 1, 1, 0 ];
+	this.defaultAttributeValues.color = [ 1, 1, 1 ];
 	this.type = 'CV.GlyphMaterial';
 	this.atlas = glyphAtlas;
 

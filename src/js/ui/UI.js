@@ -490,6 +490,7 @@ function initHelpPage () {
 	dl = document.createElement( 'dl' );
 
 	_addKey( 'C', 'scraps on/off [lox only]' );
+	_addKey( 'J', 'station labels on/off' );
 	_addKey( 'L', 'labels on/off' );
 	_addKey( 'Q', 'splay legs on/off' );
 	_addKey( 'S', 'surface legs on/off' );
@@ -845,6 +846,12 @@ function keyDown ( event ) {
 	case 73: // toggle entrance labels - 'i'
 
 		viewState.developerInfo = true;
+
+		break;
+
+	case 74: // toggle entrance labels - 'j'
+
+		if ( viewState.hasStationLabels ) viewState.stationLabels = ! viewState.stationLabels;
 
 		break;
 

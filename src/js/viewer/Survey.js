@@ -1,6 +1,5 @@
 
 import {
-	CAMERA_OFFSET,
 	FACE_SCRAPS, FACE_WALLS,
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES, FEATURE_STATIONS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
@@ -17,6 +16,7 @@ import { Box3Helper } from '../core/Box3';
 import { Materials } from '../materials/Materials';
 import { ClusterMarkers } from './ClusterMarkers';
 import { Stations } from './Stations';
+import { StationLabels } from './StationLabels';
 import { Routes } from './Routes';
 import { Legs } from './Legs';
 import { Point } from './Point';
@@ -27,12 +27,10 @@ import { SurveyColours } from '../core/SurveyColours';
 import { Terrain } from '../terrain/Terrain';
 import { WorkerPool } from '../workers/WorkerPool';
 import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
-import { GlyphString } from '../viewer/GlyphString';
 
-import { Matrix4, Vector3, Group, Box3, Object3D, TextureLoader, PointsMaterial } from '../../../../three.js/src/Three';
+import { Matrix4, Vector3, Box3, Object3D, TextureLoader, PointsMaterial } from '../../../../three.js/src/Three';
 
 var zeroVector = new Vector3();
-var _tmpVector3 = new Vector3();
 
 function Survey ( cave ) {
 
@@ -710,45 +708,7 @@ Survey.prototype.update = function ( camera, target ) {
 
 		}
 
-		var cameraPosition = _tmpVector3.copy( camera.position );
-
-		if ( camera.isOrthographicCamera ) {
-
-			// if orthographic, calculate 'virtual' camera position
-
-			cameraPosition.sub( target ); // now vector from target
-
-			cameraPosition.setLength( CAMERA_OFFSET / camera.zoom ); // scale for zoom factor
-			cameraPosition.add( target ); // relocate in world space
-
-		}
-
-		// transform camera position into model coordinate system
-
-		cameraPosition.applyMatrix4( this.inverseWorld );
-
-		var labels = this.getFeature( LABEL_STATION );
-		var label, limit;
-		var splaysVisible = cameraLayers.mask & 1 << LEG_SPLAY;
-
-		for ( var i = 0, l = labels.children.length; i < l; i++ ) {
-
-			label = labels.children[ i ];
-
-			// only show labels for splay end stations if splays visible
-			if ( label.hitCount === 0 && ! splaysVisible ) {
-
-				label.visible = false;
-
-			} else {
-
-				// show labels for network vertices at greater distance than intermediate stations
-				limit = ( label.hitCount < 3 ) ? 10000 : 20000;
-				label.visible =  ( label.position.distanceToSquared( cameraPosition) < limit );
-
-			}
-
-		}
+		this.getFeature( LABEL_STATION ).update( camera, target, this.inverseWorld );
 
 	}
 
@@ -772,11 +732,10 @@ Survey.prototype.hasFeature = function ( tag ) {
 
 Survey.prototype.loadStations = function ( surveyTree ) {
 
-	var i, l, station, label;
+	var i, l;
 
 	var stations = new Stations();
-	var stationLabels = new Group();
-	var material = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', 0 );
+	var stationLabels = new StationLabels();
 
 	surveyTree.traverse( _addStation );
 
@@ -798,18 +757,7 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 
 	for ( i = 0, l = stations.count; i < l; i++ ) {
 
-		station = stations.getStationByIndex( i );
-
-		label = new GlyphString( station.name, material );
-
-		label.layers.set( LABEL_STATION );
-
-		label.position.copy( station.p );
-
-		label.hitCount = station.hitCount;
-		label.visible = false;
-
-		stationLabels.add( label );
+		stationLabels.addStation( stations.getStationByIndex( i ) );
 
 	}
 

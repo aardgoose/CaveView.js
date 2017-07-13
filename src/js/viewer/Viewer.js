@@ -1126,12 +1126,12 @@ var renderView = function () {
 
 		directionalLight.position.copy( lPosition.applyAxisAngle( upAxis, rotation.z ) );
 
+		survey.update( camera, controls.target );
+
 		renderer.clear();
 		renderer.render( scene, camera );
 
 		HUD.renderHUD();
-
-		survey.update( camera, controls.target );
 
 		clockStart();
 

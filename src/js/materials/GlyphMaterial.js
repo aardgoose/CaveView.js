@@ -5,7 +5,7 @@ import { AtlasFactory } from '../materials/GlyphAtlas';
 
 function GlyphMaterial ( glyphAtlasSpec, container, rotation, colour ) {
 
-	var glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec, colour );
+	var glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec );
 
 	var cellScale = glyphAtlas.getCellScale();
 
@@ -13,6 +13,8 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation, colour ) {
 	var sin = Math.sin( rotation );
 
 	var rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
+
+	colour = colour || [ 1, 1, 1 ];
 
 	ShaderMaterial.call( this, {
 		uniforms: {
@@ -31,7 +33,7 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation, colour ) {
 	this.transparent = true;
 	this.defines = { USE_COLOR: true };
 
-	this.defaultAttributeValues.color = [ 1, 1, 1 ];
+	this.defaultAttributeValues.color = colour;
 	this.type = 'CV.GlyphMaterial';
 	this.atlas = glyphAtlas;
 

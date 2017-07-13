@@ -14,7 +14,9 @@ function StationLabels () {
 	this.type = 'CV.StationLabels';
 	this.layers.set( LABEL_STATION );
 
-	this.labelMaterial = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', 0 );
+	this.junctionLabelMaterial = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', 0, [ 1, 1, 0 ] );
+	this.defaultLabelMaterial = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', 0 );
+	this.splayLabelMaterial = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', 0, [ 0.6, 0.6, 0.6 ] );
 
 }
 
@@ -24,7 +26,23 @@ StationLabels.prototype.constructor = StationLabels;
 
 StationLabels.prototype.addStation = function ( station ) {
 
-	var label = new GlyphString( station.name, this.labelMaterial );
+	var material;
+
+	if ( station.hitCount === 0 ) {
+
+		material = this.splayLabelMaterial;
+
+	} else if ( station.hitCount < 3 ) {
+
+		material = this.defaultLabelMaterial;
+
+	} else {
+
+		material = this.junctionLabelMaterial;
+
+	}
+
+	var label = new GlyphString( station.name, material );
 
 	label.layers.set( LABEL_STATION );
 
@@ -72,7 +90,7 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 		} else {
 
 			// show labels for network vertices at greater distance than intermediate stations
-			limit = ( label.hitCount < 3 ) ? 10000 : 20000;
+			limit = ( label.hitCount < 3 ) ? 5000 : 40000;
 			label.visible =  ( label.position.distanceToSquared( cameraPosition) < limit );
 
 		}

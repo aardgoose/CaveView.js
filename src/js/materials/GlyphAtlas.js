@@ -13,8 +13,6 @@ function GlyphAtlas ( glyphAtlasSpec, colour ) {
 	canvas.width  = atlasSize;
 	canvas.height = atlasSize;
 
-	colour = colour || '#ffffff';
-
 	var ctx = canvas.getContext( '2d' );
 
 	if ( ! ctx ) console.error( 'cannot obtain 2D canvas' );
@@ -44,7 +42,7 @@ function GlyphAtlas ( glyphAtlasSpec, colour ) {
 
 	ctx.textAlign = 'left';
 	ctx.font = fontSize + 'px ' + glyphAtlasSpec;
-	ctx.fillStyle = colour;
+	ctx.fillStyle = '#ffffff';
 
 	var row, column;
 
@@ -102,15 +100,14 @@ GlyphAtlas.prototype.getGlyph = function ( glyph ) {
 var atlasCache = {};
 var AtlasFactory = {};
 
-AtlasFactory.getAtlas = function ( glyphAtlasSpec, colour ) {
+AtlasFactory.getAtlas = function ( glyphAtlasSpec ) {
 
-	var key = glyphAtlasSpec + ':' + colour;
-	var atlas = atlasCache[ key ];
+	var atlas = atlasCache[ glyphAtlasSpec ];
 
 	if ( atlas === undefined ) {
 
-		atlas = new GlyphAtlas( glyphAtlasSpec, colour );
-		atlasCache[ key ] = atlas;
+		atlas = new GlyphAtlas( glyphAtlasSpec );
+		atlasCache[ glyphAtlasSpec ] = atlas;
 
 	}
 

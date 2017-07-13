@@ -114,7 +114,7 @@ Compass.prototype = Object.create( Group.prototype );
 
 Object.assign( Compass.prototype, HudObject.prototype );
 
-Compass.prototype.contructor = Compass;
+Compass.prototype.constructor = Compass;
 
 Compass.prototype.set = function () {
 

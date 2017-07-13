@@ -42,7 +42,7 @@ ProgressDial.prototype = Object.create( Mesh.prototype );
 
 Object.assign( ProgressDial.prototype, HudObject.prototype );
 
-ProgressDial.prototype.contructor = ProgressDial;
+ProgressDial.prototype.constructor = ProgressDial;
 
 ProgressDial.prototype.set = function ( progress ) {
 

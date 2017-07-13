@@ -126,7 +126,7 @@ AHI.prototype = Object.create( Group.prototype );
 
 Object.assign( AHI.prototype, HudObject.prototype );
 
-AHI.prototype.contructor = AHI;
+AHI.prototype.constructor = AHI;
 
 AHI.prototype.set = function () {
 

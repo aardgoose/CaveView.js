@@ -84,7 +84,7 @@ function Stations () {
 
 Stations.prototype = Object.create ( Points.prototype );
 
-Stations.prototype.contructor = Stations;
+Stations.prototype.constructor = Stations;
 
 Stations.prototype.addStation = function ( node ) {
 

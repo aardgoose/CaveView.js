@@ -556,7 +556,7 @@ function setCameraMode ( mode ) {
 
 	cameraMode = mode;
 
-//	HUD.update();
+	HUD.update();
 
 	renderView();
 

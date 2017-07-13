@@ -35,6 +35,6 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 };
 
-Overlay.prototype.contructor = Overlay;
+Overlay.prototype.constructor = Overlay;
 
 export { Overlay };

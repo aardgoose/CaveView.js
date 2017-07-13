@@ -50,7 +50,6 @@ ScaleBar.prototype.constructor = ScaleBar;
 
 ScaleBar.prototype.setVisibility = function ( visible ) {
 
-	console.warn( 'sv', visible );
 	HudObject.prototype.setVisibility.call( this, visible );
 
 	if ( this.currentLength !== 0 ) this.scaleBars[ this.currentLength ].mesh.visible = visible;

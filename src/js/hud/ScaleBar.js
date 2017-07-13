@@ -48,6 +48,15 @@ Object.assign( ScaleBar.prototype, HudObject.prototype );
 
 ScaleBar.prototype.constructor = ScaleBar;
 
+ScaleBar.prototype.setVisibility = function ( visible ) {
+
+	console.warn( 'sv', visible );
+	HudObject.prototype.setVisibility.call( this, visible );
+
+	if ( this.currentLength !== 0 ) this.scaleBars[ this.currentLength ].mesh.visible = visible;
+
+}
+
 ScaleBar.prototype.setScale = function ( scale ) {
 
 	var scaleBars = this.scaleBars;
@@ -104,7 +113,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 		}
 
-		scaleBars[ length ].mesh.visible = true;
+		scaleBars[ length ].mesh.visible = this.visible;
 		this.currentLength = length;
 
 	}
@@ -113,7 +122,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	var legend = this.legend;
 
-	legend.style.display = 'block';
+	legend.style.display = this.visible ? 'block' : 'none';
 	legend.style.left = ( scale * scaleBars[ length ].topRight - legend.clientWidth ) + 'px';
 
 	legend.textContent = legendText;

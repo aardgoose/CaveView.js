@@ -203,7 +203,7 @@ Survey.prototype.loadEntrances = function () {
 
 	if ( clusterMarkers ) this.remove( clusterMarkers );
 
-	clusterMarkers = new ClusterMarkers( this.limits, 4 );
+	clusterMarkers = new ClusterMarkers( this.limits, this.offsets, 4 );
 
 	// remove common elements from station names
 

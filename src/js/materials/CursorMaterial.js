@@ -5,13 +5,11 @@ import { ColourCache } from '../core/ColourCache';
 
 import { Vector3, ShaderMaterial } from '../../../../three.js/src/Three';
 
-function CursorMaterial ( type, limits, offset ) {
+function CursorMaterial ( type, limits ) {
 
 	ShaderMaterial.call( this );
 
 	this.halfRange = ( limits.max.z - limits.min.z ) / 2;
-//	this.min = limits.min.z;
-//	this.max = limits.max.z;
 
 	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
 
@@ -55,7 +53,7 @@ CursorMaterial.prototype.setCursor = function ( value ) {
 };
 
 CursorMaterial.prototype.getCursor = function () {
-console.log( 'cv', this.uniforms.cursor.value );
+
 	return this.uniforms.cursor.value;
 
 };

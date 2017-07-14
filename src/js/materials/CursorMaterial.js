@@ -5,7 +5,7 @@ import { ColourCache } from '../core/ColourCache';
 
 import { Vector3, ShaderMaterial } from '../../../../three.js/src/Three';
 
-function CursorMaterial ( type, limits ) {
+function CursorMaterial ( type, limits, offset ) {
 
 	ShaderMaterial.call( this );
 

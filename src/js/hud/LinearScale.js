@@ -25,20 +25,19 @@ function LinearScale ( container, viewState ) {
 	var barWidth  = stdWidth / 2;
 
 	var range = viewState.maxHeight - viewState.minHeight;
-	var zScale = barHeight / range;
 
 	var geometry = new PlaneBufferGeometry( barWidth, range );
 
 	// rotate the model to put the plane in the xz plane, covering the range of view height values - the gradient shader works on z values.
 
 	geometry.rotateX( Math.PI / 2 );
-	geometry.translate( -barWidth / 2, 0, range / 2 + viewState.minHeight );
+	geometry.translate( -barWidth / 2, 0, 0 );
 
 	Mesh.call( this, geometry, Materials.getHeightMaterial( MATERIAL_LINE ) );
 
-	var ms = new Matrix4().makeScale( 1,  1, zScale );
+	var ms = new Matrix4().makeScale( 1,  1, barHeight / range );
 
-	ms.multiply( new Matrix4().makeTranslation( width / 2 - stdMargin, -height / 2 + barOffset - viewState.minHeight * zScale, 0 ) );
+	ms.multiply( new Matrix4().makeTranslation( width / 2 - stdMargin, -height / 2 + barOffset + barHeight / 2, 0 ) );
 
 	this.applyMatrix( ms );
 

@@ -54,7 +54,7 @@ ScaleBar.prototype.setVisibility = function ( visible ) {
 
 	if ( this.currentLength !== 0 ) this.scaleBars[ this.currentLength ].mesh.visible = visible;
 
-}
+};
 
 ScaleBar.prototype.setScale = function ( scale ) {
 

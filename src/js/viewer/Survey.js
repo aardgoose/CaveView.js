@@ -95,8 +95,14 @@ function Survey ( cave ) {
 
 	} else { 
 
+		var surveyLimits = survey.limits;
+
 		this.loadCave( survey );
-		this.limits = this.getBounds();
+
+		this.limits = new Box3( new Vector3().copy( surveyLimits.min ), new Vector3().copy( surveyLimits.max ) );
+		this.offsets = survey.offsets;
+
+		console.log ( 'offsets', this.offsets );
 
 		this.legTargets = [ this.features[ LEG_CAVE ] ];
 
@@ -216,7 +222,6 @@ Survey.prototype.loadEntrances = function () {
 
 			marker = clusterMarkers.addMarker( node.p, node.getPath( endNode ) );
 
-			this.limits.expandByPoint( marker.position );
 			this.pointTargets.push( marker );
 
 		}
@@ -765,7 +770,6 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 	this.addFeature( stationLabels, LABEL_STATION, 'CV.StationLabels' );
 
 	this.stations = stations;
-	this.stationLabels = stationLabels;
 
 	return;
 
@@ -992,7 +996,12 @@ Survey.prototype.setFeatureBox = function () {
 
 	if ( this.featureBox === null ) {
 
-		var box = new Box3Helper( this.limits, 0xffffff );
+		var box3 = new Box3().copy( this.limits );
+
+		box3.min.sub( this.offsets );
+		box3.max.sub( this.offsets );
+
+		var box = new Box3Helper( box3, 0xffffff );
 
 		box.layers.set( FEATURE_BOX );
 		box.name = 'survey-boundingbox';
@@ -1002,7 +1011,7 @@ Survey.prototype.setFeatureBox = function () {
 
 	} else {
 
-		this.featureBox.update( this.limits );
+//		this.featureBox.update( this.limits );
 
 	}
 

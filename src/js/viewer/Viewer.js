@@ -1180,16 +1180,14 @@ function setScale ( obj ) {
 	zScale = 0.5;
 
 	var range  = limits.getSize();
-	var center = limits.getCenter();
 
 	// initialize cursor height to be mid range of heights
-	cursorHeight = center.z;
+	cursorHeight = 0;
 
 	var scale = Math.min( width / range.x, height / range.y );
 	var verticalScale = scale * scaleFactor;
 
 	obj.scale.set( scale, scale, verticalScale );
-	obj.position.set( -center.x * scale, -center.y * scale, -center.z * verticalScale );
 
 	HUD.setScale( verticalScale );
 

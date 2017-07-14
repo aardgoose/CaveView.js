@@ -142,6 +142,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	var readCoordinates = ( this.projection === null ) ? __readCoordinates : __readCoordinatesProjected;
 
+	// range
+
+	var min = { x: Infinity, y: Infinity, z: Infinity };
+	var max = { x: -Infinity, y: -Infinity, z: -Infinity };
+
 	// init cmd handler table withh  error handler for unsupported records or invalid records
 
 	function _errorHandler ( e ) { console.log ('unhandled command: ', e.toString( 16 ) ); return false; }
@@ -266,7 +271,31 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	groups.push( legs );
 
+	var offsets = {
+		x: ( min.x + max.x ) / 2,
+		y: ( min.y + max.y ) / 2,
+		z: ( min.z + max.z ) / 2
+	};
+
+	surveyTree.traverse( adjustCoords );
+
+	this.offsets = offsets;
+
+	this.limits = { min: min, max: max };
+
 	return;
+
+	function adjustCoords( node ) {
+
+		var coords = node.p;
+
+		if ( coords === undefined ) return;
+
+		coords.x -= offsets.x;
+		coords.y -= offsets.y;
+		coords.z -= offsets.z;
+
+	}
 
 	function readLabelV7 () {
 		// find length of label and read label = v3 - v7 .3d format
@@ -704,6 +733,14 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 			z: l.getInt32( 8, true ) / 100
 		};
 
+		min.x = Math.min( coords.x, min.x );
+		min.y = Math.min( coords.y, min.y );
+		min.z = Math.min( coords.z, min.z );
+
+		max.x = Math.max( coords.x, max.x );
+		max.y = Math.max( coords.y, max.y );
+		max.z = Math.max( coords.z, max.z );
+
 		pos += 12;
 
 		return coords;
@@ -720,6 +757,14 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 			z: l.getInt32( 8, true ) / 100
 		};
 
+		min.x = Math.min( coords.x, min.x );
+		min.y = Math.min( coords.y, min.y );
+		min.z = Math.min( coords.z, min.z );
+
+		max.x = Math.max( coords.x, max.x );
+		max.y = Math.max( coords.y, max.y );
+		max.z = Math.max( coords.z, max.z );
+
 		pos += 12;
 
 		return coords;
@@ -732,6 +777,7 @@ Svx3dHandler.prototype.getLineSegments = function () {
 
 	var lineSegments = [];
 	var groups = this.groups;
+	var offsets = this.offsets;
 
 	for ( var i = 0, l = groups.length; i < l; i++ ) {
 
@@ -744,14 +790,28 @@ Svx3dHandler.prototype.getLineSegments = function () {
 			var from = g[ v ];
 			var to   = g[ v + 1 ];
 
+
+			// move coordinates around origin
+
+			from.coords.x -= offsets.x;
+			from.coords.y -= offsets.y;
+			from.coords.z -= offsets.z;
+
 			var fromCoords = from.coords;
 			var toCoords = to.coords;
 
+			// skip repeated points ( co-located stations )
 			if ( fromCoords.x === toCoords.x && fromCoords.y === toCoords.y && fromCoords.z === toCoords.z ) continue;
 
 			lineSegments.push( { from: fromCoords, to: toCoords, type: to.type, survey: to.survey } );
 
 		}
+
+		// move coordinates around origin
+
+		to.coords.x -= offsets.x;
+		to.coords.y -= offsets.y;
+		to.coords.z -= offsets.z;
 
 	}
 
@@ -778,6 +838,8 @@ Svx3dHandler.prototype.getSurvey = function () {
 		surveyTree: this.surveyTree,
 		sourceCRS: this.sourceCRS,
 		targetCRS: this.targetCRS,
+		limits: this.limits,
+		offsets: this.offsets,
 		lineSegments: this.getLineSegments(),
 		crossSections: this.xGroups,
 		scraps: [],

@@ -8,3 +8,4 @@ tools/dtm/*
 tools/private/
 !build/terrain/README.txt
 !build/surveys/README.txt
+npm-debug.log

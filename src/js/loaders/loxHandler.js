@@ -32,12 +32,44 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 	var xGroup = [];
 	var lastTo;
 
+	// range
+
+	var min = { x: Infinity, y: Infinity, z: Infinity };
+	var max = { x: -Infinity, y: -Infinity, z: -Infinity };
+
 	while ( pos < l ) readChunkHdr();
 
 	this.lineSegments = lineSegments;
 
 	// Drop data to give GC a chance ASAP
 	source = null;
+
+	this.limits = {
+		min: min,
+		max: max
+	};
+
+	var offsets = {
+		x: ( min.x + max.x ) / 2,
+		y: ( min.y + max.y ) / 2,
+		z: ( min.z + max.z ) / 2
+	};
+
+	this.offsets = offsets;
+
+	// convert to origin centered coordinates
+
+	for ( var i = 0; i < stations.length; i++ ) {
+
+		var coords = stations[ i ];
+
+		coords.x -= offsets.x;
+		coords.y -= offsets.y;
+		coords.z -= offsets.z;
+
+	}
+
+	// FIXME covert scraps coordinates
 
 	return;
 
@@ -195,11 +227,21 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		pos += 24;
 
-		return {
+		coords = {
 			x: f.getFloat64( 0,  true ),
 			y: f.getFloat64( 8,  true ),
 			z: f.getFloat64( 16, true )
 		};
+
+		min.x = Math.min( coords.x, min.x );
+		min.y = Math.min( coords.y, min.y );
+		min.z = Math.min( coords.z, min.z );
+
+		max.x = Math.max( coords.x, max.x );
+		max.y = Math.max( coords.y, max.y );
+		max.z = Math.max( coords.z, max.z );
+
+		return coords;
 
 	}
 
@@ -484,7 +526,9 @@ loxHandler.prototype.getSurvey = function () {
 		entrances: this.entrances,
 		hasTerrain: this.hasTerrain,
 		metadata: this.metadata,
-		terrain: this.terrain
+		terrain: this.terrain,
+		limits: this.limits,
+		offsets: this.offsets
 	};
 
 };

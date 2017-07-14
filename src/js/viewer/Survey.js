@@ -668,9 +668,9 @@ Survey.prototype.loadCave = function ( cave ) {
 		var height = ( dim.lines   - 1 ) * dim.yDelta;
 		var clip = { top: 0, bottom: 0, left: 0, right: 0, dtmOffset: 0 };
 
-		var terrainTileGeometry = new TerrainTileGeometry( width, height, dim.samples - 1, dim.lines - 1, terrain.data, 1, clip );
+		var terrainTileGeometry = new TerrainTileGeometry( width, height, dim.samples - 1, dim.lines - 1, terrain.data, 1, clip, self.offsets.z );
 
-		terrainTileGeometry.translate( dim.xOrigin, dim.yOrigin + height, 0 );
+		terrainTileGeometry.translate( dim.xOrigin - self.offsets.x, dim.yOrigin + height - self.offsets.y, 0 );
 
 		self.terrain = new Terrain().addTile( terrainTileGeometry, terrain.bitmap );
 

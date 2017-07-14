@@ -9,14 +9,15 @@ function CursorMaterial ( type, limits, offset ) {
 
 	ShaderMaterial.call( this );
 
-	this.min = limits.min.z;
-	this.max = limits.max.z;
+	this.halfRange = ( limits.max.z - limits.min.z ) / 2;
+//	this.min = limits.min.z;
+//	this.max = limits.max.z;
 
 	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
 
 	this.uniforms = {
 		uLight:      { value: new Vector3( -1, -1, 2 ) },
-		cursor:      { value: ( limits.max.z + limits.min.z ) / 2 },
+		cursor:      { value: 0 },
 		cursorWidth: { value: 5.0 },
 		baseColor:   { value: ColourCache.lightGrey },
 		cursorColor: { value: ColourCache.green }
@@ -45,7 +46,7 @@ CursorMaterial.prototype.constructor = CursorMaterial;
 
 CursorMaterial.prototype.setCursor = function ( value ) {
 
-	var newValue = Math.max( Math.min( value, this.max ), this.min );
+	var newValue = Math.max( Math.min( value, this.halfRange ), -this.halfRange );
 
 	this.uniforms.cursor.value = newValue;
 
@@ -54,7 +55,7 @@ CursorMaterial.prototype.setCursor = function ( value ) {
 };
 
 CursorMaterial.prototype.getCursor = function () {
-
+console.log( 'cv', this.uniforms.cursor.value );
 	return this.uniforms.cursor.value;
 
 };

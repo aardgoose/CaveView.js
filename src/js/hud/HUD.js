@@ -323,7 +323,7 @@ function cursorChanged ( /* event */ ) {
 
 	if ( viewState.shadingMode === SHADING_CURSOR ) {
 
-		scaledHeight = ( viewState.cursorHeight - viewState.minHeight ) / range;
+		scaledHeight = ( viewState.cursorHeight + range / 2 ) / range;
 
 	} else {
 

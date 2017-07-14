@@ -281,7 +281,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	this.offsets = offsets;
 
-	this.limits = { min: min, max: max };
+	this.limits = {
+		min: min,
+		max: max
+	};
 
 	return;
 

@@ -69,7 +69,7 @@ function getDepthMaterial ( type, limits, offsets ) {
 
 }
 
-function getCursorMaterial ( type, limits, offsets ) {
+function getCursorMaterial ( type, limits ) {
 
 	var name = 'cursor' + type;
 
@@ -77,7 +77,7 @@ function getCursorMaterial ( type, limits, offsets ) {
 
 	if ( material === undefined ) {
 
-		material = new CursorMaterial( type, limits, offsets );
+		material = new CursorMaterial( type, limits );
 
 		perSurveyMaterials[ name ] = material;
 

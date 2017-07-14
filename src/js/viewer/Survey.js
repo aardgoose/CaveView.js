@@ -1150,7 +1150,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_CURSOR:
 
-		material = Materials.getCursorMaterial( MATERIAL_SURFACE, this.limits, this.offsets );
+		material = Materials.getCursorMaterial( MATERIAL_SURFACE, this.limits );
 
 		break;
 
@@ -1333,7 +1333,7 @@ Survey.prototype.setLegColourByHeight = function ( mesh ) {
 
 Survey.prototype.setLegColourByCursor = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getCursorMaterial( MATERIAL_LINE, this.limits, this.offsets ) );
+	this.setLegColourByMaterial( mesh, Materials.getCursorMaterial( MATERIAL_LINE, this.limits ) );
 
 };
 

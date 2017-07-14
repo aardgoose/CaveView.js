@@ -15,7 +15,7 @@ import { Box3 } from '../../../../three.js/src/math/Box3';
 import { Colours } from '../core/Colours';
 import { upAxis } from '../core/constants';
 
-function TerrainTileGeometry( width, height, widthSegments, heightSegments, terrainData, scale, clip ) {
+function TerrainTileGeometry( width, height, widthSegments, heightSegments, terrainData, scale, clip, zOffset ) {
 
 	BufferGeometry.call( this );
 
@@ -76,7 +76,7 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 		for ( ix = clip.left; ix < ixMax; ix++ ) {
 
-			z = terrainData[ zIndex++ ] / scale;
+			z = terrainData[ zIndex++ ] / scale - zOffset; // scale and convert to origin centered coords
 
 			vertices.push( x, - y, z );
 			vertexCount++;

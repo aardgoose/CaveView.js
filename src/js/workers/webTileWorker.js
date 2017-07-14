@@ -20,6 +20,7 @@ function mapLoaded ( data ) {
 	// clip height map data
 
 	var clip       = tileSpec.clip;
+	var offsets    = tileSpec.offsets;
 	var tileSet    = tileSpec.tileSet;
 	var divisions  = tileSpec.divisions;
 
@@ -36,10 +37,10 @@ function mapLoaded ( data ) {
 	clip.terrainHeight = tileSpec.divisions;
 	clip.terrainWidth  = tileSpec.divisions;
 
-	var terrainTile = new TerrainTileGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions, terrainData, tileSet.dtmScale, clip );
+	var terrainTile = new TerrainTileGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions, terrainData, tileSet.dtmScale, clip, offsets.z );
 
-	var X = resolution * ( tileSpec.x * divisions + clip.left ) - halfMapExtent;
-	var Y = halfMapExtent - resolution * ( tileSpec.y * divisions + clip.top );
+	var X = resolution * ( tileSpec.x * divisions + clip.left ) - halfMapExtent - offsets.x;
+	var Y = halfMapExtent - resolution * ( tileSpec.y * divisions + clip.top ) - offsets.y;
 
 	terrainTile.translate( X, Y, 0 );
 

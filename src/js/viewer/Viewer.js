@@ -879,7 +879,7 @@ function loadSurvey ( newSurvey ) {
 
 	if ( terrain === null ) {
 
-		terrain = new WebTerrain( survey.limits, _terrainReady, _tilesLoaded, renderView );
+		terrain = new WebTerrain( survey.limits, survey.offsets, _terrainReady, _tilesLoaded, renderView );
 		asyncTerrainLoading = true;
 
 	} else {

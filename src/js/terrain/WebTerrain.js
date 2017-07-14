@@ -13,7 +13,7 @@ import {
 
 var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-function WebTerrain ( limits3, onReady, onLoaded, overlayLoadedCallback ) {
+function WebTerrain ( limits3, offsets, onReady, onLoaded, overlayLoadedCallback ) {
 
 	CommonTerrain.call( this );
 
@@ -24,6 +24,8 @@ function WebTerrain ( limits3, onReady, onLoaded, overlayLoadedCallback ) {
 		new Vector2( limits3.min.x, limits3.min.y ),
 		new Vector2( limits3.max.x, limits3.max.y )
 	);
+
+	this.offsets = offsets;
 
 	this.onLoaded        = onLoaded;
 	this.childrenLoading = 0;
@@ -204,7 +206,8 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 		x: x,
 		y: y,
 		z: z,
-		clip: clip
+		clip: clip,
+		offsets: this.offsets
 	} );
 
 	return;

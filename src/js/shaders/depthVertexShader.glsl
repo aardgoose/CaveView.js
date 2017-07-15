@@ -40,7 +40,7 @@ void main() {
 	vec2 terrainCoords = vec2( ( position.x - minX ) * scaleX, ( position.y - minY ) * scaleY );
 	vec4 terrainHeight = texture2D( depthMap, terrainCoords );
 
-	vHeight =  terrainHeight.g  - ( position.z - minZ ) * scaleZ;
+	vHeight =  terrainHeight.g - ( position.z - minZ ) * scaleZ;
 
 	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 

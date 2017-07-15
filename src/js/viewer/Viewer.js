@@ -1179,21 +1179,27 @@ function setScale ( obj ) {
 	limits = survey.limits;
 	zScale = 0.5;
 
-	var range  = limits.getSize();
+	var range = limits.getSize();
 
 	// initialize cursor height to be mid range of heights
 	cursorHeight = 0;
 
-	var scale = Math.min( width / range.x, height / range.y );
-	var verticalScale = scale * scaleFactor;
+	var hScale = Math.min( width / range.x, height / range.y );
+	var vScale = hScale * scaleFactor;
 
-	obj.scale.set( scale, scale, verticalScale );
+	var scale = new Vector3( hScale, hScale, vScale );
 
-	HUD.setScale( verticalScale );
+	obj.scale.copy( scale );
+
+	var center = survey.modelLimits.getCenter().multiply( scale ).negate();
+
+	obj.position.copy( center );
+
+	HUD.setScale( vScale );
 
 	// pass to survey to adjust size of symbology
 
-	obj.setScale( verticalScale );
+	obj.setScale( vScale );
 
 }
 

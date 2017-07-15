@@ -58,7 +58,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 	// convert to origin centered coordinates
 
-	var i, j, l, coords, vertices;
+	var i, j, coords, vertices;
 
 	for ( i = 0; i < stations.length; i++ ) {
 

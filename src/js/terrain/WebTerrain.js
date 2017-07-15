@@ -487,7 +487,12 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 				if ( tile.zoom < maxZoom ) {
 
-					this.tileArea( tile.getBoundingBox(), tile );
+					var bb = tile.getBoundingBox().clone();
+
+					bb.min.add( this.offsets );
+					bb.max.add( this.offsets );
+
+					this.tileArea( bb, tile );
 					retry = true;
 
 				}

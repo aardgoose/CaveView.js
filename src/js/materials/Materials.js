@@ -28,13 +28,13 @@ function updateCursors( /* event */ ) {
 
 }
 
-function getHeightMaterial ( type, limits, offsets ) {
+function getHeightMaterial ( type, limits ) {
 
 	var name = 'height' + type;
 
 	if ( cache.has( name ) ) return cache.get( name );
 
-	var material = new HeightMaterial( type, limits, offsets );
+	var material = new HeightMaterial( type, limits );
 
 	cache.set( name, material );
 
@@ -44,13 +44,13 @@ function getHeightMaterial ( type, limits, offsets ) {
 
 }
 
-function getDepthMapMaterial () {
+function getDepthMapMaterial ( survey ) {
 
-	return new DepthMapMaterial( viewState.minHeight, viewState.maxHeight );
+	return new DepthMapMaterial( survey );
 
 }
 
-function getDepthMaterial ( type, limits, offsets ) {
+function getDepthMaterial ( type, limits ) {
 
 	var name = 'depth' + type;
 	var material = cache.get( name );
@@ -97,7 +97,7 @@ function getCursorMaterial ( type, limits ) {
 
 }
 
-function getDepthCursorMaterial( type, limits, offsets ) {
+function getDepthCursorMaterial( type, limits ) {
 
 	var name = 'depthCursor' + type;
 

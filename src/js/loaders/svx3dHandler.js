@@ -199,7 +199,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	} else {
 
-		// dispatch table for v7 format 
+		// dispatch table for v7 format
 
 		for ( i = 0x01; i < 0x0f; i++ ) {
 
@@ -246,7 +246,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	}
 
 	if ( version === 6 ) {
-	
+
 		cmd[ 0x20 ] = cmd_DATE_V4;
 		cmd[ 0x21 ] = cmd_DATE2_V4;
 
@@ -335,7 +335,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		var db = [];
 
 		for ( var i = 0; i < len; i++ ) {
-	
+
 			db.push( data[ pos++ ] );
 
 		}
@@ -451,7 +451,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		return true;
 
 	}
- 
+
 	function cmd_DATE_V4 ( /* c */ ) {
 
 		pos += 4;
@@ -567,7 +567,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		legs = [];
 
-		// heuristic to detect line ends. lastPosition was presumably set in a line sequence therefore is at the end 
+		// heuristic to detect line ends. lastPosition was presumably set in a line sequence therefore is at the end
 		// of a line, Add the current label, presumably specified in the last LINE, to a Set of lineEnds.
 
 		lineEnds.add( lastPosition.x + ':' + lastPosition.y + ':' + lastPosition.z );
@@ -652,7 +652,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		pos += 16;
 
-		return commonXSECT( 
+		return commonXSECT(
 			flags,
 			{
 				l: l.getInt32( 0, true ) / 100,

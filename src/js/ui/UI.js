@@ -1,6 +1,6 @@
 import {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, STATION_ENTRANCE,
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, 
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_ASPECT, SHADING_DEPTH_CURSOR,
 	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
 } from '../core/constants';
@@ -149,7 +149,7 @@ function handleChange ( event ) {
 			terrainOverlay.style.display = 'none';
 
 		}
- 
+
 		break;
 
 	}
@@ -232,7 +232,7 @@ function initSelectionPage () {
 		// FIXME need to add listener to allow survey list to be updated on dynamic load of survey
 
 		top.forEachChild( _addLine );
-	
+
 		currentTop = top;
 
 		page.addListener( ul, 'mouseover', _handleMouseover );
@@ -929,7 +929,7 @@ function keyDown ( event ) {
 		break;
 
 	case 107: // increase cursor depth - '+' (keypad)
-	case 219: // '[' key 
+	case 219: // '[' key
 
 		viewState.cursorHeight++;
 

@@ -151,7 +151,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 	// account for limits of DTM resolution
 
 	var tileSet = this.tileSet;
-	var scale = ( z > tileSet.dtmMaxZoom ) ? Math.pow( 2, tileSet.dtmMaxZoom - z ) : 1; 
+	var scale = ( z > tileSet.dtmMaxZoom ) ? Math.pow( 2, tileSet.dtmMaxZoom - z ) : 1;
 
 	// don't zoom in with no overlay - no improvement of terrain rendering in this case
 
@@ -307,7 +307,7 @@ WebTerrain.prototype.tileArea = function ( limits, tile, maxZoom ) {
 	}
 
 	if ( this.tilesLoading > 0 && this.progressDial !== undefined ) {
- 
+
 		this.progressDial.start( 'Loading ' + this.tilesLoading + ' terrain tiles' );
 		this.progressInc = 100 / ( this.tilesLoading * 2 );
 
@@ -571,7 +571,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 				//console.log( 'ir', initialZoom, 'p: ', pressure, ' tp: ', tilePressure, ( pressure > tilePressure ? '*** EVICTING ***' : 'KEEP' ) );
 
 				if ( pressure > tilePressure ) tile.evict();
- 
+
 			}
 
 		}

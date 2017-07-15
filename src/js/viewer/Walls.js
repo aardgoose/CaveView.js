@@ -44,7 +44,7 @@ Walls.prototype.addWalls = function ( vertices, indices, indexRuns ) {
 		console.error( 'Walls: appending not yet implemented' );
 
 	}
-	
+
 	geometry.computeVertexNormals();
 	geometry.computeBoundingBox();
 

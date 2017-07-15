@@ -72,7 +72,7 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 		// dtmOffset adjusts for tiles smaller than DTM height maps
 
-		zIndex = iy * clip.dtmWidth + clip.left + clip.dtmOffset; 
+		zIndex = iy * clip.dtmWidth + clip.left + clip.dtmOffset;
 
 		for ( ix = clip.left; ix < ixMax; ix++ ) {
 

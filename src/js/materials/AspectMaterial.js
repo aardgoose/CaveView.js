@@ -9,7 +9,7 @@ function AspectMaterial () {
 	ShaderMaterial.call( this );
 
 	this.transparent = true;
-	
+
 	this.uniforms = {
 		// pseudo light source somewhere over viewer's left shoulder.
 		cmap:           { value: Colours.spectrumTexture },

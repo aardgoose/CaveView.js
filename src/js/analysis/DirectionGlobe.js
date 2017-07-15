@@ -1,9 +1,9 @@
 
 import  {
 	Points, SphereBufferGeometry, MeshBasicMaterial, Mesh, Geometry, Vector3, BufferGeometry, Float32BufferAttribute,
-} from '../../../../three.js/src/Three'; 
+} from '../../../../three.js/src/Three';
 
-import  { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial'; 
+import  { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
 import { ColourCache } from '../core/ColourCache';
 
@@ -42,7 +42,7 @@ function DirectionGlobe ( survey ) {
 		rLength = ( legVector.length() - stats.minLegLength ) / stats.legLengthRange;
 
 		var c = Math.max( 0, 2 * ( 1 + Math.log(  rLength * 10 ) * Math.LOG10E ) );
-	
+
 		pSize.push( c );
 		pSize.push( c );
 

@@ -2,7 +2,12 @@
 import { Shaders } from '../shaders/Shaders';
 import { ShaderMaterial } from '../../../../three.js/src/Three';
 
-function DepthMapMaterial ( minHeight, maxHeight ) {
+function DepthMapMaterial ( survey ) {
+
+	var limits = survey.modelLimits;
+
+	var minHeight = limits.min.z;
+	var maxHeight = limits.max.z;
 
 	ShaderMaterial.call( this, {
 

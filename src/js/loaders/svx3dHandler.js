@@ -614,7 +614,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		stations.set( label, coords );
 
-		var stationId = surveyTree.addPath( path, { p: coords, type: ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL } );
+		surveyTree.addPath( path, { p: coords, type: ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL } );
 
 		return true;
 

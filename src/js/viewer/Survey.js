@@ -626,7 +626,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		if ( run.end === undefined ) {
 
-			run.end = legs.vertices.length / 2;
+			run.end = legs.vertices.length;
 			legs.runs.push( run );
 
 		}
@@ -968,10 +968,11 @@ Survey.prototype.selectSection = function ( id ) {
 	var surveyTree = this.surveyTree;
 	var node;
 
+	selectedSectionIds.clear();
+
 	if ( id ) {
 
 		node = surveyTree.findById( id );
-		selectedSectionIds.clear();
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
@@ -1012,7 +1013,6 @@ Survey.prototype.setFeatureBox = function () {
 	}
 
 };
-
 
 Survey.prototype.cutSection = function ( id ) {
 

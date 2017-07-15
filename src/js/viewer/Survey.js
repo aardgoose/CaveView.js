@@ -107,7 +107,6 @@ function Survey ( cave ) {
 
 		this.modelLimits = modelLimits;
 
-		console.log ( 'offsets', this.offsets );
 		this.loadCave( survey );
 
 		this.legTargets = [ this.features[ LEG_CAVE ] ];
@@ -1063,8 +1062,6 @@ Survey.prototype.cutSection = function ( id ) {
 
 	this.setFeatureBox();
 
-	// reload entrances - omitting any not in newly truncated surveyTree
-
 	this.loadEntrances();
 
 	this.cutInProgress = true;
@@ -1329,7 +1326,7 @@ Survey.prototype.setLegColourByDepthCursor = function ( mesh ) {
 
 Survey.prototype.setLegColourByHeight = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getHeightMaterial( MATERIAL_LINE, this.modeLimits ) );
+	this.setLegColourByMaterial( mesh, Materials.getHeightMaterial( MATERIAL_LINE, this.modelLimits ) );
 
 };
 

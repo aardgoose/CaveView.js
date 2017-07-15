@@ -4,7 +4,7 @@ import {
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES, FEATURE_STATIONS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, 
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR,
 	upAxis
 } from '../core/constants';
@@ -67,7 +67,7 @@ function Survey ( cave ) {
 	this.inverseWorld = null;
 
 	// highlit point marker
- 
+
 	var pointerTexture = new TextureLoader().load( getEnvironmentValue( 'home', '' ) + 'images/ic_location.png' );
 	var pointerMaterial = new PointsMaterial( { size: 32, map: pointerTexture, transparent : true, sizeAttenuation: false, alphaTest: 0.8 } );
 
@@ -93,7 +93,7 @@ function Survey ( cave ) {
 		this.surveyTree = survey.surveyTree;
 		this.limits = cave.getLimits();
 
-	} else { 
+	} else {
 
 		var surveyLimits = survey.limits;
 
@@ -265,7 +265,7 @@ Survey.prototype.loadCave = function ( cave ) {
 	function _restoreSurveyTree ( surveyTree ) {
 
 		if ( surveyTree.forEachChild === undefined ) {
-	
+
 			// surveyTree from worker loading - add Tree methods to all objects in tree.
 
 			_restore( surveyTree );
@@ -363,7 +363,7 @@ Survey.prototype.loadCave = function ( cave ) {
 		var v = 0;
 		var l = crossSectionGroups.length;
 
-		// survey to face index mapping 
+		// survey to face index mapping
 		var currentSurvey;
 		var indexRuns = [];
 
@@ -522,14 +522,14 @@ Survey.prototype.loadCave = function ( cave ) {
 					// use previous leg to determine passage orientation for L and R for vertical legs
 
 					L = lastCross.clone().setLength(  lrud.l ).add( stationV );
-					R = lastCross.clone().setLength( -lrud.r ).add( stationV ); 
+					R = lastCross.clone().setLength( -lrud.r ).add( stationV );
 
 				}
 
 			} else {
 
 				L = cross.clone().setLength(  lrud.l ).add( stationV );
-				R = cross.clone().setLength( -lrud.r ).add( stationV ); 
+				R = cross.clone().setLength( -lrud.r ).add( stationV );
 
 			}
 
@@ -586,7 +586,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				console.log( 'unknown segment type: ', type );
 				break;
- 
+
 			}
 
 			if ( survey !== currentSurvey || type !== currentType ) {
@@ -1081,7 +1081,7 @@ Survey.prototype.cutSection = function ( id ) {
 			if ( ! obj.cutRuns( self.selectedSectionIds ) ) {
 
 				// remove this from survey layer mask
-				self.layers.mask &= ~ obj.layers.mask; 
+				self.layers.mask &= ~ obj.layers.mask;
 
 				cutList.push( obj );
 
@@ -1436,7 +1436,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 	var hueFactor = colourRange * 2 / Math.PI;
 	var legNormal = new Vector3();
 
-	// pNormal = normal of reference plane in model space 
+	// pNormal = normal of reference plane in model space
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 

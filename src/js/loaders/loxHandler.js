@@ -429,7 +429,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		var dtm = new Float64Array( ab, 0 );
 
-		// flip y direction 
+		// flip y direction
 
 		var data = [];
 

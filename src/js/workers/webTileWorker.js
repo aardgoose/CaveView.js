@@ -68,7 +68,7 @@ function mapLoaded ( data ) {
 
 	};
 
-	// support transferable objects where possible 
+	// support transferable objects where possible
 
 	var indexBuffer = terrainTile.index.array.buffer;
 	var attributes = {};

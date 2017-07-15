@@ -31,7 +31,7 @@ import {
 	Scene, Raycaster,
 	DirectionalLight, HemisphereLight,
 	LinearFilter, NearestFilter, RGBFormat,
-	OrthographicCamera, PerspectiveCamera, 
+	OrthographicCamera, PerspectiveCamera,
 	WebGLRenderer, WebGLRenderTarget,
 } from '../../../../three.js/src/Three';
 
@@ -1174,7 +1174,7 @@ function setScale ( obj ) {
 	var height = container.clientHeight;
 
 	// scaling to compensate distortion introduced by projection ( x and y coords only ) - approx only
-	var scaleFactor = survey.scaleFactor; 
+	var scaleFactor = survey.scaleFactor;
 
 	limits = survey.limits;
 	zScale = 0.5;

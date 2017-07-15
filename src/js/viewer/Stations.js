@@ -92,7 +92,7 @@ Stations.prototype.addStation = function ( node ) {
 
 	this.vertices.push( point );
 	this.colors.push( this.baseColor );
-	this.pointSizes.push( point.type === STATION_ENTRANCE ? 8.0 : 0.0 ); 
+	this.pointSizes.push( point.type === STATION_ENTRANCE ? 8.0 : 0.0 );
 
 	this.map.set( point.x.toString() + ':' + point.y.toString() + ':' + point.z.toString(), node );
 	this.stations.push( node );

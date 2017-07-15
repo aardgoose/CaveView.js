@@ -108,7 +108,7 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 	// use precalculated bounding box rather than recalculating it here.
 
 	bufferGeometry.boundingBox = new Box3(
-		new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ), 
+		new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ),
 		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
 	);
 
@@ -187,7 +187,7 @@ Tile.prototype.empty = function () {
 
 Tile.prototype.evict = function () {
 
-	this.evictionCount++; 
+	this.evictionCount++;
 	this.evicted = true;
 	this.replaced = false;
 

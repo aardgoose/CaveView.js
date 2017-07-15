@@ -23,7 +23,6 @@ import {
 	OrthographicCamera
 } from '../../../../three.js/src/Three';
 
- 
 // THREE objects
 
 var renderer;
@@ -217,12 +216,12 @@ function newScales () {
 
 
 	if ( angleScale ) scene.remove( angleScale );
-	
+
 	angleScale = new AngleScale( container );
 
 	scene.add( angleScale );
 
-	if ( scaleBar ) { 
+	if ( scaleBar ) {
 
 		scene.remove( scaleBar );
 		scaleBar = null;

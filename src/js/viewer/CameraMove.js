@@ -3,7 +3,7 @@ import {
 	Vector3,
 	CubicBezierCurve3,
 	Math as _Math
-} from '../../../../three.js/src/Three'; 
+} from '../../../../three.js/src/Three';
 
 function CameraMove ( controls, renderFunction, endCallback ) {
 
@@ -133,8 +133,8 @@ CameraMove.prototype.getControlPoint = function ( common, p1, p2, distance ) {
 
 	var adjust = new Vector3().crossVectors( normal, v1 ).setLength( Math.min( distance, v1.length() ) / 3 );
 
-	var candidate1 = new Vector3().copy( adjust ).add( v1 ); 
-	var candidate2 = new Vector3().copy( adjust ).negate().add( v1 ); 
+	var candidate1 = new Vector3().copy( adjust ).add( v1 );
+	var candidate2 = new Vector3().copy( adjust ).negate().add( v1 );
 
 	return ( v2.distanceTo( candidate1 ) < v2.distanceTo( candidate2 ) ) ? candidate1 : candidate2;
 

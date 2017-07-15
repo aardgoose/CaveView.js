@@ -17,7 +17,7 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 	var indexAttribute = new Uint16BufferAttribute( [ 0, 2, 1, 0, 3, 2 ], 1 );
 
-	// unit square 
+	// unit square
 	var positions = [
 		0, 0, 0,
 		0, 1, 0,

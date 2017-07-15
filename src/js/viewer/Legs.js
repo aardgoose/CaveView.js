@@ -168,7 +168,7 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 			var survey = legRun.survey;
 			var start  = legRun.start;
 			var end    = legRun.end;
- 
+
 			if ( selectedRuns.has( survey ) ) {
 
 				for ( v = start; v < end; v += 2 ) {

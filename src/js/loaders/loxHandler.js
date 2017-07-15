@@ -59,9 +59,11 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 	// convert to origin centered coordinates
 
-	for ( var i = 0; i < stations.length; i++ ) {
+	var i, j, l, coords, vertices;
 
-		var coords = stations[ i ];
+	for ( i = 0; i < stations.length; i++ ) {
+
+		coords = stations[ i ];
 
 		coords.x -= offsets.x;
 		coords.y -= offsets.y;
@@ -69,7 +71,25 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 	}
 
-	// FIXME covert scraps coordinates
+	var scraps = this.scraps;
+
+	// covert scraps coordinates
+
+	for ( i = 0; i < scraps.length; i++ ) {
+
+		vertices = scraps[ i ].vertices;
+
+		for ( j = 0; j < vertices.length; j++ ) {
+
+			coords = vertices[ j ];
+
+			coords.x -= offsets.x;
+			coords.y -= offsets.y;
+			coords.z -= offsets.z;
+
+		}
+
+	}
 
 	return;
 

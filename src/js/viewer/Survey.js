@@ -100,6 +100,13 @@ function Survey ( cave ) {
 		this.limits = new Box3( new Vector3().copy( surveyLimits.min ), new Vector3().copy( surveyLimits.max ) );
 		this.offsets = survey.offsets;
 
+		var modelLimits = new Box3().copy( this.limits );
+
+		modelLimits.min.sub( this.offsets );
+		modelLimits.max.sub( this.offsets );
+
+		this.modelLimits = modelLimits;
+
 		console.log ( 'offsets', this.offsets );
 		this.loadCave( survey );
 
@@ -203,7 +210,7 @@ Survey.prototype.loadEntrances = function () {
 
 	if ( clusterMarkers ) this.remove( clusterMarkers );
 
-	clusterMarkers = new ClusterMarkers( this.limits, this.offsets, 4 );
+	clusterMarkers = new ClusterMarkers( this.modelLimits, 4 );
 
 	// remove common elements from station names
 
@@ -995,12 +1002,7 @@ Survey.prototype.setFeatureBox = function () {
 
 	if ( this.featureBox === null ) {
 
-		var box3 = new Box3().copy( this.limits );
-
-		box3.min.sub( this.offsets );
-		box3.max.sub( this.offsets );
-
-		var box = new Box3Helper( box3, 0xffffff );
+		var box = new Box3Helper( this.modelLimits, 0xffffff );
 
 		box.layers.set( FEATURE_BOX );
 		box.name = 'survey-boundingbox';

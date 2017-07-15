@@ -285,16 +285,16 @@ QuadTree.prototype.projectedArea = function ( cluster ) {
 
 };
 
-function ClusterMarkers ( limits, offsets, maxDepth ) {
+function ClusterMarkers ( limits, maxDepth ) {
 
 	Object3D.call( this );
+
+	var min = limits.min;
+	var max = limits.max;
 
 	this.maxDepth = maxDepth;
 
 	this.type = 'CV.ClusterMarker';
-
-	var min = limits.min.clone().sub( offsets ); // FIXME do the calc once in Survey() and use in FeatureBox() also
-	var max = limits.max.clone().sub( offsets );
 
 	this.quadTree = new QuadTree( min.x, max.x, min.y, max.y );
 
@@ -310,7 +310,7 @@ ClusterMarkers.prototype.constructor = ClusterMarkers;
 
 ClusterMarkers.prototype.onRemoved = function () {
 
-	this.traverse( 
+	this.traverse(
 
 		function _traverse ( obj ) {
 

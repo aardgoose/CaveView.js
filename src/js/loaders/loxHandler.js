@@ -5,7 +5,6 @@ import { Tree } from '../core/Tree';
 function loxHandler  ( fileName, dataStream, metadata ) {
 
 	this.fileName     = fileName;
-	this.entrances    = [];
 	this.scraps       = [];
 	this.faults       = [];
 	this.lineSegments = [];
@@ -231,13 +230,6 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		// m_flags & 0x01 = surface
 
 		surveyTree.addById( readString( namePtr ), - m_id, m_surveyId, { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
-
-		if ( m_flags & 0x02 ) {
-
-			// entrance
-			self.entrances.push( - m_id );
-
-		}
 
 	}
 
@@ -543,7 +535,6 @@ loxHandler.prototype.getSurvey = function () {
 		lineSegments: this.lineSegments,
 		crossSections: this.xGroups,
 		scraps: this.scraps,
-		entrances: this.entrances,
 		hasTerrain: this.hasTerrain,
 		metadata: this.metadata,
 		terrain: this.terrain,

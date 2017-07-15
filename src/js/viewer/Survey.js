@@ -1012,7 +1012,7 @@ Survey.prototype.setFeatureBox = function () {
 
 	} else {
 
-//		this.featureBox.update( this.limits );
+		this.featureBox.update( this.modelLimits );
 
 	}
 
@@ -1059,7 +1059,11 @@ Survey.prototype.cutSection = function ( id ) {
 
 	this.clearSectionSelection();
 
-	this.limits = this.getBounds();
+	this.modelLimits = this.getBounds();
+	this.limits.copy( this.modelLimits );
+
+	this.limits.min.add( this.offsets );
+	this.limits.max.add( this.offsets );
 
 	this.setFeatureBox();
 

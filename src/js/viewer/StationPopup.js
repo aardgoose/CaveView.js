@@ -1,16 +1,20 @@
 import { Popup } from './Popup.js';
 
 
-function StationPopup ( station, projection ) {
+function StationPopup ( station, survey ) {
 
 	Popup.call( this, 'station-info' );
+
+	var projection = survey.projection;
+	var offsets = survey.offsets;
 
 	var point = station.p;
 	var name = station.getPath();
 	var long = false;
 	var tmp;
 
-	var originalPoint = { x: point.x, y: point.y };
+	var originalPoint = { x: point.x + offsets.x, y: point.y + offsets.y };
+	var height = point.z + offsets.z;
 
 	// convert to original survey CRS
 
@@ -31,7 +35,7 @@ function StationPopup ( station, projection ) {
 	if ( long ) name = '...' + name;
 
 	this.addLine( name );
-	this.addLine( 'x: ' + originalPoint.x + ' m' ).addLine( 'y: ' + originalPoint.y + ' m' ).addLine( 'z: ' + point.z + ' m' );
+	this.addLine( 'x: ' + originalPoint.x + ' m' ).addLine( 'y: ' + originalPoint.y + ' m' ).addLine( 'z: ' + height + ' m' );
 
 }
 

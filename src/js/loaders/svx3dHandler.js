@@ -7,7 +7,6 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	this.fileName   = fileName;
 	this.groups     = [];
-	this.entrances  = [];
 	this.surface    = [];
 	this.xGroups    = [];
 	this.surveyTree = new Tree();
@@ -115,7 +114,6 @@ Svx3dHandler.prototype.constructor = Svx3dHandler;
 Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	var groups     = this.groups;
-	var entrances  = this.entrances;
 	var xGroups    = this.xGroups;
 	var surveyTree = this.surveyTree;
 
@@ -618,10 +616,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		var stationId = surveyTree.addPath( path, { p: coords, type: ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL } );
 
-		// track entrance stations
-
-		if ( flags & 0x04 ) entrances.push( stationId );
-
 		return true;
 
 	}
@@ -846,7 +840,6 @@ Svx3dHandler.prototype.getSurvey = function () {
 		lineSegments: this.getLineSegments(),
 		crossSections: this.xGroups,
 		scraps: [],
-		entrances: this.entrances,
 		hasTerrain: false,
 		metadata: this.metadata
 	};

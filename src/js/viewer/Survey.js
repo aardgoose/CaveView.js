@@ -2,7 +2,7 @@
 import {
 	FACE_SCRAPS, FACE_WALLS,
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES, FEATURE_STATIONS,
-	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
+	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, 
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR,
@@ -114,8 +114,6 @@ function Survey ( cave ) {
 
 	}
 
-	this.entrances = survey.entrances;
-
 	this.loadEntrances();
 
 	this.setFeatureBox();
@@ -198,13 +196,8 @@ Survey.prototype.constructor = Survey;
 
 Survey.prototype.loadEntrances = function () {
 
-	var entrances = this.entrances;
-	var l = entrances.length;
-
-	if ( l === 0 ) return null;
-
-	var marker;
 	var surveyTree = this.surveyTree;
+	var self = this;
 
 	var clusterMarkers = this.getFeature( FEATURE_ENTRANCES );
 
@@ -218,23 +211,26 @@ Survey.prototype.loadEntrances = function () {
 
 	while ( endNode.children.length === 1 ) endNode = endNode.children [ 0 ];
 
-	// add entrance markers
 
-	for ( var i = 0; i < l; i++ ) {
+	// find entrances and add Markers
 
-		var node = surveyTree.findById( entrances[ i ] );
-
-		if ( node !== undefined ) {
-
-			marker = clusterMarkers.addMarker( node.p, node.getPath( endNode ) );
-
-			this.pointTargets.push( marker );
-
-		}
-
-	}
+	surveyTree.traverse( _addEntrance );
 
 	this.addFeature( clusterMarkers, FEATURE_ENTRANCES, 'CV.Survey:entrances' );
+
+	return;
+
+	function _addEntrance( node ) {
+
+		var marker;
+
+		if ( node.type !== STATION_ENTRANCE ) return;
+
+		marker = clusterMarkers.addMarker( node.p, node.getPath( endNode ) );
+
+		self.pointTargets.push( marker );
+
+	}
 
 };
 

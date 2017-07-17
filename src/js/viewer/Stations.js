@@ -73,7 +73,6 @@ function Stations () {
 
 	}
 
-
 	function _removed ( ) {
 
 		viewState.removeEventListener( 'change', _viewChanged );

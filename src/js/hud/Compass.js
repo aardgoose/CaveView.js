@@ -11,9 +11,6 @@ import {
 
 function Compass ( container ) {
 
-//	var width  = container.clientWidth;
-//	var height = container.clientHeight;
-
 	var stdWidth  = HudObject.stdWidth;
 	var stdMargin = HudObject.stdMargin;
 

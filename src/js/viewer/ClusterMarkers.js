@@ -177,8 +177,6 @@ QuadTree.prototype.check = function ( cluster ) {
 
 			var area = subQuad.projectedArea( cluster );
 
-//			console.log( 'area', area );
-
 			if ( area < 0.80 ) { // FIXME calibrate by screen size ???
 
 				subQuad.clusterMarkers( cluster );

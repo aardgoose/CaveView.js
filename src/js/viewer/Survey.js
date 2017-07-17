@@ -119,7 +119,7 @@ function Survey ( cave ) {
 
 	_setProjectionScale();
 
-	this.addEventListener( 'removed', _onSurveyRemoved );
+	this.addEventListener( 'removed', this.onRemoved );
 
 	return;
 
@@ -158,51 +158,46 @@ function Survey ( cave ) {
 
 	}
 
-	function _onSurveyRemoved ( event ) {
-
-		var survey = event.target;
-
-		if ( survey.cutInProgress ) {
-
-			// avoid disposal phase when a cut operation is taking place.
-			// this survey is being redisplayed.
-
-			survey.cutInProgress = false;
-
-			return;
-
-		}
-
-		survey.removeEventListener( 'removed', _onSurveyRemoved );
-
-		survey.traverse( _dispose );
-
-		this.remove( this.stations );
-
-		function _dispose ( object ) {
-
-			if ( object.geometry ) object.geometry.dispose();
-
-		}
-
-	}
-
 }
 
 Survey.prototype = Object.create( Object3D.prototype );
 
 Survey.prototype.constructor = Survey;
 
+Survey.prototype.onRemoved = function ( /* event */ ) {
+
+	if ( this.cutInProgress ) {
+
+		// avoid disposal phase when a cut operation is taking place.
+		// this survey is being redisplayed.
+
+		this.cutInProgress = false;
+
+		return;
+
+	}
+
+	// needs explicit removal to call removed handlers atm
+	this.remove( this.stations );
+
+	this.traverse( _dispose );
+
+	return;
+
+	function _dispose ( object ) {
+
+		if ( object.geometry ) object.geometry.dispose();
+
+	}
+
+}
+
 Survey.prototype.loadEntrances = function () {
 
 	var surveyTree = this.surveyTree;
 	var self = this;
 
-	var clusterMarkers = this.getFeature( FEATURE_ENTRANCES );
-
-	if ( clusterMarkers ) this.remove( clusterMarkers );
-
-	clusterMarkers = new ClusterMarkers( this.modelLimits, 4 );
+	var clusterMarkers = new ClusterMarkers( this.modelLimits, 4 );
 
 	// remove common elements from station names
 
@@ -583,7 +578,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			if ( leg === undefined ) {
 
-				console.log( 'unknown segment type: ', type );
+				console.warn( 'unknown segment type: ', type );
 				break;
 
 			}
@@ -729,6 +724,20 @@ Survey.prototype.addFeature = function ( obj, tag, name ) {
 	this.add( obj );
 
 };
+
+Survey.prototype.removeFeature = function ( obj ) {
+
+	this.layers.mask &= ~ obj.layers.mask;
+
+	var features = this.features;
+
+	for ( var i = 0, l = features.length; i < l; i++ ) {
+
+		if ( features[ i ] === obj ) delete features[ i ]; 
+
+	}
+
+}
 
 Survey.prototype.hasFeature = function ( tag ) {
 
@@ -1043,6 +1052,8 @@ Survey.prototype.cutSection = function ( id ) {
 
 		if ( obj.geometry ) obj.geometry.dispose();
 
+		this.removeFeature( obj );
+
 	}
 
 	this.surveyTree = this.surveyTree.findById( id );
@@ -1053,6 +1064,7 @@ Survey.prototype.cutSection = function ( id ) {
 	// ordering is important here
 
 	this.clearSectionSelection();
+	this.highlightSection( 0 );
 
 	this.modelLimits = this.getBounds();
 	this.limits.copy( this.modelLimits );
@@ -1075,19 +1087,14 @@ Survey.prototype.cutSection = function ( id ) {
 		case 'Legs':
 		case 'Walls':
 
-			if ( ! obj.cutRuns( self.selectedSectionIds ) ) {
-
-				// remove this from survey layer mask
-				self.layers.mask &= ~ obj.layers.mask;
-
-				cutList.push( obj );
-
-			}
+			if ( ! obj.cutRuns( self.selectedSectionIds ) ) cutList.push( obj );
 
 			break;
 
 		case 'Box3Helper':
 		case 'CV.Stations':
+		case 'CV.StationLabels':
+		case 'CV.ClusterMarker':
 
 			cutList.push( obj );
 
@@ -1096,10 +1103,6 @@ Survey.prototype.cutSection = function ( id ) {
 		case 'Group':
 
 			break;
-
-		default:
-
-//			console.log('unexpected object type in survey cut', obj.type );
 
 		}
 
@@ -1287,7 +1290,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	default:
 
-		console.log( 'invalid leg shading mode' );
+		console.warn( 'invalid leg shading mode' );
 
 		return false;
 

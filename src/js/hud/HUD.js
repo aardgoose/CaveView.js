@@ -127,7 +127,7 @@ function setVisibility ( visible ) {
 
 	}
 
-	viewState.refresh();
+	Viewer.renderView();
 
 }
 
@@ -310,7 +310,7 @@ function viewChanged ( event ) {
 
 	}
 
-	viewState.refresh();
+	Viewer.renderView();
 
 }
 

@@ -98,7 +98,7 @@ function init ( domID, configuration ) { // public method
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
-	renderer = new WebGLRenderer( { antialias: true, logarithmicDepthBuffer: true } ) ;
+	renderer = new WebGLRenderer( { antialias: true } ) ;
 
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
@@ -144,11 +144,7 @@ function init ( domID, configuration ) { // public method
 	// event handler
 	window.addEventListener( 'resize', resize );
 
-	Object.assign( viewState, EventDispatcher.prototype, {
-
-		refresh: renderView
-
-	} );
+	Object.assign( viewState, EventDispatcher.prototype );
 
 	Object.defineProperties( viewState, {
 
@@ -368,7 +364,7 @@ function init ( domID, configuration ) { // public method
 
 		default:
 
-			console.log( 'invalid mouse mode' );
+			console.warn( 'invalid mouse mode' );
 
 		}
 
@@ -540,7 +536,7 @@ function setCameraMode ( mode ) {
 
 	default:
 
-		console.log( 'unknown camera mode', mode );
+		console.warn( 'unknown camera mode', mode );
 		return;
 
 	}
@@ -644,7 +640,7 @@ function setViewMode ( mode, t ) {
 
 	default:
 
-		console.log( 'invalid view mode specified: ', mode );
+		console.warn( 'invalid view mode specified: ', mode );
 		return;
 
 	}

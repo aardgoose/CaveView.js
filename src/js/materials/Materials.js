@@ -10,7 +10,7 @@ import { GlyphMaterial } from './GlyphMaterial';
 import { LineBasicMaterial, MeshLambertMaterial, NoColors, VertexColors } from '../../../../three.js/src/Three';
 
 var cache = new Map();
-var viewState;
+var viewer;
 
 var cursorMaterials = [];
 var perSurveyMaterials = {};
@@ -18,7 +18,7 @@ var depthTexture = null;
 
 function updateMaterialCursor ( material ) {
 
-	viewState.initCursorHeight = material.setCursor( viewState.cursorHeight );
+	viewer.initCursorHeight = material.setCursor( viewer.cursorHeight );
 
 }
 
@@ -87,7 +87,7 @@ function getCursorMaterial ( type, limits ) {
 
 	// restore current cursor
 
-	viewState.initCursorHeight = material.getCursor();
+	viewer.initCursorHeight = material.getCursor();
 
 	// set active cursor material for updating
 
@@ -115,7 +115,7 @@ function getDepthCursorMaterial( type, limits ) {
 
 	// restore current cursor
 
-	viewState.initCursorHeight = material.getCursor();
+	viewer.initCursorHeight = material.getCursor();
 
 	// set active cursor material for updating
 
@@ -155,7 +155,7 @@ function getGlyphMaterial ( glyphAtlasSpec, rotation, colour ) {
 
 	if ( cache.has( name ) ) return cache.get( name );
 
-	var material = new GlyphMaterial( glyphAtlasSpec, viewState.container, rotation, colour );
+	var material = new GlyphMaterial( glyphAtlasSpec, viewer.container, rotation, colour );
 
 	cache.set( name, material );
 
@@ -183,13 +183,13 @@ function setDepthTexture( texture ) {
 
 }
 
-function initCache ( viewerViewState ) {
+function initCache ( Viewer ) {
 
 	cache.clear();
 
-	viewState = viewerViewState;
+	viewer = Viewer;
 
-	viewState.addEventListener( 'cursorChange', updateCursors );
+	viewer.addEventListener( 'cursorChange', updateCursors );
 
 }
 

@@ -13,19 +13,21 @@ import {
 
 var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-function WebTerrain ( limits3, offsets, onReady, onLoaded, overlayLoadedCallback ) {
+function WebTerrain ( survey, onReady, onLoaded, overlayLoadedCallback ) {
 
 	CommonTerrain.call( this );
 
 	this.name = 'WebTerrain';
 	this.type = 'CV.WebTerrain';
 
+	var limits = survey.limits;
+
 	this.limits = new Box2(
-		new Vector2( limits3.min.x, limits3.min.y ),
-		new Vector2( limits3.max.x, limits3.max.y )
+		new Vector2( limits.min.x, limits.min.y ),
+		new Vector2( limits.max.x, limits.max.y )
 	);
 
-	this.offsets = offsets;
+	this.offsets = survey.offsets;
 
 	this.onLoaded        = onLoaded;
 	this.childrenLoading = 0;

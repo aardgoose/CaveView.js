@@ -908,10 +908,46 @@ Survey.prototype.setScale = function ( scale ) {
 
 };
 
-Survey.prototype.clearSectionSelection = function () {
+Survey.prototype.getWorldPosition = function ( position ) {
+
+	return new Vector3().copy( position ).applyMatrix4( this.matrixWorld );
+
+};
+
+Survey.prototype.getGeographicalPosition = function ( position ) {
+
+	var offsets = this.offsets;
+	var projection = this.projection;
+
+	var originalPosition = { x: position.x + offsets.x, y: position.y + offsets.y, z: 0 };
+
+	// convert to original survey CRS
+
+	if  ( projection !== null ) originalPosition = projection.forward( originalPosition );
+
+	originalPosition.z = position.z + offsets.z;
+
+	return originalPosition;
+
+};
+
+Survey.prototype.selectStation = function ( index ) {
+
+	var stations = this.stations;
+	var station = stations.getStationByIndex( index );
+
+	stations.selectStation( station );
+
+	return station;
+
+};
+
+Survey.prototype.clearSelection = function () {
 
 	this.selectedSection = 0;
 	this.selectedSectionIds.clear();
+
+	this.stations.clearSelected();
 
 	var box = this.selectedBox;
 
@@ -940,7 +976,7 @@ Survey.prototype.boxSection = function ( node, box, colour ) {
 
 };
 
-Survey.prototype.highlightSection = function ( id ) {
+Survey.prototype.highlightSelection = function ( id ) {
 
 	var surveyTree = this.surveyTree;
 	var node;
@@ -977,7 +1013,7 @@ Survey.prototype.selectSection = function ( id ) {
 	var surveyTree = this.surveyTree;
 	var node;
 
-	selectedSectionIds.clear();
+	this.clearSelection();
 
 	if ( id ) {
 
@@ -990,8 +1026,7 @@ Survey.prototype.selectSection = function ( id ) {
 
 		} else {
 
-			// stations cannot be bounded
-			id = 0;
+			if ( node.p !== undefined ) this.stations.selectStation( node );
 
 		}
 
@@ -1063,8 +1098,8 @@ Survey.prototype.cutSection = function ( id ) {
 
 	// ordering is important here
 
-	this.clearSectionSelection();
-	this.highlightSection( 0 );
+	this.clearSelection();
+	this.highlightSelection( 0 );
 
 	this.modelLimits = this.getBounds();
 	this.limits.copy( this.modelLimits );

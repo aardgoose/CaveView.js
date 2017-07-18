@@ -86,8 +86,7 @@ var cameraMove;
 var lastActivityTime = 0;
 //var leakWatcher;
 
-
-var Viewer = {};
+var Viewer = Object.create( EventDispatcher.prototype );
 
 function init ( domID, configuration ) { // public method
 
@@ -145,8 +144,6 @@ function init ( domID, configuration ) { // public method
 
 	// event handler
 	window.addEventListener( 'resize', resize );
-
-	Object.assign( Viewer, EventDispatcher.prototype );
 
 	Object.defineProperties( Viewer, {
 
@@ -246,7 +243,7 @@ function init ( domID, configuration ) { // public method
 
 		'highlight': {
 			writeable: true,
-			set: function ( x ) { _stateSetter( highlightSection, 'highlight', x ); }
+			set: function ( x ) { _stateSetter( highlightSelection, 'highlight', x ); }
 		},
 
 		'routeEdit': {
@@ -718,18 +715,15 @@ function cutSection () {
 
 }
 
-function highlightSection ( id ) {
+function highlightSelection ( id ) {
 
-	survey.highlightSection( id );
+	survey.highlightSelection( id );
 
 	renderView();
 
 }
 
 function selectSection ( id ) {
-
-	survey.clearSectionSelection();
-	survey.stations.clearSelected();
 
 	var node = survey.selectSection( id );
 
@@ -752,9 +746,7 @@ function selectSection ( id ) {
 
 		// a single station
 
-		survey.stations.selectStation( node );
-
-		cameraMove.prepare( null, new Vector3().copy( node.p ).applyMatrix4( survey.matrixWorld ) );
+		cameraMove.prepare( null, survey.getWorldPosition( node.p ) );
 
 	}
 
@@ -877,7 +869,7 @@ function loadSurvey ( newSurvey ) {
 
 	if ( terrain === null ) {
 
-		terrain = new WebTerrain( survey.limits, survey.offsets, _terrainReady, _tilesLoaded, renderView );
+		terrain = new WebTerrain( survey, _terrainReady, _tilesLoaded, renderView );
 		asyncTerrainLoading = true;
 
 	} else {
@@ -1038,19 +1030,13 @@ function mouseDown ( event ) {
 
 	function _selectStation ( picked ) {
 
-		var stations = survey.stations;
-
-		var station = stations.getStationByIndex( picked.index );
-
-		stations.selectStation( station );
+		var station = survey.selectStation( picked.index );
 
 		renderView();
 
-		// p - world position of station
+		var popup = new StationPopup( station, survey.getGeographicalPosition( station.p ) );
 
-		var p = new Vector3().copy( station.p ).applyMatrix4( survey.matrixWorld );
-
-		var popup = new StationPopup( station, survey );
+		var p = survey.getWorldPosition( station.p );
 
 		popup.display( container, event.clientX, event.clientY, camera, p );
 

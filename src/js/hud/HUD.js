@@ -48,7 +48,6 @@ var container;
 
 // viewer state
 
-var viewState;
 var controls;
 var isVisible = true;
 
@@ -56,7 +55,6 @@ function init ( domId, viewRenderer ) {
 
 	container = document.getElementById( domId );
 	renderer = viewRenderer;
-	viewState = Viewer.getState;
 
 	var hHeight = container.clientHeight / 2;
 	var hWidth  = container.clientWidth / 2;
@@ -91,8 +89,8 @@ function init ( domId, viewRenderer ) {
 
 	window.addEventListener( 'resize', resize );
 
-	viewState.addEventListener( 'newCave', caveChanged );
-	viewState.addEventListener( 'change', viewChanged );
+	Viewer.addEventListener( 'newCave', caveChanged );
+	Viewer.addEventListener( 'change', viewChanged );
 
 	controls = Viewer.getControls();
 
@@ -203,7 +201,7 @@ function newScales () {
 
 	if ( linearScale ) scene.remove( linearScale );
 
-	linearScale = new LinearScale( container, viewState );
+	linearScale = new LinearScale( container, Viewer );
 
 	scene.add( linearScale );
 
@@ -242,13 +240,13 @@ function viewChanged ( event ) {
 	var useLinearScale = false;
 	var useCursorScale = false;
 
-	switch ( viewState.shadingMode ) {
+	switch ( Viewer.shadingMode ) {
 
 	case SHADING_HEIGHT:
 
 		useLinearScale = true;
 
-		linearScale.setRange( viewState.minHeight, viewState.maxHeight, 'Height above Datum' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
+		linearScale.setRange( Viewer.minHeight, Viewer.maxHeight, 'Height above Datum' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 
@@ -256,7 +254,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( viewState.maxHeight - viewState.minHeight, 0, 'Depth below surface' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
+		linearScale.setRange( Viewer.maxHeight - Viewer.minHeight, 0, 'Depth below surface' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 
@@ -264,7 +262,7 @@ function viewChanged ( event ) {
 
 		useCursorScale = true;
 
-		cursorScale.setRange( viewState.minHeight, viewState.maxHeight, 'Height' );
+		cursorScale.setRange( Viewer.minHeight, Viewer.maxHeight, 'Height' );
 
 		cursorChanged();
 
@@ -274,7 +272,7 @@ function viewChanged ( event ) {
 
 		useCursorScale = true;
 
-		cursorScale.setRange( viewState.maxHeight - viewState.minHeight, 0, 'Depth' );
+		cursorScale.setRange( Viewer.maxHeight - Viewer.minHeight, 0, 'Depth' );
 
 		cursorChanged();
 
@@ -284,7 +282,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( viewState.minLegLength, viewState.maxLegLength, 'Leg length' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE, true ) ).setVisibility( true );
+		linearScale.setRange( Viewer.minLegLength, Viewer.maxLegLength, 'Leg length' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE, true ) ).setVisibility( true );
 
 		break;
 
@@ -302,11 +300,11 @@ function viewChanged ( event ) {
 
 	if ( useCursorScale ) {
 
-		viewState.addEventListener( 'cursorChange', cursorChanged );
+		Viewer.addEventListener( 'cursorChange', cursorChanged );
 
 	} else {
 
-		viewState.removeEventListener( 'cursorChange', cursorChanged );
+		Viewer.removeEventListener( 'cursorChange', cursorChanged );
 
 	}
 
@@ -316,13 +314,13 @@ function viewChanged ( event ) {
 
 function cursorChanged ( /* event */ ) {
 
-	var cursorHeight = viewState.cursorHeight;
-	var range = viewState.maxHeight - viewState.minHeight;
+	var cursorHeight = Viewer.cursorHeight;
+	var range = Viewer.maxHeight - Viewer.minHeight;
 	var scaledHeight = 0;
 
-	if ( viewState.shadingMode === SHADING_CURSOR ) {
+	if ( Viewer.shadingMode === SHADING_CURSOR ) {
 
-		scaledHeight = ( viewState.cursorHeight + range / 2 ) / range;
+		scaledHeight = ( Viewer.cursorHeight + range / 2 ) / range;
 
 	} else {
 

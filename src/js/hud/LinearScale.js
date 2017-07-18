@@ -9,7 +9,7 @@ import {
 	Mesh
 } from '../../../../three.js/src/Three';
 
-function LinearScale ( container, viewState ) {
+function LinearScale ( container, Viewer ) {
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
@@ -24,7 +24,7 @@ function LinearScale ( container, viewState ) {
 	var barHeight = ( height - barOffset ) / 2;
 	var barWidth  = stdWidth / 2;
 
-	var range = viewState.maxHeight - viewState.minHeight;
+	var range = Viewer.maxHeight - Viewer.minHeight;
 
 	var geometry = new PlaneBufferGeometry( barWidth, range );
 

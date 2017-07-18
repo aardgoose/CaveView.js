@@ -190,7 +190,7 @@ Survey.prototype.onRemoved = function ( /* event */ ) {
 
 	}
 
-}
+};
 
 Survey.prototype.loadEntrances = function () {
 
@@ -733,11 +733,11 @@ Survey.prototype.removeFeature = function ( obj ) {
 
 	for ( var i = 0, l = features.length; i < l; i++ ) {
 
-		if ( features[ i ] === obj ) delete features[ i ]; 
+		if ( features[ i ] === obj ) delete features[ i ];
 
 	}
 
-}
+};
 
 Survey.prototype.hasFeature = function ( tag ) {
 

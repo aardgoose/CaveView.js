@@ -32,10 +32,9 @@ function Stations () {
 	this.selected = null;
 	this.selectedSize = 0;
 
-	var viewState = Viewer.getState;
 	var self = this;
 
-	viewState.addEventListener( 'change', _viewChanged );
+	Viewer.addEventListener( 'change', _viewChanged );
 
 	this.addEventListener( 'removed', _removed );
 
@@ -49,7 +48,7 @@ function Stations () {
 
 		if ( event.name === 'splays' ) {
 
-			var splaySize = viewState.splays ? 1.0 : 0.0;
+			var splaySize = Viewer.splays ? 1.0 : 0.0;
 
 			var stations = self.stations;
 			var pSize = self.geometry.getAttribute( 'pSize' );
@@ -75,7 +74,7 @@ function Stations () {
 
 	function _removed ( ) {
 
-		viewState.removeEventListener( 'change', _viewChanged );
+		Viewer.removeEventListener( 'change', _viewChanged );
 
 	}
 

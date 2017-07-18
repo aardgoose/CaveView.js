@@ -19,7 +19,6 @@ var routes = null;
 var caveIndex = Infinity;
 var caveList = [];
 var guiState = {};
-var viewState;
 var surveyTree;
 var currentTop;
 
@@ -101,12 +100,11 @@ function init ( domID, configuration ) { // public method
 		set: function ( value ) { loadCave( value ); file = value; },
 	} );
 
-	viewState = Viewer.getState;
 
-	viewState.addEventListener( 'change', Page.handleChange );
-	viewState.addEventListener( 'change', handleChange );
+	Viewer.addEventListener( 'change', Page.handleChange );
+	Viewer.addEventListener( 'change', handleChange );
 
-	viewState.addEventListener( 'newCave', viewComplete );
+	Viewer.addEventListener( 'newCave', viewComplete );
 
 }
 
@@ -129,18 +127,18 @@ function handleChange ( event ) {
 
 	case 'routeEdit':
 
-		setControlsVisibility( routeControls, viewState.routeEdit );
+		setControlsVisibility( routeControls, Viewer.routeEdit );
 
 		break;
 
 	case 'terrain':
 
-		setControlsVisibility( terrainControls, viewState.terrain );
+		setControlsVisibility( terrainControls, Viewer.terrain );
 
 	case 'terrainShading': // eslint-disable-line no-fallthrough
 
 		// only show overlay selection when terrain shading is set to overlay
-		if ( viewState.terrain && terrainOverlay && viewState.terrainShading === SHADING_OVERLAY ) {
+		if ( Viewer.terrain && terrainOverlay && Viewer.terrainShading === SHADING_OVERLAY ) {
 
 			terrainOverlay.style.display = 'block';
 
@@ -181,7 +179,7 @@ function initSelectionPage () {
 
 	var redraw = container.clientHeight; // eslint-disable-line no-unused-vars
 
-	page.addListener( viewState, 'change', _handleChange );
+	page.addListener( Viewer, 'change', _handleChange );
 
 	return;
 
@@ -203,7 +201,7 @@ function initSelectionPage () {
 		var tmp;
 		var span;
 
-		var surveyColourMap = SurveyColours.getSurveyColourMap( surveyTree, viewState.section );
+		var surveyColourMap = SurveyColours.getSurveyColourMap( surveyTree, Viewer.section );
 
 		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
 
@@ -242,7 +240,7 @@ function initSelectionPage () {
 
 		function _addLine ( child ) {
 
-			if ( child.hitCount === 0 && ! viewState.splays ) return; // skip spays if not displayed
+			if ( child.hitCount === 0 && ! Viewer.splays ) return; // skip spays if not displayed
 
 			var li  = document.createElement( 'li' );
 			var txt = document.createTextNode( child.name );
@@ -250,13 +248,13 @@ function initSelectionPage () {
 
 			li.id = 'sv' + child.id;
 
-			if ( viewState.section === child.id ) li.classList.add( 'selected' );
+			if ( Viewer.section === child.id ) li.classList.add( 'selected' );
 
 			if ( child.hitCount === undefined ) {
 
 				var colour;
 
-				if ( viewState.shadingMode === SHADING_SURVEY && surveyColourMap[ child.id ] !== undefined ) {
+				if ( Viewer.shadingMode === SHADING_SURVEY && surveyColourMap[ child.id ] !== undefined ) {
 
 					colour = surveyColourMap[ child.id ].getHexString();
 
@@ -321,7 +319,7 @@ function initSelectionPage () {
 	function _handleMouseleave ( event ) {
 
 		event.stopPropagation();
-		viewState.highlight = 0;
+		Viewer.highlight = 0;
 
 	}
 
@@ -337,7 +335,7 @@ function initSelectionPage () {
 
 		if ( id !== currentHover ) {
 
-			viewState.highlight = ( viewState.section !== id ) ? id : 0;
+			Viewer.highlight = ( Viewer.section !== id ) ? id : 0;
 			currentHover = id;
 
 		}
@@ -358,7 +356,7 @@ function initSelectionPage () {
 
 	function _handleSelectTopSurvey ( /* event */ ) {
 
-		viewState.section = currentTop.id;
+		Viewer.section = currentTop.id;
 
 	}
 
@@ -373,8 +371,8 @@ function initSelectionPage () {
 
 		case 'LI':
 
-			viewState.section = ( viewState.section !== id ) ? id : 0;
-			viewState.setPOI = true;
+			Viewer.section = ( Viewer.section !== id ) ? id : 0;
+			Viewer.setPOI = true;
 
 			break;
 
@@ -399,7 +397,7 @@ function initRoutePage () {
 
 	page.addHeader( 'Routes' );
 
-	page.addCheckbox( 'Edit Routes', viewState, 'routeEdit' );
+	page.addCheckbox( 'Edit Routes', Viewer, 'routeEdit' );
 
 	routeSelector = page.addSelect( 'Current Route', routeNames, routes, 'setRoute' );
 
@@ -436,7 +434,7 @@ function initRoutePage () {
 	function _onTop () {
 
 		// when selecting route editing mode - select correct leg shading mode
-		viewState.shadingMode = SHADING_PATH;
+		Viewer.shadingMode = SHADING_PATH;
 
 		// display first route if present
 
@@ -546,7 +544,7 @@ function initSettingsPage () {
 
 	var legShadingModesActive = Object.assign( {}, legShadingModes );
 
-	if ( viewState.hasTerrain ) {
+	if ( Viewer.hasTerrain ) {
 
 		legShadingModesActive[ 'depth' ] = SHADING_DEPTH;
 		legShadingModesActive[ 'depth cursor' ] = SHADING_DEPTH_CURSOR;
@@ -561,31 +559,31 @@ function initSettingsPage () {
 
 	page.addHeader( 'View' );
 
-	page.addSelect( 'Camera Type', cameraModes, viewState, 'cameraType' );
-	page.addSelect( 'View', cameraViews, viewState, 'view' );
+	page.addSelect( 'Camera Type', cameraModes, Viewer, 'cameraType' );
+	page.addSelect( 'View', cameraViews, Viewer, 'view' );
 
-	page.addRange( 'Vertical scaling', viewState, 'zScale' );
+	page.addRange( 'Vertical scaling', Viewer, 'zScale' );
 
-	page.addCheckbox( 'Auto Rotate', viewState, 'autoRotate' );
+	page.addCheckbox( 'Auto Rotate', Viewer, 'autoRotate' );
 
-	page.addRange( 'Rotation Speed', viewState, 'autoRotateSpeed' );
+	page.addRange( 'Rotation Speed', Viewer, 'autoRotateSpeed' );
 
 	page.addHeader( 'Shading' );
 
-	page.addSelect( 'Underground Legs', legShadingModesActive, viewState, 'shadingMode' );
+	page.addSelect( 'Underground Legs', legShadingModesActive, Viewer, 'shadingMode' );
 
 	page.addHeader( 'Visibility' );
 
-	if ( viewState.hasEntrances     ) page.addCheckbox( 'Entrances', viewState, 'entrances' );
-	if ( viewState.hasStations      ) page.addCheckbox( 'Stations', viewState, 'stations' );
-	if ( viewState.hasStationLabels ) page.addCheckbox( 'Station Labels', viewState, 'stationLabels' );
-	if ( viewState.hasSplays        ) page.addCheckbox( 'Splay Legs', viewState, 'splays' );
-	if ( viewState.hasWalls         ) page.addCheckbox( 'Walls (LRUD)', viewState, 'walls' );
-	if ( viewState.hasScraps        ) page.addCheckbox( 'Scraps', viewState, 'scraps' );
-	if ( viewState.hasTraces        ) page.addCheckbox( 'Dye Traces', viewState, 'traces' );
+	if ( Viewer.hasEntrances     ) page.addCheckbox( 'Entrances', Viewer, 'entrances' );
+	if ( Viewer.hasStations      ) page.addCheckbox( 'Stations', Viewer, 'stations' );
+	if ( Viewer.hasStationLabels ) page.addCheckbox( 'Station Labels', Viewer, 'stationLabels' );
+	if ( Viewer.hasSplays        ) page.addCheckbox( 'Splay Legs', Viewer, 'splays' );
+	if ( Viewer.hasWalls         ) page.addCheckbox( 'Walls (LRUD)', Viewer, 'walls' );
+	if ( Viewer.hasScraps        ) page.addCheckbox( 'Scraps', Viewer, 'scraps' );
+	if ( Viewer.hasTraces        ) page.addCheckbox( 'Dye Traces', Viewer, 'traces' );
 
-	page.addCheckbox( 'Indicators', viewState, 'HUD' );
-	page.addCheckbox( 'Bounding Box', viewState, 'box' );
+	page.addCheckbox( 'Indicators', Viewer, 'HUD' );
+	page.addCheckbox( 'Bounding Box', Viewer, 'box' );
 
 }
 
@@ -599,34 +597,34 @@ function initSurfacePage () {
 
 	page.addHeader( 'Surface Features' );
 
-	if ( viewState.hasSurfaceLegs ) {
+	if ( Viewer.hasSurfaceLegs ) {
 
-		page.addCheckbox( 'Surface Legs', viewState, 'surfaceLegs' );
-		page.addSelect( 'Leg Shading', surfaceShadingModes, viewState, 'surfaceShading' );
+		page.addCheckbox( 'Surface Legs', Viewer, 'surfaceLegs' );
+		page.addSelect( 'Leg Shading', surfaceShadingModes, Viewer, 'surfaceShading' );
 
 	}
 
-	if ( viewState.hasTerrain ) {
+	if ( Viewer.hasTerrain ) {
 
 		page.addHeader( 'Terrain' );
 
-		page.addCheckbox( 'Terrain', viewState, 'terrain' );
+		page.addCheckbox( 'Terrain', Viewer, 'terrain' );
 
-		var overlays = viewState.terrainOverlays;
+		var overlays = Viewer.terrainOverlays;
 		var terrainShadingModesActive = Object.assign( {}, terrainShadingModes );
 
 		if ( overlays.length > 0 ) terrainShadingModesActive[ 'map overlay' ] = SHADING_OVERLAY;
 
-		terrainControls.push( page.addSelect( 'Shading', terrainShadingModesActive, viewState, 'terrainShading' ) );
+		terrainControls.push( page.addSelect( 'Shading', terrainShadingModesActive, Viewer, 'terrainShading' ) );
 
 		if ( overlays.length > 1 ) {
 
-			terrainOverlay = page.addSelect( 'Overlay', overlays, viewState, 'terrainOverlay' );
+			terrainOverlay = page.addSelect( 'Overlay', overlays, Viewer, 'terrainOverlay' );
 			terrainControls.push( terrainOverlay );
 
 		}
 
-		terrainControls.push( page.addRange( 'Terrain opacity', viewState, 'terrainOpacity' ) );
+		terrainControls.push( page.addRange( 'Terrain opacity', Viewer, 'terrainOpacity' ) );
 
 		setControlsVisibility( terrainControls, false );
 
@@ -758,7 +756,7 @@ function viewComplete () {
 
 	// display shading mode and initialize
 
-	viewState.shadingMode = SHADING_HEIGHT;
+	Viewer.shadingMode = SHADING_HEIGHT;
 
 	surveyTree = Viewer.getSurveyTree();
 	routes = Viewer.getRoutes();
@@ -779,85 +777,85 @@ function keyDown ( event ) {
 
 	case 49: // change colouring scheme to depth - '1'
 
-		viewState.shadingMode = SHADING_HEIGHT;
+		Viewer.shadingMode = SHADING_HEIGHT;
 
 		break;
 
 	case 50: // change colouring scheme to angle - '2'
 
-		viewState.shadingMode = SHADING_INCLINATION;
+		Viewer.shadingMode = SHADING_INCLINATION;
 
 		break;
 
 	case 51: // change colouring scheme to length - '3'
 
-		viewState.shadingMode = SHADING_LENGTH;
+		Viewer.shadingMode = SHADING_LENGTH;
 
 		break;
 
 	case 52: // change colouring scheme to height cursor - '4'
 
-		viewState.shadingMode = SHADING_CURSOR;
+		Viewer.shadingMode = SHADING_CURSOR;
 
 		break;
 
 	case 53: // change colouring scheme to white - '5'
 
-		viewState.shadingMode = SHADING_SINGLE;
+		Viewer.shadingMode = SHADING_SINGLE;
 
 		break;
 
 	case 54: // change colouring scheme to per survey section - '6'
 
-		viewState.shadingMode = SHADING_SURVEY;
+		Viewer.shadingMode = SHADING_SURVEY;
 
 		break;
 
 	case 55: // change colouring scheme to per survey section - '7'
 
-		viewState.shadingMode = SHADING_PATH;
+		Viewer.shadingMode = SHADING_PATH;
 
 		break;
 
 	case 56: // change colouring scheme to per survey section - '8'
 
-		viewState.shadingMode = SHADING_DEPTH;
+		Viewer.shadingMode = SHADING_DEPTH;
 
 		break;
 
 	case 57: // change colouring scheme to depth - '9'
 
-		viewState.shadingMode = SHADING_DEPTH_CURSOR;
+		Viewer.shadingMode = SHADING_DEPTH_CURSOR;
 
 		break;
 
 	case 67: // toggle scraps visibility - 'c'
 
-		if ( viewState.hasScraps ) viewState.scraps = ! viewState.scraps;
+		if ( Viewer.hasScraps ) Viewer.scraps = ! Viewer.scraps;
 
 		break;
 
 	case 68: // toggle dye traces visibility - 'd'
 
-		if ( viewState.hasTraces ) viewState.traces = ! viewState.traces;
+		if ( Viewer.hasTraces ) Viewer.traces = ! Viewer.traces;
 
 		break;
 
 	case 73: // toggle entrance labels - 'i'
 
-		viewState.developerInfo = true;
+		Viewer.developerInfo = true;
 
 		break;
 
 	case 74: // toggle entrance labels - 'j'
 
-		if ( viewState.hasStationLabels ) viewState.stationLabels = ! viewState.stationLabels;
+		if ( Viewer.hasStationLabels ) Viewer.stationLabels = ! Viewer.stationLabels;
 
 		break;
 
 	case 76: // toggle entrance labels - 'l'
 
-		if ( viewState.hasEntrances ) viewState.entrances = ! viewState.entrances;
+		if ( Viewer.hasEntrances ) Viewer.entrances = ! Viewer.entrances;
 
 		break;
 
@@ -869,88 +867,88 @@ function keyDown ( event ) {
 
 	case 79: // switch view to orthoganal - 'o'
 
-		viewState.cameraType = CAMERA_ORTHOGRAPHIC;
+		Viewer.cameraType = CAMERA_ORTHOGRAPHIC;
 
 		break;
 
 	case 80: // switch view to perspective -'p'
 
-		viewState.cameraType = CAMERA_PERSPECTIVE;
+		Viewer.cameraType = CAMERA_PERSPECTIVE;
 
 		break;
 
 	case 81: // switch view to perspective -'q'
 
-		if ( viewState.hasSplays ) viewState.splays = ! viewState.splays;
+		if ( Viewer.hasSplays ) Viewer.splays = ! Viewer.splays;
 
 		break;
 
 	case 82: // reset camera positions and settings to initial plan view -'r'
 
-		viewState.view = VIEW_PLAN;
+		Viewer.view = VIEW_PLAN;
 
 		break;
 
 	case 83: // switch view to perspective - 's'
 
-		if ( viewState.hasSurfaceLegs ) viewState.surfaceLegs = ! viewState.surfaceLegs;
+		if ( Viewer.hasSurfaceLegs ) Viewer.surfaceLegs = ! Viewer.surfaceLegs;
 
 		break;
 
 	case 84: // switch terrain on/off - 't'
 
-		if ( viewState.hasTerrain ) viewState.terrain = ! viewState.terrain;
+		if ( Viewer.hasTerrain ) Viewer.terrain = ! Viewer.terrain;
 
 		break;
 
 	case 86: // cut selected survey section - 'v'
 
 		resetUI();
-		viewState.cut = true;
+		Viewer.cut = true;
 
 		break;
 
 	case 87: // switch walls on/off - 'w'
 
-		if ( viewState.hasWalls ) viewState.walls = ! viewState.walls;
+		if ( Viewer.hasWalls ) Viewer.walls = ! Viewer.walls;
 
 		break;
 
 	case 88: // look ast last POI - 'x'
 
-		viewState.setPOI = true; // actual value here is ignored.
+		Viewer.setPOI = true; // actual value here is ignored.
 
 		break;
 
 	case 90: // show station markers - 'z'
 
-		viewState.stations = ! viewState.stations;
+		Viewer.stations = ! Viewer.stations;
 
 		break;
 
 	case 107: // increase cursor depth - '+' (keypad)
 	case 219: // '[' key
 
-		viewState.cursorHeight++;
+		Viewer.cursorHeight++;
 
 		break;
 
 	case 109: // decrease cursor depth - '-' (keypad)
 	case 221: // ']' key
 
-		viewState.cursorHeight--;
+		Viewer.cursorHeight--;
 
 		break;
 
 	case 188: // decrease terrain opacity '<' key
 
-		if ( viewState.hasTerrain ) viewState.terrainOpacity = Math.max( viewState.terrainOpacity - 0.05, 0 );
+		if ( Viewer.hasTerrain ) Viewer.terrainOpacity = Math.max( Viewer.terrainOpacity - 0.05, 0 );
 
 		break;
 
 	case 190: // increase terrain opacity '>' key
 
-		if ( viewState.hasTerrain ) viewState.terrainOpacity = Math.min( viewState.terrainOpacity + 0.05, 1 );
+		if ( Viewer.hasTerrain ) Viewer.terrainOpacity = Math.min( Viewer.terrainOpacity + 0.05, 1 );
 
 		break;
 

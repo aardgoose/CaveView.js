@@ -65,7 +65,6 @@ var limits;
 var stats = {};
 var zScale;
 
-var viewState = {};
 var cursorHeight;
 
 var shadingMode;
@@ -86,6 +85,9 @@ var cameraMove;
 
 var lastActivityTime = 0;
 //var leakWatcher;
+
+
+var Viewer = {};
 
 function init ( domID, configuration ) { // public method
 
@@ -144,9 +146,9 @@ function init ( domID, configuration ) { // public method
 	// event handler
 	window.addEventListener( 'resize', resize );
 
-	Object.assign( viewState, EventDispatcher.prototype );
+	Object.assign( Viewer, EventDispatcher.prototype );
 
-	Object.defineProperties( viewState, {
+	Object.defineProperties( Viewer, {
 
 		'container': {
 			value: container
@@ -161,7 +163,7 @@ function init ( domID, configuration ) { // public method
 		'terrainShading': {
 			writeable: true,
 			get: function () { return terrainShadingMode; },
-			set: function ( x ) { _viewStateSetter( setTerrainShadingMode, 'terrainShading', x ); }
+			set: function ( x ) { _stateSetter( setTerrainShadingMode, 'terrainShading', x ); }
 		},
 
 		'hasTerrain': {
@@ -175,7 +177,7 @@ function init ( domID, configuration ) { // public method
 		'terrainOverlay': {
 			writeable: true,
 			get: function () { return activeOverlay; },
-			set: function ( x ) { _viewStateSetter( setTerrainOverlay, 'terrainOverlay', x ); }
+			set: function ( x ) { _stateSetter( setTerrainOverlay, 'terrainOverlay', x ); }
 		},
 
 		'terrainOpacity': {
@@ -187,25 +189,25 @@ function init ( domID, configuration ) { // public method
 		'shadingMode': {
 			writeable: true,
 			get: function () { return shadingMode; },
-			set: function ( x ) { _viewStateSetter( setShadingMode, 'shadingMode', x ); }
+			set: function ( x ) { _stateSetter( setShadingMode, 'shadingMode', x ); }
 		},
 
 		'surfaceShading': {
 			writeable: true,
 			get: function () { return surfaceShadingMode; },
-			set: function ( x ) { _viewStateSetter( setSurfaceShadingMode, 'surfaceShading', x ); }
+			set: function ( x ) { _stateSetter( setSurfaceShadingMode, 'surfaceShading', x ); }
 		},
 
 		'cameraType': {
 			writeable: true,
 			get: function () { return cameraMode; },
-			set: function ( x ) { _viewStateSetter( setCameraMode, 'cameraType', x ); }
+			set: function ( x ) { _stateSetter( setCameraMode, 'cameraType', x ); }
 		},
 
 		'view': {
 			writeable: true,
 			get: function () { return VIEW_NONE; },
-			set: function ( x ) { _viewStateSetter( setViewMode, 'view', x ); }
+			set: function ( x ) { _stateSetter( setViewMode, 'view', x ); }
 		},
 
 		'cursorHeight': {
@@ -239,12 +241,12 @@ function init ( domID, configuration ) { // public method
 		'section': {
 			writeable: true,
 			get: function () { return selectedSection; },
-			set: function ( x ) { _viewStateSetter( selectSection, 'section', x ); }
+			set: function ( x ) { _stateSetter( selectSection, 'section', x ); }
 		},
 
 		'highlight': {
 			writeable: true,
-			set: function ( x ) { _viewStateSetter( highlightSection, 'highlight', x ); }
+			set: function ( x ) { _stateSetter( highlightSection, 'highlight', x ); }
 		},
 
 		'routeEdit': {
@@ -256,7 +258,7 @@ function init ( domID, configuration ) { // public method
 		'setPOI': {
 			writeable: true,
 			get: function () { return true; },
-			set: function ( x ) { _viewStateSetter( setCameraPOI, 'setPOI', x ); }
+			set: function ( x ) { _stateSetter( setCameraPOI, 'setPOI', x ); }
 		},
 
 		'developerInfo': {
@@ -308,7 +310,7 @@ function init ( domID, configuration ) { // public method
 	_conditionalLayer( LEG_SURFACE,       'surfaceLegs' );
 	_conditionalLayer( LABEL_STATION,     'stationLabels' );
 
-	Materials.initCache( viewState );
+	Materials.initCache( Viewer );
 
 	HUD.init( domID, renderer );
 
@@ -316,7 +318,7 @@ function init ( domID, configuration ) { // public method
 
 	function _enableLayer ( layerTag, name ) {
 
-		Object.defineProperty( viewState, name, {
+		Object.defineProperty( Viewer, name, {
 			writeable: true,
 			get: function () { return testCameraLayer( layerTag ); },
 			set: function ( x ) { setCameraLayer( layerTag, x ); this.dispatchEvent( { type: 'change', name: name } ); }
@@ -330,17 +332,17 @@ function init ( domID, configuration ) { // public method
 
 		name = 'has' + name.substr( 0, 1 ).toUpperCase() + name.substr( 1 );
 
-		Object.defineProperty( viewState, name, {
+		Object.defineProperty( Viewer, name, {
 			get: function () { return survey.hasFeature( layerTag ); }
 		} );
 
 	}
 
-	function _viewStateSetter ( modeFunction, name, newMode ) {
+	function _stateSetter ( modeFunction, name, newMode ) {
 
 		modeFunction( isNaN( newMode ) ? newMode : Number( newMode ) );
 
-		viewState.dispatchEvent( { type: 'change', name: name } );
+		Viewer.dispatchEvent( { type: 'change', name: name } );
 
 	}
 
@@ -407,7 +409,7 @@ function setAutoRotate ( state ) {
 function setCursorHeight ( x ) {
 
 	cursorHeight = x;
-	viewState.dispatchEvent( { type: 'cursorChange', name: 'cursorHeight' } );
+	Viewer.dispatchEvent( { type: 'cursorChange', name: 'cursorHeight' } );
 
 	renderView();
 
@@ -416,7 +418,7 @@ function setCursorHeight ( x ) {
 function setTerrainOpacity ( x ) {
 
 	terrain.setOpacity( x );
-	viewState.dispatchEvent( { type: 'change', name: 'terrainOpacity' } );
+	Viewer.dispatchEvent( { type: 'change', name: 'terrainOpacity' } );
 
 	renderView();
 
@@ -827,7 +829,7 @@ function clearView () {
 	initCamera( pCamera );
 	initCamera( oCamera );
 
-	viewState.cameraType = CAMERA_PERSPECTIVE;
+	Viewer.cameraType = CAMERA_PERSPECTIVE;
 	setViewMode( VIEW_PLAN, 1 );
 
 	renderView();
@@ -894,7 +896,7 @@ function loadSurvey ( newSurvey ) {
 	HUD.setVisibility( true );
 
 	// signal any listeners that we have a new cave
-	if ( ! asyncTerrainLoading ) viewState.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+	if ( ! asyncTerrainLoading ) Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 	controls.object = camera;
 	controls.enabled = true;
@@ -921,7 +923,7 @@ function loadSurvey ( newSurvey ) {
 		}
 
 		// delayed notification to ensure and event listeners get accurate terrain information
-		viewState.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 	}
 
@@ -1074,7 +1076,7 @@ function mouseDown ( event ) {
 
 	function _selectEntrance ( picked ) {
 
-		if ( ! viewState.entrances ) return false;
+		if ( ! Viewer.entrances ) return false;
 
 		var entrance = picked.object;
 		var position = entrance.getWorldPosition();
@@ -1138,7 +1140,7 @@ var renderView = function () {
 
 function onCameraMoveEnd () {
 
-	if ( terrain && terrain.isTiled && viewState.terrain ) setTimeout( updateTerrain, RETILE_TIMEOUT );
+	if ( terrain && terrain.isTiled && Viewer.terrain ) setTimeout( updateTerrain, RETILE_TIMEOUT );
 
 }
 
@@ -1231,7 +1233,7 @@ function getSurveyTree () {
 
 // export public interface
 
-export var Viewer = {
+Object.assign( Viewer, {
 	init:          init,
 	clearView:     clearView,
 	loadCave:      loadCave,
@@ -1240,10 +1242,12 @@ export var Viewer = {
 	getStats:      getStats,
 	getSurveyTree: getSurveyTree,
 	getControls:   getControls,
-	getState:      viewState,
+	getState:      Viewer,
 	renderView:    renderView,
 	addOverlay:    addOverlay
-};
+} );
+
+export { Viewer };
 
 
 // EOF

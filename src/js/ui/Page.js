@@ -306,7 +306,7 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 	this.page.appendChild( label );
 
-	return;
+	return label;
 
 	function _checkboxChanged ( event ) {
 

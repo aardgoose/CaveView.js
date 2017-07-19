@@ -80,6 +80,7 @@ var cameraMode;
 var selectedSection = 0;
 
 var controls;
+var defaultTarget = new Vector3();
 
 var cameraMove;
 
@@ -601,7 +602,7 @@ function testCameraLayer ( layerTag ) {
 
 function setViewMode ( mode, t ) {
 
-	var position = new Vector3();
+	var cameraPosition = new Vector3();
 	var tAnimate = t || 240;
 
 	switch ( mode ) {
@@ -609,31 +610,31 @@ function setViewMode ( mode, t ) {
 	case VIEW_PLAN:
 
 		// reset camera to start position
-		position.set( 0, 0, CAMERA_OFFSET );
+		cameraPosition.set( 0, 0, CAMERA_OFFSET );
 
 		break;
 
 	case VIEW_ELEVATION_N:
 
-		position.set( 0, CAMERA_OFFSET, 0 );
+		cameraPosition.set( 0, CAMERA_OFFSET, 0 );
 
 		break;
 
 	case VIEW_ELEVATION_S:
 
-		position.set( 0, -CAMERA_OFFSET, 0 );
+		cameraPosition.set( 0, -CAMERA_OFFSET, 0 );
 
 		break;
 
 	case VIEW_ELEVATION_E:
 
-		position.set( CAMERA_OFFSET, 0, 0 );
+		cameraPosition.set( CAMERA_OFFSET, 0, 0 );
 
 		break;
 
 	case VIEW_ELEVATION_W:
 
-		position.set( -CAMERA_OFFSET, 0, 0 );
+		cameraPosition.set( -CAMERA_OFFSET, 0, 0 );
 
 		break;
 
@@ -644,8 +645,10 @@ function setViewMode ( mode, t ) {
 
 	}
 
+	cameraPosition.add( defaultTarget );
+
 	cameraMove.cancel();
-	cameraMove.prepare( position, new Vector3() );
+	cameraMove.prepare( cameraPosition, defaultTarget );
 	cameraMove.start( tAnimate );
 
 }
@@ -894,6 +897,8 @@ function loadSurvey ( newSurvey ) {
 	controls.enabled = true;
 
 	survey.getRoutes().addEventListener( 'changed', _routesChanged );
+
+	setViewMode( VIEW_PLAN, 1 );
 
 	renderView();
 
@@ -1175,9 +1180,7 @@ function setScale ( obj ) {
 
 	obj.scale.copy( scale );
 
-	var center = survey.modelLimits.getCenter().multiply( scale ).negate();
-
-	obj.position.copy( center );
+	obj.position.copy( survey.modelLimits.getCenter().multiply( scale ).negate() );
 
 	HUD.setScale( vScale );
 

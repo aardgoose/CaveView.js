@@ -168,6 +168,16 @@ function init ( domID, configuration ) { // public method
 			get: function () { return !! terrain; }
 		},
 
+		'hasTerrainDatumShift': {
+			get: function () {console.log( terrain.datumShift ) ; return !! terrain.datumShift; }
+		},
+
+		'terrainDatumShift': {
+			writeable: true,
+			get: function () { return !! terrain.activeDatumShift; },
+			set: function ( x ) { applyTerrainDatumShift( x ); }
+		},
+
 		'terrainOverlays': {
 			get: function () { if ( terrain.isTiled ) return Object.keys( overlays ); else return terrain.hasOverlay ? [ true ] : []; }
 		},
@@ -422,6 +432,15 @@ function setTerrainOpacity ( x ) {
 
 }
 
+function applyTerrainDatumShift( x ) {
+
+	terrain.applyDatumShift( x );
+	Viewer.dispatchEvent( { type: 'change', name: 'terrainDatumShift' } );
+
+	renderView();
+
+}
+
 function showDeveloperInfo( /* x */ ) {
 
 	console.log( renderer.info );
@@ -492,7 +511,6 @@ function renderDepthTexture () {
 	// correct height between entrances and terrain ( compensates for mismatch beween CRS and datums )
 
 	survey.calibrateTerrain( renderer, renderTarget, terrain );
-
 
 	// restore renderer to normal render size and target
 

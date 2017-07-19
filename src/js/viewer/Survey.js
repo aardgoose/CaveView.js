@@ -251,7 +251,7 @@ Survey.prototype.calibrateTerrain = function ( renderer, renderTarget, terrain )
 
 	total /= n;
 
-	terrain.translateZ( total );
+	terrain.datumShift = total;
 
 	console.log( 'Adjustmenting terrain height by ', total );
 
@@ -259,6 +259,7 @@ Survey.prototype.calibrateTerrain = function ( renderer, renderTarget, terrain )
 
 	function _testHeight( node ) {
 
+		// FIXME to extend to surface points
 		if ( node.type !== STATION_ENTRANCE) return;
 
 		pixelCoords.copy( node.p ).sub( base ).multiply( adjust ).round();
@@ -267,13 +268,13 @@ Survey.prototype.calibrateTerrain = function ( renderer, renderTarget, terrain )
 
 		// convert to survey units
 		var terrainHeight = result[ 0 ] * range.z / 256 + base.z;
-	
+
 		total += node.p.z - terrainHeight;
 		n++;
 
 	}
 
-}
+};
 
 Survey.prototype.loadCave = function ( cave ) {
 

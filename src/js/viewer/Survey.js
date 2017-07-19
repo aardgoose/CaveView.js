@@ -228,6 +228,53 @@ Survey.prototype.loadEntrances = function () {
 
 };
 
+Survey.prototype.calibrateTerrain = function ( renderer, renderTarget, terrain ) {
+
+	// renderer target is height value based
+
+	var base = this.modelLimits.min;
+	var range = this.modelLimits.getSize();
+	var terrainSize= renderer.getSize();
+
+	var pixelCoords = new Vector3();
+
+	var adjust = new Vector3( terrainSize.width, terrainSize.height, 1 ).divide( range );
+
+	var result = new Uint8Array( 4 );
+
+	var total = 0;
+	var n = 0;
+
+	this.surveyTree.traverse( _testHeight );
+
+	// simple average - could use least squares, to avoid outlier problems?
+
+	total /= n;
+
+	terrain.translateZ( total );
+
+	console.log( 'Adjustmenting terrain height by ', total );
+
+	return;
+
+	function _testHeight( node ) {
+
+		if ( node.type !== STATION_ENTRANCE) return;
+
+		pixelCoords.copy( node.p ).sub( base ).multiply( adjust ).round();
+
+		renderer.readRenderTargetPixels( renderTarget, pixelCoords.x, pixelCoords.y, 1, 1, result );
+
+		// convert to survey units
+		var terrainHeight = result[ 0 ] * range.z / 256 + base.z;
+	
+		total += node.p.z - terrainHeight;
+		n++;
+
+	}
+
+}
+
 Survey.prototype.loadCave = function ( cave ) {
 
 	var self = this;

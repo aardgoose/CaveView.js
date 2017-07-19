@@ -15,6 +15,8 @@ function CommonTerrain () {
 	this.hasOverlay = false;
 	this.defaultOverlay = null;
 	this.activeOverlay = null;
+	this.datumShift = 0;
+	this.activeDatumShift = 0;
 
 	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
 
@@ -89,6 +91,22 @@ CommonTerrain.prototype.setShadingMode = function ( mode ) {
 	this.shadingMode = mode;
 
 	return true;
+
+};
+
+CommonTerrain.prototype.applyDatumShift = function ( mode ) {
+
+	if ( mode && this.activeDatumShift === 0 ) {
+
+		this.translateZ( this.datumShift );
+		this.activeDatumShift = this.datumShift;
+
+	} else if ( ! mode && this.activeDatumShift !== 0 ) {
+
+		this.translateZ( - this.datumShift );
+		this.activeDatumShift = 0;
+
+	}
 
 };
 

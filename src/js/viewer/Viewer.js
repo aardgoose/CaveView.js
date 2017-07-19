@@ -30,7 +30,7 @@ import {
 	Vector2, Vector3, Matrix4, Euler,
 	Scene, Raycaster,
 	DirectionalLight, HemisphereLight,
-	LinearFilter, NearestFilter, RGBFormat,
+	LinearFilter, NearestFilter, RGBAFormat,
 	OrthographicCamera, PerspectiveCamera,
 	WebGLRenderer, WebGLRenderTarget,
 } from '../../../../three.js/src/Three';
@@ -476,7 +476,7 @@ function renderDepthTexture () {
 
 	scene.overrideMaterial = Materials.getDepthMapMaterial( survey );
 
-	var renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBFormat } );
+	var renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat } );
 
 	renderTarget.texture.generateMipmaps = false;
 	renderTarget.texture.name = 'CV.DepthMapTexture';
@@ -488,6 +488,13 @@ function renderDepthTexture () {
 
 	renderer.clear();
 	renderer.render( scene, rtCamera, renderTarget, true );
+
+	// correct height between entrances and terrain ( compensates for mismatch beween CRS and datums )
+
+	survey.calibrateTerrain( renderer, renderTarget, terrain );
+
+
+	// restore renderer to normal render size and target
 
 	renderer.setRenderTarget();	// revert to screen canvas
 

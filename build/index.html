@@ -12,9 +12,12 @@
 <script type="text/javascript" src="CaveView/lib/proj4-src.js" ></script>
 <script type="text/javascript" src="CaveView/lib/BGS.js" ></script>
 <script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
+<script type="text/javascript" src="CaveView/lib/BingProvider.js" ></script>
 <script type="text/javascript" >
 
 function onload () {
+
+//	BingProvider( 1, 2, 3 );
 
 	CV.UI.init( "scene", { terrainDirectory: "/terrain/", surveyDirectory: "/surveys/", home: "/CaveView/" } );
 
@@ -22,6 +25,8 @@ function onload () {
 	CV.Viewer.addOverlay( 'NLS', NLSTileUrlOS ); // eslint-disable-line no-undef
 	CV.Viewer.addOverlay( 'Satellite', function ( x, y, z ) { return 'https://api.mapbox.com/v4/mapbox.satellite/' + z + '/' + x + '/' + y + '@2x.jpg70?access_token=pk.eyJ1IjoiYWFyZGdvb3NlIiwiYSI6ImNqMWh2dHR2MTAwMXIycW4yMmg2MHJidHcifQ.eenH12R7X8Eq-Ekb_K4dDQ'; } );
 	CV.Viewer.addOverlay( 'BGS', BGSTileURL  );
+	CV.Viewer.addOverlay( 'Bing Aerial', getBingProvider( 'Aerial' ) );
+	CV.Viewer.addOverlay( 'Bing OS', getBingProvider( 'OrdnanceSurvey' ) );
 
 	CV.UI.loadCaveList( [ "P8_Master.3d", "all.3d", "Giants_Oxlow_Maskhill_System.3d", "Castleton_Master.3d", "Cheddar.lox", "Peak_Master_NoSurface.3d", "loser.3d" ] );
 

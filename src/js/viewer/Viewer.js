@@ -43,6 +43,7 @@ var RETILE_TIMEOUT = 150; // ms pause after last movement before attempting reti
 var caveIsLoaded = false;
 
 var container;
+var branding;
 
 // THREE.js objects
 
@@ -703,20 +704,40 @@ function setSurfaceShadingMode ( mode ) {
 
 }
 
-function setTerrainOverlay ( overlay ) {
+function setTerrainOverlay ( overlayName ) {
 
 	if ( terrainShadingMode === SHADING_OVERLAY ) {
 
-		activeOverlay = overlay;
-		terrain.setOverlay( overlays[ overlay ] );
+		var overlay = overlays[ overlayName ];
+		var logo = overlay.getLogo();
+
+		if ( branding !== undefined ) {
+
+			// remove last branding displayed
+			container.removeChild( branding );
+
+		}
+
+		branding = logo;
+
+		if ( logo !== undefined ) {
+
+			logo.classList.add( 'overlay-branding' );
+			container.appendChild( logo );
+
+		}
+
+		activeOverlay = overlayName;
+
+		terrain.setOverlay( overlay );
 
 	}
 
 }
 
-function addOverlay ( name, overlayFunc ) {
+function addOverlay ( name, overlayFunc, overlayLogoFunc ) {
 
-	overlays[ name ] = new Overlay( overlayFunc );
+	overlays[ name ] = new Overlay( overlayFunc, overlayLogoFunc );
 
 	if ( Object.keys( overlays ).length === 1 ) {
 

@@ -6,9 +6,18 @@ import {
 } from '../../../../three.js/src/Three';
 
 
-function Overlay ( getUrl ) {
+function Overlay ( getUrl, getLogo ) {
 
 	this.getUrl = getUrl;
+	this.getLogoFunc = getLogo;
+
+}
+
+Overlay.prototype.getLogo = function () {
+
+	if ( this.getLogoFunc === undefined ) return;
+
+	return this.getLogoFunc();
 
 }
 

@@ -6,24 +6,23 @@ import {
 } from '../../../../three.js/src/Three';
 
 
-function Overlay ( getUrl, getLogo ) {
+function Overlay ( overlayProvider ) {
 
-	this.getUrl = getUrl;
-	this.getLogoFunc = getLogo;
+	this.provider = overlayProvider;
 
 }
 
-Overlay.prototype.getLogo = function () {
+Overlay.prototype.getAttribution = function () {
 
-	if ( this.getLogoFunc === undefined ) return;
-
-	return this.getLogoFunc();
+	return this.provider.getAttribution();
 
 }
 
 Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
-	var url = this.getUrl( x, y, z );
+	var url = this.provider.getUrl( x, y, z );
+
+	if ( url === null ) return;
 
 	new TextureLoader().setCrossOrigin( 'anonymous' ).load( url, _textureLoaded );
 

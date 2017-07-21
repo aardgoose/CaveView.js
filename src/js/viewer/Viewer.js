@@ -709,7 +709,7 @@ function setTerrainOverlay ( overlayName ) {
 	if ( terrainShadingMode === SHADING_OVERLAY ) {
 
 		var overlay = overlays[ overlayName ];
-		var logo = overlay.getLogo();
+		var logo = overlay.getAttribution();
 
 		if ( branding !== undefined ) {
 

@@ -3,60 +3,37 @@
 * BingProvider.js (c) Angus Sawyer, 2017.
 */
 
-// FIXME - remove this from global scope.
 
-function BingProvider ( metaUrl ) {
+function BingProvider ( imagerySet ) {
 
-	var urlTemplate;
-	var subdomains = [];
-	var subdomainIndex = 0;
-	var subdomainCount = 0;
+	this.urlTemplate = null;
+	this.subdomains = [];
+	this.subdomainIndex = 0;
+	this.subdomainCount = 0;
+
+	var self = this;
+
 	var metadata;
+
+	var key = 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_';
+	var metaUrlTemplate = 'http://dev.virtualearth.net/REST/v1/Imagery/Metadata/{imagerySet}?inc=imageryProviders&key={key}';
+
+	var metaUrl = metaUrlTemplate.replace( '{key}', key ).replace( '{imagerySet}', imagerySet );
 
 	var req = new XMLHttpRequest();
 
 	req.responseType = 'json';
 
-	req.addEventListener( 'load', getTemplate );
+	req.addEventListener( 'load', _getTemplate );
 
 	req.open( 'GET', metaUrl );
 	req.send();
 
-	function quadkey ( x, y, z ) {
+	return;
 
-		var quadKey = [];
-
-		for ( var i = z; i > 0; i-- ) {
-
-			var digit = '0';
-			var mask = 1 << ( i - 1 );
-
-			if ( ( x & mask ) != 0 ) {
-
-				digit++;
-
-			}
-
-			if ( ( y & mask ) != 0 ) {
-
-				digit++;
-				digit++;
-
-			}
-
-			quadKey.push( digit );
-
-		}
-
-		return quadKey.join( '' );
-
-	}
-
-	function getTemplate () {
+	function _getTemplate () {
 
 		metadata = req.response;
-
-//		img.src = metadata.brandLogoUri;
 
 		var rss = metadata.resourceSets;
 
@@ -68,10 +45,10 @@ function BingProvider ( metaUrl ) {
 
 				var r = rs[ j ];
 
-				subdomains = r.imageUrlSubdomains;
-				urlTemplate = r.imageUrl;
+				self.subdomains = r.imageUrlSubdomains;
+				self.urlTemplate = r.imageUrl;
 
-				subdomainCount = subdomains.length;
+				self.subdomainCount = self.subdomains.length;
 
 				return;
 
@@ -81,42 +58,63 @@ function BingProvider ( metaUrl ) {
 
 	}
 
-	return function BingProvider( x, y, z ) {
-
-		if ( metadata === undefined ) return false;
-
-		if ( urlTemplate === undefined ) getTemplate();
-
-		var qk = quadkey( x, y, z );
-
-		subdomainIndex = ++subdomainIndex % subdomainCount;
-
-		var url = urlTemplate.replace( '{subdomain}', subdomains[ subdomainIndex ] ).replace( '{quadkey}', qk );
-
-		return url;
-
-	};
-
-};
-
-function getBingProvider( imagerySet ) {
-
-	var key = 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_';
-	var metaUrlTemplate = 'http://dev.virtualearth.net/REST/v1/Imagery/Metadata/{imagerySet}?key={key}';
-
-	var metaUrl = metaUrlTemplate.replace( '{key}', key ).replace( '{imagerySet}', imagerySet );
-
-	return BingProvider( metaUrl );
-
 }
 
-function getBingLogo () {
+
+BingProvider.quadkey = function ( x, y, z ) {
+
+	var quadKey = [];
+
+	for ( var i = z; i > 0; i-- ) {
+
+		var digit = '0';
+		var mask = 1 << ( i - 1 );
+
+		if ( ( x & mask ) != 0 ) {
+
+			digit++;
+
+		}
+
+		if ( ( y & mask ) != 0 ) {
+
+			digit++;
+			digit++;
+
+		}
+
+		quadKey.push( digit );
+
+	}
+
+	return quadKey.join( '' );
+
+}
+ 
+BingProvider.prototype.getAttribution = function () {
 
 	var img = document.createElement( 'img' );
 
-	img.src = 'https://www.microsoft.com/maps/images/branding/bing_maps_logo_white_157px_34px.png';
+	img.src = 'https://www.microsoft.com/maps/images/branding/bing_maps_logo_white_125px_27px.png';
 	img.classList.add( 'overlay-branding' );
 
 	return img;
 
-}
+};
+
+BingProvider.prototype.getUrl = function ( x, y, z ) {
+
+	var urlTemplate = this.urlTemplate;
+
+	if ( urlTemplate === null ) return null;
+
+	var qk = BingProvider.quadkey( x, y, z );
+
+	thissubdomainIndex = ++this.ubdomainIndex % this.subdomainCount;
+
+	var url = urlTemplate.replace( '{subdomain}', this.subdomains[ this.subdomainIndex ] ).replace( '{quadkey}', qk );
+
+	return url;
+
+};
+

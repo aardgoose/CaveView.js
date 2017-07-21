@@ -392,3 +392,12 @@ div.station-info {
 	padding: 4px;
 	z-index: 200;
 }
+
+
+.overlay-branding {
+	color: white;
+	margin: 4px;
+	position: absolute;
+	right: 0;
+	top: 0;
+}

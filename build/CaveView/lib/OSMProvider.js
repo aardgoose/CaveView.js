@@ -1,12 +1,16 @@
 
 
-function osmProvider ( x, y, z ) {
+function OSMProvider () {
+
+}
+
+OSMProvider.prototype.getUrl = function ( x, y, z ) {
 
 	return 'https://b.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png';
 
 }
 
-function osmAttribution() {
+OSMProvider.prototype.getAttribution = function () {
 
 	var a = document.createElement( 'a' );
 

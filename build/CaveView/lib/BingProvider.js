@@ -3,6 +3,8 @@
 * BingProvider.js (c) Angus Sawyer, 2017.
 */
 
+// FIXME - remove this from global scope.
+
 function BingProvider ( metaUrl ) {
 
 	var urlTemplate;
@@ -15,7 +17,7 @@ function BingProvider ( metaUrl ) {
 
 	req.responseType = 'json';
 
-	req.addEventListener( 'load', function ( ev ) { metadata = req.response } );
+	req.addEventListener( 'load', getTemplate );
 
 	req.open( 'GET', metaUrl );
 	req.send();
@@ -52,6 +54,10 @@ function BingProvider ( metaUrl ) {
 
 	function getTemplate () {
 
+		metadata = req.response;
+
+//		img.src = metadata.brandLogoUri;
+
 		var rss = metadata.resourceSets;
 
 		for ( var i = 0; i < rss.length; i++ ) {
@@ -64,6 +70,7 @@ function BingProvider ( metaUrl ) {
 
 				subdomains = r.imageUrlSubdomains;
 				urlTemplate = r.imageUrl;
+
 				subdomainCount = subdomains.length;
 
 				return;
@@ -100,5 +107,16 @@ function getBingProvider( imagerySet ) {
 	var metaUrl = metaUrlTemplate.replace( '{key}', key ).replace( '{imagerySet}', imagerySet );
 
 	return BingProvider( metaUrl );
+
+}
+
+function getBingLogo () {
+
+	var img = document.createElement( 'img' );
+
+	img.src = 'https://www.microsoft.com/maps/images/branding/bing_maps_logo_white_157px_34px.png';
+	img.classList.add( 'overlay-branding' );
+
+	return img;
 
 }

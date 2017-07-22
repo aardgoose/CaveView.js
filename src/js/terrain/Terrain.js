@@ -4,8 +4,7 @@ import { Tile } from './Tile';
 
 import {
 	MeshLambertMaterial,
-	TextureLoader,
-	Group
+	TextureLoader
 } from '../../../../three.js/src/Three';
 
 function Terrain () {

@@ -980,7 +980,6 @@ function loadTerrain ( mode ) {
 
 			unloadTerrainListeners();
 
- 
 		}
 
 		terrain.setVisibility( mode );

@@ -8,6 +8,10 @@ import {
 
 function Overlay ( overlayProvider ) {
 
+	this.attribution = overlayProvider.getAttribution();
+
+	this.attribution.classList.add( 'overlay-branding' );
+
 	overlayProvider.getAttribution().classList.add( 'overlay-branding' );
 
 	this.provider = overlayProvider;
@@ -16,7 +20,7 @@ function Overlay ( overlayProvider ) {
 
 Overlay.prototype.getAttribution = function () {
 
-	return this.provider.getAttribution();
+	return this.attribution;
 
 }
 

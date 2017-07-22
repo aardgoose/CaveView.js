@@ -628,7 +628,7 @@ function initSurfacePage () {
 
 //		if ( Viewer.hasTerrainDatumShift ) {
 
-			terrainControls.push( page.addCheckbox( 'Vertical datum shift', Viewer, 'terrainDatumShift' ) );
+		terrainControls.push( page.addCheckbox( 'Vertical datum shift', Viewer, 'terrainDatumShift' ) );
 
 //		}
 

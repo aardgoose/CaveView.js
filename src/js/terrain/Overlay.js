@@ -8,6 +8,8 @@ import {
 
 function Overlay ( overlayProvider ) {
 
+	overlayProvider.getAttribution().classList.add( 'overlay-branding' );
+
 	this.provider = overlayProvider;
 
 }

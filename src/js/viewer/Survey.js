@@ -242,18 +242,24 @@ Survey.prototype.calibrateTerrain = function ( renderer, renderTarget, terrain )
 
 	var result = new Uint8Array( 4 );
 
-	var total = 0;
+	var s1 = 0;
+	var s2 = 0;
+
 	var n = 0;
 
 	this.surveyTree.traverse( _testHeight );
 
-	// simple average - could use least squares, to avoid outlier problems?
+	// standard deviation
 
-	total /= n;
+	var sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
 
-	terrain.datumShift = total;
+	// simple average
 
-	console.log( 'Adjustmenting terrain height by ', total );
+	s1 /= n;
+
+	terrain.datumShift = s1;
+
+	console.log( 'Adjustmenting terrain height by ', s1, sd );
 
 	return;
 
@@ -269,7 +275,9 @@ Survey.prototype.calibrateTerrain = function ( renderer, renderTarget, terrain )
 		// convert to survey units
 		var terrainHeight = result[ 0 ] * range.z / 256 + base.z;
 
-		total += node.p.z - terrainHeight;
+		var v = node.p.z - terrainHeight;
+		s1 += v;
+		s2 += v * v;
 		n++;
 
 	}

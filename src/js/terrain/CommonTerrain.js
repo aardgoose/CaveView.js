@@ -37,9 +37,10 @@ CommonTerrain.prototype.getOpacity = function () {
 
 };
 
-CommonTerrain.prototype.setShadingMode = function ( mode ) {
+CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	var material;
+	var hideAttribution = true;
 
 	switch ( mode ) {
 
@@ -51,7 +52,8 @@ CommonTerrain.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_OVERLAY:
 
-		this.setOverlay( ( this.activeOverlay === null ? this.defaultOverlay : this.activeOverlay ) );
+		this.setOverlay( ( this.activeOverlay === null ? this.defaultOverlay : this.activeOverlay ), renderCallback );
+		hideAttribution = false;
 
 		break;
 
@@ -86,6 +88,13 @@ CommonTerrain.prototype.setShadingMode = function ( mode ) {
 
 	}
 
+	if ( hideAttribution && this.activeOverlay !== null ) {
+
+		this.activeOverlay.hideAttribution();
+		this.activeOverlay = null;
+
+	}
+
 	if ( material !== undefined ) this.setMaterial( material );
 
 	this.shadingMode = mode;
@@ -93,6 +102,22 @@ CommonTerrain.prototype.setShadingMode = function ( mode ) {
 	return true;
 
 };
+
+CommonTerrain.prototype.setVisibility = function ( mode ) {
+
+	if ( this.activeOverlay === null ) return;
+
+	if ( mode ) {
+
+		this.activeOverlay.showAttribution();
+
+	} else {
+
+		this.activeOverlay.hideAttribution();
+
+	}
+
+}
 
 CommonTerrain.prototype.applyDatumShift = function ( mode ) {
 

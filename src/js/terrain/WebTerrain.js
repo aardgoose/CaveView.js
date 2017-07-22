@@ -13,7 +13,7 @@ import {
 
 var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-function WebTerrain ( survey, onReady, onLoaded, overlayLoadedCallback ) {
+function WebTerrain ( survey, onReady, onLoaded ) {
 
 	CommonTerrain.call( this );
 
@@ -38,7 +38,6 @@ function WebTerrain ( survey, onReady, onLoaded, overlayLoadedCallback ) {
 	this.currentZoom     = null;
 	this.currentLimits   = null;
 	this.dying = false;
-	this.overlayLoadedCallback = overlayLoadedCallback;
 	this.overlaysLoading = 0;
 	this.debug = true;
 
@@ -327,13 +326,32 @@ WebTerrain.prototype.setDefaultOverlay = function ( overlay ) {
 
 };
 
-WebTerrain.prototype.setOverlay = function ( overlay ) {
+WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	if ( this.tilesLoading > 0 ) return;
 
 	var self = this;
 
+	var currentOverlay = this.activeOverlay;
+
+	if ( currentOverlay !== null ) {
+
+		if ( currentOverlay === overlay ) {
+
+			return;
+
+		} else {
+
+			currentOverlay.hideAttribution();
+
+		}
+
+	}
+
 	this.activeOverlay = overlay;
+	this.defaultOverlay = overlay;
+
+	overlay.showAttribution();
 
 	this.traverse( _setTileOverlays );
 
@@ -350,7 +368,7 @@ WebTerrain.prototype.setOverlay = function ( overlay ) {
 
 	function _overlayLoaded () {
 
-		if ( --self.overlaysLoading === 0 ) self.overlayLoadedCallback();
+		if ( --self.overlaysLoading === 0 ) overlayLoadedCallback();
 
 	}
 

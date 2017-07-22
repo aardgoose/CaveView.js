@@ -43,7 +43,6 @@ var RETILE_TIMEOUT = 150; // ms pause after last movement before attempting reti
 var caveIsLoaded = false;
 
 var container;
-var branding;
 
 // THREE.js objects
 
@@ -681,7 +680,7 @@ function setViewMode ( mode, t ) {
 
 function setTerrainShadingMode ( mode ) {
 
-	if ( terrain.setShadingMode( mode ) ) terrainShadingMode = mode;
+	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
 
 	renderView();
 
@@ -708,35 +707,17 @@ function setTerrainOverlay ( overlayName ) {
 
 	if ( terrainShadingMode === SHADING_OVERLAY ) {
 
-		var overlay = overlays[ overlayName ];
-		var logo = overlay.getAttribution();
-
-		if ( branding !== undefined ) {
-
-			// remove last branding displayed
-			container.removeChild( branding );
-
-		}
-
-		branding = logo;
-
-		if ( logo !== undefined ) {
-
-			container.appendChild( logo );
-
-		}
-
 		activeOverlay = overlayName;
 
-		terrain.setOverlay( overlay );
+		terrain.setOverlay( overlays[ overlayName ], renderView );
 
 	}
 
 }
 
-function addOverlay ( name, overlayFunc, overlayLogoFunc ) {
+function addOverlay ( name, overlayProvider ) {
 
-	overlays[ name ] = new Overlay( overlayFunc, overlayLogoFunc );
+	overlays[ name ] = new Overlay( overlayProvider, container );
 
 	if ( Object.keys( overlays ).length === 1 ) {
 
@@ -999,10 +980,13 @@ function loadTerrain ( mode ) {
 
 			unloadTerrainListeners();
 
+ 
 		}
 
+		terrain.setVisibility( mode );
+
 		setCameraLayer( FEATURE_TERRAIN, mode );
- 
+
 		Viewer.dispatchEvent( { type: 'change', name: 'terrain' } );
 
 	}

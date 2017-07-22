@@ -10,7 +10,7 @@ import {
 
 function Terrain () {
 
-	Group.call( this );
+	CommonTerrain.call( this );
 
 	this.type = 'CV.Terrain';
 	this.tile = null;
@@ -19,9 +19,7 @@ function Terrain () {
 
 }
 
-Terrain.prototype = Object.create( Group.prototype );
-
-Object.assign( Terrain.prototype, CommonTerrain.prototype );
+Terrain.prototype = Object.create( CommonTerrain.prototype );
 
 Terrain.prototype.constructor = Terrain;
 
@@ -35,9 +33,9 @@ Terrain.prototype.isLoaded = function () {
 
 Terrain.prototype.addTile = function ( terrainTileGeometry, bitmap ) {
 
-	this.activeOverlay = bitmap;
+	this.bitmap = bitmap;
 
-	if ( this.activeOverlay !== undefined ) this.hasOverlay = true;
+	if ( bitmap !== undefined ) this.hasOverlay = true;
 
 	var tile = new Tile().create( terrainTileGeometry );
 
@@ -51,7 +49,7 @@ Terrain.prototype.addTile = function ( terrainTileGeometry, bitmap ) {
 Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	var loader  = new TextureLoader();
-	var	texture = loader.load( overlay, overlayLoadedCallback );
+	var	texture = loader.load( this.bitmap, overlayLoadedCallback );
 
 	this.setMaterial( new MeshLambertMaterial(
 

@@ -156,7 +156,7 @@ function init ( domID, configuration ) { // public method
 		'terrain': {
 			writeable: true,
 			get: function () { return testCameraLayer( FEATURE_TERRAIN ); },
-			set: function ( x ) { loadTerrain( x ); setCameraLayer( FEATURE_TERRAIN, x ); this.dispatchEvent( { type: 'change', name: 'terrain' } ); }
+			set: function ( x ) { loadTerrain( x ); }
 		},
 
 		'terrainShading': {
@@ -722,7 +722,6 @@ function setTerrainOverlay ( overlayName ) {
 
 		if ( logo !== undefined ) {
 
-			logo.classList.add( 'overlay-branding' );
 			container.appendChild( logo );
 
 		}
@@ -1001,6 +1000,10 @@ function loadTerrain ( mode ) {
 			unloadTerrainListeners();
 
 		}
+
+		setCameraLayer( FEATURE_TERRAIN, mode );
+ 
+		Viewer.dispatchEvent( { type: 'change', name: 'terrain' } );
 
 	}
 

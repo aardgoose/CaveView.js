@@ -8,6 +8,27 @@ import { ColourCache } from '../core/ColourCache';
 
 var unselectedMaterial = new LineBasicMaterial( { color: 0x444444, vertexColors: VertexColors } );
 
+function onBeforeRender( renderer ) {
+
+	var stencil = renderer.state.buffers.stencil;
+	var gl = renderer.context;
+	var state = renderer.state;
+
+	state.enable( gl.STENCIL_TEST );
+
+	stencil.setOp( gl.KEEP, gl.KEEP, gl.INCR );
+
+}
+
+function onAfterRender( renderer ) {
+
+	var stencil = renderer.state.buffers.stencil;
+	var gl = renderer.context;
+
+	stencil.setOp( gl.KEEP, gl.KEEP, gl.KEEP );
+
+}
+
 function Legs ( layer ) {
 
 	var geometry = new Geometry();
@@ -16,6 +37,9 @@ function Legs ( layer ) {
 
 	this.layers.set( layer );
 	this.type = 'Legs';
+
+	this.onBeforeRender = onBeforeRender;
+	this.onAfterRender = onAfterRender;
 
 	return this;
 

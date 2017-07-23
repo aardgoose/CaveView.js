@@ -27,6 +27,28 @@ function onUploadDropBuffer() {
 
 }
 
+function onBeforeRender( renderer ) {
+
+	var stencil = renderer.state.buffers.stencil;
+	var gl = renderer.context;
+	var state = renderer.state;
+
+	state.enable( gl.STENCIL_TEST );
+
+	stencil.setFunc( gl.EQUAL, 0, 0xFFFF );
+
+}
+
+function onAfterRender( renderer ) {
+
+	var stencil = renderer.state.buffers.stencil;
+	var gl = renderer.context;
+	var state = renderer.state;
+
+	state.disable( gl.STENCIL_TEST );
+
+}
+
 function Tile ( x, y, zoom, tileSet, clip ) {
 
 	this.x = x;
@@ -48,6 +70,9 @@ function Tile ( x, y, zoom, tileSet, clip ) {
 	this.worldBoundingBox = null;
 
 	Mesh.call( this );
+
+	this.onBeforeRender = onBeforeRender;
+	this.onAfterRender = onAfterRender;
 
 	return this;
 

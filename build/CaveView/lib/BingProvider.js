@@ -22,18 +22,19 @@ function BingProvider ( imagerySet ) {
 
 	var req = new XMLHttpRequest();
 
-	req.responseType = 'json';
+	req.open( 'GET', metaUrl );
+
+	req.responseType = 'text';
 
 	req.addEventListener( 'load', _getTemplate );
 
-	req.open( 'GET', metaUrl );
 	req.send();
 
 	return;
 
 	function _getTemplate () {
 
-		metadata = req.response;
+		metadata = JSON.parse( req.response );
 
 		var rss = metadata.resourceSets;
 

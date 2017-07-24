@@ -109,10 +109,15 @@ function init ( domID, configuration ) { // public method
 function setControlsVisibility( list, visible ) {
 
 	var display = visible ? 'block' : 'none';
+	var element;
 
 	for ( var i = 0, l = list.length; i < l; i++ ) {
 
-		list[ i ].style.display = display;
+		element = list[ i ];
+
+		if ( element === null ) continue;
+
+		element.style.display = display;
 
 	}
 
@@ -530,7 +535,7 @@ function initInfoPage () {
 
 	page.addHeader( 'Information' );
 
-	page.addText( 'Viewer - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.' );
+	page.addText( 'CaveView v1.1.0 - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.' );
 
 	page.addText( 'Requires a browser supporting WebGL (IE 11+ and most other recent browsers), no plugins required. Created using the THREE.js 3D library and chroma,js colour handling library.' );
 

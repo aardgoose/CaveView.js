@@ -8,6 +8,7 @@ uniform float scaleY;
 uniform float scaleZ;
 
 uniform sampler2D depthMap;
+uniform float datumShift;
 
 #ifdef SURFACE
 
@@ -40,7 +41,7 @@ void main() {
 	vec2 terrainCoords = vec2( ( position.x - minX ) * scaleX, ( position.y - minY ) * scaleY );
 	vec4 terrainHeight = texture2D( depthMap, terrainCoords );
 
-	vHeight =  terrainHeight.g * scaleZ + minZ - position.z;
+	vHeight =  terrainHeight.g * scaleZ + datumShift + minZ - position.z;
 
 	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 

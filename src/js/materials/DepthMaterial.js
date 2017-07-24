@@ -15,15 +15,16 @@ function DepthMaterial ( type, limits, texture ) {
 
 		uniforms: {
 			// pseudo light source somewhere over viewer's left shoulder.
-			uLight: { value: new Vector3( -1, -1, 2 ) },
-			minX:     { value: limits.min.x },
-			minY:     { value: limits.min.y },
-			minZ:     { value: limits.min.z },
-			scaleX:   { value: 1 / range.x },
-			scaleY:   { value: 1 / range.y },
-			scaleZ:   { value: 1 / range.z },
-			cmap:     { value: ColourCache.getTexture( 'gradient' ) },
-			depthMap: { value: texture }
+			uLight:     { value: new Vector3( -1, -1, 2 ) },
+			minX:       { value: limits.min.x },
+			minY:       { value: limits.min.y },
+			minZ:       { value: limits.min.z },
+			scaleX:     { value: 1 / range.x },
+			scaleY:     { value: 1 / range.y },
+			scaleZ:     { value: 1 / range.z },
+			cmap:       { value: ColourCache.getTexture( 'gradient' ) },
+			depthMap:   { value: texture },
+			datumShift: { value: 0.0 }
 		},
 
 		defines: defines,
@@ -40,6 +41,12 @@ function DepthMaterial ( type, limits, texture ) {
 DepthMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 DepthMaterial.prototype.constructor = DepthMaterial;
+
+DepthMaterial.prototype.setDatumShift = function ( shift ) {
+
+	this.uniforms.datumShift.value = shift;
+
+};
 
 export { DepthMaterial };
 

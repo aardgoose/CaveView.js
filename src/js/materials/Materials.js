@@ -13,6 +13,7 @@ var cache = new Map();
 var viewer;
 
 var cursorMaterials = [];
+var depthMaterials = [];
 var perSurveyMaterials = {};
 var depthTexture = null;
 
@@ -27,6 +28,21 @@ function updateCursors( /* event */ ) {
 	cursorMaterials.forEach( updateMaterialCursor );
 
 }
+
+function updateDatumShifts( event ) {
+
+	var datumShift = event.value;
+
+	depthMaterials.forEach( _updateMaterialDepth );
+
+	function _updateMaterialDepth ( material ) {
+
+		material.setDatumShift( datumShift );
+
+	}
+
+}
+
 
 function getHeightMaterial ( type, limits ) {
 
@@ -62,6 +78,7 @@ function getDepthMaterial ( type, limits ) {
 		cache.set( name, material );
 
 		perSurveyMaterials[ name ] = material;
+		depthMaterials.push( material );
 
 	}
 
@@ -108,6 +125,7 @@ function getDepthCursorMaterial( type, limits ) {
 		material = new DepthCursorMaterial( type, limits, depthTexture );
 
 		perSurveyMaterials[ name ] = material;
+		depthMaterials.push( material );
 
 		cache.set( name, material );
 
@@ -177,9 +195,10 @@ function getAspectMaterial () {
 
 }
 
-function setDepthTexture( texture ) {
+function setDepthTexture( texture, terrain ) {
 
 	depthTexture = texture;
+	terrain.addEventListener( 'datumShiftChange', updateDatumShifts );
 
 }
 
@@ -210,6 +229,7 @@ function flushCache() {
 
 		depthTexture.dispose();
 		depthTexture = null;
+		depthMaterials = [];
 
 	}
 

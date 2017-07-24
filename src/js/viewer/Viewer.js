@@ -500,7 +500,7 @@ function renderDepthTexture () {
 	renderTarget.texture.generateMipmaps = false;
 	renderTarget.texture.name = 'CV.DepthMapTexture';
 
-	Materials.setDepthTexture( renderTarget.texture );
+	Materials.setDepthTexture( renderTarget.texture, terrain );
 
 	renderer.setSize( dim, dim );
 	renderer.setPixelRatio( 1 );

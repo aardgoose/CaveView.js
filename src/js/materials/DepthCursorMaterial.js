@@ -20,6 +20,7 @@ function DepthCursorMaterial ( type, limits, texture ) {
 			scaleY:      { value: 1 / range.y },
 			scaleZ:      { value: range.z },
 			depthMap:    { value: texture },
+			datumShift:  { value: 0.0 },
 			cursor:      { value: ( limits.max.z - limits.min.z ) / 2 },
 			cursorWidth: { value: 5.0 },
 			baseColor:   { value: ColourCache.lightGrey },
@@ -65,6 +66,12 @@ DepthCursorMaterial.prototype.setCursor = function ( value ) {
 DepthCursorMaterial.prototype.getCursor = function () {
 
 	return this.uniforms.cursor.value;
+
+};
+
+DepthCursorMaterial.prototype.setDatumShift = function ( shift ) {
+
+	this.uniforms.datumShift.value = shift;
 
 };
 

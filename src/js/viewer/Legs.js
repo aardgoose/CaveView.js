@@ -12,9 +12,8 @@ function onBeforeRender( renderer ) {
 
 	var stencil = renderer.state.buffers.stencil;
 	var gl = renderer.context;
-	var state = renderer.state;
 
-	state.enable( gl.STENCIL_TEST );
+	stencil.setTest( true );
 
 	stencil.setOp( gl.KEEP, gl.KEEP, gl.INCR );
 
@@ -23,9 +22,9 @@ function onBeforeRender( renderer ) {
 function onAfterRender( renderer ) {
 
 	var stencil = renderer.state.buffers.stencil;
-	var gl = renderer.context;
 
-	stencil.setOp( gl.KEEP, gl.KEEP, gl.KEEP );
+	stencil.setTest( false );
+
 
 }
 

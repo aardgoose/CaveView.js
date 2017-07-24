@@ -1,5 +1,4 @@
 
-import { AspectMaterial } from './AspectMaterial';
 import { CursorMaterial } from './CursorMaterial';
 import { DepthMaterial } from './DepthMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
@@ -181,20 +180,6 @@ function getGlyphMaterial ( glyphAtlasSpec, rotation, colour ) {
 
 }
 
-function getAspectMaterial () {
-
-	var name = 'aspect';
-
-	if ( cache.has( name ) ) return cache.get(name);
-
-	var material = new AspectMaterial();
-
-	cache.set( name, material );
-
-	return material;
-
-}
-
 function setDepthTexture( texture, terrain ) {
 
 	depthTexture = texture;
@@ -246,7 +231,6 @@ export var Materials = {
 	getSurfaceMaterial:     getSurfaceMaterial,
 	getLineMaterial:        getLineMaterial,
 	getGlyphMaterial:       getGlyphMaterial,
-	getAspectMaterial:      getAspectMaterial,
 	setDepthTexture:        setDepthTexture,
 	initCache:              initCache,
 	flushCache:             flushCache,

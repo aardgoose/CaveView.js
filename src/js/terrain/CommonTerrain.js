@@ -57,12 +57,6 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 		break;
 
-	case SHADING_CURSOR:
-
-		material = Materials.getCursorMaterial( MATERIAL_SURFACE, 5.0 );
-
-		break;
-
 	case SHADING_SHADED:
 
 		material = new MeshLambertMaterial( {
@@ -72,12 +66,6 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 			transparent:  true,
 			opacity:      this.opacity }
 		);
-
-		break;
-
-	case SHADING_ASPECT:
-
-		material = Materials.getAspectMaterial();
 
 		break;
 

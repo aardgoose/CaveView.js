@@ -1,5 +1,5 @@
 
-import { MATERIAL_SURFACE, SHADING_CURSOR, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED, SHADING_ASPECT } from '../core/constants';
+import { MATERIAL_SURFACE, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED } from '../core/constants';
 import { Materials } from '../materials/Materials';
 
 import {

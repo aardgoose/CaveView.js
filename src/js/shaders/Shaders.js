@@ -1,8 +1,4 @@
 
-
-import aspectVertexShader from './aspectVertexShader.glsl';
-import aspectFragmentShader from './aspectFragmentShader.glsl';
-
 import cursorVertexShader from './cursorVertexShader.glsl';
 import cursorFragmentShader from './cursorFragmentShader.glsl';
 
@@ -28,8 +24,6 @@ import waterVertexShader from './waterVertexShader.glsl';
 import waterFragmentShader from './waterFragmentShader.glsl';
 
 export var Shaders =  {
-	aspectVertexShader:		aspectVertexShader,
-	aspectFragmentShader:	aspectFragmentShader,
 	cursorVertexShader:		cursorVertexShader,
 	cursorFragmentShader:	cursorFragmentShader,
 	depthMapVertexShader:	depthMapVertexShader,

@@ -498,7 +498,7 @@ Page.prototype.addDownloadButton = function ( title, urlProvider, fileName ) {
 
 	var a = document.createElement( 'a' );
 
-	if ( typeof a.download === 'undefined' ) return false;
+	if ( typeof a.download === 'undefined' ) return null;
 
 	this.addListener( a, 'click', _setHref );
 

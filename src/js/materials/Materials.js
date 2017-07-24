@@ -233,8 +233,7 @@ export var Materials = {
 	getGlyphMaterial:       getGlyphMaterial,
 	setDepthTexture:        setDepthTexture,
 	initCache:              initCache,
-	flushCache:             flushCache,
-
+	flushCache:             flushCache
 };
 
 // EOF

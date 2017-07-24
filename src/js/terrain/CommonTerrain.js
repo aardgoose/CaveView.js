@@ -117,7 +117,7 @@ CommonTerrain.prototype.setVisibility = function ( mode ) {
 
 	}
 
-}
+};
 
 CommonTerrain.prototype.applyDatumShift = function ( mode ) {
 
@@ -132,6 +132,8 @@ CommonTerrain.prototype.applyDatumShift = function ( mode ) {
 		this.activeDatumShift = 0;
 
 	}
+
+	this.dispatchEvent( { type: 'datumShiftChange', value: this.activeDatumShift } );
 
 };
 

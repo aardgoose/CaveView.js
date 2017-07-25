@@ -5,7 +5,7 @@ import { Materials } from '../materials/Materials';
 import {
 	MeshLambertMaterial,
 	VertexColors, FrontSide,
-	Group
+	Group, Box3
 } from '../../../../three.js/src/Three';
 
 function CommonTerrain () {
@@ -71,7 +71,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	default:
 
-		console.log( 'unknown mode', mode );
+		console.warn( 'unknown mode', mode );
 		return false;
 
 	}
@@ -122,6 +122,26 @@ CommonTerrain.prototype.applyDatumShift = function ( mode ) {
 	}
 
 	this.dispatchEvent( { type: 'datumShiftChange', value: this.activeDatumShift } );
+
+};
+
+CommonTerrain.prototype.computeBoundingBox = function () {
+
+	var bb = new Box3();
+
+	this.traverse( _getBoundingBox );
+
+	this.boundingBox = bb;
+
+	var self = this;
+
+	function _getBoundingBox( obj ) {
+
+		if ( obj.isTile ) bb.union( obj.geometry.boundingBox );
+
+	}
+
+	return bb;
 
 };
 

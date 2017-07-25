@@ -133,8 +133,6 @@ CommonTerrain.prototype.computeBoundingBox = function () {
 
 	this.boundingBox = bb;
 
-	var self = this;
-
 	function _getBoundingBox( obj ) {
 
 		if ( obj.isTile ) bb.union( obj.geometry.boundingBox );

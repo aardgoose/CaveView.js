@@ -128,13 +128,11 @@ WebTerrain.prototype.getCoverage = function ( limits, zoom ) {
 
 };
 
-WebTerrain.prototype.pickCoverage = function ( limits, zoom ) {
+WebTerrain.prototype.pickCoverage = function ( limits ) {
 
 	var tileSet = this.tileSet;
+	var zoom = tileSet.maxZoom + 1;
 	var coverage;
-
-	zoom = zoom || tileSet.maxZoom;
-	zoom++;
 
 	do {
 
@@ -277,9 +275,9 @@ WebTerrain.prototype.resurrectTile = function ( tile ) {
 
 };
 
-WebTerrain.prototype.tileArea = function ( limits, tile, maxZoom ) {
+WebTerrain.prototype.tileArea = function ( limits, tile ) {
 
-	var coverage = this.pickCoverage( limits, maxZoom );
+	var coverage = this.pickCoverage( limits );
 	var zoom = coverage.zoom;
 
 	if ( tile && tile.zoom == zoom ) {

@@ -128,7 +128,11 @@ div.linear-scale-caption {
 }
 
 #frame div.page li.selected {
-	color: lime;
+	color: #1ab4e5;
+}
+
+#frame div.page li:hover {
+	color: yellow;
 }
 
 #frame div.page div#ui-path {
@@ -140,7 +144,7 @@ div.linear-scale-caption {
 }
 
 #frame div.page div#ui-path span {
-	color: lime;
+	color: #1ab4e5;
 }
 
 #frame div.page div.slide {
@@ -164,7 +168,7 @@ div.linear-scale-caption {
 	top: 0px;
 	right: 0px;
 	margin: 0;
-	color: lime;
+	color: #1ab4e5;
 	z-index: 110;
 }
 
@@ -184,6 +188,35 @@ div.linear-scale-caption {
 	transition: transform 0.25s ease-out;
 }
 
+#frame a.download {
+	border: 1px solid green;
+	display: block;
+	width: 180px;
+	box-sizing: border-box;
+	margin-top: 6px;
+	margin-bottom: 4px;
+	margin-left: 8px;
+	border: none;
+	border-bottom: 4px solid #1ab4e5;
+	color: #dddddd;
+	background-color: black;
+	padding-bottom: 4px;
+	box-shadow: 1px 1px 8px 0px #888888;
+	outline: none;
+	text-decoration: none;
+	text-align: center;
+}
+
+#frame a.download:hover {
+	color: white;
+}
+
+#frame a.download:active {
+	color: #dddddd;
+	border-bottom: 4px solid #0c536a;
+	box-shadow: none;
+	box-shadow: inset 1px 1px 8px 0px #888888;
+}
 #frame .tab {
 	position: absolute;
 	right: 0px;
@@ -259,8 +292,8 @@ div.linear-scale-caption {
 	font-weight: bold;
 	height: 16px;
 	box-sizing: border-box;
+	padding-left: 2px;
 }
-
 
 #frame div.page div.control {
 	margin: 2px 0 2px 0;
@@ -270,7 +303,7 @@ div.linear-scale-caption {
 #frame div.page label {
 	display: block;
 	border-top: 1px solid grey;
-	padding: 2px 0 2px 0;
+	padding: 2px 0 2px 8px;
 	font-size: 12px;
 }
 
@@ -279,9 +312,47 @@ div.linear-scale-caption {
 	width: 180px;
 	box-sizing: border-box;
 	padding-top: 2px;
-	margin-left: 8px;
+	margin: 2px 0 4px 8px;
 }
 
+#frame div.page select:empty {
+	background-color: #888888;
+}
+
+#frame div.page button {
+	display: block;
+	width: 180px;
+	box-sizing: border-box;
+	margin-top: 4px;
+	margin-bottom: 4px;
+	margin-left: 8px;
+	border: none;
+	border-bottom: 4px solid #1ab4e5;
+	color: #dddddd;
+	background-color: black;
+	padding-bottom: 4px;
+	box-shadow: 1px 1px 8px 0px #888888;
+	outline: none;
+}
+
+#frame div.page button:hover {
+	color: white;
+}
+
+#frame div.page button:active {
+	color: #dddddd;
+	border-bottom: 4px solid #0c536a;
+	box-shadow: none;
+	box-shadow: inset 1px 1px 8px 0px #888888;
+}
+
+#frame div.page input[type="text"] {
+	display: block;
+	width: 180px;
+	box-sizing: border-box;
+	margin-top: 2px;
+	margin-left: 8px;
+}
 
 #frame div.page input[type="checkbox"] {
 	position: absolute;
@@ -293,7 +364,6 @@ div.linear-scale-caption {
 	width: 180px;
 	margin-left: 8px;
 }
-
 
 #frame dt, #frame dd {
 	font-size: 12px;
@@ -321,4 +391,13 @@ div.station-info {
 	color: white;
 	padding: 4px;
 	z-index: 200;
+}
+
+
+.overlay-branding {
+	color: white;
+	margin: 4px;
+	position: absolute;
+	right: 0;
+	top: 0;
 }

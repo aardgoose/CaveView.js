@@ -51,11 +51,11 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 
 	var self = this;
 
-	new FileLoader().setResponseType( 'json' ).load( getEnvironmentValue( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded );
+	new FileLoader().setResponseType( 'text' ).load( getEnvironmentValue( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded );
 
-	function _tileSetLoaded( json ) {
+	function _tileSetLoaded( text ) {
 
-		self.tileSets = json;
+		self.tileSets = JSON.parse( text );
 
 		onReady( self ); // call handler
 

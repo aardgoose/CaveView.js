@@ -15,10 +15,12 @@ function BingProvider ( imagerySet ) {
 
 	var metadata;
 
-	var key = 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_';
-	var metaUrlTemplate = 'http://dev.virtualearth.net/REST/v1/Imagery/Metadata/{imagerySet}?inc=imageryProviders&key={key}';
+	var uriScheme = window.location.protocol.replace( ':' , '' );
 
-	var metaUrl = metaUrlTemplate.replace( '{key}', key ).replace( '{imagerySet}', imagerySet );
+	var key = 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_';
+	var metaUrlTemplate = uriScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/{imagerySet}?include=imageryProviders&uriScheme={uriScheme}&key={key}';
+
+	var metaUrl = metaUrlTemplate.replace( '{key}', key ).replace( '{imagerySet}', imagerySet ).replace( '{uriScheme}', uriScheme );
 
 	var req = new XMLHttpRequest();
 

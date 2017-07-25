@@ -5,8 +5,9 @@ import { ColourCache } from '../core/ColourCache';
 
 import { ShaderMaterial, Vector3 } from '../../../../three.js/src/Three';
 
-function DepthMaterial ( type, limits, texture ) {
+function DepthMaterial ( type, surveyLimits, texture, terrain ) {
 
+	var limits = terrain.boundingBox;
 	var range = limits.getSize();
 
 	var defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
@@ -21,7 +22,8 @@ function DepthMaterial ( type, limits, texture ) {
 			minZ:       { value: limits.min.z },
 			scaleX:     { value: 1 / range.x },
 			scaleY:     { value: 1 / range.y },
-			scaleZ:     { value: 1 / range.z },
+			rangeZ:     { value: range.z },
+			depthScale: { value: 1 / ( surveyLimits.max.z - surveyLimits.min.z ) },
 			cmap:       { value: ColourCache.getTexture( 'gradient' ) },
 			depthMap:   { value: texture },
 			datumShift: { value: 0.0 }

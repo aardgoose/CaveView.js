@@ -5,7 +5,7 @@ uniform float cursorWidth;
 uniform vec3 baseColor;
 uniform vec3 cursorColor;
 
-varying float vHeight;
+varying float vDepth;
 
 #ifdef SURFACE
 
@@ -32,7 +32,7 @@ void main() {
 
 #endif
 
-	float delta = abs( vHeight - cursor );
+	float delta = abs( vDepth - cursor );
 	float ss = smoothstep( 0.0, cursorWidth, cursorWidth - delta );
 
 #ifdef SURFACE

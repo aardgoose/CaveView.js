@@ -12,6 +12,7 @@ import {
 import { replaceExtension, getEnvironmentValue } from '../core/lib';
 import { ColourCache } from '../core/ColourCache';
 import { Tree } from '../core/Tree';
+import { unpackRGBA } from '../core/unpackRGBA';
 import { Box3Helper } from '../core/Box3';
 import { Materials } from '../materials/Materials';
 import { ClusterMarkers } from './ClusterMarkers';
@@ -232,8 +233,13 @@ Survey.prototype.calibrateTerrain = function ( renderer, renderTarget, terrain )
 
 	// renderer target is height value based
 
-	var base = this.modelLimits.min;
-	var range = this.modelLimits.getSize();
+	if ( terrain.boundingBox === undefined ) terrain.computeBoundingBox();
+
+	var boundingBox = terrain.boundingBox;
+
+	var base = boundingBox.min;
+	var range = boundingBox.getSize();
+
 	var terrainSize= renderer.getSize();
 
 	var pixelCoords = new Vector3();
@@ -261,6 +267,8 @@ Survey.prototype.calibrateTerrain = function ( renderer, renderTarget, terrain )
 
 	console.log( 'Adjustmenting terrain height by ', s1, sd );
 
+	if ( this.terrain === null ) this.terrain = terrain;
+
 	return;
 
 	function _testHeight( node ) {
@@ -273,7 +281,7 @@ Survey.prototype.calibrateTerrain = function ( renderer, renderTarget, terrain )
 		renderer.readRenderTargetPixels( renderTarget, pixelCoords.x, pixelCoords.y, 1, 1, result );
 
 		// convert to survey units
-		var terrainHeight = result[ 0 ] * range.z / 256 + base.z;
+		var terrainHeight = unpackRGBA( result ) * range.z + base.z;
 
 		var v = node.p.z - terrainHeight;
 		s1 += v;
@@ -1261,7 +1269,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_DEPTH:
 
-		material = Materials.getDepthMaterial( MATERIAL_SURFACE, this.modelLimits );
+		material = Materials.getDepthMaterial( MATERIAL_SURFACE, this.modelLimits, this.terrain );
 
 		if ( ! material ) return false;
 
@@ -1269,7 +1277,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_DEPTH_CURSOR:
 
-		material = Materials.getDepthCursorMaterial( MATERIAL_SURFACE, this.modelLimits );
+		material = Materials.getDepthCursorMaterial( MATERIAL_SURFACE, this.modelLimits, this.terrain );
 
 		if ( ! material ) return false;
 
@@ -1408,13 +1416,13 @@ Survey.prototype.setLegColourByMaterial = function ( mesh, material ) {
 
 Survey.prototype.setLegColourByDepth = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getDepthMaterial( MATERIAL_LINE, this.modelLimits ) );
+	this.setLegColourByMaterial( mesh, Materials.getDepthMaterial( MATERIAL_LINE, this.modelLimits, this.terrain ) );
 
 };
 
 Survey.prototype.setLegColourByDepthCursor = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getDepthCursorMaterial( MATERIAL_LINE, this.modelLimits ) );
+	this.setLegColourByMaterial( mesh, Materials.getDepthCursorMaterial( MATERIAL_LINE, this.modelLimits, this.terrain ) );
 
 };
 

@@ -26,8 +26,6 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 	var auxInfo = readNSLF();
 	readLF(); // Date
 
-	console.log( 'title: ', auxInfo[ 0 ] );
-
 	var sourceCRS = ( auxInfo[ 1 ] === undefined ) ? null : auxInfo[ 1 ]; // coordinate reference system ( proj4 format )
 
 	if ( sourceCRS !== null ) {
@@ -147,7 +145,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	// init cmd handler table withh  error handler for unsupported records or invalid records
 
-	function _errorHandler ( e ) { console.log ('unhandled command: ', e.toString( 16 ) ); return false; }
+	function _errorHandler ( e ) { console.warn( 'unhandled command: ', e.toString( 16 ) ); return false; }
 
 	for ( i = 0; i < 256; i++ ) {
 
@@ -583,13 +581,20 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	}
 
 	function cmd_ERROR ( /* c */ ) {
-		//var l = new DataView(source, pos);
 
-		//console.log('legs   : ', l.getInt32(0, true));
-		//console.log('length : ', l.getInt32(4, true));
-		//console.log('E      : ', l.getInt32(8, true));
-		//console.log('H      : ', l.getInt32(12, true));
-		//console.log('V      : ', l.getInt32(16, true));
+		/*
+
+		var l = new DataView( source, pos );
+
+		var legs = l.getInt32( 0, true );
+		var length = l.getInt32( 4, true );
+
+		var E = l.getInt32( 8, true );
+		var H = l.getInt32( 12, true );
+		var V = l.getInt32( 16, true );
+
+		*/
+
 		pos += 20;
 
 		return true;
@@ -696,7 +701,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		} else if ( lineEnds.has( [ position.x, position.y, position.z ].toString() ) ) {
 
 			endRun = true;
-//			console.log( 'unterminated LRUD passage at ', label );
+//			console.warn( 'unterminated LRUD passage at ', label );
 
 		}
 

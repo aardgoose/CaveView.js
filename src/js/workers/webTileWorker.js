@@ -1,4 +1,5 @@
 
+import '../../../../three.js/src/polyfills';
 import { HeightMapLoader } from '../loaders/HeightMapLoader';
 import { TerrainTileGeometry } from '../terrain/TerrainTileGeometry';
 

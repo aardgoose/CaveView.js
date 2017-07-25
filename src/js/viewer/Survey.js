@@ -255,17 +255,21 @@ Survey.prototype.calibrateTerrain = function ( renderer, renderTarget, terrain )
 
 	this.surveyTree.traverse( _testHeight );
 
-	// standard deviation
+	if ( n > 0 ) {
 
-	var sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
+		// standard deviation
 
-	// simple average
+		var sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
 
-	s1 /= n;
+		// simple average
 
-	terrain.datumShift = s1;
+		s1 /= n;
 
-	console.log( 'Adjustmenting terrain height by ', s1, sd );
+		terrain.datumShift = s1;
+
+		console.log( 'Adjustmenting terrain height by ', s1, sd );
+
+	}
 
 	if ( this.terrain === null ) this.terrain = terrain;
 
@@ -1133,6 +1137,8 @@ Survey.prototype.cutSection = function ( id ) {
 
 	this.PointTargets = [];
 	this.legTargets   = [];
+
+	this.terrain = null;
 
 	// iterate through objects replace geometries and remove bounding boxes;
 

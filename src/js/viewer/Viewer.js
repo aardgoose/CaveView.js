@@ -489,7 +489,7 @@ function renderDepthTexture () {
 
 	rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
 
-	scene.overrideMaterial = Materials.getDepthMapMaterial( survey );
+	scene.overrideMaterial = Materials.getDepthMapMaterial( terrain );
 
 	var renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat } );
 

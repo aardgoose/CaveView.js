@@ -59,20 +59,20 @@ function getHeightMaterial ( type, limits ) {
 
 }
 
-function getDepthMapMaterial ( survey ) {
+function getDepthMapMaterial ( terrain ) {
 
-	return new DepthMapMaterial( survey );
+	return new DepthMapMaterial( terrain );
 
 }
 
-function getDepthMaterial ( type, limits ) {
+function getDepthMaterial ( type, limits, terrain ) {
 
 	var name = 'depth' + type;
 	var material = cache.get( name );
 
 	if ( material === undefined ) {
 
-		material = new DepthMaterial( type, limits, depthTexture );
+		material = new DepthMaterial( type, limits, depthTexture, terrain );
 
 		cache.set( name, material );
 
@@ -113,7 +113,7 @@ function getCursorMaterial ( type, limits ) {
 
 }
 
-function getDepthCursorMaterial( type, limits ) {
+function getDepthCursorMaterial( type, limits, terrain ) {
 
 	var name = 'depthCursor' + type;
 
@@ -121,7 +121,7 @@ function getDepthCursorMaterial( type, limits ) {
 
 	if ( material === undefined ) {
 
-		material = new DepthCursorMaterial( type, limits, depthTexture );
+		material = new DepthCursorMaterial( type, limits, depthTexture, terrain );
 
 		perSurveyMaterials[ name ] = material;
 		depthMaterials.push( material );

@@ -2,12 +2,14 @@
 import { Shaders } from '../shaders/Shaders';
 import { ShaderMaterial } from '../../../../three.js/src/Three';
 
-function DepthMapMaterial ( survey ) {
+function DepthMapMaterial ( terrain ) {
 
-	var limits = survey.modelLimits;
+	if ( terrain.boundingBox === undefined ) terrain.computeBoundingBox();
 
-	var minHeight = limits.min.z;
-	var maxHeight = limits.max.z;
+	var boundingBox = terrain.boundingBox;
+
+	var minHeight = boundingBox.min.z;
+	var maxHeight = boundingBox.max.z;
 
 	ShaderMaterial.call( this, {
 

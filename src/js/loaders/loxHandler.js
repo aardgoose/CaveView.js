@@ -145,7 +145,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		default:
 
-			console.log( 'unknown chunk header. type : ', m_type );
+			console.warn( 'unknown chunk header. type : ', m_type );
 
 		}
 
@@ -188,7 +188,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		if ( m_parent != m_id ) {
 
-			if ( ! surveyTree.addById( readString( namePtr ), m_id, m_parent ) ) console.log( 'error constructing survey tree for', readString( titlePtr ) );
+			if ( ! surveyTree.addById( readString( namePtr ), m_id, m_parent ) ) console.warn( 'error constructing survey tree for', readString( titlePtr ) );
 
 		}
 

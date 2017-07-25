@@ -629,11 +629,7 @@ function initSurfacePage () {
 
 		terrainControls.push( page.addRange( 'Terrain opacity', Viewer, 'terrainOpacity' ) );
 
-//		if ( Viewer.hasTerrainDatumShift ) {
-
 		terrainControls.push( page.addCheckbox( 'Vertical datum shift', Viewer, 'terrainDatumShift' ) );
-
-//		}
 
 		setControlsVisibility( terrainControls, false );
 

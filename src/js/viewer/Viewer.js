@@ -168,10 +168,6 @@ function init ( domID, configuration ) { // public method
 			get: function () { return !! terrain; }
 		},
 
-		'hasTerrainDatumShift': {
-			get: function () {console.log( terrain.datumShift ) ; return !! terrain.datumShift; }
-		},
-
 		'terrainDatumShift': {
 			writeable: true,
 			get: function () { return !! terrain.activeDatumShift; },

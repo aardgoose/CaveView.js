@@ -49,8 +49,6 @@ HeightMapLoader.prototype.load = function () {
 	var self = this;
 	var xhr;
 
-	// console.log( 'loading: ', this.tileFile );
-
 	xhr = new XMLHttpRequest();
 
 	xhr.addEventListener( 'load', _loaded);

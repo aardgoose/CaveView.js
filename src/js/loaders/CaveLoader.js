@@ -54,7 +54,7 @@ CaveLoader.prototype.parseName = function ( name ) {
 
 	default:
 
-		console.log( 'Cave: unknown response extension [', self.extention, ']' );
+		console.warn( 'Cave: unknown response extension [', self.extention, ']' );
 
 	}
 
@@ -122,7 +122,7 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 
 		self.doneCount++;
 
-		if ( event.currentTarget.responseType !== 'json' ) console.log( ' error event', event );
+		if ( event.currentTarget.responseType !== 'json' ) console.warn( ' error event', event );
 
 		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
 

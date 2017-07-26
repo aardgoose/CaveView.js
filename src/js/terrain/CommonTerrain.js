@@ -170,18 +170,18 @@ CommonTerrain.prototype.getHeight = function () {
 
 	var result = new Uint8Array( 4 );
 
-	return function getHeight( node ) {
+	return function getHeight( point ) {
 
 		var renderTarget = this.renderTarget;
 
 		if ( this.terrainBase === null ) {
 
-			// setup values cached in closure
-
 			if ( this.boundingBox === undefined ) this.computeBoundingBox();
 
 			this.terrainBase = this.boundingBox.min;
 			this.terrainRange = this.boundingBox.getSize();
+
+			// setup value cached in closure
 
 			adjust.set( renderTarget.width, renderTarget.height, 1 ).divide( this.terrainRange );
 
@@ -189,7 +189,7 @@ CommonTerrain.prototype.getHeight = function () {
 
 		var terrainBase = this.terrainBase;
 
-		pixelCoords.copy( node.p ).sub( terrainBase ).multiply( adjust ).round();
+		pixelCoords.copy( point ).sub( terrainBase ).multiply( adjust ).round();
 
 		this.renderer.readRenderTargetPixels( renderTarget, pixelCoords.x, pixelCoords.y, 1, 1, result );
 

@@ -382,6 +382,8 @@ WebTerrain.prototype.removed = function () {
 
 	this.traverse( _disposeTileMesh );
 
+	this.commonRemoved();
+
 	return;
 
 	function _disposeTileMesh ( obj ) {

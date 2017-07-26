@@ -65,6 +65,7 @@ Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 Terrain.prototype.removed = function () {
 
 	this.tile.removed();
+	this.commonRemoved();
 
 };
 

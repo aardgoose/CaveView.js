@@ -261,7 +261,7 @@ Survey.prototype.calibrateTerrain = function ( terrain ) {
 		// FIXME to extend to surface points
 		if ( node.type !== STATION_ENTRANCE) return;
 
-		var v = node.p.z - terrain.getHeight( node );
+		var v = node.p.z - terrain.getHeight( node.p );
 
 		s1 += v;
 		s2 += v * v;

@@ -5,7 +5,7 @@ import {
 	Vector3, Math as _Math, Face3, Color,
 	Geometry, RingGeometry, CylinderBufferGeometry,
 	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
-	FrontSide, VertexColors, FlatShading,
+	FrontSide, VertexColors,
 	Mesh, Group
 } from '../../../../three.js/src/Three';
 
@@ -35,7 +35,7 @@ function Compass ( container ) {
 	r1.rotateZ( Math.PI / 4 );
 	r1.merge( r2 );
 
-	var rMesh = new Mesh( r1, new MeshLambertMaterial( { vertexColors: VertexColors, side: FrontSide, shading: FlatShading } ) );
+	var rMesh = new Mesh( r1, new MeshLambertMaterial( { vertexColors: VertexColors, side: FrontSide, flatShading: true } ) );
 
 	this.add( c1 );
 	this.add( c2 );

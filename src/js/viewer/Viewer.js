@@ -1063,7 +1063,7 @@ function mouseDown ( event ) {
 
 		renderView();
 
-		var depth =  ( terrain ) ? station.p.z - terrain.getHeight( station.p ) : null;
+		var depth = ( terrain ) ? station.p.z - terrain.getHeight( station.p ) : null;
 
 		var popup = new StationPopup( station, survey.getGeographicalPosition( station.p ), depth );
 

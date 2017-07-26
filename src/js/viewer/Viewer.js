@@ -504,9 +504,9 @@ function renderDepthTexture () {
 
 	// correct height between entrances and terrain ( compensates for mismatch beween CRS and datums )
 
-	survey.calibrateTerrain( renderer, renderTarget, terrain );
+	terrain.addHeightMap( renderer, renderTarget );
 
-	terrain.depthTexture = renderTarget.texture;
+	survey.calibrateTerrain( terrain );
 
 	// restore renderer to normal render size and target
 
@@ -519,7 +519,7 @@ function renderDepthTexture () {
 
 	renderView();
 
-	// clear renderList to release objects on heap
+	// clear renderList to release objects on heap associated with rtCamera
 	renderer.renderLists.dispose();
 
 }

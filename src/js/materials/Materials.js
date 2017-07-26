@@ -14,7 +14,6 @@ var viewer;
 var cursorMaterials = [];
 var depthMaterials = [];
 var perSurveyMaterials = {};
-var depthTexture = null;
 
 function updateMaterialCursor ( material ) {
 

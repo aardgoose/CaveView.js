@@ -246,11 +246,9 @@ Survey.prototype.calibrateTerrain = function ( terrain ) {
 
 		// simple average
 
-		s1 /= n;
+		terrain.datumShift = s1 / n;
 
-		terrain.datumShift = s1;
-
-		console.log( 'Adjustmenting terrain height by ', s1, sd );
+		console.log( 'Adjustmenting terrain height by ', terrain.datumShift, sd );
 
 	}
 

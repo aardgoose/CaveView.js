@@ -1,7 +1,7 @@
 import { Popup } from './Popup.js';
 
 
-function StationPopup ( station, position ) {
+function StationPopup ( station, position, depth ) {
 
 	Popup.call( this, 'station-info' );
 
@@ -25,6 +25,8 @@ function StationPopup ( station, position ) {
 
 	this.addLine( name );
 	this.addLine( 'x: ' + position.x + ' m' ).addLine( 'y: ' + position.y + ' m' ).addLine( 'z: ' + position.z + ' m' );
+
+	if ( depth !== null ) this.addLine( 'depth from surface: ' + Math.round( depth ) + ' m' );
 
 }
 

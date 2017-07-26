@@ -1,11 +1,12 @@
 
 import { MATERIAL_SURFACE, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED } from '../core/constants';
 import { Materials } from '../materials/Materials';
+import { unpackRGBA } from '../core/unpackRGBA';
 
 import {
 	MeshLambertMaterial,
 	VertexColors, FrontSide,
-	Group, Box3
+	Group, Box3, Vector3
 } from '../../../../three.js/src/Three';
 
 function CommonTerrain () {
@@ -16,8 +17,12 @@ function CommonTerrain () {
 	this.defaultOverlay = null;
 	this.activeOverlay = null;
 	this.depthTexture = null;
+	this.renderer = null;
+	this.renderTarget = null;
 	this.datumShift = 0;
 	this.activeDatumShift = 0;
+	this.terrainBase = null;
+	this.terrainRange = null;
 
 	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
 
@@ -40,7 +45,7 @@ CommonTerrain.prototype.getOpacity = function () {
 
 CommonTerrain.prototype.commonRemoved = function () {
 
-	if ( this.depthTexture !== null ) this.depthTexture.dispose();
+	if ( this.renderTarget !== null ) this.renderTarget.dispose();
 
 };
 
@@ -149,6 +154,52 @@ CommonTerrain.prototype.computeBoundingBox = function () {
 	return bb;
 
 };
+
+CommonTerrain.prototype.addHeightMap = function ( renderer, renderTarget ) {
+
+	this.depthTexture = renderTarget.texture;
+	this.renderer = renderer;
+	this.renderTarget = renderTarget;
+
+};
+
+CommonTerrain.prototype.getHeight = function () {
+
+	var pixelCoords = new Vector3();
+	var adjust = new Vector3();
+
+	var result = new Uint8Array( 4 );
+
+	return function getHeight( node ) {
+
+		var renderTarget = this.renderTarget;
+
+		if ( this.terrainBase === null ) {
+
+			// setup values cached in closure
+
+			if ( this.boundingBox === undefined ) this.computeBoundingBox();
+
+			this.terrainBase = this.boundingBox.min;
+			this.terrainRange = this.boundingBox.getSize();
+
+			adjust.set( renderTarget.width, renderTarget.height, 1 ).divide( this.terrainRange );
+
+		}
+
+		var terrainBase = this.terrainBase;
+
+		pixelCoords.copy( node.p ).sub( terrainBase ).multiply( adjust ).round();
+
+		this.renderer.readRenderTargetPixels( renderTarget, pixelCoords.x, pixelCoords.y, 1, 1, result );
+
+		// convert to survey units and return
+
+		return unpackRGBA( result ) * this.terrainRange.z + terrainBase.z;
+
+	};
+
+} ();
 
 export { CommonTerrain };
 

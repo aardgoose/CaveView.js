@@ -71,8 +71,6 @@ var shadingMode;
 var surfaceShadingMode = SHADING_SINGLE;
 var terrainShadingMode;
 
-var depthTextureCreated = false;
-
 var overlays = {};
 var activeOverlay = null;
 
@@ -496,7 +494,7 @@ function renderDepthTexture () {
 	renderTarget.texture.generateMipmaps = false;
 	renderTarget.texture.name = 'CV.DepthMapTexture';
 
-	Materials.setDepthTexture( renderTarget.texture, terrain );
+	Materials.setTerrain( terrain );
 
 	renderer.setSize( dim, dim );
 	renderer.setPixelRatio( 1 );
@@ -506,7 +504,10 @@ function renderDepthTexture () {
 
 	// correct height between entrances and terrain ( compensates for mismatch beween CRS and datums )
 
+
 	survey.calibrateTerrain( renderer, renderTarget, terrain );
+
+	terrain.depthTexture = renderTarget.texture;
 
 	// restore renderer to normal render size and target
 
@@ -516,8 +517,6 @@ function renderDepthTexture () {
 	renderer.setPixelRatio( window.devicePixelRatio );
 
 	scene.overrideMaterial = null;
-
-	depthTextureCreated = true;
 
 	renderView();
 
@@ -833,8 +832,6 @@ function clearView () {
 	surfaceShadingMode = SHADING_SINGLE;
 	terrainShadingMode = SHADING_SHADED;
 
-	depthTextureCreated = false;
-
 	// remove event listeners
 
 	unloadTerrainListeners();
@@ -951,7 +948,7 @@ function loadSurvey ( newSurvey ) {
 		renderView();
 		loadTerrainListeners();
 
-		if ( ! depthTextureCreated ) renderDepthTexture();
+		if ( terrain.depthTexture === null ) renderDepthTexture();
 
 	}
 

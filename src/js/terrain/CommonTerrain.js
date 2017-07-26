@@ -15,6 +15,7 @@ function CommonTerrain () {
 	this.hasOverlay = false;
 	this.defaultOverlay = null;
 	this.activeOverlay = null;
+	this.depthTexture = null;
 	this.datumShift = 0;
 	this.activeDatumShift = 0;
 
@@ -34,6 +35,12 @@ CommonTerrain.prototype.removed = function () {};
 CommonTerrain.prototype.getOpacity = function () {
 
 	return this.opacity;
+
+};
+
+CommonTerrain.prototype.commonRemoved = function () {
+
+	if ( this.depthTexture !== null ) this.depthTexture.dispose();
 
 };
 

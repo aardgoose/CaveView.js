@@ -5,7 +5,7 @@ import { ColourCache } from '../core/ColourCache';
 
 import { ShaderMaterial, Vector3 } from '../../../../three.js/src/Three';
 
-function DepthCursorMaterial ( type, surveyLimits, texture, terrain ) {
+function DepthCursorMaterial ( type, surveyLimits, terrain ) {
 
 	var limits = terrain.boundingBox;
 	var range = limits.getSize();
@@ -23,7 +23,7 @@ function DepthCursorMaterial ( type, surveyLimits, texture, terrain ) {
 			scaleX:      { value: 1 / range.x },
 			scaleY:      { value: 1 / range.y },
 			rangeZ:      { value: range.z },
-			depthMap:    { value: texture },
+			depthMap:    { value: terrain.depthTexture },
 			datumShift:  { value: 0.0 },
 			cursor:      { value: this.max / 2 },
 			cursorWidth: { value: 5.0 },

@@ -504,7 +504,6 @@ function renderDepthTexture () {
 
 	// correct height between entrances and terrain ( compensates for mismatch beween CRS and datums )
 
-
 	survey.calibrateTerrain( renderer, renderTarget, terrain );
 
 	terrain.depthTexture = renderTarget.texture;

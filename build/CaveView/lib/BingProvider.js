@@ -11,6 +11,9 @@ function BingProvider ( imagerySet ) {
 	this.subdomainIndex = 0;
 	this.subdomainCount = 0;
 
+	this.minZoom = null;
+	this.maxZoom = null;
+
 	var self = this;
 
 	var metadata;
@@ -50,6 +53,9 @@ function BingProvider ( imagerySet ) {
 
 				self.subdomains = r.imageUrlSubdomains;
 				self.urlTemplate = r.imageUrl;
+
+				self.minZoom = r.zoomMin;
+				self.maxZoom = r.zoomMax;
 
 				self.subdomainCount = self.subdomains.length;
 

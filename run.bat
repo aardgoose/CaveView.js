@@ -1,1 +1,1 @@
-http-server build -p 8080
+http-server build -c-1 -p 8080

@@ -703,7 +703,9 @@ function nextCave () {
 
 }
 
-function loadCave ( file ) {
+function loadCave ( inFile ) {
+
+	file = inFile;
 
 	resetUI();
 	Viewer.clearView();

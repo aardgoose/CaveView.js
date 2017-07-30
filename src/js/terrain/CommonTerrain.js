@@ -45,6 +45,8 @@ CommonTerrain.prototype.getOpacity = function () {
 
 CommonTerrain.prototype.commonRemoved = function () {
 
+	this.setVisibility( false ); // remove any overlay attribution
+
 	if ( this.renderTarget !== null ) this.renderTarget.dispose();
 
 };

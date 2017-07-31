@@ -228,7 +228,8 @@ function initSelectionPage () {
 
 		var children = top.children;
 
-		children.sort( _sortSurveys );
+		// limit sorting to amounts that sort in reasonable time
+		if  ( children.length < 1000 ) children.sort( _sortSurveys );
 
 		// FIXME need to add listener to allow survey list to be updated on dynamic load of survey
 

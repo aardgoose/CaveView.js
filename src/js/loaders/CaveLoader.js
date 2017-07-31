@@ -28,7 +28,7 @@ CaveLoader.prototype.parseName = function ( name ) {
 	var type;
 	var rev = name.split( '.' ).reverse();
 
-	this.extention = rev.shift();
+	this.extention = rev.shift().toLowerCase();
 	this.basename  = rev.reverse().join( '.' );
 
 	switch ( this.extention ) {
@@ -139,7 +139,7 @@ CaveLoader.prototype.loadFile = function ( file ) {
 
 	if ( ! type ) {
 
-		alert( 'Cave: unknown file extension [', self.extention, ']' );
+		alert( 'Cave: unknown file extension [' + this.extention +  ']' );
 		return false;
 
 	}

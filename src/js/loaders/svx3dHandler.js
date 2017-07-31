@@ -124,11 +124,13 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	var lineEnds    = new Set(); // implied line ends to fixnup xsects
 	var xSects      = [];
 	var sectionId   = 0;
+	var sectionLabels = new Set();
 
 	var data       = new Uint8Array( source, 0 );
 	var dataLength = data.length;
 	var lastPosition = { x: 0, y:0, z: 0 }; // value to allow approach vector for xsect coord frame
 	var i;
+	var labelChanged = false;
 
 	// functions
 
@@ -328,7 +330,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		}
 
-		if ( len === 0 ) return false; // no label
+		if ( len === 0 ) return;
 
 		var db = [];
 
@@ -339,8 +341,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		}
 
 		label += String.fromCharCode.apply( null, db );
+		labelChanged = true;
 
-		return true;
+		return;
 
 	}
 
@@ -411,7 +414,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		}
 
-		return true;
+		labelChanged = true;
+
+		return;
 
 	}
 
@@ -435,6 +440,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		label = parts.join( '.' );
 
 		if ( label ) label += '.';
+		labelChanged = true;
 
 		return true;
 
@@ -445,6 +451,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		var trim = c - 15;
 
 		label = label.slice( 0, -trim );
+		labelChanged = true;
 
 		return true;
 
@@ -529,10 +536,31 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		var flags = c & 0x3f;
 
-		if ( readLabel( flags ) ) {
+		readLabel( flags );
 
-			// we have a new section name, add it to the survey tree
-			sectionId = surveyTree.addPath( label.split( '.' ) );
+		if ( labelChanged && label !== '' ) {
+
+			// we have a new section name
+
+			var path = label.split( '.' );
+
+			var partLabel = path[ 0 ];
+
+			// save valid survey station prefixes
+
+			sectionLabels.add( partLabel );
+
+			for ( var i = 1, l = path.length; i < l; i++ ) {
+
+				partLabel = partLabel + '.' + path[ i ];
+				sectionLabels.add( partLabel );
+
+			}
+
+			// add it to the survey tree
+			sectionId = surveyTree.addPath( path ); // consumes path
+
+			labelChanged = false;
 
 		}
 
@@ -615,7 +643,30 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		}
 
 		var coords = readCoordinates();
+
 		var path = label.split( '.' );
+
+		var prefix = path.slice( 0, -1 ).join( '.' );
+
+		if ( path.length > 1 && ! sectionLabels.has( prefix ) ) {
+
+			// handle station names containing separator character
+
+			var i = 0;
+			var test = path[ i ];
+
+			while ( sectionLabels.has( test ) ) {
+
+				test = test + '.' + path[ ++ i ];
+
+			}
+
+			var last = path.slice( i ).join( '.' );
+
+			path = path.slice( 0, i );
+			path.push( last );
+
+		}
 
 		stations.set( label, coords );
 

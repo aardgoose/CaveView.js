@@ -5,8 +5,8 @@ import {
 	Vector3, Math as _Math, Face3, Color,
 	Geometry, RingGeometry, CylinderBufferGeometry,
 	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
-	FrontSide, VertexColors, FlatShading,
-	Mesh, Group
+	FrontSide, VertexColors,
+	Mesh, Group, FlatShading
 } from '../../../../three.js/src/Three';
 
 function Compass ( container ) {

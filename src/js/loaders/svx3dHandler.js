@@ -70,26 +70,26 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	switch ( version ) {
 
-		case 'Bv0.01':
+	case 'Bv0.01':
 
-			this.handleOld( source, pos, 1 );
+		this.handleOld( source, pos, 1 );
 
-			break;
+		break;
 
-		case 'v3':
-		case 'v4':
-		case 'v5':
-		case 'v6':
-		case 'v7':
-		case 'v8':
+	case 'v3':
+	case 'v4':
+	case 'v5':
+	case 'v6':
+	case 'v7':
+	case 'v8':
 
-			this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
+		this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
 
-			break;
+		break;
 
-		default:
+	default:
 
-			alert( 'unknown .3d version ' + version );
+		alert( 'unknown .3d version ' + version );
 
 	}
 
@@ -151,13 +151,8 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 	var dataLength = data.length;
 	var lastPosition = { x: 0, y:0, z: 0 }; // value to allow approach vector for xsect coord frame
 	var i, j, li, lj;
-	var labelChanged = false;
 
 	var dataView = new DataView( source, 0 );
-
-	// functions
-
-	var readLabel;
 
 	// selected correct read coordinates function
 
@@ -177,7 +172,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 		cmd[ i ] = _errorHandler;
 
 	}
-
 
 	cmd[ 0x00 ] = cmd_STOP;
 	cmd[   -1 ] = cmd_STOP;
@@ -222,29 +216,11 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 		}
 
 	} else {
-	
+
 		alert( 'Unsupported version' + version );
 
 		while ( pos < dataLength ) {
 
-			if ( ! cmd[ data[ pos ] ]( data[ pos++ ] ) ) break;
-
-		}
-
-	}
-
-	while ( pos < dataLength ) {
-
-		if ( version === 1 ) {
-
-			var cmdCode = dataView.getInt32( pos, true );
-			pos += 4;
-
-			if ( ! cmd[ cmdCode ]() ) break;
-
-		} else {
-
-			console.log( 'unsupported version' );
 			if ( ! cmd[ data[ pos ] ]( data[ pos++ ] ) ) break;
 
 		}
@@ -342,8 +318,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		// track coords to sectionId to allow survey ID's to be added to leg vertices
 		stations.set( lastPosition.x + ':' + lastPosition.y + ':' + lastPosition.z, node );
-
-		labelChanged = true;
 
 		return true;
 

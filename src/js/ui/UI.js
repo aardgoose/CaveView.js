@@ -537,11 +537,7 @@ function initInfoPage () {
 
 	page.addHeader( 'Information' );
 
-<<<<<<< HEAD
-	page.addText( 'CaveView v1.1.2 - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.' );
-=======
 	page.addText( 'CaveView v' + VERSION + ' - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.' );
->>>>>>> dev
 
 	page.addText( 'Requires a browser supporting WebGL (IE 11+ and most other recent browsers), no plugins required. Created using the THREE.js 3D library and chroma,js colour handling library.' );
 

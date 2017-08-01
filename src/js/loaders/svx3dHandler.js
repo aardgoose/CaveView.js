@@ -66,7 +66,32 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	}
 
-	this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
+	console.log( 'Survex .3d version ', version );
+
+	switch ( version ) {
+
+		case 'Bv0.01':
+
+			this.handleOld( source, pos, 1 );
+
+			break;
+
+		case 'v3':
+		case 'v4':
+		case 'v5':
+		case 'v6':
+		case 'v7':
+		case 'v8':
+
+			this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
+
+			break;
+
+		default:
+
+			alert( 'unknown .3d version ' + version );
+
+	}
 
 	return;
 
@@ -108,6 +133,345 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 }
 
 Svx3dHandler.prototype.constructor = Svx3dHandler;
+
+Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
+
+	var groups     = this.groups;
+	var surveyTree = this.surveyTree;
+
+	var self = this;
+
+	var cmd         = [];
+	var legs        = [];
+	var label       = '';
+	var stations    = new Map();
+	var sectionId   = 0;
+
+	var data       = new Uint8Array( source, 0 );
+	var dataLength = data.length;
+	var lastPosition = { x: 0, y:0, z: 0 }; // value to allow approach vector for xsect coord frame
+	var i, j, li, lj;
+	var labelChanged = false;
+
+	var dataView = new DataView( source, 0 );
+
+	// functions
+
+	var readLabel;
+
+	// selected correct read coordinates function
+
+	var readCoordinates = ( this.projection === null ) ? __readCoordinates : __readCoordinatesProjected;
+
+	// range
+
+	var min = { x: Infinity, y: Infinity, z: Infinity };
+	var max = { x: -Infinity, y: -Infinity, z: -Infinity };
+
+	// init cmd handler table withh  error handler for unsupported records or invalid records
+
+	function _errorHandler ( e ) { console.warn( 'unhandled command: ', e.toString( 16 ) ); return false; }
+
+	for ( i = 0; i < 256; i++ ) {
+
+		cmd[ i ] = _errorHandler;
+
+	}
+
+
+	cmd[ 0x00 ] = cmd_STOP;
+	cmd[   -1 ] = cmd_STOP;
+
+	cmd[ 0x01 ] = cmd_SKIP;
+
+	cmd[ 0x02 ] = cmd_LABEL_V1; // version numbers not related to Survex versions
+	cmd[ 0x03 ] = cmd_LABEL_V1;
+
+	cmd[ 0x04 ] = cmd_MOVE;
+	cmd[ 0x05 ] = cmd_LINE_V1;
+
+	cmd[ 0x06 ] = cmd_LABEL_V2;
+	cmd[ 0x07 ] = cmd_LABEL_V3;
+
+	for ( i = 0x40; i < 0x80; i++ ) {
+
+		cmd[ i ] = cmd_LABEL_V4;
+
+	}
+
+	for ( i = 0x80; i < 0x100; i++ ) {
+
+		cmd[ i ] = cmd_LINE_V2;
+
+	}
+
+	// dispatch table end
+
+	// common record iterator
+	// loop though data, handling record types as required.
+
+	if ( version === 1 ) {
+
+		while ( pos < dataLength ) {
+
+			var cmdCode = dataView.getInt32( pos, true );
+			pos += 4;
+
+			if ( ! cmd[ cmdCode ]() ) break;
+
+		}
+
+	} else {
+	
+		alert( 'Unsupported version' + version );
+
+		while ( pos < dataLength ) {
+
+			if ( ! cmd[ data[ pos ] ]( data[ pos++ ] ) ) break;
+
+		}
+
+	}
+
+	while ( pos < dataLength ) {
+
+		if ( version === 1 ) {
+
+			var cmdCode = dataView.getInt32( pos, true );
+			pos += 4;
+
+			if ( ! cmd[ cmdCode ]() ) break;
+
+		} else {
+
+			console.log( 'unsupported version' );
+			if ( ! cmd[ data[ pos ] ]( data[ pos++ ] ) ) break;
+
+		}
+
+	}
+
+	groups.push( legs );
+
+	// assign survey ids to all leg vertices by looking up tree node for coords
+	var group, leg, coords, node;
+
+	for ( i = 0, li = groups.length; i < li; i++ ) {
+
+		group = groups[ i ];
+
+		for ( j = 0, lj = group.length; j < lj; j++ ) {
+
+			leg = group[ j ];
+			coords = leg.coords;
+
+			node = stations.get( coords.x + ':' + coords.y + ':' + coords.z );
+
+			if ( node === undefined ) continue;
+
+			leg.survey = node.parent.id;
+
+		}
+
+	}
+
+	var offsets = {
+		x: ( min.x + max.x ) / 2,
+		y: ( min.y + max.y ) / 2,
+		z: ( min.z + max.z ) / 2
+	};
+
+	surveyTree.traverse( adjustCoords );
+
+	this.offsets = offsets;
+
+	this.limits = {
+		min: min,
+		max: max
+	};
+
+	return;
+
+	function adjustCoords( node ) {
+
+		var coords = node.p;
+
+		if ( coords === undefined ) return;
+
+		coords.x -= offsets.x;
+		coords.y -= offsets.y;
+		coords.z -= offsets.z;
+
+	}
+
+
+	function cmd_STOP ( /* c */ ) {
+
+		if ( label ) label = '';
+
+		return true;
+
+	}
+
+	function cmd_SKIP ( /* c */ ) {
+
+		console.log( 'SKIP' );
+		return false;
+
+	}
+
+	function cmd_LABEL_V1 ( /* c */ ) {
+
+		var db = [];
+
+		var nextByte = data[ pos++ ];
+
+		while ( nextByte !== 10 ) {
+
+			db.push( nextByte );
+			nextByte = data[ pos++ ];
+
+		}
+
+		if ( db[ 0 ] === 92 ) db.shift(); // remove initial '/' characters
+
+		label = String.fromCharCode.apply( null, db );
+//		console.log( 'NODE', label, lastPosition );
+
+		var node = surveyTree.addPath( label.split( '.' ), { p: lastPosition, type: STATION_NORMAL } );
+
+		// track coords to sectionId to allow survey ID's to be added to leg vertices
+		stations.set( lastPosition.x + ':' + lastPosition.y + ':' + lastPosition.z, node );
+
+		labelChanged = true;
+
+		return true;
+
+	}
+
+	function cmd_LABEL_V2 ( /* c */ ) {
+
+		console.log( 'LABEL_V2' );
+		return false;
+
+	}
+
+	function cmd_LABEL_V3 ( /* c */ ) {
+
+		console.log( 'LABEL_V3' );
+		return false;
+
+	}
+	function cmd_LABEL_V4 ( /* c */ ) {
+
+		console.log( 'LABEL_V4' );
+		return false;
+
+	}
+
+	function cmd_MOVE ( /* c */ ) {
+
+		var coords = readCoordinates();
+
+
+		lastPosition = coords;
+
+		if ( version === 1 && dataView.getInt32( pos, true ) === 2 ) {
+
+			// version 1 uses MOVE+LABEL pairs to label stations
+			return true;
+
+		}
+
+//		console.log( 'MOVE', coords );
+
+		if ( legs.length > 1 ) groups.push( legs );
+
+		legs = [];
+
+		legs.push( { coords: coords } );
+
+		return true;
+
+	}
+
+	function cmd_LINE_V1 ( /* c */ ) {
+
+		var coords = readCoordinates();
+
+		legs.push( { coords: coords, type: LEG_CAVE, survey: sectionId } );
+
+		lastPosition = coords;
+
+//		console.log( 'LINE_V1', coords );
+
+		return true;
+
+	}
+
+	function cmd_LINE_V2 ( /* c */ ) {
+
+		console.log( 'LINE_V2' );
+		return false;
+
+	}
+
+	// functions aliased at runtime as required
+
+	function __readCoordinatesProjected () {
+
+		var l = new DataView( source, pos );
+
+		var projectedCoords = self.projection.forward( {
+			x: l.getInt32( 0, true ) / 100,
+			y: l.getInt32( 4, true ) / 100
+		} );
+
+		var coords = {
+			x: projectedCoords.x,
+			y: projectedCoords.y,
+			z: l.getInt32( 8, true ) / 100
+		};
+
+		min.x = Math.min( coords.x, min.x );
+		min.y = Math.min( coords.y, min.y );
+		min.z = Math.min( coords.z, min.z );
+
+		max.x = Math.max( coords.x, max.x );
+		max.y = Math.max( coords.y, max.y );
+		max.z = Math.max( coords.z, max.z );
+
+		pos += 12;
+
+		return coords;
+
+	}
+
+	function __readCoordinates () {
+
+		var l = new DataView( source, pos );
+
+		var coords = {
+			x: l.getInt32( 0, true ) / 100,
+			y: l.getInt32( 4, true ) / 100,
+			z: l.getInt32( 8, true ) / 100
+		};
+
+		min.x = Math.min( coords.x, min.x );
+		min.y = Math.min( coords.y, min.y );
+		min.z = Math.min( coords.z, min.z );
+
+		max.x = Math.max( coords.x, max.x );
+		max.y = Math.max( coords.y, max.y );
+		max.z = Math.max( coords.z, max.z );
+
+		pos += 12;
+
+		return coords;
+
+	}
+
+};
 
 Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
@@ -558,7 +922,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 			}
 
 			// add it to the survey tree
-			sectionId = surveyTree.addPath( path ); // consumes path
+			sectionId = surveyTree.addPath( path ).id; // consumes path
 
 			labelChanged = false;
 

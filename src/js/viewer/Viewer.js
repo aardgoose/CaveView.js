@@ -1,6 +1,7 @@
 
 
 import  {
+	VERSION,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_OFFSET,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
@@ -88,6 +89,8 @@ var lastActivityTime = 0;
 var Viewer = Object.create( EventDispatcher.prototype );
 
 function init ( domID, configuration ) { // public method
+
+	console.log( 'CaveView v' + VERSION );
 
 	container = document.getElementById( domID );
 

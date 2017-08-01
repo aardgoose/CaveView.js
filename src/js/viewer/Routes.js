@@ -12,7 +12,7 @@ function Routes ( metadataSource ) {
 
 	this.metadataSource = metadataSource;
 	this.surveyTree = null;
-	this.segments = []; // maps vertex index to segment membership
+	this.vertexPairToSegment = []; // maps vertex index to segment membership
 	this.segmentMap = new Map(); // maps segments of survey between ends of passages and junctions.
 	this.segmentToInfo = {};
 
@@ -62,7 +62,7 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 	var station;
 
 	var segment = 0;
-	var segments = this.segments;
+	var vertexPairToSegment = this.vertexPairToSegment;
 	var segmentToInfo = this.segmentToInfo;
 
 	var v1, v2;
@@ -76,7 +76,7 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 		v1 = legs[ i ];
 		v2 = legs[ i + 1 ];
 
-		segments.push( segment );
+		vertexPairToSegment.push( segment );
 
 		if ( newSegment ) {
 
@@ -118,7 +118,6 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 	if ( ! newSegment ) {
 
-		segmentInfo.endVertex = v2;
 		segmentInfo.endStation = station;
 
 		segmentMap.set( segmentInfo.startStation.id + ':' + station.id, segmentInfo );
@@ -258,7 +257,7 @@ Routes.prototype.toggleSegment = function ( index ) {
 
 	var self = this;
 	var route = this.currentRoute;
-	var segment = this.segments[ index / 2 ];
+	var segment = this.vertexPairToSegment[ index / 2 ];
 
 	this.adjacentSegments.clear();
 
@@ -295,13 +294,13 @@ Routes.prototype.toggleSegment = function ( index ) {
 
 Routes.prototype.inCurrentRoute = function ( index ) {
 
-	return this.currentRoute.has( this.segments[ index / 2 ] );
+	return this.currentRoute.has( this.vertexPairToSegment[ index / 2 ] );
 
 };
 
 Routes.prototype.adjacentToRoute = function ( index ) {
 
-	return this.adjacentSegments.has( this.segments[ index / 2 ] );
+	return this.adjacentSegments.has( this.vertexPairToSegment[ index / 2 ] );
 
 };
 

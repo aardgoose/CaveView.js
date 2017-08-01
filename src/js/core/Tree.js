@@ -160,7 +160,7 @@ Tree.prototype.addPath = function ( path, properties ) {
 
 	node = this.getByPathArray( path );
 
-	if ( path.length === 0 ) return node.id;
+	if ( path.length === 0 ) return node;
 
 	// add remainder of path to node
 
@@ -175,7 +175,7 @@ Tree.prototype.addPath = function ( path, properties ) {
 
 	if ( properties !== undefined ) Object.assign( node, properties );
 
-	return node.id;
+	return node;
 
 };
 

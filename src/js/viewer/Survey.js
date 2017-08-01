@@ -12,7 +12,6 @@ import {
 import { replaceExtension, getEnvironmentValue } from '../core/lib';
 import { ColourCache } from '../core/ColourCache';
 import { Tree } from '../core/Tree';
-import { unpackRGBA } from '../core/unpackRGBA';
 import { Box3Helper } from '../core/Box3';
 import { Materials } from '../materials/Materials';
 import { ClusterMarkers } from './ClusterMarkers';
@@ -229,29 +228,13 @@ Survey.prototype.loadEntrances = function () {
 
 };
 
-Survey.prototype.calibrateTerrain = function ( renderer, renderTarget, terrain ) {
+Survey.prototype.calibrateTerrain = function ( terrain ) {
 
-	// renderer target is height value based
-
-	if ( terrain.boundingBox === undefined ) terrain.computeBoundingBox();
-
-	var boundingBox = terrain.boundingBox;
-
-	var base = boundingBox.min;
-	var range = boundingBox.getSize();
-
-	var terrainSize= renderer.getSize();
-
-	var pixelCoords = new Vector3();
-
-	var adjust = new Vector3( terrainSize.width, terrainSize.height, 1 ).divide( range );
-
-	var result = new Uint8Array( 4 );
-
-	var s1 = 0;
-	var s2 = 0;
-
+	var s1 = 0, s2 = 0;
 	var n = 0;
+
+	// find height difference between all entrance locations and terrain
+	// find average differences and use to alter height of terrain
 
 	this.surveyTree.traverse( _testHeight );
 
@@ -263,11 +246,9 @@ Survey.prototype.calibrateTerrain = function ( renderer, renderTarget, terrain )
 
 		// simple average
 
-		s1 /= n;
+		terrain.datumShift = s1 / n;
 
-		terrain.datumShift = s1;
-
-		console.log( 'Adjustmenting terrain height by ', s1, sd );
+		console.log( 'Adjustmenting terrain height by ', terrain.datumShift, sd );
 
 	}
 
@@ -280,14 +261,8 @@ Survey.prototype.calibrateTerrain = function ( renderer, renderTarget, terrain )
 		// FIXME to extend to surface points
 		if ( node.type !== STATION_ENTRANCE) return;
 
-		pixelCoords.copy( node.p ).sub( base ).multiply( adjust ).round();
+		var v = node.p.z - terrain.getHeight( node.p );
 
-		renderer.readRenderTargetPixels( renderTarget, pixelCoords.x, pixelCoords.y, 1, 1, result );
-
-		// convert to survey units
-		var terrainHeight = unpackRGBA( result ) * range.z + base.z;
-
-		var v = node.p.z - terrainHeight;
 		s1 += v;
 		s2 += v * v;
 		n++;

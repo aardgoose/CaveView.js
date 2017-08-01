@@ -1,5 +1,6 @@
 .vscode
 node_modules
+build/CaveView/js/
 build/surveys/
 build/terrain/
 tools/*.3d

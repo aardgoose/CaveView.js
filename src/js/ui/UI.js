@@ -1,4 +1,5 @@
 import {
+	VERSION,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, STATION_ENTRANCE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_DEPTH_CURSOR,
@@ -536,7 +537,11 @@ function initInfoPage () {
 
 	page.addHeader( 'Information' );
 
+<<<<<<< HEAD
 	page.addText( 'CaveView v1.1.2 - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.' );
+=======
+	page.addText( 'CaveView v' + VERSION + ' - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.' );
+>>>>>>> dev
 
 	page.addText( 'Requires a browser supporting WebGL (IE 11+ and most other recent browsers), no plugins required. Created using the THREE.js 3D library and chroma,js colour handling library.' );
 
@@ -714,6 +719,7 @@ function loadCave ( inFile ) {
 	progressBar.Start( 'Loading file ' + file + ' ...' );
 
 	caveLoader.loadURL( file );
+
 
 }
 

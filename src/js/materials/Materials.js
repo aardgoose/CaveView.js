@@ -14,7 +14,6 @@ var viewer;
 var cursorMaterials = [];
 var depthMaterials = [];
 var perSurveyMaterials = {};
-var depthTexture = null;
 
 function updateMaterialCursor ( material ) {
 
@@ -72,7 +71,7 @@ function getDepthMaterial ( type, limits, terrain ) {
 
 	if ( material === undefined ) {
 
-		material = new DepthMaterial( type, limits, depthTexture, terrain );
+		material = new DepthMaterial( type, limits, terrain );
 
 		cache.set( name, material );
 
@@ -121,7 +120,7 @@ function getDepthCursorMaterial( type, limits, terrain ) {
 
 	if ( material === undefined ) {
 
-		material = new DepthCursorMaterial( type, limits, depthTexture, terrain );
+		material = new DepthCursorMaterial( type, limits, terrain );
 
 		perSurveyMaterials[ name ] = material;
 		depthMaterials.push( material );
@@ -180,9 +179,9 @@ function getGlyphMaterial ( glyphAtlasSpec, rotation, colour ) {
 
 }
 
-function setDepthTexture( texture, terrain ) {
+function setTerrain( terrain ) {
 
-	depthTexture = texture;
+
 	terrain.addEventListener( 'datumShiftChange', updateDatumShifts );
 
 }
@@ -210,14 +209,7 @@ function flushCache() {
 
 	}
 
-	if ( depthTexture !== null ) {
-
-		depthTexture.dispose();
-		depthTexture = null;
-		depthMaterials = [];
-
-	}
-
+	depthMaterials = [];
 	perSurveyMaterials = {};
 
 }
@@ -231,7 +223,7 @@ export var Materials = {
 	getSurfaceMaterial:     getSurfaceMaterial,
 	getLineMaterial:        getLineMaterial,
 	getGlyphMaterial:       getGlyphMaterial,
-	setDepthTexture:        setDepthTexture,
+	setTerrain:             setTerrain,
 	initCache:              initCache,
 	flushCache:             flushCache
 };

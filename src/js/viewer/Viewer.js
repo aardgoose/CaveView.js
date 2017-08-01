@@ -1,6 +1,7 @@
 
 
 import  {
+	VERSION,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_OFFSET,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
@@ -71,8 +72,6 @@ var shadingMode;
 var surfaceShadingMode = SHADING_SINGLE;
 var terrainShadingMode;
 
-var depthTextureCreated = false;
-
 var overlays = {};
 var activeOverlay = null;
 
@@ -90,6 +89,8 @@ var lastActivityTime = 0;
 var Viewer = Object.create( EventDispatcher.prototype );
 
 function init ( domID, configuration ) { // public method
+
+	console.log( 'CaveView v' + VERSION );
 
 	container = document.getElementById( domID );
 
@@ -496,7 +497,7 @@ function renderDepthTexture () {
 	renderTarget.texture.generateMipmaps = false;
 	renderTarget.texture.name = 'CV.DepthMapTexture';
 
-	Materials.setDepthTexture( renderTarget.texture, terrain );
+	Materials.setTerrain( terrain );
 
 	renderer.setSize( dim, dim );
 	renderer.setPixelRatio( 1 );
@@ -506,7 +507,9 @@ function renderDepthTexture () {
 
 	// correct height between entrances and terrain ( compensates for mismatch beween CRS and datums )
 
-	survey.calibrateTerrain( renderer, renderTarget, terrain );
+	terrain.addHeightMap( renderer, renderTarget );
+
+	survey.calibrateTerrain( terrain );
 
 	// restore renderer to normal render size and target
 
@@ -517,11 +520,9 @@ function renderDepthTexture () {
 
 	scene.overrideMaterial = null;
 
-	depthTextureCreated = true;
-
 	renderView();
 
-	// clear renderList to release objects on heap
+	// clear renderList to release objects on heap associated with rtCamera
 	renderer.renderLists.dispose();
 
 }
@@ -833,8 +834,6 @@ function clearView () {
 	surfaceShadingMode = SHADING_SINGLE;
 	terrainShadingMode = SHADING_SHADED;
 
-	depthTextureCreated = false;
-
 	// remove event listeners
 
 	unloadTerrainListeners();
@@ -951,7 +950,7 @@ function loadSurvey ( newSurvey ) {
 		renderView();
 		loadTerrainListeners();
 
-		if ( ! depthTextureCreated ) renderDepthTexture();
+		if ( terrain.depthTexture === null ) renderDepthTexture();
 
 	}
 
@@ -1067,7 +1066,9 @@ function mouseDown ( event ) {
 
 		renderView();
 
-		var popup = new StationPopup( station, survey.getGeographicalPosition( station.p ) );
+		var depth = ( terrain ) ? station.p.z - terrain.getHeight( station.p ) : null;
+
+		var popup = new StationPopup( station, survey.getGeographicalPosition( station.p ), depth );
 
 		var p = survey.getWorldPosition( station.p );
 

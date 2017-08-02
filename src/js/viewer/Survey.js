@@ -708,11 +708,16 @@ Survey.prototype.loadCave = function ( cave ) {
 		var height = ( dim.lines   - 1 ) * dim.yDelta;
 		var clip = { top: 0, bottom: 0, left: 0, right: 0, dtmOffset: 0 };
 
+
+		// FIXME - rework to allow for lox specific projection adjustments to terrain grid ans UVs
+
 		var terrainTileGeometry = new TerrainTileGeometry( width, height, dim.samples - 1, dim.lines - 1, terrain.data, 1, clip, self.offsets.z );
 
 		terrainTileGeometry.translate( dim.xOrigin - self.offsets.x, dim.yOrigin + height - self.offsets.y, 0 );
 
 		self.terrain = new Terrain( self.offsets ).addTile( terrainTileGeometry, terrain.bitmap );
+
+		self.modelLimits.expandByObject( self.terrain );
 
 		return;
 

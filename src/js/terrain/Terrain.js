@@ -48,7 +48,7 @@ Terrain.prototype.addTile = function ( terrainTileGeometry, bitmap ) {
 
 };
 
-Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback, surveyOffsets ) {
+Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	// FIXME - cache this material and only create once and ensure removal
 
@@ -89,7 +89,7 @@ Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback, survey
 
 		overlayLoadedCallback();
 
-	};
+	}
 
 };
 

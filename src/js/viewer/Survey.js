@@ -710,6 +710,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 
 		// FIXME - rework to allow for lox specific projection adjustments to terrain grid ans UVs
+		// remove use of Tiles.
 
 		var terrainTileGeometry = new TerrainTileGeometry( width, height, dim.samples - 1, dim.lines - 1, terrain.data, 1, clip, self.offsets.z );
 
@@ -717,7 +718,14 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		self.terrain = new Terrain( self.offsets ).addTile( terrainTileGeometry, terrain.bitmap );
 
-		self.modelLimits.expandByObject( self.terrain );
+		// get limits of terrain - ignoring maximum which distorts height shading etc
+		var terrainLimits = new Box3().copy( self.terrain.tile.geometry.boundingBox );
+		var modelLimits = self.modelLimits;
+
+		terrainLimits.min.z = modelLimits.min.z;
+		terrainLimits.max.z = modelLimits.max.z;
+
+		modelLimits.union( terrainLimits );
 
 		return;
 

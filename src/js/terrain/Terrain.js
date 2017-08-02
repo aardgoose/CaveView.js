@@ -7,12 +7,13 @@ import {
 	TextureLoader
 } from '../../../../three.js/src/Three';
 
-function Terrain () {
+function Terrain ( offsets ) {
 
 	CommonTerrain.call( this );
 
 	this.type = 'CV.Terrain';
 	this.tile = null;
+	this.offsets = offsets;
 
 	return this;
 
@@ -32,6 +33,8 @@ Terrain.prototype.isLoaded = function () {
 
 Terrain.prototype.addTile = function ( terrainTileGeometry, bitmap ) {
 
+	// fixme - use custom lox terrain to handle non uniform grid
+
 	this.bitmap = bitmap;
 
 	if ( bitmap !== undefined ) this.hasOverlay = true;
@@ -45,20 +48,48 @@ Terrain.prototype.addTile = function ( terrainTileGeometry, bitmap ) {
 
 };
 
-Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
+Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback, surveyOffsets ) {
+
+	// FIXME - cache this material and only create once and ensure removal
 
 	var loader  = new TextureLoader();
-	var	texture = loader.load( this.bitmap.image, overlayLoadedCallback );
+	var	texture = loader.load( this.bitmap.image, _overlayLoaded );
 
-	this.setMaterial( new MeshLambertMaterial(
+	var self = this;
 
-		{
-			map: texture,
-			transparent: true,
-			opacity: this.opacity
-		}
+	function _overlayLoaded( ) {
 
-	) );
+		var bitmap = self.bitmap;
+
+		var overlayWidth  = texture.image.naturalWidth * bitmap.xDelta;
+		var overlayHeight = texture.image.naturalHeight * bitmap.yDelta;
+
+		var surveySize = self.tile.geometry.boundingBox.size();
+
+		// adjust overlay -> terrain sizing to reflect differences in geographical areas
+
+		texture.repeat.set( surveySize.x / overlayWidth, surveySize.y / overlayHeight );
+
+		// adjust overlay -> terrain offset to reflect differences in geographical origins
+
+		var surveyOrigin = self.tile.geometry.boundingBox.min;
+
+		var xOffset = surveyOrigin.x - bitmap.xOrigin + self.offsets.x;
+		var yOffset = surveyOrigin.y - bitmap.yOrigin + self.offsets.y;
+
+		texture.offset.set( xOffset / overlayWidth, yOffset / overlayHeight );
+
+		self.setMaterial( new MeshLambertMaterial(
+			{
+				map: texture,
+				transparent: true,
+				opacity: self.opacity
+			}
+		) );
+
+		overlayLoadedCallback();
+
+	};
 
 };
 

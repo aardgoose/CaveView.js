@@ -712,7 +712,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		terrainTileGeometry.translate( dim.xOrigin - self.offsets.x, dim.yOrigin + height - self.offsets.y, 0 );
 
-		self.terrain = new Terrain().addTile( terrainTileGeometry, terrain.bitmap );
+		self.terrain = new Terrain( self.offsets ).addTile( terrainTileGeometry, terrain.bitmap );
 
 		return;
 

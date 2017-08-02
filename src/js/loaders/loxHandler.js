@@ -448,16 +448,15 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		var terrain = self.terrain;
 
 		terrain.data = data;
-		terrain.dimensions = {};
 
-		var dimensions = terrain.dimensions;
-
-		dimensions.samples = m_width;
-		dimensions.lines   = m_height;
-		dimensions.xOrigin = m_calib[ 0 ];
-		dimensions.yOrigin = m_calib[ 1 ];
-		dimensions.xDelta  = m_calib[ 2 ];
-		dimensions.yDelta  = m_calib[ 5 ];
+		terrain.dimensions = {
+			samples:  m_width,
+			lines:    m_height,
+			xOrigin:  m_calib[ 0 ],
+			yOrigin:  m_calib[ 1 ],
+			xDelta:   m_calib[ 2 ],
+			yDelta:   m_calib[ 5 ]
+		};
 
 		self.hasTerrain = true;
 
@@ -468,14 +467,12 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		var f = new DataView( source, pos );
 		var m_calib = [];
 
-		m_calib[ 0 ] = f.getFloat64( 0,  true );
-		m_calib[ 1 ] = f.getFloat64( 8,  true );
-		m_calib[ 2 ] = f.getFloat64( 16, true );
-		m_calib[ 3 ] = f.getFloat64( 24, true );
-		m_calib[ 4 ] = f.getFloat64( 32, true );
-		m_calib[ 5 ] = f.getFloat64( 40, true );
-
-		console.log( 'm_calib', m_calib );
+		m_calib[ 0 ] = f.getFloat64( 0,  true ); // x origin
+		m_calib[ 1 ] = f.getFloat64( 8,  true ); // y origin
+		m_calib[ 2 ] = f.getFloat64( 16, true ); // x delta (terrain cell/image pixel)
+		m_calib[ 3 ] = f.getFloat64( 24, true ); // xy adjustment for projection
+		m_calib[ 4 ] = f.getFloat64( 32, true ); // yx adjustment for projection
+		m_calib[ 5 ] = f.getFloat64( 40, true ); // y delta (terrain cell/image pixel)
 
 		pos += 48;
 
@@ -489,11 +486,15 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		readUint(); // m_surfaceId
 
 		var imagePtr = readDataPtr();
-		console.log( 'image' );
+
 		var m_calib = readCalibration();
 
 		self.terrain.bitmap = {
-			image: extractImage( imagePtr ),
+			image:   extractImage( imagePtr ),
+			xOrigin: m_calib[ 0 ],
+			yOrigin: m_calib[ 1 ],
+			xDelta:  m_calib[ 2 ], // units / pixel
+			yDelta:  m_calib[ 5 ]  // units / pixel
 		};
 
 	}

@@ -5,6 +5,8 @@ import {
 	NearestFilter
 } from '../../../../three.js/src/Three';
 
+// FIXME fix lifecycle of materials and textures - ensure disposal/caching as required
+// GPU resource leak etc.
 
 function Overlay ( overlayProvider, container ) {
 

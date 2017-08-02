@@ -14,6 +14,7 @@ function Terrain ( offsets ) {
 	this.type = 'CV.Terrain';
 	this.tile = null;
 	this.offsets = offsets;
+	this.overlayMaterial = null;
 
 	return this;
 
@@ -50,10 +51,16 @@ Terrain.prototype.addTile = function ( terrainTileGeometry, bitmap ) {
 
 Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
-	// FIXME - cache this material and only create once and ensure removal
+	if ( this.overlayMaterial !== null ) {
 
-	var loader  = new TextureLoader();
-	var	texture = loader.load( this.bitmap.image, _overlayLoaded );
+		this.setMaterial( this.overlayMaterial );
+		overlayLoadedCallback();
+
+		return;
+
+	}
+
+	var	texture = new TextureLoader().load( this.bitmap.image, _overlayLoaded );
 
 	var self = this;
 
@@ -79,13 +86,15 @@ Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 		texture.offset.set( xOffset / overlayWidth, yOffset / overlayHeight );
 
-		self.setMaterial( new MeshLambertMaterial(
+		self.overlayMaterial = new MeshLambertMaterial(
 			{
 				map: texture,
 				transparent: true,
 				opacity: self.opacity
 			}
-		) );
+		);
+
+		self.setMaterial( self.overlayMaterial );
 
 		overlayLoadedCallback();
 
@@ -96,6 +105,18 @@ Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 Terrain.prototype.removed = function () {
 
 	this.tile.removed();
+
+	var overlayMaterial = this.overlayMaterial;
+
+	if ( overlayMaterial !== null ) {
+
+		// dispose of overlay texture and material
+
+		overlayMaterial.map.dispose();
+		overlayMaterial.dispose();
+
+	}
+
 	this.commonRemoved();
 
 };

@@ -475,6 +475,8 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		m_calib[ 4 ] = f.getFloat64( 32, true );
 		m_calib[ 5 ] = f.getFloat64( 40, true );
 
+		console.log( 'm_calib', m_calib );
+
 		pos += 48;
 
 		return m_calib;
@@ -487,10 +489,12 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		readUint(); // m_surfaceId
 
 		var imagePtr = readDataPtr();
+		console.log( 'image' );
+		var m_calib = readCalibration();
 
-		readCalibration(); // m_calib
-
-		self.terrain.bitmap = extractImage( imagePtr );
+		self.terrain.bitmap = {
+			image: extractImage( imagePtr ),
+		};
 
 	}
 

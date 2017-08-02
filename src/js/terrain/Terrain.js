@@ -48,7 +48,7 @@ Terrain.prototype.addTile = function ( terrainTileGeometry, bitmap ) {
 Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	var loader  = new TextureLoader();
-	var	texture = loader.load( this.bitmap, overlayLoadedCallback );
+	var	texture = loader.load( this.bitmap.image, overlayLoadedCallback );
 
 	this.setMaterial( new MeshLambertMaterial(
 

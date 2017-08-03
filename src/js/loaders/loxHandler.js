@@ -447,15 +447,16 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		var terrain = self.terrain;
 
-		terrain.data = data;
-
-		terrain.dimensions = {
-			samples:  m_width,
-			lines:    m_height,
-			xOrigin:  m_calib[ 0 ],
-			yOrigin:  m_calib[ 1 ],
-			xDelta:   m_calib[ 2 ],
-			yDelta:   m_calib[ 5 ]
+		terrain.dtm = {
+			data: data,
+			samples: m_width,
+			lines:   m_height,
+			xOrigin: m_calib[ 0 ],
+			yOrigin: m_calib[ 1 ],
+			xx:      m_calib[ 2 ],
+			xy:      m_calib[ 3 ],
+			yx:      m_calib[ 4 ],
+			yy:      m_calib[ 5 ]
 		};
 
 		self.hasTerrain = true;
@@ -469,10 +470,10 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		m_calib[ 0 ] = f.getFloat64( 0,  true ); // x origin
 		m_calib[ 1 ] = f.getFloat64( 8,  true ); // y origin
-		m_calib[ 2 ] = f.getFloat64( 16, true ); // x delta (terrain cell/image pixel)
-		m_calib[ 3 ] = f.getFloat64( 24, true ); // xy adjustment for projection
-		m_calib[ 4 ] = f.getFloat64( 32, true ); // yx adjustment for projection
-		m_calib[ 5 ] = f.getFloat64( 40, true ); // y delta (terrain cell/image pixel)
+		m_calib[ 2 ] = f.getFloat64( 16, true ); // xx ( 2 x 2 ) rotate and scale matrix
+		m_calib[ 3 ] = f.getFloat64( 24, true ); // xy "
+		m_calib[ 4 ] = f.getFloat64( 32, true ); // yx "
+		m_calib[ 5 ] = f.getFloat64( 40, true ); // yy "
 
 		pos += 48;
 
@@ -493,8 +494,10 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 			image:   extractImage( imagePtr ),
 			xOrigin: m_calib[ 0 ],
 			yOrigin: m_calib[ 1 ],
-			xDelta:  m_calib[ 2 ], // units / pixel
-			yDelta:  m_calib[ 5 ]  // units / pixel
+			xx:      m_calib[ 2 ],
+			xy:      m_calib[ 3 ],
+			yx:      m_calib[ 4 ],
+			yy:      m_calib[ 5 ]
 		};
 
 	}

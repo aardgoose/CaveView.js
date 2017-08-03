@@ -1,20 +1,36 @@
 
 import { CommonTerrain } from './CommonTerrain';
-import { Tile } from './Tile';
+import { LoxTerrainGeometry } from './LoxTerrainGeometry';
 
 import {
 	MeshLambertMaterial,
 	TextureLoader
 } from '../../../../three.js/src/Three';
 
-function Terrain ( offsets ) {
+function Terrain ( terrainData, offsets ) {
 
 	CommonTerrain.call( this );
 
 	this.type = 'CV.Terrain';
-	this.tile = null;
 	this.offsets = offsets;
+	this.bitmap = terrainData.bitmap;
 	this.overlayMaterial = null;
+
+	console.log( terrainData );
+
+	this.geometry = new LoxTerrainGeometry( terrainData.dtm );
+
+//	var width  = ( dtm.samples - 1 ) * dim.xDelta;
+//		var height = ( dtm.lines   - 1 ) * dim.yDelta;
+//		var clip = { top: 0, bottom: 0, left: 0, right: 0, dtmOffset: 0 };
+
+
+		// FIXME - rework to allow for lox specific projection adjustments to terrain grid ans UVs
+		// remove use of Tiles.
+
+//		var terrainTileGeometry = new TerrainTileGeometry( width, height, dim.samples - 1, dim.lines - 1, terrain.data, 1, clip, self.offsets.z );
+
+//		terrainTileGeometry.translate( dim.xOrigin - self.offsets.x, dim.yOrigin + height - self.offsets.y, 0 );
 
 	return this;
 
@@ -29,23 +45,6 @@ Terrain.prototype.isTiled = false;
 Terrain.prototype.isLoaded = function () {
 
 	return true;
-
-};
-
-Terrain.prototype.addTile = function ( terrainTileGeometry, bitmap ) {
-
-	// fixme - use custom lox terrain to handle non uniform grid
-
-	this.bitmap = bitmap;
-
-	if ( bitmap !== undefined ) this.hasOverlay = true;
-
-	var tile = new Tile().create( terrainTileGeometry );
-
-	this.add( tile );
-	this.tile = tile;
-
-	return this;
 
 };
 
@@ -104,8 +103,6 @@ Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 Terrain.prototype.removed = function () {
 
-	this.tile.removed();
-
 	var overlayMaterial = this.overlayMaterial;
 
 	if ( overlayMaterial !== null ) {
@@ -123,13 +120,13 @@ Terrain.prototype.removed = function () {
 
 Terrain.prototype.setMaterial = function ( material ) {
 
-	this.tile.setMaterial( material );
+	this.material = material;
 
 };
 
 Terrain.prototype.setOpacity = function ( opacity ) {
 
-	this.tile.setOpacity( opacity );
+	this.material.opacity = opacity;
 	this.opacity = opacity;
 
 };

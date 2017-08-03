@@ -6,7 +6,7 @@ import {
 	MeshLambertMaterial, TextureLoader, Mesh
 } from '../../../../three.js/src/Three';
 
-function Terrain ( terrainData, offsets ) {
+function LoxTerrain ( terrainData, offsets ) {
 
 	CommonTerrain.call( this );
 
@@ -31,19 +31,19 @@ function Terrain ( terrainData, offsets ) {
 
 }
 
-Terrain.prototype = Object.create( CommonTerrain.prototype );
+LoxTerrain.prototype = Object.create( CommonTerrain.prototype );
 
-Terrain.prototype.constructor = Terrain;
+LoxTerrain.prototype.constructor = LoxTerrain;
 
-Terrain.prototype.isTiled = false;
+LoxTerrain.prototype.isTiled = false;
 
-Terrain.prototype.isLoaded = function () {
+LoxTerrain.prototype.isLoaded = function () {
 
 	return true;
 
 };
 
-Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
+LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	if ( this.overlayMaterial !== null ) {
 
@@ -98,7 +98,7 @@ Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 };
 
-Terrain.prototype.removed = function () {
+LoxTerrain.prototype.removed = function () {
 
 	var overlayMaterial = this.overlayMaterial;
 
@@ -115,13 +115,13 @@ Terrain.prototype.removed = function () {
 
 };
 
-Terrain.prototype.setMaterial = function ( material ) {
+LoxTerrain.prototype.setMaterial = function ( material ) {
 
 	this.tile.material = material;
 
 };
 
-Terrain.prototype.setOpacity = function ( opacity ) {
+LoxTerrain.prototype.setOpacity = function ( opacity ) {
 
 	var material = this.tile.material;
 
@@ -132,6 +132,6 @@ Terrain.prototype.setOpacity = function ( opacity ) {
 
 };
 
-export { Terrain };
+export { LoxTerrain };
 
 // EOF

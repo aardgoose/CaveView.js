@@ -24,7 +24,7 @@ import { Walls } from './Walls';
 import { DyeTraces } from './DyeTraces';
 import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
-import { Terrain } from '../terrain/Terrain';
+import { LoxTerrain } from '../terrain/LoxTerrain';
 import { WorkerPool } from '../workers/WorkerPool';
 import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
 
@@ -695,7 +695,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		if ( cave.hasTerrain === false ) return;
 
-		var terrain = new Terrain( cave.terrain, self.offsets );
+		var terrain = new LoxTerrain( cave.terrain, self.offsets );
 
 		// get limits of terrain - ignoring maximum which distorts height shading etc
 		var terrainLimits = new Box3().copy( terrain.tile.geometry.boundingBox );

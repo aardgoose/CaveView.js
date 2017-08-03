@@ -26,7 +26,6 @@ import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
 import { WorkerPool } from '../workers/WorkerPool';
-import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
 
 import { Matrix4, Vector3, Box3, Object3D, TextureLoader, PointsMaterial } from '../../../../three.js/src/Three';
 

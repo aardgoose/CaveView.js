@@ -62,6 +62,7 @@ LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 		var bitmap = self.bitmap;
 
+		// FIXME - changes below + stencil code restoration ( maybe common tile code )?
 		// move these calls into LoxTerrainGeometry and set UVs correctly with rotational componenet
 
 		var overlayWidth  = texture.image.naturalWidth * bitmap.xx;

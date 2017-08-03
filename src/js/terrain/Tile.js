@@ -86,31 +86,6 @@ Tile.prototype.isTile = true;
 Tile.liveTiles = 0;
 Tile.overlayImages = new Map();
 
-Tile.prototype.create = function ( terrainTileGeometry ) {
-
-	terrainTileGeometry.computeBoundingBox();
-
-	this.geometry = terrainTileGeometry;
-
-	this.createCommon();
-
-	return this;
-
-};
-
-Tile.prototype.createCommon = function () {
-
-	var attributes = this.geometry.attributes;
-
-	// discard javascript attribute buffers after upload to GPU
-	for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
-
-	this.geometry.index.onUpload( onUploadDropBuffer );
-
-	this.layers.set( FEATURE_TERRAIN );
-
-};
-
 Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox, material ) {
 
 	var attributeName;
@@ -137,7 +112,16 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 
 	this.geometry = bufferGeometry;
 
-	this.createCommon();
+	var attributes = bufferGeometry.attributes;
+
+	// discard javascript attribute buffers after upload to GPU
+
+	for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
+
+	this.geometry.index.onUpload( onUploadDropBuffer );
+
+	this.layers.set( FEATURE_TERRAIN );
+
 	this.material = material;
 
 	return this;

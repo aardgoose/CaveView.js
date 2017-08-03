@@ -1,10 +1,9 @@
 
 import { CommonTerrain } from './CommonTerrain';
 import { LoxTerrainGeometry } from './LoxTerrainGeometry';
-
+import { FEATURE_TERRAIN } from '../core/constants';
 import {
-	MeshLambertMaterial,
-	TextureLoader
+	MeshLambertMaterial, TextureLoader, Mesh
 } from '../../../../three.js/src/Three';
 
 function Terrain ( terrainData, offsets ) {
@@ -16,23 +15,19 @@ function Terrain ( terrainData, offsets ) {
 	this.bitmap = terrainData.bitmap;
 	this.overlayMaterial = null;
 
-	console.log( terrainData );
+	//FIXME use a known material rather than getting a default material created
 
-	this.geometry = new LoxTerrainGeometry( terrainData.dtm );
+	var tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ) );
 
-//	var width  = ( dtm.samples - 1 ) * dim.xDelta;
-//		var height = ( dtm.lines   - 1 ) * dim.yDelta;
-//		var clip = { top: 0, bottom: 0, left: 0, right: 0, dtmOffset: 0 };
+	tile.layers.set( FEATURE_TERRAIN );
+	tile.isTile = true;
+
+	this.tile = tile;
 
 
-		// FIXME - rework to allow for lox specific projection adjustments to terrain grid ans UVs
-		// remove use of Tiles.
+	this.add( tile );
 
-//		var terrainTileGeometry = new TerrainTileGeometry( width, height, dim.samples - 1, dim.lines - 1, terrain.data, 1, clip, self.offsets.z );
-
-//		terrainTileGeometry.translate( dim.xOrigin - self.offsets.x, dim.yOrigin + height - self.offsets.y, 0 );
-
-	return this;
+	this.hasOverlay = ( terrainData.bitmap  ) ? true : false;
 
 }
 
@@ -67,8 +62,10 @@ Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 		var bitmap = self.bitmap;
 
-		var overlayWidth  = texture.image.naturalWidth * bitmap.xDelta;
-		var overlayHeight = texture.image.naturalHeight * bitmap.yDelta;
+		// move these calls into LoxTerrainGeometry and set UVs correctly with rotational componenet
+
+		var overlayWidth  = texture.image.naturalWidth * bitmap.xx;
+		var overlayHeight = texture.image.naturalHeight * bitmap.yy;
 
 		var surveySize = self.tile.geometry.boundingBox.size();
 
@@ -120,13 +117,17 @@ Terrain.prototype.removed = function () {
 
 Terrain.prototype.setMaterial = function ( material ) {
 
-	this.material = material;
+	this.tile.material = material;
 
 };
 
 Terrain.prototype.setOpacity = function ( opacity ) {
 
-	this.material.opacity = opacity;
+	var material = this.tile.material;
+
+	material.opacity = opacity;
+	material.needsUpdate = true;
+
 	this.opacity = opacity;
 
 };

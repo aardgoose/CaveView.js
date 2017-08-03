@@ -11,13 +11,11 @@ import { BufferGeometry, Float32BufferAttribute, Vector3, Matrix4, Box3 } from '
 import { Colours } from '../core/Colours';
 import { upAxis } from '../core/constants';
 
-function LoxTerrainGeometry( dtm ) {
+function LoxTerrainGeometry( dtm, offsets ) {
 
 	BufferGeometry.call( this );
 
 	this.type = 'LoxTerrainGeometry';
-
-	console.log( 'dtm', dtm );
 
 	var heightData = dtm.data;
 
@@ -36,9 +34,6 @@ function LoxTerrainGeometry( dtm ) {
 
 	var zIndex = 0;
 
-	var x = 0;
-	var y = 0;
-
 	var lines = dtm.lines;
 	var samples = dtm.samples;
 
@@ -46,43 +41,31 @@ function LoxTerrainGeometry( dtm ) {
 
 	for ( iy = 0; iy < lines; iy++ ) {
 
-		x = 0;
-
 		for ( ix = 0; ix < samples; ix++ ) {
 
 			z = heightData[ zIndex++ ];
 
-			vertices.push( x, - y, z );
+			vertices.push( ix, lines - iy, z );
 
 			if ( z < minZ ) minZ = z;
 			if ( z > maxZ ) maxZ = z;
 
+			// FIXME - use calibration matrix for image overlay
 			uvs.push( ix / ( samples - 1 ) );
-			uvs.push( 1 - iy / ( samples - 1 ) );
+			uvs.push( 1 - iy / ( lines - 1 ) );
 
 		}
 
 	}
 
-	var m = new Matrix4().set(
-		dtm.xx, dtm.xy, 0, dtm.xOrigin,
-		dtm.yx, dtm.yy, 0, dtm.yOrigin,
-		0,      0,      1, 0,
-		0,      0,      0, 1
-	);
-
-	this.applyMatrix( m );
-
-	// avoid overhead of computeBoundingBox since we know x & y min and max values;
-
-//	this.boundingBox = new Box3().set( new Vector3( 0, 0, minZ ), new Vector3( width, -height, maxZ ) );
-	this.computeBoundingBox();
-
 	// indices
 
-	for ( iy = 0; iy < lines; iy ++ ) {
+	var lx = samples - 1;
+	var ly = lines - 1;
 
-		for ( ix = 0; ix < samples; ix ++ ) {
+	for ( iy = 0; iy < ly; iy ++ ) {
+
+		for ( ix = 0; ix < lx; ix ++ ) {
 
 			var a = ix + samples * iy;
 			var b = ix + samples * ( iy + 1 );
@@ -117,7 +100,23 @@ function LoxTerrainGeometry( dtm ) {
 	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
+	// calibration data from terrain and local survey -> model - offsets
+
+	var m = new Matrix4().set(
+		dtm.xx, dtm.xy, 0, dtm.xOrigin - offsets.x,
+		dtm.yx, dtm.yy, 0, dtm.yOrigin - offsets.y,
+		0,      0,      1, - offsets.z,
+		0,      0,      0, 1
+	);
+
+	this.applyMatrix( m );
+
 	this.computeVertexNormals();
+	this.computeBoundingBox();
+
+	// avoid overhead of computeBoundingBox since we know x & y min and max values;
+
+	//	this.boundingBox = new Box3().set( new Vector3( 0, 0, minZ ), new Vector3( width, -height, maxZ ) );
 
 	var colourScale = Colours.terrain;
 	var colourRange = colourScale.length - 1;
@@ -149,7 +148,7 @@ function LoxTerrainGeometry( dtm ) {
 		colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
 
 		colour = colours[ colourIndex ];
-		console.log( colourIndex, colour );
+
 		var offset = i * 3;
 
 		buffer[ offset     ] = colour[ 0 ];

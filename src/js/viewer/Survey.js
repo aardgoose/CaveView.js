@@ -693,23 +693,21 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadTerrain ( cave ) {
 
-		if ( cave.hasTerrain === false ) {
+		if ( cave.hasTerrain === false ) return;
 
-			self.terrain = null;
-			return;
-
-		}
-
-		self.terrain = new Terrain( cave.terrain, self.offsets );
+		var terrain = new Terrain( cave.terrain, self.offsets );
 
 		// get limits of terrain - ignoring maximum which distorts height shading etc
-		var terrainLimits = new Box3().copy( self.terrain.tile.geometry.boundingBox );
+		var terrainLimits = new Box3().copy( terrain.tile.geometry.boundingBox );
+
 		var modelLimits = self.modelLimits;
 
 		terrainLimits.min.z = modelLimits.min.z;
 		terrainLimits.max.z = modelLimits.max.z;
 
 		modelLimits.union( terrainLimits );
+
+		self.terrain = terrain;
 
 		return;
 

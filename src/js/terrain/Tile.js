@@ -1,5 +1,7 @@
 
 import { FEATURE_TERRAIN } from '../core/constants';
+import { terrainLib } from './terrainLib';
+import { Materials } from '../materials/Materials';
 
 import {
 	Vector3, Triangle, Box3,
@@ -27,26 +29,6 @@ function onUploadDropBuffer() {
 
 }
 
-function onBeforeRender( renderer ) {
-
-	var stencil = renderer.state.buffers.stencil;
-	var gl = renderer.context;
-
-	stencil.setTest( true );
-
-	stencil.setOp( gl.KEEP, gl.KEEP, gl.KEEP );
-	stencil.setFunc( gl.EQUAL, 0, 0xFFFF );
-
-}
-
-function onAfterRender( renderer ) {
-
-	var stencil = renderer.state.buffers.stencil;
-
-	stencil.setTest( false );
-
-}
-
 function Tile ( x, y, zoom, tileSet, clip ) {
 
 	this.x = x;
@@ -67,14 +49,16 @@ function Tile ( x, y, zoom, tileSet, clip ) {
 	this.boundingBox = null;
 	this.worldBoundingBox = null;
 
-	Mesh.call( this );
+	Mesh.call( this, new BufferGeometry(), Materials.getSurfaceMaterial() );
 
-	this.onBeforeRender = onBeforeRender;
-	this.onAfterRender = onAfterRender;
+	this.onBeforeRender = terrainLib.onBeforeRender;
+	this.onAfterRender = terrainLib.onAfterRender;
 
 	return this;
 
 }
+
+Tile.liveTiles = 0;
 
 Tile.prototype = Object.create( Mesh.prototype );
 
@@ -83,14 +67,11 @@ Tile.prototype.constructor = Tile;
 Tile.prototype.type = 'Tile';
 Tile.prototype.isTile = true;
 
-Tile.liveTiles = 0;
-Tile.overlayImages = new Map();
-
 Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox, material ) {
 
 	var attributeName;
 	var attribute;
-	var bufferGeometry = new BufferGeometry();
+	var bufferGeometry = this.geometry;
 
 	// assemble BufferGeometry from binary buffer objects transfered from worker
 
@@ -109,8 +90,6 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 		new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ),
 		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
 	);
-
-	this.geometry = bufferGeometry;
 
 	var attributes = bufferGeometry.attributes;
 

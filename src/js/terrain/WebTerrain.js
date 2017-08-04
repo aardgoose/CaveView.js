@@ -340,6 +340,7 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 		} else {
 
+			currentOverlay.flushCache();
 			currentOverlay.hideAttribution();
 
 		}
@@ -400,13 +401,14 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 
 	this.traverse( _setTileMeshMaterial );
 
-	material.opacity = this.opacity;
-	material.needsUpdate = true;
+	this.activeOverlay = null;
 
 	// use for commmon material access for opacity
 
+	material.opacity = this.opacity;
+	material.needsUpdate = true;
+
 	this.material = material;
-	this.activeOverlay = null;
 
 	return;
 

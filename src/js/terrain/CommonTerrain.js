@@ -45,7 +45,14 @@ CommonTerrain.prototype.getOpacity = function () {
 
 CommonTerrain.prototype.commonRemoved = function () {
 
-	this.setVisibility( false ); // remove any overlay attribution
+	var activeOverlay = this.activeOverlay;
+
+	if ( activeOverlay !== null ) {
+
+		activeOverlay.flushCache();
+		activeOverlay.hideAttribution();
+
+	}
 
 	if ( this.renderTarget !== null ) this.renderTarget.dispose();
 
@@ -55,6 +62,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	var material;
 	var hideAttribution = true;
+	var activeOverlay = this.activeOverlay;
 
 	switch ( mode ) {
 
@@ -66,7 +74,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	case SHADING_OVERLAY:
 
-		this.setOverlay( ( this.activeOverlay === null ? this.defaultOverlay : this.activeOverlay ), renderCallback );
+		this.setOverlay( ( activeOverlay === null ? this.defaultOverlay : activeOverlay ), renderCallback );
 		hideAttribution = false;
 
 		break;
@@ -90,9 +98,11 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	}
 
-	if ( hideAttribution && this.activeOverlay !== null ) {
+	if ( hideAttribution && activeOverlay !== null ) {
 
-		this.activeOverlay.hideAttribution();
+		activeOverlay.flushCache();
+		activeOverlay.hideAttribution();
+
 		this.activeOverlay = null;
 
 	}

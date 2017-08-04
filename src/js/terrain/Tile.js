@@ -163,7 +163,7 @@ Tile.prototype.empty = function () {
 	if ( this.geometry ) {
 
 		this.geometry.dispose();
-		this.geometry = null;
+		this.geometry = new BufferGeometry();
 
 	}
 

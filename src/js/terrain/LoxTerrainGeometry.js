@@ -7,7 +7,7 @@
  * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
  */
 
-import { BufferGeometry, Float32BufferAttribute, Vector3, Box3 } from '../../../../three.js/src/Three';
+import { BufferGeometry, Float32BufferAttribute, Vector3 } from '../../../../three.js/src/Three';
 import { Colours } from '../core/Colours';
 import { upAxis } from '../core/constants';
 
@@ -51,7 +51,7 @@ function LoxTerrainGeometry( dtm, offsets ) {
 	var yOffset = dtm.yOrigin - offsets.y;
 	var zOffset =             - offsets.z;
 
-	var x, y, z;
+//	var x, y, z;
 
 	var lx = samples - 1;
 	var ly = lines - 1;
@@ -161,7 +161,7 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	this.addAttribute( 'color', new Float32BufferAttribute( buffer, 3 ) );
 
-};
+}
 
 LoxTerrainGeometry.prototype = Object.create( BufferGeometry.prototype );
 LoxTerrainGeometry.prototype.constructor = LoxTerrainGeometry;
@@ -182,7 +182,7 @@ LoxTerrainGeometry.prototype.setupUVs = function ( bitmap, image, offsets ) {
 	var width  = image.naturalWidth;
 	var height = image.naturalHeight;
 
-	var x, y, u, v, xOffset, yOffset;
+	var x, y, u, v;
 
 	var xOffset = - ( xx * bitmap.xOrigin + xy * bitmap.yOrigin );
 	var yOffset = - ( yx * bitmap.xOrigin + yy * bitmap.yOrigin );

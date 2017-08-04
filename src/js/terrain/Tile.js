@@ -91,7 +91,7 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
 	);
 
-	var attributes = bufferGeometry.attributes;
+	attributes = bufferGeometry.attributes;
 
 	// discard javascript attribute buffers after upload to GPU
 

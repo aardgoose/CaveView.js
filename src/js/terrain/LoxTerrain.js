@@ -1,10 +1,11 @@
 
 import { CommonTerrain } from './CommonTerrain';
 import { LoxTerrainGeometry } from './LoxTerrainGeometry';
+import { terrainLib } from './terrainLib';
+import { Materials } from '../materials/Materials';
+
 import { FEATURE_TERRAIN } from '../core/constants';
-import {
-	MeshLambertMaterial, TextureLoader, Mesh
-} from '../../../../three.js/src/Three';
+import { MeshLambertMaterial, TextureLoader, Mesh } from '../../../../three.js/src/Three';
 
 function LoxTerrain ( terrainData, offsets ) {
 
@@ -15,15 +16,14 @@ function LoxTerrain ( terrainData, offsets ) {
 	this.bitmap = terrainData.bitmap;
 	this.overlayMaterial = null;
 
-	//FIXME use a known material rather than getting a default material created
-
-	var tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ) );
+	var tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ), Materials.getSurfaceMaterial() );
 
 	tile.layers.set( FEATURE_TERRAIN );
 	tile.isTile = true;
+	tile.onBeforeRender = terrainLib.onBeforeRender;
+	tile.onAfterRender = terrainLib.onAfterRender;
 
 	this.tile = tile;
-
 
 	this.add( tile );
 
@@ -48,6 +48,7 @@ LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 	if ( this.overlayMaterial !== null ) {
 
 		this.setMaterial( this.overlayMaterial );
+
 		overlayLoadedCallback();
 
 		return;
@@ -60,7 +61,9 @@ LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	function _overlayLoaded( ) {
 
-		self.tile.geometry.setupUVs( self.bitmap, texture.image, self.offsets );
+		var bitmap = self.bitmap;
+
+		self.tile.geometry.setupUVs( bitmap, texture.image, self.offsets );
 
 		self.overlayMaterial = new MeshLambertMaterial(
 			{
@@ -69,6 +72,8 @@ LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 				opacity: self.opacity
 			}
 		);
+
+		bitmap.data = null;
 
 		self.setMaterial( self.overlayMaterial );
 

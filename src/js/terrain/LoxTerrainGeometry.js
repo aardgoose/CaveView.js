@@ -53,14 +53,17 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	var x, y, z;
 
+	var lx = samples - 1;
+	var ly = lines - 1;
+
 	for ( iy = 0; iy < lines; iy++ ) {
 
 		for ( ix = 0; ix < samples; ix++ ) {
 
 			z = heightData[ zIndex++ ];
 
-			x = ix * xx + ( lines - 1 - iy ) * xy + xOffset;
-			y = ix * yx + ( lines - 1 - iy ) * yy + yOffset;
+			x = ix * xx + ( ly - iy ) * xy + xOffset;
+			y = ix * yx + ( ly - iy ) * yy + yOffset;
 			z += zOffset;
 
 			vertices.push( x, y, z );
@@ -73,9 +76,6 @@ function LoxTerrainGeometry( dtm, offsets ) {
 	}
 
 	// indices
-
-	var lx = samples - 1;
-	var ly = lines - 1;
 
 	for ( iy = 0; iy < ly; iy ++ ) {
 
@@ -118,9 +118,7 @@ function LoxTerrainGeometry( dtm, offsets ) {
 	this.computeVertexNormals();
 	this.computeBoundingBox();
 
-	// avoid overhead of computeBoundingBox since we know x & y min and max values;
-
-	//	this.boundingBox = new Box3().set( new Vector3( 0, 0, minZ ), new Vector3( width, -height, maxZ ) );
+	// FIXME avoid overhead of computeBoundingBox since we know x & y min and max values;
 
 	var colourScale = Colours.terrain;
 	var colourRange = colourScale.length - 1;

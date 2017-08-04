@@ -7,7 +7,7 @@
  * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
  */
 
-import { BufferGeometry, Float32BufferAttribute, Vector3, Matrix4, Box3 } from '../../../../three.js/src/Three';
+import { BufferGeometry, Float32BufferAttribute, Vector3, Box3 } from '../../../../three.js/src/Three';
 import { Colours } from '../core/Colours';
 import { upAxis } from '../core/constants';
 
@@ -19,18 +19,17 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	var heightData = dtm.data;
 
-	var ix, iy, i, z, l;
+	var ix, iy, i, l, x, y, z;
 
 	// buffers
 
 	var indices = [];
 	var vertices = [];
-	var uvs = [];
 
 	var minZ = Infinity;
 	var maxZ = -Infinity;
 
-	// generate vertices and uvs
+	// generate vertices
 
 	var zIndex = 0;
 
@@ -39,20 +38,35 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	var vertexCount = lines * samples;
 
+	// 2 x 2 scale & rotate callibration matrix
+
+	var xx  = dtm.xx;
+	var xy  = dtm.xy;
+	var yx  = dtm.yx;
+	var yy  = dtm.yy;
+
+	// offsets from dtm -> survey -> model
+
+	var xOffset = dtm.xOrigin - offsets.x;
+	var yOffset = dtm.yOrigin - offsets.y;
+	var zOffset =             - offsets.z;
+
+	var x, y, z;
+
 	for ( iy = 0; iy < lines; iy++ ) {
 
 		for ( ix = 0; ix < samples; ix++ ) {
 
 			z = heightData[ zIndex++ ];
 
-			vertices.push( ix, lines - iy, z );
+			x = ix * xx + ( lines - 1 - iy ) * xy + xOffset;
+			y = ix * yx + ( lines - 1 - iy ) * yy + yOffset;
+			z += zOffset;
+
+			vertices.push( x, y, z );
 
 			if ( z < minZ ) minZ = z;
 			if ( z > maxZ ) maxZ = z;
-
-			// FIXME - use calibration matrix for image overlay
-			uvs.push( ix / ( samples - 1 ) );
-			uvs.push( 1 - iy / ( lines - 1 ) );
 
 		}
 
@@ -98,18 +112,8 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	this.setIndex( indices );
 	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
 	// calibration data from terrain and local survey -> model - offsets
-
-	var m = new Matrix4().set(
-		dtm.xx, dtm.xy, 0, dtm.xOrigin - offsets.x,
-		dtm.yx, dtm.yy, 0, dtm.yOrigin - offsets.y,
-		0,      0,      1, - offsets.z,
-		0,      0,      0, 1
-	);
-
-	this.applyMatrix( m );
 
 	this.computeVertexNormals();
 	this.computeBoundingBox();
@@ -159,9 +163,56 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	this.addAttribute( 'color', new Float32BufferAttribute( buffer, 3 ) );
 
-}
+};
 
 LoxTerrainGeometry.prototype = Object.create( BufferGeometry.prototype );
 LoxTerrainGeometry.prototype.constructor = LoxTerrainGeometry;
+
+LoxTerrainGeometry.prototype.setupUVs = function ( bitmap, image, offsets ) {
+
+	var det = bitmap.xx * bitmap.yy - bitmap.xy * bitmap.yx;
+
+	if ( det === 0 ) return false;
+
+	var xx =   bitmap.yy / det;
+	var xy = - bitmap.xy / det;
+	var yx = - bitmap.yx / det;
+	var yy =   bitmap.xx / det;
+
+	var vertices = this.getAttribute( 'position' ).array;
+
+	var width  = image.naturalWidth;
+	var height = image.naturalHeight;
+
+	var x, y, u, v, xOffset, yOffset;
+
+	var xOffset = - ( xx * bitmap.xOrigin + xy * bitmap.yOrigin );
+	var yOffset = - ( yx * bitmap.xOrigin + yy * bitmap.yOrigin );
+
+	var uvs = [];
+
+	for ( var i = 0; i < vertices.length; i += 3 ) {
+
+		x = vertices[ i ]     + offsets.x;
+		y = vertices[ i + 1 ] + offsets.y;
+
+		u = ( x * xx + y * xy + xOffset ) / width;
+		v = ( x * yx + y * yy + yOffset ) / height;
+
+		uvs.push( u, v );
+
+	}
+
+	var uvAttribute = this.getAttribute( 'uv' );
+
+	if ( uvAttribute !== undefined ) {
+
+		console.alert( 'replacing attribute uv' );
+
+	}
+
+	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+
+};
 
 export { LoxTerrainGeometry };

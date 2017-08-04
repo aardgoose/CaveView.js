@@ -60,28 +60,7 @@ LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	function _overlayLoaded( ) {
 
-		var bitmap = self.bitmap;
-
-		// FIXME - changes below + stencil code restoration ( maybe common tile code )?
-		// move these calls into LoxTerrainGeometry and set UVs correctly with rotational componenet
-
-		var overlayWidth  = texture.image.naturalWidth * bitmap.xx;
-		var overlayHeight = texture.image.naturalHeight * bitmap.yy;
-
-		var surveySize = self.tile.geometry.boundingBox.size();
-
-		// adjust overlay -> terrain sizing to reflect differences in geographical areas
-
-		texture.repeat.set( surveySize.x / overlayWidth, surveySize.y / overlayHeight );
-
-		// adjust overlay -> terrain offset to reflect differences in geographical origins
-
-		var surveyOrigin = self.tile.geometry.boundingBox.min;
-
-		var xOffset = surveyOrigin.x - bitmap.xOrigin + self.offsets.x;
-		var yOffset = surveyOrigin.y - bitmap.yOrigin + self.offsets.y;
-
-		texture.offset.set( xOffset / overlayWidth, yOffset / overlayHeight );
+		self.tile.geometry.setupUVs( self.bitmap, texture.image, self.offsets );
 
 		self.overlayMaterial = new MeshLambertMaterial(
 			{

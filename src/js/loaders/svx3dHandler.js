@@ -283,8 +283,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 	function cmd_STOP ( /* c */ ) {
 
-		if ( label ) label = '';
-
 		return true;
 
 	}

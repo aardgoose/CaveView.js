@@ -5,6 +5,8 @@ import {
 	NearestFilter
 } from '../../../../three.js/src/Three';
 
+// FIXME fix lifecycle of materials and textures - ensure disposal/caching as required
+// GPU resource leak etc.
 
 function Overlay ( overlayProvider, container ) {
 
@@ -19,6 +21,8 @@ function Overlay ( overlayProvider, container ) {
 		this.attribution = attribution;
 
 	}
+
+	this.materialCache = {};
 
 }
 
@@ -41,6 +45,19 @@ Overlay.prototype.hideAttribution = function () {
 
 Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
+	var self = this;
+	var key = x + ':' + y + ':' + z;
+
+	var material = this.materialCache[ key ];
+
+	if ( material !== undefined ) {
+
+		overlayLoaded( material );
+
+		return;
+
+	}
+
 	var url = this.provider.getUrl( x, y, z );
 
 	if ( url === null ) return;
@@ -58,9 +75,29 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 		material.map = texture;
 		material.needsUpdate = true;
 
+		self.materialCache[ key ] = material;
+
 		overlayLoaded( material );
 
 	}
+
+};
+
+Overlay.prototype.flushCache = function () {
+
+	var materialCache = this.materialCache;
+	var material;
+
+	for ( var name in materialCache ) {
+
+		material = materialCache[ name ];
+
+		material.map.dispose();
+		material.dispose();
+
+	}
+
+	this.materialCache = {};
 
 };
 

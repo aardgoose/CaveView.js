@@ -1,7 +1,7 @@
 {
-  "name": "caveview.js",
-  "version": "1.2.0",
 
+  "name": "CaveView",
+  "version": "1.2.1",
   "description": "3D Cave Survey Viewer",
   "scripts": {
     "build-main": "rollup -c",

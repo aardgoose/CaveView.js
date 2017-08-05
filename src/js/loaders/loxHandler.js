@@ -447,17 +447,17 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		var terrain = self.terrain;
 
-		terrain.data = data;
-		terrain.dimensions = {};
-
-		var dimensions = terrain.dimensions;
-
-		dimensions.samples = m_width;
-		dimensions.lines   = m_height;
-		dimensions.xOrigin = m_calib[ 0 ];
-		dimensions.yOrigin = m_calib[ 1 ];
-		dimensions.xDelta  = m_calib[ 2 ];
-		dimensions.yDelta  = m_calib[ 5 ];
+		terrain.dtm = {
+			data: data,
+			samples: m_width,
+			lines:   m_height,
+			xOrigin: m_calib[ 0 ],
+			yOrigin: m_calib[ 1 ],
+			xx:      m_calib[ 2 ],
+			xy:      m_calib[ 3 ],
+			yx:      m_calib[ 4 ],
+			yy:      m_calib[ 5 ]
+		};
 
 		self.hasTerrain = true;
 
@@ -468,12 +468,12 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		var f = new DataView( source, pos );
 		var m_calib = [];
 
-		m_calib[ 0 ] = f.getFloat64( 0,  true );
-		m_calib[ 1 ] = f.getFloat64( 8,  true );
-		m_calib[ 2 ] = f.getFloat64( 16, true );
-		m_calib[ 3 ] = f.getFloat64( 24, true );
-		m_calib[ 4 ] = f.getFloat64( 32, true );
-		m_calib[ 5 ] = f.getFloat64( 40, true );
+		m_calib[ 0 ] = f.getFloat64( 0,  true ); // x origin
+		m_calib[ 1 ] = f.getFloat64( 8,  true ); // y origin
+		m_calib[ 2 ] = f.getFloat64( 16, true ); // xx ( 2 x 2 ) rotate and scale matrix
+		m_calib[ 3 ] = f.getFloat64( 24, true ); // xy "
+		m_calib[ 4 ] = f.getFloat64( 32, true ); // yx "
+		m_calib[ 5 ] = f.getFloat64( 40, true ); // yy "
 
 		pos += 48;
 
@@ -488,9 +488,17 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		var imagePtr = readDataPtr();
 
-		readCalibration(); // m_calib
+		var m_calib = readCalibration();
 
-		self.terrain.bitmap = extractImage( imagePtr );
+		self.terrain.bitmap = {
+			image:   extractImage( imagePtr ),
+			xOrigin: m_calib[ 0 ],
+			yOrigin: m_calib[ 1 ],
+			xx:      m_calib[ 2 ],
+			xy:      m_calib[ 3 ],
+			yx:      m_calib[ 4 ],
+			yy:      m_calib[ 5 ]
+		};
 
 	}
 

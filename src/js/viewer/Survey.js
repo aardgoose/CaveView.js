@@ -24,9 +24,8 @@ import { Walls } from './Walls';
 import { DyeTraces } from './DyeTraces';
 import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
-import { Terrain } from '../terrain/Terrain';
+import { LoxTerrain } from '../terrain/LoxTerrain';
 import { WorkerPool } from '../workers/WorkerPool';
-import { TerrainTileGeometry }  from '../terrain/TerrainTileGeometry';
 
 import { Matrix4, Vector3, Box3, Object3D, TextureLoader, PointsMaterial } from '../../../../three.js/src/Three';
 
@@ -693,26 +692,21 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadTerrain ( cave ) {
 
-		if ( cave.hasTerrain === false ) {
+		if ( cave.hasTerrain === false ) return;
 
-			self.terrain = null;
-			return;
+		var terrain = new LoxTerrain( cave.terrain, self.offsets );
 
-		}
+		// get limits of terrain - ignoring maximum which distorts height shading etc
+		var terrainLimits = new Box3().copy( terrain.tile.geometry.boundingBox );
 
-		var terrain = cave.terrain;
+		var modelLimits = self.modelLimits;
 
-		var dim = terrain.dimensions;
+		terrainLimits.min.z = modelLimits.min.z;
+		terrainLimits.max.z = modelLimits.max.z;
 
-		var width  = ( dim.samples - 1 ) * dim.xDelta;
-		var height = ( dim.lines   - 1 ) * dim.yDelta;
-		var clip = { top: 0, bottom: 0, left: 0, right: 0, dtmOffset: 0 };
+		modelLimits.union( terrainLimits );
 
-		var terrainTileGeometry = new TerrainTileGeometry( width, height, dim.samples - 1, dim.lines - 1, terrain.data, 1, clip, self.offsets.z );
-
-		terrainTileGeometry.translate( dim.xOrigin - self.offsets.x, dim.yOrigin + height - self.offsets.y, 0 );
-
-		self.terrain = new Terrain().addTile( terrainTileGeometry, terrain.bitmap );
+		self.terrain = terrain;
 
 		return;
 
@@ -1457,9 +1451,14 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
-	var surveyToColourMap = SurveyColours.getSurveyColourMap( this.surveyTree, this.selectedSection );
+	var surveyTree = this.surveyTree;
+	var selectedSection = this.selectedSection;
 
-	if ( this.selectedSectionIds.size === 0 ) this.surveyTree.getSubtreeIds( this.selectedSection, this.selectedSectionIds );
+	if ( selectedSection === 0) selectedSection = surveyTree.id;
+
+	var surveyToColourMap = SurveyColours.getSurveyColourMap( surveyTree, selectedSection );
+
+	if ( this.selectedSectionIds.size === 0 ) this.surveyTree.getSubtreeIds( selectedSection, this.selectedSectionIds );
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 

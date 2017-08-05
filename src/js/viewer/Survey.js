@@ -1451,9 +1451,14 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
-	var surveyToColourMap = SurveyColours.getSurveyColourMap( this.surveyTree, this.selectedSection );
+	var surveyTree = this.surveyTree;
+	var selectedSection = this.selectedSection;
 
-	if ( this.selectedSectionIds.size === 0 ) this.surveyTree.getSubtreeIds( this.selectedSection, this.selectedSectionIds );
+	if ( selectedSection === 0) selectedSection = surveyTree.id;
+
+	var surveyToColourMap = SurveyColours.getSurveyColourMap( surveyTree, selectedSection );
+
+	if ( this.selectedSectionIds.size === 0 ) this.surveyTree.getSubtreeIds( selectedSection, this.selectedSectionIds );
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 

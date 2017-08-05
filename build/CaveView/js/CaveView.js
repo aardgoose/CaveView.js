@@ -2527,7 +2527,7 @@ Object.assign( Vector3.prototype, {
 
 } );
 
-var VERSION = '1.2.0';
+var VERSION = '1.2.1';
 
 var MATERIAL_LINE       = 1;
 var MATERIAL_SURFACE    = 2;
@@ -46756,7 +46756,14 @@ CommonTerrain.prototype.getOpacity = function () {
 
 CommonTerrain.prototype.commonRemoved = function () {
 
-	this.setVisibility( false ); // remove any overlay attribution
+	var activeOverlay = this.activeOverlay;
+
+	if ( activeOverlay !== null ) {
+
+		activeOverlay.flushCache();
+		activeOverlay.hideAttribution();
+
+	}
 
 	if ( this.renderTarget !== null ) this.renderTarget.dispose();
 
@@ -46766,6 +46773,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	var material;
 	var hideAttribution = true;
+	var activeOverlay = this.activeOverlay;
 
 	switch ( mode ) {
 
@@ -46777,7 +46785,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	case SHADING_OVERLAY:
 
-		this.setOverlay( ( this.activeOverlay === null ? this.defaultOverlay : this.activeOverlay ), renderCallback );
+		this.setOverlay( ( activeOverlay === null ? this.defaultOverlay : activeOverlay ), renderCallback );
 		hideAttribution = false;
 
 		break;
@@ -46801,9 +46809,11 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	}
 
-	if ( hideAttribution && this.activeOverlay !== null ) {
+	if ( hideAttribution && activeOverlay !== null ) {
 
-		this.activeOverlay.hideAttribution();
+		activeOverlay.flushCache();
+		activeOverlay.hideAttribution();
+
 		this.activeOverlay = null;
 
 	}
@@ -46918,448 +46928,346 @@ CommonTerrain.prototype.getHeight = function () {
 
 // EOF
 
-// preallocated for projected area calculations
+/**
+ * @author Angus Sawyer
+ * @author mrdoob / http://mrdoob.com/
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
+ */
 
-var A$1 = new Vector3();
-var B$1 = new Vector3();
-var C$1 = new Vector3();
-var D$1 = new Vector3();
+function LoxTerrainGeometry( dtm, offsets ) {
 
-var T1$1 = new Triangle( A$1, B$1, C$1 );
-var T2$1 = new Triangle( A$1, C$1, D$1 );
+	BufferGeometry.call( this );
 
-function onUploadDropBuffer() {
+	this.type = 'LoxTerrainGeometry';
 
-	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
-	this.array = null;
+	var heightData = dtm.data;
 
-}
+	var ix, iy, i, l, x, y, z;
 
-function onBeforeRender$1( renderer ) {
+	// buffers
 
-	var stencil = renderer.state.buffers.stencil;
-	var gl = renderer.context;
+	var indices = [];
+	var vertices = [];
 
-	stencil.setTest( true );
+	var minZ = Infinity;
+	var maxZ = -Infinity;
 
-	stencil.setOp( gl.KEEP, gl.KEEP, gl.KEEP );
-	stencil.setFunc( gl.EQUAL, 0, 0xFFFF );
+	// generate vertices
 
-}
+	var zIndex = 0;
 
-function onAfterRender$1( renderer ) {
+	var lines = dtm.lines;
+	var samples = dtm.samples;
 
-	var stencil = renderer.state.buffers.stencil;
+	var vertexCount = lines * samples;
 
-	stencil.setTest( false );
+	// 2 x 2 scale & rotate callibration matrix
 
-}
+	var xx  = dtm.xx;
+	var xy  = dtm.xy;
+	var yx  = dtm.yx;
+	var yy  = dtm.yy;
 
-function Tile ( x, y, zoom, tileSet, clip ) {
+	// offsets from dtm -> survey -> model
 
-	this.x = x;
-	this.y = y;
+	var xOffset = dtm.xOrigin - offsets.x;
+	var yOffset = dtm.yOrigin - offsets.y;
+	var zOffset =             - offsets.z;
 
-	this.zoom    = zoom;
-	this.tileSet = tileSet;
-	this.clip    = clip;
+//	var x, y, z;
 
-	this.canZoom       = true;
-	this.evicted       = false;
-	this.replaced      = false;
-	this.evictionCount = 1;
-	this.resurrectionPending = false;
-	this.childrenLoading = 0;
-	this.childErrors     = 0;
+	var lx = samples - 1;
+	var ly = lines - 1;
 
-	this.boundingBox = null;
-	this.worldBoundingBox = null;
+	for ( iy = 0; iy < lines; iy++ ) {
 
-	Mesh.call( this );
+		for ( ix = 0; ix < samples; ix++ ) {
 
-	this.onBeforeRender = onBeforeRender$1;
-	this.onAfterRender = onAfterRender$1;
+			z = heightData[ zIndex++ ];
 
-	return this;
+			x = ix * xx + ( ly - iy ) * xy + xOffset;
+			y = ix * yx + ( ly - iy ) * yy + yOffset;
+			z += zOffset;
 
-}
+			vertices.push( x, y, z );
 
-Tile.prototype = Object.create( Mesh.prototype );
-
-Tile.prototype.constructor = Tile;
-
-Tile.prototype.type = 'Tile';
-Tile.prototype.isTile = true;
-
-Tile.liveTiles = 0;
-Tile.overlayImages = new Map();
-
-Tile.prototype.create = function ( terrainTileGeometry ) {
-
-	terrainTileGeometry.computeBoundingBox();
-
-	this.geometry = terrainTileGeometry;
-
-	this.createCommon();
-
-	return this;
-
-};
-
-Tile.prototype.createCommon = function () {
-
-	var attributes = this.geometry.attributes;
-
-	// discard javascript attribute buffers after upload to GPU
-	for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
-
-	this.geometry.index.onUpload( onUploadDropBuffer );
-
-	this.layers.set( FEATURE_TERRAIN );
-
-};
-
-Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox, material ) {
-
-	var attributeName;
-	var attribute;
-	var bufferGeometry = new BufferGeometry();
-
-	// assemble BufferGeometry from binary buffer objects transfered from worker
-
-	for ( attributeName in attributes ) {
-
-		attribute = attributes[ attributeName ];
-		bufferGeometry.addAttribute( attributeName, new Float32BufferAttribute( attribute.array, attribute.itemSize ) );
-
-	}
-
-	bufferGeometry.setIndex( new Uint16BufferAttribute( index, 1 ) );
-
-	// use precalculated bounding box rather than recalculating it here.
-
-	bufferGeometry.boundingBox = new Box3(
-		new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ),
-		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
-	);
-
-	this.geometry = bufferGeometry;
-
-	this.createCommon();
-	this.material = material;
-
-	return this;
-
-};
-
-Tile.prototype.getWorldBoundingBox = function () {
-
-	var boundingBox;
-
-	if ( this.worldBoundingBox === null ) {
-
-		this.updateMatrixWorld();
-
-		boundingBox = this.getBoundingBox().clone();
-		boundingBox.applyMatrix4( this.matrixWorld );
-
-		this.worldBoundingBox = boundingBox;
-
-	}
-
-	return this.worldBoundingBox;
-
-};
-
-Tile.prototype.getBoundingBox = function () {
-
-	var boundingBox;
-
-	if ( this.boundingBox === null ) {
-
-		boundingBox = this.geometry.boundingBox.clone();
-
-		var adj = 5; // adjust to cope with overlaps // FIXME - was resolution
-
-		boundingBox.min.x += adj;
-		boundingBox.min.y += adj;
-		boundingBox.max.x -= adj;
-		boundingBox.max.y -= adj;
-
-		this.boundingBox = boundingBox;
-
-	}
-
-	return this.boundingBox;
-
-};
-
-Tile.prototype.empty = function () {
-
-	this.isMesh = false;
-
-	if ( ! this.boundingBox ) {
-
-		console.warn( 'FIXUP :', this.x, this.y );
-		this.getWorldBoundingBox();
-
-	}
-
-	if ( this.geometry ) {
-
-		this.geometry.dispose();
-		this.geometry = null;
-
-	}
-
-	--Tile.liveTiles;
-
-};
-
-Tile.prototype.evict = function () {
-
-	this.evictionCount++;
-	this.evicted = true;
-	this.replaced = false;
-
-	this.empty();
-
-};
-
-Tile.prototype.setReplaced = function () {
-
-	this.evicted = false;
-	this.replaced = true;
-
-	this.empty();
-
-};
-
-
-Tile.prototype.setPending = function ( parentTile ) {
-
-	if ( parentTile && this.parent === null ) {
-
-		parentTile.add( this );
-
-	}
-
-	this.parent.childrenLoading++;
-
-	this.isMesh = false;
-	this.evicted = false;
-
-};
-
-Tile.prototype.setFailed = function () {
-
-	var parent = this.parent;
-
-	parent.childErrors++;
-	parent.childrenLoading--;
-	parent.canZoom = false;
-
-	parent.remove( this );
-
-};
-
-Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
-
-	var parent = this.parent;
-	var tilesWaiting = 0;
-
-	if ( --parent.childrenLoading === 0 ) { // this tile and all siblings loaded
-
-		if ( parent.childErrors === 0 ) { // all loaded without error
-
-			if ( parent.isTile ) parent.setReplaced();
-
-			var siblings = parent.children;
-
-			for ( var i = 0, l = siblings.length; i < l; i++ ) {
-
-				var sibling = siblings[ i ];
-
-				if ( sibling.replaced || sibling.evicted ) continue;
-
-				if ( overlay === null ) {
-
-					sibling.isMesh = true;
-					Tile.liveTiles++;
-
-				} else {
-
-					// delay finalising until overlays loaded - avoids flash of raw surface
-					sibling.setOverlay( overlay, opacity, _completed );
-					tilesWaiting++;
-
-				}
-
-			}
-
-			if ( tilesWaiting === 0 ) renderCallback();
-
-			return true;
-
-		} else {
-
-			parent.remove( this );
+			if ( z < minZ ) minZ = z;
+			if ( z > maxZ ) maxZ = z;
 
 		}
 
 	}
 
-	return false;
+	// indices
 
-	function _completed( tile ) {
+	for ( iy = 0; iy < ly; iy ++ ) {
 
-		tile.isMesh = true;
-		Tile.liveTiles++;
+		for ( ix = 0; ix < lx; ix ++ ) {
 
-		if ( --tilesWaiting === 0 ) renderCallback();
+			var a = ix + samples * iy;
+			var b = ix + samples * ( iy + 1 );
+			var c = ( ix + 1 ) + samples * ( iy + 1 );
+			var d = ( ix + 1 ) + samples * iy;
+
+			// faces - render each quad such that the shared diagonal edge has the minimum length - gives a smother terrain surface
+			// diagonals b - d, a - c
+
+			var d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] );  // diff in Z values between diagonal vertices
+			var d2 = Math.abs( vertices[ b * 3 + 2 ] - vertices[ c * 3 + 2 ] );  // diff in Z values between diagonal vertices
+
+			if ( d1 < d2 ) {
+
+				indices.push( a, b, d );
+				indices.push( b, c, d );
+
+			} else {
+
+				indices.push( a, b, c );
+				indices.push( c, d, a );
+
+			}
+
+		}
+
+	}
+
+	// build geometry
+
+	this.setIndex( indices );
+	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+
+	// calibration data from terrain and local survey -> model - offsets
+
+	this.computeVertexNormals();
+	this.computeBoundingBox();
+
+	// FIXME avoid overhead of computeBoundingBox since we know x & y min and max values;
+
+	var colourScale = Colours.terrain;
+	var colourRange = colourScale.length - 1;
+
+	var colourIndex;
+	var dotProduct;
+
+	var normal = this.getAttribute( 'normal' );
+	var vNormal = new Vector3();
+
+	var buffer = new Float32Array( vertexCount * 3 );
+	var colours = [];
+	var colour;
+
+	// convert scale to float values
+
+	for ( i = 0, l = colourScale.length; i < l; i++ ) {
+
+		colour = colourScale[ i ];
+		colours.push( [ colour[ 0 ] / 255, colour[ 1 ] / 255, colour[ 2 ] / 255 ] );
+
+	}
+
+	for ( i = 0; i < vertexCount; i++ ) {
+
+		vNormal.fromArray( normal.array, i * 3 );
+
+		dotProduct = vNormal.dot( upAxis );
+		colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
+
+		colour = colours[ colourIndex ];
+
+		var offset = i * 3;
+
+		buffer[ offset     ] = colour[ 0 ];
+		buffer[ offset + 1 ] = colour[ 1 ];
+		buffer[ offset + 2 ] = colour[ 2 ];
+
+	}
+
+	this.addAttribute( 'color', new Float32BufferAttribute( buffer, 3 ) );
+
+}
+
+LoxTerrainGeometry.prototype = Object.create( BufferGeometry.prototype );
+LoxTerrainGeometry.prototype.constructor = LoxTerrainGeometry;
+
+LoxTerrainGeometry.prototype.setupUVs = function ( bitmap, image, offsets ) {
+
+	var det = bitmap.xx * bitmap.yy - bitmap.xy * bitmap.yx;
+
+	if ( det === 0 ) return false;
+
+	var xx =   bitmap.yy / det;
+	var xy = - bitmap.xy / det;
+	var yx = - bitmap.yx / det;
+	var yy =   bitmap.xx / det;
+
+	var vertices = this.getAttribute( 'position' ).array;
+
+	var width  = image.naturalWidth;
+	var height = image.naturalHeight;
+
+	var x, y, u, v;
+
+	var xOffset = - ( xx * bitmap.xOrigin + xy * bitmap.yOrigin );
+	var yOffset = - ( yx * bitmap.xOrigin + yy * bitmap.yOrigin );
+
+	var uvs = [];
+
+	for ( var i = 0; i < vertices.length; i += 3 ) {
+
+		x = vertices[ i ]     + offsets.x;
+		y = vertices[ i + 1 ] + offsets.y;
+
+		u = ( x * xx + y * xy + xOffset ) / width;
+		v = ( x * yx + y * yy + yOffset ) / height;
+
+		uvs.push( u, v );
+
+	}
+
+	var uvAttribute = this.getAttribute( 'uv' );
+
+	if ( uvAttribute !== undefined ) {
+
+		console.alert( 'replacing attribute uv' );
+
+	}
+
+	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+
+};
+
+var terrainLib = {
+
+	onBeforeRender: function ( renderer ) {
+
+		var stencil = renderer.state.buffers.stencil;
+		var gl = renderer.context;
+
+		stencil.setTest( true );
+
+		stencil.setOp( gl.KEEP, gl.KEEP, gl.KEEP );
+		stencil.setFunc( gl.EQUAL, 0, 0xFFFF );
+
+	},
+
+	onAfterRender: function ( renderer ) {
+
+		var stencil = renderer.state.buffers.stencil;
+
+		stencil.setTest( false );
 
 	}
 
 };
 
-Tile.prototype.removed = function () {
-
-	if ( this.geometry ) this.geometry.dispose();
-
-};
-
-Tile.prototype.setMaterial = function ( material ) {
-
-	this.material = material;
-
-};
-
-Tile.prototype.setOpacity = function ( opacity ) {
-
-	var material = this.material;
-
-	material.opacity = opacity;
-	material.needsUpdate = true;
-
-};
-
-Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
-
-	var self = this;
-
-	overlay.getTile( this.x, this.y, this.zoom, opacity, _overlayLoaded );
-
-	return;
-
-	function _overlayLoaded ( material ) {
-
-		self.material = material;
-		imageLoadedCallback( self );
-
-	}
-
-};
-
-Tile.prototype.projectedArea = function ( camera ) {
-
-	var boundingBox = this.getWorldBoundingBox();
-
-	var z = boundingBox.max.z;
-
-	A$1.copy( boundingBox.min ).setZ( z );
-	C$1.copy( boundingBox.max );
-
-	B$1.set( A$1.x, C$1.y, z );
-	D$1.set( C$1.x, A$1.y, z );
-
-// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
-// .clampScalar( -1, 1 );
-
-	A$1.project( camera );
-	B$1.project( camera );
-	C$1.project( camera );
-	D$1.project( camera );
-
-
-	return T1$1.area() + T2$1.area();
-
-};
-
-
-
-// EOF
-
-function Terrain () {
+function LoxTerrain ( terrainData, offsets ) {
 
 	CommonTerrain.call( this );
 
 	this.type = 'CV.Terrain';
-	this.tile = null;
+	this.offsets = offsets;
+	this.bitmap = terrainData.bitmap;
+	this.overlayMaterial = null;
 
-	return this;
+	var tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ), Materials$1.getSurfaceMaterial() );
+
+	tile.layers.set( FEATURE_TERRAIN );
+	tile.isTile = true;
+	tile.onBeforeRender = terrainLib.onBeforeRender;
+	tile.onAfterRender = terrainLib.onAfterRender;
+
+	this.tile = tile;
+
+	this.add( tile );
+
+	this.hasOverlay = ( terrainData.bitmap  ) ? true : false;
 
 }
 
-Terrain.prototype = Object.create( CommonTerrain.prototype );
+LoxTerrain.prototype = Object.create( CommonTerrain.prototype );
 
-Terrain.prototype.constructor = Terrain;
+LoxTerrain.prototype.constructor = LoxTerrain;
 
-Terrain.prototype.isTiled = false;
+LoxTerrain.prototype.isTiled = false;
 
-Terrain.prototype.isLoaded = function () {
+LoxTerrain.prototype.isLoaded = function () {
 
 	return true;
 
 };
 
-Terrain.prototype.addTile = function ( terrainTileGeometry, bitmap ) {
+LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
-	this.bitmap = bitmap;
+	if ( this.overlayMaterial !== null ) {
 
-	if ( bitmap !== undefined ) this.hasOverlay = true;
+		this.setMaterial( this.overlayMaterial );
 
-	var tile = new Tile().create( terrainTileGeometry );
+		overlayLoadedCallback();
 
-	this.add( tile );
-	this.tile = tile;
+		return;
 
-	return this;
+	}
+
+	var	texture = new TextureLoader().load( this.bitmap.image, _overlayLoaded );
+
+	var self = this;
+
+	function _overlayLoaded( ) {
+
+		var bitmap = self.bitmap;
+
+		self.tile.geometry.setupUVs( bitmap, texture.image, self.offsets );
+
+		self.overlayMaterial = new MeshLambertMaterial(
+			{
+				map: texture,
+				transparent: true,
+				opacity: self.opacity
+			}
+		);
+
+		bitmap.data = null;
+
+		self.setMaterial( self.overlayMaterial );
+
+		overlayLoadedCallback();
+
+	}
 
 };
 
-Terrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
+LoxTerrain.prototype.removed = function () {
 
-	var loader  = new TextureLoader();
-	var	texture = loader.load( this.bitmap, overlayLoadedCallback );
+	var overlayMaterial = this.overlayMaterial;
 
-	this.setMaterial( new MeshLambertMaterial(
+	if ( overlayMaterial !== null ) {
 
-		{
-			map: texture,
-			transparent: true,
-			opacity: this.opacity
-		}
+		// dispose of overlay texture and material
 
-	) );
+		overlayMaterial.map.dispose();
+		overlayMaterial.dispose();
 
-};
+	}
 
-Terrain.prototype.removed = function () {
-
-	this.tile.removed();
 	this.commonRemoved();
 
 };
 
-Terrain.prototype.setMaterial = function ( material ) {
+LoxTerrain.prototype.setMaterial = function ( material ) {
 
-	this.tile.setMaterial( material );
+	this.tile.material = material;
 
 };
 
-Terrain.prototype.setOpacity = function ( opacity ) {
+LoxTerrain.prototype.setOpacity = function ( opacity ) {
 
-	this.tile.setOpacity( opacity );
+	var material = this.tile.material;
+
+	material.opacity = opacity;
+	material.needsUpdate = true;
+
 	this.opacity = opacity;
 
 };
@@ -47425,184 +47333,6 @@ WorkerPool.prototype.dispose = function () {
 	}
 
 };
-
-/**
- * @author Angus Sawyer
- * @author mrdoob / http://mrdoob.com/
- * @author Mugen87 / https://github.com/Mugen87
- *
- * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
- */
-
-function TerrainTileGeometry( width, height, widthSegments, heightSegments, terrainData, scale, clip, zOffset ) {
-
-	BufferGeometry.call( this );
-
-	this.type = 'TerrainTileGeometry';
-
-	var gridX = Math.floor( widthSegments ) || 1;
-	var gridY = Math.floor( heightSegments ) || 1;
-
-	var gridX1 = gridX + 1;
-	var gridY1 = gridY + 1;
-
-	var segment_width = width / gridX;
-	var segment_height = height / gridY;
-
-	var ix, iy, i, z, l;
-
-	// buffers
-
-	var indices = [];
-	var vertices = [];
-	var uvs = [];
-
-	var vertexCount = 0;
-
-	var minZ = Infinity;
-	var maxZ = -Infinity;
-
-	// generate vertices and uvs
-
-	var zIndex;
-
-	var x = 0;
-	var y = 0;
-
-	if ( clip.terrainWidth === undefined ) {
-
-		clip.terrainWidth  = gridX;
-		clip.terrainHeight = gridY;
-
-	}
-
-	if ( clip.dtmWidth === undefined ) {
-
-		clip.dtmWidth = clip.terrainWidth + 1;
-
-	}
-
-	var ixMax = gridX1 + clip.left;
-	var iyMax = gridY1 + clip.top;
-
-	for ( iy = clip.top; iy < iyMax; iy++ ) {
-
-		x = 0;
-
-		// dtmOffset adjusts for tiles smaller than DTM height maps
-
-		zIndex = iy * clip.dtmWidth + clip.left + clip.dtmOffset;
-
-		for ( ix = clip.left; ix < ixMax; ix++ ) {
-
-			z = terrainData[ zIndex++ ] / scale - zOffset; // scale and convert to origin centered coords
-
-			vertices.push( x, - y, z );
-			vertexCount++;
-
-			if ( z < minZ ) minZ = z;
-			if ( z > maxZ ) maxZ = z;
-
-			uvs.push( ix / clip.terrainWidth );
-			uvs.push( 1 - ( iy / clip.terrainHeight ) );
-
-			x += segment_width;
-
-		}
-
-		y += segment_height;
-
-	}
-
-	// avoid overhead of computeBoundingBox since we know x & y min and max values;
-
-	this.boundingBox = new Box3().set( new Vector3( 0, 0, minZ ), new Vector3( width, -height, maxZ ) );
-
-	// indices
-
-	for ( iy = 0; iy < gridY; iy ++ ) {
-
-		for ( ix = 0; ix < gridX; ix ++ ) {
-
-			var a = ix + gridX1 * iy;
-			var b = ix + gridX1 * ( iy + 1 );
-			var c = ( ix + 1 ) + gridX1 * ( iy + 1 );
-			var d = ( ix + 1 ) + gridX1 * iy;
-
-			// faces - render each quad such that the shared diagonal edge has the minimum length - gives a smother terrain surface
-			// diagonals b - d, a - c
-
-			var d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] );  // diff in Z values between diagonal vertices
-			var d2 = Math.abs( vertices[ b * 3 + 2 ] - vertices[ c * 3 + 2 ] );  // diff in Z values between diagonal vertices
-
-			if ( d1 < d2 ) {
-
-				indices.push( a, b, d );
-				indices.push( b, c, d );
-
-			} else {
-
-				indices.push( a, b, c );
-				indices.push( c, d, a );
-
-			}
-
-		}
-
-	}
-
-	// build geometry
-
-	this.setIndex( indices );
-	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
-
-	this.computeVertexNormals();
-
-	var colourScale = Colours.terrain;
-	var colourRange = colourScale.length - 1;
-
-	var colourIndex;
-	var dotProduct;
-
-	var normal = this.getAttribute( 'normal' );
-	var vNormal = new Vector3();
-
-	var buffer = new Float32Array( vertexCount * 3 );
-	var colours = [];
-	var colour;
-
-	// convert scale to float values
-
-	for ( i = 0, l = colourScale.length; i < l; i++ ) {
-
-		colour = colourScale[ i ];
-		colours.push( [ colour[ 0 ] / 255, colour[ 1 ] / 255, colour[ 2 ] / 255 ] );
-
-	}
-
-	for ( i = 0; i < vertexCount; i++ ) {
-
-		vNormal.fromArray( normal.array, i * 3 );
-
-		dotProduct = vNormal.dot( upAxis );
-		colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
-
-		colour = colours[ colourIndex ];
-		var offset = i * 3;
-
-		buffer[ offset     ] = colour[ 0 ];
-		buffer[ offset + 1 ] = colour[ 1 ];
-		buffer[ offset + 2 ] = colour[ 2 ];
-
-	}
-
-	this.addAttribute( 'color', new Float32BufferAttribute( buffer, 3 ) );
-
-}
-
-TerrainTileGeometry.prototype = Object.create( BufferGeometry.prototype );
-TerrainTileGeometry.prototype.constructor = TerrainTileGeometry;
 
 var zeroVector = new Vector3();
 
@@ -48267,26 +47997,21 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadTerrain ( cave ) {
 
-		if ( cave.hasTerrain === false ) {
+		if ( cave.hasTerrain === false ) return;
 
-			self.terrain = null;
-			return;
+		var terrain = new LoxTerrain( cave.terrain, self.offsets );
 
-		}
+		// get limits of terrain - ignoring maximum which distorts height shading etc
+		var terrainLimits = new Box3().copy( terrain.tile.geometry.boundingBox );
 
-		var terrain = cave.terrain;
+		var modelLimits = self.modelLimits;
 
-		var dim = terrain.dimensions;
+		terrainLimits.min.z = modelLimits.min.z;
+		terrainLimits.max.z = modelLimits.max.z;
 
-		var width  = ( dim.samples - 1 ) * dim.xDelta;
-		var height = ( dim.lines   - 1 ) * dim.yDelta;
-		var clip = { top: 0, bottom: 0, left: 0, right: 0, dtmOffset: 0 };
+		modelLimits.union( terrainLimits );
 
-		var terrainTileGeometry = new TerrainTileGeometry( width, height, dim.samples - 1, dim.lines - 1, terrain.data, 1, clip, self.offsets.z );
-
-		terrainTileGeometry.translate( dim.xOrigin - self.offsets.x, dim.yOrigin + height - self.offsets.y, 0 );
-
-		self.terrain = new Terrain().addTile( terrainTileGeometry, terrain.bitmap );
+		self.terrain = terrain;
 
 		return;
 
@@ -49031,9 +48756,14 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
-	var surveyToColourMap = SurveyColours.getSurveyColourMap( this.surveyTree, this.selectedSection );
+	var surveyTree = this.surveyTree;
+	var selectedSection = this.selectedSection;
 
-	if ( this.selectedSectionIds.size === 0 ) this.surveyTree.getSubtreeIds( this.selectedSection, this.selectedSectionIds );
+	if ( selectedSection === 0) selectedSection = surveyTree.id;
+
+	var surveyToColourMap = SurveyColours.getSurveyColourMap( surveyTree, selectedSection );
+
+	if ( this.selectedSectionIds.size === 0 ) this.surveyTree.getSubtreeIds( selectedSection, this.selectedSectionIds );
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials$1.getLineMaterial() );
 
@@ -49218,6 +48948,338 @@ function StationPopup ( station, position, depth ) {
 StationPopup.prototype = Object.create( Popup.prototype );
 
 StationPopup.prototype.constructor = StationPopup;
+
+// preallocated for projected area calculations
+
+var A$1 = new Vector3();
+var B$1 = new Vector3();
+var C$1 = new Vector3();
+var D$1 = new Vector3();
+
+var T1$1 = new Triangle( A$1, B$1, C$1 );
+var T2$1 = new Triangle( A$1, C$1, D$1 );
+
+function onUploadDropBuffer() {
+
+	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
+	this.array = null;
+
+}
+
+function Tile ( x, y, zoom, tileSet, clip ) {
+
+	this.x = x;
+	this.y = y;
+
+	this.zoom    = zoom;
+	this.tileSet = tileSet;
+	this.clip    = clip;
+
+	this.canZoom       = true;
+	this.evicted       = false;
+	this.replaced      = false;
+	this.evictionCount = 1;
+	this.resurrectionPending = false;
+	this.childrenLoading = 0;
+	this.childErrors     = 0;
+
+	this.boundingBox = null;
+	this.worldBoundingBox = null;
+
+	Mesh.call( this, new BufferGeometry(), Materials$1.getSurfaceMaterial() );
+
+	this.onBeforeRender = terrainLib.onBeforeRender;
+	this.onAfterRender = terrainLib.onAfterRender;
+
+	return this;
+
+}
+
+Tile.liveTiles = 0;
+
+Tile.prototype = Object.create( Mesh.prototype );
+
+Tile.prototype.constructor = Tile;
+
+Tile.prototype.type = 'Tile';
+Tile.prototype.isTile = true;
+
+Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox, material ) {
+
+	var attributeName;
+	var attribute;
+	var bufferGeometry = this.geometry;
+
+	// assemble BufferGeometry from binary buffer objects transfered from worker
+
+	for ( attributeName in attributes ) {
+
+		attribute = attributes[ attributeName ];
+		bufferGeometry.addAttribute( attributeName, new Float32BufferAttribute( attribute.array, attribute.itemSize ) );
+
+	}
+
+	bufferGeometry.setIndex( new Uint16BufferAttribute( index, 1 ) );
+
+	// use precalculated bounding box rather than recalculating it here.
+
+	bufferGeometry.boundingBox = new Box3(
+		new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ),
+		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
+	);
+
+	attributes = bufferGeometry.attributes;
+
+	// discard javascript attribute buffers after upload to GPU
+
+	for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
+
+	this.geometry.index.onUpload( onUploadDropBuffer );
+
+	this.layers.set( FEATURE_TERRAIN );
+
+	this.material = material;
+
+	return this;
+
+};
+
+Tile.prototype.getWorldBoundingBox = function () {
+
+	var boundingBox;
+
+	if ( this.worldBoundingBox === null ) {
+
+		this.updateMatrixWorld();
+
+		boundingBox = this.getBoundingBox().clone();
+		boundingBox.applyMatrix4( this.matrixWorld );
+
+		this.worldBoundingBox = boundingBox;
+
+	}
+
+	return this.worldBoundingBox;
+
+};
+
+Tile.prototype.getBoundingBox = function () {
+
+	var boundingBox;
+
+	if ( this.boundingBox === null ) {
+
+		boundingBox = this.geometry.boundingBox.clone();
+
+		var adj = 5; // adjust to cope with overlaps // FIXME - was resolution
+
+		boundingBox.min.x += adj;
+		boundingBox.min.y += adj;
+		boundingBox.max.x -= adj;
+		boundingBox.max.y -= adj;
+
+		this.boundingBox = boundingBox;
+
+	}
+
+	return this.boundingBox;
+
+};
+
+Tile.prototype.empty = function () {
+
+	this.isMesh = false;
+
+	if ( ! this.boundingBox ) {
+
+		console.warn( 'FIXUP :', this.x, this.y );
+		this.getWorldBoundingBox();
+
+	}
+
+	if ( this.geometry ) {
+
+		this.geometry.dispose();
+		this.geometry = new BufferGeometry();
+
+	}
+
+	--Tile.liveTiles;
+
+};
+
+Tile.prototype.evict = function () {
+
+	this.evictionCount++;
+	this.evicted = true;
+	this.replaced = false;
+
+	this.empty();
+
+};
+
+Tile.prototype.setReplaced = function () {
+
+	this.evicted = false;
+	this.replaced = true;
+
+	this.empty();
+
+};
+
+
+Tile.prototype.setPending = function ( parentTile ) {
+
+	if ( parentTile && this.parent === null ) {
+
+		parentTile.add( this );
+
+	}
+
+	this.parent.childrenLoading++;
+
+	this.isMesh = false;
+	this.evicted = false;
+
+};
+
+Tile.prototype.setFailed = function () {
+
+	var parent = this.parent;
+
+	parent.childErrors++;
+	parent.childrenLoading--;
+	parent.canZoom = false;
+
+	parent.remove( this );
+
+};
+
+Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
+
+	var parent = this.parent;
+	var tilesWaiting = 0;
+
+	if ( --parent.childrenLoading === 0 ) { // this tile and all siblings loaded
+
+		if ( parent.childErrors === 0 ) { // all loaded without error
+
+			if ( parent.isTile ) parent.setReplaced();
+
+			var siblings = parent.children;
+
+			for ( var i = 0, l = siblings.length; i < l; i++ ) {
+
+				var sibling = siblings[ i ];
+
+				if ( sibling.replaced || sibling.evicted ) continue;
+
+				if ( overlay === null ) {
+
+					sibling.isMesh = true;
+					Tile.liveTiles++;
+
+				} else {
+
+					// delay finalising until overlays loaded - avoids flash of raw surface
+					sibling.setOverlay( overlay, opacity, _completed );
+					tilesWaiting++;
+
+				}
+
+			}
+
+			if ( tilesWaiting === 0 ) renderCallback();
+
+			return true;
+
+		} else {
+
+			parent.remove( this );
+
+		}
+
+	}
+
+	return false;
+
+	function _completed( tile ) {
+
+		tile.isMesh = true;
+		Tile.liveTiles++;
+
+		if ( --tilesWaiting === 0 ) renderCallback();
+
+	}
+
+};
+
+Tile.prototype.removed = function () {
+
+	if ( this.geometry ) this.geometry.dispose();
+
+};
+
+Tile.prototype.setMaterial = function ( material ) {
+
+	this.material = material;
+
+};
+
+Tile.prototype.setOpacity = function ( opacity ) {
+
+	var material = this.material;
+
+	material.opacity = opacity;
+	material.needsUpdate = true;
+
+};
+
+Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
+
+	var self = this;
+
+	overlay.getTile( this.x, this.y, this.zoom, opacity, _overlayLoaded );
+
+	return;
+
+	function _overlayLoaded ( material ) {
+
+		self.material = material;
+		imageLoadedCallback( self );
+
+	}
+
+};
+
+Tile.prototype.projectedArea = function ( camera ) {
+
+	var boundingBox = this.getWorldBoundingBox();
+
+	var z = boundingBox.max.z;
+
+	A$1.copy( boundingBox.min ).setZ( z );
+	C$1.copy( boundingBox.max );
+
+	B$1.set( A$1.x, C$1.y, z );
+	D$1.set( C$1.x, A$1.y, z );
+
+// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
+// .clampScalar( -1, 1 );
+
+	A$1.project( camera );
+	B$1.project( camera );
+	C$1.project( camera );
+	D$1.project( camera );
+
+
+	return T1$1.area() + T2$1.area();
+
+};
+
+
+
+// EOF
 
 //import { Box3Helper } from '../core/Box3';
 var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
@@ -49549,6 +49611,7 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 		} else {
 
+			currentOverlay.flushCache();
 			currentOverlay.hideAttribution();
 
 		}
@@ -49609,13 +49672,14 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 
 	this.traverse( _setTileMeshMaterial );
 
-	material.opacity = this.opacity;
-	material.needsUpdate = true;
+	this.activeOverlay = null;
 
 	// use for commmon material access for opacity
 
+	material.opacity = this.opacity;
+	material.needsUpdate = true;
+
 	this.material = material;
-	this.activeOverlay = null;
 
 	return;
 
@@ -49824,6 +49888,9 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 // EOF
 
+// FIXME fix lifecycle of materials and textures - ensure disposal/caching as required
+// GPU resource leak etc.
+
 function Overlay ( overlayProvider, container ) {
 
 	this.provider = overlayProvider;
@@ -49837,6 +49904,8 @@ function Overlay ( overlayProvider, container ) {
 		this.attribution = attribution;
 
 	}
+
+	this.materialCache = {};
 
 }
 
@@ -49859,6 +49928,19 @@ Overlay.prototype.hideAttribution = function () {
 
 Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
+	var self = this;
+	var key = x + ':' + y + ':' + z;
+
+	var material = this.materialCache[ key ];
+
+	if ( material !== undefined ) {
+
+		overlayLoaded( material );
+
+		return;
+
+	}
+
 	var url = this.provider.getUrl( x, y, z );
 
 	if ( url === null ) return;
@@ -49876,9 +49958,29 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 		material.map = texture;
 		material.needsUpdate = true;
 
+		self.materialCache[ key ] = material;
+
 		overlayLoaded( material );
 
 	}
+
+};
+
+Overlay.prototype.flushCache = function () {
+
+	var materialCache = this.materialCache;
+	var material;
+
+	for ( var name in materialCache ) {
+
+		material = materialCache[ name ];
+
+		material.map.dispose();
+		material.dispose();
+
+	}
+
+	this.materialCache = {};
 
 };
 
@@ -52886,8 +52988,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 	function cmd_STOP ( /* c */ ) {
 
-		if ( label ) label = '';
-
 		return true;
 
 	}
@@ -54292,17 +54392,17 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		var terrain = self.terrain;
 
-		terrain.data = data;
-		terrain.dimensions = {};
-
-		var dimensions = terrain.dimensions;
-
-		dimensions.samples = m_width;
-		dimensions.lines   = m_height;
-		dimensions.xOrigin = m_calib[ 0 ];
-		dimensions.yOrigin = m_calib[ 1 ];
-		dimensions.xDelta  = m_calib[ 2 ];
-		dimensions.yDelta  = m_calib[ 5 ];
+		terrain.dtm = {
+			data: data,
+			samples: m_width,
+			lines:   m_height,
+			xOrigin: m_calib[ 0 ],
+			yOrigin: m_calib[ 1 ],
+			xx:      m_calib[ 2 ],
+			xy:      m_calib[ 3 ],
+			yx:      m_calib[ 4 ],
+			yy:      m_calib[ 5 ]
+		};
 
 		self.hasTerrain = true;
 
@@ -54313,12 +54413,12 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 		var f = new DataView( source, pos );
 		var m_calib = [];
 
-		m_calib[ 0 ] = f.getFloat64( 0,  true );
-		m_calib[ 1 ] = f.getFloat64( 8,  true );
-		m_calib[ 2 ] = f.getFloat64( 16, true );
-		m_calib[ 3 ] = f.getFloat64( 24, true );
-		m_calib[ 4 ] = f.getFloat64( 32, true );
-		m_calib[ 5 ] = f.getFloat64( 40, true );
+		m_calib[ 0 ] = f.getFloat64( 0,  true ); // x origin
+		m_calib[ 1 ] = f.getFloat64( 8,  true ); // y origin
+		m_calib[ 2 ] = f.getFloat64( 16, true ); // xx ( 2 x 2 ) rotate and scale matrix
+		m_calib[ 3 ] = f.getFloat64( 24, true ); // xy "
+		m_calib[ 4 ] = f.getFloat64( 32, true ); // yx "
+		m_calib[ 5 ] = f.getFloat64( 40, true ); // yy "
 
 		pos += 48;
 
@@ -54333,9 +54433,17 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 		var imagePtr = readDataPtr();
 
-		readCalibration(); // m_calib
+		var m_calib = readCalibration();
 
-		self.terrain.bitmap = extractImage( imagePtr );
+		self.terrain.bitmap = {
+			image:   extractImage( imagePtr ),
+			xOrigin: m_calib[ 0 ],
+			yOrigin: m_calib[ 1 ],
+			xx:      m_calib[ 2 ],
+			xy:      m_calib[ 3 ],
+			yx:      m_calib[ 4 ],
+			yy:      m_calib[ 5 ]
+		};
 
 	}
 

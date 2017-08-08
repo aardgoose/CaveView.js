@@ -7,7 +7,7 @@
  * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
  */
 
-import { BufferGeometry, Float32BufferAttribute, Vector3 } from '../../../../three.js/src/Three';
+import { BufferGeometry, Float32BufferAttribute, Vector3, Box3 } from '../../../../three.js/src/Three';
 import { Colours } from '../core/Colours';
 import { upAxis } from '../core/constants';
 
@@ -75,6 +75,11 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	}
 
+	var maxX = lx * xx + ly * xy + xOffset;
+	var maxY = lx * yx + ly * yy + yOffset;
+
+	this.boundingBox = new Box3( new Vector3( xOffset, yOffset, minZ ), new Vector3( maxX, maxY, maxZ ) );
+
 	// indices
 
 	for ( iy = 0; iy < ly; iy ++ ) {
@@ -116,9 +121,6 @@ function LoxTerrainGeometry( dtm, offsets ) {
 	// calibration data from terrain and local survey -> model - offsets
 
 	this.computeVertexNormals();
-	this.computeBoundingBox();
-
-	// FIXME avoid overhead of computeBoundingBox since we know x & y min and max values;
 
 	var colourScale = Colours.terrain;
 	var colourRange = colourScale.length - 1;

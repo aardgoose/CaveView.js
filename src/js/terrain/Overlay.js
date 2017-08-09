@@ -70,8 +70,6 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 		var material = new MeshLambertMaterial( { transparent: true, opacity: opacity, color: 0xffffff } );
 
-		texture.magFilter = NearestFilter;
-
 		material.map = texture;
 		material.needsUpdate = true;
 

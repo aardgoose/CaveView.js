@@ -2,11 +2,21 @@
 import { Tree } from '../core/Tree';
 import { Box3    } from '../../../../three.js/src/math/Box3';
 
-function RegionHandler ( filename, dataStream ) {
+function RegionHandler ( filename ) {
 
-	this.isRegion = true;
-	this.data = dataStream;
+	this.filename = filename;
 	this.box = new Box3();
+
+}
+
+RegionHandler.prototype.constructor = RegionHandler;
+
+RegionHandler.prototype.type = 'json';
+RegionHandler.prototype.isRegion = 'true';
+
+RegionHandler.prototype.parse = function ( dataStream ) {
+
+	this.data = dataStream;
 
 	var entrances = [];
 	var caves = this.data.caves;
@@ -36,9 +46,7 @@ function RegionHandler ( filename, dataStream ) {
 	this.data.entrances = entrances;
 	this.data.surveyTree = new Tree( this.data.title );
 
-}
-
-RegionHandler.prototype.constructor = RegionHandler;
+};
 
 RegionHandler.prototype.getSurvey = function () {
 

@@ -3,21 +3,30 @@
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE } from '../core/constants';
 import { Tree } from '../core/Tree';
 
-function Svx3dHandler ( fileName, dataStream, metadata ) {
+function Svx3dHandler ( fileName ) {
 
 	this.fileName   = fileName;
 	this.groups     = [];
 	this.surface    = [];
 	this.xGroups    = [];
 	this.surveyTree = new Tree();
-	this.isRegion   = false;
 	this.sourceCRS  = null;
 	this.targetCRS  = 'EPSG:3857'; // "web mercator"
 	this.projection = null;
-	this.metadata   = metadata;
 
-	var source    = dataStream;  // file data as arrrayBuffer
-	var pos       = 0;	         // file position
+}
+
+Svx3dHandler.prototype.constructor = Svx3dHandler;
+
+Svx3dHandler.prototype.type = 'arraybuffer';
+Svx3dHandler.prototype.isRegion = 'false';
+
+Svx3dHandler.prototype.parse = function ( dataStream, metadata ) {
+
+	this.metadata = metadata;
+
+	var source    = dataStream; // file data as arrrayBuffer
+	var pos       = 0;	        // file position
 
 	// read file header
 
@@ -93,7 +102,7 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	}
 
-	return;
+	return this;
 
 	function readLF () { // read until Line feed
 
@@ -130,9 +139,7 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	}
 
-}
-
-Svx3dHandler.prototype.constructor = Svx3dHandler;
+};
 
 Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 

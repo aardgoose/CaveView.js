@@ -108,13 +108,13 @@ function init ( domID, configuration ) { // public method
 	renderer.setClearColor( 0x000000 );
 	renderer.autoClear = false;
 
-	oCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 2000 );
+	oCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
 
 	oCamera.rotateOnAxis( upAxis, Math.PI / 2 );
 
 	initCamera( oCamera );
 
-	pCamera = new PerspectiveCamera( 75, width / height, 1, 2000 );
+	pCamera = new PerspectiveCamera( 75, width / height, 1, 16000 );
 
 	initCamera( pCamera );
 
@@ -440,7 +440,7 @@ function applyTerrainDatumShift( x ) {
 
 function showDeveloperInfo( /* x */ ) {
 
-	console.log( renderer.info );
+//	console.log( renderer.info );
 /*
 	var info = renderer.getResourceInfo();
 
@@ -550,7 +550,7 @@ function setCameraMode ( mode ) {
 		// calculate zoom from ratio of pCamera distance from target to base distance.
 		oCamera.zoom = CAMERA_OFFSET / offset.length();
 
-		offset.setLength( CAMERA_OFFSET );
+		offset.setLength( CAMERA_OFFSET * 2 );
 
 		camera = oCamera;
 

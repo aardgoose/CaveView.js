@@ -2527,7 +2527,7 @@ Object.assign( Vector3.prototype, {
 
 } );
 
-var VERSION = '1.2.1';
+var VERSION = '1.2.2';
 
 var MATERIAL_LINE       = 1;
 var MATERIAL_SURFACE    = 2;
@@ -47000,6 +47000,11 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	}
 
+	var maxX = lx * xx + ly * xy + xOffset;
+	var maxY = lx * yx + ly * yy + yOffset;
+
+	this.boundingBox = new Box3( new Vector3( xOffset, yOffset, minZ ), new Vector3( maxX, maxY, maxZ ) );
+
 	// indices
 
 	for ( iy = 0; iy < ly; iy ++ ) {
@@ -47041,9 +47046,6 @@ function LoxTerrainGeometry( dtm, offsets ) {
 	// calibration data from terrain and local survey -> model - offsets
 
 	this.computeVertexNormals();
-	this.computeBoundingBox();
-
-	// FIXME avoid overhead of computeBoundingBox since we know x & y min and max values;
 
 	var colourScale = Colours.terrain;
 	var colourRange = colourScale.length - 1;
@@ -49322,13 +49324,19 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 
 	var self = this;
 
-	new FileLoader().setResponseType( 'text' ).load( getEnvironmentValue( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded );
+	new FileLoader().setResponseType( 'text' ).load( getEnvironmentValue( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
 
 	function _tileSetLoaded( text ) {
 
 		self.tileSets = JSON.parse( text );
 
-		onReady( self ); // call handler
+		onReady(); // call handler
+
+	}
+
+	function _tileSetMissing( ) {
+
+		onReady(); // call handler
 
 	}
 
@@ -49352,6 +49360,8 @@ WebTerrain.prototype.hasCoverage = function () {
 	var tileSets = this.tileSets;
 	var tileSet;
 	var coverage;
+
+	if ( tileSets === undefined ) return false;
 
 	// iterate through available tileSets and pick the first match
 	var baseDirectory = getEnvironmentValue( 'terrainDirectory', '' );
@@ -49952,8 +49962,6 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 	function _textureLoaded( texture ) {
 
 		var material = new MeshLambertMaterial( { transparent: true, opacity: opacity, color: 0xffffff } );
-
-		texture.magFilter = NearestFilter;
 
 		material.map = texture;
 		material.needsUpdate = true;
@@ -50954,13 +50962,13 @@ function init ( domID, configuration ) { // public method
 	renderer.setClearColor( 0x000000 );
 	renderer.autoClear = false;
 
-	oCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 2000 );
+	oCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
 
 	oCamera.rotateOnAxis( upAxis, Math.PI / 2 );
 
 	initCamera( oCamera );
 
-	pCamera = new PerspectiveCamera( 75, width / height, 1, 2000 );
+	pCamera = new PerspectiveCamera( 75, width / height, 1, 16000 );
 
 	initCamera( pCamera );
 
@@ -51286,7 +51294,7 @@ function applyTerrainDatumShift( x ) {
 
 function showDeveloperInfo( /* x */ ) {
 
-	console.log( renderer.info );
+//	console.log( renderer.info );
 /*
 	var info = renderer.getResourceInfo();
 
@@ -51396,7 +51404,7 @@ function setCameraMode ( mode ) {
 		// calculate zoom from ratio of pCamera distance from target to base distance.
 		oCamera.zoom = CAMERA_OFFSET / offset.length();
 
-		offset.setLength( CAMERA_OFFSET );
+		offset.setLength( CAMERA_OFFSET * 2 );
 
 		camera = oCamera;
 
@@ -52708,21 +52716,30 @@ ProgressBar.prototype.End = function () {
 
 // Survex 3d file handler
 
-function Svx3dHandler ( fileName, dataStream, metadata ) {
+function Svx3dHandler ( fileName ) {
 
 	this.fileName   = fileName;
 	this.groups     = [];
 	this.surface    = [];
 	this.xGroups    = [];
 	this.surveyTree = new Tree();
-	this.isRegion   = false;
 	this.sourceCRS  = null;
 	this.targetCRS  = 'EPSG:3857'; // "web mercator"
 	this.projection = null;
-	this.metadata   = metadata;
 
-	var source    = dataStream;  // file data as arrrayBuffer
-	var pos       = 0;	         // file position
+}
+
+Svx3dHandler.prototype.constructor = Svx3dHandler;
+
+Svx3dHandler.prototype.type = 'arraybuffer';
+Svx3dHandler.prototype.isRegion = 'false';
+
+Svx3dHandler.prototype.parse = function ( dataStream, metadata ) {
+
+	this.metadata = metadata;
+
+	var source    = dataStream; // file data as arrrayBuffer
+	var pos       = 0;	        // file position
 
 	// read file header
 
@@ -52798,7 +52815,7 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	}
 
-	return;
+	return this;
 
 	function readLF () { // read until Line feed
 
@@ -52835,9 +52852,7 @@ function Svx3dHandler ( fileName, dataStream, metadata ) {
 
 	}
 
-}
-
-Svx3dHandler.prototype.constructor = Svx3dHandler;
+};
 
 Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
@@ -53947,7 +53962,7 @@ Svx3dHandler.prototype.getSurvey = function () {
 
 // EOF
 
-function loxHandler  ( fileName, dataStream, metadata ) {
+function loxHandler  ( fileName ) {
 
 	this.fileName     = fileName;
 	this.scraps       = [];
@@ -53955,10 +53970,19 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 	this.lineSegments = [];
 	this.xGroups      = [];
 	this.surveyTree   = new Tree( '', 0 );
-	this.isRegion     = false;
-	this.metadata     = metadata;
 	this.terrain      = {};
 	this.hasTerrain   = false;
+
+}
+
+loxHandler.prototype.constructor = loxHandler;
+
+loxHandler.prototype.type = 'arraybuffer';
+loxHandler.prototype.isRegion = 'false';
+
+loxHandler.prototype.parse = function( dataStream, metadata ) {
+
+	this.metadata     = metadata;
 
 	var lineSegments = [];
 	var stations     = [];
@@ -54035,7 +54059,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 	}
 
-	return;
+	return this;
 
 	// .lox parsing functions
 
@@ -54474,9 +54498,7 @@ function loxHandler  ( fileName, dataStream, metadata ) {
 
 	}
 
-}
-
-loxHandler.prototype.constructor = loxHandler;
+};
 
 loxHandler.prototype.getSurvey = function () {
 
@@ -54501,11 +54523,139 @@ loxHandler.prototype.getSurvey = function () {
 
 // EOF
 
-function RegionHandler ( filename, dataStream ) {
+// Survex kml file handler
 
-	this.isRegion = true;
-	this.data = dataStream;
+//import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE } from '../core/constants';
+function kmlHandler ( fileName ) {
+
+	this.fileName   = fileName;
+	this.groups     = [];
+	this.surface    = [];
+	this.xGroups    = [];
+	this.surveyTree = new Tree();
+	this.sourceCRS  = null;
+	this.targetCRS  = 'EPSG:3857'; // "web mercator"
+	this.projection = null;
+
+}
+
+kmlHandler.prototype.constructor = kmlHandler;
+
+kmlHandler.prototype.type = 'document';
+kmlHandler.prototype.isRegion = 'false';
+kmlHandler.prototype.mimeType = 'text/xml';
+
+kmlHandler.prototype.parse = function ( dataStream, metadata ) {
+
+	this.metadata = metadata;
+
+	console.log( 'x', dataStream );
+	for ( var n in dataStream ) {
+
+		console.log( ':', n );
+
+	}
+
+	return this;
+
+};
+
+
+kmlHandler.prototype.getLineSegments = function () {
+
+	var lineSegments = [];
+	var groups = this.groups;
+	var offsets = this.offsets;
+
+	for ( var i = 0, l = groups.length; i < l; i++ ) {
+
+		var g = groups[ i ];
+
+		for ( var v = 0, vMax = g.length - 1; v < vMax; v++ ) {
+
+			// create vertex pairs for each line segment.
+			// all vertices except first and last are duplicated.
+			var from = g[ v ];
+			var to   = g[ v + 1 ];
+
+
+			// move coordinates around origin
+
+			from.coords.x -= offsets.x;
+			from.coords.y -= offsets.y;
+			from.coords.z -= offsets.z;
+
+			var fromCoords = from.coords;
+			var toCoords = to.coords;
+
+			// skip repeated points ( co-located stations )
+			if ( fromCoords.x === toCoords.x && fromCoords.y === toCoords.y && fromCoords.z === toCoords.z ) continue;
+
+			lineSegments.push( { from: fromCoords, to: toCoords, type: to.type, survey: to.survey } );
+
+		}
+
+		// move coordinates around origin
+
+		to.coords.x -= offsets.x;
+		to.coords.y -= offsets.y;
+		to.coords.z -= offsets.z;
+
+	}
+
+	return lineSegments;
+
+};
+
+kmlHandler.prototype.getTerrainDimensions = function () {
+
+	return { lines: 0, samples: 0 };
+
+};
+
+kmlHandler.prototype.getTerrainBitmap = function () {
+
+	return false;
+
+};
+
+kmlHandler.prototype.getSurvey = function () {
+
+	return {
+		title: this.fileName,
+		surveyTree: this.surveyTree,
+		sourceCRS: this.sourceCRS,
+		targetCRS: this.targetCRS,
+		limits: this.limits,
+		offsets: this.offsets,
+		lineSegments: this.getLineSegments(),
+		crossSections: this.xGroups,
+		scraps: [],
+		hasTerrain: false,
+		metadata: this.metadata
+	};
+
+};
+
+
+
+// EOF
+
+function RegionHandler ( filename ) {
+
+	this.filename = filename;
 	this.box = new Box3();
+
+}
+
+RegionHandler.prototype.constructor = RegionHandler;
+
+RegionHandler.prototype.type = 'json';
+RegionHandler.prototype.isRegion = 'true';
+
+RegionHandler.prototype.parse = function ( dataStream ) {
+
+	this.data = dataStream;
 
 	var entrances = [];
 	var caves = this.data.caves;
@@ -54535,9 +54685,7 @@ function RegionHandler ( filename, dataStream ) {
 	this.data.entrances = entrances;
 	this.data.surveyTree = new Tree( this.data.title );
 
-}
-
-RegionHandler.prototype.constructor = RegionHandler;
+};
 
 RegionHandler.prototype.getSurvey = function () {
 
@@ -54573,42 +54721,52 @@ function CaveLoader ( callback, progress ) {
 
 CaveLoader.prototype.constructor = CaveLoader;
 
-CaveLoader.prototype.parseName = function ( name ) {
+CaveLoader.prototype.setHandler = function ( fileName ) {
 
-	var type;
-	var rev = name.split( '.' ).reverse();
+	var rev = fileName.split( '.' ).reverse();
 
 	this.extention = rev.shift().toLowerCase();
-	this.basename  = rev.reverse().join( '.' );
+
+	var handler;
 
 	switch ( this.extention ) {
 
 	case '3d':
 
-		type = 'arraybuffer';
+		handler = new Svx3dHandler( fileName );
 
 		break;
 
 	case 'lox':
 
-		type = 'arraybuffer';
+		handler = new loxHandler( fileName );
+
+		break;
+
+
+	case 'kml':
+
+		handler = new kmlHandler( fileName );
 
 		break;
 
 	case 'reg':
 	case 'json':
 
-		type = 'json';
+		handler = new RegionHandler( fileName );
 
 		break;
 
 	default:
 
 		console.warn( 'Cave: unknown response extension [', self.extention, ']' );
+		return false;
 
 	}
 
-	return type;
+	this.handler = handler;
+
+	return true;
 
 };
 
@@ -54617,30 +54775,34 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 	var self = this;
 	var prefix = getEnvironmentValue( 'surveyDirectory', '' );
 
-	// parse file name
-	var type = this.parseName( fileName );
+	// setup file handler
+	if ( ! this.setHandler( fileName ) ) {
 
-	if ( ! type ) {
-
-		alert( 'Cave: unknown file extension [', self.extention, ']' );
+		alert( 'Cave: unknown file extension [' + self.extention + ']' );
 		return false;
 
 	}
 
+	var handler = this.handler;
+
 	this.doneCount = 0;
-	this.taskCount = type === 'json' ? 1 : 2;
+	this.taskCount = handler.isRegion ? 1 : 2;
 
 	var loader = new FileLoader().setPath( prefix );
 
-	loader.setResponseType( type ).load( fileName, _dataLoaded, _progress, _error );
+	// request metadata file if not a region
 
-	// request metadata file if not a region (ie json file)
+	if ( ! handler.isRegion ) {
 
-	if ( type !== 'json' ) {
-
-		loader.setResponseType( 'json' ).load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _error );
+		loader.setResponseType( 'json' ).load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _metadataError );
 
 	}
+
+	if ( handler.mimeType !== undefined ) loader.setMimeType( 'text/xml' );
+
+	loader.setResponseType( handler.type );
+
+	loader.load( fileName, _dataLoaded, _progress, _dataError );
 
 	return true;
 
@@ -54649,7 +54811,7 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 		self.doneCount++;
 		self.dataResponse = result;
 
-		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
+		if ( self.doneCount === self.taskCount ) self.callHandler();
 
 	}
 
@@ -54658,7 +54820,7 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 		self.doneCount++;
 		self.metadataResponse = result;
 
-		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
+		if ( self.doneCount === self.taskCount ) self.callHandler();
 
 	}
 
@@ -54668,11 +54830,19 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 
 	}
 
-	function _error ( event ) {
+	function _dataError ( event ) {
 
 		self.doneCount++;
 
-		if ( event.currentTarget.responseType !== 'json' ) console.warn( ' error event', event );
+		console.warn( ' error event', event );
+
+		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
+
+	}
+
+	function _metadataError ( /* event */ ) {
+
+		self.doneCount++;
 
 		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
 
@@ -54685,15 +54855,14 @@ CaveLoader.prototype.loadFile = function ( file ) {
 	var self = this;
 	var fileName = file.name;
 
-	var type = this.parseName( fileName );
-
-	if ( ! type ) {
+	if ( ! this.setHandler( fileName ) ) {
 
 		alert( 'Cave: unknown file extension [' + this.extention +  ']' );
 		return false;
 
 	}
 
+	var type = this.handler.type;
 	var fLoader = new FileReader();
 
 	fLoader.addEventListener( 'load', _loaded );
@@ -54707,12 +54876,6 @@ CaveLoader.prototype.loadFile = function ( file ) {
 
 		break;
 
-	/*case 'arraybuffer':
-
-		fLoader.readAsArrayText( file );
-
-		break;*/
-
 	default:
 
 		alert( 'unknown file data type' );
@@ -54725,7 +54888,7 @@ CaveLoader.prototype.loadFile = function ( file ) {
 	function _loaded () {
 
 		self.dataResponse = fLoader.result;
-		self.callHandler( fileName );
+		self.callHandler();
 
 	}
 
@@ -54737,7 +54900,7 @@ CaveLoader.prototype.loadFile = function ( file ) {
 
 };
 
-CaveLoader.prototype.callHandler = function ( fileName ) {
+CaveLoader.prototype.callHandler = function () {
 
 	if ( this.dataResponse === null ) {
 
@@ -54746,41 +54909,13 @@ CaveLoader.prototype.callHandler = function ( fileName ) {
 
 	}
 
-	var handler;
 	var data = this.dataResponse;
 	var metadata = this.metadataResponse;
-
-	switch ( this.extention ) {
-
-	case '3d':
-
-		handler = new Svx3dHandler( fileName, data, metadata );
-
-		break;
-
-	case 'lox':
-
-		handler = new loxHandler( fileName, data, metadata );
-
-		break;
-
-	case 'reg':
-
-		handler = new RegionHandler( fileName, data );
-
-		break;
-
-	default:
-
-		alert( 'Cave: unknown response extension [', this.extention, ']' );
-		handler = false;
-
-	}
 
 	this.dataResponse = null;
 	this.metadataResponse = null;
 
-	this.callback( handler );
+	this.callback( this.handler.parse( data, metadata ) );
 
 };
 
@@ -54940,6 +55075,8 @@ function initSelectionPage () {
 	var depth = 0;
 	var currentHover = 0;
 
+	var stringCompare = new Intl.Collator( 'en-GB', { numeric: true } ).compare;
+
 	currentTop = surveyTree;
 
 	if ( ! isCaveLoaded ) return;
@@ -55004,8 +55141,12 @@ function initSelectionPage () {
 
 		var children = top.children;
 
-		// limit sorting to amounts that sort in reasonable time
-		if  ( children.length < 1000 ) children.sort( _sortSurveys );
+		if ( ! children.sorted ) {
+
+			children.sort( _sortSurveys );
+			children.sorted = true;
+
+		}
 
 		// FIXME need to add listener to allow survey list to be updated on dynamic load of survey
 
@@ -55090,7 +55231,7 @@ function initSelectionPage () {
 
 		function _sortSurveys ( s1, s2 ) {
 
-			return s1.name.localeCompare( s2.name, 'en-GB', { numeric: true } );
+			return stringCompare( s1.name, s2.name );
 
 		}
 

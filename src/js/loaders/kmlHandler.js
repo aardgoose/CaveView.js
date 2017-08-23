@@ -19,7 +19,7 @@ function kmlHandler ( fileName ) {
 kmlHandler.prototype.constructor = kmlHandler;
 
 kmlHandler.prototype.type = 'document';
-kmlHandler.prototype.isRegion = 'false';
+kmlHandler.prototype.isRegion = false;
 kmlHandler.prototype.mimeType = 'text/xml';
 
 kmlHandler.prototype.parse = function ( dataStream, metadata ) {

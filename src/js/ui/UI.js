@@ -165,6 +165,8 @@ function initSelectionPage () {
 	var depth = 0;
 	var currentHover = 0;
 
+	var stringCompare = new Intl.Collator( 'en-GB', { numeric: true } ).compare;
+
 	currentTop = surveyTree;
 
 	if ( ! isCaveLoaded ) return;
@@ -229,8 +231,12 @@ function initSelectionPage () {
 
 		var children = top.children;
 
-		// limit sorting to amounts that sort in reasonable time
-		if  ( children.length < 1000 ) children.sort( _sortSurveys );
+		if ( ! children.sorted ) {
+
+			children.sort( _sortSurveys );
+			children.sorted = true;
+
+		}
 
 		// FIXME need to add listener to allow survey list to be updated on dynamic load of survey
 
@@ -315,7 +321,7 @@ function initSelectionPage () {
 
 		function _sortSurveys ( s1, s2 ) {
 
-			return s1.name.localeCompare( s2.name, 'en-GB', { numeric: true } );
+			return stringCompare( s1.name, s2.name );
 
 		}
 

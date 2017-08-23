@@ -55,7 +55,7 @@ HeightMapLoader.prototype.load = function () {
 	xhr.addEventListener( 'error', this.errorCallback );
 
 	xhr.open( 'GET', this.tileFile );
-	xhr.responseType = 'arraybuffer'; // Must be after open() to keep IE happy.
+	xhr.responseType = 'arraybuffer';
 
 	xhr.send();
 

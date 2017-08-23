@@ -2,6 +2,7 @@
 import { getEnvironmentValue, replaceExtension } from '../core/lib';
 import { Svx3dHandler } from './svx3dHandler';
 import { loxHandler } from './loxHandler';
+import { kmlHandler } from './kmlHandler';
 import { RegionHandler } from './RegionHandler';
 import { FileLoader } from '../../../../three.js/src/Three';
 
@@ -23,42 +24,52 @@ function CaveLoader ( callback, progress ) {
 
 CaveLoader.prototype.constructor = CaveLoader;
 
-CaveLoader.prototype.parseName = function ( name ) {
+CaveLoader.prototype.setHandler = function ( fileName ) {
 
-	var type;
-	var rev = name.split( '.' ).reverse();
+	var rev = fileName.split( '.' ).reverse();
 
 	this.extention = rev.shift().toLowerCase();
-	this.basename  = rev.reverse().join( '.' );
+
+	var handler;
 
 	switch ( this.extention ) {
 
 	case '3d':
 
-		type = 'arraybuffer';
+		handler = new Svx3dHandler( fileName );
 
 		break;
 
 	case 'lox':
 
-		type = 'arraybuffer';
+		handler = new loxHandler( fileName );
+
+		break;
+
+
+	case 'kml':
+
+		handler = new kmlHandler( fileName );
 
 		break;
 
 	case 'reg':
 	case 'json':
 
-		type = 'json';
+		handler = new RegionHandler( fileName );
 
 		break;
 
 	default:
 
 		console.warn( 'Cave: unknown response extension [', self.extention, ']' );
+		return false;
 
 	}
 
-	return type;
+	this.handler = handler;
+
+	return true;
 
 };
 
@@ -67,30 +78,34 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 	var self = this;
 	var prefix = getEnvironmentValue( 'surveyDirectory', '' );
 
-	// parse file name
-	var type = this.parseName( fileName );
+	// setup file handler
+	if ( ! this.setHandler( fileName ) ) {
 
-	if ( ! type ) {
-
-		alert( 'Cave: unknown file extension [', self.extention, ']' );
+		alert( 'Cave: unknown file extension [' + self.extention + ']' );
 		return false;
 
 	}
 
+	var handler = this.handler;
+
 	this.doneCount = 0;
-	this.taskCount = type === 'json' ? 1 : 2;
+	this.taskCount = handler.isRegion ? 1 : 2;
 
 	var loader = new FileLoader().setPath( prefix );
 
-	loader.setResponseType( type ).load( fileName, _dataLoaded, _progress, _error );
+	// request metadata file if not a region
 
-	// request metadata file if not a region (ie json file)
+	if ( ! handler.isRegion ) {
 
-	if ( type !== 'json' ) {
-
-		loader.setResponseType( 'json' ).load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _error );
+		loader.setResponseType( 'json' ).load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _metadataError );
 
 	}
+
+	if ( handler.mimeType !== undefined ) loader.setMimeType( 'text/xml' );
+
+	loader.setResponseType( handler.type );
+
+	loader.load( fileName, _dataLoaded, _progress, _dataError );
 
 	return true;
 
@@ -99,7 +114,7 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 		self.doneCount++;
 		self.dataResponse = result;
 
-		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
+		if ( self.doneCount === self.taskCount ) self.callHandler();
 
 	}
 
@@ -108,7 +123,7 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 		self.doneCount++;
 		self.metadataResponse = result;
 
-		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
+		if ( self.doneCount === self.taskCount ) self.callHandler();
 
 	}
 
@@ -118,11 +133,19 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 
 	}
 
-	function _error ( event ) {
+	function _dataError ( event ) {
 
 		self.doneCount++;
 
-		if ( event.currentTarget.responseType !== 'json' ) console.warn( ' error event', event );
+		console.warn( ' error event', event );
+
+		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
+
+	}
+
+	function _metadataError ( /* event */ ) {
+
+		self.doneCount++;
 
 		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
 
@@ -135,15 +158,14 @@ CaveLoader.prototype.loadFile = function ( file ) {
 	var self = this;
 	var fileName = file.name;
 
-	var type = this.parseName( fileName );
-
-	if ( ! type ) {
+	if ( ! this.setHandler( fileName ) ) {
 
 		alert( 'Cave: unknown file extension [' + this.extention +  ']' );
 		return false;
 
 	}
 
+	var type = this.handler.type;
 	var fLoader = new FileReader();
 
 	fLoader.addEventListener( 'load', _loaded );
@@ -157,12 +179,6 @@ CaveLoader.prototype.loadFile = function ( file ) {
 
 		break;
 
-	/*case 'arraybuffer':
-
-		fLoader.readAsArrayText( file );
-
-		break;*/
-
 	default:
 
 		alert( 'unknown file data type' );
@@ -175,7 +191,7 @@ CaveLoader.prototype.loadFile = function ( file ) {
 	function _loaded () {
 
 		self.dataResponse = fLoader.result;
-		self.callHandler( fileName );
+		self.callHandler();
 
 	}
 
@@ -187,7 +203,7 @@ CaveLoader.prototype.loadFile = function ( file ) {
 
 };
 
-CaveLoader.prototype.callHandler = function ( fileName ) {
+CaveLoader.prototype.callHandler = function () {
 
 	if ( this.dataResponse === null ) {
 
@@ -196,41 +212,13 @@ CaveLoader.prototype.callHandler = function ( fileName ) {
 
 	}
 
-	var handler;
 	var data = this.dataResponse;
 	var metadata = this.metadataResponse;
-
-	switch ( this.extention ) {
-
-	case '3d':
-
-		handler = new Svx3dHandler( fileName, data, metadata );
-
-		break;
-
-	case 'lox':
-
-		handler = new loxHandler( fileName, data, metadata );
-
-		break;
-
-	case 'reg':
-
-		handler = new RegionHandler( fileName, data );
-
-		break;
-
-	default:
-
-		alert( 'Cave: unknown response extension [', this.extention, ']' );
-		handler = false;
-
-	}
 
 	this.dataResponse = null;
 	this.metadataResponse = null;
 
-	this.callback( handler );
+	this.callback( this.handler.parse( data, metadata ) );
 
 };
 

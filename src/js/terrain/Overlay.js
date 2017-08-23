@@ -1,8 +1,7 @@
 
 import {
 	TextureLoader,
-	MeshLambertMaterial,
-	NearestFilter
+	MeshLambertMaterial
 } from '../../../../three.js/src/Three';
 
 // FIXME fix lifecycle of materials and textures - ensure disposal/caching as required
@@ -69,8 +68,6 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 	function _textureLoaded( texture ) {
 
 		var material = new MeshLambertMaterial( { transparent: true, opacity: opacity, color: 0xffffff } );
-
-		texture.magFilter = NearestFilter;
 
 		material.map = texture;
 		material.needsUpdate = true;

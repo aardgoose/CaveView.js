@@ -19,7 +19,7 @@ function Svx3dHandler ( fileName ) {
 Svx3dHandler.prototype.constructor = Svx3dHandler;
 
 Svx3dHandler.prototype.type = 'arraybuffer';
-Svx3dHandler.prototype.isRegion = 'false';
+Svx3dHandler.prototype.isRegion = false;
 
 Svx3dHandler.prototype.parse = function ( dataStream, metadata ) {
 

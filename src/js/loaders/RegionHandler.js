@@ -12,7 +12,7 @@ function RegionHandler ( filename ) {
 RegionHandler.prototype.constructor = RegionHandler;
 
 RegionHandler.prototype.type = 'json';
-RegionHandler.prototype.isRegion = 'true';
+RegionHandler.prototype.isRegion = true;
 
 RegionHandler.prototype.parse = function ( dataStream ) {
 

@@ -51,13 +51,19 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 
 	var self = this;
 
-	new FileLoader().setResponseType( 'text' ).load( getEnvironmentValue( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded );
+	new FileLoader().setResponseType( 'text' ).load( getEnvironmentValue( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
 
 	function _tileSetLoaded( text ) {
 
 		self.tileSets = JSON.parse( text );
 
-		onReady( self ); // call handler
+		onReady(); // call handler
+
+	}
+
+	function _tileSetMissing( ) {
+
+		onReady(); // call handler
 
 	}
 
@@ -81,6 +87,8 @@ WebTerrain.prototype.hasCoverage = function () {
 	var tileSets = this.tileSets;
 	var tileSet;
 	var coverage;
+
+	if ( tileSets === undefined ) return false;
 
 	// iterate through available tileSets and pick the first match
 	var baseDirectory = getEnvironmentValue( 'terrainDirectory', '' );

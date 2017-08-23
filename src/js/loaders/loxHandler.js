@@ -18,7 +18,7 @@ function loxHandler  ( fileName ) {
 loxHandler.prototype.constructor = loxHandler;
 
 loxHandler.prototype.type = 'arraybuffer';
-loxHandler.prototype.isRegion = 'false';
+loxHandler.prototype.isRegion = false;
 
 loxHandler.prototype.parse = function( dataStream, metadata ) {
 

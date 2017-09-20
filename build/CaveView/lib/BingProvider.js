@@ -98,8 +98,8 @@ BingProvider.quadkey = function ( x, y, z ) {
 
 	return quadKey.join( '' );
 
-}
- 
+};
+
 BingProvider.prototype.getAttribution = function () {
 
 	var img = document.createElement( 'img' );
@@ -119,7 +119,7 @@ BingProvider.prototype.getUrl = function ( x, y, z ) {
 
 	var qk = BingProvider.quadkey( x, y, z );
 
-	thissubdomainIndex = ++this.ubdomainIndex % this.subdomainCount;
+	this.subdomainIndex = ++this.subdomainIndex % this.subdomainCount;
 
 	var url = urlTemplate.replace( '{subdomain}', this.subdomains[ this.subdomainIndex ] ).replace( '{quadkey}', qk );
 

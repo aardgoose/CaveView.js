@@ -23,20 +23,9 @@ BGSProvider.prototype.getUrl = function ( x, y, z ) {
 
 	x2 = x1 + tileSize;
 	y2 = y1 + tileSize;
-//BGS.50k.Linear.features
 
 	var url = 'https://map.bgs.ac.uk/arcgis/services/BGS_Detailed_Geology/MapServer/WMSServer?REQUEST=GetMap&VERSION=1.3.0&LAYERS=BGS.50k.Bedrock,BGS.50k.Linear.features&STYLES=default,default&FORMAT=image/png&CRS=EPSG:3857&WIDTH=256&HEIGHT=256';
-//	var url = 'https://map.bgs.ac.uk/arcgis/services/BGS_Detailed_Geology/MapServer/WMSServer?REQUEST=GetMap&VERSION=1.3.0&LAYERS=BGS.50k.Linear.features&STYLES=default&FORMAT=image/png&CRS=EPSG:3857&WIDTH=256&HEIGHT=256';
 	var bbox = '&BBOX=' + x1 + ',' + y1 + ',' + x2 + ',' + y2;
-
-	console.log( 'BGS: ', bbox );
-
-	//	var img = document.createElement( 'img' );
-
-	//	img.src = url + bbox;
-	//	img.crossOrigin = '';
-
-	//	document.body.appendChild( img );
 
 	return url + bbox;
 

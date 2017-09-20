@@ -14,6 +14,7 @@
 <script type="text/javascript" src="CaveView/lib/BingProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/OSMProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/NLSProvider.js" ></script>
+<script type="text/javascript" src="CaveView/lib/BGSProvider.js" ></script>
 
 <script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
 
@@ -26,11 +27,12 @@ function onload () {
 	CV.UI.init( "scene", { terrainDirectory: "/terrain/", surveyDirectory: "/surveys/", home: "/CaveView/" } );
 
 	CV.Viewer.addOverlay( 'OSM', new OSMProvider() );
+	CV.Viewer.addOverlay( 'BGS', new BGSProvider() );
 	CV.Viewer.addOverlay( 'NLS', new NLSProvider() ); // eslint-disable-line no-undef
 	CV.Viewer.addOverlay( 'Bing Aerial',  new BingProvider( 'Aerial' ) );
 	CV.Viewer.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey' ) );
 
-	CV.UI.loadCaveList( [ "BlueWater.lox", "P8_Master.3d", "all.3d", "Giants_Oxlow_Maskhill_System.3d", "Castleton_Master.3d", "Cheddar.lox", "Peak_Master_NoSurface.3d", "loser.3d" ] );
+	CV.UI.loadCaveList( [ "all.3d", "BlueWater.lox", "P8_Master.3d", "Giants_Oxlow_Maskhill_System.3d", "Castleton_Master.3d", "Cheddar.lox", "Peak_Master_NoSurface.3d", "loser.3d" ] );
 //	CV.UI.loadCave( "P8_Master.3d" );
 
 }

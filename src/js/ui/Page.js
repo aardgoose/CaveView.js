@@ -64,6 +64,7 @@ Page.position  = 0;
 Page.inHandler = false;
 Page.controls  = [];
 Page.frame = null;
+Page.seq = 0;
 
 Page.reset = function () {
 
@@ -292,21 +293,27 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 	var label = document.createElement( 'label' );
 	var cb    = document.createElement( 'input' );
+	var div   = document.createElement( 'div' );
+	var id = 'cv-' + Page.seq++;
 
-	label.textContent = title;
+	div.classList.add( 'cv-checkbox' );
 
 	cb.type    = 'checkbox';
 	cb.checked = obj[ property ];
+	cb.id = id;
+
+	label.textContent = title;
+	label.htmlFor = id;
 
 	this.addListener( cb, 'change', _checkboxChanged );
 
 	Page.controls[ property ] = cb;
+	div.appendChild( cb );
+	div.appendChild( label );
 
-	label.appendChild( cb );
+	this.page.appendChild( div );
 
-	this.page.appendChild( label );
-
-	return label;
+	return div;
 
 	function _checkboxChanged ( event ) {
 

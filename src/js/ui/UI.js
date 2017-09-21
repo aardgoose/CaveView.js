@@ -543,9 +543,12 @@ function initInfoPage () {
 
 	page.addHeader( 'Information' );
 
-	page.addText( 'CaveView v' + VERSION + ' - a work in progress 3d cave viewer for Survex (.3d) and Therion (.lox) models.' );
+	page.addText( 'CaveView v' + VERSION + '.' );
+	page.addText( 'A WebGL 3d cave viewer for Survex (.3d) and Therion (.lox) models.' );
 
-	page.addText( 'Requires a browser supporting WebGL (IE 11+ and most other recent browsers), no plugins required. Created using the THREE.js 3D library and chroma,js colour handling library.' );
+	page.addText( 'For more information see: ' );
+	page.addLink(  'https://aardgoose.github.io/CaveView.js/', 'CaveView on GitHub' );
+	page.addText( '© Angus Sawyer, 2017' );
 
 }
 

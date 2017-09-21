@@ -4,7 +4,7 @@
 */
 
 
-function BingProvider ( imagerySet ) {
+function BingProvider ( imagerySet, key ) {
 
 	this.urlTemplate = null;
 	this.subdomains = [];
@@ -14,13 +14,21 @@ function BingProvider ( imagerySet ) {
 	this.minZoom = null;
 	this.maxZoom = null;
 
+	// attribution DOM (added to async)
+	var div = document.createElement( 'div' );
+
+	div.classList.add( 'overlay-branding' );
+	div.style.lineHeight = '30px';
+
+	this.attribution = div;
+	this.OS = ( imagerySet === 'OrdnanceSurvey' );
+
 	var self = this;
 
 	var metadata;
 
 	var uriScheme = window.location.protocol.replace( ':' , '' );
 
-	var key = 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_';
 	var metaUrlTemplate = uriScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/{imagerySet}?include=imageryProviders&uriScheme={uriScheme}&key={key}';
 
 	var metaUrl = metaUrlTemplate.replace( '{key}', key ).replace( '{imagerySet}', imagerySet ).replace( '{uriScheme}', uriScheme );
@@ -42,6 +50,24 @@ function BingProvider ( imagerySet ) {
 		metadata = JSON.parse( req.response );
 
 		var rss = metadata.resourceSets;
+
+		if ( self.OS ) {
+
+			var span = document.createElement( 'span' );
+
+			span.textContent = 'Ordnance Survey © Crown Copyright 2017';
+			span.style.paddingRight = '4px';
+			self.attribution.appendChild( span );
+
+		}
+
+		var img = document.createElement( 'img' );
+
+		img.src = metadata.brandLogoUri;
+		img.style.backgroundColor = 'white';
+		img.style.verticalAlign = 'middle';
+
+		self.attribution.appendChild ( img );
 
 		for ( var i = 0; i < rss.length; i++ ) {
 
@@ -68,7 +94,6 @@ function BingProvider ( imagerySet ) {
 	}
 
 }
-
 
 BingProvider.quadkey = function ( x, y, z ) {
 
@@ -102,12 +127,7 @@ BingProvider.quadkey = function ( x, y, z ) {
 
 BingProvider.prototype.getAttribution = function () {
 
-	var img = document.createElement( 'img' );
-
-	img.src = 'https://www.microsoft.com/maps/images/branding/bing_maps_logo_white_125px_27px.png';
-	img.classList.add( 'overlay-branding' );
-
-	return img;
+	return this.attribution;
 
 };
 

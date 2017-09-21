@@ -225,6 +225,20 @@ Page.prototype.addText = function ( text ) {
 
 };
 
+Page.prototype.addLink = function ( url, text ) {
+
+	var a = document.createElement( 'a' );
+
+	a.href = url;
+	a.textContent = text;
+	a.target = '_blank';
+
+	this.page.appendChild( a );
+
+	return a;
+
+};
+
 Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 	var div    = document.createElement( 'div' );

@@ -802,6 +802,8 @@ function resize () {
 
 	pCamera.updateProjectionMatrix();
 
+	HUD.resize();
+
 	renderView();
 
 }
@@ -1262,7 +1264,8 @@ Object.assign( Viewer, {
 	getControls:   getControls,
 	getState:      Viewer,
 	renderView:    renderView,
-	addOverlay:    addOverlay
+	addOverlay:    addOverlay,
+	resize
 } );
 
 export { Viewer };

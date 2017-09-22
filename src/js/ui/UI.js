@@ -26,6 +26,7 @@ var currentTop;
 var isCaveLoaded = false;
 
 var container;
+var outerContainer;
 
 var file;
 var progressBar;
@@ -73,18 +74,24 @@ var cameraModes = {
 
 function init ( domID, configuration ) { // public method
 
-	container = document.getElementById( domID );
+	outerContainer = document.getElementById( domID );
 
-	if ( ! container ) {
+	if ( ! outerContainer ) {
 
 		alert( 'No container DOM object [' + domID + '] available' );
 		return;
 
 	}
 
+	container = document.createElement( 'div' );
+
+	container.id = 'cv-inner-container';
+
+	outerContainer.appendChild( container );
+
 	progressBar = new ProgressBar( container );
 
-	Viewer.init( domID, configuration );
+	Viewer.init( 'cv-inner-container', configuration );
 
 	caveLoader = new CaveLoader( caveLoaded, progress );
 
@@ -487,6 +494,7 @@ function initHelpPage () {
 
 	dl = document.createElement( 'dl' );
 
+	_addKey( 'F', 'toggle full screen' );
 	_addKey( 'O', 'orthogonal view' );
 	_addKey( 'P', 'perspective view' );
 	_addKey( 'R', 'reset to plan view' );
@@ -788,6 +796,26 @@ function viewComplete () {
 
 }
 
+function toggleFullScreen() {
+
+	var body = document.getElementsByTagName( 'body' )[ 0 ];
+
+	if ( container.parentNode === body ) {
+
+		body.removeChild( container );
+		outerContainer.appendChild( container );
+
+	} else {
+
+		outerContainer.removeChild( container );
+		body.appendChild( container );
+
+	}
+
+	Viewer.resize();
+
+}
+
 function keyDown ( event ) {
 
 	if ( ! isCaveLoaded ) return;
@@ -857,6 +885,12 @@ function keyDown ( event ) {
 	case 68: // toggle dye traces visibility - 'd'
 
 		if ( Viewer.hasTraces ) Viewer.traces = ! Viewer.traces;
+
+		break;
+
+	case 70: // toggle full screen - 'f'
+
+		toggleFullScreen();
 
 		break;
 

@@ -87,8 +87,6 @@ function init ( domId, viewRenderer ) {
 	attitudeGroup.add( ahi );
 	attitudeGroup.add( progressDial );
 
-	window.addEventListener( 'resize', resize );
-
 	Viewer.addEventListener( 'newCave', caveChanged );
 	Viewer.addEventListener( 'change', viewChanged );
 
@@ -364,7 +362,8 @@ export var HUD = {
 	setVisibility:		setVisibility,
 	getVisibility:		getVisibility,
 	getProgressDial:    getProgressDial,
-	setScale:           setScale
+	setScale:           setScale,
+	resize:             resize
 };
 
 // EOF

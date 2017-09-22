@@ -86,9 +86,26 @@ div.linear-scale-caption {
 }
 
 #scene {
-	width: 100%;
-	height: 800px;
+	width: 500px;
+	height: 500px;
 	position: relative;
+}
+
+#cv-inner-container {
+	height: 100%;
+}
+
+body > #cv-inner-container {
+	position: fixed;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+}
+
+body > #cv-inner-container canvas {
+	width: 100% !important;
+	height: 100% !important;
 }
 
 #progress-bar {

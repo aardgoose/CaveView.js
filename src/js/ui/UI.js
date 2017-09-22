@@ -661,7 +661,7 @@ function initUI () {
 	initInfoPage();
 	initHelpPage();
 
-	container.appendChild( Page.frame );
+	Page.setParent( container );
 
 }
 

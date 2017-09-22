@@ -6,12 +6,12 @@ function Page( id, onTop ) {
 	var page = document.createElement( 'div' );
 
 	var frame = Page.frame;
+	var tabBox = Page.tabBox;
 
 	page.classList.add( 'page' );
 
 	tab.id = id;
 	tab.classList.add( 'tab' );
-	tab.style.top = ( Page.position++ * 40 ) + 'px';
 
 	tab.addEventListener( 'click', this.tabHandleClick );
 
@@ -27,8 +27,7 @@ function Page( id, onTop ) {
 		// create UI side panel and reveal tabs
 		frame = document.createElement( 'div' );
 
-		frame.id = 'frame';
-		frame.style.display = 'block';
+		frame.id = 'cv-frame';
 
 		Page.frame = frame;
 
@@ -42,7 +41,18 @@ function Page( id, onTop ) {
 
 	}
 
-	frame.appendChild( tab );
+	if ( tabBox === null ) {
+
+		// create UI box to contain tabs - reorients for small screen widths
+		tabBox = document.createElement( 'div' );
+
+		tabBox.id = 'cv-tab-box';
+
+		Page.tabBox = tabBox;
+
+	}
+
+	tabBox.appendChild( tab );
 	frame.appendChild( page );
 
 	Page.pages.push( { tab: tab, page: page } );
@@ -50,9 +60,10 @@ function Page( id, onTop ) {
 	this.page = page;
 	this.slide = undefined;
 
-	function _closeFrame ( event ) {
+	function _closeFrame ( /* event */ ) {
 
-		event.target.parentElement.classList.remove( 'onscreen' );
+		Page.tabBox.classList.remove( 'onscreen' );
+		Page.frame.classList.remove( 'onscreen' );
 
 	}
 
@@ -60,26 +71,34 @@ function Page( id, onTop ) {
 
 Page.pages     = [];
 Page.listeners = [];
-Page.position  = 0;
 Page.inHandler = false;
 Page.controls  = [];
 Page.frame = null;
+Page.tabBox = null;
 Page.seq = 0;
 
 Page.reset = function () {
 
 	Page.listeners = [];
 	Page.pages     = [];
-	Page.position  = 0;
 	Page.inHandler = false;
 	Page.controls  = [];
 	Page.frame     = null;
+	Page.tabBox    = null;
+
+};
+
+Page.setParent = function ( parent ) {
+
+	parent.appendChild( Page.tabBox );
+	parent.appendChild( Page.frame );
 
 };
 
 Page.clear = function () {
 
 	Page.frame.addEventListener( 'transitionend', _afterReset );
+	Page.tabBox.classList.remove( 'onscreen' );
 	Page.frame.classList.remove( 'onscreen' );
 
 	var i, l, listener;
@@ -173,7 +192,8 @@ Page.prototype.tabHandleClick = function ( event ) {
 	var pages = Page.pages;
 
 	tab.classList.add( 'toptab' );
-	tab.parentElement.classList.add( 'onscreen' );
+	Page.tabBox.classList.add( 'onscreen' );
+	Page.frame.classList.add( 'onscreen' );
 
 	for ( var i = 0, l = pages.length; i < l; i++ ) {
 

@@ -51,23 +51,6 @@ function BingProvider ( imagerySet, key ) {
 
 		var rss = metadata.resourceSets;
 
-		if ( self.OS ) {
-
-			var span = document.createElement( 'span' );
-
-			span.textContent = 'Ordnance Survey © Crown Copyright 2017';
-			span.style.paddingRight = '4px';
-			self.attribution.appendChild( span );
-
-		}
-
-		var img = document.createElement( 'img' );
-
-		img.src = metadata.brandLogoUri;
-		img.style.backgroundColor = 'white';
-		img.style.verticalAlign = 'middle';
-
-		self.attribution.appendChild ( img );
 
 		for ( var i = 0; i < rss.length; i++ ) {
 
@@ -85,11 +68,41 @@ function BingProvider ( imagerySet, key ) {
 
 				self.subdomainCount = self.subdomains.length;
 
+				_setAttribution( r );
+
 				return;
 
 			}
 
 		}
+
+	}
+
+	function _setAttribution( resourceSet ) {
+
+		var span = document.createElement( 'span' );
+
+		span.style.paddingRight = '4px';
+
+		if ( self.OS ) {
+
+			span.textContent = 'Ordnance Survey © Crown Copyright 2017';
+
+		} else {
+
+			span.textContent = resourceSet.imageryProviders[ 0 ].attribution;
+
+		}
+
+		self.attribution.appendChild( span );
+
+		var img = document.createElement( 'img' );
+
+		img.src = metadata.brandLogoUri;
+		img.style.backgroundColor = 'white';
+		img.style.verticalAlign = 'middle';
+
+		self.attribution.appendChild ( img );
 
 	}
 

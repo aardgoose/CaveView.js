@@ -91,21 +91,14 @@ div.linear-scale-caption {
 	position: relative;
 }
 
-#cv-inner-container {
-	height: 100%;
-}
-
-body > #cv-inner-container {
-	position: fixed;
+body div.fullscreen {
+	position: fixed !important;
 	top: 0px;
 	bottom: 0px;
 	left: 0px;
 	right: 0px;
-}
-
-body > #cv-inner-container canvas {
-	width: 100% !important;
-	height: 100% !important;
+	width: auto !important;
+	height: auto !important;
 }
 
 #progress-bar {
@@ -354,6 +347,16 @@ body > #cv-inner-container canvas {
 
 	#cv-tab-box .tab {
 		float: left;
+	}
+
+	body div.cv-container {
+		position: fixed !important;
+		top: 0px;
+		bottom: 0px;
+		left: 0px;
+		right: 0px;
+		width: auto !important;
+		height: auto !important;
 	}
 
 }

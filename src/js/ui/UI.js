@@ -26,7 +26,6 @@ var currentTop;
 var isCaveLoaded = false;
 
 var container;
-var outerContainer;
 
 var file;
 var progressBar;
@@ -74,24 +73,21 @@ var cameraModes = {
 
 function init ( domID, configuration ) { // public method
 
-	outerContainer = document.getElementById( domID );
+	container = document.getElementById( domID );
 
-	if ( ! outerContainer ) {
+	if ( ! container ) {
 
 		alert( 'No container DOM object [' + domID + '] available' );
 		return;
 
 	}
 
-	container = document.createElement( 'div' );
-
-	container.id = 'cv-inner-container';
-
-	outerContainer.appendChild( container );
+	// target with css for fullscreen on small screen devices
+	container.classList.add( 'cv-container' );
 
 	progressBar = new ProgressBar( container );
 
-	Viewer.init( 'cv-inner-container', configuration );
+	Viewer.init( domID, configuration );
 
 	caveLoader = new CaveLoader( caveLoaded, progress );
 
@@ -797,20 +793,8 @@ function viewComplete () {
 }
 
 function toggleFullScreen() {
-
-	var body = document.getElementsByTagName( 'body' )[ 0 ];
-
-	if ( container.parentNode === body ) {
-
-		body.removeChild( container );
-		outerContainer.appendChild( container );
-
-	} else {
-
-		outerContainer.removeChild( container );
-		body.appendChild( container );
-
-	}
+	console.log( 'toggle', container.classList );
+	container.classList.toggle( 'fullscreen' );
 
 	Viewer.resize();
 

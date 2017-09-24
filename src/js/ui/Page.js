@@ -31,14 +31,6 @@ function Page( id, onTop ) {
 
 		Page.frame = frame;
 
-		var close = document.createElement( 'div' );
-
-		close.id = 'close';
-
-		close.addEventListener( 'click', _closeFrame );
-
-		frame.appendChild( close );
-
 	}
 
 	if ( tabBox === null ) {
@@ -47,6 +39,15 @@ function Page( id, onTop ) {
 		tabBox = document.createElement( 'div' );
 
 		tabBox.id = 'cv-tab-box';
+
+		var close = document.createElement( 'div' );
+
+		close.id = 'close';
+		close.classList.add( 'tab' );
+
+		close.addEventListener( 'click', _closeFrame );
+
+		tabBox.appendChild( close );
 
 		Page.tabBox = tabBox;
 

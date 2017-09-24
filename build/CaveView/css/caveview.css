@@ -1,6 +1,4 @@
 body {
-	margin: 0;
-	padding: 0;
 	font-family: 'Source Sans Pro Regular','Helvetica Neue',Helvetica,Arial,sans-serif;
 }
 
@@ -119,6 +117,12 @@ body div.fullscreen {
 	z-index: 100;
 }
 
+#cv-frame *, #cv-tab-box * {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
 #cv-frame {
 	position: absolute;
 	top: 0px;
@@ -131,7 +135,6 @@ body div.fullscreen {
 	z-index: 100;
 	overflow-y: auto;
 	overflow-x: hidden;
-	box-sizing: border-box;
 }
 
 #cv-frame div.page {
@@ -144,7 +147,6 @@ body div.fullscreen {
 	color: white;
 	background-color: #222222;
 	padding: 0 4px 20px 20px;
-	box-sizing: border-box;
 	cursor: default;
 }
 
@@ -176,10 +178,10 @@ body div.fullscreen {
 
 #cv-frame div.page div#ui-path {
 	font-size: 12px;
+	margin-top: 8px;
 	border-top: 1px solid grey;
 	border-bottom: 1px solid grey;
-	margin-top: 8px;
-	padding: 2px 0 2px 12px;
+	padding: 2px 0 2px 0px;
 }
 
 #cv-frame div.page div#ui-path span {
@@ -189,10 +191,10 @@ body div.fullscreen {
 #cv-frame div.page div.slide {
 	position: absolute;
 	top: 64px;
+	bottom: 44px;
 	left: 0px;
 	height: auto; 
 	margin-top:0;
-	bottom: 44px;
 	background-color: #222222;
 	transition: transform 0.25s ease-in;
 }
@@ -220,10 +222,7 @@ body div.fullscreen {
 	border: 1px solid green;
 	display: block;
 	width: 180px;
-	box-sizing: border-box;
-	margin-top: 6px;
-	margin-bottom: 4px;
-	margin-left: 8px;
+	margin-top: 6px 0 4px 8px;
 	border: none;
 	border-bottom: 4px solid #1ab4e5;
 	color: #dddddd;
@@ -248,9 +247,10 @@ body div.fullscreen {
 
 #cv-tab-box {
 	position: absolute;
-	transform: none;
 	top: 0px;
+	width: 40px;
 	z-index: 200;
+	transform: none;
 	transition: transform 0.25s ease-in;	
 }
 
@@ -260,56 +260,66 @@ body div.fullscreen {
 }
 
 #cv-tab-box .tab {
+	float: left;
 	width: 40px;
 	height: 40px;
-	box-sizing: border-box;
-	background-color: #444444;
+	border-top: 1px solid black;
 	border-left: 1px solid black;
+	background-color: #444444;
+	background-position: center;
+}
+
+#cv-tab-box #close {
+	float: left;
+	background-color: #222222;
+	background-image: url(../images/ic_hide_left.png);
 	background-position: center;
 	border-top: 1px solid black;
+	display: none;
 }
 
-#cv-frame #close {
-	position: absolute;
-	left: 236px;
-	top: 0px;
-	width: 40px;
-	height: 40px;
-	box-sizing: border-box;
-	z-index: 150;
-	background-image: url(../images/ic_remove.png);
-	background-position: center;
+#cv-tab-box.onscreen #close {
+	display: block;
+	margin-left: -60px;
+	z-index: 200;
 }
 
-#icon_settings {
+#cv-tab-box #icon_settings {
 	background-image: url(../images/ic_settings.png);
 }
 
-#icon_terrain {
+#cv-tab-box #icon_terrain {
 	background-image: url(../images/ic_terrain.png);
 }
 
-#icon_explore {
+#cv-tab-box #icon_explore {
 	background-image: url(../images/ic_explore.png);
 }
 
-#icon_info {
+#cv-tab-box #icon_info {
 	background-image: url(../images/ic_info.png);
 }
 
-#icon_route {
+#cv-tab-box #icon_route {
 	background-image: url(../images/ic_route.png);
 }
 
-#icon_help {
+#cv-tab-box #icon_help {
 	background-image: url(../images/ic_help.png);
+}
+
+#cv-tab-box.onscreen div.toptab {
+	background-color: #222222;
+	border-top: 1px solid #1ab4e5;
+	border-left: none;
+	border-right: 1px solid #1ab4e5;
 }
 
 @media (max-width: 767px) {
 
 	#cv-frame {
 		width: 100%;
-		transform: translateX(-100%);
+		transform: translateY(-100%);
 	}
 
 	#cv-frame.onscreen {
@@ -321,22 +331,14 @@ body div.fullscreen {
 		top: 40px;
 	}
 
-	#cv-frame #close {
-		position: fixed;
-		background-color: #444444;
-		top: 0px;
-		right: 0px;
-		left: auto;
-	}
-
 	#cv-frame div.page div.slide, #cv-frame div.slide ul {
 		width: 100%;
 	}
 
 	#cv-tab-box {
-		position: absolute;
 		left: 0px;
-		right: 40px;
+		right: 0px;
+		width: auto;
 	}
 
 	#cv-tab-box.onscreen {
@@ -344,19 +346,39 @@ body div.fullscreen {
 		background-color: #444444;
 	}
 
-
 	#cv-tab-box .tab {
 		float: left;
 	}
 
 	body div.cv-container {
 		position: fixed !important;
-		top: 0px;
-		bottom: 0px;
-		left: 0px;
-		right: 0px;
+		top: 0px !important;
+		bottom: 0px !important;
+		left: 0px !important;
+		right: 0px !important;
 		width: auto !important;
 		height: auto !important;
+	}
+
+	#cv-tab-box.onscreen div.toptab {
+		background-color: #222222;
+		border-left: none;
+		border-right: 1px solid gray;
+		border-top: 4px solid #1ab4e5;
+	}
+
+	#cv-tab-box #close {
+		position: fixed;
+		background-color: #444444;
+		background-image: url(../images/ic_hide_up.png);
+		top: 0px;
+		right: 0px;
+		left: auto;
+	}
+
+	#cv-tab-box.onscreen #close {
+		float: right;
+		margin: 0;
 	}
 
 }
@@ -365,31 +387,22 @@ div::-webkit-scrollbar {
 	width: 10px;
 }
 */
-#cv-tab-box div.toptab {
-	background-color: #222222;
-	border-left: none;
-	border-right: 1px solid grey;
-	border-top: 1px solid grey;
-}
-
 #cv-frame div.page div.header {
-	margin: 16px 0px 8px 0px;
-	font-weight: bold;
 	height: 16px;
-	box-sizing: border-box;
+	margin: 16px 0px 8px 0px;
 	padding-left: 2px;
+	font-weight: bold;
 }
 
 #cv-frame div.page div.control {
 	margin: 2px 0 2px 0;
-	padding-top: 2px;
-	padding-right: 2px;
+	padding: 2px 2px 0 0;
 }
 
 #cv-frame div.page label {
 	display: block;
 	border-top: 1px solid grey;
-	padding: 2px 0 2px 0px;
+	padding: 2px 0 8px 0px;
 	font-size: 12px;
 }
 
@@ -397,7 +410,6 @@ div::-webkit-scrollbar {
 	display: block;
 	width: 100%;
 	max-width: 100%;
-	box-sizing: border-box;
 	padding-top: 2px;
 	margin: 2px 0 4px 0px;
 }
@@ -409,15 +421,12 @@ div::-webkit-scrollbar {
 #cv-frame div.page button {
 	display: block;
 	width: 180px;
-	box-sizing: border-box;
-	margin-top: 4px;
-	margin-bottom: 4px;
-	margin-left: 8px;
+	margin: 4px 0 4px 8px;
 	border: none;
 	border-bottom: 4px solid #1ab4e5;
+	padding-bottom: 4px;
 	color: #dddddd;
 	background-color: black;
-	padding-bottom: 4px;
 	box-shadow: 1px 1px 8px 0px #888888;
 	outline: none;
 }
@@ -436,7 +445,6 @@ div::-webkit-scrollbar {
 #cv-frame div.page input[type="text"] {
 	display: block;
 	width: 100%;
-	box-sizing: border-box;
 	margin-top: 2px;
 	margin-left: 0px;
 }
@@ -449,6 +457,7 @@ div.cv-checkbox {
 #cv-frame div.page input[type="checkbox"] {
 	position: absolute;
 	right: 0px;
+	top: 4px;
 }
 
 #cv-frame div.page input[type="range"] {
@@ -475,6 +484,7 @@ div.cv-checkbox {
 	padding-left: 8px;
 	font-size: 12px;
 	line-height: 18px;
+	margin-top: 18px;
 }
 
 #cv-frame a, #cv-frame a:visited {
@@ -490,19 +500,19 @@ div.cv-checkbox {
 div.station-info {
 	position: absolute;
 	border: 1px solid white;
-	background-color: #222222;
-	color: white;
 	padding: 4px;
+	color: white;
+	background-color: #222222;
 	z-index: 200;
 }
 
 
 .overlay-branding {
-	color: white;
-	margin: 4px;
 	position: absolute;
 	right: 0;
 	top: 0;
+	color: white;
+	margin: 4px;
 }
 
 #cv-frame input[type=checkbox]:checked + label {
@@ -511,9 +521,9 @@ div.station-info {
 
 input[type=range] {
 	height: 23px;
+	width: 100%;
 	-webkit-appearance: none;
 	margin: 10px 0;
-	width: 100%;
 	background-color: transparent;
 }
 
@@ -551,7 +561,6 @@ input[type=range]::-moz-range-track {
 	width: 100%;
 	height: 4px;
 	cursor: pointer;
-	animate: 0.2s;
 	box-shadow: 0px 0px 0px #000000;
 	background: #eee;
 	border-radius: 0px;
@@ -572,7 +581,6 @@ input[type=range]::-ms-track {
 	width: 100%;
 	height: 4px;
 	cursor: pointer;
-	animate: 0.2s;
 	background: transparent;
 	border-color: transparent;
 	color: transparent;

@@ -11,10 +11,24 @@ function HeightMaterial ( type, limits ) {
 
 	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
 
+	var zMin, zMax;
+
+	if ( limits ) {
+
+		zMin = limits.min.z;
+		zMax = limits.max.z;
+
+	} else {
+
+		zMin = 0;
+		zMax = 100;
+
+	}
+
 	this.uniforms = {
 		uLight: { value: new Vector3( -1, -1, 2 ) }, // pseudo light source somewhere over viewer's left shoulder.
-		minZ:   { value: limits.min.z },
-		scaleZ: { value: 1 / ( limits.max.z - limits.min.z ) },
+		minZ:   { value: zMin },
+		scaleZ: { value: 1 / ( zMax - zMin ) },
 		cmap:   { value: ColourCache.getTexture( 'gradient' ) },
 	};
 

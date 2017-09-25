@@ -62,7 +62,7 @@ var raycaster;
 var terrain = null;
 var directionalLight;
 var survey;
-var limits;
+var limits = null;
 var stats = {};
 var zScale;
 
@@ -156,7 +156,7 @@ function init ( domID, configuration ) { // public method
 		'terrain': {
 			writeable: true,
 			get: function () { return testCameraLayer( FEATURE_TERRAIN ); },
-			set: function ( x ) { loadTerrain( x ); }
+			set: loadTerrain
 		},
 
 		'terrainShading': {
@@ -172,7 +172,7 @@ function init ( domID, configuration ) { // public method
 		'terrainDatumShift': {
 			writeable: true,
 			get: function () { return !! terrain.activeDatumShift; },
-			set: function ( x ) { applyTerrainDatumShift( x ); }
+			set: applyTerrainDatumShift
 		},
 
 		'terrainOverlays': {
@@ -188,7 +188,7 @@ function init ( domID, configuration ) { // public method
 		'terrainOpacity': {
 			writeable: true,
 			get: function () { return terrain.getOpacity(); },
-			set: function ( x ) { setTerrainOpacity( x ); }
+			set: setTerrainOpacity
 		},
 
 		'shadingMode': {
@@ -218,7 +218,7 @@ function init ( domID, configuration ) { // public method
 		'cursorHeight': {
 			writeable: true,
 			get: function () { return cursorHeight; },
-			set: function ( x ) { setCursorHeight( x ); }
+			set: setCursorHeight
 		},
 
 		'initCursorHeight': {
@@ -228,11 +228,11 @@ function init ( domID, configuration ) { // public method
 		},
 
 		'maxHeight': {
-			get: function () { return limits.max.z; }
+			get: function () { return ( limits === null ) ? 0 : limits.max.z; }
 		},
 
 		'minHeight': {
-			get: function () { return limits.min.z; }
+			get: function () { return ( limits === null ) ? 0 : limits.min.z; }
 		},
 
 		'maxLegLength': {
@@ -269,25 +269,25 @@ function init ( domID, configuration ) { // public method
 		'developerInfo': {
 			writeable: true,
 			get: function () { return true; },
-			set: function ( x ) { showDeveloperInfo( x ); }
+			set: showDeveloperInfo
 		},
 
 		'HUD': {
 			writeable: true,
-			get: function () { return HUD.getVisibility(); },
-			set: function ( x ) { HUD.setVisibility( x ); }
+			get: HUD.getVisibility,
+			set: HUD.setVisibility
 		},
 
 		'cut': {
 			writeable: true,
 			get: function () { return true; },
-			set: function () { cutSection(); }
+			set: cutSection
 		},
 
 		'zScale': {
 			writeable: true,
 			get: function () { return zScale; },
-			set: function ( x ) { setZScale( x ); }
+			set: setZScale
 		},
 
 		'autoRotate': {
@@ -305,7 +305,7 @@ function init ( domID, configuration ) { // public method
 		'fullscreen': {
 			writeable: true,
 			get: isFullscreen,
-			set: function ( x ) { controls.autoRotateSpeed = x * 11; }
+			set: setFullscreen
 		}
 
 	} );
@@ -391,6 +391,17 @@ function isFullscreen () {
 		window.innerHeight === container.clientHeight &&
 		window.innerWidth === container.clientWidth
 	);
+
+}
+
+function setFullscreen ( targetState ) {
+
+	if ( isFullscreen() !== targetState ) {
+
+		container.classList.toggle( 'toggle-fullscreen' );
+		resize();
+
+	}
 
 }
 
@@ -843,6 +854,7 @@ function clearView () {
 
 	survey          = null;
 	terrain         = null;
+	limits          = null;
 	selectedSection = 0;
 	mouseMode       = MOUSE_MODE_NORMAL;
 	mouseTargets    = [];

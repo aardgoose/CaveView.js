@@ -89,16 +89,6 @@ div.linear-scale-caption {
 	position: relative;
 }
 
-body div.fullscreen {
-	position: fixed !important;
-	top: 0px;
-	bottom: 0px;
-	left: 0px;
-	right: 0px;
-	width: auto !important;
-	height: auto !important;
-}
-
 #progress-bar {
 	position: absolute;
 	top: 55%;
@@ -343,6 +333,21 @@ body div.fullscreen {
 	border-right: 1px solid #1ab4e5;
 }
 
+@media (min-width: 768px) {
+
+	/* default to normal size */
+	body div.toggle-fullscreen {
+		position: fixed !important;
+		top: 0px;
+		bottom: 0px;
+		left: 0px;
+		right: 0px;
+		width: auto !important;
+		height: auto !important;
+	}
+
+}
+
 @media (max-width: 767px) {
 
 	#cv-frame {
@@ -387,7 +392,8 @@ body div.fullscreen {
 		background-color: #444444;
 	}
 
-	body div.cv-container {
+	/* default to full screen */
+	body div.cv-container:not( .toggle-fullscreen ) {
 		position: fixed !important;
 		top: 0px !important;
 		bottom: 0px !important;

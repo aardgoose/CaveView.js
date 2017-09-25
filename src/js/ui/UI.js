@@ -24,6 +24,7 @@ var surveyTree;
 var currentTop;
 
 var isCaveLoaded = false;
+var fullscreenDiv;
 
 var container;
 
@@ -667,6 +668,26 @@ function initUI () {
 
 	Page.setParent( container );
 
+	fullscreenDiv = Page.addTopButton( 'fullscreen', toggleFullScreen );
+
+	setFullscreenUI ( fullscreenDiv );
+
+}
+
+function setFullscreenUI ( element ) {
+
+	if ( Viewer.fullscreen ) {
+
+		element.classList.remove( 'expand' );
+		element.classList.add( 'collapse' );
+
+	} else {
+
+		element.classList.add( 'expand' );
+		element.classList.remove( 'collapse' );
+
+	}
+
 }
 
 function handleDragover ( event ) {
@@ -797,7 +818,7 @@ function toggleFullScreen() {
 	container.classList.toggle( 'fullscreen' );
 
 	Viewer.resize();
-
+	setFullscreenUI ( fullscreenDiv );
 }
 
 function keyDown ( event ) {

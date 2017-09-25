@@ -300,6 +300,12 @@ function init ( domID, configuration ) { // public method
 			writeable: true,
 			get: function () { return controls.autoRotateSpeed / 11; },
 			set: function ( x ) { controls.autoRotateSpeed = x * 11; }
+		},
+
+		'fullscreen': {
+			writeable: true,
+			get: isFullscreen,
+			set: function ( x ) { controls.autoRotateSpeed = x * 11; }
 		}
 
 	} );
@@ -376,6 +382,15 @@ function init ( domID, configuration ) { // public method
 		}
 
 	}
+
+}
+
+function isFullscreen () {
+
+	return (
+		window.innerHeight === container.clientHeight &&
+		window.innerWidth === container.clientWidth
+	);
 
 }
 

@@ -126,6 +126,23 @@ Page.clear = function () {
 
 };
 
+Page.addTopButton= function ( id, handler ) {
+
+	var tabBox = this.tabBox;
+
+	var fullscreen = document.createElement( 'div' );
+
+	fullscreen.id = id;
+	fullscreen.classList.add( 'tab' );
+	fullscreen.classList.add( 'collapse' );
+
+	fullscreen.addEventListener( 'click', handler );
+
+	tabBox.appendChild( fullscreen );
+
+	return fullscreen;
+
+};
 
 Page.addListener = function ( obj, name, handler ) {
 

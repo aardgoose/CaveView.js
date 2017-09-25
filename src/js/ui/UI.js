@@ -814,11 +814,11 @@ function viewComplete () {
 }
 
 function toggleFullScreen() {
-	console.log( 'toggle', container.classList );
-	container.classList.toggle( 'fullscreen' );
 
-	Viewer.resize();
+	Viewer.fullscreen = ! Viewer.fullscreen;
+
 	setFullscreenUI ( fullscreenDiv );
+
 }
 
 function keyDown ( event ) {

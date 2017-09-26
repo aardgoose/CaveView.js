@@ -1291,8 +1291,7 @@ Object.assign( Viewer, {
 	getControls:   getControls,
 	getState:      Viewer,
 	renderView:    renderView,
-	addOverlay:    addOverlay,
-	resize
+	addOverlay:    addOverlay
 } );
 
 export { Viewer };

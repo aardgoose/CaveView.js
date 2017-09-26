@@ -29,6 +29,7 @@
 
 <script type="text/javascript" src="/CaveView.js/CaveView/lib/BingProvider.js" ></script>
 <script type="text/javascript" src="/CaveView.js/CaveView/lib/OSMProvider.js" ></script>
+<script type="text/javascript" src="/CaveView.js/CaveView/lib/BGSProvider.js" ></script>
 <script type="text/javascript" src="/CaveView.js/CaveView/lib/NLSProvider.js" ></script>
 
 
@@ -39,16 +40,17 @@ function onload () {
 	CV.UI.init( 'scene', { home: '/CaveView.js/CaveView/', terrainDirectory: '/CaveView.js/terrain/', surveyDirectory: '/CaveView.js/surveys/' } );
 
 	CV.Viewer.addOverlay( 'OSM', new OSMProvider() );
+	CV.Viewer.addOverlay( 'BGS', new BGSProvider() );
 	CV.Viewer.addOverlay( 'NLS', new NLSProvider() ); // eslint-disable-line no-undef
-	CV.Viewer.addOverlay( 'Bing Aerial',  new BingProvider( 'Aerial' ) );
-	CV.Viewer.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey' ) );
+	CV.Viewer.addOverlay( 'Bing Aerial',  new BingProvider( 'Aerial', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
+	CV.Viewer.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
 
 	CV.UI.loadCaveList( [ 'Giants_Oxlow_Maskhill_System.3d', 'Castleton_Master.3d', 'Cheddar.lox', 'Peak_Master.3d', 'all.3d' ] );
 
 }
 
 </script>
-<div id="scene"></div>
+<div id="scene" style=" width: 100%; height: 800px;"></div>
 <div id="hints" >
 <h3>Controls</h3>
 <ul>

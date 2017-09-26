@@ -405,10 +405,11 @@ function initSelectionPage () {
 
 function initRoutePage () {
 
-	var page = new Page( 'icon_route', _onTop );
+	var page = new Page( 'icon_route', _onTop, _onLeave );
 	var routeSelector;
 	var getNewRouteName;
 	var routeNames = routes.getRouteNames();
+	var lastShadingMode;
 
 	page.addHeader( 'Routes' );
 
@@ -449,11 +450,18 @@ function initRoutePage () {
 	function _onTop () {
 
 		// when selecting route editing mode - select correct leg shading mode
+		lastShadingMode = Viewer.shadingMode;
 		Viewer.shadingMode = SHADING_PATH;
 
 		// display first route if present
 
 		if ( ! routes.setRoute && routeNames.length > 0 ) routes.setRoute = routeNames[ 0 ];
+
+	}
+
+	function _onLeave () {
+
+		Viewer.shadingMode = lastShadingMode;
 
 	}
 

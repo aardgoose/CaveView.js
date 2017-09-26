@@ -4,12 +4,24 @@
 */
 
 
-function BingProvider ( imagerySet ) {
+function BingProvider ( imagerySet, key ) {
 
 	this.urlTemplate = null;
 	this.subdomains = [];
 	this.subdomainIndex = 0;
 	this.subdomainCount = 0;
+
+	this.minZoom = null;
+	this.maxZoom = null;
+
+	// attribution DOM (added to async)
+	var div = document.createElement( 'div' );
+
+	div.classList.add( 'overlay-branding' );
+	div.style.lineHeight = '30px';
+
+	this.attribution = div;
+	this.OS = ( imagerySet === 'OrdnanceSurvey' );
 
 	var self = this;
 
@@ -17,7 +29,6 @@ function BingProvider ( imagerySet ) {
 
 	var uriScheme = window.location.protocol.replace( ':' , '' );
 
-	var key = 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_';
 	var metaUrlTemplate = uriScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/{imagerySet}?include=imageryProviders&uriScheme={uriScheme}&key={key}';
 
 	var metaUrl = metaUrlTemplate.replace( '{key}', key ).replace( '{imagerySet}', imagerySet ).replace( '{uriScheme}', uriScheme );
@@ -40,6 +51,7 @@ function BingProvider ( imagerySet ) {
 
 		var rss = metadata.resourceSets;
 
+
 		for ( var i = 0; i < rss.length; i++ ) {
 
 			var rs = rss[ i ].resources;
@@ -51,7 +63,12 @@ function BingProvider ( imagerySet ) {
 				self.subdomains = r.imageUrlSubdomains;
 				self.urlTemplate = r.imageUrl;
 
+				self.minZoom = r.zoomMin;
+				self.maxZoom = r.zoomMax;
+
 				self.subdomainCount = self.subdomains.length;
+
+				_setAttribution( r );
 
 				return;
 
@@ -61,8 +78,35 @@ function BingProvider ( imagerySet ) {
 
 	}
 
-}
+	function _setAttribution( resourceSet ) {
 
+		var span = document.createElement( 'span' );
+
+		span.style.paddingRight = '4px';
+
+		if ( self.OS ) {
+
+			span.textContent = 'Ordnance Survey © Crown Copyright 2017';
+
+		} else {
+
+			span.textContent = resourceSet.imageryProviders[ 0 ].attribution;
+
+		}
+
+		self.attribution.appendChild( span );
+
+		var img = document.createElement( 'img' );
+
+		img.src = metadata.brandLogoUri;
+		img.style.backgroundColor = 'white';
+		img.style.verticalAlign = 'middle';
+
+		self.attribution.appendChild ( img );
+
+	}
+
+}
 
 BingProvider.quadkey = function ( x, y, z ) {
 
@@ -92,16 +136,11 @@ BingProvider.quadkey = function ( x, y, z ) {
 
 	return quadKey.join( '' );
 
-}
- 
+};
+
 BingProvider.prototype.getAttribution = function () {
 
-	var img = document.createElement( 'img' );
-
-	img.src = 'https://www.microsoft.com/maps/images/branding/bing_maps_logo_white_125px_27px.png';
-	img.classList.add( 'overlay-branding' );
-
-	return img;
+	return this.attribution;
 
 };
 
@@ -113,7 +152,7 @@ BingProvider.prototype.getUrl = function ( x, y, z ) {
 
 	var qk = BingProvider.quadkey( x, y, z );
 
-	thissubdomainIndex = ++this.ubdomainIndex % this.subdomainCount;
+	this.subdomainIndex = ++this.subdomainIndex % this.subdomainCount;
 
 	var url = urlTemplate.replace( '{subdomain}', this.subdomains[ this.subdomainIndex ] ).replace( '{quadkey}', qk );
 

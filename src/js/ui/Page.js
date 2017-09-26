@@ -226,10 +226,11 @@ Page.prototype.tabHandleClick = function ( event ) {
 
 		} else {
 
+			otherPage.style.display = 'none';
+
 			if ( otherTab.classList.contains( 'toptab' ) ) {
 
 				otherTab.classList.remove( 'toptab' );
-				otherPage.style.display = 'none';
 
 				if ( owner.onLeave !== undefined ) owner.onLeave();
 

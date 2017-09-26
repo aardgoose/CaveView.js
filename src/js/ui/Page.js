@@ -1,6 +1,6 @@
 
 
-function Page( id, onTop ) {
+function Page( id, onTop, onLeave ) {
 
 	var tab  = document.createElement( 'div' );
 	var page = document.createElement( 'div' );
@@ -56,9 +56,10 @@ function Page( id, onTop ) {
 	tabBox.appendChild( tab );
 	frame.appendChild( page );
 
-	Page.pages.push( { tab: tab, page: page } );
+	Page.pages.push( { tab: tab, page: page, owner: this } );
 
 	this.page = page;
+	this.onLeave = onLeave;
 	this.slide = undefined;
 
 	function _closeFrame ( /* event */ ) {
@@ -217,6 +218,7 @@ Page.prototype.tabHandleClick = function ( event ) {
 
 		var otherTab  = pages[ i ].tab;
 		var otherPage = pages[ i ].page;
+		var owner     = pages[ i ].owner;
 
 		if ( otherTab === tab ) {
 
@@ -224,8 +226,14 @@ Page.prototype.tabHandleClick = function ( event ) {
 
 		} else {
 
-			otherTab.classList.remove( 'toptab' );
-			otherPage.style.display = 'none';
+			if ( otherTab.classList.contains( 'toptab' ) ) {
+
+				otherTab.classList.remove( 'toptab' );
+				otherPage.style.display = 'none';
+
+				if ( owner.onLeave !== undefined ) owner.onLeave();
+
+			}
 
 		}
 

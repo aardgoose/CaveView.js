@@ -319,6 +319,7 @@ div.linear-scale-caption {
 #cv-tab-box.onscreen div.toptab {
 	background-color: #222222;
 	border-top: 1px solid #888888;
+	border-bottom: 1px solid #888888;
 	border-left: none;
 	border-right: 2px solid #1ab4e5;
 }
@@ -423,11 +424,7 @@ div.linear-scale-caption {
 	}
 
 }
-/*
-div::-webkit-scrollbar {
-	width: 10px;
-}
-*/
+
 #cv-frame div.page div.header {
 	height: 16px;
 	margin: 16px 0px 8px 0px;
@@ -451,8 +448,8 @@ div::-webkit-scrollbar {
 	display: block;
 	width: 100%;
 	max-width: 100%;
-	padding-top: 2px;
 	margin: 0 0 5px 0px;
+	padding-top: 2px;
 }
 
 #cv-frame div.page select:empty {
@@ -478,10 +475,10 @@ div::-webkit-scrollbar {
 }
 
 #cv-frame div.page button:active {
-	color: #dddddd;
 	border-bottom: 4px solid #0c536a;
 	box-shadow: none;
 	box-shadow: inset 1px 1px 8px 0px #888888;
+	color: #dddddd;
 }
 
 #cv-frame div.page input[type="text"] {

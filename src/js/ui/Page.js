@@ -115,13 +115,15 @@ Page.clear = function () {
 
 	Page.listeners = [];
 
-	function _afterReset ( event ) {
+	function _afterReset ( /* event */ ) {
 
-		var frame = event.target;
+		var frame  = Page.frame;
+		var tabBox = Page.tabBox;
 
 		frame.removeEventListener( 'transitionend', _afterReset );
 
-		if ( frame !== null ) frame.parentElement.removeChild( frame );
+		if ( frame  !== null ) frame.parentElement.removeChild( frame );
+		if ( tabBox !== null ) tabBox.parentElement.removeChild( tabBox );
 
 	}
 

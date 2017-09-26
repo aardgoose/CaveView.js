@@ -16,10 +16,12 @@ function glsl () {
 }
 
 export default {
-	entry: 'src/js/CV.js',
-	dest: 'build/CaveView/js/CaveView.js',
-	moduleName: 'CV',
-	format: 'umd',
+	input: 'src/js/CV.js',
+	name: 'CV',
+	output: {
+		file: 'build/CaveView/js/CaveView.js',
+		format: 'umd'
+	},
 	plugins: [
 		glsl()
 	]

@@ -17,9 +17,11 @@ function glsl () {
 
 export default {
 	treeshake: true,
-	entry: 'src/js/workers/webTileWorker.js',
-	dest: 'build/CaveView/js/workers/webTileWorker.js',
-	format: 'umd',
+	input: 'src/js/workers/webTileWorker.js',
+	output: {
+		file: 'build/CaveView/js/workers/webTileWorker.js',
+		format: 'umd'
+	},
 	plugins: [
 		glsl()
 	]

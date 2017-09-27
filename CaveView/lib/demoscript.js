@@ -7,13 +7,6 @@ var demoScript = [
 		}
 	},
 	{
-		caption: "Fullscreen mode",
-		delay: 3,
-		view: {
-			fullscreen: true
-		}
-	},
-	{
 		caption: "Displays center lines ...",
 		delay: 7,
 		view: {
@@ -166,6 +159,17 @@ var demoScript = [
 			zScale: 1.0,
 			terrainOpacity: 1,
 			terrain: false
+		}
+	},
+	{
+		caption: "Fullscreen mode ...",
+		delay: 3
+	},
+	{
+		caption: "Fullscreen mode",
+		delay: 3,
+		view: {
+			fullscreen: true
 		}
 	},
 	{

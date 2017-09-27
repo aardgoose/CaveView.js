@@ -7,18 +7,16 @@
 	<style>
 
 		h1, h2, p {
-			margin-left: 50px;
-		}
-
-		p {
-			margin-left: 100px;
+			margin-left: 20px;
 		}
 
 		div#scene {
 			position: relative;
-			width: 600px;
-			height:600px;
-			margin-left: 100px;	
+			box-sizing: border-box;
+			width: 66.666%;
+			height: 600px;
+			padding: 0 20px;
+			float: left;
 		}
 
 		div#scene-caption {
@@ -30,16 +28,18 @@
 		}
 
 		div#info {
-			position: absolute;
-			left: 600px;
-			width: 300px;
+			box-sizing: border-box;
+			width: 33.333%;
+			padding: 0 20px;
+			float: left;
 		}
 
-		div#info > * {
-			margin-left: 20px;
+		div#credits {
+			clear: both;
+			padding: 0 20px;
 		}
 
-	</style>
+</style>
 </head>
 <body onload="onload();" >
 
@@ -166,7 +166,9 @@ function onload () {
 </ul>
 </div>
 <div id="scene-caption" ></div>
+<div id="credits">
 <p>Contains Ordnance Survey data &copy; Crown copyright and database right 2015.</p>
 <p>Contains DTM data &copy; Environment Agency copyright and/or database right 2015.</p>
+</div>
 </body>
 </html>

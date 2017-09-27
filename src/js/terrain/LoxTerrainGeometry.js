@@ -51,8 +51,6 @@ function LoxTerrainGeometry( dtm, offsets ) {
 	var yOffset = dtm.yOrigin - offsets.y;
 	var zOffset =             - offsets.z;
 
-//	var x, y, z;
-
 	var lx = samples - 1;
 	var ly = lines - 1;
 

@@ -318,7 +318,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 		if ( db[ 0 ] === 92 ) db.shift(); // remove initial '/' characters
 
 		label = String.fromCharCode.apply( null, db );
-//		console.log( 'NODE', label, lastPosition );
 
 		var node = surveyTree.addPath( label.split( '.' ), { p: lastPosition, type: STATION_NORMAL } );
 
@@ -363,8 +362,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		}
 
-//		console.log( 'MOVE', coords );
-
 		if ( legs.length > 1 ) groups.push( legs );
 
 		legs = [];
@@ -382,8 +379,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 		legs.push( { coords: coords, type: LEG_CAVE, survey: sectionId } );
 
 		lastPosition = coords;
-
-//		console.log( 'LINE_V1', coords );
 
 		return true;
 
@@ -1096,7 +1091,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 		} else if ( lineEnds.has( [ position.x, position.y, position.z ].toString() ) ) {
 
 			endRun = true;
-//			console.warn( 'unterminated LRUD passage at ', label );
+			// console.warn( 'unterminated LRUD passage at ', label );
 
 		}
 

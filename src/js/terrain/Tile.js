@@ -327,8 +327,8 @@ Tile.prototype.projectedArea = function ( camera ) {
 	B.set( A.x, C.y, z );
 	D.set( C.x, A.y, z );
 
-// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
-// .clampScalar( -1, 1 );
+	// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
+	// .clampScalar( -1, 1 );
 
 	A.project( camera );
 	B.project( camera );

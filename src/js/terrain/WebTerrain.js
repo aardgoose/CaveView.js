@@ -101,7 +101,7 @@ WebTerrain.prototype.hasCoverage = function () {
 
 		if ( ( coverage.min_x >= tileSet.minX && coverage.max_x <= tileSet.maxX )
 				&& (
-			( coverage.min_y >= tileSet.minY && coverage.max_y <= tileSet.maxY ) ) ) {
+					( coverage.min_y >= tileSet.minY && coverage.max_y <= tileSet.maxY ) ) ) {
 
 			tileSet.directory = baseDirectory + tileSet.subdirectory;
 			this.tileSet = tileSet;

@@ -98,7 +98,7 @@ function BingProvider ( imagerySet, key ) {
 
 		var img = document.createElement( 'img' );
 
-		img.src = metadata.brandLogoUri;
+		img.src = metadata.brandLogoUri.replace( /^https?:/, window.location.protocol );
 		img.style.backgroundColor = 'white';
 		img.style.verticalAlign = 'middle';
 

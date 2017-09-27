@@ -325,6 +325,9 @@ function init ( domID, configuration ) { // public method
 
 	HUD.init( domID, renderer );
 
+	// check if we are defaulting to full screen
+	if ( isFullscreen() ) setBrowserFullscreen( true );
+
 	return;
 
 	function _enableLayer ( layerTag, name ) {
@@ -399,7 +402,36 @@ function setFullscreen ( targetState ) {
 	if ( isFullscreen() !== targetState ) {
 
 		container.classList.toggle( 'toggle-fullscreen' );
+
+		setBrowserFullscreen( targetState );
+
 		resize();
+
+	}
+
+}
+
+function setBrowserFullscreen ( targetState ) {
+
+	if ( targetState ) {
+
+		if ( container.webkitRequestFullscreen ) {
+			container.webkitRequestFullscreen();
+		} else if ( container.mozRequestFullScreen ) {
+			container.mozRequestFullScreen();
+		} else if ( container.msRequestFullscreen ) {
+			container.msRequestFullscreen();
+		}
+
+	} else {
+
+		if ( document.webkitExitFullscreen ) {
+			document.webkitExitFullscreen();
+		} else if ( document.mozCancelFullScreen ) {
+			document.mozCancelFullScreen();
+		} else if ( document.msExitFullscreen ) {
+			document.msExitFullscreen();
+		}
 
 	}
 

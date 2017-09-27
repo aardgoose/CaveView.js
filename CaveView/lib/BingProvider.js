@@ -102,7 +102,6 @@ function BingProvider ( imagerySet, key ) {
 		img.style.backgroundColor = 'white';
 		img.style.verticalAlign = 'middle';
 
-		console.dir( img );
 		self.attribution.appendChild ( img );
 
 	}

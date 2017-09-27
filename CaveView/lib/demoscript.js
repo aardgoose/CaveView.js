@@ -7,6 +7,13 @@ var demoScript = [
 		}
 	},
 	{
+		caption: "Fullscreen mode",
+		delay: 3,
+		view: {
+			fullscreen: true
+		}
+	},
+	{
 		caption: "Displays center lines ...",
 		delay: 7,
 		view: {
@@ -222,7 +229,8 @@ var demoScript = [
 			HUD: true,
 			autoRotate: false,
 			stations: true,
-			stationLabels: false
+			stationLabels: false,
+			fullscreen: false
 		}
 	},
 ];

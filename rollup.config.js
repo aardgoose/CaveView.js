@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 
 function glsl () {
 	return {
@@ -25,4 +24,4 @@ export default {
 	plugins: [
 		glsl()
 	]
-}
+};

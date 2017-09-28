@@ -220,7 +220,7 @@ var demoScript = [
 		}
 	},
 	{
-		caption: "... mouse controls to zoom, pan and rotate.",
+		caption: "mouse controls to rotate, pan and zoom ...",
 		delay: 5,
 		view: {
 			section: 0,
@@ -237,4 +237,20 @@ var demoScript = [
 			fullscreen: false
 		}
 	},
+	{
+		caption: "mouse with right button - rotate view point...",
+		delay: 2
+	},
+	{
+		caption: "mouse with left button - pan view point...",
+		delay: 2
+	},
+	{
+		caption: "mouse wheel to zoom...",
+		delay: 2
+	},
+	{
+		caption: "... have a go!",
+		delay: 2
+	}
 ];

@@ -83,10 +83,9 @@ div.linear-scale-caption {
 	text-align: center;
 }
 
-#scene {
-	width: 500px;
-	height: 500px;
+.cv-container {
 	position: relative;
+	overflow: hidden;
 }
 
 #progress-bar {

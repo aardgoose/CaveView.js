@@ -663,8 +663,6 @@ function initSurfacePage () {
 
 function initUI () {
 
-	Page.reset();
-
 	// create UI side panel and reveal tabs
 
 	initSettingsPage();

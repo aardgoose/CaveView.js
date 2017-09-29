@@ -79,17 +79,6 @@ Page.frame = null;
 Page.tabBox = null;
 Page.seq = 0;
 
-Page.reset = function () {
-
-	Page.listeners = [];
-	Page.pages     = [];
-	Page.inHandler = false;
-	Page.controls  = [];
-	Page.frame     = null;
-	Page.tabBox    = null;
-
-};
-
 Page.setParent = function ( parent ) {
 
 	parent.appendChild( Page.tabBox );
@@ -124,6 +113,13 @@ Page.clear = function () {
 
 		if ( frame  !== null ) frame.parentElement.removeChild( frame );
 		if ( tabBox !== null ) tabBox.parentElement.removeChild( tabBox );
+
+		Page.listeners = [];
+		Page.pages     = [];
+		Page.inHandler = false;
+		Page.controls  = [];
+		Page.frame     = null;
+		Page.tabBox    = null;
 
 	}
 

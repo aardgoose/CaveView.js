@@ -88,9 +88,11 @@ Page.setParent = function ( parent ) {
 
 Page.clear = function () {
 
-	Page.frame.addEventListener( 'transitionend', _afterReset );
-	Page.tabBox.classList.remove( 'onscreen' );
-	Page.frame.classList.remove( 'onscreen' );
+	var frame  = Page.frame;
+	var tabBox = Page.tabBox;
+
+	if ( frame  !== null ) frame.parentElement.removeChild( frame );
+	if ( tabBox !== null ) tabBox.parentElement.removeChild( tabBox );
 
 	var i, l, listener;
 
@@ -103,25 +105,11 @@ Page.clear = function () {
 	}
 
 	Page.listeners = [];
-
-	function _afterReset ( /* event */ ) {
-
-		var frame  = Page.frame;
-		var tabBox = Page.tabBox;
-
-		frame.removeEventListener( 'transitionend', _afterReset );
-
-		if ( frame  !== null ) frame.parentElement.removeChild( frame );
-		if ( tabBox !== null ) tabBox.parentElement.removeChild( tabBox );
-
-		Page.listeners = [];
-		Page.pages     = [];
-		Page.inHandler = false;
-		Page.controls  = [];
-		Page.frame     = null;
-		Page.tabBox    = null;
-
-	}
+	Page.pages     = [];
+	Page.inHandler = false;
+	Page.controls  = [];
+	Page.frame     = null;
+	Page.tabBox    = null;
 
 };
 

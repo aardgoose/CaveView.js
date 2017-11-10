@@ -1,23 +1,23 @@
-"use strict";
+'use strict';
 
 var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-var mapSet = 'Mulu';
-var sourceRaster = 'mulu3';
+var mapSet = 'UK';
+var sourceRaster = 'ofd';
 
 var tileSet = {
-	title: 'Mulu',
-	dtmMaxZoom: 13,
+	title: 'OFD',
+	dtmMaxZoom: 17,
 	maxZoom: 18,
-	minZoom: 10,
+	minZoom: 13,
 	divisions: 128,
 	directory: '',
-	subdirectory: 'mulu',
+	subdirectory: 'OFD',
 	dtmScale: 64,
-	minX: 838,
-	maxX: 839,
-	minY: 499,
-	maxY: 500
+	minX: 4012,
+	maxX: 4013,
+	minY: 2711,
+	maxY: 2712
 };
 
 var n,s,e,w, zoom;

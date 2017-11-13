@@ -5,7 +5,7 @@ import {
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
-	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR,
+	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_AXIS,
 	upAxis
 } from '../core/constants';
 
@@ -27,7 +27,7 @@ import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
 import { WorkerPool } from '../workers/WorkerPool';
 
-import { Matrix4, Vector3, Box3, Object3D, TextureLoader, PointsMaterial } from '../../../../three.js/src/Three';
+import { Matrix4, Vector3, Box3, Object3D, Color, TextureLoader, PointsMaterial } from '../../../../three.js/src/Three';
 
 var zeroVector = new Vector3();
 
@@ -64,6 +64,7 @@ function Survey ( cave ) {
 	this.stations = null;
 	this.workerPool = new WorkerPool( 'caveWorker.js' );
 	this.inverseWorld = null;
+	this.colourAxis = [];
 
 	// highlit point marker
 
@@ -1348,6 +1349,12 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 		break;
 
+	case SHADING_AXIS:
+
+		this.setLegColourByAxis( mesh );
+
+		break;
+
 	case SHADING_OVERLAY:
 
 		break;
@@ -1371,6 +1378,12 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	}
 
 	return true;
+
+};
+
+Survey.prototype.setColourAxis = function ( c1, c2, c3 ) {
+
+	this.colourAxis.push( c1, c2, c3 );
 
 };
 
@@ -1418,6 +1431,33 @@ Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
 	function _colourSegment ( geometry, v1, v2 ) {
+
+		geometry.colors[ v1 ] = colour;
+		geometry.colors[ v2 ] = colour;
+
+	}
+
+};
+
+Survey.prototype.setLegColourByAxis = function ( mesh ) {
+
+	var vector = new Vector3();
+
+	var c1 = this.colourAxis[ 0 ];
+	var c2 = this.colourAxis[ 1 ];
+	var c3 = this.colourAxis[ 2 ];
+
+	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
+
+	function _colourSegment ( geometry, v1, v2 ) {
+
+		vector.copy( geometry.vertices[ v1 ] ).sub( geometry.vertices[ v2 ] ).normalize();
+
+		var colour = new Color(
+			Math.abs( vector.dot( c1 ) ),
+			Math.abs( vector.dot( c2 ) ),
+			Math.abs( vector.dot( c3 ) )
+		);
 
 		geometry.colors[ v1 ] = colour;
 		geometry.colors[ v2 ] = colour;

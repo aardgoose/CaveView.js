@@ -15,6 +15,7 @@ function LoxTerrain ( terrainData, offsets ) {
 	this.offsets = offsets;
 	this.bitmap = terrainData.bitmap;
 	this.overlayMaterial = null;
+	this.attributions = [];
 
 	var tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ), Materials.getSurfaceMaterial() );
 

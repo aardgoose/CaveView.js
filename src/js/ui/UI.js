@@ -658,6 +658,14 @@ function initSurfacePage () {
 
 		setControlsVisibility( terrainControls, false );
 
+		var attributions = Viewer.terrainAttributions;
+
+		for ( var i = 0; i < attributions.length; i++ ) {
+
+			page.addText( attributions[ i ] );
+
+		}
+
 	}
 
 }

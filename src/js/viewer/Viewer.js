@@ -23,6 +23,7 @@ import { Overlay } from '../terrain/Overlay';
 import { setEnvironment } from '../core/lib';
 
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
+import { ClusterLegs } from '../analysis/ClusterLegs';
 
 import { OrbitControls } from '../core/OrbitControls';
 
@@ -167,6 +168,10 @@ function init ( domID, configuration ) { // public method
 
 		'hasTerrain': {
 			get: function () { return !! terrain; }
+		},
+
+		'terrainAttributions': {
+			get: function () { return terrain.attributions; }
 		},
 
 		'terrainDatumShift': {
@@ -942,6 +947,7 @@ function loadSurvey ( newSurvey ) {
 
 	scene.add( survey );
 	// scene.add( new DirectionGlobe( survey ) );
+	// ClusterLegs( survey );
 
 	caveIsLoaded = true;
 

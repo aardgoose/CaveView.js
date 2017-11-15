@@ -19,6 +19,7 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 
 	this.name = 'WebTerrain';
 	this.type = 'CV.WebTerrain';
+	this.attribution = [];
 
 	var limits = survey.limits;
 
@@ -104,7 +105,10 @@ WebTerrain.prototype.hasCoverage = function () {
 					( coverage.min_y >= tileSet.minY && coverage.max_y <= tileSet.maxY ) ) ) {
 
 			tileSet.directory = baseDirectory + tileSet.subdirectory;
+
 			this.tileSet = tileSet;
+			this.attributions = tileSet.attributions;
+
 			return true;
 
 		}

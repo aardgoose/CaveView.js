@@ -1,5 +1,5 @@
 
-import { VertexColors, ShaderMaterial, TextureLoader, Vector4 } from '../../../../three.js/src/Three';
+import { VertexColors, ShaderMaterial, TextureLoader, Vector4, Matrix3 } from '../../../../three.js/src/Three';
 import { Shaders } from '../shaders/Shaders';
 import { getEnvironmentValue } from '../core/lib';
 import { ColourCache } from '../core/ColourCache';
@@ -14,7 +14,8 @@ function ExtendedPointsMaterial () {
 			scale: { value: 1.0 },
 			pScale: { value: 1.0 },
 			offsetRepeat: { value: new Vector4() },
-			map: { value: null }
+			map: { value: null },
+			uvTransform: { value: new Matrix3() }
 		},
 		vertexShader: Shaders.extendedPointsVertexShader,
 		fragmentShader: Shaders.extendedPointsFragmentShader,

@@ -67,6 +67,7 @@ function getClusterMaterial ( count ) {
 	ctx.fillText( count, halfSize, halfSize + 15 );
 
 	material = new PointsMaterial( { map: new CanvasTexture( canvas ), size: 32, depthTest: false, transparent: true, alphaTest: 0.8, sizeAttenuation: false } );
+	material.fog = false;
 
 	clusterMaterialCache[ count ] = material;
 

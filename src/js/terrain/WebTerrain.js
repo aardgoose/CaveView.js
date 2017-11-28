@@ -419,6 +419,7 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 
 	material.opacity = this.opacity;
 	material.needsUpdate = true;
+	material.fog = false;
 
 	this.material = material;
 

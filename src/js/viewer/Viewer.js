@@ -22,8 +22,9 @@ import { WebTerrain } from '../terrain/WebTerrain';
 import { Overlay } from '../terrain/Overlay';
 import { setEnvironment } from '../core/lib';
 
+// analysis tests
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
-import { ClusterLegs } from '../analysis/ClusterLegs';
+//import { ClusterLegs } from '../analysis/ClusterLegs';
 
 import { OrbitControls } from '../core/OrbitControls';
 
@@ -37,8 +38,6 @@ import {
 	WebGLRenderer, WebGLRenderTarget,
 } from '../../../../three.js/src/Three';
 
-//import { LeakWatch } from '../../../../LeakWatch/src/LeakWatch';
-
 var lightPosition = new Vector3( -1, -1, 0.5 );
 var RETILE_TIMEOUT = 150; // ms pause after last movement before attempting retiling
 
@@ -49,7 +48,11 @@ var container;
 // THREE.js objects
 
 var renderer;
+
 var scene = new Scene();
+
+//scene.fog = new Fog( 0x0f0f0f, 400 );
+
 var oCamera;
 var pCamera;
 

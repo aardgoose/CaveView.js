@@ -64,7 +64,11 @@ function Survey ( cave ) {
 	this.stations = null;
 	this.workerPool = new WorkerPool( 'caveWorker.js' );
 	this.inverseWorld = null;
-	this.colourAxis = [];
+	this.colourAxis = [
+		new Vector3( 1, 0, 0),
+		new Vector3( 0, 1, 0),
+		new Vector3( 0, 1, 1)
+	];
 
 	// highlit point marker
 
@@ -1383,7 +1387,9 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 Survey.prototype.setColourAxis = function ( c1, c2, c3 ) {
 
-	this.colourAxis.push( c1, c2, c3 );
+	this.colourAxis[ 0 ] = c1;
+	this.colourAxis[ 1 ] = c2;
+	this.colourAxis[ 2 ] = c3;
 
 };
 

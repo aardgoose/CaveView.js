@@ -1,6 +1,13 @@
 
 
-function BGSProvider () {
+function BGSProvider ( layers ) {
+
+	var styles = [];
+
+	for ( var i = 0; i < layers.length; i++ ) styles.push( 'default' );
+
+	this.layers = '&LAYERS=' + layers.join() + '&STYLES=' + styles.join();
+
 }
 
 BGSProvider.prototype.minZoom = 12;
@@ -45,7 +52,7 @@ BGSProvider.prototype.getUrl = function ( x, y, z ) {
 
 	}
 
-	var url = 'https://map.bgs.ac.uk/arcgis/services/BGS_Detailed_Geology/MapServer/WMSServer?REQUEST=GetMap&VERSION=1.3.0&LAYERS=BGS.50k.Bedrock,BGS.50k.Linear.features&STYLES=default,default&FORMAT=image/png&CRS=EPSG:3857';
+	var url = 'https://map.bgs.ac.uk/arcgis/services/BGS_Detailed_Geology/MapServer/WMSServer?REQUEST=GetMap&VERSION=1.3.0' + this.layers + '&FORMAT=image/png&CRS=EPSG:3857';
 	var size = '&WIDTH=' + imageSize + '&HEIGHT=' + imageSize;
 	var bbox = '&BBOX=' + x1 + ',' + y1 + ',' + x2 + ',' + y2;
 

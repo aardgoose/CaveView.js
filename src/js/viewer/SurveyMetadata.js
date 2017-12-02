@@ -36,6 +36,7 @@ function SurveyMetadata( name, metadata ) {
 
 	this.routes = routes;
 	this.traces = traces;
+	this.entrances = metadata.entrances || {};
 
 }
 
@@ -63,7 +64,11 @@ SurveyMetadata.prototype.saveRoute = function ( routeName, route ) {
 
 SurveyMetadata.prototype.saveLocal = function () {
 
-	var localMetadata = { routes: this.routes, traces: this.traces };
+	var localMetadata = {
+		routes: this.routes,
+		traces: this.traces,
+		entrances: this.entrances
+	};
 
 	localStorage.setItem( this.name, JSON.stringify( localMetadata ) );
 

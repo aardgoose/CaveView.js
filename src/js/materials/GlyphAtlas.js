@@ -24,7 +24,7 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 	// populate with glyphs
 
-	var glyphs = '\u2610 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-_/';
+	var glyphs = '\u2610 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-_/()';
 
 	var divisions = atlasSize / cellSize;
 

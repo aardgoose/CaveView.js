@@ -199,6 +199,7 @@ Survey.prototype.onRemoved = function ( /* event */ ) {
 Survey.prototype.loadEntrances = function () {
 
 	var surveyTree = this.surveyTree;
+	var entrances = this.metadata.entrances;
 	var self = this;
 
 	var clusterMarkers = new ClusterMarkers( this.modelLimits, 4 );
@@ -208,7 +209,6 @@ Survey.prototype.loadEntrances = function () {
 	var endNode = surveyTree;
 
 	while ( endNode.children.length === 1 ) endNode = endNode.children [ 0 ];
-
 
 	// find entrances and add Markers
 
@@ -221,10 +221,24 @@ Survey.prototype.loadEntrances = function () {
 	function _addEntrance( node ) {
 
 		var marker;
+		var name;
 
 		if ( node.type !== STATION_ENTRANCE ) return;
 
-		marker = clusterMarkers.addMarker( node.p, node.getPath( endNode ) );
+		var entranceInfo = entrances[ node.getPath() ];
+
+		if ( entranceInfo !== undefined && entranceInfo.name !== undefined ) {
+
+			name = entranceInfo.name;
+
+		} else {
+
+			console.log( 'missing:', node.getPath() );
+			name = node.getPath( endNode );
+
+		}
+
+		marker = clusterMarkers.addMarker( node.p, name );
 
 		self.pointTargets.push( marker );
 

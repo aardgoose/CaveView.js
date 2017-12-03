@@ -227,18 +227,9 @@ Survey.prototype.loadEntrances = function () {
 
 		var entranceInfo = entrances[ node.getPath() ];
 
-		if ( entranceInfo !== undefined && entranceInfo.name !== undefined ) {
+		name = ( entranceInfo !== undefined && entranceInfo.name !== undefined ) ? name = entranceInfo.name : name = node.getPath( endNode );
 
-			name = entranceInfo.name;
-
-		} else {
-
-			console.log( 'missing:', node.getPath() );
-			name = node.getPath( endNode );
-
-		}
-
-		marker = clusterMarkers.addMarker( node.p, name );
+		marker = clusterMarkers.addMarker( node.p, ' ' + name + ' ' );
 
 		self.pointTargets.push( marker );
 

@@ -4,11 +4,13 @@ function SurveyMetadata( name, metadata ) {
 
 	var routes = {};
 	var traces = [];
+	var entrances = {};
 
 	if ( metadata !== null ) {
 
 		if ( metadata.routes ) routes = metadata.routes;
-		if ( metadata.traces ) traces = metadata.traces;
+		if ( metadata.traces )  traces = metadata.traces;
+		if ( metadata.entrances ) entrances = metadata.entrances;
 
 	}
 
@@ -36,7 +38,7 @@ function SurveyMetadata( name, metadata ) {
 
 	this.routes = routes;
 	this.traces = traces;
-	this.entrances = metadata.entrances || {};
+	this.entrances = entrances;
 
 }
 

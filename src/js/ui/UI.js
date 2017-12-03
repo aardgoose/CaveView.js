@@ -256,7 +256,7 @@ function initSelectionPage () {
 
 		function _addLine ( child ) {
 
-			if ( child.hitCount === 0 && ! Viewer.splays ) return; // skip spays if not displayed
+			if ( child.hitCount === 0 && ! Viewer.splays && child.type !== STATION_ENTRANCE ) return; // skip spays if not displayed
 
 			var li  = document.createElement( 'li' );
 			var txt = document.createTextNode( child.name );

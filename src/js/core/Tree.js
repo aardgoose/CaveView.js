@@ -191,7 +191,7 @@ Tree.prototype.getPath = function ( endNode ) {
 		path.push( node.name );
 		node = node.parent;
 
-	} while ( node !== endNode );
+	} while ( node !== endNode && node !== null );
 
 	return path.reverse().join( '.' );
 

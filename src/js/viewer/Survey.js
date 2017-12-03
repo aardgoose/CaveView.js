@@ -204,7 +204,7 @@ Survey.prototype.loadEntrances = function () {
 
 	var clusterMarkers = new ClusterMarkers( this.modelLimits, 4 );
 
-	// remove common elements from station names
+	// remove common elements from station names if no alternatives available
 
 	var endNode = surveyTree;
 
@@ -1141,7 +1141,6 @@ Survey.prototype.cutSection = function ( id ) {
 	}
 
 	this.surveyTree = this.surveyTree.findById( id );
-	this.surveyTree.parent = null;
 
 	this.loadStations( this.surveyTree );
 

@@ -216,7 +216,7 @@ function initSelectionPage () {
 
 		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
 
-		if ( top.parent === null ) {
+		if ( top === surveyTree ) {
 
 			titleBar.textContent = ( top.name === '' ) ? '[model]' : top.name;
 
@@ -364,7 +364,7 @@ function initSelectionPage () {
 
 		event.stopPropagation();
 
-		if ( currentTop.parent === null ) return;
+		if (  currentTop === surveyTree ) return;
 
 		page.replaceSlide( _displayPanel( currentTop.parent ), --depth, _handleSelectSurvey );
 

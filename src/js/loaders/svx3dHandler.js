@@ -21,7 +21,7 @@ Svx3dHandler.prototype.constructor = Svx3dHandler;
 Svx3dHandler.prototype.type = 'arraybuffer';
 Svx3dHandler.prototype.isRegion = false;
 
-Svx3dHandler.prototype.parse = function ( dataStream, metadata ) {
+Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	this.metadata = metadata;
 
@@ -76,8 +76,6 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata ) {
 	}
 
 	console.log( 'Survex .3d version ', version );
-	var section = 'lathkill.hillocks-knotlow';
-	section = null;
 
 	switch ( version ) {
 

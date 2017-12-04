@@ -127,6 +127,15 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata ) {
 
 	this.offsets = offsets;
 
+	var marginX = ( max.x - min.x ) * 0.05;
+	var marginY = ( max.y - min.y ) * 0.05;
+
+	min.x -= marginX;
+	max.x += marginX;
+
+	min.y -= marginY;
+	max.y += marginY;
+
 	this.limits = {
 		min: min,
 		max: max

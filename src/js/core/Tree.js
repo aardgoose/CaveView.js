@@ -239,10 +239,7 @@ Tree.prototype.trim = function ( path ) {
 
 		child = children[ i ];
 
-		if ( child.name === prefix ) {
-			console.log( 'herec', child.name );
-			break;
-		}
+		if ( child.name === prefix ) break;
 
 	}
 

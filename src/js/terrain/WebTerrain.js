@@ -1,6 +1,5 @@
 import { CommonTerrain } from './CommonTerrain';
 import { Tile } from './Tile';
-//import { Box3Helper } from '../core/Box3';
 import { HUD } from '../hud/HUD';
 import { WorkerPool } from '../workers/WorkerPool';
 import { getEnvironmentValue } from '../core/lib';

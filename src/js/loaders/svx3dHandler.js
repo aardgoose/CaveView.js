@@ -76,6 +76,8 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata ) {
 	}
 
 	console.log( 'Survex .3d version ', version );
+	var section = 'lathkill.hillocks-knotlow';
+	section = null;
 
 	switch ( version ) {
 
@@ -92,7 +94,7 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata ) {
 	case 'v7':
 	case 'v8':
 
-		this.handleVx( source, pos, Number( version.charAt( 1 ) ) );
+		this.handleVx( source, pos, Number( version.charAt( 1 ) ), section );
 
 		break;
 
@@ -102,7 +104,63 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata ) {
 
 	}
 
+	var surveyTree = this.surveyTree;
+
+	var min = { x: Infinity, y: Infinity, z: Infinity };
+	var max = { x: -Infinity, y: -Infinity, z: -Infinity };
+
+	if ( section !== null ) {
+
+		surveyTree.trim( section.split( '.' ) );
+
+	}
+
+	surveyTree.traverse( getLimits );
+
+	var offsets = {
+		x: ( min.x + max.x ) / 2,
+		y: ( min.y + max.y ) / 2,
+		z: ( min.z + max.z ) / 2
+	};
+
+	surveyTree.traverse( adjustCoords );
+
+	this.offsets = offsets;
+
+	this.limits = {
+		min: min,
+		max: max
+	};
+
 	return this;
+
+	function getLimits( node ) {
+
+		var coords = node.p;
+
+		if ( coords === undefined ) return;
+
+		min.x = Math.min( coords.x, min.x );
+		min.y = Math.min( coords.y, min.y );
+		min.z = Math.min( coords.z, min.z );
+
+		max.x = Math.max( coords.x, max.x );
+		max.y = Math.max( coords.y, max.y );
+		max.z = Math.max( coords.z, max.z );
+
+	}
+
+	function adjustCoords( node ) {
+
+		var coords = node.p;
+
+		if ( coords === undefined ) return;
+
+		coords.x -= offsets.x;
+		coords.y -= offsets.y;
+		coords.z -= offsets.z;
+
+	}
 
 	function readLF () { // read until Line feed
 
@@ -165,11 +223,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 	var readCoordinates = ( this.projection === null ) ? __readCoordinates : __readCoordinatesProjected;
 
-	// range
-
-	var min = { x: Infinity, y: Infinity, z: Infinity };
-	var max = { x: -Infinity, y: -Infinity, z: -Infinity };
-
 	// init cmd handler table withh  error handler for unsupported records or invalid records
 
 	function _errorHandler ( e ) { console.warn( 'unhandled command: ', e.toString( 16 ) ); return false; }
@@ -179,7 +232,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 		cmd[ i ] = _errorHandler;
 
 	}
-
 
 	cmd[ 0x00 ] = cmd_STOP;
 	cmd[   -1 ] = cmd_STOP;
@@ -259,36 +311,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 	}
 
-	var offsets = {
-		x: ( min.x + max.x ) / 2,
-		y: ( min.y + max.y ) / 2,
-		z: ( min.z + max.z ) / 2
-	};
-
-	surveyTree.traverse( adjustCoords );
-
-	this.offsets = offsets;
-
-	this.limits = {
-		min: min,
-		max: max
-	};
-
-	return;
-
-	function adjustCoords( node ) {
-
-		var coords = node.p;
-
-		if ( coords === undefined ) return;
-
-		coords.x -= offsets.x;
-		coords.y -= offsets.y;
-		coords.z -= offsets.z;
-
-	}
-
-
 	function cmd_STOP ( /* c */ ) {
 
 		return true;
@@ -341,6 +363,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 		return false;
 
 	}
+
 	function cmd_LABEL_V4 ( /* c */ ) {
 
 		console.log( 'LABEL_V4' );
@@ -351,7 +374,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 	function cmd_MOVE ( /* c */ ) {
 
 		var coords = readCoordinates();
-
 
 		lastPosition = coords;
 
@@ -408,14 +430,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 			z: l.getInt32( 8, true ) / 100
 		};
 
-		min.x = Math.min( coords.x, min.x );
-		min.y = Math.min( coords.y, min.y );
-		min.z = Math.min( coords.z, min.z );
-
-		max.x = Math.max( coords.x, max.x );
-		max.y = Math.max( coords.y, max.y );
-		max.z = Math.max( coords.z, max.z );
-
 		pos += 12;
 
 		return coords;
@@ -432,14 +446,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 			z: l.getInt32( 8, true ) / 100
 		};
 
-		min.x = Math.min( coords.x, min.x );
-		min.y = Math.min( coords.y, min.y );
-		min.z = Math.min( coords.z, min.z );
-
-		max.x = Math.max( coords.x, max.x );
-		max.y = Math.max( coords.y, max.y );
-		max.z = Math.max( coords.z, max.z );
-
 		pos += 12;
 
 		return coords;
@@ -448,7 +454,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 };
 
-Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
+Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	var groups     = this.groups;
 	var xGroups    = this.xGroups;
@@ -470,6 +476,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	var lastPosition = { x: 0, y:0, z: 0 }; // value to allow approach vector for xsect coord frame
 	var i;
 	var labelChanged = false;
+	var inSection = ( section === null );
 
 	// functions
 
@@ -478,11 +485,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 	// selected correct read coordinates function
 
 	var readCoordinates = ( this.projection === null ) ? __readCoordinates : __readCoordinatesProjected;
-
-	// range
-
-	var min = { x: Infinity, y: Infinity, z: Infinity };
-	var max = { x: -Infinity, y: -Infinity, z: -Infinity };
 
 	// init cmd handler table withh  error handler for unsupported records or invalid records
 
@@ -608,34 +610,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 	groups.push( legs );
 
-	var offsets = {
-		x: ( min.x + max.x ) / 2,
-		y: ( min.y + max.y ) / 2,
-		z: ( min.z + max.z ) / 2
-	};
-
-	surveyTree.traverse( adjustCoords );
-
-	this.offsets = offsets;
-
-	this.limits = {
-		min: min,
-		max: max
-	};
-
 	return;
-
-	function adjustCoords( node ) {
-
-		var coords = node.p;
-
-		if ( coords === undefined ) return;
-
-		coords.x -= offsets.x;
-		coords.y -= offsets.y;
-		coords.z -= offsets.z;
-
-	}
 
 	function readLabelV7 () {
 		// find length of label and read label = v3 - v7 .3d format
@@ -879,6 +854,15 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		if ( labelChanged && label !== '' ) {
 
+			// only record legs in selected section
+			// inSection flag only requires updating when label has changed
+
+			if ( section !== null ) {
+
+				inSection = label.startsWith( section );
+
+			}
+
 			// we have a new section name
 
 			var path = label.split( '.' );
@@ -905,17 +889,21 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 
 		var coords = readCoordinates();
 
-		if ( flags & 0x01 ) {
+		if ( inSection ) {
 
-			legs.push( { coords: coords, type: LEG_SURFACE, survey: sectionId } );
+			if ( flags & 0x01 ) {
 
-		} else if ( flags & 0x04 ) {
+				legs.push( { coords: coords, type: LEG_SURFACE, survey: sectionId } );
 
-			legs.push( { coords: coords, type: LEG_SPLAY, survey: sectionId } );
+			} else if ( flags & 0x04 ) {
 
-		} else {
+				legs.push( { coords: coords, type: LEG_SPLAY, survey: sectionId } );
 
-			legs.push( { coords: coords, type: LEG_CAVE, survey: sectionId } );
+			} else {
+
+				legs.push( { coords: coords, type: LEG_CAVE, survey: sectionId } );
+
+			}
 
 		}
 
@@ -1125,14 +1113,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 			z: l.getInt32( 8, true ) / 100
 		};
 
-		min.x = Math.min( coords.x, min.x );
-		min.y = Math.min( coords.y, min.y );
-		min.z = Math.min( coords.z, min.z );
-
-		max.x = Math.max( coords.x, max.x );
-		max.y = Math.max( coords.y, max.y );
-		max.z = Math.max( coords.z, max.z );
-
 		pos += 12;
 
 		return coords;
@@ -1148,14 +1128,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version ) {
 			y: l.getInt32( 4, true ) / 100,
 			z: l.getInt32( 8, true ) / 100
 		};
-
-		min.x = Math.min( coords.x, min.x );
-		min.y = Math.min( coords.y, min.y );
-		min.z = Math.min( coords.z, min.z );
-
-		max.x = Math.max( coords.x, max.x );
-		max.y = Math.max( coords.y, max.y );
-		max.z = Math.max( coords.z, max.z );
 
 		pos += 12;
 
@@ -1181,7 +1153,6 @@ Svx3dHandler.prototype.getLineSegments = function () {
 			// all vertices except first and last are duplicated.
 			var from = g[ v ];
 			var to   = g[ v + 1 ];
-
 
 			// move coordinates around origin
 

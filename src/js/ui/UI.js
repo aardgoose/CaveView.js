@@ -754,7 +754,7 @@ function nextCave () {
 
 }
 
-function loadCave ( inFile ) {
+function loadCave ( inFile, section ) {
 
 	file = inFile;
 
@@ -763,8 +763,7 @@ function loadCave ( inFile ) {
 
 	progressBar.Start( 'Loading file ' + file + ' ...' );
 
-	caveLoader.loadURL( file );
-
+	caveLoader.loadURL( file, section );
 
 }
 

@@ -19,6 +19,7 @@ function CaveLoader ( callback, progress ) {
 	this.dataResponse = null;
 	this.metadataResponse = null;
 	this.taskCount = 0;
+	this.section = null;
 
 }
 
@@ -73,7 +74,9 @@ CaveLoader.prototype.setHandler = function ( fileName ) {
 
 };
 
-CaveLoader.prototype.loadURL = function ( fileName ) {
+CaveLoader.prototype.loadURL = function ( fileName, section ) {
+
+	if ( section !== undefined ) this.section = section;
 
 	var self = this;
 	var prefix = getEnvironmentValue( 'surveyDirectory', '' );
@@ -153,7 +156,9 @@ CaveLoader.prototype.loadURL = function ( fileName ) {
 
 };
 
-CaveLoader.prototype.loadFile = function ( file ) {
+CaveLoader.prototype.loadFile = function ( file, section ) {
+
+	if ( section !== undefined ) this.section = section;
 
 	var self = this;
 	var fileName = file.name;
@@ -214,11 +219,13 @@ CaveLoader.prototype.callHandler = function () {
 
 	var data = this.dataResponse;
 	var metadata = this.metadataResponse;
+	var section = this.section;
 
 	this.dataResponse = null;
 	this.metadataResponse = null;
+	this.section = null;
 
-	this.callback( this.handler.parse( data, metadata ) );
+	this.callback( this.handler.parse( data, metadata, section ) );
 
 };
 

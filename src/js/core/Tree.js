@@ -227,6 +227,31 @@ Tree.prototype.getIdByPath = function ( path ) {
 
 };
 
+Tree.prototype.trim = function ( path ) {
+
+	var prefix = path.shift();
+	var children = this.children;
+	var child;
+
+	if ( prefix === undefined ) return;
+
+	for ( var i = 0; i < children.length; i++ ) {
+
+		child = children[ i ];
+
+		if ( child.name === prefix ) {
+			console.log( 'herec', child.name );
+			break;
+		}
+
+	}
+
+	this.children = [ child ];
+
+	child.trim( path );
+
+};
+
 export { Tree };
 
 // EOF

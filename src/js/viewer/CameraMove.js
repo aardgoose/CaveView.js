@@ -1,7 +1,9 @@
 
 import {
+	Object3D,
 	Vector3,
 	CubicBezierCurve3,
+	Quaternion,
 	Math as _Math
 } from '../../../../three.js/src/Three';
 
@@ -20,6 +22,7 @@ function CameraMove ( controls, renderFunction, endCallback ) {
 	this.skipNext = false;
 
 	this.moveRequired = false;
+	this.targetRotation = new Quaternion().setFromAxisAngle( Object3D.DefaultUp, 0 );
 
 }
 
@@ -34,6 +37,7 @@ CameraMove.prototype.prepare = function ( cameraTarget, targetPOI ) {
 	if ( targetPOI && targetPOI.isBox3 ) {
 
 		// target can be a Box3 in world space
+		// setup a target position above the box3 such that it fits the screen
 
 		var size = targetPOI.getSize();
 		var camera = this.controls.object;
@@ -142,11 +146,25 @@ CameraMove.prototype.getControlPoint = function ( common, p1, p2, distance ) {
 
 CameraMove.prototype.start = function ( time ) {
 
+	var controls = this.controls;
+
 	if ( this.frameCount === 0 && ! this.skipNext ) {
+
+		if ( this.cameraTarget === null && this.targetPOI !== null ) {
+
+			// scale time for simple pans by angle panned through
+
+			var v1 = new Vector3().subVectors( controls.target, controls.object.position );
+			var v2 = new Vector3().subVectors( this.targetPOI, controls.object.position );
+
+			time = Math.round( time * Math.acos( v1.normalize().dot( v2.normalize() ) ) / Math.PI );
+
+		}
 
 		this.frameCount = time + 1;
 		this.frames = this.frameCount;
-		this.controls.enabled = ! this.moveRequired;
+
+		controls.enabled = ! this.moveRequired;
 
 		this.animate();
 
@@ -177,23 +195,24 @@ CameraMove.prototype.animate = function () {
 
 		var t = 1 - tRemaining / this.frames;
 
-		controls.target.lerp( this.targetPOI, t );
-
-		if ( curve !== null ) {
-
-			camera.position.copy( this.curve.getPoint( t ) );
-
-		}
+		if ( curve !== null ) camera.position.copy( this.curve.getPoint( t ) );
 
 		camera.zoom = camera.zoom + ( this.targetZoom - camera.zoom ) * t;
 
-		//	if ( targetPOI.quaternion ) camera.quaternion.slerp( targetPOI.quaternion, t );
+		controls.target.lerp( this.targetPOI, t );
+
+		camera.lookAt( controls.target );
+
+		if ( curve !== null ) camera.quaternion.slerp( this.targetRotation, t );
 
 		camera.updateProjectionMatrix();
+		camera.updateMatrixWorld();
+
+	} else {
+
+		controls.update();
 
 	}
-
-	controls.update();
 
 	if ( tRemaining === 0 ) {
 
@@ -207,6 +226,9 @@ CameraMove.prototype.animate = function () {
 
 	var self = this;
 
+	// send event to update HUD
+
+	controls.dispatchEvent( { type: 'change' } );
 	requestAnimationFrame( function () { self.animate(); } );
 
 	this.renderFunction();
@@ -220,6 +242,7 @@ CameraMove.prototype.endAnimation = function () {
 
 	this.cameraTarget = null;
 	this.targetPOI = null;
+	this.curve = null;
 
 	this.renderFunction();
 	this.endCallback();

@@ -1250,9 +1250,9 @@ function updateTerrain () {
 
 }
 
-function setCameraPOI ( /* fixme */ ) {
+function setCameraPOI () {
 
-	cameraMove.start( 200 );
+	cameraMove.start( 100 );
 
 }
 

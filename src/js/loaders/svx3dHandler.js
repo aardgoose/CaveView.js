@@ -1056,6 +1056,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	function commonXSECT ( flags, lrud ) {
 
+		if ( section !== null && label.startsWith( section ) ) return;
+
 		var position = stations.get( label );
 
 		if ( ! position ) return;

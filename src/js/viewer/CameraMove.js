@@ -24,6 +24,8 @@ function CameraMove ( controls, renderFunction, endCallback ) {
 	this.moveRequired = false;
 	this.targetRotation = new Quaternion().setFromAxisAngle( Object3D.DefaultUp, 0 );
 
+	this.doAnimate = this.animate.bind( this );
+
 }
 
 CameraMove.prototype.constructor = CameraMove;
@@ -225,12 +227,11 @@ CameraMove.prototype.animate = function () {
 
 	}
 
-	var self = this;
-
 	// send event to update HUD
 
 	controls.dispatchEvent( { type: 'change' } );
-	requestAnimationFrame( function () { self.animate(); } );
+
+	requestAnimationFrame( this.doAnimate );
 
 	this.renderFunction();
 

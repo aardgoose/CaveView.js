@@ -262,10 +262,4 @@ CameraMove.prototype.cancel = function () {
 
 };
 
-CameraMove.prototype.isActive = function () {
-
-	return ( this.frameCount > 0 );
-
-};
-
 export { CameraMove };

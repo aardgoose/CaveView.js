@@ -193,7 +193,7 @@ CameraMove.prototype.animate = function () {
 
 		var camera = controls.object;
 
-		var t = 1 - tRemaining / this.frames;
+		var t =  Math.sin( ( 1 - tRemaining / this.frames ) * Math.PI / 2 );
 
 		if ( curve !== null ) camera.position.copy( this.curve.getPoint( t ) );
 

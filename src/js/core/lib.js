@@ -57,6 +57,16 @@ function replaceExtension( fileName, newExtention ) {
 
 // polyfill padStart for IE11 - now supported for Chrome, FireFox and Edge
 
+if ( ! String.prototype.startsWith) {
+
+	String.prototype.startsWith = function( searchString, position ) {
+
+		return this.substr( position || 0, searchString.length ) === searchString;
+
+	};
+
+}
+
 if ( ! String.prototype.padStart ) {
 
 	String.prototype.padStart = function padStart( targetLength, padString ) {

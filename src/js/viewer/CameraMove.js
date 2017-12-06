@@ -218,6 +218,7 @@ CameraMove.prototype.animate = function () {
 
 		// end of animation
 
+		if ( this.moveRequired ) controls.dispatchEvent( { type: 'change' } );
 		this.endAnimation();
 
 		return;

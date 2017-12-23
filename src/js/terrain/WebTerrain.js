@@ -261,7 +261,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
 		if ( tile.setLoaded( self.activeOverlay, self.opacity, self.onLoaded ) ) {
-
+			tile.setOpacity( self.opacity );
 			if ( self.progressDial ) self.progressDial.end();
 
 		}
@@ -372,11 +372,14 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 		if ( ! obj.isTile ) return;
 
 		obj.setOverlay( overlay, self.opacity, _overlayLoaded );
+
 		self.overlaysLoading++;
 
 	}
 
-	function _overlayLoaded () {
+	function _overlayLoaded ( tile ) {
+
+		tile.setOpacity( self.opacity );
 
 		if ( --self.overlaysLoading === 0 ) overlayLoadedCallback();
 
@@ -436,6 +439,8 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 
 WebTerrain.prototype.setOpacity = function ( opacity ) {
 
+	this.opacity = opacity;
+
 	if ( this.shadingMode === SHADING_OVERLAY ) {
 
 		// each tile has its own material, therefore need setting separately
@@ -451,8 +456,6 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 		}
 
 	}
-
-	this.opacity = opacity;
 
 	return;
 

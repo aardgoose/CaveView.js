@@ -43,8 +43,8 @@ var legShadingModes = {
 	'height cursor':      SHADING_CURSOR,
 	'fixed':              SHADING_SINGLE,
 	'survey':             SHADING_SURVEY,
-	'route':              SHADING_PATH,
-	'axis':               SHADING_AXIS
+	'route':              SHADING_PATH
+//	'axis':               SHADING_AXIS
 };
 
 var surfaceShadingModes = {

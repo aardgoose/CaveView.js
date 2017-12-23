@@ -20,7 +20,7 @@ import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { Overlay } from '../terrain/Overlay';
-import { setEnvironment } from '../core/lib';
+import { setEnvironment, getEnvironmentValue } from '../core/lib';
 
 // analysis tests
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
@@ -934,9 +934,33 @@ function loadCave ( cave ) {
 
 }
 
+function setupView () {
+
+	var view = getEnvironmentValue( 'view', {} );
+	var name;
+
+	for ( name in view ) {
+
+		var prop = Object.getOwnPropertyDescriptor( Viewer, name );
+
+		if ( prop === undefined || prop.enumerable ) {
+
+			console.log( 'unknown view setting', name );
+			continue;
+
+		}
+
+		console.log( 'setting view:', name, view[ name ] );
+		Viewer[ name ] = view[ name ];
+
+	}
+
+}
+
 function loadSurvey ( newSurvey ) {
 
-	var asyncTerrainLoading = false;
+	var syncTerrainLoading = true;
+	var firstTile = true;
 
 	survey = newSurvey;
 
@@ -964,7 +988,7 @@ function loadSurvey ( newSurvey ) {
 	if ( terrain === null ) {
 
 		terrain = new WebTerrain( survey, _terrainReady, _tilesLoaded, renderView );
-		asyncTerrainLoading = true;
+		syncTerrainLoading = false;
 
 	} else {
 
@@ -982,7 +1006,7 @@ function loadSurvey ( newSurvey ) {
 	HUD.setVisibility( true );
 
 	// signal any listeners that we have a new cave
-	if ( ! asyncTerrainLoading ) Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+	if ( syncTerrainLoading ) Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 	controls.object = camera;
 	controls.enabled = true;
@@ -990,6 +1014,8 @@ function loadSurvey ( newSurvey ) {
 	survey.getRoutes().addEventListener( 'changed', _routesChanged );
 
 	setViewMode( VIEW_PLAN, 1 );
+
+	if ( syncTerrainLoading ) setupView();
 
 	renderView();
 
@@ -1016,6 +1042,13 @@ function loadSurvey ( newSurvey ) {
 	}
 
 	function _tilesLoaded () {
+
+		if ( firstTile ) {
+
+			setupView();
+			firstTile = false;
+
+		}
 
 		renderView();
 		loadTerrainListeners();

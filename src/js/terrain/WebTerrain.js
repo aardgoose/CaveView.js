@@ -261,7 +261,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 		if ( self.progressDial ) self.progressDial.add( self.progressInc );
 
 		if ( tile.setLoaded( self.activeOverlay, self.opacity, self.onLoaded ) ) {
-			tile.setOpacity( self.opacity );
+
 			if ( self.progressDial ) self.progressDial.end();
 
 		}

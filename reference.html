@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>CaveView installation</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<style>
+
+	h1, h2 {
+
+		margin-left: 16px;
+
+	}
+
+	h3, h4, p, pre, dl {
+
+		margin-left: 32px;
+
+	}
+
+	* {
+		font-family: sans-serif;
+	}
+
+	pre {
+		font-family: monospace;
+		font-weight: bold;
+		background-color: #eeeeee;
+		padding: 8px 8px;
+	}
+
+	dd > span::before {
+		content: "["
+	}
+
+	dd > span::after {
+		content: "] "
+	}
+
+	dt, dd {
+		margin-bottom: 1em;
+	}
+
+	</style>
+</head>
+<body>
+<h1>Cave View - Reference</h1>
+
+<h2>Funtions</h2>
+<h3>CV.UI.init</h3>
+<h3>CV.UI.loadCave</h3>
+<h3>CV.UI.loadCaves</h3>
+<h3>CV.Viewer.init</h3>
+<h2>API Objects</h2>
+<h3>configuration Object</h3>
+<p>The configuration object defines the location of the resources required to display models and the initial view.</p>
+<h4>Properties</h4>
+<dl>
+	<dt>home</dt>
+	<dd><span>string</span> The path to the installtion of the CaveView package.</dd>
+	<dt>section</dt>
+	<dd><span>string</span>The section name of a survey to be displayed (optional).</dd>
+	<dt>surveyDirectory</dt>
+	<dd><span>string</span>The path of the directory containing the survey model(s) to be displayed.</dd>
+	<dt>terrainDirectory</dt>
+	<dd><span>string</span>The path of the directory containing terrain tiles (optional).</dd>
+	<dt>view</dt>
+	<dd><span>Object</span>An object, the properties of which determine the view settings applied to all models when loaded (optional).</dd>
+</dl>
+<h3>view Object</h3>
+<h4>Properties</h4>
+<dl>
+	<dt>autoRotate</dt>
+	<dd><span>boolean</span>auto rotation of model <span>default: false</span></dd>
+	<dt>box</dt>
+	<dd><span>boolean</span>visibility of model bounding box <span>default: true</span></dd>
+	<dt>cameraType</dt>
+	<dd><span>enummeration</span>The projection type for the display:
+		<dl>
+			<dt>CV.CAMERA_ORTHOGRAPHIC</dt><dd></dd>
+			<dt>CV.CAMERA_PERSPECTIVE</dt><dd></dd>
+		</dl>
+	</dd>
+	<dt>entrances</dt>
+	<dd><span>boolean</span>visibility of entrance names <span>default: true</span></dd>
+	<dt>HUD</dt>
+	<dd><span>boolean</span>visibility of head up display (HUD) indicatiors <span>default: true</span></dd>
+	<dt>scraps</dt>
+	<dd><span>boolean</span>visibility of scrap modeled passages (.lox models only) <span>default: false</span></dd>
+	<dt>shadingMode</dt>
+	<dd><span>enummeration</span>shading of underground model components:
+		<dl>
+			<dt>CV.SHADING_HEIGHT</dt><dd>shading by height above dataum</dd>
+			<dt>CV.SHADING_INCLINATION</dt><dd>shading by leg inclination</dd>
+			<dt>CV.SHADING_LENGTH</dt><dd>shading by leg length</dd>
+			<dt>CV.SHADING_SURVEY</dt><dd></dd>
+			<dt>CV.SHADING_SINGLE</dt><dd>all components shown as white</dd>
+			<dt>CV.SHADING_DEPTH</dt><dd>shading by depth below surface (requires terrain)</dd>
+		</dl>
+	</dd>
+	<dt>splays</dt>
+	<dd><span>boolean</span>visibility of splay legs <span>default: false</span></dd>
+	<dt>stations</dt>
+	<dd><span>boolean</span>visibility of station markers <span>default: false</span></dd>
+	<dt>stationLabels</dt>
+	<dd><span>boolean</span>visibility of station names <span>default: false</span></dd>
+	<dt>terrain</dt>
+	<dd><span>boolean</span>visibility of terrain (if available) <span>default: false</span></dd>
+	<dt>terrainOpacity</dt>
+	<dd><span>float</span>The opacity of the terrain between 0 (fully transparent) and 1 (opaque) <span>default: 0.5</span></dd>
+	<dt>terrainShading</dt>
+	<dd><span>enummeration</span>shading appplied to the terrain surface:
+		<dl>
+			<dt>CV.SHADING_SHADED</dt><dd></dd>
+			<dt>CV.SHADING_HEIGHT</dt><dd></dd>
+			<dt>CV.SHADING_OVERLAY</dt><dd></dd>
+		</dl>
+	</dd>
+	<dt>view</dt>
+	<dd><span>enummeration</span>the initial viewpoint:
+		<dl>
+			<dt>CV.VIEW_PLAN</dt><dd></dd>
+			<dt>CV.VIEW_ELEVATION_N</dt><dd></dd>
+			<dt>CV.VIEW_ELEVATION_S</dt><dd></dd>
+			<dt>CV.VIEW_ELEVATION_E</dt><dd></dd>
+			<dt>CV.VIEW_ELEVATION_W</dt><dd></dd>
+		</dl>
+	</dd>
+	<dt>walls</dt>
+	<dd><span>boolean</span>visibility of basic cross section messurement (LRUD) based passage walls<span>default: false</span></dd>
+</dl>
+
+</body>
+</html>

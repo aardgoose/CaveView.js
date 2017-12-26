@@ -40,6 +40,8 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 	var xGroup = [];
 	var lastTo;
 	var sectionId = 0;
+	var lastParentId;
+	var parentNode;
 
 	// range
 
@@ -169,7 +171,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		}
 
-		skipData( m_dataSize );
+		pos += m_dataSize;
 
 	}
 
@@ -193,12 +195,6 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	}
 
-	function skipData ( i ) {
-
-		pos += i;
-
-	}
-
 	function readSurvey () {
 
 		var m_id     = readUint();
@@ -207,17 +203,25 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 		var titlePtr = readDataPtr();
 		var node;
 
+		if ( lastParentId !== m_parent ) {
+
+			parentNode = surveyTree.findById( m_parent );
+			lastParentId = m_parent;
+
+		}
+
 		if ( m_parent != m_id ) {
 
-			node = surveyTree.addById( readString( namePtr ), m_id, m_parent );
+			node = surveyTree.addById( readString( namePtr ), m_id, parentNode );
 
 			if ( node === null ) console.warn( 'error constructing survey tree for', readString( titlePtr ) );
 
-			if ( section !== null &&node.getPath() === section ) {
+			if ( section !== null && node.getPath() === section ) {
 
 				sectionId = m_id;
 
 			}
+
 		}
 
 	}
@@ -257,7 +261,14 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		// m_flags & 0x01 = surface
 
-		surveyTree.addById( readString( namePtr ), - m_id, m_surveyId, { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
+		if ( lastParentId !== m_surveyId ) {
+
+			parentNode = surveyTree.findById( m_surveyId );
+			lastParentId = m_surveyId;
+
+		}
+
+		surveyTree.addById( readString( namePtr ), - m_id, parentNode, { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
 
 	}
 

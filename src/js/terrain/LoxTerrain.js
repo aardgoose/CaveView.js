@@ -46,6 +46,8 @@ LoxTerrain.prototype.isLoaded = function () {
 
 LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
+	if ( ! this.hasOverlay ) return;
+
 	if ( this.overlayMaterial !== null ) {
 
 		this.setMaterial( this.overlayMaterial );

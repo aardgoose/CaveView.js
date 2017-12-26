@@ -1363,7 +1363,6 @@ Object.assign( Viewer, {
 	getStats:      getStats,
 	getSurveyTree: getSurveyTree,
 	getControls:   getControls,
-	getState:      Viewer,
 	renderView:    renderView,
 	addOverlay:    addOverlay
 } );

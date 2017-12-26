@@ -20,7 +20,7 @@ loxHandler.prototype.constructor = loxHandler;
 loxHandler.prototype.type = 'arraybuffer';
 loxHandler.prototype.isRegion = false;
 
-loxHandler.prototype.parse = function( dataStream, metadata ) {
+loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	this.metadata     = metadata;
 
@@ -39,6 +39,7 @@ loxHandler.prototype.parse = function( dataStream, metadata ) {
 
 	var xGroup = [];
 	var lastTo;
+	var sectionId = 0;
 
 	// range
 
@@ -112,7 +113,7 @@ loxHandler.prototype.parse = function( dataStream, metadata ) {
 		var doFunction;
 
 		// offset of data region for out of line strings/images/scrap data.
-		dataStart  = pos + m_recSize;
+		dataStart = pos + m_recSize;
 
 		switch ( m_type ) {
 
@@ -182,6 +183,16 @@ loxHandler.prototype.parse = function( dataStream, metadata ) {
 
 	}
 
+	function readFloat64 () {
+
+		var i = f.getFloat64( pos, true );
+
+		pos += 8;
+
+		return i;
+
+	}
+
 	function skipData ( i ) {
 
 		pos += i;
@@ -194,11 +205,19 @@ loxHandler.prototype.parse = function( dataStream, metadata ) {
 		var namePtr  = readDataPtr();
 		var m_parent = readUint();
 		var titlePtr = readDataPtr();
+		var node;
 
 		if ( m_parent != m_id ) {
 
-			if ( ! surveyTree.addById( readString( namePtr ), m_id, m_parent ) ) console.warn( 'error constructing survey tree for', readString( titlePtr ) );
+			node = surveyTree.addById( readString( namePtr ), m_id, m_parent );
 
+			if ( node === null ) console.warn( 'error constructing survey tree for', readString( titlePtr ) );
+
+			if ( section !== null &&node.getPath() === section ) {
+
+				sectionId = m_id;
+
+			}
 		}
 
 	}
@@ -227,7 +246,7 @@ loxHandler.prototype.parse = function( dataStream, metadata ) {
 		var m_surveyId = readUint();
 		var namePtr    = readDataPtr();
 
-		readDataPtr(); // commentPtr
+		pos += 8; // readDataPtr(); // commentPtr - ignored
 
 		var m_flags    = readUint();
 		var coords     = readCoords();
@@ -244,14 +263,10 @@ loxHandler.prototype.parse = function( dataStream, metadata ) {
 
 	function readCoords () {
 
-		var f = new DataView( source, pos );
-
-		pos += 24;
-
 		coords = {
-			x: f.getFloat64( 0,  true ),
-			y: f.getFloat64( 8,  true ),
-			z: f.getFloat64( 16, true )
+			x: readFloat64(),
+			y: readFloat64(),
+			z: readFloat64()
 		};
 
 		min.x = Math.min( coords.x, min.x );
@@ -280,11 +295,11 @@ loxHandler.prototype.parse = function( dataStream, metadata ) {
 
 		var m_surveyId = readUint();
 
-		f.getFloat64( pos, true ); // m_threshold
+		pos += 8; // readFloat64(); // m_threshold
+
+		if ( sectionId !== 0 && m_surveyId !== sectionId ) return;
 
 		var type = LEG_CAVE;
-
-		pos += 8;
 
 		if ( m_flags & 0x01 ) type = LEG_SURFACE;
 		if ( m_flags & 0x08 ) type = LEG_SPLAY;
@@ -319,15 +334,11 @@ loxHandler.prototype.parse = function( dataStream, metadata ) {
 
 	function readLRUD () {
 
-		var f = new DataView( source, pos );
-
-		pos += 32;
-
 		return {
-			l: f.getFloat64( 0,  true ),
-			r: f.getFloat64( 8,  true ),
-			u: f.getFloat64( 16, true ),
-			d: f.getFloat64( 24, true )
+			l: readFloat64(),
+			r: readFloat64(),
+			u: readFloat64(),
+			d: readFloat64()
 		};
 
 	}
@@ -347,6 +358,8 @@ loxHandler.prototype.parse = function( dataStream, metadata ) {
 		var scrap = { vertices: [], faces: [], survey: m_surveyId };
 		var lastFace;
 		var i, offset, f;
+
+		if ( sectionId !== 0 && m_surveyId !== sectionId ) return;
 
 		for ( i = 0; i < m_numPoints; i++ ) {
 
@@ -474,17 +487,14 @@ loxHandler.prototype.parse = function( dataStream, metadata ) {
 
 	function readCalibration () {
 
-		var f = new DataView( source, pos );
 		var m_calib = [];
 
-		m_calib[ 0 ] = f.getFloat64( 0,  true ); // x origin
-		m_calib[ 1 ] = f.getFloat64( 8,  true ); // y origin
-		m_calib[ 2 ] = f.getFloat64( 16, true ); // xx ( 2 x 2 ) rotate and scale matrix
-		m_calib[ 3 ] = f.getFloat64( 24, true ); // xy "
-		m_calib[ 4 ] = f.getFloat64( 32, true ); // yx "
-		m_calib[ 5 ] = f.getFloat64( 40, true ); // yy "
-
-		pos += 48;
+		m_calib[ 0 ] = readFloat64(  ); // x origin
+		m_calib[ 1 ] = readFloat64( 8,  true ); // y origin
+		m_calib[ 2 ] = readFloat64( 16, true ); // xx ( 2 x 2 ) rotate and scale matrix
+		m_calib[ 3 ] = readFloat64( 24, true ); // xy "
+		m_calib[ 4 ] = readFloat64( 32, true ); // yx "
+		m_calib[ 5 ] = readFloat64( 40, true ); // yy "
 
 		return m_calib;
 

@@ -70,26 +70,19 @@ Tree.prototype.forEachChild = function ( func, recurse ) {
 
 };
 
-Tree.prototype.addById = function ( name, id, parentId, properties ) {
+Tree.prototype.addById = function ( name, id, parentNode, properties ) {
 
-	var parentNode = this.findById( parentId );
+	var node = new Tree( name, id, this.root, parentNode );
 
-	if ( parentNode ) {
+	if ( properties !== undefined ) Object.assign( node, properties );
 
-		var node = new Tree( name, id, this.root, parentNode );
+	parentNode.children.push( node );
 
-		if ( properties !== undefined ) Object.assign( node, properties );
+	var root = this.root;
 
-		parentNode.children.push( node );
+	root.maxId = Math.max( root.maxId, id );
 
-		var root = this.root;
-		root.maxId = Math.max( root.maxId, id );
-
-		return node;
-
-	}
-
-	return null;
+	return node;
 
 };
 

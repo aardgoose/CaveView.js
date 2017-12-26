@@ -7,14 +7,24 @@
 
 	h1, h2 {
 
-		margin-left: 16px;
+		margin: 0 16px 1em 16px;
 
 	}
 
 	h3, h4, p, pre, dl {
 
 		margin-left: 32px;
+		margin-right: 32px;
 
+	}
+
+	h2 {
+		border-bottom: 2px solid gray;
+	}
+
+	h3 {
+		margin-top: 2em;
+		background-color: #eeeeee;
 	}
 
 	* {
@@ -36,7 +46,14 @@
 		content: "] "
 	}
 
-	dt, dd {
+	dt {
+		margin-bottom: 0.5em;
+		font-weight: bold;
+		color: #666666;
+		padding-left: 16px;
+	}
+
+	dd {
 		margin-bottom: 1em;
 	}
 
@@ -44,12 +61,28 @@
 </head>
 <body>
 <h1>Cave View - Reference</h1>
+<p>The following functions and objects are stable. Any other functions may change without warning.</p>
 
 <h2>Funtions</h2>
-<h3>CV.UI.init</h3>
-<h3>CV.UI.loadCave</h3>
-<h3>CV.UI.loadCaves</h3>
-<h3>CV.Viewer.init</h3>
+<h3>CV.UI.init( &lt;id&gt;, &lt;configuration Object&gt; )</h3>
+<p>Initianlise CaveView - a blank screen is displayed.</p>
+<h4>Parameters</h4>
+<dl>
+	<dt>id</dt><dd><span>string</span>The id property of the HTML element where the model will be displayed.</dd>
+	<dt>configuration Object</dt><dd><span>Object</span>An Javascript object defined below.</dd>
+</dl>
+<h3>CV.UI.loadCave( &lt;filename&gt; )</h3>
+<p>Load a single model.</p>
+<h4>Parameters</h4>
+<dl>
+	<dt>filename</dt><dd><span>string</span>The filename of the model to be loaded from the survey directory (specified by the configuration object).</dd>
+</dl>
+<h3>CV.UI.loadCaves( &lt;array&gt; )</h3>
+<p>The user interface displays a list of models to display, the first model is by default.</p>
+<h4>Parameters</h4>
+<dl>
+	<dt>array</dt><dd><span>Array</span>an array of filenames of models to be displayed. The first file specified will be displayed initially.</dd>
+</dl>
 <h2>API Objects</h2>
 <h3>configuration Object</h3>
 <p>The configuration object defines the location of the resources required to display models and the initial view.</p>
@@ -76,8 +109,8 @@
 	<dt>cameraType</dt>
 	<dd><span>enummeration</span>The projection type for the display:
 		<dl>
-			<dt>CV.CAMERA_ORTHOGRAPHIC</dt><dd></dd>
-			<dt>CV.CAMERA_PERSPECTIVE</dt><dd></dd>
+			<dt>CV.CAMERA_ORTHOGRAPHIC</dt><dd>Orthographic projection of model.</dd>
+			<dt>CV.CAMERA_PERSPECTIVE</dt><dd>Perspective projection of model.</dd>
 		</dl>
 	</dd>
 	<dt>entrances</dt>
@@ -92,7 +125,7 @@
 			<dt>CV.SHADING_HEIGHT</dt><dd>shading by height above dataum</dd>
 			<dt>CV.SHADING_INCLINATION</dt><dd>shading by leg inclination</dd>
 			<dt>CV.SHADING_LENGTH</dt><dd>shading by leg length</dd>
-			<dt>CV.SHADING_SURVEY</dt><dd></dd>
+			<dt>CV.SHADING_SURVEY</dt><dd>shading by section of survey</dd>
 			<dt>CV.SHADING_SINGLE</dt><dd>all components shown as white</dd>
 			<dt>CV.SHADING_DEPTH</dt><dd>shading by depth below surface (requires terrain)</dd>
 		</dl>
@@ -103,6 +136,8 @@
 	<dd><span>boolean</span>visibility of station markers <span>default: false</span></dd>
 	<dt>stationLabels</dt>
 	<dd><span>boolean</span>visibility of station names <span>default: false</span></dd>
+	<dt>surface</dt>
+	<dd><span>boolean</span>visibility of surface legs <span>default: false</span></dd>
 	<dt>terrain</dt>
 	<dd><span>boolean</span>visibility of terrain (if available) <span>default: false</span></dd>
 	<dt>terrainOpacity</dt>
@@ -110,23 +145,25 @@
 	<dt>terrainShading</dt>
 	<dd><span>enummeration</span>shading appplied to the terrain surface:
 		<dl>
-			<dt>CV.SHADING_SHADED</dt><dd></dd>
-			<dt>CV.SHADING_HEIGHT</dt><dd></dd>
-			<dt>CV.SHADING_OVERLAY</dt><dd></dd>
+			<dt>CV.SHADING_SHADED</dt><dd>The terrain is shaded by inclination.</dd>
+			<dt>CV.SHADING_HEIGHT</dt><dd>The terrain is shaded by height.</dd>
+			<dt>CV.SHADING_OVERLAY</dt><dd>A overlay image or set of images is displayed on the terrain*.</dd>
 		</dl>
+		<p>*Therion .lox models may contain an overlay image. If a external terrain is provided for a Survex .3d model, image tiles from a 'slippy map' tile server may be used.</p>
 	</dd>
 	<dt>view</dt>
 	<dd><span>enummeration</span>the initial viewpoint:
 		<dl>
-			<dt>CV.VIEW_PLAN</dt><dd></dd>
-			<dt>CV.VIEW_ELEVATION_N</dt><dd></dd>
-			<dt>CV.VIEW_ELEVATION_S</dt><dd></dd>
-			<dt>CV.VIEW_ELEVATION_E</dt><dd></dd>
-			<dt>CV.VIEW_ELEVATION_W</dt><dd></dd>
+			<dt>CV.VIEW_PLAN</dt><dd>A plan view of the complete model. The default view.</dd>
+			<dt>CV.VIEW_ELEVATION_N</dt><dd>An elevation view from the North*.</dd>
+			<dt>CV.VIEW_ELEVATION_S</dt><dd>An elevation from the South*.</dd>
+			<dt>CV.VIEW_ELEVATION_E</dt><dd>An elevation from the East*.</dd>
+			<dt>CV.VIEW_ELEVATION_W</dt><dd>An elevation from the West*.</dd>
 		</dl>
+		<p>* Assuming the positive y axis is North and the positive x axis is East.</p>
 	</dd>
 	<dt>walls</dt>
-	<dd><span>boolean</span>visibility of basic cross section messurement (LRUD) based passage walls<span>default: false</span></dd>
+	<dd><span>boolean</span>visibility of basic cross section messurement (LRUD) based passage walls <span>default: false</span></dd>
 </dl>
 
 </body>

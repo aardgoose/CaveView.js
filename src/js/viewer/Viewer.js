@@ -16,6 +16,7 @@ import  {
 import { HUD } from '../hud/HUD';
 import { Materials } from '../materials/Materials';
 import { CameraMove } from './CameraMove';
+import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
 import { WebTerrain } from '../terrain/WebTerrain';
@@ -69,6 +70,7 @@ var survey;
 var limits = null;
 var stats = {};
 var zScale;
+var caveLoader;
 
 var cursorHeight;
 
@@ -332,6 +334,8 @@ function init ( domID, configuration ) { // public method
 	Materials.initCache( Viewer );
 
 	HUD.init( domID, renderer );
+
+	caveLoader = new CaveLoader( caveLoaded, HUD.setProgress );
 
 	// check if we are defaulting to full screen
 	if ( isFullscreen() ) setBrowserFullscreen( true );
@@ -921,7 +925,33 @@ function clearView () {
 
 }
 
-function loadCave ( cave ) {
+function loadCave ( file, section ) {
+
+	var progress = HUD.getProgressDial();
+
+	progress.start();
+
+	renderView();
+
+	if ( file instanceof File ) {
+
+		// progressBar.start( 'Loading file ' + file.name + ' ...' );
+		caveLoader.loadFile( file );
+
+	} else {
+
+		// progressBar.start( 'Loading file ' + file + ' ...' );
+		caveLoader.loadURL( file, section );
+
+	}
+
+}
+
+function caveLoaded ( cave ) {
+
+	var progress = HUD.getProgressDial();
+
+	progress.end();
 
 	if ( ! cave ) {
 

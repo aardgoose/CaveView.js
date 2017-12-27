@@ -8,13 +8,9 @@ import {
 
 import { replaceExtension } from '../core/lib';
 import { Page } from './Page';
-import { ProgressBar } from './ProgressBar';
-import { CaveLoader } from '../loaders/CaveLoader';
 import { Viewer } from '../viewer/Viewer';
 import { SurveyColours } from '../core/SurveyColours';
 
-var cave;
-var caveLoader;
 var routes = null;
 
 var caveIndex = Infinity;
@@ -29,7 +25,6 @@ var fullscreenDiv;
 var container;
 
 var loadedFile;
-var progressBar;
 
 var terrainControls = [];
 var routeControls = [];
@@ -87,11 +82,7 @@ function init ( domID, configuration ) { // public method
 	// target with css for fullscreen on small screen devices
 	container.classList.add( 'cv-container' );
 
-	progressBar = new ProgressBar( container );
-
 	Viewer.init( domID, configuration );
-
-	caveLoader = new CaveLoader( caveLoaded, progress );
 
 	// event handlers
 	document.addEventListener( 'keydown', keyDown );
@@ -758,51 +749,8 @@ function loadCave ( file, section ) {
 	resetUI();
 	Viewer.clearView();
 
-	if ( file instanceof File ) {
-
-		progressBar.start( 'Loading file ' + file.name + ' ...' );
-		caveLoader.loadFile( file );
-
-	} else {
-
-		progressBar.start( 'Loading file ' + file + ' ...' );
-		caveLoader.loadURL( file, section );
-
-		loadedFile = file;
-
-	}
-
-}
-
-function progress ( pcent ) {
-
-	progressBar.update( pcent );
-
-}
-
-function caveLoaded ( inCave ) {
-
-	cave = inCave;
-
-	// slight delay to allow repaint to display 100%.
-	setTimeout( _delayedTasks1, 100 );
-
-	function _delayedTasks1 () {
-
-		progressBar.end();
-		progressBar.start( 'Rendering...' );
-
-		setTimeout( _delayedTasks2, 100 );
-
-	}
-
-	function _delayedTasks2 () {
-
-		Viewer.loadCave( cave );
-		progressBar.end();
-
-		// viewComplete executed as 'newCave'' event handler
-	}
+	Viewer.loadCave( file, section );
+	loadedFile = file instanceof File ? file.name : file;
 
 }
 
@@ -816,8 +764,6 @@ function viewComplete () {
 	routes = Viewer.getRoutes();
 
 	isCaveLoaded = true;
-
-	cave = null; // drop reference to cave to free heap space
 
 	initUI();
 

@@ -27,7 +27,7 @@ function ProgressBar ( container ) {
 
 ProgressBar.prototype.constructor = ProgressBar;
 
-ProgressBar.prototype.Start = function ( text ) {
+ProgressBar.prototype.start = function ( text ) {
 
 	var statusText  = this.statusText;
 	var progressBar = this.progressBar;
@@ -40,7 +40,7 @@ ProgressBar.prototype.Start = function ( text ) {
 
 };
 
-ProgressBar.prototype.Update = function ( pcent ) {
+ProgressBar.prototype.update = function ( pcent ) {
 
 	this.progressBar.value = pcent;
 
@@ -52,7 +52,7 @@ ProgressBar.prototype.Add = function ( pcent ) {
 
 };
 
-ProgressBar.prototype.End = function () {
+ProgressBar.prototype.end = function () {
 
 	var container = this.container;
 

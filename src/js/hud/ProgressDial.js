@@ -59,6 +59,8 @@ ProgressDial.prototype.set = function ( progress ) {
 
 	this.geometry.colorsNeedUpdate = true;
 
+	Viewer.renderView();
+
 };
 
 ProgressDial.prototype.add = function ( progress ) {
@@ -80,6 +82,8 @@ ProgressDial.prototype.start = function () {
 	this.geometry.colorsNeedUpdate = true;
 	this.progress = 0;
 	this.visible = true;
+
+	Viewer.renderView();
 
 };
 

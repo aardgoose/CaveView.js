@@ -335,7 +335,9 @@ function init ( domID, configuration ) { // public method
 
 	HUD.init( domID, renderer );
 
-	caveLoader = new CaveLoader( caveLoaded, HUD.setProgress );
+	var progress = HUD.getProgressDial();
+
+	caveLoader = new CaveLoader( caveLoaded, progress.set.bind( progress ) );
 
 	// check if we are defaulting to full screen
 	if ( isFullscreen() ) setBrowserFullscreen( true );
@@ -931,8 +933,6 @@ function loadCave ( file, section ) {
 
 	progress.start();
 
-	renderView();
-
 	if ( file instanceof File ) {
 
 		// progressBar.start( 'Loading file ' + file.name + ' ...' );
@@ -1269,18 +1269,21 @@ var renderView = function () {
 
 	return function renderView () {
 
-		if ( ! caveIsLoaded ) return;
-
-		camera.getWorldRotation( rotation );
-
-		lPosition.copy( lightPosition );
-
-		directionalLight.position.copy( lPosition.applyAxisAngle( upAxis, rotation.z ) );
-
-		survey.update( camera, controls.target );
-
 		renderer.clear();
-		renderer.render( scene, camera );
+
+		if ( caveIsLoaded ) {
+
+			camera.getWorldRotation( rotation );
+
+			lPosition.copy( lightPosition );
+
+			directionalLight.position.copy( lPosition.applyAxisAngle( upAxis, rotation.z ) );
+
+			survey.update( camera, controls.target );
+
+			renderer.render( scene, camera );
+
+		}
 
 		HUD.renderHUD();
 

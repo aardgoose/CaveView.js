@@ -139,13 +139,6 @@ function getProgressDial() {
 
 }
 
-function setProgress( percentage ) {
-
-	progressDial.set ( percentage );
-	renderHUD();
-
-}
-
 function setScale( scale ) {
 
 	hScale = scale;
@@ -369,7 +362,6 @@ export var HUD = {
 	setVisibility:		setVisibility,
 	getVisibility:		getVisibility,
 	getProgressDial:    getProgressDial,
-	setProgress:        setProgress,
 	setScale:           setScale,
 	resize:             resize
 };

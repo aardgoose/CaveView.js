@@ -2,7 +2,7 @@ import {
 	VERSION,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, STATION_ENTRANCE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
-	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_AXIS,
+	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_DEPTH_CURSOR, // SHADING_AXIS,
 	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
 } from '../core/constants';
 
@@ -28,7 +28,7 @@ var fullscreenDiv;
 
 var container;
 
-var file;
+var loadedFile;
 var progressBar;
 
 var terrainControls = [];
@@ -100,10 +100,9 @@ function init ( domID, configuration ) { // public method
 	container.addEventListener( 'dragover', handleDragover );
 
 	Object.defineProperty( guiState, 'file', {
-		get: function () { return file; },
-		set: function ( value ) { loadCave( value ); file = value; },
+		get: function () { return loadedFile; },
+		set: function ( value ) { loadCave( value ); loadedFile = value; },
 	} );
-
 
 	Viewer.addEventListener( 'change', Page.handleChange );
 	Viewer.addEventListener( 'change', handleChange );
@@ -424,7 +423,7 @@ function initRoutePage () {
 
 	routeControls.push( page.addButton( 'Add', _newRoute ) );
 
-	routeControls.push( page.addDownloadButton( 'Download', Viewer.getMetadata, replaceExtension( file, 'json' ) ) );
+	routeControls.push( page.addDownloadButton( 'Download', Viewer.getMetadata, replaceExtension( loadedFile, 'json' ) ) );
 
 	setControlsVisibility( routeControls, false );
 
@@ -718,7 +717,7 @@ function handleDrop ( event ) {
 
 	event.preventDefault();
 
-	if ( dt.files.length === 1 ) loadCaveLocalFile( dt.files[ 0 ] );
+	if ( dt.files.length === 1 ) loadCave( dt.files[ 0 ], null );
 
 }
 
@@ -754,33 +753,30 @@ function nextCave () {
 
 }
 
-function loadCave ( inFile, section ) {
-
-	file = inFile;
+function loadCave ( file, section ) {
 
 	resetUI();
 	Viewer.clearView();
 
-	progressBar.Start( 'Loading file ' + file + ' ...' );
+	if ( file instanceof File ) {
 
-	caveLoader.loadURL( file, section );
+		progressBar.start( 'Loading file ' + file.name + ' ...' );
+		caveLoader.loadFile( file );
 
-}
+	} else {
 
-function loadCaveLocalFile ( file ) {
+		progressBar.start( 'Loading file ' + file + ' ...' );
+		caveLoader.loadURL( file, section );
 
-	resetUI();
-	Viewer.clearView();
+		loadedFile = file;
 
-	progressBar.Start( 'Loading file ' + file.name + ' ...' );
-
-	caveLoader.loadFile( file );
+	}
 
 }
 
 function progress ( pcent ) {
 
-	progressBar.Update( pcent );
+	progressBar.update( pcent );
 
 }
 
@@ -793,8 +789,8 @@ function caveLoaded ( inCave ) {
 
 	function _delayedTasks1 () {
 
-		progressBar.End();
-		progressBar.Start( 'Rendering...' );
+		progressBar.end();
+		progressBar.start( 'Rendering...' );
 
 		setTimeout( _delayedTasks2, 100 );
 
@@ -803,7 +799,7 @@ function caveLoaded ( inCave ) {
 	function _delayedTasks2 () {
 
 		Viewer.loadCave( cave );
-		progressBar.End();
+		progressBar.end();
 
 		// viewComplete executed as 'newCave'' event handler
 	}

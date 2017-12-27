@@ -38,6 +38,7 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 	this.currentZoom     = null;
 	this.currentLimits   = null;
 	this.dying = false;
+	this.tilesLoading = 0;
 	this.overlaysLoading = 0;
 	this.debug = true;
 

@@ -79,7 +79,7 @@ ProgressDial.prototype.start = function () {
 
 	this.geometry.colorsNeedUpdate = true;
 	this.progress = 0;
-	this.visible = this.isVisible;
+	this.visible = true;
 
 };
 

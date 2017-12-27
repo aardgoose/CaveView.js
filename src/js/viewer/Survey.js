@@ -33,13 +33,6 @@ var zeroVector = new Vector3();
 
 function Survey ( cave ) {
 
-	if ( ! cave ) {
-
-		alert( 'failed loading cave information' );
-		return;
-
-	}
-
 	Object3D.call( this );
 
 	this.selectedSectionIds = new Set();
@@ -227,7 +220,7 @@ Survey.prototype.loadEntrances = function () {
 
 		var entranceInfo = entrances[ node.getPath() ];
 
-		if ( entranceInfo === undefined || entranceInfo.name == undefined ) console.log( node.getPath( endNode ) );
+//		if ( entranceInfo === undefined || entranceInfo.name == undefined ) console.log( node.getPath( endNode ) );
 
 		name = ( entranceInfo !== undefined && entranceInfo.name !== undefined ) ? name = entranceInfo.name : name = node.getPath( endNode );
 

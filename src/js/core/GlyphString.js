@@ -57,6 +57,7 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 	}
 
 	this.width = offset;
+	this.glyphAtlas = glyphAtlas;
 
 	this.addAttribute( 'instanceUvs', new InstancedBufferAttribute( uvs, 2, 1 ) );
 	this.addAttribute( 'instanceOffsets', new InstancedBufferAttribute( offsets, 1, 1 ) );
@@ -73,6 +74,52 @@ GlyphStringGeometry.prototype = Object.assign( Object.create( InstancedBufferGeo
 
 } );
 
+GlyphStringGeometry.prototype.replaceString = function ( text ) {
+
+	var l = this.name.length;
+
+	var uvs = new Float32Array( l * 2 );
+	var widths = new Float32Array( l );
+	var offsets = new Float32Array( l );
+
+	var glyphAtlas = this.glyphAtlas;
+	var i, glyphData;
+	var offset = 0;
+
+	for ( i = 0; i < l; i++ ) {
+
+		if ( text.charCodeAt() === 0 ) continue; // skip null characters
+
+		glyphData = glyphAtlas.getGlyph( text[ i ] );
+
+		uvs[ i * 2 ] = glyphData.column;
+		uvs[ i * 2 + 1 ] = glyphData.row;
+
+		widths[ i ] = glyphData.width;
+
+		offsets[ i ] = offset;
+
+		offset += glyphData.width;
+
+	}
+
+	this.width = offset;
+
+	var instanceUvs = this.getAttribute( 'instanceUvs' );
+	var instanceOffsets = this.getAttribute( 'instanceOffsets' );
+	var instanceWidths = this.getAttribute( 'instanceWidths' );
+
+	instanceUvs.copyArray( uvs );
+	instanceOffsets.copyArray( offsets );
+	instanceWidths.copyArray( widths );
+
+	instanceUvs.needsUpdate = true;
+	instanceOffsets.needsUpdate = true;
+	instanceWidths.needsUpdate = true;
+
+//	this.needsUpdate = true;
+
+};
 
 function GlyphString ( text, glyphMaterial ) {
 
@@ -99,6 +146,19 @@ GlyphString.prototype = Object.assign( Object.create( Mesh.prototype ), {
 	}
 
 } );
+
+GlyphString.prototype.replaceString = function ( newstring ) {
+
+	if ( newstring.length !== this.name.length ) {
+
+		console.warn( 'new string has invalid length', newstring, this.name.length );
+		return;
+
+	}
+
+	this.geometry.replaceString( newstring );
+
+};
 
 export { GlyphString };
 

@@ -1,6 +1,6 @@
 
 import { FEATURE_ENTRANCES } from '../core/constants';
-import { GlyphString } from './GlyphString';
+import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 import { Point } from './Point';
 

@@ -98,6 +98,8 @@ ProgressDial.prototype.start = function () {
 	this.progress = 0;
 	this.visible = true;
 
+	this.pcent.replaceString( '  0%' );
+
 	Viewer.renderView();
 
 };

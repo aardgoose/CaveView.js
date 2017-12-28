@@ -255,11 +255,11 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 		}
 
-		if ( self.progressDial ) self.progressDial.add( self.progressInc );
+		if ( self.progressDial ) self.progressDial.addValue( self.progressInc );
 
 		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox, self.material );
 
-		if ( self.progressDial ) self.progressDial.add( self.progressInc );
+		if ( self.progressDial ) self.progressDial.addValue( self.progressInc );
 
 		if ( tile.setLoaded( self.activeOverlay, self.opacity, self.onLoaded ) ) {
 

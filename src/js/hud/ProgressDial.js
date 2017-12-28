@@ -2,6 +2,8 @@
 import { upAxis } from '../core/constants';
 import { HudObject } from './HudObject';
 import { Viewer } from '../viewer/Viewer';
+import { GlyphString } from '../core/GlyphString';
+import { Materials } from '../materials/Materials';
 
 import {
 	RingGeometry,
@@ -9,6 +11,7 @@ import {
 	FaceColors,
 	Mesh
 } from '../../../../three.js/src/Three';
+
 
 function ProgressDial () {
 
@@ -34,6 +37,12 @@ function ProgressDial () {
 
 	this.addEventListener( 'removed', this.removeDomObjects );
 
+	var glyphMaterial = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', 0 );
+
+	this.pcent = new GlyphString( '----', glyphMaterial );
+
+	this.add( this.pcent );
+
 	return this;
 
 }
@@ -45,6 +54,8 @@ Object.assign( ProgressDial.prototype, HudObject.prototype );
 ProgressDial.prototype.constructor = ProgressDial;
 
 ProgressDial.prototype.set = function ( progress ) {
+
+	if ( progress === this.progress ) return;
 
 	this.progress = progress;
 
@@ -59,11 +70,15 @@ ProgressDial.prototype.set = function ( progress ) {
 
 	this.geometry.colorsNeedUpdate = true;
 
+	var pcent = Math.round( progress ) + '%';
+
+	this.pcent.replaceString( pcent.padStart( 4, ' ' ) );
+
 	Viewer.renderView();
 
 };
 
-ProgressDial.prototype.add = function ( progress ) {
+ProgressDial.prototype.addValue = function ( progress ) {
 
 	this.set( this.progress + progress );
 

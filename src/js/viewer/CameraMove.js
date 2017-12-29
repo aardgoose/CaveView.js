@@ -4,14 +4,19 @@ import {
 	Vector3,
 	QuadraticBezierCurve3,
 	Quaternion,
+	Euler,
 	Line3,
+	Matrix4,
 	Math as _Math
 } from '../../../../three.js/src/Three';
+
+import { upAxis } from '../core/constants';
 
 function CameraMove ( controls, renderFunction, endCallback ) {
 
 	this.cameraTarget = null;
-	this.targetPOI = null;
+	this.endPOI = null;
+	this.endQuaternion = new Quaternion();
 
 	this.controls = controls;
 	this.renderFunction = renderFunction;
@@ -23,7 +28,6 @@ function CameraMove ( controls, renderFunction, endCallback ) {
 	this.skipNext = false;
 
 	this.moveRequired = false;
-	this.targetRotation = new Quaternion().setFromAxisAngle( Object3D.DefaultUp, 0 );
 
 	this.doAnimate = this.animate.bind( this );
 
@@ -37,23 +41,27 @@ CameraMove.prototype.prepare = function () {
 	var cameraLine = new Line3();
 	var v = new Vector3();
 	var controlPoint = new Vector3();
+	var m4 = new Matrix4();
+	var q90 = new Quaternion().setFromAxisAngle( upAxis, - Math.PI / 2 );
+	var euler = new Euler();
 
-	return function prepare ( cameraTarget, targetPOI ) {
+	return function prepare ( cameraTarget, endPOI ) {
 
 		if ( this.frameCount !== 0 ) return;
 
 		this.skipNext = false;
 
-		if ( targetPOI && targetPOI.isBox3 ) {
+		var camera = this.controls.object;
+
+		if ( endPOI && endPOI.isBox3 ) {
 
 			// target can be a Box3 in world space
 			// setup a target position above the box3 such that it fits the screen
 
-			var size = targetPOI.getSize();
-			var camera = this.controls.object;
+			var size = endPOI.getSize();
 			var elevation;
 
-			targetPOI = targetPOI.getCenter();
+			endPOI = endPOI.getCenter();
 
 			if ( camera.isPerspectiveCamera ) {
 
@@ -78,18 +86,33 @@ CameraMove.prototype.prepare = function () {
 
 			}
 
-			cameraTarget   = targetPOI.clone();
+			cameraTarget   = endPOI.clone();
 			cameraTarget.z = cameraTarget.z + elevation;
 
 		}
 
 		this.cameraTarget = cameraTarget;
-		this.targetPOI = targetPOI;
+		this.endPOI = endPOI;
 
-		this.moveRequired = ( this.cameraTarget !== null || this.targetPOI !== null );
+		this.moveRequired = ( this.cameraTarget !== null || this.endPOI !== null );
 
 		var startPOI = this.controls.target;
 		var cameraStart = this.controls.object.position;
+
+		if ( this.moveRequired ) {
+
+			m4.lookAt( ( cameraTarget !== null ? cameraTarget : cameraStart ), endPOI, upAxis );
+			this.endQuaternion.setFromRotationMatrix( m4 );
+			euler.setFromQuaternion( this.endQuaternion );
+
+			if ( Math.abs( euler.x ) < 0.0001 ) {
+
+				// apply correction if looking verticaly
+				this.endQuaternion.multiply( q90 );
+
+			}
+
+		}
 
 		if ( cameraTarget !== null ) {
 
@@ -99,14 +122,14 @@ CameraMove.prototype.prepare = function () {
 
 				this.moveRequired = false;
 
-				if ( targetPOI === null ) this.skipNext = true;
+				if ( endPOI === null ) this.skipNext = true;
 
 			} else {
 
-				if ( targetPOI === null ) targetPOI = startPOI;
+				if ( endPOI === null ) endPOI = startPOI;
 
 				// get mid point between start and end POI
-				vMidpoint.addVectors( startPOI, targetPOI ).multiplyScalar( 0.5 );
+				vMidpoint.addVectors( startPOI, endPOI ).multiplyScalar( 0.5 );
 
 				// line between camera positions
 				cameraLine.set( cameraStart, cameraTarget );
@@ -135,12 +158,12 @@ CameraMove.prototype.start = function ( time ) {
 
 	if ( this.frameCount === 0 && ! this.skipNext ) {
 
-		if ( this.cameraTarget === null && this.targetPOI !== null ) {
+		if ( this.cameraTarget === null && this.endPOI !== null ) {
 
 			// scale time for simple pans by angle panned through
 
 			var v1 = new Vector3().subVectors( controls.target, controls.object.position );
-			var v2 = new Vector3().subVectors( this.targetPOI, controls.object.position );
+			var v2 = new Vector3().subVectors( this.endPOI, controls.object.position );
 
 			time = Math.round( time * Math.acos( v1.normalize().dot( v2.normalize() ) ) / Math.PI );
 
@@ -174,7 +197,7 @@ CameraMove.prototype.animate = function () {
 
 	if ( this.moveRequired ) {
 
-		// update camera position and controls.target
+		// update camera position
 
 		var camera = controls.object;
 
@@ -184,13 +207,7 @@ CameraMove.prototype.animate = function () {
 
 		camera.zoom = camera.zoom + ( this.targetZoom - camera.zoom ) * t;
 
-		controls.target.lerp( this.targetPOI, t );
-
-		camera.lookAt( controls.target );
-
-//		var tv = new Vector3().subVectors( camera.position, controls.target );
-//		this.targetRotation( tv, 0 );
-		if ( curve !== null ) camera.quaternion.slerp( this.targetRotation, t );
+		camera.quaternion.slerp( this.endQuaternion, t );
 
 		camera.updateProjectionMatrix();
 		camera.updateMatrixWorld();
@@ -205,16 +222,11 @@ CameraMove.prototype.animate = function () {
 
 		// end of animation
 
-		if ( this.moveRequired ) controls.dispatchEvent( { type: 'change' } );
 		this.endAnimation();
 
 		return;
 
 	}
-
-	// send event to update HUD
-
-	controls.dispatchEvent( { type: 'change' } );
 
 	requestAnimationFrame( this.doAnimate );
 
@@ -224,12 +236,17 @@ CameraMove.prototype.animate = function () {
 
 CameraMove.prototype.endAnimation = function () {
 
+	var controls = this.controls;
 	this.controls.enabled = true;
 	this.moveRequired = false;
 
+	if ( this.endPOI !== null ) controls.target.copy( this.endPOI );
+
 	this.cameraTarget = null;
-	this.targetPOI = null;
+	this.endPOI = null;
 	this.curve = null;
+
+	this.controls.update();
 
 	this.renderFunction();
 	this.endCallback();

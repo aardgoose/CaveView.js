@@ -92,8 +92,6 @@ function init ( domId, viewRenderer ) {
 
 	controls = Viewer.getControls();
 
-	controls.addEventListener( 'change', update );
-
 }
 
 function setVisibility ( visible ) {
@@ -166,7 +164,7 @@ function resize () {
 
 }
 
-function update () {
+function renderHUD () {
 
 	// update HUD components
 
@@ -175,10 +173,6 @@ function update () {
 	compass.set( currentCamera );
 	ahi.set( currentCamera );
 	updateScaleBar( currentCamera );
-
-}
-
-function renderHUD () {
 
 	// render on screen
 	renderer.clearDepth();
@@ -358,7 +352,6 @@ function updateScaleBar ( camera ) {
 export var HUD = {
 	init:               init,
 	renderHUD:          renderHUD,
-	update:             update,
 	setVisibility:		setVisibility,
 	getVisibility:		getVisibility,
 	getProgressDial:    getProgressDial,

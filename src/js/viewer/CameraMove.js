@@ -2,8 +2,9 @@
 import {
 	Object3D,
 	Vector3,
-	CubicBezierCurve3,
+	QuadraticBezierCurve3,
 	Quaternion,
+	Line3,
 	Math as _Math
 } from '../../../../three.js/src/Three';
 
@@ -30,121 +31,103 @@ function CameraMove ( controls, renderFunction, endCallback ) {
 
 CameraMove.prototype.constructor = CameraMove;
 
-CameraMove.prototype.prepare = function ( cameraTarget, targetPOI ) {
+CameraMove.prototype.prepare = function () {
 
-	if ( this.frameCount !== 0 ) return;
+	var vMidpoint = new Vector3();
+	var cameraLine = new Line3();
+	var v = new Vector3();
+	var controlPoint = new Vector3();
 
-	this.skipNext = false;
+	return function prepare ( cameraTarget, targetPOI ) {
 
-	if ( targetPOI && targetPOI.isBox3 ) {
+		if ( this.frameCount !== 0 ) return;
 
-		// target can be a Box3 in world space
-		// setup a target position above the box3 such that it fits the screen
+		this.skipNext = false;
 
-		var size = targetPOI.getSize();
-		var camera = this.controls.object;
-		var elevation;
+		if ( targetPOI && targetPOI.isBox3 ) {
 
-		targetPOI = targetPOI.getCenter();
+			// target can be a Box3 in world space
+			// setup a target position above the box3 such that it fits the screen
 
-		if ( camera.isPerspectiveCamera ) {
+			var size = targetPOI.getSize();
+			var camera = this.controls.object;
+			var elevation;
 
-			var tan = Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
+			targetPOI = targetPOI.getCenter();
 
-			var e1 = 1.5 * tan * size.y / 2 + size.z;
-			var e2 = tan * camera.aspect * size.x / 2 + size.z;
+			if ( camera.isPerspectiveCamera ) {
 
-			elevation = Math.max( e1, e2 );
+				var tan = Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
 
-			this.targetZoom = 1;
+				var e1 = 1.5 * tan * size.y / 2 + size.z;
+				var e2 = tan * camera.aspect * size.x / 2 + size.z;
 
-			if ( elevation === 0 ) elevation = 100;
+				elevation = Math.max( e1, e2 );
 
-		} else {
+				this.targetZoom = 1;
 
-			var hRatio = ( camera.right - camera.left ) / size.x;
-			var vRatio = ( camera.top - camera.bottom ) / size.y;
+				if ( elevation === 0 ) elevation = 100;
 
-			this.targetZoom = Math.min( hRatio, vRatio );
-			elevation = 600;
+			} else {
 
-		}
+				var hRatio = ( camera.right - camera.left ) / size.x;
+				var vRatio = ( camera.top - camera.bottom ) / size.y;
 
-		cameraTarget   = targetPOI.clone();
-		cameraTarget.z = cameraTarget.z + elevation;
+				this.targetZoom = Math.min( hRatio, vRatio );
+				elevation = 600;
 
-	}
+			}
 
-	this.cameraTarget = cameraTarget;
-	this.targetPOI = targetPOI;
-
-	this.moveRequired = ( this.cameraTarget !== null || this.targetPOI !== null );
-
-	var startPOI = this.controls.target;
-	var cameraStart = this.controls.object.position;
-
-	if ( cameraTarget !== null ) {
-
-		if ( cameraTarget.equals( cameraStart ) ) {
-
-			// start and end camera positions are identical.
-
-			this.moveRequired = false;
-
-			if ( targetPOI === null ) this.skipNext = true;
-
-		} else {
-
-			if ( targetPOI === null ) targetPOI = startPOI;
-
-			var distance = cameraStart.distanceTo( cameraTarget );
-
-			var cp1 = this.getControlPoint( startPOI, cameraStart, cameraTarget, distance );
-			var cp2 = this.getControlPoint( targetPOI, cameraTarget, cameraStart, distance );
-
-			this.curve = new CubicBezierCurve3( cameraStart, cp1, cp2, cameraTarget );
+			cameraTarget   = targetPOI.clone();
+			cameraTarget.z = cameraTarget.z + elevation;
 
 		}
 
-	}
+		this.cameraTarget = cameraTarget;
+		this.targetPOI = targetPOI;
 
-};
+		this.moveRequired = ( this.cameraTarget !== null || this.targetPOI !== null );
 
-CameraMove.prototype.getControlPoint = function ( common, p1, p2, distance ) {
+		var startPOI = this.controls.target;
+		var cameraStart = this.controls.object.position;
 
-	var v1 = new Vector3();
-	var v2 = new Vector3();
+		if ( cameraTarget !== null ) {
 
-	var normal = new Vector3();
-	var l = 0;
+			if ( cameraTarget.equals( cameraStart ) ) {
 
-	while ( l === 0 ) {
+				// start and end camera positions are identical.
 
-		v1.copy( p1 ).sub( common );
-		v2.copy( p2 ).sub( common );
+				this.moveRequired = false;
 
-		normal.crossVectors( v1, v2 );
+				if ( targetPOI === null ) this.skipNext = true;
 
-		l = normal.length();
+			} else {
 
-		if ( l === 0 ) {
+				if ( targetPOI === null ) targetPOI = startPOI;
 
-			// adjust the targetPOI to avoid degenerate triangles.
+				// get mid point between start and end POI
+				vMidpoint.addVectors( startPOI, targetPOI ).multiplyScalar( 0.5 );
 
-			common.addScalar( -1 );
+				// line between camera positions
+				cameraLine.set( cameraStart, cameraTarget );
+
+				// closest point on line to POI midpoint
+				cameraLine.closestPointToPoint( vMidpoint, true, v );
+
+				// reflect mid point around cameraLine in cameraLine + midPoint plane
+				controlPoint.subVectors( v, startPOI ).add( v );
+
+				this.curve = new QuadraticBezierCurve3( cameraStart, controlPoint, cameraTarget );
+
+				return this.curve.getPoints( 20 );
+
+			}
 
 		}
 
-	}
+	};
 
-	var adjust = new Vector3().crossVectors( normal, v1 ).setLength( Math.min( distance, v1.length() ) / 3 );
-
-	var candidate1 = new Vector3().copy( adjust ).add( v1 );
-	var candidate2 = new Vector3().copy( adjust ).negate().add( v1 );
-
-	return ( v2.distanceTo( candidate1 ) < v2.distanceTo( candidate2 ) ) ? candidate1 : candidate2;
-
-};
+}();
 
 CameraMove.prototype.start = function ( time ) {
 
@@ -205,6 +188,8 @@ CameraMove.prototype.animate = function () {
 
 		camera.lookAt( controls.target );
 
+//		var tv = new Vector3().subVectors( camera.position, controls.target );
+//		this.targetRotation( tv, 0 );
 		if ( curve !== null ) camera.quaternion.slerp( this.targetRotation, t );
 
 		camera.updateProjectionMatrix();

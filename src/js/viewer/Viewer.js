@@ -36,7 +36,7 @@ import {
 	DirectionalLight, HemisphereLight,
 	LinearFilter, NearestFilter, RGBAFormat,
 	OrthographicCamera, PerspectiveCamera,
-	WebGLRenderer, WebGLRenderTarget,
+	WebGLRenderer, WebGLRenderTarget
 } from '../../../../three.js/src/Three';
 
 var lightPosition = new Vector3( -1, -1, 0.5 );
@@ -51,8 +51,6 @@ var container;
 var renderer;
 
 var scene = new Scene();
-
-//scene.fog = new Fog( 0x0f0f0f, 400 );
 
 var oCamera;
 var pCamera;
@@ -645,8 +643,6 @@ function setCameraMode ( mode ) {
 	controls.object = camera;
 
 	cameraMode = mode;
-
-	HUD.update();
 
 	renderView();
 

@@ -132,7 +132,8 @@ function init ( domID, configuration ) { // public method
 
 	scene.add( directionalLight );
 
-	scene.add( new HemisphereLight( 0xffffff, 0x00ffff, 0.3 ) );
+	scene.add( new HemisphereLight( 0xffffff, 0xffffff, 0.3 ) );
+	//	scene.autoUpdate = false; // FIXME - update entrance labels/clusters manually
 
 	raycaster = new Raycaster();
 

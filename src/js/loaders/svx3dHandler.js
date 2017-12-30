@@ -1,6 +1,6 @@
 // Survex 3d file handler
 
-import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE } from '../core/constants';
+import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
 import { Tree } from '../core/Tree';
 
 function Svx3dHandler ( fileName ) {
@@ -1070,7 +1070,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		var surveyId = surveyTree.getIdByPath( station );
 
 		// FIXME to get a approach vector for the first XSECT in a run so we can add it to the display
-		xSects.push( { start: lastPosition, end: position, lrud: lrud, survey: surveyId } );
+		xSects.push( { start: lastPosition, end: position, lrud: lrud, survey: surveyId, type: WALL_SQUARE } );
 
 		lastPosition = position;
 

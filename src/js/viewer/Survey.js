@@ -512,23 +512,23 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				} else {
 
-					// top faces top half
+					// top faces - top half
 					indices.push( u1, ur1, ur2 );
 					indices.push( u1, ur2, u2 );
 					indices.push( u1, u2,  ul2 );
 					indices.push( u1, ul2, ul1 );
 
-					// top faces bottom half
-					indices.push( ur1, r1,  r2 );
-					indices.push( ur1, r2,  ur2 );
+					// top faces - bottom half
+					indices.push( ur1, r1, r2 );
+					indices.push( ur1, r2, ur2 );
 					indices.push( ul1, ul2, l2 );
-					indices.push( ul1, ul2, l1 );
+					indices.push( ul1, l2, l1 );
 
 					// bottom faces - top half
 					indices.push( dr1, r2,  r1 );
 					indices.push( dr1, dr2, r2 );
-					indices.push( d1,  dl2, d2 );
-					indices.push( d1,  dl1, dl2 );
+					indices.push( dl1, l2, dl2 );
+					indices.push( dl1, l1, l2 );
 
 					// bottom faces - bottom half
 					indices.push( d1, dr2, dr1 );
@@ -651,15 +651,17 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			case WALL_OVAL:
 
+				var ovalFactor = 0.3;
+
 				vertices.push( L );
 				vertices.push( R );
 				vertices.push( U );
 				vertices.push( D );
 
-				UL = L.clone().setZ( U.z );
-				UR = R.clone().setZ( U.z );
-				DL = L.clone().setZ( D.z );
-				DR = R.clone().setZ( D.z );
+				UL = L.clone().setZ( U.z ).lerp( stationV, ovalFactor );
+				UR = R.clone().setZ( U.z ).lerp( stationV, ovalFactor );
+				DL = L.clone().setZ( D.z ).lerp( stationV, ovalFactor );
+				DR = R.clone().setZ( D.z ).lerp( stationV, ovalFactor );
 
 				vertices.push( UL );
 				vertices.push( DR );

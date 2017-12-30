@@ -39,6 +39,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	var xGroup = [];
 	var lastTo;
+	var lastFrom;
 	var sectionId = 0;
 	var lastParentId;
 	var parentNode;
@@ -330,18 +331,20 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		if ( m_sectionType !== 0x00 ) {
 
-			if ( m_from !== lastTo ) {
+			// shot direction not always in seqence
+			if ( m_from !== lastTo && m_to !== lastFrom && m_from !== lastFrom && m_to !== lastTo ) {
 
 				// new set of shots
 
 				xGroup = [];
 				self.xGroups.push( xGroup );
 
-				xGroup.push( { start: to, end: from, lrud: fromLRUD, survey: m_surveyId } );
+				xGroup.push( { start: to, end: from, lrud: fromLRUD, survey: m_surveyId, type: m_sectionType } );
 
 			}
 
-			xGroup.push( { start: from, end: to, lrud: toLRUD, survey: m_surveyId } );
+			xGroup.push( { start: from, end: to, lrud: toLRUD, survey: m_surveyId, type: m_sectionType } );
+
 
 		}
 
@@ -350,6 +353,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 		lineSegments.push( { from: from, to: to, type: type, survey: m_surveyId } );
 
 		lastTo = m_to;
+		lastFrom = m_from;
 
 	}
 

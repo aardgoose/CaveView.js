@@ -1,6 +1,7 @@
 
 import {
 	FACE_SCRAPS, FACE_WALLS,
+	WALL_DIAMOND, WALL_SQUARE, WALL_OVAL,
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES, FEATURE_STATIONS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
@@ -411,13 +412,16 @@ Survey.prototype.loadCave = function ( cave ) {
 		var indexRuns = [];
 
 		var lastEnd = 0;
-		var l1, r1, u1, d1, l2, r2, u2, d2, lrud;
+		var l1, r1, u1, d1, l2, r2, u2, d2;
+		var ul1, ur1, dl1, dr1, ul2, ur2, dl2, dr2;
 		var i, j;
 
 		var cross = new Vector3();
 		var lastCross = new Vector3();
 
 		var run = null;
+		var shape = WALL_OVAL;
+		var vertexCount; // number of vertices per section
 
 		if ( l === 0 ) return;
 
@@ -429,18 +433,13 @@ Survey.prototype.loadCave = function ( cave ) {
 			if ( m < 2 ) continue;
 
 			// enter first station vertices - FIXME use fudged approach vector for this (points wrong way).
-			lrud = _getLRUD( crossSectionGroup[ 0 ] );
-
-			vertices.push( lrud.l );
-			vertices.push( lrud.r );
-			vertices.push( lrud.u );
-			vertices.push( lrud.d );
+			vertexCount = _getLRUD( crossSectionGroup[ 0 ], shape );
 
 			for ( j = 0; j < m; j++ ) {
 
 				var survey = crossSectionGroup[ j ].survey;
 
-				lrud = _getLRUD( crossSectionGroup[ j ] );
+				vertexCount = _getLRUD( crossSectionGroup[ j ], shape );
 
 				if ( survey !== currentSurvey ) {
 
@@ -465,10 +464,6 @@ Survey.prototype.loadCave = function ( cave ) {
 				}
 
 				// next station vertices
-				vertices.push( lrud.l );
-				vertices.push( lrud.r );
-				vertices.push( lrud.u );
-				vertices.push( lrud.d );
 
 				// triangles to form passage box
 				l1 = v++;
@@ -476,26 +471,74 @@ Survey.prototype.loadCave = function ( cave ) {
 				u1 = v++;
 				d1 = v++;
 
+				if ( vertexCount === 8 ) {
+
+					ul1 = v++;
+					dr1 = v++;
+					ur1 = v++;
+					dl1 = v++;
+
+				}
+
 				l2 = v++;
 				r2 = v++;
 				u2 = v++;
 				d2 = v++;
 
+				if ( vertexCount === 8 ) {
+
+					ul2 = v++;
+					dr2 = v++;
+					ur2 = v++;
+					dl2 = v++;
+
+				}
+
 				// all face vertices specified in CCW winding order to define front side.
 
-				// top faces
-				indices.push( u1, r1, r2 );
-				indices.push( u1, r2, u2 );
-				indices.push( u1, u2, l2 );
-				indices.push( u1, l2, l1 );
+				if ( vertexCount === 4 ) {
 
-				// bottom faces
-				indices.push( d1, r2, r1 );
-				indices.push( d1, d2, r2 );
-				indices.push( d1, l2, d2 );
-				indices.push( d1, l1, l2 );
+					// top faces
+					indices.push( u1, r1, r2 );
+					indices.push( u1, r2, u2 );
+					indices.push( u1, u2, l2 );
+					indices.push( u1, l2, l1 );
 
-				v = v - 4; // rewind to allow current vertices to be start of next box section.
+					// bottom faces
+					indices.push( d1, r2, r1 );
+					indices.push( d1, d2, r2 );
+					indices.push( d1, l2, d2 );
+					indices.push( d1, l1, l2 );
+
+				} else {
+
+					// top faces top half
+					indices.push( u1, ur1, ur2 );
+					indices.push( u1, ur2, u2 );
+					indices.push( u1, u2,  ul2 );
+					indices.push( u1, ul2, ul1 );
+
+					// top faces bottom half
+					indices.push( ur1, r1,  r2 );
+					indices.push( ur1, r2,  ur2 );
+					indices.push( ul1, ul2, l2 );
+					indices.push( ul1, ul2, l1 );
+
+					// bottom faces - top half
+					indices.push( dr1, r2,  r1 );
+					indices.push( dr1, dr2, r2 );
+					indices.push( d1,  dl2, d2 );
+					indices.push( d1,  dl1, dl2 );
+
+					// bottom faces - bottom half
+					indices.push( d1, dr2, dr1 );
+					indices.push( d1, d2,  dr2 );
+					indices.push( d1, dl2, d2 );
+					indices.push( d1, dl1, dl2 );
+
+				}
+
+				v = v - vertexCount; // rewind to allow current vertices to be start of next box section.
 
 				if ( run === null ) {
 
@@ -512,7 +555,7 @@ Survey.prototype.loadCave = function ( cave ) {
 			}
 
 			currentSurvey = null;
-			v = v + 4; // advance because we are starting a new set of independant x-sections.
+			v = v + vertexCount; // advance because we are starting a new set of independant x-sections.
 
 		}
 
@@ -538,7 +581,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		return;
 
-		function _getLRUD ( crossSection ) {
+		function _getLRUD ( crossSection, shape ) {
 
 			var station  = crossSection.end;
 			var lrud     = crossSection.lrud;
@@ -547,7 +590,7 @@ Survey.prototype.loadCave = function ( cave ) {
 			// cross product of leg and up AXIS to give direction of LR vector
 			cross.subVectors( crossSection.start, crossSection.end ).cross( upAxis );
 
-			var L, R, U, D;
+			var L, R, U, D, UL, UR, DL, DR;
 
 			if ( cross.equals( zeroVector ) ) {
 
@@ -581,7 +624,55 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			lastCross.copy( cross );
 
-			return { l: L, r: R, u: U, d: D };
+			switch ( shape ) {
+
+			case WALL_DIAMOND:
+
+				vertices.push( L );
+				vertices.push( R );
+				vertices.push( U );
+				vertices.push( D );
+
+				return 4;
+
+			case WALL_SQUARE:
+
+				UL = L.clone().setZ( U.z );
+				UR = R.clone().setZ( U.z );
+				DL = L.clone().setZ( D.z );
+				DR = R.clone().setZ( D.z );
+
+				vertices.push( UL );
+				vertices.push( DR );
+				vertices.push( UR );
+				vertices.push( DL );
+
+				return 4;
+
+			case WALL_OVAL:
+
+				vertices.push( L );
+				vertices.push( R );
+				vertices.push( U );
+				vertices.push( D );
+
+				UL = L.clone().setZ( U.z );
+				UR = R.clone().setZ( U.z );
+				DL = L.clone().setZ( D.z );
+				DR = R.clone().setZ( D.z );
+
+				vertices.push( UL );
+				vertices.push( DR );
+				vertices.push( UR );
+				vertices.push( DL );
+
+				return 8;
+
+			default:
+
+				console.error( 'invalid lrud shape', shape );
+
+			}
 
 		}
 

@@ -694,7 +694,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			default:
 
-				console.error( 'invalid lrud shape', shape );
+				console.error( 'invalid lrud shape', crossSection.type );
 
 			}
 

@@ -318,6 +318,16 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 		var from = stations[ m_from ];
 		var to   = stations[ m_to ];
 
+		/*
+		.lox section types
+
+		LXFILE_SHOT_SECTION_NONE 0
+		LXFILE_SHOT_SECTION_OVAL 1
+		LXFILE_SHOT_SECTION_SQUARE 2
+		LXFILE_SHOT_SECTION_DIAMOND 3
+		LXFILE_SHOT_SECTION_TUNNEL 4
+		*/
+
 		if ( m_sectionType !== 0x00 ) {
 
 			if ( m_from !== lastTo ) {

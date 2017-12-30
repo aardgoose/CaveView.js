@@ -53,9 +53,9 @@ export var FEATURE_TRACES        = 9;
 export var FACE_WALLS            = 10;
 export var FACE_SCRAPS           = 11;
 
-export var WALL_DIAMOND          = 0;
-export var WALL_SQUARE           = 1;
-export var WALL_OVAL             = 2;
+export var WALL_OVAL             = 1; // based on Therion .lox types
+export var WALL_SQUARE           = 2;
+export var WALL_DIAMOND          = 3;
 
 export var LABEL_STATION         = 12;
 

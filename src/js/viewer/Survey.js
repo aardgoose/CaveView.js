@@ -420,7 +420,7 @@ Survey.prototype.loadCave = function ( cave ) {
 		var lastCross = new Vector3();
 
 		var run = null;
-		var shape = WALL_OVAL;
+
 		var vertexCount; // number of vertices per section
 
 		if ( l === 0 ) return;
@@ -433,13 +433,13 @@ Survey.prototype.loadCave = function ( cave ) {
 			if ( m < 2 ) continue;
 
 			// enter first station vertices - FIXME use fudged approach vector for this (points wrong way).
-			vertexCount = _getLRUD( crossSectionGroup[ 0 ], shape );
+			vertexCount = _getLRUD( crossSectionGroup[ 0 ] );
 
 			for ( j = 0; j < m; j++ ) {
 
 				var survey = crossSectionGroup[ j ].survey;
 
-				vertexCount = _getLRUD( crossSectionGroup[ j ], shape );
+				vertexCount = _getLRUD( crossSectionGroup[ j ] );
 
 				if ( survey !== currentSurvey ) {
 
@@ -447,9 +447,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 					if ( run !== null ) {
 
-						// close section with two triangles to form cap.
-						indices.push( u2, r2, d2 );
-						indices.push( u2, d2, l2 );
+						_endCap();
 
 						lastEnd = indices.length;
 
@@ -550,6 +548,15 @@ Survey.prototype.loadCave = function ( cave ) {
 					indices.push( u1, r1, d1 );
 					indices.push( u1, d1, l1 );
 
+					if ( vertexCount === 8 ) {
+
+						indices.push( u1, l1, ul1 );
+						indices.push( u1, ur1, r1 );
+						indices.push( d1, dl1, l1 );
+						indices.push( d1, r1, dr1 );
+
+					}
+
 				}
 
 			}
@@ -561,9 +568,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		if ( run !== null ) {
 
-			// close tube with two triangles
-			indices.push( u2, r2, d2 );
-			indices.push( u2, d2, l2 );
+			_endCap();
 
 			run.count = indices.length - run.start;
 
@@ -580,6 +585,23 @@ Survey.prototype.loadCave = function ( cave ) {
 		self.addFeature( mesh, FACE_WALLS, 'CV.Survey:faces:walls' );
 
 		return;
+
+		function _endCap() {
+
+			// close tube with two triangles
+			indices.push( u2, r2, d2 );
+			indices.push( u2, d2, l2 );
+
+			if ( vertexCount === 8 ) {
+
+				indices.push( u2, l2, ul2 );
+				indices.push( u2, ur2, r2 );
+				indices.push( d2, dl2, l2 );
+				indices.push( d2, r2, dr2 );
+
+			}
+
+		}
 
 		function _getLRUD ( crossSection, shape ) {
 
@@ -624,7 +646,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			lastCross.copy( cross );
 
-			switch ( shape ) {
+			switch ( crossSection.type ) {
 
 			case WALL_DIAMOND:
 

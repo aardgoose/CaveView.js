@@ -37,12 +37,10 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 	var f = new DataView( source, 0 );
 	var l = source.byteLength;
 
-	var xGroup = [];
-	var lastTo;
-	var lastFrom;
 	var sectionId = 0;
 	var lastParentId;
 	var parentNode;
+	var xSects = [];
 
 	// range
 
@@ -102,6 +100,8 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 		}
 
 	}
+
+	procXsects();
 
 	return this;
 
@@ -176,6 +176,75 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	}
 
+	function procXsects () {
+
+		var xGroups = self.xGroups;
+		var lastTo, xGroup, i;
+
+		var ends = [];
+
+		xSects.sort( function ( a, b ) { return a.m_from - b.m_from; } );
+
+		for ( i = 0; i < xSects.length; i++ ) {
+
+			let xSect = xSects[ i ];
+
+			if ( xSect.m_from !== lastTo ) {
+
+				xGroup = [];
+				self.xGroups.push( xGroup );
+
+			}
+
+			lastTo = xSect.m_to;
+
+			xGroup.push( xSect );
+
+		}
+
+		for ( i = 0; i < xGroups.length; i++ ) {
+
+			let group = xGroups[ i ];
+
+			let start = group[ 0 ].m_from;
+			let end = group[ group.length - 1 ].m_to;
+
+			// should this group be linked to an other
+
+			let prepend = ends.indexOf ( start );
+
+			if ( prepend !== -1 ) {
+
+				xGroups[ i ] = xGroups[ prepend ].concat( group );
+				xGroups[ prepend ] = [];
+
+				ends[ prepend ] = undefined;
+
+			}
+
+			ends.push( end );
+
+		}
+
+		for ( i = 0; i < xGroups.length; i++ ) {
+
+			let group = xGroups[ i ];
+			let xSect = group[ 0 ];
+
+			if ( xSect === undefined ) continue;
+
+			let start = xSect.start;
+			let end = xSect.end;
+
+			// fake approach vector for initial xSect ( mirrors first segment vector )
+			let newStart = { x: start.x * 2 - end.x, y: start.y * 2 - end.y, z: start.z * 2 - end.z };
+
+			group.unshift( { start: newStart, end: start, lrud: xSect.fromLRUD, survey: xSect.survey, type: xSect.type } );
+
+		}
+
+	}
+
 	function readUint () {
 
 		var i = f.getUint32( pos, true );
@@ -238,7 +307,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function readString ( ptr ) {
 
-		// strings are null terminated. Igore last byte in string
+		// strings are null terminated. Ignore last byte in string
 		var bytes = new Uint8Array( source, dataStart + ptr.position, ptr.size - 1 );
 
 		return String.fromCharCode.apply( null, bytes );
@@ -292,14 +361,28 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 		return coords;
 
 	}
-
 	function readShot () {
 
-		var m_from = readUint();
-		var m_to   = readUint();
+		var m_from_r  = readUint();
+		var m_to_r    = readUint();
 
-		var fromLRUD = readLRUD();
-		var toLRUD   = readLRUD();
+		var m_from, m_to, fromLRUD, toLRUD;
+
+		if ( m_to_r > m_from_r ) {
+
+			m_from = m_from_r;
+			m_to = m_to_r;
+			fromLRUD = readLRUD( true );
+			toLRUD   = readLRUD( true );
+
+		} else {
+
+			m_from = m_to_r;
+			m_to = m_from_r;
+			toLRUD   = readLRUD( false );
+			fromLRUD = readLRUD( false );
+
+		}
 
 		var m_flags = readUint();
 
@@ -329,42 +412,43 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 		LXFILE_SHOT_SECTION_TUNNEL 4
 		*/
 
-		if ( m_sectionType !== 0x00 ) {
+		if ( m_sectionType !== 0x00  ) {
 
-			// shot direction not always in seqence
-			if ( m_from !== lastTo && m_to !== lastFrom && m_from !== lastFrom && m_to !== lastTo ) {
-
-				// new set of shots
-
-				xGroup = [];
-				self.xGroups.push( xGroup );
-
-				xGroup.push( { start: to, end: from, lrud: fromLRUD, survey: m_surveyId, type: m_sectionType } );
-
-			}
-
-			xGroup.push( { start: from, end: to, lrud: toLRUD, survey: m_surveyId, type: m_sectionType } );
-
+			xSects.push( { m_from: m_from, m_to: m_to, start: from, end: to, fromLRUD: fromLRUD, lrud: toLRUD, survey: m_surveyId, type: m_sectionType } );
 
 		}
 
-		if ( from.x === to.x && from.y === to.y && from.z === to.z ) return;
+		if ( from.x === to.x && from.y === to.y && from.z === to.z ) {
+//			console.log( 'dup leg ', surveyTree.findById( -m_from ).getPath() );
+//			console.log( '        ', surveyTree.findById( -m_to ).getPath() );
+			return;
+		}
 
 		lineSegments.push( { from: from, to: to, type: type, survey: m_surveyId } );
 
-		lastTo = m_to;
-		lastFrom = m_from;
-
 	}
 
-	function readLRUD () {
+	function readLRUD ( forward ) {
 
-		return {
-			l: readFloat64(),
-			r: readFloat64(),
-			u: readFloat64(),
-			d: readFloat64()
-		};
+		if ( forward ) {
+
+			return {
+				l: readFloat64(),
+				r: readFloat64(),
+				u: readFloat64(),
+				d: readFloat64()
+			};
+
+		} else {
+
+			return {
+				r: readFloat64(),
+				l: readFloat64(),
+				u: readFloat64(),
+				d: readFloat64()
+			};
+
+		}
 
 	}
 

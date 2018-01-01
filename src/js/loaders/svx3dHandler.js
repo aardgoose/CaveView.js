@@ -1056,7 +1056,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	function commonXSECT ( flags, lrud ) {
 
-		if ( section !== null && label.startsWith( section ) ) return;
+		if ( section !== null && ! label.startsWith( section ) ) return true;
 
 		var position = stations.get( label );
 
@@ -1077,7 +1077,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		// some XSECTS are not flagged as last in passage
 		// heuristic - the last line position before a move is an implied line end.
 		// cmd_MOVE saves these in the set lineEnds.
-		// this fixes up surveys that display incorrectly withg 'fly-back' artefacts in Aven and Loch.
+		// this fixes up surveys that display incorrectly with 'fly-back' artefacts in Aven and Loch.
 
 		var endRun = false;
 

@@ -209,15 +209,17 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 			let start = group[ 0 ].m_from;
 			let end = group[ group.length - 1 ].m_to;
 
-			// should this group be linked to an other
+			// concatenate adjacent groups
 
 			let prepend = ends.indexOf ( start );
 
 			if ( prepend !== -1 ) {
 
+				// keep the new run in the same slot - thus end record remains correct
 				xGroups[ i ] = xGroups[ prepend ].concat( group );
-				xGroups[ prepend ] = [];
 
+				// remove entry from moved group
+				xGroups[ prepend ] = [];
 				ends[ prepend ] = undefined;
 
 			}
@@ -231,7 +233,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 			let group = xGroups[ i ];
 			let xSect = group[ 0 ];
 
-			if ( xSect === undefined ) continue;
+			if ( xSect === undefined ) continue; // groups that have been merged
 
 			let start = xSect.start;
 			let end = xSect.end;
@@ -361,6 +363,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 		return coords;
 
 	}
+
 	function readShot () {
 
 		var m_from_r  = readUint();
@@ -384,11 +387,9 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		}
 
-		var m_flags = readUint();
-
+		var m_flags       = readUint();
 		var m_sectionType = readUint();
-
-		var m_surveyId = readUint();
+		var m_surveyId    = readUint();
 
 		pos += 8; // readFloat64(); // m_threshold
 
@@ -412,15 +413,15 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 		LXFILE_SHOT_SECTION_TUNNEL 4
 		*/
 
-		if ( m_sectionType !== 0x00  ) {
+		if ( m_sectionType !== 0x00 && type === LEG_CAVE ) {
 
 			xSects.push( { m_from: m_from, m_to: m_to, start: from, end: to, fromLRUD: fromLRUD, lrud: toLRUD, survey: m_surveyId, type: m_sectionType } );
 
 		}
 
 		if ( from.x === to.x && from.y === to.y && from.z === to.z ) {
-//			console.log( 'dup leg ', surveyTree.findById( -m_from ).getPath() );
-//			console.log( '        ', surveyTree.findById( -m_to ).getPath() );
+			// console.log( 'dup leg ', surveyTree.findById( -m_from ).getPath() );
+			// console.log( '        ', surveyTree.findById( -m_to ).getPath() );
 			return;
 		}
 

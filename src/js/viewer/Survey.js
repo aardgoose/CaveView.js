@@ -433,13 +433,14 @@ Survey.prototype.loadCave = function ( cave ) {
 			if ( m < 2 ) continue;
 
 			// enter first station vertices - FIXME use fudged approach vector for this (points wrong way).
-			vertexCount = _getLRUD( crossSectionGroup[ 0 ] );
+			vertexCount = _getLRUD( crossSectionGroup[ 0 ], crossSectionGroup[ 1 ] );
 
 			for ( j = 0; j < m; j++ ) {
 
-				var survey = crossSectionGroup[ j ].survey;
+				var xSect = crossSectionGroup[ j ];
+				var survey = xSect.survey;
 
-				vertexCount = _getLRUD( crossSectionGroup[ j ] );
+				vertexCount = _getLRUD( xSect, crossSectionGroup[ j + 1 ] );
 
 				if ( survey !== currentSurvey ) {
 
@@ -603,14 +604,23 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
-		function _getLRUD ( crossSection, shape ) {
+		function _getLRUD ( crossSection, nextSection ) {
 
 			var station  = crossSection.end;
 			var lrud     = crossSection.lrud;
 			var stationV = new Vector3( station.x, station.y, station.z );
 
-			// cross product of leg and up AXIS to give direction of LR vector
-			cross.subVectors( crossSection.start, crossSection.end ).cross( upAxis );
+			// cross product of leg + next leg vector and up AXIS to give direction of LR vector
+			cross.subVectors( crossSection.start, crossSection.end );
+
+			if ( nextSection ) {
+
+				var next = new Vector3().subVectors( nextSection.start, nextSection.end ).normalize();
+				cross.add( next );
+
+			}
+
+			cross.cross( upAxis );
 
 			var L, R, U, D, UL, UR, DL, DR;
 

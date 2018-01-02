@@ -1,6 +1,6 @@
 // Survex 3d file handler
 
-import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
+import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE, WALL_DIAMOND } from '../core/constants';
 import { Tree } from '../core/Tree';
 
 function Svx3dHandler ( fileName ) {
@@ -481,6 +481,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	var data       = new Uint8Array( source, 0 );
 	var dataLength = data.length;
 	var lastPosition = { x: 0, y:0, z: 0 }; // value to allow approach vector for xsect coord frame
+	var lastXSectPosition = { x: 0, y:0, z: 0 }; // value to allow approach vector for xsect coord frame
 	var i;
 	var labelChanged = false;
 	var inSection = ( section === null );
@@ -612,6 +613,27 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	if ( xSects.length > 1 ) {
 
 		xGroups.push( xSects );
+
+	}
+
+	// fake approach vector for initial leg in xSect sequence
+
+	for ( i = 0; i < xGroups.length; i ++ ) {
+
+		let group = xGroups[ i ];
+
+		if ( group.length < 2 ) continue;
+
+		let x1 = group[ 0 ];
+		let x2 = group[ 1 ];
+
+		// mirror vector from first to second leg
+		let start = x1.end;
+		let end = x2.end;
+
+		let newStart = { x: start.x * 2 - end.x, y: start.y * 2 - end.y, z: start.z * 2 - end.z };
+
+		x1.start = newStart;
 
 	}
 
@@ -1069,10 +1091,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		var surveyId = surveyTree.getIdByPath( station );
 
-		// FIXME to get a approach vector for the first XSECT in a run so we can add it to the display
-		xSects.push( { start: lastPosition, end: position, lrud: lrud, survey: surveyId, type: WALL_SQUARE } );
+		xSects.push( { start: lastXSectPosition, end: position, lrud: lrud, survey: surveyId, type: WALL_DIAMOND } );
 
-		lastPosition = position;
+		lastXSectPosition = position;
 
 		// some XSECTS are not flagged as last in passage
 		// heuristic - the last line position before a move is an implied line end.
@@ -1096,7 +1117,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			if ( xSects.length > 0 ) xGroups.push( xSects );
 
-			lastPosition = { x: 0, y: 0, z: 0 };
+			lastXSectPosition = { x: 0, y: 0, z: 0 };
 			xSects = [];
 
 		}

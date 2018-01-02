@@ -4,7 +4,7 @@ import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 import { Point } from './Point';
 
-import { Object3D, Vector3, Triangle, PointsMaterial, CanvasTexture } from '../../../../three.js/src/Three';
+import { Object3D, Vector3, Spherical, Triangle, PointsMaterial, CanvasTexture, Math as _Math } from '../../../../three.js/src/Three';
 
 
 // preallocated objects for projected area calculation
@@ -154,7 +154,7 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 
 };
 
-QuadTree.prototype.check = function ( cluster ) {
+QuadTree.prototype.check = function ( cluster, angle ) {
 
 	var subQuad;
 
@@ -178,14 +178,15 @@ QuadTree.prototype.check = function ( cluster ) {
 
 			var area = subQuad.projectedArea( cluster );
 
-			if ( area < 0.80 ) { // FIXME calibrate by screen size ???
+			// cluster markers compensated for angle to the horizontal.
+			if ( area < 0.80 * angle ) { // FIXME calibrate by screen size ???
 
 				subQuad.clusterMarkers( cluster );
 
 			} else {
 
 				subQuad.showMarkers();
-				subQuad.check( cluster );
+				subQuad.check( cluster, angle );
 
 			}
 
@@ -338,21 +339,30 @@ ClusterMarkers.prototype.addMarker = function ( position, label ) {
 
 };
 
-ClusterMarkers.prototype.cluster = function ( camera ) {
+ClusterMarkers.prototype.cluster = function () {
 
-	// determine which labels are too close together to be usefully displayed as separate objects.
+	var sp = new Spherical();
+	var v = new Vector3();
 
-	// immediate exit if only a single label or none.
+	return function cluster ( camera ) {
 
-	if ( this.children.length < 2 ) return;
+		// determine which labels are too close together to be usefully displayed as separate objects.
 
-	this.camera = camera;
+		// immediate exit if only a single label or none.
 
-	this.quadTree.check( this ) ;
+		if ( this.children.length < 2 ) return;
 
-	return;
+		this.camera = camera;
 
-};
+		sp.setFromVector3( camera.getWorldDirection( v ) );
+
+		this.quadTree.check( this, Math.cos( ( ( sp.phi - Math.PI / 2 ) * 2 ) + 1 ) / 3 ) ;
+
+		return;
+
+	};
+
+}();
 
 export { ClusterMarkers };
 

@@ -30,8 +30,6 @@ import { WorkerPool } from '../workers/WorkerPool';
 
 import { Matrix4, Vector3, Box3, Object3D, Color, TextureLoader, PointsMaterial } from '../../../../three.js/src/Three';
 
-var zeroVector = new Vector3();
-
 function Survey ( cave ) {
 
 	Object3D.call( this );
@@ -418,6 +416,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		var cross = new Vector3();
 		var lastCross = new Vector3();
+		var nextCross = new Vector3();
 
 		var run = null;
 
@@ -477,6 +476,13 @@ Survey.prototype.loadCave = function ( cave ) {
 					ur1 = v++;
 					dl1 = v++;
 
+				} else {
+
+					ul1 = l1;
+					dr1 = r1;
+					ur1 = r1;
+					dl1 = l1;
+
 				}
 
 				l2 = v++;
@@ -490,6 +496,13 @@ Survey.prototype.loadCave = function ( cave ) {
 					dr2 = v++;
 					ur2 = v++;
 					dl2 = v++;
+
+				} else {
+
+					ul2 = l1;
+					dr2 = r1;
+					ur2 = r1;
+					dl2 = l1;
 
 				}
 
@@ -609,14 +622,17 @@ Survey.prototype.loadCave = function ( cave ) {
 			var station  = crossSection.end;
 			var lrud     = crossSection.lrud;
 			var stationV = new Vector3( station.x, station.y, station.z );
+			var vertical;
 
 			// cross product of leg + next leg vector and up AXIS to give direction of LR vector
-			cross.subVectors( crossSection.start, crossSection.end );
+			cross.subVectors( crossSection.start, crossSection.end ).normalize();
+
+			vertical = ( Math.abs( cross.dot( upAxis ) ) > 0.97 );
 
 			if ( nextSection ) {
 
-				var next = new Vector3().subVectors( nextSection.start, nextSection.end ).normalize();
-				cross.add( next );
+				nextCross.subVectors( nextSection.start, nextSection.end ).normalize();
+				cross.add( nextCross );
 
 			}
 
@@ -624,35 +640,23 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			var L, R, U, D, UL, UR, DL, DR;
 
-			if ( cross.equals( zeroVector ) ) {
+			if ( vertical && ( lrud.u + lrud.d < 5 ) ) {
 
-				// leg is vertical
+				cross.copy( lastCross );
+				var t = cross.clone().cross( upAxis );
 
-				if ( lastCross.equals( zeroVector ) ) {
-
-					// previous leg was vertical
-
-					L = stationV;
-					R = stationV;
-
-				} else {
-
-					// use previous leg to determine passage orientation for L and R for vertical legs
-
-					L = lastCross.clone().setLength(  lrud.l ).add( stationV );
-					R = lastCross.clone().setLength( -lrud.r ).add( stationV );
-
-				}
+				U = t.clone().setLength( -lrud.u ).add( stationV );
+				D = t.clone().setLength( lrud.d ).add( stationV );
 
 			} else {
 
-				L = cross.clone().setLength(  lrud.l ).add( stationV );
-				R = cross.clone().setLength( -lrud.r ).add( stationV );
+				U = new Vector3( station.x, station.y, station.z + lrud.u );
+				D = new Vector3( station.x, station.y, station.z - lrud.d );
 
 			}
 
-			U = new Vector3( station.x, station.y, station.z + lrud.u );
-			D = new Vector3( station.x, station.y, station.z - lrud.d );
+			L = cross.clone().setLength(  lrud.l ).add( stationV );
+			R = cross.clone().setLength( -lrud.r ).add( stationV );
 
 			lastCross.copy( cross );
 
@@ -665,7 +669,7 @@ Survey.prototype.loadCave = function ( cave ) {
 				vertices.push( U );
 				vertices.push( D );
 
-				return 4;
+				return 4; // number of vertices for this profile
 
 			case WALL_SQUARE:
 
@@ -679,11 +683,11 @@ Survey.prototype.loadCave = function ( cave ) {
 				vertices.push( UR );
 				vertices.push( DL );
 
-				return 4;
+				return 4; // number of vertices for this profile
 
 			case WALL_OVAL:
 
-				var ovalFactor = 0.3;
+				var ovalFactor = 0.293;
 
 				vertices.push( L );
 				vertices.push( R );
@@ -700,11 +704,11 @@ Survey.prototype.loadCave = function ( cave ) {
 				vertices.push( UR );
 				vertices.push( DL );
 
-				return 8;
+				return 8; // number of vertices for this profile
 
 			default:
 
-				console.error( 'invalid lrud shape', crossSection.type );
+				console.error( 'unsupported lrud shape', crossSection.type );
 
 			}
 

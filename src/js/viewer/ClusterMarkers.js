@@ -9,19 +9,17 @@ import { Object3D, Vector3, Spherical, Triangle, Plane, PointsMaterial, CanvasTe
 
 // preallocated objects for projected area calculation and cluster visibility checks
 
-const d90 = Math.PI / 2;
+const __d90 = Math.PI / 2;
 
-var A = new Vector3();
-var B = new Vector3();
-var C = new Vector3();
-var D = new Vector3();
+var __a = new Vector3();
+var __b = new Vector3();
+var __c = new Vector3();
+var __d = new Vector3();
 
-var T1 = new Triangle( A, B, C );
-var T2 = new Triangle( A, C, D );
+var __t1 = new Triangle( __a, __b, __c );
+var __t2 = new Triangle( __a, __c, __d );
 
-var tmpV1 = new Vector3();
-var tmpV2 = new Vector3();
-var tmpPlane = new Plane();
+var __plane = new Plane();
 
 var clusterMaterialCache = [];
 
@@ -197,14 +195,14 @@ QuadTree.prototype.check = function ( cluster, target, angleFactor ) {
 
 				// adjust for inclination to horizontal and distance from camera vs distance between camera and target
 
-				tmpV1.subVectors( cluster.camera.position, target );
+				__a.subVectors( cluster.camera.position, target );
 
-				tmpPlane.set( tmpV1, 0 );
+				__plane.set( __a, 0 );
 
-				tmpV2.set( this.quadMarker.position ).setFromMatrixScale( cluster.matrixWorld );
+				__b.copy( this.quadMarker.position ).setFromMatrixScale( cluster.matrixWorld );
 
-				var d2Target = tmpV1.length() * 2;
-				var dCluster = Math.abs( tmpPlane.distanceToPoint( tmpV2 ) );
+				var d2Target = __a.length() * 2;
+				var dCluster = Math.abs( __plane.distanceToPoint( __b ) );
 
 				var depthRatio = 1.5 * ( d2Target - dCluster ) / d2Target;
 
@@ -306,12 +304,12 @@ QuadTree.prototype.projectedArea = function ( cluster ) {
 	var matrixWorld = cluster.matrixWorld;
 	var zAverage = this.centroid.z / this.count;
 
-	A.set( this.xMin, this.yMin, zAverage ).applyMatrix4( matrixWorld ).project( camera );
-	B.set( this.xMin, this.yMax, zAverage ).applyMatrix4( matrixWorld ).project( camera );
-	C.set( this.xMax, this.yMax, zAverage ).applyMatrix4( matrixWorld ).project( camera );
-	D.set( this.xMax, this.yMin, zAverage ).applyMatrix4( matrixWorld ).project( camera );
+	__a.set( this.xMin, this.yMin, zAverage ).applyMatrix4( matrixWorld ).project( camera );
+	__b.set( this.xMin, this.yMax, zAverage ).applyMatrix4( matrixWorld ).project( camera );
+	__c.set( this.xMax, this.yMax, zAverage ).applyMatrix4( matrixWorld ).project( camera );
+	__d.set( this.xMax, this.yMin, zAverage ).applyMatrix4( matrixWorld ).project( camera );
 
-	return T1.area() + T2.area();
+	return __t1.area() + __t2.area();
 
 };
 
@@ -387,9 +385,8 @@ ClusterMarkers.prototype.cluster = function () {
 		sp.setFromVector3( this.camera.getWorldDirection( v ) );
 
 		const angle = sp.phi;
-//		const d90 = Math.PI / 2;
 
-		this.quadTree.check( this, target, Math.sin( ( angle <= d90 ? angle : angle - d90 ) ) );
+		this.quadTree.check( this, target, Math.sin( ( angle <= __d90 ? angle : angle - __d90 ) ) );
 
 		return;
 

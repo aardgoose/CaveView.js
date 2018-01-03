@@ -4,10 +4,10 @@ import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 import { Point } from './Point';
 
-import { Object3D, Vector3, Spherical, Triangle, PointsMaterial, CanvasTexture, Math as _Math } from '../../../../three.js/src/Three';
+import { Object3D, Vector3, Spherical, Triangle, Plane, PointsMaterial, CanvasTexture, Math as _Math } from '../../../../three.js/src/Three';
 
 
-// preallocated objects for projected area calculation
+// preallocated objects for projected area calculation and cluster visibility checks
 
 var A = new Vector3();
 var B = new Vector3();
@@ -16,6 +16,10 @@ var D = new Vector3();
 
 var T1 = new Triangle( A, B, C );
 var T2 = new Triangle( A, C, D );
+
+var tmpV1 = new Vector3();
+var tmpV2 = new Vector3();
+var tmpPlane = new Plane();
 
 var clusterMaterialCache = [];
 
@@ -95,6 +99,7 @@ function QuadTree ( xMin, xMax, yMin, yMax ) {
 
 	this.yMin = yMin;
 	this.yMax = yMax;
+	this.updateMarkers = false;
 
 }
 
@@ -107,6 +112,7 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 
 	this.markers.push( marker );
 	this.centroid.add( marker.position );
+	this.updateMarkers = true;
 
 	this.count++;
 
@@ -154,9 +160,10 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 
 };
 
-QuadTree.prototype.check = function ( cluster, angle ) {
+QuadTree.prototype.check = function ( cluster, target, angle ) {
 
 	var subQuad;
+	var recurse = true;
 
 	for ( var i = 0; i < 4; i++ ) {
 
@@ -174,19 +181,50 @@ QuadTree.prototype.check = function ( cluster, angle ) {
 
 			}
 
-			// test for projected area for quad containing multiple markers
-
-			var area = subQuad.projectedArea( cluster );
-
-			// cluster markers compensated for angle to the horizontal.
-			if ( area < 0.80 * angle ) { // FIXME calibrate by screen size ???
+			if ( this.updateMarkers ) {
 
 				subQuad.clusterMarkers( cluster );
+				this.updateMarkers = false;
 
-			} else {
+			}
 
-				subQuad.showMarkers();
-				subQuad.check( cluster, angle );
+			// test for projected area for quad containing multiple markers
+			if ( this.quadMarker !== null ) { //
+
+				var area = subQuad.projectedArea( cluster );
+
+				// adjust for inclination to horizontal and distance from camera vs distance between camera and target
+
+				tmpV1.subVectors( cluster.camera.position, target );
+
+				tmpPlane.set( tmpV1, 0 );
+
+				tmpV2.set( this.quadMarker.position ).setFromMatrixScale( cluster.matrixWorld );
+
+				var d2Target = tmpV1.length() * 2;
+				var dCluster = Math.abs( tmpPlane.distanceToPoint( tmpV2 ) );
+
+				var depthRatio = ( d2Target - dCluster ) / d2Target;
+
+				depthRatio = 1;
+				var angleFactor = angle;
+
+				console.log( 'dr', depthRatio, 'af', angleFactor );
+
+				// cluster markers compensated for angle to the horizontal.
+				if ( area < 0.70 * depthRatio ) { // FIXME calibrate by screen size ???
+
+					subQuad.clusterMarkers( cluster );
+					recurse = false;
+
+				}
+
+			}
+
+			if ( recurse ) {
+
+				subQuad.showMarkers( true );
+				subQuad.check( cluster, target, angle );
 
 			}
 
@@ -196,7 +234,7 @@ QuadTree.prototype.check = function ( cluster, angle ) {
 
 };
 
-QuadTree.prototype.showMarkers = function () {
+QuadTree.prototype.showMarkers = function ( visible ) {
 
 	var markers = this.markers;
 
@@ -204,7 +242,7 @@ QuadTree.prototype.showMarkers = function () {
 
 	for ( var i = 0, l = markers.length; i < l; i++ ) {
 
-		markers[ i ].visible = true;
+		markers[ i ].visible = visible;
 
 	}
 
@@ -214,16 +252,11 @@ QuadTree.prototype.showMarkers = function () {
 
 QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
-	var i, l, subQuad;
-	var markers = this.markers;
+	var i, subQuad;
 
 	// hide the indiviual markers in this quad
 
-	for ( i = 0, l = markers.length; i < l; i++ ) {
-
-		markers[ i ].visible = false;
-
-	}
+	this.showMarkers( false );
 
 	// hide quadMarkers for contained quads
 
@@ -344,7 +377,7 @@ ClusterMarkers.prototype.cluster = function () {
 	var sp = new Spherical();
 	var v = new Vector3();
 
-	return function cluster ( camera ) {
+	return function cluster ( camera, target ) {
 
 		// determine which labels are too close together to be usefully displayed as separate objects.
 
@@ -354,9 +387,9 @@ ClusterMarkers.prototype.cluster = function () {
 
 		this.camera = camera;
 
-		sp.setFromVector3( camera.getWorldDirection( v ) );
+		sp.setFromVector3( this.camera.getWorldDirection( v ) );
 
-		this.quadTree.check( this, Math.cos( ( ( sp.phi - Math.PI / 2 ) * 2 ) + 1 ) / 3 ) ;
+		this.quadTree.check( this, target, sp.phi ) ;
 
 		return;
 

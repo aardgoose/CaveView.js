@@ -870,7 +870,7 @@ Survey.prototype.update = function ( camera, target ) {
 
 	if ( this.features[ FEATURE_ENTRANCES ] && cameraLayers.mask & 1 << FEATURE_ENTRANCES ) {
 
-		this.getFeature( FEATURE_ENTRANCES ).cluster( camera );
+		this.getFeature( FEATURE_ENTRANCES ).cluster( camera, target );
 
 	}
 

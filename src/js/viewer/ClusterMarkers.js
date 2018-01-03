@@ -4,10 +4,12 @@ import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 import { Point } from './Point';
 
-import { Object3D, Vector3, Spherical, Triangle, Plane, PointsMaterial, CanvasTexture, Math as _Math } from '../../../../three.js/src/Three';
+import { Object3D, Vector3, Spherical, Triangle, Plane, PointsMaterial, CanvasTexture } from '../../../../three.js/src/Three';
 
 
 // preallocated objects for projected area calculation and cluster visibility checks
+
+const d90 = Math.PI / 2;
 
 var A = new Vector3();
 var B = new Vector3();
@@ -160,7 +162,7 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 
 };
 
-QuadTree.prototype.check = function ( cluster, target, angle ) {
+QuadTree.prototype.check = function ( cluster, target, angleFactor ) {
 
 	var subQuad;
 	var recurse = true;
@@ -204,15 +206,10 @@ QuadTree.prototype.check = function ( cluster, target, angle ) {
 				var d2Target = tmpV1.length() * 2;
 				var dCluster = Math.abs( tmpPlane.distanceToPoint( tmpV2 ) );
 
-				var depthRatio = ( d2Target - dCluster ) / d2Target;
-
-				depthRatio = 1;
-				var angleFactor = angle;
-
-				console.log( 'dr', depthRatio, 'af', angleFactor );
+				var depthRatio = 1.5 * ( d2Target - dCluster ) / d2Target;
 
 				// cluster markers compensated for angle to the horizontal.
-				if ( area < 0.70 * depthRatio ) { // FIXME calibrate by screen size ???
+				if ( area < 0.70 * depthRatio * angleFactor ) { // FIXME calibrate by screen size ???
 
 					subQuad.clusterMarkers( cluster );
 					recurse = false;
@@ -224,7 +221,7 @@ QuadTree.prototype.check = function ( cluster, target, angle ) {
 			if ( recurse ) {
 
 				subQuad.showMarkers( true );
-				subQuad.check( cluster, target, angle );
+				subQuad.check( cluster, target, angleFactor );
 
 			}
 
@@ -389,7 +386,10 @@ ClusterMarkers.prototype.cluster = function () {
 
 		sp.setFromVector3( this.camera.getWorldDirection( v ) );
 
-		this.quadTree.check( this, target, sp.phi ) ;
+		const angle = sp.phi;
+//		const d90 = Math.PI / 2;
+
+		this.quadTree.check( this, target, Math.sin( ( angle <= d90 ? angle : angle - d90 ) ) );
 
 		return;
 

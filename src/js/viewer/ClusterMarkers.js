@@ -1,15 +1,13 @@
 
-import { FEATURE_ENTRANCES } from '../core/constants';
+import { FEATURE_ENTRANCES,  upAxis } from '../core/constants';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 import { Point } from './Point';
 
-import { Object3D, Vector3, Spherical, Triangle, Plane, PointsMaterial, CanvasTexture } from '../../../../three.js/src/Three';
+import { Object3D, Vector3, Triangle, Plane, PointsMaterial, CanvasTexture } from '../../../../three.js/src/Three';
 
 
 // preallocated objects for projected area calculation and cluster visibility checks
-
-const __d90 = Math.PI / 2;
 
 var __a = new Vector3();
 var __b = new Vector3();
@@ -99,7 +97,6 @@ function QuadTree ( xMin, xMax, yMin, yMax ) {
 
 	this.yMin = yMin;
 	this.yMax = yMax;
-	this.updateMarkers = false;
 
 }
 
@@ -112,7 +109,6 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 
 	this.markers.push( marker );
 	this.centroid.add( marker.position );
-	this.updateMarkers = true;
 
 	this.count++;
 
@@ -163,7 +159,6 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 QuadTree.prototype.check = function ( cluster, target, angleFactor ) {
 
 	var subQuad;
-	var recurse = true;
 
 	for ( var i = 0; i < 4; i++ ) {
 
@@ -181,42 +176,43 @@ QuadTree.prototype.check = function ( cluster, target, angleFactor ) {
 
 			}
 
-			if ( this.updateMarkers ) {
+			// test for projected area for quad containing multiple markers
+
+			var area = subQuad.projectedArea( cluster );
+
+			// adjust for inclination to horizontal and distance from camera vs distance between camera and target
+
+			__a.subVectors( cluster.camera.position, target );
+
+			var d2Target = __a.length() * 2;
+
+			__a.normalize();
+
+			__plane.setFromNormalAndCoplanarPoint( __a, cluster.camera.position );
+
+			if ( this.quadMarker === null ) {
+
+				__b.copy( this.centroid.clone().divideScalar( this.count ) ).applyMatrix4( cluster.matrixWorld );
+
+			} else {
+
+				__b.copy( this.quadMarker.position ).applyMatrix4( cluster.matrixWorld );
+
+			}
+
+			var dCluster = Math.abs( __plane.distanceToPoint( __b ) );
+
+			var depthRatio =  ( d2Target - dCluster ) / d2Target;
+
+			//console.log( area, 'dr', Math.round( depthRatio * 100 )/100, 'af', Math.round( angleFactor * 100 ) / 100 , '++', Math.round( depthRatio * angleFactor * 100 * 20  ) / 100);
+
+			// cluster markers compensated for angle to the horizontal and distance from camera plane
+
+			if ( area < 10 * depthRatio * ( angleFactor) ) { // FIXME calibrate by screen size ???
 
 				subQuad.clusterMarkers( cluster );
-				this.updateMarkers = false;
 
-			}
-
-			// test for projected area for quad containing multiple markers
-			if ( this.quadMarker !== null ) { //
-
-				var area = subQuad.projectedArea( cluster );
-
-				// adjust for inclination to horizontal and distance from camera vs distance between camera and target
-
-				__a.subVectors( cluster.camera.position, target );
-
-				__plane.set( __a, 0 );
-
-				__b.copy( this.quadMarker.position ).setFromMatrixScale( cluster.matrixWorld );
-
-				var d2Target = __a.length() * 2;
-				var dCluster = Math.abs( __plane.distanceToPoint( __b ) );
-
-				var depthRatio = 1.5 * ( d2Target - dCluster ) / d2Target;
-
-				// cluster markers compensated for angle to the horizontal.
-				if ( area < 0.70 * depthRatio * angleFactor ) { // FIXME calibrate by screen size ???
-
-					subQuad.clusterMarkers( cluster );
-					recurse = false;
-
-				}
-
-			}
-
-			if ( recurse ) {
+			} else {
 
 				subQuad.showMarkers( true );
 				subQuad.check( cluster, target, angleFactor );
@@ -369,7 +365,6 @@ ClusterMarkers.prototype.addMarker = function ( position, label ) {
 
 ClusterMarkers.prototype.cluster = function () {
 
-	var sp = new Spherical();
 	var v = new Vector3();
 
 	return function cluster ( camera, target ) {
@@ -382,11 +377,9 @@ ClusterMarkers.prototype.cluster = function () {
 
 		this.camera = camera;
 
-		sp.setFromVector3( this.camera.getWorldDirection( v ) );
+		const angle = this.camera.getWorldDirection( v ).dot( upAxis );
 
-		const angle = sp.phi;
-
-		this.quadTree.check( this, target, Math.sin( ( angle <= __d90 ? angle : angle - __d90 ) ) );
+		this.quadTree.check( this, target, 1 - Math.cos( angle ) );
 
 		return;
 

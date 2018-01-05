@@ -71,12 +71,14 @@
 	<dt>id</dt><dd><span>string</span>The id property of the HTML element where the model will be displayed.</dd>
 	<dt>configuration Object</dt><dd><span>Object</span>An Javascript object defined below.</dd>
 </dl>
-<h3>CV.UI.loadCave( &lt;filename&gt; )</h3>
+<h3>CV.UI.loadCave( &lt;filename&gt;, &lt;section&gt; )</h3>
 <p>Load a single model.</p>
 <h4>Parameters</h4>
 <dl>
 	<dt>filename</dt><dd><span>string</span>The filename of the model to be loaded from the survey directory (specified by the configuration object).</dd>
+	<dt>section</dt><dd><span>string</span>The section name of the survey to be displayed (optional).</dd>
 </dl>
+
 <h3>CV.UI.loadCaves( &lt;array&gt; )</h3>
 <p>The user interface displays a list of models to display, the first model is by default.</p>
 <h4>Parameters</h4>
@@ -92,11 +94,12 @@
 	</dl>
 <h3>CV.Viewer.addOverlay( &lt;id&gt;, &lt;overlay provider&gt; )</h3>
 <h4>Parameters</h4>
-<h3>CV.Viewer.loadCave( &lt;filename&gt; )</h3>
+<h3>CV.Viewer.loadCave( &lt;filename&gt;, &lt;section&gt; )</h3>
 <p>Load a single model.</p>
 <h4>Parameters</h4>
 <dl>
 	<dt>filename</dt><dd><span>string</span>The filename of the model to be loaded from the survey directory (specified by the configuration object).</dd>
+	<dt>section</dt><dd><span>string</span>The section name of the survey to be displayed (optional).</dd>
 </dl>
 <h2>API Objects</h2>
 <h3>configuration Object</h3>
@@ -105,8 +108,6 @@
 <dl>
 	<dt>home</dt>
 	<dd><span>string</span> The path to the installtion of the CaveView package.</dd>
-	<dt>section</dt>
-	<dd><span>string</span>The section name of a survey to be displayed (optional).</dd>
 	<dt>surveyDirectory</dt>
 	<dd><span>string</span>The path of the directory containing the survey model(s) to be displayed.</dd>
 	<dt>terrainDirectory</dt>

@@ -258,6 +258,12 @@ function init ( domID, configuration ) { // public method
 			set: function ( x ) { _stateSetter( selectSection, 'section', x ); }
 		},
 
+		'sectionByName': {
+			writeable: true,
+			get: getSelectedSectionName,
+			set: setSelectedSectionName
+		},
+
 		'highlight': {
 			writeable: true,
 			set: function ( x ) { _stateSetter( highlightSelection, 'highlight', x ); }
@@ -826,7 +832,21 @@ function selectSection ( id ) {
 
 	selectedSection = id;
 
-	if ( id === 0 ) return;
+	if ( id === 0 ) {
+
+		var cameraPosition = new Vector3();
+
+		// reset camera to start position
+		cameraPosition.set( 0, 0, CAMERA_OFFSET ).add( defaultTarget );
+
+		cameraMove.cancel();
+		cameraMove.prepare( cameraPosition, defaultTarget );
+
+		highlightSelection( 0 );
+
+		return;
+
+	}
 
 	if ( node.p === undefined ) {
 
@@ -846,6 +866,33 @@ function selectSection ( id ) {
 	}
 
 	renderView();
+
+}
+
+
+function getSelectedSectionName () {
+
+	if ( selectedSection === 0 ) {
+
+		return '';
+
+	} else {
+
+		let node = survey.surveyTree.findById( selectedSection );
+
+		return node === undefined ? '' : node.getPath();
+
+	}
+
+}
+
+function setSelectedSectionName ( name ) {
+
+
+	let id = survey.surveyTree.getIdByPath( name.split( '.' ) );
+	console.log( name, id );
+
+	selectSection( id === undefined ? 0 : id );
 
 }
 
@@ -1292,6 +1339,8 @@ var renderView = function () {
 
 
 function onCameraMoveEnd () {
+
+	Viewer.dispatchEvent( { type: 'moved' } );
 
 	if ( terrain && terrain.isTiled && Viewer.terrain ) setTimeout( updateTerrain, RETILE_TIMEOUT );
 

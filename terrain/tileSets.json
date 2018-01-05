@@ -12,7 +12,11 @@
 		"minX": 1013,
 		"maxX": 1014,
 		"minY": 663,
-		"maxY": 665
+		"maxY": 665,
+		"attributions": [
+			"Contains Ordnance Survey data © Crown copyright and database right 2015.",
+			"Contains DTM data © Environment Agency copyright and/or database right 2015." 
+		]
 	},
 	{
 		"title": "Dales 1",
@@ -26,6 +30,10 @@
 		"minX": 504,
 		"maxX": 505,
 		"minY": 327,
-		"maxY": 327
+		"maxY": 327,
+		"attributions": [
+			"Contains Ordnance Survey data © Crown copyright and database right 2015."
+		]
+
 	}
 ]

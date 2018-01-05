@@ -72,7 +72,7 @@ var demoScript = [
 			walls: false,
 			shadingMode: CV.SHADING_SURVEY
 		}
-	},
+	},/*
 	{
 		caption: "depth below surface ...",
 		delay: 5,
@@ -80,7 +80,7 @@ var demoScript = [
 			section: 0,
 			shadingMode: CV.SHADING_DEPTH
 		}
-	},
+	},*/
 	{
 		caption: "and selected paths",
 		delay: 3,

@@ -878,7 +878,7 @@ function getSelectedSectionName () {
 
 	} else {
 
-		let node = survey.surveyTree.findById( selectedSection );
+		var node = survey.surveyTree.findById( selectedSection );
 
 		return node === undefined ? '' : node.getPath();
 
@@ -889,7 +889,7 @@ function getSelectedSectionName () {
 function setSelectedSectionName ( name ) {
 
 
-	let id = survey.surveyTree.getIdByPath( name.split( '.' ) );
+	var id = survey.surveyTree.getIdByPath( name.split( '.' ) );
 	console.log( name, id );
 
 	selectSection( id === undefined ? 0 : id );

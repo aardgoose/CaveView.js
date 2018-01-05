@@ -377,7 +377,7 @@ ClusterMarkers.prototype.cluster = function () {
 
 		this.camera = camera;
 
-		const angle = this.camera.getWorldDirection( v ).dot( upAxis );
+		var angle = this.camera.getWorldDirection( v ).dot( upAxis );
 
 		this.quadTree.check( this, target, 1 - Math.cos( angle ) );
 

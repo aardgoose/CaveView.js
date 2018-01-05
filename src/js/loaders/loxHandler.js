@@ -187,7 +187,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		for ( i = 0; i < xSects.length; i++ ) {
 
-			let xSect = xSects[ i ];
+			var xSect = xSects[ i ];
 
 			if ( xSect.m_from !== lastTo ) {
 
@@ -204,14 +204,14 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		for ( i = 0; i < xGroups.length; i++ ) {
 
-			let group = xGroups[ i ];
+			var group = xGroups[ i ];
 
-			let start = group[ 0 ].m_from;
-			let end = group[ group.length - 1 ].m_to;
+			var start = group[ 0 ].m_from;
+			var end = group[ group.length - 1 ].m_to;
 
 			// concatenate adjacent groups
 
-			let prepend = ends.indexOf ( start );
+			var prepend = ends.indexOf ( start );
 
 			if ( prepend !== -1 ) {
 
@@ -230,16 +230,16 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		for ( i = 0; i < xGroups.length; i++ ) {
 
-			let group = xGroups[ i ];
-			let xSect = group[ 0 ];
+			var group = xGroups[ i ];
+			var xSect = group[ 0 ];
 
 			if ( xSect === undefined ) continue; // groups that have been merged
 
-			let start = xSect.start;
-			let end = xSect.end;
+			var start = xSect.start;
+			var end = xSect.end;
 
 			// fake approach vector for initial xSect ( mirrors first segment vector )
-			let newStart = { x: start.x * 2 - end.x, y: start.y * 2 - end.y, z: start.z * 2 - end.z };
+			var newStart = { x: start.x * 2 - end.x, y: start.y * 2 - end.y, z: start.z * 2 - end.z };
 
 			group.unshift( { start: newStart, end: start, lrud: xSect.fromLRUD, survey: xSect.survey, type: xSect.type } );
 

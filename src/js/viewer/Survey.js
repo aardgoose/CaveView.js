@@ -219,7 +219,7 @@ Survey.prototype.loadEntrances = function () {
 
 		var entranceInfo = entrances[ node.getPath() ];
 
-//		if ( entranceInfo === undefined || entranceInfo.name == undefined ) console.log( node.getPath( endNode ) );
+		// if ( entranceInfo === undefined || entranceInfo.name == undefined ) console.log( node.getPath( endNode ) );
 
 		name = ( entranceInfo !== undefined && entranceInfo.name !== undefined ) ? name = entranceInfo.name : name = node.getPath( endNode );
 

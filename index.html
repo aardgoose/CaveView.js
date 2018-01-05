@@ -3,7 +3,7 @@
 <head>
 	<title>demo 3d cave viewer</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<link type="text/css" href="/CaveView.js/CaveView/css/caveview.css" rel="stylesheet"/>
+	<link type="text/css" href="/CaveView/css/caveview.css" rel="stylesheet"/>
 	<style>
 
 		h1, h2, h3, p {
@@ -47,19 +47,17 @@
 </head>
 <body onload="onload();" >
 
-<script type="text/javascript" src="/CaveView.js/CaveView/lib/Detector.js"></script>
-<script type="text/javascript" src="/CaveView.js/CaveView/lib/proj4.js" ></script>
-<script type="text/javascript" src="/CaveView.js/CaveView/js/CaveView.js" ></script>
+<script type="text/javascript" src="/CaveView/lib/Detector.js"></script>
+<script type="text/javascript" src="/CaveView/lib/proj4.js" ></script>
+<script type="text/javascript" src="/CaveView/js/CaveView.js" ></script>
 
-<script type="text/javascript" src="/CaveView.js/CaveView/lib/OSMProvider.js" ></script>
-<script type="text/javascript" src="/CaveView.js/CaveView/lib/demoscript.js" ></script>
+<script type="text/javascript" src="/CaveView/lib/OSMProvider.js" ></script>
+<script type="text/javascript" src="/CaveView/lib/demoscript.js" ></script>
 
 <script type="text/javascript" >
 "use strict";
 
-var	caveLoader = new CV.CaveLoader( caveLoaded, progress );
 var captionDiv;
-var cave;
 var index = 0;
 var routes;
 
@@ -82,35 +80,9 @@ function runDemo() {
 
 }
 
-function progress ( pcent ) {
-
-	captionDiv.textContent = 'Loading ... [ ' +  pcent + '%';
-
-}
-
-function caveLoaded ( newCave ) {
-
-	cave = newCave;
-
-	CV.Viewer.addEventListener( 'newCave', viewComplete );
-
-	CV.Viewer.clearView();
-	CV.Viewer.loadCave( cave );
-
-}
-
 function viewComplete () {
 
 	if ( index ) return; // view complete called on cut operation.
-
-	// display shading mode and initialize
-
-	CV.Viewer.shadingMode = CV.SHADING_SINGLE;
-
-	CV.Viewer.entrances = false;
-	CV.Viewer.box       = false;
-	CV.Viewer.HUD       = false;
-	CV.Viewer.walls     = false;
 
 	routes = CV.Viewer.getRoutes();
 
@@ -129,14 +101,24 @@ function onload () {
 
 	CV.Viewer.init( 'scene', {
 		home: 'CaveView/',
-		terrainDirectory: '/CaveView.js/terrain/',
-		surveyDirectory: '/CaveView.js/surveys/'
+		terrainDirectory: '/terrain/',
+		surveyDirectory: '/surveys/',
+		view: {
+			shadingMode: CV.SHADING_SINGLE,
+			entrances: false,
+			box: false,
+			HUD: false,
+			walls: false
+		}
 	} );
 
 	CV.Viewer.addOverlay( 'OSM', new OSMProvider() );
 
-	caveLoader.loadURL( 'P8_Master.3d' );
-	
+	CV.Viewer.addEventListener( 'newCave', viewComplete );
+
+	CV.Viewer.clearView();
+	CV.Viewer.loadCave( 'P8_Master.3d' );
+
 	captionDiv = document.getElementById( 'scene-caption' );
 
 }

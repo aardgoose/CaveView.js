@@ -1,6 +1,5 @@
 
 import {
-	Object3D,
 	Vector3,
 	QuadraticBezierCurve3,
 	Quaternion,

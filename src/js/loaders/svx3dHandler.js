@@ -1,6 +1,6 @@
 // Survex 3d file handler
 
-import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE, WALL_DIAMOND } from '../core/constants';
+import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
 import { Tree } from '../core/Tree';
 
 function Svx3dHandler ( fileName ) {
@@ -1091,7 +1091,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		var surveyId = surveyTree.getIdByPath( station );
 
-		xSects.push( { start: lastXSectPosition, end: position, lrud: lrud, survey: surveyId, type: WALL_DIAMOND } );
+		xSects.push( { start: lastXSectPosition, end: position, lrud: lrud, survey: surveyId, type: WALL_SQUARE } );
 
 		lastXSectPosition = position;
 

@@ -620,18 +620,18 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	for ( i = 0; i < xGroups.length; i ++ ) {
 
-		let group = xGroups[ i ];
+		var group = xGroups[ i ];
 
 		if ( group.length < 2 ) continue;
 
-		let x1 = group[ 0 ];
-		let x2 = group[ 1 ];
+		var x1 = group[ 0 ];
+		var x2 = group[ 1 ];
 
 		// mirror vector from first to second leg
-		let start = x1.end;
-		let end = x2.end;
+		var start = x1.end;
+		var end = x2.end;
 
-		let newStart = { x: start.x * 2 - end.x, y: start.y * 2 - end.y, z: start.z * 2 - end.z };
+		var newStart = { x: start.x * 2 - end.x, y: start.y * 2 - end.y, z: start.z * 2 - end.z };
 
 		x1.start = newStart;
 

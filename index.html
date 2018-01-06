@@ -10,13 +10,17 @@
 			margin-left: 20px;
 		}
 
-		div#scene {
-			position: relative;
+		div#scene-box {
 			box-sizing: border-box;
 			width: 66.666%;
-			height: 600px;
 			padding: 0 20px;
 			float: left;
+		}
+
+		div#scene {
+			position: relative;
+			height: 600px;
+			width: auto;
 		}
 
 		div#scene-caption {
@@ -126,7 +130,9 @@ function onload () {
 </script>
 <h1>Cave View</h1>
 <h2>a 3D cave survey viewer for the web</h2>
+<div id="scene-box">
 <div id="scene" class="cv-container" ><div id="scene-caption" ></div></div>
+</div>
 <div id="info" >
 <h3>Features</h3>
 <p>Displays:</p>

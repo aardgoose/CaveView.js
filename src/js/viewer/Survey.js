@@ -541,9 +541,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		}
 
-		l = indices.length;
-
-		if ( l === 0 ) return;
+		if ( indices.length === 0 ) return;
 
 		mesh.addWalls( vertices, indices, indexRuns );
 

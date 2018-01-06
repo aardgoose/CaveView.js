@@ -812,7 +812,7 @@ function cutSection () {
 	// reset view
 	clearView();
 
-	loadSurvey( cutSurvey );
+	loadSurvey( cutSurvey, true );
 
 }
 
@@ -1004,7 +1004,7 @@ function caveLoaded ( cave ) {
 
 	}
 
-	loadSurvey( new Survey( cave ) );
+	loadSurvey( new Survey( cave ), false );
 
 }
 
@@ -1031,7 +1031,7 @@ function setupView () {
 
 }
 
-function loadSurvey ( newSurvey ) {
+function loadSurvey ( newSurvey, cut ) {
 
 	var syncTerrainLoading = true;
 	var firstTile = true;
@@ -1089,7 +1089,7 @@ function loadSurvey ( newSurvey ) {
 
 	setViewMode( VIEW_PLAN, 1 );
 
-	if ( syncTerrainLoading ) setupView();
+	if ( syncTerrainLoading && ! cut ) setupView();
 
 	renderView();
 
@@ -1119,7 +1119,7 @@ function loadSurvey ( newSurvey ) {
 
 		if ( firstTile ) {
 
-			setupView();
+			if ( ! cut ) setupView();
 			firstTile = false;
 
 		}

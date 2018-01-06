@@ -2,6 +2,7 @@
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
 import { Tree } from '../core/Tree';
+import { Vector3, Box3 } from '../../../../three.js/src/Three';
 
 function Svx3dHandler ( fileName ) {
 
@@ -19,7 +20,6 @@ function Svx3dHandler ( fileName ) {
 Svx3dHandler.prototype.constructor = Svx3dHandler;
 
 Svx3dHandler.prototype.type = 'arraybuffer';
-Svx3dHandler.prototype.isRegion = false;
 
 Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
@@ -104,26 +104,22 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	var surveyTree = this.surveyTree;
 
-	var min = { x: Infinity, y: Infinity, z: Infinity };
-	var max = { x: -Infinity, y: -Infinity, z: -Infinity };
-
 	if ( section !== null ) {
 
 		surveyTree.trim( section.split( '.' ) );
 
 	}
 
+	var limits = new Box3();
+
 	surveyTree.traverse( getLimits );
 
-	var offsets = {
-		x: ( min.x + max.x ) / 2,
-		y: ( min.y + max.y ) / 2,
-		z: ( min.z + max.z ) / 2
-	};
+	var offsets = limits.getCenter();
 
 	surveyTree.traverse( adjustCoords );
 
-	this.offsets = offsets;
+	var min = limits.min;
+	var max = limits.max;
 
 	var marginX = ( max.x - min.x ) * 0.05;
 	var marginY = ( max.y - min.y ) * 0.05;
@@ -134,10 +130,8 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	min.y -= marginY;
 	max.y += marginY;
 
-	this.limits = {
-		min: min,
-		max: max
-	};
+	this.limits = limits;
+	this.offsets = offsets;
 
 	return this;
 
@@ -147,13 +141,7 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		if ( coords === undefined ) return;
 
-		min.x = Math.min( coords.x, min.x );
-		min.y = Math.min( coords.y, min.y );
-		min.z = Math.min( coords.z, min.z );
-
-		max.x = Math.max( coords.x, max.x );
-		max.y = Math.max( coords.y, max.y );
-		max.z = Math.max( coords.z, max.z );
+		limits.expandByPoint( coords );
 
 	}
 
@@ -163,9 +151,7 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		if ( coords === undefined ) return;
 
-		coords.x -= offsets.x;
-		coords.y -= offsets.y;
-		coords.z -= offsets.z;
+		coords.sub( offsets );
 
 	}
 
@@ -221,7 +207,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 	var data       = new Uint8Array( source, 0 );
 	var dataLength = data.length;
-	var lastPosition = { x: 0, y:0, z: 0 }; // value to allow approach vector for xsect coord frame
+	var lastPosition = new Vector3(); // value to allow approach vector for xsect coord frame
 	var i, j, li, lj;
 
 	var dataView = new DataView( source, 0 );
@@ -431,11 +417,11 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 			y: l.getInt32( 4, true ) / 100
 		} );
 
-		var coords = {
-			x: projectedCoords.x,
-			y: projectedCoords.y,
-			z: l.getInt32( 8, true ) / 100
-		};
+		var coords = new Vector3(
+			projectedCoords.x,
+			projectedCoords.y,
+			l.getInt32( 8, true ) / 100
+		);
 
 		pos += 12;
 
@@ -447,11 +433,11 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		var l = new DataView( source, pos );
 
-		var coords = {
-			x: l.getInt32( 0, true ) / 100,
-			y: l.getInt32( 4, true ) / 100,
-			z: l.getInt32( 8, true ) / 100
-		};
+		var coords = new Vector3(
+			l.getInt32( 0, true ) / 100,
+			l.getInt32( 4, true ) / 100,
+			l.getInt32( 8, true ) / 100
+		);
 
 		pos += 12;
 
@@ -480,8 +466,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	var data       = new Uint8Array( source, 0 );
 	var dataLength = data.length;
-	var lastPosition = { x: 0, y:0, z: 0 }; // value to allow approach vector for xsect coord frame
-	var lastXSectPosition = { x: 0, y:0, z: 0 }; // value to allow approach vector for xsect coord frame
+	var lastPosition = new Vector3();
+	var lastXSectPosition = new Vector3(); // value to allow approach vector for xsect coord frame
 	var i;
 	var labelChanged = false;
 	var inSection = ( section === null );
@@ -631,7 +617,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		var start = x1.end;
 		var end = x2.end;
 
-		var newStart = { x: start.x * 2 - end.x, y: start.y * 2 - end.y, z: start.z * 2 - end.z };
+		var newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
 
 		x1.start = newStart;
 
@@ -952,7 +938,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		// heuristic to detect line ends. lastPosition was presumably set in a line sequence therefore is at the end
 		// of a line, Add the current label, presumably specified in the last LINE, to a Set of lineEnds.
 
-		lineEnds.add( lastPosition.x + ':' + lastPosition.y + ':' + lastPosition.z );
+		lineEnds.add( lastPosition.x + ',' + lastPosition.y + ',' + lastPosition.z );
 
 		var coords = readCoordinates();
 
@@ -1082,7 +1068,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		var position = stations.get( label );
 
-		if ( ! position ) return;
+		if ( ! position ) {
+			//	console.warn( 'missing station in XSECT :', label );
+			return true;
+		}
 
 		var station = label.split( '.' );
 
@@ -1117,7 +1106,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			if ( xSects.length > 0 ) xGroups.push( xSects );
 
-			lastXSectPosition = { x: 0, y: 0, z: 0 };
+			lastXSectPosition = new Vector3();
 			xSects = [];
 
 		}
@@ -1137,11 +1126,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 			y: l.getInt32( 4, true ) / 100
 		} );
 
-		var coords = {
-			x: projectedCoords.x,
-			y: projectedCoords.y,
-			z: l.getInt32( 8, true ) / 100
-		};
+		var coords = new Vector3(
+			projectedCoords.x,
+			projectedCoords.y,
+			l.getInt32( 8, true ) / 100
+		);
 
 		pos += 12;
 
@@ -1153,11 +1142,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		var l = new DataView( source, pos );
 
-		var coords = {
-			x: l.getInt32( 0, true ) / 100,
-			y: l.getInt32( 4, true ) / 100,
-			z: l.getInt32( 8, true ) / 100
-		};
+		var coords = new Vector3(
+			l.getInt32( 0, true ) / 100,
+			l.getInt32( 4, true ) / 100,
+			l.getInt32( 8, true ) / 100
+		);
 
 		pos += 12;
 
@@ -1186,15 +1175,13 @@ Svx3dHandler.prototype.getLineSegments = function () {
 
 			// move coordinates around origin
 
-			from.coords.x -= offsets.x;
-			from.coords.y -= offsets.y;
-			from.coords.z -= offsets.z;
+			from.coords.sub( offsets );
 
 			var fromCoords = from.coords;
 			var toCoords = to.coords;
 
 			// skip repeated points ( co-located stations )
-			if ( fromCoords.x === toCoords.x && fromCoords.y === toCoords.y && fromCoords.z === toCoords.z ) continue;
+			if ( fromCoords.equals( toCoords ) ) continue;
 
 			lineSegments.push( { from: fromCoords, to: toCoords, type: to.type, survey: to.survey } );
 
@@ -1202,9 +1189,7 @@ Svx3dHandler.prototype.getLineSegments = function () {
 
 		// move coordinates around origin
 
-		to.coords.x -= offsets.x;
-		to.coords.y -= offsets.y;
-		to.coords.z -= offsets.z;
+		to.coords.sub( offsets );
 
 	}
 

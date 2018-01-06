@@ -40,6 +40,8 @@ function ProgressDial () {
 	var glyphMaterial = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', 0 );
 
 	this.pcent = new GlyphString( '----', glyphMaterial );
+	this.pcent.translateY( 10 );
+	this.pcent.translateX( -5 );
 
 	this.add( this.pcent );
 

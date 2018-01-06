@@ -1,6 +1,7 @@
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_ENTRANCE, STATION_NORMAL } from '../core/constants';
 import { Tree } from '../core/Tree';
+import { Vector3, Box3 } from '../../../../three.js/src/Three';
 
 function loxHandler  ( fileName ) {
 
@@ -18,7 +19,6 @@ function loxHandler  ( fileName ) {
 loxHandler.prototype.constructor = loxHandler;
 
 loxHandler.prototype.type = 'arraybuffer';
-loxHandler.prototype.isRegion = false;
 
 loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
@@ -44,8 +44,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	// range
 
-	var min = { x: Infinity, y: Infinity, z: Infinity };
-	var max = { x: -Infinity, y: -Infinity, z: -Infinity };
+	var limits = new Box3();
 
 	while ( pos < l ) readChunkHdr();
 
@@ -54,17 +53,9 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 	// Drop data to give GC a chance ASAP
 	source = null;
 
-	this.limits = {
-		min: min,
-		max: max
-	};
+	var offsets = limits.getCenter();
 
-	var offsets = {
-		x: ( min.x + max.x ) / 2,
-		y: ( min.y + max.y ) / 2,
-		z: ( min.z + max.z ) / 2
-	};
-
+	this.limits = limits;
 	this.offsets = offsets;
 
 	// convert to origin centered coordinates
@@ -73,11 +64,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	for ( i = 0; i < stations.length; i++ ) {
 
-		coords = stations[ i ];
-
-		coords.x -= offsets.x;
-		coords.y -= offsets.y;
-		coords.z -= offsets.z;
+		stations[ i ].sub( offsets );
 
 	}
 
@@ -91,11 +78,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		for ( j = 0; j < vertices.length; j++ ) {
 
-			coords = vertices[ j ];
-
-			coords.x -= offsets.x;
-			coords.y -= offsets.y;
-			coords.z -= offsets.z;
+			vertices[ j ].sub( offsets );
 
 		}
 
@@ -180,6 +163,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		var xGroups = self.xGroups;
 		var lastTo, xGroup, i;
+		var group, start, end, xSect;
 
 		var ends = [];
 
@@ -187,7 +171,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		for ( i = 0; i < xSects.length; i++ ) {
 
-			var xSect = xSects[ i ];
+			xSect = xSects[ i ];
 
 			if ( xSect.m_from !== lastTo ) {
 
@@ -204,10 +188,10 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		for ( i = 0; i < xGroups.length; i++ ) {
 
-			var group = xGroups[ i ];
+			group = xGroups[ i ];
 
-			var start = group[ 0 ].m_from;
-			var end = group[ group.length - 1 ].m_to;
+			start = group[ 0 ].m_from;
+			end = group[ group.length - 1 ].m_to;
 
 			// concatenate adjacent groups
 
@@ -230,16 +214,17 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		for ( i = 0; i < xGroups.length; i++ ) {
 
-			var group = xGroups[ i ];
-			var xSect = group[ 0 ];
+			group = xGroups[ i ];
+			xSect = group[ 0 ];
 
 			if ( xSect === undefined ) continue; // groups that have been merged
 
-			var start = xSect.start;
-			var end = xSect.end;
+			start = xSect.start;
+			end = xSect.end;
 
 			// fake approach vector for initial xSect ( mirrors first segment vector )
-			var newStart = { x: start.x * 2 - end.x, y: start.y * 2 - end.y, z: start.z * 2 - end.z };
+
+			var newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
 
 			group.unshift( { start: newStart, end: start, lrud: xSect.fromLRUD, survey: xSect.survey, type: xSect.type } );
 
@@ -346,19 +331,13 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function readCoords () {
 
-		coords = {
-			x: readFloat64(),
-			y: readFloat64(),
-			z: readFloat64()
-		};
+		coords = new Vector3(
+			readFloat64(),
+			readFloat64(),
+			readFloat64()
+		);
 
-		min.x = Math.min( coords.x, min.x );
-		min.y = Math.min( coords.y, min.y );
-		min.z = Math.min( coords.z, min.z );
-
-		max.x = Math.max( coords.x, max.x );
-		max.y = Math.max( coords.y, max.y );
-		max.z = Math.max( coords.z, max.z );
+		limits.expandByPoint( coords );
 
 		return coords;
 
@@ -419,7 +398,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		}
 
-		if ( from.x === to.x && from.y === to.y && from.z === to.z ) {
+		if ( from.equals( to ) ) {
 			// console.log( 'dup leg ', surveyTree.findById( -m_from ).getPath() );
 			// console.log( '        ', surveyTree.findById( -m_to ).getPath() );
 			return;
@@ -476,11 +455,11 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 			offset = dataStart + pointsPtr.position + i * 24; // 24 = 3 * sizeof( double )
 			f = new DataView( source, offset );
 
-			scrap.vertices.push( {
-				x: f.getFloat64( 0,  true ),
-				y: f.getFloat64( 8,  true ),
-				z: f.getFloat64( 16, true )
-			} );
+			scrap.vertices.push( new Vector3(
+				f.getFloat64( 0,  true ),
+				f.getFloat64( 8,  true ),
+				f.getFloat64( 16, true )
+			) );
 
 		}
 

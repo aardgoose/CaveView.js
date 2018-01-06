@@ -160,7 +160,7 @@ var demoScript = [
 			terrainOpacity: 1,
 			terrain: false
 		}
-	},
+	},/*
 	{
 		caption: 'Fullscreen mode ...',
 		delay: 3
@@ -171,13 +171,13 @@ var demoScript = [
 		view: {
 			fullscreen: true
 		}
-	},
+	}, */
 	{
 		caption: 'Focus on selected survey sections',
 		delay: 5,
 		view: {
 			zScale: 0.5,
-			section: 3,
+			sectionByName: 'p8.bens_dig',
 			box: false
 		}
 	},

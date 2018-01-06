@@ -1035,6 +1035,7 @@ function loadSurvey ( newSurvey, cut ) {
 
 	var syncTerrainLoading = true;
 	var firstTile = true;
+	var inCut = cut;
 
 	survey = newSurvey;
 
@@ -1089,7 +1090,7 @@ function loadSurvey ( newSurvey, cut ) {
 
 	setViewMode( VIEW_PLAN, 1 );
 
-	if ( syncTerrainLoading && ! cut ) setupView();
+	if ( syncTerrainLoading && ! inCut ) setupView();
 
 	renderView();
 
@@ -1119,7 +1120,7 @@ function loadSurvey ( newSurvey, cut ) {
 
 		if ( firstTile ) {
 
-			if ( ! cut ) setupView();
+			if ( ! inCut ) setupView();
 			firstTile = false;
 
 		}

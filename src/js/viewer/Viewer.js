@@ -1282,25 +1282,9 @@ function mouseDown ( event ) {
 
 		console.log( entrance.type, entrance.name );
 
-		if ( survey.isRegion === true ) {
-
-			survey.loadFromEntrance( entrance, _loaded );
-
-		} else {
-
-			cameraMove.start( 80 );
-
-		}
+		cameraMove.start( 80 );
 
 		return true;
-
-	}
-
-	function _loaded () {
-
-		setShadingMode( shadingMode );
-
-		renderView();
 
 	}
 

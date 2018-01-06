@@ -3,7 +3,6 @@ import { getEnvironmentValue, replaceExtension } from '../core/lib';
 import { Svx3dHandler } from './svx3dHandler';
 import { loxHandler } from './loxHandler';
 import { kmlHandler } from './kmlHandler';
-import { RegionHandler } from './RegionHandler';
 import { FileLoader } from '../../../../three.js/src/Three';
 
 function CaveLoader ( callback, progress ) {
@@ -54,13 +53,6 @@ CaveLoader.prototype.setHandler = function ( fileName ) {
 
 		break;
 
-	case 'reg':
-	case 'json':
-
-		handler = new RegionHandler( fileName );
-
-		break;
-
 	default:
 
 		console.warn( 'Cave: unknown response extension [', self.extention, ']' );
@@ -96,13 +88,7 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	var loader = new FileLoader().setPath( prefix );
 
-	// request metadata file if not a region
-
-	if ( ! handler.isRegion ) {
-
-		loader.setResponseType( 'json' ).load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _metadataError );
-
-	}
+	loader.setResponseType( 'json' ).load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _metadataError );
 
 	if ( handler.mimeType !== undefined ) loader.setMimeType( 'text/xml' );
 

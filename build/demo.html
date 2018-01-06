@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>demo 3d cave viewer</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+	<style>
+
+		h1, h2, h3, p {
+			margin-left: 20px;
+		}
+
+		div#scene-box {
+			box-sizing: border-box;
+			width: 66.666%;
+			padding: 0 20px;
+			float: left;
+		}
+
+		div#scene {
+			position: relative;
+			height: 600px;
+			width: auto;
+		}
+
+		div#scene-caption {
+			position: absolute;
+			top: 8px;
+			left: 100px;
+			color: white;
+			background-color: black;
+		}
+
+		div#info {
+			box-sizing: border-box;
+			width: 33.333%;
+			padding: 0 20px;
+			float: left;
+		}
+
+		div#credits {
+			clear: both;
+			padding: 0 20px;
+		}
+
+		div#credits p {
+			margin: 20px 0 0 0;
+		}
+
+</style>
+</head>
+<body onload="onload();" >
+
+<script type="text/javascript" src="CaveView/lib/Detector.js"></script>
+<script type="text/javascript" src="CaveView/lib/proj4.js" ></script>
+<script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
+
+<script type="text/javascript" src="CaveView/lib/OSMProvider.js" ></script>
+<script type="text/javascript" src="demoscript.js" ></script>
+
+<script type="text/javascript" >
+"use strict";
+
+var captionDiv;
+var index = 0;
+var routes;
+
+function runDemo() {
+
+	if ( index === demoScript.length ) return;
+
+	var d = demoScript[ index++ ];
+	var property;
+
+	captionDiv.textContent = d.caption;
+
+	var view = d.view;
+
+	if ( view ) for ( property in view ) CV.Viewer[ property ] = view[ property ];
+
+	if ( d.route ) routes.setRoute = d.route;
+
+	setTimeout( runDemo, d.delay * 1000 );
+
+}
+
+function viewComplete () {
+
+	if ( index ) return; // view complete called on cut operation.
+
+	routes = CV.Viewer.getRoutes();
+
+	runDemo();
+
+}
+
+function onload () {
+
+	if ( ! Detector.webgl ) {
+
+		Detector.addGetWebGLMessage( { parent: document.getElementById( 'scene' ) } );
+		return;
+
+	}
+
+	CV.Viewer.init( 'scene', {
+		home: 'CaveView/',
+		terrainDirectory: '/terrain/',
+		surveyDirectory: '/surveys/',
+		view: {
+			shadingMode: CV.SHADING_SINGLE,
+			entrances: false,
+			box: false,
+			HUD: false,
+			walls: false
+		}
+	} );
+
+	CV.Viewer.addOverlay( 'OSM', new OSMProvider() );
+
+	CV.Viewer.addEventListener( 'newCave', viewComplete );
+
+//	CV.Viewer.clearView();
+	CV.Viewer.loadCave( 'P8_Master.3d' );
+
+	captionDiv = document.getElementById( 'scene-caption' );
+
+}
+
+</script>
+<h1>Cave View</h1>
+<h2>a 3D cave survey viewer for the web</h2>
+<div id="scene-box" >
+<div id="scene" class="cv-container" ><div id="scene-caption" ></div></div>
+</div>
+<div id="info" >
+<h3>Features</h3>
+<p>Displays:</p>
+<ul>
+<li><a href="http://survex.com/" >Survex</a> .3d</li>
+<li><a href="http://therion.speleo.sk/" >Therion</a> .lox models</li>
+<li>Terrain and "Slippy Map" overlays</li>
+</ul>
+<p>No plugins required.</p>
+<p>Tested with the following browsers:</p>
+<ul>
+<li>Google Chrome 59</li>
+<li>Firefox 53</li>
+<li>Internet Explorer 11</li>
+<li>Microsoft Edge</li>
+<li>Opera 38</li>
+<li>Safari 9.1 (on iOS and OS X)</li>
+</ul>
+<h3>Information</h3>
+<p><a href="https://github.com/aardgoose/CaveView.js/releases" >Release Notes: 1.4.0</a></p>
+<p><a href="fulldemo.html" >Full Demo with UI</a></p>
+<p><a href="installation.html" >Installation instructions</a></p>
+<p><a href="build.html" >Building instructions</a></p>
+<p><a href="reference.html" >API Reference</a></p>
+<p><a href="https://github.com/aardgoose/CaveView.js/tree/1.4.0" >Source code available here.</a></p>
+<p><a href="https://threejs.org/" >Built with three.js r89</a></p>
+</div>
+<div id="credits">
+<p>Contains Ordnance Survey data &copy; Crown copyright and database right 2015.</p>
+<p>Contains DTM data &copy; Environment Agency copyright and/or database right 2015.</p>
+</div>
+</body>
+</html>

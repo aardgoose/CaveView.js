@@ -552,7 +552,7 @@ function initInfoPage () {
 
 	page.addText( 'For more information see: ' );
 	page.addLink(  'https://aardgoose.github.io/CaveView.js/', 'CaveView on GitHub' );
-	page.addText( '© Angus Sawyer, 2017' );
+	page.addText( '© Angus Sawyer, 2018' );
 
 }
 

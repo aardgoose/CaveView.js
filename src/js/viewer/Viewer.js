@@ -72,9 +72,9 @@ var caveLoader;
 
 var cursorHeight;
 
-var shadingMode;
+var shadingMode = SHADING_SINGLE;
 var surfaceShadingMode = SHADING_SINGLE;
-var terrainShadingMode;
+var terrainShadingMode = SHADING_SHADED;
 
 var overlays = {};
 var activeOverlay = null;
@@ -1061,7 +1061,7 @@ function loadSurvey ( newSurvey ) {
 
 	if ( terrain === null ) {
 
-		terrain = new WebTerrain( survey, _terrainReady, _tilesLoaded, renderView );
+		terrain = new WebTerrain( survey, _terrainReady, _tilesLoaded );
 		syncTerrainLoading = false;
 
 	} else {

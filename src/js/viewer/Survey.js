@@ -10,9 +10,8 @@ import {
 	upAxis
 } from '../core/constants';
 
-import { replaceExtension, getEnvironmentValue } from '../core/lib';
+import { getEnvironmentValue } from '../core/lib';
 import { ColourCache } from '../core/ColourCache';
-import { Tree } from '../core/Tree';
 import { Box3Helper } from '../core/Box3';
 import { Materials } from '../materials/Materials';
 import { ClusterMarkers } from './ClusterMarkers';
@@ -26,7 +25,6 @@ import { DyeTraces } from './DyeTraces';
 import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
-import { WorkerPool } from '../workers/WorkerPool';
 
 import { Matrix4, Vector3, Box3, Object3D, Color, TextureLoader, PointsMaterial } from '../../../../three.js/src/Three';
 
@@ -50,11 +48,9 @@ function Survey ( cave ) {
 	this.type = 'CV.Survey';
 	this.cutInProgress = false;
 	this.terrain = null;
-	this.isRegion = cave.isRegion;
 	this.features = [];
 	this.routes = null;
 	this.stations = null;
-	this.workerPool = new WorkerPool( 'caveWorker.js' );
 	this.inverseWorld = null;
 	this.colourAxis = [
 		new Vector3( 1, 0, 0),
@@ -84,30 +80,19 @@ function Survey ( cave ) {
 	this.name = survey.title;
 	this.CRS = ( survey.sourceCRS === null ) ? getEnvironmentValue( 'CRS', 'fred' ) : survey.sourceCRS;
 
-	if ( this.isRegion === true ) {
+	this.limits = survey.limits;
+	this.offsets = survey.offsets;
 
-		this.surveyTree = survey.surveyTree;
-		this.limits = cave.getLimits();
+	var modelLimits = new Box3().copy( this.limits );
 
-	} else {
+	modelLimits.min.sub( this.offsets );
+	modelLimits.max.sub( this.offsets );
 
-		var surveyLimits = survey.limits;
+	this.modelLimits = modelLimits;
 
-		this.limits = new Box3( new Vector3().copy( surveyLimits.min ), new Vector3().copy( surveyLimits.max ) );
-		this.offsets = survey.offsets;
+	this.loadCave( survey );
 
-		var modelLimits = new Box3().copy( this.limits );
-
-		modelLimits.min.sub( this.offsets );
-		modelLimits.max.sub( this.offsets );
-
-		this.modelLimits = modelLimits;
-
-		this.loadCave( survey );
-
-		this.legTargets = [ this.features[ LEG_CAVE ] ];
-
-	}
+	this.legTargets = [ this.features[ LEG_CAVE ] ];
 
 	this.loadEntrances();
 
@@ -280,7 +265,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	var self = this;
 
-	_restoreSurveyTree( cave.surveyTree );
+	this.surveyTree = cave.surveyTree;
 
 	_loadSegments( cave.lineSegments );
 
@@ -303,38 +288,6 @@ Survey.prototype.loadCave = function ( cave ) {
 	this.routes = new Routes( metadata ).mapSurvey( this.stations, this.getLegs(), this.surveyTree );
 
 	return;
-
-	function _restoreSurveyTree ( surveyTree ) {
-
-		if ( surveyTree.forEachChild === undefined ) {
-
-			// surveyTree from worker loading - add Tree methods to all objects in tree.
-
-			_restore( surveyTree );
-
-			surveyTree.forEachChild( _restore, true );
-
-		}
-
-		if ( self.surveyTree === null ) {
-
-			self.surveyTree = surveyTree;
-
-		} else {
-
-			self.surveyTree.children.push( surveyTree );
-
-		}
-
-		return;
-
-		function _restore ( child ) {
-
-			Object.assign( child, Tree.prototype );
-
-		}
-
-	}
 
 	function _loadScraps ( scrapList ) {
 
@@ -370,9 +323,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			for ( i = 0, l = scrap.vertices.length; i < l; i++ ) {
 
-				var vertex = scrap.vertices[ i ];
-
-				vertices.push( new Vector3( vertex.x, vertex.y, vertex.z ) );
+				vertices.push( scrap.vertices[ i ] );
 
 			}
 
@@ -621,7 +572,6 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			var station  = crossSection.end;
 			var lrud     = crossSection.lrud;
-			var stationV = new Vector3( station.x, station.y, station.z );
 			var vertical;
 
 			// cross product of leg + next leg vector and up AXIS to give direction of LR vector
@@ -645,8 +595,8 @@ Survey.prototype.loadCave = function ( cave ) {
 				cross.copy( lastCross );
 				var t = cross.clone().cross( upAxis );
 
-				U = t.clone().setLength( -lrud.u ).add( stationV );
-				D = t.clone().setLength( lrud.d ).add( stationV );
+				U = t.clone().setLength( -lrud.u ).add( station );
+				D = t.clone().setLength( lrud.d ).add( station );
 
 			} else {
 
@@ -655,8 +605,8 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			}
 
-			L = cross.clone().setLength(  lrud.l ).add( stationV );
-			R = cross.clone().setLength( -lrud.r ).add( stationV );
+			L = cross.clone().setLength(  lrud.l ).add( station );
+			R = cross.clone().setLength( -lrud.r ).add( station );
 
 			lastCross.copy( cross );
 
@@ -694,10 +644,10 @@ Survey.prototype.loadCave = function ( cave ) {
 				vertices.push( U );
 				vertices.push( D );
 
-				UL = L.clone().setZ( U.z ).lerp( stationV, ovalFactor );
-				UR = R.clone().setZ( U.z ).lerp( stationV, ovalFactor );
-				DL = L.clone().setZ( D.z ).lerp( stationV, ovalFactor );
-				DR = R.clone().setZ( D.z ).lerp( stationV, ovalFactor );
+				UL = L.clone().setZ( U.z ).lerp( station, ovalFactor );
+				UR = R.clone().setZ( U.z ).lerp( station, ovalFactor );
+				DL = L.clone().setZ( D.z ).lerp( station, ovalFactor );
+				DR = R.clone().setZ( D.z ).lerp( station, ovalFactor );
 
 				vertices.push( UL );
 				vertices.push( DR );
@@ -734,23 +684,12 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		if ( l === 0 ) return null;
 
-		var vertex1, vertex2;
-
-		var lastVertex = new Vector3();
-
 		for ( var i = 0; i < l; i++ ) {
 
 			var leg = srcSegments[ i ];
 
 			var type   = leg.type;
 			var survey = leg.survey;
-
-			// most line segments will share vertices - avoid allocating new Vector3() in this case.
-
-			vertex1 = lastVertex.equals( leg.from ) ? lastVertex : new Vector3( leg.from.x, leg.from.y, leg.from.z );
-			vertex2 = new Vector3( leg.to.x,   leg.to.y,   leg.to.z );
-
-			lastVertex = vertex2;
 
 			legs = typeLegs[ type ];
 
@@ -787,8 +726,8 @@ Survey.prototype.loadCave = function ( cave ) {
 			}
 
 
-			legs.vertices.push( vertex1 );
-			legs.vertices.push( vertex2 );
+			legs.vertices.push( leg.from );
+			legs.vertices.push( leg.to );
 
 			legs.colors.push( ColourCache.white );
 			legs.colors.push( ColourCache.white );
@@ -1020,40 +959,6 @@ Survey.prototype.loadDyeTraces = function () {
 	dyeTraces.finish();
 
 	this.addFeature( dyeTraces, FEATURE_TRACES, 'CV.DyeTraces' );
-
-};
-
-Survey.prototype.loadFromEntrance = function ( entrance, loadedCallback ) {
-
-	var self = this;
-	var name = replaceExtension( entrance.name, '3d' );
-	var prefix = getEnvironmentValue( 'surveyDirectory', '' );
-
-	if ( entrance.loaded ) return;
-
-	entrance.loaded = true;
-
-	console.log( 'load: ', name );
-
-	var worker = this.workerPool.getWorker();
-
-	worker.onmessage = _surveyLoaded;
-
-	worker.postMessage( prefix + name );
-
-	return;
-
-	function _surveyLoaded ( event ) {
-
-		var surveyData = event.data; // FIXME check for ok;
-
-		self.workerPool.putWorker( worker );
-
-		self.loadCave( surveyData.survey );
-
-		loadedCallback();
-
-	}
 
 };
 

@@ -251,6 +251,9 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 			if ( self.progressDial ) self.progressDial.end();
 
+			// signal error to caller
+			if ( self.tilesLoading === 0 ) self.onLoaded( self.childErrors );
+
 			return;
 
 		}

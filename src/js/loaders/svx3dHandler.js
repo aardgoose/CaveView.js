@@ -24,6 +24,7 @@ Svx3dHandler.prototype.type = 'arraybuffer';
 Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	this.metadata = metadata;
+	this.stationMap = new Map();
 
 	var source    = dataStream; // file data as arrrayBuffer
 	var pos       = 0;	        // file position
@@ -110,13 +111,27 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	}
 
+	var stationMap = this.stationMap;
 	var limits = new Box3();
+	var projection = this.projection;
 
-	surveyTree.traverse( getLimits );
+	// get bounding box of all stations in survey
+
+	if ( projection === null ) {
+
+		stationMap.forEach( getLimits );
+
+	} else {
+
+		stationMap.forEach( getLimitsProjected );
+
+	}
 
 	var offsets = limits.getCenter();
 
-	surveyTree.traverse( adjustCoords );
+	// adjust coordinates to be centered on ( 0, 0, 0 )
+
+	stationMap.forEach( adjustCoords );
 
 	var min = limits.min;
 	var max = limits.max;
@@ -135,21 +150,27 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	return this;
 
-	function getLimits( node ) {
-
-		var coords = node.p;
-
-		if ( coords === undefined ) return;
+	function getLimits ( coords ) {
 
 		limits.expandByPoint( coords );
 
 	}
 
-	function adjustCoords( node ) {
+	function getLimitsProjected ( coords ) {
 
-		var coords = node.p;
+		var projectedCoords = projection.forward( {
+			x: coords.x,
+			y: coords.y
+		} );
 
-		if ( coords === undefined ) return;
+		coords.x = projectedCoords.x;
+		coords.y = projectedCoords.y;
+
+		limits.expandByPoint( coords );
+
+	}
+
+	function adjustCoords ( coords ) {
 
 		coords.sub( offsets );
 
@@ -197,8 +218,6 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 	var groups     = this.groups;
 	var surveyTree = this.surveyTree;
 
-	var self = this;
-
 	var cmd         = [];
 	var legs        = [];
 	var label       = '';
@@ -211,10 +230,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 	var i, j, li, lj;
 
 	var dataView = new DataView( source, 0 );
-
-	// selected correct read coordinates function
-
-	var readCoordinates = ( this.projection === null ) ? __readCoordinates : __readCoordinatesProjected;
+	var stationMap = this.stationMap;
 
 	// init cmd handler table withh  error handler for unsupported records or invalid records
 
@@ -294,7 +310,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 			leg = group[ j ];
 			coords = leg.coords;
 
-			node = stations.get( coords.x + ':' + coords.y + ':' + coords.z );
+			node = stations.get( coords );
 
 			if ( node === undefined ) continue;
 
@@ -337,7 +353,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 		var node = surveyTree.addPath( label.split( '.' ), { p: lastPosition, type: STATION_NORMAL } );
 
 		// track coords to sectionId to allow survey ID's to be added to leg vertices
-		stations.set( lastPosition.x + ':' + lastPosition.y + ':' + lastPosition.z, node );
+		stations.set( lastPosition, node );
 
 		return true;
 
@@ -406,30 +422,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 	}
 
-	// functions aliased at runtime as required
-
-	function __readCoordinatesProjected () {
-
-		var l = new DataView( source, pos );
-
-		var projectedCoords = self.projection.forward( {
-			x: l.getInt32( 0, true ) / 100,
-			y: l.getInt32( 4, true ) / 100
-		} );
-
-		var coords = new Vector3(
-			projectedCoords.x,
-			projectedCoords.y,
-			l.getInt32( 8, true ) / 100
-		);
-
-		pos += 12;
-
-		return coords;
-
-	}
-
-	function __readCoordinates () {
+	function readCoordinates () {
 
 		var l = new DataView( source, pos );
 
@@ -440,6 +433,19 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 		);
 
 		pos += 12;
+
+		var key = coords.x + ',' + coords.y + ',' + coords.z;
+		var cachedCoords = stationMap.get( key );
+
+		if ( cachedCoords !== undefined ) {
+
+			coords = cachedCoords;
+
+		} else {
+
+			stationMap.set( key, coords );
+
+		}
 
 		return coords;
 
@@ -452,8 +458,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	var groups     = this.groups;
 	var xGroups    = this.xGroups;
 	var surveyTree = this.surveyTree;
-
-	var self = this;
 
 	var cmd         = [];
 	var legs        = [];
@@ -472,13 +476,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	var labelChanged = false;
 	var inSection = ( section === null );
 
+	var stationMap = this.stationMap;
+
 	// functions
 
 	var readLabel;
-
-	// selected correct read coordinates function
-
-	var readCoordinates = ( this.projection === null ) ? __readCoordinates : __readCoordinatesProjected;
 
 	// init cmd handler table withh  error handler for unsupported records or invalid records
 
@@ -938,7 +940,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		// heuristic to detect line ends. lastPosition was presumably set in a line sequence therefore is at the end
 		// of a line, Add the current label, presumably specified in the last LINE, to a Set of lineEnds.
 
-		lineEnds.add( lastPosition.x + ',' + lastPosition.y + ',' + lastPosition.z );
+		lineEnds.add( lastPosition );
 
 		var coords = readCoordinates();
 
@@ -1095,7 +1097,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			endRun = true;
 
-		} else if ( lineEnds.has( [ position.x, position.y, position.z ].toString() ) ) {
+		} else if ( lineEnds.has( position ) ) {
 
 			endRun = true;
 			// console.warn( 'unterminated LRUD passage at ', label );
@@ -1115,30 +1117,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	}
 
-	// functions aliased at runtime as required
-
-	function __readCoordinatesProjected () {
-
-		var l = new DataView( source, pos );
-
-		var projectedCoords = self.projection.forward( {
-			x: l.getInt32( 0, true ) / 100,
-			y: l.getInt32( 4, true ) / 100
-		} );
-
-		var coords = new Vector3(
-			projectedCoords.x,
-			projectedCoords.y,
-			l.getInt32( 8, true ) / 100
-		);
-
-		pos += 12;
-
-		return coords;
-
-	}
-
-	function __readCoordinates () {
+	function readCoordinates () {
 
 		var l = new DataView( source, pos );
 
@@ -1150,6 +1129,19 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		pos += 12;
 
+		var key = coords.x + ',' + coords.y + ',' + coords.z;
+		var cachedCoords = stationMap.get( key );
+
+		if ( cachedCoords !== undefined ) {
+
+			coords = cachedCoords;
+
+		} else {
+
+			stationMap.set( key, coords );
+
+		}
+
 		return coords;
 
 	}
@@ -1160,7 +1152,6 @@ Svx3dHandler.prototype.getLineSegments = function () {
 
 	var lineSegments = [];
 	var groups = this.groups;
-	var offsets = this.offsets;
 
 	for ( var i = 0, l = groups.length; i < l; i++ ) {
 
@@ -1173,23 +1164,15 @@ Svx3dHandler.prototype.getLineSegments = function () {
 			var from = g[ v ];
 			var to   = g[ v + 1 ];
 
-			// move coordinates around origin
-
-			from.coords.sub( offsets );
-
 			var fromCoords = from.coords;
 			var toCoords = to.coords;
 
 			// skip repeated points ( co-located stations )
-			if ( fromCoords.equals( toCoords ) ) continue;
+			if ( fromCoords === toCoords ) continue;
 
 			lineSegments.push( { from: fromCoords, to: toCoords, type: to.type, survey: to.survey } );
 
 		}
-
-		// move coordinates around origin
-
-		to.coords.sub( offsets );
 
 	}
 

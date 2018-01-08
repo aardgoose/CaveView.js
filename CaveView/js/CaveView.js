@@ -42451,6 +42451,7 @@ function setupView () {
 function loadSurvey ( newSurvey, cut ) {
 
 	var syncTerrainLoading = true;
+	var firstTiles = true;
 
 	survey = newSurvey;
 
@@ -42538,10 +42539,15 @@ function loadSurvey ( newSurvey, cut ) {
 
 		}
 
-		// delayed notification to ensure and event listeners get accurate terrain information
-		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+		if ( firstTiles ) {
 
-		if ( ! cut ) setupView();
+			// delayed notification to ensure and event listeners get accurate terrain information
+			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+
+			if ( ! cut ) setupView();
+			firstTiles = false;
+
+		}
 
 		renderView();
 

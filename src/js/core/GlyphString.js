@@ -6,6 +6,34 @@ import {
 	Mesh
 } from '../../../../three.js/src/Three';
 
+function onUploadDropBuffer() {
+
+	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
+	this.array = null;
+
+}
+
+function GlyphStringGeometryCache ( material ) {
+
+	this.material = material;
+	this.cache = {};
+
+}
+
+GlyphStringGeometryCache.prototype.getGeometry = function ( text ) {
+
+	var entry = this.cache[ text ];
+
+	if ( entry === undefined ) {
+
+		entry = new GlyphStringGeometry( text, this.material.getAtlas() );
+		this.cache[ text ] = entry;
+
+	}
+
+	return entry;
+
+};
 
 function GlyphStringGeometry ( text, glyphAtlas ) {
 
@@ -121,9 +149,30 @@ GlyphStringGeometry.prototype.replaceString = function ( text ) {
 
 };
 
-function GlyphString ( text, glyphMaterial ) {
+function GlyphString ( text, glyphMaterial, fixed ) {
 
-	var geometry = new GlyphStringGeometry( text, glyphMaterial.getAtlas() );
+	var geometry;
+
+	fixed = fixed === undefined ? true : fixed;
+
+	if ( fixed ) {
+
+		var cache = GlyphString.cache.get( glyphMaterial );
+
+		if ( cache === undefined ) {
+
+			cache = new GlyphStringGeometryCache( glyphMaterial );
+			GlyphString.cache.set( glyphMaterial, cache );
+
+		}
+
+		geometry = cache.getGeometry( text );
+
+	} else {
+
+		geometry = new GlyphStringGeometry( text, glyphMaterial.getAtlas() );
+
+	}
 
 	Mesh.call( this, geometry, glyphMaterial );
 
@@ -131,7 +180,18 @@ function GlyphString ( text, glyphMaterial ) {
 	this.name = text;
 	this.frustumCulled = false;
 
+	var attributes = geometry.attributes;
+
+	if ( fixed ) {
+
+		geometry.computeBoundingSphere();
+		for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
+
+	}
+
 }
+
+GlyphString.cache = new Map();
 
 GlyphString.prototype = Object.assign( Object.create( Mesh.prototype ), {
 

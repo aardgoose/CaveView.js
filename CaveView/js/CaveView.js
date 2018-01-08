@@ -42523,6 +42523,7 @@ function loadSurvey ( newSurvey, cut ) {
 		} else {
 
 			terrain = null;
+			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 		}
 

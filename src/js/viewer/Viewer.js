@@ -1034,8 +1034,6 @@ function setupView () {
 function loadSurvey ( newSurvey, cut ) {
 
 	var syncTerrainLoading = true;
-	var firstTile = true;
-	var inCut = cut;
 
 	survey = newSurvey;
 
@@ -1090,7 +1088,7 @@ function loadSurvey ( newSurvey, cut ) {
 
 	setViewMode( VIEW_PLAN, 1 );
 
-	if ( syncTerrainLoading && ! inCut ) setupView();
+	if ( syncTerrainLoading && ! cut ) setupView();
 
 	renderView();
 
@@ -1111,24 +1109,31 @@ function loadSurvey ( newSurvey, cut ) {
 
 		}
 
-		// delayed notification to ensure and event listeners get accurate terrain information
-		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
-
 	}
 
-	function _tilesLoaded () {
+	function _tilesLoaded ( errors ) {
 
-		if ( firstTile ) {
+		if ( errors > 0 ) {
 
-			if ( ! inCut ) setupView();
-			firstTile = false;
+			terrain = null;
+			console.log( 'errors loading terrain' );
 
 		}
 
-		renderView();
-		loadTerrainListeners();
+		if ( ! cut ) setupView();
 
-		if ( terrain.depthTexture === null ) renderDepthTexture();
+		// delayed notification to ensure and event listeners get accurate terrain information
+		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+
+		renderView();
+
+		if ( terrain !== null ) {
+
+			loadTerrainListeners();
+
+			if ( terrain.depthTexture === null ) renderDepthTexture();
+
+		}
 
 	}
 

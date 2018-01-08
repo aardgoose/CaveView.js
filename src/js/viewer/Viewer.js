@@ -1120,10 +1120,10 @@ function loadSurvey ( newSurvey, cut ) {
 
 		}
 
-		if ( ! cut ) setupView();
-
 		// delayed notification to ensure and event listeners get accurate terrain information
 		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+
+		if ( ! cut ) setupView();
 
 		renderView();
 

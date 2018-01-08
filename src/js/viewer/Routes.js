@@ -98,7 +98,7 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 		station = stations.getStation( v2 );
 
-		if ( ( station && station.hitCount > 2 ) || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) {
+		if ( station && ( station.hitCount > 2 || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) ) {
 
 			// we have found a junction or a passage end
 			segmentInfo.endStation = station;

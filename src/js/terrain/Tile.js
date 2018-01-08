@@ -252,7 +252,7 @@ Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
 
 			}
 
-			if ( tilesWaiting === 0 ) renderCallback();
+			if ( tilesWaiting === 0 ) renderCallback( parent.childErrors );
 
 			return true;
 
@@ -271,7 +271,7 @@ Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
 		tile.isMesh = true;
 		Tile.liveTiles++;
 
-		if ( --tilesWaiting === 0 ) renderCallback();
+		if ( --tilesWaiting === 0 ) renderCallback( parent.childErrors );
 
 	}
 

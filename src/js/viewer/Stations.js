@@ -92,7 +92,7 @@ Stations.prototype.addStation = function ( node ) {
 	this.colors.push( this.baseColor );
 	this.pointSizes.push( point.type === STATION_ENTRANCE ? 8.0 : 0.0 );
 
-	this.map.set( point.x.toString() + ':' + point.y.toString() + ':' + point.z.toString(), node );
+	this.map.set( point, node );
 	this.stations.push( node );
 
 	node.hitCount = 0;
@@ -103,7 +103,7 @@ Stations.prototype.addStation = function ( node ) {
 
 Stations.prototype.getStation = function ( vertex ) {
 
-	return this.map.get( vertex.x.toString() + ':' + vertex.y.toString() + ':' + vertex.z.toString() );
+	return this.map.get( vertex );
 
 };
 

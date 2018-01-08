@@ -213,6 +213,8 @@ CaveLoader.prototype.callHandler = function () {
 
 	this.callback( this.handler.parse( data, metadata, section ) );
 
+	this.handler = null;
+
 };
 
 export { CaveLoader };

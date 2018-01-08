@@ -5,6 +5,7 @@ import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMapMaterial } from './DepthMapMaterial';
 import { HeightMaterial } from './HeightMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
+import { GlyphString } from '../core/GlyphString';
 
 import { LineBasicMaterial, MeshLambertMaterial, NoColors, VertexColors } from '../../../../three.js/src/Three';
 
@@ -211,6 +212,7 @@ function flushCache() {
 
 	depthMaterials = [];
 	perSurveyMaterials = {};
+	GlyphString.cache = new Map();
 
 }
 

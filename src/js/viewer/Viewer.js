@@ -88,6 +88,8 @@ var defaultTarget = new Vector3();
 var cameraMove;
 
 var lastActivityTime = 0;
+
+var formatters = {};
 //var leakWatcher;
 
 var Viewer = Object.create( EventDispatcher.prototype );
@@ -799,6 +801,12 @@ function addOverlay ( name, overlayProvider ) {
 
 }
 
+function addFormatters( stationFormatter ) {
+
+	formatters.station = stationFormatter;
+
+}
+
 function cutSection () {
 
 	if ( selectedSection === 0 ) return;
@@ -1258,7 +1266,7 @@ function mouseDown ( event ) {
 
 		var depth = ( terrain ) ? station.p.z - terrain.getHeight( station.p ) : null;
 
-		var popup = new StationPopup( station, survey.getGeographicalPosition( station.p ), depth );
+		var popup = new StationPopup( station, survey.getGeographicalPosition( station.p ), depth, formatters.station );
 
 		var p = survey.getWorldPosition( station.p );
 
@@ -1440,7 +1448,8 @@ Object.assign( Viewer, {
 	getSurveyTree: getSurveyTree,
 	getControls:   getControls,
 	renderView:    renderView,
-	addOverlay:    addOverlay
+	addOverlay:    addOverlay,
+	addFormatters: addFormatters
 } );
 
 export { Viewer };

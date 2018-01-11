@@ -91,6 +91,8 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 	this.addAttribute( 'instanceOffsets', new InstancedBufferAttribute( offsets, 1, 1 ) );
 	this.addAttribute( 'instanceWidths', new InstancedBufferAttribute( widths, 1, 1 ) );
 
+	this.computeBoundingSphere();
+
 }
 
 GlyphStringGeometry.indexAttribute = null;
@@ -184,7 +186,6 @@ function GlyphString ( text, glyphMaterial, fixed ) {
 
 	if ( fixed ) {
 
-		geometry.computeBoundingSphere();
 		for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
 
 	}

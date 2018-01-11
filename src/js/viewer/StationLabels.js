@@ -1,4 +1,4 @@
-import { Group, Vector3 } from '../../../../three.js/src/Three';
+import { Group, Vector3, Object3D } from '../../../../three.js/src/Three';
 
 import { CAMERA_OFFSET, LABEL_STATION, LEG_SPLAY } from '../core/constants';
 import { GlyphString } from '../core/GlyphString';
@@ -25,29 +25,15 @@ StationLabels.prototype.constructor = StationLabels;
 
 StationLabels.prototype.addStation = function ( station ) {
 
-	var material;
-
-	if ( station.hitCount === 0 ) {
-
-		material = this.splayLabelMaterial;
-
-	} else if ( station.hitCount < 3 ) {
-
-		material = this.defaultLabelMaterial;
-
-	} else {
-
-		material = this.junctionLabelMaterial;
-
-	}
-
-	var label = new GlyphString( station.name, material );
+	var label = new Object3D();
 
 	label.layers.set( LABEL_STATION );
 
 	label.position.copy( station.p );
 
 	label.hitCount = station.hitCount;
+	label.station = station;
+
 	label.visible = false;
 
 	this.add( label );
@@ -82,6 +68,7 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 		label = children[ i ];
 
 		// only show labels for splay end stations if splays visible
+
 		if ( label.hitCount === 0 && ! splaysVisible ) {
 
 			label.visible = false;
@@ -90,11 +77,52 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
 			// show labels for network vertices at greater distance than intermediate stations
 			limit = ( label.hitCount < 3 ) ? 5000 : 40000;
-			label.visible =  ( label.position.distanceToSquared( cameraPosition) < limit );
+			label.visible = ( label.position.distanceToSquared( cameraPosition ) < limit );
+
+			if ( label.visible && !label.isGlyphString ) {
+
+				// lazy creation of GlyphStrings
+
+				this.createLabel( label );
+
+			}
 
 		}
 
 	}
+
+};
+
+StationLabels.prototype.createLabel = function ( dummyLabel ) {
+
+	var station = dummyLabel.station;
+	var material;
+
+	if ( station.hitCount === 0 ) {
+
+		material = this.splayLabelMaterial;
+
+	} else if ( station.hitCount < 3 ) {
+
+		material = this.defaultLabelMaterial;
+
+	} else {
+
+		material = this.junctionLabelMaterial;
+
+	}
+
+	var label = new GlyphString( station.name, material );
+
+	label.layers.set( LABEL_STATION );
+
+	label.position.copy( station.p );
+
+	label.hitCount = station.hitCount;
+	label.visible = false;
+
+	this.remove( dummyLabel );
+	this.add( label );
 
 };
 

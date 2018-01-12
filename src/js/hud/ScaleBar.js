@@ -1,6 +1,6 @@
 
 import { HudObject } from './HudObject';
-import { ColourCache } from '../core/ColourCache';
+import { getThemeValue, getThemeColor } from '../core/lib';
 
 import {
 	Vector3,
@@ -141,21 +141,25 @@ ScaleBar.prototype.setScale = function ( scale ) {
 		line.vertices.push( new Vector3( -rLength / 2, 0, 1 ) );
 		line.vertices.push( new Vector3(  rLength / 2, 0, 1 ) );
 
+		var sb = getThemeValue( 'scaleBar' );
+
 		var mBar  = new Mesh( bar,  new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
 		var mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
-		var mLine = new LineSegments( line, new LineBasicMaterial( { color: 0xff0000 } ) );
+		var mLine = new LineSegments( line, new LineBasicMaterial( { color: sb } ) );
+
+		var c1 = getThemeColor( 'scaleBar' );
 
 		for ( i = 0, l = bar.faces.length; i < l; i = i + 4 ) {
 
-			bar.faces[ i ].color = ColourCache.red;
-			bar.faces[ i + 1 ].color = ColourCache.red;
+			bar.faces[ i ].color = c1;
+			bar.faces[ i + 1 ].color = c1;
 
 		}
 
 		for ( i = 0, l = bar2.faces.length; i < l; i = i + 4 ) {
 
-			bar2.faces[ i ].color = ColourCache.red;
-			bar2.faces[ i + 1 ].color = ColourCache.red;
+			bar2.faces[ i ].color = c1;
+			bar2.faces[ i + 1 ].color = c1;
 
 		}
 

@@ -1,13 +1,15 @@
 
 import { HudObject } from './HudObject';
+import { getThemeValue, getThemeColor } from '../core/lib';
 
 import {
-	Vector3, Math as _Math, Face3, Color,
+	Vector3, Math as _Math, Face3,
 	Geometry, RingGeometry, CylinderBufferGeometry,
 	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
 	FrontSide, VertexColors,
 	Mesh, Group
 } from '../../../../three.js/src/Three';
+
 
 function Compass ( container ) {
 
@@ -27,10 +29,10 @@ function Compass ( container ) {
 	var cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 	cg2.translate( 0, 0, 5 );
 
-	var c2 = new Mesh( cg2, new MeshBasicMaterial( { color: 0xb03a14 } ) );
+	var c2 = new Mesh( cg2, new MeshBasicMaterial( { color: getThemeValue( 'compassTop1' ) } ) );
 
-	var r1 = _makeRose( stdWidth * 0.8, 0.141, 0x581d0a, 0x0c536a );
-	var r2 = _makeRose( stdWidth * 0.9, 0.141, 0xb03a14, 0x1ab4e5 );
+	var r1 = _makeRose( stdWidth * 0.9, 0.141, getThemeColor( 'compassBottom1' ), getThemeColor( 'compassBottom2' ) );
+	var r2 = _makeRose( stdWidth * 0.9, 0.141, getThemeColor( 'compassTop1' ), getThemeColor( 'compassTop2' ) );
 
 	r1.rotateZ( Math.PI / 4 );
 	r1.merge( r2 );
@@ -86,7 +88,7 @@ function Compass ( container ) {
 
 	function _makeRose ( radius, scale, color1, color2 ) {
 
-		var p1 = _makePetal( radius, scale, new Color( color1 ), new Color( color2 ) );
+		var p1 = _makePetal( radius, scale, color1, color2 );
 		var p2 = p1.clone();
 		var p3 = p1.clone();
 		var p4 = p1.clone();

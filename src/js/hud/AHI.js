@@ -1,7 +1,7 @@
 
 import { upAxis } from '../core/constants';
 import { HudObject } from './HudObject';
-import { ColourCache } from '../core/ColourCache';
+import { getThemeColor } from '../core/lib';
 
 import {
 	Vector3, Math as _Math,
@@ -39,8 +39,8 @@ function AHI ( container ) {
 
 	var colours = [];
 
-	var c1 = ColourCache.hudBlue;
-	var c2 = ColourCache.hudRed;
+	var c1 = getThemeColor( 'ahiSky' );
+	var c2 = getThemeColor( 'ahiEarth' );
 
 	var i;
 

@@ -136,14 +136,17 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	var min = limits.min;
 	var max = limits.max;
 
-	var marginX = ( max.x - min.x ) * 0.05;
-	var marginY = ( max.y - min.y ) * 0.05;
+	// expand survey area by 10%
 
-	min.x -= marginX;
-	max.x += marginX;
+	limits.expandByVector(
 
-	min.y -= marginY;
-	max.y += marginY;
+		new Vector3(
+			( max.x - min.x ) * 0.05,
+			( max.y - min.y ) * 0.05,
+			0
+		)
+
+	);
 
 	this.limits = limits;
 	this.offsets = offsets;

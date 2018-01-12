@@ -100,8 +100,7 @@ var demoScript = [
 		delay: 3,
 		view: {
 			autoRotate: false,
-			view: CV.VIEW_PLAN,
-			shadingMode: CV.SHADING_HEIGHT
+			view: CV.VIEW_PLAN
 		}
 	},
 	{

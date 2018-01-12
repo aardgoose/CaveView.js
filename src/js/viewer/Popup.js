@@ -1,59 +1,83 @@
 
-import { Vector3 } from '../../../../three.js/src/Three';
+import { LEG_CAVE } from '../core/constants';
+import { PopupMaterial } from '../materials/PopupMaterial';
 
-function Popup( cssClass ) {
+import {
+	CanvasTexture,
+	BufferGeometry,
+	Float32BufferAttribute,
+	Uint16BufferAttribute,
+	Mesh
+} from '../../../../three.js/src/Three';
 
-	this.div = document.createElement( 'div' );
-	this.div.classList.add( cssClass );
+
+function PopupGeometry () {
+
+	BufferGeometry.call( this );
+
+	this.type = 'PopupGeometry';
+
+	var indexAttribute = new Uint16BufferAttribute( [ 0, 2, 1, 0, 3, 2 ], 1 );
+
+	// unit square
+	var positions = [
+		0, 0, 0,
+		0, 1, 0,
+		1, 1, 0,
+		1, 0, 0
+	];
+
+	var positionAttribute = new Float32BufferAttribute( positions, 3 );
+
+	this.setIndex( indexAttribute );
+	this.addAttribute( 'position', positionAttribute );
 
 }
 
+PopupGeometry.prototype = Object.create( BufferGeometry.prototype );
+
+function Popup( container ) {
+
+	Mesh.call( this, new PopupGeometry() );
+
+	this.lines = [];
+	this.layers.set( LEG_CAVE );
+	this.type = 'Popup';
+	this.container = container;
+	this.visible = false;
+
+	return this;
+
+}
+
+Popup.prototype = Object.create( Mesh.prototype );
+
 Popup.prototype.constructor = Popup;
 
-Popup.prototype.display = function ( container, x, y, camera, p ) {
+Popup.prototype.display = function ( renderFunction ) {
 
-	var div = this.div;
-	var screenPosition = new Vector3();
+	var self = this;
 
-	div.style.left = x + 'px';
-	div.style.top = y + 'px';
-
-	container.appendChild ( div );
+	var container = this.container;
 
 	container.addEventListener( 'mouseup', _mouseUp );
-	container.addEventListener( 'mousemove', _mouseMove );
 
-	function _mouseMove ( /* event */ ) {
+	this.visible = true;
 
-		camera.updateMatrixWorld();
-
-		screenPosition.copy( p );
-		screenPosition.project( camera );
-
-		var X = container.clientWidth * ( screenPosition.x + 1 ) / 2;
-		var Y = container.clientHeight * ( -screenPosition.y + 1 ) / 2;
-
-
-		if ( X + div.clientWidth > container.clientWidth || Y + div.clientHeight > container.clientHeight ) {
-
-			// moving off screen, delete now.
-			_mouseUp();
-
-		} else {
-
-			div.style.left = X + 'px';
-			div.style.top =  Y + 'px';
-
-		}
-
-	}
+	renderFunction();
 
 	function _mouseUp ( /* event */ ) {
 
-		container.removeChild( div );
+		self.visible = false;
 
-		container.removeEventListener( 'mousemove', _mouseMove );
 		container.removeEventListener( 'mouseup', _mouseUp );
+
+		self.parent.remove( self );
+
+		self.material.dispose();
+		self.geometry.dispose();
+
+		renderFunction();
 
 	}
 
@@ -61,11 +85,61 @@ Popup.prototype.display = function ( container, x, y, camera, p ) {
 
 Popup.prototype.addLine = function ( line ) {
 
-	var newLine = document.createElement( 'div' );
+	this.lines.push( line );
 
-	newLine.textContent = line;
+	return this;
 
-	this.div.appendChild ( newLine );
+};
+
+Popup.prototype.finish = function () {
+
+	var cellSize = 32;
+	var lines = this.lines;
+	var lineCount = lines.length;
+
+	var popupWidth = 300;
+	var popupHeight = cellSize * lineCount;
+
+	var canvas = document.createElement( 'canvas' );
+
+	if ( ! canvas ) console.error( 'creating canvas for Popup failed' );
+
+	canvas.width  = popupWidth;
+	canvas.height = popupHeight;
+
+	var ctx = canvas.getContext( '2d' );
+
+	if ( ! ctx ) console.error( 'cannot obtain 2D canvas' );
+
+	// set background
+
+	ctx.fillStyle = 'rgba( 0, 1, 0, 1 )';
+	ctx.fillRect( 0, 0, popupWidth, popupHeight );
+
+	// write text contents
+
+	var fontSize = 20;
+
+	ctx.textAlign = 'left';
+	ctx.font = fontSize + 'px ' + 'normal helvetica,sans-serif';
+	ctx.fillStyle = '#ffffff';
+
+	var line;
+
+	for ( var i = 0; i < lineCount; i++ ) {
+
+		line = lines[ i ];
+		ctx.fillText( line, 0 , cellSize * i - 6 );
+
+	}
+
+	var material = new PopupMaterial( this.container, new CanvasTexture( canvas ), 0 );
+
+	this.material = material;
+
+	this.material.needsUpdate = true;
+
+	console.log( this );
 
 	return this;
 

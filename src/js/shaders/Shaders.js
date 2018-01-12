@@ -20,6 +20,9 @@ import glyphFragmentShader from './glyphFragmentShader.glsl';
 import heightVertexShader from './heightVertexShader.glsl';
 import heightFragmentShader from './heightFragmentShader.glsl';
 
+import popupVertexShader from './popupVertexShader.glsl';
+import popupFragmentShader from './popupFragmentShader.glsl';
+
 import waterVertexShader from './waterVertexShader.glsl';
 import waterFragmentShader from './waterFragmentShader.glsl';
 
@@ -38,6 +41,8 @@ export var Shaders =  {
 	glyphFragmentShader:	glyphFragmentShader,
 	heightVertexShader:		heightVertexShader,
 	heightFragmentShader:	heightFragmentShader,
+	popupVertexShader:		popupVertexShader,
+	popupFragmentShader:	popupFragmentShader,
 	waterVertexShader:		waterVertexShader,
 	waterFragmentShader:	waterFragmentShader
 };

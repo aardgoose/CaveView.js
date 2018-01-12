@@ -1,8 +1,8 @@
 import { Popup } from './Popup.js';
 
-function StationPopup ( station, position, depth, formatter ) {
+function StationPopup ( container, station, position, depth, formatter ) {
 
-	Popup.call( this, 'station-info' );
+	Popup.call( this, container );
 
 	var name = station.getPath();
 	var long = false;
@@ -47,6 +47,10 @@ function StationPopup ( station, position, depth, formatter ) {
 		if ( depth !== null ) this.addLine( 'depth from surface: ' + Math.round( depth ) + ' m' );
 
 	}
+
+	this.finish();
+
+	return this;
 
 }
 

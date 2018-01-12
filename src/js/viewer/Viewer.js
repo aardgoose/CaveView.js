@@ -21,7 +21,7 @@ import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { Overlay } from '../terrain/Overlay';
-import { setEnvironment, getEnvironmentValue } from '../core/lib';
+import { setEnvironment, getEnvironmentValue, getThemeValue } from '../core/lib';
 
 // analysis tests
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
@@ -95,7 +95,16 @@ var formatters = {};
 var Viewer = Object.create( EventDispatcher.prototype );
 
 function init ( domID, configuration ) { // public method
+/*
+	WeakMap.prototype.__get = WeakMap.prototype.get;
 
+	WeakMap.prototype.get = function ( obj ) {
+
+		console.log( Object.getPrototypeOf( obj ).constructor.name );
+		return this.__get( obj );
+
+	};
+*/
 	console.log( 'CaveView v' + VERSION );
 
 	container = document.getElementById( domID );
@@ -111,7 +120,7 @@ function init ( domID, configuration ) { // public method
 
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setClearColor( 0x000000 );
+	renderer.setClearColor( getThemeValue( 'background' ) );
 	renderer.autoClear = false;
 
 	oCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
@@ -1266,11 +1275,18 @@ function mouseDown ( event ) {
 
 		var depth = ( terrain ) ? station.p.z - terrain.getHeight( station.p ) : null;
 
-		var popup = new StationPopup( station, survey.getGeographicalPosition( station.p ), depth, formatters.station );
+		var popup = new StationPopup( container, station, survey.getGeographicalPosition( station.p ), depth, formatters.station );
 
 		var p = survey.getWorldPosition( station.p );
 
-		popup.display( container, event.clientX, event.clientY, camera, p );
+		// FIXME this API needs rework 
+		popup.position.copy( station.p );
+
+		survey.add( popup );
+
+		popup.display( renderView );
+
+		console.log( popup );
 
 		cameraMove.prepare( null, p.clone() );
 

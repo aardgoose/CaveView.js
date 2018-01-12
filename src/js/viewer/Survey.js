@@ -10,6 +10,7 @@ import {
 	upAxis
 } from '../core/constants';
 
+import { getThemeValue } from '../core/lib';
 import { getEnvironmentValue } from '../core/lib';
 import { ColourCache } from '../core/ColourCache';
 import { Box3Helper } from '../core/Box3';
@@ -1118,7 +1119,7 @@ Survey.prototype.setFeatureBox = function () {
 
 	if ( this.featureBox === null ) {
 
-		var box = new Box3Helper( this.modelLimits, 0xffffff );
+		var box = new Box3Helper( this.modelLimits, getThemeValue( 'boundingBox' ) );
 
 		box.layers.set( FEATURE_BOX );
 		box.name = 'survey-boundingbox';

@@ -1,5 +1,6 @@
 
 import { upAxis } from '../core/constants';
+import { getThemeValue } from '../core/lib';
 import { HudObject } from './HudObject';
 import { Viewer } from '../viewer/Viewer';
 import { GlyphString } from '../core/GlyphString';
@@ -43,6 +44,8 @@ function ProgressDial () {
 	this.pcent.translateY( 10 );
 	this.pcent.translateX( -5 );
 
+	this.color = getThemeValue( 'progress' );
+
 	this.add( this.pcent );
 
 	return this;
@@ -63,10 +66,11 @@ ProgressDial.prototype.set = function ( progress ) {
 
 	var l = Math.floor( Math.min( 100, Math.round( progress ) ) / 2 ) * 2;
 	var faces = this.geometry.faces;
+	var color = this.color;
 
 	for ( var i = 0; i < l; i++ ) {
 
-		faces[ 99 - i ].color.set( 0x00ff00 );
+		faces[ 99 - i ].color.set( color );
 
 	}
 

@@ -1,5 +1,21 @@
 
+import { Color }  from '../../../../three.js/src/math/Color';
+
 var environment = new Map();
+var themeColors = new Map();
+
+var defaultTheme = {
+	background: 0x000000,
+	progress: 0x00ff00,
+	scaleBar: 0xff00ff,
+	compassTop1: 0xb03a14,
+	compassTop2: 0x1ab4e5,
+	compassBottom1: 0x581d0a,
+	compassBottom2: 0x0c536a,
+	ahiSky: 0x106f8d,
+	ahiEarth: 0x802100,
+	boundingBox: 0x00ffff
+};
 
 function setEnvironment ( envs ) {
 
@@ -26,6 +42,30 @@ function getEnvironmentValue ( item, defaultValue ) {
 		return defaultValue;
 
 	}
+
+}
+
+function getThemeValue ( name ) {
+
+	var theme = environment.get( 'theme' );
+
+	return ( theme !== undefined && theme[ name ] !== undefined ) ? theme[ name ] : defaultTheme[ name ];
+
+}
+
+function getThemeColor ( name ) {
+
+	var color = themeColors.get( name );
+
+	if ( color === undefined ) {
+
+		color = new Color( getThemeValue( name ) );
+
+		themeColors.set( name, color );
+
+	}
+
+	return color;
 
 }
 
@@ -126,6 +166,6 @@ if ( ! String.prototype.repeat ) {
 }
 
 
-export { replaceExtension, setEnvironment, getEnvironmentValue };
+export { replaceExtension, setEnvironment, getEnvironmentValue, getThemeValue, getThemeColor };
 
 // EOF

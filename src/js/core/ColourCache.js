@@ -92,7 +92,5 @@ export var ColourCache = {
 	green:     new Color( 0x00ff00 ),
 	white:     new Color( 0xffffff ),
 	grey:      new Color( 0x444444 ),
-	lightGrey: new Color( 0x888888 ),
-	hudBlue:   new Color( 0x106f8d ),
-	hudRed:    new Color( 0x802100 )
+	lightGrey: new Color( 0x888888 )
 };

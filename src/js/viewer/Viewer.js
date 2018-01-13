@@ -89,6 +89,7 @@ var cameraMove;
 
 var lastActivityTime = 0;
 
+var popup = null;
 var formatters = {};
 //var leakWatcher;
 
@@ -147,6 +148,8 @@ function init ( domID, configuration ) { // public method
 	//	scene.autoUpdate = false; // FIXME - update entrance labels/clusters manually
 
 	raycaster = new Raycaster();
+
+	raycaster.params.Points.threshold = 5;
 
 	renderer.clear();
 
@@ -1243,15 +1246,7 @@ function mouseDown ( event ) {
 
 		case MOUSE_MODE_NORMAL:
 
-			if ( picked.object.isPoints ) {
-
-				result = _selectStation( picked );
-
-			} else {
-
-				result = _selectEntrance( picked );
-
-			}
+			result = _selectStation( picked );
 
 			break;
 
@@ -1271,24 +1266,17 @@ function mouseDown ( event ) {
 
 		var station = survey.selectStation( picked.index );
 
-		renderView();
-
 		var depth = ( terrain ) ? station.p.z - terrain.getHeight( station.p ) : null;
 
-		var popup = new StationPopup( container, station, survey.getGeographicalPosition( station.p ), depth, formatters.station );
-
-		var p = survey.getWorldPosition( station.p );
-
-		// FIXME this API needs rework 
-		popup.position.copy( station.p );
+		popup = new StationPopup( container, station, survey, depth, formatters.station );
 
 		survey.add( popup );
 
-		popup.display( renderView );
+		container.addEventListener( 'mouseup', _mouseUp );
 
-		console.log( popup );
+		renderView();
 
-		cameraMove.prepare( null, p.clone() );
+		cameraMove.prepare( null, survey.getWorldPosition( station.p ) );
 
 		return true;
 
@@ -1308,20 +1296,14 @@ function mouseDown ( event ) {
 
 	}
 
-	function _selectEntrance ( picked ) {
+	function _mouseUp ( /* event */ ) {
 
-		if ( ! Viewer.entrances ) return false;
+		container.removeEventListener( 'mouseup', _mouseUp );
 
-		var entrance = picked.object;
-		var position = entrance.getWorldPosition();
+		popup.close();
+		survey.clearSelection();
 
-		cameraMove.prepare( position.clone().add( new Vector3( 0, 0, 5 ) ), position );
-
-		console.log( entrance.type, entrance.name );
-
-		cameraMove.start( 80 );
-
-		return true;
+		renderView();
 
 	}
 

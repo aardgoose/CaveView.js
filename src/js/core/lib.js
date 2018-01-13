@@ -14,7 +14,8 @@ var defaultTheme = {
 	compassBottom2: 0x0c536a,
 	ahiSky: 0x106f8d,
 	ahiEarth: 0x802100,
-	boundingBox: 0x00ffff
+	boundingBox: 0x00ffff,
+	single: 0xffffff
 };
 
 function setEnvironment ( envs ) {

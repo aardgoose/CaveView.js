@@ -1,13 +1,16 @@
 import { Popup } from './Popup.js';
 
-function StationPopup ( container, station, position, depth, formatter ) {
+function StationPopup ( container, station, survey, depth, formatter ) {
 
-	Popup.call( this, container );
+	Popup.call( this );
 
 	var name = station.getPath();
 	var long = false;
 	var tmp;
 	var lines = null;
+	var position = survey.getGeographicalPosition( station.p );
+
+	this.container = container;
 
 	// reduce name length if too long
 
@@ -32,7 +35,7 @@ function StationPopup ( container, station, position, depth, formatter ) {
 
 	}
 
-	if ( lines === null) {
+	if ( lines !== null ) {
 
 		for ( let i = 0; i < lines.length; i++ ) {
 
@@ -50,6 +53,8 @@ function StationPopup ( container, station, position, depth, formatter ) {
 
 	this.finish();
 
+	this.position.copy( station.p );
+
 	return this;
 
 }
@@ -57,5 +62,6 @@ function StationPopup ( container, station, position, depth, formatter ) {
 StationPopup.prototype = Object.create( Popup.prototype );
 
 StationPopup.prototype.constructor = StationPopup;
+
 
 export { StationPopup };

@@ -36,15 +36,13 @@ function PopupGeometry () {
 
 PopupGeometry.prototype = Object.create( BufferGeometry.prototype );
 
-function Popup( container ) {
+function Popup() {
 
 	Mesh.call( this, new PopupGeometry() );
 
 	this.lines = [];
 	this.layers.set( LEG_CAVE );
 	this.type = 'Popup';
-	this.container = container;
-	this.visible = false;
 
 	return this;
 
@@ -53,35 +51,6 @@ function Popup( container ) {
 Popup.prototype = Object.create( Mesh.prototype );
 
 Popup.prototype.constructor = Popup;
-
-Popup.prototype.display = function ( renderFunction ) {
-
-	var self = this;
-
-	var container = this.container;
-
-	container.addEventListener( 'mouseup', _mouseUp );
-
-	this.visible = true;
-
-	renderFunction();
-
-	function _mouseUp ( /* event */ ) {
-
-		self.visible = false;
-
-		container.removeEventListener( 'mouseup', _mouseUp );
-
-		self.parent.remove( self );
-
-		self.material.dispose();
-		self.geometry.dispose();
-
-		renderFunction();
-
-	}
-
-};
 
 Popup.prototype.addLine = function ( line ) {
 
@@ -136,12 +105,18 @@ Popup.prototype.finish = function () {
 	var material = new PopupMaterial( this.container, new CanvasTexture( canvas ), 0 );
 
 	this.material = material;
-
 	this.material.needsUpdate = true;
 
-	console.log( this );
-
 	return this;
+
+};
+
+Popup.prototype.close = function () {
+
+	this.parent.remove( this );
+
+	this.material.dispose();
+	this.geometry.dispose();
 
 };
 

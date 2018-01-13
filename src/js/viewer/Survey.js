@@ -10,7 +10,7 @@ import {
 	upAxis
 } from '../core/constants';
 
-import { getThemeValue } from '../core/lib';
+import { getThemeValue, getThemeColor } from '../core/lib';
 import { getEnvironmentValue } from '../core/lib';
 import { ColourCache } from '../core/ColourCache';
 import { Box3Helper } from '../core/Box3';
@@ -178,8 +178,6 @@ Survey.prototype.loadEntrances = function () {
 
 	var surveyTree = this.surveyTree;
 	var entrances = this.metadata.entrances;
-	var self = this;
-
 	var clusterMarkers = new ClusterMarkers( this.modelLimits, 4 );
 
 	// remove common elements from station names if no alternatives available
@@ -198,7 +196,6 @@ Survey.prototype.loadEntrances = function () {
 
 	function _addEntrance( node ) {
 
-		var marker;
 		var name;
 
 		if ( node.type !== STATION_ENTRANCE ) return;
@@ -211,9 +208,7 @@ Survey.prototype.loadEntrances = function () {
 
 		if ( name === '-skip' ) return;
 
-		marker = clusterMarkers.addMarker( node.p, ' ' + name + ' ' );
-
-		self.pointTargets.push( marker );
+		clusterMarkers.addMarker( node.p, ' ' + name + ' ' );
 
 	}
 
@@ -1271,7 +1266,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_SINGLE:
 
-		material = Materials.getSurfaceMaterial();
+		material = Materials.getSurfaceMaterial( getThemeValue( 'single' ) );
 
 		break;
 
@@ -1371,7 +1366,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	case SHADING_SINGLE:
 
-		this.setLegColourByColour( mesh, ColourCache.white );
+		this.setLegColourByColour( mesh, getThemeColor( 'single' ) );
 
 		break;
 
@@ -1559,7 +1554,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	var c1 = ColourCache.yellow;
 	var c2 = ColourCache.red;
-	var c3 = ColourCache.white;
+	var c3 = getThemeColor( 'single' );
 
 	var colour;
 

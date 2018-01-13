@@ -47,13 +47,16 @@ function getHeightMaterial ( type, limits ) {
 
 	var name = 'height' + type;
 
-	if ( cache.has( name ) ) return cache.get( name );
+	var material = cache.get( name );
 
-	var material = new HeightMaterial( type, limits );
+	if ( material === undefined ) {
 
-	cache.set( name, material );
+		material = new HeightMaterial( type, limits );
+		cache.set( name, material );
 
-	perSurveyMaterials[ name ] = material;
+		perSurveyMaterials[ name ] = material;
+
+	}
 
 	return material;
 
@@ -68,6 +71,7 @@ function getDepthMapMaterial ( terrain ) {
 function getDepthMaterial ( type, limits, terrain ) {
 
 	var name = 'depth' + type;
+
 	var material = cache.get( name );
 
 	if ( material === undefined ) {
@@ -142,13 +146,21 @@ function getDepthCursorMaterial( type, limits, terrain ) {
 
 }
 
-function getSurfaceMaterial () {
+function getSurfaceMaterial ( color ) {
 
-	if ( cache.has( 'surface' ) ) return cache.get( 'surface' );
+	var material = cache.get( 'surface' );
 
-	var material = new MeshLambertMaterial( { color: 0xFFFFFF, vertexColors: NoColors } );
+	if ( material === undefined ) {
 
-	cache.set( 'surface', material );
+		material = new MeshLambertMaterial( { color: color, vertexColors: NoColors } );
+		cache.set( 'surface', material );
+
+	} else {
+
+		material.color.set( color );
+		material.needsUpdate = true;
+
+	}
 
 	return material;
 
@@ -156,11 +168,14 @@ function getSurfaceMaterial () {
 
 function getLineMaterial () {
 
-	if ( cache.has( 'line' ) ) return cache.get( 'line' );
+	var material = cache.get( 'line' );
 
-	var material = new LineBasicMaterial( { color: 0xFFFFFF, vertexColors: VertexColors } );
+	if ( material === undefined ) {
 
-	cache.set( 'line', material );
+		material = new LineBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } );
+		cache.set( 'line', material );
+
+	}
 
 	return material;
 
@@ -170,11 +185,14 @@ function getGlyphMaterial ( glyphAtlasSpec, rotation, colour ) {
 
 	var name = glyphAtlasSpec + ':' + rotation.toString() + ':' + ( colour ? colour.toString() : 'default' );
 
-	if ( cache.has( name ) ) return cache.get( name );
+	var material = cache.get( name );
 
-	var material = new GlyphMaterial( glyphAtlasSpec, viewer.container, rotation, colour );
+	if ( material === undefined ) {
 
-	cache.set( name, material );
+		material = new GlyphMaterial( glyphAtlasSpec, viewer.container, rotation, colour );
+		cache.set( name, material );
+
+	}
 
 	return material;
 

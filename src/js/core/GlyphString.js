@@ -13,6 +13,8 @@ function onUploadDropBuffer() {
 
 }
 
+GlyphString.cache = new Map();
+
 function GlyphStringGeometryCache ( material ) {
 
 	this.material = material;
@@ -147,8 +149,6 @@ GlyphStringGeometry.prototype.replaceString = function ( text ) {
 	instanceOffsets.needsUpdate = true;
 	instanceWidths.needsUpdate = true;
 
-//	this.needsUpdate = true;
-
 };
 
 function GlyphString ( text, glyphMaterial, fixed ) {
@@ -191,8 +191,6 @@ function GlyphString ( text, glyphMaterial, fixed ) {
 	}
 
 }
-
-GlyphString.cache = new Map();
 
 GlyphString.prototype = Object.assign( Object.create( Mesh.prototype ), {
 

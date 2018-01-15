@@ -522,6 +522,8 @@ function setTerrainOpacity ( x ) {
 
 function applyTerrainDatumShift( x ) {
 
+	if ( terrain === null ) return;
+
 	terrain.applyDatumShift( x );
 	Viewer.dispatchEvent( { type: 'change', name: 'terrainDatumShift' } );
 
@@ -1159,6 +1161,8 @@ function loadSurvey ( newSurvey, cut ) {
 			loadTerrainListeners();
 
 			if ( terrain.depthTexture === null ) renderDepthTexture();
+
+			applyTerrainDatumShift( true );
 
 		}
 

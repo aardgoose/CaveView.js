@@ -29,7 +29,7 @@ void main() {
 
 	// scale popup
 
-	newPosition.xy *= 0.5;
+	newPosition.xy *= 0.25;
 
 	// correct for aspect ratio
 

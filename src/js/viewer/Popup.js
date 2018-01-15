@@ -1,5 +1,6 @@
 
 import { LEG_CAVE } from '../core/constants';
+import { getThemeColorCSS } from '../core/lib';
 import { PopupMaterial } from '../materials/PopupMaterial';
 
 import {
@@ -82,8 +83,12 @@ Popup.prototype.finish = function () {
 
 	// set background
 
-	ctx.fillStyle = 'rgba( 0, 1, 0, 1 )';
+	ctx.fillStyle = getThemeColorCSS( 'popupBackground' );
 	ctx.fillRect( 0, 0, popupWidth, popupHeight );
+
+	ctx.strokeStyle = getThemeColorCSS( 'popupBorder' );
+	ctx.lineWidth = 2.0;
+	ctx.strokeRect( 0, 0, popupWidth, popupHeight );
 
 	// write text contents
 
@@ -91,14 +96,14 @@ Popup.prototype.finish = function () {
 
 	ctx.textAlign = 'left';
 	ctx.font = fontSize + 'px ' + 'normal helvetica,sans-serif';
-	ctx.fillStyle = '#ffffff';
+	ctx.fillStyle = getThemeColorCSS( 'popupText' );
 
 	var line;
 
 	for ( var i = 0; i < lineCount; i++ ) {
 
 		line = lines[ i ];
-		ctx.fillText( line, 0 , cellSize * i - 6 );
+		ctx.fillText( line, 10 , cellSize * ( i + 1 ) - 6 );
 
 	}
 

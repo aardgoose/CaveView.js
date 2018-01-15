@@ -7,7 +7,9 @@ function PopupMaterial ( container, popupImage, rotation, colour ) {
 	var cos = Math.cos( rotation );
 	var sin = Math.sin( rotation );
 
+	var canvas = popupImage.image;
 	var rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
+	var scale = ( canvas.width * container.clientHeight ) / ( canvas.height * container.clientWidth );
 
 	colour = colour || [ 1, 1, 1 ];
 
@@ -15,7 +17,7 @@ function PopupMaterial ( container, popupImage, rotation, colour ) {
 		uniforms: {
 			rotate: { value: rotationMatrix },
 			popupImage: { value: popupImage },
-			scale: { value: container.clientHeight / container.clientWidth }
+			scale: { value: scale }
 		},
 		vertexShader: Shaders.popupVertexShader,
 		fragmentShader: Shaders.popupFragmentShader,
@@ -30,18 +32,7 @@ function PopupMaterial ( container, popupImage, rotation, colour ) {
 	this.defaultAttributeValues.color = colour;
 	this.type = 'CV.PopupMaterial';
 
-	// event handler
-	window.addEventListener( 'resize', _resize );
-
-	var self = this;
-
 	return this;
-
-	function _resize() {
-
-		self.uniforms.scale.value = container.clientHeight / container.clientWidth;
-
-	}
 
 }
 

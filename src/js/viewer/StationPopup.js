@@ -30,8 +30,7 @@ function StationPopup ( container, station, survey, depth, formatter ) {
 
 	if ( formatter !== undefined ) {
 
-		// null for future CRS parameter
-		lines = formatter( null, position, depth );
+		lines = formatter( survey.CRS, position, depth );
 
 	}
 

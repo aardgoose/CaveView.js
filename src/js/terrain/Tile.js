@@ -49,7 +49,7 @@ function Tile ( x, y, zoom, tileSet, clip ) {
 	this.boundingBox = null;
 	this.worldBoundingBox = null;
 
-	Mesh.call( this, new BufferGeometry(), Materials.getSurfaceMaterial() );
+	Mesh.call( this, new BufferGeometry(), Materials.getSurfaceMaterial( 0xffffff ) );
 
 	this.onBeforeRender = terrainLib.onBeforeRender;
 	this.onAfterRender = terrainLib.onAfterRender;

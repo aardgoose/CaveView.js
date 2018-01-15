@@ -148,12 +148,12 @@ function getDepthCursorMaterial( type, limits, terrain ) {
 
 function getSurfaceMaterial ( color ) {
 
-	var material = cache.get( 'surface' );
+	var material = cache.get( 'surface' + color );
 
 	if ( material === undefined ) {
 
 		material = new MeshLambertMaterial( { color: color, vertexColors: NoColors } );
-		cache.set( 'surface', material );
+		cache.set( 'surface' + color, material );
 
 	} else {
 

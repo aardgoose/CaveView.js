@@ -6,16 +6,23 @@ var themeColors = new Map();
 
 var defaultTheme = {
 	background: 0x000000,
+	bezel: 0x888888,
 	progress: 0x00ff00,
-	scaleBar: 0xff00ff,
+	scaleBar1: 0xffffff,
+	scaleBar2: 0xff0000,
 	compassTop1: 0xb03a14,
 	compassTop2: 0x1ab4e5,
 	compassBottom1: 0x581d0a,
 	compassBottom2: 0x0c536a,
 	ahiSky: 0x106f8d,
 	ahiEarth: 0x802100,
+	ahiBar: 0xffff00,
+	ahiMarks: 0xffffff,
 	boundingBox: 0x00ffff,
-	single: 0xffffff
+	single: 0xffffff,
+	popupText: 0xffffff,
+	popupBorder: 0xffffff,
+	popupBackground: 0x222222
 };
 
 function setEnvironment ( envs ) {
@@ -51,6 +58,14 @@ function getThemeValue ( name ) {
 	var theme = environment.get( 'theme' );
 
 	return ( theme !== undefined && theme[ name ] !== undefined ) ? theme[ name ] : defaultTheme[ name ];
+
+}
+
+function getThemeColorCSS ( name ) {
+
+	var color = '#' + getThemeValue( name ).toString( 16 ).padStart( 6, '0' );
+
+	return color;
 
 }
 
@@ -167,6 +182,6 @@ if ( ! String.prototype.repeat ) {
 }
 
 
-export { replaceExtension, setEnvironment, getEnvironmentValue, getThemeValue, getThemeColor };
+export { replaceExtension, setEnvironment, getEnvironmentValue, getThemeValue, getThemeColor, getThemeColorCSS };
 
 // EOF

@@ -141,25 +141,24 @@ ScaleBar.prototype.setScale = function ( scale ) {
 		line.vertices.push( new Vector3( -rLength / 2, 0, 1 ) );
 		line.vertices.push( new Vector3(  rLength / 2, 0, 1 ) );
 
-		var sb = getThemeValue( 'scaleBar' );
+		var sb = getThemeValue( 'scaleBar1' );
 
 		var mBar  = new Mesh( bar,  new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
 		var mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
 		var mLine = new LineSegments( line, new LineBasicMaterial( { color: sb } ) );
 
-		var c1 = getThemeColor( 'scaleBar' );
+		var c1 = getThemeColor( 'scaleBar1' );
+		var c2 = getThemeColor( 'scaleBar2' );
 
-		for ( i = 0, l = bar.faces.length; i < l; i = i + 4 ) {
+		for ( i = 0, l = bar.faces.length; i < l; i++ ) {
 
-			bar.faces[ i ].color = c1;
-			bar.faces[ i + 1 ].color = c1;
+			bar.faces[ i ].color = ( i % 4 < 2 ) ? c1 : c2;
 
 		}
 
-		for ( i = 0, l = bar2.faces.length; i < l; i = i + 4 ) {
+		for ( i = 0, l = bar2.faces.length; i < l; i++ ) {
 
-			bar2.faces[ i ].color = c1;
-			bar2.faces[ i + 1 ].color = c1;
+			bar2.faces[ i ].color = ( i % 4 < 2 ) ? c1 : c2;
 
 		}
 

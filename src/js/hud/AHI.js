@@ -1,7 +1,7 @@
 
 import { upAxis } from '../core/constants';
 import { HudObject } from './HudObject';
-import { getThemeColor } from '../core/lib';
+import { getThemeColor, getThemeValue } from '../core/lib';
 
 import {
 	Vector3, Math as _Math,
@@ -82,10 +82,10 @@ function AHI ( container ) {
 
 	}
 
-	var mRing   = new Mesh( ring, new MeshPhongMaterial( { color: 0x888888, specular: 0x888888 } ) );
+	var mRing   = new Mesh( ring, new MeshPhongMaterial( { color: getThemeValue( 'bezel' ), specular: 0x888888 } ) );
 	var mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: VertexColors, specular: 0x666666, shininess: 20 } ) );
-	var mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: 0xcccc00 } ) );
-	var mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: 0xffffff } ) );
+	var mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: getThemeValue( 'ahiBar' ) } ) );
+	var mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: getThemeValue( 'ahiMarks' ) } ) );
 
 	mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 	mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );

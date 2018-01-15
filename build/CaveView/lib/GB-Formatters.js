@@ -4,8 +4,6 @@ function OSGBStationFormatter ( crs, coordinates, depth ) {
 	var easting  = coordinates.x;
 	var northing = coordinates.y;
 
-	console.log( coordinates );
-
 	var firstLetter = 'STNOH'.charAt( Math.floor( easting / 500000 ) + Math.floor( northing / 500000 ) * 2 );
 
 	var e2 = Math.floor( ( easting  % 500000 ) / 100000 );

@@ -24,7 +24,7 @@ function Compass ( container ) {
 	var cg1 = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth, 3, 32, 1, true );
 	cg1.rotateX( Math.PI / 2 );
 
-	var c1 = new Mesh( cg1, new MeshPhongMaterial( { color: 0x888888, specular: 0x888888 } ) );
+	var c1 = new Mesh( cg1, new MeshPhongMaterial( { color: getThemeValue( 'bezel' ), specular: 0x888888 } ) );
 
 	var cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 	cg2.translate( 0, 0, 5 );

@@ -1060,7 +1060,7 @@ Survey.prototype.highlightSelection = function ( id ) {
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
-			this.highlightBox = this.boxSection( node, box, 0xffff00 );
+			this.highlightBox = this.boxSection( node, box, getThemeValue( 'highlightBox' ) );
 
 		} else if ( node.p ) {
 
@@ -1093,7 +1093,7 @@ Survey.prototype.selectSection = function ( id ) {
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
-			this.selectedBox = this.boxSection( node, this.selectedBox, 0x00ff00 );
+			this.selectedBox = this.boxSection( node, this.selectedBox, getThemeValue( 'selectBox' ) );
 			surveyTree.getSubtreeIds( id, selectedSectionIds );
 
 		} else {

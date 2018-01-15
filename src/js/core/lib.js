@@ -22,7 +22,9 @@ var defaultTheme = {
 	single: 0xffffff,
 	popupText: 0xffffff,
 	popupBorder: 0xffffff,
-	popupBackground: 0x222222
+	popupBackground: 0x222222,
+	selectBox: 0x0000ff,
+	highlightBox: 0xff0000
 };
 
 function setEnvironment ( envs ) {

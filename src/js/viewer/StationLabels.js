@@ -1,10 +1,30 @@
-import { Group, Vector3, Object3D } from '../../../../three.js/src/Three';
+import { Group, Vector3 } from '../../../../three.js/src/Three';
 
 import { CAMERA_OFFSET, LABEL_STATION, LEG_SPLAY } from '../core/constants';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
 var _tmpVector3 = new Vector3();
+
+/*
+
+lightweight fake Object3D.
+
+*/
+
+function DummyStationLabel( station ) {
+
+	this.position = station.p;
+	this.station = station;
+
+}
+
+DummyStationLabel.prototype.visible = false;
+DummyStationLabel.prototype.isObject3D = true;
+DummyStationLabel.prototype.parent = null;
+DummyStationLabel.prototype.dispatchEvent = function () {};
+DummyStationLabel.prototype.updateMatrixWorld = function () {};
+DummyStationLabel.prototype.traverse = function () {};
 
 function StationLabels () {
 
@@ -25,18 +45,7 @@ StationLabels.prototype.constructor = StationLabels;
 
 StationLabels.prototype.addStation = function ( station ) {
 
-	var label = new Object3D();
-
-	label.layers.set( LABEL_STATION );
-
-	label.position.copy( station.p );
-
-	label.hitCount = station.hitCount;
-	label.station = station;
-
-	label.visible = false;
-
-	this.add( label );
+	this.add( new DummyStationLabel( station ) );
 
 };
 
@@ -59,27 +68,29 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
 	cameraPosition.applyMatrix4( inverseWorld );
 
-	var label, limit;
+	var label, limit, hitCount;
 	var splaysVisible = camera.layers.mask & 1 << LEG_SPLAY;
 	var children = this.children;
 
 	for ( var i = 0, l = children.length; i < l; i++ ) {
 
 		label = children[ i ];
+		hitCount = label.station.hitCount;
+
 
 		// only show labels for splay end stations if splays visible
 
-		if ( label.hitCount === 0 && ! splaysVisible ) {
+		if ( hitCount === 0 && ! splaysVisible ) {
 
 			label.visible = false;
 
 		} else {
 
 			// show labels for network vertices at greater distance than intermediate stations
-			limit = ( label.hitCount < 3 ) ? 5000 : 40000;
+			limit = ( hitCount < 3 ) ? 5000 : 40000;
 			label.visible = ( label.position.distanceToSquared( cameraPosition ) < limit );
 
-			if ( label.visible && !label.isGlyphString ) {
+			if ( label.visible && ! label.isGlyphString ) {
 
 				// lazy creation of GlyphStrings
 
@@ -115,10 +126,7 @@ StationLabels.prototype.createLabel = function ( dummyLabel ) {
 	var label = new GlyphString( station.name, material );
 
 	label.layers.set( LABEL_STATION );
-
 	label.position.copy( station.p );
-
-	label.hitCount = station.hitCount;
 	label.visible = false;
 
 	this.remove( dummyLabel );

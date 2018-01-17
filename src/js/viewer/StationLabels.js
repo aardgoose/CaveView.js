@@ -3,6 +3,7 @@ import { Group, Vector3 } from '../../../../three.js/src/Three';
 import { CAMERA_OFFSET, LABEL_STATION, LEG_SPLAY } from '../core/constants';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
+import { getThemeColorCSS } from '../core/lib';
 
 var _tmpVector3 = new Vector3();
 
@@ -19,6 +20,8 @@ function DummyStationLabel( station ) {
 
 }
 
+// minimum parts of Object3D to be compatible with three.js and this code.
+
 DummyStationLabel.prototype.visible = false;
 DummyStationLabel.prototype.isObject3D = true;
 DummyStationLabel.prototype.parent = null;
@@ -33,9 +36,17 @@ function StationLabels () {
 	this.type = 'CV.StationLabels';
 	this.layers.set( LABEL_STATION );
 
-	this.junctionLabelMaterial = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', 0, [ 1, 1, 0 ] );
-	this.defaultLabelMaterial = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', 0 );
-	this.splayLabelMaterial = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', 0, [ 0.6, 0.6, 0.6 ] );
+	var atlasSpec = {
+		color: '#ffffff',
+		background: '#000000',
+		font: 'normal helvetica,sans-serif'
+	};
+
+	this.defaultLabelMaterial = Materials.getGlyphMaterial( atlasSpec, 0 );
+	this.splayLabelMaterial = Materials.getGlyphMaterial( atlasSpec, 0 );
+
+	atlasSpec.color = '#ffff00';
+	this.junctionLabelMaterial = Materials.getGlyphMaterial( atlasSpec, 0 );
 
 }
 
@@ -128,6 +139,7 @@ StationLabels.prototype.createLabel = function ( dummyLabel ) {
 	label.layers.set( LABEL_STATION );
 	label.position.copy( station.p );
 	label.visible = false;
+	label.station = station;
 
 	this.remove( dummyLabel );
 	this.add( label );

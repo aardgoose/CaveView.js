@@ -183,7 +183,7 @@ function getLineMaterial () {
 
 function getGlyphMaterial ( glyphAtlasSpec, rotation, colour ) {
 
-	var name = glyphAtlasSpec + ':' + rotation.toString() + ':' + ( colour ? colour.toString() : 'default' );
+	var name = JSON.stringify( glyphAtlasSpec ) + ':' + rotation.toString();
 
 	var material = cache.get( name );
 

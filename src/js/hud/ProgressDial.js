@@ -38,7 +38,11 @@ function ProgressDial () {
 
 	this.addEventListener( 'removed', this.removeDomObjects );
 
-	var glyphMaterial = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', 0 );
+	var atlasSpec = {
+		font: 'normal helvetica,sans-serif'
+	};
+
+	var glyphMaterial = Materials.getGlyphMaterial( atlasSpec, 0 );
 
 	this.pcent = new GlyphString( '----', glyphMaterial, false );
 	this.pcent.translateY( 10 );

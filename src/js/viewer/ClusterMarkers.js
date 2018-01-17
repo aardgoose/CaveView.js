@@ -349,7 +349,11 @@ ClusterMarkers.prototype.onRemoved = function () {
 ClusterMarkers.prototype.addMarker = function ( position, label ) {
 
 	// create marker
-	var material = Materials.getGlyphMaterial( 'normal helvetica,sans-serif', Math.PI / 4 );
+	var atlasSpec = {
+		font: 'normal helvetica,sans-serif'
+	};
+
+	var material = Materials.getGlyphMaterial( atlasSpec, Math.PI / 4 );
 	var marker = new GlyphString( label, material );
 
 	marker.layers.set( FEATURE_ENTRANCES );

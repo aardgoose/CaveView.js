@@ -3,7 +3,7 @@ import { ShaderMaterial } from '../../../../three.js/src/Three';
 import { Shaders } from '../shaders/Shaders';
 import { AtlasFactory } from '../materials/GlyphAtlas';
 
-function GlyphMaterial ( glyphAtlasSpec, container, rotation, colour ) {
+function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 
 	var glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec );
 
@@ -13,8 +13,6 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation, colour ) {
 	var sin = Math.sin( rotation );
 
 	var rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
-
-	colour = colour || [ 1, 1, 1 ];
 
 	ShaderMaterial.call( this, {
 		uniforms: {
@@ -31,9 +29,7 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation, colour ) {
 	this.alphaTest = 0.8;
 	this.depthTest = false;
 	this.transparent = true;
-	this.defines = { USE_COLOR: true };
 
-	this.defaultAttributeValues.color = colour;
 	this.type = 'CV.GlyphMaterial';
 	this.atlas = glyphAtlas;
 

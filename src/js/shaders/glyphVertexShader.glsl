@@ -11,11 +11,8 @@ attribute float instanceOffsets;
 attribute float instanceWidths;
 
 varying vec2 vUv;
-varying vec3 vColor;
 
 void main() {
-
-	vColor = color;
 
 	// select glyph from atlas ( with proportional spacing ).
 

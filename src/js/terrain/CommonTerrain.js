@@ -45,7 +45,7 @@ CommonTerrain.prototype.getOpacity = function () {
 
 CommonTerrain.prototype.commonRemoved = function () {
 
-	var activeOverlay = this.activeOverlay;
+	const activeOverlay = this.activeOverlay;
 
 	if ( activeOverlay !== null ) {
 
@@ -60,9 +60,10 @@ CommonTerrain.prototype.commonRemoved = function () {
 
 CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
+	const activeOverlay = this.activeOverlay;
+
 	var material;
 	var hideAttribution = true;
-	var activeOverlay = this.activeOverlay;
 
 	switch ( mode ) {
 
@@ -151,7 +152,7 @@ CommonTerrain.prototype.applyDatumShift = function ( mode ) {
 
 CommonTerrain.prototype.computeBoundingBox = function () {
 
-	var bb = new Box3();
+	const bb = new Box3();
 
 	this.traverse( _getBoundingBox );
 
@@ -177,14 +178,14 @@ CommonTerrain.prototype.addHeightMap = function ( renderer, renderTarget ) {
 
 CommonTerrain.prototype.getHeight = function () {
 
-	var pixelCoords = new Vector3();
-	var adjust = new Vector3();
+	const pixelCoords = new Vector3();
+	const adjust = new Vector3();
 
-	var result = new Uint8Array( 4 );
+	const result = new Uint8Array( 4 );
 
 	return function getHeight( point ) {
 
-		var renderTarget = this.renderTarget;
+		const renderTarget = this.renderTarget;
 
 		if ( this.terrainBase === null ) {
 
@@ -199,7 +200,7 @@ CommonTerrain.prototype.getHeight = function () {
 
 		}
 
-		var terrainBase = this.terrainBase;
+		const terrainBase = this.terrainBase;
 
 		pixelCoords.copy( point ).sub( terrainBase ).multiply( adjust ).round();
 

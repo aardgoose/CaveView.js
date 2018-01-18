@@ -2,8 +2,8 @@
 
 function Page( id, onTop, onLeave ) {
 
-	var tab  = document.createElement( 'div' );
-	var page = document.createElement( 'div' );
+	const tab  = document.createElement( 'div' );
+	const page = document.createElement( 'div' );
 
 	var frame = Page.frame;
 	var tabBox = Page.tabBox;
@@ -40,7 +40,7 @@ function Page( id, onTop, onLeave ) {
 
 		tabBox.id = 'cv-tab-box';
 
-		var close = document.createElement( 'div' );
+		const close = document.createElement( 'div' );
 
 		close.id = 'close';
 		close.classList.add( 'tab' );
@@ -88,17 +88,17 @@ Page.setParent = function ( parent ) {
 
 Page.clear = function () {
 
-	var frame  = Page.frame;
-	var tabBox = Page.tabBox;
+	const frame  = Page.frame;
+	const tabBox = Page.tabBox;
 
 	if ( frame  !== null ) frame.parentElement.removeChild( frame );
 	if ( tabBox !== null ) tabBox.parentElement.removeChild( tabBox );
 
-	var i, l, listener;
+	var i, l;
 
 	for ( i = 0, l = Page.listeners.length; i < l; i++ ) {
 
-		listener = Page.listeners[ i ];
+		const listener = Page.listeners[ i ];
 
 		listener.obj.removeEventListener( listener.name, listener.handler );
 
@@ -115,9 +115,8 @@ Page.clear = function () {
 
 Page.addTopButton= function ( id, handler ) {
 
-	var tabBox = this.tabBox;
-
-	var fullscreen = document.createElement( 'div' );
+	const tabBox = this.tabBox;
+	const fullscreen = document.createElement( 'div' );
 
 	fullscreen.id = id;
 	fullscreen.classList.add( 'tab' );
@@ -145,14 +144,14 @@ Page.addListener = function ( obj, name, handler ) {
 
 Page.handleChange = function ( event ) {
 
-	var obj = event.target;
-	var property = event.name;
+	const obj = event.target;
+	const property = event.name;
 
 	if ( ! Page.inHandle ) {
 
 		if ( Page.controls[ property ] ) {
 
-			var ctrl = Page.controls[ property ];
+			const ctrl = Page.controls[ property ];
 
 			switch ( ctrl.type ) {
 
@@ -193,18 +192,20 @@ Page.prototype.addListener = function ( obj, name, handler ) {
 
 Page.prototype.tabHandleClick = function ( event ) {
 
-	var tab = event.target;
-	var pages = Page.pages;
+	const tab = event.target;
+	const pages = Page.pages;
 
 	tab.classList.add( 'toptab' );
 	Page.tabBox.classList.add( 'onscreen' );
 	Page.frame.classList.add( 'onscreen' );
 
-	for ( var i = 0, l = pages.length; i < l; i++ ) {
+	var i, l;
 
-		var otherTab  = pages[ i ].tab;
-		var otherPage = pages[ i ].page;
-		var owner     = pages[ i ].owner;
+	for ( i = 0, l = pages.length; i < l; i++ ) {
+
+		const otherTab  = pages[ i ].tab;
+		const otherPage = pages[ i ].page;
+		const owner     = pages[ i ].owner;
 
 		if ( otherTab === tab ) {
 
@@ -236,7 +237,7 @@ Page.prototype.appendChild = function ( domElement ) {
 
 Page.prototype.addHeader = function ( text ) {
 
-	var div = document.createElement( 'div' );
+	const div = document.createElement( 'div' );
 
 	div.classList.add( 'header' );
 	div.textContent = text;
@@ -249,7 +250,7 @@ Page.prototype.addHeader = function ( text ) {
 
 Page.prototype.addText = function ( text ) {
 
-	var p = document.createElement( 'p' );
+	const p = document.createElement( 'p' );
 
 	p.textContent = text;
 	this.page.appendChild( p );
@@ -260,7 +261,7 @@ Page.prototype.addText = function ( text ) {
 
 Page.prototype.addLink = function ( url, text ) {
 
-	var a = document.createElement( 'a' );
+	const a = document.createElement( 'a' );
 
 	a.href = url;
 	a.textContent = text;
@@ -274,10 +275,10 @@ Page.prototype.addLink = function ( url, text ) {
 
 Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
-	var div    = document.createElement( 'div' );
-	var label  = document.createElement( 'label' );
-	var select = document.createElement( 'select' );
-	var opt;
+	const div    = document.createElement( 'div' );
+	const label  = document.createElement( 'label' );
+	const select = document.createElement( 'select' );
+
 
 	div.classList.add( 'control' );
 
@@ -285,7 +286,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 		for ( var i = 0, l = obj.length; i < l; i++ ) {
 
-			opt = document.createElement( 'option' );
+			const opt = document.createElement( 'option' );
 
 			opt.value = obj[ i ];
 			opt.text  = obj[ i ];
@@ -300,7 +301,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 		for ( var p in obj ) {
 
-			opt = document.createElement( 'option' );
+			const opt = document.createElement( 'option' );
 
 			opt.text  = p;
 			opt.value = obj[ p ];
@@ -338,10 +339,11 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 Page.prototype.addCheckbox = function ( title, obj, property ) {
 
-	var label = document.createElement( 'label' );
-	var cb    = document.createElement( 'input' );
-	var div   = document.createElement( 'div' );
-	var id = 'cv-' + Page.seq++;
+	const label = document.createElement( 'label' );
+	const cb    = document.createElement( 'input' );
+	const div   = document.createElement( 'div' );
+
+	const id = 'cv-' + Page.seq++;
 
 	div.classList.add( 'cv-checkbox' );
 
@@ -376,9 +378,9 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 Page.prototype.addRange = function ( title, obj, property ) {
 
-	var div = document.createElement( 'div' );
-	var label = document.createElement( 'label' );
-	var range = document.createElement( 'input' );
+	const div = document.createElement( 'div' );
+	const label = document.createElement( 'label' );
+	const range = document.createElement( 'input' );
 
 	div.classList.add( 'control' );
 
@@ -418,7 +420,7 @@ Page.prototype.addRange = function ( title, obj, property ) {
 
 Page.prototype.addSlide = function ( domElement, depth, handleClick ) {
 
-	var slide = document.createElement( 'div' );
+	const slide = document.createElement( 'div' );
 
 	slide.classList.add( 'slide' );
 	slide.style.zIndex = 200 - depth;
@@ -437,9 +439,10 @@ Page.prototype.addSlide = function ( domElement, depth, handleClick ) {
 
 Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 
-	var newSlide = document.createElement( 'div' );
-	var oldSlide = this.slide;
-	var page = this.page;
+	const newSlide = document.createElement( 'div' );
+	const oldSlide = this.slide;
+	const page = this.page;
+
 	var redraw; // eslint-disable-line no-unused-vars
 
 	newSlide.classList.add( 'slide' );
@@ -500,7 +503,7 @@ Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 
 Page.prototype.addButton = function ( title, func ) {
 
-	var button = document.createElement( 'button' );
+	const button = document.createElement( 'button' );
 
 	button.type = 'button';
 	button.textContent = title;
@@ -516,16 +519,16 @@ Page.prototype.addButton = function ( title, func ) {
 
 Page.prototype.addTextBox = function ( labelText, placeholder, getResultGetter ) {
 
-	var div = document.createElement( 'div' );
-	var label = document.createElement( 'label' );
+	const div = document.createElement( 'div' );
+	const label = document.createElement( 'label' );
 
 	label.textContent = labelText;
 
-	var input = document.createElement( 'input' );
+	const input = document.createElement( 'input' );
+
 	var value;
 
 	input.type = 'text';
-
 	input.placeholder = placeholder;
 
 	div.appendChild( label );
@@ -550,7 +553,7 @@ Page.prototype.addTextBox = function ( labelText, placeholder, getResultGetter )
 
 Page.prototype.addDownloadButton = function ( title, urlProvider, fileName ) {
 
-	var a = document.createElement( 'a' );
+	const a = document.createElement( 'a' );
 
 	if ( typeof a.download === 'undefined' ) return null;
 

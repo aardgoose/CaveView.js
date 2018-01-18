@@ -26,30 +26,28 @@ CaveLoader.prototype.constructor = CaveLoader;
 
 CaveLoader.prototype.setHandler = function ( fileName ) {
 
-	var rev = fileName.split( '.' ).reverse();
+	const rev = fileName.split( '.' ).reverse();
 
 	this.extention = rev.shift().toLowerCase();
-
-	var handler;
 
 	switch ( this.extention ) {
 
 	case '3d':
 
-		handler = new Svx3dHandler( fileName );
+		this.handler = new Svx3dHandler( fileName );
 
 		break;
 
 	case 'lox':
 
-		handler = new loxHandler( fileName );
+		this.handler = new loxHandler( fileName );
 
 		break;
 
 
 	case 'kml':
 
-		handler = new kmlHandler( fileName );
+		this.handler = new kmlHandler( fileName );
 
 		break;
 
@@ -60,8 +58,6 @@ CaveLoader.prototype.setHandler = function ( fileName ) {
 
 	}
 
-	this.handler = handler;
-
 	return true;
 
 };
@@ -70,8 +66,8 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	if ( section !== undefined ) this.section = section;
 
-	var self = this;
-	var prefix = getEnvironmentValue( 'surveyDirectory', '' );
+	const self = this;
+	const prefix = getEnvironmentValue( 'surveyDirectory', '' );
 
 	// setup file handler
 	if ( ! this.setHandler( fileName ) ) {
@@ -81,12 +77,12 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	}
 
-	var handler = this.handler;
+	const handler = this.handler;
 
 	this.doneCount = 0;
 	this.taskCount = handler.isRegion ? 1 : 2;
 
-	var loader = new FileLoader().setPath( prefix );
+	const loader = new FileLoader().setPath( prefix );
 
 	loader.setResponseType( 'json' ).load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _metadataError );
 
@@ -146,8 +142,8 @@ CaveLoader.prototype.loadFile = function ( file, section ) {
 
 	if ( section !== undefined ) this.section = section;
 
-	var self = this;
-	var fileName = file.name;
+	const self = this;
+	const fileName = file.name;
 
 	if ( ! this.setHandler( fileName ) ) {
 
@@ -156,13 +152,12 @@ CaveLoader.prototype.loadFile = function ( file, section ) {
 
 	}
 
-	var type = this.handler.type;
-	var fLoader = new FileReader();
+	const fLoader = new FileReader();
 
 	fLoader.addEventListener( 'load', _loaded );
 	fLoader.addEventListener( 'progress', _progress );
 
-	switch ( type ) {
+	switch ( this.handler.type ) {
 
 	case 'arraybuffer':
 
@@ -203,9 +198,9 @@ CaveLoader.prototype.callHandler = function () {
 
 	}
 
-	var data = this.dataResponse;
-	var metadata = this.metadataResponse;
-	var section = this.section;
+	const data = this.dataResponse;
+	const metadata = this.metadataResponse;
+	const section = this.section;
 
 	this.dataResponse = null;
 	this.metadataResponse = null;

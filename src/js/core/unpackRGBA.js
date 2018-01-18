@@ -1,11 +1,11 @@
 // unpack GLSL created RGBA packed float values
 
-var unpackDownscale = 255 / ( 256 * 256 );
+const unpackDownscale = 255 / ( 256 * 256 );
 
-var unpackFactor0 = unpackDownscale / ( 256 * 256 * 256 );
-var unpackFactor1 = unpackDownscale / ( 256 * 256 );
-var unpackFactor2 = unpackDownscale / 256;
-var unpackFactor3 = unpackDownscale / 1;
+const unpackFactor0 = unpackDownscale / ( 256 * 256 * 256 );
+const unpackFactor1 = unpackDownscale / ( 256 * 256 );
+const unpackFactor2 = unpackDownscale / 256;
+const unpackFactor3 = unpackDownscale / 1;
 
 function unpackRGBA( buffer ) {
 

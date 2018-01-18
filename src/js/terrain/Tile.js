@@ -14,13 +14,13 @@ import {
 
 // preallocated for projected area calculations
 
-var A = new Vector3();
-var B = new Vector3();
-var C = new Vector3();
-var D = new Vector3();
+const __a = new Vector3();
+const __b = new Vector3();
+const __c = new Vector3();
+const __d = new Vector3();
 
-var T1 = new Triangle( A, B, C );
-var T2 = new Triangle( A, C, D );
+const __t1 = new Triangle( __a, __b, __c );
+const __t2 = new Triangle( __a, __c, __d );
 
 function onUploadDropBuffer() {
 
@@ -109,13 +109,12 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 
 Tile.prototype.getWorldBoundingBox = function () {
 
-	var boundingBox;
-
 	if ( this.worldBoundingBox === null ) {
 
 		this.updateMatrixWorld();
 
-		boundingBox = this.getBoundingBox().clone();
+		const boundingBox = this.getBoundingBox().clone();
+
 		boundingBox.applyMatrix4( this.matrixWorld );
 
 		this.worldBoundingBox = boundingBox;
@@ -128,13 +127,11 @@ Tile.prototype.getWorldBoundingBox = function () {
 
 Tile.prototype.getBoundingBox = function () {
 
-	var boundingBox;
-
 	if ( this.boundingBox === null ) {
 
-		boundingBox = this.geometry.boundingBox.clone();
+		const adj = 5; // adjust to cope with overlaps // FIXME - was resolution
 
-		var adj = 5; // adjust to cope with overlaps // FIXME - was resolution
+		const boundingBox = this.geometry.boundingBox.clone();
 
 		boundingBox.min.x += adj;
 		boundingBox.min.y += adj;
@@ -208,7 +205,7 @@ Tile.prototype.setPending = function ( parentTile ) {
 
 Tile.prototype.setFailed = function () {
 
-	var parent = this.parent;
+	const parent = this.parent;
 
 	parent.childErrors++;
 	parent.childrenLoading--;
@@ -220,7 +217,8 @@ Tile.prototype.setFailed = function () {
 
 Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
 
-	var parent = this.parent;
+	const parent = this.parent;
+
 	var tilesWaiting = 0;
 
 	if ( --parent.childrenLoading === 0 ) { // this tile and all siblings loaded
@@ -229,11 +227,11 @@ Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
 
 			if ( parent.isTile ) parent.setReplaced();
 
-			var siblings = parent.children;
+			const siblings = parent.children;
 
 			for ( var i = 0, l = siblings.length; i < l; i++ ) {
 
-				var sibling = siblings[ i ];
+				const sibling = siblings[ i ];
 
 				if ( sibling.replaced || sibling.evicted ) continue;
 
@@ -291,7 +289,7 @@ Tile.prototype.setMaterial = function ( material ) {
 
 Tile.prototype.setOpacity = function ( opacity ) {
 
-	var material = this.material;
+	const material = this.material;
 
 	material.opacity = opacity;
 	material.needsUpdate = true;
@@ -300,7 +298,7 @@ Tile.prototype.setOpacity = function ( opacity ) {
 
 Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
-	var self = this;
+	const self = this;
 
 	overlay.getTile( this.x, this.y, this.zoom, opacity, _overlayLoaded );
 
@@ -317,26 +315,25 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
 Tile.prototype.projectedArea = function ( camera ) {
 
-	var boundingBox = this.getWorldBoundingBox();
+	const boundingBox = this.getWorldBoundingBox();
+	const z = boundingBox.max.z;
 
-	var z = boundingBox.max.z;
+	__a.copy( boundingBox.min ).setZ( z );
+	__c.copy( boundingBox.max );
 
-	A.copy( boundingBox.min ).setZ( z );
-	C.copy( boundingBox.max );
-
-	B.set( A.x, C.y, z );
-	D.set( C.x, A.y, z );
+	__b.set( __a.x, __c.y, z );
+	__d.set( __c.x, __a.y, z );
 
 	// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
 	// .clampScalar( -1, 1 );
 
-	A.project( camera );
-	B.project( camera );
-	C.project( camera );
-	D.project( camera );
+	__a.project( camera );
+	__b.project( camera );
+	__c.project( camera );
+	__d.project( camera );
 
 
-	return T1.area() + T2.area();
+	return __t1.area() + __t2.area();
 
 };
 

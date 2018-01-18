@@ -20,14 +20,14 @@ function SurveyMetadata( name, metadata ) {
 
 		localMetadata = JSON.parse( localMetadata );
 
-		var localRoutes = localMetadata.routes;
-		var routeName, route;
+		const localRoutes = localMetadata.routes;
 
 		// add local routes to any routes in metadata (if any)
+		var routeName;
 
 		for ( routeName in localRoutes ) {
 
-			route = localRoutes[ routeName ];
+			const route = localRoutes[ routeName ];
 			route.local = true;
 
 			routes[ routeName ] = route;
@@ -66,7 +66,7 @@ SurveyMetadata.prototype.saveRoute = function ( routeName, route ) {
 
 SurveyMetadata.prototype.saveLocal = function () {
 
-	var localMetadata = {
+	const localMetadata = {
 		routes: this.routes,
 		traces: this.traces,
 		entrances: this.entrances
@@ -80,7 +80,7 @@ SurveyMetadata.prototype.getURL = function () {
 
 	// dump of json top window for cut and paste capture
 
-	var routesJSON = {
+	const routesJSON = {
 		name: 'test',
 		version: 1.0,
 		routes: this.routes,

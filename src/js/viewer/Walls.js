@@ -131,7 +131,7 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 
 	for ( var run = 0, l = indexRuns.length; run < l; run++ ) {
 
-		var indexRun = indexRuns[ run ];
+		const indexRun = indexRuns[ run ];
 
 		if ( selectedRuns.has( indexRun.survey ) ) {
 

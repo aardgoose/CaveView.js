@@ -17,7 +17,7 @@ function LoxTerrain ( terrainData, offsets ) {
 	this.overlayMaterial = null;
 	this.attributions = [];
 
-	var tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ), Materials.getSurfaceMaterial() );
+	const tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ), Materials.getSurfaceMaterial( 0xffffff ) );
 
 	tile.layers.set( FEATURE_TERRAIN );
 	tile.isTile = true;
@@ -58,13 +58,12 @@ LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	}
 
-	var	texture = new TextureLoader().load( this.bitmap.image, _overlayLoaded );
-
-	var self = this;
+	const texture = new TextureLoader().load( this.bitmap.image, _overlayLoaded );
+	const self = this;
 
 	function _overlayLoaded( ) {
 
-		var bitmap = self.bitmap;
+		const bitmap = self.bitmap;
 
 		self.tile.geometry.setupUVs( bitmap, texture.image, self.offsets );
 
@@ -88,7 +87,7 @@ LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 LoxTerrain.prototype.removed = function () {
 
-	var overlayMaterial = this.overlayMaterial;
+	const overlayMaterial = this.overlayMaterial;
 
 	if ( overlayMaterial !== null ) {
 
@@ -111,7 +110,7 @@ LoxTerrain.prototype.setMaterial = function ( material ) {
 
 LoxTerrain.prototype.setOpacity = function ( opacity ) {
 
-	var material = this.tile.material;
+	const material = this.tile.material;
 
 	material.opacity = opacity;
 	material.needsUpdate = true;

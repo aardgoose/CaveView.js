@@ -104,12 +104,11 @@ function init ( domID, configuration ) { // public method
 
 function setControlsVisibility( list, visible ) {
 
-	var display = visible ? 'block' : 'none';
-	var element;
+	const display = visible ? 'block' : 'none';
 
 	for ( var i = 0, l = list.length; i < l; i++ ) {
 
-		element = list[ i ];
+		const element = list[ i ];
 
 		if ( element === null ) continue;
 
@@ -160,7 +159,7 @@ function initSelectionPage () {
 	var depth = 0;
 	var currentHover = 0;
 
-	var stringCompare = new Intl.Collator( 'en-GB', { numeric: true } ).compare;
+	const stringCompare = new Intl.Collator( 'en-GB', { numeric: true } ).compare;
 
 	currentTop = surveyTree;
 
@@ -198,11 +197,9 @@ function initSelectionPage () {
 
 	function _displayPanel ( top ) {
 
-		var ul;
 		var tmp;
-		var span;
 
-		var surveyColourMap = SurveyColours.getSurveyColourMap( surveyTree, Viewer.section );
+		const surveyColourMap = SurveyColours.getSurveyColourMap( surveyTree, Viewer.section );
 
 		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
 
@@ -212,7 +209,8 @@ function initSelectionPage () {
 
 		} else {
 
-			span = document.createElement( 'span' );
+			const span = document.createElement( 'span' );
+
 			span.textContent = ' \u25C4';
 
 			page.addListener( span, 'click', _handleSelectSurveyBack );
@@ -222,7 +220,7 @@ function initSelectionPage () {
 
 		}
 
-		ul = document.createElement( 'ul' );
+		const ul = document.createElement( 'ul' );
 
 		var children = top.children;
 
@@ -248,9 +246,9 @@ function initSelectionPage () {
 
 			if ( child.hitCount === 0 && ! Viewer.splays && child.type !== STATION_ENTRANCE ) return; // skip spays if not displayed
 
-			var li  = document.createElement( 'li' );
-			var txt = document.createTextNode( child.name );
-			var key = document.createElement( 'span' );
+			const li  = document.createElement( 'li' );
+			const txt = document.createTextNode( child.name );
+			const key = document.createElement( 'span' );
 
 			li.id = 'sv' + child.id;
 
@@ -258,7 +256,7 @@ function initSelectionPage () {
 
 			if ( child.hitCount === undefined ) {
 
-				var colour;
+				let colour;
 
 				if ( Viewer.shadingMode === SHADING_SURVEY && surveyColourMap[ child.id ] !== undefined ) {
 
@@ -300,7 +298,7 @@ function initSelectionPage () {
 
 			if ( child.children.length > 0 ) {
 
-				var descend = document.createElement( 'div' );
+				const descend = document.createElement( 'div' );
 
 				descend.classList.add( 'descend-tree' );
 				descend.id = 'ssv' + child.id;
@@ -333,11 +331,11 @@ function initSelectionPage () {
 
 		event.stopPropagation();
 
-		var target = event.target;
+		const target = event.target;
 
 		if ( target.nodeName !== 'LI' ) return;
 
-		var id = Number( target.id.split( 'v' )[ 1 ] );
+		const id = Number( target.id.split( 'v' )[ 1 ] );
 
 		if ( id !== currentHover ) {
 
@@ -368,8 +366,8 @@ function initSelectionPage () {
 
 	function _handleSelectSurvey ( event ) {
 
-		var target = event.target;
-		var id = Number( target.id.split( 'v' )[ 1 ] );
+		const target = event.target;
+		const id = Number( target.id.split( 'v' )[ 1 ] );
 
 		event.stopPropagation();
 
@@ -561,7 +559,7 @@ function initSettingsPage () {
 
 	// reset
 
-	var legShadingModesActive = Object.assign( {}, legShadingModes );
+	const legShadingModesActive = Object.assign( {}, legShadingModes );
 
 	if ( Viewer.hasTerrain ) {
 
@@ -570,7 +568,7 @@ function initSettingsPage () {
 
 	}
 
-	var page = new Page( 'icon_settings' );
+	const page = new Page( 'icon_settings' );
 
 	page.addHeader( 'Survey' );
 
@@ -629,8 +627,8 @@ function initSurfacePage () {
 
 		page.addCheckbox( 'Terrain', Viewer, 'terrain' );
 
-		var overlays = Viewer.terrainOverlays;
-		var terrainShadingModesActive = Object.assign( {}, terrainShadingModes );
+		const overlays = Viewer.terrainOverlays;
+		const terrainShadingModesActive = Object.assign( {}, terrainShadingModes );
 
 		if ( overlays.length > 0 ) terrainShadingModesActive[ 'map overlay' ] = SHADING_OVERLAY;
 
@@ -649,7 +647,7 @@ function initSurfacePage () {
 
 		setControlsVisibility( terrainControls, false );
 
-		var attributions = Viewer.terrainAttributions;
+		const attributions = Viewer.terrainAttributions;
 
 		for ( var i = 0; i < attributions.length; i++ ) {
 
@@ -705,7 +703,7 @@ function handleDragover ( event ) {
 
 function handleDrop ( event ) {
 
-	var dt = event.dataTransfer;
+	const dt = event.dataTransfer;
 
 	event.preventDefault();
 

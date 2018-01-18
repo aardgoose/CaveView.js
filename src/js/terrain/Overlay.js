@@ -12,7 +12,7 @@ function Overlay ( overlayProvider, container ) {
 	this.provider = overlayProvider;
 	this.container = container;
 
-	var attribution = overlayProvider.getAttribution();
+	const attribution = overlayProvider.getAttribution();
 
 	if ( attribution ) {
 
@@ -27,7 +27,7 @@ function Overlay ( overlayProvider, container ) {
 
 Overlay.prototype.showAttribution = function () {
 
-	var attribution = this.attribution;
+	const attribution = this.attribution;
 
 	if ( attribution !== undefined ) this.container.appendChild( attribution );
 
@@ -35,8 +35,8 @@ Overlay.prototype.showAttribution = function () {
 
 Overlay.prototype.hideAttribution = function () {
 
-	var attribution = this.attribution;
-	var parent = attribution.parentNode;
+	const attribution = this.attribution;
+	const parent = attribution.parentNode;
 
 	if ( parent !== null ) parent.removeChild( attribution );
 
@@ -44,8 +44,8 @@ Overlay.prototype.hideAttribution = function () {
 
 Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
-	var self = this;
-	var key = x + ':' + y + ':' + z;
+	const self = this;
+	const key = x + ':' + y + ':' + z;
 
 	var material = this.materialCache[ key ];
 
@@ -57,7 +57,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 	}
 
-	var url = this.provider.getUrl( x, y, z );
+	const url = this.provider.getUrl( x, y, z );
 
 	if ( url === null ) return;
 
@@ -82,12 +82,11 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 Overlay.prototype.flushCache = function () {
 
-	var materialCache = this.materialCache;
-	var material;
+	const materialCache = this.materialCache;
 
 	for ( var name in materialCache ) {
 
-		material = materialCache[ name ];
+		let material = materialCache[ name ];
 
 		material.map.dispose();
 		material.dispose();

@@ -24,27 +24,28 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	this.metadata     = metadata;
 
-	var lineSegments = [];
-	var stations     = [];
-	var self         = this;
-	var surveyTree   = this.surveyTree;
+	const lineSegments = [];
+	const stations     = [];
+	const self         = this;
+	const surveyTree   = this.surveyTree;
+	const xSects       = [];
 
 	// assumes little endian data ATM - FIXME
 
 	var source = dataStream;
+	const l = source.byteLength;
+
 	var pos = 0; // file position
 	var dataStart;
 	var f = new DataView( source, 0 );
-	var l = source.byteLength;
 
 	var sectionId = 0;
 	var lastParentId;
 	var parentNode;
-	var xSects = [];
 
 	// range
 
-	var limits = new Box3();
+	const limits = new Box3();
 
 	while ( pos < l ) readChunkHdr();
 
@@ -53,14 +54,14 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 	// Drop data to give GC a chance ASAP
 	source = null;
 
-	var offsets = limits.getCenter();
+	const offsets = limits.getCenter();
 
 	this.limits = limits;
 	this.offsets = offsets;
 
 	// convert to origin centered coordinates
 
-	var i, j, coords, vertices;
+	var i, j;
 
 	for ( i = 0; i < stations.length; i++ ) {
 
@@ -68,13 +69,13 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	}
 
-	var scraps = this.scraps;
+	const scraps = this.scraps;
 
 	// covert scraps coordinates
 
 	for ( i = 0; i < scraps.length; i++ ) {
 
-		vertices = scraps[ i ].vertices;
+		const vertices = scraps[ i ].vertices;
 
 		for ( j = 0; j < vertices.length; j++ ) {
 
@@ -92,10 +93,11 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function readChunkHdr () {
 
-		var m_type     = readUint();
-		var m_recSize  = readUint();
-		var m_recCount = readUint();
-		var m_dataSize = readUint();
+		const m_type     = readUint();
+		const m_recSize  = readUint();
+		const m_recCount = readUint();
+		const m_dataSize = readUint();
+
 		var doFunction;
 
 		// offset of data region for out of line strings/images/scrap data.
@@ -161,17 +163,16 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function procXsects () {
 
-		var xGroups = self.xGroups;
-		var lastTo, xGroup, i;
-		var group, start, end, xSect;
+		const xGroups = self.xGroups;
+		const ends = [];
 
-		var ends = [];
+		var lastTo, xGroup, i;
 
 		xSects.sort( function ( a, b ) { return a.m_from - b.m_from; } );
 
 		for ( i = 0; i < xSects.length; i++ ) {
 
-			xSect = xSects[ i ];
+			const xSect = xSects[ i ];
 
 			if ( xSect.m_from !== lastTo ) {
 
@@ -188,10 +189,10 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		for ( i = 0; i < xGroups.length; i++ ) {
 
-			group = xGroups[ i ];
+			const group = xGroups[ i ];
 
-			start = group[ 0 ].m_from;
-			end = group[ group.length - 1 ].m_to;
+			const start = group[ 0 ].m_from;
+			const end = group[ group.length - 1 ].m_to;
 
 			// concatenate adjacent groups
 
@@ -214,17 +215,17 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		for ( i = 0; i < xGroups.length; i++ ) {
 
-			group = xGroups[ i ];
-			xSect = group[ 0 ];
+			const group = xGroups[ i ];
+			const xSect = group[ 0 ];
 
 			if ( xSect === undefined ) continue; // groups that have been merged
 
-			start = xSect.start;
-			end = xSect.end;
+			const start = xSect.start;
+			const end = xSect.end;
 
 			// fake approach vector for initial xSect ( mirrors first segment vector )
 
-			var newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
+			const newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
 
 			group.unshift( { start: newStart, end: start, lrud: xSect.fromLRUD, survey: xSect.survey, type: xSect.type } );
 
@@ -234,7 +235,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function readUint () {
 
-		var i = f.getUint32( pos, true );
+		const i = f.getUint32( pos, true );
 
 		pos += 4;
 
@@ -244,7 +245,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function readFloat64 () {
 
-		var i = f.getFloat64( pos, true );
+		const i = f.getFloat64( pos, true );
 
 		pos += 8;
 
@@ -254,10 +255,11 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function readSurvey () {
 
-		var m_id     = readUint();
-		var namePtr  = readDataPtr();
-		var m_parent = readUint();
-		var titlePtr = readDataPtr();
+		const m_id     = readUint();
+		const namePtr  = readDataPtr();
+		const m_parent = readUint();
+		const titlePtr = readDataPtr();
+
 		var node;
 
 		if ( lastParentId !== m_parent ) {
@@ -285,8 +287,8 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function readDataPtr () {
 
-		var m_position = readUint();
-		var m_size     = readUint();
+		const m_position = readUint();
+		const m_size     = readUint();
 
 		return { position: m_position, size: m_size };
 
@@ -295,7 +297,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 	function readString ( ptr ) {
 
 		// strings are null terminated. Ignore last byte in string
-		var bytes = new Uint8Array( source, dataStart + ptr.position, ptr.size - 1 );
+		const bytes = new Uint8Array( source, dataStart + ptr.position, ptr.size - 1 );
 
 		return String.fromCharCode.apply( null, bytes );
 
@@ -303,14 +305,14 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function readStation () {
 
-		var m_id       = readUint();
-		var m_surveyId = readUint();
-		var namePtr    = readDataPtr();
+		const m_id       = readUint();
+		const m_surveyId = readUint();
+		const namePtr    = readDataPtr();
 
 		pos += 8; // readDataPtr(); // commentPtr - ignored
 
-		var m_flags    = readUint();
-		var coords     = readCoords();
+		const m_flags    = readUint();
+		const coords     = readCoords();
 
 		stations[ m_id ] = coords;
 
@@ -331,7 +333,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function readCoords () {
 
-		coords = new Vector3(
+		const coords = new Vector3(
 			readFloat64(),
 			readFloat64(),
 			readFloat64()
@@ -345,8 +347,8 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function readShot () {
 
-		var m_from_r  = readUint();
-		var m_to_r    = readUint();
+		const m_from_r  = readUint();
+		const m_to_r    = readUint();
 
 		var m_from, m_to, fromLRUD, toLRUD;
 
@@ -366,9 +368,9 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		}
 
-		var m_flags       = readUint();
-		var m_sectionType = readUint();
-		var m_surveyId    = readUint();
+		const m_flags       = readUint();
+		const m_sectionType = readUint();
+		const m_surveyId    = readUint();
 
 		pos += 8; // readFloat64(); // m_threshold
 
@@ -379,8 +381,8 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 		if ( m_flags & 0x01 ) type = LEG_SURFACE;
 		if ( m_flags & 0x08 ) type = LEG_SPLAY;
 
-		var from = stations[ m_from ];
-		var to   = stations[ m_to ];
+		const from = stations[ m_from ];
+		const to   = stations[ m_to ];
 
 		/*
 		.lox section types
@@ -436,24 +438,25 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		readUint(); // m_id
 
-		var m_surveyId   = readUint();
+		const m_surveyId   = readUint();
 
-		var m_numPoints  = readUint();
-		var pointsPtr    = readDataPtr();
+		const m_numPoints  = readUint();
+		const pointsPtr    = readDataPtr();
 
-		var m_num3Angles = readUint();
-		var facesPtr     = readDataPtr();
+		const m_num3Angles = readUint();
+		const facesPtr     = readDataPtr();
 
-		var scrap = { vertices: [], faces: [], survey: m_surveyId };
+		const scrap = { vertices: [], faces: [], survey: m_surveyId };
+
 		var lastFace;
-		var i, offset, f;
+		var i, j;
 
 		if ( sectionId !== 0 && m_surveyId !== sectionId ) return;
 
 		for ( i = 0; i < m_numPoints; i++ ) {
 
-			offset = dataStart + pointsPtr.position + i * 24; // 24 = 3 * sizeof( double )
-			f = new DataView( source, offset );
+			const offset = dataStart + pointsPtr.position + i * 24; // 24 = 3 * sizeof( double )
+			const f = new DataView( source, offset );
 
 			scrap.vertices.push( new Vector3(
 				f.getFloat64( 0,  true ),
@@ -467,10 +470,10 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		for ( i = 0; i < m_num3Angles; i++ ) {
 
-			offset = dataStart + facesPtr.position + i * 12; // 12 = 3 * sizeof( uint32 )
-			f = new DataView( source, offset );
+			const offset = dataStart + facesPtr.position + i * 12; // 12 = 3 * sizeof( uint32 )
+			const f = new DataView( source, offset );
 
-			var face = [
+			const face = [
 				f.getUint32( 0, true ),
 				f.getUint32( 4, true ),
 				f.getUint32( 8, true )
@@ -479,8 +482,6 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 			// check for face winding order == orientation
 
 			fix_direction: { if ( lastFace !== undefined ) {
-
-				var j;
 
 				for ( j = 0; j < 3; j++ ) { // this case triggers more often than those below.
 
@@ -530,25 +531,27 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		readUint(); // m_id
 
-		var m_width    = readUint();
-		var m_height   = readUint();
+		const m_width    = readUint();
+		const m_height   = readUint();
 
-		var surfacePtr = readDataPtr();
-		var m_calib    = readCalibration();
+		const surfacePtr = readDataPtr();
+		const m_calib    = readCalibration();
 
-		var ab = source.slice( pos, pos + surfacePtr.size ); // required for 64b alignment
+		const ab = source.slice( pos, pos + surfacePtr.size ); // required for 64b alignment
 
-		var dtm = new Float64Array( ab, 0 );
+		const dtm = new Float64Array( ab, 0 );
 
 		// flip y direction
 
-		var data = [];
+		const data = [];
 
-		for ( var i = 0; i < m_height; i++ ) {
+		var i, j;
 
-			var offset = ( m_height - 1 - i ) * m_width;
+		for ( i = 0; i < m_height; i++ ) {
 
-			for ( var j = 0; j < m_width; j++ ) {
+			const offset = ( m_height - 1 - i ) * m_width;
+
+			for ( j = 0; j < m_width; j++ ) {
 
 				data.push( dtm[ offset + j ] );
 
@@ -556,9 +559,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		}
 
-		var terrain = self.terrain;
-
-		terrain.dtm = {
+		self.terrain.dtm = {
 			data: data,
 			samples: m_width,
 			lines:   m_height,
@@ -576,7 +577,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function readCalibration () {
 
-		var m_calib = [];
+		const m_calib = [];
 
 		m_calib[ 0 ] = readFloat64(  ); // x origin
 		m_calib[ 1 ] = readFloat64( 8,  true ); // y origin
@@ -594,9 +595,8 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 		readUint(); // m_type
 		readUint(); // m_surfaceId
 
-		var imagePtr = readDataPtr();
-
-		var m_calib = readCalibration();
+		const imagePtr = readDataPtr();
+		const m_calib = readCalibration();
 
 		self.terrain.bitmap = {
 			image:   extractImage( imagePtr ),
@@ -612,11 +612,12 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function extractImage ( imagePtr ) {
 
-		var imgData = new Uint8Array( source, dataStart + imagePtr.position, imagePtr.size );
-		var type;
+		const imgData = new Uint8Array( source, dataStart + imagePtr.position, imagePtr.size );
 
-		var b1 = imgData[ 0 ];
-		var b2 = imgData[ 1 ];
+		const b1 = imgData[ 0 ];
+		const b2 = imgData[ 1 ];
+
+		var type;
 
 		if ( b1 === 0xff && b2 === 0xd8 ) {
 
@@ -630,8 +631,8 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		if ( ! type ) return '';
 
-		var blob = new Blob( [ imgData ], { type: type } );
-		var blobURL = URL.createObjectURL( blob );
+		const blob = new Blob( [ imgData ], { type: type } );
+		const blobURL = URL.createObjectURL( blob );
 
 		return blobURL;
 

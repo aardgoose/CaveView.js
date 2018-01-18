@@ -3,15 +3,15 @@ function HeightMapLoader ( tileSpec, loadCallback, errorCallback ) {
 
 	if ( ! loadCallback ) alert( 'No callback specified' );
 
-	var tileSet = tileSpec.tileSet;
-	var clip = tileSpec.clip;
+	const tileSet = tileSpec.tileSet;
+	const clip = tileSpec.clip;
 
 	this.loadCallback  = loadCallback;
 	this.errorCallback = errorCallback;
 
 	if ( tileSpec.z > tileSet.dtmMaxZoom ) {
 
-		var scale = Math.pow( 2, tileSpec.z - tileSet.dtmMaxZoom );
+		const scale = Math.pow( 2, tileSpec.z - tileSet.dtmMaxZoom );
 
 		this.x = Math.floor( tileSpec.x / scale );
 		this.y = Math.floor( tileSpec.y / scale );
@@ -19,10 +19,10 @@ function HeightMapLoader ( tileSpec, loadCallback, errorCallback ) {
 
 		// calculate offset in terrain cells of covering DTM tile for this smaller image tile.
 
-		var divisions = tileSet.divisions;
+		const divisions = tileSet.divisions;
 
-		var dtmOffsetX =  ( divisions * ( tileSpec.x % scale ) ) / scale;
-		var dtmOffsetY =  ( divisions + 1 ) * ( divisions * ( tileSpec.y % scale ) ) / scale;
+		const dtmOffsetX =  ( divisions * ( tileSpec.x % scale ) ) / scale;
+		const dtmOffsetY =  ( divisions + 1 ) * ( divisions * ( tileSpec.y % scale ) ) / scale;
 
 		clip.dtmOffset = dtmOffsetY + dtmOffsetX;
 		clip.dtmWidth = tileSet.divisions + 1;
@@ -46,10 +46,8 @@ HeightMapLoader.prototype.constructor = HeightMapLoader;
 
 HeightMapLoader.prototype.load = function () {
 
-	var self = this;
-	var xhr;
-
-	xhr = new XMLHttpRequest();
+	const self = this;
+	const xhr = new XMLHttpRequest();
 
 	xhr.addEventListener( 'load', _loaded);
 	xhr.addEventListener( 'error', this.errorCallback );

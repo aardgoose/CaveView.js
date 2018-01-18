@@ -61,10 +61,10 @@ function Survey ( cave ) {
 
 	// highlit point marker
 
-	var pointerTexture = new TextureLoader().load( getEnvironmentValue( 'home', '' ) + 'images/ic_location.png' );
-	var pointerMaterial = new PointsMaterial( { size: 32, map: pointerTexture, transparent : true, sizeAttenuation: false, alphaTest: 0.8 } );
+	const pointerTexture = new TextureLoader().load( getEnvironmentValue( 'home', '' ) + 'images/ic_location.png' );
+	const pointerMaterial = new PointsMaterial( { size: 32, map: pointerTexture, transparent : true, sizeAttenuation: false, alphaTest: 0.8 } );
 
-	var point = new Point( pointerMaterial );
+	const point = new Point( pointerMaterial );
 
 	point.visible = false;
 
@@ -72,11 +72,11 @@ function Survey ( cave ) {
 
 	this.stationHighlight = point;
 
-	var self = this;
+	const self = this;
 
 	SurveyColours.clearMap(); // clear cache of survey section to colour
 
-	var survey = cave.getSurvey();
+	const survey = cave.getSurvey();
 
 	this.name = survey.title;
 	this.CRS = ( survey.sourceCRS === null ) ? getEnvironmentValue( 'CRS', 'fred' ) : survey.sourceCRS;
@@ -84,7 +84,7 @@ function Survey ( cave ) {
 	this.limits = survey.limits;
 	this.offsets = survey.offsets;
 
-	var modelLimits = new Box3().copy( this.limits );
+	const modelLimits = new Box3().copy( this.limits );
 
 	modelLimits.min.sub( this.offsets );
 	modelLimits.max.sub( this.offsets );
@@ -117,24 +117,24 @@ function Survey ( cave ) {
 
 		}
 
-		var limits = self.limits;
+		const limits = self.limits;
 
-		var p1 = limits.min.clone();
-		var p2 = limits.max.clone();
+		const p1 = limits.min.clone();
+		const p2 = limits.max.clone();
 
 		p1.z = 0;
 		p2.z = 0;
 
 		var l1 = p1.distanceTo( p2 );
 
-		var transform = proj4( survey.targetCRS, survey.sourceCRS ); // eslint-disable-line no-undef
+		const transform = proj4( survey.targetCRS, survey.sourceCRS ); // eslint-disable-line no-undef
 
 		p1.copy( transform.forward( p1 ) );
 		p2.copy( transform.forward( p2 ) );
 
 		self.projection = transform;
 
-		var l2 = p1.distanceTo( p2 );
+		const l2 = p1.distanceTo( p2 );
 
 		self.scaleFactor = l1 / l2;
 
@@ -176,9 +176,9 @@ Survey.prototype.onRemoved = function ( /* event */ ) {
 
 Survey.prototype.loadEntrances = function () {
 
-	var surveyTree = this.surveyTree;
-	var entrances = this.metadata.entrances;
-	var clusterMarkers = new ClusterMarkers( this.modelLimits, 4 );
+	const surveyTree = this.surveyTree;
+	const entrances = this.metadata.entrances;
+	const clusterMarkers = new ClusterMarkers( this.modelLimits, 4 );
 
 	// remove common elements from station names if no alternatives available
 
@@ -200,7 +200,7 @@ Survey.prototype.loadEntrances = function () {
 
 		if ( node.type !== STATION_ENTRANCE ) return;
 
-		var entranceInfo = entrances[ node.getPath() ];
+		const entranceInfo = entrances[ node.getPath() ];
 
 		// if ( entranceInfo === undefined || entranceInfo.name == undefined ) console.log( node.getPath( endNode ) );
 
@@ -247,7 +247,7 @@ Survey.prototype.calibrateTerrain = function ( terrain ) {
 		// FIXME to extend to surface points
 		if ( node.type !== STATION_ENTRANCE) return;
 
-		var v = node.p.z - terrain.getHeight( node.p );
+		const v = node.p.z - terrain.getHeight( node.p );
 
 		s1 += v;
 		s2 += v * v;
@@ -259,7 +259,7 @@ Survey.prototype.calibrateTerrain = function ( terrain ) {
 
 Survey.prototype.loadCave = function ( cave ) {
 
-	var self = this;
+	const self = this;
 
 	this.surveyTree = cave.surveyTree;
 
@@ -275,7 +275,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.pointTargets.push( this.stations );
 
-	var metadata = new SurveyMetadata( this.name, cave.metadata );
+	const metadata = new SurveyMetadata( this.name, cave.metadata );
 
 	this.metadata = metadata;
 
@@ -287,21 +287,21 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadScraps ( scrapList ) {
 
-		var l = scrapList.length;
+		const l = scrapList.length;
 
 		if ( l === 0 ) return null;
 
-		var mesh = self.getFeature( FACE_SCRAPS, Walls );
+		const mesh = self.getFeature( FACE_SCRAPS, Walls );
 
-		var indices = [];
-		var vertices = [];
+		const indices = [];
+		const vertices = [];
 
-		var indexRuns = [];
+		const indexRuns = [];
 
 		var vertexOffset = 0;
-		var lastEnd = 0;
+		var i, lastEnd = 0;
 
-		for ( var i = 0; i < l; i++ ) {
+		for ( i = 0; i < l; i++ ) {
 
 			_loadScrap( scrapList[ i ] );
 
@@ -331,7 +331,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			}
 
-			var end = indices.length;
+			const end = indices.length;
 
 			indexRuns.push( { start: lastEnd, count: end - lastEnd, survey: scrap.survey } );
 			lastEnd = end;
@@ -344,17 +344,19 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadCrossSections ( crossSectionGroups ) {
 
-		var mesh = self.getFeature( FACE_WALLS, Walls );
+		const mesh = self.getFeature( FACE_WALLS, Walls );
 
-		var indices = [];
-		var vertices = [];
+		const indices = [];
+		const vertices = [];
 
-		var v = 0;
-		var l = crossSectionGroups.length;
+		const l = crossSectionGroups.length;
 
 		// survey to face index mapping
+		const indexRuns = [];
+
 		var currentSurvey;
-		var indexRuns = [];
+
+		var v = 0;
 
 		var lastEnd = 0;
 		var l1, r1, u1, d1, l2, r2, u2, d2;
@@ -373,8 +375,8 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		for ( i = 0; i < l; i++ ) {
 
-			var crossSectionGroup = crossSectionGroups[ i ];
-			var m = crossSectionGroup.length;
+			const crossSectionGroup = crossSectionGroups[ i ];
+			const m = crossSectionGroup.length;
 
 			if ( m < 2 ) continue;
 
@@ -383,8 +385,8 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			for ( j = 0; j < m; j++ ) {
 
-				var xSect = crossSectionGroup[ j ];
-				var survey = xSect.survey;
+				const xSect = crossSectionGroup[ j ];
+				const survey = xSect.survey;
 
 				vertexCount = _getLRUD( xSect, crossSectionGroup[ j + 1 ] );
 
@@ -564,14 +566,14 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		function _getLRUD ( crossSection, nextSection ) {
 
-			var station  = crossSection.end;
-			var lrud     = crossSection.lrud;
-			var vertical;
+			const ovalFactor = 0.293;
+			const station = crossSection.end;
+			const lrud    = crossSection.lrud;
 
 			// cross product of leg + next leg vector and up AXIS to give direction of LR vector
 			cross.subVectors( crossSection.start, crossSection.end ).normalize();
 
-			vertical = ( Math.abs( cross.dot( upAxis ) ) > 0.97 );
+			const vertical = ( Math.abs( cross.dot( upAxis ) ) > 0.97 );
 
 			if ( nextSection ) {
 
@@ -587,7 +589,7 @@ Survey.prototype.loadCave = function ( cave ) {
 			if ( vertical && ( lrud.u + lrud.d < 5 ) ) {
 
 				cross.copy( lastCross );
-				var t = cross.clone().cross( upAxis );
+				const t = cross.clone().cross( upAxis );
 
 				U = t.clone().setLength( -lrud.u ).add( station );
 				D = t.clone().setLength( lrud.d ).add( station );
@@ -631,8 +633,6 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			case WALL_OVAL:
 
-				var ovalFactor = 0.293;
-
 				vertices.push( L );
 				vertices.push( R );
 				vertices.push( U );
@@ -662,7 +662,8 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	function _loadSegments ( srcSegments ) {
 
-		var typeLegs = [];
+		const l = srcSegments.length;
+		const typeLegs = [];
 
 		typeLegs[ LEG_CAVE    ] = { vertices: [], colors: [], runs: [] };
 		typeLegs[ LEG_SURFACE ] = { vertices: [], colors: [], runs: [] };
@@ -674,16 +675,15 @@ Survey.prototype.loadCave = function ( cave ) {
 		var currentSurvey;
 
 		var run;
-		var l = srcSegments.length;
 
 		if ( l === 0 ) return null;
 
 		for ( var i = 0; i < l; i++ ) {
 
-			var leg = srcSegments[ i ];
+			const leg = srcSegments[ i ];
 
-			var type   = leg.type;
-			var survey = leg.survey;
+			const type   = leg.type;
+			const survey = leg.survey;
 
 			legs = typeLegs[ type ];
 
@@ -700,7 +700,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				if ( run !== undefined ) {
 
-					var lastLegs = typeLegs[ currentType ];
+					const lastLegs = typeLegs[ currentType ];
 
 					run.end = lastLegs.vertices.length;
 					lastLegs.runs.push( run );
@@ -745,11 +745,11 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		function _addModelSegments ( tag, name ) {
 
-			var legs = typeLegs[ tag ];
+			const legs = typeLegs[ tag ];
 
 			if ( legs.vertices.length === 0 ) return;
 
-			var legObject = self.getFeature( tag, Legs );
+			const legObject = self.getFeature( tag, Legs );
 
 			legObject.addLegs( legs.vertices, legs.colors, legs.runs );
 
@@ -763,12 +763,12 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		if ( cave.hasTerrain === false ) return;
 
-		var terrain = new LoxTerrain( cave.terrain, self.offsets );
+		const terrain = new LoxTerrain( cave.terrain, self.offsets );
 
 		// get limits of terrain - ignoring maximum which distorts height shading etc
-		var terrainLimits = new Box3().copy( terrain.tile.geometry.boundingBox );
+		const terrainLimits = new Box3().copy( terrain.tile.geometry.boundingBox );
 
-		var modelLimits = self.modelLimits;
+		const modelLimits = self.modelLimits;
 
 		terrainLimits.min.z = modelLimits.min.z;
 		terrainLimits.max.z = modelLimits.max.z;
@@ -799,7 +799,7 @@ Survey.prototype.getFeature = function ( tag, obj ) {
 
 Survey.prototype.update = function ( camera, target ) {
 
-	var cameraLayers = camera.layers;
+	const cameraLayers = camera.layers;
 
 	if ( this.features[ FEATURE_ENTRANCES ] && cameraLayers.mask & 1 << FEATURE_ENTRANCES ) {
 
@@ -835,7 +835,7 @@ Survey.prototype.removeFeature = function ( obj ) {
 
 	this.layers.mask &= ~ obj.layers.mask;
 
-	var features = this.features;
+	const features = this.features;
 
 	for ( var i = 0, l = features.length; i < l; i++ ) {
 
@@ -853,14 +853,14 @@ Survey.prototype.hasFeature = function ( tag ) {
 
 Survey.prototype.loadStations = function ( surveyTree ) {
 
-	var i, l;
-
-	var stations = new Stations();
-	var stationLabels = new StationLabels();
+	const stations = new Stations();
+	const stationLabels = new StationLabels();
 
 	surveyTree.traverse( _addStation );
 
-	var legs = this.getLegs();
+	const legs = this.getLegs();
+
+	var i, l;
 
 	// count number of legs linked to each station
 
@@ -907,7 +907,7 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 
 	function _computeBoundingBox ( node ) {
 
-		var parent = node.parent;
+		const parent = node.parent;
 
 		if ( parent && parent.boundingBox === undefined ) parent.boundingBox = new Box3();
 
@@ -930,16 +930,18 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 
 Survey.prototype.loadDyeTraces = function () {
 
-	var traces = this.metadata.getTraces();
+	const traces = this.metadata.getTraces();
 
 	if ( traces.length === 0 ) return;
 
-	var surveyTree = this.surveyTree;
-	var dyeTraces = new DyeTraces();
+	const surveyTree = this.surveyTree;
+	const dyeTraces = new DyeTraces();
 
-	for ( var i = 0, l = traces.length; i < l; i++ ) {
+	var i,l;
 
-		var trace = traces[ i ];
+	for ( i = 0, l = traces.length; i < l; i++ ) {
+
+		const trace = traces[ i ];
 
 		var startStation = surveyTree.getByPath( trace.start );
 		var endStation   = surveyTree.getByPath( trace.end );
@@ -988,8 +990,8 @@ Survey.prototype.getWorldPosition = function ( position ) {
 
 Survey.prototype.getGeographicalPosition = function ( position ) {
 
-	var offsets = this.offsets;
-	var projection = this.projection;
+	const offsets = this.offsets;
+	const projection = this.projection;
 
 	var originalPosition = { x: position.x + offsets.x, y: position.y + offsets.y, z: 0 };
 
@@ -1005,8 +1007,8 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 
 Survey.prototype.selectStation = function ( index ) {
 
-	var stations = this.stations;
-	var station = stations.getStationByIndex( index );
+	const stations = this.stations;
+	const station = stations.getStationByIndex( index );
 
 	stations.selectStation( station );
 
@@ -1021,7 +1023,7 @@ Survey.prototype.clearSelection = function () {
 
 	this.stations.clearSelected();
 
-	var box = this.selectedBox;
+	const box = this.selectedBox;
 
 	if ( box !== null ) box.visible = false;
 
@@ -1050,9 +1052,9 @@ Survey.prototype.boxSection = function ( node, box, colour ) {
 
 Survey.prototype.highlightSelection = function ( id ) {
 
-	var surveyTree = this.surveyTree;
+	const surveyTree = this.surveyTree;
+	const box = this.highlightBox;
 	var node;
-	var box = this.highlightBox;
 
 	if ( id ) {
 
@@ -1064,7 +1066,7 @@ Survey.prototype.highlightSelection = function ( id ) {
 
 		} else if ( node.p ) {
 
-			var highlight = this.stationHighlight;
+			const highlight = this.stationHighlight;
 
 			highlight.position.copy( node.p );
 			highlight.visible = true;
@@ -1081,8 +1083,9 @@ Survey.prototype.highlightSelection = function ( id ) {
 
 Survey.prototype.selectSection = function ( id ) {
 
-	var selectedSectionIds = this.selectedSectionIds;
-	var surveyTree = this.surveyTree;
+	const selectedSectionIds = this.selectedSectionIds;
+	const surveyTree = this.surveyTree;
+
 	var node;
 
 	this.clearSelection();
@@ -1114,7 +1117,7 @@ Survey.prototype.setFeatureBox = function () {
 
 	if ( this.featureBox === null ) {
 
-		var box = new Box3Helper( this.modelLimits, getThemeValue( 'boundingBox' ) );
+		const box = new Box3Helper( this.modelLimits, getThemeValue( 'boundingBox' ) );
 
 		box.layers.set( FEATURE_BOX );
 		box.name = 'survey-boundingbox';
@@ -1132,8 +1135,8 @@ Survey.prototype.setFeatureBox = function () {
 
 Survey.prototype.cutSection = function ( id ) {
 
-	var selectedSectionIds = this.selectedSectionIds;
-	var self = this;
+	const selectedSectionIds = this.selectedSectionIds;
+	const self = this;
 
 	if ( selectedSectionIds.size === 0 ) return;
 
@@ -1146,14 +1149,16 @@ Survey.prototype.cutSection = function ( id ) {
 
 	// iterate through objects replace geometries and remove bounding boxes;
 
-	var cutList = []; // list of Object3D's to remove from survey - workaround for lack of traverseReverse
+	const cutList = []; // list of Object3D's to remove from survey - workaround for lack of traverseReverse
 
 	this.traverse( _cutObject );
 
-	for ( var i = 0, l = cutList.length; i < l; i++ ) {
+	var i, l;
 
-		var obj = cutList[ i ];
-		var parent = obj.parent;
+	for ( i = 0, l = cutList.length; i < l; i++ ) {
+
+		const obj = cutList[ i ];
+		const parent = obj.parent;
 
 		if ( parent ) parent.remove( obj );
 
@@ -1220,10 +1225,10 @@ Survey.prototype.cutSection = function ( id ) {
 
 Survey.prototype.getBounds = function () {
 
-	var box = new Box3();
+	const box = new Box3();
 
-	var min = box.min;
-	var max = box.max;
+	const min = box.min;
+	const max = box.max;
 
 	this.traverse( _addObjectBounds );
 
@@ -1233,7 +1238,7 @@ Survey.prototype.getBounds = function () {
 
 		if ( obj.type === 'CV.Survey' ) return; // skip survey which is positioned/scaled into world space
 
-		var geometry = obj.geometry;
+		const geometry = obj.geometry;
 
 		if ( geometry && geometry.boundingBox ) {
 
@@ -1328,7 +1333,7 @@ Survey.prototype.setWallShading = function ( mesh, node, selectedMaterial ) {
 
 Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
-	var mesh = this.features[ legType ];
+	const mesh = this.features[ legType ];
 
 	if ( mesh === undefined ) return;
 
@@ -1476,11 +1481,11 @@ Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
 
 Survey.prototype.setLegColourByAxis = function ( mesh ) {
 
-	var vector = new Vector3();
+	const vector = new Vector3();
 
-	var c1 = this.colourAxis[ 0 ];
-	var c2 = this.colourAxis[ 1 ];
-	var c3 = this.colourAxis[ 2 ];
+	const c1 = this.colourAxis[ 0 ];
+	const c2 = this.colourAxis[ 1 ];
+	const c3 = this.colourAxis[ 2 ];
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
@@ -1488,7 +1493,7 @@ Survey.prototype.setLegColourByAxis = function ( mesh ) {
 
 		vector.copy( geometry.vertices[ v1 ] ).sub( geometry.vertices[ v2 ] ).normalize();
 
-		var colour = new Color(
+		const colour = new Color(
 			Math.abs( vector.dot( c1 ) ),
 			Math.abs( vector.dot( c2 ) ),
 			Math.abs( vector.dot( c3 ) )
@@ -1503,19 +1508,19 @@ Survey.prototype.setLegColourByAxis = function ( mesh ) {
 
 Survey.prototype.setLegColourByLength = function ( mesh ) {
 
-	var colours = ColourCache.getColors( 'gradient' );
-	var colourRange = colours.length - 1;
-	var stats = mesh.stats;
+	const colours = ColourCache.getColors( 'gradient' );
+	const colourRange = colours.length - 1;
+	const stats = mesh.stats;
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
 	function _colourSegment ( geometry, v1, v2 ) {
 
-		var vertex1 = geometry.vertices[ v1 ];
-		var vertex2 = geometry.vertices[ v2 ];
+		const vertex1 = geometry.vertices[ v1 ];
+		const vertex2 = geometry.vertices[ v2 ];
 
-		var relLength = ( Math.abs( vertex1.distanceTo( vertex2 ) ) - stats.minLegLength ) / stats.legLengthRange;
-		var colour = colours[ Math.floor( ( 1 - relLength ) * colourRange ) ];
+		const relLength = ( Math.abs( vertex1.distanceTo( vertex2 ) ) - stats.minLegLength ) / stats.legLengthRange;
+		const colour = colours[ Math.floor( ( 1 - relLength ) * colourRange ) ];
 
 		geometry.colors[ v1 ] = colour;
 		geometry.colors[ v2 ] = colour;
@@ -1526,12 +1531,13 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
-	var surveyTree = this.surveyTree;
+	const surveyTree = this.surveyTree;
+
 	var selectedSection = this.selectedSection;
 
 	if ( selectedSection === 0) selectedSection = surveyTree.id;
 
-	var surveyToColourMap = SurveyColours.getSurveyColourMap( surveyTree, selectedSection );
+	const surveyToColourMap = SurveyColours.getSurveyColourMap( surveyTree, selectedSection );
 
 	if ( this.selectedSectionIds.size === 0 ) this.surveyTree.getSubtreeIds( selectedSection, this.selectedSectionIds );
 
@@ -1539,7 +1545,7 @@ Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
 	function _colourSegment ( geometry, v1, v2, survey ) {
 
-		var colour = surveyToColourMap[ survey ];
+		const colour = surveyToColourMap[ survey ];
 
 		geometry.colors[ v1 ] = colour;
 		geometry.colors[ v2 ] = colour;
@@ -1550,17 +1556,17 @@ Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
 Survey.prototype.setLegColourByPath = function ( mesh ) {
 
-	var routes = this.getRoutes();
+	const routes = this.getRoutes();
 
-	var c1 = ColourCache.yellow;
-	var c2 = ColourCache.red;
-	var c3 = getThemeColor( 'single' );
-
-	var colour;
+	const c1 = ColourCache.yellow;
+	const c2 = ColourCache.red;
+	const c3 = getThemeColor( 'single' );
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
 	function _colourSegment ( geometry, v1, v2 /*, survey */ ) {
+
+		var colour;
 
 		if ( routes.inCurrentRoute( v1 ) ) {
 
@@ -1584,11 +1590,11 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
-	var colours = ColourCache.getColors( 'inclination' );
+	const colours = ColourCache.getColors( 'inclination' );
 
-	var colourRange = colours.length - 1;
-	var hueFactor = colourRange * 2 / Math.PI;
-	var legNormal = new Vector3();
+	const colourRange = colours.length - 1;
+	const hueFactor = colourRange * 2 / Math.PI;
+	const legNormal = new Vector3();
 
 	// pNormal = normal of reference plane in model space
 
@@ -1596,14 +1602,15 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 	function _colourSegment ( geometry, v1, v2 ) {
 
-		var vertex1 = geometry.vertices[ v1 ];
-		var vertex2 = geometry.vertices[ v2 ];
+		const vertex1 = geometry.vertices[ v1 ];
+		const vertex2 = geometry.vertices[ v2 ];
 
 		legNormal.subVectors( vertex1, vertex2 ).normalize();
-		var dotProduct = legNormal.dot( pNormal );
 
-		var hueIndex = Math.floor( hueFactor * Math.acos( Math.abs( dotProduct ) ) );
-		var colour = colours[ hueIndex ];
+		const dotProduct = legNormal.dot( pNormal );
+
+		const hueIndex = Math.floor( hueFactor * Math.acos( Math.abs( dotProduct ) ) );
+		const colour = colours[ hueIndex ];
 
 		geometry.colors[ v1 ] = colour;
 		geometry.colors[ v2 ] = colour;

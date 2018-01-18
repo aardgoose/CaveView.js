@@ -3,8 +3,8 @@ import '../../../../three.js/src/polyfills';
 import { HeightMapLoader } from '../loaders/HeightMapLoader';
 import { TerrainTileGeometry } from '../terrain/TerrainTileGeometry';
 
+const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 var tileSpec;
-var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
 onmessage = onMessage;
 
@@ -20,28 +20,28 @@ function mapLoaded ( data ) {
 
 	// clip height map data
 
-	var clip       = tileSpec.clip;
-	var offsets    = tileSpec.offsets;
-	var tileSet    = tileSpec.tileSet;
-	var divisions  = tileSpec.divisions;
+	const clip       = tileSpec.clip;
+	const offsets    = tileSpec.offsets;
+	const tileSet    = tileSpec.tileSet;
+	const divisions  = tileSpec.divisions;
 
-	var terrainData = new Uint16Array( data );
+	const terrainData = new Uint16Array( data );
 
-	var xDivisions = divisions - clip.left - clip.right;
-	var yDivisions = divisions - clip.top - clip.bottom;
+	const xDivisions = divisions - clip.left - clip.right;
+	const yDivisions = divisions - clip.top - clip.bottom;
 
-	var resolution = tileSpec.resolution;
+	const resolution = tileSpec.resolution;
 
-	var xTileWidth = resolution * xDivisions;
-	var yTileWidth = resolution * yDivisions;
+	const xTileWidth = resolution * xDivisions;
+	const yTileWidth = resolution * yDivisions;
 
 	clip.terrainHeight = tileSpec.divisions;
 	clip.terrainWidth  = tileSpec.divisions;
 
-	var terrainTile = new TerrainTileGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions, terrainData, tileSet.dtmScale, clip, offsets.z );
+	const terrainTile = new TerrainTileGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions, terrainData, tileSet.dtmScale, clip, offsets.z );
 
-	var X = resolution * ( tileSpec.x * divisions + clip.left ) - halfMapExtent - offsets.x;
-	var Y = halfMapExtent - resolution * ( tileSpec.y * divisions + clip.top ) - offsets.y;
+	const X = resolution * ( tileSpec.x * divisions + clip.left ) - halfMapExtent - offsets.x;
+	const Y = halfMapExtent - resolution * ( tileSpec.y * divisions + clip.top ) - offsets.y;
 
 	terrainTile.translate( X, Y, 0 );
 
@@ -50,9 +50,9 @@ function mapLoaded ( data ) {
 	// avoid calculating bounding box in main thread.
 	// however it isn't preserved in json serialisation.
 
-	var bb = terrainTile.boundingBox;
+	const bb = terrainTile.boundingBox;
 
-	var boundingBox = {
+	const boundingBox = {
 
 		min: {
 			x: bb.min.x,
@@ -71,16 +71,16 @@ function mapLoaded ( data ) {
 
 	// support transferable objects where possible
 
-	var indexBuffer = terrainTile.index.array.buffer;
-	var attributes = {};
-	var transferable = [];
+	const indexBuffer = terrainTile.index.array.buffer;
+	const attributes = {};
+	const transferable = [];
 
-	var srcAttributes = terrainTile.attributes;
+	const srcAttributes = terrainTile.attributes;
 
 	for ( var attributeName in srcAttributes ) {
 
-		var attribute = srcAttributes[ attributeName ];
-		var arrayBuffer = attribute.array.buffer;
+		const attribute = srcAttributes[ attributeName ];
+		const arrayBuffer = attribute.array.buffer;
 
 		attributes[ attributeName ] = { array: arrayBuffer, itemSize: attribute.itemSize };
 

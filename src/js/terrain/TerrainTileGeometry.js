@@ -21,27 +21,27 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 	this.type = 'TerrainTileGeometry';
 
-	var gridX = Math.floor( widthSegments ) || 1;
-	var gridY = Math.floor( heightSegments ) || 1;
+	const gridX = Math.floor( widthSegments ) || 1;
+	const gridY = Math.floor( heightSegments ) || 1;
 
-	var gridX1 = gridX + 1;
-	var gridY1 = gridY + 1;
+	const gridX1 = gridX + 1;
+	const gridY1 = gridY + 1;
 
-	var segment_width = width / gridX;
-	var segment_height = height / gridY;
-
-	var ix, iy, i, z, l;
+	const segment_width = width / gridX;
+	const segment_height = height / gridY;
 
 	// buffers
 
-	var indices = [];
-	var vertices = [];
-	var uvs = [];
+	const indices = [];
+	const vertices = [];
+	const uvs = [];
 
 	var vertexCount = 0;
 
 	var minZ = Infinity;
 	var maxZ = -Infinity;
+
+	var ix, iy, i, l;
 
 	// generate vertices and uvs
 
@@ -63,8 +63,8 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 	}
 
-	var ixMax = gridX1 + clip.left;
-	var iyMax = gridY1 + clip.top;
+	const ixMax = gridX1 + clip.left;
+	const iyMax = gridY1 + clip.top;
 
 	for ( iy = clip.top; iy < iyMax; iy++ ) {
 
@@ -76,7 +76,7 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 		for ( ix = clip.left; ix < ixMax; ix++ ) {
 
-			z = terrainData[ zIndex++ ] / scale - zOffset; // scale and convert to origin centered coords
+			const z = terrainData[ zIndex++ ] / scale - zOffset; // scale and convert to origin centered coords
 
 			vertices.push( x, - y, z );
 			vertexCount++;
@@ -105,16 +105,16 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 		for ( ix = 0; ix < gridX; ix ++ ) {
 
-			var a = ix + gridX1 * iy;
-			var b = ix + gridX1 * ( iy + 1 );
-			var c = ( ix + 1 ) + gridX1 * ( iy + 1 );
-			var d = ( ix + 1 ) + gridX1 * iy;
+			const a = ix + gridX1 * iy;
+			const b = ix + gridX1 * ( iy + 1 );
+			const c = ( ix + 1 ) + gridX1 * ( iy + 1 );
+			const d = ( ix + 1 ) + gridX1 * iy;
 
 			// faces - render each quad such that the shared diagonal edge has the minimum length - gives a smother terrain surface
 			// diagonals b - d, a - c
 
-			var d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] );  // diff in Z values between diagonal vertices
-			var d2 = Math.abs( vertices[ b * 3 + 2 ] - vertices[ c * 3 + 2 ] );  // diff in Z values between diagonal vertices
+			const d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] );  // diff in Z values between diagonal vertices
+			const d2 = Math.abs( vertices[ b * 3 + 2 ] - vertices[ c * 3 + 2 ] );  // diff in Z values between diagonal vertices
 
 			if ( d1 < d2 ) {
 
@@ -140,24 +140,22 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 	this.computeVertexNormals();
 
-	var colourScale = Colours.terrain;
-	var colourRange = colourScale.length - 1;
+	const colourScale = Colours.terrain;
+	const colourRange = colourScale.length - 1;
 
-	var colourIndex;
-	var dotProduct;
+	const normal = this.getAttribute( 'normal' );
+	const vNormal = new Vector3();
 
-	var normal = this.getAttribute( 'normal' );
-	var vNormal = new Vector3();
+	const buffer = new Float32Array( vertexCount * 3 );
 
-	var buffer = new Float32Array( vertexCount * 3 );
 	var colours = [];
-	var colour;
 
 	// convert scale to float values
 
 	for ( i = 0, l = colourScale.length; i < l; i++ ) {
 
-		colour = colourScale[ i ];
+		const colour = colourScale[ i ];
+
 		colours.push( [ colour[ 0 ] / 255, colour[ 1 ] / 255, colour[ 2 ] / 255 ] );
 
 	}
@@ -166,11 +164,11 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 		vNormal.fromArray( normal.array, i * 3 );
 
-		dotProduct = vNormal.dot( upAxis );
-		colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
+		const dotProduct = vNormal.dot( upAxis );
+		const colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
 
-		colour = colours[ colourIndex ];
-		var offset = i * 3;
+		const colour = colours[ colourIndex ];
+		const offset = i * 3;
 
 		buffer[ offset     ] = colour[ 0 ];
 		buffer[ offset + 1 ] = colour[ 1 ];

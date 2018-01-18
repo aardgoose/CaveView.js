@@ -10,7 +10,7 @@ import {
 } from '../../../../three.js/src/Three';
 
 
-var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
+const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
 function WebTerrain ( survey, onReady, onLoaded ) {
 
@@ -20,7 +20,7 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 	this.type = 'CV.WebTerrain';
 	this.attribution = [];
 
-	var limits = survey.limits;
+	const limits = survey.limits;
 
 	this.limits = new Box2(
 		new Vector2( limits.min.x, limits.min.y ),
@@ -50,7 +50,7 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 
 	}
 
-	var self = this;
+	const self = this;
 
 	new FileLoader().setResponseType( 'text' ).load( getEnvironmentValue( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
 
@@ -84,21 +84,18 @@ WebTerrain.prototype.isLoaded = function () {
 
 WebTerrain.prototype.hasCoverage = function () {
 
-	var limits = this.limits;
-	var tileSets = this.tileSets;
-	var tileSet;
-	var coverage;
+	const limits = this.limits;
+	const tileSets = this.tileSets;
 
 	if ( tileSets === undefined ) return false;
 
 	// iterate through available tileSets and pick the first match
-	var baseDirectory = getEnvironmentValue( 'terrainDirectory', '' );
+	const baseDirectory = getEnvironmentValue( 'terrainDirectory', '' );
 
 	for ( var i = 0, l = tileSets.length; i < l; i++ ) {
 
-		tileSet = tileSets[ i ];
-
-		coverage = this.getCoverage( limits, tileSet.minZoom );
+		const tileSet = tileSets[ i ];
+		const coverage = this.getCoverage( limits, tileSet.minZoom );
 
 		if ( ( coverage.min_x >= tileSet.minX && coverage.max_x <= tileSet.maxX )
 				&& (
@@ -121,12 +118,12 @@ WebTerrain.prototype.hasCoverage = function () {
 
 WebTerrain.prototype.getCoverage = function ( limits, zoom ) {
 
-	var coverage = { zoom: zoom };
+	const coverage = { zoom: zoom };
 
-	var N =  halfMapExtent;
-	var W = -halfMapExtent;
+	const N =  halfMapExtent;
+	const W = -halfMapExtent;
 
-	var tileCount = Math.pow( 2, zoom - 1 ) / halfMapExtent; // tile count per metre
+	const tileCount = Math.pow( 2, zoom - 1 ) / halfMapExtent; // tile count per metre
 
 	coverage.min_x = Math.floor( ( limits.min.x - W ) * tileCount );
 	coverage.max_x = Math.floor( ( limits.max.x - W ) * tileCount );
@@ -142,7 +139,8 @@ WebTerrain.prototype.getCoverage = function ( limits, zoom ) {
 
 WebTerrain.prototype.pickCoverage = function ( limits ) {
 
-	var tileSet = this.tileSet;
+	const tileSet = this.tileSet;
+
 	var zoom = tileSet.maxZoom + 1;
 	var coverage;
 
@@ -159,10 +157,13 @@ WebTerrain.prototype.pickCoverage = function ( limits ) {
 
 WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
+	const self = this;
+
 	// account for limits of DTM resolution
 
-	var tileSet = this.tileSet;
-	var scale = ( z > tileSet.dtmMaxZoom ) ? Math.pow( 2, tileSet.dtmMaxZoom - z ) : 1;
+	const tileSet = this.tileSet;
+	const scale = ( z > tileSet.dtmMaxZoom ) ? Math.pow( 2, tileSet.dtmMaxZoom - z ) : 1;
+	const limits = this.limits;
 
 	// don't zoom in with no overlay - no improvement of terrain rendering in this case
 
@@ -170,20 +171,17 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 	console.log( 'load: [ ', z +'/' +  x + '/' +  y, ']' );
 
-	var self = this;
+	const tileWidth = halfMapExtent / Math.pow( 2, z - 1 );
+	const clip      = { top: 0, bottom: 0, left: 0, right: 0 };
 
-	var limits    = this.limits;
-	var tileWidth = halfMapExtent / Math.pow( 2, z - 1 );
-	var clip      = { top: 0, bottom: 0, left: 0, right: 0 };
+	const tileMinX = tileWidth * x - halfMapExtent;
+	const tileMaxX = tileMinX + tileWidth;
 
-	var tileMinX = tileWidth * x - halfMapExtent;
-	var tileMaxX = tileMinX + tileWidth;
+	const tileMaxY = halfMapExtent - tileWidth * y;
+	const tileMinY = tileMaxY - tileWidth;
 
-	var tileMaxY = halfMapExtent - tileWidth * y;
-	var tileMinY = tileMaxY - tileWidth;
-
-	var divisions = ( tileSet.divisions ) * scale ;
-	var resolution = tileWidth / divisions;
+	const divisions = ( tileSet.divisions ) * scale ;
+	const resolution = tileWidth / divisions;
 
 	++this.tilesLoading;
 
@@ -199,14 +197,14 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 	// get Tile instance.
 
-	var tile = existingTile ? existingTile : new Tile( x, y, z, self.tileSet, clip );
-	var parent = parentTile ? parentTile : this;
+	const tile = existingTile ? existingTile : new Tile( x, y, z, self.tileSet, clip );
+	const parent = parentTile ? parentTile : this;
 
 	tile.setPending( parent ); // tile load/reload pending
 
 	// get a web worker from the pool and create new geometry in it
 
-	var tileLoader = this.workerPool.getWorker();
+	const tileLoader = this.workerPool.getWorker();
 
 	tileLoader.onmessage = _mapLoaded;
 
@@ -225,7 +223,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 	function _mapLoaded ( event ) {
 
-		var tileData = event.data;
+		const tileData = event.data;
 
 		// return worker to pool
 
@@ -292,10 +290,10 @@ WebTerrain.prototype.resurrectTile = function ( tile ) {
 
 WebTerrain.prototype.tileArea = function ( limits, tile ) {
 
-	var coverage = this.pickCoverage( limits );
-	var zoom = coverage.zoom;
+	const coverage = this.pickCoverage( limits );
+	const zoom = coverage.zoom;
 
-	if ( tile && tile.zoom == zoom ) {
+	if ( tile && tile.zoom === zoom ) {
 
 		console.error( 'ERROR - looping on tile replacement' );
 		return;
@@ -343,9 +341,8 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	if ( this.tilesLoading > 0 ) return;
 
-	var self = this;
-
-	var currentOverlay = this.activeOverlay;
+	const self = this;
+	const currentOverlay = this.activeOverlay;
 
 	if ( currentOverlay !== null ) {
 
@@ -393,11 +390,11 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 WebTerrain.prototype.removed = function () {
 
+	const self = this;
+
 	this.dying = true;
 
 	if ( this.tilesLoading > 0 ) return;
-
-	var self = this;
 
 	this.traverse( _disposeTileMesh );
 
@@ -473,17 +470,17 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 WebTerrain.prototype.zoomCheck = function ( camera ) {
 
-	var maxZoom     = this.tileSet.maxZoom;
-	var initialZoom = this.initialZoom;
-	var self = this;
+	const maxZoom     = this.tileSet.maxZoom;
+	const initialZoom = this.initialZoom;
+	const self = this;
 
-	var frustum  = new Frustum();
+	const frustum = new Frustum();
 
-	var candidateTiles      = [];
-	var candidateEvictTiles = [];
-	var resurrectTiles      = [];
+	const candidateTiles      = [];
+	const candidateEvictTiles = [];
+	const resurrectTiles      = [];
+
 	var retry = false;
-
 	var total, tile, i;
 
 	if ( this.tilesLoading > 0 ) return true;
@@ -498,8 +495,8 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 	this.traverse( _scanTiles );
 
-	var resurrectCount = resurrectTiles.length;
-	var candidateCount = candidateTiles.length;
+	const resurrectCount = resurrectTiles.length;
+	const candidateCount = candidateTiles.length;
 
 	_evictTiles();
 
@@ -528,7 +525,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 				if ( tile.zoom < maxZoom ) {
 
-					var bb = tile.getBoundingBox().clone();
+					const bb = tile.getBoundingBox().clone();
 
 					bb.min.add( this.offsets );
 					bb.max.add( this.offsets );
@@ -597,8 +594,9 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 	function _evictTiles() {
 
-		var EVICT_PRESSURE = 5;
-		var evictCount = candidateEvictTiles.length;
+		const EVICT_PRESSURE = 5;
+		const evictCount = candidateEvictTiles.length;
+
 		var i;
 
 		if ( evictCount !== 0 ) {
@@ -607,12 +605,12 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 			for ( i = 0; i < evictCount; i++ ) {
 
-				var tile = candidateEvictTiles[ i ];
+				const tile = candidateEvictTiles[ i ];
 
 				// heuristics for evicting tiles - needs refinement
 
-				var pressure = Tile.liveTiles / EVICT_PRESSURE;
-				var tilePressure = tile.evictionCount * Math.pow( 2, initialZoom - tile.zoom );
+				const pressure = Tile.liveTiles / EVICT_PRESSURE;
+				const tilePressure = tile.evictionCount * Math.pow( 2, initialZoom - tile.zoom );
 
 				//console.log( 'ir', initialZoom, 'p: ', pressure, ' tp: ', tilePressure, ( pressure > tilePressure ? '*** EVICTING ***' : 'KEEP' ) );
 

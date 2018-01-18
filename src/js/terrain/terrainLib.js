@@ -1,10 +1,10 @@
 
-var terrainLib = {
+const terrainLib = {
 
 	onBeforeRender: function ( renderer ) {
 
-		var stencil = renderer.state.buffers.stencil;
-		var gl = renderer.context;
+		const stencil = renderer.state.buffers.stencil;
+		const gl = renderer.context;
 
 		stencil.setTest( true );
 
@@ -15,7 +15,7 @@ var terrainLib = {
 
 	onAfterRender: function ( renderer ) {
 
-		var stencil = renderer.state.buffers.stencil;
+		const stencil = renderer.state.buffers.stencil;
 
 		stencil.setTest( false );
 

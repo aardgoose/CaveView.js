@@ -17,52 +17,51 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	this.type = 'LoxTerrainGeometry';
 
-	var heightData = dtm.data;
+	const heightData = dtm.data;
 
-	var ix, iy, i, l, x, y, z;
+	const lines = dtm.lines;
+	const samples = dtm.samples;
+
+	const vertexCount = lines * samples;
 
 	// buffers
 
-	var indices = [];
-	var vertices = [];
+	const indices = [];
+	const vertices = [];
+
+	// 2 x 2 scale & rotate callibration matrix
+
+	const xx  = dtm.xx;
+	const xy  = dtm.xy;
+	const yx  = dtm.yx;
+	const yy  = dtm.yy;
+
+	// offsets from dtm -> survey -> model
+
+	const xOffset = dtm.xOrigin - offsets.x;
+	const yOffset = dtm.yOrigin - offsets.y;
+	const zOffset =             - offsets.z;
+
+	const lx = samples - 1;
+	const ly = lines - 1;
+
+	var ix, iy, i, l;
 
 	var minZ = Infinity;
 	var maxZ = -Infinity;
 
-	// generate vertices
-
 	var zIndex = 0;
 
-	var lines = dtm.lines;
-	var samples = dtm.samples;
-
-	var vertexCount = lines * samples;
-
-	// 2 x 2 scale & rotate callibration matrix
-
-	var xx  = dtm.xx;
-	var xy  = dtm.xy;
-	var yx  = dtm.yx;
-	var yy  = dtm.yy;
-
-	// offsets from dtm -> survey -> model
-
-	var xOffset = dtm.xOrigin - offsets.x;
-	var yOffset = dtm.yOrigin - offsets.y;
-	var zOffset =             - offsets.z;
-
-	var lx = samples - 1;
-	var ly = lines - 1;
+	// setup vertices frmo height data (corrected by rotation matrix)
 
 	for ( iy = 0; iy < lines; iy++ ) {
 
 		for ( ix = 0; ix < samples; ix++ ) {
 
-			z = heightData[ zIndex++ ];
+			const x = ix * xx + ( ly - iy ) * xy + xOffset;
+			const y = ix * yx + ( ly - iy ) * yy + yOffset;
 
-			x = ix * xx + ( ly - iy ) * xy + xOffset;
-			y = ix * yx + ( ly - iy ) * yy + yOffset;
-			z += zOffset;
+			const z = heightData[ zIndex++ ] + zOffset;
 
 			vertices.push( x, y, z );
 
@@ -73,8 +72,8 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	}
 
-	var maxX = lx * xx + ly * xy + xOffset;
-	var maxY = lx * yx + ly * yy + yOffset;
+	const maxX = lx * xx + ly * xy + xOffset;
+	const maxY = lx * yx + ly * yy + yOffset;
 
 	this.boundingBox = new Box3( new Vector3( xOffset, yOffset, minZ ), new Vector3( maxX, maxY, maxZ ) );
 
@@ -84,16 +83,16 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 		for ( ix = 0; ix < lx; ix ++ ) {
 
-			var a = ix + samples * iy;
-			var b = ix + samples * ( iy + 1 );
-			var c = ( ix + 1 ) + samples * ( iy + 1 );
-			var d = ( ix + 1 ) + samples * iy;
+			const a = ix + samples * iy;
+			const b = ix + samples * ( iy + 1 );
+			const c = ( ix + 1 ) + samples * ( iy + 1 );
+			const d = ( ix + 1 ) + samples * iy;
 
 			// faces - render each quad such that the shared diagonal edge has the minimum length - gives a smother terrain surface
 			// diagonals b - d, a - c
 
-			var d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] );  // diff in Z values between diagonal vertices
-			var d2 = Math.abs( vertices[ b * 3 + 2 ] - vertices[ c * 3 + 2 ] );  // diff in Z values between diagonal vertices
+			const d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] );  // diff in Z values between diagonal vertices
+			const d2 = Math.abs( vertices[ b * 3 + 2 ] - vertices[ c * 3 + 2 ] );  // diff in Z values between diagonal vertices
 
 			if ( d1 < d2 ) {
 
@@ -120,24 +119,21 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	this.computeVertexNormals();
 
-	var colourScale = Colours.terrain;
-	var colourRange = colourScale.length - 1;
+	const colourScale = Colours.terrain;
+	const colourRange = colourScale.length - 1;
 
-	var colourIndex;
-	var dotProduct;
+	const normal = this.getAttribute( 'normal' );
+	const vNormal = new Vector3();
 
-	var normal = this.getAttribute( 'normal' );
-	var vNormal = new Vector3();
-
-	var buffer = new Float32Array( vertexCount * 3 );
-	var colours = [];
-	var colour;
+	const buffer = new Float32Array( vertexCount * 3 );
+	const colours = [];
 
 	// convert scale to float values
 
 	for ( i = 0, l = colourScale.length; i < l; i++ ) {
 
-		colour = colourScale[ i ];
+		const colour = colourScale[ i ];
+
 		colours.push( [ colour[ 0 ] / 255, colour[ 1 ] / 255, colour[ 2 ] / 255 ] );
 
 	}
@@ -146,12 +142,13 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 		vNormal.fromArray( normal.array, i * 3 );
 
-		dotProduct = vNormal.dot( upAxis );
-		colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
+		const dotProduct = vNormal.dot( upAxis );
 
-		colour = colours[ colourIndex ];
+		const colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
 
-		var offset = i * 3;
+		const colour = colours[ colourIndex ];
+
+		const offset = i * 3;
 
 		buffer[ offset     ] = colour[ 0 ];
 		buffer[ offset + 1 ] = colour[ 1 ];
@@ -168,40 +165,39 @@ LoxTerrainGeometry.prototype.constructor = LoxTerrainGeometry;
 
 LoxTerrainGeometry.prototype.setupUVs = function ( bitmap, image, offsets ) {
 
-	var det = bitmap.xx * bitmap.yy - bitmap.xy * bitmap.yx;
+	const det = bitmap.xx * bitmap.yy - bitmap.xy * bitmap.yx;
 
 	if ( det === 0 ) return false;
 
-	var xx =   bitmap.yy / det;
-	var xy = - bitmap.xy / det;
-	var yx = - bitmap.yx / det;
-	var yy =   bitmap.xx / det;
+	// rotation matrix of bitmap over CRS
+	const xx =   bitmap.yy / det;
+	const xy = - bitmap.xy / det;
+	const yx = - bitmap.yx / det;
+	const yy =   bitmap.xx / det;
 
-	var vertices = this.getAttribute( 'position' ).array;
+	const vertices = this.getAttribute( 'position' ).array;
 
-	var width  = image.naturalWidth;
-	var height = image.naturalHeight;
+	const width  = image.naturalWidth;
+	const height = image.naturalHeight;
 
-	var x, y, u, v;
+	const xOffset = - ( xx * bitmap.xOrigin + xy * bitmap.yOrigin );
+	const yOffset = - ( yx * bitmap.xOrigin + yy * bitmap.yOrigin );
 
-	var xOffset = - ( xx * bitmap.xOrigin + xy * bitmap.yOrigin );
-	var yOffset = - ( yx * bitmap.xOrigin + yy * bitmap.yOrigin );
-
-	var uvs = [];
+	const uvs = [];
 
 	for ( var i = 0; i < vertices.length; i += 3 ) {
 
-		x = vertices[ i ]     + offsets.x;
-		y = vertices[ i + 1 ] + offsets.y;
+		const x = vertices[ i ]     + offsets.x;
+		const y = vertices[ i + 1 ] + offsets.y;
 
-		u = ( x * xx + y * xy + xOffset ) / width;
-		v = ( x * yx + y * yy + yOffset ) / height;
+		const u = ( x * xx + y * xy + xOffset ) / width;
+		const v = ( x * yx + y * yy + yOffset ) / height;
 
 		uvs.push( u, v );
 
 	}
 
-	var uvAttribute = this.getAttribute( 'uv' );
+	const uvAttribute = this.getAttribute( 'uv' );
 
 	if ( uvAttribute !== undefined ) {
 

@@ -5,14 +5,14 @@ import { AtlasFactory } from '../materials/GlyphAtlas';
 
 function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 
-	var glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec );
+	const glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec );
 
-	var cellScale = glyphAtlas.getCellScale();
+	const cellScale = glyphAtlas.getCellScale();
 
-	var cos = Math.cos( rotation );
-	var sin = Math.sin( rotation );
+	const cos = Math.cos( rotation );
+	const sin = Math.sin( rotation );
 
-	var rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
+	const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
 
 	ShaderMaterial.call( this, {
 		uniforms: {

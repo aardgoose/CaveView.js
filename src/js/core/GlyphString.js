@@ -108,15 +108,15 @@ GlyphStringGeometry.prototype = Object.assign( Object.create( InstancedBufferGeo
 
 GlyphStringGeometry.prototype.replaceString = function ( text ) {
 
-	var l = this.name.length;
+	const l = this.name.length;
 
-	var uvs = new Float32Array( l * 2 );
-	var widths = new Float32Array( l );
-	var offsets = new Float32Array( l );
+	const uvs = new Float32Array( l * 2 );
+	const widths = new Float32Array( l );
+	const offsets = new Float32Array( l );
 
-	var glyphAtlas = this.glyphAtlas;
-	var i, glyphData;
-	var offset = 0;
+	const glyphAtlas = this.glyphAtlas;
+
+	var i, glyphData, offset = 0;
 
 	for ( i = 0; i < l; i++ ) {
 
@@ -137,9 +137,9 @@ GlyphStringGeometry.prototype.replaceString = function ( text ) {
 
 	this.width = offset;
 
-	var instanceUvs = this.getAttribute( 'instanceUvs' );
-	var instanceOffsets = this.getAttribute( 'instanceOffsets' );
-	var instanceWidths = this.getAttribute( 'instanceWidths' );
+	const instanceUvs = this.getAttribute( 'instanceUvs' );
+	const instanceOffsets = this.getAttribute( 'instanceOffsets' );
+	const instanceWidths = this.getAttribute( 'instanceWidths' );
 
 	instanceUvs.copyArray( uvs );
 	instanceOffsets.copyArray( offsets );
@@ -182,7 +182,7 @@ function GlyphString ( text, glyphMaterial, fixed ) {
 	this.name = text;
 	this.frustumCulled = false;
 
-	var attributes = geometry.attributes;
+	const attributes = geometry.attributes;
 
 	if ( fixed ) {
 

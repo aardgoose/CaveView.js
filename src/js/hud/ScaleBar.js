@@ -12,7 +12,7 @@ import {
 
 function ScaleBar ( container, hScale, rightMargin ) {
 
-	var leftMargin = 10;
+	const leftMargin = 10;
 
 	Group.call( this );
 
@@ -130,8 +130,9 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	function _makeScaleBar ( length ) {
 
-		var height = 4;
-		var rLength = length * self.hScale;
+		const height = 4;
+		const rLength = length * self.hScale;
+
 		var i, l;
 
 		var bar  = new PlaneGeometry( rLength, height, length );

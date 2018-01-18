@@ -11,11 +11,11 @@ import {
 
 function AngleScale ( container ) {
 
-	var width  = container.clientWidth;
-	var height = container.clientHeight;
+	const width  = container.clientWidth;
+	const height = container.clientHeight;
 
-	var stdWidth  = HudObject.stdWidth;
-	var stdMargin = HudObject.stdMargin;
+	const stdWidth  = HudObject.stdWidth;
+	const stdMargin = HudObject.stdMargin;
 
 	var i, l;
 

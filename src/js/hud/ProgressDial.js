@@ -16,8 +16,10 @@ import {
 
 function ProgressDial () {
 
-	var stdWidth  = HudObject.stdWidth;
-	var stdMargin = HudObject.stdMargin;
+	const stdWidth  = HudObject.stdWidth;
+	const stdMargin = HudObject.stdMargin;
+
+	const offset = stdWidth + stdMargin;
 
 	var geometry = new RingGeometry( stdWidth * 0.9, stdWidth, 50 );
 
@@ -25,8 +27,6 @@ function ProgressDial () {
 
 	this.name = 'CV.ProgressDial';
 	this.domObjects = [];
-
-	var offset = stdWidth + stdMargin;
 
 	this.translateX( -offset * 5 );
 	this.translateY(  offset );
@@ -45,6 +45,7 @@ function ProgressDial () {
 	var glyphMaterial = Materials.getGlyphMaterial( atlasSpec, 0 );
 
 	this.pcent = new GlyphString( '----', glyphMaterial, false );
+
 	this.pcent.translateY( 10 );
 	this.pcent.translateX( -5 );
 

@@ -51,13 +51,13 @@ var container;
 var controls;
 var isVisible = true;
 
-function init ( domId, viewRenderer ) {
+function init ( containerIn, viewRenderer ) {
 
-	container = document.getElementById( domId );
+	container = containerIn;
 	renderer = viewRenderer;
 
-	var hHeight = container.clientHeight / 2;
-	var hWidth  = container.clientWidth / 2;
+	const hHeight = container.clientHeight / 2;
+	const hWidth  = container.clientWidth / 2;
 
 	// create GL scene and camera for overlay
 	camera = new OrthographicCamera( -hWidth, hWidth, hHeight, -hHeight, 1, 1000 );
@@ -71,8 +71,8 @@ function init ( domId, viewRenderer ) {
 
 	scene.add( attitudeGroup );
 
-	var aLight = new AmbientLight( 0x888888 );
-	var dLight = new DirectionalLight( 0xFFFFFF );
+	const aLight = new AmbientLight( 0x888888 );
+	const dLight = new DirectionalLight( 0xFFFFFF );
 
 	dLight.position.set( -1, 1, 1 );
 
@@ -145,8 +145,8 @@ function setScale( scale ) {
 
 function resize () {
 
-	var hWidth  = container.clientWidth / 2;
-	var hHeight = container.clientHeight / 2;
+	const hWidth  = container.clientWidth / 2;
+	const hHeight = container.clientHeight / 2;
 
 	// adjust cameras to new aspect ratio etc.
 	camera.left   = -hWidth;
@@ -306,8 +306,9 @@ function viewChanged ( event ) {
 
 function cursorChanged ( /* event */ ) {
 
-	var cursorHeight = Viewer.cursorHeight;
-	var range = Viewer.maxHeight - Viewer.minHeight;
+	const cursorHeight = Viewer.cursorHeight;
+	const range = Viewer.maxHeight - Viewer.minHeight;
+
 	var scaledHeight = 0;
 
 	if ( Viewer.shadingMode === SHADING_CURSOR ) {

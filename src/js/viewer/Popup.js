@@ -63,21 +63,23 @@ Popup.prototype.addLine = function ( line ) {
 
 Popup.prototype.finish = function () {
 
-	var cellSize = 32;
-	var lines = this.lines;
-	var lineCount = lines.length;
+	const cellSize = 32;
+	const fontSize = 20;
 
-	var popupWidth = 300;
-	var popupHeight = cellSize * lineCount;
+	const lines = this.lines;z
+	const lineCount = lines.length;
 
-	var canvas = document.createElement( 'canvas' );
+	const popupWidth = 300;
+	const popupHeight = cellSize * lineCount;
+
+	const canvas = document.createElement( 'canvas' );
 
 	if ( ! canvas ) console.error( 'creating canvas for Popup failed' );
 
 	canvas.width  = popupWidth;
 	canvas.height = popupHeight;
 
-	var ctx = canvas.getContext( '2d' );
+	const ctx = canvas.getContext( '2d' );
 
 	if ( ! ctx ) console.error( 'cannot obtain 2D canvas' );
 
@@ -91,8 +93,6 @@ Popup.prototype.finish = function () {
 	ctx.strokeRect( 0, 0, popupWidth, popupHeight );
 
 	// write text contents
-
-	var fontSize = 20;
 
 	ctx.textAlign = 'left';
 	ctx.font = fontSize + 'px ' + 'normal helvetica,sans-serif';

@@ -13,8 +13,8 @@ import {
 
 function Compass ( container ) {
 
-	var stdWidth  = HudObject.stdWidth;
-	var stdMargin = HudObject.stdMargin;
+	const stdWidth  = HudObject.stdWidth;
+	const stdMargin = HudObject.stdMargin;
 
 	Group.call( this );
 
@@ -43,7 +43,7 @@ function Compass ( container ) {
 	this.add( c2 );
 	this.add( rMesh );
 
-	var offset = stdWidth + stdMargin;
+	const offset = stdWidth + stdMargin;
 
 	this.translateX( -offset );
 	this.translateY(  offset );

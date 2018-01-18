@@ -61,7 +61,7 @@ StationLabels.prototype.addStation = function ( station ) {
 
 StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
-	var cameraPosition = _tmpVector3.copy( camera.position );
+	const cameraPosition = _tmpVector3.copy( camera.position );
 
 	if ( camera.isOrthographicCamera ) {
 
@@ -78,9 +78,10 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
 	cameraPosition.applyMatrix4( inverseWorld );
 
+	const splaysVisible = camera.layers.mask & 1 << LEG_SPLAY;
+	const children = this.children;
+
 	var label, limit, hitCount;
-	var splaysVisible = camera.layers.mask & 1 << LEG_SPLAY;
-	var children = this.children;
 
 	for ( var i = 0, l = children.length; i < l; i++ ) {
 
@@ -116,7 +117,7 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
 StationLabels.prototype.createLabel = function ( dummyLabel ) {
 
-	var station = dummyLabel.station;
+	const station = dummyLabel.station;
 	var material;
 
 	if ( station.hitCount === 0 ) {
@@ -133,7 +134,7 @@ StationLabels.prototype.createLabel = function ( dummyLabel ) {
 
 	}
 
-	var label = new GlyphString( station.name, material );
+	const label = new GlyphString( station.name, material );
 
 	label.layers.set( LABEL_STATION );
 	label.position.copy( station.p );

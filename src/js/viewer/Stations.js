@@ -32,7 +32,7 @@ function Stations () {
 	this.selected = null;
 	this.selectedSize = 0;
 
-	var self = this;
+	const self = this;
 
 	Viewer.addEventListener( 'change', _viewChanged );
 
@@ -48,12 +48,12 @@ function Stations () {
 
 		if ( event.name === 'splays' ) {
 
-			var splaySize = Viewer.splays ? 1.0 : 0.0;
+			const splaySize = Viewer.splays ? 1.0 : 0.0;
 
-			var stations = self.stations;
-			var pSize = self.geometry.getAttribute( 'pSize' );
-			var i;
-			var l = stations.length;
+			const stations = self.stations;
+			const pSize = self.geometry.getAttribute( 'pSize' );
+
+			var i, l = stations.length;
 
 			for ( i = 0; i < l; i++ ) {
 
@@ -86,7 +86,7 @@ Stations.prototype.constructor = Stations;
 
 Stations.prototype.addStation = function ( node ) {
 
-	var point = node.p;
+	const point = node.p;
 
 	this.vertices.push( point );
 	this.colors.push( this.baseColor );
@@ -118,7 +118,7 @@ Stations.prototype.clearSelected = function () {
 
 	if ( this.selected !== null ) {
 
-		var pSize = this.geometry.getAttribute( 'pSize' );
+		const pSize = this.geometry.getAttribute( 'pSize' );
 
 		pSize.setX( this.selected, this.selectedSize );
 		pSize.needsUpdate = true;
@@ -137,7 +137,7 @@ Stations.prototype.selectStation = function ( node ) {
 
 Stations.prototype.selectStationByIndex = function ( index ) {
 
-	var pSize = this.geometry.getAttribute( 'pSize' );
+	const pSize = this.geometry.getAttribute( 'pSize' );
 
 	if ( this.selected !== null ) {
 
@@ -160,7 +160,7 @@ Stations.prototype.selectStationByIndex = function ( index ) {
 
 Stations.prototype.updateStation = function ( vertex ) {
 
-	var	station = this.getStation( vertex );
+	const station = this.getStation( vertex );
 
 	if ( station !== undefined ) {
 
@@ -183,10 +183,10 @@ Stations.prototype.updateStation = function ( vertex ) {
 
 Stations.prototype.finalise = function () {
 
-	var bufferGeometry = this.geometry;
+	const bufferGeometry = this.geometry;
 
-	var positions = new Float32BufferAttribute(this.vertices.length * 3, 3 );
-	var colors = new Float32BufferAttribute( this.colors.length * 3, 3 );
+	const positions = new Float32BufferAttribute(this.vertices.length * 3, 3 );
+	const colors = new Float32BufferAttribute( this.colors.length * 3, 3 );
 
 	bufferGeometry.addAttribute( 'pSize', new Float32BufferAttribute( this.pointSizes, 1 ) );
 	bufferGeometry.addAttribute( 'position', positions.copyVector3sArray( this.vertices ) );
@@ -207,4 +207,3 @@ Stations.prototype.setScale = function ( scale ) {
 
 
 export { Stations };
-

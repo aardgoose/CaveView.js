@@ -9,12 +9,13 @@ import { GlyphString } from '../core/GlyphString';
 
 import { LineBasicMaterial, MeshLambertMaterial, NoColors, VertexColors } from '../../../../three.js/src/Three';
 
-var cache = new Map();
-var viewer;
+const cache = new Map();
 
 var cursorMaterials = [];
 var depthMaterials = [];
 var perSurveyMaterials = {};
+
+var viewer;
 
 function updateMaterialCursor ( material ) {
 
@@ -30,7 +31,7 @@ function updateCursors( /* event */ ) {
 
 function updateDatumShifts( event ) {
 
-	var datumShift = event.value;
+	const datumShift = event.value;
 
 	depthMaterials.forEach( _updateMaterialDepth );
 
@@ -45,7 +46,7 @@ function updateDatumShifts( event ) {
 
 function getHeightMaterial ( type, limits ) {
 
-	var name = 'height' + type;
+	const name = 'height' + type;
 
 	var material = cache.get( name );
 
@@ -70,7 +71,7 @@ function getDepthMapMaterial ( terrain ) {
 
 function getDepthMaterial ( type, limits, terrain ) {
 
-	var name = 'depth' + type;
+	const name = 'depth' + type;
 
 	var material = cache.get( name );
 
@@ -91,7 +92,7 @@ function getDepthMaterial ( type, limits, terrain ) {
 
 function getCursorMaterial ( type, limits ) {
 
-	var name = 'cursor' + type;
+	const name = 'cursor' + type;
 
 	var material = cache.get( name );
 
@@ -119,7 +120,7 @@ function getCursorMaterial ( type, limits ) {
 
 function getDepthCursorMaterial( type, limits, terrain ) {
 
-	var name = 'depthCursor' + type;
+	const name = 'depthCursor' + type;
 
 	var material = cache.get( name );
 
@@ -183,7 +184,7 @@ function getLineMaterial () {
 
 function getGlyphMaterial ( glyphAtlasSpec, rotation, colour ) {
 
-	var name = JSON.stringify( glyphAtlasSpec ) + ':' + rotation.toString();
+	const name = JSON.stringify( glyphAtlasSpec ) + ':' + rotation.toString();
 
 	var material = cache.get( name );
 

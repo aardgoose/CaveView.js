@@ -2,18 +2,30 @@ import { CanvasTexture } from '../../../../three.js/src/Three';
 
 function GlyphAtlas ( glyphAtlasSpec ) {
 
-	var atlasSize = 512;
-	var cellSize = 32;
+	const atlasSize = 512;
+	const cellSize = 32;
+	const fontSize = 20;
+	const divisions = atlasSize / cellSize;
 
-	var canvas = document.createElement( 'canvas' );
-	var map = {};
+	const canvas = document.createElement( 'canvas' );
+	const map = {};
+
+	const glyphs = '\u2610 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%,.-_/()\'';
+	const glyphCount = glyphs.length;
+
+	if ( glyphCount > divisions * divisions ) {
+
+		console.error( 'too many glyphs for atlas' );
+		return;
+
+	}
 
 	if ( ! canvas ) console.error( 'creating canvas for glyph atlas failed' );
 
 	canvas.width  = atlasSize;
 	canvas.height = atlasSize;
 
-	var ctx = canvas.getContext( '2d' );
+	const ctx = canvas.getContext( '2d' );
 
 	if ( ! ctx ) console.error( 'cannot obtain 2D canvas' );
 
@@ -24,33 +36,17 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 	// populate with glyphs
 
-	var glyphs = '\u2610 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%,.-_/()\'';
-
-	var divisions = atlasSize / cellSize;
-
-	var glyphCount = glyphs.length;
-
-	if ( glyphCount > divisions * divisions ) {
-
-		console.error( 'too many glyphs for atlas' );
-		return;
-
-	}
-
-	var glyph;
-	var fontSize = 20;
-
 	ctx.textAlign = 'left';
 	ctx.font = fontSize + 'px ' + glyphAtlasSpec.font;
 	ctx.fillStyle = glyphAtlasSpec.color || '#ffffff';
 
-	var row, column;
+	var row, column, glyph;
 
 	for ( var i = 0; i < glyphCount; i++ ) {
 
 		glyph = glyphs.charAt( i );
 
-		var glyphWidth = ctx.measureText( glyph ).width / cellSize;
+		let glyphWidth = ctx.measureText( glyph ).width / cellSize;
 
 		row = Math.floor( i / divisions ) + 1;
 		column = i % divisions;
@@ -102,7 +98,8 @@ var AtlasFactory = {};
 
 AtlasFactory.getAtlas = function ( glyphAtlasSpec ) {
 
-	var key = JSON.stringify( glyphAtlasSpec );
+	const key = JSON.stringify( glyphAtlasSpec );
+
 	var atlas = atlasCache[ key ];
 
 	if ( atlas === undefined ) {

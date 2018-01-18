@@ -155,8 +155,8 @@ function handleChange ( event ) {
 
 function initSelectionPage () {
 
-	var titleBar = document.createElement( 'div' );
-	var page;
+	const titleBar = document.createElement( 'div' );
+
 	var depth = 0;
 	var currentHover = 0;
 
@@ -166,7 +166,7 @@ function initSelectionPage () {
 
 	if ( ! isCaveLoaded ) return;
 
-	page = new Page( 'icon_explore' );
+	const page = new Page( 'icon_explore' );
 
 	page.addHeader( 'Selection' );
 
@@ -396,7 +396,8 @@ function initSelectionPage () {
 
 function initRoutePage () {
 
-	var page = new Page( 'icon_route', _onTop, _onLeave );
+	const page = new Page( 'icon_route', _onTop, _onLeave );
+
 	var routeSelector;
 	var getNewRouteName;
 	var routeNames = routes.getRouteNames();
@@ -460,7 +461,7 @@ function initRoutePage () {
 
 function initHelpPage () {
 
-	var help = new Page( 'icon_help' );
+	const help = new Page( 'icon_help' );
 	var dl;
 
 	help.addHeader( 'Help - key commands' );
@@ -543,7 +544,7 @@ function initHelpPage () {
 
 function initInfoPage () {
 
-	var page = new Page( 'icon_info' );
+	const page = new Page( 'icon_info' );
 
 	page.addHeader( 'Information' );
 
@@ -611,7 +612,7 @@ function initSurfacePage () {
 	terrainOverlay = null;
 	terrainControls = [];
 
-	var page = new Page( 'icon_terrain' );
+	const page = new Page( 'icon_terrain' );
 
 	page.addHeader( 'Surface Features' );
 

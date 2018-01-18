@@ -9,15 +9,15 @@ import { Object3D, Vector3, Triangle, Plane, PointsMaterial, CanvasTexture } fro
 
 // preallocated objects for projected area calculation and cluster visibility checks
 
-var __a = new Vector3();
-var __b = new Vector3();
-var __c = new Vector3();
-var __d = new Vector3();
+const __a = new Vector3();
+const __b = new Vector3();
+const __c = new Vector3();
+const __d = new Vector3();
 
-var __t1 = new Triangle( __a, __b, __c );
-var __t2 = new Triangle( __a, __c, __d );
+const __t1 = new Triangle( __a, __b, __c );
+const __t2 = new Triangle( __a, __c, __d );
 
-var __plane = new Plane();
+const __plane = new Plane();
 
 var clusterMaterialCache = [];
 
@@ -27,17 +27,18 @@ function getClusterMaterial ( count ) {
 
 	if ( material !== undefined ) return material;
 
-	var markerSize = 64;
-	var halfSize = markerSize / 2;
+	const markerSize = 64;
+	const fontSize = 40;
+	const halfSize = markerSize / 2;
 
-	var canvas = document.createElement( 'canvas' );
+	const canvas = document.createElement( 'canvas' );
 
 	if ( ! canvas ) console.error( 'creating canvas for glyph atlas failed' );
 
 	canvas.width  = markerSize;
 	canvas.height = markerSize;
 
-	var ctx = canvas.getContext( '2d' );
+	const ctx = canvas.getContext( '2d' );
 
 	if ( ! ctx ) console.error( 'cannot obtain 2D canvas' );
 
@@ -46,13 +47,11 @@ function getClusterMaterial ( count ) {
 	ctx.fillStyle = 'rgba( 0, 0, 0, 0 )';
 	ctx.fillRect( 0, 0, markerSize, markerSize );
 
-	var fontSize = 40;
-
 	ctx.textAlign = 'center';
 	ctx.font = 'bold ' + fontSize + 'px helvetica,sans-serif';
 	ctx.fillStyle = '#ffffff';
 
-	var gradient = ctx.createRadialGradient( halfSize, halfSize, 30, halfSize, halfSize, 0 );
+	const gradient = ctx.createRadialGradient( halfSize, halfSize, 30, halfSize, halfSize, 0 );
 
 	gradient.addColorStop( 0.0, 'rgba( 255, 128, 0, 64 )' );
 	gradient.addColorStop( 0.3, 'rgba( 255, 200, 0, 255 )' );
@@ -104,18 +103,19 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 
 	// add marker into this quad and recurse to inner quads
 
-	var index = 0;
-	var position = marker.position;
+	if ( depth-- === 0 ) return;
+
+	const position = marker.position;
+
+	const xMid = ( this.xMin + this.xMax ) / 2;
+	const yMid = ( this.yMin + this.yMax ) / 2;
 
 	this.markers.push( marker );
 	this.centroid.add( marker.position );
 
 	this.count++;
 
-	if ( depth-- === 0 ) return;
-
-	var xMid = ( this.xMin + this.xMax ) / 2;
-	var yMid = ( this.yMin + this.yMax ) / 2;
+	var index = 0;
 
 	if ( position.x > xMid ) index += 1;
 	if ( position.y > yMid ) index += 2;
@@ -178,13 +178,13 @@ QuadTree.prototype.check = function ( cluster, target, angleFactor ) {
 
 			// test for projected area for quad containing multiple markers
 
-			var area = subQuad.projectedArea( cluster );
+			const area = subQuad.projectedArea( cluster );
 
 			// adjust for inclination to horizontal and distance from camera vs distance between camera and target
 
 			__a.subVectors( cluster.camera.position, target );
 
-			var d2Target = __a.length() * 2;
+			const d2Target = __a.length() * 2;
 
 			__a.normalize();
 
@@ -200,9 +200,9 @@ QuadTree.prototype.check = function ( cluster, target, angleFactor ) {
 
 			}
 
-			var dCluster = Math.abs( __plane.distanceToPoint( __b ) );
+			const dCluster = Math.abs( __plane.distanceToPoint( __b ) );
 
-			var depthRatio =  ( d2Target - dCluster ) / d2Target;
+			const depthRatio =  ( d2Target - dCluster ) / d2Target;
 
 			//console.log( area, 'dr', Math.round( depthRatio * 100 )/100, 'af', Math.round( angleFactor * 100 ) / 100 , '++', Math.round( depthRatio * angleFactor * 100 * 20  ) / 100);
 
@@ -227,7 +227,7 @@ QuadTree.prototype.check = function ( cluster, target, angleFactor ) {
 
 QuadTree.prototype.showMarkers = function ( visible ) {
 
-	var markers = this.markers;
+	const markers = this.markers;
 
 	// hide the indiviual markers in this quad
 
@@ -280,11 +280,11 @@ QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
 QuadTree.prototype.hideQuadMarkers = function () {
 
-	var subQuad;
+	var subQuad, i;
 
 	if ( this.quadMarker ) this.quadMarker.visible = false;
 
-	for ( var i = 0; i < 4; i++ ) {
+	for ( i = 0; i < 4; i++ ) {
 
 		subQuad = this.nodes[ i ];
 
@@ -296,9 +296,9 @@ QuadTree.prototype.hideQuadMarkers = function () {
 
 QuadTree.prototype.projectedArea = function ( cluster ) {
 
-	var camera = cluster.camera;
-	var matrixWorld = cluster.matrixWorld;
-	var zAverage = this.centroid.z / this.count;
+	const camera = cluster.camera;
+	const matrixWorld = cluster.matrixWorld;
+	const zAverage = this.centroid.z / this.count;
 
 	__a.set( this.xMin, this.yMin, zAverage ).applyMatrix4( matrixWorld ).project( camera );
 	__b.set( this.xMin, this.yMax, zAverage ).applyMatrix4( matrixWorld ).project( camera );
@@ -313,8 +313,8 @@ function ClusterMarkers ( limits, maxDepth ) {
 
 	Object3D.call( this );
 
-	var min = limits.min;
-	var max = limits.max;
+	const min = limits.min;
+	const max = limits.max;
 
 	this.maxDepth = maxDepth;
 
@@ -349,12 +349,12 @@ ClusterMarkers.prototype.onRemoved = function () {
 ClusterMarkers.prototype.addMarker = function ( position, label ) {
 
 	// create marker
-	var atlasSpec = {
+	const atlasSpec = {
 		font: 'normal helvetica,sans-serif'
 	};
 
-	var material = Materials.getGlyphMaterial( atlasSpec, Math.PI / 4 );
-	var marker = new GlyphString( label, material );
+	const material = Materials.getGlyphMaterial( atlasSpec, Math.PI / 4 );
+	const marker = new GlyphString( label, material );
 
 	marker.layers.set( FEATURE_ENTRANCES );
 	marker.position.copy( position );
@@ -369,7 +369,7 @@ ClusterMarkers.prototype.addMarker = function ( position, label ) {
 
 ClusterMarkers.prototype.cluster = function () {
 
-	var v = new Vector3();
+	const v = new Vector3();
 
 	return function cluster ( camera, target ) {
 
@@ -381,7 +381,7 @@ ClusterMarkers.prototype.cluster = function () {
 
 		this.camera = camera;
 
-		var angle = this.camera.getWorldDirection( v ).dot( upAxis );
+		const angle = this.camera.getWorldDirection( v ).dot( upAxis );
 
 		this.quadTree.check( this, target, 1 - Math.cos( angle ) );
 

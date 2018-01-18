@@ -6,10 +6,10 @@ function DepthMapMaterial ( terrain ) {
 
 	if ( terrain.boundingBox === undefined ) terrain.computeBoundingBox();
 
-	var boundingBox = terrain.boundingBox;
+	const boundingBox = terrain.boundingBox;
 
-	var minHeight = boundingBox.min.z;
-	var maxHeight = boundingBox.max.z;
+	const minHeight = boundingBox.min.z;
+	const maxHeight = boundingBox.max.z;
 
 	ShaderMaterial.call( this, {
 

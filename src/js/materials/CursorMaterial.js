@@ -44,7 +44,7 @@ CursorMaterial.prototype.constructor = CursorMaterial;
 
 CursorMaterial.prototype.setCursor = function ( value ) {
 
-	var newValue = Math.max( Math.min( value, this.halfRange ), -this.halfRange );
+	const newValue = Math.max( Math.min( value, this.halfRange ), -this.halfRange );
 
 	this.uniforms.cursor.value = newValue;
 

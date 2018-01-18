@@ -11,20 +11,20 @@ import {
 
 function LinearScale ( container, Viewer ) {
 
-	var width  = container.clientWidth;
-	var height = container.clientHeight;
+	const width  = container.clientWidth;
+	const height = container.clientHeight;
 
-	var stdWidth  = HudObject.stdWidth;
-	var stdMargin = HudObject.stdMargin;
+	const stdWidth  = HudObject.stdWidth;
+	const stdMargin = HudObject.stdMargin;
+
+	const barOffset = 3 * ( stdWidth + stdMargin );
+	const barHeight = ( height - barOffset ) / 2;
+	const barWidth  = stdWidth / 2;
+
+	const range = Viewer.maxHeight - Viewer.minHeight;
 
 	this.name = 'CV.LinearScale';
 	this.domObjects = [];
-
-	var barOffset = 3 * ( stdWidth + stdMargin );
-	var barHeight = ( height - barOffset ) / 2;
-	var barWidth  = stdWidth / 2;
-
-	var range = Viewer.maxHeight - Viewer.minHeight;
 
 	var geometry = new PlaneBufferGeometry( barWidth, range );
 

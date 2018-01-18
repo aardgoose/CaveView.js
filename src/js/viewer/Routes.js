@@ -28,13 +28,14 @@ function Routes ( metadataSource ) {
 		get: function () { return this.currentRouteName; }
 	} );
 
-	var routes = metadataSource.getRoutes();
+	const routes = metadataSource.getRoutes();
+	const routeNames = this.routeNames;
+
 	var routeName;
-	var routeNames = this.routeNames;
 
 	for ( routeName in routes ) {
 
-		var route = routes[ routeName ];
+		const route = routes[ routeName ];
 
 		routeNames.push( routeName );
 		this.routes.set( routeName, route.segments );
@@ -56,25 +57,20 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 	// determine segments between junctions and entrances/passage ends and create mapping array.
 	this.surveyTree = surveyTree;
 
-	var segmentMap = this.segmentMap;
-	var newSegment = true;
+	const segmentMap = this.segmentMap;
+	const vertexPairToSegment = this.vertexPairToSegment;
+	const segmentToInfo = this.segmentToInfo;
 
 	var station;
-
+	var newSegment = true;
 	var segment = 0;
-	var vertexPairToSegment = this.vertexPairToSegment;
-	var segmentToInfo = this.segmentToInfo;
-
-	var v1, v2;
-
-	var i, l = legs.length;
-
 	var segmentInfo;
+	var i, l = legs.length;
 
 	for ( i = 0; i < l; i = i + 2 ) {
 
-		v1 = legs[ i ];
-		v2 = legs[ i + 1 ];
+		const v1 = legs[ i ];
+		const v2 = legs[ i + 1 ];
 
 		vertexPairToSegment.push( segment );
 
@@ -167,16 +163,14 @@ Routes.prototype.addRoute = function ( routeName ) {
 
 Routes.prototype.loadRoute = function ( routeName ) {
 
-	var self = this;
+	const self = this;
 
-	var surveyTree = this.surveyTree;
-	var currentRoute = this.currentRoute;
-	var segmentMap = this.segmentMap;
+	const surveyTree = this.surveyTree;
+	const currentRoute = this.currentRoute;
+	const segmentMap = this.segmentMap;
+	const routeSegments = this.routes.get( routeName );
 
-	var map;
-	var segment;
-
-	var routeSegments = this.routes.get( routeName );
+	var map, segment, i;
 
 	if ( ! routeSegments ) {
 
@@ -187,7 +181,7 @@ Routes.prototype.loadRoute = function ( routeName ) {
 
 	currentRoute.clear();
 
-	for ( var i = 0; i < routeSegments.length; i++ ) {
+	for ( i = 0; i < routeSegments.length; i++ ) {
 
 		segment = routeSegments[ i ];
 
@@ -213,12 +207,11 @@ Routes.prototype.getCurrentRoute = function () {
 
 Routes.prototype.saveCurrent = function () {
 
-	var routeName = this.currentRouteName;
+	const routeName = this.currentRouteName;
+	const segmentMap = this.segmentMap;
+	const route = this.currentRoute;
 
 	if ( ! routeName ) return;
-
-	var segmentMap = this.segmentMap;
-	var route = this.currentRoute;
 
 	var routeSegments = [];
 
@@ -255,9 +248,9 @@ Routes.prototype.getRouteNames = function () {
 
 Routes.prototype.toggleSegment = function ( index ) {
 
-	var self = this;
-	var route = this.currentRoute;
-	var segment = this.vertexPairToSegment[ index / 2 ];
+	const self = this;
+	const route = this.currentRoute;
+	const segment = this.vertexPairToSegment[ index / 2 ];
 
 	this.adjacentSegments.clear();
 
@@ -271,7 +264,7 @@ Routes.prototype.toggleSegment = function ( index ) {
 
 		// handle adjacent segments to the latest segment toggled 'on'
 
-		var segmentInfo = this.segmentToInfo[ segment ];
+		const segmentInfo = this.segmentToInfo[ segment ];
 
 		if ( segmentInfo !== undefined ) {
 

@@ -23,11 +23,9 @@ HudObject.prototype.removeDomObjects = function () {
 
 HudObject.prototype.setVisibility = function ( visible ) {
 
-	var style;
-
 	this.visible = visible;
 
-	style = ( visible ? 'block' : 'none' );
+	var style = ( visible ? 'block' : 'none' );
 
 	for ( var i = 0, l = this.domObjects.length; i < l; i++ ) {
 

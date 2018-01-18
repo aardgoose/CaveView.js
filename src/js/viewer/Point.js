@@ -4,7 +4,7 @@ import {
 
 function Point ( material ) {
 
-	var geometry = new BufferGeometry();
+	const geometry = new BufferGeometry();
 
 	material = material || new PointsMaterial( { color: 0xffffff } );
 

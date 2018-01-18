@@ -36,38 +36,40 @@ CameraMove.prototype.constructor = CameraMove;
 
 CameraMove.prototype.prepare = function () {
 
-	var vMidpoint = new Vector3();
-	var cameraLine = new Line3();
-	var v = new Vector3();
-	var controlPoint = new Vector3();
-	var m4 = new Matrix4();
-	var q90 = new Quaternion().setFromAxisAngle( upAxis, - Math.PI / 2 );
-	var euler = new Euler();
+	const vMidpoint = new Vector3();
+	const cameraLine = new Line3();
+	const v = new Vector3();
+	const controlPoint = new Vector3();
+	const m4 = new Matrix4();
+	const q90 = new Quaternion().setFromAxisAngle( upAxis, - Math.PI / 2 );
+	const euler = new Euler();
 
 	return function prepare ( cameraTarget, endPOI ) {
 
 		if ( this.frameCount !== 0 ) return;
 
-		this.skipNext = false;
+		const camera = this.controls.object;
+		const startPOI = this.controls.target;
+		const cameraStart = this.controls.object.position;
 
-		var camera = this.controls.object;
+		this.skipNext = false;
 
 		if ( endPOI && endPOI.isBox3 ) {
 
 			// target can be a Box3 in world space
 			// setup a target position above the box3 such that it fits the screen
 
-			var size = endPOI.getSize();
+			const size = endPOI.getSize();
 			var elevation;
 
 			endPOI = endPOI.getCenter();
 
 			if ( camera.isPerspectiveCamera ) {
 
-				var tan = Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
+				const tan = Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
 
-				var e1 = 1.5 * tan * size.y / 2 + size.z;
-				var e2 = tan * camera.aspect * size.x / 2 + size.z;
+				const e1 = 1.5 * tan * size.y / 2 + size.z;
+				const e2 = tan * camera.aspect * size.x / 2 + size.z;
 
 				elevation = Math.max( e1, e2 );
 
@@ -77,8 +79,8 @@ CameraMove.prototype.prepare = function () {
 
 			} else {
 
-				var hRatio = ( camera.right - camera.left ) / size.x;
-				var vRatio = ( camera.top - camera.bottom ) / size.y;
+				const hRatio = ( camera.right - camera.left ) / size.x;
+				const vRatio = ( camera.top - camera.bottom ) / size.y;
 
 				this.targetZoom = Math.min( hRatio, vRatio );
 				elevation = 600;
@@ -95,13 +97,12 @@ CameraMove.prototype.prepare = function () {
 
 		this.moveRequired = ( this.cameraTarget !== null || this.endPOI !== null );
 
-		var startPOI = this.controls.target;
-		var cameraStart = this.controls.object.position;
-
 		if ( this.moveRequired ) {
 
 			m4.lookAt( ( cameraTarget !== null ? cameraTarget : cameraStart ), endPOI, upAxis );
+
 			this.endQuaternion.setFromRotationMatrix( m4 );
+
 			euler.setFromQuaternion( this.endQuaternion );
 
 			if ( Math.abs( euler.x ) < 0.0001 ) {
@@ -141,7 +142,7 @@ CameraMove.prototype.prepare = function () {
 
 				this.curve = new QuadraticBezierCurve3( cameraStart, controlPoint, cameraTarget );
 
-				return this.curve.getPoints( 20 );
+				return;
 
 			}
 
@@ -153,16 +154,16 @@ CameraMove.prototype.prepare = function () {
 
 CameraMove.prototype.start = function ( time ) {
 
-	var controls = this.controls;
-
 	if ( this.frameCount === 0 && ! this.skipNext ) {
+
+		const controls = this.controls;
 
 		if ( this.cameraTarget === null && this.endPOI !== null ) {
 
 			// scale time for simple pans by angle panned through
 
-			var v1 = new Vector3().subVectors( controls.target, controls.object.position );
-			var v2 = new Vector3().subVectors( this.endPOI, controls.object.position );
+			const v1 = new Vector3().subVectors( controls.target, controls.object.position );
+			const v2 = new Vector3().subVectors( this.endPOI, controls.object.position );
 
 			time = Math.round( time * Math.acos( v1.normalize().dot( v2.normalize() ) ) / Math.PI );
 
@@ -181,9 +182,9 @@ CameraMove.prototype.start = function ( time ) {
 
 CameraMove.prototype.animate = function () {
 
-	var tRemaining = --this.frameCount;
-	var controls = this.controls;
-	var curve = this.curve;
+	const tRemaining = --this.frameCount;
+	const controls = this.controls;
+	const curve = this.curve;
 
 	if ( tRemaining < 0 ) {
 
@@ -198,9 +199,9 @@ CameraMove.prototype.animate = function () {
 
 		// update camera position
 
-		var camera = controls.object;
+		const camera = controls.object;
 
-		var t =  Math.sin( ( 1 - tRemaining / this.frames ) * Math.PI / 2 );
+		const t = Math.sin( ( 1 - tRemaining / this.frames ) * Math.PI / 2 );
 
 		if ( curve !== null ) camera.position.copy( this.curve.getPoint( t ) );
 
@@ -235,7 +236,8 @@ CameraMove.prototype.animate = function () {
 
 CameraMove.prototype.endAnimation = function () {
 
-	var controls = this.controls;
+	const controls = this.controls;
+
 	this.controls.enabled = true;
 	this.moveRequired = false;
 

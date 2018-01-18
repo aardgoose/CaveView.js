@@ -4,12 +4,12 @@ import { Shaders } from '../shaders/Shaders';
 
 function PopupMaterial ( container, popupImage, rotation, colour ) {
 
-	var cos = Math.cos( rotation );
-	var sin = Math.sin( rotation );
+	const cos = Math.cos( rotation );
+	const sin = Math.sin( rotation );
 
-	var canvas = popupImage.image;
-	var rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
-	var scale = ( canvas.width * container.clientHeight ) / ( canvas.height * container.clientWidth );
+	const canvas = popupImage.image;
+	const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
+	const scale = ( canvas.width * container.clientHeight ) / ( canvas.height * container.clientWidth );
 
 	colour = colour || [ 1, 1, 1 ];
 

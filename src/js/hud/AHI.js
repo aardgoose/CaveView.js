@@ -13,8 +13,11 @@ import {
 
 function AHI ( container ) {
 
-	var stdWidth  = HudObject.stdWidth;
-	var stdMargin = HudObject.stdMargin;
+	const stdWidth  = HudObject.stdWidth;
+	const stdMargin = HudObject.stdMargin;
+
+	const c1 = getThemeColor( 'ahiSky' );
+	const c2 = getThemeColor( 'ahiEarth' );
 
 	Group.call( this );
 
@@ -38,10 +41,6 @@ function AHI ( container ) {
 	var sphereColors = new BufferAttribute( new Float32Array( sv * 3 ), 3 );
 
 	var colours = [];
-
-	var c1 = getThemeColor( 'ahiSky' );
-	var c2 = getThemeColor( 'ahiEarth' );
-
 	var i;
 
 	for ( i = 0; i < sv; i++ ) {
@@ -98,7 +97,7 @@ function AHI ( container ) {
 	this.add( globe );
 	this.add( mBar );
 
-	var offset = stdWidth + stdMargin;
+	const offset = stdWidth + stdMargin;
 
 	this.translateX( -3 * offset );
 	this.translateY( offset );

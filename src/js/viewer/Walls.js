@@ -8,7 +8,7 @@ var unselectedMaterial = new MeshLambertMaterial( { color: 0x444444, vertexColor
 
 function Walls ( layer ) {
 
-	var geometry = new BufferGeometry();
+	const geometry = new BufferGeometry();
 
 	Mesh.call( this, geometry, unselectedMaterial );
 
@@ -25,13 +25,12 @@ Walls.prototype.constructor = Walls;
 
 Walls.prototype.addWalls = function ( vertices, indices, indexRuns ) {
 
-	var geometry = this.geometry;
-
-	var position = geometry.getAttribute( 'position' );
+	const geometry = this.geometry;
+	const position = geometry.getAttribute( 'position' );
 
 	if ( position === undefined ) {
 
-		var positions = new Float32BufferAttribute( vertices.length * 3, 3 );
+		const positions = new Float32BufferAttribute( vertices.length * 3, 3 );
 
 		geometry.addAttribute( 'position', positions.copyVector3sArray( vertices ) );
 
@@ -56,11 +55,10 @@ Walls.prototype.addWalls = function ( vertices, indices, indexRuns ) {
 
 Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
-	var geometry = this.geometry;
+	const geometry = this.geometry;
+	const indexRuns = this.indexRuns;
 
 	geometry.clearGroups();
-
-	var indexRuns = this.indexRuns;
 
 	if ( selectedRuns.size && indexRuns ) {
 
@@ -112,24 +110,24 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
 Walls.prototype.cutRuns = function ( selectedRuns ) {
 
-	var indexRuns = this.indexRuns;
+	const geometry = this.geometry;
 
-	var geometry = this.geometry;
+	const vertices = geometry.getAttribute( 'position' );
+	const indices = geometry.index;
 
-	var vertices = geometry.getAttribute( 'position' );
-	var indices = geometry.index;
+	const indexRuns = this.indexRuns;
 
-	var newIndices = [];
-	var newVertices = [];
+	const newIndices = [];
+	const newVertices = [];
 
-	var newIndexRuns = [];
+	const newIndexRuns = [];
+
+	// map old vertex index values to new index values
+	const vMap = new Map();
 
 	var fp = 0;
-
-	var vMap = new Map();
-	var index, newIndex;
+	var newIndex;
 	var newVertexIndex = 0;
-	var offset;
 
 	for ( var run = 0, l = indexRuns.length; run < l; run++ ) {
 
@@ -137,27 +135,27 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 
 		if ( selectedRuns.has( indexRun.survey ) ) {
 
-			var start = indexRun.start;
-			var count = indexRun.count;
+			const start = indexRun.start;
+			const count = indexRun.count;
 
-			var end = start + count;
+			const end = start + count;
 
-			var itemSize = vertices.itemSize;
-			var oldVertices = vertices.array;
+			const itemSize = vertices.itemSize;
+			const oldVertices = vertices.array;
 
 			for ( var i = start; i < end; i++ ) {
 
-				index = indices.getX( i );
+				const index = indices.getX( i );
 
 				newIndex = vMap.get( index );
 
 				if ( newIndex === undefined ) {
 
+					const offset = index * itemSize;
+
 					newIndex = newVertexIndex++;
 
 					vMap.set( index, newIndex );
-
-					offset = index * itemSize;
 
 					newVertices.push( oldVertices[ offset ], oldVertices[ offset + 1 ], oldVertices[ offset + 2 ] );
 

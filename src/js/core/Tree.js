@@ -26,7 +26,7 @@ Tree.prototype.constructor = Tree;
 
 Tree.prototype.traverse = function ( func ) {
 
-	var children = this.children;
+	const children = this.children;
 
 	func ( this );
 
@@ -40,8 +40,7 @@ Tree.prototype.traverse = function ( func ) {
 
 Tree.prototype.traverseDepthFirst = function ( func ) {
 
-	var children = this.children;
-
+	const children = this.children;
 
 	for ( var i = 0; i < children.length; i++ ) {
 
@@ -55,7 +54,8 @@ Tree.prototype.traverseDepthFirst = function ( func ) {
 
 Tree.prototype.forEachChild = function ( func, recurse ) {
 
-	var children = this.children;
+	const children = this.children;
+
 	var child;
 
 	for ( var i = 0; i < children.length; i++ ) {
@@ -72,13 +72,12 @@ Tree.prototype.forEachChild = function ( func, recurse ) {
 
 Tree.prototype.addById = function ( name, id, parentNode, properties ) {
 
-	var node = new Tree( name, id, this.root, parentNode );
+	const node = new Tree( name, id, this.root, parentNode );
+	const root = this.root;
 
 	if ( properties !== undefined ) Object.assign( node, properties );
 
 	parentNode.children.push( node );
-
-	var root = this.root;
 
 	root.maxId = Math.max( root.maxId, id );
 
@@ -106,8 +105,8 @@ Tree.prototype.findById = function ( id ) {
 
 Tree.prototype.getByPath = function ( path ) {
 
-	var pathArray = path.split( '.' );
-	var node = this.getByPathArray( pathArray );
+	const pathArray = path.split( '.' );
+	const node = this.getByPathArray( pathArray );
 
 	return pathArray.length === 0 ? node : undefined;
 
@@ -174,8 +173,9 @@ Tree.prototype.addPath = function ( path, properties ) {
 
 Tree.prototype.getPath = function ( endNode ) {
 
+	const path = [];
+
 	var node = this;
-	var path = [];
 
 	if ( endNode === undefined ) endNode = this.root;
 
@@ -192,7 +192,7 @@ Tree.prototype.getPath = function ( endNode ) {
 
 Tree.prototype.getSubtreeIds = function ( id, idSet ) {
 
-	var node = this.findById( id );
+	const node = this.findById( id );
 
 	node.traverse( _getId );
 
@@ -206,7 +206,7 @@ Tree.prototype.getSubtreeIds = function ( id, idSet ) {
 
 Tree.prototype.getIdByPath = function ( path ) {
 
-	var node = this.getByPathArray( path );
+	const node = this.getByPathArray( path );
 
 	if ( path.length === 0 ) {
 
@@ -222,8 +222,9 @@ Tree.prototype.getIdByPath = function ( path ) {
 
 Tree.prototype.trim = function ( path ) {
 
-	var prefix = path.shift();
-	var children = this.children;
+	const prefix = path.shift();
+	const children = this.children;
+
 	var child;
 
 	if ( prefix === undefined ) return;

@@ -36,11 +36,12 @@ import {
 	DirectionalLight, HemisphereLight,
 	LinearFilter, NearestFilter, RGBAFormat,
 	OrthographicCamera, PerspectiveCamera,
-	WebGLRenderer, WebGLRenderTarget
+	WebGLRenderer, WebGLRenderTarget,
+	MOUSE
 } from '../../../../three.js/src/Three';
 
-var lightPosition = new Vector3( -1, -1, 0.5 );
-var RETILE_TIMEOUT = 150; // ms pause after last movement before attempting retiling
+const lightPosition = new Vector3( -1, -1, 0.5 );
+const RETILE_TIMEOUT = 150; // ms pause after last movement before attempting retiling
 
 var caveIsLoaded = false;
 
@@ -114,8 +115,8 @@ function init ( domID, configuration ) { // public method
 
 	setEnvironment( configuration );
 
-	var width  = container.clientWidth;
-	var height = container.clientHeight;
+	const width  = container.clientWidth;
+	const height = container.clientHeight;
 
 	renderer = new WebGLRenderer( { antialias: true } ) ;
 
@@ -149,7 +150,7 @@ function init ( domID, configuration ) { // public method
 
 	raycaster = new Raycaster();
 
-	raycaster.params.Points.threshold = 5;
+	raycaster.params.Points.threshold = 3;
 
 	renderer.clear();
 
@@ -352,7 +353,7 @@ function init ( domID, configuration ) { // public method
 
 	Materials.initCache( Viewer );
 
-	HUD.init( domID, renderer );
+	HUD.init( container, renderer );
 
 	var progress = HUD.getProgressDial();
 
@@ -474,8 +475,8 @@ function setZScale ( scale ) {
 
 	// scale - in range 0 - 1
 
-	var lastScale = Math.pow( 2, ( zScale - 0.5 ) * 4 );
-	var newScale  = Math.pow( 2, ( scale - 0.5 )  * 4 );
+	const lastScale = Math.pow( 2, ( zScale - 0.5 ) * 4 );
+	const newScale  = Math.pow( 2, ( scale - 0.5 )  * 4 );
 
 	survey.applyMatrix( new Matrix4().makeScale( 1, 1, newScale / lastScale ) );
 
@@ -555,17 +556,17 @@ function renderDepthTexture () {
 
 	if ( terrain === null || ! terrain.isLoaded() ) return;
 
-	var dim = 512;
+	const dim = 512;
 
 	// set camera frustrum to cover region/survey area
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
-	var range = limits.getSize();
+	const range = limits.getSize();
 
-	var scaleX = width / range.x;
-	var scaleY = height / range.y;
+	const scaleX = width / range.x;
+	const scaleY = height / range.y;
 
 	if ( scaleX < scaleY ) {
 
@@ -715,8 +716,8 @@ function testCameraLayer ( layerTag ) {
 
 function setViewMode ( mode, t ) {
 
-	var cameraPosition = new Vector3();
-	var tAnimate = t || 240;
+	const cameraPosition = new Vector3();
+	const tAnimate = t || 240;
 
 	switch ( mode ) {
 
@@ -910,9 +911,7 @@ function getSelectedSectionName () {
 
 function setSelectedSectionName ( name ) {
 
-
-	var id = survey.surveyTree.getIdByPath( name.split( '.' ) );
-	console.log( name, id );
+	const id = survey.surveyTree.getIdByPath( name.split( '.' ) );
 
 	selectSection( id === undefined ? 0 : id );
 
@@ -920,8 +919,8 @@ function setSelectedSectionName ( name ) {
 
 function resize () {
 
-	var width  = container.clientWidth;
-	var height = container.clientHeight;
+	const width  = container.clientWidth;
+	const height = container.clientHeight;
 
 	// adjust the renderer to the new canvas size
 	renderer.setSize( width, height );
@@ -995,9 +994,7 @@ function clearView () {
 
 function loadCave ( file, section ) {
 
-	var progress = HUD.getProgressDial();
-
-	progress.start();
+	HUD.getProgressDial().start();
 
 	if ( file instanceof File ) {
 
@@ -1015,9 +1012,7 @@ function loadCave ( file, section ) {
 
 function caveLoaded ( cave ) {
 
-	var progress = HUD.getProgressDial();
-
-	progress.end();
+	HUD.getProgressDial().end();
 
 	if ( ! cave ) {
 
@@ -1211,8 +1206,6 @@ function loadTerrainListeners () {
 
 function unloadTerrainListeners () {
 
-	if ( ! controls ) return;
-
 	controls.removeEventListener( 'end', clockStart );
 
 	clockStop();
@@ -1270,13 +1263,50 @@ function mouseDown ( event ) {
 
 		var station = survey.selectStation( picked.index );
 
+		if ( event.button === MOUSE.LEFT ) {
+
+			_showStationPopup( station );
+
+		} else if ( event.button === MOUSE.RIGHT ) {
+
+			_setStationPOI( station );
+
+		}
+
+	}
+
+	function _setStationPOI( station ) {
+
+		if ( station.p === undefined ) return;
+
+		selectSection( station.id );
+
+		cameraMove.start( 60 );
+		event.stopPropagation();
+
+		controls.enabled = false;
+		container.addEventListener( 'mouseup', _mouseUpLeft );
+
+	}
+
+	function _mouseUpLeft () {
+
+		controls.enabled = true;
+		container.removeEventListener( 'mouseup', _mouseUpLeft );
+
+	}
+
+	function _showStationPopup ( station ) {
+
 		var depth = ( terrain ) ? station.p.z - terrain.getHeight( station.p ) : null;
+
+		if ( popup !== null ) return;
 
 		popup = new StationPopup( container, station, survey, depth, formatters.station );
 
 		survey.add( popup );
 
-		container.addEventListener( 'mouseup', _mouseUp );
+		container.addEventListener( 'mouseup', _mouseUpRight );
 
 		renderView();
 
@@ -1300,11 +1330,13 @@ function mouseDown ( event ) {
 
 	}
 
-	function _mouseUp ( /* event */ ) {
+	function _mouseUpRight ( /* event */ ) {
 
-		container.removeEventListener( 'mouseup', _mouseUp );
+		container.removeEventListener( 'mouseup', _mouseUpRight );
 
 		popup.close();
+		popup = null;
+
 		survey.clearSelection();
 
 		renderView();
@@ -1377,24 +1409,26 @@ function setCameraPOI () {
 
 function setScale ( obj ) {
 
-	var width  = container.clientWidth;
-	var height = container.clientHeight;
+	const width  = container.clientWidth;
+	const height = container.clientHeight;
 
 	// scaling to compensate distortion introduced by projection ( x and y coords only ) - approx only
-	var scaleFactor = survey.scaleFactor;
+	const scaleFactor = survey.scaleFactor;
 
 	limits = survey.limits;
-	zScale = 0.5;
 
-	var range = limits.getSize();
+	const range = limits.getSize();
 
 	// initialize cursor height to be mid range of heights
 	cursorHeight = 0;
 
-	var hScale = Math.min( width / range.x, height / range.y );
-	var vScale = hScale * scaleFactor;
+	// initialize vertical scaling to none
+	zScale = 0.5;
 
-	var scale = new Vector3( hScale, hScale, vScale );
+	const hScale = Math.min( width / range.x, height / range.y );
+	const vScale = hScale * scaleFactor;
+
+	const scale = new Vector3( hScale, hScale, vScale );
 
 	obj.scale.copy( scale );
 

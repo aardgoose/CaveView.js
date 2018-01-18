@@ -8,18 +8,18 @@ import {
 
 function CursorScale ( container ) {
 
-	var width  = container.clientWidth;
-	var height = container.clientHeight;
+	const width  = container.clientWidth;
+	const height = container.clientHeight;
 
-	var stdWidth  = HudObject.stdWidth;
-	var stdMargin = HudObject.stdMargin;
+	const stdWidth  = HudObject.stdWidth;
+	const stdMargin = HudObject.stdMargin;
+
+	const barOffset = 3 * ( stdWidth + stdMargin );
+	const barHeight = ( height - barOffset ) / 2;
+	const barWidth  = stdWidth / 2;
 
 	this.name = 'CV.CursorScale';
 	this.domObjects = [];
-
-	var barOffset = 3 * ( stdWidth + stdMargin );
-	var barHeight = ( height - barOffset ) / 2;
-	var barWidth  = stdWidth / 2;
 
 	var geometry = new PlaneBufferGeometry( barWidth, barHeight );
 

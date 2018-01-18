@@ -6,12 +6,12 @@ import {
 
 import { ColourCache } from '../core/ColourCache';
 
-var unselectedMaterial = new LineBasicMaterial( { color: 0x444444, vertexColors: VertexColors } );
+const unselectedMaterial = new LineBasicMaterial( { color: 0x444444, vertexColors: VertexColors } );
 
 function onBeforeRender( renderer ) {
 
-	var stencil = renderer.state.buffers.stencil;
-	var gl = renderer.context;
+	const stencil = renderer.state.buffers.stencil;
+	const gl = renderer.context;
 
 	stencil.setTest( true );
 
@@ -21,7 +21,7 @@ function onBeforeRender( renderer ) {
 
 function onAfterRender( renderer ) {
 
-	var stencil = renderer.state.buffers.stencil;
+	const stencil = renderer.state.buffers.stencil;
 
 	stencil.setTest( false );
 
@@ -30,7 +30,7 @@ function onAfterRender( renderer ) {
 
 function Legs ( layer ) {
 
-	var geometry = new Geometry();
+	const geometry = new Geometry();
 
 	LineSegments.call( this, geometry, unselectedMaterial );
 
@@ -50,7 +50,7 @@ Legs.prototype.constructor = Legs;
 
 Legs.prototype.addLegs = function ( vertices, colors, legRuns ) {
 
-	var geometry = this.geometry;
+	const geometry = this.geometry;
 
 	if ( geometry.vertices.length === 0 ) {
 
@@ -77,30 +77,31 @@ Legs.prototype.addLegs = function ( vertices, colors, legRuns ) {
 
 Legs.prototype.cutRuns = function ( selectedRuns ) {
 
-	var legRuns = this.legRuns;
+	const legRuns = this.legRuns;
 
 	if ( ! legRuns ) return;
 
-	var geometry = this.geometry;
+	const geometry = this.geometry;
 
-	var vertices = geometry.vertices;
-	var colors   = geometry.colors;
+	const vertices = geometry.vertices;
+	const colors   = geometry.colors;
 
-	var newGeometry = new Geometry();
+	const newGeometry = new Geometry();
 
-	var newVertices = newGeometry.vertices;
-	var newColors   = newGeometry.colors;
+	const newVertices = newGeometry.vertices;
+	const newColors   = newGeometry.colors;
+
 	var newLegRuns  = [];
 
 	var vp = 0;
 
 	for ( var run = 0, l = legRuns.length; run < l; run++ ) {
 
-		var legRun = legRuns[ run ];
+		const legRun = legRuns[ run ];
 
-		var survey = legRun.survey;
-		var start  = legRun.start;
-		var end    = legRun.end;
+		const survey = legRun.survey;
+		const start  = legRun.start;
+		const end    = legRun.end;
 
 		if ( selectedRuns.has( survey ) ) {
 
@@ -143,12 +144,11 @@ Legs.prototype.cutRuns = function ( selectedRuns ) {
 
 Legs.prototype.computeStats = function () {
 
-	var stats = { maxLegLength: -Infinity, minLegLength: Infinity, legCount: 0, legLength: 0 };
-	var vertices = this.geometry.vertices;
+	const stats = { maxLegLength: -Infinity, minLegLength: Infinity, legCount: 0, legLength: 0 };
+	const vertices = this.geometry.vertices;
+	const l = vertices.length;
 
 	var vertex1, vertex2, legLength;
-
-	var l = vertices.length;
 
 	for ( var i = 0; i < l; i += 2 ) {
 
@@ -175,10 +175,9 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 
 	this.material = material;
 
-	var geometry = this.geometry;
-	var legRuns = this.legRuns;
-
-	var colors = geometry.colors;
+	const geometry = this.geometry;
+	const legRuns = this.legRuns;
+	const colors = geometry.colors;
 
 	var l, run, v;
 
@@ -186,11 +185,11 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 
 		for ( run = 0, l = legRuns.length; run < l; run++ ) {
 
-			var legRun = legRuns[ run ];
+			const legRun = legRuns[ run ];
 
-			var survey = legRun.survey;
-			var start  = legRun.start;
-			var end    = legRun.end;
+			const survey = legRun.survey;
+			const start  = legRun.start;
+			const end    = legRun.end;
 
 			if ( selectedRuns.has( survey ) ) {
 

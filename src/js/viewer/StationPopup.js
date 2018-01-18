@@ -4,11 +4,12 @@ function StationPopup ( container, station, survey, depth, formatter ) {
 
 	Popup.call( this );
 
+	const position = survey.getGeographicalPosition( station.p );
+
 	var name = station.getPath();
 	var long = false;
 	var tmp;
 	var lines = null;
-	var position = survey.getGeographicalPosition( station.p );
 
 	this.container = container;
 

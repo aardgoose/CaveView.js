@@ -757,8 +757,6 @@ function viewComplete () {
 
 	// display shading mode and initialize
 
-	Viewer.shadingMode = SHADING_HEIGHT;
-
 	surveyTree = Viewer.getSurveyTree();
 	routes = Viewer.getRoutes();
 

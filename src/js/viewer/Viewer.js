@@ -40,6 +40,24 @@ import {
 	MOUSE
 } from '../../../../three.js/src/Three';
 
+const defaultView = {
+	autoRotate: false,
+	autoRotateSpeed: 1,
+	view: VIEW_PLAN,
+	cameraType: CAMERA_PERSPECTIVE,
+	shadingMode: SHADING_HEIGHT,
+	surfaceLegs: false,
+	walls: false,
+	scraps: false,
+	splays: false,
+	stations: false,
+	stationLabels: false,
+	entrances: true,
+	terrain: true,
+	traces: false,
+	HUD: true
+};
+
 const lightPosition = new Vector3( -1, -1, 0.5 );
 const RETILE_TIMEOUT = 150; // ms pause after last movement before attempting retiling
 
@@ -84,6 +102,7 @@ var cameraMode;
 var selectedSection = 0;
 
 var controls;
+var moved = true;
 var defaultTarget = new Vector3();
 
 var cameraMove;
@@ -94,7 +113,7 @@ var popup = null;
 var formatters = {};
 //var leakWatcher;
 
-var Viewer = Object.create( EventDispatcher.prototype );
+const Viewer = Object.create( EventDispatcher.prototype );
 
 function init ( domID, configuration ) { // public method
 /*
@@ -160,7 +179,7 @@ function init ( domID, configuration ) { // public method
 
 	cameraMove = new CameraMove( controls, renderView, onCameraMoveEnd );
 
-	controls.addEventListener( 'change', function () { cameraMove.prepare( null, null ); cameraMove.start( 80 ); } );
+	controls.addEventListener( 'change', function () { moved = true; cameraMove.prepare( null, null ); cameraMove.start( 80 ); } );
 
 	controls.enableDamping = true;
 
@@ -355,7 +374,7 @@ function init ( domID, configuration ) { // public method
 
 	HUD.init( container, renderer );
 
-	var progress = HUD.getProgressDial();
+	const progress = HUD.getProgressDial();
 
 	caveLoader = new CaveLoader( caveLoaded, progress.set.bind( progress ) );
 
@@ -580,13 +599,13 @@ function renderDepthTexture () {
 
 	// render the terrain to a new canvas square canvas and extract image data
 
-	var	rtCamera = new OrthographicCamera( -width / 2, width / 2,  height / 2, -height / 2, -10000, 10000 );
+	const rtCamera = new OrthographicCamera( -width / 2, width / 2,  height / 2, -height / 2, -10000, 10000 );
 
 	rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
 
 	scene.overrideMaterial = Materials.getDepthMapMaterial( terrain );
 
-	var renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat } );
+	const renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat } );
 
 	renderTarget.texture.generateMipmaps = false;
 	renderTarget.texture.name = 'CV.DepthMapTexture';
@@ -627,7 +646,7 @@ function setCameraMode ( mode ) {
 
 	// get offset vector of current camera from target
 
-	var offset = camera.position.clone().sub( controls.target );
+	const offset = camera.position.clone().sub( controls.target );
 
 	switch ( mode ) {
 
@@ -719,6 +738,9 @@ function setViewMode ( mode, t ) {
 	const cameraPosition = new Vector3();
 	const tAnimate = t || 240;
 
+	if ( ! moved ) return;
+	moved = false;
+
 	switch ( mode ) {
 
 	case VIEW_PLAN:
@@ -769,6 +791,7 @@ function setViewMode ( mode, t ) {
 
 function setTerrainShadingMode ( mode ) {
 
+	if ( terrain === null ) return;
 	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
 
 	renderView();
@@ -830,7 +853,7 @@ function cutSection () {
 	survey.cutSection( selectedSection );
 
 	// grab a reference to prevent survey being destroyed in clearView()
-	var cutSurvey = survey;
+	const cutSurvey = survey;
 
 	// reset view
 	clearView();
@@ -849,7 +872,7 @@ function highlightSelection ( id ) {
 
 function selectSection ( id ) {
 
-	var node = survey.selectSection( id );
+	const node = survey.selectSection( id );
 
 	setShadingMode( shadingMode );
 
@@ -901,7 +924,7 @@ function getSelectedSectionName () {
 
 	} else {
 
-		var node = survey.surveyTree.findById( selectedSection );
+		const node = survey.surveyTree.findById( selectedSection );
 
 		return node === undefined ? '' : node.getPath();
 
@@ -962,6 +985,7 @@ function clearView () {
 	}
 
 	controls.enabled = false;
+	moved = true;
 
 	survey          = null;
 	terrain         = null;
@@ -969,10 +993,6 @@ function clearView () {
 	selectedSection = 0;
 	mouseMode       = MOUSE_MODE_NORMAL;
 	mouseTargets    = [];
-
-	shadingMode = SHADING_HEIGHT;
-	surfaceShadingMode = SHADING_SINGLE;
-	terrainShadingMode = SHADING_SHADED;
 
 	// remove event listeners
 
@@ -984,11 +1004,6 @@ function clearView () {
 
 	initCamera( pCamera );
 	initCamera( oCamera );
-
-	Viewer.cameraType = CAMERA_PERSPECTIVE;
-	setViewMode( VIEW_PLAN, 1 );
-
-	renderView();
 
 }
 
@@ -1027,22 +1042,17 @@ function caveLoaded ( cave ) {
 
 function setupView () {
 
-	var view = getEnvironmentValue( 'view', {} );
+	const view = getEnvironmentValue( 'view', {} );
+
 	var name;
 
-	for ( name in view ) {
+	for ( name in defaultView ) {
 
-		var prop = Object.getOwnPropertyDescriptor( Viewer, name );
+		const value = ( view[ name ] !== undefined ) ? view[ name ] : defaultView[ name ];
 
-		if ( prop === undefined || prop.enumerable ) {
+		console.log( 'setting view:', name, value );
 
-			console.log( 'unknown view setting', name );
-			continue;
-
-		}
-
-		console.log( 'setting view:', name, view[ name ] );
-		Viewer[ name ] = view[ name ];
+		Viewer[ name ] = value;
 
 	}
 
@@ -1067,13 +1077,10 @@ function loadSurvey ( newSurvey, cut ) {
 	// scene.add( new DirectionGlobe( survey ) );
 	// ClusterLegs( survey );
 
-	caveIsLoaded = true;
-
 	selectSection( 0 );
 
 	mouseTargets = survey.pointTargets;
 
-	setSurfaceShadingMode( surfaceShadingMode );
 	// set if we have independant terrain maps
 
 	if ( terrain === null ) {
@@ -1084,8 +1091,6 @@ function loadSurvey ( newSurvey, cut ) {
 	} else {
 
 		survey.add( terrain );
-		setTerrainShadingMode( terrainShadingMode );
-
 		renderDepthTexture();
 
 	}
@@ -1094,7 +1099,6 @@ function loadSurvey ( newSurvey, cut ) {
 
 	container.addEventListener( 'mousedown', mouseDown, false );
 
-	HUD.setVisibility( true );
 
 	// signal any listeners that we have a new cave
 	if ( syncTerrainLoading ) Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
@@ -1104,11 +1108,15 @@ function loadSurvey ( newSurvey, cut ) {
 
 	survey.getRoutes().addEventListener( 'changed', _routesChanged );
 
-	setViewMode( VIEW_PLAN, 1 );
+	if ( ! cut ) {
 
-	if ( syncTerrainLoading && ! cut ) setupView();
+		setupView();
 
-	renderView();
+		caveIsLoaded = true;
+
+		renderView();
+
+	}
 
 	function _terrainReady () {
 
@@ -1124,6 +1132,10 @@ function loadSurvey ( newSurvey, cut ) {
 		} else {
 
 			terrain = null;
+
+			setupView();
+			renderView();
+
 			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 		}
@@ -1145,6 +1157,7 @@ function loadSurvey ( newSurvey, cut ) {
 			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 			if ( ! cut ) setupView();
+
 			firstTiles = false;
 
 		}
@@ -1298,7 +1311,7 @@ function mouseDown ( event ) {
 
 	function _showStationPopup ( station ) {
 
-		var depth = ( terrain ) ? station.p.z - terrain.getHeight( station.p ) : null;
+		const depth = ( terrain ) ? station.p.z - terrain.getHeight( station.p ) : null;
 
 		if ( popup !== null ) return;
 
@@ -1318,7 +1331,7 @@ function mouseDown ( event ) {
 
 	function _selectSegment ( picked ) {
 
-		var routes = getRoutes();
+		const routes = getRoutes();
 
 		routes.toggleSegment( picked.index );
 
@@ -1347,8 +1360,8 @@ function mouseDown ( event ) {
 
 var renderView = function () {
 
-	var lPosition = new Vector3();
-	var rotation = new Euler();
+	const lPosition = new Vector3();
+	const rotation = new Euler();
 
 	return function renderView () {
 

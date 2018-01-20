@@ -18,17 +18,17 @@ function PopupGeometry () {
 
 	this.type = 'PopupGeometry';
 
-	var indexAttribute = new Uint16BufferAttribute( [ 0, 2, 1, 0, 3, 2 ], 1 );
+	const indexAttribute = new Uint16BufferAttribute( [ 0, 2, 1, 0, 3, 2 ], 1 );
 
 	// unit square
-	var positions = [
+	const positions = [
 		0, 0, 0,
 		0, 1, 0,
 		1, 1, 0,
 		1, 0, 0
 	];
 
-	var positionAttribute = new Float32BufferAttribute( positions, 3 );
+	const positionAttribute = new Float32BufferAttribute( positions, 3 );
 
 	this.setIndex( indexAttribute );
 	this.addAttribute( 'position', positionAttribute );
@@ -66,7 +66,7 @@ Popup.prototype.finish = function () {
 	const cellSize = 32;
 	const fontSize = 20;
 
-	const lines = this.lines;z
+	const lines = this.lines;
 	const lineCount = lines.length;
 
 	const popupWidth = 300;
@@ -98,16 +98,16 @@ Popup.prototype.finish = function () {
 	ctx.font = fontSize + 'px ' + 'normal helvetica,sans-serif';
 	ctx.fillStyle = getThemeColorCSS( 'popupText' );
 
-	var line;
+	var line, i;
 
-	for ( var i = 0; i < lineCount; i++ ) {
+	for ( i = 0; i < lineCount; i++ ) {
 
 		line = lines[ i ];
 		ctx.fillText( line, 10 , cellSize * ( i + 1 ) - 6 );
 
 	}
 
-	var material = new PopupMaterial( this.container, new CanvasTexture( canvas ), 0 );
+	const material = new PopupMaterial( this.container, new CanvasTexture( canvas ), 0 );
 
 	this.material = material;
 	this.material.needsUpdate = true;

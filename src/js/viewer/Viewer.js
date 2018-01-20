@@ -1,5 +1,4 @@
 
-
 import  {
 	VERSION,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_OFFSET,
@@ -42,7 +41,7 @@ import {
 
 const defaultView = {
 	autoRotate: false,
-	autoRotateSpeed: 1,
+	autoRotateSpeed: 0.5,
 	view: VIEW_PLAN,
 	cameraType: CAMERA_PERSPECTIVE,
 	shadingMode: SHADING_HEIGHT,
@@ -53,12 +52,21 @@ const defaultView = {
 	stations: false,
 	stationLabels: false,
 	entrances: true,
-	terrain: true,
+	terrain: false,
 	traces: false,
-	HUD: true
+	HUD: true,
+	zScale: 0.5
 };
 
+const renderer = new WebGLRenderer( { antialias: true } ) ;
+
+const defaultTarget = new Vector3();
 const lightPosition = new Vector3( -1, -1, 0.5 );
+const directionalLight = new DirectionalLight( 0xffffff );
+const scene = new Scene();
+const mouse = new Vector2();
+const raycaster = new Raycaster();
+
 const RETILE_TIMEOUT = 150; // ms pause after last movement before attempting retiling
 
 var caveIsLoaded = false;
@@ -67,22 +75,15 @@ var container;
 
 // THREE.js objects
 
-var renderer;
-
-var scene = new Scene();
-
 var oCamera;
 var pCamera;
 
 var camera;
 
-var mouse = new Vector2();
 var mouseMode = MOUSE_MODE_NORMAL;
 var mouseTargets = [];
 
-var raycaster;
 var terrain = null;
-var directionalLight;
 var survey;
 var limits = null;
 var stats = {};
@@ -102,8 +103,7 @@ var cameraMode;
 var selectedSection = 0;
 
 var controls;
-var moved = true;
-var defaultTarget = new Vector3();
+var renderRequired = false;
 
 var cameraMove;
 
@@ -137,8 +137,6 @@ function init ( domID, configuration ) { // public method
 	const width  = container.clientWidth;
 	const height = container.clientHeight;
 
-	renderer = new WebGLRenderer( { antialias: true } ) ;
-
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setClearColor( getThemeValue( 'background' ) );
@@ -159,15 +157,12 @@ function init ( domID, configuration ) { // public method
 	scene.add( pCamera );
 	scene.add( oCamera );
 
-	directionalLight = new DirectionalLight( 0xffffff );
 	directionalLight.position.copy( lightPosition );
 
 	scene.add( directionalLight );
 
 	scene.add( new HemisphereLight( 0xffffff, 0xffffff, 0.3 ) );
 	//	scene.autoUpdate = false; // FIXME - update entrance labels/clusters manually
-
-	raycaster = new Raycaster();
 
 	raycaster.params.Points.threshold = 3;
 
@@ -179,7 +174,7 @@ function init ( domID, configuration ) { // public method
 
 	cameraMove = new CameraMove( controls, renderView, onCameraMoveEnd );
 
-	controls.addEventListener( 'change', function () { moved = true; cameraMove.prepare( null, null ); cameraMove.start( 80 ); } );
+	controls.addEventListener( 'change', function () { cameraMove.prepare( null, null ); cameraMove.start( 80 ); } );
 
 	controls.enableDamping = true;
 
@@ -736,10 +731,6 @@ function testCameraLayer ( layerTag ) {
 function setViewMode ( mode, t ) {
 
 	const cameraPosition = new Vector3();
-	const tAnimate = t || 240;
-
-	if ( ! moved ) return;
-	moved = false;
 
 	switch ( mode ) {
 
@@ -785,7 +776,7 @@ function setViewMode ( mode, t ) {
 
 	cameraMove.cancel();
 	cameraMove.prepare( cameraPosition, defaultTarget );
-	cameraMove.start( tAnimate );
+	cameraMove.start( renderRequired ? t || 240 : 1 );
 
 }
 
@@ -985,7 +976,6 @@ function clearView () {
 	}
 
 	controls.enabled = false;
-	moved = true;
 
 	survey          = null;
 	terrain         = null;
@@ -1046,6 +1036,9 @@ function setupView () {
 
 	var name;
 
+	// don't render until all settings made.
+	renderRequired = false;
+
 	for ( name in defaultView ) {
 
 		const value = ( view[ name ] !== undefined ) ? view[ name ] : defaultView[ name ];
@@ -1056,12 +1049,17 @@ function setupView () {
 
 	}
 
+	renderRequired = true;
+
 }
 
 function loadSurvey ( newSurvey, cut ) {
 
 	var syncTerrainLoading = true;
 	var firstTiles = true;
+
+	// only render after first SetupView()
+	renderRequired = false;
 
 	survey = newSurvey;
 
@@ -1090,7 +1088,11 @@ function loadSurvey ( newSurvey, cut ) {
 
 	} else {
 
+
 		survey.add( terrain );
+
+		setTerrainShadingMode( terrainShadingMode );
+
 		renderDepthTexture();
 
 	}
@@ -1098,7 +1100,6 @@ function loadSurvey ( newSurvey, cut ) {
 	scene.matrixAutoUpdate = false;
 
 	container.addEventListener( 'mousedown', mouseDown, false );
-
 
 	// signal any listeners that we have a new cave
 	if ( syncTerrainLoading ) Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
@@ -1179,7 +1180,6 @@ function loadSurvey ( newSurvey, cut ) {
 	function _routesChanged ( /* event */ ) {
 
 		setShadingMode( shadingMode );
-		renderView();
 
 	}
 
@@ -1187,7 +1187,7 @@ function loadSurvey ( newSurvey, cut ) {
 
 function loadTerrain ( mode ) {
 
-	if ( terrain.isLoaded() ) {
+	if ( terrain !== null && terrain.isLoaded() ) {
 
 		if ( mode ) {
 
@@ -1364,6 +1364,8 @@ var renderView = function () {
 	const rotation = new Euler();
 
 	return function renderView () {
+
+		if ( ! renderRequired ) return;
 
 		renderer.clear();
 

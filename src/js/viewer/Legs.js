@@ -92,7 +92,6 @@ Legs.prototype.cutRuns = function ( selectedRuns ) {
 	const newColors   = newGeometry.colors;
 
 	var newLegRuns  = [];
-
 	var vp = 0;
 
 	for ( var run = 0, l = legRuns.length; run < l; run++ ) {

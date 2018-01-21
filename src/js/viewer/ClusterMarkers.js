@@ -19,7 +19,7 @@ const __t2 = new Triangle( __a, __c, __d );
 
 const __plane = new Plane();
 
-var clusterMaterialCache = [];
+const clusterMaterialCache = [];
 
 function getClusterMaterial ( count ) {
 
@@ -158,9 +158,9 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 
 QuadTree.prototype.check = function ( cluster, target, angleFactor ) {
 
-	var subQuad;
+	var subQuad, i;
 
-	for ( var i = 0; i < 4; i++ ) {
+	for ( i = 0; i < 4; i++ ) {
 
 		subQuad = this.nodes[ i ];
 

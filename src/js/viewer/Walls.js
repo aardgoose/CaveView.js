@@ -4,7 +4,7 @@ import {
 	MeshLambertMaterial
 } from '../../../../three.js/src/Three';
 
-var unselectedMaterial = new MeshLambertMaterial( { color: 0x444444, vertexColors: FaceColors } );
+const unselectedMaterial = new MeshLambertMaterial( { color: 0x444444, vertexColors: FaceColors } );
 
 function Walls ( layer ) {
 
@@ -125,11 +125,11 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 	// map old vertex index values to new index values
 	const vMap = new Map();
 
-	var fp = 0;
+	var i, run, l, fp = 0;
 	var newIndex;
 	var newVertexIndex = 0;
 
-	for ( var run = 0, l = indexRuns.length; run < l; run++ ) {
+	for ( run = 0, l = indexRuns.length; run < l; run++ ) {
 
 		const indexRun = indexRuns[ run ];
 
@@ -143,7 +143,7 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 			const itemSize = vertices.itemSize;
 			const oldVertices = vertices.array;
 
-			for ( var i = start; i < end; i++ ) {
+			for ( i = start; i < end; i++ ) {
 
 				const index = indices.getX( i );
 

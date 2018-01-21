@@ -1,6 +1,14 @@
 
+import { lang_en } from './default-lang';
 
-function Page( id, onTop, onLeave ) {
+x18n.register( 'en', lang_en );
+x18n.set( 'en' );
+
+const t = x18n.t;
+
+console.log( t( 'settings.visibility.hud' ) );
+
+function Page( id, x18nPrefix, onTop, onLeave ) {
 
 	const tab  = document.createElement( 'div' );
 	const page = document.createElement( 'div' );
@@ -61,6 +69,7 @@ function Page( id, onTop, onLeave ) {
 	this.page = page;
 	this.onLeave = onLeave;
 	this.slide = undefined;
+	this.x18nPrefix = x18nPrefix + '.';
 
 	function _closeFrame ( /* event */ ) {
 
@@ -184,6 +193,14 @@ Page.handleChange = function ( event ) {
 
 Page.prototype.constructor = Page;
 
+Page.prototype.i18n = function ( text ) {
+
+	const tr = x18n.t( this.x18nPrefix + text );
+
+	return ( tr === undefined ) ? text : tr;
+
+};
+
 Page.prototype.addListener = function ( obj, name, handler ) {
 
 	Page.addListener( obj, name, handler ); // redirect to :: method - allows later rework to page specific destruction
@@ -303,7 +320,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 			const opt = document.createElement( 'option' );
 
-			opt.text  = p;
+			opt.text  = this.i18n( p );
 			opt.value = obj[ p ];
 
 			if ( opt.value == trgObj[ property ] ) opt.selected = true;
@@ -351,7 +368,7 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 	cb.checked = obj[ property ];
 	cb.id = id;
 
-	label.textContent = title;
+	label.textContent = this.i18n( title );
 	label.htmlFor = id;
 
 	this.addListener( cb, 'change', _checkboxChanged );

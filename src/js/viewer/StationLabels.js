@@ -81,13 +81,10 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 	const splaysVisible = camera.layers.mask & 1 << LEG_SPLAY;
 	const children = this.children;
 
-	var label, limit, hitCount;
-
 	for ( var i = 0, l = children.length; i < l; i++ ) {
 
-		label = children[ i ];
-		hitCount = label.station.hitCount;
-
+		const label = children[ i ];
+		const hitCount = label.station.hitCount;
 
 		// only show labels for splay end stations if splays visible
 
@@ -98,8 +95,7 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 		} else {
 
 			// show labels for network vertices at greater distance than intermediate stations
-			limit = ( hitCount < 3 ) ? 5000 : 40000;
-			label.visible = ( label.position.distanceToSquared( cameraPosition ) < limit );
+			label.visible = ( label.position.distanceToSquared( cameraPosition ) < ( hitCount < 3 ) ? 5000 : 40000 );
 
 			if ( label.visible && ! label.isGlyphString ) {
 

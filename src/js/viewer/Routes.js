@@ -60,12 +60,13 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 	const segmentMap = this.segmentMap;
 	const vertexPairToSegment = this.vertexPairToSegment;
 	const segmentToInfo = this.segmentToInfo;
+	const l = legs.length;
 
 	var station;
 	var newSegment = true;
 	var segment = 0;
 	var segmentInfo;
-	var i, l = legs.length;
+	var i;
 
 	for ( i = 0; i < l; i = i + 2 ) {
 

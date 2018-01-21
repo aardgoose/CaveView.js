@@ -98,12 +98,11 @@ Popup.prototype.finish = function () {
 	ctx.font = fontSize + 'px ' + 'normal helvetica,sans-serif';
 	ctx.fillStyle = getThemeColorCSS( 'popupText' );
 
-	var line, i;
+	var i;
 
 	for ( i = 0; i < lineCount; i++ ) {
 
-		line = lines[ i ];
-		ctx.fillText( line, 10 , cellSize * ( i + 1 ) - 6 );
+		ctx.fillText( lines[ i ], 10 , cellSize * ( i + 1 ) - 6 );
 
 	}
 

@@ -54,8 +54,7 @@ const defaultView = {
 	entrances: true,
 	terrain: false,
 	traces: false,
-	HUD: true,
-	zScale: 0.5
+	HUD: true
 };
 
 const renderer = new WebGLRenderer( { antialias: true } ) ;
@@ -66,6 +65,8 @@ const directionalLight = new DirectionalLight( 0xffffff );
 const scene = new Scene();
 const mouse = new Vector2();
 const raycaster = new Raycaster();
+
+const formatters = {};
 
 const RETILE_TIMEOUT = 150; // ms pause after last movement before attempting retiling
 
@@ -110,7 +111,7 @@ var cameraMove;
 var lastActivityTime = 0;
 
 var popup = null;
-var formatters = {};
+
 //var leakWatcher;
 
 const Viewer = Object.create( EventDispatcher.prototype );
@@ -193,6 +194,7 @@ function init ( domID, configuration ) { // public method
 			set: loadTerrain
 		},
 
+
 		'terrainShading': {
 			writeable: true,
 			get: function () { return terrainShadingMode; },
@@ -225,7 +227,7 @@ function init ( domID, configuration ) { // public method
 
 		'terrainOpacity': {
 			writeable: true,
-			get: function () { return terrain.getOpacity(); },
+			get: function () { return ( terrain !== null ) ? terrain.getOpacity() : 0; },
 			set: setTerrainOpacity
 		},
 
@@ -528,6 +530,8 @@ function setCursorHeight ( x ) {
 
 function setTerrainOpacity ( x ) {
 
+	if ( terrain === null ) return;
+
 	terrain.setOpacity( x );
 	Viewer.dispatchEvent( { type: 'change', name: 'terrainOpacity' } );
 
@@ -547,22 +551,6 @@ function applyTerrainDatumShift( x ) {
 }
 
 function showDeveloperInfo( /* x */ ) {
-
-//	console.log( renderer.info );
-/*
-	var info = renderer.getResourceInfo();
-
-	if ( leakWatcher === undefined ) {
-
-		leakWatcher = new LeakWatch();
-		leakWatcher.setBaseline( scene, info );
-
-	} else {
-
-		leakWatcher.compare( scene, info );
-
-	}
-*/
 
 }
 
@@ -808,6 +796,8 @@ function setSurfaceShadingMode ( mode ) {
 
 function setTerrainOverlay ( overlayName ) {
 
+	if ( terrain ===  null ) return;
+
 	if ( terrainShadingMode === SHADING_OVERLAY ) {
 
 		activeOverlay = overlayName;
@@ -871,7 +861,7 @@ function selectSection ( id ) {
 
 	if ( id === 0 ) {
 
-		var cameraPosition = new Vector3();
+		const cameraPosition = new Vector3();
 
 		// reset camera to start position
 		cameraPosition.set( 0, 0, CAMERA_OFFSET ).add( defaultTarget );
@@ -890,7 +880,7 @@ function selectSection ( id ) {
 		if ( node.boundingBox === undefined ) return;
 		// a section of the survey rather than a station
 
-		var boundingBox = node.boundingBox.clone();
+		const boundingBox = node.boundingBox.clone();
 
 		cameraMove.prepare( null, boundingBox.applyMatrix4( survey.matrixWorld ) );
 
@@ -1239,16 +1229,17 @@ function clockStop ( /* event */ ) {
 
 function mouseDown ( event ) {
 
-	var picked, result;
+	var picked, result, i;
 
 	mouse.x =   ( event.clientX / container.clientWidth  ) * 2 - 1;
 	mouse.y = - ( event.clientY / container.clientHeight ) * 2 + 1;
 
 	raycaster.setFromCamera( mouse, camera );
 
-	var intersects = raycaster.intersectObjects( mouseTargets, false );
+	const intersects = raycaster.intersectObjects( mouseTargets, false );
+	const l = intersects.length;
 
-	for ( var i = 0, l = intersects.length; i < l; i++ ) {
+	for ( i = 0; i < l; i++ ) {
 
 		picked = intersects[ i ];
 
@@ -1274,7 +1265,7 @@ function mouseDown ( event ) {
 
 	function _selectStation ( picked ) {
 
-		var station = survey.selectStation( picked.index );
+		const station = survey.selectStation( picked.index );
 
 		if ( event.button === MOUSE.LEFT ) {
 

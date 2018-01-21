@@ -125,7 +125,7 @@ function Survey ( cave ) {
 		p1.z = 0;
 		p2.z = 0;
 
-		var l1 = p1.distanceTo( p2 );
+		const l1 = p1.distanceTo( p2 );
 
 		const transform = proj4( survey.targetCRS, survey.sourceCRS ); // eslint-disable-line no-undef
 
@@ -196,15 +196,13 @@ Survey.prototype.loadEntrances = function () {
 
 	function _addEntrance( node ) {
 
-		var name;
-
 		if ( node.type !== STATION_ENTRANCE ) return;
 
 		const entranceInfo = entrances[ node.getPath() ];
 
 		// if ( entranceInfo === undefined || entranceInfo.name == undefined ) console.log( node.getPath( endNode ) );
 
-		name = ( entranceInfo !== undefined && entranceInfo.name !== undefined ) ? name = entranceInfo.name : name = node.getPath( endNode );
+		const name = ( entranceInfo !== undefined && entranceInfo.name !== undefined ) ? entranceInfo.name : node.getPath( endNode );
 
 		if ( name === '-skip' ) return;
 
@@ -216,8 +214,7 @@ Survey.prototype.loadEntrances = function () {
 
 Survey.prototype.calibrateTerrain = function ( terrain ) {
 
-	var s1 = 0, s2 = 0;
-	var n = 0;
+	var s1 = 0, s2 = 0, n = 0;
 
 	// find height difference between all entrance locations and terrain
 	// find average differences and use to alter height of terrain
@@ -228,7 +225,7 @@ Survey.prototype.calibrateTerrain = function ( terrain ) {
 
 		// standard deviation
 
-		var sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
+		let sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
 
 		// simple average
 
@@ -325,7 +322,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			for ( i = 0, l = scrap.faces.length; i < l; i++ ) {
 
-				var face = scrap.faces[ i ];
+				const face = scrap.faces[ i ];
 
 				indices.push( face[ 0 ] + vertexOffset, face[ 2 ] + vertexOffset, face[ 1 ] + vertexOffset );
 
@@ -363,9 +360,9 @@ Survey.prototype.loadCave = function ( cave ) {
 		var ul1, ur1, dl1, dr1, ul2, ur2, dl2, dr2;
 		var i, j;
 
-		var cross = new Vector3();
-		var lastCross = new Vector3();
-		var nextCross = new Vector3();
+		const cross = new Vector3();
+		const lastCross = new Vector3();
+		const nextCross = new Vector3();
 
 		var run = null;
 
@@ -669,16 +666,13 @@ Survey.prototype.loadCave = function ( cave ) {
 		typeLegs[ LEG_SURFACE ] = { vertices: [], colors: [], runs: [] };
 		typeLegs[ LEG_SPLAY   ] = { vertices: [], colors: [], runs: [] };
 
-		var legs;
-
+		var legs, run, i;
 		var currentType;
 		var currentSurvey;
 
-		var run;
-
 		if ( l === 0 ) return null;
 
-		for ( var i = 0; i < l; i++ ) {
+		for ( i = 0; i < l; i++ ) {
 
 			const leg = srcSegments[ i ];
 
@@ -937,14 +931,14 @@ Survey.prototype.loadDyeTraces = function () {
 	const surveyTree = this.surveyTree;
 	const dyeTraces = new DyeTraces();
 
-	var i,l;
+	var i, l;
 
 	for ( i = 0, l = traces.length; i < l; i++ ) {
 
 		const trace = traces[ i ];
 
-		var startStation = surveyTree.getByPath( trace.start );
-		var endStation   = surveyTree.getByPath( trace.end );
+		const startStation = surveyTree.getByPath( trace.start );
+		const endStation   = surveyTree.getByPath( trace.end );
 
 		if ( endStation === undefined || startStation === undefined ) continue;
 

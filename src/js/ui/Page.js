@@ -257,7 +257,7 @@ Page.prototype.addHeader = function ( text ) {
 	const div = document.createElement( 'div' );
 
 	div.classList.add( 'header' );
-	div.textContent = text;
+	div.textContent = this.i18n( text );
 
 	this.page.appendChild( div );
 
@@ -333,7 +333,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 	this.addListener( select, 'change', function ( event ) { Page.inHandler = true; trgObj[ property ] = event.target.value; Page.inHandler = false; } );
 
-	label.textContent = title;
+	label.textContent = this.i18n( title );
 
 	Page.controls[ property ] = select;
 
@@ -412,7 +412,7 @@ Page.prototype.addRange = function ( title, obj, property ) {
 	this.addListener( range, 'input', _rangeChanged );
 	this.addListener( range, 'change', _rangeChanged ); // for IE11 support
 
-	label.textContent = title;
+	label.textContent = this.i18n( title );
 
 	Page.controls[ property ] = range;
 
@@ -523,7 +523,7 @@ Page.prototype.addButton = function ( title, func ) {
 	const button = document.createElement( 'button' );
 
 	button.type = 'button';
-	button.textContent = title;
+	button.textContent = this.i18n( title );
 
 	this.addListener( button, 'click', func );
 
@@ -539,7 +539,7 @@ Page.prototype.addTextBox = function ( labelText, placeholder, getResultGetter )
 	const div = document.createElement( 'div' );
 	const label = document.createElement( 'label' );
 
-	label.textContent = labelText;
+	label.textContent = this.i18n( labelText );
 
 	const input = document.createElement( 'input' );
 
@@ -576,7 +576,7 @@ Page.prototype.addDownloadButton = function ( title, urlProvider, fileName ) {
 
 	this.addListener( a, 'click', _setHref );
 
-	a.textContent = title;
+	a.textContent = this.i18n( title );
 	a.type = 'download';
 	a.download = fileName;
 	a.href = 'javascript:void();';

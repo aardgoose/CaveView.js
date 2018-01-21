@@ -31,41 +31,41 @@ var routeControls = [];
 
 var terrainOverlay = null;
 
-var legShadingModes = {
-	'by height':          SHADING_HEIGHT,
-	'by leg length':      SHADING_LENGTH,
-	'by leg inclination': SHADING_INCLINATION,
-	'height cursor':      SHADING_CURSOR,
-	'fixed':              SHADING_SINGLE,
-	'survey':             SHADING_SURVEY,
-	'route':              SHADING_PATH
+const legShadingModes = {
+	'shading.height':        SHADING_HEIGHT,
+	'shading.length':        SHADING_LENGTH,
+	'shading.inclination':   SHADING_INCLINATION,
+	'shading.height_cursor': SHADING_CURSOR,
+	'shading.fixed':         SHADING_SINGLE,
+	'shading.survey':        SHADING_SURVEY,
+	'shading.route':         SHADING_PATH
 //	'axis':               SHADING_AXIS
 };
 
-var surfaceShadingModes = {
-	'by height':          SHADING_HEIGHT,
-	'by leg inclination': SHADING_INCLINATION,
-	'height cursor':      SHADING_CURSOR,
-	'fixed':              SHADING_SINGLE
+const surfaceShadingModes = {
+	'surface.shading.height':        SHADING_HEIGHT,
+	'surface.shading.inclination':   SHADING_INCLINATION,
+	'surface.shading.height_cursor': SHADING_CURSOR,
+	'surface.shading.fixed':         SHADING_SINGLE
 };
 
 var terrainShadingModes = {
-	'Relief shading':     SHADING_SHADED,
-	'by height':          SHADING_HEIGHT
+	'terrain.shading.relief': SHADING_SHADED,
+	'terrain.shading.height': SHADING_HEIGHT
 };
 
-var cameraViews = {
-	'<select viewpoint>': VIEW_NONE,
-	'Plan':               VIEW_PLAN,
-	'N Elevation':        VIEW_ELEVATION_N,
-	'S Elevation':        VIEW_ELEVATION_S,
-	'E Elevation':        VIEW_ELEVATION_E,
-	'W Elevation':        VIEW_ELEVATION_W
+const cameraViews = {
+	'view.viewpoints.none':        VIEW_NONE,
+	'view.viewpoints.plan':        VIEW_PLAN,
+	'view.viewpoints.elevation_n': VIEW_ELEVATION_N,
+	'view.viewpoints.elevation_s': VIEW_ELEVATION_S,
+	'view.viewpoints.elevation_e': VIEW_ELEVATION_E,
+	'view.viewpoints.elevation_w': VIEW_ELEVATION_W
 };
 
-var cameraModes = {
-	'Orthographic': CAMERA_ORTHOGRAPHIC,
-	'Perspective':  CAMERA_PERSPECTIVE
+const cameraModes = {
+	'view.camera.orthographic': CAMERA_ORTHOGRAPHIC,
+	'view.camera.perspective':  CAMERA_PERSPECTIVE
 };
 
 function init ( domID, configuration ) { // public method
@@ -165,7 +165,7 @@ function initSelectionPage () {
 
 	if ( ! isCaveLoaded ) return;
 
-	const page = new Page( 'icon_explore' );
+	const page = new Page( 'icon_explore', 'explore' );
 
 	page.addHeader( 'Selection' );
 
@@ -394,26 +394,26 @@ function initSelectionPage () {
 
 function initRoutePage () {
 
-	const page = new Page( 'icon_route', _onTop, _onLeave );
+	const page = new Page( 'icon_route', 'routes', _onTop, _onLeave );
 
 	var routeSelector;
 	var getNewRouteName;
 	var routeNames = routes.getRouteNames();
 	var lastShadingMode;
 
-	page.addHeader( 'Routes' );
+	page.addHeader( 'routes.header' );
 
-	page.addCheckbox( 'Edit Routes', Viewer, 'routeEdit' );
+	page.addCheckbox( 'routes.edit', Viewer, 'routeEdit' );
 
-	routeSelector = page.addSelect( 'Current Route', routeNames, routes, 'setRoute' );
+	routeSelector = page.addSelect( 'routes.current', routeNames, routes, 'setRoute' );
 
-	routeControls.push( page.addButton( 'Save', _saveRoute ) );
+	routeControls.push( page.addButton( 'routes.save', _saveRoute ) );
 
-	routeControls.push( page.addTextBox( 'New Route', '---', function ( getter ) { getNewRouteName = getter; } ) );
+	routeControls.push( page.addTextBox( 'routes.new', '---', function ( getter ) { getNewRouteName = getter; } ) );
 
-	routeControls.push( page.addButton( 'Add', _newRoute ) );
+	routeControls.push( page.addButton( 'routes.add', _newRoute ) );
 
-	routeControls.push( page.addDownloadButton( 'Download', Viewer.getMetadata, replaceExtension( loadedFile, 'json' ) ) );
+	routeControls.push( page.addDownloadButton( 'routes.download', Viewer.getMetadata, replaceExtension( loadedFile, 'json' ) ) );
 
 	setControlsVisibility( routeControls, false );
 
@@ -459,7 +459,7 @@ function initRoutePage () {
 
 function initHelpPage () {
 
-	const help = new Page( 'icon_help' );
+	const help = new Page( 'icon_help', 'help' );
 	var dl;
 
 	help.addHeader( 'Help - key commands' );
@@ -542,7 +542,7 @@ function initHelpPage () {
 
 function initInfoPage () {
 
-	const page = new Page( 'icon_info' );
+	const page = new Page( 'icon_info', 'info' );
 
 	page.addHeader( 'Information' );
 
@@ -563,44 +563,44 @@ function initSettingsPage () {
 
 	if ( Viewer.hasTerrain ) {
 
-		legShadingModesActive[ 'depth' ] = SHADING_DEPTH;
-		legShadingModesActive[ 'depth cursor' ] = SHADING_DEPTH_CURSOR;
+		legShadingModesActive[ 'shading.depth' ] = SHADING_DEPTH;
+		legShadingModesActive[ 'shading.depth_cursor' ] = SHADING_DEPTH_CURSOR;
 
 	}
 
-	const page = new Page( 'icon_settings' );
+	const page = new Page( 'icon_settings', 'settings' );
 
-	page.addHeader( 'Survey' );
+	page.addHeader( 'survey.header' );
 
-	if ( caveList.length > 0 ) page.addSelect( 'File', caveList, guiState, 'file' );
+	if ( caveList.length > 0 ) page.addSelect( 'survey.caption', caveList, guiState, 'file' );
 
-	page.addHeader( 'View' );
+	page.addHeader( 'view.header' );
 
-	page.addSelect( 'Camera Type', cameraModes, Viewer, 'cameraType' );
-	page.addSelect( 'View', cameraViews, Viewer, 'view' );
+	page.addSelect( 'view.camera.caption', cameraModes, Viewer, 'cameraType' );
+	page.addSelect( 'view.viewpoints.caption', cameraViews, Viewer, 'view' );
 
-	page.addRange( 'Vertical scaling', Viewer, 'zScale' );
+	page.addRange( 'view.vertical_scaling', Viewer, 'zScale' );
 
-	page.addCheckbox( 'Auto Rotate', Viewer, 'autoRotate' );
+	page.addCheckbox( 'view.autorotate', Viewer, 'autoRotate' );
 
-	page.addRange( 'Rotation Speed', Viewer, 'autoRotateSpeed' );
+	page.addRange( 'view.rotation_speed', Viewer, 'autoRotateSpeed' );
 
-	page.addHeader( 'Shading' );
+	page.addHeader( 'shading.header' );
 
-	page.addSelect( 'Underground Legs', legShadingModesActive, Viewer, 'shadingMode' );
+	page.addSelect( 'shading.caption', legShadingModesActive, Viewer, 'shadingMode' );
 
-	page.addHeader( 'Visibility' );
+	page.addHeader( 'visibility.header' );
 
-	if ( Viewer.hasEntrances     ) page.addCheckbox( 'Entrances', Viewer, 'entrances' );
-	if ( Viewer.hasStations      ) page.addCheckbox( 'Stations', Viewer, 'stations' );
-	if ( Viewer.hasStationLabels ) page.addCheckbox( 'Station Labels', Viewer, 'stationLabels' );
-	if ( Viewer.hasSplays        ) page.addCheckbox( 'Splay Legs', Viewer, 'splays' );
-	if ( Viewer.hasWalls         ) page.addCheckbox( 'Walls (LRUD)', Viewer, 'walls' );
-	if ( Viewer.hasScraps        ) page.addCheckbox( 'Scraps', Viewer, 'scraps' );
-	if ( Viewer.hasTraces        ) page.addCheckbox( 'Dye Traces', Viewer, 'traces' );
+	if ( Viewer.hasEntrances     ) page.addCheckbox( 'visibility.entrances', Viewer, 'entrances' );
+	if ( Viewer.hasStations      ) page.addCheckbox( 'visibility.stations', Viewer, 'stations' );
+	if ( Viewer.hasStationLabels ) page.addCheckbox( 'visibility.labels', Viewer, 'stationLabels' );
+	if ( Viewer.hasSplays        ) page.addCheckbox( 'visibility.splays', Viewer, 'splays' );
+	if ( Viewer.hasWalls         ) page.addCheckbox( 'visibility.walls', Viewer, 'walls' );
+	if ( Viewer.hasScraps        ) page.addCheckbox( 'visibility.scraps', Viewer, 'scraps' );
+	if ( Viewer.hasTraces        ) page.addCheckbox( 'visibility.traces', Viewer, 'traces' );
 
-	page.addCheckbox( 'Indicators', Viewer, 'HUD' );
-	page.addCheckbox( 'Bounding Box', Viewer, 'box' );
+	page.addCheckbox( 'visibility.hud', Viewer, 'HUD' );
+	page.addCheckbox( 'visibility.box', Viewer, 'box' );
 
 }
 
@@ -610,14 +610,14 @@ function initSurfacePage () {
 	terrainOverlay = null;
 	terrainControls = [];
 
-	const page = new Page( 'icon_terrain' );
+	const page = new Page( 'icon_terrain', 'surface' );
 
 	page.addHeader( 'Surface Features' );
 
 	if ( Viewer.hasSurfaceLegs ) {
 
-		page.addCheckbox( 'Surface Legs', Viewer, 'surfaceLegs' );
-		page.addSelect( 'Leg Shading', surfaceShadingModes, Viewer, 'surfaceShading' );
+		page.addCheckbox( 'surface.legs', Viewer, 'surfaceLegs' );
+		page.addSelect( 'surface.shading.caption', surfaceShadingModes, Viewer, 'surfaceShading' );
 
 	}
 
@@ -625,12 +625,12 @@ function initSurfacePage () {
 
 		page.addHeader( 'Terrain' );
 
-		page.addCheckbox( 'Terrain', Viewer, 'terrain' );
+		page.addCheckbox( 'terrain.terrain', Viewer, 'terrain' );
 
 		const overlays = Viewer.terrainOverlays;
 		const terrainShadingModesActive = Object.assign( {}, terrainShadingModes );
 
-		if ( overlays.length > 0 ) terrainShadingModesActive[ 'map overlay' ] = SHADING_OVERLAY;
+		if ( overlays.length > 0 ) terrainShadingModesActive[ 'terrain.shading.overlay' ] = SHADING_OVERLAY;
 
 		terrainControls.push( page.addSelect( 'Shading', terrainShadingModesActive, Viewer, 'terrainShading' ) );
 
@@ -641,9 +641,9 @@ function initSurfacePage () {
 
 		}
 
-		terrainControls.push( page.addRange( 'Terrain opacity', Viewer, 'terrainOpacity' ) );
+		terrainControls.push( page.addRange( 'terrain.opacity', Viewer, 'terrainOpacity' ) );
 
-		terrainControls.push( page.addCheckbox( 'Vertical datum shift', Viewer, 'terrainDatumShift' ) );
+		terrainControls.push( page.addCheckbox( 'terrain.datum_shift', Viewer, 'terrainDatumShift' ) );
 
 		setControlsVisibility( terrainControls, false );
 

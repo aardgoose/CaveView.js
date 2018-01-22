@@ -546,13 +546,13 @@ function initInfoPage () {
 
 	const page = new Page( 'icon_info', 'info' );
 
-	page.addHeader( 'Information' );
+	page.addHeader( 'header' );
 
 	page.addText( 'CaveView v' + VERSION + '.' );
 	page.addText( 'A WebGL 3d cave viewer for Survex (.3d) and Therion (.lox) models.' );
 
 	page.addText( 'For more information see: ' );
-	page.addLink(  'https://aardgoose.github.io/CaveView.js/', 'CaveView on GitHub' );
+	page.addLink( 'https://aardgoose.github.io/CaveView.js/', 'CaveView on GitHub' );
 	page.addText( '© Angus Sawyer, 2018' );
 
 }

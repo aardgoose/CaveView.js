@@ -89,6 +89,9 @@ const lang_en = {
 			download: 'Download'
 		}
 	},
+	info: {
+		header: 'Information'
+	},
 	help: {
 		header: 'Help - key commands',
 		shading: {

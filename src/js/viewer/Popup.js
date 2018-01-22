@@ -1,6 +1,6 @@
 
 import { LEG_CAVE } from '../core/constants';
-import { getThemeColorCSS } from '../core/lib';
+import { Cfg } from '../core/lib';
 import { PopupMaterial } from '../materials/PopupMaterial';
 
 import {
@@ -85,10 +85,10 @@ Popup.prototype.finish = function () {
 
 	// set background
 
-	ctx.fillStyle = getThemeColorCSS( 'popupBackground' );
+	ctx.fillStyle = Cfg.themeColorCSS( 'popupBackground' );
 	ctx.fillRect( 0, 0, popupWidth, popupHeight );
 
-	ctx.strokeStyle = getThemeColorCSS( 'popupBorder' );
+	ctx.strokeStyle = Cfg.themeColorCSS( 'popupBorder' );
 	ctx.lineWidth = 2.0;
 	ctx.strokeRect( 0, 0, popupWidth, popupHeight );
 
@@ -96,7 +96,7 @@ Popup.prototype.finish = function () {
 
 	ctx.textAlign = 'left';
 	ctx.font = fontSize + 'px ' + 'normal helvetica,sans-serif';
-	ctx.fillStyle = getThemeColorCSS( 'popupText' );
+	ctx.fillStyle = Cfg.themeColorCSS( 'popupText' );
 
 	var i;
 

@@ -47,7 +47,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 	const self = this;
 	const key = x + ':' + y + ':' + z;
 
-	var material = this.materialCache[ key ];
+	const material = this.materialCache[ key ];
 
 	if ( material !== undefined ) {
 
@@ -67,7 +67,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 	function _textureLoaded( texture ) {
 
-		var material = new MeshLambertMaterial( { transparent: true, opacity: opacity, color: 0xffffff } );
+		const material = new MeshLambertMaterial( { transparent: true, opacity: opacity, color: 0xffffff } );
 
 		material.map = texture;
 		material.needsUpdate = true;

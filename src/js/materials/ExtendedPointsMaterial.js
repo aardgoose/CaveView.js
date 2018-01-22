@@ -1,7 +1,7 @@
 
 import { VertexColors, ShaderMaterial, TextureLoader, Vector4, Matrix3 } from '../../../../three.js/src/Three';
 import { Shaders } from '../shaders/Shaders';
-import { getEnvironmentValue } from '../core/lib';
+import { Cfg } from '../core/lib';
 import { ColourCache } from '../core/ColourCache';
 
 function ExtendedPointsMaterial () {
@@ -22,7 +22,7 @@ function ExtendedPointsMaterial () {
 		vertexColors: VertexColors
 	} );
 
-	this.map = new TextureLoader().load( getEnvironmentValue( 'home', '' ) + 'images/disc.png' );
+	this.map = new TextureLoader().load( Cfg.value( 'home', '' ) + 'images/disc.png' );
 
 	this.color = ColourCache.white;
 	this.opacity = 1.0;

@@ -1,9 +1,8 @@
-import { getEnvironmentValue } from '../core/lib';
-
+import { Cfg } from '../core/lib';
 
 function WorkerPool ( script ) {
 
-	this.script = getEnvironmentValue( 'home', '' ) + 'js/workers/' + script;
+	this.script = Cfg.value( 'home', '' ) + 'js/workers/' + script;
 
 	if ( WorkerPool.workers[ script ] === undefined ) {
 

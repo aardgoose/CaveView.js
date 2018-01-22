@@ -5,7 +5,7 @@ import { ColourCache } from './ColourCache';
 var map = [];
 var selectedSection = 0;
 
-var SurveyColours = {};
+const SurveyColours = {};
 
 SurveyColours.clearMap = function () {
 
@@ -34,7 +34,7 @@ SurveyColours.getSurveyColourMap = function ( surveyTree, newSelectedSection ) {
 	map = [];
 	selectedSection = newSelectedSection;
 
-	var survey = ( selectedSection === 0 ) ? surveyTree.id : selectedSection;
+	const survey = ( selectedSection === 0 ) ? surveyTree.id : selectedSection;
 
 	// create mapping of survey id to colour
 	// map each child id _and_ all its lower level survey ids to the same colour
@@ -57,7 +57,7 @@ SurveyColours.getSurveyColourMap = function ( surveyTree, newSelectedSection ) {
 
 	for ( var i = 0, l = children.length; i < l; i++ ) {
 
-		var childId = children[ i ].id;
+		const childId = children[ i ].id;
 
 		subTree = surveyTree.findById( childId );
 

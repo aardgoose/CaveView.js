@@ -1,6 +1,6 @@
 
 import { upAxis } from '../core/constants';
-import { getThemeValue } from '../core/lib';
+import { Cfg } from '../core/lib';
 import { HudObject } from './HudObject';
 import { Viewer } from '../viewer/Viewer';
 import { GlyphString } from '../core/GlyphString';
@@ -49,7 +49,7 @@ function ProgressDial () {
 	this.pcent.translateY( 10 );
 	this.pcent.translateX( -5 );
 
-	this.color = getThemeValue( 'progress' );
+	this.color = Cfg.themeValue( 'progress' );
 
 	this.add( this.pcent );
 

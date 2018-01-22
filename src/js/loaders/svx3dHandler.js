@@ -623,7 +623,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		const start = x1.end;
 		const end = x2.end;
 
-		var newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
+		const newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
 
 		x1.start = newStart;
 
@@ -991,7 +991,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		const coords = readCoordinates();
 
 		var path = label.split( '.' );
-		var prefix = path.slice( 0, -1 ).join( '.' );
+		const prefix = path.slice( 0, -1 ).join( '.' );
 
 		if ( path.length > 1 && ! sectionLabels.has( prefix ) ) {
 

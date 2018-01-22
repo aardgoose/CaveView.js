@@ -1,6 +1,6 @@
 
 import { HudObject } from './HudObject';
-import { getThemeValue, getThemeColor } from '../core/lib';
+import { Cfg } from '../core/lib';
 
 import {
 	Vector3, Math as _Math, Face3,
@@ -24,15 +24,15 @@ function Compass ( container ) {
 	var cg1 = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth, 3, 32, 1, true );
 	cg1.rotateX( Math.PI / 2 );
 
-	var c1 = new Mesh( cg1, new MeshPhongMaterial( { color: getThemeValue( 'bezel' ), specular: 0x888888 } ) );
+	var c1 = new Mesh( cg1, new MeshPhongMaterial( { color: Cfg.themeValue( 'bezel' ), specular: 0x888888 } ) );
 
 	var cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 	cg2.translate( 0, 0, 5 );
 
-	var c2 = new Mesh( cg2, new MeshBasicMaterial( { color: getThemeValue( 'compassTop1' ) } ) );
+	var c2 = new Mesh( cg2, new MeshBasicMaterial( { color: Cfg.themeValue( 'compassTop1' ) } ) );
 
-	var r1 = _makeRose( stdWidth * 0.9, 0.141, getThemeColor( 'compassBottom1' ), getThemeColor( 'compassBottom2' ) );
-	var r2 = _makeRose( stdWidth * 0.9, 0.141, getThemeColor( 'compassTop1' ), getThemeColor( 'compassTop2' ) );
+	var r1 = _makeRose( stdWidth * 0.9, 0.141, Cfg.themeColor( 'compassBottom1' ), Cfg.themeColor( 'compassBottom2' ) );
+	var r2 = _makeRose( stdWidth * 0.9, 0.141, Cfg.themeColor( 'compassTop1' ), Cfg.themeColor( 'compassTop2' ) );
 
 	r1.rotateZ( Math.PI / 4 );
 	r1.merge( r2 );

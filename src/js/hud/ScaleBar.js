@@ -1,6 +1,6 @@
 
 import { HudObject } from './HudObject';
-import { getThemeValue, getThemeColor } from '../core/lib';
+import { Cfg } from '../core/lib';
 
 import {
 	Vector3,
@@ -143,14 +143,14 @@ ScaleBar.prototype.setScale = function ( scale ) {
 		line.vertices.push( new Vector3( -rLength / 2, 0, 1 ) );
 		line.vertices.push( new Vector3(  rLength / 2, 0, 1 ) );
 
-		const sb = getThemeValue( 'scaleBar1' );
+		const sb = Cfg.themeValue( 'scaleBar1' );
 
 		const mBar  = new Mesh( bar,  new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
 		const mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
 		const mLine = new LineSegments( line, new LineBasicMaterial( { color: sb } ) );
 
-		const c1 = getThemeColor( 'scaleBar1' );
-		const c2 = getThemeColor( 'scaleBar2' );
+		const c1 = Cfg.themeColor( 'scaleBar1' );
+		const c2 = Cfg.themeColor( 'scaleBar2' );
 
 		for ( i = 0, l = bar.faces.length; i < l; i++ ) {
 

@@ -6,20 +6,20 @@ import { RGBFormat, UnsignedByteType }  from '../../../../three.js/src/constants
 
 // define colors to share THREE.Color objects
 
-var caches = {
+const caches = {
 	'colors': [],
 	'texture' : []
 };
 
 function createTexture ( scale ) {
 
-	var l = scale.length;
-	var data = new Uint8Array( l * 3 );
+	const l = scale.length;
+	const data = new Uint8Array( l * 3 );
 
 	for ( var i = 0; i < l; ) {
 
-		var c = scale[ l - ++i ];
-		var offset = i * 3;
+		const c = scale[ l - ++i ];
+		const offset = i * 3;
 
 		data[ offset ]     = c[0];
 		data[ offset + 1 ] = c[1];
@@ -27,7 +27,7 @@ function createTexture ( scale ) {
 
 	}
 
-	var texture = new DataTexture( data, l, 1, RGBFormat, UnsignedByteType );
+	const texture = new DataTexture( data, l, 1, RGBFormat, UnsignedByteType );
 
 	texture.needsUpdate = true;
 
@@ -37,12 +37,11 @@ function createTexture ( scale ) {
 
 function createColors ( scale ) {
 
-	var cache = [];
-	var c;
+	const cache = [];
 
 	for ( var i = 0, l = scale.length; i < l; i++ ) {
 
-		c = scale[ i ];
+		let c = scale[ i ];
 
 		cache[ i ] = new Color( c[ 0 ] / 255, c[ 1 ] / 255, c[ 2 ] / 255 );
 
@@ -54,12 +53,13 @@ function createColors ( scale ) {
 
 function getCacheEntry( cacheName, createFunc, name ) {
 
-	var cache = caches[ cacheName ];
+	const cache = caches[ cacheName ];
+
 	var entry = cache[ name ];
 
 	if ( entry === undefined ) {
 
-		var scale = Colours[ name ];
+		const scale = Colours[ name ];
 
 		if ( scale === undefined ) console.error( 'unknown colour scale requested ' + name );
 
@@ -84,7 +84,7 @@ function getColors( name ) {
 
 }
 
-export var ColourCache = {
+export const ColourCache = {
 	getTexture: getTexture,
 	getColors: getColors,
 	red:       new Color( 0xff0000 ),

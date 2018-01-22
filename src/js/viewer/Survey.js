@@ -10,8 +10,7 @@ import {
 	upAxis
 } from '../core/constants';
 
-import { getThemeValue, getThemeColor } from '../core/lib';
-import { getEnvironmentValue } from '../core/lib';
+import { Cfg } from '../core/lib';
 import { ColourCache } from '../core/ColourCache';
 import { Box3Helper } from '../core/Box3';
 import { Materials } from '../materials/Materials';
@@ -61,7 +60,7 @@ function Survey ( cave ) {
 
 	// highlit point marker
 
-	const pointerTexture = new TextureLoader().load( getEnvironmentValue( 'home', '' ) + 'images/ic_location.png' );
+	const pointerTexture = new TextureLoader().load( Cfg.value( 'home', '' ) + 'images/ic_location.png' );
 	const pointerMaterial = new PointsMaterial( { size: 32, map: pointerTexture, transparent : true, sizeAttenuation: false, alphaTest: 0.8 } );
 
 	const point = new Point( pointerMaterial );
@@ -79,7 +78,7 @@ function Survey ( cave ) {
 	const survey = cave.getSurvey();
 
 	this.name = survey.title;
-	this.CRS = ( survey.sourceCRS === null ) ? getEnvironmentValue( 'CRS', 'fred' ) : survey.sourceCRS;
+	this.CRS = ( survey.sourceCRS === null ) ? Cfg.value( 'CRS', 'fred' ) : survey.sourceCRS;
 
 	this.limits = survey.limits;
 	this.offsets = survey.offsets;
@@ -1056,7 +1055,7 @@ Survey.prototype.highlightSelection = function ( id ) {
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
-			this.highlightBox = this.boxSection( node, box, getThemeValue( 'highlightBox' ) );
+			this.highlightBox = this.boxSection( node, box, Cfg.themeValue( 'highlightBox' ) );
 
 		} else if ( node.p ) {
 
@@ -1090,7 +1089,7 @@ Survey.prototype.selectSection = function ( id ) {
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
-			this.selectedBox = this.boxSection( node, this.selectedBox, getThemeValue( 'selectBox' ) );
+			this.selectedBox = this.boxSection( node, this.selectedBox, Cfg.themeValue( 'selectBox' ) );
 			surveyTree.getSubtreeIds( id, selectedSectionIds );
 
 		} else {
@@ -1111,7 +1110,7 @@ Survey.prototype.setFeatureBox = function () {
 
 	if ( this.featureBox === null ) {
 
-		const box = new Box3Helper( this.modelLimits, getThemeValue( 'boundingBox' ) );
+		const box = new Box3Helper( this.modelLimits, Cfg.themeValue( 'boundingBox' ) );
 
 		box.layers.set( FEATURE_BOX );
 		box.name = 'survey-boundingbox';
@@ -1265,7 +1264,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_SINGLE:
 
-		material = Materials.getSurfaceMaterial( getThemeValue( 'single' ) );
+		material = Materials.getSurfaceMaterial( Cfg.themeValue( 'single' ) );
 
 		break;
 
@@ -1365,7 +1364,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	case SHADING_SINGLE:
 
-		this.setLegColourByColour( mesh, getThemeColor( 'single' ) );
+		this.setLegColourByColour( mesh, Cfg.themeColor( 'single' ) );
 
 		break;
 
@@ -1554,7 +1553,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	const c1 = ColourCache.yellow;
 	const c2 = ColourCache.red;
-	const c3 = getThemeColor( 'single' );
+	const c3 = Cfg.themeColor( 'single' );
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 

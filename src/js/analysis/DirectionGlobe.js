@@ -9,44 +9,42 @@ import { ColourCache } from '../core/ColourCache';
 
 function DirectionGlobe ( survey ) {
 
-	var geometry = new Geometry();
-	var bufferGeometry = new BufferGeometry();
+	const geometry = new Geometry();
+	const bufferGeometry = new BufferGeometry();
 
 	Points.call( this, bufferGeometry, new ExtendedPointsMaterial() );
 
 	this.type = 'DirectionGlobe';
 
-	var self = this;
+	const self = this;
 
 	this.sphere = new Mesh( new SphereBufferGeometry( 39.9, 20, 20 ), new MeshBasicMaterial( { color: 0x000000 } ) );
 
 	this.add(  this.sphere );
 
-	var stats = survey.getStats();
-	var vertices = survey.getLegs();
+	const stats = survey.getStats();
+	const vertices = survey.getLegs();
+	const l = vertices.length;
 
-	var colours = ColourCache.gradient;
-	var bias = colours.length - 1;
+	const colours = ColourCache.gradient;
+	const bias = colours.length - 1;
 
-	var legVector;
-	var rLength, color;
+	const pSize = [];
 
-	var l = vertices.length;
+	var i;
 
-	var pSize = [];
+	for ( i = 0; i < l; i += 2 ) {
 
-	for ( var i = 0; i < l; i += 2 ) {
+		const legVector = new Vector3().subVectors( vertices[ i ], vertices[ i + 1 ] );
 
-		legVector = new Vector3().subVectors( vertices[ i ], vertices[ i + 1 ] );
+		const rLength = ( legVector.length() - stats.minLegLength ) / stats.legLengthRange;
 
-		rLength = ( legVector.length() - stats.minLegLength ) / stats.legLengthRange;
-
-		var c = Math.max( 0, 2 * ( 1 + Math.log(  rLength * 10 ) * Math.LOG10E ) );
+		const c = Math.max( 0, 2 * ( 1 + Math.log(  rLength * 10 ) * Math.LOG10E ) );
 
 		pSize.push( c );
 		pSize.push( c );
 
-		color = colours[ Math.max( 0, Math.floor( bias * ( 1 + Math.log(  rLength * 10 ) * Math.LOG10E ) / 2 ) ) ];
+		const color = colours[ Math.max( 0, Math.floor( bias * ( 1 + Math.log(  rLength * 10 ) * Math.LOG10E ) / 2 ) ) ];
 
 		legVector.setLength( 41 - rLength  );
 
@@ -58,8 +56,8 @@ function DirectionGlobe ( survey ) {
 
 	}
 
-	var positions = new Float32BufferAttribute( geometry.vertices.length * 3, 3 );
-	var colors = new Float32BufferAttribute( geometry.colors.length * 3, 3 );
+	const positions = new Float32BufferAttribute( geometry.vertices.length * 3, 3 );
+	const colors = new Float32BufferAttribute( geometry.colors.length * 3, 3 );
 
 	bufferGeometry.addAttribute( 'pSize', new Float32BufferAttribute( pSize, 1 ) );
 	bufferGeometry.addAttribute( 'position', positions.copyVector3sArray( geometry.vertices ) );
@@ -69,7 +67,7 @@ function DirectionGlobe ( survey ) {
 
 	function _onSurveyRemoved( event ) {
 
-		var survey = event.target;
+		const survey = event.target;
 
 		survey.removeEventListener( 'removed', _onSurveyRemoved );
 

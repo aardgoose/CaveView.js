@@ -1033,7 +1033,7 @@ function setupView () {
 
 		const value = ( view[ name ] !== undefined ) ? view[ name ] : defaultView[ name ];
 
-		console.log( 'setting view:', name, value );
+		// console.log( 'setting view:', name, value );
 
 		Viewer[ name ] = value;
 

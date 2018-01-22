@@ -26,7 +26,7 @@ function ScaleBar ( container, hScale, rightMargin ) {
 	this.position.set( -container.clientWidth / 2 + 5, -container.clientHeight / 2 + leftMargin, 0 );
 	this.scaleMax = container.clientWidth - ( leftMargin + rightMargin );
 
-	var legend = document.createElement( 'div' );
+	const legend = document.createElement( 'div' );
 
 	legend.classList.add( 'scale-legend' );
 	legend.textContent = '';
@@ -58,15 +58,16 @@ ScaleBar.prototype.setVisibility = function ( visible ) {
 
 ScaleBar.prototype.setScale = function ( scale ) {
 
-	var scaleBars = this.scaleBars;
-	var length = 0;
-	var self = this;
+	const scaleBars = this.scaleBars;
+	const self = this;
 
-	var maxVisible = this.scaleMax / ( scale * this.hScale );
+	const maxVisible = this.scaleMax / ( scale * this.hScale );
+	const rMax     = Math.pow( 10, exponent );
+	const maxInc   = maxVisible / rMax;
+
 	var exponent = Math.ceil( Math.log( maxVisible ) / Math.LN10 ) - 1;
-	var rMax     = Math.pow( 10, exponent );
-	var maxInc   = maxVisible / rMax;
 	var legendText;
+	var length = 0;
 
 	if ( maxInc < 2 ) {
 
@@ -99,7 +100,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 		if ( ! scaleBars[ length ] ) {
 
-			var bar = _makeScaleBar( length );
+			const bar = _makeScaleBar( length );
 
 			scaleBars[ length ] = bar;
 			this.add( bar.mesh );
@@ -119,7 +120,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	scaleBars[ length ].mesh.scale.x = scale;
 
-	var legend = this.legend;
+	const legend = this.legend;
 
 	legend.style.display = this.visible ? 'block' : 'none';
 	legend.style.left = ( scale * scaleBars[ length ].topRight - legend.clientWidth ) + 'px';
@@ -135,21 +136,21 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 		var i, l;
 
-		var bar  = new PlaneGeometry( rLength, height, length );
-		var bar2 = new PlaneGeometry( rLength, height, length * 10 );
-		var line = new Geometry();
+		const bar  = new PlaneGeometry( rLength, height, length );
+		const bar2 = new PlaneGeometry( rLength, height, length * 10 );
+		const line = new Geometry();
 
 		line.vertices.push( new Vector3( -rLength / 2, 0, 1 ) );
 		line.vertices.push( new Vector3(  rLength / 2, 0, 1 ) );
 
-		var sb = getThemeValue( 'scaleBar1' );
+		const sb = getThemeValue( 'scaleBar1' );
 
-		var mBar  = new Mesh( bar,  new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
-		var mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
-		var mLine = new LineSegments( line, new LineBasicMaterial( { color: sb } ) );
+		const mBar  = new Mesh( bar,  new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
+		const mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
+		const mLine = new LineSegments( line, new LineBasicMaterial( { color: sb } ) );
 
-		var c1 = getThemeColor( 'scaleBar1' );
-		var c2 = getThemeColor( 'scaleBar2' );
+		const c1 = getThemeColor( 'scaleBar1' );
+		const c2 = getThemeColor( 'scaleBar2' );
 
 		for ( i = 0, l = bar.faces.length; i < l; i++ ) {
 
@@ -169,7 +170,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 		bar.computeBoundingBox();
 
-		var group = new Group();
+		const group = new Group();
 
 		group.add( mBar );
 		group.add( mBar2 );

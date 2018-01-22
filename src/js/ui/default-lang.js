@@ -52,6 +52,7 @@ const lang_en = {
 	},
 	surface: {
 		surface: {
+			header: 'Surface Features',
 			legs: 'Surface Legs',
 			shading: {
 				caption: 'Shading',
@@ -62,7 +63,8 @@ const lang_en = {
 			}
 		},
 		terrain: {
-			terrain: 'Terrain',
+			header: 'Terrain',
+			terrain: 'Terrain visible',
 			shading: {
 				relief: 'relief shading',
 				height: 'by height',
@@ -81,6 +83,49 @@ const lang_en = {
 			new: 'New route',
 			add: 'Add',
 			download: 'Download'
+		}
+	},
+	help: {
+		header: 'Help - key commands',
+		shading: {
+			header: 'Shading',
+			height: 'height',
+			inclination: 'leg inclination',
+			length: 'leg length',
+			height_cursor: 'height cursor',
+			single: 'single colour',
+			survey: 'survey section',
+			route: 'route',
+			depth: 'depth below surface',
+			depth_cursor: 'depth_cursor',
+			cursor_up: 'move cursor up',
+			cursor_down: 'move cursor down'
+		},
+		view: {
+			header: 'View',
+			full_screen: 'toggle full screen',
+			orthogonal: 'orthogonal view',
+			perspective: 'perspective view',
+			reset: 'reset to plan view',
+			center: 'center on selected feature',
+			next: 'next cave'
+		},
+		visibility: {
+			header: 'Visibility',
+			scraps: 'scraps on/off [lox only]',
+			station_labels: 'station labels on/off',
+			entrance_labels: 'entrancel abels on/off',
+			splays: 'splay legs on/off',
+			surface: 'surface legs on/off',
+			terrain: 'terrain on/off',
+			walls: 'LRUD walls on/off',
+			stations: 'station markers on/off',
+			opacity_down: 'decrease terrain opacity',
+			opacity_up: 'increase terrain opacity'
+		},
+		selection: {
+			header: 'Selection',
+			remove: 'remove all except selected section'
 		}
 	}
 };

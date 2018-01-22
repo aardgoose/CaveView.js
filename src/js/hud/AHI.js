@@ -1,7 +1,7 @@
 
 import { upAxis } from '../core/constants';
 import { HudObject } from './HudObject';
-import { getThemeColor, getThemeValue } from '../core/lib';
+import { Cfg } from '../core/lib';
 
 import {
 	Vector3, Math as _Math,
@@ -16,8 +16,8 @@ function AHI ( container ) {
 	const stdWidth  = HudObject.stdWidth;
 	const stdMargin = HudObject.stdMargin;
 
-	const c1 = getThemeColor( 'ahiSky' );
-	const c2 = getThemeColor( 'ahiEarth' );
+	const c1 = Cfg.themeColor( 'ahiSky' );
+	const c2 = Cfg.themeColor( 'ahiEarth' );
 
 	Group.call( this );
 
@@ -81,10 +81,10 @@ function AHI ( container ) {
 
 	}
 
-	var mRing   = new Mesh( ring, new MeshPhongMaterial( { color: getThemeValue( 'bezel' ), specular: 0x888888 } ) );
+	var mRing   = new Mesh( ring, new MeshPhongMaterial( { color: Cfg.themeValue( 'bezel' ), specular: 0x888888 } ) );
 	var mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: VertexColors, specular: 0x666666, shininess: 20 } ) );
-	var mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: getThemeValue( 'ahiBar' ) } ) );
-	var mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: getThemeValue( 'ahiMarks' ) } ) );
+	var mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: Cfg.themeValue( 'ahiBar' ) } ) );
+	var mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: Cfg.themeValue( 'ahiMarks' ) } ) );
 
 	mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 	mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );

@@ -1,5 +1,6 @@
 
 import { Color }  from '../../../../three.js/src/math/Color';
+import { lang_en } from './default-lang';
 
 var environment = new Map();
 var themeColors = new Map();
@@ -27,7 +28,14 @@ var defaultTheme = {
 	highlightBox: 0xff0000
 };
 
-function setEnvironment ( envs ) {
+x18n.register( 'en', lang_en );
+x18n.set( 'en' );
+
+const Cfg = {};
+
+Cfg.i18n = x18n.t;
+
+Cfg.set = function setConfig ( envs ) {
 
 	if ( envs === undefined ) return;
 
@@ -39,9 +47,9 @@ function setEnvironment ( envs ) {
 
 	}
 
-}
+};
 
-function getEnvironmentValue ( item, defaultValue ) {
+Cfg.value = function getEnvironmentValue ( item, defaultValue ) {
 
 	if ( environment.has( item ) ) {
 
@@ -53,31 +61,31 @@ function getEnvironmentValue ( item, defaultValue ) {
 
 	}
 
-}
+};
 
-function getThemeValue ( name ) {
+Cfg.themeValue = function getThemeValue ( name ) {
 
 	var theme = environment.get( 'theme' );
 
 	return ( theme !== undefined && theme[ name ] !== undefined ) ? theme[ name ] : defaultTheme[ name ];
 
-}
+};
 
-function getThemeColorCSS ( name ) {
+Cfg.themeColorCSS = function getThemeColorCSS ( name ) {
 
-	var color = '#' + getThemeValue( name ).toString( 16 ).padStart( 6, '0' );
+	var color = '#' + Cfg.themeValue( name ).toString( 16 ).padStart( 6, '0' );
 
 	return color;
 
-}
+};
 
-function getThemeColor ( name ) {
+Cfg.themeColor = function getThemeColor ( name ) {
 
 	var color = themeColors.get( name );
 
 	if ( color === undefined ) {
 
-		color = new Color( getThemeValue( name ) );
+		color = new Color( Cfg.themeValue( name ) );
 
 		themeColors.set( name, color );
 
@@ -85,7 +93,7 @@ function getThemeColor ( name ) {
 
 	return color;
 
-}
+};
 
 function replaceExtension( fileName, newExtention ) {
 
@@ -183,7 +191,6 @@ if ( ! String.prototype.repeat ) {
 
 }
 
-
-export { replaceExtension, setEnvironment, getEnvironmentValue, getThemeValue, getThemeColor, getThemeColorCSS };
+export { Cfg, replaceExtension };
 
 // EOF

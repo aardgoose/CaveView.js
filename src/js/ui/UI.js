@@ -198,9 +198,9 @@ function initSelectionPage () {
 
 	function _displayPanel ( top ) {
 
-		var tmp;
-
 		const surveyColourMap = SurveyColours.getSurveyColourMap( surveyTree, Viewer.section );
+
+		var tmp;
 
 		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
 
@@ -353,7 +353,7 @@ function initSelectionPage () {
 
 		event.stopPropagation();
 
-		if (  currentTop === surveyTree ) return;
+		if ( currentTop === surveyTree ) return;
 
 		page.replaceSlide( _displayPanel( currentTop.parent ), --depth, _handleSelectSurvey );
 
@@ -483,7 +483,6 @@ function initHelpPage () {
 	_addKey( '[', 'shading.cursor_up' );
 	_addKey( ']', 'shading.cursor_down' );
 
-
 	help.appendChild( dl );
 
 	help.addHeader( 'view.header' );
@@ -495,6 +494,7 @@ function initHelpPage () {
 	_addKey( 'P', 'view.perspective' );
 	_addKey( 'R', 'view.reset' );
 	_addKey( '.', 'view.center' );
+
 	if ( caveList.length > 0 ) _addKey( 'n', 'view.next' );
 
 	help.appendChild( dl );
@@ -529,8 +529,8 @@ function initHelpPage () {
 
 	function _addKey( key, description ) {
 
-		var dt = document.createElement( 'dt' );
-		var dd = document.createElement( 'dd' );
+		const dt = document.createElement( 'dt' );
+		const dd = document.createElement( 'dd' );
 
 		dt.textContent = key;
 		dd.textContent = help.i18n( description );
@@ -971,7 +971,7 @@ function keyDown ( event ) {
 
 // export public interface
 
-export var UI = {
+export const UI = {
 	init:         init,
 	loadCave:     loadCave,
 	loadCaveList: loadCaveList

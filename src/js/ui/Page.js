@@ -1,12 +1,5 @@
 
-import { lang_en } from './default-lang';
-
-x18n.register( 'en', lang_en );
-x18n.set( 'en' );
-
-const t = x18n.t;
-
-console.log( t( 'settings.visibility.hud' ) );
+import { Cfg } from '../core/lib';
 
 function Page( id, x18nPrefix, onTop, onLeave ) {
 
@@ -195,7 +188,7 @@ Page.prototype.constructor = Page;
 
 Page.prototype.i18n = function ( text ) {
 
-	const tr = x18n.t( this.x18nPrefix + text );
+	const tr = Cfg.i18n( this.x18nPrefix + text );
 
 	return ( tr === undefined ) ? text : tr;
 

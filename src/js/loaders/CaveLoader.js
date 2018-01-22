@@ -1,5 +1,5 @@
 
-import { getEnvironmentValue, replaceExtension } from '../core/lib';
+import { Cfg, replaceExtension } from '../core/lib';
 import { Svx3dHandler } from './svx3dHandler';
 import { loxHandler } from './loxHandler';
 import { kmlHandler } from './kmlHandler';
@@ -67,7 +67,7 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 	if ( section !== undefined ) this.section = section;
 
 	const self = this;
-	const prefix = getEnvironmentValue( 'surveyDirectory', '' );
+	const prefix = Cfg.value( 'surveyDirectory', '' );
 
 	// setup file handler
 	if ( ! this.setHandler( fileName ) ) {

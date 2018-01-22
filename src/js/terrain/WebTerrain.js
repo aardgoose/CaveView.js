@@ -2,7 +2,7 @@ import { CommonTerrain } from './CommonTerrain';
 import { Tile } from './Tile';
 import { HUD } from '../hud/HUD';
 import { WorkerPool } from '../workers/WorkerPool';
-import { getEnvironmentValue } from '../core/lib';
+import { Cfg } from '../core/lib';
 import { SHADING_OVERLAY } from '../core/constants';
 
 import {
@@ -52,7 +52,7 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 
 	const self = this;
 
-	new FileLoader().setResponseType( 'text' ).load( getEnvironmentValue( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
+	new FileLoader().setResponseType( 'text' ).load( Cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
 
 	function _tileSetLoaded( text ) {
 
@@ -90,7 +90,7 @@ WebTerrain.prototype.hasCoverage = function () {
 	if ( tileSets === undefined ) return false;
 
 	// iterate through available tileSets and pick the first match
-	const baseDirectory = getEnvironmentValue( 'terrainDirectory', '' );
+	const baseDirectory = Cfg.value( 'terrainDirectory', '' );
 
 	for ( var i = 0, l = tileSets.length; i < l; i++ ) {
 

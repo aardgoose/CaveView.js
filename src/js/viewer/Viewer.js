@@ -20,7 +20,7 @@ import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { Overlay } from '../terrain/Overlay';
-import { setEnvironment, getEnvironmentValue, getThemeValue } from '../core/lib';
+import { Cfg } from '../core/lib';
 
 // analysis tests
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
@@ -133,14 +133,14 @@ function init ( domID, configuration ) { // public method
 
 	if ( ! container ) alert( 'No container DOM object [' + domID + '] available' );
 
-	setEnvironment( configuration );
+	Cfg.set( configuration );
 
 	const width  = container.clientWidth;
 	const height = container.clientHeight;
 
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setClearColor( getThemeValue( 'background' ) );
+	renderer.setClearColor( Cfg.themeValue( 'background' ) );
 	renderer.autoClear = false;
 
 	oCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
@@ -1022,7 +1022,7 @@ function caveLoaded ( cave ) {
 
 function setupView () {
 
-	const view = getEnvironmentValue( 'view', {} );
+	const view = Cfg.value( 'view', {} );
 
 	var name;
 

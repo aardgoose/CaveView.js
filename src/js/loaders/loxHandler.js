@@ -196,7 +196,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 			// concatenate adjacent groups
 
-			var prepend = ends.indexOf ( start );
+			const prepend = ends.indexOf( start );
 
 			if ( prepend !== -1 ) {
 
@@ -260,8 +260,6 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 		const m_parent = readUint();
 		const titlePtr = readDataPtr();
 
-		var node;
-
 		if ( lastParentId !== m_parent ) {
 
 			parentNode = surveyTree.findById( m_parent );
@@ -271,7 +269,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		if ( m_parent != m_id ) {
 
-			node = surveyTree.addById( readString( namePtr ), m_id, parentNode );
+			let node = surveyTree.addById( readString( namePtr ), m_id, parentNode );
 
 			if ( node === null ) console.warn( 'error constructing survey tree for', readString( titlePtr ) );
 

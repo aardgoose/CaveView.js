@@ -9,7 +9,7 @@ import {
 	Mesh
 } from '../../../../three.js/src/Three';
 
-function AngleScale ( container ) {
+function AngleScale ( container, caption ) {
 
 	const width  = container.clientWidth;
 	const height = container.clientHeight;
@@ -62,7 +62,7 @@ function AngleScale ( container ) {
 	var legend = document.createElement( 'div' );
 
 	legend.id = 'angle-legend';
-	legend.textContent = 'Inclination';
+	legend.textContent = caption;
 
 	container.appendChild( legend );
 

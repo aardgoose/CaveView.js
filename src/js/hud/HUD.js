@@ -4,6 +4,7 @@ import {
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH,
 } from '../core/constants';
 
+import { Cfg } from '../core/lib';
 import { Viewer } from '../viewer/Viewer';
 
 import { AHI } from './AHI';
@@ -91,6 +92,14 @@ function init ( containerIn, viewRenderer ) {
 	Viewer.addEventListener( 'change', viewChanged );
 
 	controls = Viewer.getControls();
+
+}
+
+function i18n ( text ) {
+
+	const tr = Cfg.i18n( 'hud.' + text );
+
+	return ( tr === undefined ) ? text : tr;
 
 }
 
@@ -207,7 +216,7 @@ function newScales () {
 
 	if ( angleScale ) scene.remove( angleScale );
 
-	angleScale = new AngleScale( container );
+	angleScale = new AngleScale( container, i18n( 'inclination' ) );
 
 	scene.add( angleScale );
 
@@ -238,7 +247,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( Viewer.minHeight, Viewer.maxHeight, 'Height above Datum' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
+		linearScale.setRange( Viewer.minHeight, Viewer.maxHeight, i18n( 'above_datum' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 
@@ -246,7 +255,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( Viewer.maxHeight - Viewer.minHeight, 0, 'Depth below surface' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
+		linearScale.setRange( Viewer.maxHeight - Viewer.minHeight, 0, i18n( 'below_surface' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 
@@ -254,7 +263,7 @@ function viewChanged ( event ) {
 
 		useCursorScale = true;
 
-		cursorScale.setRange( Viewer.minHeight, Viewer.maxHeight, 'Height' );
+		cursorScale.setRange( Viewer.minHeight, Viewer.maxHeight, i18n( 'height' ) );
 
 		cursorChanged();
 
@@ -264,7 +273,7 @@ function viewChanged ( event ) {
 
 		useCursorScale = true;
 
-		cursorScale.setRange( Viewer.maxHeight - Viewer.minHeight, 0, 'Depth' );
+		cursorScale.setRange( Viewer.maxHeight - Viewer.minHeight, 0, i18n( 'depth' ) );
 
 		cursorChanged();
 
@@ -274,7 +283,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( Viewer.minLegLength, Viewer.maxLegLength, 'Leg length' ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE, true ) ).setVisibility( true );
+		linearScale.setRange( Viewer.minLegLength, Viewer.maxLegLength, i18n( 'leg_length' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE, true ) ).setVisibility( true );
 
 		break;
 
@@ -350,7 +359,7 @@ function updateScaleBar ( camera ) {
 
 }
 
-export var HUD = {
+export const HUD = {
 	init:               init,
 	renderHUD:          renderHUD,
 	setVisibility:		setVisibility,

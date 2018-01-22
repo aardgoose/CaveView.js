@@ -66,9 +66,13 @@ const lang_en = {
 			header: 'Terrain',
 			terrain: 'Terrain visible',
 			shading: {
+				caption: 'Shading',
 				relief: 'relief shading',
 				height: 'by height',
 				overlay: 'map overlay'
+			},
+			overlay: {
+				caption: 'Overlay'
 			},
 			opacity: 'Opacity',
 			datum_shift: 'Vertical datum shift'

@@ -11,11 +11,12 @@ import { Page } from './Page';
 import { Viewer } from '../viewer/Viewer';
 import { SurveyColours } from '../core/SurveyColours';
 
+const guiState = {};
+
+var caveList = [];
 var routes = null;
 
 var caveIndex = Infinity;
-var caveList = [];
-var guiState = {};
 var surveyTree;
 var currentTop;
 
@@ -49,7 +50,7 @@ const surfaceShadingModes = {
 	'surface.shading.fixed':         SHADING_SINGLE
 };
 
-var terrainShadingModes = {
+const terrainShadingModes = {
 	'terrain.shading.relief': SHADING_SHADED,
 	'terrain.shading.height': SHADING_HEIGHT
 };
@@ -222,7 +223,7 @@ function initSelectionPage () {
 
 		const ul = document.createElement( 'ul' );
 
-		var children = top.children;
+		const children = top.children;
 
 		if ( ! children.sorted ) {
 
@@ -396,9 +397,10 @@ function initRoutePage () {
 
 	const page = new Page( 'icon_route', 'routes', _onTop, _onLeave );
 
+	const routeNames = routes.getRouteNames();
+
 	var routeSelector;
 	var getNewRouteName;
-	var routeNames = routes.getRouteNames();
 	var lastShadingMode;
 
 	page.addHeader( 'routes.header' );
@@ -462,66 +464,66 @@ function initHelpPage () {
 	const help = new Page( 'icon_help', 'help' );
 	var dl;
 
-	help.addHeader( 'Help - key commands' );
+	help.addHeader( 'header' );
 
-	help.addHeader( 'Shading' );
+	help.addHeader( 'shading.header' );
 
 	dl = document.createElement( 'dl' );
 
-	_addKey( '1', 'height' );
-	_addKey( '2', 'leg angle' );
-	_addKey( '3', 'leg length' );
-	_addKey( '4', 'height cursor ' );
-	_addKey( '5', 'single colour' );
-	_addKey( '6', 'survey section' );
-	_addKey( '7', 'route' );
-	_addKey( '8', 'depth from surface' );
-	_addKey( '9', 'depth cursor' );
+	_addKey( '1', 'shading.height' );
+	_addKey( '2', 'shading.inclination' );
+	_addKey( '3', 'shading.length' );
+	_addKey( '4', 'shading.height_cursor' );
+	_addKey( '5', 'shading.single' );
+	_addKey( '6', 'shading.survey' );
+	_addKey( '7', 'shading.route' );
+	_addKey( '8', 'shading.depth' );
+	_addKey( '9', 'shading.depth_cursor' );
 
-	_addKey( '[', 'move depth cursor up' );
-	_addKey( ']', 'move depth cursor down' );
+	_addKey( '[', 'shading.cursor_up' );
+	_addKey( ']', 'shading.cursor_down' );
 
-	if ( caveList.length > 0 ) _addKey( 'n', 'next cave' );
 
 	help.appendChild( dl );
 
-	help.addHeader( 'View' );
+	help.addHeader( 'view.header' );
 
 	dl = document.createElement( 'dl' );
 
-	_addKey( 'F', 'toggle full screen' );
-	_addKey( 'O', 'orthogonal view' );
-	_addKey( 'P', 'perspective view' );
-	_addKey( 'R', 'reset to plan view' );
-	_addKey( '.', 'center view on last feature selected' );
+	_addKey( 'F', 'view.full_screen' );
+	_addKey( 'O', 'view.orthogonal' );
+	_addKey( 'P', 'view.perspective' );
+	_addKey( 'R', 'view.reset' );
+	_addKey( '.', 'view.center' );
+	if ( caveList.length > 0 ) _addKey( 'n', 'view.next' );
 
 	help.appendChild( dl );
 
-	help.addHeader( 'Visibility' );
+	help.addHeader( 'visibility.header' );
 
 	dl = document.createElement( 'dl' );
 
-	_addKey( 'C', 'scraps on/off [lox only]' );
-	_addKey( 'J', 'station labels on/off' );
-	_addKey( 'L', 'labels on/off' );
-	_addKey( 'Q', 'splay legs on/off' );
-	_addKey( 'S', 'surface legs on/off' );
-	_addKey( 'T', 'terrain on/off' );
-	_addKey( 'W', 'LRUD walls on/off' );
-	_addKey( 'Z', 'stations on/off' );
+	_addKey( 'C', 'visibility.scraps' );
+	_addKey( 'J', 'visibility.station_labels' );
+	_addKey( 'L', 'visibility.entrance_labels' );
+	_addKey( 'Q', 'visibility.splays' );
+	_addKey( 'S', 'visibility.surface' );
+	_addKey( 'T', 'visibility.terrain' );
+	_addKey( 'W', 'visibility.walls' );
+	_addKey( 'Z', 'visibility.stations' );
 
 	_addKey( '', '-' );
 
-	_addKey( '<', 'Decrease terrain opacity' );
-	_addKey( '>', 'Increase terrain opacity' );
+	_addKey( '<', 'visibility.opacity_down' );
+	_addKey( '>', 'visibility.opacity_up' );
 
 	help.appendChild( dl );
 
-	help.addHeader( 'Selection' );
+	help.addHeader( 'selection.header' );
 
 	dl = document.createElement( 'dl' );
 
-	_addKey( 'V', 'Remove all except selected section' );
+	_addKey( 'V', 'selection.remove' );
 
 	help.appendChild( dl );
 
@@ -531,7 +533,7 @@ function initHelpPage () {
 		var dd = document.createElement( 'dd' );
 
 		dt.textContent = key;
-		dd.textContent = description;
+		dd.textContent = help.i18n( description );
 
 		dl.appendChild( dt );
 		dl.appendChild( dd );
@@ -612,7 +614,7 @@ function initSurfacePage () {
 
 	const page = new Page( 'icon_terrain', 'surface' );
 
-	page.addHeader( 'Surface Features' );
+	page.addHeader( 'surface.header' );
 
 	if ( Viewer.hasSurfaceLegs ) {
 
@@ -623,7 +625,7 @@ function initSurfacePage () {
 
 	if ( Viewer.hasTerrain ) {
 
-		page.addHeader( 'Terrain' );
+		page.addHeader( 'terrain.header' );
 
 		page.addCheckbox( 'terrain.terrain', Viewer, 'terrain' );
 

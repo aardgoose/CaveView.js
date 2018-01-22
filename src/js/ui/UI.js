@@ -634,11 +634,11 @@ function initSurfacePage () {
 
 		if ( overlays.length > 0 ) terrainShadingModesActive[ 'terrain.shading.overlay' ] = SHADING_OVERLAY;
 
-		terrainControls.push( page.addSelect( 'Shading', terrainShadingModesActive, Viewer, 'terrainShading' ) );
+		terrainControls.push( page.addSelect( 'terrain.shading.caption', terrainShadingModesActive, Viewer, 'terrainShading' ) );
 
 		if ( overlays.length > 1 ) {
 
-			terrainOverlay = page.addSelect( 'Overlay', overlays, Viewer, 'terrainOverlay' );
+			terrainOverlay = page.addSelect( 'terrain.overlay.caption', overlays, Viewer, 'terrainOverlay' );
 			terrainControls.push( terrainOverlay );
 
 		}

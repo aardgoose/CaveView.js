@@ -6,7 +6,7 @@ import {
 	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
 } from '../core/constants';
 
-import { replaceExtension } from '../core/lib';
+import { replaceExtension, Cfg } from '../core/lib';
 import { Page } from './Page';
 import { Viewer } from '../viewer/Viewer';
 import { SurveyColours } from '../core/SurveyColours';
@@ -100,6 +100,20 @@ function init ( domID, configuration ) { // public method
 	Viewer.addEventListener( 'change', handleChange );
 
 	Viewer.addEventListener( 'newCave', viewComplete );
+
+	// make sure we get new language strings if slow loading
+	Cfg.addEventListener( 'change', refresh );
+
+}
+
+function refresh() {
+
+	if ( isCaveLoaded ) {
+
+		Page.clear();
+		initUI();
+
+	}
 
 }
 

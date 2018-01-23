@@ -51,6 +51,7 @@ var container;
 
 var controls;
 var isVisible = true;
+var caveLoaded = false;
 
 function init ( containerIn, viewRenderer ) {
 
@@ -90,6 +91,8 @@ function init ( containerIn, viewRenderer ) {
 
 	Viewer.addEventListener( 'newCave', caveChanged );
 	Viewer.addEventListener( 'change', viewChanged );
+
+	Cfg.addEventListener( 'change', cfgChanged );
 
 	controls = Viewer.getControls();
 
@@ -181,6 +184,7 @@ function renderHUD () {
 
 	compass.set( currentCamera );
 	ahi.set( currentCamera );
+
 	updateScaleBar( currentCamera );
 
 	// render on screen
@@ -188,8 +192,17 @@ function renderHUD () {
 	renderer.render( scene, camera );
 
 }
+function cfgChanged ( /* event */ ) {
+
+	// only change controls when a cave has been loaded already
+	// prevents flicker when racing with i18n resource loading
+	if ( caveLoaded ) caveChanged();
+
+}
 
 function caveChanged ( /* event */ ) {
+
+	caveLoaded = true;
 
 	newScales();
 

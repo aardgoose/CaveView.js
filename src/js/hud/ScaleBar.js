@@ -62,10 +62,12 @@ ScaleBar.prototype.setScale = function ( scale ) {
 	const self = this;
 
 	const maxVisible = this.scaleMax / ( scale * this.hScale );
+
+	var exponent = Math.ceil( Math.log( maxVisible ) / Math.LN10 ) - 1;
+
 	const rMax     = Math.pow( 10, exponent );
 	const maxInc   = maxVisible / rMax;
 
-	var exponent = Math.ceil( Math.log( maxVisible ) / Math.LN10 ) - 1;
 	var legendText;
 	var length = 0;
 

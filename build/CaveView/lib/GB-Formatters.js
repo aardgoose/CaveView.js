@@ -17,9 +17,9 @@ function OSGBStationFormatter ( crs, coordinates, depth ) {
 	var lines = [];
 
 	lines.push( firstLetter + secondLetter + ' ' + e3 + ' ' + n3 );
-	lines.push( 'height: ' + coordinates.z.toLocaleString( 'en-GB', { maximumFractionDigits: 2, useGrouping: false } ) + 'm' );
+	lines.push( 'height: ' + coordinates.z.toLocaleString( 'en-GB', { maximumFractionDigits: 2, useGrouping: false } ) + '\u202fm' );
 
-	if ( depth !== null ) lines.push( 'depth: ' + depth.toLocaleString( 'en-GB', { maximumFractionDigits: 2, useGrouping: false } ) + 'm' );
+	if ( depth !== null ) lines.push( 'depth: ' + depth.toLocaleString( 'en-GB', { maximumFractionDigits: 2, useGrouping: false } ) + '\u202fm' );
 
 	return lines;
 

@@ -88,11 +88,11 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	if ( exponent >= 3 ) {
 
-		legendText = length * Math.pow( 10, exponent - 3) + 'km';
+		legendText = length * Math.pow( 10, exponent - 3) + '\u202fkm';
 
 	} else {
 
-		legendText = length * Math.pow( 10, exponent ) + 'm';
+		legendText = length * Math.pow( 10, exponent ) + '\u202fm';
 
 	}
 

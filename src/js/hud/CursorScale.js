@@ -98,8 +98,8 @@ CursorScale.prototype.constructor = CursorScale;
 
 CursorScale.prototype.setRange = function ( min, max, caption ) {
 
-	this.maxDiv.textContent = Math.round( max ) + 'm';
-	this.minDiv.textContent = Math.round( min ) + 'm';
+	this.maxDiv.textContent = Math.round( max ) + '\u202fm';
+	this.minDiv.textContent = Math.round( min ) + '\u202fm';
 
 	this.caption.textContent = caption;
 

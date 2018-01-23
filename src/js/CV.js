@@ -1,3 +1,4 @@
+import './core/polyfills';
 import { Cfg } from './core/lib';
 
 // backwards compat

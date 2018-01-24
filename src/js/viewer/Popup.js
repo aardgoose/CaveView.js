@@ -69,7 +69,7 @@ Popup.prototype.finish = function () {
 	const lines = this.lines;
 	const lineCount = lines.length;
 
-	const popupWidth = 300;
+	const popupWidth = 256;
 	const popupHeight = cellSize * lineCount;
 
 	const canvas = document.createElement( 'canvas' );

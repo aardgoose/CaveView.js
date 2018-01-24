@@ -21,7 +21,7 @@ var defaultTheme = {
 	ahiEarth: 0x802100,
 	ahiBar: 0xffff00,
 	ahiMarks: 0xffffff,
-	boundingBox: 0x00ffff,
+	boundingBox: 0xffffff,
 	single: 0xffffff,
 	popupText: 0xffffff,
 	popupBorder: 0xffffff,

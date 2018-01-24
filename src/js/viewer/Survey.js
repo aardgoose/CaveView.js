@@ -1504,16 +1504,14 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 	const colours = ColourCache.getColors( 'gradient' );
 	const colourRange = colours.length - 1;
 	const stats = mesh.stats;
+	const legLengths = mesh.legLengths;
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
 	function _colourSegment ( geometry, v1, v2 ) {
 
-		const vertex1 = geometry.vertices[ v1 ];
-		const vertex2 = geometry.vertices[ v2 ];
-
-		const relLength = ( Math.abs( vertex1.distanceTo( vertex2 ) ) - stats.minLegLength ) / stats.legLengthRange;
-		const colour = colours[ Math.floor( ( 1 - relLength ) * colourRange ) ];
+		const relLength = ( legLengths[ v1 / 2 ] - stats.minLegLength ) / stats.legLengthRange;
+		const colour = colours[ Math.floor( relLength * colourRange ) ];
 
 		geometry.colors[ v1 ] = colour;
 		geometry.colors[ v2 ] = colour;

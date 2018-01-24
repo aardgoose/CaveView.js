@@ -1053,7 +1053,7 @@ function loadSurvey ( newSurvey, cut ) {
 
 	survey = newSurvey;
 
-	stats = survey.getFeature( LEG_CAVE ).stats;
+	stats = getLegStats( LEG_CAVE );
 
 	setScale( survey );
 
@@ -1448,9 +1448,9 @@ function setScale ( obj ) {
 
 }
 
-function getStats () {
+function getLegStats ( type ) {
 
-	return stats;
+	return survey.getFeature( type ).stats;
 
 }
 
@@ -1486,7 +1486,7 @@ Object.assign( Viewer, {
 	loadCave:      loadCave,
 	getMetadata:   getMetadata,
 	getRoutes:     getRoutes,
-	getStats:      getStats,
+	getLegStats:   getLegStats,
 	getSurveyTree: getSurveyTree,
 	getControls:   getControls,
 	renderView:    renderView,

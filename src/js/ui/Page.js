@@ -262,7 +262,21 @@ Page.prototype.addText = function ( text ) {
 
 	const p = document.createElement( 'p' );
 
+	p.classList.add( 'spaced' );
 	p.textContent = text;
+
+	this.page.appendChild( p );
+
+	return p;
+
+};
+
+Page.prototype.addLine = function ( text ) {
+
+	const p = document.createElement( 'p' );
+
+	p.textContent = text;
+
 	this.page.appendChild( p );
 
 	return p;

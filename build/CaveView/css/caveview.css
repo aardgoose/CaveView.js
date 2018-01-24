@@ -525,6 +525,9 @@ div.cv-checkbox {
 	padding-left: 8px;
 	font-size: 12px;
 	line-height: 18px;
+}
+
+#cv-frame p.spaced {
 	margin-top: 18px;
 }
 

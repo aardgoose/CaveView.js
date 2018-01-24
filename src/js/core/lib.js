@@ -1,7 +1,7 @@
 
 import { Color }  from '../../../../three.js/src/math/Color';
 import { FileLoader, EventDispatcher } from '../../../../three.js/src/Three';
-
+import { x18n } from './x18n';
 import { lang_en } from './default-lang';
 
 var environment = new Map();
@@ -52,9 +52,11 @@ Cfg.set = function setConfig ( envs ) {
 
 	}
 
-	var lang = Cfg.value( 'language' );
+	Cfg.setLanguage( Cfg.value( 'language', navigator.language.slice( 0, 2 ) ) );
 
-	if ( lang === undefined ) lang = navigator.language.split( '-' )[ 0 ];
+};
+
+Cfg.setLanguage = function ( lang ) {
 
 	if ( lang === 'en' ) {
 
@@ -71,7 +73,7 @@ Cfg.set = function setConfig ( envs ) {
 
 	}
 
-	x18n.on( [ 'dict:change' ],function () { Cfg.dispatchEvent( { type: 'change', name: name } ); } );
+	x18n.on( [ 'lang:change' ], function () { Cfg.dispatchEvent( { type: 'change', name: name } ); } );
 
 	return;
 
@@ -82,11 +84,12 @@ Cfg.set = function setConfig ( envs ) {
 		x18n.register( lang, JSON.parse( response ) );
 		x18n.set( lang );
 
+		console.log( x18n.availableLocales );
 	}
 
 	function _languageError() {
 
-		console.log( 'error loading language file' );
+		console.log( 'error loading language file', lang );
 
 	}
 

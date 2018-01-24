@@ -39,6 +39,7 @@ function Legs ( layer ) {
 
 	this.onBeforeRender = onBeforeRender;
 	this.onAfterRender = onAfterRender;
+	this.legLengths = [];
 
 	return this;
 
@@ -147,14 +148,18 @@ Legs.prototype.computeStats = function () {
 	const vertices = this.geometry.vertices;
 	const l = vertices.length;
 
-	var vertex1, vertex2, legLength;
+	const legLengths = [];
 
-	for ( var i = 0; i < l; i += 2 ) {
+	var i;
 
-		vertex1 = vertices[ i ];
-		vertex2 = vertices[ i + 1 ];
+	for ( i = 0; i < l; i += 2 ) {
 
-		legLength = Math.abs( vertex1.distanceTo( vertex2 ) );
+		const vertex1 = vertices[ i ];
+		const vertex2 = vertices[ i + 1 ];
+
+		const legLength = vertex1.distanceTo( vertex2 );
+
+		legLengths[ i / 2 ] = legLength; // cache lengths to avoid recalc
 
 		stats.legLength = stats.legLength + legLength;
 
@@ -162,6 +167,8 @@ Legs.prototype.computeStats = function () {
 		stats.minLegLength = Math.min( stats.minLegLength, legLength );
 
 	}
+
+	this.legLengths = legLengths;
 
 	stats.legLengthRange = stats.maxLegLength - stats.minLegLength;
 	stats.legCount = l / 2;

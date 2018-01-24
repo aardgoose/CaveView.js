@@ -1276,6 +1276,8 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_DEPTH:
 
+		if ( this.terrain === null ) return false;
+
 		material = Materials.getDepthMaterial( MATERIAL_SURFACE, this.modelLimits, this.terrain );
 
 		if ( ! material ) return false;

@@ -90,7 +90,14 @@ const lang_en = {
 		}
 	},
 	info: {
-		header: 'Information'
+		header: 'Information',
+		stats: {
+			header: 'Survey Stats',
+			legs: 'Leg count',
+			totalLength: 'Total length',
+			minLength: 'Shortest leg',
+			maxLength: 'Longest leg'
+		}
 	},
 	help: {
 		header: 'Help - key commands',

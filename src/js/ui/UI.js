@@ -1,5 +1,5 @@
 import {
-	VERSION,
+	VERSION, LEG_CAVE,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, STATION_ENTRANCE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_DEPTH_CURSOR, // SHADING_AXIS,
@@ -562,7 +562,16 @@ function initInfoPage () {
 
 	page.addHeader( 'header' );
 
-	page.addText( 'CaveView v' + VERSION + '.' );
+	page.addHeader( 'stats.header' );
+
+	const stats = Viewer.getLegStats ( LEG_CAVE );
+
+	page.addLine( page.i18n( 'stats.legs' ) + ': ' + stats.legCount );
+	page.addLine( page.i18n( 'stats.totalLength' ) + ': ' + stats.legLength.toFixed( 2 ) + '\u202fm' );
+	page.addLine( page.i18n( 'stats.minLength' ) + ': ' + stats.minLegLength.toFixed( 2 ) + '\u202fm' );
+	page.addLine( page.i18n( 'stats.maxLength' ) + ': ' + stats.maxLegLength.toFixed( 2 ) + '\u202fm' );
+
+	page.addHeader( 'CaveView v' + VERSION + '.' );
 	page.addText( 'A WebGL 3d cave viewer for Survex (.3d) and Therion (.lox) models.' );
 
 	page.addText( 'For more information see: ' );

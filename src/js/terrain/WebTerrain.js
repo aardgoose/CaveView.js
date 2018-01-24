@@ -362,7 +362,7 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 	this.activeOverlay = overlay;
 	this.defaultOverlay = overlay;
 
-	overlay.showAttribution();
+	if ( overlay !== null ) overlay.showAttribution();
 
 	this.traverse( _setTileOverlays );
 

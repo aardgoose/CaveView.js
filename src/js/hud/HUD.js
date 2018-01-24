@@ -246,7 +246,7 @@ function newScales () {
 
 function viewChanged ( event ) {
 
-	if ( event.name !== 'shadingMode' || ! isVisible ) return;
+	if ( event.name !== 'shadingMode' || ! isVisible || ! caveLoaded ) return;
 
 	// hide all - and only make required elements visible
 

@@ -82,13 +82,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	case SHADING_SHADED:
 
-		material = new MeshLambertMaterial( {
-			color:        0xffffff,
-			vertexColors: VertexColors,
-			side:         FrontSide,
-			transparent:  true,
-			opacity:      this.opacity }
-		);
+		material = this.getShadedMaterial();
 
 		break;
 
@@ -113,6 +107,18 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 	this.shadingMode = mode;
 
 	return true;
+
+};
+
+CommonTerrain.prototype.getShadedMaterial = function () {
+
+	return new MeshLambertMaterial( {
+		color:        0xffffff,
+		vertexColors: VertexColors,
+		side:         FrontSide,
+		transparent:  true,
+		opacity:      this.opacity }
+	);
 
 };
 

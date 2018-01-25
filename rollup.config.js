@@ -16,8 +16,8 @@ function glsl () {
 
 export default {
 	input: 'src/js/CV.js',
-	name: 'CV',
 	output: {
+		name: 'CV',
 		file: 'build/CaveView/js/CaveView.js',
 		format: 'umd'
 	},

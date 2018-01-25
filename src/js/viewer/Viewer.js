@@ -1044,7 +1044,7 @@ function setupView () {
 
 }
 
-function loadSurvey ( newSurvey, cut ) {
+function loadSurvey ( newSurvey ) {
 
 	var syncTerrainLoading = true;
 	var firstTiles = true;

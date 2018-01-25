@@ -86,8 +86,8 @@ div.linear-scale-caption {
 .cv-container {
 	position: relative;
 	overflow: hidden;
-	height: 500px;
-	width: 500px;
+	height: 600px;
+	width: 1000px;
 }
 
 #progress-bar {
@@ -525,6 +525,9 @@ div.cv-checkbox {
 	padding-left: 8px;
 	font-size: 12px;
 	line-height: 18px;
+}
+
+#cv-frame p.spaced {
 	margin-top: 18px;
 }
 

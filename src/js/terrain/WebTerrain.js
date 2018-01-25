@@ -42,6 +42,8 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 	this.overlaysLoading = 0;
 	this.debug = true;
 
+	this.material = this.getShadedMaterial();
+
 	this.workerPool = new WorkerPool( 'webTileWorker.js' );
 
 	if ( HUD !== undefined ) {

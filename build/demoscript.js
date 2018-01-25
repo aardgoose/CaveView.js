@@ -1,4 +1,4 @@
-var demoScript = [
+const demoScript = [
 	{
 		caption: 'A web cave survey viewer...',
 		delay: 5,

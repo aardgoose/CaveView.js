@@ -79,12 +79,11 @@ Cfg.setLanguage = function ( lang ) {
 
 	function _languageLoaded( response ) {
 
-		console.log( 'loaded language', lang );
+		console.log( 'loaded language [' + lang + ']' );
 
 		x18n.register( lang, JSON.parse( response ) );
 		x18n.set( lang );
 
-		console.log( x18n.availableLocales );
 	}
 
 	function _languageError() {

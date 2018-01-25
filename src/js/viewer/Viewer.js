@@ -42,9 +42,11 @@ import {
 const defaultView = {
 	autoRotate: false,
 	autoRotateSpeed: 0.5,
+	box: true,
 	view: VIEW_PLAN,
 	cameraType: CAMERA_PERSPECTIVE,
 	shadingMode: SHADING_HEIGHT,
+	terrainShadingMode: SHADING_SHADED,
 	surfaceLegs: false,
 	walls: false,
 	scraps: false,
@@ -193,7 +195,6 @@ function init ( domID, configuration ) { // public method
 			get: function () { return testCameraLayer( FEATURE_TERRAIN ); },
 			set: loadTerrain
 		},
-
 
 		'terrainShading': {
 			writeable: true,
@@ -1099,15 +1100,11 @@ function loadSurvey ( newSurvey, cut ) {
 
 	survey.getRoutes().addEventListener( 'changed', _routesChanged );
 
-	if ( ! cut ) {
+	setupView();
 
-		setupView();
+	caveIsLoaded = true;
 
-		caveIsLoaded = true;
-
-		renderView();
-
-	}
+	renderView();
 
 	function _terrainReady () {
 
@@ -1147,7 +1144,7 @@ function loadSurvey ( newSurvey, cut ) {
 			// delayed notification to ensure and event listeners get accurate terrain information
 			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
-			if ( ! cut ) setupView();
+			setupView();
 
 			firstTiles = false;
 

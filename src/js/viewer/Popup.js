@@ -44,6 +44,7 @@ function Popup() {
 	this.lines = [];
 	this.layers.set( LEG_CAVE );
 	this.type = 'Popup';
+	this.renderOrder = Infinity;
 
 	return this;
 

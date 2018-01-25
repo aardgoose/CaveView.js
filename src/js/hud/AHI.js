@@ -16,8 +16,8 @@ function AHI ( container ) {
 	const stdWidth  = HudObject.stdWidth;
 	const stdMargin = HudObject.stdMargin;
 
-	const c1 = Cfg.themeColor( 'ahiSky' );
-	const c2 = Cfg.themeColor( 'ahiEarth' );
+	const c1 = Cfg.themeColor( 'hud.ahi.sky' );
+	const c2 = Cfg.themeColor( 'hud.ahi.earth' );
 
 	Group.call( this );
 
@@ -81,10 +81,10 @@ function AHI ( container ) {
 
 	}
 
-	var mRing   = new Mesh( ring, new MeshPhongMaterial( { color: Cfg.themeValue( 'bezel' ), specular: 0x888888 } ) );
+	var mRing   = new Mesh( ring, new MeshPhongMaterial( { color: Cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ) );
 	var mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: VertexColors, specular: 0x666666, shininess: 20 } ) );
-	var mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: Cfg.themeValue( 'ahiBar' ) } ) );
-	var mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: Cfg.themeValue( 'ahiMarks' ) } ) );
+	var mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: Cfg.themeValue( 'hud.ahi.bar' ) } ) );
+	var mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: Cfg.themeValue( 'hud.ahi.marks' ) } ) );
 
 	mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 	mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );

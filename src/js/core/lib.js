@@ -9,27 +9,40 @@ var themeColors = new Map();
 
 var defaultTheme = {
 	background: 0x000000,
-	bezel: 0x888888,
-	progress: 0x00ff00,
-	scaleBar1: 0xffffff,
-	scaleBar2: 0xff0000,
-	compassTop1: 0xb03a14,
-	compassTop2: 0x1ab4e5,
-	compassBottom1: 0x581d0a,
-	compassBottom2: 0x0c536a,
-	ahiSky: 0x106f8d,
-	ahiEarth: 0x802100,
-	ahiBar: 0xffff00,
-	ahiMarks: 0xffffff,
-	boundingBox: 0xffffff,
-	single: 0xffffff,
-	popupText: 0xffffff,
-	popupBorder: 0xffffff,
-	popupBackground: 0x222222,
-	selectBox: 0x0000ff,
-	highlightBox: 0xff0000
+	hud: {
+		progress: 0x00ff00,
+		bezel: 0x888888,
+		scale: {
+			bar1: 0xffffff,
+			bar2: 0xff0000,
+		},
+		compass: {
+			top1: 0xb03a14,
+			top2: 0x1ab4e5,
+			bottom1: 0x581d0a,
+			bottom2: 0x0c536a
+		},
+		ahi: {
+			sky: 0x106f8d,
+			earth: 0x802100,
+			bar: 0xffff00,
+			marks: 0xffffff
+		},
+	},
+	box: {
+		bounding: 0xffffff,
+		select: 0x0000ff,
+		highlight: 0xff0000
+	},
+	shading: {
+		single: 0xffffff
+	},
+	popup: {
+		text: 0xffffff,
+		border: 0xffffff,
+		background: 0x222222
+	}
 };
-
 
 // setup default language
 
@@ -110,9 +123,45 @@ Cfg.value = function getValue ( item, defaultValue ) {
 
 Cfg.themeValue = function getThemeValue ( name ) {
 
-	var theme = environment.get( 'theme' );
+	const theme = environment.get( 'theme' );
 
-	return ( theme !== undefined && theme[ name ] !== undefined ) ? theme[ name ] : defaultTheme[ name ];
+	const parts = name.split( '.' );
+	var value;
+
+	if ( theme !== undefined ) {
+
+		value = Cfg.treeValue( theme, parts );
+
+	}
+
+	if ( value === undefined ) {
+
+		value = Cfg.treeValue( defaultTheme, parts);
+
+	}
+
+	return value;
+
+
+};
+
+Cfg.treeValue = function ( theme, parts ) {
+
+	var i;
+	var top = theme;
+	var part;
+
+	for ( i = 0; i < parts.length; i++ ) {
+
+		part = parts[ i ];
+
+		if ( top[ part ] === undefined ) return undefined;
+
+		top = top[ part ];
+
+	}
+
+	return top;
 
 };
 

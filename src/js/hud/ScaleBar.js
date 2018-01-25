@@ -145,14 +145,14 @@ ScaleBar.prototype.setScale = function ( scale ) {
 		line.vertices.push( new Vector3( -rLength / 2, 0, 1 ) );
 		line.vertices.push( new Vector3(  rLength / 2, 0, 1 ) );
 
-		const sb = Cfg.themeValue( 'scaleBar1' );
+		const sb = Cfg.themeValue( 'hud.scale.bar1' );
 
 		const mBar  = new Mesh( bar,  new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
 		const mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
 		const mLine = new LineSegments( line, new LineBasicMaterial( { color: sb } ) );
 
-		const c1 = Cfg.themeColor( 'scaleBar1' );
-		const c2 = Cfg.themeColor( 'scaleBar2' );
+		const c1 = Cfg.themeColor( 'hud.scale.bar1' );
+		const c2 = Cfg.themeColor( 'hud.scale.bar2' );
 
 		for ( i = 0, l = bar.faces.length; i < l; i++ ) {
 

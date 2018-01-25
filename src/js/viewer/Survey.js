@@ -1055,7 +1055,7 @@ Survey.prototype.highlightSelection = function ( id ) {
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
-			this.highlightBox = this.boxSection( node, box, Cfg.themeValue( 'highlightBox' ) );
+			this.highlightBox = this.boxSection( node, box, Cfg.themeValue( 'box.highlight' ) );
 
 		} else if ( node.p ) {
 
@@ -1089,7 +1089,7 @@ Survey.prototype.selectSection = function ( id ) {
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
-			this.selectedBox = this.boxSection( node, this.selectedBox, Cfg.themeValue( 'selectBox' ) );
+			this.selectedBox = this.boxSection( node, this.selectedBox, Cfg.themeValue( 'box.select' ) );
 			surveyTree.getSubtreeIds( id, selectedSectionIds );
 
 		} else {
@@ -1110,7 +1110,7 @@ Survey.prototype.setFeatureBox = function () {
 
 	if ( this.featureBox === null ) {
 
-		const box = new Box3Helper( this.modelLimits, Cfg.themeValue( 'boundingBox' ) );
+		const box = new Box3Helper( this.modelLimits, Cfg.themeValue( 'box.bounding' ) );
 
 		box.layers.set( FEATURE_BOX );
 		box.name = 'survey-boundingbox';
@@ -1264,7 +1264,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_SINGLE:
 
-		material = Materials.getSurfaceMaterial( Cfg.themeValue( 'single' ) );
+		material = Materials.getSurfaceMaterial( Cfg.themeValue( 'shading.single' ) );
 
 		break;
 
@@ -1366,7 +1366,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	case SHADING_SINGLE:
 
-		this.setLegColourByColour( mesh, Cfg.themeColor( 'single' ) );
+		this.setLegColourByColour( mesh, Cfg.themeColor( 'shading.single' ) );
 
 		break;
 
@@ -1553,7 +1553,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	const c1 = ColourCache.yellow;
 	const c2 = ColourCache.red;
-	const c3 = Cfg.themeColor( 'single' );
+	const c3 = Cfg.themeColor( 'shading.single' );
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 

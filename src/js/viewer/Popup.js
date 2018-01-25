@@ -86,10 +86,10 @@ Popup.prototype.finish = function () {
 
 	// set background
 
-	ctx.fillStyle = Cfg.themeColorCSS( 'popupBackground' );
+	ctx.fillStyle = Cfg.themeColorCSS( 'popup.background' );
 	ctx.fillRect( 0, 0, popupWidth, popupHeight );
 
-	ctx.strokeStyle = Cfg.themeColorCSS( 'popupBorder' );
+	ctx.strokeStyle = Cfg.themeColorCSS( 'popup.border' );
 	ctx.lineWidth = 2.0;
 	ctx.strokeRect( 0, 0, popupWidth, popupHeight );
 
@@ -97,7 +97,7 @@ Popup.prototype.finish = function () {
 
 	ctx.textAlign = 'left';
 	ctx.font = fontSize + 'px ' + 'normal helvetica,sans-serif';
-	ctx.fillStyle = Cfg.themeColorCSS( 'popupText' );
+	ctx.fillStyle = Cfg.themeColorCSS( 'popup.text' );
 
 	var i;
 

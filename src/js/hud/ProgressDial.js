@@ -49,7 +49,7 @@ function ProgressDial () {
 	this.pcent.translateY( 10 );
 	this.pcent.translateX( -5 );
 
-	this.color = Cfg.themeValue( 'progress' );
+	this.color = Cfg.themeValue( 'hud.progress' );
 
 	this.add( this.pcent );
 

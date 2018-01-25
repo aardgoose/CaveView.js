@@ -1,10 +1,11 @@
 import './core/polyfills';
+import '../../../three.js/src/polyfills';
+
 import { Cfg } from './core/lib';
 
 // backwards compat
 const setEnvironment = Cfg.set;
 
-import '../../../three.js/src/polyfills';
 export * from './core/constants';
 export { setEnvironment };
 export { Viewer } from './viewer/Viewer';

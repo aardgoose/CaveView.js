@@ -1,6 +1,5 @@
 
-import { Color }  from '../../../../three.js/src/math/Color';
-import { FileLoader, EventDispatcher } from '../../../../three.js/src/Three';
+import { Color, FileLoader, EventDispatcher } from '../Three';
 import { x18n } from './x18n';
 import { lang_en } from './default-lang';
 

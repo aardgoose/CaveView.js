@@ -35,7 +35,7 @@ function LinearScale ( container, Viewer ) {
 
 	Mesh.call( this, geometry, Materials.getHeightMaterial( MATERIAL_LINE ) );
 
-	var ms = new Matrix4().makeScale( 1,  1, barHeight / range );
+	var ms = new Matrix4().makeScale( 1, 1, barHeight / range );
 
 	ms.multiply( new Matrix4().makeTranslation( width / 2 - stdMargin, -height / 2 + barOffset + barHeight / 2, 0 ) );
 

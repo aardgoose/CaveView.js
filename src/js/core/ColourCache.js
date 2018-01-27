@@ -1,4 +1,5 @@
 
+import { Colours } from './Colours';
 import { Color, DataTexture, RGBFormat, UnsignedByteType }  from '../Three';
 
 // define colors to share THREE.Color objects

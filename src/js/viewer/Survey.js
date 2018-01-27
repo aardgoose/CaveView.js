@@ -1252,13 +1252,13 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_HEIGHT:
 
-		material = Materials.getHeightMaterial( MATERIAL_SURFACE, this.modelLimits );
+		material = Materials.getHeightMaterial( MATERIAL_SURFACE );
 
 		break;
 
 	case SHADING_CURSOR:
 
-		material = Materials.getCursorMaterial( MATERIAL_SURFACE, this.modelLimits );
+		material = Materials.getCursorMaterial( MATERIAL_SURFACE );
 
 		break;
 
@@ -1278,7 +1278,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 		if ( this.terrain === null ) return false;
 
-		material = Materials.getDepthMaterial( MATERIAL_SURFACE, this.modelLimits, this.terrain );
+		material = Materials.getDepthMaterial( MATERIAL_SURFACE, this.terrain );
 
 		if ( ! material ) return false;
 
@@ -1286,7 +1286,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_DEPTH_CURSOR:
 
-		material = Materials.getDepthCursorMaterial( MATERIAL_SURFACE, this.modelLimits, this.terrain );
+		material = Materials.getDepthCursorMaterial( MATERIAL_SURFACE, this.terrain );
 
 		if ( ! material ) return false;
 
@@ -1439,25 +1439,25 @@ Survey.prototype.setLegColourByMaterial = function ( mesh, material ) {
 
 Survey.prototype.setLegColourByDepth = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getDepthMaterial( MATERIAL_LINE, this.modelLimits, this.terrain ) );
+	this.setLegColourByMaterial( mesh, Materials.getDepthMaterial( MATERIAL_LINE, this.terrain ) );
 
 };
 
 Survey.prototype.setLegColourByDepthCursor = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getDepthCursorMaterial( MATERIAL_LINE, this.modelLimits, this.terrain ) );
+	this.setLegColourByMaterial( mesh, Materials.getDepthCursorMaterial( MATERIAL_LINE, this.terrain ) );
 
 };
 
 Survey.prototype.setLegColourByHeight = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getHeightMaterial( MATERIAL_LINE, this.modelLimits ) );
+	this.setLegColourByMaterial( mesh, Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 };
 
 Survey.prototype.setLegColourByCursor = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getCursorMaterial( MATERIAL_LINE, this.modelLimits ) );
+	this.setLegColourByMaterial( mesh, Materials.getCursorMaterial( MATERIAL_LINE ) );
 
 };
 

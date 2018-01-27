@@ -190,6 +190,10 @@ function init ( domID, configuration ) { // public method
 			value: container
 		},
 
+		'modelLimits': {
+			get: function () { return survey.modelLimits; }
+		},
+
 		'terrain': {
 			writeable: true,
 			get: function () { return testCameraLayer( FEATURE_TERRAIN ); },

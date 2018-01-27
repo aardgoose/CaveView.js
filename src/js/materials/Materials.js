@@ -44,7 +44,7 @@ function updateDatumShifts( event ) {
 }
 
 
-function getHeightMaterial ( type, limits ) {
+function getHeightMaterial ( type ) {
 
 	const name = 'height' + type;
 
@@ -52,7 +52,7 @@ function getHeightMaterial ( type, limits ) {
 
 	if ( material === undefined ) {
 
-		material = new HeightMaterial( type, limits );
+		material = new HeightMaterial( type, viewer.modelLimits );
 		cache.set( name, material );
 
 		perSurveyMaterials[ name ] = material;
@@ -69,7 +69,7 @@ function getDepthMapMaterial ( terrain ) {
 
 }
 
-function getDepthMaterial ( type, limits, terrain ) {
+function getDepthMaterial ( type, terrain ) {
 
 	const name = 'depth' + type;
 
@@ -77,7 +77,7 @@ function getDepthMaterial ( type, limits, terrain ) {
 
 	if ( material === undefined ) {
 
-		material = new DepthMaterial( type, limits, terrain );
+		material = new DepthMaterial( type, viewer.modelLimits, terrain );
 
 		cache.set( name, material );
 
@@ -90,7 +90,7 @@ function getDepthMaterial ( type, limits, terrain ) {
 
 }
 
-function getCursorMaterial ( type, limits ) {
+function getCursorMaterial ( type ) {
 
 	const name = 'cursor' + type;
 
@@ -98,7 +98,7 @@ function getCursorMaterial ( type, limits ) {
 
 	if ( material === undefined ) {
 
-		material = new CursorMaterial( type, limits );
+		material = new CursorMaterial( type, viewer.modelLimits );
 
 		perSurveyMaterials[ name ] = material;
 
@@ -118,7 +118,7 @@ function getCursorMaterial ( type, limits ) {
 
 }
 
-function getDepthCursorMaterial( type, limits, terrain ) {
+function getDepthCursorMaterial( type, terrain ) {
 
 	const name = 'depthCursor' + type;
 
@@ -126,7 +126,7 @@ function getDepthCursorMaterial( type, limits, terrain ) {
 
 	if ( material === undefined ) {
 
-		material = new DepthCursorMaterial( type, limits, terrain );
+		material = new DepthCursorMaterial( type, viewer.modelLimits, terrain );
 
 		perSurveyMaterials[ name ] = material;
 		depthMaterials.push( material );

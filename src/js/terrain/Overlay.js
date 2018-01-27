@@ -2,7 +2,7 @@
 import {
 	TextureLoader,
 	MeshLambertMaterial
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 // FIXME fix lifecycle of materials and textures - ensure disposal/caching as required
 // GPU resource leak etc.

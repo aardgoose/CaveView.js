@@ -7,7 +7,7 @@ import { HeightMaterial } from './HeightMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
 import { GlyphString } from '../core/GlyphString';
 
-import { LineBasicMaterial, MeshLambertMaterial, NoColors, VertexColors } from '../../../../three.js/src/Three';
+import { LineBasicMaterial, MeshLambertMaterial, NoColors, VertexColors } from '../Three';
 
 const cache = new Map();
 

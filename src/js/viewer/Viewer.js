@@ -37,7 +37,7 @@ import {
 	OrthographicCamera, PerspectiveCamera,
 	WebGLRenderer, WebGLRenderTarget,
 	MOUSE
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 const defaultView = {
 	autoRotate: false,

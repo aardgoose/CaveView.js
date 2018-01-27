@@ -2,7 +2,7 @@ import {
 	Geometry,
 	VertexColors, LineSegments,
 	LineBasicMaterial
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 import { ColourCache } from '../core/ColourCache';
 

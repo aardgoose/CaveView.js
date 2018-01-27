@@ -7,7 +7,7 @@ import { SHADING_OVERLAY } from '../core/constants';
 
 import {
 	Vector2, Frustum, Box2, Matrix4, FileLoader
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 
 const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition

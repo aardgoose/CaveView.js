@@ -2,7 +2,7 @@ import {
 	BufferGeometry, Float32BufferAttribute,
 	FaceColors, Mesh,
 	MeshLambertMaterial
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 const unselectedMaterial = new MeshLambertMaterial( { color: 0x444444, vertexColors: FaceColors } );
 

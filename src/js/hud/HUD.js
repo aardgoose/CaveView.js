@@ -22,7 +22,7 @@ import {
 	Scene, Group,
 	AmbientLight, DirectionalLight,
 	OrthographicCamera
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 // THREE objects
 

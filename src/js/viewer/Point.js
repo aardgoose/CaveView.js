@@ -1,6 +1,6 @@
 import {
 	Points, PointsMaterial, BufferGeometry, Float32BufferAttribute
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 function Point ( material ) {
 

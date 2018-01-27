@@ -7,7 +7,7 @@ import {
 	MeshBasicMaterial,
 	VertexColors, FrontSide,
 	Mesh
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 function AngleScale ( container, caption ) {
 

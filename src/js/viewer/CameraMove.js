@@ -7,7 +7,7 @@ import {
 	Line3,
 	Matrix4,
 	Math as _Math
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 import { upAxis } from '../core/constants';
 

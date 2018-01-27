@@ -7,7 +7,7 @@ import {
 	Vector3, Matrix4,
 	PlaneBufferGeometry,
 	Mesh
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 function LinearScale ( container, Viewer ) {
 

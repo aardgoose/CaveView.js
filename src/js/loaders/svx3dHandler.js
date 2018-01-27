@@ -2,7 +2,7 @@
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
 import { Tree } from '../core/Tree';
-import { Vector3, Box3 } from '../../../../three.js/src/Three';
+import { Vector3, Box3 } from '../Three';
 
 function Svx3dHandler ( fileName ) {
 

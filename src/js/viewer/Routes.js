@@ -4,7 +4,7 @@ import {
 	LineSegments,
 	Geometry,
 	EventDispatcher,
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 function Routes ( metadataSource ) {
 

@@ -4,7 +4,7 @@ import { HudObject } from './HudObject';
 import {
 	PlaneBufferGeometry, Geometry, Vector3,
 	Mesh, MeshBasicMaterial, Line, LineBasicMaterial
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 function CursorScale ( container ) {
 

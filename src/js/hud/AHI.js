@@ -9,7 +9,7 @@ import {
 	LineBasicMaterial, MeshPhongMaterial,
 	VertexColors,
 	Mesh, LineSegments, Group
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 function AHI ( container ) {
 

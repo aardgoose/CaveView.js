@@ -3,7 +3,7 @@ import { Cfg, replaceExtension } from '../core/lib';
 import { Svx3dHandler } from './svx3dHandler';
 import { loxHandler } from './loxHandler';
 import { kmlHandler } from './kmlHandler';
-import { FileLoader } from '../../../../three.js/src/Three';
+import { FileLoader } from '../Three';
 
 function CaveLoader ( callback, progress ) {
 

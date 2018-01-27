@@ -1,5 +1,5 @@
 
-import { ShaderMaterial } from '../../../../three.js/src/Three';
+import { ShaderMaterial } from '../Three';
 import { Shaders } from '../shaders/Shaders';
 
 function PopupMaterial ( container, popupImage, rotation, colour ) {

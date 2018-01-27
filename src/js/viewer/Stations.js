@@ -2,7 +2,7 @@ import {
 	BufferGeometry,
 	Points,
 	Float32BufferAttribute
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 

@@ -8,7 +8,7 @@ import {
 	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
 	FrontSide, VertexColors,
 	Mesh, Group
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 
 function Compass ( container ) {

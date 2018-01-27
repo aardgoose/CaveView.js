@@ -1,5 +1,5 @@
 
-import { VertexColors, ShaderMaterial, TextureLoader, Vector4, Matrix3 } from '../../../../three.js/src/Three';
+import { VertexColors, ShaderMaterial, TextureLoader, Vector4, Matrix3 } from '../Three';
 import { Shaders } from '../shaders/Shaders';
 import { Cfg } from '../core/lib';
 import { ColourCache } from '../core/ColourCache';

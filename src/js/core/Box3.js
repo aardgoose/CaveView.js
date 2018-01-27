@@ -5,7 +5,7 @@
  * @author Mugen87 / http://github.com/Mugen87
  */
 
-import { LineSegments, LineBasicMaterial, BufferAttribute, BufferGeometry } from '../../../../three.js/src/Three';
+import { LineSegments, LineBasicMaterial, BufferAttribute, BufferGeometry } from '../Three';
 
 function Box3Helper( box3, color ) {
 

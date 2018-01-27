@@ -1,4 +1,4 @@
-import { CanvasTexture } from '../../../../three.js/src/Three';
+import { CanvasTexture } from '../Three';
 
 function GlyphAtlas ( glyphAtlasSpec ) {
 

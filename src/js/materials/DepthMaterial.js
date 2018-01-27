@@ -3,7 +3,7 @@ import { Shaders } from '../shaders/Shaders';
 import { MATERIAL_LINE } from '../core/constants';
 import { ColourCache } from '../core/ColourCache';
 
-import { ShaderMaterial, Vector3 } from '../../../../three.js/src/Three';
+import { ShaderMaterial, Vector3 } from '../Three';
 
 function DepthMaterial ( type, surveyLimits, terrain ) {
 

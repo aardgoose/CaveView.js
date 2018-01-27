@@ -7,7 +7,7 @@ import {
 	MeshLambertMaterial,
 	VertexColors, FrontSide,
 	Group, Box3, Vector3
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 function CommonTerrain () {
 

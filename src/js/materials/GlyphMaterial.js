@@ -1,5 +1,5 @@
 
-import { ShaderMaterial } from '../../../../three.js/src/Three';
+import { ShaderMaterial } from '../Three';
 import { Shaders } from '../shaders/Shaders';
 import { AtlasFactory } from '../materials/GlyphAtlas';
 

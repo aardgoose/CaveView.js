@@ -4,7 +4,7 @@ import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 import { Point } from './Point';
 
-import { Object3D, Vector3, Triangle, Plane, PointsMaterial, CanvasTexture } from '../../../../three.js/src/Three';
+import { Object3D, Vector3, Triangle, Plane, PointsMaterial, CanvasTexture } from '../Three';
 
 
 // preallocated objects for projected area calculation and cluster visibility checks

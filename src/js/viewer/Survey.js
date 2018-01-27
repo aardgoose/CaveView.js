@@ -26,7 +26,7 @@ import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
 
-import { Matrix4, Vector3, Box3, Object3D, Color, TextureLoader, PointsMaterial } from '../../../../three.js/src/Three';
+import { Matrix4, Vector3, Box3, Object3D, Color, TextureLoader, PointsMaterial } from '../Three';
 
 function Survey ( cave ) {
 

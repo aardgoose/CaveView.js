@@ -1,4 +1,4 @@
-import { Group, Vector3 } from '../../../../three.js/src/Three';
+import { Group, Vector3 } from '../Three';
 
 import { CAMERA_OFFSET, LABEL_STATION, LEG_SPLAY } from '../core/constants';
 import { GlyphString } from '../core/GlyphString';

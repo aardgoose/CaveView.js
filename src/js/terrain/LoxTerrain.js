@@ -5,7 +5,7 @@ import { terrainLib } from './terrainLib';
 import { Materials } from '../materials/Materials';
 
 import { FEATURE_TERRAIN } from '../core/constants';
-import { MeshLambertMaterial, TextureLoader, Mesh } from '../../../../three.js/src/Three';
+import { MeshLambertMaterial, TextureLoader, Mesh } from '../Three';
 
 function LoxTerrain ( terrainData, offsets ) {
 

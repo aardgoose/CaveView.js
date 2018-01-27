@@ -9,7 +9,7 @@ import {
 	Float32BufferAttribute,
 	Uint16BufferAttribute,
 	Mesh
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 
 function PopupGeometry () {

@@ -3,7 +3,7 @@ import { MATERIAL_LINE } from '../core/constants';
 import { Shaders } from '../shaders/Shaders';
 import { ColourCache } from '../core/ColourCache';
 
-import { Vector3, ShaderMaterial } from '../../../../three.js/src/Three';
+import { Vector3, ShaderMaterial } from '../Three';
 
 function HeightMaterial ( type, limits ) {
 

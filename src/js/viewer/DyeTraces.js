@@ -1,6 +1,6 @@
 import {
 	Vector3, BufferGeometry, Float32BufferAttribute, Mesh
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 import { WaterMaterial } from '../materials/WaterMaterial';
 import { FEATURE_TRACES, upAxis } from '../core/constants';

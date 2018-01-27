@@ -1,6 +1,6 @@
 
 import { Shaders } from '../shaders/Shaders';
-import { ShaderMaterial } from '../../../../three.js/src/Three';
+import { ShaderMaterial } from '../Three';
 
 function DepthMapMaterial ( terrain ) {
 

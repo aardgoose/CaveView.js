@@ -8,7 +8,7 @@ import {
 	LineBasicMaterial, MeshBasicMaterial,
 	FaceColors, FrontSide,
 	LineSegments, Group, Mesh
-} from '../../../../three.js/src/Three';
+} from '../Three';
 
 function ScaleBar ( container, hScale, rightMargin ) {
 

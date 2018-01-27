@@ -1,8 +1,5 @@
 
-import { Color }  from '../../../../three.js/src/math/Color';
-import { Colours } from './Colours';
-import { DataTexture }  from '../../../../three.js/src/textures/DataTexture';
-import { RGBFormat, UnsignedByteType }  from '../../../../three.js/src/constants';
+import { Color, DataTexture, RGBFormat, UnsignedByteType }  from '../Three';
 
 // define colors to share THREE.Color objects
 

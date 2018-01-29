@@ -190,10 +190,6 @@ function init ( domID, configuration ) { // public method
 			value: container
 		},
 
-		'modelLimits': {
-			get: function () { return survey.modelLimits; }
-		},
-
 		'terrain': {
 			writeable: true,
 			get: function () { return testCameraLayer( FEATURE_TERRAIN ); },
@@ -981,8 +977,6 @@ function clearView () {
 
 	unloadTerrainListeners();
 
-	Materials.flushCache();
-
 	container.removeEventListener( 'mousedown', mouseDown );
 
 	initCamera( pCamera );
@@ -1059,6 +1053,8 @@ function loadSurvey ( newSurvey ) {
 	stats = getLegStats( LEG_CAVE );
 
 	setScale( survey );
+
+	Materials.flushCache( survey );
 
 	terrain = survey.terrain;
 
@@ -1228,37 +1224,31 @@ function clockStop ( /* event */ ) {
 
 function mouseDown ( event ) {
 
-	var picked, result, i;
-
+	// FIXME - handle scrolled container
 	mouse.x =   ( event.clientX / container.clientWidth  ) * 2 - 1;
 	mouse.y = - ( event.clientY / container.clientHeight ) * 2 + 1;
 
 	raycaster.setFromCamera( mouse, camera );
 
 	const intersects = raycaster.intersectObjects( mouseTargets, false );
-	const l = intersects.length;
 
-	for ( i = 0; i < l; i++ ) {
+	if ( intersects.length < 1 ) return;
 
-		picked = intersects[ i ];
+	const picked = intersects[ 0 ];
 
-		switch ( mouseMode ) {
+	switch ( mouseMode ) {
 
-		case MOUSE_MODE_NORMAL:
+	case MOUSE_MODE_NORMAL:
 
-			result = _selectStation( picked );
+		_selectStation( picked );
 
-			break;
+		break;
 
-		case MOUSE_MODE_ROUTE_EDIT:
+	case MOUSE_MODE_ROUTE_EDIT:
 
-			result = _selectSegment( picked );
+		_selectSegment( picked );
 
-			break;
-
-		}
-
-		if ( result ) break;
+		break;
 
 	}
 

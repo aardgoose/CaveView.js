@@ -16,6 +16,7 @@ var depthMaterials = [];
 var perSurveyMaterials = {};
 
 var viewer;
+var survey;
 
 function updateMaterialCursor ( material ) {
 
@@ -52,7 +53,7 @@ function getHeightMaterial ( type ) {
 
 	if ( material === undefined ) {
 
-		material = new HeightMaterial( type, viewer.modelLimits );
+		material = new HeightMaterial( type, survey.modelLimits );
 		cache.set( name, material );
 
 		perSurveyMaterials[ name ] = material;
@@ -69,7 +70,7 @@ function getDepthMapMaterial ( terrain ) {
 
 }
 
-function getDepthMaterial ( type, terrain ) {
+function getDepthMaterial ( type ) {
 
 	const name = 'depth' + type;
 
@@ -77,7 +78,7 @@ function getDepthMaterial ( type, terrain ) {
 
 	if ( material === undefined ) {
 
-		material = new DepthMaterial( type, viewer.modelLimits, terrain );
+		material = new DepthMaterial( type, survey.modelLimits, survey.terrain );
 
 		cache.set( name, material );
 
@@ -98,7 +99,7 @@ function getCursorMaterial ( type ) {
 
 	if ( material === undefined ) {
 
-		material = new CursorMaterial( type, viewer.modelLimits );
+		material = new CursorMaterial( type, survey.modelLimits );
 
 		perSurveyMaterials[ name ] = material;
 
@@ -118,7 +119,7 @@ function getCursorMaterial ( type ) {
 
 }
 
-function getDepthCursorMaterial( type, terrain ) {
+function getDepthCursorMaterial( type ) {
 
 	const name = 'depthCursor' + type;
 
@@ -126,7 +127,7 @@ function getDepthCursorMaterial( type, terrain ) {
 
 	if ( material === undefined ) {
 
-		material = new DepthCursorMaterial( type, viewer.modelLimits, terrain );
+		material = new DepthCursorMaterial( type, survey.modelLimits, survey.terrain );
 
 		perSurveyMaterials[ name ] = material;
 		depthMaterials.push( material );
@@ -216,13 +217,13 @@ function initCache ( Viewer ) {
 
 }
 
-function flushCache() {
+function flushCache( surveyIn ) {
 
 	var name;
 
 	for ( name in perSurveyMaterials ) {
 
-		var material = perSurveyMaterials[ name ];
+		let material = perSurveyMaterials[ name ];
 
 		material.dispose();
 		cache.delete( name );
@@ -233,9 +234,11 @@ function flushCache() {
 	perSurveyMaterials = {};
 	GlyphString.cache = new Map();
 
+	survey = surveyIn;
+
 }
 
-export var Materials = {
+export const Materials = {
 	getHeightMaterial:      getHeightMaterial,
 	getDepthMapMaterial:    getDepthMapMaterial,
 	getDepthMaterial:       getDepthMaterial,

@@ -11,19 +11,8 @@ function HeightMaterial ( type, limits ) {
 
 	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
 
-	var zMin, zMax;
-
-	if ( limits ) {
-
-		zMin = limits.min.z;
-		zMax = limits.max.z;
-
-	} else {
-
-		zMin = 0;
-		zMax = 100;
-
-	}
+	const zMin = limits.min.z;
+	const zMax = limits.max.z;
 
 	this.uniforms = {
 		uLight: { value: new Vector3( -1, -1, 2 ) }, // pseudo light source somewhere over viewer's left shoulder.

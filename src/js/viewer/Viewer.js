@@ -47,6 +47,7 @@ const defaultView = {
 	cameraType: CAMERA_PERSPECTIVE,
 	shadingMode: SHADING_HEIGHT,
 	terrainShading: SHADING_SHADED,
+	terrainOverlay: null,
 	surfaceLegs: false,
 	walls: false,
 	scraps: false,
@@ -70,7 +71,7 @@ const raycaster = new Raycaster();
 
 const formatters = {};
 
-const RETILE_TIMEOUT = 150; // ms pause after last movement before attempting retiling
+const RETILE_TIMEOUT = 80; // ms pause after last movement before attempting retiling
 
 var caveIsLoaded = false;
 
@@ -101,6 +102,7 @@ var terrainShadingMode = SHADING_SHADED;
 
 var overlays = {};
 var activeOverlay = null;
+var defaultOverlay = null;
 
 var cameraMode;
 var selectedSection = 0;
@@ -778,7 +780,7 @@ function setTerrainShadingMode ( mode ) {
 
 function setShadingMode ( mode ) {
 
-	if ( terrain === null && ( mode === SHADING_DEPTH || mode === SHADING_DEPTH_CURSOR ) ) return;
+	if ( terrain === 0 && ( mode === SHADING_DEPTH || mode === SHADING_DEPTH_CURSOR ) ) return;
 	if ( survey.setShadingMode( mode ) ) shadingMode = mode;
 
 	renderView();
@@ -795,7 +797,7 @@ function setSurfaceShadingMode ( mode ) {
 
 function setTerrainOverlay ( overlayName ) {
 
-	if ( terrain ===  null ) return;
+	if ( ( overlayName === 0 && terrain.isTiled ) || terrain === null ) return;
 
 	if ( terrainShadingMode === SHADING_OVERLAY ) {
 
@@ -814,6 +816,7 @@ function addOverlay ( name, overlayProvider ) {
 	if ( Object.keys( overlays ).length === 1 ) {
 
 		activeOverlay = name;
+		defaultOverlay = name;
 
 	}
 
@@ -972,6 +975,7 @@ function clearView () {
 	selectedSection = 0;
 	mouseMode       = MOUSE_MODE_NORMAL;
 	mouseTargets    = [];
+	activeOverlay   = null;
 
 	// remove event listeners
 
@@ -1109,6 +1113,8 @@ function loadSurvey ( newSurvey ) {
 		if ( terrain.hasCoverage() ) {
 
 			setTerrainShadingMode( terrainShadingMode );
+
+			if ( activeOverlay === null ) activeOverlay = defaultOverlay;
 
 			terrain.tileArea( survey.limits );
 			terrain.setDefaultOverlay( overlays[ activeOverlay ] );

@@ -5,6 +5,7 @@ import { Materials } from '../materials/Materials';
 import { Point } from './Point';
 
 import { Object3D, Vector3, Triangle, Plane, PointsMaterial, CanvasTexture } from '../Three';
+import { StencilLib } from '../core/StencilLib';
 
 
 // preallocated objects for projected area calculation and cluster visibility checks
@@ -78,7 +79,12 @@ function getClusterMaterial ( count ) {
 
 function makeClusterMarker ( count ) {
 
-	return new Point( getClusterMaterial( count ) );
+	const point = new Point( getClusterMaterial( count ) );
+
+	point.onBeforeRender = StencilLib.featureOnBeforeRender;
+	point.onAfterRender = StencilLib.featureOnAfterRender;
+
+	return point;
 
 }
 

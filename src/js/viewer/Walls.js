@@ -4,6 +4,8 @@ import {
 	MeshLambertMaterial
 } from '../Three';
 
+import { StencilLib } from '../core/StencilLib';
+
 const unselectedMaterial = new MeshLambertMaterial( { color: 0x444444, vertexColors: FaceColors } );
 
 function Walls ( layer ) {
@@ -14,6 +16,9 @@ function Walls ( layer ) {
 
 	this.layers.set( layer );
 	this.type = 'Walls';
+
+	this.onBeforeRender = StencilLib.featureOnBeforeRender;
+	this.onAfterRender = StencilLib.featureOnAfterRender;
 
 	return this;
 

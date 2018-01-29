@@ -1,6 +1,6 @@
 
 import { FEATURE_TERRAIN } from '../core/constants';
-import { terrainLib } from './terrainLib';
+import { StencilLib } from '../core/StencilLib';
 import { Materials } from '../materials/Materials';
 
 import {
@@ -51,8 +51,8 @@ function Tile ( x, y, zoom, tileSet, clip ) {
 
 	Mesh.call( this, new BufferGeometry(), Materials.getSurfaceMaterial( 0xffffff ) );
 
-	this.onBeforeRender = terrainLib.onBeforeRender;
-	this.onAfterRender = terrainLib.onAfterRender;
+	this.onBeforeRender = StencilLib.terrainOnBeforeRender;
+	this.onAfterRender = StencilLib.terrainOnAfterRender;
 
 	return this;
 

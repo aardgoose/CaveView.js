@@ -4,7 +4,7 @@ import { CAMERA_OFFSET, LABEL_STATION, LEG_SPLAY } from '../core/constants';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
-var _tmpVector3 = new Vector3();
+const _tmpVector3 = new Vector3();
 
 /*
 

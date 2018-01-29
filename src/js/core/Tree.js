@@ -56,11 +56,9 @@ Tree.prototype.forEachChild = function ( func, recurse ) {
 
 	const children = this.children;
 
-	var child;
-
 	for ( var i = 0; i < children.length; i++ ) {
 
-		child = children[ i ];
+		const child = children[ i ];
 
 		func( child );
 
@@ -91,9 +89,7 @@ Tree.prototype.findById = function ( id ) {
 
 	for ( var i = 0, l = this.children.length; i < l; i++ ) {
 
-		var child = this.children[ i ];
-
-		var found = child.findById( id );
+		const found = this.children[ i ].findById( id );
 
 		if ( found ) return found;
 
@@ -106,15 +102,14 @@ Tree.prototype.findById = function ( id ) {
 Tree.prototype.getByPath = function ( path ) {
 
 	const pathArray = path.split( '.' );
-	const node = this.getByPathArray( pathArray );
 
-	return pathArray.length === 0 ? node : undefined;
+	return pathArray.length === 0 ? this.getByPathArray( pathArray ) : undefined;
 
 };
 
 Tree.prototype.getByPathArray = function ( path ) {
 
-	var node  = this;
+	var node = this;
 	var search = true;
 
 	while ( search && path.length > 0 ) {
@@ -123,7 +118,7 @@ Tree.prototype.getByPathArray = function ( path ) {
 
 		for ( var i = 0, l = node.children.length; i < l; i++ ) {
 
-			var child = node.children[ i ];
+			const child = node.children[ i ];
 
 			if ( child.name === path[ 0 ] ) {
 
@@ -145,12 +140,9 @@ Tree.prototype.getByPathArray = function ( path ) {
 
 Tree.prototype.addPath = function ( path, properties ) {
 
-	var node;
-	var newNode;
-
 	// find part of path that exists already
 
-	node = this.getByPathArray( path );
+	var node = this.getByPathArray( path );
 
 	if ( path.length === 0 ) return node;
 
@@ -158,7 +150,7 @@ Tree.prototype.addPath = function ( path, properties ) {
 
 	while ( path.length > 0 ) {
 
-		newNode = new Tree( path.shift(), null, this.root, node );
+		const newNode = new Tree( path.shift(), null, this.root, node );
 
 		node.children.push( newNode );
 		node = newNode;

@@ -40,7 +40,7 @@ function AHI ( container ) {
 
 	const sphereColors = new BufferAttribute( new Float32Array( sv * 3 ), 3 );
 
-	var colours = [];
+	const colours = [];
 	var i;
 
 	for ( i = 0; i < sv; i++ ) {
@@ -130,7 +130,7 @@ AHI.prototype.constructor = AHI;
 AHI.prototype.set = function () {
 
 	const xAxis   = new Vector3( 1, 0, 0 );
-	var direction = new Vector3();
+	const direction = new Vector3();
 
 	return function set ( vCamera ) {
 

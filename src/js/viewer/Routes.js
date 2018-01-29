@@ -171,7 +171,7 @@ Routes.prototype.loadRoute = function ( routeName ) {
 	const segmentMap = this.segmentMap;
 	const routeSegments = this.routes.get( routeName );
 
-	var map, segment, i;
+	var i;
 
 	if ( ! routeSegments ) {
 
@@ -184,9 +184,9 @@ Routes.prototype.loadRoute = function ( routeName ) {
 
 	for ( i = 0; i < routeSegments.length; i++ ) {
 
-		segment = routeSegments[ i ];
+		const segment = routeSegments[ i ];
 
-		map = segmentMap.get( surveyTree.getIdByPath( segment.start.split( '.' ) ) + ':' + surveyTree.getIdByPath( segment.end.split( '.' ) ) );
+		const map = segmentMap.get( surveyTree.getIdByPath( segment.start.split( '.' ) ) + ':' + surveyTree.getIdByPath( segment.end.split( '.' ) ) );
 
 		if ( map !== undefined ) currentRoute.add( map.segment );
 

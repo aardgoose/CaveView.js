@@ -13,7 +13,7 @@ function beforeRender ( renderer, scene, camera, geometry, material ) {
 
 function DyeTraces () {
 
-	var geometry = new BufferGeometry();
+	const geometry = new BufferGeometry();
 
 	Mesh.call( this, geometry, new WaterMaterial() );
 
@@ -33,13 +33,13 @@ DyeTraces.prototype.constructor = DyeTraces;
 
 DyeTraces.prototype.finish = function () {
 
-	var geometry = this.geometry;
+	const geometry = this.geometry;
 
-	var vertices = this.vertices;
-	var ends = this.ends;
+	const vertices = this.vertices;
+	const ends = this.ends;
 
-	var positions = new Float32BufferAttribute( vertices.length * 3, 3 );
-	var sinks = new Float32BufferAttribute( ends.length * 3, 3 );
+	const positions = new Float32BufferAttribute( vertices.length * 3, 3 );
+	const sinks = new Float32BufferAttribute( ends.length * 3, 3 );
 
 	geometry.addAttribute( 'position', positions.copyVector3sArray( vertices ) );
 	geometry.addAttribute( 'sinks', sinks.copyVector3sArray( ends ) );
@@ -50,15 +50,15 @@ DyeTraces.prototype.finish = function () {
 
 DyeTraces.prototype.addTrace = function ( startStation, endStation ) {
 
-	var vertices = this.vertices;
-	var ends = this.ends;
+	const vertices = this.vertices;
+	const ends = this.ends;
 
-	var end = new Vector3().copy( endStation );
+	const end = new Vector3().copy( endStation );
 
-	var v = new Vector3().subVectors( endStation, startStation ).cross( upAxis ).setLength( 2 );
+	const v = new Vector3().subVectors( endStation, startStation ).cross( upAxis ).setLength( 2 );
 
-	var v1 = new Vector3().add( startStation ).add( v );
-	var v2 = new Vector3().add( startStation ).sub( v );
+	const v1 = new Vector3().add( startStation ).add( v );
+	const v2 = new Vector3().add( startStation ).sub( v );
 
 	vertices.push( v1 );
 	vertices.push( v2 );

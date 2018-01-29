@@ -5,28 +5,9 @@ import {
 } from '../Three';
 
 import { ColourCache } from '../core/ColourCache';
+import { StencilLib } from '../core/StencilLib';
 
 const unselectedMaterial = new LineBasicMaterial( { color: 0x444444, vertexColors: VertexColors } );
-
-function onBeforeRender( renderer ) {
-
-	const stencil = renderer.state.buffers.stencil;
-	const gl = renderer.context;
-
-	stencil.setTest( true );
-
-	stencil.setOp( gl.KEEP, gl.KEEP, gl.INCR );
-
-}
-
-function onAfterRender( renderer ) {
-
-	const stencil = renderer.state.buffers.stencil;
-
-	stencil.setTest( false );
-
-
-}
 
 function Legs ( layer ) {
 
@@ -37,8 +18,9 @@ function Legs ( layer ) {
 	this.layers.set( layer );
 	this.type = 'Legs';
 
-	this.onBeforeRender = onBeforeRender;
-	this.onAfterRender = onAfterRender;
+	this.onBeforeRender = StencilLib.featureOnBeforeRender;
+	this.onAfterRender = StencilLib.featureOnAfterRender;
+
 	this.legLengths = [];
 
 	return this;

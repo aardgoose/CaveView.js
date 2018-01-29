@@ -3,10 +3,10 @@ import { Color, FileLoader, EventDispatcher } from '../Three';
 import { x18n } from './x18n';
 import { lang_en } from './default-lang';
 
-var environment = new Map();
-var themeColors = new Map();
+const environment = new Map();
+const themeColors = new Map();
 
-var defaultTheme = {
+const defaultTheme = {
 	background: 0x000000,
 	hud: {
 		progress: 0x00ff00,
@@ -166,7 +166,7 @@ Cfg.treeValue = function ( theme, parts ) {
 
 Cfg.themeColorCSS = function getThemeColorCSS ( name ) {
 
-	var color = '#' + Cfg.themeValue( name ).toString( 16 ).padStart( 6, '0' );
+	const color = '#' + Cfg.themeValue( name ).toString( 16 ).padStart( 6, '0' );
 
 	return color;
 

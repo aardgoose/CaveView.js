@@ -21,7 +21,7 @@ function ProgressDial () {
 
 	const offset = stdWidth + stdMargin;
 
-	var geometry = new RingGeometry( stdWidth * 0.9, stdWidth, 50 );
+	const geometry = new RingGeometry( stdWidth * 0.9, stdWidth, 50 );
 
 	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors } ) );
 
@@ -38,7 +38,7 @@ function ProgressDial () {
 
 	this.addEventListener( 'removed', this.removeDomObjects );
 
-	var atlasSpec = {
+	const atlasSpec = {
 		font: 'normal helvetica,sans-serif'
 	};
 
@@ -69,9 +69,9 @@ ProgressDial.prototype.set = function ( progress ) {
 
 	this.progress = progress;
 
-	var l = Math.floor( Math.min( 100, Math.round( progress ) ) / 2 ) * 2;
-	var faces = this.geometry.faces;
-	var color = this.color;
+	const l = Math.floor( Math.min( 100, Math.round( progress ) ) / 2 ) * 2;
+	const faces = this.geometry.faces;
+	const color = this.color;
 
 	for ( var i = 0; i < l; i++ ) {
 
@@ -97,7 +97,7 @@ ProgressDial.prototype.addValue = function ( progress ) {
 
 ProgressDial.prototype.start = function () {
 
-	var faces = this.geometry.faces;
+	const faces = this.geometry.faces;
 
 	for ( var i = 0; i < 100; i++ ) {
 
@@ -117,7 +117,7 @@ ProgressDial.prototype.start = function () {
 
 ProgressDial.prototype.end = function () {
 
-	var self = this;
+	const self = this;
 
 	setTimeout( function () { self.visible = false; Viewer.renderView(); }, 500 );
 

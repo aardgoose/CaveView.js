@@ -21,7 +21,7 @@ function CursorScale ( container ) {
 	this.name = 'CV.CursorScale';
 	this.domObjects = [];
 
-	var geometry = new PlaneBufferGeometry( barWidth, barHeight );
+	const geometry = new PlaneBufferGeometry( barWidth, barHeight );
 
 	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0x777777 } ) );
 
@@ -37,17 +37,17 @@ function CursorScale ( container ) {
 	cursorGeometry.vertices.push( new Vector3(  barWidth / 2, -barHeight / 2, 0 ) );
 	cursorGeometry.vertices.push( new Vector3( -barWidth / 2, -barHeight / 2, 0 ) );
 
-	var cursor = new Line( cursorGeometry, new LineBasicMaterial( { color: 0xffffff } ) );
+	const cursor = new Line( cursorGeometry, new LineBasicMaterial( { color: 0xffffff } ) );
 
 	this.add( cursor );
 
 	this.cursor = cursor;
 
 	// add labels
-	var maxdiv = document.createElement( 'div' );
-	var mindiv = document.createElement( 'div' );
+	const maxdiv = document.createElement( 'div' );
+	const mindiv = document.createElement( 'div' );
 
-	var caption = document.createElement( 'div' );
+	const caption = document.createElement( 'div' );
 
 	maxdiv.classList.add( 'linear-scale' );
 	mindiv.classList.add( 'linear-scale' );

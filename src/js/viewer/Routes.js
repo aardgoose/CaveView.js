@@ -129,8 +129,8 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 Routes.prototype.createWireframe = function () {
 
-	var geometry = new Geometry();
-	var vertices = geometry.vertices;
+	const geometry = new Geometry();
+	const vertices = geometry.vertices;
 
 	this.segmentMap.forEach( _addSegment );
 
@@ -214,7 +214,7 @@ Routes.prototype.saveCurrent = function () {
 
 	if ( ! routeName ) return;
 
-	var routeSegments = [];
+	const routeSegments = [];
 
 	segmentMap.forEach( _addRoute );
 

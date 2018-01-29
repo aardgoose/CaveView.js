@@ -16,7 +16,7 @@ SurveyColours.clearMap = function () {
 
 SurveyColours.getSurveyColour = function ( surveyId ) {
 
-	var surveyColours = ColourCache.getColors( 'survey' );
+	const surveyColours = ColourCache.getColors( 'survey' );
 
 	return surveyColours[ surveyId % surveyColours.length ];
 

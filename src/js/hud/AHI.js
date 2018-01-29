@@ -27,18 +27,18 @@ function AHI ( container ) {
 	this.lastPitch = 0;
 
 	// artificial horizon instrument
-	var globe = new Group();
+	const globe = new Group();
 
-	var ring = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth, 3, 32, 1, true );
+	const ring = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth, 3, 32, 1, true );
 	ring.rotateX( Math.PI / 2 );
 
-	var sphere = new SphereBufferGeometry( stdWidth - 10, 31, 31 );
-	var bar    = new Geometry();
-	var marks  = new Geometry();
+	const sphere = new SphereBufferGeometry( stdWidth - 10, 31, 31 );
+	const bar    = new Geometry();
+	const marks  = new Geometry();
 
-	var sv = sphere.getAttribute( 'position' ).count;
+	const sv = sphere.getAttribute( 'position' ).count;
 
-	var sphereColors = new BufferAttribute( new Float32Array( sv * 3 ), 3 );
+	const sphereColors = new BufferAttribute( new Float32Array( sv * 3 ), 3 );
 
 	var colours = [];
 	var i;
@@ -56,15 +56,15 @@ function AHI ( container ) {
 	bar.vertices.push( new Vector3( stdWidth - 4, 0, stdWidth ) );
 
 	// pitch interval marks
-	var m1 = new Vector3(  4, 0, stdWidth - 10 );
-	var m2 = new Vector3( -4, 0, stdWidth - 10 );
+	const m1 = new Vector3(  4, 0, stdWidth - 10 );
+	const m2 = new Vector3( -4, 0, stdWidth - 10 );
 
-	var xAxis = new Vector3( 1, 0, 0 );
+	const xAxis = new Vector3( 1, 0, 0 );
 
 	for ( i = 0; i < 12; i++ ) {
 
-		var mn1 = m1.clone();
-		var mn2 = m2.clone();
+		let mn1 = m1.clone();
+		let mn2 = m2.clone();
 
 		if ( i % 3 === 0 ) {
 
@@ -81,10 +81,10 @@ function AHI ( container ) {
 
 	}
 
-	var mRing   = new Mesh( ring, new MeshPhongMaterial( { color: Cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ) );
-	var mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: VertexColors, specular: 0x666666, shininess: 20 } ) );
-	var mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: Cfg.themeValue( 'hud.ahi.bar' ) } ) );
-	var mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: Cfg.themeValue( 'hud.ahi.marks' ) } ) );
+	const mRing   = new Mesh( ring, new MeshPhongMaterial( { color: Cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ) );
+	const mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: VertexColors, specular: 0x666666, shininess: 20 } ) );
+	const mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: Cfg.themeValue( 'hud.ahi.bar' ) } ) );
+	const mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: Cfg.themeValue( 'hud.ahi.marks' ) } ) );
 
 	mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 	mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );
@@ -102,7 +102,7 @@ function AHI ( container ) {
 	this.translateX( -3 * offset );
 	this.translateY( offset );
 
-	var panel = document.createElement( 'div' );
+	const panel = document.createElement( 'div' );
 
 	panel.classList.add( 'cv-ahi' );
 	panel.textContent = '';
@@ -129,8 +129,8 @@ AHI.prototype.constructor = AHI;
 
 AHI.prototype.set = function () {
 
+	const xAxis   = new Vector3( 1, 0, 0 );
 	var direction = new Vector3();
-	var xAxis     = new Vector3( 1, 0, 0 );
 
 	return function set ( vCamera ) {
 

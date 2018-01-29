@@ -737,7 +737,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		if ( add ) {
 
-			var db = [];
+			let db = [];
 
 			for ( var i = 0; i < add; i++ ) {
 

@@ -269,7 +269,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		if ( m_parent != m_id ) {
 
-			let node = surveyTree.addById( readString( namePtr ), m_id, parentNode );
+			const node = surveyTree.addById( readString( namePtr ), m_id, parentNode );
 
 			if ( node === null ) console.warn( 'error constructing survey tree for', readString( titlePtr ) );
 

@@ -47,6 +47,7 @@ const defaultView = {
 	cameraType: CAMERA_PERSPECTIVE,
 	shadingMode: SHADING_HEIGHT,
 	terrainShading: SHADING_SHADED,
+	terrainOpacity: 0.5,
 	terrainOverlay: null,
 	surfaceLegs: false,
 	walls: false,

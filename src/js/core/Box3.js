@@ -60,8 +60,8 @@ Box3Helper.prototype.update = function ( box3 ) {
 
 	*/
 
-	var position = this.geometry.attributes.position;
-	var array = position.array;
+	const position = this.geometry.attributes.position;
+	const array = position.array;
 
 	array[  0 ] = max.x; array[  1 ] = max.y; array[  2 ] = max.z;
 	array[  3 ] = min.x; array[  4 ] = max.y; array[  5 ] = max.z;

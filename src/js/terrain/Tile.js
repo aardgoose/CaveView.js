@@ -38,9 +38,9 @@ function Tile ( x, y, zoom, tileSet, clip ) {
 	this.tileSet = tileSet;
 	this.clip    = clip;
 
-	this.canZoom       = true;
-	this.evicted       = false;
-	this.replaced      = false;
+	this.canZoom  = true;
+	this.evicted  = false;
+	this.replaced = false;
 	this.evictionCount = 1;
 	this.resurrectionPending = false;
 	this.childrenLoading = 0;

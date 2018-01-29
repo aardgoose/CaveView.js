@@ -21,23 +21,23 @@ function Compass ( container ) {
 	this.name = 'CV.Compass';
 	this.domObjects = [];
 
-	var cg1 = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth, 3, 32, 1, true );
+	const cg1 = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth, 3, 32, 1, true );
 	cg1.rotateX( Math.PI / 2 );
 
-	var c1 = new Mesh( cg1, new MeshPhongMaterial( { color: Cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ) );
+	const c1 = new Mesh( cg1, new MeshPhongMaterial( { color: Cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ) );
 
-	var cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
+	const cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 	cg2.translate( 0, 0, 5 );
 
-	var c2 = new Mesh( cg2, new MeshBasicMaterial( { color: Cfg.themeValue( 'hud.compass.top1' ) } ) );
+	const c2 = new Mesh( cg2, new MeshBasicMaterial( { color: Cfg.themeValue( 'hud.compass.top1' ) } ) );
 
-	var r1 = _makeRose( stdWidth * 0.9, 0.141, Cfg.themeColor( 'hud.compass.bottom1' ), Cfg.themeColor( 'hud.compass.bottom2' ) );
-	var r2 = _makeRose( stdWidth * 0.9, 0.141, Cfg.themeColor( 'hud.compass.top1' ), Cfg.themeColor( 'hud.compass.top2' ) );
+	const r1 = _makeRose( stdWidth * 0.9, 0.141, Cfg.themeColor( 'hud.compass.bottom1' ), Cfg.themeColor( 'hud.compass.bottom2' ) );
+	const r2 = _makeRose( stdWidth * 0.9, 0.141, Cfg.themeColor( 'hud.compass.top1' ), Cfg.themeColor( 'hud.compass.top2' ) );
 
 	r1.rotateZ( Math.PI / 4 );
 	r1.merge( r2 );
 
-	var rMesh = new Mesh( r1, new MeshLambertMaterial( { vertexColors: VertexColors, side: FrontSide, flatShading: true } ) );
+	const rMesh = new Mesh( r1, new MeshLambertMaterial( { vertexColors: VertexColors, side: FrontSide, flatShading: true } ) );
 
 	this.add( c1 );
 	this.add( c2 );
@@ -50,7 +50,7 @@ function Compass ( container ) {
 
 	this.lastRotation = 0;
 
-	var panel = document.createElement( 'div' );
+	const panel = document.createElement( 'div' );
 
 	panel.classList.add( 'cv-compass' );
 	panel.textContent = '';
@@ -68,8 +68,8 @@ function Compass ( container ) {
 	// make 'petal' for compass rose
 	function _makePetal ( radius, scale, color1, color2 ) {
 
-		var innerR = radius * scale;
-		var g = new Geometry();
+		const innerR = radius * scale;
+		const g = new Geometry();
 
 		g.vertices.push( new Vector3( 0, radius, 0 ) );
 		g.vertices.push( new Vector3( innerR ,innerR, 0 ) );
@@ -88,10 +88,10 @@ function Compass ( container ) {
 
 	function _makeRose ( radius, scale, color1, color2 ) {
 
-		var p1 = _makePetal( radius, scale, color1, color2 );
-		var p2 = p1.clone();
-		var p3 = p1.clone();
-		var p4 = p1.clone();
+		const p1 = _makePetal( radius, scale, color1, color2 );
+		const p2 = p1.clone();
+		const p3 = p1.clone();
+		const p4 = p1.clone();
 
 		p2.rotateZ( Math.PI / 2 );
 		p3.rotateZ( Math.PI );
@@ -117,9 +117,9 @@ Compass.prototype.constructor = Compass;
 
 Compass.prototype.set = function () {
 
-	var direction     = new Vector3();
-	var yAxis         = new Vector3( 0, 1, 0 );
-	var negativeZAxis = new Vector3( 0, 0, -1 );
+	const direction     = new Vector3();
+	const yAxis         = new Vector3( 0, 1, 0 );
+	const negativeZAxis = new Vector3( 0, 0, -1 );
 
 	return function set ( vCamera ) {
 

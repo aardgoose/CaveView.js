@@ -136,8 +136,6 @@ ScaleBar.prototype.setScale = function ( scale ) {
 		const height = 4;
 		const rLength = length * self.hScale;
 
-		var i, l;
-
 		const bar  = new PlaneGeometry( rLength, height, length );
 		const bar2 = new PlaneGeometry( rLength, height, length * 10 );
 		const line = new Geometry();
@@ -153,6 +151,8 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 		const c1 = Cfg.themeColor( 'hud.scale.bar1' );
 		const c2 = Cfg.themeColor( 'hud.scale.bar2' );
+
+		var i, l;
 
 		for ( i = 0, l = bar.faces.length; i < l; i++ ) {
 

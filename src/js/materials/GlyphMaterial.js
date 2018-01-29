@@ -5,8 +5,9 @@ import { AtlasFactory } from '../materials/GlyphAtlas';
 
 function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 
-	const glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec );
+	const self = this;
 
+	const glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec );
 	const cellScale = glyphAtlas.getCellScale();
 
 	const cos = Math.cos( rotation );
@@ -36,8 +37,6 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 
 	// event handler
 	window.addEventListener( 'resize', _resize );
-
-	var self = this;
 
 	return this;
 

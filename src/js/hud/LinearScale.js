@@ -26,7 +26,7 @@ function LinearScale ( container, Viewer ) {
 	this.name = 'CV.LinearScale';
 	this.domObjects = [];
 
-	var geometry = new PlaneBufferGeometry( barWidth, range );
+	const geometry = new PlaneBufferGeometry( barWidth, range );
 
 	// rotate the model to put the plane in the xz plane, covering the range of view height values - the gradient shader works on z values.
 
@@ -35,7 +35,7 @@ function LinearScale ( container, Viewer ) {
 
 	Mesh.call( this, geometry, Materials.getHeightMaterial( MATERIAL_LINE ) );
 
-	var ms = new Matrix4().makeScale( 1, 1, barHeight / range );
+	const ms = new Matrix4().makeScale( 1, 1, barHeight / range );
 
 	ms.multiply( new Matrix4().makeTranslation( width / 2 - stdMargin, -height / 2 + barOffset + barHeight / 2, 0 ) );
 
@@ -45,10 +45,10 @@ function LinearScale ( container, Viewer ) {
 	this.rotateOnAxis( new Vector3( 1, 0, 0 ), -Math.PI / 2 );
 
 	// add labels
-	var maxdiv = document.createElement( 'div' );
-	var mindiv = document.createElement( 'div' );
+	const maxdiv = document.createElement( 'div' );
+	const mindiv = document.createElement( 'div' );
 
-	var caption = document.createElement( 'div' );
+	const caption = document.createElement( 'div' );
 
 	maxdiv.classList.add( 'linear-scale' );
 	mindiv.classList.add( 'linear-scale' );

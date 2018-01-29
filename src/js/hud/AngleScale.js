@@ -17,16 +17,17 @@ function AngleScale ( container, caption ) {
 	const stdWidth  = HudObject.stdWidth;
 	const stdMargin = HudObject.stdMargin;
 
+	const pNormal = new Vector3( 1, 0, 0 );
+
+	const geometry = new RingGeometry( 1, 40, 36, 1, Math.PI, Math.PI );
+	const vertices = geometry.vertices;
+
+	const hues = ColourCache.getColors( 'inclination' );
+	const c = [];
+
+	const legNormal = new Vector3();
+
 	var i, l;
-
-	var geometry = new RingGeometry( 1, 40, 36, 1, Math.PI, Math.PI );
-	var c = [];
-
-	var pNormal = new Vector3( 1, 0, 0 );
-	var hues = ColourCache.getColors( 'inclination' );
-
-	var vertices = geometry.vertices;
-	var legNormal = new Vector3();
 
 	for ( i = 0, l = vertices.length; i < l; i++ ) {
 
@@ -39,7 +40,8 @@ function AngleScale ( container, caption ) {
 
 	}
 
-	var faces = geometry.faces, f;
+	const faces = geometry.faces;
+	var f;
 
 	for ( i = 0, l = faces.length; i < l; i++ ) {
 

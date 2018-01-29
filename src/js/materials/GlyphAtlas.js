@@ -40,16 +40,13 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 	ctx.font = fontSize + 'px ' + glyphAtlasSpec.font;
 	ctx.fillStyle = glyphAtlasSpec.color || '#ffffff';
 
-	var row, column, glyph;
-
 	for ( var i = 0; i < glyphCount; i++ ) {
 
-		glyph = glyphs.charAt( i );
+		const glyph = glyphs.charAt( i );
+		const glyphWidth = ctx.measureText( glyph ).width / cellSize;
 
-		let glyphWidth = ctx.measureText( glyph ).width / cellSize;
-
-		row = Math.floor( i / divisions ) + 1;
-		column = i % divisions;
+		const row = Math.floor( i / divisions ) + 1;
+		const column = i % divisions;
 
 		map[ glyph ] = { row: ( divisions - row ) / divisions, column: column / divisions, width: glyphWidth };
 

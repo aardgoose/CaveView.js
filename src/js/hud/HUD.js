@@ -180,7 +180,7 @@ function renderHUD () {
 
 	// update HUD components
 
-	var currentCamera = controls.object;
+	const currentCamera = controls.object;
 
 	compass.set( currentCamera );
 	ahi.set( currentCamera );
@@ -192,6 +192,7 @@ function renderHUD () {
 	renderer.render( scene, camera );
 
 }
+
 function cfgChanged ( /* event */ ) {
 
 	// only change controls when a cave has been loaded already
@@ -218,7 +219,6 @@ function newScales () {
 	linearScale = new LinearScale( container, Viewer );
 
 	scene.add( linearScale );
-
 
 	if ( cursorScale ) scene.remove( cursorScale );
 

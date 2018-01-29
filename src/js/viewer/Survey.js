@@ -27,6 +27,7 @@ import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
 
 import { Matrix4, Vector3, Box3, Object3D, Color, TextureLoader, PointsMaterial } from '../Three';
+import { StencilLib } from '../core/StencilLib';
 
 function Survey ( cave ) {
 
@@ -1027,6 +1028,9 @@ Survey.prototype.boxSection = function ( node, box, colour ) {
 	if ( box === null ) {
 
 		box = new Box3Helper( node.boundingBox, colour );
+
+		box.onBeforeRender = StencilLib.featureOnBeforeRender;
+		box.onAfterRender = StencilLib.featureOnAfterRender;
 
 		box.layers.set( FEATURE_SELECTED_BOX );
 

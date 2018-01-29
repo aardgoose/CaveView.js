@@ -95,7 +95,7 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 		} else {
 
 			// show labels for network vertices at greater distance than intermediate stations
-			label.visible = ( label.position.distanceToSquared( cameraPosition ) < ( hitCount < 3 ) ? 5000 : 40000 );
+			label.visible = ( label.position.distanceToSquared( cameraPosition ) < ( ( hitCount < 3 ) ? 5000 : 40000 ) );
 
 			if ( label.visible && ! label.isGlyphString ) {
 

@@ -1051,19 +1051,17 @@ Survey.prototype.highlightSelection = function ( id ) {
 
 	const surveyTree = this.surveyTree;
 	const box = this.highlightBox;
-	var node;
+	const highlight = this.stationHighlight;
 
 	if ( id ) {
 
-		node = surveyTree.findById( id );
+		const node = surveyTree.findById( id );
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
 			this.highlightBox = this.boxSection( node, box, Cfg.themeValue( 'box.highlight' ) );
 
 		} else if ( node.p ) {
-
-			const highlight = this.stationHighlight;
 
 			highlight.position.copy( node.p );
 			highlight.visible = true;
@@ -1073,6 +1071,8 @@ Survey.prototype.highlightSelection = function ( id ) {
 	} else {
 
 		if ( box !== null ) box.visible = false;
+
+		highlight.visible = false;
 
 	}
 

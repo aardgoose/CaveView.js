@@ -1,7 +1,7 @@
 
 import { CommonTerrain } from './CommonTerrain';
 import { LoxTerrainGeometry } from './LoxTerrainGeometry';
-import { terrainLib } from './terrainLib';
+import { StencilLib } from '../core/StencilLib';
 import { Materials } from '../materials/Materials';
 
 import { FEATURE_TERRAIN } from '../core/constants';
@@ -21,8 +21,8 @@ function LoxTerrain ( terrainData, offsets ) {
 
 	tile.layers.set( FEATURE_TERRAIN );
 	tile.isTile = true;
-	tile.onBeforeRender = terrainLib.onBeforeRender;
-	tile.onAfterRender = terrainLib.onAfterRender;
+	tile.onBeforeRender = StencilLib.terrainOnBeforeRender;
+	tile.onAfterRender = StencilLib.terrainOnAfterRender;
 
 	this.tile = tile;
 	this.overlayLoaded = false;

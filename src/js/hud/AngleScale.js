@@ -27,21 +27,20 @@ function AngleScale ( container, caption ) {
 
 	const legNormal = new Vector3();
 
-	var i, l;
+	var i, l, f;
 
 	for ( i = 0, l = vertices.length; i < l; i++ ) {
 
 		legNormal.copy( vertices[ i ] ).normalize();
 
-		var dotProduct = legNormal.dot( pNormal );
-		var hueIndex = Math.floor( 127 * 2 * Math.asin( Math.abs( dotProduct ) ) / Math.PI );
+		const dotProduct = legNormal.dot( pNormal );
+		const hueIndex = Math.floor( 127 * 2 * Math.asin( Math.abs( dotProduct ) ) / Math.PI );
 
 		c[ i ] = hues[ hueIndex ];
 
 	}
 
 	const faces = geometry.faces;
-	var f;
 
 	for ( i = 0, l = faces.length; i < l; i++ ) {
 
@@ -61,7 +60,7 @@ function AngleScale ( container, caption ) {
 	this.name = 'CV.AngleScale';
 	this.domObjects = [];
 
-	var legend = document.createElement( 'div' );
+	const legend = document.createElement( 'div' );
 
 	legend.id = 'angle-legend';
 	legend.textContent = caption;

@@ -25,6 +25,7 @@ function LoxTerrain ( terrainData, offsets ) {
 	tile.onAfterRender = terrainLib.onAfterRender;
 
 	this.tile = tile;
+	this.overlayLoaded = false;
 
 	this.add( tile );
 
@@ -58,8 +59,12 @@ LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	}
 
+	if ( this.overlayLoaded ) return;
+
 	const texture = new TextureLoader().load( this.bitmap.image, _overlayLoaded );
 	const self = this;
+
+	this.overlayLoaded = true;
 
 	function _overlayLoaded( ) {
 

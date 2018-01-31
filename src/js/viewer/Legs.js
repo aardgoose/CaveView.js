@@ -75,15 +75,19 @@ Legs.prototype.cutRuns = function ( selectedRuns ) {
 	const newColors   = newGeometry.colors;
 
 	const newLegRuns  = [];
-	var vp = 0;
+	const l = legRuns.length;
 
-	for ( var run = 0, l = legRuns.length; run < l; run++ ) {
+	var run;
+
+	for ( run = 0; run < l; run++ ) {
 
 		const legRun = legRuns[ run ];
 
 		const survey = legRun.survey;
 		const start  = legRun.start;
 		const end    = legRun.end;
+
+		let vp = 0;
 
 		if ( selectedRuns.has( survey ) ) {
 

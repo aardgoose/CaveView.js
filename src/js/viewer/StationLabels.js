@@ -35,7 +35,7 @@ function StationLabels () {
 	this.type = 'CV.StationLabels';
 	this.layers.set( LABEL_STATION );
 
-	var atlasSpec = {
+	const atlasSpec = {
 		color: '#ffffff',
 		background: '#000000',
 		font: 'normal helvetica,sans-serif'

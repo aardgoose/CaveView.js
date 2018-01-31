@@ -69,14 +69,13 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
 		this.material = [ selectedMaterial, unselectedMaterial ];
 
-		var indexRun = indexRuns[ 0 ];
+		let indexRun = indexRuns[ 0 ];
 
-		var start = indexRun.start;
-		var count = indexRun.count;
+		let start = indexRun.start;
+		let count = indexRun.count;
 
-		var currentMaterial;
-		var lastMaterial = selectedRuns.has( indexRun.survey ) ? 0 : 1;
-
+		let currentMaterial;
+		let lastMaterial = selectedRuns.has( indexRun.survey ) ? 0 : 1;
 
 		// merge adjacent runs with shared material.
 
@@ -130,13 +129,14 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 	// map old vertex index values to new index values
 	const vMap = new Map();
 
-	var i, run, l, fp = 0;
-	var newIndex;
-	var newVertexIndex = 0;
+	const l = indexRuns.length;
+	var run;
 
-	for ( run = 0, l = indexRuns.length; run < l; run++ ) {
+	for ( run = 0; run < l; run++ ) {
 
 		const indexRun = indexRuns[ run ];
+
+		let i, newVertexIndex = 0, fp = 0;
 
 		if ( selectedRuns.has( indexRun.survey ) ) {
 
@@ -152,7 +152,7 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 
 				const index = indices.getX( i );
 
-				newIndex = vMap.get( index );
+				let newIndex = vMap.get( index );
 
 				if ( newIndex === undefined ) {
 

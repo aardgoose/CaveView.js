@@ -152,17 +152,13 @@ function getDepthCursorMaterial( type ) {
 
 function getSurfaceMaterial ( color ) {
 
-	var material = cache.get( 'surface' + color );
+	const name = 'surface' + color;
+	var material = cache.get( name );
 
 	if ( material === undefined ) {
 
 		material = new MeshLambertMaterial( { color: color, vertexColors: NoColors } );
-		cache.set( 'surface' + color, material );
-
-	} else {
-
-		material.color.set( color );
-		material.needsUpdate = true;
+		cache.set( name, material );
 
 	}
 
@@ -205,6 +201,7 @@ function getGlyphMaterial ( glyphAtlasSpec, rotation, colour ) {
 function getClusterMaterial ( count ) {
 
 	const name = 'cluster' + count;
+
 	var material = cache.get( name );
 
 	if ( material === undefined ) {
@@ -241,7 +238,7 @@ function flushCache( surveyIn ) {
 
 	for ( name in perSurveyMaterials ) {
 
-		let material = perSurveyMaterials[ name ];
+		const material = perSurveyMaterials[ name ];
 
 		material.dispose();
 		cache.delete( name );

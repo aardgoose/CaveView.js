@@ -1,5 +1,6 @@
 
 import { CursorMaterial } from './CursorMaterial';
+import { ClusterMaterial } from './ClusterMaterial';
 import { DepthMaterial } from './DepthMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMapMaterial } from './DepthMapMaterial';
@@ -12,6 +13,7 @@ import { LineBasicMaterial, MeshLambertMaterial, NoColors, VertexColors } from '
 const cache = new Map();
 
 var cursorMaterials = [];
+
 var depthMaterials = [];
 var perSurveyMaterials = {};
 
@@ -200,6 +202,22 @@ function getGlyphMaterial ( glyphAtlasSpec, rotation, colour ) {
 
 }
 
+function getClusterMaterial ( count ) {
+
+	const name = 'cluster' + count;
+	var material = cache.get( name );
+
+	if ( material === undefined ) {
+
+		material = new ClusterMaterial( count );
+		cache.set( name, material );
+
+	}
+
+	return material;
+
+}
+
 function setTerrain( terrain ) {
 
 
@@ -243,6 +261,7 @@ export const Materials = {
 	getDepthMapMaterial:    getDepthMapMaterial,
 	getDepthMaterial:       getDepthMaterial,
 	getDepthCursorMaterial: getDepthCursorMaterial,
+	getClusterMaterial:     getClusterMaterial,
 	getCursorMaterial:      getCursorMaterial,
 	getSurfaceMaterial:     getSurfaceMaterial,
 	getLineMaterial:        getLineMaterial,

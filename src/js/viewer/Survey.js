@@ -243,7 +243,6 @@ Survey.prototype.calibrateTerrain = function ( terrain ) {
 
 	if ( markers !== undefined ) {
 
-//		const getHeight = ;
 		markers.addHeightProvider( terrain.getHeight.bind ( terrain ) );
 
 	}

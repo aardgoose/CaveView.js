@@ -9,6 +9,7 @@ const StencilLib = {
 		stencil.setTest( true );
 
 		stencil.setOp( gl.KEEP, gl.KEEP, gl.INCR );
+		stencil.setFunc( gl.ALWAYS );
 
 	},
 
@@ -27,8 +28,6 @@ const StencilLib = {
 		const gl = renderer.context;
 
 		stencil.setTest( true );
-
-		stencil.setOp( gl.KEEP, gl.KEEP, gl.KEEP );
 		stencil.setFunc( gl.EQUAL, 0, 0xFFFF );
 
 	},

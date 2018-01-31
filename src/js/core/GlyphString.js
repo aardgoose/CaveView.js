@@ -45,10 +45,10 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 	this.name = text;
 	this.width = 0;
 
-	var indexAttribute = new Uint16BufferAttribute( [ 0, 2, 1, 0, 3, 2 ], 1 );
+	const indexAttribute = new Uint16BufferAttribute( [ 0, 2, 1, 0, 3, 2 ], 1 );
 
 	// unit square
-	var positions = [
+	const positions = [
 		0, 0, 0,
 		0, 1, 0,
 		1, 1, 0,
@@ -60,34 +60,15 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 	this.setIndex( indexAttribute );
 	this.addAttribute( 'position', positionAttribute );
 
-	var i, l, glyphData;
-	var offset = 0;
+	const l = text.length;
 
-	l = text.length;
+	const uvs = new Float32Array( l * 2 );
+	const widths = new Float32Array( l );
+	const offsets = new Float32Array( l );
 
-	var uvs = new Float32Array( l * 2 );
-	var widths = new Float32Array( l );
-	var offsets = new Float32Array( l );
-
-	for ( i = 0; i < l; i++ ) {
-
-		if ( text.charCodeAt() === 0 ) continue; // skip null characters
-
-		glyphData = glyphAtlas.getGlyph( text[ i ] );
-
-		uvs[ i * 2 ] = glyphData.column;
-		uvs[ i * 2 + 1 ] = glyphData.row;
-
-		widths[ i ] = glyphData.width;
-
-		offsets[ i ] = offset;
-
-		offset += glyphData.width;
-
-	}
-
-	this.width = offset;
 	this.glyphAtlas = glyphAtlas;
+
+	this.width = this.setStringAttributes( text, uvs, offsets, widths );
 
 	this.addAttribute( 'instanceUvs', new InstancedBufferAttribute( uvs, 2, 1 ) );
 	this.addAttribute( 'instanceOffsets', new InstancedBufferAttribute( offsets, 1, 1 ) );
@@ -114,28 +95,7 @@ GlyphStringGeometry.prototype.replaceString = function ( text ) {
 	const widths = new Float32Array( l );
 	const offsets = new Float32Array( l );
 
-	const glyphAtlas = this.glyphAtlas;
-
-	var i, glyphData, offset = 0;
-
-	for ( i = 0; i < l; i++ ) {
-
-		if ( text.charCodeAt() === 0 ) continue; // skip null characters
-
-		glyphData = glyphAtlas.getGlyph( text[ i ] );
-
-		uvs[ i * 2 ] = glyphData.column;
-		uvs[ i * 2 + 1 ] = glyphData.row;
-
-		widths[ i ] = glyphData.width;
-
-		offsets[ i ] = offset;
-
-		offset += glyphData.width;
-
-	}
-
-	this.width = offset;
+	this.width = this.setStringAttributes( text, uvs, offsets, widths );
 
 	const instanceUvs = this.getAttribute( 'instanceUvs' );
 	const instanceOffsets = this.getAttribute( 'instanceOffsets' );
@@ -151,6 +111,33 @@ GlyphStringGeometry.prototype.replaceString = function ( text ) {
 
 };
 
+GlyphStringGeometry.prototype.setStringAttributes = function ( text, uvs, offsets, widths ) {
+
+	const l = text.length, glyphAtlas = this.glyphAtlas;
+
+	var i, offset = 0;
+
+	for ( i = 0; i < l; i++ ) {
+
+		if ( text.charCodeAt() === 0 ) continue; // skip null characters
+
+		const glyphData = glyphAtlas.getGlyph( text[ i ] );
+
+		uvs[ i * 2 ] = glyphData.column;
+		uvs[ i * 2 + 1 ] = glyphData.row;
+
+		widths[ i ] = glyphData.width;
+
+		offsets[ i ] = offset;
+
+		offset += glyphData.width;
+
+	}
+
+	return offset;
+
+};
+
 function GlyphString ( text, glyphMaterial, fixed ) {
 
 	var geometry;
@@ -159,7 +146,7 @@ function GlyphString ( text, glyphMaterial, fixed ) {
 
 	if ( fixed ) {
 
-		var cache = GlyphString.cache.get( glyphMaterial );
+		let cache = GlyphString.cache.get( glyphMaterial );
 
 		if ( cache === undefined ) {
 

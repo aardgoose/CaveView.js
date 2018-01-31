@@ -2,10 +2,8 @@
 import { FEATURE_ENTRANCES,  upAxis } from '../core/constants';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
-import { Point } from './Point';
-
+import { Marker } from './Marker';
 import { Object3D, Vector3, Triangle, Plane } from '../Three';
-import { StencilLib } from '../core/StencilLib';
 
 
 // preallocated objects for projected area calculation and cluster visibility checks
@@ -19,18 +17,6 @@ const __t1 = new Triangle( __a, __b, __c );
 const __t2 = new Triangle( __a, __c, __d );
 
 const __plane = new Plane();
-
-
-function makeClusterMarker ( count ) {
-
-	const point = new Point( Materials.getClusterMaterial( count ) );
-
-	point.onBeforeRender = StencilLib.featureOnBeforeRender;
-	point.onAfterRender = StencilLib.featureOnAfterRender;
-
-	return point;
-
-}
 
 
 function QuadTree ( xMin, xMax, yMin, yMax ) {
@@ -193,7 +179,7 @@ QuadTree.prototype.showMarkers = function ( visible ) {
 
 QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
-	var i, subQuad;
+	var i;
 
 	// hide the indiviual markers in this quad
 
@@ -203,7 +189,7 @@ QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
 	for ( i = 0; i < 4; i++ ) {
 
-		subQuad = this.nodes[ i ];
+		const subQuad = this.nodes[ i ];
 
 		if ( subQuad !== undefined ) subQuad.hideQuadMarkers();
 
@@ -211,12 +197,17 @@ QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
 	if ( this.quadMarker === null ) {
 
-		var quadMarker = makeClusterMarker( this.count );
+		const quadMarker = new Marker( this.count );
 
 		// set to center of distribution of markers in this quad.
-
 		quadMarker.position.copy( this.centroid ).divideScalar( this.count );
 		quadMarker.layers.set( FEATURE_ENTRANCES );
+
+		if ( cluster.heightProvider !== null ) {
+
+			quadMarker.adjustHeight(  cluster.heightProvider );
+
+		}
 
 		cluster.add( quadMarker );
 
@@ -230,13 +221,13 @@ QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
 QuadTree.prototype.hideQuadMarkers = function () {
 
-	var subQuad, i;
+	var i;
 
 	if ( this.quadMarker ) this.quadMarker.visible = false;
 
 	for ( i = 0; i < 4; i++ ) {
 
-		subQuad = this.nodes[ i ];
+		const subQuad = this.nodes[ i ];
 
 		if ( subQuad !== undefined ) subQuad.hideQuadMarkers();
 
@@ -271,6 +262,7 @@ function ClusterMarkers ( limits, maxDepth ) {
 	this.type = 'CV.ClusterMarker';
 
 	this.quadTree = new QuadTree( min.x, max.x, min.y, max.y );
+	this.heightProvider = null;
 
 	this.addEventListener( 'removed', this.onRemoved );
 
@@ -281,6 +273,18 @@ function ClusterMarkers ( limits, maxDepth ) {
 ClusterMarkers.prototype = Object.create( Object3D.prototype );
 
 ClusterMarkers.prototype.constructor = ClusterMarkers;
+
+ClusterMarkers.prototype.addHeightProvider = function ( func ) {
+
+	this.heightProvider = func;
+
+	this.traverse( function _setHeight( obj ) {
+
+		if ( obj.isMarker ) obj.adjustHeight( func );
+
+	} );
+
+};
 
 ClusterMarkers.prototype.onRemoved = function () {
 

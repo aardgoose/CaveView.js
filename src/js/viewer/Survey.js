@@ -237,6 +237,17 @@ Survey.prototype.calibrateTerrain = function ( terrain ) {
 
 	if ( this.terrain === null ) this.terrain = terrain;
 
+	// if we have a terrain we can make sure cluster markers can adjust to avoid terrain
+
+	const markers = this.getFeature( FEATURE_ENTRANCES );
+
+	if ( markers !== undefined ) {
+
+//		const getHeight = ;
+		markers.addHeightProvider( terrain.getHeight.bind ( terrain ) );
+
+	}
+
 	return;
 
 	function _testHeight( node ) {

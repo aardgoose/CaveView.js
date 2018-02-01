@@ -630,9 +630,8 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 		if ( ! type ) return '';
 
 		const blob = new Blob( [ imgData ], { type: type } );
-		const blobURL = URL.createObjectURL( blob );
 
-		return blobURL;
+		return URL.createObjectURL( blob );
 
 	}
 

@@ -64,6 +64,8 @@ LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 	const texture = new TextureLoader().load( this.bitmap.image, _overlayLoaded );
 	const self = this;
 
+	texture.anisotropy = 4;
+
 	this.overlayLoaded = true;
 
 	function _overlayLoaded( ) {
@@ -72,15 +74,27 @@ LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 		self.tile.geometry.setupUVs( bitmap, texture.image, self.offsets );
 
+		texture.onUpdate = function ( texture ) {
+
+			// release info
+
+			URL.revokeObjectURL( texture.image.src );
+			texture.image = null;
+
+		};
+
 		self.overlayMaterial = new MeshLambertMaterial(
 			{
 				map: texture,
 				transparent: true,
-				opacity: self.opacity
+				opacity: self.opacity,
 			}
 		);
 
 		bitmap.data = null;
+		bitmap.image = null;
+
+		console.log( bitmap );
 
 		self.setMaterial( self.overlayMaterial );
 

@@ -10,7 +10,7 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 	const canvas = document.createElement( 'canvas' );
 	const map = {};
 
-	const glyphs = '\u00B0\u2610 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%,.-_/()\'';
+	const glyphs = '\u202f\u00B0\u2610 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%,.-_/()\'';
 	const glyphCount = glyphs.length;
 
 	if ( glyphCount > divisions * divisions ) {

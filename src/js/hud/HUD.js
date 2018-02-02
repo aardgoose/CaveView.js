@@ -112,7 +112,7 @@ function setVisibility ( visible ) {
 	ahi.visible = visible;
 	progressDial.setVisibility( visible );
 
-	if ( scaleBar ) scaleBar.setVisibility( visible );
+	if ( scaleBar ) scaleBar.visible = visible;
 
 	isVisible = visible;
 
@@ -360,13 +360,13 @@ function updateScaleBar ( camera ) {
 
 		}
 
-		if ( isVisible !== scaleBar.visible ) scaleBar.setVisibility( isVisible );
+		if ( isVisible !== scaleBar.visible ) scaleBar.visible = isVisible;
 
 		scaleBar.setScale( camera.zoom );
 
 	} else {
 
-		if ( scaleBar !== null && scaleBar.visible ) scaleBar.setVisibility( false );
+		if ( scaleBar !== null && scaleBar.visible ) scaleBar.visible = false;
 
 	}
 

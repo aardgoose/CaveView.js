@@ -1,6 +1,8 @@
 
 import { HudObject } from './HudObject';
 import { Cfg } from '../core/lib';
+import { MutableGlyphString } from '../core/GlyphString';
+import { Materials } from '../materials/Materials';
 
 import {
 	Vector3,
@@ -17,7 +19,6 @@ function ScaleBar ( container, hScale, rightMargin ) {
 	Group.call( this );
 
 	this.name = 'CV.ScaleBar';
-	this.domObjects = [];
 
 	this.hScale        = hScale;
 	this.scaleBars     = [];
@@ -26,25 +27,21 @@ function ScaleBar ( container, hScale, rightMargin ) {
 	this.position.set( -container.clientWidth / 2 + 5, -container.clientHeight / 2 + leftMargin, 0 );
 	this.scaleMax = container.clientWidth - ( leftMargin + rightMargin );
 
-	const legend = document.createElement( 'div' );
+	const material = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
+	const label = new MutableGlyphString( '--------', material );
 
-	legend.classList.add( 'scale-legend' );
-	legend.textContent = '';
+	label.translateX( 0 );
+	label.translateY( 10 );
 
-	container.appendChild( legend );
+	this.add( label );
 
-	this.legend = legend;
-	this.domObjects.push( legend );
-
-	this.addEventListener( 'removed', this.removeDomObjects );
+	this.label = label;
 
 	return this;
 
 }
 
 ScaleBar.prototype = Object.create( Group.prototype );
-
-Object.assign( ScaleBar.prototype, HudObject.prototype );
 
 ScaleBar.prototype.constructor = ScaleBar;
 
@@ -122,12 +119,11 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	scaleBars[ length ].mesh.scale.x = scale;
 
-	const legend = this.legend;
+	const label = this.label;
 
-	legend.style.display = this.visible ? 'block' : 'none';
-	legend.style.left = ( scale * scaleBars[ length ].topRight - legend.clientWidth ) + 'px';
+	label.translateX( scale * scaleBars[ length ].topRight  - label.position.x );
 
-	legend.textContent = legendText;
+	label.replaceString( legendText.padStart( 8, ' ' ) );
 
 	return this;
 

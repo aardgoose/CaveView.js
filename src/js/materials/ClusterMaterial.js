@@ -42,7 +42,11 @@ function ClusterMaterial ( count ) {
 
 	ctx.fillText( count, halfSize, halfSize + 15 );
 
-	PointsMaterial.call( this, { map: new CanvasTexture( canvas ), size: 32, depthTest: false, transparent: true, alphaTest: 0.8, sizeAttenuation: false } );
+	const texture = new CanvasTexture( canvas );
+
+	PointsMaterial.call( this, { map: texture, size: 32, depthTest: false, transparent: true, alphaTest: 0.8, sizeAttenuation: false } );
+
+	texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
 
 	this.name = 'ClusterMaterial';
 

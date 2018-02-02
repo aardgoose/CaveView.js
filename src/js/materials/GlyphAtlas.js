@@ -55,6 +55,9 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 	}
 
 	this.texture = new CanvasTexture( canvas );
+
+	this.texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
+
 	this.map = map;
 	this.cellScale = cellSize / atlasSize;
 

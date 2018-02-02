@@ -52,31 +52,12 @@ div.linear-scale-caption {
 	border-top: 1px solid white;
 }
 
-#angle-legend {
-	position: absolute;
-	width: 80px;
-	right: 5px;
-	bottom: 180px;
-	color: white;
-	background-color: black;
-	font-size: 14px;
-	text-align: center;
-}
-
 .cv-container {
 	position: relative;
 	overflow: hidden;
 	height: 600px;
 	width: 1000px;
 	touch-action: none;
-}
-
-#progress-bar {
-	position: absolute;
-	top: 55%;
-	height: 20px;
-	border: 1px solid white;
-	z-index: 100;
 }
 
 #status-text {

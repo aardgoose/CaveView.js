@@ -45,14 +45,6 @@ ScaleBar.prototype = Object.create( Group.prototype );
 
 ScaleBar.prototype.constructor = ScaleBar;
 
-ScaleBar.prototype.setVisibility = function ( visible ) {
-
-	HudObject.prototype.setVisibility.call( this, visible );
-
-	if ( this.currentLength !== 0 ) this.scaleBars[ this.currentLength ].mesh.visible = visible;
-
-};
-
 ScaleBar.prototype.setScale = function ( scale ) {
 
 	const scaleBars = this.scaleBars;

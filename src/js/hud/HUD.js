@@ -127,7 +127,7 @@ function setVisibility ( visible ) {
 
 			linearScale.setVisibility( false );
 			cursorScale.setVisibility( false );
-			angleScale.setVisibility( false );
+			angleScale.visible = false;
 
 		}
 
@@ -308,7 +308,7 @@ function viewChanged ( event ) {
 
 	}
 
-	angleScale.setVisibility( useAngleScale );
+	angleScale.visible = useAngleScale;
 	linearScale.setVisibility( useLinearScale );
 	cursorScale.setVisibility( useCursorScale );
 

@@ -1,6 +1,9 @@
 
 import { HudObject } from './HudObject';
 import { ColourCache } from '../core/ColourCache';
+import { GlyphString } from '../core/GlyphString';
+import { Materials } from '../materials/Materials';
+
 import {
 	Vector3,
 	RingGeometry,
@@ -58,27 +61,20 @@ function AngleScale ( container, caption ) {
 	this.translateX(  width / 2 - 40 - 5 );
 
 	this.name = 'CV.AngleScale';
-	this.domObjects = [];
 
-	const legend = document.createElement( 'div' );
+	const material = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
+	const label = new GlyphString( caption, material );
 
-	legend.id = 'angle-legend';
-	legend.textContent = caption;
+	label.translateX( -stdWidth );
+	label.translateY( 10 );
 
-	container.appendChild( legend );
-
-	this.txt = legend;
-	this.domObjects.push( legend );
-
-	this.addEventListener( 'removed', this.removeDomObjects );
+	this.add( label );
 
 	return this;
 
 }
 
 AngleScale.prototype = Object.create( Mesh.prototype );
-
-Object.assign( AngleScale.prototype, HudObject.prototype );
 
 AngleScale.prototype.constructor = AngleScale;
 

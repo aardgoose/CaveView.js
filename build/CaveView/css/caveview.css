@@ -13,26 +13,6 @@ div.cv-panel {
 	border-radius: 5px;
 }
 
-div.cv-compass, div.cv-ahi {
-	position: absolute; 
-	bottom: 95px;
-	right: 5px;
-	margin: 0;
-	padding-top: 2px;
-	/*	border: 1px solid white; */
-	text-align: center;
-	width: 78px;
-	height: 19px;
-	z-index: 50;
-	background-color: rgba(50,50,50,0.5);
-	background-color: black;
-	color: white;
-}
-	
-div.cv-ahi {
-	right: 95px;
-}
-
 div.scale-legend {
 	position: absolute;
 	color: white;
@@ -88,6 +68,7 @@ div.linear-scale-caption {
 	overflow: hidden;
 	height: 600px;
 	width: 1000px;
+	touch-action: none;
 }
 
 #progress-bar {

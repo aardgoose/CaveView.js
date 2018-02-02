@@ -1,6 +1,8 @@
 
 import { HudObject } from './HudObject';
 import { Cfg } from '../core/lib';
+import { MutableGlyphString } from '../core/GlyphString';
+import { Materials } from '../materials/Materials';
 
 import {
 	Vector3, Math as _Math, Face3,
@@ -11,7 +13,7 @@ import {
 } from '../Three';
 
 
-function Compass ( container ) {
+function Compass () {
 
 	const stdWidth  = HudObject.stdWidth;
 	const stdMargin = HudObject.stdMargin;
@@ -19,7 +21,6 @@ function Compass ( container ) {
 	Group.call( this );
 
 	this.name = 'CV.Compass';
-	this.domObjects = [];
 
 	const cg1 = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth, 3, 32, 1, true );
 	cg1.rotateX( Math.PI / 2 );
@@ -39,9 +40,14 @@ function Compass ( container ) {
 
 	const rMesh = new Mesh( r1, new MeshLambertMaterial( { vertexColors: VertexColors, side: FrontSide, flatShading: true } ) );
 
-	this.add( c1 );
-	this.add( c2 );
-	this.add( rMesh );
+	const rotaryGroup = new Group();
+
+	rotaryGroup.add( c1 );
+	rotaryGroup.add( c2 );
+	rotaryGroup.add( rMesh );
+
+	this.add( rotaryGroup );
+	this.rotaryGroup = rotaryGroup;
 
 	const offset = stdWidth + stdMargin;
 
@@ -50,18 +56,15 @@ function Compass ( container ) {
 
 	this.lastRotation = 0;
 
-	const panel = document.createElement( 'div' );
+	const material = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
+	const label = new MutableGlyphString( '000\u00B0', material );
 
-	panel.classList.add( 'cv-compass' );
-	panel.textContent = '';
+	label.translateX( -10 );
+	label.translateY( stdWidth + 5 );
 
-	container.appendChild( panel );
+	this.add( label );
 
-	this.txt = panel;
-	this.domObjects.push( panel );
-
-	this.addEventListener( 'removed', this.removeDomObjects );
-	this.txt.textContent = '000\u00B0';
+	this.label = label;
 
 	return this;
 
@@ -111,8 +114,6 @@ function Compass ( container ) {
 
 Compass.prototype = Object.create( Group.prototype );
 
-Object.assign( Compass.prototype, HudObject.prototype );
-
 Compass.prototype.constructor = Compass;
 
 Compass.prototype.set = function () {
@@ -143,9 +144,11 @@ Compass.prototype.set = function () {
 
 		var degrees = 360 - Math.round( _Math.radToDeg( a ) );
 
-		this.txt.textContent = degrees.toString().padStart( 3, '0' ) + '\u00B0'; // unicode degree symbol
+		const res = degrees.toString().padStart( 3, '0' ) + '\u00B0'; // unicode degree symbol
 
-		this.rotateOnAxis( negativeZAxis, a - this.lastRotation );
+		this.label.replaceString( res );
+
+		this.rotaryGroup.rotateOnAxis( negativeZAxis, a - this.lastRotation );
 
 		this.lastRotation = a;
 

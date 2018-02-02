@@ -81,8 +81,8 @@ function init ( containerIn, viewRenderer ) {
 	scene.add( aLight );
 	scene.add( dLight );
 
-	compass      = new Compass( container );
-	ahi          = new AHI( container );
+	compass      = new Compass();
+	ahi          = new AHI();
 	progressDial = new ProgressDial();
 
 	attitudeGroup.add( compass );
@@ -108,8 +108,8 @@ function i18n ( text ) {
 
 function setVisibility ( visible ) {
 
-	compass.setVisibility( visible );
-	ahi.setVisibility( visible );
+	compass.visible = visible;
+	ahi.visible = visible;
 	progressDial.setVisibility( visible );
 
 	if ( scaleBar ) scaleBar.setVisibility( visible );

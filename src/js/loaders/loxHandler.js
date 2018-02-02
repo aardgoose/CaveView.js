@@ -577,12 +577,12 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		const m_calib = [];
 
-		m_calib[ 0 ] = readFloat64(  ); // x origin
-		m_calib[ 1 ] = readFloat64( 8,  true ); // y origin
-		m_calib[ 2 ] = readFloat64( 16, true ); // xx ( 2 x 2 ) rotate and scale matrix
-		m_calib[ 3 ] = readFloat64( 24, true ); // xy "
-		m_calib[ 4 ] = readFloat64( 32, true ); // yx "
-		m_calib[ 5 ] = readFloat64( 40, true ); // yy "
+		m_calib[ 0 ] = readFloat64(); // x origin
+		m_calib[ 1 ] = readFloat64(); // y origin
+		m_calib[ 2 ] = readFloat64(); // xx ( 2 x 2 ) rotate and scale matrix
+		m_calib[ 3 ] = readFloat64(); // xy "
+		m_calib[ 4 ] = readFloat64(); // yx "
+		m_calib[ 5 ] = readFloat64(); // yy "
 
 		return m_calib;
 

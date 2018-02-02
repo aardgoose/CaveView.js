@@ -138,13 +138,15 @@ GlyphStringGeometry.prototype.setStringAttributes = function ( text, uvs, offset
 
 };
 
-function GlyphString ( text, glyphMaterial, fixed ) {
+function GlyphString ( text, glyphMaterial ) {
 
 	var geometry;
 
-	fixed = fixed === undefined ? true : fixed;
+	if ( this.isMutableGlyphString ) {
 
-	if ( fixed ) {
+		geometry = new GlyphStringGeometry( text, glyphMaterial.getAtlas() );
+
+	} else {
 
 		let cache = GlyphString.cache.get( glyphMaterial );
 
@@ -157,21 +159,16 @@ function GlyphString ( text, glyphMaterial, fixed ) {
 
 		geometry = cache.getGeometry( text );
 
-	} else {
-
-		geometry = new GlyphStringGeometry( text, glyphMaterial.getAtlas() );
-
 	}
 
 	Mesh.call( this, geometry, glyphMaterial );
 
-	this.type = 'GlyphString';
 	this.name = text;
 	this.frustumCulled = false;
 
 	const attributes = geometry.attributes;
 
-	if ( fixed ) {
+	if ( ! this.isMutableGlyphString ) {
 
 		for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
 
@@ -193,11 +190,21 @@ GlyphString.prototype = Object.assign( Object.create( Mesh.prototype ), {
 
 } );
 
-GlyphString.prototype.replaceString = function ( newstring ) {
+function MutableGlyphString ( text, material ) {
+
+	GlyphString.call( this, text, material );
+
+}
+
+MutableGlyphString.prototype = Object.create( GlyphString.prototype );
+
+MutableGlyphString.prototype.isMutableGlyphString = true;
+
+MutableGlyphString.prototype.replaceString = function ( newstring ) {
 
 	if ( newstring.length !== this.name.length ) {
 
-		console.warn( 'new string has invalid length', newstring, this.name.length );
+		console.warn( 'new string has invalid length', newstring, this.name.length, newstring.length );
 		return;
 
 	}
@@ -206,6 +213,6 @@ GlyphString.prototype.replaceString = function ( newstring ) {
 
 };
 
-export { GlyphString };
+export { GlyphString, MutableGlyphString };
 
 // EOF

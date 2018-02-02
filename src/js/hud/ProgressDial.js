@@ -3,7 +3,7 @@ import { upAxis } from '../core/constants';
 import { Cfg } from '../core/lib';
 import { HudObject } from './HudObject';
 import { Viewer } from '../viewer/Viewer';
-import { GlyphString } from '../core/GlyphString';
+import { MutableGlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
 import {
@@ -26,7 +26,6 @@ function ProgressDial () {
 	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors } ) );
 
 	this.name = 'CV.ProgressDial';
-	this.domObjects = [];
 
 	this.translateX( -offset * 5 );
 	this.translateY(  offset );
@@ -36,15 +35,9 @@ function ProgressDial () {
 	this.visible = false;
 	this.isVisible = true;
 
-	this.addEventListener( 'removed', this.removeDomObjects );
+	var glyphMaterial = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
 
-	const atlasSpec = {
-		font: 'normal helvetica,sans-serif'
-	};
-
-	var glyphMaterial = Materials.getGlyphMaterial( atlasSpec, 0 );
-
-	this.pcent = new GlyphString( '----', glyphMaterial, false );
+	this.pcent = new MutableGlyphString( '----', glyphMaterial );
 
 	this.pcent.translateY( 10 );
 	this.pcent.translateX( -5 );
@@ -58,8 +51,6 @@ function ProgressDial () {
 }
 
 ProgressDial.prototype = Object.create( Mesh.prototype );
-
-Object.assign( ProgressDial.prototype, HudObject.prototype );
 
 ProgressDial.prototype.constructor = ProgressDial;
 

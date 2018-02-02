@@ -1,9 +1,14 @@
 
-
 function HudObject () {}
 
 HudObject.stdWidth  = 40;
 HudObject.stdMargin = 5;
+
+HudObject.atlasSpec = {
+	color: '#ffffff',
+	background: '#000000',
+	font: 'normal helvetica,sans-serif'
+};
 
 HudObject.prototype.removeDomObjects = function () {
 

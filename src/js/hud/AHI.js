@@ -2,6 +2,8 @@
 import { upAxis } from '../core/constants';
 import { HudObject } from './HudObject';
 import { Cfg } from '../core/lib';
+import { MutableGlyphString } from '../core/GlyphString';
+import { Materials } from '../materials/Materials';
 
 import {
 	Vector3, Math as _Math,
@@ -11,7 +13,7 @@ import {
 	Mesh, LineSegments, Group
 } from '../Three';
 
-function AHI ( container ) {
+function AHI () {
 
 	const stdWidth  = HudObject.stdWidth;
 	const stdMargin = HudObject.stdMargin;
@@ -22,7 +24,6 @@ function AHI ( container ) {
 	Group.call( this );
 
 	this.name = 'CV.AHI';
-	this.domObjects = [];
 
 	this.lastPitch = 0;
 
@@ -102,28 +103,23 @@ function AHI ( container ) {
 	this.translateX( -3 * offset );
 	this.translateY( offset );
 
-	const panel = document.createElement( 'div' );
-
-	panel.classList.add( 'cv-ahi' );
-	panel.textContent = '';
-
-	container.appendChild( panel );
-
 	this.globe = globe;
-	this.txt = panel;
 
-	this.domObjects.push( panel );
+	const material = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
+	const label = new MutableGlyphString( '-90\u00B0', material );
 
-	this.addEventListener( 'removed', this.removeDomObjects );
-	this.txt.textContent = '-90\u00B0';
+	label.translateX( -10 );
+	label.translateY( stdWidth + 5 );
+
+	this.add( label );
+
+	this.label = label;
 
 	return this;
 
 }
 
 AHI.prototype = Object.create( Group.prototype );
-
-Object.assign( AHI.prototype, HudObject.prototype );
 
 AHI.prototype.constructor = AHI;
 
@@ -136,14 +132,14 @@ AHI.prototype.set = function () {
 
 		vCamera.getWorldDirection( direction );
 
-		var pitch = Math.PI / 2 - direction.angleTo( upAxis );
+		const pitch = Math.PI / 2 - direction.angleTo( upAxis );
 
 		if ( pitch === this.lastPitch ) return;
 
 		this.globe.rotateOnAxis( xAxis, pitch - this.lastPitch );
 		this.lastPitch = pitch;
 
-		this.txt.textContent = Math.round( _Math.radToDeg( pitch ) ) + '\u00B0';
+		this.label.replaceString(  String( Math.round( _Math.radToDeg( pitch ) ) + '\u00B0' ).padStart( 4, ' ' ) );
 
 	};
 

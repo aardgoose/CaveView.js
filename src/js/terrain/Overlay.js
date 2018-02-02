@@ -4,6 +4,8 @@ import {
 	MeshLambertMaterial
 } from '../Three';
 
+import { Cfg } from '../core/lib';
+
 // FIXME fix lifecycle of materials and textures - ensure disposal/caching as required
 // GPU resource leak etc.
 
@@ -69,7 +71,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 		const material = new MeshLambertMaterial( { transparent: true, opacity: opacity, color: 0xffffff } );
 
-		texture.anisotropy = 4;
+		texture.anisotropy = Cfg.value( 'anisotropy', 4 );
 
 		material.map = texture;
 		material.needsUpdate = true;

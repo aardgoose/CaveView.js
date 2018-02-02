@@ -3,8 +3,9 @@ import { CommonTerrain } from './CommonTerrain';
 import { LoxTerrainGeometry } from './LoxTerrainGeometry';
 import { StencilLib } from '../core/StencilLib';
 import { Materials } from '../materials/Materials';
-
+import { Cfg } from '../core/lib';
 import { FEATURE_TERRAIN } from '../core/constants';
+
 import { MeshLambertMaterial, TextureLoader, Mesh } from '../Three';
 
 function LoxTerrain ( terrainData, offsets ) {
@@ -64,7 +65,7 @@ LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 	const texture = new TextureLoader().load( this.bitmap.image, _overlayLoaded );
 	const self = this;
 
-	texture.anisotropy = 4;
+	texture.anisotropy = Cfg.value( 'anisotropy', 4 );
 
 	this.overlayLoaded = true;
 
@@ -93,8 +94,6 @@ LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 		bitmap.data = null;
 		bitmap.image = null;
-
-		console.log( bitmap );
 
 		self.setMaterial( self.overlayMaterial );
 

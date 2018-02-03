@@ -17,12 +17,13 @@ function ScaleBar ( container, hScale, rightMargin ) {
 	const leftMargin = 10;
 
 	Group.call( this );
-
+o
 	this.name = 'CV.ScaleBar';
 
 	this.hScale        = hScale;
 	this.scaleBars     = [];
 	this.currentLength = 0;
+	this.wScale = container.clientHeight / container.clientWidth;
 
 	this.position.set( -container.clientWidth / 2 + 5, -container.clientHeight / 2 + leftMargin, 0 );
 	this.scaleMax = container.clientWidth - ( leftMargin + rightMargin );
@@ -112,8 +113,9 @@ ScaleBar.prototype.setScale = function ( scale ) {
 	scaleBars[ length ].mesh.scale.x = scale;
 
 	const label = this.label;
+	const w =  2 * this.wScale * label.getWidth();
 
-	label.translateX( scale * scaleBars[ length ].topRight  - label.position.x );
+	label.translateX( scale * scaleBars[ length ].topRight  - label.position.x - w );
 
 	label.replaceString( legendText.padStart( 8, ' ' ) );
 

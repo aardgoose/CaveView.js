@@ -182,7 +182,8 @@ GlyphString.prototype.isGlyphString = true;
 
 GlyphString.prototype.getWidth = function () {
 
-	return this.geometry.width;
+	return this.geometry.width / this.geometry.glyphAtlas.getCellScale();
+
 
 };
 

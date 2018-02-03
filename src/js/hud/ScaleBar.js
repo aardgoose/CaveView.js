@@ -17,7 +17,7 @@ function ScaleBar ( container, hScale, rightMargin ) {
 	const leftMargin = 10;
 
 	Group.call( this );
-o
+
 	this.name = 'CV.ScaleBar';
 
 	this.hScale        = hScale;

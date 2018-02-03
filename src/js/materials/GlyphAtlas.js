@@ -60,6 +60,7 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 	this.map = map;
 	this.cellScale = cellSize / atlasSize;
+	this.cellSize = cellSize;
 
 }
 
@@ -74,6 +75,12 @@ GlyphAtlas.prototype.getTexture = function () {
 GlyphAtlas.prototype.getCellScale = function () {
 
 	return this.cellScale;
+
+};
+
+GlyphAtlas.prototype.getCellSize = function () {
+
+	return this.cellSize;
 
 };
 

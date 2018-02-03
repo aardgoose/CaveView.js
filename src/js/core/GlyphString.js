@@ -55,7 +55,7 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 		1, 0, 0
 	];
 
-	var positionAttribute = new Float32BufferAttribute( positions, 3 );
+	const positionAttribute = new Float32BufferAttribute( positions, 3 );
 
 	this.setIndex( indexAttribute );
 	this.addAttribute( 'position', positionAttribute );
@@ -68,7 +68,7 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 	this.glyphAtlas = glyphAtlas;
 
-	this.width = this.setStringAttributes( text, uvs, offsets, widths );
+	this.setStringAttributes( text, uvs, offsets, widths );
 
 	this.addAttribute( 'instanceUvs', new InstancedBufferAttribute( uvs, 2, 1 ) );
 	this.addAttribute( 'instanceOffsets', new InstancedBufferAttribute( offsets, 1, 1 ) );
@@ -95,7 +95,7 @@ GlyphStringGeometry.prototype.replaceString = function ( text ) {
 	const widths = new Float32Array( l );
 	const offsets = new Float32Array( l );
 
-	this.width = this.setStringAttributes( text, uvs, offsets, widths );
+	this.setStringAttributes( text, uvs, offsets, widths );
 
 	const instanceUvs = this.getAttribute( 'instanceUvs' );
 	const instanceOffsets = this.getAttribute( 'instanceOffsets' );
@@ -134,7 +134,7 @@ GlyphStringGeometry.prototype.setStringAttributes = function ( text, uvs, offset
 
 	}
 
-	return offset;
+	this.width = offset;
 
 };
 
@@ -176,19 +176,15 @@ function GlyphString ( text, glyphMaterial ) {
 
 }
 
-GlyphString.prototype = Object.assign( Object.create( Mesh.prototype ), {
+GlyphString.prototype = Object.create( Mesh.prototype );
 
-	constructor: GlyphString,
+GlyphString.prototype.isGlyphString = true;
 
-	isGlyphString: true,
+GlyphString.prototype.getWidth = function () {
 
-	getWidth: function () {
+	return this.geometry.width;
 
-		return this.geometry.width;
-
-	}
-
-} );
+};
 
 function MutableGlyphString ( text, material ) {
 

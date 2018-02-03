@@ -187,6 +187,12 @@ GlyphString.prototype.getWidth = function () {
 
 };
 
+GlyphString.prototype.getHeight = function () {
+
+	return this.geometry.glyphAtlas.getCellSize() / 2;
+
+};
+
 function MutableGlyphString ( text, material ) {
 
 	GlyphString.call( this, text, material );

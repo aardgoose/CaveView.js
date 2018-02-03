@@ -6,7 +6,6 @@ HudObject.stdMargin = 5;
 
 HudObject.atlasSpec = {
 	color: '#ffffff',
-	background: '#000000',
 	font: 'normal helvetica,sans-serif'
 };
 

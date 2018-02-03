@@ -1,38 +1,27 @@
 
-import { HudObject } from './HudObject';
+import { Scale } from './Scale';
 
 import {
 	PlaneBufferGeometry, Geometry, Vector3,
-	Mesh, MeshBasicMaterial, Line, LineBasicMaterial
+	MeshBasicMaterial, Line, LineBasicMaterial
 } from '../Three';
 
 function CursorScale ( container ) {
 
-	const width  = container.clientWidth;
-	const height = container.clientHeight;
+	const geometry = new PlaneBufferGeometry( 1, 1 );
 
-	const stdWidth  = HudObject.stdWidth;
-	const stdMargin = HudObject.stdMargin;
-
-	const barOffset = 3 * ( stdWidth + stdMargin );
-	const barHeight = ( height - barOffset ) / 2;
-	const barWidth  = stdWidth / 2;
+	Scale.call( this, container, geometry, new MeshBasicMaterial( { color: 0x676767 } ) );
 
 	this.name = 'CV.CursorScale';
-	this.domObjects = [];
 
-	const geometry = new PlaneBufferGeometry( barWidth, barHeight );
+	const barWidth = this.barWidth;
+	const barHeight = this.barHeight;
 
-	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0x777777 } ) );
-
-	this.translateX(  width / 2  - barWidth / 2  - stdMargin );
-	this.translateY( -height / 2 + barHeight / 2 + barOffset );
-
-	this.barHeight = barHeight;
+	geometry.scale( barWidth, barHeight, 1 );
 
 	// make cursor line
 
-	var cursorGeometry = new Geometry();
+	const cursorGeometry = new Geometry();
 
 	cursorGeometry.vertices.push( new Vector3(  barWidth / 2, -barHeight / 2, 0 ) );
 	cursorGeometry.vertices.push( new Vector3( -barWidth / 2, -barHeight / 2, 0 ) );
@@ -43,69 +32,11 @@ function CursorScale ( container ) {
 
 	this.cursor = cursor;
 
-	// add labels
-	const maxdiv = document.createElement( 'div' );
-	const mindiv = document.createElement( 'div' );
-
-	const caption = document.createElement( 'div' );
-
-	maxdiv.classList.add( 'linear-scale' );
-	mindiv.classList.add( 'linear-scale' );
-
-	caption.classList.add( 'linear-scale-caption' );
-
-	maxdiv.id = 'max-div';
-	mindiv.id = 'min-div';
-
-	caption.id = 'linear-caption';
-
-	maxdiv.style.top    = barHeight + 'px';
-	mindiv.style.bottom = barOffset + 'px';
-
-	caption.style.bottom = height - barHeight + 'px';
-
-	container.appendChild( maxdiv );
-	container.appendChild( mindiv );
-
-	container.appendChild( caption );
-
-	maxdiv.textContent = '---';
-	mindiv.textContent = '---';
-
-	caption.textContent = 'xxxx';
-
-	this.maxDiv = maxdiv;
-	this.minDiv = mindiv;
-
-	this.caption = caption;
-
-	this.domObjects.push( mindiv );
-	this.domObjects.push( maxdiv );
-
-	this.domObjects.push( caption );
-
-	this.addEventListener( 'removed', this.removeDomObjects );
-
 	return this;
 
 }
 
-CursorScale.prototype = Object.create( Mesh.prototype );
-
-Object.assign( CursorScale.prototype, HudObject.prototype );
-
-CursorScale.prototype.constructor = CursorScale;
-
-CursorScale.prototype.setRange = function ( min, max, caption ) {
-
-	this.maxDiv.textContent = Math.round( max ) + '\u202fm';
-	this.minDiv.textContent = Math.round( min ) + '\u202fm';
-
-	this.caption.textContent = caption;
-
-	return this;
-
-};
+CursorScale.prototype = Object.create( Scale.prototype );
 
 
 CursorScale.prototype.setCursor = function ( scaledValue /*, displayValue */ ) {

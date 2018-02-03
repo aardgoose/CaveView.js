@@ -125,8 +125,8 @@ function setVisibility ( visible ) {
 
 		} else {
 
-			linearScale.setVisibility( false );
-			cursorScale.setVisibility( false );
+			linearScale.visible = false;
+			cursorScale.visible = false;
 			angleScale.visible = false;
 
 		}
@@ -260,7 +260,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( Viewer.minHeight, Viewer.maxHeight, i18n( 'above_datum' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
+		linearScale.setRange( Viewer.minHeight, Viewer.maxHeight, i18n( 'height' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 
@@ -268,7 +268,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( Viewer.maxHeight - Viewer.minHeight, 0, i18n( 'below_surface' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
+		linearScale.setRange( Viewer.maxHeight - Viewer.minHeight, 0, i18n( 'depth' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 
@@ -296,7 +296,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( Viewer.minLegLength, Viewer.maxLegLength, i18n( 'leg_length' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE, true ) ).setVisibility( true );
+		linearScale.setRange( Viewer.minLegLength, Viewer.maxLegLength, i18n( 'leg_length' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE, true ) );
 
 		break;
 
@@ -309,8 +309,8 @@ function viewChanged ( event ) {
 	}
 
 	angleScale.visible = useAngleScale;
-	linearScale.setVisibility( useLinearScale );
-	cursorScale.setVisibility( useCursorScale );
+	linearScale.visible= useLinearScale;
+	cursorScale.visible = useCursorScale;
 
 	if ( useCursorScale ) {
 

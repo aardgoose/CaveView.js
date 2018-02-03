@@ -143,11 +143,9 @@ const lang_en = {
 		}
 	},
 	hud: {
-		height: 'height',
+		height: 'height.',
 		leg_length: 'leg length',
-		depth: 'depth',
-		above_datum: 'height above datum',
-		below_surface: 'depth below surface',
+		depth: 'depth.',
 		inclination: 'inclination'
 	}
 };

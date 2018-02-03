@@ -1,125 +1,40 @@
 
-import { HudObject } from './HudObject';
+import { Scale } from './Scale';
 import { Materials } from '../materials/Materials';
 import { MATERIAL_LINE } from '../core/constants';
 
 import {
 	Vector3, Matrix4,
-	PlaneBufferGeometry,
-	Mesh
+	PlaneBufferGeometry
 } from '../Three';
 
 function LinearScale ( container, Viewer ) {
 
-	const width  = container.clientWidth;
-	const height = container.clientHeight;
-
-	const stdWidth  = HudObject.stdWidth;
-	const stdMargin = HudObject.stdMargin;
-
-	const barOffset = 3 * ( stdWidth + stdMargin );
-	const barHeight = ( height - barOffset ) / 2;
-	const barWidth  = stdWidth / 2;
-
 	const range = Viewer.maxHeight - Viewer.minHeight;
-
-	this.name = 'CV.LinearScale';
-	this.domObjects = [];
-
-	const geometry = new PlaneBufferGeometry( barWidth, range );
+	const geometry = new PlaneBufferGeometry( 1, range );
 
 	// rotate the model to put the plane in the xz plane, covering the range of view height values - the gradient shader works on z values.
 
 	geometry.rotateX( Math.PI / 2 );
-	geometry.translate( -barWidth / 2, 0, 0 );
 
-	Mesh.call( this, geometry, Materials.getHeightMaterial( MATERIAL_LINE ) );
+	Scale.call( this, container, geometry, Materials.getHeightMaterial( MATERIAL_LINE ) );
 
-	const ms = new Matrix4().makeScale( 1, 1, barHeight / range );
+	this.name = 'CV.LinearScale';
 
-	ms.multiply( new Matrix4().makeTranslation( width / 2 - stdMargin, -height / 2 + barOffset + barHeight / 2, 0 ) );
-
-	this.applyMatrix( ms );
+	this.scaleBar.applyMatrix( new Matrix4().makeScale( this.barWidth, 1, this.barHeight / range ) );
 
 	// rotate the model in the world view.
-	this.rotateOnAxis( new Vector3( 1, 0, 0 ), -Math.PI / 2 );
-
-	// add labels
-	const maxdiv = document.createElement( 'div' );
-	const mindiv = document.createElement( 'div' );
-
-	const caption = document.createElement( 'div' );
-
-	maxdiv.classList.add( 'linear-scale' );
-	mindiv.classList.add( 'linear-scale' );
-
-	caption.classList.add( 'linear-scale-caption' );
-
-	maxdiv.id = 'max-div';
-	mindiv.id = 'min-div';
-
-	caption.id = 'linear-caption';
-
-	maxdiv.style.top    = barHeight + 'px';
-	mindiv.style.bottom = barOffset + 'px';
-
-	caption.style.bottom = height - barHeight + 'px';
-
-	container.appendChild( maxdiv );
-	container.appendChild( mindiv );
-
-	container.appendChild( caption );
-
-	maxdiv.textContent = '---';
-	mindiv.textContent = '---';
-
-	caption.textContent = 'xxxx';
-
-	this.maxDiv = maxdiv;
-	this.minDiv = mindiv;
-
-	this.caption = caption;
-
-	this.domObjects.push( mindiv );
-	this.domObjects.push( maxdiv );
-
-	this.domObjects.push( caption );
-
-	this.addEventListener( 'removed', this.removeDomObjects );
+	this.scaleBar.rotateOnAxis( new Vector3( 1, 0, 0 ), -Math.PI / 2 );
 
 	return this;
 
 }
 
-LinearScale.prototype = Object.create( Mesh.prototype );
-
-Object.assign( LinearScale.prototype, HudObject.prototype );
-
-LinearScale.prototype.constructor = LinearScale;
-
-LinearScale.prototype.setRange = function ( min, max, caption ) {
-
-	this.maxDiv.textContent = Math.round( max ) + '\u202fm';
-	this.minDiv.textContent = Math.round( min ) + '\u202fm';
-
-	this.setCaption( caption );
-
-	return this;
-
-};
-
-
-LinearScale.prototype.setCaption = function ( caption ) {
-
-	this.caption.textContent = caption;
-
-	return this;
-
-};
+LinearScale.prototype = Object.create( Scale.prototype );
 
 LinearScale.prototype.setMaterial = function ( material ) {
 
-	this.material = material;
+	this.scaleBar.material = material;
 
 	return this;
 

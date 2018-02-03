@@ -37,7 +37,6 @@ function StationLabels () {
 
 	const atlasSpec = {
 		color: '#ffffff',
-		background: '#000000',
 		font: 'normal helvetica,sans-serif'
 	};
 

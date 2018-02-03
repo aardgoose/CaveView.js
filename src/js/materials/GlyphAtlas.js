@@ -30,7 +30,7 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 	if ( ! ctx ) console.error( 'cannot obtain 2D canvas' );
 
 	// set background
-	ctx.fillStyle = glyphAtlasSpec.background || '#000000';
+	ctx.fillStyle = glyphAtlasSpec.background || 'rgba( 0, 0, 0, 0 )';
 
 	ctx.fillRect( 0, 0, atlasSize, atlasSize );
 
@@ -50,7 +50,7 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 		map[ glyph ] = { row: ( divisions - row ) / divisions, column: column / divisions, width: glyphWidth };
 
-		ctx.fillText( glyph, cellSize * column, cellSize * row - 6 );
+		ctx.fillText( glyph, cellSize * column, cellSize * row - 8 );
 
 	}
 

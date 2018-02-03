@@ -113,11 +113,13 @@ ScaleBar.prototype.setScale = function ( scale ) {
 	scaleBars[ length ].mesh.scale.x = scale;
 
 	const label = this.label;
+
+	label.replaceString( legendText.padStart( 8, ' ' ) );
+
 	const w =  2 * this.wScale * label.getWidth();
 
 	label.translateX( scale * scaleBars[ length ].topRight  - label.position.x - w );
 
-	label.replaceString( legendText.padStart( 8, ' ' ) );
 
 	return this;
 

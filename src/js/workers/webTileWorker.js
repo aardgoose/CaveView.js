@@ -38,14 +38,12 @@ function mapLoaded ( data ) {
 	clip.terrainHeight = tileSpec.divisions;
 	clip.terrainWidth  = tileSpec.divisions;
 
-	const terrainTile = new TerrainTileGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions, terrainData, tileSet.dtmScale, clip, offsets.z );
+	// offsets to translate tile to correct position relative to model centre
 
-	const X = resolution * ( tileSpec.x * divisions + clip.left ) - halfMapExtent - offsets.x;
-	const Y = halfMapExtent - resolution * ( tileSpec.y * divisions + clip.top ) - offsets.y;
+	offsets.x = resolution * ( tileSpec.x * divisions + clip.left ) - halfMapExtent - offsets.x;
+	offsets.y = halfMapExtent - resolution * ( tileSpec.y * divisions + clip.top ) - offsets.y;
 
-	terrainTile.translate( X, Y, 0 );
-
-	terrainTile.computeBoundingBox();
+	const terrainTile = new TerrainTileGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions, terrainData, tileSet.dtmScale, clip, offsets );
 
 	// avoid calculating bounding box in main thread.
 	// however it isn't preserved in json serialisation.

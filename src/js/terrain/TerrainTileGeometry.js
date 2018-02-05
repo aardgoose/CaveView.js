@@ -15,7 +15,7 @@ import { Box3 } from '../../../../three.js/src/math/Box3';
 import { Colours } from '../core/Colours';
 import { upAxis } from '../core/constants';
 
-function TerrainTileGeometry( width, height, widthSegments, heightSegments, terrainData, scale, clip, zOffset ) {
+function TerrainTileGeometry( width, height, widthSegments, heightSegments, terrainData, scale, clip, offsets ) {
 
 	BufferGeometry.call( this );
 
@@ -45,11 +45,6 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 	// generate vertices and uvs
 
-	var zIndex;
-
-	var x = 0;
-	var y = 0;
-
 	if ( clip.terrainWidth === undefined ) {
 
 		clip.terrainWidth  = gridX;
@@ -66,9 +61,17 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 	const ixMax = gridX1 + clip.left;
 	const iyMax = gridY1 + clip.top;
 
+	const zOffset = offsets.z;
+	const xOffset = offsets.x;
+
+	var zIndex;
+
+	var x;
+	var y = - offsets.y;
+
 	for ( iy = clip.top; iy < iyMax; iy++ ) {
 
-		x = 0;
+		x = xOffset;
 
 		// dtmOffset adjusts for tiles smaller than DTM height maps
 
@@ -97,7 +100,7 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 	// avoid overhead of computeBoundingBox since we know x & y min and max values;
 
-	this.boundingBox = new Box3().set( new Vector3( 0, 0, minZ ), new Vector3( width, -height, maxZ ) );
+	this.boundingBox =  new Box3().set( new Vector3( offsets.x, offsets.y - height, minZ ), new Vector3( offsets.x + width, offsets.y, maxZ ) );
 
 	// indices
 

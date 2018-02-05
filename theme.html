@@ -7,23 +7,24 @@
 </head>
 <body>
 <h1>Cave View - Theme Object</h1>
+<p>All colour values are hex RGB values.</p>
 <pre>
 const defaultTheme = {
-	background: 0x000000,
+	background: 0x000000, // background colour to model
 	hud: {
-		progress: 0x00ff00,
-		bezel: 0x888888,
+		progress: 0x00ff00, // progress dial
+		bezel: 0x888888, // bezel colour for compass and artificial horizon (AHI)
 		scale: {
 			bar1: 0xffffff,
 			bar2: 0xff0000,
 		},
 		compass: {
-			top1: 0xb03a14,
+			top1: 0xb03a14, // colours for cardinal directions
 			top2: 0x1ab4e5,
-			bottom1: 0x581d0a,
+			bottom1: 0x581d0a, // colours for secondary directions
 			bottom2: 0x0c536a
 		},
-		ahi: {
+		ahi: { // artifical horizon instrument 
 			sky: 0x106f8d,
 			earth: 0x802100,
 			bar: 0xffff00,
@@ -31,14 +32,14 @@ const defaultTheme = {
 		},
 	},
 	box: {
-		bounding: 0xffffff,
-		select: 0x0000ff,
-		highlight: 0xff0000
+		bounding: 0xffffff, // bounding box for entire model
+		select: 0x0000ff, // box surrounding selected sub section of model
+		highlight: 0xff0000 // highlit sub section of model
 	},
 	shading: {
-		single: 0xffffff
+		single: 0xffffff // colour of legs displayed with a single colour
 	},
-	popup: {
+	popup: { // popup survey station details
 		text: 0xffffff,
 		border: 0xffffff,
 		background: 0x222222

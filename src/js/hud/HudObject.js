@@ -1,11 +1,13 @@
 
+import { Cfg } from '../core/lib';
+
 const HudObject = {
 
-	stdWidth: 40,
+	stdWidth: Cfg.themeValue( 'hud.widgetSize' ),
 	stdMargin: 5,
 
 	atlasSpec: {
-		color: '#ffffff',
+		color: Cfg.themeColorCSS( 'hud.text' ),
 		font: 'normal helvetica,sans-serif'
 	}
 

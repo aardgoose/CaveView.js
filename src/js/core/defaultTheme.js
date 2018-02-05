@@ -2,7 +2,7 @@
 const defaultTheme = {
 	background: 0x000000,
 	hud: {
-		text: 0xff0000,
+		text: 0xffffff,
 		progress: 0x00ff00,
 		bezel: 0x888888,
 		widgetSize: 40,

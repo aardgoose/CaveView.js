@@ -1565,9 +1565,9 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	const routes = this.getRoutes();
 
-	const c1 = ColourCache.yellow;
-	const c2 = ColourCache.red;
-	const c3 = Cfg.themeColor( 'shading.single' );
+	const c1 = Cfg.themeColor( 'routes.active' );
+	const c2 = Cfg.themeColor( 'routes.adjacent' );
+	const c3 = Cfg.themeColor( 'routes.default' );
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 

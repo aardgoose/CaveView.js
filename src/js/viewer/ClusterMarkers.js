@@ -1,5 +1,6 @@
 
 import { FEATURE_ENTRANCES,  upAxis } from '../core/constants';
+import { Cfg } from '../core/lib';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 import { Marker } from './Marker';
@@ -304,6 +305,7 @@ ClusterMarkers.prototype.addMarker = function ( position, label ) {
 
 	// create marker
 	const atlasSpec = {
+		color: Cfg.themeColorCSS( 'stations.entrances.text' ),
 		font: 'normal helvetica,sans-serif'
 	};
 

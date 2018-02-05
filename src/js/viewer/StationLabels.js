@@ -1,6 +1,7 @@
 import { Group, Vector3 } from '../Three';
 
 import { CAMERA_OFFSET, LABEL_STATION, LEG_SPLAY } from '../core/constants';
+import { Cfg } from '../core/lib';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
@@ -36,14 +37,14 @@ function StationLabels () {
 	this.layers.set( LABEL_STATION );
 
 	const atlasSpec = {
-		color: '#ffffff',
+		color: Cfg.themeColorCSS( 'stations.default.text' ),
 		font: 'normal helvetica,sans-serif'
 	};
 
 	this.defaultLabelMaterial = Materials.getGlyphMaterial( atlasSpec, 0 );
 	this.splayLabelMaterial = Materials.getGlyphMaterial( atlasSpec, 0 );
 
-	atlasSpec.color = '#ffff00';
+	atlasSpec.color = Cfg.themeColorCSS( 'stations.junctions.text' );
 	this.junctionLabelMaterial = Materials.getGlyphMaterial( atlasSpec, 0 );
 
 }

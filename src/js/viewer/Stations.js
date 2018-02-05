@@ -8,7 +8,7 @@ import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
 import { FEATURE_STATIONS, STATION_ENTRANCE } from '../core/constants';
 import { Viewer } from '../viewer/Viewer';
-import { ColourCache } from '../core/ColourCache';
+import { Cfg } from '../core/lib';
 
 function Stations () {
 
@@ -18,8 +18,8 @@ function Stations () {
 	this.map = new Map();
 	this.stationCount = 0;
 
-	this.baseColor     = ColourCache.red;
-	this.junctionColor = ColourCache.yellow;
+	this.baseColor     = Cfg.themeColor( 'stations.default.marker' );
+	this.junctionColor = Cfg.themeColor( 'stations.junctions.marker' );
 
 	this.layers.set( FEATURE_STATIONS );
 

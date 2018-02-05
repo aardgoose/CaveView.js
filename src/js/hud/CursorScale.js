@@ -1,4 +1,5 @@
 
+import { Cfg } from '../core/lib';
 import { Scale } from './Scale';
 
 import {
@@ -26,7 +27,7 @@ function CursorScale ( container ) {
 	cursorGeometry.vertices.push( new Vector3(  barWidth / 2, -barHeight / 2, 0 ) );
 	cursorGeometry.vertices.push( new Vector3( -barWidth / 2, -barHeight / 2, 0 ) );
 
-	const cursor = new Line( cursorGeometry, new LineBasicMaterial( { color: 0xffffff } ) );
+	const cursor = new Line( cursorGeometry, new LineBasicMaterial( { color: Cfg.themeColor( 'hud.cursor' ) } ) );
 
 	this.add( cursor );
 

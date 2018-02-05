@@ -1,7 +1,7 @@
 
 import { Shaders } from '../shaders/Shaders';
 import { MATERIAL_LINE } from '../core/constants';
-import { ColourCache } from '../core/ColourCache';
+import { Cfg } from '../core/lib';
 
 import { Vector3, ShaderMaterial } from '../Three';
 
@@ -17,8 +17,8 @@ function CursorMaterial ( type, limits ) {
 		uLight:      { value: new Vector3( -1, -1, 2 ) },
 		cursor:      { value: 0 },
 		cursorWidth: { value: 5.0 },
-		baseColor:   { value: ColourCache.lightGrey },
-		cursorColor: { value: ColourCache.green }
+		baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },
+		cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) }
 	};
 
 	this.vertexShader   = Shaders.cursorVertexShader;

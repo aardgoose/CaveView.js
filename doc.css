@@ -32,6 +32,10 @@ pre {
 	padding: 8px 8px;
 }
 
+dd > span {
+	background: #aaaaaa;
+}
+
 dd > span::before {
 	content: "["
 }

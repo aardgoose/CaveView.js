@@ -4,7 +4,7 @@ import {
 	LineBasicMaterial
 } from '../Three';
 
-import { ColourCache } from '../core/ColourCache';
+import { Cfg } from '../core/lib';
 import { StencilLib } from '../core/StencilLib';
 
 const unselectedMaterial = new LineBasicMaterial( { color: 0x444444, vertexColors: VertexColors } );
@@ -170,6 +170,7 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 	const geometry = this.geometry;
 	const legRuns = this.legRuns;
 	const colors = geometry.colors;
+	const unselectedColor = Cfg.themeColor( 'shading.unselected' );
 
 	var l, run, v;
 
@@ -195,8 +196,8 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 
 				for ( v = start; v < end; v += 2 ) {
 
-					colors[ v ]     = ColourCache.grey;
-					colors[ v + 1 ] = ColourCache.grey;
+					colors[ v ]     = unselectedColor;
+					colors[ v + 1 ] = unselectedColor;
 
 				}
 

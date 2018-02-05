@@ -5,7 +5,7 @@ const defaultTheme = {
 		text: 0xff0000,
 		progress: 0x00ff00,
 		bezel: 0x888888,
-		widgetSize: 20,
+		widgetSize: 40,
 		scale: {
 			bar1: 0xffffff,
 			bar2: 0xff0000,
@@ -22,14 +22,36 @@ const defaultTheme = {
 			bar: 0xffff00,
 			marks: 0xffffff
 		},
+		cursor: 0xffff00
 	},
 	box: {
 		bounding: 0xffffff,
 		select: 0x0000ff,
 		highlight: 0xff0000
 	},
+	routes: {
+		active: 0xffff00,
+		adjacent: 0xff0000,
+		default: 0x888888
+	},
+	stations: {
+		entrances: {
+			text: 0xffffff
+		},
+		junctions: {
+			text: 0xffff00,
+			marker: 0xffff00
+		},
+		default: {
+			text: 0xffffff,
+			marker: 0xff0000
+		}
+	},
 	shading: {
-		single: 0xffffff
+		single: 0xffffff,
+		cursor: 0xffff00,
+		cursorBase: 0x888888,
+		unselected: 0x444444
 	},
 	popup: {
 		text: 0xffffff,

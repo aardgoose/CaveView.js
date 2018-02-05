@@ -1,7 +1,7 @@
 
 import { Shaders } from '../shaders/Shaders';
 import { MATERIAL_LINE } from '../core/constants';
-import { ColourCache } from '../core/ColourCache';
+import { Cfg } from '../core/lib';
 
 import { ShaderMaterial, Vector3 } from '../Three';
 
@@ -27,8 +27,8 @@ function DepthCursorMaterial ( type, surveyLimits, terrain ) {
 			datumShift:  { value: 0.0 },
 			cursor:      { value: this.max / 2 },
 			cursorWidth: { value: 5.0 },
-			baseColor:   { value: ColourCache.lightGrey },
-			cursorColor: { value: ColourCache.green }
+			baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },
+			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) }
 		},
 		vertexShader: Shaders.depthCursorVertexShader,
 		fragmentShader: Shaders.depthCursorFragmentShader

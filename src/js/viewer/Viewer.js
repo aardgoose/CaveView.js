@@ -221,7 +221,7 @@ function init ( domID, configuration ) { // public method
 		},
 
 		'terrainOverlays': {
-			get: function () { if ( terrain.isTiled ) return Object.keys( overlays ); else return terrain.hasOverlay ? [ true ] : []; }
+			get: function () { if ( terrain !== null && terrain.isTiled ) return Object.keys( overlays ); else return terrain.hasOverlay ? [ true ] : []; }
 		},
 
 		'terrainOverlay': {
@@ -799,7 +799,7 @@ function setSurfaceShadingMode ( mode ) {
 
 function setTerrainOverlay ( overlayName ) {
 
-	if ( ( overlayName === 0 && terrain.isTiled ) || terrain === null ) return;
+	if ( terrain === null || ( overlayName === 0 && terrain.isTiled ) ) return;
 
 	if ( terrainShadingMode === SHADING_OVERLAY ) {
 

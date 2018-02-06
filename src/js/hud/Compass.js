@@ -59,7 +59,7 @@ function Compass () {
 	const material = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
 	const label = new MutableGlyphString( '000\u00B0', material );
 
-	label.translateX( -10 );
+	label.translateX( - label.getWidth() / 2 );
 	label.translateY( stdWidth + 5 );
 
 	this.add( label );

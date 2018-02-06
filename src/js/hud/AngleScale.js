@@ -65,8 +65,8 @@ function AngleScale ( container, caption ) {
 	const material = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
 	const label = new GlyphString( caption, material );
 
-	label.translateX( -stdWidth );
-	label.translateY( 10 );
+	label.translateX( - label.getWidth() / 2 );
+	label.translateY( 5 );
 
 	this.add( label );
 

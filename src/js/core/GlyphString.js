@@ -182,14 +182,13 @@ GlyphString.prototype.isGlyphString = true;
 
 GlyphString.prototype.getWidth = function () {
 
-	return this.geometry.width / this.geometry.glyphAtlas.getCellScale();
-
+	return ( this.geometry.width * this.material.scaleFactor );
 
 };
 
 GlyphString.prototype.getHeight = function () {
 
-	return this.geometry.glyphAtlas.getCellSize() / 2;
+	return this.material.scaleFactor;
 
 };
 

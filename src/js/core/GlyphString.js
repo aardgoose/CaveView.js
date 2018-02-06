@@ -182,7 +182,7 @@ GlyphString.prototype.isGlyphString = true;
 
 GlyphString.prototype.getWidth = function () {
 
-	return ( this.geometry.width * this.material.scaleFactor );
+	return this.geometry.width * this.material.scaleFactor;
 
 };
 

@@ -20,7 +20,9 @@ function Scale( container, geometry, material ) {
 
 	this.barHeight = barHeight;
 	this.barWidth = barWidth;
-	this.offset = barHeight / 2;
+
+	this.offsetX = -barWidth / 2 - 5;
+	this.offsetY = barHeight / 2;
 
 	Group.call( this );
 
@@ -44,8 +46,9 @@ Scale.prototype = Object.create( Group.prototype );
 
 Scale.prototype.setRange = function ( min, max, caption ) {
 
-	const offset = this.offset;
-	const barWidth = this.barWidth;
+	const offsetX = this.offsetX;
+	const offsetY = this.offsetY;
+
 	const material = this.textMaterial;
 
 	if ( min !== this.min || max !== this.max ) {
@@ -63,11 +66,11 @@ Scale.prototype.setRange = function ( min, max, caption ) {
 		const topLabel = new GlyphString( Math.round( max ) + '\u202fm', material );
 		const bottomLabel = new GlyphString( Math.round( min ) + '\u202fm', material );
 
-		topLabel.translateX( - barWidth - topLabel.getWidth() );
-		bottomLabel.translateX( - barWidth - bottomLabel.getWidth() );
+		topLabel.translateX( offsetX - topLabel.getWidth() );
+		bottomLabel.translateX( offsetX - bottomLabel.getWidth() );
 
-		bottomLabel.translateY( -offset );
-		topLabel.translateY( offset - topLabel.getHeight() );
+		topLabel.translateY( offsetY - topLabel.getHeight() );
+		bottomLabel.translateY( -offsetY );
 
 		topLabel.isRange = true;
 		bottomLabel.isRange = true;
@@ -100,9 +103,8 @@ Scale.prototype.setCaption = function ( text ) {
 	}
 
 	caption = new GlyphString( text, this.textMaterial );
-
-	caption.translateX( - HudObject.stdMargin - caption.getWidth() );
-	caption.translateY( this.offset );
+	caption.translateX( this.barWidth / 2 - caption.getWidth() );
+	caption.translateY( this.offsetY + this.barWidth / 2 );
 
 	this.add( caption );
 	this.caption = caption;

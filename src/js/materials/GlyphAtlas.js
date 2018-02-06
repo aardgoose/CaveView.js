@@ -78,12 +78,6 @@ GlyphAtlas.prototype.getCellScale = function () {
 
 };
 
-GlyphAtlas.prototype.getCellSize = function () {
-
-	return this.cellSize;
-
-};
-
 GlyphAtlas.prototype.getGlyph = function ( glyph ) {
 
 	var glyphData = this.map[ glyph ];

@@ -1,6 +1,8 @@
 
 import { Cfg } from '../core/lib';
 import { Scale } from './Scale';
+import { MutableGlyphString } from '../core/GlyphString';
+import { Materials } from '../materials/Materials';
 
 import {
 	PlaneBufferGeometry, Geometry, Vector3,
@@ -29,9 +31,24 @@ function CursorScale ( container ) {
 
 	const cursor = new Line( cursorGeometry, new LineBasicMaterial( { color: Cfg.themeColor( 'hud.cursor' ) } ) );
 
+	const atlasSpec = {
+		color: Cfg.themeColorCSS( 'hud.cursor' ),
+		background: '#444444',
+		font: 'bold helvetica,sans-serif'
+	};
+
+	const material = Materials.getGlyphMaterial( atlasSpec, 0 );
+
+	const cursorLabel = new MutableGlyphString( '      ', material );
+
+	cursorLabel.translateY( - barHeight / 2 - cursorLabel.getHeight() / 2 );
+	cursorLabel.translateZ( 10 );
+
 	this.add( cursor );
+	cursor.add( cursorLabel );
 
 	this.cursor = cursor;
+	this.cursorLabel = cursorLabel;
 
 	return this;
 
@@ -40,9 +57,14 @@ function CursorScale ( container ) {
 CursorScale.prototype = Object.create( Scale.prototype );
 
 
-CursorScale.prototype.setCursor = function ( scaledValue /*, displayValue */ ) {
+CursorScale.prototype.setCursor = function ( scaledValue, displayValue ) {
+
+	const cursorLabel = this.cursorLabel;
 
 	this.cursor.position.setY( this.barHeight * scaledValue );
+
+	cursorLabel.replaceString( String( displayValue + '\u202fm' ).padStart( 6, ' ') );
+	cursorLabel.position.setX( this.offsetX - cursorLabel.getWidth() );
 
 	return this;
 

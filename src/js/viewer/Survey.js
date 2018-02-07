@@ -288,7 +288,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.loadDyeTraces();
 
-	this.routes = new Routes( metadata ).mapSurvey( this.stations, this.getLegs(), this.surveyTree );
+	this.routes = new Routes( metadata ).mapSurvey( this.stations, this.getFeature( LEG_CAVE ), this.surveyTree );
 
 	return;
 
@@ -1009,14 +1009,22 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 
 };
 
-Survey.prototype.selectStation = function ( index ) {
+Survey.prototype.spStation = function ( station ) {
 
-	const stations = this.stations;
-	const station = stations.getStationByIndex( index );
+	this.routes.spFind( station );
+	this.setShadingMode( SHADING_DISTANCE );
 
-	stations.selectStation( station );
+};
 
-	return station;
+Survey.prototype.getMaxDistance = function () {
+
+	return this.routes.maxDistance;
+
+};
+
+Survey.prototype.selectStation = function ( station ) {
+
+	this.stations.selectStation( station );
 
 };
 
@@ -1149,7 +1157,7 @@ Survey.prototype.cutSection = function ( id ) {
 
 	// clear target lists
 
-	this.PointTargets = [];
+	this.pointTargets = [];
 	this.legTargets   = [];
 
 	this.terrain = null;
@@ -1424,7 +1432,15 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	case SHADING_DISTANCE:
 
-		this.setLegColourByColour( mesh, Cfg.themeColor( 'shading.distance' ) );
+		if ( this.routes.maxDistance === 0 ) {
+
+			this.setLegColourByColour( mesh, Cfg.themeColor( 'shading.unconnected' ) );
+
+		} else {
+
+			this.setLegColourByDistance( mesh );
+
+		}
 
 		break;
 
@@ -1543,6 +1559,35 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 		geometry.colors[ v1 ] = colour;
 		geometry.colors[ v2 ] = colour;
+
+	}
+
+};
+
+Survey.prototype.setLegColourByDistance = function ( mesh ) {
+
+	const colours = ColourCache.getColors( 'gradient' );
+	const unconnected = Cfg.themeColor( 'shading.unconnected' );
+
+	const stations = this.stations;
+	const colourRange = colours.length - 1;
+	const maxDistance = this.routes.maxDistance;
+
+	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
+
+	function _colourSegment ( geometry, v1, v2 ) {
+
+		geometry.colors[ v1 ] = _setDistanceColour( geometry, v1 );
+		geometry.colors[ v2 ] = _setDistanceColour( geometry, v2 );
+
+	}
+
+	function _setDistanceColour( geometry, vertexIndex ) {
+
+		const vertex = geometry.vertices[ vertexIndex ];
+		const distance = stations.getStation( vertex ).distance;
+
+		return ( distance === Infinity ) ? unconnected : colours[ Math.floor( colourRange * distance / maxDistance ) ];
 
 	}
 

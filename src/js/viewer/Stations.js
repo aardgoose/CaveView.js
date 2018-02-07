@@ -98,6 +98,8 @@ Stations.prototype.addStation = function ( node ) {
 	node.hitCount = 0;
 	node.stationVertexIndex = this.stationCount++;
 	node.linkedSegments = [];
+	node.legs = [];
+	node.distance = Infinity;
 
 };
 
@@ -132,6 +134,8 @@ Stations.prototype.clearSelected = function () {
 Stations.prototype.selectStation = function ( node ) {
 
 	this.selectStationByIndex( node.stationVertexIndex );
+
+	return node;
 
 };
 
@@ -205,5 +209,10 @@ Stations.prototype.setScale = function ( scale ) {
 
 };
 
+Stations.prototype.resetDistances = function () {
+
+	this.stations.forEach( function _resetDistance( node ) { node.distance = Infinity; } );
+
+};
 
 export { Stations };

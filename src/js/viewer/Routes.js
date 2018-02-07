@@ -22,6 +22,10 @@ function Routes ( metadataSource ) {
 	this.currentRoute = new Set();
 	this.currentRouteName = null;
 	this.adjacentSegments = new Set();
+	this.maxDistance = 0;
+
+	this.stations = null;
+	this.legs = null;
 
 	Object.defineProperty( this, 'setRoute', {
 		set: function ( x ) { this.loadRoute( x ); },
@@ -52,11 +56,14 @@ Routes.prototype.constructor = Routes;
 
 Object.assign( Routes.prototype, EventDispatcher.prototype );
 
-Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
+Routes.prototype.mapSurvey = function ( stations, legsObject, surveyTree ) {
 
 	// determine segments between junctions and entrances/passage ends and create mapping array.
 	this.surveyTree = surveyTree;
+	this.stations = stations;
+	this.legsObject = legsObject;
 
+	const legs = legsObject.geometry.vertices;
 	const segmentMap = this.segmentMap;
 	const vertexPairToSegment = this.vertexPairToSegment;
 	const segmentToInfo = this.segmentToInfo;
@@ -75,25 +82,25 @@ Routes.prototype.mapSurvey = function ( stations, legs, surveyTree ) {
 
 		vertexPairToSegment.push( segment );
 
-		if ( newSegment ) {
+		station = stations.getStation( v1 );
+		if ( station !== undefined ) station.legs.push( i );
 
-			station = stations.getStation( v1 );
+		if ( newSegment ) {
 
 			if ( station === undefined ) continue; // possible use of separator in station name.
 
 			segmentInfo = {
 				segment: segment,
 				startStation: station,
-				endStation: null
+				endStation: null,
 			};
-
-			station.linkedSegments.push( segment );
 
 			newSegment = false;
 
 		}
 
 		station = stations.getStation( v2 );
+		if ( station !== undefined ) station.legs.push( i );
 
 		if ( station && ( station.hitCount > 2 || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) ) {
 
@@ -297,6 +304,62 @@ Routes.prototype.adjacentToRoute = function ( index ) {
 	return this.adjacentSegments.has( this.vertexPairToSegment[ index / 2 ] );
 
 };
+
+Routes.prototype.spFind = function ( station ) {
+
+	const queue = [ station ];
+	const legsObject = this.legsObject;
+	const legs = legsObject.geometry.vertices;
+	const stations = this.stations;
+
+
+	stations.resetDistances();
+
+	var maxDistance = 0;
+
+	station.distance = 0;
+
+	while ( queue.length > 0 ) {
+
+		const station = queue.shift();
+		const currentDistance = station.distance;
+		const stationLegs = station.legs;
+
+		// console.log( 'station:', station.getPath(), currentDistance );
+
+		maxDistance = Math.max( maxDistance, currentDistance );
+
+		let i;
+
+		for ( i = 0; i < stationLegs.length; i++ ) {
+
+			const leg = stationLegs[ i ];
+
+			const v1 = legs[ leg ];
+			const v2 = legs[ leg + 1 ];
+
+			const nextVertex = ( v1 !== station.p ) ? v1 : v2;
+			const nextStation = stations.getStation( nextVertex );
+			const nextLength = legsObject.legLengths[ leg / 2 ];
+
+			if ( nextStation.distance > currentDistance + nextLength ) {
+
+				nextStation.distance = currentDistance + nextLength;
+				queue.push( nextStation );
+
+				// console.log( 'new next', nextStation.distance, queue.length );
+
+			}
+
+		}
+
+	}
+
+	console.log( 'max:', maxDistance );
+	this.maxDistance = maxDistance;
+
+};
+
 
 export { Routes };
 

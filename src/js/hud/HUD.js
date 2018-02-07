@@ -345,7 +345,7 @@ function cursorChanged ( /* event */ ) {
 
 	scaledHeight = Math.max( Math.min( scaledHeight, 1 ), 0 );
 
-	cursorScale.setCursor( scaledHeight, Math.round( cursorHeight ) );
+	cursorScale.setCursor( scaledHeight, Math.round( cursorHeight + range / 2 + Viewer.minHeight ) );
 
 }
 

@@ -8,7 +8,7 @@ const HudObject = {
 
 	atlasSpec: {
 		color: Cfg.themeColorCSS( 'hud.text' ),
-		font: 'normal helvetica,sans-serif'
+		font: 'bold helvetica,sans-serif'
 	}
 
 };

@@ -9,7 +9,7 @@ import  {
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
 	upAxis,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, SHADING_DISTANCE
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -785,6 +785,14 @@ function setShadingMode ( mode ) {
 	if ( terrain === 0 && ( mode === SHADING_DEPTH || mode === SHADING_DEPTH_CURSOR ) ) return;
 	if ( survey.setShadingMode( mode ) ) shadingMode = mode;
 
+	if ( shadingMode === SHADING_DISTANCE ) {
+
+		mouseMode = MOUSE_MODE_DISTANCE;
+		mouseTargets = 	mouseTargets = survey.pointTargets;
+		console.log( 'distance mode' );
+
+	}
+
 	renderView();
 
 }
@@ -1255,6 +1263,12 @@ function mouseDown ( event ) {
 	case MOUSE_MODE_ROUTE_EDIT:
 
 		_selectSegment( picked );
+
+		break;
+
+	case MOUSE_MODE_DISTANCE:
+
+		_selectStation( picked );
 
 		break;
 

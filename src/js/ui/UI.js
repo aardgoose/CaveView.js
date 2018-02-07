@@ -2,8 +2,8 @@ import {
 	VERSION, LEG_CAVE,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, STATION_ENTRANCE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
-	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_DEPTH_CURSOR, // SHADING_AXIS,
-	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
+	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
+	SHADING_BECK, VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
 } from '../core/constants';
 
 import { replaceExtension, Cfg } from '../core/lib';
@@ -39,7 +39,9 @@ const legShadingModes = {
 	'shading.height_cursor': SHADING_CURSOR,
 	'shading.fixed':         SHADING_SINGLE,
 	'shading.survey':        SHADING_SURVEY,
-	'shading.route':         SHADING_PATH
+	'shading.route':         SHADING_PATH,
+	'shading.distance':      SHADING_DISTANCE,
+	'shading.beck':          SHADING_BECK
 //	'axis':               SHADING_AXIS
 };
 
@@ -493,6 +495,7 @@ function initHelpPage () {
 	_addKey( '7', 'shading.route' );
 	_addKey( '8', 'shading.depth' );
 	_addKey( '9', 'shading.depth_cursor' );
+	_addKey( '0', 'shading.distance' );
 
 	_addKey( '[', 'shading.cursor_up' );
 	_addKey( ']', 'shading.cursor_down' );
@@ -804,6 +807,12 @@ function keyDown ( event ) {
 	if ( ! isCaveLoaded ) return;
 
 	switch ( event.keyCode ) {
+
+	case 48: // change colouring scheme to distance = '0'
+
+		Viewer.shadingMode = SHADING_DISTANCE;
+
+		break;
 
 	case 49: // change colouring scheme to depth - '1'
 

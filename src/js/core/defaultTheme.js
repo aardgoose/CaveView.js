@@ -49,6 +49,7 @@ const defaultTheme = {
 	},
 	shading: {
 		single: 0xffffff,
+		distance: 0x00ffff,
 		cursor: 0xffff00,
 		cursorBase: 0x888888,
 		unselected: 0x444444

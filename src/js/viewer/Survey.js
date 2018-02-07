@@ -6,7 +6,7 @@ import {
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
-	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_AXIS,
+	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_AXIS, SHADING_DISTANCE,
 	upAxis
 } from '../core/constants';
 
@@ -1306,6 +1306,12 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 		break;
 
+	case SHADING_DISTANCE:
+
+		material = false;
+
+		break;
+
 	}
 
 	if ( this.setLegShading( LEG_CAVE, mode ) ) {
@@ -1413,6 +1419,12 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	case SHADING_DEPTH:
 
 		this.setLegColourByDepth( mesh );
+
+		break;
+
+	case SHADING_DISTANCE:
+
+		this.setLegColourByColour( mesh, Cfg.themeColor( 'shading.distance' ) );
 
 		break;
 

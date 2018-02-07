@@ -1,7 +1,7 @@
 
 import { Vector3 }  from '../../../../three.js/src/math/Vector3';
 
-export const VERSION = '1.6.2';
+export const VERSION = '1.7.0';
 
 export const MATERIAL_LINE       = 1;
 export const MATERIAL_SURFACE    = 2;
@@ -23,6 +23,7 @@ export const VIEW_ELEVATION_W    = 5;
 
 export const MOUSE_MODE_NORMAL     = 0;
 export const MOUSE_MODE_ROUTE_EDIT = 1;
+export const MOUSE_MODE_DISTANCE   = 2;
 // shading types
 
 export const SHADING_HEIGHT       = 1;
@@ -37,6 +38,8 @@ export const SHADING_DEPTH        = 9;
 export const SHADING_PATH         = 10;
 export const SHADING_DEPTH_CURSOR = 11;
 export const SHADING_AXIS         = 12;
+export const SHADING_DISTANCE     = 13;
+export const SHADING_BECK         = 14;
 
 // layer tags for scene objects
 

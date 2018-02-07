@@ -35,7 +35,9 @@ const lang_en = {
 			survey: 'survey',
 			route: 'route',
 			depth: 'depth',
-			depth_cursor: 'depth cursor'
+			depth_cursor: 'depth cursor',
+			distance: 'distance',
+			beck: 'beck'
 		},
 		visibility: {
 			header: 'Visibility',
@@ -113,7 +115,8 @@ const lang_en = {
 			depth: 'depth below surface',
 			depth_cursor: 'depth_cursor',
 			cursor_up: 'move cursor up',
-			cursor_down: 'move cursor down'
+			cursor_down: 'move cursor down',
+			distance: 'distance'
 		},
 		view: {
 			header: 'View',

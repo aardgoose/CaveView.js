@@ -1,7 +1,7 @@
 
 import {
 	MATERIAL_LINE,
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH,
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_DISTANCE
 } from '../core/constants';
 
 import { Cfg } from '../core/lib';
@@ -269,6 +269,14 @@ function viewChanged ( event ) {
 		useLinearScale = true;
 
 		linearScale.setRange( Viewer.maxHeight - Viewer.minHeight, 0, i18n( 'depth' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
+
+		break;
+
+	case SHADING_DISTANCE:
+
+		useLinearScale = true;
+
+		linearScale.setRange( 0, Viewer.maxDistance, i18n( 'distance' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 

@@ -272,6 +272,10 @@ function init ( domID, configuration ) { // public method
 			set: function ( x ) { cursorHeight = x; }
 		},
 
+		'maxDistance': {
+			get: function () { return survey.getMaxDistance(); }
+		},
+
 		'maxHeight': {
 			get: function () { return ( limits === null ) ? 0 : limits.max.z; }
 		},
@@ -1250,33 +1254,33 @@ function mouseDown ( event ) {
 
 	if ( intersects.length < 1 ) return;
 
-	const picked = intersects[ 0 ];
-
 	switch ( mouseMode ) {
 
 	case MOUSE_MODE_NORMAL:
 
-		_selectStation( picked );
+		_selectStation( visibleStation( intersects ) );
 
 		break;
 
 	case MOUSE_MODE_ROUTE_EDIT:
 
-		_selectSegment( picked );
+		_selectSegment( intersects[ 0 ] );
 
 		break;
 
 	case MOUSE_MODE_DISTANCE:
 
-		_selectStation( picked );
+		_selectDistance( visibleStation( intersects ) );
 
 		break;
 
 	}
 
-	function _selectStation ( picked ) {
+	function _selectStation ( station ) {
 
-		const station = survey.selectStation( picked.index );
+		if ( station === null || station.p === undefined ) return;
+
+		survey.selectStation( station );
 
 		if ( event.button === MOUSE.LEFT ) {
 
@@ -1292,7 +1296,7 @@ function mouseDown ( event ) {
 
 	function _setStationPOI( station ) {
 
-		if ( station.p === undefined ) return;
+		if ( station === null || station.p === undefined ) return;
 
 		selectSection( station.id );
 
@@ -1301,6 +1305,25 @@ function mouseDown ( event ) {
 
 		controls.enabled = false;
 		container.addEventListener( 'mouseup', _mouseUpLeft );
+
+	}
+
+	function _selectDistance ( station ) {
+
+		if ( station === null || station.p === undefined ) return;
+
+		if ( event.button === MOUSE.LEFT ) {
+
+			_showStationPopup( station );
+
+		} else if ( event.button === MOUSE.RIGHT ) {
+
+			survey.spStation( station );
+
+			Viewer.dispatchEvent( { type: 'change', name: 'shadingMode' } );
+			renderView();
+
+		}
 
 	}
 
@@ -1357,6 +1380,31 @@ function mouseDown ( event ) {
 		renderView();
 
 	}
+
+}
+
+function visibleStation ( intersects ) {
+
+	var i;
+	var station;
+
+	for ( i = 0; i < intersects.length; i++ ) {
+
+		station = survey.stations.getStationByIndex( intersects[ i ].index );
+
+		if ( ! Viewer.splays && station.hitCount === 0 ) {
+
+			// don't select spays unless visible
+			station = null;
+			continue;
+
+		}
+
+		break;
+
+	}
+
+	return station;
 
 }
 

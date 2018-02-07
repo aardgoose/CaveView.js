@@ -116,7 +116,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	label.replaceString( legendText.padStart( 8, ' ' ) );
 
-	const w =  2 * this.wScale * label.getWidth();
+	const w = label.getWidth();
 
 	label.translateX( scale * scaleBars[ length ].topRight  - label.position.x - w );
 

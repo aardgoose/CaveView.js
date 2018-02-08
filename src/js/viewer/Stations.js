@@ -88,6 +88,15 @@ Stations.prototype.addStation = function ( node ) {
 
 	const point = node.p;
 
+	const seen = this.map.get( point );
+
+	if ( seen !== undefined ) {
+
+		// console.log( 'duplicate', node.getPath(), seen.getPath() );
+		return;
+
+	}
+
 	this.vertices.push( point );
 	this.colors.push( this.baseColor );
 	this.pointSizes.push( point.type === STATION_ENTRANCE ? 8.0 : 0.0 );

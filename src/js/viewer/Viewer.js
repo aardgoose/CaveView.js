@@ -1318,7 +1318,7 @@ function mouseDown ( event ) {
 
 		} else if ( event.button === MOUSE.RIGHT ) {
 
-			survey.spStation( station );
+			survey.shortestPathSearch( station );
 
 			Viewer.dispatchEvent( { type: 'change', name: 'shadingMode' } );
 			renderView();

@@ -4,7 +4,10 @@ import {
 	LineSegments,
 	Geometry,
 	EventDispatcher,
+	Vector3
 } from '../Three';
+
+import { Beckeriser } from './Beckeriser';
 
 function Routes ( metadataSource ) {
 
@@ -136,19 +139,7 @@ Routes.prototype.mapSurvey = function ( stations, legsObject, surveyTree ) {
 
 Routes.prototype.createWireframe = function () {
 
-	const geometry = new Geometry();
-	const vertices = geometry.vertices;
-
-	this.segmentMap.forEach( _addSegment );
-
-	return new LineSegments( geometry, new LineBasicMaterial( { color: 0x00ff00 } ) );
-
-	function _addSegment( value /*, key */ ) {
-
-		vertices.push( value.startStation.p );
-		vertices.push( value.endStation.p );
-
-	}
+	return new Beckeriser( this.segmentMap );
 
 };
 
@@ -305,13 +296,14 @@ Routes.prototype.adjacentToRoute = function ( index ) {
 
 };
 
-Routes.prototype.spFind = function ( station ) {
+Routes.prototype.shortestPathSearch = function ( station ) {
 
+	// queue of stations searched.
 	const queue = [ station ];
+
 	const legsObject = this.legsObject;
 	const legs = legsObject.geometry.vertices;
 	const stations = this.stations;
-
 
 	stations.resetDistances();
 
@@ -331,6 +323,7 @@ Routes.prototype.spFind = function ( station ) {
 
 		let i;
 
+		// find stations connected to this station
 		for ( i = 0; i < stationLegs.length; i++ ) {
 
 			const leg = stationLegs[ i ];
@@ -341,6 +334,9 @@ Routes.prototype.spFind = function ( station ) {
 			const nextVertex = ( v1 !== station.p ) ? v1 : v2;
 			const nextStation = stations.getStation( nextVertex );
 			const nextLength = legsObject.legLengths[ leg / 2 ];
+
+			// label stations with distance of shortest path
+			// add to search list
 
 			if ( nextStation.distance > currentDistance + nextLength ) {
 

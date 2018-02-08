@@ -5,7 +5,7 @@ import {
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES, FEATURE_STATIONS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_BECK,
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_AXIS, SHADING_DISTANCE,
 	upAxis
 } from '../core/constants';
@@ -40,6 +40,7 @@ function Survey ( cave ) {
 	this.featureBox = null;
 	this.surveyTree = null;
 	this.projection = null;
+	this.wireframe = null;
 
 	// objects targetted by raycasters and objects with variable LOD
 
@@ -1009,9 +1010,9 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 
 };
 
-Survey.prototype.spStation = function ( station ) {
+Survey.prototype.shortestPathSearch = function ( station ) {
 
-	this.routes.spFind( station );
+	this.routes.shortestPathSearch( station );
 	this.setShadingMode( SHADING_DISTANCE );
 
 };
@@ -1315,6 +1316,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 		break;
 
 	case SHADING_DISTANCE:
+	case SHADING_BECK:
 
 		material = false;
 
@@ -1395,6 +1397,24 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	case SHADING_SINGLE:
 
 		this.setLegColourByColour( mesh, Cfg.themeColor( 'shading.single' ) );
+
+		break;
+
+	case SHADING_BECK:
+
+		this.setLegColourByColour( mesh, Cfg.themeColor( 'shading.single' ) );
+
+		if ( this.wireframe === null ) {
+
+			var wf = this.routes.createWireframe();
+			wf.layers.set( LEG_CAVE );
+			this.add( wf );
+			this.wireframe = wf;
+			wf.trim( 10 );
+
+		}
+
+//		this.getFeature( LEG_CAVE ).visible = false;
 
 		break;
 

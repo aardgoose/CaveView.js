@@ -1411,10 +1411,11 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 			this.add( wf );
 			this.wireframe = wf;
 			wf.trim( 10 );
+//			wf.trim( 10 );
 
 		}
 
-//		this.getFeature( LEG_CAVE ).visible = false;
+		// this.getFeature( LEG_CAVE ).visible = false;
 
 		break;
 

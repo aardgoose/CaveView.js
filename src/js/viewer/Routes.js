@@ -1,12 +1,5 @@
 
-import {
-	LineBasicMaterial,
-	LineSegments,
-	Geometry,
-	EventDispatcher,
-	Vector3
-} from '../Three';
-
+import { EventDispatcher } from '../Three';
 import { Beckeriser } from './Beckeriser';
 
 function Routes ( metadataSource ) {

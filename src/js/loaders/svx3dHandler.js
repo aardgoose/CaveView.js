@@ -476,6 +476,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	var xSects      = [];
 	var sectionId   = 0;
 
+	var move = false;
 	var lastPosition = new Vector3();
 	var lastXSectPosition = new Vector3(); // value to allow approach vector for xsect coord frame
 	var i;
@@ -678,6 +679,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		label += String.fromCharCode.apply( null, db );
 		labelChanged = true;
 
+		if ( section !== null ) inSection = label.startsWith( section );
+
 		return;
 
 	}
@@ -750,6 +753,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		}
 
 		labelChanged = true;
+
+		if ( section !== null ) inSection = label.startsWith( section );
 
 		return;
 
@@ -875,15 +880,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		if ( labelChanged && label !== '' ) {
 
-			// only record legs in selected section
-			// inSection flag only requires updating when label has changed
-
-			if ( section !== null ) {
-
-				inSection = label.startsWith( section );
-
-			}
-
 			// we have a new section name
 
 			const path = label.split( '.' );
@@ -908,27 +904,46 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		}
 
-		const coords = readCoordinates();
-
 		if ( inSection ) {
 
-			if ( flags & 0x01 ) {
+			// add start of run of legs
 
-				legs.push( { coords: coords, type: LEG_SURFACE, survey: sectionId } );
+			if ( move )  {
 
-			} else if ( flags & 0x04 ) {
-
-				legs.push( { coords: coords, type: LEG_SPLAY, survey: sectionId } );
-
-			} else {
-
-				legs.push( { coords: coords, type: LEG_CAVE, survey: sectionId } );
+				legs.push( { coords: lastPosition } );
+				move = false;
 
 			}
 
-		}
+			lastPosition = readCoordinates();
 
-		lastPosition = coords;
+			if ( flags & 0x01 ) {
+
+				legs.push( { coords: lastPosition, type: LEG_SURFACE, survey: sectionId } );
+
+			} else if ( flags & 0x04 ) {
+
+				legs.push( { coords: lastPosition, type: LEG_SPLAY, survey: sectionId } );
+
+			} else {
+
+				legs.push( { coords: lastPosition, type: LEG_CAVE, survey: sectionId } );
+
+			}
+
+		} else {
+
+			if ( move ) {
+
+				dropCoordinates( lastPosition );
+				move = false;
+
+			}
+
+			// skip coordinates
+			pos += 12;
+
+		}
 
 		return true;
 
@@ -946,9 +961,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		lineEnds.add( lastPosition );
 
+		if ( ! inSection && move ) dropCoordinates( lastPosition );
+
 		lastPosition = readCoordinates();
 
-		legs.push( { coords: lastPosition } );
+		move = true;
 
 		return true;
 
@@ -981,7 +998,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		readLabel( 0 );
 
-		if ( ! ( flags & 0x0E ) || flags & 0x20 ) { // skip surface only stations
+		if ( ( ! ( flags & 0x0E ) || flags & 0x20 ) || ! inSection ) { // skip surface only stations
 
 			pos += 12; //skip coordinates
 			return true;
@@ -1144,6 +1161,12 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		}
 
 		return coords;
+
+	}
+
+	function dropCoordinates ( coords ) {
+
+		stationMap.delete( coords.x + ',' + coords.y + ',' + coords.z );
 
 	}
 

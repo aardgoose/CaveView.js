@@ -70,18 +70,16 @@ Beckeriser.prototype.trim = function (/*  n  */ ) {
 
 	this.endEdges();
 
-	this.merge();
-	this.merge();
+	this.merge( limit );
 
 };
 
-Beckeriser.prototype.merge = function (/*  n  */ ) {
+Beckeriser.prototype.merge = function ( limit ) {
 
 	const self = this;
-	const limit = this.logAvg + this.logSd;
+	const drops = new Set();
 
-	const edges = this.edges;
-	const drops = new Map();
+	var edges = this.edges;
 
 	// merge two legs together ( hitCount = 2 )
 
@@ -96,56 +94,53 @@ Beckeriser.prototype.merge = function (/*  n  */ ) {
 
 		if ( edge.logL < limit && ( s1.hitCount === 2 || s2.hitCount === 2 ) ) {
 
-			drops.set( ( s1.hitCount === 2 ) ? s1 : s2, [] );
+			drops.add( ( s1.hitCount === 2 ) ? s1 : s2 );
 
 		}
 
 	}
+
+	drops.forEach( function _drop( dropStation ) {
+
+		var i;
+		const newEdge = [];
+
+		for ( i = 0; i < edges.length; i++ ) {
+
+			const edge = edges[ i ];
+
+			const s1 = edge.s1;
+			const s2 = edge.s2;
+
+			if ( s1 === dropStation ) {
+
+				newEdge.push( s2 );
+				edge.drop = true;
+
+			} else if ( s2 === dropStation ) {
+
+				newEdge.push( s1 );
+				edge.drop = true;
+
+			}
+
+			if ( newEdge.length === 2 ) break;
+
+		}
+
+		edges = edges.filter( function _dropMarked( v ) { return v.drop !== true; } );
+
+		if ( newEdge.length < 2 ) return;
+
+		edges.push( { s1: newEdge[ 0 ], s2: newEdge[ 1 ] } );
+
+	} );
 
 	this.beginEdges();
 
-	for ( i = 0; i < edges.length; i++ ) {
+	edges.forEach( function _addEdges ( value /*, key */ ) {
 
-		const edge = edges[ i ];
-
-		const s1 = edge.s1;
-		const s2 = edge.s2;
-
-		let edit;
-
-		// handle edges where one station is being removed
-
-		edit = drops.get( s1 );
-
-		if ( edit !== undefined ) {
-
-			edit.push( s2 );
-			continue;
-
-		}
-
-		edit = drops.get( s2 );
-
-		if ( edit !== undefined ) {
-
-			edit.push( s1 );
-			continue;
-
-		}
-
-		this.addEdge( s1, s2 );
-
-	}
-
-	// add new edges created after removing a side branch
-
-	drops.forEach( function _addEdits ( value /*, key */ ) {
-
-		// skip incomplete edits (adjacent edits not supported )
-
-		if ( value.length !== 2 ) return;
-
-		self.addEdge( value[ 0 ], value[ 1 ] );
+		self.addEdge( value.s1, value.s2 );
 
 	} );
 
@@ -225,8 +220,7 @@ Beckeriser.prototype.addEdge =  function ( start, end ) {
 		length: length,
 		logL: logL,
 		s1: start,
-		s2: end,
-		remove: false
+		s2: end
 	} );
 
 };

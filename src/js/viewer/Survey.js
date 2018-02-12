@@ -1404,18 +1404,21 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 		this.setLegColourByColour( mesh, Cfg.themeColor( 'shading.single' ) );
 
-		if ( this.wireframe === null ) {
+		var wf = this.wireframe;
 
-			var wf = this.routes.createWireframe();
+		if ( wf === null ) {
+
+			wf = this.routes.createWireframe( Materials.getHeightMaterial( MATERIAL_LINE ) );
 			wf.layers.set( LEG_CAVE );
+
 			this.add( wf );
 			this.wireframe = wf;
-			wf.trim( 10 );
-//			wf.trim( 10 );
 
 		}
 
-		// this.getFeature( LEG_CAVE ).visible = false;
+		wf.trim( 10 );
+
+		this.getFeature( LEG_CAVE ).visible = false;
 
 		break;
 

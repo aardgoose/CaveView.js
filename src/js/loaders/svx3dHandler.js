@@ -1089,7 +1089,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		const position = stations.get( label );
 
 		if ( ! position ) {
-			//	console.warn( 'missing station in XSECT :', label );
+			// console.warn( 'missing station in XSECT :', label );
 			return true;
 		}
 

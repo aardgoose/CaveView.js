@@ -130,9 +130,9 @@ Routes.prototype.mapSurvey = function ( stations, legsObject, surveyTree ) {
 
 };
 
-Routes.prototype.createWireframe = function () {
+Routes.prototype.createWireframe = function ( m ) {
 
-	return new Beckeriser( this.segmentMap );
+	return new Beckeriser( this.segmentMap, m  );
 
 };
 

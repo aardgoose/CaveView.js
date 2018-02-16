@@ -51,8 +51,6 @@ function StationLabels () {
 
 StationLabels.prototype = Object.create ( Group.prototype );
 
-StationLabels.prototype.constructor = StationLabels;
-
 StationLabels.prototype.addStation = function ( station ) {
 
 	this.add( new DummyStationLabel( station ) );

@@ -32,7 +32,6 @@ function Box3Helper( box3, color ) {
 Box3Helper.prototype.type = 'Box3Helper';
 
 Box3Helper.prototype = Object.create( LineSegments.prototype );
-Box3Helper.prototype.constructor = Box3Helper;
 
 Box3Helper.prototype.update = function ( box3 ) {
 

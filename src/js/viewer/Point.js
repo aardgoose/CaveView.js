@@ -20,6 +20,4 @@ function Point ( material ) {
 
 Point.prototype = Object.create( Points.prototype );
 
-Point.prototype.constructor = Point;
-
 export { Point };

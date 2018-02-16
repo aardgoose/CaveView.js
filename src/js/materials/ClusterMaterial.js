@@ -56,6 +56,4 @@ function ClusterMaterial ( count ) {
 
 ClusterMaterial.prototype = Object.create( PointsMaterial.prototype );
 
-ClusterMaterial.prototype.constructor = ClusterMaterial;
-
 export { ClusterMaterial };

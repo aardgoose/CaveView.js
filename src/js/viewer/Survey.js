@@ -145,8 +145,6 @@ function Survey ( cave ) {
 
 Survey.prototype = Object.create( Object3D.prototype );
 
-Survey.prototype.constructor = Survey;
-
 Survey.prototype.onRemoved = function ( /* event */ ) {
 
 	if ( this.cutInProgress ) {

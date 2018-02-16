@@ -888,7 +888,8 @@ function keyDown ( event ) {
 
 	case 73: // toggle entrance labels - 'i'
 
-		Viewer.developerInfo = true;
+		// Viewer.developerInfo = true;
+		Viewer.shadingMode = SHADING_BECK;
 
 		break;
 

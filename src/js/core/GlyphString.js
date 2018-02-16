@@ -78,9 +78,6 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 }
 
-GlyphStringGeometry.indexAttribute = null;
-GlyphStringGeometry.positionAttribute = null;
-
 GlyphStringGeometry.prototype = Object.assign( Object.create( InstancedBufferGeometry.prototype ), {
 
 	constructor: GlyphStringGeometry

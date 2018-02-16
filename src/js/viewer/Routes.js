@@ -48,8 +48,6 @@ function Routes ( metadataSource ) {
 
 }
 
-Routes.prototype.constructor = Routes;
-
 Object.assign( Routes.prototype, EventDispatcher.prototype );
 
 Routes.prototype.mapSurvey = function ( stations, legsObject, surveyTree ) {

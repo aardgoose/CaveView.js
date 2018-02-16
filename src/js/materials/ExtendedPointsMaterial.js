@@ -43,8 +43,6 @@ function ExtendedPointsMaterial () {
 
 ExtendedPointsMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
-ExtendedPointsMaterial.prototype.constructor = ExtendedPointsMaterial;
-
 export { ExtendedPointsMaterial };
 
 // EOF

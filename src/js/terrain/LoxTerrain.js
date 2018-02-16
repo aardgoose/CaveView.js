@@ -36,8 +36,6 @@ function LoxTerrain ( terrainData, offsets ) {
 
 LoxTerrain.prototype = Object.create( CommonTerrain.prototype );
 
-LoxTerrain.prototype.constructor = LoxTerrain;
-
 LoxTerrain.prototype.isTiled = false;
 
 LoxTerrain.prototype.isLoaded = function () {

@@ -575,16 +575,14 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function readCalibration () {
 
-		const m_calib = [];
-
-		m_calib[ 0 ] = readFloat64(); // x origin
-		m_calib[ 1 ] = readFloat64(); // y origin
-		m_calib[ 2 ] = readFloat64(); // xx ( 2 x 2 ) rotate and scale matrix
-		m_calib[ 3 ] = readFloat64(); // xy "
-		m_calib[ 4 ] = readFloat64(); // yx "
-		m_calib[ 5 ] = readFloat64(); // yy "
-
-		return m_calib;
+		return [
+			readFloat64(), // x origin
+			readFloat64(), // y origin
+			readFloat64(), // xx ( 2 x 2 ) rotate and scale matrix
+			readFloat64(), // xy "
+			readFloat64(), // yx "
+			readFloat64() // yy "
+		]; // m_calib
 
 	}
 

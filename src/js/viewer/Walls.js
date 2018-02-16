@@ -17,16 +17,14 @@ function Walls ( layer ) {
 	this.layers.set( layer );
 	this.type = 'Walls';
 
-	this.onBeforeRender = StencilLib.featureOnBeforeRender;
-	this.onAfterRender = StencilLib.featureOnAfterRender;
-
 	return this;
 
 }
 
 Walls.prototype = Object.create( Mesh.prototype );
 
-Walls.prototype.constructor = Walls;
+Walls.prototype.onBeforeRender = StencilLib.featureOnBeforeRender;
+Walls.prototype.onAfterRender = StencilLib.featureOnAfterRender;
 
 Walls.prototype.addWalls = function ( vertices, indices, indexRuns ) {
 

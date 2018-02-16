@@ -53,8 +53,6 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 
 GlyphMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
-GlyphMaterial.prototype.constructor = GlyphMaterial;
-
 GlyphMaterial.prototype.getAtlas = function () {
 
 	return this.atlas;

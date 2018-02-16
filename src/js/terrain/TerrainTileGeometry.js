@@ -184,6 +184,5 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 }
 
 TerrainTileGeometry.prototype = Object.create( BufferGeometry.prototype );
-TerrainTileGeometry.prototype.constructor = TerrainTileGeometry;
 
 export { TerrainTileGeometry };

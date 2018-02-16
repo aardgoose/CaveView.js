@@ -32,7 +32,6 @@ function CameraMove ( controls, renderFunction, endCallback ) {
 
 }
 
-CameraMove.prototype.constructor = CameraMove;
 
 CameraMove.prototype.prepare = function () {
 

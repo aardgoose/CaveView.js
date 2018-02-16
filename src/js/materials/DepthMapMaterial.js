@@ -33,8 +33,6 @@ function DepthMapMaterial ( terrain ) {
 
 DepthMapMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
-DepthMapMaterial.prototype.constructor = DepthMapMaterial;
-
 export { DepthMapMaterial };
 
 // EOF

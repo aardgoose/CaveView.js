@@ -64,8 +64,6 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 }
 
-GlyphAtlas.prototype.constructor = GlyphAtlas;
-
 GlyphAtlas.prototype.getTexture = function () {
 
 	return this.texture;

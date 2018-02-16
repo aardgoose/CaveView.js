@@ -161,7 +161,6 @@ function LoxTerrainGeometry( dtm, offsets ) {
 }
 
 LoxTerrainGeometry.prototype = Object.create( BufferGeometry.prototype );
-LoxTerrainGeometry.prototype.constructor = LoxTerrainGeometry;
 
 LoxTerrainGeometry.prototype.setupUVs = function ( bitmap, image, offsets ) {
 

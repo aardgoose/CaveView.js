@@ -2,7 +2,9 @@
 import {
 	LineSegments,
 	Geometry,
-	Color
+	Color,
+	Vector3,
+	Math as _Math
 } from '../Three';
 
 //const red = new Color( 0xff0000 );
@@ -71,6 +73,53 @@ Beckeriser.prototype.trim = function (/*  n  */ ) {
 	this.endEdges();
 
 	this.merge( limit );
+	this.warp();
+};
+
+Beckeriser.prototype.warp = function () {
+
+	const edges = this.edges;
+
+	edges.sort( function _sortLegs ( a, b ) { return b.length - a.length; } );
+
+	var i;
+
+	const up = new Vector3( 0, 0, 1 );
+	const xAxis = new Vector3( 1, 0, 0 );
+	const r45 = Math.PI / 4;
+
+	const edgeVector = new Vector3();
+	const tmpVector = new Vector3();
+
+	for ( i = 0; i < edges.length; i++ ) {
+
+		const edge = edges[ i ];
+
+		var p1 = edge.s1.p;
+		var p2 = edge.s2.p;
+
+		if ( p1.moved && p2.moved ) continue;
+
+		if ( p2.moved ) {
+
+			p1 = edge.s2.p;
+			p2 = edge.s1.p;
+
+		}
+
+		edgeVector.subVectors( p2, p1);
+		tmpVector.copy( edgeVector ).projectOnPlane( up );
+
+		const adj = tmpVector.angleTo( xAxis );
+		const adjx =  _Math.radToDeg( r45 * Math.floor( adj / r45 ) ) - adj;
+
+		edgeVector.applyAxisAngle( up, adjx );
+
+		p2.addVectors( p1, edgeVector );
+		p1.moved = true;
+		p2.moved = true;
+
+	}
 
 };
 
@@ -198,13 +247,15 @@ Beckeriser.prototype.addEdge =  function ( start, end ) {
 	const colors = this.geometry.colors;
 
 	// stats for legs
-	if ( length === 0 ) return;
+	if ( length > 0 ) {
 
-	this.s1 += length;
-	this.s2 += length * length;
+		this.s1 += length;
+		this.s2 += length * length;
 
-	this.s1Log += logL;
-	this.s2Log += logL * logL;
+		this.s1Log += logL;
+		this.s2Log += logL * logL;
+
+	}
 
 	// get lengths and hitcounts for each edge of network
 

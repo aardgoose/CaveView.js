@@ -76,8 +76,6 @@ function AngleScale ( container, caption ) {
 
 AngleScale.prototype = Object.create( Mesh.prototype );
 
-AngleScale.prototype.constructor = AngleScale;
-
 export { AngleScale };
 
 // EOF

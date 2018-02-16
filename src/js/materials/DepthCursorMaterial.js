@@ -54,8 +54,6 @@ function DepthCursorMaterial ( type, surveyLimits, terrain ) {
 
 DepthCursorMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
-DepthCursorMaterial.prototype.constructor = DepthCursorMaterial;
-
 DepthCursorMaterial.prototype.setCursor = function ( value ) {
 
 	const newValue = Math.max( Math.min( value, this.max ), 0 );

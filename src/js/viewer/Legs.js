@@ -17,10 +17,6 @@ function Legs ( layer ) {
 
 	this.layers.set( layer );
 	this.type = 'Legs';
-
-	this.onBeforeRender = StencilLib.featureOnBeforeRender;
-	this.onAfterRender = StencilLib.featureOnAfterRender;
-
 	this.legLengths = [];
 
 	return this;
@@ -29,7 +25,8 @@ function Legs ( layer ) {
 
 Legs.prototype = Object.create( LineSegments.prototype );
 
-Legs.prototype.constructor = Legs;
+Legs.prototype.onBeforeRender = StencilLib.featureOnBeforeRender;
+Legs.prototype.onAfterRender = StencilLib.featureOnAfterRender;
 
 Legs.prototype.addLegs = function ( vertices, colors, legRuns ) {
 

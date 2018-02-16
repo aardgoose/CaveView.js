@@ -44,8 +44,6 @@ function ScaleBar ( container, hScale, rightMargin ) {
 
 ScaleBar.prototype = Object.create( Group.prototype );
 
-ScaleBar.prototype.constructor = ScaleBar;
-
 ScaleBar.prototype.setScale = function ( scale ) {
 
 	const scaleBars = this.scaleBars;

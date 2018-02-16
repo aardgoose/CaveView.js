@@ -280,7 +280,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		while ( pos < dataLength ) {
 
-			var cmdCode = dataView.getInt32( pos, true );
+			const cmdCode = dataView.getInt32( pos, true );
 			pos += 4;
 
 			if ( ! cmd[ cmdCode ]() ) break;

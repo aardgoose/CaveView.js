@@ -40,8 +40,6 @@ function CursorMaterial ( type, limits ) {
 
 CursorMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
-CursorMaterial.prototype.constructor = CursorMaterial;
-
 CursorMaterial.prototype.setCursor = function ( value ) {
 
 	const newValue = Math.max( Math.min( value, this.halfRange ), -this.halfRange );

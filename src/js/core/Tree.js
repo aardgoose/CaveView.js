@@ -22,8 +22,6 @@ function Tree( name, id, root, parent ) { // root parameter only used internally
 
 }
 
-Tree.prototype.constructor = Tree;
-
 Tree.prototype.traverse = function ( func ) {
 
 	const children = this.children;

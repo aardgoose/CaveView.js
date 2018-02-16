@@ -30,8 +30,6 @@ function CommonTerrain () {
 
 CommonTerrain.prototype = Object.create( Group.prototype );
 
-CommonTerrain.prototype.constructor = CommonTerrain;
-
 CommonTerrain.prototype.shadingMode = SHADING_SHADED;
 CommonTerrain.prototype.opacity = 0.5;
 

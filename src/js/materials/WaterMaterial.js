@@ -21,8 +21,6 @@ function WaterMaterial () {
 
 WaterMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
-WaterMaterial.prototype.constructor = WaterMaterial;
-
 export { WaterMaterial };
 
 // EOF

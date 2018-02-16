@@ -121,8 +121,6 @@ function AHI () {
 
 AHI.prototype = Object.create( Group.prototype );
 
-AHI.prototype.constructor = AHI;
-
 AHI.prototype.set = function () {
 
 	const xAxis   = new Vector3( 1, 0, 0 );

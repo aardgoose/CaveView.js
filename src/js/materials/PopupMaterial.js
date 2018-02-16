@@ -38,8 +38,6 @@ function PopupMaterial ( container, popupImage, rotation, colour ) {
 
 PopupMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
-PopupMaterial.prototype.constructor = PopupMaterial;
-
 export { PopupMaterial };
 
 // EOF

@@ -52,8 +52,6 @@ function Popup() {
 
 Popup.prototype = Object.create( Mesh.prototype );
 
-Popup.prototype.constructor = Popup;
-
 Popup.prototype.addLine = function ( line ) {
 
 	this.lines.push( line );

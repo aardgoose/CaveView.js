@@ -56,7 +56,6 @@ function CursorScale ( container ) {
 
 CursorScale.prototype = Object.create( Scale.prototype );
 
-
 CursorScale.prototype.setCursor = function ( scaledValue, displayValue ) {
 
 	const cursorLabel = this.cursorLabel;

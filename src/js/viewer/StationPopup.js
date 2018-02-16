@@ -61,7 +61,4 @@ function StationPopup ( container, station, survey, depth, formatter ) {
 
 StationPopup.prototype = Object.create( Popup.prototype );
 
-StationPopup.prototype.constructor = StationPopup;
-
-
 export { StationPopup };

@@ -74,8 +74,6 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 
 WebTerrain.prototype = Object.create( CommonTerrain.prototype );
 
-WebTerrain.prototype.constructor = WebTerrain;
-
 WebTerrain.prototype.isTiled = true;
 
 WebTerrain.prototype.isLoaded = function () {

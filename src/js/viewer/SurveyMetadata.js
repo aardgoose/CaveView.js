@@ -42,8 +42,6 @@ function SurveyMetadata( name, metadata ) {
 
 }
 
-SurveyMetadata.prototype.constructor = SurveyMetadata;
-
 SurveyMetadata.prototype.getTraces = function () {
 
 	return this.traces;

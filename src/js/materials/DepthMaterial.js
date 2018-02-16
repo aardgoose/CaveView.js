@@ -42,8 +42,6 @@ function DepthMaterial ( type, surveyLimits, terrain ) {
 
 DepthMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
-DepthMaterial.prototype.constructor = DepthMaterial;
-
 DepthMaterial.prototype.setDatumShift = function ( shift ) {
 
 	this.uniforms.datumShift.value = shift;

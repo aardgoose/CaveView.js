@@ -32,8 +32,6 @@ function HeightMaterial ( type, limits ) {
 
 HeightMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
-HeightMaterial.prototype.constructor = HeightMaterial;
-
 export { HeightMaterial };
 
 // EOF

@@ -15,10 +15,7 @@ function WorkerPool ( script ) {
 
 }
 
-
 WorkerPool.workers = {};
-
-WorkerPool.prototype.constructor = WorkerPool;
 
 WorkerPool.prototype.getWorker = function () {
 

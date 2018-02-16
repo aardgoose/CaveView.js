@@ -52,8 +52,6 @@ function ProgressDial () {
 
 ProgressDial.prototype = Object.create( Mesh.prototype );
 
-ProgressDial.prototype.constructor = ProgressDial;
-
 ProgressDial.prototype.set = function ( progress ) {
 
 	if ( progress === this.progress ) return;

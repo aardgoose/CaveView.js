@@ -114,8 +114,6 @@ function Compass () {
 
 Compass.prototype = Object.create( Group.prototype );
 
-Compass.prototype.constructor = Compass;
-
 Compass.prototype.set = function () {
 
 	const direction     = new Vector3();

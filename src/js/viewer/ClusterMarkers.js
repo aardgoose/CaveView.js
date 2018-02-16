@@ -273,8 +273,6 @@ function ClusterMarkers ( limits, maxDepth ) {
 
 ClusterMarkers.prototype = Object.create( Object3D.prototype );
 
-ClusterMarkers.prototype.constructor = ClusterMarkers;
-
 ClusterMarkers.prototype.addHeightProvider = function ( func ) {
 
 	this.heightProvider = func;

@@ -29,8 +29,6 @@ function DyeTraces () {
 
 DyeTraces.prototype = Object.create( Mesh.prototype );
 
-DyeTraces.prototype.constructor = DyeTraces;
-
 DyeTraces.prototype.finish = function () {
 
 	const geometry = this.geometry;

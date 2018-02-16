@@ -51,9 +51,6 @@ function Tile ( x, y, zoom, tileSet, clip ) {
 
 	Mesh.call( this, new BufferGeometry(), Materials.getSurfaceMaterial( 0xffffff ) );
 
-	this.onBeforeRender = StencilLib.terrainOnBeforeRender;
-	this.onAfterRender = StencilLib.terrainOnAfterRender;
-
 	return this;
 
 }
@@ -62,10 +59,11 @@ Tile.liveTiles = 0;
 
 Tile.prototype = Object.create( Mesh.prototype );
 
-Tile.prototype.constructor = Tile;
-
 Tile.prototype.type = 'Tile';
 Tile.prototype.isTile = true;
+
+Tile.prototype.onBeforeRender = StencilLib.terrainOnBeforeRender;
+Tile.prototype.onAfterRender = StencilLib.terrainOnAfterRender;
 
 Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox, material ) {
 

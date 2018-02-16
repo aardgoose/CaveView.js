@@ -52,8 +52,9 @@ function Stations () {
 
 			const stations = self.stations;
 			const pSize = self.geometry.getAttribute( 'pSize' );
+			const l = stations.length;
 
-			var i, l = stations.length;
+			var i;
 
 			for ( i = 0; i < l; i++ ) {
 

@@ -26,7 +26,7 @@ import popupFragmentShader from './popupFragmentShader.glsl';
 import waterVertexShader from './waterVertexShader.glsl';
 import waterFragmentShader from './waterFragmentShader.glsl';
 
-export const Shaders =  {
+export const Shaders = {
 	cursorVertexShader:		cursorVertexShader,
 	cursorFragmentShader:	cursorFragmentShader,
 	depthMapVertexShader:	depthMapVertexShader,
@@ -46,6 +46,5 @@ export const Shaders =  {
 	waterVertexShader:		waterVertexShader,
 	waterFragmentShader:	waterFragmentShader
 };
-
 
 // EOF

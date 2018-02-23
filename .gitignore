@@ -8,4 +8,5 @@ tools/dtm/*
 tools/private/
 !build/terrain/README.txt
 !build/surveys/README.txt
+build/overlays/
 npm-debug.log

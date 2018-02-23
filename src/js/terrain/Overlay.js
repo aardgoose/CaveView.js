@@ -9,6 +9,8 @@ import { Cfg } from '../core/lib';
 // FIXME fix lifecycle of materials and textures - ensure disposal/caching as required
 // GPU resource leak etc.
 
+const missingMaterial = new MeshLambertMaterial( { transparent: true, opacity: 0.5, color: 0xffffff } );
+
 function Overlay ( overlayProvider, container ) {
 
 	this.provider = overlayProvider;
@@ -24,6 +26,7 @@ function Overlay ( overlayProvider, container ) {
 	}
 
 	this.materialCache = {};
+	this.missing = new Set();
 
 }
 
@@ -61,9 +64,15 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 	const url = this.provider.getUrl( x, y, z );
 
-	if ( url === null ) return;
+	if ( url === null || this.missing.has( url ) ) {
 
-	new TextureLoader().setCrossOrigin( 'anonymous' ).load( url, _textureLoaded );
+		overlayLoaded( missingMaterial );
+
+		return;
+
+	}
+
+	new TextureLoader().setCrossOrigin( 'anonymous' ).load( url, _textureLoaded, undefined, _textureMissing );
 
 	return;
 
@@ -79,6 +88,14 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 		self.materialCache[ key ] = material;
 
 		overlayLoaded( material );
+
+	}
+
+	function _textureMissing( /* texture */ ) {
+
+		self.missing.add( url );
+
+		overlayLoaded( missingMaterial );
 
 	}
 

@@ -8,7 +8,7 @@ OSMProvider.prototype.getUrl = function ( x, y, z ) {
 
 	return 'https://b.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png';
 
-}
+};
 
 OSMProvider.prototype.getAttribution = function () {
 
@@ -19,4 +19,4 @@ OSMProvider.prototype.getAttribution = function () {
 
 	return a;
 
-}
+};

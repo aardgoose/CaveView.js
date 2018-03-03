@@ -36,7 +36,8 @@ import {
 	LinearFilter, NearestFilter, RGBAFormat,
 	OrthographicCamera, PerspectiveCamera,
 	WebGLRenderer, WebGLRenderTarget,
-	MOUSE
+	MOUSE,
+	Quaternion
 } from '../Three';
 
 const defaultView = {
@@ -1412,6 +1413,7 @@ var renderView = function () {
 
 	const lPosition = new Vector3();
 	const rotation = new Euler();
+	const q = new Quaternion();
 
 	return function renderView () {
 
@@ -1421,7 +1423,7 @@ var renderView = function () {
 
 		if ( caveIsLoaded ) {
 
-			camera.getWorldRotation( rotation );
+			rotation.setFromQuaternion( camera.getWorldQuaternion( q ) );
 
 			lPosition.copy( lightPosition );
 

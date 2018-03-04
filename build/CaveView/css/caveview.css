@@ -200,11 +200,13 @@ body {
 }
 
 #fullscreen.expand {
-	background-image: url(../images/ic_expand_all.png);
+	background-image: url(../images/icons.png);
+	background-position: -252px;
 }
 
 #fullscreen.collapse {
-	background-image: url(../images/ic_collapse_all.png);
+	background-image: url(../images/icons.png);
+	background-position: -216px;
 }
 
 #cv-tab-box #icon_settings {

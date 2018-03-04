@@ -167,7 +167,9 @@ body {
 	border-top: 1px solid black;
 	border-left: thin #888888 solid;
 	background-color: #444444;
-	background-position: center;
+	background-origin: content-box;
+	background-image: url(../images/icons.png);
+	padding: 1px;
 }
 
 #cv-tab-box #close {
@@ -206,27 +208,28 @@ body {
 }
 
 #cv-tab-box #icon_settings {
-	background-image: url(../images/ic_settings.png);
+	background-position: 0 0;
 }
 
 #cv-tab-box #icon_terrain {
-	background-image: url(../images/ic_terrain.png);
+	background-position: -36px 0;
 }
 
 #cv-tab-box #icon_explore {
-	background-image: url(../images/ic_explore.png);
-}
-
-#cv-tab-box #icon_info {
-	background-image: url(../images/ic_info.png);
+	background-position: -72px 0;
 }
 
 #cv-tab-box #icon_route {
-	background-image: url(../images/ic_route.png);
+	background-position: -108px 0;
 }
 
+#cv-tab-box #icon_info {
+	background-position: -144px 0;
+}
+
+
 #cv-tab-box #icon_help {
-	background-image: url(../images/ic_help.png);
+	background-position: -180px 0;
 }
 
 #cv-tab-box.onscreen div.toptab {

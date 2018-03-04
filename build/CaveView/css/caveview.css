@@ -174,7 +174,8 @@ body {
 
 #cv-tab-box #close {
 	background-color: #222222;
-	background-image: url(../images/ic_hide_left.png);
+	background-image: url(../images/icons.png);
+	background-position: -360px;
 	border-left: none;
 	display: none;
 }
@@ -330,7 +331,8 @@ body {
 	#cv-tab-box #close {
 		position: fixed;
 		background-color: #444444;
-		background-image: url(../images/ic_hide_up.png);
+		background-image: url(../images/icons.png);
+		background-position: -324px;
 		top: 0px;
 		right: 0px;
 		left: auto;

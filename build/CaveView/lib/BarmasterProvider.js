@@ -4,6 +4,9 @@ function BarmasterProvider () {
 
 }
 
+BarmasterProvider.prototype.minZoom = 12;
+BarmasterProvider.prototype.maxZoom = 16;
+
 BarmasterProvider.prototype.getUrl = function ( x, y, z ) {
 
 	return 'overlays/barmaster/' + z + '/' + x + '/' + y + '.png';

@@ -1,7 +1,8 @@
 
 import {
 	TextureLoader,
-	MeshLambertMaterial
+	MeshLambertMaterial,
+	RepeatWrapping
 } from '../Three';
 
 import { Cfg } from '../core/lib';
@@ -53,12 +54,41 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 	const key = x + ':' + y + ':' + z;
 
 	const material = this.materialCache[ key ];
+	const maxZoom = this.provider.maxZoom;
+
+	var repeat = 1;
+	var xOffset = 0;
+	var yOffset = 0;
 
 	if ( material !== undefined ) {
 
 		overlayLoaded( material );
 
 		return;
+
+	}
+
+	const zoomDelta = z - maxZoom;
+
+	if ( zoomDelta > 0 ) {
+
+		const scale = Math.pow( 2, zoomDelta );
+
+		repeat = 1 / scale;
+
+		// get image for lower zoom
+		const newX = Math.floor( x * repeat );
+		const newY = Math.floor( y * repeat );
+
+		xOffset = ( x - newX * scale ) / scale;
+		yOffset = 1 - ( y - newY * scale ) / scale;
+		yOffset -= repeat;
+
+		x = newX;
+		y = newY;
+		z = maxZoom;
+
+		//console.log( 'max zoom exceeded', repeat, x, y, z, xOffset, yOffset );
 
 	}
 
@@ -81,6 +111,12 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 		const material = new MeshLambertMaterial( { transparent: true, opacity: opacity, color: 0xffffff } );
 
 		texture.anisotropy = Cfg.value( 'anisotropy', 4 );
+
+		texture.repeat.x = repeat;
+		texture.repeat.y = repeat;
+
+		texture.offset.x = xOffset;
+		texture.offset.y = yOffset;
 
 		material.map = texture;
 		material.needsUpdate = true;

@@ -12,6 +12,7 @@
 <script type="text/javascript" src="CaveView/lib/proj4.js" ></script>
 
 <script type="text/javascript" src="CaveView/lib/BingProvider.js" ></script>
+<script type="text/javascript" src="CaveView/lib/BarmasterProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/OSMProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/NLSProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/BGSProvider.js" ></script>
@@ -35,6 +36,7 @@ function onload () {
 		}
 	} );
 
+	CV.Viewer.addOverlay( 'Barmaster', new BarmasterProvider() );
 	CV.Viewer.addOverlay( 'OSM', new OSMProvider() );
 	CV.Viewer.addOverlay( 'BGS Solid', new BGSProvider( [ 'BGS.50k.Bedrock', 'BGS.50k.Linear.features' ] ) );
 	CV.Viewer.addOverlay( 'BGS Drift', new BGSProvider( [ 'BGS.50k.Superficial.deposits' ] ) );

@@ -5,7 +5,7 @@ function BarmasterProvider () {
 }
 
 BarmasterProvider.prototype.minZoom = 12;
-BarmasterProvider.prototype.maxZoom = 16;
+BarmasterProvider.prototype.maxZoom = 15;
 
 BarmasterProvider.prototype.getUrl = function ( x, y, z ) {
 

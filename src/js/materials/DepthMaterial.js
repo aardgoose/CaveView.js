@@ -8,7 +8,7 @@ import { ShaderMaterial, Vector3 } from '../Three';
 function DepthMaterial ( type, surveyLimits, terrain ) {
 
 	const limits = terrain.boundingBox;
-	const range = limits.getSize();
+	const range = limits.getSize( new Vector3() );
 
 	const defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
 

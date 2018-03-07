@@ -575,7 +575,7 @@ function renderDepthTexture () {
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
-	const range = limits.getSize();
+	const range = limits.getSize( new Vector3() );
 
 	const scaleX = width / range.x;
 	const scaleY = height / range.y;
@@ -1484,7 +1484,7 @@ function setScale ( obj ) {
 
 	limits = survey.limits;
 
-	const range = limits.getSize();
+	const range = limits.getSize( new Vector3() );
 
 	// initialize cursor height to be mid range of heights
 	cursorHeight = 0;
@@ -1499,7 +1499,7 @@ function setScale ( obj ) {
 
 	obj.scale.copy( scale );
 
-	obj.position.copy( survey.modelLimits.getCenter().multiply( scale ).negate() );
+	obj.position.copy( survey.modelLimits.getCenter( new Vector3() ).multiply( scale ).negate() );
 
 	HUD.setScale( vScale );
 

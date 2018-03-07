@@ -8,7 +8,7 @@ import { ShaderMaterial, Vector3 } from '../Three';
 function DepthCursorMaterial ( type, surveyLimits, terrain ) {
 
 	const limits = terrain.boundingBox;
-	const range = limits.getSize();
+	const range = limits.getSize( new Vector3() );
 
 	// max range of depth values
 	this.max = surveyLimits.max.z - surveyLimits.min.z;

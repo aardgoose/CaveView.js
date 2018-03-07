@@ -37,7 +37,8 @@ CameraMove.prototype.prepare = function () {
 
 	const vMidpoint = new Vector3();
 	const cameraLine = new Line3();
-	const v = new Vector3();
+	const vTmp1 = new Vector3();
+	const vTmp2 = new Vector3();
 	const controlPoint = new Vector3();
 	const m4 = new Matrix4();
 	const q90 = new Quaternion().setFromAxisAngle( upAxis, - Math.PI / 2 );
@@ -58,10 +59,10 @@ CameraMove.prototype.prepare = function () {
 			// target can be a Box3 in world space
 			// setup a target position above the box3 such that it fits the screen
 
-			const size = endPOI.getSize();
+			const size = endPOI.getSize( vTmp1 );
 			var elevation;
 
-			endPOI = endPOI.getCenter();
+			endPOI = endPOI.getCenter( vTmp2 );
 
 			if ( camera.isPerspectiveCamera ) {
 
@@ -134,10 +135,10 @@ CameraMove.prototype.prepare = function () {
 				cameraLine.set( cameraStart, cameraTarget );
 
 				// closest point on line to POI midpoint
-				cameraLine.closestPointToPoint( vMidpoint, true, v );
+				cameraLine.closestPointToPoint( vMidpoint, true, vTmp1 );
 
 				// reflect mid point around cameraLine in cameraLine + midPoint plane
-				controlPoint.subVectors( v, startPOI ).add( v );
+				controlPoint.subVectors( vTmp1, startPOI ).add( vTmp1 );
 
 				this.curve = new QuadraticBezierCurve3( cameraStart, controlPoint, cameraTarget );
 

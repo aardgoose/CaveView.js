@@ -1,8 +1,7 @@
 
 import {
 	TextureLoader,
-	MeshLambertMaterial,
-	RepeatWrapping
+	MeshLambertMaterial
 } from '../Three';
 
 import { Cfg } from '../core/lib';

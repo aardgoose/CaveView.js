@@ -126,7 +126,7 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	}
 
-	const offsets = limits.getCenter();
+	const offsets = limits.getCenter( new Vector3() );
 
 	// adjust coordinates to be centered on ( 0, 0, 0 )
 

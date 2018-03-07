@@ -54,7 +54,7 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 	// Drop data to give GC a chance ASAP
 	source = null;
 
-	const offsets = limits.getCenter();
+	const offsets = limits.getCenter( new Vector3() );
 
 	this.limits = limits;
 	this.offsets = offsets;

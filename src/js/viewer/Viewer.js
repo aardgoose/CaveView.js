@@ -1243,11 +1243,14 @@ function clockStop ( /* event */ ) {
 
 }
 
+
 function mouseDown ( event ) {
 
+	const bc = container.getBoundingClientRect();
+
 	// FIXME - handle scrolled container
-	mouse.x =   ( event.clientX / container.clientWidth  ) * 2 - 1;
-	mouse.y = - ( event.clientY / container.clientHeight ) * 2 + 1;
+	mouse.x =   ( ( event.clientX - bc.left ) / container.clientWidth  ) * 2 - 1;
+	mouse.y = - ( ( event.clientY - bc.top ) / container.clientHeight ) * 2 + 1;
 
 	raycaster.setFromCamera( mouse, camera );
 

@@ -1,7 +1,9 @@
 import {
 	BufferGeometry,
 	Points,
-	Float32BufferAttribute
+	Float32BufferAttribute,
+	TextureLoader,
+	PointsMaterial
 } from '../Three';
 
 import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
@@ -9,6 +11,7 @@ import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 import { FEATURE_STATIONS, STATION_ENTRANCE } from '../core/constants';
 import { Viewer } from '../viewer/Viewer';
 import { Cfg } from '../core/lib';
+import { Point } from './Point';
 
 function Stations () {
 
@@ -37,6 +40,16 @@ function Stations () {
 	Viewer.addEventListener( 'change', _viewChanged );
 
 	this.addEventListener( 'removed', _removed );
+
+	const pointerTexture = new TextureLoader().load( Cfg.value( 'home', '' ) + 'images/ic_location.png' );
+	const pointerMaterial = new PointsMaterial( { size: 32, map: pointerTexture, transparent : true, sizeAttenuation: false, alphaTest: 0.8 } );
+
+	const point = new Point( pointerMaterial );
+
+	point.visible = false;
+
+	this.add( point );
+	this.highlightPoint = point;
 
 	Object.defineProperty( this, 'count', {
 
@@ -136,6 +149,23 @@ Stations.prototype.clearSelected = function () {
 		this.selected = null;
 
 	}
+
+};
+
+Stations.prototype.highlightStation = function ( node ) {
+
+	const highlightPoint = this.highlightPoint;
+
+	highlightPoint.position.copy( node.p );
+	highlightPoint.visible = true;
+
+	return node;
+
+};
+
+Stations.prototype.clearHighlight = function () {
+
+	this.highlightPoint.visible = false;
 
 };
 

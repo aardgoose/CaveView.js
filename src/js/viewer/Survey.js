@@ -19,14 +19,13 @@ import { Stations } from './Stations';
 import { StationLabels } from './StationLabels';
 import { Routes } from './Routes';
 import { Legs } from './Legs';
-import { Point } from './Point';
 import { Walls } from './Walls';
 import { DyeTraces } from './DyeTraces';
 import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
 
-import { Matrix4, Vector3, Box3, Object3D, Color, TextureLoader, PointsMaterial } from '../Three';
+import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
 import { StencilLib } from '../core/StencilLib';
 
 function Survey ( cave ) {
@@ -59,19 +58,6 @@ function Survey ( cave ) {
 		new Vector3( 0, 1, 0),
 		new Vector3( 0, 1, 1)
 	];
-
-	// highlit point marker
-
-	const pointerTexture = new TextureLoader().load( Cfg.value( 'home', '' ) + 'images/ic_location.png' );
-	const pointerMaterial = new PointsMaterial( { size: 32, map: pointerTexture, transparent : true, sizeAttenuation: false, alphaTest: 0.8 } );
-
-	const point = new Point( pointerMaterial );
-
-	point.visible = false;
-
-	this.add( point );
-
-	this.stationHighlight = point;
 
 	const self = this;
 
@@ -1012,6 +998,7 @@ Survey.prototype.shortestPathSearch = function ( station ) {
 
 	this.routes.shortestPathSearch( station );
 	this.setShadingMode( SHADING_DISTANCE );
+	this.stations.highlightStation( station );
 
 };
 
@@ -1068,7 +1055,6 @@ Survey.prototype.highlightSelection = function ( id ) {
 
 	const surveyTree = this.surveyTree;
 	const box = this.highlightBox;
-	const highlight = this.stationHighlight;
 
 	if ( id ) {
 
@@ -1080,8 +1066,7 @@ Survey.prototype.highlightSelection = function ( id ) {
 
 		} else if ( node.p ) {
 
-			highlight.position.copy( node.p );
-			highlight.visible = true;
+			this.stations.highlightStation( node );
 
 		}
 
@@ -1089,7 +1074,7 @@ Survey.prototype.highlightSelection = function ( id ) {
 
 		if ( box !== null ) box.visible = false;
 
-		highlight.visible = false;
+		this.stations.clearHighlight();
 
 	}
 
@@ -1321,6 +1306,8 @@ Survey.prototype.setShadingMode = function ( mode ) {
 		break;
 
 	}
+
+	if ( mode !== SHADING_DISTANCE ) this.stations.clearHighlight();
 
 	if ( this.setLegShading( LEG_CAVE, mode ) ) {
 

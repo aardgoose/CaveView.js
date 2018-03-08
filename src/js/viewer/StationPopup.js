@@ -1,6 +1,6 @@
 import { Popup } from './Popup.js';
 
-function StationPopup ( container, station, survey, depth, formatter ) {
+function StationPopup ( container, station, survey, depth, formatter, showDistance ) {
 
 	Popup.call( this );
 
@@ -25,13 +25,25 @@ function StationPopup ( container, station, survey, depth, formatter ) {
 
 	}
 
+	var distance;
+
+	if ( showDistance ) {
+
+		distance = station.distance !== Infinity ? Math.round( station.distance ) : 'unconnected';
+
+	} else {
+
+		distance = null;
+
+	}
+
 	if ( long ) name = '...' + name;
 
 	this.addLine( name );
 
 	if ( formatter !== undefined ) {
 
-		lines = formatter( survey.CRS, position, depth );
+		lines = formatter( survey.CRS, position, depth, distance );
 
 	}
 
@@ -48,6 +60,12 @@ function StationPopup ( container, station, survey, depth, formatter ) {
 		this.addLine( 'x: ' + position.x + ' m' ).addLine( 'y: ' + position.y + ' m' ).addLine( 'z: ' + position.z + ' m' );
 
 		if ( depth !== null ) this.addLine( 'depth from surface: ' + Math.round( depth ) + ' m' );
+
+		if ( showDistance ) {
+
+			this.addLine( 'distance: ' + distance + '\u202fm' );
+
+		}
 
 	}
 

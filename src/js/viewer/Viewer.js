@@ -793,8 +793,7 @@ function setShadingMode ( mode ) {
 	if ( shadingMode === SHADING_DISTANCE ) {
 
 		mouseMode = MOUSE_MODE_DISTANCE;
-		mouseTargets = 	mouseTargets = survey.pointTargets;
-		console.log( 'distance mode' );
+		mouseTargets = survey.pointTargets;
 
 	}
 

@@ -1,5 +1,5 @@
 
-function OSGBStationFormatter ( crs, coordinates, depth ) {
+function OSGBStationFormatter ( crs, coordinates, depth, distance ) {
 
 	var easting  = coordinates.x;
 	var northing = coordinates.y;
@@ -20,6 +20,8 @@ function OSGBStationFormatter ( crs, coordinates, depth ) {
 	lines.push( 'height: ' + coordinates.z.toLocaleString( 'en-GB', { maximumFractionDigits: 2, useGrouping: false } ) + '\u202fm' );
 
 	if ( depth !== null ) lines.push( 'depth: ' + depth.toLocaleString( 'en-GB', { maximumFractionDigits: 2, useGrouping: false } ) + '\u202fm' );
+
+	if ( distance !== null ) lines.push( 'distance: ' + distance + '\u202fm' );
 
 	return lines;
 

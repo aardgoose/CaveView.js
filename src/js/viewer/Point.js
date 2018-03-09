@@ -1,12 +1,10 @@
 import {
-	Points, PointsMaterial, BufferGeometry, Float32BufferAttribute
+	Points, BufferGeometry, Float32BufferAttribute
 } from '../Three';
 
 function Point ( material ) {
 
 	const geometry = new BufferGeometry();
-
-	material = material || new PointsMaterial( { color: 0xffffff } );
 
 	geometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0 ], 3 ) );
 

@@ -2,8 +2,6 @@ import {
 	BufferGeometry,
 	Points,
 	Float32BufferAttribute,
-	TextureLoader,
-	PointsMaterial
 } from '../Three';
 
 import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
@@ -11,7 +9,7 @@ import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 import { FEATURE_STATIONS, STATION_ENTRANCE } from '../core/constants';
 import { Viewer } from '../viewer/Viewer';
 import { Cfg } from '../core/lib';
-import { Point } from './Point';
+import { PointIndicator } from './PointIndicator';
 
 function Stations () {
 
@@ -41,10 +39,7 @@ function Stations () {
 
 	this.addEventListener( 'removed', _removed );
 
-	const pointerTexture = new TextureLoader().load( Cfg.value( 'home', '' ) + 'images/ic_location.png' );
-	const pointerMaterial = new PointsMaterial( { size: 32, map: pointerTexture, transparent : true, sizeAttenuation: false, alphaTest: 0.8 } );
-
-	const point = new Point( pointerMaterial );
+	const point = new PointIndicator();
 
 	point.visible = false;
 

@@ -331,7 +331,7 @@ Tile.prototype.projectedArea = function ( camera ) {
 	__d.project( camera );
 
 
-	return __t1.area() + __t2.area();
+	return __t1.getArea() + __t2.getArea();
 
 };
 

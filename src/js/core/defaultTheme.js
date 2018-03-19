@@ -1,6 +1,10 @@
 
 const defaultTheme = {
 	background: 0x000000,
+	lighting: {
+		azimuth: 315,
+		inclination: 45
+	},
 	hud: {
 		text: 0xffffff,
 		progress: 0x00ff00,

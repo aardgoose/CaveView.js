@@ -37,7 +37,7 @@ import {
 	OrthographicCamera, PerspectiveCamera,
 	WebGLRenderer, WebGLRenderTarget,
 	MOUSE,
-	Quaternion
+	Quaternion, Spherical, Math as _Math
 } from '../Three';
 
 const defaultView = {
@@ -66,7 +66,7 @@ const defaultView = {
 const renderer = new WebGLRenderer( { antialias: true } ) ;
 
 const defaultTarget = new Vector3();
-const lightPosition = new Vector3( -1, -1, 0.5 );
+const lightPosition = new Vector3();
 const directionalLight = new DirectionalLight( 0xffffff );
 const scene = new Scene();
 const mouse = new Vector2();
@@ -164,6 +164,14 @@ function init ( domID, configuration ) { // public method
 
 	scene.add( pCamera );
 	scene.add( oCamera );
+
+	// setup directional lighting
+
+	const inclination = _Math.degToRad( Cfg.themeValue( 'lighting.inclination' ) );
+	const azimuth = _Math.degToRad( Cfg.themeValue( 'lighting.azimuth' ) - 90 );
+
+	lightPosition.setFromSpherical( new Spherical( 1, inclination, azimuth ) );
+	lightPosition.applyAxisAngle( new Vector3( 1, 0, 0 ), Math.PI / 2 );
 
 	directionalLight.position.copy( lightPosition );
 

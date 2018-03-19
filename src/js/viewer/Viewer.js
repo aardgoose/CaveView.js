@@ -1437,6 +1437,7 @@ var renderView = function () {
 			lPosition.copy( lightPosition );
 
 			directionalLight.position.copy( lPosition.applyAxisAngle( upAxis, rotation.z ) );
+			directionalLight.updateMatrix();
 
 			survey.update( camera, controls.target );
 

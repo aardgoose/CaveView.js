@@ -816,7 +816,7 @@ Survey.prototype.addFeature = function ( obj, tag, name ) {
 
 	this.features[ tag ] = obj;
 
-	this.add( obj );
+	this.addStatic( obj );
 
 };
 
@@ -1038,7 +1038,8 @@ Survey.prototype.boxSection = function ( node, box, colour ) {
 
 		box.layers.set( FEATURE_SELECTED_BOX );
 
-		this.add( box );
+		this.addStatic( box );
+		box.updateMatrixWorld( true );
 
 	} else {
 
@@ -1122,7 +1123,7 @@ Survey.prototype.setFeatureBox = function () {
 		box.name = 'survey-boundingbox';
 
 		this.featureBox = box;
-		this.add( box );
+		this.addStatic( box );
 
 	} else {
 

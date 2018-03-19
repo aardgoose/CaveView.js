@@ -37,14 +37,15 @@ function ProgressDial () {
 
 	var glyphMaterial = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
 
-	this.pcent = new MutableGlyphString( '----', glyphMaterial );
+	const pcent = new MutableGlyphString( '----', glyphMaterial );
 
-	this.pcent.translateY( 10 );
-	this.pcent.translateX( -5 );
+	pcent.translateY( 10 );
+	pcent.translateX( -5 );
 
 	this.color = Cfg.themeValue( 'hud.progress' );
 
-	this.add( this.pcent );
+	this.addStatic( pcent );
+	this.pcent = pcent;
 
 	return this;
 

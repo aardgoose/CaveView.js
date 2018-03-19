@@ -71,23 +71,26 @@ function init ( containerIn, viewRenderer ) {
 	attitudeGroup = new Group();
 	attitudeGroup.position.set( hWidth, -hHeight, 0 );
 
-	scene.add( attitudeGroup );
+	scene.addStatic( attitudeGroup );
+
+	scene.matrixAutoUpdate = false;
+	scene.name = 'HUD';
 
 	const aLight = new AmbientLight( 0x888888 );
 	const dLight = new DirectionalLight( 0xFFFFFF );
 
 	dLight.position.set( -1, 1, 1 );
 
-	scene.add( aLight );
-	scene.add( dLight );
+	scene.addStatic( aLight );
+	scene.addStatic( dLight );
 
 	compass      = new Compass();
 	ahi          = new AHI();
 	progressDial = new ProgressDial();
 
-	attitudeGroup.add( compass );
-	attitudeGroup.add( ahi );
-	attitudeGroup.add( progressDial );
+	attitudeGroup.addStatic( compass );
+	attitudeGroup.addStatic( ahi );
+	attitudeGroup.addStatic( progressDial );
 
 	Viewer.addEventListener( 'newCave', caveChanged );
 	Viewer.addEventListener( 'change', viewChanged );
@@ -218,20 +221,19 @@ function newScales () {
 
 	linearScale = new LinearScale( container, Viewer );
 
-	scene.add( linearScale );
+	scene.addStatic( linearScale );
 
 	if ( cursorScale ) scene.remove( cursorScale );
 
 	cursorScale = new CursorScale( container );
 
-	scene.add( cursorScale );
-
+	scene.addStatic( cursorScale );
 
 	if ( angleScale ) scene.remove( angleScale );
 
 	angleScale = new AngleScale( container, i18n( 'inclination' ) );
 
-	scene.add( angleScale );
+	scene.addStatic( angleScale );
 
 	if ( scaleBar ) {
 
@@ -364,7 +366,7 @@ function updateScaleBar ( camera ) {
 		if ( scaleBar === null ) {
 
 			scaleBar = new ScaleBar( container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
-			scene.add( scaleBar );
+			scene.addStatic( scaleBar );
 
 		}
 

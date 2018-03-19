@@ -91,12 +91,13 @@ function AHI () {
 	mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );
 	mRing.rotateOnAxis( new Vector3( 0, 0, 1 ), Math.PI / 8 );
 
-	globe.add( mSphere );
-	globe.add( mMarks );
+	globe.addStatic( mSphere );
+	globe.addStatic( mMarks );
 
-	this.add( mRing );
+	this.addStatic( mRing );
+	this.addStatic( mBar );
+
 	this.add( globe );
-	this.add( mBar );
 
 	const offset = stdWidth + stdMargin;
 
@@ -111,7 +112,7 @@ function AHI () {
 	label.translateX( - label.getWidth() / 2 );
 	label.translateY( stdWidth + 5 );
 
-	this.add( label );
+	this.addStatic( label );
 
 	this.label = label;
 

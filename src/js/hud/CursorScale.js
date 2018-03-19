@@ -44,8 +44,8 @@ function CursorScale ( container ) {
 	cursorLabel.translateY( - barHeight / 2 - cursorLabel.getHeight() / 2 );
 	cursorLabel.translateZ( 10 );
 
-	this.add( cursor );
-	cursor.add( cursorLabel );
+	this.addStatic( cursor );
+	cursor.addStatic( cursorLabel );
 
 	this.cursor = cursor;
 	this.cursorLabel = cursorLabel;
@@ -58,12 +58,16 @@ CursorScale.prototype = Object.create( Scale.prototype );
 
 CursorScale.prototype.setCursor = function ( scaledValue, displayValue ) {
 
+	const cursor = this.cursor;
 	const cursorLabel = this.cursorLabel;
 
-	this.cursor.position.setY( this.barHeight * scaledValue );
+	cursor.position.setY( this.barHeight * scaledValue );
+	cursor.updateMatrix();
 
 	cursorLabel.replaceString( String( displayValue + '\u202fm' ).padStart( 6, ' ') );
 	cursorLabel.position.setX( this.offsetX - cursorLabel.getWidth() );
+
+	cursorLabel.updateMatrix();
 
 	return this;
 

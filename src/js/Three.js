@@ -157,3 +157,14 @@ export { QuadraticBezierCurve3 } from '../../../three.js/src/extras/curves/Quadr
 //export { WebGLUtils } from '../../../three.js/src/renderers/webgl/WebGLUtils.js';
 export * from '../../../three.js/src/constants.js';
 //export * from '../../../three.js/src/Three.Legacy.js';
+
+import { Object3D } from '../../../three.js/src/core/Object3D.js';
+
+Object3D.prototype.addStatic = function ( obj ) {
+
+	obj.matrixAutoUpdate = false;
+	obj.updateMatrix();
+
+	this.add( obj );
+
+};

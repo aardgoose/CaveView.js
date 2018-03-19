@@ -35,6 +35,7 @@ function StationLabels () {
 
 	this.type = 'CV.StationLabels';
 	this.layers.set( LABEL_STATION );
+	this.worldUpdated = false;
 
 	const atlasSpec = {
 		color: Cfg.themeColorCSS( 'stations.default.text' ),
@@ -54,6 +55,17 @@ StationLabels.prototype = Object.create ( Group.prototype );
 StationLabels.prototype.addStation = function ( station ) {
 
 	this.add( new DummyStationLabel( station ) );
+
+};
+
+StationLabels.prototype.updateMatrixWorld = function ( force ) {
+
+	if ( ! this.worldUpdated ) {
+
+		Group.prototype.updateMatrixWorld.call( this, force );
+		this.worldUpdated = true;
+
+	}
 
 };
 
@@ -136,7 +148,7 @@ StationLabels.prototype.createLabel = function ( dummyLabel ) {
 	label.station = station;
 
 	this.remove( dummyLabel );
-	this.add( label );
+	this.addStatic( label );
 
 };
 

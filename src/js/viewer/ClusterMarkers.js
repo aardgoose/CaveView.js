@@ -206,11 +206,11 @@ QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
 		if ( cluster.heightProvider !== null ) {
 
-			quadMarker.adjustHeight(  cluster.heightProvider );
+			quadMarker.adjustHeight( cluster.heightProvider );
 
 		}
 
-		cluster.add( quadMarker );
+		cluster.addStatic( quadMarker );
 
 		this.quadMarker = quadMarker;
 
@@ -315,7 +315,7 @@ ClusterMarkers.prototype.addMarker = function ( position, label ) {
 
 	this.quadTree.addNode( marker, this.maxDepth );
 
-	this.add( marker );
+	this.addStatic( marker );
 
 	return marker;
 

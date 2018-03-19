@@ -162,6 +162,8 @@ function init ( domID, configuration ) { // public method
 
 	camera = pCamera;
 
+	scene.name = 'CV.Viewer';
+
 	scene.add( pCamera );
 	scene.add( oCamera );
 
@@ -175,10 +177,8 @@ function init ( domID, configuration ) { // public method
 
 	directionalLight.position.copy( lightPosition );
 
-	scene.add( directionalLight );
-
-	scene.add( new HemisphereLight( 0xffffff, 0xffffff, 0.3 ) );
-	//	scene.autoUpdate = false; // FIXME - update entrance labels/clusters manually
+	scene.addStatic( directionalLight );
+	scene.addStatic( new HemisphereLight( 0xffffff, 0xffffff, 0.3 ) );
 
 	raycaster.params.Points.threshold = 3;
 
@@ -513,6 +513,7 @@ function setZScale ( scale ) {
 	const newScale  = Math.pow( 2, ( scale - 0.5 )  * 4 );
 
 	survey.applyMatrix( new Matrix4().makeScale( 1, 1, newScale / lastScale ) );
+	survey.updateMatrix();
 
 	zScale = scale;
 
@@ -1086,9 +1087,7 @@ function loadSurvey ( newSurvey ) {
 
 	scene.up = upAxis;
 
-	scene.add( survey );
-	// scene.add( new DirectionGlobe( survey ) );
-	// ClusterLegs( survey );
+	scene.addStatic( survey );
 
 	selectSection( 0 );
 
@@ -1104,7 +1103,7 @@ function loadSurvey ( newSurvey ) {
 	} else {
 
 
-		survey.add( terrain );
+		survey.addStatic( terrain );
 
 		setTerrainShadingMode( terrainShadingMode );
 
@@ -1141,7 +1140,7 @@ function loadSurvey ( newSurvey ) {
 			terrain.tileArea( survey.limits );
 			terrain.setDefaultOverlay( overlays[ activeOverlay ] );
 
-			survey.add( terrain );
+			survey.addStatic( terrain );
 
 		} else {
 
@@ -1510,6 +1509,8 @@ function setScale ( obj ) {
 	obj.scale.copy( scale );
 
 	obj.position.copy( survey.modelLimits.getCenter( new Vector3() ).multiply( scale ).negate() );
+
+	obj.updateMatrix();
 
 	HUD.setScale( vScale );
 

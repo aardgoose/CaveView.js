@@ -43,7 +43,7 @@ function Stations () {
 
 	point.visible = false;
 
-	this.add( point );
+	this.addStatic( point );
 	this.highlightPoint = point;
 
 	Object.defineProperty( this, 'count', {
@@ -152,6 +152,8 @@ Stations.prototype.highlightStation = function ( node ) {
 	const highlightPoint = this.highlightPoint;
 
 	highlightPoint.position.copy( node.p );
+	highlightPoint.updateMatrix();
+
 	highlightPoint.visible = true;
 
 	return node;

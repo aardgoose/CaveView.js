@@ -18,7 +18,15 @@
     "type": "git",
     "url": "git+https://github.com/aardgoose/CaveView.js.git"
   },
-  "keywords": [ "cave", "survey", "3d", "webgl", "browser", "survex", "therion" ],
+  "keywords": [
+    "cave",
+    "survey",
+    "3d",
+    "webgl",
+    "browser",
+    "survex",
+    "therion"
+  ],
   "author": "aardgoose",
   "license": "MIT",
   "bugs": {
@@ -26,9 +34,9 @@
   },
   "homepage": "https://github.com/aardgoose/CaveView.js#readme",
   "devDependencies": {
+    "eslint": "^4.19.0",
     "http-server": "^0.10.0",
     "rollup": "^0.50.0",
-    "rollup-watch": ">=3.2.0",
-    "eslint": ">=3.10.1"
+    "rollup-watch": ">=3.2.0"
   }
 }

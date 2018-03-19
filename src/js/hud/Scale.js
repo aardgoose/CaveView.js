@@ -31,6 +31,7 @@ function Scale( container, geometry, material ) {
 	this.translateY( -height / 2 + barHeight / 2 + barOffset );
 
 	this.scaleBar = new Mesh( geometry, material );
+	this.scaleBar.name = 'scale bar';
 
 	this.textMaterial = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
 
@@ -75,8 +76,8 @@ Scale.prototype.setRange = function ( min, max, caption ) {
 		topLabel.isRange = true;
 		bottomLabel.isRange = true;
 
-		this.add( topLabel );
-		this.add( bottomLabel );
+		this.addStatic( topLabel );
+		this.addStatic( bottomLabel );
 
 		this.min = min;
 		this.max = max;
@@ -106,7 +107,7 @@ Scale.prototype.setCaption = function ( text ) {
 	caption.translateX( this.barWidth / 2 - caption.getWidth() );
 	caption.translateY( this.offsetY + this.barWidth / 2 );
 
-	this.add( caption );
+	this.addStatic( caption );
 	this.caption = caption;
 
 	return this;

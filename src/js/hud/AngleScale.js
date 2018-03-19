@@ -68,7 +68,7 @@ function AngleScale ( container, caption ) {
 	label.translateX( - label.getWidth() / 2 );
 	label.translateY( 5 );
 
-	this.add( label );
+	this.addStatic( label );
 
 	return this;
 

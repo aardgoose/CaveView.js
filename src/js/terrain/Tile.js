@@ -190,7 +190,7 @@ Tile.prototype.setPending = function ( parentTile ) {
 
 	if ( parentTile && this.parent === null ) {
 
-		parentTile.add( this );
+		parentTile.addStatic( this );
 
 	}
 

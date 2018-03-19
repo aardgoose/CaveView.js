@@ -42,9 +42,9 @@ function Compass () {
 
 	const rotaryGroup = new Group();
 
-	rotaryGroup.add( c1 );
-	rotaryGroup.add( c2 );
-	rotaryGroup.add( rMesh );
+	rotaryGroup.addStatic( c1 );
+	rotaryGroup.addStatic( c2 );
+	rotaryGroup.addStatic( rMesh );
 
 	this.add( rotaryGroup );
 	this.rotaryGroup = rotaryGroup;
@@ -62,7 +62,7 @@ function Compass () {
 	label.translateX( - label.getWidth() / 2 );
 	label.translateY( stdWidth + 5 );
 
-	this.add( label );
+	this.addStatic( label );
 
 	this.label = label;
 

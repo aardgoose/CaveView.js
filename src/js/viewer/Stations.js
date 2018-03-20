@@ -232,7 +232,6 @@ Stations.prototype.finalise = function () {
 	bufferGeometry.addAttribute( 'color', colors.copyColorsArray( this.colors ) );
 
 	this.pointSizes = null;
-	this.vertices   = null;
 	this.colors     = null;
 
 };

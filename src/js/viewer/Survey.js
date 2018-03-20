@@ -843,13 +843,12 @@ Survey.prototype.hasFeature = function ( tag ) {
 Survey.prototype.loadStations = function ( surveyTree ) {
 
 	const stations = new Stations();
-	const stationLabels = new StationLabels();
 
 	surveyTree.traverse( _addStation );
 
 	const legs = this.getLegs();
 
-	var i, l;
+	var i;
 
 	// count number of legs linked to each station
 
@@ -862,14 +861,7 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 	// we have finished adding stations.
 	stations.finalise();
 
-
-	// add labels for stations
-
-	for ( i = 0, l = stations.count; i < l; i++ ) {
-
-		stationLabels.addStation( stations.getStationByIndex( i ) );
-
-	}
+	const stationLabels = new StationLabels( stations );
 
 	this.addFeature( stations, FEATURE_STATIONS, 'CV.Stations' );
 	this.addFeature( stationLabels, LABEL_STATION, 'CV.StationLabels' );

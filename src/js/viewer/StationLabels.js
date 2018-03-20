@@ -7,35 +7,13 @@ import { Materials } from '../materials/Materials';
 
 const _tmpVector3 = new Vector3();
 
-/*
-
-lightweight fake Object3D.
-
-*/
-
-function DummyStationLabel( station ) {
-
-	this.position = station.p;
-	this.station = station;
-
-}
-
-// minimum parts of Object3D to be compatible with three.js and this code.
-
-DummyStationLabel.prototype.visible = false;
-DummyStationLabel.prototype.isObject3D = true;
-DummyStationLabel.prototype.parent = null;
-DummyStationLabel.prototype.dispatchEvent = function () {};
-DummyStationLabel.prototype.updateMatrixWorld = function () {};
-DummyStationLabel.prototype.traverse = function () {};
-
-function StationLabels () {
+function StationLabels ( stations ) {
 
 	Group.call( this );
 
 	this.type = 'CV.StationLabels';
 	this.layers.set( LABEL_STATION );
-	this.worldUpdated = false;
+	this.stations = stations;
 
 	const atlasSpec = {
 		color: Cfg.themeColorCSS( 'stations.default.text' ),
@@ -51,23 +29,6 @@ function StationLabels () {
 }
 
 StationLabels.prototype = Object.create ( Group.prototype );
-
-StationLabels.prototype.addStation = function ( station ) {
-
-	this.add( new DummyStationLabel( station ) );
-
-};
-
-StationLabels.prototype.updateMatrixWorld = function ( force ) {
-
-	if ( ! this.worldUpdated ) {
-
-		Group.prototype.updateMatrixWorld.call( this, force );
-		this.worldUpdated = true;
-
-	}
-
-};
 
 StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
@@ -88,30 +49,37 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
 	cameraPosition.applyMatrix4( inverseWorld );
 
+	const stations = this.stations;
 	const splaysVisible = camera.layers.mask & 1 << LEG_SPLAY;
-	const children = this.children;
+	const points = stations.vertices;
 
-	for ( var i = 0, l = children.length; i < l; i++ ) {
+	for ( var i = 0, l = points.length; i < l; i++ ) {
 
-		const label = children[ i ];
-		const hitCount = label.station.hitCount;
+		const position = points[ i ];
+
+		const station = stations.getStation( position );
+
+		const hitCount = station.hitCount;
+		var label = station.label;
 
 		// only show labels for splay end stations if splays visible
 
-		if ( hitCount === 0 && ! splaysVisible ) {
+		if ( hitCount === 0 && ! splaysVisible && label !== undefined) {
 
 			label.visible = false;
 
 		} else {
 
 			// show labels for network vertices at greater distance than intermediate stations
-			label.visible = ( label.position.distanceToSquared( cameraPosition ) < ( ( hitCount < 3 ) ? 5000 : 40000 ) );
+			const visible = ( position.distanceToSquared( cameraPosition ) < ( ( hitCount < 3 ) ? 5000 : 40000 ) );
 
-			if ( label.visible && ! label.isGlyphString ) {
+			if ( label === undefined ) {
 
-				// lazy creation of GlyphStrings
+				if ( visible ) this.addLabel( station );
 
-				this.createLabel( label );
+			} else {
+
+				label.visible = visible;
 
 			}
 
@@ -121,9 +89,8 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
 };
 
-StationLabels.prototype.createLabel = function ( dummyLabel ) {
+StationLabels.prototype.addLabel = function ( station ) {
 
-	const station = dummyLabel.station;
 	var material;
 
 	if ( station.hitCount === 0 ) {
@@ -144,10 +111,9 @@ StationLabels.prototype.createLabel = function ( dummyLabel ) {
 
 	label.layers.set( LABEL_STATION );
 	label.position.copy( station.p );
-	label.visible = false;
-	label.station = station;
 
-	this.remove( dummyLabel );
+	station.label = label;
+
 	this.addStatic( label );
 
 };

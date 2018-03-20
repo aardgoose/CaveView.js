@@ -11,6 +11,13 @@ import { Viewer } from '../viewer/Viewer';
 import { Cfg } from '../core/lib';
 import { PointIndicator } from './PointIndicator';
 
+function onUploadDropBuffer() {
+
+	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
+	this.array = null;
+
+}
+
 function Stations () {
 
 	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial() );
@@ -230,6 +237,8 @@ Stations.prototype.finalise = function () {
 	bufferGeometry.addAttribute( 'pSize', new Float32BufferAttribute( this.pointSizes, 1 ) );
 	bufferGeometry.addAttribute( 'position', positions.copyVector3sArray( this.vertices ) );
 	bufferGeometry.addAttribute( 'color', colors.copyColorsArray( this.colors ) );
+
+	bufferGeometry.getAttribute( 'color' ).onUpload( onUploadDropBuffer );
 
 	this.pointSizes = null;
 	this.colors     = null;

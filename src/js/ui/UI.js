@@ -3,7 +3,7 @@ import {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, STATION_ENTRANCE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
-	SHADING_BECK, VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
+	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
 } from '../core/constants';
 
 import { replaceExtension, Cfg } from '../core/lib';
@@ -40,9 +40,7 @@ const legShadingModes = {
 	'shading.fixed':         SHADING_SINGLE,
 	'shading.survey':        SHADING_SURVEY,
 	'shading.route':         SHADING_PATH,
-	'shading.distance':      SHADING_DISTANCE,
-	'shading.beck':          SHADING_BECK
-//	'axis':               SHADING_AXIS
+	'shading.distance':      SHADING_DISTANCE
 };
 
 const surfaceShadingModes = {
@@ -883,13 +881,6 @@ function keyDown ( event ) {
 	case 70: // toggle full screen - 'f'
 
 		toggleFullScreen();
-
-		break;
-
-	case 73: // toggle entrance labels - 'i'
-
-		// Viewer.developerInfo = true;
-		Viewer.shadingMode = SHADING_BECK;
 
 		break;
 

@@ -22,7 +22,7 @@ import { DyeTraces } from './DyeTraces';
 import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
-import { buildScraps, buildCrossSections } from './WallBuilders';
+import { buildScraps, buildCrossSections, buildHull } from './WallBuilders';
 
 import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
 import { StencilLib } from '../core/StencilLib';
@@ -260,6 +260,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	buildScraps( cave, this );
 	buildCrossSections( cave, this );
+	buildHull( this );
 
 	_loadTerrain( cave );
 
@@ -602,7 +603,7 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 
 	// convert to original survey CRS
 
-	if  ( projection !== null ) originalPosition = projection.forward( originalPosition );
+	if ( projection !== null ) originalPosition = projection.forward( originalPosition );
 
 	originalPosition.z = position.z + offsets.z;
 

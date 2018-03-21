@@ -6,7 +6,8 @@ import {
 
 import { Walls } from './Walls';
 
-import { Vector3 } from '../Three';
+import { Vector3, Mesh, MeshLambertMaterial } from '../Three';
+import { ConvexBufferGeometry } from '../core/ConvexGeometry';
 
 function buildScraps ( cave, survey ) {
 
@@ -385,6 +386,17 @@ function buildCrossSections ( cave, survey ) {
 
 }
 
-export { buildScraps, buildCrossSections };
+function buildHull( survey ) {
+
+	const bg = new ConvexBufferGeometry( survey.stations.vertices );
+	const mesh = new Mesh( bg, new MeshLambertMaterial() );
+
+	mesh.setShading = function () {}; // dummy function
+
+	survey.addFeature( mesh, FACE_WALLS, 'CV.Survey:faces:hull' );
+
+}
+
+export { buildScraps, buildCrossSections, buildHull };
 
 // EOF

@@ -235,7 +235,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 	var lastPosition = new Vector3(); // value to allow approach vector for xsect coord frame
 	var i, j, li, lj;
 
-	// init cmd handler table withh  error handler for unsupported records or invalid records
+	// init cmd handler table with error handler for unsupported records or invalid records
 
 	function _errorHandler ( e ) { console.warn( 'unhandled command: ', e.toString( 16 ) ); return false; }
 
@@ -462,7 +462,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	const surveyTree = this.surveyTree;
 	const stationMap = this.stationMap;
 
-	const cmd        = [];
+	const cmd = [];
 
 	const lineEnds      = new Set(); // implied line ends to fixnup xsects
 	const sectionLabels = new Set();
@@ -471,10 +471,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	const data       = new Uint8Array( source, 0 );
 	const dataLength = data.length;
 
-	var legs        = [];
-	var label       = '';
-	var xSects      = [];
-	var sectionId   = 0;
+	var legs      = [];
+	var label     = '';
+	var xSects    = [];
+	var sectionId = 0;
 
 	var move = false;
 	var lastPosition = new Vector3();
@@ -487,7 +487,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	var readLabel;
 
-	// init cmd handler table withh  error handler for unsupported records or invalid records
+	// init cmd handler table with error handler for unsupported records or invalid records
 
 	function _errorHandler ( e ) { console.warn( 'unhandled command: ', e.toString( 16 ) ); return false; }
 
@@ -687,7 +687,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	function readLabelV8 ( flags ) {
 
-		if ( flags & 0x20 )  return false; // no label change
+		if ( flags & 0x20 ) return false; // no label change
 
 		var b = data[ pos++ ];
 		var add = 0;
@@ -786,7 +786,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	}
 
-	function cmd_TRIM ( c ) {  // v7 and previous
+	function cmd_TRIM ( c ) { // v7 and previous
 
 		const trim = c - 15;
 
@@ -908,7 +908,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			// add start of run of legs
 
-			if ( move )  {
+			if ( move ) {
 
 				legs.push( { coords: lastPosition } );
 				move = false;

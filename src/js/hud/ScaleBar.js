@@ -53,8 +53,8 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	var exponent = Math.ceil( Math.log( maxVisible ) / Math.LN10 ) - 1;
 
-	const rMax     = Math.pow( 10, exponent );
-	const maxInc   = maxVisible / rMax;
+	const rMax   = Math.pow( 10, exponent );
+	const maxInc = maxVisible / rMax;
 
 	var legendText;
 	var length = 0;
@@ -116,7 +116,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	const w = label.getWidth();
 
-	label.translateX( scale * scaleBars[ length ].topRight  - label.position.x - w );
+	label.translateX( scale * scaleBars[ length ].topRight - label.position.x - w );
 
 
 	return this;

@@ -130,7 +130,7 @@ Routes.prototype.mapSurvey = function ( stations, legsObject, surveyTree ) {
 
 Routes.prototype.createWireframe = function ( m ) {
 
-	return new Beckeriser( this.segmentMap, m  );
+	return new Beckeriser( this.segmentMap, m );
 
 };
 
@@ -342,7 +342,7 @@ Routes.prototype.shortestPathSearch = function ( station ) {
 
 	}
 
-	console.log( 'max:', maxDistance );
+	// console.log( 'max:', maxDistance );
 	this.maxDistance = maxDistance;
 
 };

@@ -119,4 +119,3 @@ StationLabels.prototype.addLabel = function ( station ) {
 };
 
 export { StationLabels };
-

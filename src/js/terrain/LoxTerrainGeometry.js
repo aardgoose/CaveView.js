@@ -31,10 +31,10 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	// 2 x 2 scale & rotate callibration matrix
 
-	const xx  = dtm.xx;
-	const xy  = dtm.xy;
-	const yx  = dtm.yx;
-	const yy  = dtm.yy;
+	const xx = dtm.xx;
+	const xy = dtm.xy;
+	const yx = dtm.yx;
+	const yy = dtm.yy;
 
 	// offsets from dtm -> survey -> model
 
@@ -91,8 +91,8 @@ function LoxTerrainGeometry( dtm, offsets ) {
 			// faces - render each quad such that the shared diagonal edge has the minimum length - gives a smother terrain surface
 			// diagonals b - d, a - c
 
-			const d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] );  // diff in Z values between diagonal vertices
-			const d2 = Math.abs( vertices[ b * 3 + 2 ] - vertices[ c * 3 + 2 ] );  // diff in Z values between diagonal vertices
+			const d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] ); // diff in Z values between diagonal vertices
+			const d2 = Math.abs( vertices[ b * 3 + 2 ] - vertices[ c * 3 + 2 ] ); // diff in Z values between diagonal vertices
 
 			if ( d1 < d2 ) {
 

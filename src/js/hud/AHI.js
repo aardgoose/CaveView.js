@@ -124,7 +124,7 @@ AHI.prototype = Object.create( Group.prototype );
 
 AHI.prototype.set = function () {
 
-	const xAxis   = new Vector3( 1, 0, 0 );
+	const xAxis = new Vector3( 1, 0, 0 );
 	const direction = new Vector3();
 
 	return function set ( vCamera ) {

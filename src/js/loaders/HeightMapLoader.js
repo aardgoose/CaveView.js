@@ -21,8 +21,8 @@ function HeightMapLoader ( tileSpec, loadCallback, errorCallback ) {
 
 		const divisions = tileSet.divisions;
 
-		const dtmOffsetX =  ( divisions * ( tileSpec.x % scale ) ) / scale;
-		const dtmOffsetY =  ( divisions + 1 ) * ( divisions * ( tileSpec.y % scale ) ) / scale;
+		const dtmOffsetX = ( divisions * ( tileSpec.x % scale ) ) / scale;
+		const dtmOffsetY = ( divisions + 1 ) * ( divisions * ( tileSpec.y % scale ) ) / scale;
 
 		clip.dtmOffset = dtmOffsetY + dtmOffsetX;
 		clip.dtmWidth = tileSet.divisions + 1;

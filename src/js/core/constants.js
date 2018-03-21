@@ -1,7 +1,7 @@
 
 import { Vector3 }  from '../../../../three.js/src/math/Vector3';
 
-export const VERSION = '1.7.0-dev';
+export const VERSION = '1.7.0';
 
 export const MATERIAL_LINE       = 1;
 export const MATERIAL_SURFACE    = 2;

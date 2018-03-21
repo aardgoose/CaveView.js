@@ -126,49 +126,57 @@ ScaleBar.prototype.setScale = function ( scale ) {
 		const height = 4;
 		const rLength = length * self.hScale;
 
-		const bar  = new PlaneGeometry( rLength, height, length );
-		const bar2 = new PlaneGeometry( rLength, height, length * 10 );
 		const line = new Geometry();
 
 		line.vertices.push( new Vector3( -rLength / 2, 0, 1 ) );
 		line.vertices.push( new Vector3(  rLength / 2, 0, 1 ) );
 
+		line.translate( rLength / 2, height, 0 );
+
 		const sb = Cfg.themeValue( 'hud.scale.bar1' );
 
-		const mBar  = new Mesh( bar,  new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
-		const mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
 		const mLine = new LineSegments( line, new LineBasicMaterial( { color: sb } ) );
 
-		const c1 = Cfg.themeColor( 'hud.scale.bar1' );
-		const c2 = Cfg.themeColor( 'hud.scale.bar2' );
-
-		var i, l;
-
-		for ( i = 0, l = bar.faces.length; i < l; i++ ) {
-
-			bar.faces[ i ].color = ( i % 4 < 2 ) ? c1 : c2;
-
-		}
-
-		for ( i = 0, l = bar2.faces.length; i < l; i++ ) {
-
-			bar2.faces[ i ].color = ( i % 4 < 2 ) ? c1 : c2;
-
-		}
+		const bar = _makeBarGeometry( length );
+		const bar2 = _makeBarGeometry( length * 10 );
 
 		bar.translate( rLength / 2, height + height / 2 + 1, 0 );
 		bar2.translate( rLength / 2, height / 2, 0 );
-		line.translate( rLength / 2, height, 0 );
+
+		const mBar = new Mesh( bar, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
+		const mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
 
 		bar.computeBoundingBox();
 
 		const group = new Group();
 
-		group.add( mBar );
-		group.add( mBar2 );
-		group.add( mLine );
+		group.addStatic( mBar );
+		group.addStatic( mBar2 );
+		group.addStatic( mLine );
 
 		return { mesh: group, topRight: bar.boundingBox.max.x };
+
+		function _makeBarGeometry( divisions ) {
+
+			const c1 = Cfg.themeColor( 'hud.scale.bar1' );
+			const c2 = Cfg.themeColor( 'hud.scale.bar2' );
+
+			const bar = new PlaneGeometry( rLength, height, divisions );
+
+			const faces = bar.faces;
+			const l = faces.length;
+
+			var i;
+
+			for ( i = 0; i < l; i++ ) {
+
+				faces[ i ].color = ( i % 4 < 2 ) ? c1 : c2;
+
+			}
+
+			return bar;
+
+		}
 
 	}
 

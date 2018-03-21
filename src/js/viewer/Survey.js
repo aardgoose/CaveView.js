@@ -4,8 +4,8 @@ import {
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES, FEATURE_STATIONS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_BECK,
-	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_AXIS, SHADING_DISTANCE,
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
+	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	upAxis
 } from '../core/constants';
 
@@ -916,7 +916,6 @@ Survey.prototype.setShadingMode = function ( mode ) {
 		break;
 
 	case SHADING_DISTANCE:
-	case SHADING_BECK:
 
 		material = false;
 
@@ -1002,28 +1001,6 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 		break;
 
-	case SHADING_BECK:
-
-		this.setLegColourByColour( mesh, Cfg.themeColor( 'shading.single' ) );
-
-		var wf = this.wireframe;
-
-		if ( wf === null ) {
-
-			wf = this.routes.createWireframe( Materials.getHeightMaterial( MATERIAL_LINE ) );
-			wf.layers.set( LEG_CAVE );
-
-			this.add( wf );
-			this.wireframe = wf;
-
-		}
-
-		wf.trim( 10 );
-
-		this.getFeature( LEG_CAVE ).visible = false;
-
-		break;
-
 	case SHADING_SURVEY:
 
 		this.setLegColourBySurvey( mesh );
@@ -1033,12 +1010,6 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	case SHADING_PATH:
 
 		this.setLegColourByPath( mesh );
-
-		break;
-
-	case SHADING_AXIS:
-
-		this.setLegColourByAxis( mesh );
 
 		break;
 
@@ -1079,14 +1050,6 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	}
 
 	return true;
-
-};
-
-Survey.prototype.setColourAxis = function ( c1, c2, c3 ) {
-
-	this.colourAxis[ 0 ] = c1;
-	this.colourAxis[ 1 ] = c2;
-	this.colourAxis[ 2 ] = c3;
 
 };
 

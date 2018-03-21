@@ -5,11 +5,11 @@ import {
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY, SHADING_PATH,
-	SHADING_DEPTH, SHADING_DEPTH_CURSOR,
+	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
 	upAxis,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, SHADING_DISTANCE
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -124,16 +124,7 @@ var popup = null;
 const Viewer = Object.create( EventDispatcher.prototype );
 
 function init ( domID, configuration ) { // public method
-/*
-	WeakMap.prototype.__get = WeakMap.prototype.get;
 
-	WeakMap.prototype.get = function ( obj ) {
-
-		console.log( Object.getPrototypeOf( obj ).constructor.name );
-		return this.__get( obj );
-
-	};
-*/
 	console.log( 'CaveView v' + VERSION );
 
 	container = document.getElementById( domID );
@@ -1248,7 +1239,6 @@ function clockStop ( /* event */ ) {
 	lastActivityTime = 0;
 
 }
-
 
 function mouseDown ( event ) {
 

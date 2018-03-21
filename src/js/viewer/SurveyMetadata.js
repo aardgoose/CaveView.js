@@ -9,7 +9,7 @@ function SurveyMetadata( name, metadata ) {
 	if ( metadata !== null ) {
 
 		if ( metadata.routes ) routes = metadata.routes;
-		if ( metadata.traces )  traces = metadata.traces;
+		if ( metadata.traces ) traces = metadata.traces;
 		if ( metadata.entrances ) entrances = metadata.entrances;
 
 	}

@@ -30,7 +30,7 @@ function LoxTerrain ( terrainData, offsets ) {
 
 	this.add( tile );
 
-	this.hasOverlay = ( terrainData.bitmap  ) ? true : false;
+	this.hasOverlay = ( terrainData.bitmap ) ? true : false;
 
 }
 

@@ -100,7 +100,7 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 	// avoid overhead of computeBoundingBox since we know x & y min and max values;
 
-	this.boundingBox =  new Box3().set( new Vector3( offsets.x, offsets.y - height, minZ ), new Vector3( offsets.x + width, offsets.y, maxZ ) );
+	this.boundingBox = new Box3().set( new Vector3( offsets.x, offsets.y - height, minZ ), new Vector3( offsets.x + width, offsets.y, maxZ ) );
 
 	// indices
 
@@ -116,8 +116,8 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 			// faces - render each quad such that the shared diagonal edge has the minimum length - gives a smother terrain surface
 			// diagonals b - d, a - c
 
-			const d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] );  // diff in Z values between diagonal vertices
-			const d2 = Math.abs( vertices[ b * 3 + 2 ] - vertices[ c * 3 + 2 ] );  // diff in Z values between diagonal vertices
+			const d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] ); // diff in Z values between diagonal vertices
+			const d2 = Math.abs( vertices[ b * 3 + 2 ] - vertices[ c * 3 + 2 ] ); // diff in Z values between diagonal vertices
 
 			if ( d1 < d2 ) {
 

@@ -169,7 +169,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 	if ( scale !== 1 && this.activeOverlay === null && this.currentZoom !== null ) return;
 
-	console.log( 'load: [ ', z +'/' +  x + '/' +  y, ']' );
+	console.log( 'load: [ ', z +'/' + x + '/' + y, ']' );
 
 	const tileWidth = halfMapExtent / Math.pow( 2, z - 1 );
 	const clip      = { top: 0, bottom: 0, left: 0, right: 0 };

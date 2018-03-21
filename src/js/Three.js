@@ -28,7 +28,12 @@ export { DataTexture } from '../../../three.js/src/textures/DataTexture.js';
 export { CanvasTexture } from '../../../three.js/src/textures/CanvasTexture.js';
 //export { DepthTexture } from '../../../three.js/src/textures/DepthTexture.js';
 export { Texture } from '../../../three.js/src/textures/Texture.js';
-export * from '../../../three.js/src/geometries/Geometries.js';
+
+export { SphereBufferGeometry } from '../../../three.js/src/geometries/SphereGeometry.js';
+export { RingGeometry, RingBufferGeometry } from '../../../three.js/src/geometries/RingGeometry.js';
+export { PlaneGeometry, PlaneBufferGeometry } from '../../../three.js/src/geometries/PlaneGeometry.js';
+export { CylinderBufferGeometry } from '../../../three.js/src/geometries/CylinderGeometry.js';
+
 export * from '../../../three.js/src/materials/Materials.js';
 //export { CompressedTextureLoader } from '../../../three.js/src/loaders/CompressedTextureLoader.js';
 //export { DataTextureLoader } from '../../../three.js/src/loaders/DataTextureLoader.js';
@@ -157,6 +162,10 @@ export { QuadraticBezierCurve3 } from '../../../three.js/src/extras/curves/Quadr
 //export { WebGLUtils } from '../../../three.js/src/renderers/webgl/WebGLUtils.js';
 export * from '../../../three.js/src/constants.js';
 //export * from '../../../three.js/src/Three.Legacy.js';
+
+import { _Math } from '../../../three.js/src/math/Math.js';
+
+_Math.generateUUID = function () { return null; };
 
 import { Object3D } from '../../../three.js/src/core/Object3D.js';
 

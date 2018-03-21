@@ -1,5 +1,5 @@
 
-import { FEATURE_ENTRANCES,  upAxis } from '../core/constants';
+import { FEATURE_ENTRANCES, upAxis } from '../core/constants';
 import { Cfg } from '../core/lib';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
@@ -139,9 +139,9 @@ QuadTree.prototype.check = function ( cluster, target, angleFactor ) {
 
 			const dCluster = Math.abs( __plane.distanceToPoint( __b ) );
 
-			const depthRatio =  ( d2Target - dCluster ) / d2Target;
+			const depthRatio = ( d2Target - dCluster ) / d2Target;
 
-			//console.log( area, 'dr', Math.round( depthRatio * 100 )/100, 'af', Math.round( angleFactor * 100 ) / 100 , '++', Math.round( depthRatio * angleFactor * 100 * 20  ) / 100);
+			//console.log( area, 'dr', Math.round( depthRatio * 100 )/100, 'af', Math.round( angleFactor * 100 ) / 100 , '++', Math.round( depthRatio * angleFactor * 100 * 20 ) / 100);
 
 			// cluster markers compensated for angle to the horizontal and distance from camera plane
 

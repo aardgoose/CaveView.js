@@ -20,10 +20,10 @@ function mapLoaded ( data ) {
 
 	// clip height map data
 
-	const clip       = tileSpec.clip;
-	const offsets    = tileSpec.offsets;
-	const tileSet    = tileSpec.tileSet;
-	const divisions  = tileSpec.divisions;
+	const clip      = tileSpec.clip;
+	const offsets   = tileSpec.offsets;
+	const tileSet   = tileSpec.tileSet;
+	const divisions = tileSpec.divisions;
 
 	const terrainData = new Uint16Array( data );
 
@@ -59,7 +59,6 @@ function mapLoaded ( data ) {
 		},
 
 		max: {
-
 			x: bb.max.x,
 			y: bb.max.y,
 			z: bb.max.z

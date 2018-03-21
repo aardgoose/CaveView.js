@@ -147,7 +147,7 @@ CaveLoader.prototype.loadFile = function ( file, section ) {
 
 	if ( ! this.setHandler( fileName ) ) {
 
-		alert( 'Cave: unknown file extension [' + this.extention +  ']' );
+		alert( 'Cave: unknown file extension [' + this.extention + ']' );
 		return false;
 
 	}

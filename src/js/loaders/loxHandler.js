@@ -3,7 +3,7 @@ import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_ENTRANCE, STATION_NORMAL } fr
 import { Tree } from '../core/Tree';
 import { Vector3, Box3 } from '../Three';
 
-function loxHandler  ( fileName ) {
+function loxHandler ( fileName ) {
 
 	this.fileName     = fileName;
 	this.scraps       = [];
@@ -20,9 +20,9 @@ loxHandler.prototype.constructor = loxHandler;
 
 loxHandler.prototype.type = 'arraybuffer';
 
-loxHandler.prototype.parse = function( dataStream, metadata, section ) {
+loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
-	this.metadata     = metadata;
+	this.metadata = metadata;
 
 	const lineSegments = [];
 	const stations     = [];
@@ -309,8 +309,8 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		pos += 8; // readDataPtr(); // commentPtr - ignored
 
-		const m_flags    = readUint();
-		const coords     = readCoords();
+		const m_flags = readUint();
+		const coords = readCoords();
 
 		stations[ m_id ] = coords;
 
@@ -345,8 +345,8 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 	function readShot () {
 
-		const m_from_r  = readUint();
-		const m_to_r    = readUint();
+		const m_from_r = readUint();
+		const m_to_r   = readUint();
 
 		var m_from, m_to, fromLRUD, toLRUD;
 
@@ -529,8 +529,8 @@ loxHandler.prototype.parse = function( dataStream, metadata, section ) {
 
 		readUint(); // m_id
 
-		const m_width    = readUint();
-		const m_height   = readUint();
+		const m_width  = readUint();
+		const m_height = readUint();
 
 		const surfacePtr = readDataPtr();
 		const m_calib    = readCalibration();

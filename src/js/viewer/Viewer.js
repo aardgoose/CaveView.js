@@ -1,5 +1,5 @@
 
-import  {
+import {
 	VERSION,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_OFFSET,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
@@ -601,7 +601,7 @@ function renderDepthTexture () {
 
 	// render the terrain to a new canvas square canvas and extract image data
 
-	const rtCamera = new OrthographicCamera( -width / 2, width / 2,  height / 2, -height / 2, -10000, 10000 );
+	const rtCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, -10000, 10000 );
 
 	rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
 

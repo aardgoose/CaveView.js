@@ -624,6 +624,7 @@ function initSettingsPage () {
 	if ( Viewer.hasStationLabels ) page.addCheckbox( 'visibility.labels', Viewer, 'stationLabels' );
 	if ( Viewer.hasSplays        ) page.addCheckbox( 'visibility.splays', Viewer, 'splays' );
 	if ( Viewer.hasWalls         ) page.addCheckbox( 'visibility.walls', Viewer, 'walls' );
+	if ( Viewer.hasAlpha         ) page.addCheckbox( 'visibility.alpha', Viewer, 'alpha' );
 	if ( Viewer.hasScraps        ) page.addCheckbox( 'visibility.scraps', Viewer, 'scraps' );
 	if ( Viewer.hasTraces        ) page.addCheckbox( 'visibility.traces', Viewer, 'traces' );
 

@@ -1,7 +1,7 @@
 
 import { Vector3 }  from '../../../../three.js/src/math/Vector3';
 
-export const VERSION = '1.7.0-dev';
+export const VERSION = '1.8.0-dev';
 
 export const MATERIAL_LINE       = 1;
 export const MATERIAL_SURFACE    = 2;
@@ -55,6 +55,7 @@ export const FEATURE_TRACES        = 9;
 
 export const FACE_WALLS            = 10;
 export const FACE_SCRAPS           = 11;
+export const FACE_ALPHA            = 13;
 
 export const WALL_OVAL             = 1; // based on Therion .lox types
 export const WALL_SQUARE           = 2;

@@ -403,7 +403,8 @@ Survey.prototype.getFeature = function ( tag, obj ) {
 
 	if ( o === undefined && obj ) {
 
-		o = new obj ( tag );
+		o = new obj ();
+		o.layers.set( tag );
 
 	}
 
@@ -438,6 +439,7 @@ Survey.prototype.update = function ( camera, target ) {
 Survey.prototype.addFeature = function ( obj, tag, name ) {
 
 	obj.name = name;
+	obj.layers.set( tag );
 
 	this.features[ tag ] = obj;
 

@@ -450,7 +450,6 @@ function buildHull( survey ) {
 
 	mesh.setShading = function () {};
 	mesh.update = function () {};
-	mesh.layers.set( FACE_ALPHA );
 
 	survey.addFeature( mesh, FACE_ALPHA, 'CV.Survey:faces:alpha' );
 

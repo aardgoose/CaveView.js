@@ -6,7 +6,7 @@ import {
 
 import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
-import { FEATURE_STATIONS, STATION_ENTRANCE } from '../core/constants';
+import { STATION_ENTRANCE } from '../core/constants';
 import { Viewer } from '../viewer/Viewer';
 import { Cfg } from '../core/lib';
 import { PointIndicator } from './PointIndicator';
@@ -28,8 +28,6 @@ function Stations () {
 
 	this.baseColor     = Cfg.themeColor( 'stations.default.marker' );
 	this.junctionColor = Cfg.themeColor( 'stations.junctions.marker' );
-
-	this.layers.set( FEATURE_STATIONS );
 
 	this.pointSizes = [];
 	this.vertices   = [];

@@ -9,13 +9,12 @@ import { StencilLib } from '../core/StencilLib';
 
 const unselectedMaterial = new LineBasicMaterial( { color: 0x444444, vertexColors: VertexColors } );
 
-function Legs ( layer ) {
+function Legs () {
 
 	const geometry = new Geometry();
 
 	LineSegments.call( this, geometry, unselectedMaterial );
 
-	this.layers.set( layer );
 	this.type = 'Legs';
 	this.legLengths = [];
 

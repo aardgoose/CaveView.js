@@ -12,7 +12,6 @@ function StationLabels ( stations ) {
 	Group.call( this );
 
 	this.type = 'CV.StationLabels';
-	this.layers.set( LABEL_STATION );
 	this.stations = stations;
 
 	const atlasSpec = {

@@ -136,6 +136,7 @@ const lang_en = {
 			surface: 'surface legs on/off',
 			terrain: 'terrain on/off',
 			walls: 'LRUD walls on/off',
+			alpha: 'Alpha Shapes',
 			stations: 'station markers on/off',
 			opacity_down: 'decrease terrain opacity',
 			opacity_up: 'increase terrain opacity'

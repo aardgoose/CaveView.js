@@ -448,8 +448,11 @@ function buildHull( survey ) {
 
 	const mesh = new Mesh( geometry, new MeshLambertMaterial() );
 
-	mesh.setShading = function () {};
-	mesh.update = function () {};
+	mesh.setShading = function ( selectedRuns, material ) {
+
+		mesh.material = material;
+
+	};
 
 	survey.addFeature( mesh, FACE_ALPHA, 'CV.Survey:faces:alpha' );
 

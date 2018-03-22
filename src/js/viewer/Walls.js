@@ -8,13 +8,12 @@ import { StencilLib } from '../core/StencilLib';
 
 const unselectedMaterial = new MeshLambertMaterial( { color: 0x444444, vertexColors: FaceColors } );
 
-function Walls ( layer ) {
+function Walls () {
 
 	const geometry = new BufferGeometry();
 
 	Mesh.call( this, geometry, unselectedMaterial );
 
-	this.layers.set( layer );
 	this.type = 'Walls';
 
 	return this;

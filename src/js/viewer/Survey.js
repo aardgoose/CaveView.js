@@ -1,6 +1,6 @@
 
 import {
-	FACE_SCRAPS, FACE_WALLS,
+	FACE_SCRAPS, FACE_WALLS, FACE_ALPHA,
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES, FEATURE_STATIONS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
@@ -933,6 +933,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 		this.setWallShading( this.features[ FACE_WALLS  ], mode, material );
 		this.setWallShading( this.features[ FACE_SCRAPS ], mode, material );
+		this.setWallShading( this.features[ FACE_ALPHA ], mode, material );
 
 		return true;
 

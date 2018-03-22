@@ -2,7 +2,7 @@
 import {
 	VERSION,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_OFFSET,
-	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
+	FACE_WALLS, FACE_SCRAPS, FACE_ALPHA, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY, SHADING_PATH,
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR,
@@ -53,6 +53,7 @@ const defaultView = {
 	terrainOverlay: null,
 	surfaceLegs: false,
 	walls: false,
+	alpha: false,
 	scraps: false,
 	splays: false,
 	stations: false,
@@ -381,6 +382,7 @@ function init ( domID, configuration ) { // public method
 	_conditionalLayer( FEATURE_TRACES,    'traces' );
 	_conditionalLayer( FACE_SCRAPS,       'scraps' );
 	_conditionalLayer( FACE_WALLS,        'walls' );
+	_conditionalLayer( FACE_ALPHA,        'alpha' );
 	_conditionalLayer( LEG_SPLAY,         'splays' );
 	_conditionalLayer( LEG_SURFACE,       'surfaceLegs' );
 	_conditionalLayer( LABEL_STATION,     'stationLabels' );

@@ -38,5 +38,10 @@
     "http-server": "^0.10.0",
     "rollup": "^0.50.0",
     "rollup-watch": ">=3.2.0"
+  },
+  "dependencies": {
+    "alpha-shape": "^1.0.0",
+    "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-node-resolve": "^3.3.0"
   }
 }

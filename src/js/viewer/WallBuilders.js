@@ -1,13 +1,13 @@
 
 import {
-	FACE_SCRAPS, FACE_WALLS,
+	FACE_SCRAPS, FACE_WALLS, FACE_ALPHA,
 	WALL_DIAMOND, WALL_SQUARE, WALL_OVAL, upAxis
 } from '../core/constants';
 
+import { alphaShape } from '../../../node_modules/alpha-shape/alpha';
 import { Walls } from './Walls';
 
-import { Vector3, Mesh, MeshLambertMaterial } from '../Three';
-import { ConvexBufferGeometry } from '../core/ConvexGeometry';
+import { Vector3, Mesh, MeshLambertMaterial, Float32BufferAttribute, BufferGeometry } from '../Three';
 
 function buildScraps ( cave, survey ) {
 
@@ -388,12 +388,73 @@ function buildCrossSections ( cave, survey ) {
 
 function buildHull( survey ) {
 
-	const bg = new ConvexBufferGeometry( survey.stations.vertices );
-	const mesh = new Mesh( bg, new MeshLambertMaterial() );
+	const sVertices = survey.stations.vertices;
+	const points = [];
 
-	mesh.setShading = function () {}; // dummy function
+	const vertices = [];
+	const indices = [];
 
-	survey.addFeature( mesh, FACE_WALLS, 'CV.Survey:faces:hull' );
+	var i;
+
+	// all very inefficient - copy stations position attribute buffer.
+	// tranfer to worker to offload processing of main thread
+
+	for ( i = 0; i < sVertices.length; i++ ) {
+
+		const v = sVertices[ i ];
+
+		points.push( [ v.x, v.y, v.z ] );
+		vertices.push( v.x, v.y, v.z );
+
+	}
+
+
+	// add LRUD vertices
+
+	const walls = survey.getFeature( FACE_WALLS, Walls );
+
+	const position = walls.geometry.getAttribute( 'position' );
+	const tbArray = position.array;
+
+	for ( i = 0; i < position.count; i++ ) {
+
+		const offset = i * 3;
+
+		points.push( [ tbArray[ offset ], tbArray[ offset + 1 ], tbArray[ offset + 2 ] ] );
+		vertices.push( tbArray[ offset ], tbArray[ offset + 1 ], tbArray[ offset + 2 ] );
+
+	}
+
+	var cells = alphaShape( 0.08, points );
+
+	var geometry = new BufferGeometry();
+
+	// buffers
+
+	for ( i = 0; i < cells.length; i++ ) {
+
+		const c = cells[ i ];
+		indices.push( c[ 0 ], c[ 1 ] , c[ 2 ] );
+
+	}
+
+	// build geometry
+
+	geometry.setIndex( indices );
+
+	geometry.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+
+	geometry.computeVertexNormals();
+
+	const mesh = new Mesh( geometry, new MeshLambertMaterial() );
+
+	mesh.setShading = function () {};
+	mesh.update = function () {};
+	mesh.layers.set( FACE_ALPHA );
+
+	survey.addFeature( mesh, FACE_ALPHA, 'CV.Survey:faces:alpha' );
+
+//	console.log( cells );
 
 }
 

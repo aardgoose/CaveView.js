@@ -1,10 +1,10 @@
-
 import {
 	FACE_SCRAPS, FACE_WALLS, FACE_ALPHA,
 	WALL_DIAMOND, WALL_SQUARE, WALL_OVAL, upAxis
 } from '../core/constants';
 
-import { alphaShape } from '../../../node_modules/alpha-shape/alpha';
+import { WorkerPool } from '../core/WorkerPool';
+
 import { Walls } from './Walls';
 
 import { Vector3, Mesh, MeshLambertMaterial, Float32BufferAttribute, BufferGeometry } from '../Three';
@@ -408,7 +408,6 @@ function buildHull( survey ) {
 
 	}
 
-
 	// add LRUD vertices
 
 	const walls = survey.getFeature( FACE_WALLS, Walls );
@@ -425,26 +424,19 @@ function buildHull( survey ) {
 
 	}
 
-	var cells = alphaShape( 0.08, points );
+	const workerPool = new WorkerPool( 'alphaWorker.js' );
 
-	var geometry = new BufferGeometry();
+	const worker = workerPool.getWorker();
 
-	// buffers
+	worker.onmessage = _wallsLoaded;
 
-	for ( i = 0; i < cells.length; i++ ) {
+	worker.postMessage( {
+		test: 'testing',
+		points: points,
+		alpha: 0.08
+	} );
 
-		const c = cells[ i ];
-		indices.push( c[ 0 ], c[ 1 ] , c[ 2 ] );
-
-	}
-
-	// build geometry
-
-	geometry.setIndex( indices );
-
-	geometry.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-
-	geometry.computeVertexNormals();
+	const geometry = new BufferGeometry();
 
 	const mesh = new Mesh( geometry, new MeshLambertMaterial() );
 
@@ -456,7 +448,32 @@ function buildHull( survey ) {
 
 	survey.addFeature( mesh, FACE_ALPHA, 'CV.Survey:faces:alpha' );
 
-//	console.log( cells );
+	function _wallsLoaded ( event ) {
+
+		console.log( event.data );
+
+		const cells = event.data.cells;
+		var i;
+
+		for ( i = 0; i < cells.length; i++ ) {
+
+			const c = cells[ i ];
+			indices.push( c[ 0 ], c[ 1 ] , c[ 2 ] );
+
+		}
+
+		// build geometry
+
+		geometry.setIndex( indices );
+		geometry.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+
+		geometry.computeVertexNormals();
+
+		// return worker to pool
+
+		workerPool.putWorker( worker );
+
+	}
 
 }
 

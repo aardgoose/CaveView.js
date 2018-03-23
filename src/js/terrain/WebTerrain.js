@@ -1,7 +1,7 @@
 import { CommonTerrain } from './CommonTerrain';
 import { Tile } from './Tile';
 import { HUD } from '../hud/HUD';
-import { WorkerPool } from '../workers/WorkerPool';
+import { WorkerPool } from '../core/WorkerPool';
 import { Cfg } from '../core/lib';
 import { SHADING_OVERLAY } from '../core/constants';
 

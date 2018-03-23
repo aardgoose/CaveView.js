@@ -7,7 +7,7 @@ import { WorkerPool } from '../core/WorkerPool';
 
 import { Walls } from './Walls';
 
-import { Vector3, Mesh, MeshLambertMaterial, Float32BufferAttribute, BufferGeometry } from '../Three';
+import { Vector3, Float32BufferAttribute } from '../Three';
 
 function buildScraps ( cave, survey ) {
 
@@ -390,9 +390,7 @@ function buildHull( survey ) {
 
 	const sVertices = survey.stations.vertices;
 	const points = [];
-
 	const vertices = [];
-	const indices = [];
 
 	var i;
 
@@ -431,28 +429,22 @@ function buildHull( survey ) {
 	worker.onmessage = _wallsLoaded;
 
 	worker.postMessage( {
-		test: 'testing',
 		points: points,
 		alpha: 0.08
 	} );
 
-	const geometry = new BufferGeometry();
+	const mesh = new Walls();
 
-	const mesh = new Mesh( geometry, new MeshLambertMaterial() );
-
-	mesh.setShading = function ( selectedRuns, material ) {
-
-		mesh.material = material;
-
-	};
+	mesh.ready = false;
 
 	survey.addFeature( mesh, FACE_ALPHA, 'CV.Survey:faces:alpha' );
 
 	function _wallsLoaded ( event ) {
 
-		console.log( event.data );
+		console.log( 'alpha walls loaded:', event.data.status );
 
 		const cells = event.data.cells;
+		const indices = [];
 		var i;
 
 		for ( i = 0; i < cells.length; i++ ) {
@@ -464,10 +456,16 @@ function buildHull( survey ) {
 
 		// build geometry
 
+		const geometry = mesh.geometry;
+
 		geometry.setIndex( indices );
 		geometry.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 
 		geometry.computeVertexNormals();
+
+		mesh.ready = true;
+
+		survey.dispatchEvent( { type: 'changed', name: 'changed' } );
 
 		// return worker to pool
 

@@ -13,10 +13,15 @@ function WorkerPool ( script ) {
 
 	this.workers = WorkerPool.workers[ script ];
 
+	const cpuCount = window.navigator.hardwareConcurrency;
+
+	WorkerPool.maxActive = cpuCount === undefined ? 4 : cpuCount;
+
 }
 
 WorkerPool.workers = {};
 WorkerPool.activeWorkers = new Set();
+WorkerPool.pendingWork = [];
 
 WorkerPool.terminateActive = function () {
 
@@ -59,6 +64,33 @@ WorkerPool.prototype.putWorker = function ( worker ) {
 		worker.terminate();
 
 	}
+
+	if ( WorkerPool.pendingWork.length > 0 ) {
+
+		const pending = WorkerPool.pendingWork.shift();
+
+		// resubit to orginal pool
+
+		pending.pool.queueWork( pending.message, pending.callback );
+
+	}
+
+};
+
+WorkerPool.prototype.queueWork = function ( message, callback ) {
+
+	if ( WorkerPool.activeWorkers.size === WorkerPool.maxActive ) {
+
+		WorkerPool.pendingWork.push( { pool: this, message: message, callback: callback } );
+		return;
+
+	}
+
+	const worker = this.getWorker();
+
+	worker.onmessage = callback;
+
+	worker.postMessage( message );
 
 };
 

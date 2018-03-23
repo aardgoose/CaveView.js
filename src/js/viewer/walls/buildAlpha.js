@@ -83,15 +83,14 @@ function buildAlpha ( survey ) {
 
 		segmentPointSet.forEach( _addPoints );
 
-		const worker = workerPool.getWorker();
-
-		worker.onmessage = _wallsLoaded;
-
-		worker.postMessage( {
-			segment: i,
-			points: points,
-			alpha: 0.08
-		} );
+		workerPool.queueWork(
+			{
+				segment: i,
+				points: points,
+				alpha: 0.08
+			},
+			_wallsLoaded
+		);
 
 		pending++;
 

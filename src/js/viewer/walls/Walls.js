@@ -2,9 +2,9 @@ import {
 	BufferGeometry, Float32BufferAttribute,
 	FaceColors, Mesh,
 	MeshLambertMaterial
-} from '../Three';
+} from '../../Three';
 
-import { StencilLib } from '../core/StencilLib';
+import { StencilLib } from '../../core/StencilLib';
 
 const unselectedMaterial = new MeshLambertMaterial( { color: 0x444444, vertexColors: FaceColors } );
 

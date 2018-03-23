@@ -1,6 +1,6 @@
 
 import { Color, FileLoader, EventDispatcher } from '../Three';
-import { x18n } from './x18n';
+import { x18n } from '../3rdParty/x18n';
 import { lang_en } from './default-lang';
 import { defaultTheme } from './defaultTheme';
 

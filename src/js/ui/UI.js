@@ -869,6 +869,12 @@ function keyDown ( event ) {
 
 		break;
 
+	case 65: // toggle alpha wall visibility - 'a'
+
+		if ( Viewer.hasAlpha ) Viewer.alpha = ! Viewer.alpha;
+
+		break;
+
 	case 67: // toggle scraps visibility - 'c'
 
 		if ( Viewer.hasScraps ) Viewer.scraps = ! Viewer.scraps;

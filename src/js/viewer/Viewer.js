@@ -1128,7 +1128,8 @@ function loadSurvey ( newSurvey ) {
 	controls.object = camera;
 	controls.enabled = true;
 
-	survey.getRoutes().addEventListener( 'changed', _routesChanged );
+	survey.getRoutes().addEventListener( 'changed', surveyChanged );
+	survey.addEventListener( 'changed', surveyChanged );
 
 	setupView();
 
@@ -1196,11 +1197,11 @@ function loadSurvey ( newSurvey ) {
 
 	}
 
-	function _routesChanged ( /* event */ ) {
+}
 
-		setShadingMode( shadingMode );
+function surveyChanged ( /* event */ ) {
 
-	}
+	setShadingMode( shadingMode );
 
 }
 

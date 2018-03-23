@@ -14,8 +14,6 @@ function Walls () {
 
 	Mesh.call( this, geometry, unselectedMaterial );
 
-	this.type = 'Walls';
-
 	return this;
 
 }
@@ -24,6 +22,9 @@ Walls.prototype = Object.create( Mesh.prototype );
 
 Walls.prototype.onBeforeRender = StencilLib.featureOnBeforeRender;
 Walls.prototype.onAfterRender = StencilLib.featureOnAfterRender;
+
+Walls.prototype.type = 'Walls';
+Walls.prototype.ready = true;
 
 Walls.prototype.addWalls = function ( vertices, indices, indexRuns ) {
 
@@ -61,6 +62,8 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 	const indexRuns = this.indexRuns;
 
 	geometry.clearGroups();
+
+	this.visible = true && this.ready;
 
 	if ( selectedRuns.size && indexRuns ) {
 

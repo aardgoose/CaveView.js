@@ -950,7 +950,6 @@ Survey.prototype.setWallShading = function ( mesh, node, selectedMaterial ) {
 	if ( selectedMaterial ) {
 
 		mesh.setShading( this.selectedSectionIds, selectedMaterial );
-		mesh.visible = true;
 
 	} else {
 

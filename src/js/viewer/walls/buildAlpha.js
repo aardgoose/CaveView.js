@@ -1,5 +1,5 @@
 import {
-	FACE_WALLS, FACE_ALPHA,
+	FACE_ALPHA, LEG_SPLAY,
 } from '../../core/constants';
 
 import { WorkerPool } from '../../core/WorkerPool';
@@ -11,50 +11,91 @@ import { Float32BufferAttribute } from '../../Three';
 
 function buildAlpha ( survey ) {
 
-	const sVertices = survey.stations.vertices;
-	const points = [];
+	const stations = survey.stations;
 	const vertices = [];
+	const indices = [];
 
-	var i;
+	const segments = [];
 
-	// all very inefficient - copy stations position attribute buffer.
-	// tranfer to worker to offload processing of main thread
+	var points;
+	var pending = 0;
+	var i, j;
 
-	for ( i = 0; i < sVertices.length; i++ ) {
+	// allocate splays to segments
 
-		const v = sVertices[ i ];
+	if ( ! survey.hasFeature( LEG_SPLAY ) ) return;
 
-		points.push( [ v.x, v.y, v.z ] );
-		vertices.push( v.x, v.y, v.z );
+	const splayLineSegments = survey.getFeature( LEG_SPLAY );
+	const splays = splayLineSegments.geometry.vertices;
+
+	for ( i = 0; i < splays.length; i += 2 ) {
+
+		const v1 = splays[ i ];
+		const v2 = splays[ i + 1 ];
+
+		const s1 = stations.getStation( v1 );
+		const s2 = stations.getStation( v2 );
+
+		let linkedSegments;
+
+		if ( s1 === undefined || s2 === undefined ) continue;
+
+		if ( s1.hitCount === 0 ) {
+
+			linkedSegments = s2.linkedSegments;
+
+		} else {
+
+			linkedSegments = s1.linkedSegments;
+
+		}
+
+		// console.log( station.name, segments );
+
+		for ( j = 0; j < linkedSegments.length; j++ ) {
+
+			const s = linkedSegments[ j ];
+
+			if ( segments[ s ] === undefined ) segments[ s ] = new Set();
+
+			segments[ s ].add( v1 );
+			segments[ s ].add( v2 );
+
+		}
 
 	}
 
-	// add LRUD vertices
-
-	const walls = survey.getFeature( FACE_WALLS, Walls );
-
-	const position = walls.geometry.getAttribute( 'position' );
-	const tbArray = position.array;
-
-	for ( i = 0; i < position.count; i++ ) {
-
-		const offset = i * 3;
-
-		points.push( [ tbArray[ offset ], tbArray[ offset + 1 ], tbArray[ offset + 2 ] ] );
-		vertices.push( tbArray[ offset ], tbArray[ offset + 1 ], tbArray[ offset + 2 ] );
-
-	}
+	// submit each set of segment points to Worker
 
 	const workerPool = new WorkerPool( 'alphaWorker.js' );
 
-	const worker = workerPool.getWorker();
+	// TODO - make queueing pool
+	// only submit more work when current queue depth < max
 
-	worker.onmessage = _wallsLoaded;
+	for ( i = 0; i < segments.length; i++ ) {
 
-	worker.postMessage( {
-		points: points,
-		alpha: 0.08
-	} );
+		const segment = segments[ i ];
+
+		if ( segment === undefined ) continue;
+
+		const segmentPointSet = segment;
+		points = [];
+
+		segmentPointSet.forEach( _addPoints );
+
+		const worker = workerPool.getWorker();
+
+		worker.onmessage = _wallsLoaded;
+
+		worker.postMessage( {
+			segment: i,
+			points: points,
+			alpha: 0.08
+		} );
+
+		pending++;
+
+	}
 
 	const mesh = new Walls();
 
@@ -62,20 +103,37 @@ function buildAlpha ( survey ) {
 
 	survey.addFeature( mesh, FACE_ALPHA, 'CV.Survey:faces:alpha' );
 
+	return;
+
 	function _wallsLoaded ( event ) {
 
-		console.log( 'alpha walls loaded:', event.data.status );
-
 		const cells = event.data.cells;
-		const indices = [];
+		const worker = event.currentTarget;
+		const segment = event.data.segment;
+		const offset = vertices.length / 3;
+
+		console.log( 'alpha walls loaded:', segment, cells.length );
+
+		workerPool.putWorker( worker );
+
 		var i;
+
+		// populate vertices and indices in order of worker completion
+
+		const segmentPointSet = segments[ segment ];
+
+		segmentPointSet.forEach( _addVertices );
 
 		for ( i = 0; i < cells.length; i++ ) {
 
 			const c = cells[ i ];
-			indices.push( c[ 0 ], c[ 1 ] , c[ 2 ] );
+			indices.push( c[ 0 ] + offset, c[ 1 ] + offset, c[ 2 ] + offset );
 
 		}
+
+		if ( --pending > 0 ) return;
+
+		console.log( 'loading complete alpha walls' );
 
 		// build geometry
 
@@ -92,7 +150,17 @@ function buildAlpha ( survey ) {
 
 		// return worker to pool
 
-		workerPool.putWorker( worker );
+	}
+
+	function _addPoints ( point ) {
+
+		points.push( [ point.x, point.y, point.z ] );
+
+	}
+
+	function _addVertices ( point ) {
+
+		vertices.push( point.x, point.y, point.z );
 
 	}
 

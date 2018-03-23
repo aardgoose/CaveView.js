@@ -258,8 +258,6 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.loadStations( cave.surveyTree );
 
-	buildWalls( cave, this );
-
 	_loadTerrain( cave );
 
 	this.computeBoundingBoxes( cave.surveyTree );
@@ -273,6 +271,8 @@ Survey.prototype.loadCave = function ( cave ) {
 	this.loadDyeTraces();
 
 	this.routes = new Routes( metadata ).mapSurvey( this.stations, this.getFeature( LEG_CAVE ), this.surveyTree );
+
+	buildWalls( cave, this );
 
 	return;
 

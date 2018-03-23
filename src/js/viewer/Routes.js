@@ -77,7 +77,13 @@ Routes.prototype.mapSurvey = function ( stations, legsObject, surveyTree ) {
 		vertexPairToSegment.push( segment );
 
 		station = stations.getStation( v1 );
-		if ( station !== undefined ) station.legs.push( i );
+
+		if ( station !== undefined ) {
+
+			station.legs.push( i );
+			station.linkedSegments.push( segment );
+
+		}
 
 		if ( newSegment ) {
 

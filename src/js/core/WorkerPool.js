@@ -1,4 +1,4 @@
-import { Cfg } from '../core/lib';
+import { Cfg } from './lib';
 
 function WorkerPool ( script ) {
 
@@ -16,12 +16,27 @@ function WorkerPool ( script ) {
 }
 
 WorkerPool.workers = {};
+WorkerPool.activeWorkers = new Set();
+
+WorkerPool.terminateActive = function () {
+
+	const activeWorkers = WorkerPool.activeWorkers;
+
+	activeWorkers.forEach( function ( worker ) { worker.terminate(); } );
+
+	activeWorkers.clear();
+
+};
 
 WorkerPool.prototype.getWorker = function () {
 
 	if ( this.workers.length === 0 ) {
 
-		return new Worker( this.script );
+		const worker = new Worker( this.script );
+
+		WorkerPool.activeWorkers.add( worker );
+
+		return worker;
 
 	} else {
 
@@ -32,6 +47,8 @@ WorkerPool.prototype.getWorker = function () {
 };
 
 WorkerPool.prototype.putWorker = function ( worker ) {
+
+	WorkerPool.activeWorkers.delete( worker );
 
 	if ( this.workers.length <  4 ) {
 

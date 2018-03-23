@@ -21,6 +21,7 @@ import { StationPopup } from './StationPopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { Overlay } from '../terrain/Overlay';
 import { Cfg } from '../core/lib';
+import { WorkerPool } from '../core/WorkerPool';
 
 // analysis tests
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
@@ -984,6 +985,10 @@ function clearView () {
 	renderer.clear();
 
 	HUD.setVisibility( false );
+
+	// terminate all running workers (tile loading/wall building etc)
+
+	WorkerPool.terminateActive();
 
 	if ( survey ) {
 

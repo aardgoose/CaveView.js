@@ -22,7 +22,7 @@ import { DyeTraces } from './DyeTraces';
 import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
-import { buildScraps, buildCrossSections, buildHull } from './WallBuilders';
+import { buildWalls } from './walls/WallBuilders';
 
 import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
 import { StencilLib } from '../core/StencilLib';
@@ -258,9 +258,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.loadStations( cave.surveyTree );
 
-	buildScraps( cave, this );
-	buildCrossSections( cave, this );
-	buildHull( this );
+	buildWalls( cave, this );
 
 	_loadTerrain( cave );
 

@@ -336,10 +336,7 @@ function buildCrossSections ( cave, survey ) {
 
 		case WALL_DIAMOND:
 
-			vertices.push( L );
-			vertices.push( R );
-			vertices.push( U );
-			vertices.push( D );
+			vertices.push( L, R, U, D );
 
 			return 4; // number of vertices for this profile
 
@@ -350,29 +347,20 @@ function buildCrossSections ( cave, survey ) {
 			DL = L.clone().setZ( D.z );
 			DR = R.clone().setZ( D.z );
 
-			vertices.push( UL );
-			vertices.push( DR );
-			vertices.push( UR );
-			vertices.push( DL );
+			vertices.push( UL, DR, UR, DL );
 
 			return 4; // number of vertices for this profile
 
 		case WALL_OVAL:
 
-			vertices.push( L );
-			vertices.push( R );
-			vertices.push( U );
-			vertices.push( D );
+			vertices.push( L, R, U, D );
 
 			UL = L.clone().setZ( U.z ).lerp( station, ovalFactor );
 			UR = R.clone().setZ( U.z ).lerp( station, ovalFactor );
 			DL = L.clone().setZ( D.z ).lerp( station, ovalFactor );
 			DR = R.clone().setZ( D.z ).lerp( station, ovalFactor );
 
-			vertices.push( UL );
-			vertices.push( DR );
-			vertices.push( UR );
-			vertices.push( DL );
+			vertices.push( UL, DR, UR, DL );
 
 			return 8; // number of vertices for this profile
 

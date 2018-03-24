@@ -69,9 +69,6 @@ function buildAlpha ( survey ) {
 
 	const workerPool = new WorkerPool( 'alphaWorker.js' );
 
-	// TODO - make queueing pool
-	// only submit more work when current queue depth < max
-
 	for ( i = 0; i < segments.length; i++ ) {
 
 		const segment = segments[ i ];
@@ -147,7 +144,9 @@ function buildAlpha ( survey ) {
 
 		survey.dispatchEvent( { type: 'changed', name: 'changed' } );
 
-		// return worker to pool
+		// finished with all workers
+
+		workerPool.dispose();
 
 	}
 

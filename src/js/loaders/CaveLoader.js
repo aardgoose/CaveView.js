@@ -3,9 +3,9 @@ import { Cfg, replaceExtension } from '../core/lib';
 import { Svx3dHandler } from './svx3dHandler';
 import { loxHandler } from './loxHandler';
 import { kmlHandler } from './kmlHandler';
-import { FileLoader } from '../Three';
+import { FileLoader, EventDispatcher } from '../Three';
 
-function CaveLoader ( callback, progress ) {
+function CaveLoader ( callback ) {
 
 	if ( ! callback ) {
 
@@ -14,13 +14,14 @@ function CaveLoader ( callback, progress ) {
 	}
 
 	this.callback = callback;
-	this.progress = progress;
 	this.dataResponse = null;
 	this.metadataResponse = null;
 	this.taskCount = 0;
 	this.section = null;
 
 }
+
+CaveLoader.prototype = Object.create( EventDispatcher.prototype );
 
 CaveLoader.prototype.constructor = CaveLoader;
 
@@ -63,6 +64,8 @@ CaveLoader.prototype.setHandler = function ( fileName ) {
 };
 
 CaveLoader.prototype.loadURL = function ( fileName, section ) {
+
+	this.dispatchEvent( { type: 'progress', name: 'start' } );
 
 	if ( section !== undefined ) this.section = section;
 
@@ -114,7 +117,7 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	function _progress ( e ) {
 
-		if ( self.progress) self.progress( Math.round( 100 * e.loaded / e.total ) );
+		self.dispatchEvent( { type: 'progress', name: 'set', progress: Math.round( 100 * e.loaded / e.total ) } );
 
 	}
 
@@ -139,6 +142,8 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 };
 
 CaveLoader.prototype.loadFile = function ( file, section ) {
+
+	this.dispatchEvent( { type: 'progress', name: 'start' } );
 
 	if ( section !== undefined ) this.section = section;
 
@@ -183,7 +188,7 @@ CaveLoader.prototype.loadFile = function ( file, section ) {
 
 	function _progress ( e ) {
 
-		if ( self.progress ) self.progress( Math.round( 100 * e.loaded / e.total ) );
+		self.dispatchEvent( { type: 'progress', name: 'set', progress: Math.round( 100 * e.loaded / e.total ) } );
 
 	}
 
@@ -194,6 +199,8 @@ CaveLoader.prototype.callHandler = function () {
 	if ( this.dataResponse === null ) {
 
 		this.callback( false );
+		this.dispatchEvent( { type: 'progress', name: 'stop' } );
+
 		return;
 
 	}
@@ -207,6 +214,7 @@ CaveLoader.prototype.callHandler = function () {
 	this.section = null;
 
 	this.callback( this.handler.parse( data, metadata, section ) );
+	this.dispatchEvent( { type: 'progress', name: 'end' } );
 
 	this.handler = null;
 

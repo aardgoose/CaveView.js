@@ -2,6 +2,7 @@ import { Cfg } from './lib';
 
 function WorkerPool ( script ) {
 
+	this.baseScript = script;
 	this.script = Cfg.value( 'home', '' ) + 'js/workers/' + script;
 
 	if ( WorkerPool.workers[ script ] === undefined ) {
@@ -35,19 +36,21 @@ WorkerPool.terminateActive = function () {
 
 WorkerPool.prototype.getWorker = function () {
 
+	var worker;
+
 	if ( this.workers.length === 0 ) {
 
-		const worker = new Worker( this.script );
-
-		WorkerPool.activeWorkers.add( worker );
-
-		return worker;
+		worker = new Worker( this.script );
 
 	} else {
 
-		return this.workers.pop();
+		worker = this.workers.pop();
 
 	}
+
+	WorkerPool.activeWorkers.add( worker );
+
+	return worker;
 
 };
 
@@ -77,6 +80,18 @@ WorkerPool.prototype.putWorker = function ( worker ) {
 
 };
 
+WorkerPool.prototype.runWorker = function ( message, callback ) {
+
+	const worker = this.getWorker();
+
+	worker.onmessage = callback;
+
+	worker.postMessage( message );
+
+	return worker;
+
+};
+
 WorkerPool.prototype.queueWork = function ( message, callback ) {
 
 	if ( WorkerPool.activeWorkers.size === WorkerPool.maxActive ) {
@@ -86,11 +101,7 @@ WorkerPool.prototype.queueWork = function ( message, callback ) {
 
 	}
 
-	const worker = this.getWorker();
-
-	worker.onmessage = callback;
-
-	worker.postMessage( message );
+	this.runWorker( message, callback );
 
 };
 
@@ -101,6 +112,8 @@ WorkerPool.prototype.dispose = function () {
 		this.workers[ i ].terminate();
 
 	}
+
+	WorkerPool.workers[ this.baseScript ] = [];
 
 };
 

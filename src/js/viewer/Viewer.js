@@ -1107,7 +1107,6 @@ function loadSurvey ( newSurvey ) {
 
 	} else {
 
-
 		survey.addStatic( terrain );
 
 		setTerrainShadingMode( terrainShadingMode );
@@ -1147,20 +1146,26 @@ function loadSurvey ( newSurvey ) {
 			terrain.tileArea( survey.limits );
 			terrain.setDefaultOverlay( overlays[ activeOverlay ] );
 
-			survey.addStatic( terrain );
-
 		} else {
 
-			terrain = null;
-
-			survey.asyncTasks();
-
-			setupView();
-			renderView();
-
-			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+			_noTerrain();
 
 		}
+
+	}
+
+	function _noTerrain () {
+
+		console.log( 'errors loading terrain' );
+
+		terrain = null;
+
+		survey.asyncTasks();
+
+		setupView();
+		renderView();
+
+		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 	}
 
@@ -1168,9 +1173,8 @@ function loadSurvey ( newSurvey ) {
 
 		if ( errors > 0 ) {
 
-			terrain = null;
-			console.log( 'errors loading terrain' );
-			survey.asyncTasks();
+			_noTerrain();
+			if ( firstTiles ) return;
 
 		}
 
@@ -1179,25 +1183,22 @@ function loadSurvey ( newSurvey ) {
 			// delayed notification to ensure and event listeners get accurate terrain information
 			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
+			survey.addStatic( terrain );
 			survey.asyncTasks();
 
 			setupView();
+
+			loadTerrainListeners();
+
+			renderDepthTexture();
+
+			applyTerrainDatumShift( true );
 
 			firstTiles = false;
 
 		}
 
 		renderView();
-
-		if ( terrain !== null ) {
-
-			loadTerrainListeners();
-
-			if ( terrain.depthTexture === null ) renderDepthTexture();
-
-			applyTerrainDatumShift( true );
-
-		}
 
 	}
 

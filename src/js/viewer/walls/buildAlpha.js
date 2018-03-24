@@ -18,7 +18,9 @@ function buildAlpha ( survey ) {
 	const segments = [];
 
 	var points;
+	var tasks = 0;
 	var pending = 0;
+
 	var i, j;
 
 	// allocate splays to segments
@@ -65,6 +67,8 @@ function buildAlpha ( survey ) {
 
 	}
 
+	survey.dispatchEvent( { type: 'progress', name: 'start' } );
+
 	// submit each set of segment points to Worker
 
 	const workerPool = new WorkerPool( 'alphaWorker.js' );
@@ -80,6 +84,9 @@ function buildAlpha ( survey ) {
 
 		segmentPointSet.forEach( _addPoints );
 
+		pending++;
+		tasks++;
+
 		workerPool.queueWork(
 			{
 				segment: i,
@@ -88,8 +95,6 @@ function buildAlpha ( survey ) {
 			},
 			_wallsLoaded
 		);
-
-		pending++;
 
 	}
 
@@ -108,7 +113,7 @@ function buildAlpha ( survey ) {
 		const segment = event.data.segment;
 		const offset = vertices.length / 3;
 
-		console.log( 'alpha walls loaded:', segment, cells.length );
+		// console.log( 'alpha walls loaded:', segment, cells.length );
 
 		workerPool.putWorker( worker );
 
@@ -127,7 +132,11 @@ function buildAlpha ( survey ) {
 
 		}
 
-		if ( --pending > 0 ) return;
+		pending--;
+
+		survey.dispatchEvent( { type: 'progress', name: 'set', progress: 100 * ( tasks - pending ) / tasks } );
+
+		if ( pending > 0 ) return;
 
 		console.log( 'loading complete alpha walls' );
 
@@ -143,6 +152,7 @@ function buildAlpha ( survey ) {
 		mesh.ready = true;
 
 		survey.dispatchEvent( { type: 'changed', name: 'changed' } );
+		survey.dispatchEvent( { type: 'progress', name: 'end' } );
 
 		// finished with all workers
 

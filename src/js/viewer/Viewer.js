@@ -1101,6 +1101,8 @@ function loadSurvey ( newSurvey ) {
 	if ( terrain === null ) {
 
 		terrain = new WebTerrain( survey, _terrainReady, _tilesLoaded );
+		HUD.getProgressDial( 0 ).watch( terrain );
+
 		syncTerrainLoading = false;
 
 	} else {

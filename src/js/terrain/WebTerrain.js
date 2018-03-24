@@ -1,6 +1,5 @@
 import { CommonTerrain } from './CommonTerrain';
 import { Tile } from './Tile';
-import { HUD } from '../hud/HUD';
 import { WorkerPool } from '../core/WorkerPool';
 import { Cfg } from '../core/lib';
 import { SHADING_OVERLAY } from '../core/constants';
@@ -45,12 +44,6 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 	this.material = this.getShadedMaterial();
 
 	this.workerPool = new WorkerPool( 'webTileWorker.js' );
-
-	if ( HUD !== undefined ) {
-
-		this.progressDial = HUD.getProgressDial();
-
-	}
 
 	const self = this;
 
@@ -236,7 +229,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 		if ( self.dying ) {
 
-			self.progressDial.end();
+			self.dispatchEvent( { type: 'progress', name: 'end' } );
 			return;
 
 		}
@@ -247,7 +240,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 			tile.setFailed();
 
-			if ( self.progressDial ) self.progressDial.end();
+			self.dispatchEvent( { type: 'progress', name: 'end' } );
 
 			// signal error to caller
 			if ( self.tilesLoading === 0 ) self.onLoaded( self.childErrors );
@@ -256,15 +249,15 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 		}
 
-		if ( self.progressDial ) self.progressDial.addValue( self.progressInc );
+		self.dispatchEvent( { type: 'progress', name: 'add', value: self.progressInc } );
 
 		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox, self.material );
 
-		if ( self.progressDial ) self.progressDial.addValue( self.progressInc );
+		self.dispatchEvent( { type: 'progress', name: 'add', value: self.progressInc } );
 
 		if ( tile.setLoaded( self.activeOverlay, self.opacity, self.onLoaded ) ) {
 
-			if ( self.progressDial ) self.progressDial.end();
+			self.dispatchEvent( { type: 'progress', name: 'end' } );
 
 		}
 
@@ -318,9 +311,9 @@ WebTerrain.prototype.tileArea = function ( limits, tile ) {
 
 	}
 
-	if ( this.tilesLoading > 0 && this.progressDial !== undefined ) {
+	if ( this.tilesLoading > 0 ) {
 
-		this.progressDial.start( 'Loading ' + this.tilesLoading + ' terrain tiles' );
+		this.dispatchEvent( { type: 'progress', name: 'start' } );
 		this.progressInc = 100 / ( this.tilesLoading * 2 );
 
 	}
@@ -502,7 +495,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 	if ( resurrectCount !== 0 ) {
 
-		if ( this.progressDial ) this.progressDial.start( 'Resurrecting tiles' );
+		this.dispatchEvent( { type: 'progress', name: 'start' } );
 
 		for ( i = 0; i < resurrectCount; i++ ) {
 

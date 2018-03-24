@@ -153,6 +153,11 @@ ProgressDial.prototype.handleProgess = function ( event ) {
 		this.set( event.progress );
 		break;
 
+	case 'add':
+
+		this.addValue( event.value );
+		break;
+
 	case 'end':
 
 		this.end();

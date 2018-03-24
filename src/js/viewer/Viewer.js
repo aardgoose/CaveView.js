@@ -392,9 +392,9 @@ function init ( domID, configuration ) { // public method
 
 	HUD.init( container, renderer );
 
-	const progress = HUD.getProgressDial( 0 );
+	caveLoader = new CaveLoader( caveLoaded );
 
-	caveLoader = new CaveLoader( caveLoaded, progress.set.bind( progress ) );
+	HUD.getProgressDial( 0 ).watch( caveLoader );
 
 	// check if we are defaulting to full screen
 	if ( isFullscreen() ) setBrowserFullscreen( true );
@@ -1020,16 +1020,12 @@ function clearView () {
 
 function loadCave ( file, section ) {
 
-	HUD.getProgressDial( 0 ).start();
-
 	if ( file instanceof File ) {
 
-		// progressBar.start( 'Loading file ' + file.name + ' ...' );
 		caveLoader.loadFile( file );
 
 	} else {
 
-		// progressBar.start( 'Loading file ' + file + ' ...' );
 		caveLoader.loadURL( file, section );
 
 	}
@@ -1037,8 +1033,6 @@ function loadCave ( file, section ) {
 }
 
 function caveLoaded ( cave ) {
-
-	HUD.getProgressDial( 0 ).end();
 
 	if ( ! cave ) {
 

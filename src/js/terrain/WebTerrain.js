@@ -204,30 +204,30 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 	// get a web worker from the pool and create new geometry in it
 
-	const tileLoader = this.workerPool.getWorker();
-
-	tileLoader.onmessage = _mapLoaded;
-
-	tileLoader.postMessage( {
-		tileSet: tileSet,
-		divisions: divisions,
-		resolution: resolution,
-		x: x,
-		y: y,
-		z: z,
-		clip: clip,
-		offsets: this.offsets
-	} );
+	this.workerPool.runWorker(
+		{
+			tileSet: tileSet,
+			divisions: divisions,
+			resolution: resolution,
+			x: x,
+			y: y,
+			z: z,
+			clip: clip,
+			offsets: this.offsets
+		},
+		_mapLoaded
+	);
 
 	return;
 
 	function _mapLoaded ( event ) {
 
 		const tileData = event.data;
+		const worker = event.currentTarget;
 
 		// return worker to pool
 
-		self.workerPool.putWorker( tileLoader );
+		self.workerPool.putWorker( worker );
 
 		--self.tilesLoading;
 

@@ -392,7 +392,7 @@ function init ( domID, configuration ) { // public method
 
 	HUD.init( container, renderer );
 
-	const progress = HUD.getProgressDial();
+	const progress = HUD.getProgressDial( 0 );
 
 	caveLoader = new CaveLoader( caveLoaded, progress.set.bind( progress ) );
 
@@ -1020,7 +1020,7 @@ function clearView () {
 
 function loadCave ( file, section ) {
 
-	HUD.getProgressDial().start();
+	HUD.getProgressDial( 0 ).start();
 
 	if ( file instanceof File ) {
 
@@ -1038,7 +1038,7 @@ function loadCave ( file, section ) {
 
 function caveLoaded ( cave ) {
 
-	HUD.getProgressDial().end();
+	HUD.getProgressDial( 0 ).end();
 
 	if ( ! cave ) {
 
@@ -1084,6 +1084,8 @@ function loadSurvey ( newSurvey ) {
 
 	survey = newSurvey;
 
+	HUD.getProgressDial( 1 ).watch( survey );
+
 	stats = getLegStats( LEG_CAVE );
 
 	setScale( survey );
@@ -1115,6 +1117,7 @@ function loadSurvey ( newSurvey ) {
 		setTerrainShadingMode( terrainShadingMode );
 
 		renderDepthTexture();
+		survey.asyncTasks();
 
 	}
 
@@ -1154,6 +1157,8 @@ function loadSurvey ( newSurvey ) {
 
 			terrain = null;
 
+			survey.asyncTasks();
+
 			setupView();
 			renderView();
 
@@ -1169,6 +1174,7 @@ function loadSurvey ( newSurvey ) {
 
 			terrain = null;
 			console.log( 'errors loading terrain' );
+			survey.asyncTasks();
 
 		}
 
@@ -1176,6 +1182,8 @@ function loadSurvey ( newSurvey ) {
 
 			// delayed notification to ensure and event listeners get accurate terrain information
 			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+
+			survey.asyncTasks();
 
 			setupView();
 

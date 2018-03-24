@@ -22,7 +22,7 @@ import { DyeTraces } from './DyeTraces';
 import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
-import { buildWalls } from './walls/WallBuilders';
+import { buildWallsSync, buildWallsAsync } from './walls/WallBuilders';
 
 import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
 import { StencilLib } from '../core/StencilLib';
@@ -272,7 +272,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.routes = new Routes( metadata ).mapSurvey( this.stations, this.getFeature( LEG_CAVE ), this.surveyTree );
 
-	buildWalls( cave, this );
+	buildWallsSync( cave, this );
 
 	return;
 
@@ -392,6 +392,12 @@ Survey.prototype.loadCave = function ( cave ) {
 		return;
 
 	}
+
+};
+
+Survey.prototype.asyncTasks = function () {
+
+	buildWallsAsync( this );
 
 };
 

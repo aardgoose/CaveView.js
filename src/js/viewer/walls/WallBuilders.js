@@ -2,14 +2,19 @@ import { buildScraps } from './buildScraps';
 import { buildCrossSections } from './buildCrossSections';
 import { buildAlpha } from './buildAlpha';
 
-function buildWalls ( cave, survey ) {
+function buildWallsSync ( cave, survey ) {
 
 	buildScraps( cave, survey );
 	buildCrossSections( cave, survey );
+
+}
+
+function buildWallsAsync ( survey ) {
+
 	buildAlpha( survey );
 
 }
 
-export { buildWalls };
+export { buildWallsSync, buildWallsAsync };
 
 // EOF

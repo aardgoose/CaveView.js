@@ -5,7 +5,6 @@ import { Cfg } from '../core/lib';
 
 function ContourMaterial () {
 
-
 	ShaderMaterial.call( this, {
 		vertexShader:    Shaders.contourVertexShader,
 		fragmentShader:  Shaders.contourFragmentShader,
@@ -17,6 +16,9 @@ function ContourMaterial () {
 			contourColor:   { value: Cfg.themeColor( 'shading.contours.line' ) }
 		}
 	} );
+
+	this.alphaTest = 0.8;
+	this.transparent = true;
 
 	this.extensions.derivatives = true;
 

@@ -11,7 +11,7 @@ void main() {
 
 	float c = 1.0 - smoothstep( df * 1.0, df * 2.0, f );
 
-	gl_FragColor = vec4( c * contourColor, 1.0);
+	gl_FragColor = vec4( c * contourColor, c );
 
 }
 

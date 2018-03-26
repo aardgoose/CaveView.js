@@ -191,6 +191,8 @@ function getContourMaterial () {
 		material = new ContourMaterial();
 		cache.set( 'contour', material );
 
+		depthMaterials.push( material );
+
 	}
 
 	return material;
@@ -232,7 +234,6 @@ function getClusterMaterial ( count ) {
 }
 
 function setTerrain( terrain ) {
-
 
 	terrain.addEventListener( 'datumShiftChange', updateDatumShifts );
 

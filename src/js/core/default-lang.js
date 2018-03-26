@@ -71,7 +71,8 @@ const lang_en = {
 				caption: 'Shading',
 				relief: 'relief shading',
 				height: 'by height',
-				overlay: 'map overlay'
+				overlay: 'map overlay',
+				contours: 'contours'
 			},
 			overlay: {
 				caption: 'Overlay'

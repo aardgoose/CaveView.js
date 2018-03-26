@@ -1,6 +1,7 @@
 
 import { CursorMaterial } from './CursorMaterial';
 import { ClusterMaterial } from './ClusterMaterial';
+import { ContourMaterial } from './ContourMaterial';
 import { DepthMaterial } from './DepthMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMapMaterial } from './DepthMapMaterial';
@@ -181,6 +182,21 @@ function getLineMaterial () {
 
 }
 
+function getContourMaterial () {
+
+	var material = cache.get( 'contour' );
+
+	if ( material === undefined ) {
+
+		material = new ContourMaterial();
+		cache.set( 'contour', material );
+
+	}
+
+	return material;
+
+}
+
 function getGlyphMaterial ( glyphAtlasSpec, rotation, colour ) {
 
 	const name = JSON.stringify( glyphAtlasSpec ) + ':' + rotation.toString();
@@ -254,6 +270,7 @@ function flushCache( surveyIn ) {
 }
 
 export const Materials = {
+	getContourMaterial:     getContourMaterial,
 	getHeightMaterial:      getHeightMaterial,
 	getDepthMapMaterial:    getDepthMapMaterial,
 	getDepthMaterial:       getDepthMaterial,

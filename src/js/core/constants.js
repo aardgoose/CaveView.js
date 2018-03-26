@@ -40,6 +40,7 @@ export const SHADING_DEPTH_CURSOR = 11;
 export const SHADING_AXIS         = 12;
 export const SHADING_DISTANCE     = 13;
 export const SHADING_BECK         = 14;
+export const SHADING_CONTOURS     = 15;
 
 // layer tags for scene objects
 

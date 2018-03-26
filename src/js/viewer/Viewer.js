@@ -126,16 +126,7 @@ var popup = null;
 const Viewer = Object.create( EventDispatcher.prototype );
 
 function init ( domID, configuration ) { // public method
-/*
-	WeakMap.prototype.__get = WeakMap.prototype.get;
 
-	WeakMap.prototype.get = function ( obj ) {
-
-		console.log( Object.getPrototypeOf( obj ).constructor.name );
-		return this.__get( obj );
-
-	};
-*/
 	console.log( 'CaveView v' + VERSION );
 
 	container = document.getElementById( domID );
@@ -372,7 +363,11 @@ function init ( domID, configuration ) { // public method
 			writeable: true,
 			get: isFullscreen,
 			set: setFullscreen
-		}
+		},
+
+		'hasContours': {
+			get: function () { return ! ( renderer.extensions.get( 'OES_standard_derivatives' ) === null ); }
+		},
 
 	} );
 

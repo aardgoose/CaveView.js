@@ -361,7 +361,11 @@ function init ( domID, configuration ) { // public method
 			writeable: true,
 			get: isFullscreen,
 			set: setFullscreen
-		}
+		},
+
+		'hasContours': {
+			get: function () { return ! ( renderer.extensions.get( 'OES_standard_derivatives' ) === null ); }
+		},
 
 	} );
 

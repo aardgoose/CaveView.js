@@ -2,7 +2,7 @@
 const defaultTheme = {
 	background: 0x000000,
 	lighting: {
-		azimuth: 315,
+		azimuth: 225,
 		inclination: 45
 	},
 	hud: {
@@ -56,7 +56,11 @@ const defaultTheme = {
 		cursor: 0xffff00,
 		cursorBase: 0x888888,
 		unselected: 0x444444,
-		unconnected: 0x888888
+		unconnected: 0x888888,
+		contours: {
+			line: 0x00ff00,
+			interval: 10
+		}
 	},
 	popup: {
 		text: 0xffffff,

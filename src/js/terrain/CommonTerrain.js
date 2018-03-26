@@ -1,5 +1,5 @@
 
-import { MATERIAL_SURFACE, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED } from '../core/constants';
+import { MATERIAL_SURFACE, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED, SHADING_CONTOURS } from '../core/constants';
 import { Materials } from '../materials/Materials';
 import { unpackRGBA } from '../core/unpackRGBA';
 
@@ -81,6 +81,12 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 	case SHADING_SHADED:
 
 		material = this.getShadedMaterial();
+
+		break;
+
+	case SHADING_CONTOURS:
+
+		material = Materials.getContourMaterial();
 
 		break;
 

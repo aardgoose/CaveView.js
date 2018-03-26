@@ -2,8 +2,8 @@ import {
 	VERSION, LEG_CAVE,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, STATION_ENTRANCE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
-	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
-	VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
+	SHADING_SINGLE, SHADING_SHADED, SHADING_SURVEY, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE, SHADING_CONTOURS,
+	SHADING_BECK, VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
 } from '../core/constants';
 
 import { replaceExtension, Cfg } from '../core/lib';
@@ -657,6 +657,7 @@ function initSurfacePage () {
 		const terrainShadingModesActive = Object.assign( {}, terrainShadingModes );
 
 		if ( overlays.length > 0 ) terrainShadingModesActive[ 'terrain.shading.overlay' ] = SHADING_OVERLAY;
+		if ( Viewer.hasContours ) terrainShadingModesActive[ 'terrain.shading.contours' ] = SHADING_CONTOURS;
 
 		terrainControls.push( page.addSelect( 'terrain.shading.caption', terrainShadingModesActive, Viewer, 'terrainShading' ) );
 

@@ -1,4 +1,7 @@
 
+import contourVertexShader from './contourVertexShader.glsl';
+import contourFragmentShader from './contourFragmentShader.glsl';
+
 import cursorVertexShader from './cursorVertexShader.glsl';
 import cursorFragmentShader from './cursorFragmentShader.glsl';
 
@@ -27,6 +30,8 @@ import waterVertexShader from './waterVertexShader.glsl';
 import waterFragmentShader from './waterFragmentShader.glsl';
 
 export const Shaders = {
+	contourVertexShader:	contourVertexShader,
+	contourFragmentShader:	contourFragmentShader,
 	cursorVertexShader:		cursorVertexShader,
 	cursorFragmentShader:	cursorFragmentShader,
 	depthMapVertexShader:	depthMapVertexShader,

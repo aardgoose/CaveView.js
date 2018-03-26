@@ -156,6 +156,8 @@ CommonTerrain.prototype.applyDatumShift = function ( mode ) {
 
 	}
 
+	this.updateMatrix();
+
 	this.dispatchEvent( { type: 'datumShiftChange', value: this.activeDatumShift } );
 
 };

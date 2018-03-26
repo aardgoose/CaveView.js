@@ -58,7 +58,7 @@ const defaultTheme = {
 		unselected: 0x444444,
 		unconnected: 0x888888,
 		contours: {
-			line: 0x00ff00,
+			line: 0x008800,
 			interval: 10
 		}
 	},

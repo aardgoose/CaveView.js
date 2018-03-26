@@ -2,6 +2,7 @@
 import { MATERIAL_SURFACE, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED, SHADING_CONTOURS } from '../core/constants';
 import { Materials } from '../materials/Materials';
 import { unpackRGBA } from '../core/unpackRGBA';
+import { StencilLib } from '../core/StencilLib';
 
 import {
 	MeshLambertMaterial,
@@ -63,6 +64,8 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 	var material;
 	var hideAttribution = true;
 
+	StencilLib.featureShowThrough = true;
+
 	switch ( mode ) {
 
 	case SHADING_HEIGHT:
@@ -87,6 +90,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 	case SHADING_CONTOURS:
 
 		material = Materials.getContourMaterial();
+		StencilLib.featureShowThrough = false;
 
 		break;
 
@@ -155,6 +159,8 @@ CommonTerrain.prototype.applyDatumShift = function ( mode ) {
 		this.activeDatumShift = 0;
 
 	}
+
+	this.updateMatrix();
 
 	this.dispatchEvent( { type: 'datumShiftChange', value: this.activeDatumShift } );
 

@@ -37,7 +37,6 @@ export const SHADING_SHADED       = 8;
 export const SHADING_DEPTH        = 9;
 export const SHADING_PATH         = 10;
 export const SHADING_DEPTH_CURSOR = 11;
-export const SHADING_AXIS         = 12;
 export const SHADING_DISTANCE     = 13;
 export const SHADING_BECK         = 14;
 export const SHADING_CONTOURS     = 15;

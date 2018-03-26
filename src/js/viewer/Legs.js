@@ -40,7 +40,7 @@ Legs.prototype.addLegs = function ( vertices, colors, legRuns ) {
 
 		// FIXME: alllocate new buffer of old + new length, adjust indexs and append old data after new data.
 
-		console.error( 'Walls: appending not yet implemented' );
+		console.error( 'Legs: appending not yet implemented' );
 
 	}
 

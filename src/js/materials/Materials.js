@@ -21,6 +21,22 @@ var perSurveyMaterials = {};
 var viewer;
 var survey;
 
+function cacheMaterial ( name, material ) {
+
+	cache.set( name, material );
+
+	return material;
+
+}
+function cacheSurveyMaterial ( name, material ) {
+
+	cache.set( name, material );
+	perSurveyMaterials[ name ] = material;
+
+	return material;
+
+}
+
 function updateMaterialCursor ( material ) {
 
 	viewer.initCursorHeight = material.setCursor( viewer.cursorHeight );
@@ -56,10 +72,7 @@ function getHeightMaterial ( type ) {
 
 	if ( material === undefined ) {
 
-		material = new HeightMaterial( type, survey.modelLimits );
-		cache.set( name, material );
-
-		perSurveyMaterials[ name ] = material;
+		material = cacheSurveyMaterial( name, new HeightMaterial( type, survey.modelLimits ) );
 
 	}
 
@@ -81,11 +94,8 @@ function getDepthMaterial ( type ) {
 
 	if ( material === undefined ) {
 
-		material = new DepthMaterial( type, survey.modelLimits, survey.terrain );
+		material = cacheSurveyMaterial( name, new DepthMaterial( type, survey.modelLimits, survey.terrain ) );
 
-		cache.set( name, material );
-
-		perSurveyMaterials[ name ] = material;
 		depthMaterials.push( material );
 
 	}
@@ -102,11 +112,7 @@ function getCursorMaterial ( type ) {
 
 	if ( material === undefined ) {
 
-		material = new CursorMaterial( type, survey.modelLimits );
-
-		perSurveyMaterials[ name ] = material;
-
-		cache.set( name, material );
+		material = cacheSurveyMaterial( name, new CursorMaterial( type, survey.modelLimits ) );
 
 	}
 
@@ -130,12 +136,9 @@ function getDepthCursorMaterial( type ) {
 
 	if ( material === undefined ) {
 
-		material = new DepthCursorMaterial( type, survey.modelLimits, survey.terrain );
+		material = cacheSurveyMaterial( name, new DepthCursorMaterial( type, survey.modelLimits, survey.terrain ) );
 
-		perSurveyMaterials[ name ] = material;
 		depthMaterials.push( material );
-
-		cache.set( name, material );
 
 	}
 
@@ -158,8 +161,7 @@ function getSurfaceMaterial ( color ) {
 
 	if ( material === undefined ) {
 
-		material = new MeshLambertMaterial( { color: color, vertexColors: NoColors } );
-		cache.set( name, material );
+		material = cacheMaterial( name, new MeshLambertMaterial( { color: color, vertexColors: NoColors } ) );
 
 	}
 
@@ -173,8 +175,7 @@ function getLineMaterial () {
 
 	if ( material === undefined ) {
 
-		material = new LineBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } );
-		cache.set( 'line', material );
+		material = cacheMaterial( 'line',  new LineBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
 
 	}
 
@@ -188,11 +189,9 @@ function getContourMaterial ( terrain ) {
 
 	if ( material === undefined ) {
 
-		material = new ContourMaterial( terrain );
-		cache.set( 'contour', material );
+		material = cacheSurveyMaterial( 'contour', new ContourMaterial( terrain ) );
 
 		depthMaterials.push( material );
-		perSurveyMaterials[ 'contour' ] = material;
 
 	}
 
@@ -208,8 +207,7 @@ function getGlyphMaterial ( glyphAtlasSpec, rotation, colour ) {
 
 	if ( material === undefined ) {
 
-		material = new GlyphMaterial( glyphAtlasSpec, viewer.container, rotation, colour );
-		cache.set( name, material );
+		material = cacheMaterial( name, new GlyphMaterial( glyphAtlasSpec, viewer.container, rotation, colour ) );
 
 	}
 
@@ -225,8 +223,7 @@ function getClusterMaterial ( count ) {
 
 	if ( material === undefined ) {
 
-		material = new ClusterMaterial( count );
-		cache.set( name, material );
+		material = cacheMaterial( name, new ClusterMaterial( count ) );
 
 	}
 

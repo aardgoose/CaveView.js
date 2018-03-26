@@ -40,7 +40,8 @@ const legShadingModes = {
 	'shading.fixed':         SHADING_SINGLE,
 	'shading.survey':        SHADING_SURVEY,
 	'shading.route':         SHADING_PATH,
-	'shading.distance':      SHADING_DISTANCE
+	'shading.distance':      SHADING_DISTANCE,
+	'shading.back':          SHADING_BECK
 };
 
 const surfaceShadingModes = {
@@ -658,7 +659,7 @@ function initSurfacePage () {
 		const terrainShadingModesActive = Object.assign( {}, terrainShadingModes );
 
 		if ( overlays.length > 0 ) terrainShadingModesActive[ 'terrain.shading.overlay' ] = SHADING_OVERLAY;
-		if ( Viewer.hasContours ) terrainShadingModesActive[ 'terrain.shading.contours' ] = SHADING_CONTOURS;
+		if ( Viewer.hasContours ) terrainShadingModesActive[ 'terrain.shading.contours' + ' (' + Cfg.themeValue( 'shading.contours.interval' ) + '\u202fm)' ] = SHADING_CONTOURS;
 
 		terrainControls.push( page.addSelect( 'terrain.shading.caption', terrainShadingModesActive, Viewer, 'terrainShading' ) );
 

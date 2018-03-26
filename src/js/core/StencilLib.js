@@ -1,7 +1,12 @@
 
+
 const StencilLib = {
 
+	featureShowThrough: true,
+
 	featureOnBeforeRender: function ( renderer ) {
+
+		if ( ! StencilLib.featureShowThrough ) return;
 
 		const stencil = renderer.state.buffers.stencil;
 		const gl = renderer.context;
@@ -15,6 +20,8 @@ const StencilLib = {
 
 	featureOnAfterRender: function ( renderer ) {
 
+		if ( ! StencilLib.featureShowThrough ) return;
+
 		const stencil = renderer.state.buffers.stencil;
 
 		stencil.setTest( false );
@@ -23,6 +30,8 @@ const StencilLib = {
 	},
 
 	terrainOnBeforeRender: function ( renderer ) {
+
+		if ( ! StencilLib.featureShowThrough ) return;
 
 		const stencil = renderer.state.buffers.stencil;
 		const gl = renderer.context;
@@ -34,6 +43,8 @@ const StencilLib = {
 	},
 
 	terrainOnAfterRender: function ( renderer ) {
+
+		if ( ! StencilLib.featureShowThrough ) return;
 
 		const stencil = renderer.state.buffers.stencil;
 

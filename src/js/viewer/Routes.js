@@ -1,6 +1,5 @@
 
 import { EventDispatcher } from '../Three';
-import { Beckeriser } from './Beckeriser';
 
 function Routes ( metadataSource ) {
 
@@ -131,12 +130,6 @@ Routes.prototype.mapSurvey = function ( stations, legsObject, surveyTree ) {
 	}
 
 	return this;
-
-};
-
-Routes.prototype.createWireframe = function ( m ) {
-
-	return new Beckeriser( this.segmentMap, m );
 
 };
 

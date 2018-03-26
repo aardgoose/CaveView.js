@@ -40,9 +40,7 @@ const legShadingModes = {
 	'shading.fixed':         SHADING_SINGLE,
 	'shading.survey':        SHADING_SURVEY,
 	'shading.route':         SHADING_PATH,
-	'shading.distance':      SHADING_DISTANCE,
-	'shading.beck':          SHADING_BECK
-//	'axis':               SHADING_AXIS
+	'shading.distance':      SHADING_DISTANCE
 };
 
 const surfaceShadingModes = {
@@ -891,13 +889,6 @@ function keyDown ( event ) {
 	case 70: // toggle full screen - 'f'
 
 		toggleFullScreen();
-
-		break;
-
-	case 73: // toggle entrance labels - 'i'
-
-		// Viewer.developerInfo = true;
-		Viewer.shadingMode = SHADING_BECK;
 
 		break;
 

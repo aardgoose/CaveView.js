@@ -326,8 +326,20 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 		for ( var p in obj ) {
 
 			const opt = document.createElement( 'option' );
+			const self = this;
 
-			opt.text  = this.i18n( p );
+			const s = p.split( ' ' );
+
+			if ( s.length > 1 ) {
+
+				opt.text  = s.reduce( function ( res, val) { return res + ' ' + self.i18n( val ); }, '' ).trim();
+
+			} else {
+
+				opt.text  = self.i18n( p );
+
+			}
+
 			opt.value = obj[ p ];
 
 			if ( opt.value == trgObj[ property ] ) opt.selected = true;

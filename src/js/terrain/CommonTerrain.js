@@ -89,7 +89,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	case SHADING_CONTOURS:
 
-		material = Materials.getContourMaterial();
+		material = Materials.getContourMaterial( this );
 		StencilLib.featureShowThrough = false;
 
 		break;

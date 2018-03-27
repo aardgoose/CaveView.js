@@ -1,5 +1,17 @@
 
 // polyfill padStart for IE11 - now supported for Chrome, FireFox and Edge
+if ( Math.log2 === undefined ) {
+
+	// Missing in IE
+	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log2
+
+	Math.log2 = function ( value ) {
+
+		return Math.log( value ) * Math.LOG2E;
+
+	};
+
+}
 
 if ( ! String.prototype.startsWith) {
 

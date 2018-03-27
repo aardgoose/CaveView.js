@@ -1,6 +1,7 @@
 import { buildScraps } from './buildScraps';
 import { buildCrossSections } from './buildCrossSections';
 import { buildAlpha } from './buildAlpha';
+import { Cfg } from '../../core/lib';
 
 function buildWallsSync ( cave, survey ) {
 
@@ -11,7 +12,7 @@ function buildWallsSync ( cave, survey ) {
 
 function buildWallsAsync ( survey ) {
 
-	buildAlpha( survey );
+	if ( Cfg.value( 'alphaWalls', false ) ) buildAlpha( survey );
 
 }
 

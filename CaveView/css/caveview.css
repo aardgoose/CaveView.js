@@ -2,100 +2,12 @@ body {
 	font-family: 'Source Sans Pro Regular','Helvetica Neue',Helvetica,Arial,sans-serif;
 }
 
-div.cv-panel {
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: 100;
-	background-color: rgba(50,50,50,0.5);
-	color: yellowgreen;
-	border: 1px solid black;
-	border-radius: 5px;
-}
-
-div.cv-compass, div.cv-ahi {
-	position: absolute; 
-	bottom: 95px;
-	right: 5px;
-	margin: 0;
-	padding-top: 2px;
-	/*	border: 1px solid white; */
-	text-align: center;
-	width: 78px;
-	height: 19px;
-	z-index: 50;
-	background-color: rgba(50,50,50,0.5);
-	background-color: black;
-	color: white;
-}
-	
-div.cv-ahi {
-	right: 95px;
-}
-
-div.scale-legend {
-	position: absolute;
-	color: white;
-	background-color: black;
-	bottom: 30px;
-}
-
-div.linear-scale {
-	position: absolute;
-	color: white;
-	background-color: black;
-	right: 30px;
-	width: 40px;
-	padding: 2px 0;
-	text-align: right;
-	border: 1px solid black;
-	font-size: 14px;
-}
-
-div.linear-scale-caption {
-	position: absolute;
-	color: white;
-	background-color: black;
-	right: 5px;
-	width: 65px;
-	padding: 2px 0 5px 0;
-	text-align: left;
-	border: 1px solid black;
-	font-size: 14px;
-}
-
-#min-div {
-	border-bottom: 1px solid white;
-}
-
-#max-div {
-	border-top: 1px solid white;
-}
-
-#angle-legend {
-	position: absolute;
-	width: 80px;
-	right: 5px;
-	bottom: 180px;
-	color: white;
-	background-color: black;
-	font-size: 14px;
-	text-align: center;
-}
-
 .cv-container {
 	position: relative;
 	overflow: hidden;
 	height: 600px;
 	width: 1000px;
-}
-
-#progress-bar {
-	position: absolute;
-	top: 55%;
-	height: 20px;
-	border: 1px solid white;
-	z-index: 100;
+	touch-action: none;
 }
 
 #status-text {
@@ -255,12 +167,15 @@ div.linear-scale-caption {
 	border-top: 1px solid black;
 	border-left: thin #888888 solid;
 	background-color: #444444;
-	background-position: center;
+	background-origin: content-box;
+	background-image: url(../images/icons.png);
+	padding: 1px;
 }
 
 #cv-tab-box #close {
 	background-color: #222222;
-	background-image: url(../images/ic_hide_left.png);
+	background-image: url(../images/icons.png);
+	background-position: -360px;
 	border-left: none;
 	display: none;
 }
@@ -286,35 +201,38 @@ div.linear-scale-caption {
 }
 
 #fullscreen.expand {
-	background-image: url(../images/ic_expand_all.png);
+	background-image: url(../images/icons.png);
+	background-position: -252px;
 }
 
 #fullscreen.collapse {
-	background-image: url(../images/ic_collapse_all.png);
+	background-image: url(../images/icons.png);
+	background-position: -216px;
 }
 
 #cv-tab-box #icon_settings {
-	background-image: url(../images/ic_settings.png);
+	background-position: 0 0;
 }
 
 #cv-tab-box #icon_terrain {
-	background-image: url(../images/ic_terrain.png);
+	background-position: -36px 0;
 }
 
 #cv-tab-box #icon_explore {
-	background-image: url(../images/ic_explore.png);
-}
-
-#cv-tab-box #icon_info {
-	background-image: url(../images/ic_info.png);
+	background-position: -72px 0;
 }
 
 #cv-tab-box #icon_route {
-	background-image: url(../images/ic_route.png);
+	background-position: -108px 0;
 }
 
+#cv-tab-box #icon_info {
+	background-position: -144px 0;
+}
+
+
 #cv-tab-box #icon_help {
-	background-image: url(../images/ic_help.png);
+	background-position: -180px 0;
 }
 
 #cv-tab-box.onscreen div.toptab {
@@ -413,7 +331,8 @@ div.linear-scale-caption {
 	#cv-tab-box #close {
 		position: fixed;
 		background-color: #444444;
-		background-image: url(../images/ic_hide_up.png);
+		background-image: url(../images/icons.png);
+		background-position: -324px;
 		top: 0px;
 		right: 0px;
 		left: auto;

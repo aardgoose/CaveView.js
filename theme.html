@@ -11,6 +11,10 @@
 <pre>
 const defaultTheme = {
 	background: 0x000000, // background colour to model
+	lighting: { // position of lighting for terrain (polar coordinates)
+		azimuth: 225,
+		inclination: 45
+	},
 	hud: {
 		progress: 0x00ff00, // progress dial
 		bezel: 0x888888, // bezel colour for compass and artificial horizon (AHI)
@@ -36,8 +40,37 @@ const defaultTheme = {
 		select: 0x0000ff, // selected sub section of model
 		highlight: 0xff0000 // highlit sub section of model
 	},
+	routes: {
+		active: 0xffff00,
+		adjacent: 0xff0000,
+		default: 0x888888
+	},
+	stations: { // station markers
+		entrances: {
+			text: 0xffffff
+		},
+		junctions: {
+			text: 0xffff00,
+			marker: 0xffff00
+		},
+		default: {
+			text: 0xffffff,
+			marker: 0xff0000
+		}
+	},
+
 	shading: {
 		single: 0xffffff // colour of legs displayed with a single colour
+		cursor: 0xffff00, // highlight colour for depth/height cursor shading
+		cursorBase: 0x888888,
+		unselected: 0x444444,
+		unconnected: 0x888888, // legs not connected in distance shading mode
+		contours: {
+			line: 0x444444, // colour for minor contours ( interval spacing )
+			line10: 0x888888, // colour for major contours ( 10 * interval )
+			interval: 10 // contour line vertical interval (m)
+		}
+
 	},
 	popup: { // popup survey station details
 		text: 0xffffff,

@@ -40,8 +40,7 @@ const legShadingModes = {
 	'shading.fixed':         SHADING_SINGLE,
 	'shading.survey':        SHADING_SURVEY,
 	'shading.route':         SHADING_PATH,
-	'shading.distance':      SHADING_DISTANCE,
-	'shading.back':          SHADING_BECK
+	'shading.distance':      SHADING_DISTANCE
 };
 
 const surfaceShadingModes = {

@@ -72,7 +72,7 @@ function getHeightMaterial ( type ) {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( name, new HeightMaterial( type, survey.modelLimits ) );
+		material = cacheSurveyMaterial( name, new HeightMaterial( type, survey ) );
 
 	}
 
@@ -94,7 +94,7 @@ function getDepthMaterial ( type ) {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( name, new DepthMaterial( type, survey.modelLimits, survey.terrain ) );
+		material = cacheSurveyMaterial( name, new DepthMaterial( type, survey ) );
 
 		depthMaterials.push( material );
 
@@ -112,7 +112,7 @@ function getCursorMaterial ( type ) {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( name, new CursorMaterial( type, survey.modelLimits ) );
+		material = cacheSurveyMaterial( name, new CursorMaterial( type, survey ) );
 
 	}
 
@@ -136,7 +136,7 @@ function getDepthCursorMaterial( type ) {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( name, new DepthCursorMaterial( type, survey.modelLimits, survey.terrain ) );
+		material = cacheSurveyMaterial( name, new DepthCursorMaterial( type, survey ) );
 
 		depthMaterials.push( material );
 

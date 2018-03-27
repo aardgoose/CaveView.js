@@ -5,7 +5,9 @@ import { Cfg } from '../core/lib';
 
 import { Vector3, ShaderMaterial } from '../Three';
 
-function CursorMaterial ( type, limits ) {
+function CursorMaterial ( type, survey ) {
+
+	const limits = survey.modelLimits;
 
 	ShaderMaterial.call( this );
 

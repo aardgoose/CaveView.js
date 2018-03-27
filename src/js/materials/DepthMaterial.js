@@ -5,8 +5,10 @@ import { ColourCache } from '../core/ColourCache';
 
 import { ShaderMaterial, Vector3 } from '../Three';
 
-function DepthMaterial ( type, surveyLimits, terrain ) {
+function DepthMaterial ( type, survey ) {
 
+	const surveyLimits = survey.modelLimits;
+	const terrain = survey.terrain;
 	const limits = terrain.boundingBox;
 	const range = limits.getSize( new Vector3() );
 

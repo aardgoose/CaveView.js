@@ -183,13 +183,13 @@ function getLineMaterial () {
 
 }
 
-function getContourMaterial ( terrain ) {
+function getContourMaterial () {
 
 	var material = cache.get( 'contour' );
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( 'contour', new ContourMaterial( terrain ) );
+		material = cacheSurveyMaterial( 'contour', new ContourMaterial( survey ) );
 
 		depthMaterials.push( material );
 

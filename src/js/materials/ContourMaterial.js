@@ -3,7 +3,10 @@ import { Shaders } from '../shaders/Shaders';
 import { ShaderMaterial } from '../Three';
 import { Cfg } from '../core/lib';
 
-function ContourMaterial ( terrain ) {
+function ContourMaterial ( survey ) {
+
+	const terrain = survey.terrain;
+	const zAdjust = survey.offsets.z;
 
 	ShaderMaterial.call( this, {
 		vertexShader:    Shaders.contourVertexShader,
@@ -12,6 +15,7 @@ function ContourMaterial ( terrain ) {
 		type:            'CV.ContourMaterial',
 		uniforms: {
 			datumShift:      { value: terrain.activeDatumShift },
+			zAdjust:         { value: zAdjust },
 			contourInterval: { value: Cfg.themeValue( 'shading.contours.interval' ) },
 			contourColor:    { value: Cfg.themeColor( 'shading.contours.line' ) },
 			contourColor10:  { value: Cfg.themeColor( 'shading.contours.line10' ) }

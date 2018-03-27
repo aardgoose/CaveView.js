@@ -1,13 +1,13 @@
 
 uniform float datumShift;
+uniform float zAdjust;
 
-varying vec3 vPosition;
+varying float vPositionZ;
 
 void main() {
 
-	vPosition = position;
-
-	vPosition.z = vPosition.z + datumShift;
+	// FIXME ( single uniform )
+	vPositionZ = position.z + zAdjust + datumShift;
 
 	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 

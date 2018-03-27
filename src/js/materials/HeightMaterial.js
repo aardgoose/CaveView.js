@@ -5,7 +5,9 @@ import { ColourCache } from '../core/ColourCache';
 
 import { Vector3, ShaderMaterial } from '../Three';
 
-function HeightMaterial ( type, limits ) {
+function HeightMaterial ( type, survey ) {
+
+	const limits = survey.modelLimits;
 
 	ShaderMaterial.call( this );
 

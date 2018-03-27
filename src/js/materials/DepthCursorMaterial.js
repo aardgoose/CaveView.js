@@ -5,7 +5,10 @@ import { Cfg } from '../core/lib';
 
 import { ShaderMaterial, Vector3 } from '../Three';
 
-function DepthCursorMaterial ( type, surveyLimits, terrain ) {
+function DepthCursorMaterial ( type, survey ) {
+
+	const surveyLimits = survey.modelLimits;
+	const terrain = survey.terrain;
 
 	const limits = terrain.boundingBox;
 	const range = limits.getSize( new Vector3() );

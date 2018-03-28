@@ -4,7 +4,7 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 	const atlasSize = 512;
 	const cellSize = 32;
-	const fontSize = 20;
+	const fontSize = 32;
 	const divisions = atlasSize / cellSize;
 
 	const canvas = document.createElement( 'canvas' );
@@ -24,6 +24,10 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 	canvas.width  = atlasSize;
 	canvas.height = atlasSize;
+
+	var d = document.getElementById( 'scratch' );
+
+	d.appendChild( canvas );
 
 	const ctx = canvas.getContext( '2d' );
 
@@ -50,7 +54,7 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 		map[ glyph ] = { row: ( divisions - row ) / divisions, column: column / divisions, width: glyphWidth };
 
-		ctx.fillText( glyph, cellSize * column, cellSize * row - 8 );
+		ctx.fillText( glyph, cellSize * column, cellSize * row - 5 );
 
 	}
 

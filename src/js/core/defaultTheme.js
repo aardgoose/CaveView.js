@@ -60,7 +60,8 @@ const defaultTheme = {
 		contours: {
 			line: 0x444444,
 			line10: 0x888888,
-			interval: 10
+			interval: 10,
+			base: 0x888800
 		}
 	},
 	popup: {

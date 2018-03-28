@@ -2,8 +2,13 @@
 uniform vec3 contourColor;
 uniform vec3 contourColor10;
 uniform float contourInterval;
+uniform vec3 baseColor;
+uniform float opacity;
+uniform vec3 uLight;
 
 varying float vPositionZ;
+varying vec3 vNormal;
+varying vec3 lNormal;
 
 void main() {
 
@@ -15,9 +20,14 @@ void main() {
 	float contourColourSelection = step( 0.90, f10 );
 	float c = 1.0 - smoothstep( df * 1.0, df * 2.0, f );
 
-	vec3 finalColour = mix( contourColor, contourColor10, contourColourSelection );
+	vec4 finalColour = vec4( mix( contourColor, contourColor10, contourColourSelection ), 1.0 );
 
-	gl_FragColor = vec4( c * finalColour, c );
+	float nDot = dot( normalize( vNormal ), uLight );
+	float light = 0.5 * ( nDot + 1.0 );
+
+	vec4 baseColourAlpha = vec4( baseColor * light, opacity );
+
+	gl_FragColor = mix( baseColourAlpha, finalColour, c );
 
 }
 

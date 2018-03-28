@@ -1,6 +1,6 @@
 
 import { Shaders } from '../shaders/Shaders';
-import { ShaderMaterial } from '../Three';
+import { ShaderMaterial, Vector3 } from '../Three';
 import { Cfg } from '../core/lib';
 
 function ContourMaterial ( survey ) {
@@ -14,11 +14,14 @@ function ContourMaterial ( survey ) {
 		depthWrite:      false,
 		type:            'CV.ContourMaterial',
 		uniforms: {
+			uLight: { value: new Vector3( -1, -1, 2 ) }, // pseudo light source somewhere over viewer's left shoulder.
 			datumShift:      { value: terrain.activeDatumShift },
 			zAdjust:         { value: zAdjust },
 			contourInterval: { value: Cfg.themeValue( 'shading.contours.interval' ) },
 			contourColor:    { value: Cfg.themeColor( 'shading.contours.line' ) },
-			contourColor10:  { value: Cfg.themeColor( 'shading.contours.line10' ) }
+			contourColor10:  { value: Cfg.themeColor( 'shading.contours.line10' ) },
+			baseColor:       { value: Cfg.themeColor( 'shading.contours.base' ) },
+			opacity:         { value: 0.5 }
 		}
 	} );
 
@@ -26,6 +29,13 @@ function ContourMaterial ( survey ) {
 	this.transparent = true;
 
 	this.extensions.derivatives = true;
+
+
+	Object.defineProperty( this, 'opacity', {
+		writeable: true,
+		get: function () { return this.uniforms.opacity.value; },
+		set: function ( value ) { this.uniforms.opacity.value = value; }
+	} );
 
 	return this;
 

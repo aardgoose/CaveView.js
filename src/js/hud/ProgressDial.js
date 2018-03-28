@@ -21,7 +21,9 @@ function ProgressDial ( addText, ring ) {
 
 	const offset = stdWidth + stdMargin;
 
-	const geometry = new RingGeometry( stdWidth * ( 0.9 - ring * 0.1 ), stdWidth * ( 1 - ring * 0.1 ), 50 );
+	const gap = ring === 0 ? 0 : 1;
+
+	const geometry = new RingGeometry( stdWidth * ( 0.9 - ring * 0.1 ), stdWidth * ( 1 - ring * 0.1 ) - gap, 50 );
 
 	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors } ) );
 

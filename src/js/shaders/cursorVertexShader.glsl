@@ -1,9 +1,7 @@
 
 #ifdef SURFACE
 
-uniform vec3 uLight;
 varying vec3 vNormal;
-varying vec3 lNormal;
 
 #else
 	
@@ -18,7 +16,6 @@ void main() {
 #ifdef SURFACE
 
 	vNormal = normalMatrix * normal;
-	lNormal = uLight;
 
 #else
 

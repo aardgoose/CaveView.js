@@ -4,8 +4,9 @@ varying float vDepth;
 
 #ifdef SURFACE
 
+uniform vec3 uLight;
+
 varying vec3 vNormal;
-varying vec3 lNormal;
 
 #else
 
@@ -17,9 +18,8 @@ void main() {
 
 #ifdef SURFACE
 
-	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );
-	float light;
-	light = 0.5 * ( nDot + 1.0 );
+	float nDot = dot( normalize( vNormal ), uLight );
+	float light = 0.5 * ( nDot + 1.0 );
 
 	gl_FragColor = texture2D( cmap, vec2( vDepth, 1.0 ) ) * light;
 

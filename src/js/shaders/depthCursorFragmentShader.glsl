@@ -9,8 +9,9 @@ varying float vDepth;
 
 #ifdef SURFACE
 
+uniform vec3 uLight;
+
 varying vec3 vNormal;
-varying vec3 lNormal;
 
 #else
 
@@ -21,9 +22,10 @@ varying vec3 vColor;
 void main() {
 
 	float light;
+
 #ifdef SURFACE
 
-	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );
+	float nDot = dot( normalize( vNormal ), uLight );
 	light = 0.5 * ( nDot + 1.0 );
 
 #else

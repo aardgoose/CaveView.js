@@ -1,6 +1,6 @@
 
 import { Shaders } from '../shaders/Shaders';
-import { ShaderMaterial, Vector3 } from '../Three';
+import { ShaderMaterial } from '../Three';
 import { Cfg } from '../core/lib';
 
 function ContourMaterial ( survey ) {
@@ -14,7 +14,7 @@ function ContourMaterial ( survey ) {
 		depthWrite:      false,
 		type:            'CV.ContourMaterial',
 		uniforms: {
-			uLight: { value: new Vector3( -1, -1, 2 ) }, // pseudo light source somewhere over viewer's left shoulder.
+			uLight:          { value: survey.lightDirection },
 			datumShift:      { value: terrain.activeDatumShift },
 			zAdjust:         { value: zAdjust },
 			contourInterval: { value: Cfg.themeValue( 'shading.contours.interval' ) },

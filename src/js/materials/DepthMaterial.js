@@ -18,7 +18,7 @@ function DepthMaterial ( type, survey ) {
 
 		uniforms: {
 			// pseudo light source somewhere over viewer's left shoulder.
-			uLight:     { value: new Vector3( -1, -1, 2 ) },
+			uLight:     { value: survey.lightDirection },
 			minX:       { value: limits.min.x },
 			minY:       { value: limits.min.y },
 			minZ:       { value: limits.min.z },

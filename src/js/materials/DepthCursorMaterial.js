@@ -19,7 +19,7 @@ function DepthCursorMaterial ( type, survey ) {
 	ShaderMaterial.call( this, {
 
 		uniforms: {
-			uLight:      { value: new Vector3( -1, -1, 2 ) },
+			uLight:      { value: survey.lightDirection },
 			minX:        { value: limits.min.x },
 			minY:        { value: limits.min.y },
 			minZ:        { value: limits.min.z },

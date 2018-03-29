@@ -3,7 +3,7 @@ import { Shaders } from '../shaders/Shaders';
 import { MATERIAL_LINE } from '../core/constants';
 import { Cfg } from '../core/lib';
 
-import { Vector3, ShaderMaterial } from '../Three';
+import { ShaderMaterial } from '../Three';
 
 function CursorMaterial ( type, survey ) {
 
@@ -16,7 +16,7 @@ function CursorMaterial ( type, survey ) {
 	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
 
 	this.uniforms = {
-		uLight:      { value: new Vector3( -1, -1, 2 ) },
+		uLight:      { value: survey.lightDirection },
 		cursor:      { value: 0 },
 		cursorWidth: { value: 5.0 },
 		baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },

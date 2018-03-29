@@ -25,10 +25,6 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 	canvas.width  = atlasSize;
 	canvas.height = atlasSize;
 
-	var d = document.getElementById( 'scratch' );
-
-	d.appendChild( canvas );
-
 	const ctx = canvas.getContext( '2d' );
 
 	if ( ! ctx ) console.error( 'cannot obtain 2D canvas' );

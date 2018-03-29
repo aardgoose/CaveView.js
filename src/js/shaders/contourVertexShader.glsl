@@ -1,14 +1,20 @@
+#define saturate(a) clamp( a, 0.0, 1.0 )
 
 uniform float datumShift;
 uniform float zAdjust;
-varying vec3 vNormal;
-
+uniform vec3 uLight;
+uniform vec3 baseColor;
 
 varying float vPositionZ;
+varying vec3 vBaseColor;
 
 void main() {
 
-	vNormal = normalMatrix * normal;
+	vec3 sNormal = normalMatrix * normal;
+
+	float dotNL = dot( normalize( sNormal ), uLight );
+
+	vBaseColor = saturate( dotNL ) * baseColor;
 
 	// FIXME ( single uniform )
 	vPositionZ = position.z + zAdjust + datumShift;

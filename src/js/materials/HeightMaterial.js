@@ -3,7 +3,7 @@ import { MATERIAL_LINE } from '../core/constants';
 import { Shaders } from '../shaders/Shaders';
 import { ColourCache } from '../core/ColourCache';
 
-import { Vector3, ShaderMaterial } from '../Three';
+import { ShaderMaterial } from '../Three';
 
 function HeightMaterial ( type, survey ) {
 
@@ -17,7 +17,7 @@ function HeightMaterial ( type, survey ) {
 	const zMax = limits.max.z;
 
 	this.uniforms = {
-		uLight: { value: new Vector3( -1, -1, 2 ) }, // pseudo light source somewhere over viewer's left shoulder.
+		uLight: { value: survey.lightDirection },
 		minZ:   { value: zMin },
 		scaleZ: { value: 1 / ( zMax - zMin ) },
 		cmap:   { value: ColourCache.getTexture( 'gradient' ) },

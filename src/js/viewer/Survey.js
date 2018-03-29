@@ -58,6 +58,8 @@ function Survey ( cave ) {
 		new Vector3( 0, 1, 1)
 	];
 
+	this.lightDirection = new Vector3( -1, -1, 2 ).normalize();
+
 	const self = this;
 
 	SurveyColours.clearMap(); // clear cache of survey section to colour

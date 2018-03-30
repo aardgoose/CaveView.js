@@ -9,24 +9,24 @@ function CursorMaterial ( type, survey ) {
 
 	const limits = survey.modelLimits;
 
-	ShaderMaterial.call( this );
+	ShaderMaterial.call( this, {
+		vertexShader: Shaders.cursorVertexShader,
+		fragmentShader: Shaders.cursorFragmentShader,
+		type: 'CV.CursorMaterial',
+		uniforms: {
+			uLight:      { value: survey.lightDirection },
+			cursor:      { value: 0 },
+			cursorWidth: { value: 5.0 },
+			baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },
+			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) }
+		},
+		defines: {
+			USE_COLOR: true,
+			SURFACE: ( type !== MATERIAL_LINE )
+		}
+	} );
 
 	this.halfRange = ( limits.max.z - limits.min.z ) / 2;
-
-	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true, USE_COLOR: true };
-
-	this.uniforms = {
-		uLight:      { value: survey.lightDirection },
-		cursor:      { value: 0 },
-		cursorWidth: { value: 5.0 },
-		baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },
-		cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) }
-	};
-
-	this.vertexShader   = Shaders.cursorVertexShader;
-	this.fragmentShader = Shaders.cursorFragmentShader;
-
-	this.type = 'CV.CursorMaterial';
 
 	this.addEventListener( 'update', _update );
 

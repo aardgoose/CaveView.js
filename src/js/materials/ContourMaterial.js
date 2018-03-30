@@ -30,7 +30,6 @@ function ContourMaterial ( survey ) {
 
 	this.extensions.derivatives = true;
 
-
 	Object.defineProperty( this, 'opacity', {
 		writeable: true,
 		get: function () { return this.uniforms.opacity.value; },

@@ -1,6 +1,6 @@
 
 import { Shaders } from '../shaders/Shaders';
-import { MATERIAL_SURFACE } from '../core/constants';
+import { MATERIAL_LINE } from '../core/constants';
 import { Cfg } from '../core/lib';
 
 import { ShaderMaterial, Vector3 } from '../Three';
@@ -17,7 +17,9 @@ function DepthCursorMaterial ( type, survey ) {
 	this.max = surveyLimits.max.z - surveyLimits.min.z;
 
 	ShaderMaterial.call( this, {
-
+		vertexShader: Shaders.depthCursorVertexShader,
+		fragmentShader: Shaders.depthCursorFragmentShader,
+		type: 'CV.DepthCursorMaterial',
 		uniforms: {
 			uLight:      { value: survey.lightDirection },
 			minX:        { value: limits.min.x },
@@ -30,24 +32,14 @@ function DepthCursorMaterial ( type, survey ) {
 			datumShift:  { value: 0.0 },
 			cursor:      { value: this.max / 2 },
 			cursorWidth: { value: 5.0 },
-			baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },
+			baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },	
 			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) }
 		},
-		vertexShader: Shaders.depthCursorVertexShader,
-		fragmentShader: Shaders.depthCursorFragmentShader
+		defines: {
+			USE_COLOR: true,
+			SURFACE: ( type !== MATERIAL_LINE )
+		}
 	} );
-
-	this.defines = {};
-
-	this.defines.USE_COLOR = true;
-
-	if ( type === MATERIAL_SURFACE ) {
-
-		this.defines.SURFACE = true;
-
-	}
-
-	this.type = 'CV.DepthCursorMaterial';
 
 	return this;
 

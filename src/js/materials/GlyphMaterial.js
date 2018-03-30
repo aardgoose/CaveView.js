@@ -16,14 +16,15 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 	const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
 
 	ShaderMaterial.call( this, {
+		vertexShader: Shaders.glyphVertexShader,
+		fragmentShader: Shaders.glyphFragmentShader,
+		type: 'CV.GlyphMaterial',
 		uniforms: {
 			cellScale: { value: cellScale },
 			atlas: { value: glyphAtlas.getTexture() },
 			rotate: { value: rotationMatrix },
 			scale: { value: container.clientHeight / container.clientWidth }
 		},
-		vertexShader: Shaders.glyphVertexShader,
-		fragmentShader: Shaders.glyphFragmentShader,
 	} );
 
 	this.alphaTest = 0.8;
@@ -32,7 +33,6 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 
 	this.type = 'CV.GlyphMaterial';
 	this.atlas = glyphAtlas;
-
 
 	// event handler
 	window.addEventListener( 'resize', _resize );

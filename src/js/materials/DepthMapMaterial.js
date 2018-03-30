@@ -12,19 +12,14 @@ function DepthMapMaterial ( terrain ) {
 	const maxHeight = boundingBox.max.z;
 
 	ShaderMaterial.call( this, {
-
-		uniforms: {
-
-			minZ:   { value: minHeight },
-			scaleZ: { value: 1 / ( maxHeight - minHeight ) }
-
-		},
-
 		vertexShader:    Shaders.depthMapVertexShader,
 		fragmentShader:  Shaders.depthMapFragmentShader,
+		type:            'CV.DepthMapMaterial',
 		depthWrite:      false,
-		type:            'CV.DepthMapMaterial'
-
+		uniforms: {
+			minZ:   { value: minHeight },
+			scaleZ: { value: 1 / ( maxHeight - minHeight ) }
+		}
 	} );
 
 	return this;

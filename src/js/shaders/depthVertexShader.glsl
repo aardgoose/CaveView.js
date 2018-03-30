@@ -1,3 +1,5 @@
+#define saturate(a) clamp( a, 0.0, 1.0 )
+
 const float UnpackDownscale = 255. / 256.; // 0..1 -> fraction (excluding 1)
 
 const vec3 PackFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );
@@ -19,24 +21,20 @@ uniform float depthScale;
 
 uniform sampler2D depthMap;
 uniform float datumShift;
-
-#ifdef SURFACE
-
-varying vec3 vNormal;
-
-#else
+uniform vec3 uLight;
 
 varying vec3 vColor;
-
-#endif
-
 varying float vDepth;
 
 void main() {
 
 #ifdef SURFACE
 
-	vNormal = normalMatrix * normal;
+	vec3 sNormal = normalMatrix * normal;
+
+	float dotNL = dot( normalize( sNormal ), uLight );
+
+	vColor = saturate( dotNL ) * color + vec3( 0.3, 0.3, 0.3 );
 
 #else
 

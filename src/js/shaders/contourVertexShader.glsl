@@ -10,9 +10,7 @@ varying vec3 vBaseColor;
 
 void main() {
 
-	vec3 sNormal = normalMatrix * normal;
-
-	float dotNL = dot( normalize( sNormal ), uLight );
+	float dotNL = dot( normal, uLight );
 
 	vBaseColor = saturate( dotNL ) * baseColor;
 

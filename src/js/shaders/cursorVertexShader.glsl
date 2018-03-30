@@ -1,21 +1,19 @@
+#define saturate(a) clamp( a, 0.0, 1.0 )
 
-#ifdef SURFACE
+uniform vec3 uLight;
 
-varying vec3 vNormal;
-
-#else
-	
 varying vec3 vColor;
-
-#endif
-
 varying float height;
 
 void main() {
 
 #ifdef SURFACE
 
-	vNormal = normalMatrix * normal;
+	vec3 sNormal = normalMatrix * normal;
+
+	float dotNL = dot( normalize( sNormal ), uLight );
+
+	vColor = saturate( dotNL ) * color + vec3( 0.3, 0.3, 0.3 );
 
 #else
 

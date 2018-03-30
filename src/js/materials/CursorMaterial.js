@@ -13,7 +13,7 @@ function CursorMaterial ( type, survey ) {
 
 	this.halfRange = ( limits.max.z - limits.min.z ) / 2;
 
-	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
+	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true, USE_COLOR: true };
 
 	this.uniforms = {
 		uLight:      { value: survey.lightDirection },

@@ -12,7 +12,7 @@ function DepthMaterial ( type, survey ) {
 	const limits = terrain.boundingBox;
 	const range = limits.getSize( new Vector3() );
 
-	const defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
+	const defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true, USE_COLOR: true };
 
 	ShaderMaterial.call( this, {
 

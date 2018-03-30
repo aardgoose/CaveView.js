@@ -1,6 +1,6 @@
 
 import { Shaders } from '../shaders/Shaders';
-import { MATERIAL_LINE } from '../core/constants';
+import { MATERIAL_SURFACE } from '../core/constants';
 import { Cfg } from '../core/lib';
 
 import { ShaderMaterial, Vector3 } from '../Three';
@@ -39,11 +39,9 @@ function DepthCursorMaterial ( type, survey ) {
 
 	this.defines = {};
 
-	if ( type === MATERIAL_LINE ) {
+	this.defines.USE_COLOR = true;
 
-		this.defines.USE_COLOR = true;
-
-	} else {
+	if ( type === MATERIAL_SURFACE ) {
 
 		this.defines.SURFACE = true;
 

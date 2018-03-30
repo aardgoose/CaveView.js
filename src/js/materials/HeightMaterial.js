@@ -11,7 +11,8 @@ function HeightMaterial ( type, survey ) {
 
 	ShaderMaterial.call( this );
 
-	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
+//	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
+	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true, USE_COLOR: true };
 
 	const zMin = limits.min.z;
 	const zMax = limits.max.z;

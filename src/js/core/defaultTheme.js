@@ -2,7 +2,7 @@
 const defaultTheme = {
 	background: 0x000000,
 	lighting: {
-		azimuth: 225,
+		azimuth: 315,
 		inclination: 45
 	},
 	hud: {
@@ -61,7 +61,7 @@ const defaultTheme = {
 			line: 0x444444,
 			line10: 0x888888,
 			interval: 10,
-			base: 0x888800
+			base: 0xffffff
 		}
 	},
 	popup: {

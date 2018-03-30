@@ -1,9 +1,6 @@
 
 // polyfill padStart for IE11 - now supported for Chrome, FireFox and Edge
-/*Math.log2 = Math.log2 || function(x) {
-	return Math.log(x) * Math.LOG2E;
-};
-*/
+
 if ( ! String.prototype.startsWith) {
 
 	String.prototype.startsWith = function( searchString, position ) {

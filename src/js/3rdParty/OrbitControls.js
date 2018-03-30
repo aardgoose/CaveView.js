@@ -1046,3 +1046,5 @@ Object.defineProperties( OrbitControls.prototype, {
 	}
 
 } );
+
+export { OrbitControls };

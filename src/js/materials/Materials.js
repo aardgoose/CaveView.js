@@ -189,7 +189,7 @@ function getContourMaterial () {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( 'contour', new ContourMaterial( survey ) );
+		material = cacheSurveyMaterial( 'contour', new ContourMaterial( survey, viewer ) );
 
 		depthMaterials.push( material );
 

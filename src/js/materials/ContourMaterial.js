@@ -3,7 +3,7 @@ import { Shaders } from '../shaders/Shaders';
 import { ShaderMaterial } from '../Three';
 import { Cfg } from '../core/lib';
 
-function ContourMaterial ( survey ) {
+function ContourMaterial ( survey, viewer ) {
 
 	const terrain = survey.terrain;
 	const zAdjust = survey.offsets.z;
@@ -14,7 +14,7 @@ function ContourMaterial ( survey ) {
 		depthWrite:      false,
 		type:            'CV.ContourMaterial',
 		uniforms: {
-			uLight:          { value: survey.lightDirection },
+			uLight:          { value: viewer.surfaceLightDirection },
 			datumShift:      { value: terrain.activeDatumShift },
 			zAdjust:         { value: zAdjust },
 			contourInterval: { value: Cfg.themeValue( 'shading.contours.interval' ) },
@@ -36,7 +36,17 @@ function ContourMaterial ( survey ) {
 		set: function ( value ) { this.uniforms.opacity.value = value; }
 	} );
 
+	const self = this;
+
+	viewer.addEventListener( 'lightingChange', _lightingChanged );
+
 	return this;
+
+	function _lightingChanged ( /* event */ ) {
+
+		self.uniforms.uLight.value = viewer.surfaceLightDirection;
+
+	}
 
 }
 

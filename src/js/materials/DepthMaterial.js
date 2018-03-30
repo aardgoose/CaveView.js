@@ -12,10 +12,10 @@ function DepthMaterial ( type, survey ) {
 	const limits = terrain.boundingBox;
 	const range = limits.getSize( new Vector3() );
 
-	const defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true, USE_COLOR: true };
-
 	ShaderMaterial.call( this, {
-
+		vertexShader: Shaders.depthVertexShader,
+		fragmentShader: Shaders.depthFragmentShader,
+		type: 'CV.DepthMaterial',
 		uniforms: {
 			// pseudo light source somewhere over viewer's left shoulder.
 			uLight:     { value: survey.lightDirection },
@@ -30,13 +30,11 @@ function DepthMaterial ( type, survey ) {
 			depthMap:   { value: terrain.depthTexture },
 			datumShift: { value: 0.0 }
 		},
-
-		defines: defines,
-		vertexShader: Shaders.depthVertexShader,
-		fragmentShader: Shaders.depthFragmentShader
+		defines: {
+			USE_COLOR: true,
+			SURFACE: ( type !== MATERIAL_LINE )
+		}
 	} );
-
-	this.type = 'CV.DepthMaterial';
 
 	return this;
 

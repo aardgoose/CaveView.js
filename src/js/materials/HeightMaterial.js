@@ -9,25 +9,24 @@ function HeightMaterial ( type, survey ) {
 
 	const limits = survey.modelLimits;
 
-	ShaderMaterial.call( this );
-
-//	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
-	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true, USE_COLOR: true };
-
 	const zMin = limits.min.z;
 	const zMax = limits.max.z;
 
-	this.uniforms = {
-		uLight: { value: survey.lightDirection },
-		minZ:   { value: zMin },
-		scaleZ: { value: 1 / ( zMax - zMin ) },
-		cmap:   { value: ColourCache.getTexture( 'gradient' ) },
-	};
-
-	this.vertexShader = Shaders.heightVertexShader;
-	this.fragmentShader = Shaders.heightFragmentShader;
-
-	this.type = 'CV.HeightMaterial';
+	ShaderMaterial.call( this, {
+		vertexShader: Shaders.heightVertexShader,
+		fragmentShader: Shaders.heightFragmentShader,
+		type: 'CV.HeightMaterial',
+		uniforms: {
+			uLight: { value: survey.lightDirection },
+			minZ:   { value: zMin },
+			scaleZ: { value: 1 / ( zMax - zMin ) },
+			cmap:   { value: ColourCache.getTexture( 'gradient' ) },
+		},
+		defines: {
+			USE_COLOR: true,
+			SURFACE: ( type !== MATERIAL_LINE )
+		}
+	} );
 
 	return this;
 

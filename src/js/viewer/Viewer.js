@@ -69,6 +69,7 @@ const renderer = new WebGLRenderer( { antialias: true } ) ;
 
 const defaultTarget = new Vector3();
 const lightPosition = new Vector3();
+const currentLightPosition = new Vector3();
 const directionalLight = new DirectionalLight( 0xffffff );
 const scene = new Scene();
 const mouse = new Vector2();
@@ -168,6 +169,8 @@ function init ( domID, configuration ) { // public method
 	lightPosition.setFromSpherical( new Spherical( 1, inclination, azimuth ) );
 	lightPosition.applyAxisAngle( new Vector3( 1, 0, 0 ), Math.PI / 2 );
 
+	currentLightPosition.copy( lightPosition );
+
 	directionalLight.position.copy( lightPosition );
 
 	scene.addStatic( directionalLight );
@@ -183,7 +186,7 @@ function init ( domID, configuration ) { // public method
 
 	cameraMove = new CameraMove( controls, renderView, onCameraMoveEnd );
 
-	controls.addEventListener( 'change', function () { cameraMove.prepare( null, null ); cameraMove.start( 80 ); } );
+	controls.addEventListener( 'change', cameraMoved );
 
 	controls.enableDamping = true;
 
@@ -706,6 +709,28 @@ function initCamera ( camera ) {
 	camera.updateProjectionMatrix();
 
 }
+
+var cameraMoved = function () {
+
+	const rotation = new Euler();
+	const q = new Quaternion();
+
+	return function cameraMoved() {
+
+		cameraMove.prepare( null, null );
+		cameraMove.start( 80 );
+
+		rotation.setFromQuaternion( camera.getWorldQuaternion( q ) );
+
+		currentLightPosition.copy( lightPosition );
+		currentLightPosition.applyAxisAngle( upAxis, rotation.z );
+
+		directionalLight.position.copy( currentLightPosition );
+		directionalLight.updateMatrix();
+
+	};
+
+}();
 
 function setCameraLayer ( layerTag, enable ) {
 
@@ -1427,41 +1452,25 @@ function visibleStation ( intersects ) {
 
 }
 
-var renderView = function () {
+function renderView () {
 
-	const lPosition = new Vector3();
-	const rotation = new Euler();
-	const q = new Quaternion();
+	if ( ! renderRequired ) return;
 
-	return function renderView () {
+	renderer.clear();
 
-		if ( ! renderRequired ) return;
+	if ( caveIsLoaded ) {
 
-		renderer.clear();
+		survey.update( camera, controls.target );
 
-		if ( caveIsLoaded ) {
+		renderer.render( scene, camera );
 
-			rotation.setFromQuaternion( camera.getWorldQuaternion( q ) );
+	}
 
-			lPosition.copy( lightPosition );
+	HUD.renderHUD();
 
-			directionalLight.position.copy( lPosition.applyAxisAngle( upAxis, rotation.z ) );
-			directionalLight.updateMatrix();
+	clockStart();
 
-			survey.update( camera, controls.target );
-
-			renderer.render( scene, camera );
-
-		}
-
-		HUD.renderHUD();
-
-		clockStart();
-
-	};
-
-} ();
-
+}
 
 function onCameraMoveEnd () {
 

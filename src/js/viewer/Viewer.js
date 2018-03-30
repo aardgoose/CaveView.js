@@ -728,6 +728,8 @@ var cameraMoved = function () {
 		directionalLight.position.copy( currentLightPosition );
 		directionalLight.updateMatrix();
 
+		Viewer.dispatchEvent( { type: 'lightingChange', name: 'surface' } );
+
 	};
 
 }();
@@ -1582,7 +1584,8 @@ Object.assign( Viewer, {
 	getControls:   getControls,
 	renderView:    renderView,
 	addOverlay:    addOverlay,
-	addFormatters: addFormatters
+	addFormatters: addFormatters,
+	surfaceLightDirection: currentLightPosition
 } );
 
 export { Viewer };

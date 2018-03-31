@@ -7,7 +7,7 @@ export { UniformsLib } from '../../../three.js/src/renderers/shaders/UniformsLib
 export { UniformsUtils } from '../../../three.js/src/renderers/shaders/UniformsUtils.js';
 export { ShaderChunk } from '../../../three.js/src/renderers/shaders/ShaderChunk.js';
 //export { FogExp2 } from '../../../three.js/src/scenes/FogExp2.js';
-//export { Fog } from '../../../three.js/src/scenes/Fog.js';
+export { Fog } from '../../../three.js/src/scenes/Fog.js';
 export { Scene } from '../../../three.js/src/scenes/Scene.js';
 //export { LensFlare } from '../../../three.js/src/objects/LensFlare.js';
 //export { Sprite } from '../../../three.js/src/objects/Sprite.js';

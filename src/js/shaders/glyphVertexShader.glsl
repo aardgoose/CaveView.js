@@ -11,6 +11,7 @@ attribute float instanceOffsets;
 attribute float instanceWidths;
 
 varying vec2 vUv;
+varying float fogDepth;
 
 void main() {
 
@@ -30,7 +31,7 @@ void main() {
 
 	newPosition = rotate * newPosition;
 
-	// position of GlyphString object on screeno
+	// position of GlyphString object on screen
 
 	vec4 offset = projectionMatrix * modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
 
@@ -45,6 +46,10 @@ void main() {
 	// move to clip space
 
 	newPosition.xy *= offset.w;
+
+	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+	fogDepth = -mvPosition.z;
 
 	gl_Position = vec4( newPosition, 0.0, 0.0 ) + offset;
 

@@ -25,6 +25,7 @@ uniform vec3 uLight;
 
 varying vec3 vColor;
 varying float vDepth;
+varying float fogDepth;
 
 void main() {
 
@@ -53,6 +54,10 @@ void main() {
 
 	vDepth = ( terrainHeight - position.z ) * depthScale;
 
-	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+	fogDepth = -mvPosition.z;
+
+	gl_Position = projectionMatrix * mvPosition;
 
 }

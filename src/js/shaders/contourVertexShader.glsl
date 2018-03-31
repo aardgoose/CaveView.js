@@ -3,16 +3,13 @@
 uniform float datumShift;
 uniform float zAdjust;
 uniform vec3 uLight;
-uniform vec3 baseColor;
 
 varying float vPositionZ;
-varying vec3 vBaseColor;
+varying float vDotNL;
 
 void main() {
 
-	float dotNL = dot( normal, uLight );
-
-	vBaseColor = saturate( dotNL ) * baseColor;
+	vDotNL = saturate( dot( normal, uLight ) );
 
 	// FIXME ( single uniform )
 	vPositionZ = position.z + zAdjust + datumShift;

@@ -2,10 +2,11 @@
 uniform vec3 contourColor;
 uniform vec3 contourColor10;
 uniform float contourInterval;
+uniform vec3 baseColor;
 uniform float opacity;
 
-varying vec3 vBaseColor;
 varying float vPositionZ;
+varying float vDotNL;
 
 void main() {
 
@@ -19,9 +20,9 @@ void main() {
 
 	vec4 finalColor = vec4( mix( contourColor, contourColor10, contourColorSelection ), 1.0 );
 
-	vec4 baseColorAlpha = vec4( vBaseColor, opacity );
+	vec4 baseColorAlpha = vec4( baseColor, opacity );
 
-	gl_FragColor = mix( baseColorAlpha, finalColor, c );
+	gl_FragColor = mix( baseColorAlpha, finalColor, c ) * vDotNL;
 
 }
 

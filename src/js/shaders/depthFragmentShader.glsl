@@ -1,7 +1,7 @@
 
 uniform sampler2D cmap;
-varying float vDepth;
 
+varying float vDepth;
 varying vec3 vColor;
 
 void main() {

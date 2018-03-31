@@ -37,11 +37,16 @@
     "eslint": "^4.19.1",
     "http-server": "^0.10.0",
     "rollup": "^0.50.0",
+    "rollup-plugin-visualizer": "^0.5.0",
     "rollup-watch": ">=3.2.0"
   },
   "dependencies": {
     "alpha-shape": "^1.0.0",
+    "proj4": "^2.4.4",
     "rollup-plugin-commonjs": "^9.1.0",
-    "rollup-plugin-node-resolve": "^3.3.0"
+    "rollup-plugin-graph": "^1.2.0",
+    "rollup-plugin-json": "^2.3.0",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "wkt-parser": "^1.2.1"
   }
 }

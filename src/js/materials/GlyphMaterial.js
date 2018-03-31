@@ -1,5 +1,5 @@
 
-import { ShaderMaterial } from '../Three';
+import { ShaderMaterial, Color } from '../Three';
 import { Shaders } from '../shaders/Shaders';
 import { AtlasFactory } from '../materials/GlyphAtlas';
 
@@ -23,7 +23,10 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 			cellScale: { value: cellScale },
 			atlas: { value: glyphAtlas.getTexture() },
 			rotate: { value: rotationMatrix },
-			scale: { value: container.clientHeight / container.clientWidth }
+			scale: { value: container.clientHeight / container.clientWidth },
+			fogNear: { value: 1 },
+			fogFar: { value: 30000 },
+			fogColor: { value: new Color( 0x222222 ) }
 		},
 	} );
 

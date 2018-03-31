@@ -21,7 +21,11 @@ function Box3Helper( box3, color ) {
 	geometry.setIndex( new BufferAttribute( indices, 1 ) );
 	geometry.addAttribute( 'position', new BufferAttribute( positions, 3 ) );
 
-	LineSegments.call( this, geometry, new LineBasicMaterial( { color: color } ) );
+	const material = new LineBasicMaterial( { color: color } );
+
+	material.fog = false;
+
+	LineSegments.call( this, geometry, material );
 
 	this.matrixAutoUpdate = false;
 

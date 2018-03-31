@@ -3,7 +3,7 @@ import { Shaders } from '../shaders/Shaders';
 import { MATERIAL_LINE } from '../core/constants';
 import { ColourCache } from '../core/ColourCache';
 
-import { ShaderMaterial, Vector3 } from '../Three';
+import { ShaderMaterial, Vector3, Color } from '../Three';
 
 function DepthMaterial ( type, survey ) {
 
@@ -28,7 +28,10 @@ function DepthMaterial ( type, survey ) {
 			depthScale: { value: 1 / ( surveyLimits.max.z - surveyLimits.min.z ) },
 			cmap:       { value: ColourCache.getTexture( 'gradient' ) },
 			depthMap:   { value: terrain.depthTexture },
-			datumShift: { value: 0.0 }
+			datumShift: { value: 0.0 },
+			fogNear: { value: 1 },
+			fogFar: { value: 300 },
+			fogColor: { value: new Color( 0x222222 ) }
 		},
 		defines: {
 			USE_COLOR: true,

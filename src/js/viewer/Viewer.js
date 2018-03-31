@@ -37,7 +37,7 @@ import {
 	LinearFilter, NearestFilter, RGBAFormat,
 	OrthographicCamera, PerspectiveCamera,
 	WebGLRenderer, WebGLRenderTarget,
-	MOUSE,
+	MOUSE, Fog,
 	Quaternion, Spherical, Math as _Math
 } from '../Three';
 
@@ -72,6 +72,7 @@ const lightPosition = new Vector3();
 const currentLightPosition = new Vector3();
 const directionalLight = new DirectionalLight( 0xffffff );
 const scene = new Scene();
+const fog = new Fog( 0x222222, 1, 300 );
 const mouse = new Vector2();
 const raycaster = new Raycaster();
 
@@ -156,6 +157,7 @@ function init ( domID, configuration ) { // public method
 
 	camera = pCamera;
 
+	scene.fog = fog;
 	scene.name = 'CV.Viewer';
 
 	scene.add( pCamera );

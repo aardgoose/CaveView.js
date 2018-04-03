@@ -49,7 +49,8 @@ const lang_en = {
 			splays: 'Splay Legs',
 			traces: 'Dye Traces',
 			box: 'Bounding box',
-			hud: 'Indicators'
+			hud: 'Indicators',
+			fog: 'Fog'
 		}
 	},
 	surface: {
@@ -140,7 +141,7 @@ const lang_en = {
 			alpha: 'Alpha Shapes',
 			stations: 'station markers on/off',
 			opacity_down: 'decrease terrain opacity',
-			opacity_up: 'increase terrain opacity'
+			opacity_up: 'increase terrain opacity',
 		},
 		selection: {
 			header: 'Selection',

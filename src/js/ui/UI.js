@@ -627,6 +627,7 @@ function initSettingsPage () {
 	if ( Viewer.hasScraps        ) page.addCheckbox( 'visibility.scraps', Viewer, 'scraps' );
 	if ( Viewer.hasTraces        ) page.addCheckbox( 'visibility.traces', Viewer, 'traces' );
 
+	page.addCheckbox( 'visibility.fog', Viewer, 'fog' );
 	page.addCheckbox( 'visibility.hud', Viewer, 'HUD' );
 	page.addCheckbox( 'visibility.box', Viewer, 'box' );
 

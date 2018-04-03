@@ -62,7 +62,8 @@ const defaultView = {
 	entrances: true,
 	terrain: false,
 	traces: false,
-	HUD: true
+	HUD: true,
+	fog: false
 };
 
 const renderer = new WebGLRenderer( { antialias: true } ) ;
@@ -110,7 +111,7 @@ var terrainShadingMode = SHADING_SHADED;
 var overlays = {};
 var activeOverlay = null;
 var defaultOverlay = null;
-var useFog = true;
+var useFog = false;
 
 var cameraMode;
 var selectedSection = 0;
@@ -373,6 +374,12 @@ function init ( domID, configuration ) { // public method
 
 		'hasContours': {
 			get: function () { return ! ( renderer.extensions.get( 'OES_standard_derivatives' ) === null ); }
+		},
+
+		'fog': {
+			writeable: true,
+			get: function () { return useFog; },
+			set: function ( x ) { useFog = x; renderView(); }
 		},
 
 	} );

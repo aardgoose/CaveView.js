@@ -379,7 +379,7 @@ function init ( domID, configuration ) { // public method
 		'fog': {
 			writeable: true,
 			get: function () { return useFog; },
-			set: function ( x ) { useFog = x; renderView(); }
+			set: setFog
 		},
 
 	} );
@@ -817,6 +817,16 @@ function setViewMode ( mode, t ) {
 	cameraMove.cancel();
 	cameraMove.prepare( cameraPosition, defaultTarget );
 	cameraMove.start( renderRequired ? t || 240 : 1 );
+
+}
+
+function setFog( enable ) {
+
+	useFog = enable;
+
+	fog.far = useFog ? 300 : Infinity;
+
+	renderView();
 
 }
 

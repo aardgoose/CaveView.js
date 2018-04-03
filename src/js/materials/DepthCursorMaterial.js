@@ -4,6 +4,7 @@ import { MATERIAL_LINE } from '../core/constants';
 import { Cfg } from '../core/lib';
 
 import { ShaderMaterial, Vector3 } from '../Three';
+import { MaterialFog } from './MaterialFog';
 
 function DepthCursorMaterial ( type, survey ) {
 
@@ -20,7 +21,7 @@ function DepthCursorMaterial ( type, survey ) {
 		vertexShader: Shaders.depthCursorVertexShader,
 		fragmentShader: Shaders.depthCursorFragmentShader,
 		type: 'CV.DepthCursorMaterial',
-		uniforms: {
+		uniforms: Object.assign( {
 			uLight:      { value: survey.lightDirection },
 			minX:        { value: limits.min.x },
 			minY:        { value: limits.min.y },
@@ -32,9 +33,9 @@ function DepthCursorMaterial ( type, survey ) {
 			datumShift:  { value: 0.0 },
 			cursor:      { value: this.max / 2 },
 			cursorWidth: { value: 5.0 },
-			baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },	
-			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) }
-		},
+			baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },
+			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) },
+		}, MaterialFog.uniforms ),
 		defines: {
 			USE_COLOR: true,
 			SURFACE: ( type !== MATERIAL_LINE )

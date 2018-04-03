@@ -3,7 +3,8 @@ import { MATERIAL_LINE } from '../core/constants';
 import { Shaders } from '../shaders/Shaders';
 import { ColourCache } from '../core/ColourCache';
 
-import { ShaderMaterial, Color } from '../Three';
+import { ShaderMaterial } from '../Three';
+import { MaterialFog } from './MaterialFog';
 
 function HeightMaterial ( type, survey ) {
 
@@ -16,15 +17,12 @@ function HeightMaterial ( type, survey ) {
 		vertexShader: Shaders.heightVertexShader,
 		fragmentShader: Shaders.heightFragmentShader,
 		type: 'CV.HeightMaterial',
-		uniforms: {
+		uniforms: Object.assign( {
 			uLight: { value: survey.lightDirection },
 			minZ:   { value: zMin },
 			scaleZ: { value: 1 / ( zMax - zMin ) },
 			cmap:   { value: ColourCache.getTexture( 'gradient' ) },
-			fogNear: { value: 1 },
-			fogFar: { value: 300 },
-			fogColor: { value: new Color( 0x222222 ) }
-		},
+		}, MaterialFog.uniforms ),
 		defines: {
 			USE_COLOR: true,
 			SURFACE: ( type !== MATERIAL_LINE )

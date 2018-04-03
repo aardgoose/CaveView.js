@@ -110,6 +110,7 @@ var terrainShadingMode = SHADING_SHADED;
 var overlays = {};
 var activeOverlay = null;
 var defaultOverlay = null;
+var useFog = true;
 
 var cameraMode;
 var selectedSection = 0;
@@ -1466,9 +1467,12 @@ function renderView () {
 
 		survey.update( camera, controls.target );
 
+		if ( useFog ) Materials.setFog( true );
 		renderer.render( scene, camera );
 
 	}
+
+	if ( useFog ) Materials.setFog( false );
 
 	HUD.renderHUD();
 

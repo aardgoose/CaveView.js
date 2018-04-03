@@ -8,6 +8,7 @@ import { DepthMapMaterial } from './DepthMapMaterial';
 import { HeightMaterial } from './HeightMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
 import { GlyphString } from '../core/GlyphString';
+import { MaterialFog } from './MaterialFog';
 
 import { LineBasicMaterial, MeshLambertMaterial, NoColors, VertexColors } from '../Three';
 
@@ -268,6 +269,14 @@ function flushCache( surveyIn ) {
 
 }
 
+function setFog( enable ) {
+
+	MaterialFog.uniforms.fogEnabled.value = enable ? 1 : 0;
+
+	return;
+
+}
+
 export const Materials = {
 	getContourMaterial:     getContourMaterial,
 	getHeightMaterial:      getHeightMaterial,
@@ -281,7 +290,8 @@ export const Materials = {
 	getGlyphMaterial:       getGlyphMaterial,
 	setTerrain:             setTerrain,
 	initCache:              initCache,
-	flushCache:             flushCache
+	flushCache:             flushCache,
+	setFog:                 setFog
 };
 
 // EOF

@@ -3,7 +3,8 @@ import { Shaders } from '../shaders/Shaders';
 import { MATERIAL_LINE } from '../core/constants';
 import { ColourCache } from '../core/ColourCache';
 
-import { ShaderMaterial, Vector3, Color } from '../Three';
+import { ShaderMaterial, Vector3 } from '../Three';
+import { MaterialFog } from './MaterialFog';
 
 function DepthMaterial ( type, survey ) {
 
@@ -16,7 +17,7 @@ function DepthMaterial ( type, survey ) {
 		vertexShader: Shaders.depthVertexShader,
 		fragmentShader: Shaders.depthFragmentShader,
 		type: 'CV.DepthMaterial',
-		uniforms: {
+		uniforms: Object.assign( {
 			// pseudo light source somewhere over viewer's left shoulder.
 			uLight:     { value: survey.lightDirection },
 			minX:       { value: limits.min.x },
@@ -29,10 +30,7 @@ function DepthMaterial ( type, survey ) {
 			cmap:       { value: ColourCache.getTexture( 'gradient' ) },
 			depthMap:   { value: terrain.depthTexture },
 			datumShift: { value: 0.0 },
-			fogNear: { value: 1 },
-			fogFar: { value: 300 },
-			fogColor: { value: new Color( 0x222222 ) }
-		},
+		}, MaterialFog.uniforms ),
 		defines: {
 			USE_COLOR: true,
 			SURFACE: ( type !== MATERIAL_LINE )

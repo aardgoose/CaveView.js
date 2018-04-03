@@ -1,7 +1,8 @@
 
-import { ShaderMaterial, Color } from '../Three';
+import { ShaderMaterial } from '../Three';
 import { Shaders } from '../shaders/Shaders';
 import { AtlasFactory } from '../materials/GlyphAtlas';
+import { MaterialFog } from './MaterialFog';
 
 function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 
@@ -19,15 +20,12 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 		vertexShader: Shaders.glyphVertexShader,
 		fragmentShader: Shaders.glyphFragmentShader,
 		type: 'CV.GlyphMaterial',
-		uniforms: {
+		uniforms: Object.assign( {
 			cellScale: { value: cellScale },
 			atlas: { value: glyphAtlas.getTexture() },
 			rotate: { value: rotationMatrix },
 			scale: { value: container.clientHeight / container.clientWidth },
-			fogNear: { value: 1 },
-			fogFar: { value: 30000 },
-			fogColor: { value: new Color( 0x222222 ) }
-		},
+		}, MaterialFog.uniforms ),
 	} );
 
 	this.alphaTest = 0.8;

@@ -20,9 +20,7 @@ function DepthMaterial ( type, survey ) {
 		uniforms: Object.assign( {
 			// pseudo light source somewhere over viewer's left shoulder.
 			uLight:     { value: survey.lightDirection },
-			minX:       { value: limits.min.x },
-			minY:       { value: limits.min.y },
-			minZ:       { value: limits.min.z },
+			modelMin:   { value: limits.min },
 			scaleX:     { value: 1 / range.x },
 			scaleY:     { value: 1 / range.y },
 			rangeZ:     { value: range.z },

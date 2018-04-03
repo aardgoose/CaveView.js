@@ -9,9 +9,7 @@ float unpackRGBAToFloat( const in vec4 v ) {
 	return dot( v, UnpackFactors );
 }
 
-uniform float minX;
-uniform float minY;
-uniform float minZ;
+uniform vec3 modelMin;
 
 uniform float scaleX;
 uniform float scaleY;
@@ -41,10 +39,11 @@ void main() {
 
 #endif
 
-	vec2 terrainCoords = vec2( ( position.x - minX ) * scaleX, ( position.y - minY ) * scaleY );
+	vec2 terrainCoords = vec2( ( position.x - modelMin.x ) * scaleX, ( position.y - modelMin.y ) * scaleY );
+
 	float terrainHeight = unpackRGBAToFloat( texture2D( depthMap, terrainCoords ) );
 
-	vDepth = terrainHeight * rangeZ + datumShift + minZ - position.z;
+	vDepth = terrainHeight * rangeZ + datumShift + modelMin.z - position.z;
 
 	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 

@@ -23,6 +23,7 @@ uniform vec3 uLight;
 
 varying vec3 vColor;
 varying float vDepth;
+varying float fogDepth;
 
 void main() {
 
@@ -44,6 +45,10 @@ void main() {
 	float terrainHeight = unpackRGBAToFloat( texture2D( depthMap, terrainCoords ) );
 
 	vDepth = terrainHeight * rangeZ + datumShift + minZ - position.z;
+
+	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+	fogDepth = -mvPosition.z;
 
 	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 

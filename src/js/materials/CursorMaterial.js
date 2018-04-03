@@ -4,6 +4,7 @@ import { MATERIAL_LINE } from '../core/constants';
 import { Cfg } from '../core/lib';
 
 import { ShaderMaterial } from '../Three';
+import { MaterialFog } from './MaterialFog';
 
 function CursorMaterial ( type, survey ) {
 
@@ -13,13 +14,13 @@ function CursorMaterial ( type, survey ) {
 		vertexShader: Shaders.cursorVertexShader,
 		fragmentShader: Shaders.cursorFragmentShader,
 		type: 'CV.CursorMaterial',
-		uniforms: {
+		uniforms: Object.assign( {
 			uLight:      { value: survey.lightDirection },
 			cursor:      { value: 0 },
 			cursorWidth: { value: 5.0 },
 			baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },
-			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) }
-		},
+			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) },
+		}, MaterialFog.uniforms ),
 		defines: {
 			USE_COLOR: true,
 			SURFACE: ( type !== MATERIAL_LINE )

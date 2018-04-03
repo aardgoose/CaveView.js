@@ -1,12 +1,12 @@
 
-import { Color } from '../Three';
+import { Cfg } from '../core/lib';
 
 var MaterialFog = {
 
 	uniforms: {
 		fogNear: { value: 1 },
 		fogFar: { value: 300 },
-		fogColor: { value: new Color( 0x222222 ) },
+		fogColor: { value: Cfg.themeColor( 'background' ) },
 		fogEnabled: { value: 0 }
 	}
 

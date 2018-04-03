@@ -23,9 +23,7 @@ function DepthCursorMaterial ( type, survey ) {
 		type: 'CV.DepthCursorMaterial',
 		uniforms: Object.assign( {
 			uLight:      { value: survey.lightDirection },
-			minX:        { value: limits.min.x },
-			minY:        { value: limits.min.y },
-			minZ:        { value: limits.min.z },
+			modelMin:    { value: limits.min },
 			scaleX:      { value: 1 / range.x },
 			scaleY:      { value: 1 / range.y },
 			rangeZ:      { value: range.z },

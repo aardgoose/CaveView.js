@@ -824,7 +824,7 @@ function setFog( enable ) {
 
 	useFog = enable;
 
-	fog.far = useFog ? 300 : Infinity;
+	fog.density = useFog ? 0.0025 : 0;
 
 	renderView();
 

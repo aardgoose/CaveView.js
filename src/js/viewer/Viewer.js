@@ -37,7 +37,7 @@ import {
 	LinearFilter, NearestFilter, RGBAFormat,
 	OrthographicCamera, PerspectiveCamera,
 	WebGLRenderer, WebGLRenderTarget,
-	MOUSE, Fog,
+	MOUSE, FogExp2,
 	Quaternion, Spherical, Math as _Math
 } from '../Three';
 
@@ -73,7 +73,7 @@ const lightPosition = new Vector3();
 const currentLightPosition = new Vector3();
 const directionalLight = new DirectionalLight( 0xffffff );
 const scene = new Scene();
-const fog = new Fog( 0x222222, 1, 300 );
+const fog = new FogExp2( Cfg.themeValue( 'background' ), 0.0025 );
 const mouse = new Vector2();
 const raycaster = new Raycaster();
 

@@ -4,9 +4,8 @@ import { Cfg } from '../core/lib';
 var MaterialFog = {
 
 	uniforms: {
-		fogNear: { value: 1 },
-		fogFar: { value: 300 },
 		fogColor: { value: Cfg.themeColor( 'background' ) },
+		fogDensity: { value: 0.0025 },
 		fogEnabled: { value: 0 }
 	}
 

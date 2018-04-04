@@ -20,7 +20,7 @@ void main() {
 
 		float fogFactor = whiteCompliment( exp2( - fogDensity * fogDensity * fogDepth * fogDepth * LOG2 ) );
 
-		gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
+		gl_FragColor = mix( gl_FragColor, vec4( fogColor, 0.0 ), fogFactor );
 
 	}
 

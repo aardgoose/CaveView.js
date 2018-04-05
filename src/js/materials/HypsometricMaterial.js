@@ -16,12 +16,21 @@ function HypsometricMaterial ( survey, viewer ) {
 		fragmentShader: Shaders.surfaceFragmentShader,
 		type: 'CV.HypsometricMaterial',
 		uniforms: {
-			uLight: { value: viewer.surfaceLightDirection },
-			datumShift:      { value: terrain.activeDatumShift },
-			minZ:   { value: zMin },
-			scaleZ: { value: 1 / ( zMax - zMin ) },
-			cmap:   { value: ColourCache.getTexture( 'hypsometric' ) },
+			uLight:     { value: viewer.surfaceLightDirection },
+			datumShift: { value: terrain.activeDatumShift },
+			minZ:       { value: zMin },
+			scaleZ:     { value: 1 / ( zMax - zMin ) },
+			cmap:       { value: ColourCache.getTexture( 'hypsometric' ) },
+			opacity:    { value: 0.5 }
 		}
+	} );
+
+	this.transparent = true;
+
+	Object.defineProperty( this, 'opacity', {
+		writeable: true,
+		get: function () { return this.uniforms.opacity.value; },
+		set: function ( value ) { this.uniforms.opacity.value = value; }
 	} );
 
 	const self = this;

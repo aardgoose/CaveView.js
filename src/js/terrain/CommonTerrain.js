@@ -1,5 +1,5 @@
 
-import { MATERIAL_SURFACE, SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED, SHADING_CONTOURS } from '../core/constants';
+import { SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED, SHADING_CONTOURS } from '../core/constants';
 import { Materials } from '../materials/Materials';
 import { unpackRGBA } from '../core/unpackRGBA';
 import { StencilLib } from '../core/StencilLib';
@@ -70,7 +70,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	case SHADING_HEIGHT:
 
-		material = Materials.getHeightMaterial( MATERIAL_SURFACE );
+		material = Materials.getHypsometricMaterial();
 
 		break;
 

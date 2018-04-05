@@ -6,6 +6,7 @@ import { DepthMaterial } from './DepthMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMapMaterial } from './DepthMapMaterial';
 import { HeightMaterial } from './HeightMaterial';
+import { HypsometricMaterial } from './HypsometricMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
 import { GlyphString } from '../core/GlyphString';
 import { MaterialFog } from './MaterialFog';
@@ -74,6 +75,23 @@ function getHeightMaterial ( type ) {
 	if ( material === undefined ) {
 
 		material = cacheSurveyMaterial( name, new HeightMaterial( type, survey ) );
+
+	}
+
+	return material;
+
+}
+
+function getHypsometricMaterial () {
+
+	const name = 'hypsometric';
+
+	var material = cache.get( name );
+
+	if ( material === undefined ) {
+
+		material = cacheSurveyMaterial( name, new HypsometricMaterial( survey, viewer ) );
+		depthMaterials.push( material );
 
 	}
 
@@ -280,6 +298,7 @@ function setFog( enable ) {
 export const Materials = {
 	getContourMaterial:     getContourMaterial,
 	getHeightMaterial:      getHeightMaterial,
+	getHypsometricMaterial: getHypsometricMaterial,
 	getDepthMapMaterial:    getDepthMapMaterial,
 	getDepthMaterial:       getDepthMaterial,
 	getDepthCursorMaterial: getDepthCursorMaterial,

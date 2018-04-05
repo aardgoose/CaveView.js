@@ -25,7 +25,6 @@ function ContourMaterial ( survey, viewer ) {
 		}
 	} );
 
-	this.alphaTest = 0.8;
 	this.transparent = true;
 
 	this.extensions.derivatives = true;

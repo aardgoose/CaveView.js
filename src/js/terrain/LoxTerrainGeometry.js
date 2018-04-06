@@ -8,8 +8,6 @@
  */
 
 import { BufferGeometry, Float32BufferAttribute, Vector3, Box3 } from '../Three';
-import { Colours } from '../core/Colours';
-import { upAxis } from '../core/constants';
 
 function LoxTerrainGeometry( dtm, offsets ) {
 
@@ -21,8 +19,6 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	const lines = dtm.lines;
 	const samples = dtm.samples;
-
-	const vertexCount = lines * samples;
 
 	// buffers
 
@@ -45,7 +41,7 @@ function LoxTerrainGeometry( dtm, offsets ) {
 	const lx = samples - 1;
 	const ly = lines - 1;
 
-	var ix, iy, i, l;
+	var ix, iy;
 
 	var minZ = Infinity;
 	var maxZ = -Infinity;
@@ -118,45 +114,6 @@ function LoxTerrainGeometry( dtm, offsets ) {
 	// calibration data from terrain and local survey -> model - offsets
 
 	this.computeVertexNormals();
-
-	const colourScale = Colours.terrain;
-	const colourRange = colourScale.length - 1;
-
-	const normal = this.getAttribute( 'normal' );
-	const vNormal = new Vector3();
-
-	const buffer = new Float32Array( vertexCount * 3 );
-	const colours = [];
-
-	// convert scale to float values
-
-	for ( i = 0, l = colourScale.length; i < l; i++ ) {
-
-		const colour = colourScale[ i ];
-
-		colours.push( [ colour[ 0 ] / 255, colour[ 1 ] / 255, colour[ 2 ] / 255 ] );
-
-	}
-
-	for ( i = 0; i < vertexCount; i++ ) {
-
-		vNormal.fromArray( normal.array, i * 3 );
-
-		const dotProduct = vNormal.dot( upAxis );
-
-		const colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
-
-		const colour = colours[ colourIndex ];
-
-		const offset = i * 3;
-
-		buffer[ offset     ] = colour[ 0 ];
-		buffer[ offset + 1 ] = colour[ 1 ];
-		buffer[ offset + 2 ] = colour[ 2 ];
-
-	}
-
-	this.addAttribute( 'color', new Float32BufferAttribute( buffer, 3 ) );
 
 }
 

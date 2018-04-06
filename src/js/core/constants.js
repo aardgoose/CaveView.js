@@ -34,6 +34,7 @@ export const SHADING_SINGLE       = 5;
 export const SHADING_SURVEY       = 6;
 export const SHADING_OVERLAY      = 7;
 export const SHADING_SHADED       = 8;
+export const SHADING_RELIEF       = 8;
 export const SHADING_DEPTH        = 9;
 export const SHADING_PATH         = 10;
 export const SHADING_DEPTH_CURSOR = 11;

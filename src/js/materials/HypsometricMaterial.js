@@ -6,10 +6,10 @@ import { ShaderMaterial } from '../Three';
 function HypsometricMaterial ( survey, viewer ) {
 
 	const terrain = survey.terrain;
-	const limits = terrain.boundingBox;
+	const datumShift = terrain === null ? 0 : terrain.activeDatumShift;
 
-	const zMin = limits.min.z;
-	const zMax = limits.max.z;
+	const zMin = 0;
+	const zMax = 500;
 
 	ShaderMaterial.call( this, {
 		vertexShader: Shaders.surfaceVertexShader,
@@ -17,7 +17,7 @@ function HypsometricMaterial ( survey, viewer ) {
 		type: 'CV.HypsometricMaterial',
 		uniforms: {
 			uLight:     { value: viewer.surfaceLightDirection },
-			datumShift: { value: terrain.activeDatumShift },
+			datumShift: { value: datumShift },
 			minZ:       { value: zMin },
 			scaleZ:     { value: 1 / ( zMax - zMin ) },
 			cmap:       { value: ColourCache.getTexture( 'hypsometric' ) },

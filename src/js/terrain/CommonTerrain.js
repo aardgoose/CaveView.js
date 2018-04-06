@@ -1,14 +1,10 @@
 
-import { SHADING_HEIGHT, SHADING_OVERLAY, SHADING_SHADED, SHADING_CONTOURS } from '../core/constants';
+import { SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS } from '../core/constants';
 import { Materials } from '../materials/Materials';
 import { unpackRGBA } from '../core/unpackRGBA';
 import { StencilLib } from '../core/StencilLib';
 
-import {
-	MeshLambertMaterial,
-	VertexColors, FrontSide,
-	Group, Box3, Vector3
-} from '../Three';
+import { Group, Box3, Vector3 } from '../Three';
 
 function CommonTerrain () {
 
@@ -31,7 +27,7 @@ function CommonTerrain () {
 
 CommonTerrain.prototype = Object.create( Group.prototype );
 
-CommonTerrain.prototype.shadingMode = SHADING_SHADED;
+CommonTerrain.prototype.shadingMode = SHADING_RELIEF;
 CommonTerrain.prototype.opacity = 0.5;
 
 CommonTerrain.prototype.removed = function () {};
@@ -68,7 +64,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	switch ( mode ) {
 
-	case SHADING_HEIGHT:
+	case SHADING_RELIEF:
 
 		material = Materials.getHypsometricMaterial();
 
@@ -78,12 +74,6 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 		this.setOverlay( ( activeOverlay === null ? this.defaultOverlay : activeOverlay ), renderCallback );
 		hideAttribution = false;
-
-		break;
-
-	case SHADING_SHADED:
-
-		material = this.getShadedMaterial();
 
 		break;
 
@@ -115,18 +105,6 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 	this.shadingMode = mode;
 
 	return true;
-
-};
-
-CommonTerrain.prototype.getShadedMaterial = function () {
-
-	return new MeshLambertMaterial( {
-		color:        0xffffff,
-		vertexColors: VertexColors,
-		side:         FrontSide,
-		transparent:  true,
-		opacity:      this.opacity }
-	);
 
 };
 

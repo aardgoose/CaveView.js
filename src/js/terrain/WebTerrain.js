@@ -1,3 +1,4 @@
+import { Materials } from '../materials/Materials';
 import { CommonTerrain } from './CommonTerrain';
 import { Tile } from './Tile';
 import { WorkerPool } from '../core/WorkerPool';
@@ -41,7 +42,7 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 	this.overlaysLoading = 0;
 	this.debug = true;
 
-	this.material = this.getShadedMaterial();
+	this.material = Materials.getHypsometricMaterial();
 
 	this.workerPool = new WorkerPool( 'webTileWorker.js' );
 

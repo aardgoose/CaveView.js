@@ -4,7 +4,7 @@ import {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_OFFSET,
 	FACE_WALLS, FACE_SCRAPS, FACE_ALPHA, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
-	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY, SHADING_PATH,
+	SHADING_HEIGHT, SHADING_SINGLE, SHADING_RELIEF, SHADING_OVERLAY, SHADING_PATH,
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
@@ -49,7 +49,7 @@ const defaultView = {
 	cameraType: CAMERA_PERSPECTIVE,
 	shadingMode: SHADING_HEIGHT,
 	surfaceShading: SHADING_HEIGHT,
-	terrainShading: SHADING_SHADED,
+	terrainShading: SHADING_RELIEF,
 	terrainOpacity: 0.5,
 	terrainOverlay: null,
 	surfaceLegs: false,
@@ -106,7 +106,7 @@ var cursorHeight;
 
 var shadingMode = SHADING_SINGLE;
 var surfaceShadingMode = SHADING_SINGLE;
-var terrainShadingMode = SHADING_SHADED;
+var terrainShadingMode = SHADING_RELIEF;
 
 var overlays = {};
 var activeOverlay = null;
@@ -832,7 +832,7 @@ function setFog( enable ) {
 
 function setTerrainShadingMode ( mode ) {
 
-	if ( terrain === null ) return;
+	if ( survey.terrain === null  ) return;
 	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
 
 	renderView();

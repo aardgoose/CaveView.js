@@ -1,5 +1,6 @@
 import { Shaders } from '../shaders/Shaders';
 import { ColourCache } from '../core/ColourCache';
+import { Cfg } from '../core/lib';
 
 import { ShaderMaterial } from '../Three';
 
@@ -8,8 +9,8 @@ function HypsometricMaterial ( survey, viewer ) {
 	const terrain = survey.terrain;
 	const datumShift = terrain === null ? 0 : terrain.activeDatumShift;
 
-	const zMin = 0;
-	const zMax = 500;
+	const zMin = Cfg.themeValue( 'shading.hypsometric.min' );
+	const zMax = Cfg.themeValue( 'shading.hypsometric.max' );
 
 	ShaderMaterial.call( this, {
 		vertexShader: Shaders.surfaceVertexShader,

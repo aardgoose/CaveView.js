@@ -62,6 +62,10 @@ const defaultTheme = {
 			line10: 0xf29d62,
 			interval: 10,
 			base: 0xffffff
+		},
+		hypsometric: {
+			min: 0,
+			max: 400
 		}
 	},
 	popup: {

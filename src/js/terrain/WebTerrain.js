@@ -325,12 +325,6 @@ WebTerrain.prototype.tileArea = function ( limits, tile ) {
 
 };
 
-WebTerrain.prototype.setDefaultOverlay = function ( overlay ) {
-
-	this.defaultOverlay = overlay;
-
-};
-
 WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	if ( this.tilesLoading > 0 ) return;
@@ -354,7 +348,6 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 	}
 
 	this.activeOverlay = overlay;
-	this.defaultOverlay = overlay;
 
 	if ( overlay !== null ) overlay.showAttribution();
 

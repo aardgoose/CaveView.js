@@ -5,7 +5,7 @@ import {
 	FACE_WALLS, FACE_SCRAPS, FACE_ALPHA, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_RELIEF, SHADING_OVERLAY, SHADING_PATH,
-	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
+	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE, SHADING_CONTOURS,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
 	upAxis,
@@ -66,6 +66,10 @@ const defaultView = {
 	fog: false
 };
 
+var terrainShadingModes = {
+	'terrain.shading.height': SHADING_RELIEF
+};
+
 const renderer = new WebGLRenderer( { antialias: true } ) ;
 
 const defaultTarget = new Vector3();
@@ -109,8 +113,6 @@ var surfaceShadingMode = SHADING_SINGLE;
 var terrainShadingMode = SHADING_RELIEF;
 
 var overlays = {};
-var activeOverlay = null;
-var defaultOverlay = null;
 var useFog = false;
 
 var cameraMode;
@@ -229,14 +231,8 @@ function init ( domID, configuration ) { // public method
 			set: applyTerrainDatumShift
 		},
 
-		'terrainOverlays': {
-			get: function () { if ( terrain !== null && terrain.isTiled ) return Object.keys( overlays ); else return terrain.hasOverlay ? [ true ] : []; }
-		},
-
-		'terrainOverlay': {
-			writeable: true,
-			get: function () { return activeOverlay; },
-			set: function ( x ) { _stateSetter( setTerrainOverlay, 'terrainOverlay', x ); }
+		'terrainShadingModes': {
+			get: function () { return terrainShadingModes; }
 		},
 
 		'terrainOpacity': {
@@ -833,7 +829,21 @@ function setFog( enable ) {
 function setTerrainShadingMode ( mode ) {
 
 	if ( survey.terrain === null  ) return;
-	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
+
+	const overlay = overlays[ mode ];
+
+	if ( overlay !== undefined ) {
+
+		terrain.setOverlay( overlay, renderView );
+		terrain.setShadingMode( SHADING_OVERLAY, renderView );
+
+		terrainShadingMode = mode;
+
+	} else {
+
+		if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
+
+	}
 
 	renderView();
 
@@ -863,30 +873,9 @@ function setSurfaceShadingMode ( mode ) {
 
 }
 
-function setTerrainOverlay ( overlayName ) {
-
-	if ( terrain === null || ( overlayName === 0 && terrain.isTiled ) ) return;
-
-	if ( terrainShadingMode === SHADING_OVERLAY ) {
-
-		activeOverlay = overlayName;
-
-		terrain.setOverlay( overlays[ overlayName ], renderView );
-
-	}
-
-}
-
 function addOverlay ( name, overlayProvider ) {
 
 	overlays[ name ] = new Overlay( overlayProvider, container );
-
-	if ( Object.keys( overlays ).length === 1 ) {
-
-		activeOverlay = name;
-		defaultOverlay = name;
-
-	}
 
 }
 
@@ -1047,7 +1036,7 @@ function clearView () {
 	selectedSection = 0;
 	mouseMode       = MOUSE_MODE_NORMAL;
 	mouseTargets    = [];
-	activeOverlay   = null;
+	terrainShadingModes = {};
 
 	// remove event listeners
 
@@ -1107,6 +1096,33 @@ function setupView () {
 	}
 
 	renderRequired = true;
+}
+
+function setTerrainModes () {
+
+	terrainShadingModes[ 'terrain.shading.height' ] = SHADING_RELIEF;
+
+	if ( renderer.extensions.get( 'OES_standard_derivatives' ) !== null ) {
+
+		terrainShadingModes[ 'terrain.shading.contours' + ' (' + Cfg.themeValue( 'shading.contours.interval' ) + '\u202fm)' ] = SHADING_CONTOURS;
+
+	}
+
+	if ( terrain.isTiled ) {
+
+		var name;
+
+		for ( name in overlays ) {
+
+			terrainShadingModes[ name ] = name;
+
+		}
+
+	} else if ( terrain.hasOverlay ) {
+
+		terrainShadingModes[ 'terrain.shading.overlay' ] = SHADING_OVERLAY;
+
+	}
 
 }
 
@@ -1153,6 +1169,8 @@ function loadSurvey ( newSurvey ) {
 
 		survey.addStatic( terrain );
 
+		setTerrainModes();
+
 		setTerrainShadingMode( terrainShadingMode );
 
 		renderDepthTexture();
@@ -1185,10 +1203,7 @@ function loadSurvey ( newSurvey ) {
 
 			setTerrainShadingMode( terrainShadingMode );
 
-			if ( activeOverlay === null ) activeOverlay = defaultOverlay;
-
 			terrain.tileArea( survey.limits );
-			terrain.setDefaultOverlay( overlays[ activeOverlay ] );
 
 		} else {
 
@@ -1223,6 +1238,8 @@ function loadSurvey ( newSurvey ) {
 		}
 
 		if ( firstTiles ) {
+
+			setTerrainModes();
 
 			// delayed notification to ensure and event listeners get accurate terrain information
 			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );

@@ -1,9 +1,9 @@
 import {
 	VERSION, LEG_CAVE,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, STATION_ENTRANCE,
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
-	SHADING_SINGLE, SHADING_RELIEF, SHADING_SURVEY, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE, SHADING_CONTOURS,
-	SHADING_BECK, VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W,
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH,
+	SHADING_SINGLE, SHADING_SURVEY, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
+	SHADING_BECK, VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W
 } from '../core/constants';
 
 import { replaceExtension, Cfg } from '../core/lib';
@@ -30,8 +30,6 @@ var loadedFile;
 var terrainControls = [];
 var routeControls = [];
 
-var terrainOverlay = null;
-
 const legShadingModes = {
 	'shading.height':        SHADING_HEIGHT,
 	'shading.length':        SHADING_LENGTH,
@@ -49,10 +47,6 @@ const surfaceShadingModes = {
 	'surface.shading.inclination':   SHADING_INCLINATION,
 	'surface.shading.height_cursor': SHADING_CURSOR,
 	'surface.shading.fixed':         SHADING_SINGLE
-};
-
-const terrainShadingModes = {
-	'terrain.shading.height': SHADING_RELIEF
 };
 
 const cameraViews = {
@@ -147,19 +141,6 @@ function handleChange ( event ) {
 	case 'terrain':
 
 		setControlsVisibility( terrainControls, Viewer.terrain );
-
-	case 'terrainShading': // eslint-disable-line no-fallthrough
-
-		// only show overlay selection when terrain shading is set to overlay
-		if ( Viewer.terrain && terrainOverlay && Viewer.terrainShading === SHADING_OVERLAY ) {
-
-			terrainOverlay.style.display = 'block';
-
-		} else if ( terrainOverlay ) {
-
-			terrainOverlay.style.display = 'none';
-
-		}
 
 		break;
 
@@ -635,7 +616,6 @@ function initSettingsPage () {
 function initSurfacePage () {
 
 	// reset
-	terrainOverlay = null;
 	terrainControls = [];
 
 	const page = new Page( 'icon_terrain', 'surface' );
@@ -655,20 +635,7 @@ function initSurfacePage () {
 
 		page.addCheckbox( 'terrain.terrain', Viewer, 'terrain' );
 
-		const overlays = Viewer.terrainOverlays;
-		const terrainShadingModesActive = Object.assign( {}, terrainShadingModes );
-
-		if ( overlays.length > 0 ) terrainShadingModesActive[ 'terrain.shading.overlay' ] = SHADING_OVERLAY;
-		if ( Viewer.hasContours ) terrainShadingModesActive[ 'terrain.shading.contours' + ' (' + Cfg.themeValue( 'shading.contours.interval' ) + '\u202fm)' ] = SHADING_CONTOURS;
-
-		terrainControls.push( page.addSelect( 'terrain.shading.caption', terrainShadingModesActive, Viewer, 'terrainShading' ) );
-
-		if ( overlays.length > 1 ) {
-
-			terrainOverlay = page.addSelect( 'terrain.overlay.caption', overlays, Viewer, 'terrainOverlay' );
-			terrainControls.push( terrainOverlay );
-
-		}
+		terrainControls.push( page.addSelect( 'terrain.shading.caption', Viewer.terrainShadingModes, Viewer, 'terrainShading' ) );
 
 		terrainControls.push( page.addRange( 'terrain.opacity', Viewer, 'terrainOpacity' ) );
 

@@ -51,7 +51,6 @@ const defaultView = {
 	surfaceShading: SHADING_HEIGHT,
 	terrainShading: SHADING_RELIEF,
 	terrainOpacity: 0.5,
-	terrainOverlay: null,
 	surfaceLegs: false,
 	walls: false,
 	alpha: false,

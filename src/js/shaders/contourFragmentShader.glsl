@@ -10,8 +10,8 @@ varying float vDotNL;
 
 void main() {
 
-	float f  = fract( vPositionZ / contourInterval );
-	float f10  = fract( vPositionZ / ( contourInterval * 10.0 ) );
+	float f = fract( vPositionZ / contourInterval );
+	float f10 = fract( vPositionZ / ( contourInterval * 10.0 ) );
 
 	float df = fwidth( vPositionZ / contourInterval );
 

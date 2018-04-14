@@ -629,7 +629,7 @@ function renderDepthTexture () {
 
 	// restore renderer to normal render size and target
 
-	renderer.setRenderTarget();	// revert to screen canvas
+	renderer.setRenderTarget(); // revert to screen canvas
 
 	renderer.setSize( container.clientWidth, container.clientHeight );
 	renderer.setPixelRatio( window.devicePixelRatio );

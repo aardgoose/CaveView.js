@@ -3,7 +3,6 @@ import { CommonTerrain } from './CommonTerrain';
 import { Tile } from './Tile';
 import { WorkerPool } from '../core/WorkerPool';
 import { Cfg } from '../core/lib';
-import { SHADING_OVERLAY } from '../core/constants';
 
 import {
 	Vector2, Frustum, Box2, Matrix4, FileLoader
@@ -429,12 +428,7 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 	this.opacity = opacity;
 
-	if ( this.shadingMode === SHADING_OVERLAY ) {
-
-		// each tile has its own material, therefore need setting separately
-		this.traverse( _setTileOpacity );
-
-	} else {
+	if ( this.activeOverlay === null ) {
 
 		if ( this.material ) {
 
@@ -442,6 +436,11 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 			this.material.needsUpdate = true;
 
 		}
+
+	} else {
+
+		// each tile has its own material, therefore need setting separately
+		this.traverse( _setTileOpacity );
 
 	}
 

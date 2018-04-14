@@ -215,12 +215,6 @@ CommonTerrain.prototype.computeBoundingBox = function () {
 
 };
 
-CommonTerrain.addOverlay = function ( name, overlayProvider, container ) {
-
-	overlays[ name ] = new Overlay( overlayProvider, container );
-
-};
-
 CommonTerrain.prototype.addHeightMap = function ( renderer, renderTarget ) {
 
 	this.depthTexture = renderTarget.texture;

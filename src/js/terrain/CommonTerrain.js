@@ -79,7 +79,7 @@ CommonTerrain.prototype.getTerrainShadingModes = function ( renderer ) {
 
 		for ( name in overlays ) {
 
-			terrainShadingModes[ name ] = name;
+			if ( overlays[ name ].hasCoverage( this.limits ) ) terrainShadingModes[ name ] = name;
 
 		}
 

@@ -13,6 +13,12 @@ function BGSProvider ( layers ) {
 BGSProvider.prototype.minZoom = 12;
 BGSProvider.prototype.maxZoom = 14;
 
+BGSProvider.prototype.minX = 14;
+BGSProvider.prototype.maxX = 14;
+BGSProvider.prototype.minY = 14;
+BGSProvider.prototype.maxY = 14;
+
+
 BGSProvider.prototype.getUrl = function ( x, y, z ) {
 
 	var earthRadius = 6378137; // in meters

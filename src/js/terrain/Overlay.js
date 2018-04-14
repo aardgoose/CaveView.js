@@ -1,7 +1,8 @@
 
 import {
 	TextureLoader,
-	MeshLambertMaterial
+	MeshLambertMaterial,
+	Box2, Vector2
 } from '../Three';
 
 import { Cfg } from '../core/lib';
@@ -28,12 +29,24 @@ function Overlay ( overlayProvider, container ) {
 	this.materialCache = {};
 	this.missing = new Set();
 
+	const coverage = overlayProvider.coverage;
+
+	if ( coverage !== undefined ) {
+
+		this.coverage = new Box2(
+			new Vector2( coverage.minX, coverage.minY ),
+			new Vector2( coverage.maxX, coverage.maxY )
+		);
+
+	}
+
 }
 
 Overlay.prototype.hasCoverage = function ( limits ) {
 
-	console.log( limits );
-	return true;
+	const coverage = this.coverage;
+
+	return ( coverage === undefined ) ? true : coverage.intersectsBox( limits );
 
 };
 

@@ -13,11 +13,12 @@ function BGSProvider ( layers ) {
 BGSProvider.prototype.minZoom = 12;
 BGSProvider.prototype.maxZoom = 14;
 
-BGSProvider.prototype.minX = 14;
-BGSProvider.prototype.maxX = 14;
-BGSProvider.prototype.minY = 14;
-BGSProvider.prototype.maxY = 14;
-
+BGSProvider.prototype.coverage = {
+	minX: -1945261.298110,
+	minY: 5414691.645640,
+	maxX: 1134858.947510,
+	maxY: 10211684.489360
+};
 
 BGSProvider.prototype.getUrl = function ( x, y, z ) {
 

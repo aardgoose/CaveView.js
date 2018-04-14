@@ -30,6 +30,13 @@ function Overlay ( overlayProvider, container ) {
 
 }
 
+Overlay.prototype.hasCoverage = function ( limits ) {
+
+	console.log( limits );
+	return true;
+
+};
+
 Overlay.prototype.showAttribution = function () {
 
 	const attribution = this.attribution;

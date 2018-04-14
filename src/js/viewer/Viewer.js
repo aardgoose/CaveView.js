@@ -1076,6 +1076,7 @@ function setupView () {
 	}
 
 	renderRequired = true;
+
 }
 
 function loadSurvey ( newSurvey ) {

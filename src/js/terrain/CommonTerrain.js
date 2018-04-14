@@ -133,6 +133,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 		if ( overlay !== undefined ) {
 
 			this.setOverlay( overlay, renderCallback );
+			hideAttribution = false;
 
 		} else {
 

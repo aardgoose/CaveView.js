@@ -1,17 +1,19 @@
 
 import { SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS } from '../core/constants';
+import { Cfg } from '../core/lib';
 import { Materials } from '../materials/Materials';
 import { unpackRGBA } from '../core/unpackRGBA';
 import { StencilLib } from '../core/StencilLib';
-
+import { Overlay } from './Overlay';
 import { Group, Box3, Vector3 } from '../Three';
+
+const overlays = {};
 
 function CommonTerrain () {
 
 	Group.call( this );
 
 	this.hasOverlay = false;
-	this.defaultOverlay = null;
 	this.activeOverlay = null;
 	this.depthTexture = null;
 	this.renderer = null;
@@ -24,6 +26,12 @@ function CommonTerrain () {
 	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
 
 }
+
+CommonTerrain.addOverlay = function ( name, overlayProvider, container ) {
+
+	overlays[ name ] = new Overlay( overlayProvider, container );
+
+};
 
 CommonTerrain.prototype = Object.create( Group.prototype );
 
@@ -53,6 +61,38 @@ CommonTerrain.prototype.commonRemoved = function () {
 
 };
 
+CommonTerrain.prototype.getTerrainShadingModes = function ( renderer ) {
+
+	const terrainShadingModes = {};
+
+	terrainShadingModes[ 'terrain.shading.height' ] = SHADING_RELIEF;
+
+	if ( renderer.extensions.get( 'OES_standard_derivatives' ) !== null ) {
+
+		terrainShadingModes[ 'terrain.shading.contours' + ' (' + Cfg.themeValue( 'shading.contours.interval' ) + '\u202fm)' ] = SHADING_CONTOURS;
+
+	}
+
+	if ( this.isTiled ) {
+
+		var name;
+
+		for ( name in overlays ) {
+
+			terrainShadingModes[ name ] = name;
+
+		}
+
+	} else if ( this.hasOverlay ) {
+
+		terrainShadingModes[ 'terrain.shading.overlay' ] = SHADING_OVERLAY;
+
+	}
+
+	return terrainShadingModes;
+
+};
+
 CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	const activeOverlay = this.activeOverlay;
@@ -61,6 +101,8 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 	var hideAttribution = true;
 
 	StencilLib.featureShowThrough = true;
+
+	var overlay = null;
 
 	switch ( mode ) {
 
@@ -72,7 +114,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	case SHADING_OVERLAY:
 
-		this.setOverlay( ( activeOverlay === null ? this.defaultOverlay : activeOverlay ), renderCallback );
+		this.setOverlay( renderCallback );
 		hideAttribution = false;
 
 		break;
@@ -86,8 +128,18 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	default:
 
-		console.warn( 'unknown mode', mode );
-		return false;
+		overlay = overlays[ mode ];
+
+		if ( overlay !== undefined ) {
+
+			this.setOverlay( overlay, renderCallback );
+
+		} else {
+
+			console.warn( 'unknown mode', mode );
+			return false;
+
+		}
 
 	}
 
@@ -159,6 +211,12 @@ CommonTerrain.prototype.computeBoundingBox = function () {
 	}
 
 	return bb;
+
+};
+
+CommonTerrain.addOverlay = function ( name, overlayProvider, container ) {
+
+	overlays[ name ] = new Overlay( overlayProvider, container );
 
 };
 

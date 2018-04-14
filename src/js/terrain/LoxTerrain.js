@@ -44,7 +44,7 @@ LoxTerrain.prototype.isLoaded = function () {
 
 };
 
-LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
+LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
 
 	if ( ! this.hasOverlay ) return;
 

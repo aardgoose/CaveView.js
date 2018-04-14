@@ -4,8 +4,8 @@ import {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_OFFSET,
 	FACE_WALLS, FACE_SCRAPS, FACE_ALPHA, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
-	SHADING_HEIGHT, SHADING_SINGLE, SHADING_RELIEF, SHADING_OVERLAY, SHADING_PATH,
-	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE, SHADING_CONTOURS,
+	SHADING_HEIGHT, SHADING_SINGLE, SHADING_RELIEF, SHADING_PATH,
+	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
 	upAxis,
@@ -19,7 +19,7 @@ import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
 import { WebTerrain } from '../terrain/WebTerrain';
-import { Overlay } from '../terrain/Overlay';
+import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/lib';
 import { WorkerPool } from '../core/WorkerPool';
 
@@ -65,10 +65,6 @@ const defaultView = {
 	fog: false
 };
 
-var terrainShadingModes = {
-	'terrain.shading.height': SHADING_RELIEF
-};
-
 const renderer = new WebGLRenderer( { antialias: true } ) ;
 
 const defaultTarget = new Vector3();
@@ -111,7 +107,6 @@ var shadingMode = SHADING_SINGLE;
 var surfaceShadingMode = SHADING_SINGLE;
 var terrainShadingMode = SHADING_RELIEF;
 
-var overlays = {};
 var useFog = false;
 
 var cameraMode;
@@ -231,7 +226,7 @@ function init ( domID, configuration ) { // public method
 		},
 
 		'terrainShadingModes': {
-			get: function () { return terrainShadingModes; }
+			get: function () { return terrain.getTerrainShadingModes( renderer ); }
 		},
 
 		'terrainOpacity': {
@@ -829,20 +824,7 @@ function setTerrainShadingMode ( mode ) {
 
 	if ( survey.terrain === null  ) return;
 
-	const overlay = overlays[ mode ];
-
-	if ( overlay !== undefined ) {
-
-		terrain.setOverlay( overlay, renderView );
-		terrain.setShadingMode( SHADING_OVERLAY, renderView );
-
-		terrainShadingMode = mode;
-
-	} else {
-
-		if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
-
-	}
+	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
 
 	renderView();
 
@@ -874,7 +856,7 @@ function setSurfaceShadingMode ( mode ) {
 
 function addOverlay ( name, overlayProvider ) {
 
-	overlays[ name ] = new Overlay( overlayProvider, container );
+	CommonTerrain.addOverlay( name, overlayProvider, container );
 
 }
 
@@ -1035,7 +1017,6 @@ function clearView () {
 	selectedSection = 0;
 	mouseMode       = MOUSE_MODE_NORMAL;
 	mouseTargets    = [];
-	terrainShadingModes = {};
 
 	// remove event listeners
 
@@ -1097,34 +1078,6 @@ function setupView () {
 	renderRequired = true;
 }
 
-function setTerrainModes () {
-
-	terrainShadingModes[ 'terrain.shading.height' ] = SHADING_RELIEF;
-
-	if ( renderer.extensions.get( 'OES_standard_derivatives' ) !== null ) {
-
-		terrainShadingModes[ 'terrain.shading.contours' + ' (' + Cfg.themeValue( 'shading.contours.interval' ) + '\u202fm)' ] = SHADING_CONTOURS;
-
-	}
-
-	if ( terrain.isTiled ) {
-
-		var name;
-
-		for ( name in overlays ) {
-
-			terrainShadingModes[ name ] = name;
-
-		}
-
-	} else if ( terrain.hasOverlay ) {
-
-		terrainShadingModes[ 'terrain.shading.overlay' ] = SHADING_OVERLAY;
-
-	}
-
-}
-
 function loadSurvey ( newSurvey ) {
 
 	var syncTerrainLoading = true;
@@ -1167,8 +1120,6 @@ function loadSurvey ( newSurvey ) {
 	} else {
 
 		survey.addStatic( terrain );
-
-		setTerrainModes();
 
 		setTerrainShadingMode( terrainShadingMode );
 
@@ -1237,8 +1188,6 @@ function loadSurvey ( newSurvey ) {
 		}
 
 		if ( firstTiles ) {
-
-			setTerrainModes();
 
 			// delayed notification to ensure and event listeners get accurate terrain information
 			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );

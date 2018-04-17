@@ -2,6 +2,7 @@
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
 import { Tree } from '../core/Tree';
+import { Cfg } from '../core/lib';
 import { Vector3, Box3 } from '../Three';
 
 function Svx3dHandler ( fileName ) {
@@ -55,7 +56,7 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 			default:
 
-				sourceCRS = null;
+				sourceCRS = Cfg.value( 'defaultCRS' , null );
 				console.warn( 'unsupported projection' );
 
 			}
@@ -1117,8 +1118,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		} else if ( lineEnds.has( position ) ) {
 
-			endRun = true;
-			// console.warn( 'unterminated LRUD passage at ', label );
+		//	endRun = true;
+			console.warn( 'unterminated LRUD passage at ', label );
 
 		}
 

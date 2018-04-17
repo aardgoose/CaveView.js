@@ -139,7 +139,7 @@ Legs.prototype.computeStats = function () {
 		const vertex1 = vertices[ i ];
 		const vertex2 = vertices[ i + 1 ];
 
-		const legLength = vertex1.distanceTo( vertex2 );
+		const legLength = vertex1.correctedDistanceTo( vertex2 );
 
 		legLengths[ i / 2 ] = legLength; // cache lengths to avoid recalc
 

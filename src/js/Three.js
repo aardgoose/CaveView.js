@@ -177,3 +177,19 @@ Object3D.prototype.addStatic = function ( obj ) {
 	this.add( obj );
 
 };
+
+import { Vector3 } from '../../../three.js/src/math/Vector3.js';
+
+Vector3.prototype.correctedDistanceTo = function ( v ) {
+
+	return Math.sqrt( this.correctedDistanceToSquared( v ) );
+
+};
+
+Vector3.prototype.correctedDistanceToSquared = function ( v ) {
+
+	var dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
+
+	return dx * dx + dy * dy + dz * dz;
+
+};

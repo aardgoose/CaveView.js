@@ -67,7 +67,7 @@ function Survey ( cave ) {
 	const survey = cave.getSurvey();
 
 	this.name = survey.title;
-	this.CRS = ( survey.sourceCRS === null ) ? Cfg.value( 'CRS', 'fred' ) : survey.sourceCRS;
+	this.CRS = survey.sourceCRS;
 
 	this.limits = survey.limits;
 	this.offsets = survey.offsets;
@@ -79,6 +79,11 @@ function Survey ( cave ) {
 
 	this.modelLimits = modelLimits;
 
+	// this needs to be defined before loading the leg data to
+	// allow correct leg lengths to be calculated
+
+	_setProjectionScale();
+
 	this.loadCave( survey );
 
 	this.legTargets = [ this.features[ LEG_CAVE ] ];
@@ -86,8 +91,6 @@ function Survey ( cave ) {
 	this.loadEntrances();
 
 	this.setFeatureBox();
-
-	_setProjectionScale();
 
 	this.addEventListener( 'removed', this.onRemoved );
 
@@ -125,6 +128,7 @@ function Survey ( cave ) {
 		const l2 = p1.distanceTo( p2 );
 
 		self.scaleFactor = l1 / l2;
+		Vector3.scaleFactor = 1 / self.scaleFactor;
 
 	}
 

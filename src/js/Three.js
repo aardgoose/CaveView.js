@@ -178,7 +178,12 @@ Object3D.prototype.addStatic = function ( obj ) {
 
 };
 
+// add methods to calculate lengths corrected for distortions introduced
+// by web mercator projection
+
 import { Vector3 } from '../../../three.js/src/math/Vector3.js';
+
+Vector3.scaleFactor = 1;
 
 Vector3.prototype.correctedDistanceTo = function ( v ) {
 
@@ -188,7 +193,7 @@ Vector3.prototype.correctedDistanceTo = function ( v ) {
 
 Vector3.prototype.correctedDistanceToSquared = function ( v ) {
 
-	var dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
+	var dx = this.x - v.x, dy = this.y - v.y, dz = ( this.z - v.z ) * Vector3.scaleFactor;
 
 	return dx * dx + dy * dy + dz * dz;
 

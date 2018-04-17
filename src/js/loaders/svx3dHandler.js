@@ -1116,10 +1116,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			endRun = true;
 
-		} else if ( lineEnds.has( position ) ) {
+		} else if ( lineEnds.has( position ) && xSects.length > 1 ) {
 
-		//	endRun = true;
-			console.warn( 'unterminated LRUD passage at ', label );
+			endRun = true;
+			// console.warn( 'unterminated LRUD passage at ', label );
 
 		}
 

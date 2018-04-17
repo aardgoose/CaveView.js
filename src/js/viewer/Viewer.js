@@ -38,7 +38,7 @@ import {
 	OrthographicCamera, PerspectiveCamera,
 	WebGLRenderer, WebGLRenderTarget,
 	MOUSE, FogExp2,
-	Quaternion, Spherical, Math as _Math
+	Quaternion, Spherical
 } from '../Three';
 
 const defaultView = {
@@ -163,8 +163,8 @@ function init ( domID, configuration ) { // public method
 
 	// setup directional lighting
 
-	const inclination = _Math.degToRad( Cfg.themeValue( 'lighting.inclination' ) );
-	const azimuth = _Math.degToRad( Cfg.themeValue( 'lighting.azimuth' ) - 90 );
+	const inclination = Cfg.themeAngle( 'lighting.inclination' );
+	const azimuth = Cfg.themeAngle( 'lighting.azimuth' ) - Math.PI / 2;
 
 	lightPosition.setFromSpherical( new Spherical( 1, inclination, azimuth ) );
 	lightPosition.applyAxisAngle( new Vector3( 1, 0, 0 ), Math.PI / 2 );
@@ -189,6 +189,7 @@ function init ( domID, configuration ) { // public method
 	controls.addEventListener( 'change', cameraMoved );
 
 	controls.enableDamping = true;
+	controls.maxPolarAngle = Cfg.themeAngle( 'maxPolarAngle' );
 
 	// event handler
 	window.addEventListener( 'resize', resize );

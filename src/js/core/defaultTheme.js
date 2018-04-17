@@ -1,6 +1,7 @@
 
 const defaultTheme = {
 	background: 0x000000,
+	maxPolarAngle: 90,
 	lighting: {
 		azimuth: 315,
 		inclination: 45

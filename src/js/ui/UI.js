@@ -240,7 +240,9 @@ function initSelectionPage () {
 
 		function _addLine ( child ) {
 
-			if ( child.hitCount === 0 && ! Viewer.splays && child.type !== STATION_ENTRANCE ) return; // skip spays if not displayed
+			const connections = ( child.p === undefined ) ? null : child.p.connections;
+
+			if ( connections === 0 && ! Viewer.splays && child.type !== STATION_ENTRANCE ) return; // skip spays if not displayed
 
 			const li  = document.createElement( 'li' );
 			const txt = document.createTextNode( child.name );
@@ -250,7 +252,7 @@ function initSelectionPage () {
 
 			if ( Viewer.section === child.id ) li.classList.add( 'selected' );
 
-			if ( child.hitCount === undefined ) {
+			if ( connections === null ) {
 
 				let colour;
 
@@ -272,12 +274,12 @@ function initSelectionPage () {
 				key.style.color = 'yellow';
 				key.textContent = '\u2229 ';
 
-			} else if ( child.hitCount > 2 ) { // station at junction
+			} else if ( connections > 2 ) { // station at junction
 
 				key.style.color = 'yellow';
 				key.textContent = '\u25fc ';
 
-			} else if ( child.hitCount === 0 ) { // end of splay
+			} else if ( connections === 0 ) { // end of splay
 
 				key.style.color = 'red';
 				key.textContent = '\u25fb ';

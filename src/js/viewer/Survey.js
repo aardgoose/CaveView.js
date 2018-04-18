@@ -10,6 +10,7 @@ import {
 } from '../core/constants';
 
 import { Cfg } from '../core/lib';
+import { StationPosition } from '../core/StationPosition';
 import { ColourCache } from '../core/ColourCache';
 import { Box3Helper } from '../core/Box3';
 import { Materials } from '../materials/Materials';
@@ -128,7 +129,7 @@ function Survey ( cave ) {
 		const l2 = p1.distanceTo( p2 );
 
 		self.scaleFactor = l1 / l2;
-		Vector3.scaleFactor = 1 / self.scaleFactor;
+		StationPosition.scaleFactor = 1 / self.scaleFactor;
 
 	}
 
@@ -482,18 +483,6 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 	const stations = new Stations();
 
 	surveyTree.traverse( _addStation );
-
-	const legs = this.getLegs();
-
-	var i;
-
-	// count number of legs linked to each station
-
-	for ( i = 0; i < legs.length; i++ ) {
-
-		stations.updateStation( legs[ i ] );
-
-	}
 
 	// we have finished adding stations.
 	stations.finalise();

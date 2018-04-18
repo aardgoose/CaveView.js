@@ -390,6 +390,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		lastPosition = coords;
 
+		// lookahead at next command
 		if ( version === 1 && dataView.getInt32( pos, true ) === 2 ) {
 
 			// version 1 uses MOVE+LABEL pairs to label stations
@@ -412,6 +413,9 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 		const coords = readCoordinates();
 
 		legs.push( { coords: coords, type: LEG_CAVE, survey: sectionId } );
+
+		lastPosition.connections++;
+		coords.connections++;
 
 		lastPosition = coords;
 

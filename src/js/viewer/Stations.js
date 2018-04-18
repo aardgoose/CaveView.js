@@ -71,7 +71,7 @@ function Stations () {
 
 			for ( i = 0; i < l; i++ ) {
 
-				if ( stations[ i ].hitCount === 0 ) {
+				if ( stations[ i ].p.connections === 0 ) {
 
 					pSize.setX( i, splaySize );
 
@@ -109,14 +109,37 @@ Stations.prototype.addStation = function ( node ) {
 
 	}
 
+	const connections = point.connections; // FIXME redundant
+
 	this.vertices.push( point );
-	this.colors.push( this.baseColor );
-	this.pointSizes.push( point.type === STATION_ENTRANCE ? 8.0 : 0.0 );
+
+	this.colors.push( connections > 2 ? this.junctionColor : this.baseColor );
+
+	var pointSize = 0.0;
+
+	if ( point.type === STATION_ENTRANCE ) {
+
+		pointSize = 8.0;
+
+	} else {
+
+		if ( connections > 2 ) {
+
+			pointSize = 4.0;
+
+		} else if ( connections > 0 ) {
+
+			pointSize = 2.0;
+
+		}
+
+	}
+
+	this.pointSizes.push( pointSize );
 
 	this.map.set( point, node );
 	this.stations.push( node );
 
-	node.hitCount = 0;
 	node.stationVertexIndex = this.stationCount++;
 	node.linkedSegments = [];
 	node.legs = [];
@@ -199,29 +222,6 @@ Stations.prototype.selectStationByIndex = function ( index ) {
 	pSize.needsUpdate = true;
 
 	this.selected = index;
-
-};
-
-Stations.prototype.updateStation = function ( vertex ) {
-
-	const station = this.getStation( vertex );
-
-	if ( station !== undefined ) {
-
-		station.hitCount++;
-
-		if ( station.hitCount > 2 ) {
-
-			this.colors[ station.stationVertexIndex ] = this.junctionColor;
-			this.pointSizes[ station.stationVertexIndex ] = 4.0;
-
-		} else if ( station.hitCount > 0 ) {
-
-			this.pointSizes[ station.stationVertexIndex ] = 2.0;
-
-		}
-
-	}
 
 };
 

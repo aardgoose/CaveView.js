@@ -1425,7 +1425,7 @@ function visibleStation ( intersects ) {
 
 		station = survey.stations.getStationByIndex( intersects[ i ].index );
 
-		if ( ! Viewer.splays && station.hitCount === 0 ) {
+		if ( ! Viewer.splays && station.p.connections === 0 ) {
 
 			// don't select spays unless visible
 			station = null;

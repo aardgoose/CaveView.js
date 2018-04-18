@@ -42,7 +42,7 @@ function buildAlpha ( survey ) {
 
 		if ( s1 === undefined || s2 === undefined ) continue;
 
-		if ( s1.hitCount === 0 ) {
+		if ( v1.connections === 0 ) {
 
 			linkedSegments = s2.linkedSegments;
 

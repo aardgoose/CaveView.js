@@ -109,7 +109,7 @@ Stations.prototype.addStation = function ( node ) {
 
 	}
 
-	const connections = point.connections; // FIXME redundant
+	const connections = point.connections;
 
 	this.vertices.push( point );
 
@@ -117,7 +117,7 @@ Stations.prototype.addStation = function ( node ) {
 
 	var pointSize = 0.0;
 
-	if ( point.type === STATION_ENTRANCE ) {
+	if ( node.type === STATION_ENTRANCE ) {
 
 		pointSize = 8.0;
 

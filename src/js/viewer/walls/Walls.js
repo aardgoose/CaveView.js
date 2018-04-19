@@ -14,6 +14,8 @@ function Walls () {
 
 	Mesh.call( this, geometry, unselectedMaterial );
 
+	this.type = 'Walls';
+
 	return this;
 
 }
@@ -23,7 +25,6 @@ Walls.prototype = Object.create( Mesh.prototype );
 Walls.prototype.onBeforeRender = StencilLib.featureOnBeforeRender;
 Walls.prototype.onAfterRender = StencilLib.featureOnAfterRender;
 
-Walls.prototype.type = 'Walls';
 Walls.prototype.ready = true;
 
 Walls.prototype.addWalls = function ( vertices, indices, indexRuns ) {

@@ -88,5 +88,5 @@ function getColors( name ) {
 export const ColourCache = {
 	getTexture: getTexture,
 	getColors: getColors,
-	white:     new Color( 0xffffff )
+	white: new Color( 0xffffff )
 };

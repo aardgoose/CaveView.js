@@ -1199,9 +1199,6 @@ Svx3dHandler.prototype.getLineSegments = function () {
 			const fromCoords = from.coords;
 			const toCoords = to.coords;
 
-			// skip repeated points ( co-located stations )
-			if ( fromCoords === toCoords ) continue;
-
 			lineSegments.push( { from: fromCoords, to: toCoords, type: to.type, survey: to.survey } );
 
 		}

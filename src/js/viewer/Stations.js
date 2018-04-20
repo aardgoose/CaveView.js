@@ -51,12 +51,6 @@ function Stations () {
 	this.addStatic( point );
 	this.highlightPoint = point;
 
-	Object.defineProperty( this, 'count', {
-
-		get: function () { return this.stations.length; }
-
-	} );
-
 	function _viewChanged( event ) {
 
 		if ( event.name === 'splays' ) {
@@ -152,7 +146,6 @@ Stations.prototype.getStation = function ( vertex ) {
 	return this.map.get( vertex );
 
 };
-
 
 Stations.prototype.getStationByIndex = function ( index ) {
 

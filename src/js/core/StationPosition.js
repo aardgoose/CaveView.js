@@ -23,7 +23,7 @@ StationPosition.prototype.correctedDistanceTo = function ( v ) {
 
 StationPosition.prototype.correctedDistanceToSquared = function ( v ) {
 
-	var dx = this.x - v.x, dy = this.y - v.y, dz = ( this.z - v.z ) * Vector3.scaleFactor;
+	var dx = this.x - v.x, dy = this.y - v.y, dz = ( this.z - v.z ) * StationPosition.scaleFactor;
 
 	return dx * dx + dy * dy + dz * dz;
 

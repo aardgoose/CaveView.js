@@ -131,13 +131,13 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 	const vMap = new Map();
 
 	const l = indexRuns.length;
-	var run;
+
+	var run, newVertexIndex = 0, fp = 0;
 
 	for ( run = 0; run < l; run++ ) {
 
 		const indexRun = indexRuns[ run ];
-
-		let i, newVertexIndex = 0, fp = 0;
+		let i;
 
 		if ( selectedRuns.has( indexRun.survey ) ) {
 

@@ -14,14 +14,16 @@ import {
 } from '../Three';
 
 
-function ProgressDial () {
+function ProgressDial ( addText, ring ) {
 
 	const stdWidth  = HudObject.stdWidth;
 	const stdMargin = HudObject.stdMargin;
 
 	const offset = stdWidth + stdMargin;
 
-	const geometry = new RingGeometry( stdWidth * 0.9, stdWidth, 50 );
+	const gap = ring === 0 ? 0 : 1;
+
+	const geometry = new RingGeometry( stdWidth * ( 0.9 - ring * 0.1 ), stdWidth * ( 1 - ring * 0.1 ) - gap, 50 );
 
 	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors } ) );
 
@@ -35,17 +37,25 @@ function ProgressDial () {
 	this.visible = false;
 	this.isVisible = true;
 
-	var glyphMaterial = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
-
-	const pcent = new MutableGlyphString( '----', glyphMaterial );
-
-	pcent.translateY( 10 );
-	pcent.translateX( -5 );
-
 	this.color = Cfg.themeValue( 'hud.progress' );
 
-	this.addStatic( pcent );
-	this.pcent = pcent;
+	if ( addText ) {
+
+		var glyphMaterial = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
+
+		const pcent = new MutableGlyphString( '----', glyphMaterial );
+
+		pcent.translateY( 10 );
+		pcent.translateX( -5 );
+
+		this.addStatic( pcent );
+		this.pcent = pcent;
+
+	} else {
+
+		this.pcent = null;
+
+	}
 
 	return this;
 
@@ -71,9 +81,13 @@ ProgressDial.prototype.set = function ( progress ) {
 
 	this.geometry.colorsNeedUpdate = true;
 
-	var pcent = Math.round( progress ) + '%';
+	if ( this.pcent !== null ) {
 
-	this.pcent.replaceString( pcent.padStart( 4, ' ' ) );
+		var pcent = Math.round( progress ) + '%';
+
+		this.pcent.replaceString( pcent.padStart( 4, ' ' ) );
+
+	}
 
 	Viewer.renderView();
 
@@ -99,7 +113,7 @@ ProgressDial.prototype.start = function () {
 	this.progress = 0;
 	this.visible = true;
 
-	this.pcent.replaceString( '  0%' );
+	if ( this.pcent !== null ) this.pcent.replaceString( '  0%' );
 
 	Viewer.renderView();
 
@@ -117,6 +131,41 @@ ProgressDial.prototype.setVisibility = function ( visibility ) {
 
 	this.isVisible = visibility;
 	this.visible = ( this.visible && visibility );
+
+};
+
+ProgressDial.prototype.watch = function ( obj ) {
+
+	const self = this;
+	obj.addEventListener( 'progress', self.handleProgess.bind( self ) );
+
+};
+
+ProgressDial.prototype.handleProgess = function ( event ) {
+
+	switch ( event.name ) {
+
+	case 'start':
+
+		this.start();
+		break;
+
+	case 'set':
+
+		this.set( event.progress );
+		break;
+
+	case 'add':
+
+		this.addValue( event.value );
+		break;
+
+	case 'end':
+
+		this.end();
+		break;
+
+	}
 
 };
 

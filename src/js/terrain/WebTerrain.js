@@ -1,9 +1,8 @@
+import { Materials } from '../materials/Materials';
 import { CommonTerrain } from './CommonTerrain';
 import { Tile } from './Tile';
-import { HUD } from '../hud/HUD';
-import { WorkerPool } from '../workers/WorkerPool';
+import { WorkerPool } from '../core/WorkerPool';
 import { Cfg } from '../core/lib';
-import { SHADING_OVERLAY } from '../core/constants';
 
 import {
 	Vector2, Frustum, Box2, Matrix4, FileLoader
@@ -32,7 +31,7 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 	this.onLoaded        = onLoaded;
 	this.childrenLoading = 0;
 	this.childErrors     = 0;
-	this.terrainLoaded   = false;
+	this.isLoaded        = false;
 	this.material        = null;
 	this.initialZoom     = null;
 	this.currentZoom     = null;
@@ -42,15 +41,9 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 	this.overlaysLoading = 0;
 	this.debug = true;
 
-	this.material = this.getShadedMaterial();
+	this.material = Materials.getHypsometricMaterial();
 
 	this.workerPool = new WorkerPool( 'webTileWorker.js' );
-
-	if ( HUD !== undefined ) {
-
-		this.progressDial = HUD.getProgressDial();
-
-	}
 
 	const self = this;
 
@@ -75,12 +68,6 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 WebTerrain.prototype = Object.create( CommonTerrain.prototype );
 
 WebTerrain.prototype.isTiled = true;
-
-WebTerrain.prototype.isLoaded = function () {
-
-	return this.terrainLoaded;
-
-};
 
 WebTerrain.prototype.hasCoverage = function () {
 
@@ -204,30 +191,30 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 	// get a web worker from the pool and create new geometry in it
 
-	const tileLoader = this.workerPool.getWorker();
-
-	tileLoader.onmessage = _mapLoaded;
-
-	tileLoader.postMessage( {
-		tileSet: tileSet,
-		divisions: divisions,
-		resolution: resolution,
-		x: x,
-		y: y,
-		z: z,
-		clip: clip,
-		offsets: this.offsets
-	} );
+	this.workerPool.runWorker(
+		{
+			tileSet: tileSet,
+			divisions: divisions,
+			resolution: resolution,
+			x: x,
+			y: y,
+			z: z,
+			clip: clip,
+			offsets: this.offsets
+		},
+		_mapLoaded
+	);
 
 	return;
 
 	function _mapLoaded ( event ) {
 
 		const tileData = event.data;
+		const worker = event.currentTarget;
 
 		// return worker to pool
 
-		self.workerPool.putWorker( tileLoader );
+		self.workerPool.putWorker( worker );
 
 		--self.tilesLoading;
 
@@ -236,7 +223,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 		if ( self.dying ) {
 
-			self.progressDial.end();
+			self.dispatchEvent( { type: 'progress', name: 'end' } );
 			return;
 
 		}
@@ -247,7 +234,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 			tile.setFailed();
 
-			if ( self.progressDial ) self.progressDial.end();
+			self.dispatchEvent( { type: 'progress', name: 'end' } );
 
 			// signal error to caller
 			if ( self.tilesLoading === 0 ) self.onLoaded( self.childErrors );
@@ -256,19 +243,20 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 		}
 
-		if ( self.progressDial ) self.progressDial.addValue( self.progressInc );
+
+		self.dispatchEvent( { type: 'progress', name: 'add', value: self.progressInc } );
 
 		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox, self.material );
 
-		if ( self.progressDial ) self.progressDial.addValue( self.progressInc );
+		self.dispatchEvent( { type: 'progress', name: 'add', value: self.progressInc } );
 
 		if ( tile.setLoaded( self.activeOverlay, self.opacity, self.onLoaded ) ) {
 
-			if ( self.progressDial ) self.progressDial.end();
+			self.dispatchEvent( { type: 'progress', name: 'end' } );
 
 		}
 
-		self.terrainLoaded = true;
+		self.isLoaded = true;
 
 	}
 
@@ -318,9 +306,9 @@ WebTerrain.prototype.tileArea = function ( limits, tile ) {
 
 	}
 
-	if ( this.tilesLoading > 0 && this.progressDial !== undefined ) {
+	if ( this.tilesLoading > 0 ) {
 
-		this.progressDial.start( 'Loading ' + this.tilesLoading + ' terrain tiles' );
+		this.dispatchEvent( { type: 'progress', name: 'start' } );
 		this.progressInc = 100 / ( this.tilesLoading * 2 );
 
 	}
@@ -328,12 +316,6 @@ WebTerrain.prototype.tileArea = function ( limits, tile ) {
 	this.currentZoom = zoom;
 
 	return;
-
-};
-
-WebTerrain.prototype.setDefaultOverlay = function ( overlay ) {
-
-	this.defaultOverlay = overlay;
 
 };
 
@@ -360,7 +342,6 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 	}
 
 	this.activeOverlay = overlay;
-	this.defaultOverlay = overlay;
 
 	if ( overlay !== null ) overlay.showAttribution();
 
@@ -442,12 +423,7 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 	this.opacity = opacity;
 
-	if ( this.shadingMode === SHADING_OVERLAY ) {
-
-		// each tile has its own material, therefore need setting separately
-		this.traverse( _setTileOpacity );
-
-	} else {
+	if ( this.activeOverlay === null ) {
 
 		if ( this.material ) {
 
@@ -455,6 +431,11 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 			this.material.needsUpdate = true;
 
 		}
+
+	} else {
+
+		// each tile has its own material, therefore need setting separately
+		this.traverse( _setTileOpacity );
 
 	}
 
@@ -502,7 +483,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 	if ( resurrectCount !== 0 ) {
 
-		if ( this.progressDial ) this.progressDial.start( 'Resurrecting tiles' );
+		this.dispatchEvent( { type: 'progress', name: 'start' } );
 
 		for ( i = 0; i < resurrectCount; i++ ) {
 

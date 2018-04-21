@@ -12,9 +12,6 @@ import { Float32BufferAttribute } from '../../../../three.js/src/core/BufferAttr
 import { Vector3 } from '../../../../three.js/src/math/Vector3';
 import { Box3 } from '../../../../three.js/src/math/Box3';
 
-import { Colours } from '../core/Colours';
-import { upAxis } from '../core/constants';
-
 function TerrainTileGeometry( width, height, widthSegments, heightSegments, terrainData, scale, clip, offsets ) {
 
 	BufferGeometry.call( this );
@@ -36,12 +33,11 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 	const vertices = [];
 	const uvs = [];
 
-	var vertexCount = 0;
 
 	var minZ = Infinity;
 	var maxZ = -Infinity;
 
-	var ix, iy, i, l;
+	var ix, iy;
 
 	// generate vertices and uvs
 
@@ -82,7 +78,6 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 			const z = terrainData[ zIndex++ ] / scale - zOffset; // scale and convert to origin centered coords
 
 			vertices.push( x, - y, z );
-			vertexCount++;
 
 			if ( z < minZ ) minZ = z;
 			if ( z > maxZ ) maxZ = z;
@@ -142,44 +137,6 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
 	this.computeVertexNormals();
-
-	const colourScale = Colours.terrain;
-	const colourRange = colourScale.length - 1;
-
-	const normal = this.getAttribute( 'normal' );
-	const vNormal = new Vector3();
-
-	const buffer = new Float32Array( vertexCount * 3 );
-
-	var colours = [];
-
-	// convert scale to float values
-
-	for ( i = 0, l = colourScale.length; i < l; i++ ) {
-
-		const colour = colourScale[ i ];
-
-		colours.push( [ colour[ 0 ] / 255, colour[ 1 ] / 255, colour[ 2 ] / 255 ] );
-
-	}
-
-	for ( i = 0; i < vertexCount; i++ ) {
-
-		vNormal.fromArray( normal.array, i * 3 );
-
-		const dotProduct = vNormal.dot( upAxis );
-		const colourIndex = Math.floor( colourRange * 2 * Math.acos( Math.abs( dotProduct ) ) / Math.PI );
-
-		const colour = colours[ colourIndex ];
-		const offset = i * 3;
-
-		buffer[ offset     ] = colour[ 0 ];
-		buffer[ offset + 1 ] = colour[ 1 ];
-		buffer[ offset + 2 ] = colour[ 2 ];
-
-	}
-
-	this.addAttribute( 'color', new Float32BufferAttribute( buffer, 3 ) );
 
 }
 

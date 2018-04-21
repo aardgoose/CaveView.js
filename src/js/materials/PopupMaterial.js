@@ -14,23 +14,25 @@ function PopupMaterial ( container, popupImage, rotation, colour ) {
 	colour = colour || [ 1, 1, 1 ];
 
 	ShaderMaterial.call( this, {
+		vertexShader: Shaders.popupVertexShader,
+		fragmentShader: Shaders.popupFragmentShader,
+		type: 'CV.PopupMaterial',
 		uniforms: {
 			rotate: { value: rotationMatrix },
 			popupImage: { value: popupImage },
 			scale: { value: scale }
 		},
-		vertexShader: Shaders.popupVertexShader,
-		fragmentShader: Shaders.popupFragmentShader,
+		defines: {
+			USE_COLOR: true
+		}
 	} );
 
 	this.opacity = 1.0;
 	this.alphaTest = 0.8;
 	this.depthTest = false;
 	this.transparent = true;
-	this.defines = { USE_COLOR: true };
 
 	this.defaultAttributeValues.color = colour;
-	this.type = 'CV.PopupMaterial';
 
 	return this;
 

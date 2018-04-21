@@ -41,6 +41,8 @@ var scaleBar    = null;
 
 var compass;
 var ahi;
+
+var progressDials;
 var progressDial;
 
 // DOM objects
@@ -86,11 +88,16 @@ function init ( containerIn, viewRenderer ) {
 
 	compass      = new Compass();
 	ahi          = new AHI();
-	progressDial = new ProgressDial();
+
+	progressDials = [ new ProgressDial( true, 0 ), new ProgressDial( false, 1 ) ];
+
+	progressDial = progressDials [ 0 ];
 
 	attitudeGroup.addStatic( compass );
 	attitudeGroup.addStatic( ahi );
-	attitudeGroup.addStatic( progressDial );
+
+	attitudeGroup.addStatic( progressDials[ 0 ] );
+	attitudeGroup.addStatic( progressDials[ 1 ] );
 
 	Viewer.addEventListener( 'newCave', caveChanged );
 	Viewer.addEventListener( 'change', viewChanged );
@@ -146,9 +153,9 @@ function getVisibility() {
 
 }
 
-function getProgressDial() {
+function getProgressDial( ring ) {
 
-	return progressDial;
+	return progressDials[ ring ];
 
 }
 

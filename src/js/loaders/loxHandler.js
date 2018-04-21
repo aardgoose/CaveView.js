@@ -2,6 +2,7 @@
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_ENTRANCE, STATION_NORMAL } from '../core/constants';
 import { Tree } from '../core/Tree';
 import { Vector3, Box3 } from '../Three';
+import { StationPosition } from '../core/StationPosition';
 
 function loxHandler ( fileName ) {
 
@@ -331,7 +332,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	function readCoords () {
 
-		const coords = new Vector3(
+		const coords = new StationPosition(
 			readFloat64(),
 			readFloat64(),
 			readFloat64()
@@ -402,6 +403,13 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 			// console.log( 'dup leg ', surveyTree.findById( -m_from ).getPath() );
 			// console.log( '        ', surveyTree.findById( -m_to ).getPath() );
 			return;
+		}
+
+		if ( type === LEG_CAVE ) {
+
+			from.connections++;
+			to.connections++;
+
 		}
 
 		lineSegments.push( { from: from, to: to, type: type, survey: m_surveyId } );

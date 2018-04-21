@@ -46,10 +46,12 @@
 			"labels": "Station Labels",
 			"walls": "Walls (LRUD)",
 			"scraps": "Scraps",
+			"alpha": "Alpha Shapes",
 			"splays": "Splay Legs",
 			"traces": "Dye Traces",
 			"box": "Bounding box",
-			"hud": "Indicators"
+			"hud": "Indicators",
+			"fog": "Fog"
 		}
 	},
 	"surface": {

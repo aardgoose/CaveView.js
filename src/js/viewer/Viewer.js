@@ -2,9 +2,9 @@
 import {
 	VERSION,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_OFFSET,
-	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
+	FACE_WALLS, FACE_SCRAPS, FACE_ALPHA, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
-	SHADING_HEIGHT, SHADING_SINGLE, SHADING_SHADED, SHADING_OVERLAY, SHADING_PATH,
+	SHADING_HEIGHT, SHADING_SINGLE, SHADING_RELIEF, SHADING_PATH,
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
@@ -19,14 +19,15 @@ import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
 import { WebTerrain } from '../terrain/WebTerrain';
-import { Overlay } from '../terrain/Overlay';
+import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/lib';
+import { WorkerPool } from '../core/WorkerPool';
 
 // analysis tests
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
 //import { ClusterLegs } from '../analysis/ClusterLegs';
 
-import { OrbitControls } from '../core/OrbitControls';
+import { OrbitControls } from '../3rdParty/OrbitControls';
 
 import {
 	EventDispatcher,
@@ -36,8 +37,8 @@ import {
 	LinearFilter, NearestFilter, RGBAFormat,
 	OrthographicCamera, PerspectiveCamera,
 	WebGLRenderer, WebGLRenderTarget,
-	MOUSE,
-	Quaternion, Spherical, Math as _Math
+	MOUSE, FogExp2,
+	Quaternion, Spherical
 } from '../Three';
 
 const defaultView = {
@@ -48,11 +49,11 @@ const defaultView = {
 	cameraType: CAMERA_PERSPECTIVE,
 	shadingMode: SHADING_HEIGHT,
 	surfaceShading: SHADING_HEIGHT,
-	terrainShading: SHADING_SHADED,
+	terrainShading: SHADING_RELIEF,
 	terrainOpacity: 0.5,
-	terrainOverlay: null,
 	surfaceLegs: false,
 	walls: false,
+	alpha: false,
 	scraps: false,
 	splays: false,
 	stations: false,
@@ -60,15 +61,18 @@ const defaultView = {
 	entrances: true,
 	terrain: false,
 	traces: false,
-	HUD: true
+	HUD: true,
+	fog: false
 };
 
 const renderer = new WebGLRenderer( { antialias: true } ) ;
 
 const defaultTarget = new Vector3();
 const lightPosition = new Vector3();
+const currentLightPosition = new Vector3();
 const directionalLight = new DirectionalLight( 0xffffff );
 const scene = new Scene();
+const fog = new FogExp2( Cfg.themeValue( 'background' ), 0.0025 );
 const mouse = new Vector2();
 const raycaster = new Raycaster();
 
@@ -101,11 +105,9 @@ var cursorHeight;
 
 var shadingMode = SHADING_SINGLE;
 var surfaceShadingMode = SHADING_SINGLE;
-var terrainShadingMode = SHADING_SHADED;
+var terrainShadingMode = SHADING_RELIEF;
 
-var overlays = {};
-var activeOverlay = null;
-var defaultOverlay = null;
+var useFog = false;
 
 var cameraMode;
 var selectedSection = 0;
@@ -143,8 +145,6 @@ function init ( domID, configuration ) { // public method
 
 	oCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
 
-	oCamera.rotateOnAxis( upAxis, Math.PI / 2 );
-
 	initCamera( oCamera );
 
 	pCamera = new PerspectiveCamera( 75, width / height, 1, 16000 );
@@ -153,18 +153,18 @@ function init ( domID, configuration ) { // public method
 
 	camera = pCamera;
 
+	scene.fog = fog;
 	scene.name = 'CV.Viewer';
-
-	scene.add( pCamera );
-	scene.add( oCamera );
 
 	// setup directional lighting
 
-	const inclination = _Math.degToRad( Cfg.themeValue( 'lighting.inclination' ) );
-	const azimuth = _Math.degToRad( Cfg.themeValue( 'lighting.azimuth' ) - 90 );
+	const inclination = Cfg.themeAngle( 'lighting.inclination' );
+	const azimuth = Cfg.themeAngle( 'lighting.azimuth' ) - Math.PI / 2;
 
 	lightPosition.setFromSpherical( new Spherical( 1, inclination, azimuth ) );
 	lightPosition.applyAxisAngle( new Vector3( 1, 0, 0 ), Math.PI / 2 );
+
+	currentLightPosition.copy( lightPosition );
 
 	directionalLight.position.copy( lightPosition );
 
@@ -181,9 +181,10 @@ function init ( domID, configuration ) { // public method
 
 	cameraMove = new CameraMove( controls, renderView, onCameraMoveEnd );
 
-	controls.addEventListener( 'change', function () { cameraMove.prepare( null, null ); cameraMove.start( 80 ); } );
+	controls.addEventListener( 'change', cameraMoved );
 
 	controls.enableDamping = true;
+	controls.maxPolarAngle = Cfg.themeAngle( 'maxPolarAngle' );
 
 	// event handler
 	window.addEventListener( 'resize', resize );
@@ -220,14 +221,8 @@ function init ( domID, configuration ) { // public method
 			set: applyTerrainDatumShift
 		},
 
-		'terrainOverlays': {
-			get: function () { if ( terrain !== null && terrain.isTiled ) return Object.keys( overlays ); else return terrain.hasOverlay ? [ true ] : []; }
-		},
-
-		'terrainOverlay': {
-			writeable: true,
-			get: function () { return activeOverlay; },
-			set: function ( x ) { _stateSetter( setTerrainOverlay, 'terrainOverlay', x ); }
+		'terrainShadingModes': {
+			get: function () { return terrain.getTerrainShadingModes( renderer ); }
 		},
 
 		'terrainOpacity': {
@@ -367,6 +362,12 @@ function init ( domID, configuration ) { // public method
 			get: function () { return ! ( renderer.extensions.get( 'OES_standard_derivatives' ) === null ); }
 		},
 
+		'fog': {
+			writeable: true,
+			get: function () { return useFog; },
+			set: setFog
+		},
+
 	} );
 
 	_enableLayer( FEATURE_BOX, 'box' );
@@ -376,6 +377,7 @@ function init ( domID, configuration ) { // public method
 	_conditionalLayer( FEATURE_TRACES,    'traces' );
 	_conditionalLayer( FACE_SCRAPS,       'scraps' );
 	_conditionalLayer( FACE_WALLS,        'walls' );
+	_conditionalLayer( FACE_ALPHA,        'alpha' );
 	_conditionalLayer( LEG_SPLAY,         'splays' );
 	_conditionalLayer( LEG_SURFACE,       'surfaceLegs' );
 	_conditionalLayer( LABEL_STATION,     'stationLabels' );
@@ -384,9 +386,9 @@ function init ( domID, configuration ) { // public method
 
 	HUD.init( container, renderer );
 
-	const progress = HUD.getProgressDial();
+	caveLoader = new CaveLoader( caveLoaded );
 
-	caveLoader = new CaveLoader( caveLoaded, progress.set.bind( progress ) );
+	HUD.getProgressDial( 0 ).watch( caveLoader );
 
 	// check if we are defaulting to full screen
 	if ( isFullscreen() ) setBrowserFullscreen( true );
@@ -570,7 +572,7 @@ function showDeveloperInfo( /* x */ ) {
 
 function renderDepthTexture () {
 
-	if ( terrain === null || ! terrain.isLoaded() ) return;
+	if ( ! terrain.isLoaded ) return;
 
 	const dim = 512;
 
@@ -623,7 +625,7 @@ function renderDepthTexture () {
 
 	// restore renderer to normal render size and target
 
-	renderer.setRenderTarget();	// revert to screen canvas
+	renderer.setRenderTarget(); // revert to screen canvas
 
 	renderer.setSize( container.clientWidth, container.clientHeight );
 	renderer.setPixelRatio( window.devicePixelRatio );
@@ -702,7 +704,33 @@ function initCamera ( camera ) {
 	camera.lookAt( 0, 0, 0 );
 	camera.updateProjectionMatrix();
 
+	scene.add( camera );
+
 }
+
+var cameraMoved = function () {
+
+	const rotation = new Euler();
+	const q = new Quaternion();
+
+	return function cameraMoved() {
+
+		cameraMove.prepare( null, null );
+		cameraMove.start( 80 );
+
+		rotation.setFromQuaternion( camera.getWorldQuaternion( q ) );
+
+		currentLightPosition.copy( lightPosition );
+		currentLightPosition.applyAxisAngle( upAxis, rotation.z );
+
+		directionalLight.position.copy( currentLightPosition );
+		directionalLight.updateMatrix();
+
+		Viewer.dispatchEvent( { type: 'lightingChange', name: 'surface' } );
+
+	};
+
+}();
 
 function setCameraLayer ( layerTag, enable ) {
 
@@ -780,9 +808,20 @@ function setViewMode ( mode, t ) {
 
 }
 
+function setFog( enable ) {
+
+	useFog = enable;
+
+	fog.density = useFog ? 0.0025 : 0;
+
+	renderView();
+
+}
+
 function setTerrainShadingMode ( mode ) {
 
-	if ( terrain === null ) return;
+	if ( survey.terrain === null  ) return;
+
 	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
 
 	renderView();
@@ -813,30 +852,9 @@ function setSurfaceShadingMode ( mode ) {
 
 }
 
-function setTerrainOverlay ( overlayName ) {
-
-	if ( terrain === null || ( overlayName === 0 && terrain.isTiled ) ) return;
-
-	if ( terrainShadingMode === SHADING_OVERLAY ) {
-
-		activeOverlay = overlayName;
-
-		terrain.setOverlay( overlays[ overlayName ], renderView );
-
-	}
-
-}
-
 function addOverlay ( name, overlayProvider ) {
 
-	overlays[ name ] = new Overlay( overlayProvider, container );
-
-	if ( Object.keys( overlays ).length === 1 ) {
-
-		activeOverlay = name;
-		defaultOverlay = name;
-
-	}
+	CommonTerrain.addOverlay( name, overlayProvider, container );
 
 }
 
@@ -978,6 +996,10 @@ function clearView () {
 
 	HUD.setVisibility( false );
 
+	// terminate all running workers (tile loading/wall building etc)
+
+	WorkerPool.terminateActive();
+
 	if ( survey ) {
 
 		survey.remove( terrain );
@@ -993,7 +1015,6 @@ function clearView () {
 	selectedSection = 0;
 	mouseMode       = MOUSE_MODE_NORMAL;
 	mouseTargets    = [];
-	activeOverlay   = null;
 
 	// remove event listeners
 
@@ -1008,16 +1029,12 @@ function clearView () {
 
 function loadCave ( file, section ) {
 
-	HUD.getProgressDial().start();
-
 	if ( file instanceof File ) {
 
-		// progressBar.start( 'Loading file ' + file.name + ' ...' );
 		caveLoader.loadFile( file );
 
 	} else {
 
-		// progressBar.start( 'Loading file ' + file + ' ...' );
 		caveLoader.loadURL( file, section );
 
 	}
@@ -1025,8 +1042,6 @@ function loadCave ( file, section ) {
 }
 
 function caveLoaded ( cave ) {
-
-	HUD.getProgressDial().end();
 
 	if ( ! cave ) {
 
@@ -1072,6 +1087,10 @@ function loadSurvey ( newSurvey ) {
 
 	survey = newSurvey;
 
+	survey.surfaceLight = lightPosition.clone().negate();
+
+	HUD.getProgressDial( 1 ).watch( survey );
+
 	stats = getLegStats( LEG_CAVE );
 
 	setScale( survey );
@@ -1093,16 +1112,18 @@ function loadSurvey ( newSurvey ) {
 	if ( terrain === null ) {
 
 		terrain = new WebTerrain( survey, _terrainReady, _tilesLoaded );
+		HUD.getProgressDial( 0 ).watch( terrain );
+
 		syncTerrainLoading = false;
 
 	} else {
-
 
 		survey.addStatic( terrain );
 
 		setTerrainShadingMode( terrainShadingMode );
 
 		renderDepthTexture();
+		survey.asyncTasks();
 
 	}
 
@@ -1116,7 +1137,8 @@ function loadSurvey ( newSurvey ) {
 	controls.object = camera;
 	controls.enabled = true;
 
-	survey.getRoutes().addEventListener( 'changed', _routesChanged );
+	survey.getRoutes().addEventListener( 'changed', surveyChanged );
+	survey.addEventListener( 'changed', surveyChanged );
 
 	setupView();
 
@@ -1130,23 +1152,28 @@ function loadSurvey ( newSurvey ) {
 
 			setTerrainShadingMode( terrainShadingMode );
 
-			if ( activeOverlay === null ) activeOverlay = defaultOverlay;
-
 			terrain.tileArea( survey.limits );
-			terrain.setDefaultOverlay( overlays[ activeOverlay ] );
-
-			survey.addStatic( terrain );
 
 		} else {
 
-			terrain = null;
-
-			setupView();
-			renderView();
-
-			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+			_noTerrain();
 
 		}
+
+	}
+
+	function _noTerrain () {
+
+		console.log( 'errors loading terrain' );
+
+		terrain = null;
+
+		survey.asyncTasks();
+
+		setupView();
+		renderView();
+
+		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 	}
 
@@ -1154,8 +1181,8 @@ function loadSurvey ( newSurvey ) {
 
 		if ( errors > 0 ) {
 
-			terrain = null;
-			console.log( 'errors loading terrain' );
+			_noTerrain();
+			if ( firstTiles ) return;
 
 		}
 
@@ -1164,7 +1191,16 @@ function loadSurvey ( newSurvey ) {
 			// delayed notification to ensure and event listeners get accurate terrain information
 			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
+			survey.addStatic( terrain );
+			survey.asyncTasks();
+
 			setupView();
+
+			loadTerrainListeners();
+
+			renderDepthTexture();
+
+			applyTerrainDatumShift( true );
 
 			firstTiles = false;
 
@@ -1172,29 +1208,19 @@ function loadSurvey ( newSurvey ) {
 
 		renderView();
 
-		if ( terrain !== null ) {
-
-			loadTerrainListeners();
-
-			if ( terrain.depthTexture === null ) renderDepthTexture();
-
-			applyTerrainDatumShift( true );
-
-		}
-
 	}
 
-	function _routesChanged ( /* event */ ) {
+}
 
-		setShadingMode( shadingMode );
+function surveyChanged ( /* event */ ) {
 
-	}
+	setShadingMode( shadingMode );
 
 }
 
 function loadTerrain ( mode ) {
 
-	if ( terrain !== null && terrain.isLoaded() ) {
+	if ( terrain !== null && terrain.isLoaded ) {
 
 		if ( mode ) {
 
@@ -1396,7 +1422,7 @@ function visibleStation ( intersects ) {
 
 		station = survey.stations.getStationByIndex( intersects[ i ].index );
 
-		if ( ! Viewer.splays && station.hitCount === 0 ) {
+		if ( ! Viewer.splays && station.p.connections === 0 ) {
 
 			// don't select spays unless visible
 			station = null;
@@ -1412,41 +1438,28 @@ function visibleStation ( intersects ) {
 
 }
 
-var renderView = function () {
+function renderView () {
 
-	const lPosition = new Vector3();
-	const rotation = new Euler();
-	const q = new Quaternion();
+	if ( ! renderRequired ) return;
 
-	return function renderView () {
+	renderer.clear();
 
-		if ( ! renderRequired ) return;
+	if ( caveIsLoaded ) {
 
-		renderer.clear();
+		survey.update( camera, controls.target );
 
-		if ( caveIsLoaded ) {
+		if ( useFog ) Materials.setFog( true );
+		renderer.render( scene, camera );
 
-			rotation.setFromQuaternion( camera.getWorldQuaternion( q ) );
+	}
 
-			lPosition.copy( lightPosition );
+	if ( useFog ) Materials.setFog( false );
 
-			directionalLight.position.copy( lPosition.applyAxisAngle( upAxis, rotation.z ) );
-			directionalLight.updateMatrix();
+	HUD.renderHUD();
 
-			survey.update( camera, controls.target );
+	clockStart();
 
-			renderer.render( scene, camera );
-
-		}
-
-		HUD.renderHUD();
-
-		clockStart();
-
-	};
-
-} ();
-
+}
 
 function onCameraMoveEnd () {
 
@@ -1558,7 +1571,8 @@ Object.assign( Viewer, {
 	getControls:   getControls,
 	renderView:    renderView,
 	addOverlay:    addOverlay,
-	addFormatters: addFormatters
+	addFormatters: addFormatters,
+	surfaceLightDirection: currentLightPosition
 } );
 
 export { Viewer };

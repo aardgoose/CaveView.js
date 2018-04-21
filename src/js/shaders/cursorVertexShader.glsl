@@ -1,24 +1,20 @@
-
-#ifdef SURFACE
+#define saturate(a) clamp( a, 0.0, 1.0 )
 
 uniform vec3 uLight;
-varying vec3 vNormal;
-varying vec3 lNormal;
 
-#else
-	
 varying vec3 vColor;
-
-#endif
-
 varying float height;
+varying float fogDepth;
 
 void main() {
 
 #ifdef SURFACE
 
-	vNormal = normalMatrix * normal;
-	lNormal = uLight;
+	vec3 sNormal = normalMatrix * normal;
+
+	float dotNL = dot( normalize( sNormal ), uLight );
+
+	vColor = saturate( dotNL ) * color + vec3( 0.3, 0.3, 0.3 );
 
 #else
 
@@ -27,6 +23,10 @@ void main() {
 #endif
 
 	height = position.z;
+
+	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+	fogDepth = -mvPosition.z;
 
 	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 

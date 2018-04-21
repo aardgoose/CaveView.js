@@ -6,8 +6,10 @@ import { DepthMaterial } from './DepthMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMapMaterial } from './DepthMapMaterial';
 import { HeightMaterial } from './HeightMaterial';
+import { HypsometricMaterial } from './HypsometricMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
 import { GlyphString } from '../core/GlyphString';
+import { MaterialFog } from './MaterialFog';
 
 import { LineBasicMaterial, MeshLambertMaterial, NoColors, VertexColors } from '../Three';
 
@@ -73,6 +75,23 @@ function getHeightMaterial ( type ) {
 	if ( material === undefined ) {
 
 		material = cacheSurveyMaterial( name, new HeightMaterial( type, survey ) );
+
+	}
+
+	return material;
+
+}
+
+function getHypsometricMaterial () {
+
+	const name = 'hypsometric';
+
+	var material = cache.get( name );
+
+	if ( material === undefined ) {
+
+		material = cacheSurveyMaterial( name, new HypsometricMaterial( survey, viewer ) );
+		depthMaterials.push( material );
 
 	}
 
@@ -189,7 +208,7 @@ function getContourMaterial () {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( 'contour', new ContourMaterial( survey ) );
+		material = cacheSurveyMaterial( 'contour', new ContourMaterial( survey, viewer ) );
 
 		depthMaterials.push( material );
 
@@ -268,9 +287,18 @@ function flushCache( surveyIn ) {
 
 }
 
+function setFog( enable ) {
+
+	MaterialFog.uniforms.fogEnabled.value = enable ? 1 : 0;
+
+	return;
+
+}
+
 export const Materials = {
 	getContourMaterial:     getContourMaterial,
 	getHeightMaterial:      getHeightMaterial,
+	getHypsometricMaterial: getHypsometricMaterial,
 	getDepthMapMaterial:    getDepthMapMaterial,
 	getDepthMaterial:       getDepthMaterial,
 	getDepthCursorMaterial: getDepthCursorMaterial,
@@ -281,7 +309,8 @@ export const Materials = {
 	getGlyphMaterial:       getGlyphMaterial,
 	setTerrain:             setTerrain,
 	initCache:              initCache,
-	flushCache:             flushCache
+	flushCache:             flushCache,
+	setFog:                 setFog
 };
 
 // EOF

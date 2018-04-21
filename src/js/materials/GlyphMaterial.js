@@ -2,6 +2,7 @@
 import { ShaderMaterial } from '../Three';
 import { Shaders } from '../shaders/Shaders';
 import { AtlasFactory } from '../materials/GlyphAtlas';
+import { MaterialFog } from './MaterialFog';
 
 function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 
@@ -16,24 +17,23 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 	const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
 
 	ShaderMaterial.call( this, {
-		uniforms: {
+		vertexShader: Shaders.glyphVertexShader,
+		fragmentShader: Shaders.glyphFragmentShader,
+		type: 'CV.GlyphMaterial',
+		uniforms: Object.assign( {
 			cellScale: { value: cellScale },
 			atlas: { value: glyphAtlas.getTexture() },
 			rotate: { value: rotationMatrix },
-			scale: { value: container.clientHeight / container.clientWidth }
-		},
-		vertexShader: Shaders.glyphVertexShader,
-		fragmentShader: Shaders.glyphFragmentShader,
+			scale: { value: container.clientHeight / container.clientWidth },
+		}, MaterialFog.uniforms ),
 	} );
 
-	this.opacity = 1.0;
 	this.alphaTest = 0.8;
 	this.depthTest = false;
 	this.transparent = true;
 
 	this.type = 'CV.GlyphMaterial';
 	this.atlas = glyphAtlas;
-
 
 	// event handler
 	window.addEventListener( 'resize', _resize );

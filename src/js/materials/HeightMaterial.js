@@ -3,30 +3,31 @@ import { MATERIAL_LINE } from '../core/constants';
 import { Shaders } from '../shaders/Shaders';
 import { ColourCache } from '../core/ColourCache';
 
-import { Vector3, ShaderMaterial } from '../Three';
+import { ShaderMaterial } from '../Three';
+import { MaterialFog } from './MaterialFog';
 
 function HeightMaterial ( type, survey ) {
 
 	const limits = survey.modelLimits;
 
-	ShaderMaterial.call( this );
-
-	this.defines = ( type === MATERIAL_LINE ) ? { USE_COLOR: true } : { SURFACE: true };
-
 	const zMin = limits.min.z;
 	const zMax = limits.max.z;
 
-	this.uniforms = {
-		uLight: { value: new Vector3( -1, -1, 2 ) }, // pseudo light source somewhere over viewer's left shoulder.
-		minZ:   { value: zMin },
-		scaleZ: { value: 1 / ( zMax - zMin ) },
-		cmap:   { value: ColourCache.getTexture( 'gradient' ) },
-	};
-
-	this.vertexShader = Shaders.heightVertexShader;
-	this.fragmentShader = Shaders.heightFragmentShader;
-
-	this.type = 'CV.HeightMaterial';
+	ShaderMaterial.call( this, {
+		vertexShader: Shaders.heightVertexShader,
+		fragmentShader: Shaders.heightFragmentShader,
+		type: 'CV.HeightMaterial',
+		uniforms: Object.assign( {
+			uLight: { value: survey.lightDirection },
+			minZ:   { value: zMin },
+			scaleZ: { value: 1 / ( zMax - zMin ) },
+			cmap:   { value: ColourCache.getTexture( 'gradient' ) },
+		}, MaterialFog.uniforms ),
+		defines: {
+			USE_COLOR: true,
+			SURFACE: ( type !== MATERIAL_LINE )
+		}
+	} );
 
 	return this;
 

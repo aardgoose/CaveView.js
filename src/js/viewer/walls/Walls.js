@@ -2,19 +2,18 @@ import {
 	BufferGeometry, Float32BufferAttribute,
 	FaceColors, Mesh,
 	MeshLambertMaterial
-} from '../Three';
+} from '../../Three';
 
-import { StencilLib } from '../core/StencilLib';
+import { StencilLib } from '../../core/StencilLib';
 
 const unselectedMaterial = new MeshLambertMaterial( { color: 0x444444, vertexColors: FaceColors } );
 
-function Walls ( layer ) {
+function Walls () {
 
 	const geometry = new BufferGeometry();
 
 	Mesh.call( this, geometry, unselectedMaterial );
 
-	this.layers.set( layer );
 	this.type = 'Walls';
 
 	return this;
@@ -25,6 +24,8 @@ Walls.prototype = Object.create( Mesh.prototype );
 
 Walls.prototype.onBeforeRender = StencilLib.featureOnBeforeRender;
 Walls.prototype.onAfterRender = StencilLib.featureOnAfterRender;
+
+Walls.prototype.ready = true;
 
 Walls.prototype.addWalls = function ( vertices, indices, indexRuns ) {
 
@@ -62,6 +63,8 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 	const indexRuns = this.indexRuns;
 
 	geometry.clearGroups();
+
+	this.visible = true && this.ready;
 
 	if ( selectedRuns.size && indexRuns ) {
 
@@ -128,13 +131,13 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 	const vMap = new Map();
 
 	const l = indexRuns.length;
-	var run;
+
+	var run, newVertexIndex = 0, fp = 0;
 
 	for ( run = 0; run < l; run++ ) {
 
 		const indexRun = indexRuns[ run ];
-
-		let i, newVertexIndex = 0, fp = 0;
+		let i;
 
 		if ( selectedRuns.has( indexRun.survey ) ) {
 

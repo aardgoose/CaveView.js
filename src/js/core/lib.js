@@ -1,6 +1,6 @@
 
-import { Color, FileLoader, EventDispatcher } from '../Three';
-import { x18n } from './x18n';
+import { Color, FileLoader, EventDispatcher, Math as _Math } from '../Three';
+import { x18n } from '../3rdParty/x18n';
 import { lang_en } from './default-lang';
 import { defaultTheme } from './defaultTheme';
 
@@ -105,6 +105,12 @@ Cfg.themeValue = function getThemeValue ( name ) {
 
 	return value;
 
+
+};
+
+Cfg.themeAngle = function getThemeAngle ( name ) {
+
+	return _Math.degToRad( Cfg.themeValue ( name ) );
 
 };
 

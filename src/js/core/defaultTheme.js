@@ -1,8 +1,9 @@
 
 const defaultTheme = {
 	background: 0x000000,
+	maxPolarAngle: 90,
 	lighting: {
-		azimuth: 225,
+		azimuth: 315,
 		inclination: 45
 	},
 	hud: {
@@ -58,9 +59,14 @@ const defaultTheme = {
 		unselected: 0x444444,
 		unconnected: 0x888888,
 		contours: {
-			line: 0x444444,
-			line10: 0x888888,
-			interval: 10
+			line: 0xe1bba2,
+			line10: 0xf29d62,
+			interval: 10,
+			base: 0xffffff
+		},
+		hypsometric: {
+			min: 0,
+			max: 400
 		}
 	},
 	popup: {

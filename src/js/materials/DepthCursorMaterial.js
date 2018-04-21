@@ -4,6 +4,7 @@ import { MATERIAL_LINE } from '../core/constants';
 import { Cfg } from '../core/lib';
 
 import { ShaderMaterial, Vector3 } from '../Three';
+import { MaterialFog } from './MaterialFog';
 
 function DepthCursorMaterial ( type, survey ) {
 
@@ -17,12 +18,12 @@ function DepthCursorMaterial ( type, survey ) {
 	this.max = surveyLimits.max.z - surveyLimits.min.z;
 
 	ShaderMaterial.call( this, {
-
-		uniforms: {
-			uLight:      { value: new Vector3( -1, -1, 2 ) },
-			minX:        { value: limits.min.x },
-			minY:        { value: limits.min.y },
-			minZ:        { value: limits.min.z },
+		vertexShader: Shaders.depthCursorVertexShader,
+		fragmentShader: Shaders.depthCursorFragmentShader,
+		type: 'CV.DepthCursorMaterial',
+		uniforms: Object.assign( {
+			uLight:      { value: survey.lightDirection },
+			modelMin:    { value: limits.min },
 			scaleX:      { value: 1 / range.x },
 			scaleY:      { value: 1 / range.y },
 			rangeZ:      { value: range.z },
@@ -31,25 +32,13 @@ function DepthCursorMaterial ( type, survey ) {
 			cursor:      { value: this.max / 2 },
 			cursorWidth: { value: 5.0 },
 			baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },
-			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) }
-		},
-		vertexShader: Shaders.depthCursorVertexShader,
-		fragmentShader: Shaders.depthCursorFragmentShader
+			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) },
+		}, MaterialFog.uniforms ),
+		defines: {
+			USE_COLOR: true,
+			SURFACE: ( type !== MATERIAL_LINE )
+		}
 	} );
-
-	this.defines = {};
-
-	if ( type === MATERIAL_LINE ) {
-
-		this.defines.USE_COLOR = true;
-
-	} else {
-
-		this.defines.SURFACE = true;
-
-	}
-
-	this.type = 'CV.DepthCursorMaterial';
 
 	return this;
 

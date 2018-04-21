@@ -57,7 +57,6 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 			default:
 
-				sourceCRS = Cfg.value( 'defaultCRS' , null );
 				console.warn( 'unsupported projection' );
 
 			}
@@ -65,6 +64,8 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		}
 
 	}
+
+	if ( sourceCRS === null ) sourceCRS = Cfg.value( 'defaultCRS' , null );
 
 	// FIXME use NAD grid corrections OSTM15 etc ( UK Centric )
 

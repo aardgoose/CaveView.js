@@ -1,3 +1,6 @@
+let graph = require( 'rollup-plugin-graph' );
+let graphOptions = {prune: true};
+
 
 function glsl () {
 	return {
@@ -22,7 +25,8 @@ export default {
 		format: 'umd'
 	},
 	plugins: [
-		glsl()
+		glsl(),
+		graph(graphOptions)
 	]
 };
 

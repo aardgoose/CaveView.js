@@ -5,13 +5,13 @@ import { ShaderMaterial, DoubleSide } from '../Three';
 function WaterMaterial () {
 
 	ShaderMaterial.call( this, {
-		uniforms: {
-			offset: { value: 0 }
-		},
 		vertexShader: Shaders.waterVertexShader,
 		fragmentShader: Shaders.waterFragmentShader,
 		depthWrite: false,
 		type: 'CV.WaterMaterial',
+		uniforms: {
+			offset: { value: 0 }
+		},
 		side: DoubleSide
 	} );
 

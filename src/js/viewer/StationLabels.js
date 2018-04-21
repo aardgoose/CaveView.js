@@ -12,7 +12,6 @@ function StationLabels ( stations ) {
 	Group.call( this );
 
 	this.type = 'CV.StationLabels';
-	this.layers.set( LABEL_STATION );
 	this.stations = stations;
 
 	const atlasSpec = {
@@ -58,20 +57,20 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 		const position = points[ i ];
 
 		const station = stations.getStation( position );
+		const connections = position.connections;
 
-		const hitCount = station.hitCount;
 		var label = station.label;
 
 		// only show labels for splay end stations if splays visible
 
-		if ( hitCount === 0 && ! splaysVisible && label !== undefined) {
+		if ( connections === 0 && ! splaysVisible && label !== undefined) {
 
 			label.visible = false;
 
 		} else {
 
 			// show labels for network vertices at greater distance than intermediate stations
-			const visible = ( position.distanceToSquared( cameraPosition ) < ( ( hitCount < 3 ) ? 5000 : 40000 ) );
+			const visible = ( position.distanceToSquared( cameraPosition ) < ( ( connections < 3 ) ? 5000 : 40000 ) );
 
 			if ( label === undefined ) {
 
@@ -93,11 +92,14 @@ StationLabels.prototype.addLabel = function ( station ) {
 
 	var material;
 
-	if ( station.hitCount === 0 ) {
+	const position = station.p;
+	const connections = position.connections;
+
+	if ( connections === 0 ) {
 
 		material = this.splayLabelMaterial;
 
-	} else if ( station.hitCount < 3 ) {
+	} else if ( connections < 3 ) {
 
 		material = this.defaultLabelMaterial;
 
@@ -110,7 +112,7 @@ StationLabels.prototype.addLabel = function ( station ) {
 	const label = new GlyphString( station.name, material );
 
 	label.layers.set( LABEL_STATION );
-	label.position.copy( station.p );
+	label.position.copy( position );
 
 	station.label = label;
 

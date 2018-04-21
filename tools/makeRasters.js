@@ -2,22 +2,22 @@
 
 var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-var mapSet = 'UK';
-var sourceRaster = 'ofd';
+var mapSet = 'Austria';
+var sourceRaster = 'dhm_lamb_10m';
 
 var tileSet = {
-	title: 'OFD',
+	title: 'Loser',
 	dtmMaxZoom: 17,
 	maxZoom: 18,
 	minZoom: 13,
 	divisions: 128,
 	directory: '',
-	subdirectory: 'OFD',
+	subdirectory: 'Loser',
 	dtmScale: 64,
-	minX: 4012,
-	maxX: 4013,
-	minY: 2711,
-	maxY: 2712
+	minX: 4409,
+	maxX: 4410,
+	minY: 2857,
+	maxY: 2859
 };
 
 var n,s,e,w, zoom;

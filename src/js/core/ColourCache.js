@@ -1,6 +1,6 @@
 
 import { Colours } from './Colours';
-import { Color, DataTexture, RGBFormat, UnsignedByteType }  from '../Three';
+import { Color, DataTexture, RGBFormat, UnsignedByteType, LinearFilter }  from '../Three';
 
 // define colors to share THREE.Color objects
 
@@ -26,6 +26,9 @@ function createTexture ( scale ) {
 	}
 
 	const texture = new DataTexture( data, l, 1, RGBFormat, UnsignedByteType );
+
+	texture.minFilter = LinearFilter;
+	texture.magFilter = LinearFilter;
 
 	texture.needsUpdate = true;
 
@@ -85,5 +88,5 @@ function getColors( name ) {
 export const ColourCache = {
 	getTexture: getTexture,
 	getColors: getColors,
-	white:     new Color( 0xffffff )
+	white: new Color( 0xffffff )
 };

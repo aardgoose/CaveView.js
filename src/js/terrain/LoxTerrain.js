@@ -18,7 +18,7 @@ function LoxTerrain ( terrainData, offsets ) {
 	this.overlayMaterial = null;
 	this.attributions = [];
 
-	const tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ), Materials.getSurfaceMaterial( 0xffffff ) );
+	const tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ), Materials.getHypsometricMaterial() );
 
 	tile.layers.set( FEATURE_TERRAIN );
 	tile.isTile = true;
@@ -38,13 +38,9 @@ LoxTerrain.prototype = Object.create( CommonTerrain.prototype );
 
 LoxTerrain.prototype.isTiled = false;
 
-LoxTerrain.prototype.isLoaded = function () {
+LoxTerrain.prototype.isLoaded = true;
 
-	return true;
-
-};
-
-LoxTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
+LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
 
 	if ( ! this.hasOverlay ) return;
 

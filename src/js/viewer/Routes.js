@@ -76,7 +76,13 @@ Routes.prototype.mapSurvey = function ( stations, legsObject, surveyTree ) {
 		vertexPairToSegment.push( segment );
 
 		station = stations.getStation( v1 );
-		if ( station !== undefined ) station.legs.push( i );
+
+		if ( station !== undefined ) {
+
+			station.legs.push( i );
+			station.linkedSegments.push( segment );
+
+		}
 
 		if ( newSegment ) {
 
@@ -95,7 +101,7 @@ Routes.prototype.mapSurvey = function ( stations, legsObject, surveyTree ) {
 		station = stations.getStation( v2 );
 		if ( station !== undefined ) station.legs.push( i );
 
-		if ( station && ( station.hitCount > 2 || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) ) {
+		if ( station && ( v2.connections > 2 || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) ) {
 
 			// we have found a junction or a passage end
 			segmentInfo.endStation = station;

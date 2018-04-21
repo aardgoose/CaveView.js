@@ -2,6 +2,8 @@
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
 import { Tree } from '../core/Tree';
+import { Cfg } from '../core/lib';
+import { StationPosition } from '../core/StationPosition';
 import { Vector3, Box3 } from '../Three';
 
 function Svx3dHandler ( fileName ) {
@@ -55,7 +57,6 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 			default:
 
-				sourceCRS = null;
 				console.warn( 'unsupported projection' );
 
 			}
@@ -63,6 +64,8 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		}
 
 	}
+
+	if ( sourceCRS === null ) sourceCRS = Cfg.value( 'defaultCRS' , null );
 
 	// FIXME use NAD grid corrections OSTM15 etc ( UK Centric )
 
@@ -232,7 +235,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 	var sectionId   = 0;
 	var legs        = [];
 
-	var lastPosition = new Vector3(); // value to allow approach vector for xsect coord frame
+	var lastPosition = new StationPosition(); // value to allow approach vector for xsect coord frame
 	var i, j, li, lj;
 
 	// init cmd handler table with error handler for unsupported records or invalid records
@@ -388,6 +391,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		lastPosition = coords;
 
+		// lookahead at next command
 		if ( version === 1 && dataView.getInt32( pos, true ) === 2 ) {
 
 			// version 1 uses MOVE+LABEL pairs to label stations
@@ -411,6 +415,9 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		legs.push( { coords: coords, type: LEG_CAVE, survey: sectionId } );
 
+		lastPosition.connections++;
+		coords.connections++;
+
 		lastPosition = coords;
 
 		return true;
@@ -428,7 +435,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		const l = new DataView( source, pos );
 
-		var coords = new Vector3(
+		var coords = new StationPosition(
 			l.getInt32( 0, true ) / 100,
 			l.getInt32( 4, true ) / 100,
 			l.getInt32( 8, true ) / 100
@@ -464,7 +471,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	const cmd = [];
 
-	const lineEnds      = new Set(); // implied line ends to fixnup xsects
 	const sectionLabels = new Set();
 	const stations      = new Map();
 
@@ -477,7 +483,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	var sectionId = 0;
 
 	var move = false;
-	var lastPosition = new Vector3();
+	var lastPosition = new StationPosition();
 	var lastXSectPosition = new Vector3(); // value to allow approach vector for xsect coord frame
 	var i;
 	var labelChanged = false;
@@ -907,7 +913,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		if ( inSection ) {
 
 			// add start of run of legs
-
 			if ( move ) {
 
 				legs.push( { coords: lastPosition } );
@@ -915,21 +920,31 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			}
 
-			lastPosition = readCoordinates();
+			const thisPosition = readCoordinates();
+
+			if ( thisPosition === lastPosition ) return true;
 
 			if ( flags & 0x01 ) {
 
-				legs.push( { coords: lastPosition, type: LEG_SURFACE, survey: sectionId } );
+				legs.push( { coords: thisPosition, type: LEG_SURFACE, survey: sectionId } );
 
 			} else if ( flags & 0x04 ) {
 
-				legs.push( { coords: lastPosition, type: LEG_SPLAY, survey: sectionId } );
+				legs.push( { coords: thisPosition, type: LEG_SPLAY, survey: sectionId } );
 
 			} else {
 
-				legs.push( { coords: lastPosition, type: LEG_CAVE, survey: sectionId } );
+				// reference count underground legs ignoring splay and surface legs
+				// used for topology reconstruction
+
+				lastPosition.connections++;
+				thisPosition.connections++;
+
+				legs.push( { coords: thisPosition, type: LEG_CAVE, survey: sectionId } );
 
 			}
+
+			lastPosition = thisPosition;
 
 		} else {
 
@@ -955,11 +970,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		if ( legs.length > 1 ) groups.push( legs );
 
 		legs = [];
-
-		// heuristic to detect line ends. lastPosition was presumably set in a line sequence therefore is at the end
-		// of a line, Add the current label, presumably specified in the last LINE, to a Set of lineEnds.
-
-		lineEnds.add( lastPosition );
 
 		if ( ! inSection && move ) dropCoordinates( lastPosition );
 
@@ -1105,9 +1115,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		lastXSectPosition = position;
 
 		// some XSECTS are not flagged as last in passage
-		// heuristic - the last line position before a move is an implied line end.
-		// cmd_MOVE saves these in the set lineEnds.
-		// this fixes up surveys that display incorrectly with 'fly-back' artefacts in Aven and Loch.
+		// if a station has only one connection and is not the first in a set of XSECTS
+		// it is at the end of a run of legs. Add a break to remove flyback artifacts
 
 		var endRun = false;
 
@@ -1115,10 +1124,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			endRun = true;
 
-		} else if ( lineEnds.has( position ) ) {
+		} else if ( position.connections === 1 && xSects.length > 1 ) {
 
 			endRun = true;
-			// console.warn( 'unterminated LRUD passage at ', label );
+			// console.log( 'unterminated LRUD passage at ', label, 'ref count ', position.connections );
 
 		}
 
@@ -1139,7 +1148,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		const l = new DataView( source, pos );
 
-		var coords = new Vector3(
+		var coords = new StationPosition(
 			l.getInt32( 0, true ) / 100,
 			l.getInt32( 4, true ) / 100,
 			l.getInt32( 8, true ) / 100
@@ -1190,9 +1199,6 @@ Svx3dHandler.prototype.getLineSegments = function () {
 
 			const fromCoords = from.coords;
 			const toCoords = to.coords;
-
-			// skip repeated points ( co-located stations )
-			if ( fromCoords === toCoords ) continue;
 
 			lineSegments.push( { from: fromCoords, to: toCoords, type: to.type, survey: to.survey } );
 

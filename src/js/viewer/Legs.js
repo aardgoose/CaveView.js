@@ -9,13 +9,12 @@ import { StencilLib } from '../core/StencilLib';
 
 const unselectedMaterial = new LineBasicMaterial( { color: 0x444444, vertexColors: VertexColors } );
 
-function Legs ( layer ) {
+function Legs () {
 
 	const geometry = new Geometry();
 
 	LineSegments.call( this, geometry, unselectedMaterial );
 
-	this.layers.set( layer );
 	this.type = 'Legs';
 	this.legLengths = [];
 
@@ -41,7 +40,7 @@ Legs.prototype.addLegs = function ( vertices, colors, legRuns ) {
 
 		// FIXME: alllocate new buffer of old + new length, adjust indexs and append old data after new data.
 
-		console.error( 'Walls: appending not yet implemented' );
+		console.error( 'Legs: appending not yet implemented' );
 
 	}
 
@@ -140,7 +139,7 @@ Legs.prototype.computeStats = function () {
 		const vertex1 = vertices[ i ];
 		const vertex2 = vertices[ i + 1 ];
 
-		const legLength = vertex1.distanceTo( vertex2 );
+		const legLength = vertex1.correctedDistanceTo( vertex2 );
 
 		legLengths[ i / 2 ] = legLength; // cache lengths to avoid recalc
 

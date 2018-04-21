@@ -15,8 +15,6 @@ void main() {
 
 	vColor = color;
 
-	// select glyph from atlas ( with proportional spacing ).
-
 	vUv = vec2( position.x, position.y );
 
 	// rotate as required

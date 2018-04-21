@@ -1,6 +1,6 @@
 
 import {
-	FACE_SCRAPS, FACE_WALLS,
+	FACE_SCRAPS, FACE_WALLS, FACE_ALPHA,
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES, FEATURE_STATIONS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
@@ -10,6 +10,7 @@ import {
 } from '../core/constants';
 
 import { Cfg } from '../core/lib';
+import { StationPosition } from '../core/StationPosition';
 import { ColourCache } from '../core/ColourCache';
 import { Box3Helper } from '../core/Box3';
 import { Materials } from '../materials/Materials';
@@ -22,7 +23,7 @@ import { DyeTraces } from './DyeTraces';
 import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
-import { buildScraps, buildCrossSections } from './WallBuilders';
+import { buildWallsSync, buildWallsAsync } from './walls/WallBuilders';
 
 import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
 import { StencilLib } from '../core/StencilLib';
@@ -58,6 +59,8 @@ function Survey ( cave ) {
 		new Vector3( 0, 1, 1)
 	];
 
+	this.lightDirection = new Vector3( -1, -1, 2 ).normalize();
+
 	const self = this;
 
 	SurveyColours.clearMap(); // clear cache of survey section to colour
@@ -65,7 +68,7 @@ function Survey ( cave ) {
 	const survey = cave.getSurvey();
 
 	this.name = survey.title;
-	this.CRS = ( survey.sourceCRS === null ) ? Cfg.value( 'CRS', 'fred' ) : survey.sourceCRS;
+	this.CRS = survey.sourceCRS;
 
 	this.limits = survey.limits;
 	this.offsets = survey.offsets;
@@ -77,6 +80,11 @@ function Survey ( cave ) {
 
 	this.modelLimits = modelLimits;
 
+	// this needs to be defined before loading the leg data to
+	// allow correct leg lengths to be calculated
+
+	_setProjectionScale();
+
 	this.loadCave( survey );
 
 	this.legTargets = [ this.features[ LEG_CAVE ] ];
@@ -84,8 +92,6 @@ function Survey ( cave ) {
 	this.loadEntrances();
 
 	this.setFeatureBox();
-
-	_setProjectionScale();
 
 	this.addEventListener( 'removed', this.onRemoved );
 
@@ -123,6 +129,7 @@ function Survey ( cave ) {
 		const l2 = p1.distanceTo( p2 );
 
 		self.scaleFactor = l1 / l2;
+		StationPosition.scaleFactor = 1 / self.scaleFactor;
 
 	}
 
@@ -258,9 +265,6 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.loadStations( cave.surveyTree );
 
-	buildScraps( cave, this );
-	buildCrossSections( cave, this );
-
 	_loadTerrain( cave );
 
 	this.computeBoundingBoxes( cave.surveyTree );
@@ -274,6 +278,8 @@ Survey.prototype.loadCave = function ( cave ) {
 	this.loadDyeTraces();
 
 	this.routes = new Routes( metadata ).mapSurvey( this.stations, this.getFeature( LEG_CAVE ), this.surveyTree );
+
+	buildWallsSync( cave, this );
 
 	return;
 
@@ -396,13 +402,20 @@ Survey.prototype.loadCave = function ( cave ) {
 
 };
 
+Survey.prototype.asyncTasks = function () {
+
+	buildWallsAsync( this );
+
+};
+
 Survey.prototype.getFeature = function ( tag, obj ) {
 
 	var o = this.features[ tag ];
 
 	if ( o === undefined && obj ) {
 
-		o = new obj ( tag );
+		o = new obj ();
+		o.layers.set( tag );
 
 	}
 
@@ -437,6 +450,7 @@ Survey.prototype.update = function ( camera, target ) {
 Survey.prototype.addFeature = function ( obj, tag, name ) {
 
 	obj.name = name;
+	obj.layers.set( tag );
 
 	this.features[ tag ] = obj;
 
@@ -469,18 +483,6 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 	const stations = new Stations();
 
 	surveyTree.traverse( _addStation );
-
-	const legs = this.getLegs();
-
-	var i;
-
-	// count number of legs linked to each station
-
-	for ( i = 0; i < legs.length; i++ ) {
-
-		stations.updateStation( legs[ i ] );
-
-	}
 
 	// we have finished adding stations.
 	stations.finalise();
@@ -602,7 +604,7 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 
 	// convert to original survey CRS
 
-	if  ( projection !== null ) originalPosition = projection.forward( originalPosition );
+	if ( projection !== null ) originalPosition = projection.forward( originalPosition );
 
 	originalPosition.z = position.z + offsets.z;
 
@@ -929,6 +931,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 		this.setWallShading( this.features[ FACE_WALLS  ], mode, material );
 		this.setWallShading( this.features[ FACE_SCRAPS ], mode, material );
+		this.setWallShading( this.features[ FACE_ALPHA ], mode, material );
 
 		return true;
 
@@ -945,7 +948,6 @@ Survey.prototype.setWallShading = function ( mesh, node, selectedMaterial ) {
 	if ( selectedMaterial ) {
 
 		mesh.setShading( this.selectedSectionIds, selectedMaterial );
-		mesh.visible = true;
 
 	} else {
 

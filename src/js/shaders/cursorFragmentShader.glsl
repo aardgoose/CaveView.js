@@ -1,3 +1,6 @@
+#define saturate(a) clamp( a, 0.0, 1.0 )
+#define whiteCompliment(a) ( 1.0 - saturate( a ) )
+#define LOG2 1.442695
 
 uniform float cursor;
 uniform float cursorWidth;
@@ -5,61 +8,36 @@ uniform float cursorWidth;
 uniform vec3 baseColor;
 uniform vec3 cursorColor;
 
+uniform vec3 fogColor;
+uniform int fogEnabled;
+uniform float fogDensity;
+
 varying float height;
-
-#ifdef SURFACE
-
-varying vec3 vNormal;
-varying vec3 lNormal;
-
-#else
-
 varying vec3 vColor;
+varying float fogDepth;
 
-#endif
 
 void main() {
-
-#ifdef SURFACE
-
-	float nDot = dot( normalize( vNormal ), normalize( lNormal ) );
-	float light;
-	light = 0.5 * ( nDot + 1.0 );
-
-#else
-
-	float light = 1.0;
-
-#endif
 
 	float delta = abs( height - cursor );
 	float ss = smoothstep( 0.0, cursorWidth, cursorWidth - delta );
 
-
-#ifdef SURFACE
-
 	if ( delta < cursorWidth * 0.05 ) {
 
-		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light;
+		gl_FragColor = vec4( vColor, 1.0 );
 
 	} else {
 
-		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 );
+		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ), 1.0 ) * vec4( vColor, 1.0 );
 
 	}
 
-#else
+	if ( fogEnabled != 0 ) {
 
-	if ( delta < cursorWidth * 0.05 ) {
+		float fogFactor = whiteCompliment( exp2( - fogDensity * fogDensity * fogDepth * fogDepth * LOG2 ) );
 
-		gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * light * vec4( vColor, 1.0 );
-
-	} else {
-
-		gl_FragColor = vec4( mix( baseColor, cursorColor, ss ) * light, 1.0 ) * vec4( vColor, 1.0 );
+		gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
 
 	}
-
-#endif
 
 }

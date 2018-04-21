@@ -26,6 +26,9 @@ import heightFragmentShader from './heightFragmentShader.glsl';
 import popupVertexShader from './popupVertexShader.glsl';
 import popupFragmentShader from './popupFragmentShader.glsl';
 
+import surfaceVertexShader from './surfaceVertexShader.glsl';
+import surfaceFragmentShader from './surfaceFragmentShader.glsl';
+
 import waterVertexShader from './waterVertexShader.glsl';
 import waterFragmentShader from './waterFragmentShader.glsl';
 
@@ -48,6 +51,8 @@ export const Shaders = {
 	heightFragmentShader:	heightFragmentShader,
 	popupVertexShader:		popupVertexShader,
 	popupFragmentShader:	popupFragmentShader,
+	surfaceVertexShader:	surfaceVertexShader,
+	surfaceFragmentShader:	surfaceFragmentShader,
 	waterVertexShader:		waterVertexShader,
 	waterFragmentShader:	waterFragmentShader
 };

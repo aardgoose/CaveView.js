@@ -7,6 +7,9 @@ import { ColourCache } from '../core/ColourCache';
 function ExtendedPointsMaterial () {
 
 	ShaderMaterial.call( this, {
+		vertexShader: Shaders.extendedPointsVertexShader,
+		fragmentShader: Shaders.extendedPointsFragmentShader,
+		type: 'CV.ExtendedPointsMaterial',
 		uniforms: {
 			diffuse: { value: ColourCache.white },
 			opacity: { value: 1.0 },
@@ -17,8 +20,6 @@ function ExtendedPointsMaterial () {
 			map: { value: null },
 			uvTransform: { value: new Matrix3() }
 		},
-		vertexShader: Shaders.extendedPointsVertexShader,
-		fragmentShader: Shaders.extendedPointsFragmentShader,
 		vertexColors: VertexColors
 	} );
 
@@ -32,8 +33,6 @@ function ExtendedPointsMaterial () {
 	this.scale = 1;
 	this.sizeAttenuation = true;
 	this.transparent = true;
-
-	this.type = 'CV.ExtendedPointsMaterial';
 
 	this.isPointsMaterial = true;
 

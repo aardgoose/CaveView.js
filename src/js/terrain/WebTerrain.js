@@ -31,7 +31,7 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 	this.onLoaded        = onLoaded;
 	this.childrenLoading = 0;
 	this.childErrors     = 0;
-	this.terrainLoaded   = false;
+	this.isLoaded        = false;
 	this.material        = null;
 	this.initialZoom     = null;
 	this.currentZoom     = null;
@@ -68,12 +68,6 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 WebTerrain.prototype = Object.create( CommonTerrain.prototype );
 
 WebTerrain.prototype.isTiled = true;
-
-WebTerrain.prototype.isLoaded = function () {
-
-	return this.terrainLoaded;
-
-};
 
 WebTerrain.prototype.hasCoverage = function () {
 
@@ -249,6 +243,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 		}
 
+
 		self.dispatchEvent( { type: 'progress', name: 'add', value: self.progressInc } );
 
 		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox, self.material );
@@ -261,7 +256,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 		}
 
-		self.terrainLoaded = true;
+		self.isLoaded = true;
 
 	}
 

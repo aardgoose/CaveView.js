@@ -145,8 +145,6 @@ function init ( domID, configuration ) { // public method
 
 	oCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
 
-	oCamera.rotateOnAxis( upAxis, Math.PI / 2 );
-
 	initCamera( oCamera );
 
 	pCamera = new PerspectiveCamera( 75, width / height, 1, 16000 );
@@ -157,9 +155,6 @@ function init ( domID, configuration ) { // public method
 
 	scene.fog = fog;
 	scene.name = 'CV.Viewer';
-
-	scene.add( pCamera );
-	scene.add( oCamera );
 
 	// setup directional lighting
 
@@ -577,7 +572,7 @@ function showDeveloperInfo( /* x */ ) {
 
 function renderDepthTexture () {
 
-	if ( terrain === null || ! terrain.isLoaded() ) return;
+	if ( ! terrain.isLoaded ) return;
 
 	const dim = 512;
 
@@ -708,6 +703,8 @@ function initCamera ( camera ) {
 	camera.position.set( 0, 0, CAMERA_OFFSET );
 	camera.lookAt( 0, 0, 0 );
 	camera.updateProjectionMatrix();
+
+	scene.add( camera );
 
 }
 
@@ -1223,7 +1220,7 @@ function surveyChanged ( /* event */ ) {
 
 function loadTerrain ( mode ) {
 
-	if ( terrain !== null && terrain.isLoaded() ) {
+	if ( terrain !== null && terrain.isLoaded ) {
 
 		if ( mode ) {
 

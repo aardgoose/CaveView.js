@@ -38,11 +38,7 @@ LoxTerrain.prototype = Object.create( CommonTerrain.prototype );
 
 LoxTerrain.prototype.isTiled = false;
 
-LoxTerrain.prototype.isLoaded = function () {
-
-	return true;
-
-};
+LoxTerrain.prototype.isLoaded = true;
 
 LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
 

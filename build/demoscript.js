@@ -100,6 +100,7 @@ const demoScript = [
 		delay: 3,
 		view: {
 			autoRotate: false,
+			shadingMode: CV.SHADING_HEIGHT,
 			view: CV.VIEW_PLAN
 		}
 	},
@@ -113,12 +114,22 @@ const demoScript = [
 		}
 	},
 	{
+		caption: 'Terrain - contoured',
+		delay: 5,
+		view: {
+			autoRotate: false,
+			terrainOpacity: 0.5,
+			terrainShading: CV.SHADING_CONTOURS,
+			view: CV.VIEW_PLAN
+		}
+	},
+	{
 		caption: 'Map Overlays',
 		delay: 5,
 		view: {
-			terrainOpacity: 1,
 			terrain: true,
-			terrainShading: CV.SHADING_OVERLAY
+			terrainShading: 'OSM',
+			terrainOpacity: 1
 		}
 	},
 	{

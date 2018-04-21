@@ -50,7 +50,8 @@ function onload () {
 	CV.UI.init( 'scene', { home: '/CaveView.js/CaveView/', terrainDirectory: '/CaveView.js/terrain/', surveyDirectory: '/CaveView.js/surveys/' } );
 
 	CV.Viewer.addOverlay( 'OSM', new OSMProvider() );
-	CV.Viewer.addOverlay( 'BGS', new BGSProvider() );
+	CV.Viewer.addOverlay( 'BGS Solid', new BGSProvider( [ 'BGS.50k.Bedrock', 'BGS.50k.Linear.features' ] ) );
+	CV.Viewer.addOverlay( 'BGS Drift', new BGSProvider( [ 'BGS.50k.Superficial.deposits' ] ) );
 	CV.Viewer.addOverlay( 'NLS', new NLSProvider() ); // eslint-disable-line no-undef
 	CV.Viewer.addOverlay( 'Bing Aerial', new BingProvider( 'Aerial', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
 	CV.Viewer.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );

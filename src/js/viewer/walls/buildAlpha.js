@@ -1,5 +1,5 @@
 import {
-	FACE_ALPHA, LEG_SPLAY,
+	FACE_ALPHA, LEG_SPLAY, FACE_WALLS, LEG_CAVE
 } from '../../core/constants';
 
 import { WorkerPool } from '../../core/WorkerPool';
@@ -8,27 +8,13 @@ import { Walls } from './Walls';
 
 import { Float32BufferAttribute } from '../../Three';
 
-
-function buildAlpha ( survey ) {
+function getSplays( survey, segments ) {
 
 	const stations = survey.stations;
-	const vertices = [];
-	const indices = [];
-
-	const segments = [];
-
-	var points;
-	var tasks = 0;
-	var pending = 0;
-
-	var i, j;
-
-	// allocate splays to segments
-
-	if ( ! survey.hasFeature( LEG_SPLAY ) ) return;
-
 	const splayLineSegments = survey.getFeature( LEG_SPLAY );
 	const splays = splayLineSegments.geometry.vertices;
+
+	var i, j;
 
 	for ( i = 0; i < splays.length; i += 2 ) {
 
@@ -66,6 +52,72 @@ function buildAlpha ( survey ) {
 		}
 
 	}
+
+}
+
+function getWalls( survey, segments ) {
+
+	const stations = survey.stations;
+	const walls = survey.getFeature( FACE_WALLS );
+	const centerLines = survey.getFeature( LEG_CAVE );
+
+	const lrudVertices = walls.vertices;
+	const centerLineVertices = centerLines.geometry.vertices;
+
+	// drop vertices after use
+	walls.vertices = null;
+
+	var i, j, k;
+
+	for ( i = 0; i < centerLineVertices.length; i++ ) {
+
+		const vertex = centerLineVertices[ i ];
+		const station = stations.getStation( vertex );
+
+		const lrudInfo = vertex.lrudInfo;
+
+		if ( lrudInfo === undefined ) continue;
+
+		let linkedSegments = station.linkedSegments;
+
+		for ( j = 0; j < linkedSegments.length; j++ ) {
+
+			const s = linkedSegments[ j ];
+
+			if ( segments[ s ] === undefined ) segments[ s ] = new Set();
+
+			const start = lrudInfo.start;
+			const end = start + lrudInfo.count;
+
+			for ( k = start; k < end; k++ ) {
+
+				segments[ s ].add( lrudVertices[ k ] );
+
+			}
+
+		}
+
+	}
+
+}
+
+function buildAlpha ( survey ) {
+
+	const vertices = [];
+	const indices = [];
+
+	const segments = [];
+
+	var points;
+	var tasks = 0;
+	var pending = 0;
+
+	var i;
+
+	// allocate splays to segments
+
+	if ( survey.hasFeature( LEG_SPLAY ) ) getSplays( survey, segments );
+	if ( survey.hasFeature( FACE_WALLS ) ) getWalls( survey, segments );
 
 	survey.dispatchEvent( { type: 'progress', name: 'start' } );
 

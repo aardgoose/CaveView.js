@@ -212,6 +212,9 @@ function buildCrossSections ( cave, survey, alphaWalls ) {
 
 	survey.addFeature( mesh, FACE_WALLS, 'CV.Survey:faces:walls' );
 
+	// save vertices for alphaWall construction
+	if ( alphaWalls ) mesh.vertices = vertices;
+
 	return;
 
 	function _endCap() {

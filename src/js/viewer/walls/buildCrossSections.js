@@ -8,7 +8,7 @@ import { Walls } from './Walls';
 import { Vector3 } from '../../Three';
 
 
-function buildCrossSections ( cave, survey ) {
+function buildCrossSections ( cave, survey, alphaWalls ) {
 
 	const crossSectionGroups = cave.crossSections;
 	const mesh = survey.getFeature( FACE_WALLS, Walls );
@@ -175,15 +175,15 @@ function buildCrossSections ( cave, survey ) {
 				run = { start: lastEnd, survey: survey };
 
 				// start tube with two triangles to form cap
-				indices.push( u1, r1, d1 );
-				indices.push( u1, d1, l1 );
+				indices.push( u1, d1, r1 );
+				indices.push( u1, l1, d1 );
 
 				if ( vertexCount === 8 ) {
 
-					indices.push( u1, l1, ul1 );
-					indices.push( u1, ur1, r1 );
-					indices.push( d1, dl1, l1 );
-					indices.push( d1, r1, dr1 );
+					indices.push( u1, ul1, l1 );
+					indices.push( u1, r1, ur1 );
+					indices.push( d1, l1, dl1 );
+					indices.push( d1, dr1, r1 );
 
 				}
 
@@ -237,6 +237,8 @@ function buildCrossSections ( cave, survey ) {
 		const station = crossSection.end;
 		const lrud    = crossSection.lrud;
 
+		var vertexCount;
+
 		// cross product of leg + next leg vector and up AXIS to give direction of LR vector
 		cross.subVectors( crossSection.start, crossSection.end ).normalize();
 
@@ -273,13 +275,16 @@ function buildCrossSections ( cave, survey ) {
 
 		lastCross.copy( cross );
 
+		const vertexStart = vertices.length;
+
 		switch ( crossSection.type ) {
 
 		case WALL_DIAMOND:
 
 			vertices.push( L, R, U, D );
 
-			return 4; // number of vertices for this profile
+			vertexCount = 4; // number of vertices for this profile
+			break;
 
 		case WALL_SQUARE:
 
@@ -290,7 +295,8 @@ function buildCrossSections ( cave, survey ) {
 
 			vertices.push( UL, DR, UR, DL );
 
-			return 4; // number of vertices for this profile
+			vertexCount = 4; // number of vertices for this profile
+			break;
 
 		case WALL_OVAL:
 
@@ -303,13 +309,18 @@ function buildCrossSections ( cave, survey ) {
 
 			vertices.push( UL, DR, UR, DL );
 
-			return 8; // number of vertices for this profile
+			vertexCount = 8; // number of vertices for this profile
+			break;
 
 		default:
 
 			console.error( 'unsupported lrud shape', crossSection.type );
 
 		}
+
+		if ( alphaWalls ) station.lrudInfo = { start: vertexStart, count: vertexCount };
+
+		return vertexCount;
 
 	}
 

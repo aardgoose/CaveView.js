@@ -6,7 +6,7 @@ import { Cfg } from '../../core/lib';
 function buildWallsSync ( cave, survey ) {
 
 	buildScraps( cave, survey );
-	buildCrossSections( cave, survey );
+	buildCrossSections( cave, survey, Cfg.value( 'alphaWalls', false ) );
 
 }
 

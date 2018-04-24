@@ -76,7 +76,7 @@ function runDemo() {
 
 	var view = d.view;
 
-	if ( view ) for ( property in view ) CV.Viewer[ property ] = view[ property ];
+	if ( view ) CV.Viewer.setView( view );
 
 	if ( d.route ) routes.setRoute = d.route;
 
@@ -120,7 +120,7 @@ function onload () {
 
 	CV.Viewer.addEventListener( 'newCave', viewComplete );
 
-//	CV.Viewer.clearView();
+	CV.Viewer.clearView();
 	CV.Viewer.loadCave( 'P8_Master.3d' );
 
 	captionDiv = document.getElementById( 'scene-caption' );

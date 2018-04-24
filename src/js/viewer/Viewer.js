@@ -1053,27 +1053,23 @@ function caveLoaded ( cave ) {
 	loadSurvey( new Survey( cave ), false );
 
 }
+function setView( properties1, properties2 ) {
+
+	// don't render until all settings made.
+
+	renderRequired = false;
+
+	Object.assign( Viewer, properties1, properties2 );
+
+	renderRequired = true;
+
+	renderView();
+
+}
 
 function setupView () {
 
-	const view = Cfg.value( 'view', {} );
-
-	var name;
-
-	// don't render until all settings made.
-	renderRequired = false;
-
-	for ( name in defaultView ) {
-
-		const value = ( view[ name ] !== undefined ) ? view[ name ] : defaultView[ name ];
-
-		// console.log( 'setting view:', name, value );
-
-		Viewer[ name ] = value;
-
-	}
-
-	renderRequired = true;
+	setView( defaultView, Cfg.value( 'view', {} ) );
 
 }
 
@@ -1140,11 +1136,8 @@ function loadSurvey ( newSurvey ) {
 	survey.getRoutes().addEventListener( 'changed', surveyChanged );
 	survey.addEventListener( 'changed', surveyChanged );
 
-	setupView();
-
 	caveIsLoaded = true;
-
-	renderView();
+	setupView();
 
 	function _terrainReady () {
 
@@ -1171,7 +1164,6 @@ function loadSurvey ( newSurvey ) {
 		survey.asyncTasks();
 
 		setupView();
-		renderView();
 
 		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
@@ -1572,6 +1564,7 @@ Object.assign( Viewer, {
 	renderView:    renderView,
 	addOverlay:    addOverlay,
 	addFormatters: addFormatters,
+	setView:       setView,
 	surfaceLightDirection: currentLightPosition
 } );
 

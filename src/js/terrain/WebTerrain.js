@@ -11,7 +11,7 @@ import {
 
 const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-function WebTerrain ( survey, onReady, onLoaded ) {
+function WebTerrain ( survey, onNoCoverage, onLoaded ) {
 
 	CommonTerrain.call( this );
 
@@ -53,13 +53,21 @@ function WebTerrain ( survey, onReady, onLoaded ) {
 
 		self.tileSets = JSON.parse( text );
 
-		onReady(); // call handler
+		if ( self.hasCoverage() ) {
+
+			self.tileArea( survey.limits );
+
+		} else {
+
+			onNoCoverage();
+
+		}
 
 	}
 
 	function _tileSetMissing( ) {
 
-		onReady(); // call handler
+		onNoCoverage(); // call handler
 
 	}
 

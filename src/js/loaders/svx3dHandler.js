@@ -1108,7 +1108,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		// get survey path by removing last component of station name
 		station.pop();
 
-		const surveyId = surveyTree.getIdByPath( station );
+		const surveyId = surveyTree.getIdByPathArray( station );
 
 		xSects.push( { start: lastXSectPosition, end: position, lrud: lrud, survey: surveyId, type: WALL_SQUARE } );
 

@@ -196,9 +196,15 @@ Tree.prototype.getSubtreeIds = function ( id, idSet ) {
 
 Tree.prototype.getIdByPath = function ( path ) {
 
-	const node = this.getByPathArray( path );
+	return this.getIdByPathArray( path.split( '.' ) );
 
-	if ( path.length === 0 ) {
+};
+
+Tree.prototype.getIdByPathArray = function ( array ) {
+
+	const node = this.getByPathArray( array );
+
+	if ( array.length === 0 ) {
 
 		return node.id;
 

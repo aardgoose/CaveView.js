@@ -46,7 +46,7 @@ CameraMove.prototype.prepare = function () {
 
 	return function prepare ( cameraTarget, endPOI ) {
 
-		if ( this.frameCount !== 0 ) return;
+		if ( this.frameCount !== 0 ) return this;
 
 		const camera = this.controls.object;
 		const startPOI = this.controls.target;
@@ -142,11 +142,13 @@ CameraMove.prototype.prepare = function () {
 
 				this.curve = new QuadraticBezierCurve3( cameraStart, controlPoint, cameraTarget );
 
-				return;
+				return this;
 
 			}
 
 		}
+
+		return this;
 
 	};
 

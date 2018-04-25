@@ -155,6 +155,7 @@ function init ( domID, configuration ) { // public method
 
 	scene.fog = fog;
 	scene.name = 'CV.Viewer';
+	scene.up = upAxis;
 
 	// setup directional lighting
 
@@ -524,8 +525,7 @@ function setAutoRotate ( state ) {
 
 	if ( state ) {
 
-		cameraMove.prepare( null, null );
-		cameraMove.start( 2952000 );
+		cameraMove.prepare( null, null ).start( 2952000 );
 
 	} else {
 
@@ -715,8 +715,7 @@ var cameraMoved = function () {
 
 	return function cameraMoved() {
 
-		cameraMove.prepare( null, null );
-		cameraMove.start( 80 );
+		cameraMove.prepare( null, null ).start( 80 );
 
 		rotation.setFromQuaternion( camera.getWorldQuaternion( q ) );
 
@@ -803,8 +802,7 @@ function setViewMode ( mode, t ) {
 	cameraPosition.add( defaultTarget );
 
 	cameraMove.cancel();
-	cameraMove.prepare( cameraPosition, defaultTarget );
-	cameraMove.start( renderRequired ? t || 240 : 1 );
+	cameraMove.prepare( cameraPosition, defaultTarget ).start( renderRequired ? t || 240 : 1 );
 
 }
 
@@ -1076,7 +1074,6 @@ function setupView () {
 function loadSurvey ( newSurvey ) {
 
 	var syncTerrainLoading = true;
-	var firstTiles = true;
 
 	// only render after first SetupView()
 	renderRequired = false;
@@ -1094,8 +1091,6 @@ function loadSurvey ( newSurvey ) {
 	Materials.flushCache( survey );
 
 	terrain = survey.terrain;
-
-	scene.up = upAxis;
 
 	scene.addStatic( survey );
 
@@ -1174,11 +1169,11 @@ function loadSurvey ( newSurvey ) {
 		if ( errors > 0 ) {
 
 			_noTerrain();
-			if ( firstTiles ) return;
+			if ( terrain.parent === null ) return;
 
 		}
 
-		if ( firstTiles ) {
+		if ( terrain.parent === null ) {
 
 			// delayed notification to ensure and event listeners get accurate terrain information
 			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
@@ -1193,8 +1188,6 @@ function loadSurvey ( newSurvey ) {
 			renderDepthTexture();
 
 			applyTerrainDatumShift( true );
-
-			firstTiles = false;
 
 		}
 

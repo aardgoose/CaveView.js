@@ -1150,14 +1150,14 @@ function loadSurvey ( newSurvey ) {
 
 	function _tilesLoaded ( errors ) {
 
-		if ( errors > 0 ) {
-
-			_noTerrain();
-			if ( terrain.parent === null ) return;
-
-		}
-
 		if ( terrain.parent === null ) {
+
+			if ( errors > 0 ) {
+
+				_noTerrain();
+				return;
+
+			}
 
 			// delayed notification to ensure and event listeners get accurate terrain information
 			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );

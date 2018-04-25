@@ -951,7 +951,7 @@ function getSelectedSectionName () {
 
 function setSelectedSectionName ( name ) {
 
-	const id = survey.surveyTree.getIdByPath( name.split( '.' ) );
+	const id = survey.surveyTree.getIdByPath( name );
 
 	selectSection( id === undefined ? 0 : id );
 
@@ -1102,7 +1102,7 @@ function loadSurvey ( newSurvey ) {
 
 	if ( terrain === null ) {
 
-		terrain = new WebTerrain( survey, _terrainReady, _tilesLoaded );
+		terrain = new WebTerrain( survey, _noTerrain, _tilesLoaded );
 		HUD.getProgressDial( 0 ).watch( terrain );
 
 		syncTerrainLoading = false;
@@ -1133,22 +1133,6 @@ function loadSurvey ( newSurvey ) {
 
 	caveIsLoaded = true;
 	setupView();
-
-	function _terrainReady () {
-
-		if ( terrain.hasCoverage() ) {
-
-			setTerrainShadingMode( terrainShadingMode );
-
-			terrain.tileArea( survey.limits );
-
-		} else {
-
-			_noTerrain();
-
-		}
-
-	}
 
 	function _noTerrain () {
 

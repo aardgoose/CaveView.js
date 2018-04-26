@@ -8,10 +8,11 @@ import {
 	Vector2, Frustum, Box2, Matrix4, FileLoader
 } from '../Three';
 
-
 const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-function WebTerrain ( survey, onNoCoverage, onLoaded ) {
+var tileSets;
+
+function WebTerrain ( survey, onLoaded ) {
 
 	CommonTerrain.call( this );
 
@@ -45,42 +46,71 @@ function WebTerrain ( survey, onNoCoverage, onLoaded ) {
 
 	this.workerPool = new WorkerPool( 'webTileWorker.js' );
 
-	const self = this;
-
-	new FileLoader().setResponseType( 'text' ).load( Cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
-
-	function _tileSetLoaded( text ) {
-
-		self.tileSets = JSON.parse( text );
-
-		if ( self.hasCoverage() ) {
-
-			self.tileArea( survey.limits );
-
-		} else {
-
-			onNoCoverage();
-
-		}
-
-	}
-
-	function _tileSetMissing( ) {
-
-		onNoCoverage(); // call handler
-
-	}
-
 }
 
 WebTerrain.prototype = Object.create( CommonTerrain.prototype );
 
 WebTerrain.prototype.isTiled = true;
 
+WebTerrain.prototype.load = function ( onNoCoverage ) {
+
+	// return indicates if sync coverage checking in progress
+
+	const self = this;
+
+	if ( tileSets === undefined ) {
+
+		// async operation
+
+		new FileLoader().setResponseType( 'text' ).load( Cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
+
+		return false;
+
+	} else if ( tileSets === null ) {
+
+		return true;
+
+	} else {
+
+		return _checkTileSets();
+
+	}
+
+	function _checkTileSets( ) {
+
+		if ( self.hasCoverage() ) {
+
+			self.tileArea( self.limits );
+			return false;
+
+		}
+
+		return true;
+
+	}
+
+	// async callbacks
+
+	function _tileSetLoaded( text ) {
+
+		tileSets = JSON.parse( text );
+
+		_checkTileSets();
+
+	}
+
+	function _tileSetMissing( ) {
+
+		tileSets = null;
+		onNoCoverage(); // call handler
+
+	}
+
+};
+
 WebTerrain.prototype.hasCoverage = function () {
 
 	const limits = this.limits;
-	const tileSets = this.tileSets;
 
 	if ( tileSets === undefined ) return false;
 

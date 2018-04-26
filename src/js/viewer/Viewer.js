@@ -1102,10 +1102,13 @@ function loadSurvey ( newSurvey ) {
 
 	if ( terrain === null ) {
 
-		terrain = new WebTerrain( survey, _noTerrain, _tilesLoaded );
+		terrain = new WebTerrain( survey, _tilesLoaded );
+
 		HUD.getProgressDial( 0 ).watch( terrain );
 
-		syncTerrainLoading = false;
+		syncTerrainLoading = terrain.load( _noTerrain );
+
+		if ( syncTerrainLoading ) terrain = null;
 
 	} else {
 
@@ -1134,7 +1137,7 @@ function loadSurvey ( newSurvey ) {
 	caveIsLoaded = true;
 	setupView();
 
-	function _noTerrain () {
+	function _noTerrain ( ) {
 
 		console.log( 'errors loading terrain' );
 

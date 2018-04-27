@@ -893,12 +893,6 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 		break;
 
-	case SHADING_SURVEY:
-
-		// FIXME make multiple material for survey - > color and pass to Walls().
-
-		break;
-
 	case SHADING_DEPTH:
 
 		if ( this.terrain === null ) return false;
@@ -918,6 +912,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 		break;
 
 	case SHADING_DISTANCE:
+	case SHADING_SURVEY:
 
 		material = false;
 
@@ -954,8 +949,6 @@ Survey.prototype.setWallShading = function ( mesh, node, selectedMaterial ) {
 		mesh.visible = false;
 
 	}
-
-	// FIXME - ressurect SHADING_SURVEY ???
 
 };
 

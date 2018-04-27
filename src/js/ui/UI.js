@@ -87,7 +87,7 @@ function init ( domID, configuration ) { // public method
 
 	Object.defineProperty( guiState, 'file', {
 		get: function () { return loadedFile; },
-		set: function ( value ) { loadCave( value ); loadedFile = value; },
+		set: loadCave
 	} );
 
 	Viewer.addEventListener( 'change', Page.handleChange );
@@ -240,6 +240,7 @@ function initSelectionPage () {
 
 		function _addLine ( child ) {
 
+			const id = child.id;
 			const connections = ( child.p === undefined ) ? null : child.p.connections;
 
 			if ( connections === 0 && ! Viewer.splays && child.type !== STATION_ENTRANCE ) return; // skip spays if not displayed
@@ -248,17 +249,17 @@ function initSelectionPage () {
 			const txt = document.createTextNode( child.name );
 			const key = document.createElement( 'span' );
 
-			li.id = 'sv' + child.id;
+			li.id = 'sv' + id;
 
-			if ( Viewer.section === child.id ) li.classList.add( 'selected' );
+			if ( Viewer.section === id ) li.classList.add( 'selected' );
 
 			if ( connections === null ) {
 
 				let colour;
 
-				if ( Viewer.shadingMode === SHADING_SURVEY && surveyColourMap[ child.id ] !== undefined ) {
+				if ( Viewer.shadingMode === SHADING_SURVEY && surveyColourMap[ id ] !== undefined ) {
 
-					colour = surveyColourMap[ child.id ].getHexString();
+					colour = surveyColourMap[ id ].getHexString();
 
 				} else {
 
@@ -299,7 +300,7 @@ function initSelectionPage () {
 				const descend = document.createElement( 'div' );
 
 				descend.classList.add( 'descend-tree' );
-				descend.id = 'ssv' + child.id;
+				descend.id = 'ssv' + id;
 				descend.textContent = '\u25bA';
 
 				li.appendChild( descend );

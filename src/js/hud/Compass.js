@@ -124,12 +124,8 @@ Compass.prototype.set = function () {
 
 		vCamera.getWorldDirection( direction );
 
-		if ( direction.x === 0 && direction.y === 0 ) {
-
-			// FIXME get camera rotation....
-			return;
-
-		}
+		// floating point limitations result in this being seldom called
+		if ( direction.x === 0 && direction.y === 0 ) return;
 
 		// we are only interested in angle to horizontal plane.
 		direction.z = 0;

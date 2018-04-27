@@ -68,6 +68,8 @@ const defaultView = {
 const renderer = new WebGLRenderer( { antialias: true } ) ;
 
 const defaultTarget = new Vector3();
+const initialCameraPosition = new Vector3( 0, 0, CAMERA_OFFSET ).add( defaultTarget );
+
 const lightPosition = new Vector3();
 const currentLightPosition = new Vector3();
 const directionalLight = new DirectionalLight( 0xffffff );
@@ -897,13 +899,8 @@ function selectSection ( id ) {
 
 	if ( id === 0 ) {
 
-		const cameraPosition = new Vector3();
-
-		// reset camera to start position
-		cameraPosition.set( 0, 0, CAMERA_OFFSET ).add( defaultTarget );
-
 		cameraMove.cancel();
-		cameraMove.prepare( cameraPosition, defaultTarget );
+		cameraMove.prepare( initialCameraPosition, defaultTarget );
 
 		highlightSelection( 0 );
 

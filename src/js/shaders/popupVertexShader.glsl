@@ -15,7 +15,7 @@ void main() {
 
 	vColor = color;
 
-	vUv = vec2( position.x, position.y );
+	vUv = newPosition;
 
 	// rotate as required
 

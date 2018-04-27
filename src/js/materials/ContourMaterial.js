@@ -5,8 +5,10 @@ import { Cfg } from '../core/lib';
 
 function ContourMaterial ( survey, viewer ) {
 
+	this.baseAdjust = survey.offsets.z;
+
 	const terrain = survey.terrain;
-	const zAdjust = survey.offsets.z;
+	const zAdjust = this.baseAdjust + terrain.activeDatumShift;
 
 	ShaderMaterial.call( this, {
 		vertexShader:    Shaders.contourVertexShader,
@@ -15,7 +17,6 @@ function ContourMaterial ( survey, viewer ) {
 		type:            'CV.ContourMaterial',
 		uniforms: {
 			uLight:          { value: viewer.surfaceLightDirection },
-			datumShift:      { value: terrain.activeDatumShift },
 			zAdjust:         { value: zAdjust },
 			contourInterval: { value: Cfg.themeValue( 'shading.contours.interval' ) },
 			contourColor:    { value: Cfg.themeColor( 'shading.contours.line' ) },
@@ -53,7 +54,7 @@ ContourMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 ContourMaterial.prototype.setDatumShift = function ( shift ) {
 
-	this.uniforms.datumShift.value = shift;
+	this.uniforms.zAdjust.value = this.baseAdjust + shift;
 
 };
 

@@ -47,10 +47,10 @@ function buildCrossSections ( cave, survey, alphaWalls ) {
 
 		if ( m < 2 ) continue;
 
-		// enter first station vertices - FIXME use fudged approach vector for this (points wrong way).
+		// enter first station vertices
 		vertexCount = _getLRUD( crossSectionGroup[ 0 ], crossSectionGroup[ 1 ] );
 
-		for ( j = 0; j < m; j++ ) {
+		for ( j = 1; j < m; j++ ) {
 
 			const xSect = crossSectionGroup[ j ];
 			const survey = xSect.survey;

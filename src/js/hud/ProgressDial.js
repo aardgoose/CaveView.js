@@ -45,10 +45,10 @@ function ProgressDial ( addText, ring ) {
 
 		const pcent = new MutableGlyphString( '----', glyphMaterial );
 
-		pcent.translateY( 10 );
-		pcent.translateX( -5 );
+		pcent.translateY( pcent.getWidth() / 2 );
+		pcent.translateX( -10 );
 
-		this.addStatic( pcent );
+		this.add( pcent );
 		this.pcent = pcent;
 
 	} else {
@@ -72,6 +72,7 @@ ProgressDial.prototype.set = function ( progress ) {
 	const l = Math.floor( Math.min( 100, Math.round( progress ) ) / 2 ) * 2;
 	const faces = this.geometry.faces;
 	const color = this.color;
+	const pcent = this.pcent;
 
 	for ( var i = 0; i < l; i++ ) {
 
@@ -81,11 +82,12 @@ ProgressDial.prototype.set = function ( progress ) {
 
 	this.geometry.colorsNeedUpdate = true;
 
-	if ( this.pcent !== null ) {
+	if ( pcent !== null ) {
 
-		var pcent = Math.round( progress ) + '%';
+		var pcentValue = Math.round( progress ) + '%';
 
-		this.pcent.replaceString( pcent.padStart( 4, ' ' ) );
+		pcent.replaceString( pcentValue.padStart( 4, ' ' ) );
+		pcent.translateY( pcent.getWidth() / 2 - pcent.position.y );
 
 	}
 

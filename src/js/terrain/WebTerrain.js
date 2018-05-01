@@ -42,7 +42,7 @@ function WebTerrain ( survey, onLoaded ) {
 	this.overlaysLoading = 0;
 	this.debug = true;
 
-	this.material = Materials.getHypsometricMaterial();
+	this.material = Materials.getCursorMaterial();
 
 	this.workerPool = new WorkerPool( 'webTileWorker.js' );
 

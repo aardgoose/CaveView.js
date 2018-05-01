@@ -28,13 +28,19 @@ function onload () {
 		terrainDirectory: "/terrain/",
 		surveyDirectory: "/surveys/",
 		home: "/CaveView/",
-		view: { walls: true, alpha: true },
+		view: { walls: false, alpha: true },
 		alphaWalls: false,
-		language: "template",
-		defaultCRS: "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs",
+//		language: "template",
+//		defaultCRS: "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs",
 		theme: {
 			hud: {
 				progress: 0xff0000
+			},
+			shading: {
+				hypsometic: {
+					min: 100,
+					max: 700
+				}
 			}
 		}
 	} );

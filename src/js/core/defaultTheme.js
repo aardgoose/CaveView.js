@@ -57,17 +57,19 @@ const defaultTheme = {
 		cursor: 0xffff00,
 		cursorBase: 0x888888,
 		unselected: 0x444444,
-		unconnected: 0x888888,
 		contours: {
 			line: 0xe1bba2,
 			line10: 0xf29d62,
 			interval: 10,
 			base: 0xffffff
 		},
+		/*
 		hypsometric: {
 			min: 0,
 			max: 400
-		}
+		},
+		*/
+		unconnected: 0x888888
 	},
 	popup: {
 		text: 0xffffff,

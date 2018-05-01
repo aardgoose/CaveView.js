@@ -18,7 +18,7 @@ function LoxTerrain ( terrainData, offsets ) {
 	this.overlayMaterial = null;
 	this.attributions = [];
 
-	const tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ), Materials.getHypsometricMaterial() );
+	const tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ), Materials.getCursorMaterial() );
 
 	tile.layers.set( FEATURE_TERRAIN );
 	tile.isTile = true;

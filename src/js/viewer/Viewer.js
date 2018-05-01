@@ -1159,6 +1159,8 @@ function loadSurvey ( newSurvey ) {
 
 			}
 
+			survey.terrain = terrain;
+
 			// delayed notification to ensure and event listeners get accurate terrain information
 			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 

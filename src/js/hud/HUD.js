@@ -179,6 +179,7 @@ function resize () {
 	camera.updateProjectionMatrix();
 
 	attitudeGroup.position.set( hWidth, -hHeight, 0 );
+	attitudeGroup.updateMatrix();
 
 	newScales();
 

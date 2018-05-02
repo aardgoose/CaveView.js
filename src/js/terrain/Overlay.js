@@ -16,6 +16,7 @@ function Overlay ( overlayProvider, container ) {
 
 	this.provider = overlayProvider;
 	this.container = container;
+	this.active = false;
 
 	const attribution = overlayProvider.getAttribution();
 
@@ -81,7 +82,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 	if ( material !== undefined ) {
 
-		overlayLoaded( material );
+		overlayLoaded( this.active ? material : null );
 
 		return;
 
@@ -127,6 +128,13 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 	function _textureLoaded( texture ) {
 
+		if ( ! self.active ) {
+
+			overlayLoaded( null );
+			return;
+
+		}
+
 		const material = new MeshLambertMaterial( { transparent: true, opacity: opacity, color: 0xffffff } );
 
 		texture.anisotropy = Cfg.value( 'anisotropy', 4 );
@@ -150,7 +158,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 		self.missing.add( url );
 
-		overlayLoaded( missingMaterial );
+		overlayLoaded( self.active ? missingMaterial : null );
 
 	}
 

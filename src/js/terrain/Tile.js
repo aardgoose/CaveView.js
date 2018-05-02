@@ -304,7 +304,8 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
 	function _overlayLoaded ( material ) {
 
-		self.material = material;
+		if ( material !== null ) self.material = material;
+
 		imageLoadedCallback( self );
 
 	}

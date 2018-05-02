@@ -374,14 +374,16 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 			currentOverlay.flushCache();
 			currentOverlay.hideAttribution();
+			currentOverlay.active = false;
 
 		}
 
 	}
 
-	this.activeOverlay = overlay;
+	overlay.showAttribution();
+	overlay.active = true;
 
-	if ( overlay !== null ) overlay.showAttribution();
+	this.activeOverlay = overlay;
 
 	this.traverse( _setTileOverlays );
 

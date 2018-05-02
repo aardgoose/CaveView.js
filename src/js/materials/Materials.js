@@ -91,7 +91,6 @@ function getHypsometricMaterial () {
 	if ( material === undefined ) {
 
 		material = cacheSurveyMaterial( name, new HypsometricMaterial( survey, viewer ) );
-		depthMaterials.push( material );
 
 	}
 

@@ -19,6 +19,7 @@ function WebTerrain ( survey, onLoaded ) {
 	this.name = 'WebTerrain';
 	this.type = 'CV.WebTerrain';
 	this.attribution = [];
+	this.log = false;
 
 	const limits = survey.limits;
 
@@ -129,6 +130,7 @@ WebTerrain.prototype.hasCoverage = function () {
 			tileSet.directory = baseDirectory + tileSet.subdirectory;
 
 			this.tileSet = tileSet;
+			this.log = tileSet.log === undefined ? false : tileSet.log;
 			this.attributions = tileSet.attributions;
 
 			return true;
@@ -194,7 +196,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 	if ( scale !== 1 && this.activeOverlay === null && this.currentZoom !== null ) return;
 
-	console.log( 'load: [ ', z +'/' + x + '/' + y, ']' );
+	if ( this.log ) console.log( 'load: [ ', z +'/' + x + '/' + y, ']' );
 
 	const tileWidth = halfMapExtent / Math.pow( 2, z - 1 );
 	const clip      = { top: 0, bottom: 0, left: 0, right: 0 };

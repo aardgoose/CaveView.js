@@ -7,19 +7,14 @@ import { ShaderMaterial } from '../Three';
 function HypsometricMaterial ( survey, viewer ) {
 
 	const terrain = survey.terrain;
-	const datumShift = terrain === null ? 0 : terrain.activeDatumShift;
-
-	const zOffset = survey.offsets.z;
 
 	var zMin = Cfg.themeValue( 'shading.hypsometric.min' );
 	var zMax = Cfg.themeValue( 'shading.hypsometric.max' );
 
 	if ( terrain.boundBox === undefined ) terrain.computeBoundingBox();
 
-	if ( zMin === undefined ) zMin = terrain.boundingBox.min.z + zOffset;
-	if ( zMax === undefined ) zMax = terrain.boundingBox.max.z + zOffset + 10;
-
-	if ( terrain ) console.log( 'offset', terrain.boundingBox, zMin, zMax );
+	if ( zMin === undefined ) zMin = terrain.boundingBox.min.z;
+	if ( zMax === undefined ) zMax = terrain.boundingBox.max.z;
 
 	ShaderMaterial.call( this, {
 		vertexShader: Shaders.surfaceVertexShader,
@@ -27,8 +22,7 @@ function HypsometricMaterial ( survey, viewer ) {
 		type: 'CV.HypsometricMaterial',
 		uniforms: {
 			uLight:     { value: viewer.surfaceLightDirection },
-			datumShift: { value: datumShift },
-			minZ:       { value: zMin - zOffset },
+			minZ:       { value: zMin },
 			scaleZ:     { value: 1 / ( zMax - zMin ) },
 			cmap:       { value: ColourCache.getTexture( 'hypsometric' ) },
 			opacity:    { value: 0.5 }
@@ -57,12 +51,6 @@ function HypsometricMaterial ( survey, viewer ) {
 }
 
 HypsometricMaterial.prototype = Object.create( ShaderMaterial.prototype );
-
-HypsometricMaterial.prototype.setDatumShift = function ( shift ) {
-
-	this.uniforms.datumShift.value = shift;
-
-};
 
 export { HypsometricMaterial };
 

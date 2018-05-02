@@ -14,14 +14,15 @@ function createTexture ( scale ) {
 	const l = scale.length;
 	const data = new Uint8Array( l * 3 );
 
-	for ( var i = 0; i < l; ) {
+	var offset = 0;
 
-		const c = scale[ l - ++i ];
-		const offset = i * 3;
+	for ( var i = l; i; ) {
 
-		data[ offset ]     = c[0];
-		data[ offset + 1 ] = c[1];
-		data[ offset + 2 ] = c[2];
+		const c = scale[ --i ];
+
+		data[ offset++ ] = c[ 0 ];
+		data[ offset++ ] = c[ 1 ];
+		data[ offset++ ] = c[ 2 ];
 
 	}
 

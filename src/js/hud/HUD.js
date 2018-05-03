@@ -48,7 +48,6 @@ var progressDial;
 
 var viewer;
 var controls;
-
 var isVisible = true;
 var caveLoaded = false;
 
@@ -74,7 +73,6 @@ function init ( viewerIn, viewRenderer ) {
 
 	scene.addStatic( attitudeGroup );
 
-	scene.matrixAutoUpdate = false;
 	scene.name = 'HUD';
 
 	const aLight = new AmbientLight( 0x888888 );

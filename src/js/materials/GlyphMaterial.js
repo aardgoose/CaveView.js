@@ -4,12 +4,13 @@ import { Shaders } from '../shaders/Shaders';
 import { AtlasFactory } from '../materials/GlyphAtlas';
 import { MaterialFog } from './MaterialFog';
 
-function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
+function GlyphMaterial ( glyphAtlasSpec, rotation, viewer ) {
 
 	const self = this;
 
 	const glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec );
 	const cellScale = glyphAtlas.getCellScale();
+	const container = viewer.container;
 
 	const cos = Math.cos( rotation );
 	const sin = Math.sin( rotation );
@@ -35,8 +36,7 @@ function GlyphMaterial ( glyphAtlasSpec, container, rotation ) {
 	this.type = 'CV.GlyphMaterial';
 	this.atlas = glyphAtlas;
 
-	// event handler
-	window.addEventListener( 'resize', _resize );
+	viewer.addEventListener( 'resized', _resize );
 
 	this.scaleFactor = container.clientHeight * this.atlas.getCellScale() / 2 ;
 

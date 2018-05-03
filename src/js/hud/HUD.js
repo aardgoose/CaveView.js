@@ -5,7 +5,6 @@ import {
 } from '../core/constants';
 
 import { Cfg } from '../core/lib';
-import { Viewer } from '../viewer/Viewer';
 
 import { AHI } from './AHI';
 import { AngleScale } from './AngleScale';
@@ -45,20 +44,20 @@ var ahi;
 var progressDials;
 var progressDial;
 
-// DOM objects
-
-var container;
-
 // viewer state
 
+var viewer;
 var controls;
+
 var isVisible = true;
 var caveLoaded = false;
 
-function init ( containerIn, viewRenderer ) {
+function init ( viewerIn, viewRenderer ) {
 
-	container = containerIn;
+	viewer = viewerIn;
 	renderer = viewRenderer;
+
+	const container = viewer.container;
 
 	const hHeight = container.clientHeight / 2;
 	const hWidth  = container.clientWidth / 2;
@@ -99,12 +98,13 @@ function init ( containerIn, viewRenderer ) {
 	attitudeGroup.addStatic( progressDials[ 0 ] );
 	attitudeGroup.addStatic( progressDials[ 1 ] );
 
-	Viewer.addEventListener( 'newCave', caveChanged );
-	Viewer.addEventListener( 'change', viewChanged );
+	viewer.addEventListener( 'newCave', caveChanged );
+	viewer.addEventListener( 'change', viewChanged );
+	viewer.addEventListener( 'resized', resize );
 
 	Cfg.addEventListener( 'change', cfgChanged );
 
-	controls = Viewer.getControls();
+	controls = viewer.getControls();
 
 }
 
@@ -143,7 +143,7 @@ function setVisibility ( visible ) {
 
 	}
 
-	Viewer.renderView();
+	viewer.renderView();
 
 }
 
@@ -166,6 +166,8 @@ function setScale( scale ) {
 }
 
 function resize () {
+
+	const container = viewer.container;
 
 	const hWidth  = container.clientWidth / 2;
 	const hHeight = container.clientHeight / 2;
@@ -225,9 +227,11 @@ function caveChanged ( /* event */ ) {
 
 function newScales () {
 
+	const container = viewer.container;
+
 	if ( linearScale ) scene.remove( linearScale );
 
-	linearScale = new LinearScale( container, Viewer );
+	linearScale = new LinearScale( container, viewer );
 
 	scene.addStatic( linearScale );
 
@@ -264,13 +268,13 @@ function viewChanged ( event ) {
 	var useLinearScale = false;
 	var useCursorScale = false;
 
-	switch ( Viewer.shadingMode ) {
+	switch ( viewer.shadingMode ) {
 
 	case SHADING_HEIGHT:
 
 		useLinearScale = true;
 
-		linearScale.setRange( Viewer.minHeight, Viewer.maxHeight, i18n( 'height' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
+		linearScale.setRange( viewer.minHeight, viewer.maxHeight, i18n( 'height' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 
@@ -278,7 +282,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( Viewer.maxHeight - Viewer.minHeight, 0, i18n( 'depth' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
+		linearScale.setRange( viewer.maxHeight - viewer.minHeight, 0, i18n( 'depth' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 
@@ -286,7 +290,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( 0, Viewer.maxDistance, i18n( 'distance' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
+		linearScale.setRange( 0, viewer.maxDistance, i18n( 'distance' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
 
 		break;
 
@@ -294,7 +298,7 @@ function viewChanged ( event ) {
 
 		useCursorScale = true;
 
-		cursorScale.setRange( Viewer.minHeight, Viewer.maxHeight, i18n( 'height' ) );
+		cursorScale.setRange( viewer.minHeight, viewer.maxHeight, i18n( 'height' ) );
 
 		cursorChanged();
 
@@ -304,7 +308,7 @@ function viewChanged ( event ) {
 
 		useCursorScale = true;
 
-		cursorScale.setRange( Viewer.maxHeight - Viewer.minHeight, 0, i18n( 'depth' ) );
+		cursorScale.setRange( viewer.maxHeight - viewer.minHeight, 0, i18n( 'depth' ) );
 
 		cursorChanged();
 
@@ -314,7 +318,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( Viewer.minLegLength, Viewer.maxLegLength, i18n( 'leg_length' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE, true ) );
+		linearScale.setRange( viewer.minLegLength, viewer.maxLegLength, i18n( 'leg_length' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE, true ) );
 
 		break;
 
@@ -332,28 +336,28 @@ function viewChanged ( event ) {
 
 	if ( useCursorScale ) {
 
-		Viewer.addEventListener( 'cursorChange', cursorChanged );
+		viewer.addEventListener( 'cursorChange', cursorChanged );
 
 	} else {
 
-		Viewer.removeEventListener( 'cursorChange', cursorChanged );
+		viewer.removeEventListener( 'cursorChange', cursorChanged );
 
 	}
 
-	Viewer.renderView();
+	viewer.renderView();
 
 }
 
 function cursorChanged ( /* event */ ) {
 
-	const cursorHeight = Viewer.cursorHeight;
-	const range = Viewer.maxHeight - Viewer.minHeight;
+	const cursorHeight = viewer.cursorHeight;
+	const range = viewer.maxHeight - viewer.minHeight;
 
 	var scaledHeight = 0;
 
-	if ( Viewer.shadingMode === SHADING_CURSOR ) {
+	if ( viewer.shadingMode === SHADING_CURSOR ) {
 
-		scaledHeight = ( Viewer.cursorHeight + range / 2 ) / range;
+		scaledHeight = ( viewer.cursorHeight + range / 2 ) / range;
 
 	} else {
 
@@ -363,7 +367,7 @@ function cursorChanged ( /* event */ ) {
 
 	scaledHeight = Math.max( Math.min( scaledHeight, 1 ), 0 );
 
-	cursorScale.setCursor( scaledHeight, Math.round( cursorHeight + range / 2 + Viewer.minHeight ) );
+	cursorScale.setCursor( scaledHeight, Math.round( cursorHeight + range / 2 + viewer.minHeight ) );
 
 }
 
@@ -373,7 +377,7 @@ function updateScaleBar ( camera ) {
 
 		if ( scaleBar === null ) {
 
-			scaleBar = new ScaleBar( container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
+			scaleBar = new ScaleBar( viewer.container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
 			scene.addStatic( scaleBar );
 
 		}
@@ -396,8 +400,7 @@ export const HUD = {
 	setVisibility:		setVisibility,
 	getVisibility:		getVisibility,
 	getProgressDial:    getProgressDial,
-	setScale:           setScale,
-	resize:             resize
+	setScale:           setScale
 };
 
 // EOF

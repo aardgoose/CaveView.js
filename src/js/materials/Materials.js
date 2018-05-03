@@ -217,7 +217,7 @@ function getContourMaterial () {
 
 }
 
-function getGlyphMaterial ( glyphAtlasSpec, rotation, colour ) {
+function getGlyphMaterial ( glyphAtlasSpec, rotation ) {
 
 	const name = JSON.stringify( glyphAtlasSpec ) + ':' + rotation.toString();
 
@@ -225,7 +225,7 @@ function getGlyphMaterial ( glyphAtlasSpec, rotation, colour ) {
 
 	if ( material === undefined ) {
 
-		material = cacheMaterial( name, new GlyphMaterial( glyphAtlasSpec, viewer.container, rotation, colour ) );
+		material = cacheMaterial( name, new GlyphMaterial( glyphAtlasSpec, rotation, viewer ) );
 
 	}
 

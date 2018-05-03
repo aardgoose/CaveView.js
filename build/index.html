@@ -16,6 +16,8 @@
 <script type="text/javascript" src="CaveView/lib/OSMProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/NLSProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/BGSProvider.js" ></script>
+<script type="text/javascript" src="CaveView/lib/WMTSProvider.js" ></script>
+<script type="text/javascript" src="CaveView/lib/IGMEProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/GB-Formatters.js" ></script>
 
 <script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
@@ -36,12 +38,6 @@ function onload () {
 			hud: {
 				progress: 0xff0000
 			},
-			shading: {
-				hypsometic: {
-					min: 100,
-					max: 700
-				}
-			}
 		}
 	} );
 
@@ -52,8 +48,10 @@ function onload () {
 	CV.Viewer.addOverlay( 'NLS', new NLSProvider() ); // eslint-disable-line no-undef
 	CV.Viewer.addOverlay( 'Bing Aerial',  new BingProvider( 'Aerial', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
 	CV.Viewer.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
+	CV.Viewer.addOverlay( 'WMTS', new WMTSProvider() );
+	CV.Viewer.addOverlay( 'IGME', new IGMEProvider() );
 
-	CV.Viewer.addFormatters( OSGBStationFormatter );
+//	CV.Viewer.addFormatters( OSGBStationFormatter );
 
 	CV.UI.loadCaveList( [
 		"P8_Master.3d",

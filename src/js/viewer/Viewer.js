@@ -149,7 +149,7 @@ function init ( domID, configuration ) { // public method
 
 	initCamera( oCamera );
 
-	pCamera = new PerspectiveCamera( 75, width / height, 1, 16000 );
+	pCamera = new PerspectiveCamera( Cfg.themeValue( 'fieldOfView' ) , width / height, 1, 16000 );
 
 	initCamera( pCamera );
 

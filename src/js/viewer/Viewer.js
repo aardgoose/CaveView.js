@@ -387,7 +387,7 @@ function init ( domID, configuration ) { // public method
 
 	Materials.initCache( Viewer );
 
-	HUD.init( container, renderer );
+	HUD.init( Viewer, renderer );
 
 	caveLoader = new CaveLoader( caveLoaded );
 
@@ -976,7 +976,7 @@ function resize () {
 
 	pCamera.updateProjectionMatrix();
 
-	HUD.resize();
+	Viewer.dispatchEvent( { type: 'resized', name: '-' } );
 
 	renderView();
 

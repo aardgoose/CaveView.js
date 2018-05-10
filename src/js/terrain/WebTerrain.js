@@ -12,6 +12,24 @@ const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
 var tileSets;
 
+
+const flatTileSet = {
+	title: 'flat',
+	dtmMaxZoom: 16,
+	maxZoom: 18,
+	minZoom: 10,
+	divisions: 128,
+	directory: null,
+	subdirectory: null,
+	dtmScale: 64,
+	minX: 0,
+	maxX: 1023,
+	minY: 0,
+	maxY: 1023,
+	attributions: [],
+	log: true
+};
+
 function WebTerrain ( survey, onLoaded ) {
 
 	CommonTerrain.call( this );
@@ -95,6 +113,9 @@ WebTerrain.prototype.load = function ( onNoCoverage ) {
 	function _tileSetLoaded( text ) {
 
 		tileSets = JSON.parse( text );
+		tileSets.push( flatTileSet );
+
+		console.log( tileSets );
 
 		_checkTileSets();
 
@@ -102,7 +123,7 @@ WebTerrain.prototype.load = function ( onNoCoverage ) {
 
 	function _tileSetMissing( ) {
 
-		tileSets = null;
+		tileSets = [ flatTileSet ];
 		onNoCoverage(); // call handler
 
 	}

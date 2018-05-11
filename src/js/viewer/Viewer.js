@@ -1103,9 +1103,7 @@ function loadSurvey ( newSurvey ) {
 
 		HUD.getProgressDial( 0 ).watch( terrain );
 
-		syncTerrainLoading = terrain.load( _noTerrain );
-
-		if ( syncTerrainLoading ) terrain = null;
+		syncTerrainLoading = terrain.load();
 
 	} else {
 
@@ -1134,38 +1132,35 @@ function loadSurvey ( newSurvey ) {
 	caveIsLoaded = true;
 	setupView();
 
-	function _noTerrain ( ) {
-
-		console.log( 'errors loading terrain' );
-
-		terrain = null;
-
-		survey.asyncTasks();
-
-		setupView();
-
-		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
-
-	}
-
 	function _tilesLoaded ( errors ) {
-
+console.warn( 'x', errors );
 		if ( terrain.parent === null ) {
 
 			if ( errors > 0 ) {
 
-				_noTerrain();
+				console.log( 'errors loading terrain' );
+
+				terrain = null;
+
+				survey.asyncTasks();
+
+				if ( syncTerrainLoading ) return;
+
+				Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+
+				setupView();
+
 				return;
 
 			}
 
 			survey.terrain = terrain;
 
-			// delayed notification to ensure and event listeners get accurate terrain information
-			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
-
 			survey.addStatic( terrain );
 			survey.asyncTasks();
+
+			// delayed notification to ensure and event listeners get accurate terrain information
+			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 			setupView();
 

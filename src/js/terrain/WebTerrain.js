@@ -12,8 +12,8 @@ const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
 var tileSets;
 
-
 const flatTileSet = {
+	isFlat: true,
 	title: 'flat',
 	dtmMaxZoom: 16,
 	maxZoom: 18,
@@ -71,7 +71,7 @@ WebTerrain.prototype = Object.create( CommonTerrain.prototype );
 
 WebTerrain.prototype.isTiled = true;
 
-WebTerrain.prototype.load = function ( onNoCoverage ) {
+WebTerrain.prototype.load = function () {
 
 	// return indicates if sync coverage checking in progress
 
@@ -104,6 +104,7 @@ WebTerrain.prototype.load = function ( onNoCoverage ) {
 
 		}
 
+		self.onLoaded( 1 ); // signal failed tile loading
 		return true;
 
 	}
@@ -115,8 +116,6 @@ WebTerrain.prototype.load = function ( onNoCoverage ) {
 		tileSets = JSON.parse( text );
 		tileSets.push( flatTileSet );
 
-		console.log( tileSets );
-
 		_checkTileSets();
 
 	}
@@ -124,7 +123,7 @@ WebTerrain.prototype.load = function ( onNoCoverage ) {
 	function _tileSetMissing( ) {
 
 		tileSets = [ flatTileSet ];
-		onNoCoverage(); // call handler
+		self.onLoaded( 1 ); // signal failed tile loading
 
 	}
 
@@ -246,11 +245,8 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 	// get Tile instance.
 
 	const tile = existingTile ? existingTile : new Tile( x, y, z, self.tileSet, clip );
-	const parent = parentTile ? parentTile : this;
 
-	tile.setPending( parent ); // tile load/reload pending
-
-	// get a web worker from the pool and create new geometry in it
+	tile.setPending(  parentTile ? parentTile : this ); // tile load/reload pending
 
 	this.workerPool.runWorker(
 		{

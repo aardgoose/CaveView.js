@@ -2,6 +2,7 @@
 import '../../../../three.js/src/polyfills';
 import { HeightMapLoader } from '../loaders/HeightMapLoader';
 import { TerrainTileGeometry } from '../terrain/TerrainTileGeometry';
+import { FlatTileGeometry } from '../terrain/FlatTileGeometry';
 
 const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 var tileSpec;
@@ -12,7 +13,17 @@ function onMessage ( event ) {
 
 	tileSpec = event.data;
 
-	new HeightMapLoader( tileSpec, mapLoaded, mapError ).load();
+	const tileSet   = tileSpec.tileSet;
+
+	if ( tileSet.isFlat ) {
+
+		mapLoaded( null );
+
+	} else {
+
+		new HeightMapLoader( tileSpec, mapLoaded, mapError ).load();
+
+	}
 
 }
 
@@ -35,15 +46,25 @@ function mapLoaded ( data ) {
 	const xTileWidth = resolution * xDivisions;
 	const yTileWidth = resolution * yDivisions;
 
-	clip.terrainHeight = tileSpec.divisions;
-	clip.terrainWidth  = tileSpec.divisions;
+	clip.terrainHeight = divisions;
+	clip.terrainWidth  = divisions;
 
 	// offsets to translate tile to correct position relative to model centre
 
 	offsets.x = resolution * ( tileSpec.x * divisions + clip.left ) - halfMapExtent - offsets.x;
 	offsets.y = halfMapExtent - resolution * ( tileSpec.y * divisions + clip.top ) - offsets.y;
 
-	const terrainTile = new TerrainTileGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions, terrainData, tileSet.dtmScale, clip, offsets );
+	var terrainTile;
+
+	if ( tileSet.isFlat ) {
+
+		terrainTile = new FlatTileGeometry( xTileWidth, yTileWidth, clip, offsets );
+
+	} else {
+
+		terrainTile = new TerrainTileGeometry( xTileWidth, yTileWidth, xDivisions, yDivisions, terrainData, tileSet.dtmScale, clip, offsets );
+
+	}
 
 	// avoid calculating bounding box in main thread.
 	// however it isn't preserved in json serialisation.

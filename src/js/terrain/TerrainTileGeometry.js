@@ -18,8 +18,8 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 	this.type = 'TerrainTileGeometry';
 
-	const gridX = Math.floor( widthSegments ) || 1;
-	const gridY = Math.floor( heightSegments ) || 1;
+	const gridX = widthSegments;
+	const gridY = heightSegments;
 
 	const gridX1 = gridX + 1;
 	const gridY1 = gridY + 1;
@@ -40,13 +40,6 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 	var ix, iy;
 
 	// generate vertices and uvs
-
-	if ( clip.terrainWidth === undefined ) {
-
-		clip.terrainWidth  = gridX;
-		clip.terrainHeight = gridY;
-
-	}
 
 	if ( clip.dtmWidth === undefined ) {
 

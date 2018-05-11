@@ -1133,7 +1133,7 @@ function loadSurvey ( newSurvey ) {
 	setupView();
 
 	function _tilesLoaded ( errors ) {
-console.warn( 'x', errors );
+
 		if ( terrain.parent === null ) {
 
 			if ( errors > 0 ) {

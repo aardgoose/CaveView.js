@@ -36,8 +36,9 @@ function WebTerrain ( survey, onLoaded ) {
 
 	this.name = 'WebTerrain';
 	this.type = 'CV.WebTerrain';
-	this.attribution = [];
+	this.attributions = [];
 	this.log = false;
+	this.displayCRS = survey.displayCRS;
 
 	const limits = survey.limits;
 
@@ -45,6 +46,8 @@ function WebTerrain ( survey, onLoaded ) {
 		new Vector2( limits.min.x, limits.min.y ),
 		new Vector2( limits.max.x, limits.max.y )
 	);
+
+	this.flatZ = survey.modelLimits.max.z;
 
 	this.offsets = survey.offsets;
 
@@ -77,17 +80,16 @@ WebTerrain.prototype.load = function () {
 
 	const self = this;
 
+	if ( this.displayCRS !== 'EPSG:3857' ) return false;
+
 	if ( tileSets === undefined ) {
 
 		// async operation
 
 		new FileLoader().setResponseType( 'text' ).load( Cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
 
-		return false;
-
-	} else if ( tileSets === null ) {
-
 		return true;
+
 
 	} else {
 
@@ -100,12 +102,11 @@ WebTerrain.prototype.load = function () {
 		if ( self.hasCoverage() ) {
 
 			self.tileArea( self.limits );
-			return false;
+			return true;
 
 		}
 
-		self.onLoaded( 1 ); // signal failed tile loading
-		return true;
+		return false;
 
 	}
 
@@ -123,7 +124,7 @@ WebTerrain.prototype.load = function () {
 	function _tileSetMissing( ) {
 
 		tileSets = [ flatTileSet ];
-		self.onLoaded( 1 ); // signal failed tile loading
+		_checkTileSets();
 
 	}
 
@@ -150,6 +151,7 @@ WebTerrain.prototype.hasCoverage = function () {
 			tileSet.directory = baseDirectory + tileSet.subdirectory;
 
 			this.tileSet = tileSet;
+			this.isFlat = tileSet.isFlat;
 			this.log = tileSet.log === undefined ? false : tileSet.log;
 			this.attributions = tileSet.attributions;
 
@@ -257,7 +259,8 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 			y: y,
 			z: z,
 			clip: clip,
-			offsets: this.offsets
+			offsets: this.offsets,
+			flatZ: this.flatZ
 		},
 		_mapLoaded
 	);

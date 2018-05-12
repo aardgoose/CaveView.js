@@ -15,6 +15,7 @@ function Svx3dHandler ( fileName ) {
 	this.surveyTree = new Tree();
 	this.sourceCRS  = null;
 	this.targetCRS  = 'EPSG:3857'; // "web mercator"
+	this.displayCRS = null;
 	this.projection = null;
 	this.stationMap = new Map();
 
@@ -75,6 +76,7 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		this.sourceCRS = sourceCRS;
 		this.projection = proj4( this.sourceCRS, this.targetCRS ); // eslint-disable-line no-undef
+		this.displayCRS = this.targetCRS;
 
 	}
 
@@ -1228,7 +1230,7 @@ Svx3dHandler.prototype.getSurvey = function () {
 		title: this.fileName,
 		surveyTree: this.surveyTree,
 		sourceCRS: this.sourceCRS,
-		targetCRS: this.targetCRS,
+		displayCRS: this.displayCRS,
 		limits: this.limits,
 		offsets: this.offsets,
 		lineSegments: this.getLineSegments(),

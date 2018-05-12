@@ -3,7 +3,7 @@ import {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, STATION_ENTRANCE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH,
 	SHADING_SINGLE, SHADING_SURVEY, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
-	SHADING_BECK, VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W
+	/* SHADING_BECK, */ VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W
 } from '../core/constants';
 
 import { replaceExtension, Cfg } from '../core/lib';
@@ -38,8 +38,8 @@ const legShadingModes = {
 	'shading.fixed':         SHADING_SINGLE,
 	'shading.survey':        SHADING_SURVEY,
 	'shading.route':         SHADING_PATH,
-	'shading.distance':      SHADING_DISTANCE,
-	'shading.back':          SHADING_BECK
+	'shading.distance':      SHADING_DISTANCE
+//	'shading.back':          SHADING_BECK
 };
 
 const surfaceShadingModes = {
@@ -571,7 +571,7 @@ function initSettingsPage () {
 
 	const legShadingModesActive = Object.assign( {}, legShadingModes );
 
-	if ( Viewer.hasTerrain ) {
+	if ( Viewer.hasRealTerrain ) {
 
 		legShadingModesActive[ 'shading.depth' ] = SHADING_DEPTH;
 		legShadingModesActive[ 'shading.depth_cursor' ] = SHADING_DEPTH_CURSOR;

@@ -22,6 +22,7 @@ function CommonTerrain () {
 	this.activeDatumShift = 0;
 	this.terrainBase = null;
 	this.terrainRange = null;
+	this.isFlat = false;
 
 	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
 
@@ -67,7 +68,7 @@ CommonTerrain.prototype.getTerrainShadingModes = function ( renderer ) {
 
 	terrainShadingModes[ 'terrain.shading.height' ] = SHADING_RELIEF;
 
-	if ( renderer.extensions.get( 'OES_standard_derivatives' ) !== null ) {
+	if ( renderer.extensions.get( 'OES_standard_derivatives' ) !== null && ! this.isFlat ) {
 
 		terrainShadingModes[ 'terrain.shading.contours' + ' (' + Cfg.themeValue( 'shading.contours.interval' ) + '\u202fm)' ] = SHADING_CONTOURS;
 

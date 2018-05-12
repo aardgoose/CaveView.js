@@ -214,6 +214,10 @@ function init ( domID, configuration ) { // public method
 			get: function () { return !! terrain; }
 		},
 
+		'hasRealTerrain': {
+			get: function () { return ( terrain && ! terrain.isFlat ); }
+		},
+
 		'terrainAttributions': {
 			get: function () { return terrain.attributions; }
 		},
@@ -1062,9 +1066,19 @@ function setView( properties1, properties2 ) {
 
 }
 
-function setupView () {
+function setupView ( final ) {
 
 	setView( defaultView, Cfg.value( 'view', {} ) );
+
+	if ( final ) {
+
+		// signal any listeners that we have a new cave
+
+		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+
+		survey.asyncTasks();
+
+	}
 
 }
 
@@ -1103,7 +1117,9 @@ function loadSurvey ( newSurvey ) {
 
 		HUD.getProgressDial( 0 ).watch( terrain );
 
-		syncTerrainLoading = terrain.load();
+		syncTerrainLoading = ! terrain.load();
+
+		if ( syncTerrainLoading ) terrain = null;
 
 	} else {
 
@@ -1112,16 +1128,12 @@ function loadSurvey ( newSurvey ) {
 		setTerrainShadingMode( terrainShadingMode );
 
 		renderDepthTexture();
-		survey.asyncTasks();
 
 	}
 
 	scene.matrixAutoUpdate = false;
 
 	container.addEventListener( 'mousedown', mouseDown, false );
-
-	// signal any listeners that we have a new cave
-	if ( syncTerrainLoading ) Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 	controls.object = camera;
 	controls.enabled = true;
@@ -1130,7 +1142,8 @@ function loadSurvey ( newSurvey ) {
 	survey.addEventListener( 'changed', surveyChanged );
 
 	caveIsLoaded = true;
-	setupView();
+
+	setupView( syncTerrainLoading );
 
 	function _tilesLoaded ( errors ) {
 
@@ -1142,13 +1155,7 @@ function loadSurvey ( newSurvey ) {
 
 				terrain = null;
 
-				survey.asyncTasks();
-
-				if ( syncTerrainLoading ) return;
-
-				Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
-
-				setupView();
+				setupView( true );
 
 				return;
 
@@ -1157,18 +1164,14 @@ function loadSurvey ( newSurvey ) {
 			survey.terrain = terrain;
 
 			survey.addStatic( terrain );
-			survey.asyncTasks();
-
-			// delayed notification to ensure and event listeners get accurate terrain information
-			Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
-
-			setupView();
 
 			loadTerrainListeners();
 
 			renderDepthTexture();
 
 			applyTerrainDatumShift( true );
+
+			setupView( true );
 
 		}
 

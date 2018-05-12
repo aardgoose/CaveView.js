@@ -51,6 +51,7 @@ const defaultView = {
 	surfaceShading: SHADING_HEIGHT,
 	terrainShading: SHADING_RELIEF,
 	terrainOpacity: 0.5,
+	terrainDatumShift: true,
 	surfaceLegs: false,
 	walls: false,
 	alpha: false,
@@ -1125,8 +1126,6 @@ function loadSurvey ( newSurvey ) {
 
 		survey.addStatic( terrain );
 
-		setTerrainShadingMode( terrainShadingMode );
-
 		renderDepthTexture();
 
 	}
@@ -1168,8 +1167,6 @@ function loadSurvey ( newSurvey ) {
 			loadTerrainListeners();
 
 			renderDepthTexture();
-
-			applyTerrainDatumShift( true );
 
 			setupView( true );
 

@@ -56,7 +56,7 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 	var zIndex;
 
 	var x;
-	var y = - offsets.y;
+	var y = offsets.y;
 
 	for ( iy = clip.top; iy < iyMax; iy++ ) {
 
@@ -70,7 +70,7 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 			const z = terrainData[ zIndex++ ] / scale - zOffset; // scale and convert to origin centered coords
 
-			vertices.push( x, - y, z );
+			vertices.push( x, y, z );
 
 			if ( z < minZ ) minZ = z;
 			if ( z > maxZ ) maxZ = z;
@@ -82,7 +82,7 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 
 		}
 
-		y += segment_height;
+		y -= segment_height;
 
 	}
 

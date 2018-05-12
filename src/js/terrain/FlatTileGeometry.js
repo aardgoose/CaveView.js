@@ -12,7 +12,7 @@ import { Float32BufferAttribute } from '../../../../three.js/src/core/BufferAttr
 import { Vector3 } from '../../../../three.js/src/math/Vector3';
 import { Box3 } from '../../../../three.js/src/math/Box3';
 
-function FlatTileGeometry( width, height, clip, offsets ) {
+function FlatTileGeometry( width, height, clip, offsets, flatZ ) {
 
 	BufferGeometry.call( this );
 
@@ -25,10 +25,10 @@ function FlatTileGeometry( width, height, clip, offsets ) {
 
 	// generate vertices and uvs
 
-	vertices.push( offsets.x,         offsets.y - height, 0 );
-	vertices.push( offsets.x,         offsets.y, 0 );
-	vertices.push( offsets.x + width, offsets.y, 0 );
-	vertices.push( offsets.x + width, offsets.y - height, 0 );
+	vertices.push( offsets.x,         offsets.y - height, flatZ );
+	vertices.push( offsets.x,         offsets.y, flatZ );
+	vertices.push( offsets.x + width, offsets.y, flatZ );
+	vertices.push( offsets.x + width, offsets.y - height, flatZ );
 
 	uvs.push( clip.left / clip.terrainWidth,          clip.bottom / clip.terrainHeight );
 	uvs.push( clip.left / clip.terrainWidth,          1 - ( clip.top / clip.terrainHeight ) );

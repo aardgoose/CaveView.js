@@ -58,7 +58,7 @@ function mapLoaded ( data ) {
 
 	if ( tileSet.isFlat ) {
 
-		terrainTile = new FlatTileGeometry( xTileWidth, yTileWidth, clip, offsets );
+		terrainTile = new FlatTileGeometry( xTileWidth, yTileWidth, clip, offsets, tileSpec.flatZ );
 
 	} else {
 

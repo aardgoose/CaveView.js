@@ -69,6 +69,7 @@ function Survey ( cave ) {
 
 	this.name = survey.title;
 	this.CRS = survey.sourceCRS;
+	this.displayCRS = survey.displayCRS;
 
 	this.limits = survey.limits;
 	this.offsets = survey.offsets;
@@ -101,7 +102,7 @@ function Survey ( cave ) {
 
 		// calculate scaling distortion if we have required CRS definitions
 
-		if ( survey.sourceCRS === null || survey.targetCRS === null ) {
+		if ( survey.sourceCRS === null || survey.displayCRS === null ) {
 
 			self.scaleFactor = 1;
 
@@ -119,7 +120,7 @@ function Survey ( cave ) {
 
 		const l1 = p1.distanceTo( p2 );
 
-		const transform = proj4( survey.targetCRS, survey.sourceCRS ); // eslint-disable-line no-undef
+		const transform = proj4( survey.displayCRS, survey.sourceCRS ); // eslint-disable-line no-undef
 
 		p1.copy( transform.forward( p1 ) );
 		p2.copy( transform.forward( p2 ) );
@@ -206,6 +207,8 @@ Survey.prototype.loadEntrances = function () {
 Survey.prototype.calibrateTerrain = function ( terrain ) {
 
 	var s1 = 0, s2 = 0, n = 0;
+
+	if ( terrain.isFlat ) return;
 
 	// find height difference between all entrance locations and terrain
 	// find average differences and use to alter height of terrain

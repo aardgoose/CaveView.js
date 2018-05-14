@@ -1,7 +1,7 @@
 'use strict';
 
 var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
-
+/*
 var mapSet = 'Austria';
 var sourceRaster = 'dhm_lamb_10m';
 
@@ -19,8 +19,27 @@ var tileSet = {
 	minY: 2857,
 	maxY: 2859
 };
+*/
 
-var n,s,e,w, zoom;
+var mapSet = 'Matienzo';
+var sourceRaster = 'SOURCE';
+
+var tileSet = {
+	title: 'Matienzo',
+	dtmMaxZoom: 16,
+	maxZoom: 18,
+	minZoom: 12,
+	divisions: 128,
+	directory: '',
+	subdirectory: 'Matienzo',
+	dtmScale: 64,
+	minX: 2005,
+	maxX: 2008,
+	minY: 1498,
+	maxY: 1500
+};
+
+var n, s, e, w, zoom;
 var cmd;
 
 var maxTileWidth = halfMapExtent / Math.pow( 2, tileSet.minZoom - 1 );

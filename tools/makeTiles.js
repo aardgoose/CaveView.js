@@ -1,7 +1,6 @@
 'use strict';
 
 var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
-var mapSet = 'UK';
 
 function tileArea( x, y, z, maxZoom ) {
 
@@ -50,19 +49,21 @@ function tileArea( x, y, z, maxZoom ) {
 
 // EPSG:3875 "Web Mercator" tile range
 
+var mapSet = 'Matienzo';
+
 var tileSet = {
-	title: 'OFD',
-	dtmMaxZoom: 17,
+	title: 'Matienzo',
+	dtmMaxZoom: 16,
 	maxZoom: 18,
-	minZoom: 13,
+	minZoom: 12,
 	divisions: 128,
 	directory: '',
-	subdirectory: 'OFD',
+	subdirectory: 'Matienzo',
 	dtmScale: 64,
-	minX: 4012,
-	maxX: 4013,
-	minY: 2711,
-	maxY: 2712
+	minX: 2005,
+	maxX: 2008,
+	minY: 1498,
+	maxY: 1500
 };
 
 

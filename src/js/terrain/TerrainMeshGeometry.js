@@ -45,7 +45,7 @@ function TerrainMeshGeometry( width, height, meshData, scale, clip, offsets ) {
 		const v = vArray[ i ] / 32767;
 
 		vertices.push( u * width + offsets.x );
-		vertices.push( v * height + offsets.y );
+		vertices.push( ( v - 1 ) * height + offsets.y );
 
 		vertices.push( hArray[ i ] / 32767 * rangeZ + minZ );
 
@@ -97,9 +97,12 @@ function TerrainMeshGeometry( width, height, meshData, scale, clip, offsets ) {
 
 	function _decode( tArray ) {
 
-		tArray.forEach( function ( value, index, array ) {
+		var value = 0;
 
-			array[ index ] = ( value << 1 ) ^ ( - ( value & 1 ) );
+		tArray.forEach( function ( deltaValue, index, array ) {
+
+			value += ( deltaValue >> 1 ) ^ ( - ( deltaValue & 1 ) );
+			array[ index ] = value;
 
 		} );
 

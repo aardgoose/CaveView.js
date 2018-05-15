@@ -29,14 +29,14 @@ function onUploadDropBuffer() {
 
 }
 
-function Tile ( x, y, zoom, tileSet, clip ) {
+function Tile ( x, y, zoom, tileSpec ) {
 
 	this.x = x;
 	this.y = y;
 
 	this.zoom    = zoom;
-	this.tileSet = tileSet;
-	this.clip    = clip;
+	this.tileSet = tileSpec.tileSet;
+	this.clip    = tileSpec.clip;
 
 	this.canZoom  = true;
 	this.evicted  = false;

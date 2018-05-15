@@ -19,11 +19,12 @@ function TerrainMeshGeometry( width, height, meshData, scale, clip, offsets ) {
 	const indices = [];
 	const vertices = [];
 	const uvs = [];
+	const normals = [];
 
 	const dataView = new DataView( meshData, 0 );
 
-	const centerX = dataView.getFloat64( 0, true );
-	const centerY = dataView.getFloat64( 8, true );
+	// const centerX = dataView.getFloat64( 0, true );
+	// const centerY = dataView.getFloat64( 8, true );
 	// const centerZ = dataView.getFloat64( 16, true );
 
 	const minZ = dataView.getFloat32( 24, true );
@@ -37,17 +38,24 @@ function TerrainMeshGeometry( width, height, meshData, scale, clip, offsets ) {
 	const vArray = _decode( new Uint16Array( meshData, 92 + vCount * 2, vCount ) );
 	const hArray = _decode( new Uint16Array( meshData, 92 + vCount * 4, vCount ) );
 
+	const offsetX = offsets.x;
+	const offsetY = offsets.y;
+	const offsetZ = minZ - offsets.z;
+
 	var i;
+	var v3 = new Vector3(); // tmp for normal decoding
+
+	// generate vertices and uvs
 
 	for ( i = 0; i < vCount; i++ ) {
 
 		const u = uArray[ i ] / 32767;
 		const v = vArray[ i ] / 32767;
 
-		vertices.push( u * width + offsets.x );
-		vertices.push( ( v - 1 ) * height + offsets.y );
+		vertices.push( u * width + offsetX );
+		vertices.push( ( v  ) * height + offsetY );
 
-		vertices.push( hArray[ i ] / 32767 * rangeZ + minZ );
+		vertices.push( hArray[ i ] / 32767 * rangeZ + offsetZ );
 
 		uvs.push ( u, v );
 
@@ -55,15 +63,11 @@ function TerrainMeshGeometry( width, height, meshData, scale, clip, offsets ) {
 
 	const indexDataOffset = 88 + 4 + vCount * 6; // need to fix alignment
 
-	var iSize = vCount > 65536 ? 32: 16;
+	var indexElementSize = vCount > 65536 ? 4: 2;
 
 	const triangleCount = dataView.getUint32( indexDataOffset, true );
 
 	const iArray = new Uint16Array( meshData, indexDataOffset + 4, triangleCount * 3 );
-
-	console.log( 'triangleCount', triangleCount, indexDataOffset, iSize );
-	console.log( 'cx cy:', centerX, centerY );
-	console.log( 'minz maxz:', minZ, maxZ, vCount );
 
 	var highest = 0;
 
@@ -81,22 +85,53 @@ function TerrainMeshGeometry( width, height, meshData, scale, clip, offsets ) {
 
 	}
 
+	var nextStart = indexDataOffset + 4 + ( triangleCount * 3 * indexElementSize );
+
+	// skip edge vertex descriptors
+
+	for ( i = 0; i < 4; i++ ) {
+
+		const edgeVertexCount = dataView.getInt32( nextStart, true );
+
+		nextStart += 4 + edgeVertexCount * indexElementSize;
+
+	}
+
+	/*
+
+	const extentionId = dataView.getUint8( nextStart, true );
+	const extentionLength = dataView.getUint32( nextStart + 1, true );
+
+	console.log( 'Exention', extentionId, extentionLength, vCount * 2 );
+
+	*/
+
+	// read oct encoded normals
+
+	const octNormals = new Uint8Array( meshData, nextStart + 5, vCount * 2 );
+
+	for ( i = 0; i < vCount * 2; ) {
+
+		_decodeOct( octNormals[ i++ ] / 255 * 2 - 1, octNormals[ i++ ] / 255 * 2 - 1 );
+
+	}
+
 	// avoid overhead of computeBoundingBox since we know x & y min and max values;
 
-	this.boundingBox = new Box3().set( new Vector3( offsets.x, offsets.y - height, minZ ), new Vector3( offsets.x + width, offsets.y, maxZ ) );
-
-	// generate vertices and uvs
+	this.boundingBox = new Box3().set( new Vector3( offsets.x, offsets.y, minZ - offsets.z ), new Vector3( offsets.x + width, offsets.y + height, maxZ - offsets.z ) );
 
 	// build geometry
 
 	this.setIndex( indices );
-	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
-	this.computeVertexNormals();
+	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+	this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
+
+	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
 	function _decode( tArray ) {
 
+		// zig zag and delta decode
 		var value = 0;
 
 		tArray.forEach( function ( deltaValue, index, array ) {
@@ -107,6 +142,34 @@ function TerrainMeshGeometry( width, height, meshData, scale, clip, offsets ) {
 		} );
 
 		return tArray;
+
+	}
+
+	function _decodeOct ( xOct, yOct ) {
+
+		v3.x = xOct;
+		v3.y = yOct;
+		v3.z = 1 - Math.abs( xOct ) - Math.abs( yOct );
+
+		if ( v3.z < 0) {
+
+			const x = v3.x;
+
+			v3.x = ( 1.0 - Math.abs( v3.y ) ) * _signNotZero( x );
+			v3.y = ( 1.0 - Math.abs( x ) ) * _signNotZero( v3.y );
+
+
+		}
+
+		v3.normalize();
+
+		normals.push( v3.x, v3.y, v3.z );
+
+	}
+
+	function _signNotZero ( value ) {
+
+		return value < 0.0 ? -1.0 : 1.0;
 
 	}
 

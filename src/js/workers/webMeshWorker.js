@@ -3,7 +3,6 @@ import '../../../../three.js/src/polyfills';
 import { TerrainMeshLoader } from '../loaders/TerrainMeshLoader';
 import { TerrainMeshGeometry } from '../terrain/TerrainMeshGeometry';
 
-const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 var tileSpec;
 
 onmessage = onMessage;
@@ -23,27 +22,16 @@ function mapLoaded ( meshData ) {
 	const clip      = tileSpec.clip;
 	const offsets   = tileSpec.offsets;
 	const tileSet   = tileSpec.tileSet;
-	const divisions = tileSpec.divisions;
-
-	const xDivisions = divisions;
-	const yDivisions = divisions;
-
 	const resolution = tileSpec.resolution;
-
-	const xTileWidth = resolution * xDivisions;
-	const yTileWidth = resolution * yDivisions;
-
-	clip.terrainHeight = divisions;
-	clip.terrainWidth  = divisions;
 
 	// offsets to translate tile to correct position relative to model centre
 
-	offsets.x = resolution * ( tileSpec.x * divisions ) - halfMapExtent - offsets.x;
-	offsets.y = halfMapExtent - resolution * ( tileSpec.y * divisions ) - offsets.y;
+	offsets.x = resolution * tileSpec.x - 180 - offsets.x;
+	offsets.y = resolution * tileSpec.y - 90 - offsets.y;
 
 	var terrainTile;
 
-	terrainTile = new TerrainMeshGeometry( xTileWidth, yTileWidth, meshData, tileSet.dtmScale, clip, offsets );
+	terrainTile = new TerrainMeshGeometry( resolution, resolution, meshData, tileSet.dtmScale, clip, offsets );
 
 	// avoid calculating bounding box in main thread.
 	// however it isn't preserved in json serialisation.

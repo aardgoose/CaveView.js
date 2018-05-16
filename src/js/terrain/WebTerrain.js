@@ -22,6 +22,7 @@ function WebTerrain ( survey, onLoaded ) {
 	this.attributions = [];
 	this.log = false;
 	this.displayCRS = survey.displayCRS;
+	this.surveyCRS = survey.CRS;
 
 	const limits = survey.limits;
 
@@ -70,12 +71,14 @@ WebTerrain.prototype.load = function () {
 		break;
 
 	case 'EPSG:4326':
+	case 'ORIGINAL':
 
-		this.TS = new EPSG4326TileSet();
+		this.TS = new EPSG4326TileSet( this.surveyCRS );
 
 		tileSets = [ EPSG4326TileSet.defaultTileSet ];
 
 		break;
+
 
 	default:
 

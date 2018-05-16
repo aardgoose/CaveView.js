@@ -3,39 +3,12 @@ function TerrainMeshLoader ( tileSpec, loadCallback, errorCallback ) {
 
 	if ( ! loadCallback ) alert( 'No callback specified' );
 
-	const tileSet = tileSpec.tileSet;
-	const clip = tileSpec.clip;
-
 	this.loadCallback  = loadCallback;
 	this.errorCallback = errorCallback;
 
-	if ( tileSpec.z > tileSet.dtmMaxZoom ) {
-
-		const scale = Math.pow( 2, tileSpec.z - tileSet.dtmMaxZoom );
-
-		this.x = Math.floor( tileSpec.x / scale );
-		this.y = Math.floor( tileSpec.y / scale );
-		this.z = tileSet.dtmMaxZoom;
-
-		// calculate offset in terrain cells of covering DTM tile for this smaller image tile.
-
-		const divisions = tileSet.divisions;
-
-		const dtmOffsetX = ( divisions * ( tileSpec.x % scale ) ) / scale;
-		const dtmOffsetY = ( divisions + 1 ) * ( divisions * ( tileSpec.y % scale ) ) / scale;
-
-		clip.dtmOffset = dtmOffsetY + dtmOffsetX;
-		clip.dtmWidth = tileSet.divisions + 1;
-
-	} else {
-
-		this.x = tileSpec.x;
-		this.y = tileSpec.y;
-		this.z = tileSpec.z;
-
-		clip.dtmOffset = 0;
-
-	}
+	this.x = tileSpec.x;
+	this.y = tileSpec.y;
+	this.z = tileSpec.z;
 
 	//	this.tileFile = 'https://assets.cesium.com/1/' + this.z + '/' + this.x + '/' + this.y + '.terrain';
 	this.tileFile = 'https://assets.agi.com/stk-terrain/tilesets/world/tiles/' + this.z + '/' + this.x + '/' + this.y + '.terrain';

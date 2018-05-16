@@ -6,9 +6,8 @@
 import { BufferGeometry } from '../../../../three.js/src/core/BufferGeometry';
 import { Float32BufferAttribute } from '../../../../three.js/src/core/BufferAttribute';
 import { Vector3 } from '../../../../three.js/src/math/Vector3';
-import { Box3 } from '../../../../three.js/src/math/Box3';
 
-function TerrainMeshGeometry( width, height, meshData, scale, clip, offsets ) {
+function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform ) {
 
 	BufferGeometry.call( this );
 
@@ -38,9 +37,11 @@ function TerrainMeshGeometry( width, height, meshData, scale, clip, offsets ) {
 	const vArray = _decode( new Uint16Array( meshData, 92 + vCount * 2, vCount ) );
 	const hArray = _decode( new Uint16Array( meshData, 92 + vCount * 4, vCount ) );
 
-	const offsetX = offsets.x;
-	const offsetY = offsets.y;
+	const offsetX = - offsets.x;
+	const offsetY = - offsets.y;
 	const offsetZ = minZ - offsets.z;
+
+	const xAxis = new Vector3( 1, 0, 0 );
 
 	var i;
 	var v3 = new Vector3(); // tmp for normal decoding
@@ -52,8 +53,10 @@ function TerrainMeshGeometry( width, height, meshData, scale, clip, offsets ) {
 		const u = uArray[ i ] / 32767;
 		const v = vArray[ i ] / 32767;
 
-		vertices.push( u * width + offsetX );
-		vertices.push( ( v  ) * height + offsetY );
+		const coords = transform.forward( { x: x + u * resolution, y: y + v * resolution } );
+
+		vertices.push( coords.x + offsetX );
+		vertices.push( coords.y + offsetY );
 
 		vertices.push( hArray[ i ] / 32767 * rangeZ + offsetZ );
 
@@ -112,22 +115,24 @@ function TerrainMeshGeometry( width, height, meshData, scale, clip, offsets ) {
 
 	for ( i = 0; i < vCount * 2; ) {
 
-		_decodeOct( octNormals[ i++ ] / 255 * 2 - 1, octNormals[ i++ ] / 255 * 2 - 1 );
+		_decodeOct( ( octNormals[ i++ ] / 255 ) * 2 - 1, ( octNormals[ i++ ] / 255 ) * 2 - 1 );
 
 	}
 
-	// avoid overhead of computeBoundingBox since we know x & y min and max values;
+	//	console.log( normals );
 
-	this.boundingBox = new Box3().set( new Vector3( offsets.x, offsets.y, minZ - offsets.z ), new Vector3( offsets.x + width, offsets.y + height, maxZ - offsets.z ) );
 
 	// build geometry
 
 	this.setIndex( indices );
 
 	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-	this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
+	//this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
 
 	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+
+	this.computeBoundingBox();
+	this.computeVertexNormals();
 
 	function _decode( tArray ) {
 
@@ -149,7 +154,7 @@ function TerrainMeshGeometry( width, height, meshData, scale, clip, offsets ) {
 
 		v3.x = xOct;
 		v3.y = yOct;
-		v3.z = 1 - Math.abs( xOct ) - Math.abs( yOct );
+		v3.z = 1 - ( Math.abs( xOct ) + Math.abs( yOct ) );
 
 		if ( v3.z < 0) {
 
@@ -158,8 +163,14 @@ function TerrainMeshGeometry( width, height, meshData, scale, clip, offsets ) {
 			v3.x = ( 1.0 - Math.abs( v3.y ) ) * _signNotZero( x );
 			v3.y = ( 1.0 - Math.abs( x ) ) * _signNotZero( v3.y );
 
-
 		}
+
+		v3.normalize();
+
+		// v3.x *= Math.cos( 52 * Math.PI / 180 );
+
+		v3.applyAxisAngle( xAxis, Math.PI / 4 );
+
 
 		v3.normalize();
 

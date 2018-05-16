@@ -21,6 +21,8 @@ EPSG3857TileSet.defaultTileSet = {
 	log: true
 };
 
+EPSG3857TileSet.prototype.workerScript = 'webTileWorker.js';
+
 EPSG3857TileSet.prototype.getCoverage = function ( limits, zoom ) {
 
 	const coverage = { zoom: zoom };

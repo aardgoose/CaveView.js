@@ -18,6 +18,8 @@ EPSG4326TileSet.defaultTileSet = {
 	log: true
 };
 
+EPSG4326TileSet.prototype.workerScript = 'webMeshWorker.js';
+
 EPSG4326TileSet.prototype.getCoverage = function ( limits, zoom ) {
 
 	const coverage = { zoom: zoom };

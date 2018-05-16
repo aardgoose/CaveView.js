@@ -49,8 +49,6 @@ function WebTerrain ( survey, onLoaded ) {
 
 	this.material = Materials.getCursorMaterial();
 
-	this.workerPool = new WorkerPool( 'webMeshWorker.js' );
-
 }
 
 WebTerrain.prototype = Object.create( CommonTerrain.prototype );
@@ -74,6 +72,7 @@ WebTerrain.prototype.load = function () {
 	case 'EPSG:4326':
 
 		this.TS = new EPSG4326TileSet();
+
 		tileSets = [ EPSG4326TileSet.defaultTileSet ];
 
 		break;
@@ -83,6 +82,8 @@ WebTerrain.prototype.load = function () {
 		return false;
 
 	}
+
+	this.workerPool = new WorkerPool( this.TS.workerScript );
 
 	if ( tileSets === undefined ) {
 
@@ -134,21 +135,23 @@ WebTerrain.prototype.load = function () {
 
 WebTerrain.prototype.hasCoverage = function () {
 
-	const limits = this.limits;
-
-	if ( tileSets === undefined ) return false;
-
 	// iterate through available tileSets and pick the first match
+
+	const limits = this.limits;
 	const baseDirectory = Cfg.value( 'terrainDirectory', '' );
 
 	for ( var i = 0, l = tileSets.length; i < l; i++ ) {
 
 		const tileSet = tileSets[ i ];
+
 		const coverage = this.TS.getCoverage( limits, tileSet.minZoom );
 
-		if ( ( coverage.min_x >= tileSet.minX && coverage.max_x <= tileSet.maxX )
-				&& (
-					( coverage.min_y >= tileSet.minY && coverage.max_y <= tileSet.maxY ) ) ) {
+		if (
+			coverage.min_x >= tileSet.minX &&
+			coverage.max_x <= tileSet.maxX &&
+			coverage.min_y >= tileSet.minY &&
+			coverage.max_y <= tileSet.maxY
+		) {
 
 			tileSet.directory = baseDirectory + tileSet.subdirectory;
 
@@ -156,6 +159,8 @@ WebTerrain.prototype.hasCoverage = function () {
 			this.isFlat = tileSet.isFlat;
 			this.log = tileSet.log === undefined ? false : tileSet.log;
 			this.attributions = tileSet.attributions;
+
+			console.log( 'selected tile set', tileSet.title );
 
 			return true;
 
@@ -304,8 +309,6 @@ WebTerrain.prototype.tileArea = function ( limits, tile ) {
 		this.initialZoom = zoom;
 
 	}
-
-	console.log( coverage );
 
 	for ( var x = coverage.min_x; x < coverage.max_x + 1; x++ ) {
 

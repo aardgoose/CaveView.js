@@ -66,17 +66,27 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	}
 
+	const displayCRS = Cfg.value( 'displayCRS' , 'ORIGINAL' );
+
 	if ( sourceCRS === null ) sourceCRS = Cfg.value( 'defaultCRS' , null );
 
 	// FIXME use NAD grid corrections OSTM15 etc ( UK Centric )
-
 	if ( sourceCRS !== null ) {
 
-		console.log( 'Reprojecting from', sourceCRS, 'to', this.targetCRS );
-
 		this.sourceCRS = sourceCRS;
-		this.projection = proj4( this.sourceCRS, this.targetCRS ); // eslint-disable-line no-undef
-		this.displayCRS = this.targetCRS;
+
+		if ( displayCRS  === 'ORIGINAL' ) {
+
+			this.displayCRS = 'ORIGINAL';
+
+		} else {
+
+			console.log( 'Reprojecting from', sourceCRS, 'to', this.targetCRS );
+
+			this.projection = proj4( this.sourceCRS, this.targetCRS ); // eslint-disable-line no-undef
+			this.displayCRS = this.targetCRS;
+
+		}
 
 	}
 

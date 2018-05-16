@@ -3,6 +3,8 @@ import '../../../../three.js/src/polyfills';
 import { TerrainMeshLoader } from '../loaders/TerrainMeshLoader';
 import { TerrainMeshGeometry } from '../terrain/TerrainMeshGeometry';
 
+importScripts( '../../lib/proj4.js' );
+
 var tileSpec;
 
 onmessage = onMessage;
@@ -19,19 +21,16 @@ function mapLoaded ( meshData ) {
 
 	// clip height map data
 
-	const clip      = tileSpec.clip;
 	const offsets   = tileSpec.offsets;
-	const tileSet   = tileSpec.tileSet;
 	const resolution = tileSpec.resolution;
+	const transform = proj4( 'EPSG:4326', tileSpec.displayCRS ); // eslint-disable-line no-undef
 
-	// offsets to translate tile to correct position relative to model centre
+	// tile origin
 
-	offsets.x = resolution * tileSpec.x - 180 - offsets.x;
-	offsets.y = resolution * tileSpec.y - 90 - offsets.y;
+	const x = resolution * tileSpec.x - 180;
+	const y = resolution * tileSpec.y - 90;
 
-	var terrainTile;
-
-	terrainTile = new TerrainMeshGeometry( resolution, resolution, meshData, tileSet.dtmScale, clip, offsets );
+	var terrainTile = new TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform );
 
 	// avoid calculating bounding box in main thread.
 	// however it isn't preserved in json serialisation.

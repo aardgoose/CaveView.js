@@ -8,7 +8,7 @@ import {
 	BufferGeometry,
 	Float32BufferAttribute,
 	Uint16BufferAttribute,
-	Mesh
+	Mesh, VertexNormalsHelper
 } from '../Three';
 
 
@@ -237,7 +237,7 @@ Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
 
 					sibling.isMesh = true;
 					Tile.liveTiles++;
-
+					// this.add( new VertexNormalsHelper( this ) );
 				} else {
 
 					// delay finalising until overlays loaded - avoids flash of raw surface

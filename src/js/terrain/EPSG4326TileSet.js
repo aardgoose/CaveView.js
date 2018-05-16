@@ -38,9 +38,6 @@ EPSG4326TileSet.prototype.getCoverage = function ( limits, zoom ) {
 	min.copy( this.transform.forward( min ) );
 	max.copy( this.transform.forward( max ) );
 
-	//console.log( min );
-	//console.log( max );
-
 	const tileCount = Math.pow( 2, zoom ) / 180; // tile count per degree
 
 	coverage.min_x = Math.floor( ( min.x - W ) * tileCount );

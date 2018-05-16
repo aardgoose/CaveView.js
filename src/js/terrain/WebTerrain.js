@@ -193,7 +193,7 @@ WebTerrain.prototype.pickCoverage = function ( limits ) {
 
 };
 
-WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
+WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 	const self = this;
 
@@ -214,7 +214,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, existingTile, parentTile ) {
 
 	const tile = existingTile ? existingTile : new Tile( x, y, z, tileSpec );
 
-	tile.setPending(  parentTile ? parentTile : this ); // tile load/reload pending
+	tile.setPending( parentTile ); // tile load/reload pending
 
 	this.workerPool.runWorker( tileSpec, _mapLoaded );
 
@@ -293,31 +293,19 @@ WebTerrain.prototype.resurrectTile = function ( tile ) {
 
 };
 
-WebTerrain.prototype.tileArea = function ( limits, tile ) {
+WebTerrain.prototype.tileArea = function ( limits ) {
 
 	const coverage = this.pickCoverage( limits );
 	const zoom = coverage.zoom;
 
-	if ( tile && tile.zoom === zoom ) {
-
-		console.error( 'ERROR - looping on tile replacement' );
-		return;
-
-	}
-
 	this.currentLimits = limits;
-
-	if ( this.initialZoom === null ) {
-
-		this.initialZoom = zoom;
-
-	}
+	this.initialZoom = zoom;
 
 	for ( var x = coverage.min_x; x < coverage.max_x + 1; x++ ) {
 
 		for ( var y = coverage.min_y; y < coverage.max_y + 1; y++ ) {
 
-			this.loadTile( x, y, zoom, null, tile );
+			this.loadTile( x, y, zoom, this );
 
 		}
 
@@ -329,6 +317,26 @@ WebTerrain.prototype.tileArea = function ( limits, tile ) {
 		this.progressInc = 100 / ( this.tilesLoading * 2 );
 
 	}
+
+	this.currentZoom = zoom;
+
+	return;
+
+};
+
+WebTerrain.prototype.zoomTile = function ( tile ) {
+
+	const zoom = tile.zoom + 1;
+	const x = tile.x * 2;
+	const y = tile.y * 2;
+
+	this.loadTile( x,     y,     zoom, tile );
+	this.loadTile( x + 1, y,     zoom, tile );
+	this.loadTile( x,     y + 1, zoom, tile );
+	this.loadTile( x + 1, y + 1, zoom, tile );
+
+	this.dispatchEvent( { type: 'progress', name: 'start' } );
+	this.progressInc = 100 / 8;
 
 	this.currentZoom = zoom;
 
@@ -525,12 +533,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 				if ( tile.zoom < maxZoom ) {
 
-					const bb = tile.getBoundingBox().clone();
-
-					bb.min.add( this.offsets );
-					bb.max.add( this.offsets );
-
-					this.tileArea( bb, tile );
+					this.zoomTile( tile );
 					retry = true;
 
 				}

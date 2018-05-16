@@ -8,7 +8,7 @@ import {
 	BufferGeometry,
 	Float32BufferAttribute,
 	Uint16BufferAttribute,
-	Mesh, VertexNormalsHelper
+	Mesh
 } from '../Three';
 
 
@@ -111,7 +111,7 @@ Tile.prototype.getWorldBoundingBox = function () {
 
 		this.updateMatrixWorld();
 
-		const boundingBox = this.getBoundingBox().clone();
+		const boundingBox = this.geometry.boundingBox.clone();
 
 		boundingBox.applyMatrix4( this.matrixWorld );
 
@@ -123,37 +123,9 @@ Tile.prototype.getWorldBoundingBox = function () {
 
 };
 
-Tile.prototype.getBoundingBox = function () {
-
-	if ( this.boundingBox === null ) {
-
-		const adj = 5; // adjust to cope with overlaps // FIXME - was resolution
-
-		const boundingBox = this.geometry.boundingBox.clone();
-
-		boundingBox.min.x += adj;
-		boundingBox.min.y += adj;
-		boundingBox.max.x -= adj;
-		boundingBox.max.y -= adj;
-
-		this.boundingBox = boundingBox;
-
-	}
-
-	return this.boundingBox;
-
-};
-
 Tile.prototype.empty = function () {
 
 	this.isMesh = false;
-
-	if ( ! this.boundingBox ) {
-
-		console.warn( 'FIXUP :', this.x, this.y );
-		this.getWorldBoundingBox();
-
-	}
 
 	if ( this.geometry ) {
 

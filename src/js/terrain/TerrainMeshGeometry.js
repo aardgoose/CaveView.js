@@ -6,6 +6,7 @@
 import { BufferGeometry } from '../../../../three.js/src/core/BufferGeometry';
 import { Float32BufferAttribute } from '../../../../three.js/src/core/BufferAttribute';
 import { Vector3 } from '../../../../three.js/src/math/Vector3';
+import { Quaternion } from '../../../../three.js/src/math/Quaternion';
 
 function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform ) {
 
@@ -22,9 +23,13 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform ) {
 
 	const dataView = new DataView( meshData, 0 );
 
-	// const centerX = dataView.getFloat64( 0, true );
-	// const centerY = dataView.getFloat64( 8, true );
-	// const centerZ = dataView.getFloat64( 16, true );
+	const centerX = dataView.getFloat64( 0, true );
+	const centerY = dataView.getFloat64( 8, true );
+	const centerZ = dataView.getFloat64( 16, true );
+
+	const up = new Vector3( centerX, centerY, centerZ ).normalize();
+
+	const quaternion = new Quaternion().setFromUnitVectors( up, new Vector3( 0, 0, 1 ) );
 
 	const minZ = dataView.getFloat32( 24, true );
 	const maxZ = dataView.getFloat32( 28, true );
@@ -40,8 +45,6 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform ) {
 	const offsetX = - offsets.x;
 	const offsetY = - offsets.y;
 	const offsetZ = minZ - offsets.z;
-
-	const xAxis = new Vector3( 1, 0, 0 );
 
 	var i;
 	var v3 = new Vector3(); // tmp for normal decoding
@@ -119,20 +122,17 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform ) {
 
 	}
 
-	//	console.log( normals );
-
-
 	// build geometry
 
 	this.setIndex( indices );
 
 	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-	//this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
+	this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
 
 	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
 	this.computeBoundingBox();
-	this.computeVertexNormals();
+	//this.computeVertexNormals();
 
 	function _decode( tArray ) {
 
@@ -165,16 +165,11 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform ) {
 
 		}
 
+		// approximate transformation from ECRF to local refrence frame
+		v3.applyQuaternion( quaternion );
 		v3.normalize();
 
-		// v3.x *= Math.cos( 52 * Math.PI / 180 );
-
-		v3.applyAxisAngle( xAxis, Math.PI / 4 );
-
-
-		v3.normalize();
-
-		normals.push( v3.x, v3.y, v3.z );
+		normals.push( v3.y, v3.x, v3.z );
 
 	}
 

@@ -108,8 +108,6 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform ) {
 	const extentionId = dataView.getUint8( nextStart, true );
 	const extentionLength = dataView.getUint32( nextStart + 1, true );
 
-	console.log( 'Exention', extentionId, extentionLength, vCount * 2 );
-
 	*/
 
 	// read oct encoded normals

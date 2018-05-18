@@ -209,7 +209,7 @@ Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
 
 					sibling.isMesh = true;
 					Tile.liveTiles++;
-					// this.add( new VertexNormalsHelper( this ) );
+
 				} else {
 
 					// delay finalising until overlays loaded - avoids flash of raw surface

@@ -1,6 +1,15 @@
 'use strict';
 
-var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
+const { execSync } = require( 'child_process' );
+
+const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
+
+function runCmd( cmd ) {
+
+	console.log( cmd );
+	execSync( cmd );
+
+}
 
 function tileArea( x, y, z, maxZoom ) {
 
@@ -11,7 +20,6 @@ function tileArea( x, y, z, maxZoom ) {
 	var outFile;
 
 	var n, s, e, w;
-	var cmd;
 
 	n = halfMapExtent - y * tileWidth + offset;
 	s = halfMapExtent - ( y + 1 ) * tileWidth - offset;
@@ -21,13 +29,11 @@ function tileArea( x, y, z, maxZoom ) {
 
 	if ( z > 8 ) {
 
-		cmd =  'g.region n=' + n + ' s=' + s + ' w=' +  w + ' e=' + e + ' nsres=' + resolution + ' ewres=' + resolution;
-		console.log( cmd );
+		runCmd( 'g.region n=' + n + ' s=' + s + ' w=' +  w + ' e=' + e + ' nsres=' + resolution + ' ewres=' + resolution );
 
 		outFile = 'dtm\\' + z + '\\DTM-' + x + '-' + y + '.bin';
 
-		cmd = 'r.out.bin -b bytes=2 input=DTM' + z + 'X@' + mapSet +  ' output=' + outFile;
-		console.log( cmd );
+		runCmd( 'r.out.bin -b bytes=2 input=DTM' + z + 'X@' + mapSet +  ' output=' + outFile );
 
 	}
 

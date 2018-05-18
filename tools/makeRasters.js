@@ -1,6 +1,16 @@
 'use strict';
 
-var halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
+const { execSync } = require( 'child_process' );
+
+const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
+
+function runCmd( cmd ) {
+
+	console.log( cmd );
+	execSync( cmd );
+
+}
+
 /*
 var mapSet = 'Austria';
 var sourceRaster = 'dhm_lamb_10m';
@@ -40,7 +50,6 @@ var tileSet = {
 };
 
 var n, s, e, w, zoom;
-var cmd;
 
 var maxTileWidth = halfMapExtent / Math.pow( 2, tileSet.minZoom - 1 );
 
@@ -56,15 +65,12 @@ for ( zoom = tileSet.minZoom; zoom <= tileSet.dtmMaxZoom; zoom++ ) {
 	e = - halfMapExtent + ( tileSet.maxX + 1 ) * maxTileWidth + offset;
 	w = - halfMapExtent + tileSet.minX * maxTileWidth - offset;
 
-	cmd =  'g.region n=' + n + ' s=' + s + ' w=' +  w + ' e=' + e + ' nsres=' + resolution + ' ewres=' + resolution;
-	console.log( cmd );
+	runCmd( 'g.region n=' + n + ' s=' + s + ' w=' +  w + ' e=' + e + ' nsres=' + resolution + ' ewres=' + resolution );
 
-	cmd = 'r.resamp.interp --o input=' +  sourceRaster + '@' + mapSet + ' output=DTM' + zoom + 'M@' + mapSet;
-	console.log( cmd );
+	runCmd( 'r.resamp.interp --o input=' +  sourceRaster + '@' + mapSet + ' output=DTM' + zoom + 'M@' + mapSet );
 
 	// scale by 64 to increase resolution as a 16b integer (smaller files and type usable by OpenGL)
-	cmd = 'r.mapcalc --o "DTM' + zoom + 'X=round(DTM' + zoom + 'M@' + mapSet + ' * 64)"';
-	console.log( cmd );
+	runCmd( 'r.mapcalc --o "DTM' + zoom + 'X=round(DTM' + zoom + 'M@' + mapSet + ' * 64)"' );
 
 }
 

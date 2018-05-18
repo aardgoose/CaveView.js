@@ -63,11 +63,11 @@ HeightMapLoader.prototype.load = function () {
 
 		if (xhr.status === 200) {
 
-			self.loadCallback( xhr.response, self.x, self.y );
+			self.loadCallback( xhr.response );
 
 		} else {
 
-			self.errorCallback( xhr.response, self.x, self.y );
+			self.errorCallback( xhr.response );
 
 		}
 

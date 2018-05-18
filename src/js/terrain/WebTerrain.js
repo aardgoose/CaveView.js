@@ -163,7 +163,7 @@ WebTerrain.prototype.hasCoverage = function () {
 			this.log = tileSet.log === undefined ? false : tileSet.log;
 			this.attributions = tileSet.attributions;
 
-			console.log( 'selected tile set', tileSet.title );
+			console.log( 'selected tile set:', tileSet.title );
 
 			return true;
 
@@ -184,8 +184,7 @@ WebTerrain.prototype.pickCoverage = function ( limits ) {
 
 	do {
 
-		--zoom;
-		coverage = this.TS.getCoverage( limits, zoom );
+		coverage = this.TS.getCoverage( limits, --zoom );
 
 	} while ( coverage.count > 4 && zoom > tileSet.minZoom );
 
@@ -196,8 +195,6 @@ WebTerrain.prototype.pickCoverage = function ( limits ) {
 WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 	const self = this;
-
-	// account for limits of DTM resolution
 
 	const tileSpec = this.TS.getTileSpec( x, y, z, this.limits );
 
@@ -359,16 +356,13 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 		} else {
 
-			currentOverlay.flushCache();
-			currentOverlay.hideAttribution();
-			currentOverlay.active = false;
+			currentOverlay.setInactive();
 
 		}
 
 	}
 
-	overlay.showAttribution();
-	overlay.active = true;
+	overlay.setActive();
 
 	this.activeOverlay = overlay;
 
@@ -401,8 +395,6 @@ WebTerrain.prototype.removed = function () {
 	const self = this;
 
 	this.dying = true;
-
-	if ( this.tilesLoading > 0 ) return;
 
 	this.traverse( _disposeTileMesh );
 

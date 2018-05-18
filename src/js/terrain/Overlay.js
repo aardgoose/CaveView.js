@@ -7,9 +7,6 @@ import {
 
 import { Cfg } from '../core/lib';
 
-// FIXME fix lifecycle of materials and textures - ensure disposal/caching as required
-// GPU resource leak etc.
-
 const missingMaterial = new MeshLambertMaterial( { transparent: true, opacity: 0.5, color: 0xffffff } );
 
 function Overlay ( overlayProvider, container ) {
@@ -130,6 +127,8 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 		if ( ! self.active ) {
 
+			texture.dispose();
+
 			overlayLoaded( null );
 			return;
 
@@ -139,11 +138,9 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 		texture.anisotropy = Cfg.value( 'anisotropy', 4 );
 
-		texture.repeat.x = repeat;
-		texture.repeat.y = repeat;
+		texture.repeat.setScalar( repeat );
 
-		texture.offset.x = xOffset;
-		texture.offset.y = yOffset;
+		texture.offset.set( xOffset, yOffset );
 
 		material.map = texture;
 		material.needsUpdate = true;
@@ -164,7 +161,16 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 };
 
-Overlay.prototype.flushCache = function () {
+Overlay.prototype.setActive = function () {
+
+	this.showAttribution();
+	this.active = true;
+
+};
+
+Overlay.prototype.setInactive = function () {
+
+	// flush cache
 
 	const materialCache = this.materialCache;
 
@@ -178,6 +184,9 @@ Overlay.prototype.flushCache = function () {
 	}
 
 	this.materialCache = {};
+
+	this.hideAttribution();
+	this.active = false;
 
 };
 

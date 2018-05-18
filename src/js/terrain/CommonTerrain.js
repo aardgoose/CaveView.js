@@ -51,12 +51,7 @@ CommonTerrain.prototype.commonRemoved = function () {
 
 	const activeOverlay = this.activeOverlay;
 
-	if ( activeOverlay !== null ) {
-
-		activeOverlay.flushCache();
-		activeOverlay.hideAttribution();
-
-	}
+	if ( activeOverlay !== null ) activeOverlay.setInactive();
 
 	if ( this.renderTarget !== null ) this.renderTarget.dispose();
 
@@ -152,8 +147,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	if ( hideAttribution && activeOverlay !== null ) {
 
-		activeOverlay.flushCache();
-		activeOverlay.hideAttribution();
+		activeOverlay.setInactive();
 
 		this.activeOverlay = null;
 

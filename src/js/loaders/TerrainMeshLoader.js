@@ -10,8 +10,8 @@ function TerrainMeshLoader ( tileSpec, loadCallback, errorCallback ) {
 	this.y = tileSpec.y;
 	this.z = tileSpec.z;
 
-	//	this.tileFile = 'https://assets.cesium.com/1/' + this.z + '/' + this.x + '/' + this.y + '.terrain';
-	this.tileFile = 'https://assets.agi.com/stk-terrain/tilesets/world/tiles/' + this.z + '/' + this.x + '/' + this.y + '.terrain';
+	this.tileFile = tileSpec.url + this.z + '/' + this.x + '/' + this.y + '.terrain';
+	this.accessToken = tileSpec.accessToken;
 
 }
 
@@ -21,8 +21,8 @@ TerrainMeshLoader.prototype.load = function () {
 
 	const self = this;
 	const xhr = new XMLHttpRequest();
-	//const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZTk5MmVmZC1iZDU5LTQzMWQtOWY0Zi1mZDYxNDA1MTNjMjgiLCJpZCI6OTEwLCJpYXQiOjE1MjYzMjczMDh9.aJWNt5jc-dt64lR4q7zw0bdp0PARsvupmWjUYUrQVQs'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhMTdkODUzMi01Y2RlLTRhOWEtYWQwNS05YzRhMWE4OTM3ZTEiLCJpZCI6OTEwLCJhc3NldHMiOnsiMSI6eyJ0eXBlIjoiVEVSUkFJTiIsImV4dGVuc2lvbnMiOlt0cnVlLHRydWUsdHJ1ZV19fSwiaWF0IjoxNTI2Mzc5MTU5LCJleHAiOjE1MjYzODI3NTl9.pSojikilWR74NNxboZyELXjlh4DGC6MGHR3Nub4s0yQ';
-	const accessToken =  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhMTdkODUzMi01Y2RlLTRhOWEtYWQwNS05YzRhMWE4OTM3ZTEiLCJpZCI6OTEwLCJhc3NldHMiOnsiMSI6eyJ0eXBlIjoiVEVSUkFJTiIsImV4dGVuc2lvbnMiOlt0cnVlLHRydWUsdHJ1ZV19fSwiaWF0IjoxNTI2Mzc5MTU5LCJleHAiOjE1MjYzODI3NTl9.pSojikilWR74NNxboZyELXjlh4DGC6MGHR3Nub4s0yQ';
+
+	//this.tileFile += '?v=1.0.0';
 
 	xhr.addEventListener( 'load', _loaded);
 	xhr.addEventListener( 'error', this.errorCallback );
@@ -30,7 +30,7 @@ TerrainMeshLoader.prototype.load = function () {
 	xhr.open( 'GET', this.tileFile );
 
 	xhr.responseType = 'arraybuffer';
-	xhr.setRequestHeader( 'Accept', 'application/vnd.quantized-mesh;extensions=octvertexnormals;q=0.9;access_token=' + accessToken );
+	xhr.setRequestHeader( 'Accept', 'application/vnd.quantized-mesh;extensions=octvertexnormals;q=0.9;access_token=' + this.accessToken );
 
 	xhr.send();
 

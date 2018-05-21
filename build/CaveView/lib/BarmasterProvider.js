@@ -7,6 +7,8 @@ function BarmasterProvider () {
 BarmasterProvider.prototype.minZoom = 12;
 BarmasterProvider.prototype.maxZoom = 15;
 
+BarmasterProvider.prototype.crsSupported = [ 'EPSG:3857' ];
+
 BarmasterProvider.prototype.coverage = {
 	minX: -206138,
 	minY: 7035233,

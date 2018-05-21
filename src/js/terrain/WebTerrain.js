@@ -8,10 +8,8 @@ import { EPSG4326TileSet } from './EPSG4326TileSet';
 import { EPSG3857TileSet } from './EPSG3857TileSet';
 
 import {
-	Vector2, Frustum, Box2, Matrix4, FileLoader
+	Vector2, Frustum, Box2, Matrix4
 } from '../Three';
-
-var tileSets;
 
 function WebTerrain ( survey, onLoaded ) {
 
@@ -66,16 +64,14 @@ WebTerrain.prototype.load = function () {
 
 	case 'EPSG:3857':
 
-		this.TS = new EPSG3857TileSet();
+		this.TS = new EPSG3857TileSet( _tileSetReady );
 
 		break;
 
 	case 'EPSG:4326':
 	case 'ORIGINAL':
 
-		this.TS = new EPSG4326TileSet( this.surveyCRS );
-
-		tileSets = [ EPSG4326TileSet.defaultTileSet ];
+		this.TS = new EPSG4326TileSet( _tileSetReady, this.surveyCRS );
 
 		break;
 
@@ -88,22 +84,11 @@ WebTerrain.prototype.load = function () {
 
 	this.workerPool = new WorkerPool( this.TS.workerScript );
 
-	if ( tileSets === undefined ) {
+	return true;
 
-		// async operation
+	function _tileSetReady () {
 
-		new FileLoader().setResponseType( 'text' ).load( Cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
-
-		return true;
-
-
-	} else {
-
-		return _checkTileSets();
-
-	}
-
-	function _checkTileSets( ) {
+		self.tileSets = self.TS.getTileSets();
 
 		if ( self.hasCoverage() ) {
 
@@ -116,24 +101,6 @@ WebTerrain.prototype.load = function () {
 
 	}
 
-	// async callbacks
-
-	function _tileSetLoaded( text ) {
-
-		tileSets = JSON.parse( text );
-		tileSets.push( EPSG3857TileSet.defaultTileSet );
-
-		_checkTileSets();
-
-	}
-
-	function _tileSetMissing( ) {
-
-		tileSets = [ EPSG3857TileSet.defaultTileSet ];
-		_checkTileSets();
-
-	}
-
 };
 
 WebTerrain.prototype.hasCoverage = function () {
@@ -142,6 +109,7 @@ WebTerrain.prototype.hasCoverage = function () {
 
 	const limits = this.limits;
 	const baseDirectory = Cfg.value( 'terrainDirectory', '' );
+	const tileSets = this.tileSets;
 
 	for ( var i = 0, l = tileSets.length; i < l; i++ ) {
 

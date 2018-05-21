@@ -1,7 +1,47 @@
 
+import { Cfg } from '../core/lib';
+
+import { FileLoader } from '../Three';
+
 const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-function EPSG3857TileSet( ) {}
+var tileSets;
+
+function EPSG3857TileSet( tileSetReady ) {
+
+	if ( tileSets === undefined ) {
+
+		// async operation
+
+		new FileLoader().setResponseType( 'text' ).load( Cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
+
+		return true;
+
+
+	} else {
+
+		return tileSetReady();
+
+	}
+
+	function _tileSetLoaded ( text ) {
+
+		tileSets = JSON.parse( text );
+		tileSets.push( EPSG3857TileSet.defaultTileSet );
+
+		tileSetReady();
+
+	}
+
+	function _tileSetMissing ( ) {
+
+		tileSets = [ EPSG3857TileSet.defaultTileSet ];
+
+		tileSetReady();
+
+	}
+
+}
 
 EPSG3857TileSet.defaultTileSet = {
 	isFlat: true,
@@ -22,6 +62,12 @@ EPSG3857TileSet.defaultTileSet = {
 };
 
 EPSG3857TileSet.prototype.workerScript = 'webTileWorker.js';
+
+EPSG3857TileSet.prototype.getTileSets = function () {
+
+	return tileSets;
+
+};
 
 EPSG3857TileSet.prototype.getCoverage = function ( limits, zoom ) {
 

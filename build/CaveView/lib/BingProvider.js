@@ -138,6 +138,8 @@ BingProvider.quadkey = function ( x, y, z ) {
 
 };
 
+BingProvider.prototype.crsSupported = [ 'EPSG:3857' ];
+
 BingProvider.prototype.getAttribution = function () {
 
 	return this.attribution;

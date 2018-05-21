@@ -10,6 +10,8 @@ function BGSProvider ( layers ) {
 
 }
 
+BGSProvider.prototype.crsSupported = [ 'EPSG:3857' ];
+
 BGSProvider.prototype.minZoom = 12;
 BGSProvider.prototype.maxZoom = 14;
 

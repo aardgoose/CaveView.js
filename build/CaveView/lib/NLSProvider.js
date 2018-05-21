@@ -7,6 +7,8 @@ function NLSProvider () {
 NLSProvider.prototype.minZoom = 12;
 NLSProvider.prototype.maxZoom = 14;
 
+NLSProvider.prototype.crsSupported = [ 'EPSG:3857' ];
+
 NLSProvider.prototype.coverage = {
 	minX: -1945261.298110,
 	minY: 5414691.645640,

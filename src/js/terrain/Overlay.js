@@ -14,6 +14,7 @@ function Overlay ( overlayProvider, container ) {
 	this.provider = overlayProvider;
 	this.container = container;
 	this.active = false;
+	this.crsSupported = overlayProvider.crsSupported === undefined ? [ 'EPSG:3857', 'EPSG:4326', 'ORIGINAL' ] : overlayProvider.crsSupported;
 
 	const attribution = overlayProvider.getAttribution();
 
@@ -40,9 +41,11 @@ function Overlay ( overlayProvider, container ) {
 
 }
 
-Overlay.prototype.hasCoverage = function ( limits ) {
+Overlay.prototype.hasCoverage = function ( limits, crs ) {
 
 	const coverage = this.coverage;
+
+	if ( this.crsSupported.indexOf( crs ) === -1 ) return false;
 
 	return ( coverage === undefined ) ? true : coverage.intersectsBox( limits );
 

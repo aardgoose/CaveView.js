@@ -51,6 +51,9 @@ function Tile ( x, y, zoom, tileSpec ) {
 
 	Mesh.call( this, new BufferGeometry(), Materials.getCursorMaterial() );
 
+	this.type = 'Tile';
+	this.isTile = true;
+
 	return this;
 
 }
@@ -58,9 +61,6 @@ function Tile ( x, y, zoom, tileSpec ) {
 Tile.liveTiles = 0;
 
 Tile.prototype = Object.create( Mesh.prototype );
-
-Tile.prototype.type = 'Tile';
-Tile.prototype.isTile = true;
 
 Tile.prototype.onBeforeRender = StencilLib.terrainOnBeforeRender;
 Tile.prototype.onAfterRender = StencilLib.terrainOnAfterRender;
@@ -83,7 +83,7 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 	bufferGeometry.setIndex( new Uint16BufferAttribute( index, 1 ) );
 
 	// use precalculated bounding box rather than recalculating it here.
-
+	if ( boundingBox.min.z === Infinity ) console.warn( 'inf', this, boundingBox );
 	bufferGeometry.boundingBox = new Box3(
 		new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ),
 		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
@@ -302,7 +302,6 @@ Tile.prototype.projectedArea = function ( camera ) {
 	__b.project( camera );
 	__c.project( camera );
 	__d.project( camera );
-
 
 	return __t1.getArea() + __t2.getArea();
 

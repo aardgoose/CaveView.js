@@ -34,8 +34,8 @@ function EPSG4326TileSet( tileSetReady, crs ) {
 
 EPSG4326TileSet.defaultTileSet = {
 	title: 'Cesium',
-	dtmMaxZoom: 18,
-	maxZoom: 18,
+	dtmMaxZoom: 16,
+	maxZoom: 16,
 	minZoom: 10,
 	divisions: 1,
 	directory: null,
@@ -100,7 +100,8 @@ EPSG4326TileSet.prototype.getTileSpec = function ( x, y, z /* limits */ ) {
 		flatZ: null,
 		displayCRS: this.CRS,
 		url: this.url,
-		accessToken: this.accessToken
+		accessToken: this.accessToken,
+		clipped: false
 	};
 
 };

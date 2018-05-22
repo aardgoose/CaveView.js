@@ -9,20 +9,9 @@ var tileSets;
 
 function EPSG3857TileSet( tileSetReady ) {
 
-	if ( tileSets === undefined ) {
+	new FileLoader().setResponseType( 'text' ).load( Cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
 
-		// async operation
-
-		new FileLoader().setResponseType( 'text' ).load( Cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
-
-		return true;
-
-
-	} else {
-
-		return tileSetReady();
-
-	}
+	return;
 
 	function _tileSetLoaded ( text ) {
 
@@ -124,6 +113,8 @@ EPSG3857TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
 
 	if ( tileMaxX > limits.max.x ) clip.right = Math.floor( ( tileMaxX - limits.max.x ) / resolution );
 
+	const clipped = ( clip.top >= divisions || clip.bottom >= divisions || clip.left >= divisions || clip.right >= divisions );
+
 	return {
 		tileSet: tileSet,
 		divisions: divisions,
@@ -133,7 +124,8 @@ EPSG3857TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
 		z: z,
 		clip: clip,
 		offsets: null,
-		flatZ: null
+		flatZ: null,
+		clipped: clipped
 	};
 
 };

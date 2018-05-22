@@ -53,6 +53,7 @@ function WebTerrain ( survey, onLoaded ) {
 WebTerrain.prototype = Object.create( CommonTerrain.prototype );
 
 WebTerrain.prototype.isTiled = true;
+WebTerrain.prototype.canZoom = true;
 
 WebTerrain.prototype.load = function () {
 
@@ -254,7 +255,7 @@ WebTerrain.prototype.resurrectTile = function ( tile ) {
 	}
 
 	// reload tile (use exiting tile object to preserve canZoom).
-	this.loadTile( tile.x, tile.y, tile.zoom, tile );
+	this.loadTile( tile.x, tile.y, tile.zoom, tile.parent, tile );
 
 };
 
@@ -508,7 +509,9 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 	function _scanTiles( tile ) {
 
-		if ( tile === self || ! tile.isTile ) return;
+		const parent = tile.parent;
+
+		if ( tile === self || ! tile.isTile || parent.ResurrectionPending || ! parent.canZoom ) return;
 
 		if ( frustum.intersectsBox( tile.getWorldBoundingBox() ) ) {
 
@@ -519,7 +522,12 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 				if ( ! tile.isMesh ) {
 
 					// this tile is not loaded, but has been previously
-					resurrectTiles.push( tile );
+					if ( tile.evicted ) {
+
+						tile.resurrectionPending = true;
+						resurrectTiles.push( tile );
+
+					}
 
 				} else {
 
@@ -534,13 +542,6 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 					tile.resurrectionPending = true;
 					resurrectTiles.push( tile );
-
-				}
-
-				if ( tile.parent.ResurrectionPending && this.isMesh ) {
-
-					// remove tile - will be replaced with parent
-					console.warn( ' should not get here' );
 
 				}
 

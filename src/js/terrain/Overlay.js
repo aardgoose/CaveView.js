@@ -47,6 +47,8 @@ Overlay.prototype.hasCoverage = function ( limits, crs ) {
 
 	if ( this.crsSupported.indexOf( crs ) === -1 ) return false;
 
+	this.provider.crs = crs;
+
 	return ( coverage === undefined ) ? true : coverage.intersectsBox( limits );
 
 };

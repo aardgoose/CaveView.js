@@ -245,20 +245,6 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 };
 
-WebTerrain.prototype.resurrectTile = function ( tile ) {
-
-	if ( tile.isMesh ) {
-
-		console.warn( 'resurrecting the undead!' );
-		return;
-
-	}
-
-	// reload tile (use exiting tile object to preserve canZoom).
-	this.loadTile( tile.x, tile.y, tile.zoom, tile.parent, tile );
-
-};
-
 WebTerrain.prototype.tileArea = function ( limits ) {
 
 	const coverage = this.pickCoverage( limits );
@@ -475,7 +461,18 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		for ( i = 0; i < resurrectCount; i++ ) {
 
-			this.resurrectTile( resurrectTiles[ i ] );
+			const tile = resurrectTiles[ i ];
+
+			if ( tile.isMesh ) {
+
+				console.warn( 'resurrecting the undead!' );
+				return;
+
+			}
+
+			// reload tile (use exiting tile object to preserve canZoom).
+			this.loadTile( tile.x, tile.y, tile.zoom, tile.parent, tile );
+
 			retry = true;
 
 		}

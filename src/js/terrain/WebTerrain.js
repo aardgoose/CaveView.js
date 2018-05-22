@@ -47,13 +47,13 @@ function WebTerrain ( survey, onLoaded ) {
 	this.debug = true;
 
 	this.material = Materials.getCursorMaterial();
+	this.canZoom = true;
 
 }
 
 WebTerrain.prototype = Object.create( CommonTerrain.prototype );
 
 WebTerrain.prototype.isTiled = true;
-WebTerrain.prototype.canZoom = true;
 
 WebTerrain.prototype.load = function () {
 
@@ -167,7 +167,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 	const tileSpec = this.TS.getTileSpec( x, y, z, this.limits );
 
-	if ( tileSpec === null ) return;
+	if ( tileSpec === null || tileSpec.clipped ) return;
 
 	tileSpec.offsets = this.offsets,
 	tileSpec.flatZ = this.flatZ;
@@ -488,7 +488,6 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 			if ( candidateTiles[ i ].area / total.area > 0.3 ) { // FIXME - weight by tile resolution to balance view across all visible areas first.
 
 				tile = candidateTiles[ i ].tile;
-
 				if ( tile.zoom < maxZoom ) {
 
 					this.zoomTile( tile );
@@ -508,7 +507,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		const parent = tile.parent;
 
-		if ( tile === self || ! tile.isTile || parent.ResurrectionPending || ! parent.canZoom ) return;
+		if ( tile === self || ! tile.isTile || parent.resurrectionPending || ! parent.canZoom ) return;
 
 		if ( frustum.intersectsBox( tile.getWorldBoundingBox() ) ) {
 

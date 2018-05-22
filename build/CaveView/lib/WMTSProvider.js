@@ -2,8 +2,8 @@
 
 function WMTSProvider () {
 
-//	this.urlBase = 'http://www.ign.es/wmts/mapa-raster?REQUEST=GetTile&SERVICE=WMTS&Version=1.0.0&Layer=MTN&Style=default&Format=image/jpeg&TileMatrixSet=GoogleMapsCompatible';
-	this.urlBase = 'http://www.ign.es/wmts/pnoa-ma?REQUEST=GetTile&SERVICE=WMTS&Version=1.0.0&Layer=OI.OrthoimageCoverage&Style=default&Format=image/jpeg&TileMatrixSet=GoogleMapsCompatible';
+	this.urlBase = 'http://www.ign.es/wmts/mapa-raster?REQUEST=GetTile&SERVICE=WMTS&Version=1.0.0&Layer=MTN&Style=default&Format=image/jpeg';
+//	this.urlBase = 'http://www.ign.es/wmts/pnoa-ma?REQUEST=GetTile&SERVICE=WMTS&Version=1.0.0&Layer=OI.OrthoimageCoverage&Style=default&Format=image/jpeg';
 
 }
 
@@ -21,7 +21,26 @@ NLSProvider.prototype.coverage = {
 
 WMTSProvider.prototype.getUrl = function ( x, y, z ) {
 
-	return this.urlBase + '&TileMatrix=' + z + '&TileRow=' + y + '&TileCol=' + x;
+	var tileMatrixSet;
+	var g;
+
+	switch ( this.crs ) {
+
+	case 'EPSG:4326':
+	case 'ORIGINAL':
+
+		tileMatrixSet = 'EPSG:4326';
+		y = Math.pow( 2, z ) - y - 1;
+
+		break;
+
+	default:
+
+		tileMatrixSet = 'GoogleMapsCompatible';
+
+	}
+
+	return this.urlBase + '&TileMatrixSet=' + tileMatrixSet + '&TileMatrix=EPSG:4326:' + z + '&TileRow=' + y + '&TileCol=' + x;
 
 };
 

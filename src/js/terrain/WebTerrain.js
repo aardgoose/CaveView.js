@@ -418,7 +418,6 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 WebTerrain.prototype.zoomCheck = function ( camera ) {
 
-	const maxZoom     = this.TS.tileSet.maxZoom;
 	const initialZoom = this.initialZoom;
 
 	const frustum = new Frustum();
@@ -455,22 +454,15 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 			const tile = resurrectTiles[ i ];
 
-			if ( tile.isMesh ) {
-
-				console.warn( 'resurrecting the undead!' );
-				return;
-
-			}
-
 			// reload tile (use exiting tile object to preserve canZoom).
 			tile.resurrectionPending = false;
 			this.loadTile( tile.x, tile.y, tile.zoom, tile.parent, tile );
 
-			retry = true;
-
 		}
 
 		this.progressInc = 100 / ( 2 * resurrectCount );
+
+		retry = true;
 
 	} else if ( candidateCount !== 0 ) {
 
@@ -480,14 +472,10 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 			tile = candidateTiles[ i ];
 
-			if ( tile.area / totalArea > 0.3 ) { // FIXME - weight by tile resolution to balance view across all visible areas first.
+			if ( tile.canZoom && tile.area / totalArea > 0.3 ) { // FIXME - weight by tile resolution to balance view across all visible areas first.
 
-				if ( tile.zoom < maxZoom ) {
-
-					this.zoomTile( tile );
-					retry = true;
-
-				}
+				this.zoomTile( tile );
+				retry = true;
 
 			}
 
@@ -514,15 +502,12 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 					// this tile is loaded, maybe increase resolution?
 					if ( tile.canZoom ) candidateTiles.push( tile.computeProjectedArea( camera ) );
 
-				} else {
+				} else if ( tile.evicted ) {
 
 					// this tile is not loaded, but has been previously
-					if ( tile.evicted ) {
 
-						tile.resurrectionPending = true;
-						resurrectTiles.push( tile );
-
-					}
+					tile.resurrectionPending = true;
+					resurrectTiles.push( tile );
 
 				}
 

@@ -7,9 +7,7 @@ import { Cfg } from '../core/lib';
 import { EPSG4326TileSet } from './EPSG4326TileSet';
 import { EPSG3857TileSet } from './EPSG3857TileSet';
 
-import {
-	Vector2, Frustum, Box2, Matrix4
-} from '../Three';
+import { Frustum, Matrix4 } from '../Three';
 
 function WebTerrain ( survey, onLoaded ) {
 
@@ -19,18 +17,11 @@ function WebTerrain ( survey, onLoaded ) {
 	this.type = 'CV.WebTerrain';
 	this.attributions = [];
 	this.log = false;
+
 	this.displayCRS = survey.displayCRS;
 	this.surveyCRS = survey.CRS;
-
-	const limits = survey.limits;
-
-	this.limits = new Box2(
-		new Vector2( limits.min.x, limits.min.y ),
-		new Vector2( limits.max.x, limits.max.y )
-	);
-
+	this.limits = survey.limits;
 	this.flatZ = survey.modelLimits.max.z;
-
 	this.offsets = survey.offsets;
 
 	this.onLoaded        = onLoaded;
@@ -74,7 +65,6 @@ WebTerrain.prototype.load = function () {
 
 		break;
 
-
 	default:
 
 		return false;
@@ -109,12 +99,13 @@ WebTerrain.prototype.hasCoverage = function () {
 	const limits = this.limits;
 	const baseDirectory = Cfg.value( 'terrainDirectory', '' );
 	const tileSets = this.tileSets;
+	const TS = this.TS;
 
 	for ( var i = 0, l = tileSets.length; i < l; i++ ) {
 
 		const tileSet = tileSets[ i ];
 
-		const coverage = this.TS.getCoverage( limits, tileSet.minZoom );
+		const coverage = TS.getCoverage( limits, tileSet.minZoom );
 
 		if (
 			coverage.min_x >= tileSet.minX &&
@@ -125,7 +116,8 @@ WebTerrain.prototype.hasCoverage = function () {
 
 			tileSet.directory = baseDirectory + tileSet.subdirectory;
 
-			this.TS.tileSet = tileSet;
+			TS.tileSet = tileSet;
+
 			this.isFlat = tileSet.isFlat;
 			this.log = tileSet.log === undefined ? false : tileSet.log;
 			this.attributions = tileSet.attributions;

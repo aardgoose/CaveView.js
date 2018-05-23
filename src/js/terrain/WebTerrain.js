@@ -39,7 +39,6 @@ function WebTerrain ( survey, onLoaded ) {
 	this.isLoaded        = false;
 	this.material        = null;
 	this.initialZoom     = null;
-	this.currentZoom     = null;
 	this.currentLimits   = null;
 	this.dying = false;
 	this.tilesLoading = 0;
@@ -270,8 +269,6 @@ WebTerrain.prototype.tileArea = function ( limits ) {
 
 	}
 
-	this.currentZoom = zoom;
-
 	return;
 
 };
@@ -289,8 +286,6 @@ WebTerrain.prototype.zoomTile = function ( tile ) {
 
 	this.dispatchEvent( { type: 'progress', name: 'start' } );
 	this.progressInc = 100 / 8;
-
-	this.currentZoom = zoom;
 
 	return;
 
@@ -453,6 +448,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 	const resurrectCount = resurrectTiles.length;
 	const candidateCount = candidateTiles.length;
 
+	console.log( 'zoom tests cc:', candidateCount, 'rc:', resurrectCount );
 	_evictTiles();
 
 	if ( resurrectCount !== 0 ) {
@@ -485,9 +481,12 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		for ( i = 0; i < candidateCount; i++ ) {
 
-			if ( candidateTiles[ i ].area / total.area > 0.3 ) { // FIXME - weight by tile resolution to balance view across all visible areas first.
+			tile = candidateTiles[ i ];
 
-				tile = candidateTiles[ i ].tile;
+			console.log( 'ta', tile.area, total.area );
+
+			if ( tile.area / total.area > 0.3 ) { // FIXME - weight by tile resolution to balance view across all visible areas first.
+
 				if ( tile.zoom < maxZoom ) {
 
 					this.zoomTile( tile );
@@ -527,8 +526,10 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 				} else {
 
+					console.log( tile.x + ':' + tile.y + ':' +tile.zoom, tile.canZoom );
+
 					// this tile is loaded, maybe increase resolution?
-					if ( tile.canZoom ) candidateTiles.push( { tile: tile, area: tile.projectedArea( camera ) } );
+					if ( tile.canZoom ) candidateTiles.push( tile.computeProjectedArea( camera ) );
 
 				}
 
@@ -572,7 +573,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 				const pressure = Tile.liveTiles / EVICT_PRESSURE;
 				const tilePressure = tile.evictionCount * Math.pow( 2, initialZoom - tile.zoom );
 
-				//console.log( 'ir', initialZoom, 'p: ', pressure, ' tp: ', tilePressure, ( pressure > tilePressure ? '*** EVICTING ***' : 'KEEP' ) );
+				// console.log( 'ir', initialZoom, 'p: ', pressure, ' tp: ', tilePressure, ( pressure > tilePressure ? '*** EVICTING ***' : 'KEEP' ) );
 
 				if ( pressure > tilePressure ) tile.evict();
 

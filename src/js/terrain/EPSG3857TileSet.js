@@ -86,7 +86,7 @@ EPSG3857TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
 
 	// don't zoom in with no overlay - no improvement of terrain rendering in this case
 
-	if ( scale !== 1 && this.activeOverlay === null && this.currentZoom !== null ) return null;
+	if ( scale !== 1 && this.activeOverlay === null ) return null;
 
 	if ( this.log ) console.log( 'load: [ ', z +'/' + x + '/' + y, ']' );
 
@@ -114,6 +114,7 @@ EPSG3857TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
 	if ( tileMaxX > limits.max.x ) clip.right = Math.floor( ( tileMaxX - limits.max.x ) / resolution );
 
 	const clipped = ( clip.top >= divisions || clip.bottom >= divisions || clip.left >= divisions || clip.right >= divisions );
+	const clippedFraction = ( divisions - clip.top - clip.bottom ) * (divisions - clip.left - clip.right ) / ( divisions * divisions );
 
 	return {
 		tileSet: tileSet,
@@ -125,7 +126,8 @@ EPSG3857TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
 		clip: clip,
 		offsets: null,
 		flatZ: null,
-		clipped: clipped
+		clipped: clipped,
+		clippedFraction: clippedFraction
 	};
 
 };

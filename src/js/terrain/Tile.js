@@ -37,6 +37,7 @@ function Tile ( x, y, zoom, tileSpec ) {
 	this.zoom    = zoom;
 	this.tileSet = tileSpec.tileSet;
 	this.clip    = tileSpec.clip;
+	this.clippedFraction = tileSpec.clippedFraction;
 
 	this.canZoom  = true;
 	this.evicted  = false;
@@ -44,7 +45,8 @@ function Tile ( x, y, zoom, tileSpec ) {
 	this.evictionCount = 1;
 	this.resurrectionPending = false;
 	this.childrenLoading = 0;
-	this.childErrors     = 0;
+	this.childErrors = 0;
+	this.area = 0;
 
 	this.boundingBox = null;
 	this.worldBoundingBox = null;
@@ -284,7 +286,7 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
 };
 
-Tile.prototype.projectedArea = function ( camera ) {
+Tile.prototype.computeProjectedArea = function ( camera ) {
 
 	const boundingBox = this.getWorldBoundingBox();
 	const z = boundingBox.max.z;
@@ -303,7 +305,9 @@ Tile.prototype.projectedArea = function ( camera ) {
 	__c.project( camera );
 	__d.project( camera );
 
-	return __t1.getArea() + __t2.getArea();
+	this.area = ( __t1.getArea() + __t2.getArea() ) / this.clippedFraction;
+
+	return this;
 
 };
 

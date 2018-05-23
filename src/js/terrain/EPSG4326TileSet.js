@@ -101,7 +101,8 @@ EPSG4326TileSet.prototype.getTileSpec = function ( x, y, z /* limits */ ) {
 		displayCRS: this.CRS,
 		url: this.url,
 		accessToken: this.accessToken,
-		clipped: false
+		clipped: false,
+		clippedFraction: 1
 	};
 
 };

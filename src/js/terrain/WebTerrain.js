@@ -420,7 +420,6 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 	const maxZoom     = this.TS.tileSet.maxZoom;
 	const initialZoom = this.initialZoom;
-	const self = this;
 
 	const frustum = new Frustum();
 
@@ -502,7 +501,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		const parent = tile.parent;
 
-		if ( tile === self || ! tile.isTile || parent.resurrectionPending || ! parent.canZoom ) return;
+		if ( ! tile.isTile || parent.resurrectionPending || ! parent.canZoom ) return;
 
 		if ( frustum.intersectsBox( tile.getWorldBoundingBox() ) ) {
 

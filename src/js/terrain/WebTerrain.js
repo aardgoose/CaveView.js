@@ -431,7 +431,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 	const resurrectTiles      = [];
 
 	var retry = false;
-	var total, tile, i;
+	var tile, i;
 
 	if ( this.tilesLoading > 0 ) return true;
 
@@ -477,15 +477,15 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 	} else if ( candidateCount !== 0 ) {
 
-		total = candidateTiles.reduce( function ( a, b ) { return { area: a.area + b.area }; } );
+		let totalArea = candidateTiles.reduce( function ( a , b ) { return a + b.area; }, 0 );
 
 		for ( i = 0; i < candidateCount; i++ ) {
 
 			tile = candidateTiles[ i ];
 
-			console.log( 'ta', tile.area, total.area );
+			// console.log( 'ta', tile.area, totalArea );
 
-			if ( tile.area / total.area > 0.3 ) { // FIXME - weight by tile resolution to balance view across all visible areas first.
+			if ( tile.area / totalArea > 0.3 ) { // FIXME - weight by tile resolution to balance view across all visible areas first.
 
 				if ( tile.zoom < maxZoom ) {
 

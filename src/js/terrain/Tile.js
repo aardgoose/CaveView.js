@@ -85,7 +85,7 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 	bufferGeometry.setIndex( new Uint16BufferAttribute( index, 1 ) );
 
 	// use precalculated bounding box rather than recalculating it here.
-	if ( boundingBox.min.z === Infinity ) console.warn( 'inf', this, boundingBox );
+
 	bufferGeometry.boundingBox = new Box3(
 		new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ),
 		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )

@@ -165,7 +165,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 	const tileSpec = this.TS.getTileSpec( x, y, z, this.limits );
 
-	if ( tileSpec === null || tileSpec.clipped ) return;
+	if ( tileSpec === null ) return;
 
 	tileSpec.offsets = this.offsets,
 	tileSpec.flatZ = this.flatZ;

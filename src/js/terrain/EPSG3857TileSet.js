@@ -113,7 +113,8 @@ EPSG3857TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
 
 	if ( tileMaxX > limits.max.x ) clip.right = Math.floor( ( tileMaxX - limits.max.x ) / resolution );
 
-	const clipped = ( clip.top >= divisions || clip.bottom >= divisions || clip.left >= divisions || clip.right >= divisions );
+	if ( clip.top >= divisions || clip.bottom >= divisions || clip.left >= divisions || clip.right >= divisions ) return null;
+
 	const clippedFraction = ( divisions - clip.top - clip.bottom ) * (divisions - clip.left - clip.right ) / ( divisions * divisions );
 
 	return {
@@ -126,7 +127,6 @@ EPSG3857TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
 		clip: clip,
 		offsets: null,
 		flatZ: null,
-		clipped: clipped,
 		clippedFraction: clippedFraction
 	};
 

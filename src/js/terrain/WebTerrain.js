@@ -39,7 +39,6 @@ function WebTerrain ( survey, onLoaded ) {
 	this.isLoaded        = false;
 	this.material        = null;
 	this.initialZoom     = null;
-	this.currentLimits   = null;
 	this.dying = false;
 	this.tilesLoading = 0;
 	this.overlaysLoading = 0;
@@ -249,7 +248,6 @@ WebTerrain.prototype.tileArea = function ( limits ) {
 	const coverage = this.pickCoverage( limits );
 	const zoom = coverage.zoom;
 
-	this.currentLimits = limits;
 	this.initialZoom = zoom;
 
 	for ( var x = coverage.min_x; x < coverage.max_x + 1; x++ ) {
@@ -448,7 +446,6 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 	const resurrectCount = resurrectTiles.length;
 	const candidateCount = candidateTiles.length;
 
-	console.log( 'zoom tests cc:', candidateCount, 'rc:', resurrectCount );
 	_evictTiles();
 
 	if ( resurrectCount !== 0 ) {
@@ -467,6 +464,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 			}
 
 			// reload tile (use exiting tile object to preserve canZoom).
+			tile.resurrectionPending = false;
 			this.loadTile( tile.x, tile.y, tile.zoom, tile.parent, tile );
 
 			retry = true;
@@ -482,8 +480,6 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 		for ( i = 0; i < candidateCount; i++ ) {
 
 			tile = candidateTiles[ i ];
-
-			// console.log( 'ta', tile.area, totalArea );
 
 			if ( tile.area / totalArea > 0.3 ) { // FIXME - weight by tile resolution to balance view across all visible areas first.
 
@@ -514,7 +510,12 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 			if ( tile.children.length === 0 ) {
 
-				if ( ! tile.isMesh ) {
+				if ( tile.isMesh ) {
+
+					// this tile is loaded, maybe increase resolution?
+					if ( tile.canZoom ) candidateTiles.push( tile.computeProjectedArea( camera ) );
+
+				} else {
 
 					// this tile is not loaded, but has been previously
 					if ( tile.evicted ) {
@@ -523,13 +524,6 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 						resurrectTiles.push( tile );
 
 					}
-
-				} else {
-
-					console.log( tile.x + ':' + tile.y + ':' +tile.zoom, tile.canZoom );
-
-					// this tile is loaded, maybe increase resolution?
-					if ( tile.canZoom ) candidateTiles.push( tile.computeProjectedArea( camera ) );
 
 				}
 

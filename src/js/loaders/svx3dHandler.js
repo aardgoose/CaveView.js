@@ -66,7 +66,7 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	}
 
-	const displayCRS = Cfg.value( 'displayCRS' , 'ORIGINAL' );
+	const displayCRS = Cfg.value( 'displayCRS' , 'EPSG:3857' );
 
 	if ( sourceCRS === null ) sourceCRS = Cfg.value( 'defaultCRS' , null );
 

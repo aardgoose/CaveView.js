@@ -122,11 +122,15 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 	}
 
 	var newIndices = [];
+	var clipSides = 0;
 
 	if ( clippedVertices.length === 0 ) {
 
 		// console.log( 'not clipping tile' );
 		newIndices = indices;
+
+		// FIXME - rewrite indices to rempve vertices/normals/uvs that
+		// are unused.
 
 	} else {
 
@@ -191,13 +195,72 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 
 	}
 
+	function _clipEdges () {
+
+		// adjust clip box to model space
+
+		clip.min.sub( offsets );
+		clip.max.sub( offsets );
+
+		for ( i = 0; i < indices.length; ) {
+
+			const i1 = indices[ i++ ];
+			const i2 = indices[ i++ ];
+			const i3 = indices[ i++ ];
+
+			let outside = 0;
+
+			if ( clippedVertices[ i1 ] ) outside++;
+			if ( clippedVertices[ i2 ] ) outside++;
+			if ( clippedVertices[ i3 ] ) outside++;
+
+			//console.log( i1, i2, i3 );
+
+			switch ( outside ) {
+
+			case 3:
+
+				// skip this tri - totally outside area of interest
+
+				break;
+
+			case 2:
+
+				// handle tri with one point inside area of interest
+				// two edge reduced to intersect sides of area
+
+				_handleOverlap2( i1, i2, i3 );
+
+				break;
+
+			case 1:
+
+				// handle tris with one point outside area of interest
+
+				_handleOverlap1( i1, i2, i3, i - 3 );
+
+				break;
+
+			case 0:
+
+				// tri within area of interest
+
+				newIndices.push( i1, i2, i3 );
+
+			}
+
+
+		}
+
+		return;
+
+	}
+
 	function _handleOverlap1 ( i1, i2, i3 ) {
 
 		const v1 = _getVertex( i1 );
 		const v2 = _getVertex( i2 );
 		const v3 = _getVertex( i3 );
-
-		//return;
 
 		var p1, p2, p3;
 
@@ -207,38 +270,50 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 		if ( v2.outside ) { p1 = v2, p2 = v3, p3 = v1; }
 		if ( v3.outside ) { p1 = v3, p2 = v1, p3 = v2; }
 
-		if ( p1 === undefined ) console.log( 'already done' );
-
 		// create new vertices which are where p1>p2 and p1>p3 intersect boundary
-		// _intersect returns index value
+		// _intersect() creates new vertices entry etc and returns index value
 
-		var i1n2 = _intersect( p1, p2 );
-		var i1n3 = _intersect( p1, p3 );
+		clipSides = 0;
 
-		var common = new Vector3().addVectors( p2, p3 ).divideScalar( 2 );
+		const i1n2 = _intersect( p1, p2 );
+		const i1n3 = _intersect( p1, p3 );
 
-		var iCommon = vertices.length / 3;
+		const common = new Vector3().addVectors( p2, p3 ).divideScalar( 2 );
+
+		const p2UV = _getUV( p2 );
+		const p3UV = _getUV( p3 );
+
+		const iCommon = vertices.length / 3;
 
 		vertices.push( common.x, common.y, common.z );
 		normals.push( 0, 0, 1 );
-		uvs.push( 0.5, 0.5 );
+		uvs.push( ( p2UV.u + p3UV.u ) / 2, ( p2UV.v + p3UV.v ) / 2 );
 
 		newIndices.push( i1n3, i1n2, iCommon );
 		newIndices.push( p2.indexV, iCommon, i1n2 );
 		newIndices.push( p3.indexV, i1n3, iCommon );
 
+		const corner = _getCorner();
+
+		if ( corner !== null ) {
+
+			const cornerIndex = vertices.length / 3;
+
+			vertices.push( corner.x, corner.y, ( p2.z + p3.z ) / 2 );
+			normals.push( 0, 0, 1 ); // FIXME correct normals
+			uvs.push( corner.u, corner.v );
+
+			newIndices.push( i1n2, i1n3, cornerIndex );
+
+		}
+
 	}
 
-
 	function _handleOverlap2 ( i1, i2, i3 ) {
-
-		// newIndices.push( i1, i2, i3 );
 
 		const v1 = _getVertex( i1 );
 		const v2 = _getVertex( i2 );
 		const v3 = _getVertex( i3 );
-
-		// console.log( 'doing:', i1, i2, i3, v1.outside, v2.outside, v3.outside );
 
 		var p1, p2, p3;
 
@@ -248,10 +323,26 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 		if ( ! v2.outside ) { p1 = v2, p2 = v3, p3 = v1; }
 		if ( ! v3.outside ) { p1 = v3, p2 = v1, p3 = v2; }
 
+		clipSides = 0;
+
 		const i2n1 = _intersect( p2, p1 );
 		const i3n1 = _intersect( p3, p1 );
 
 		newIndices.push( i2n1, i3n1, p1.indexV );
+
+		const corner = _getCorner();
+
+		if ( corner !== null ) {
+
+			const cornerIndex = vertices.length / 3;
+
+			vertices.push( corner.x, corner.y, ( p2.z + p3.z ) / 2 );
+			normals.push( 0, 0, 1 ); // FIXME correct normals
+			uvs.push( corner.u, corner.v );
+
+			newIndices.push( i2n1, cornerIndex, i3n1 );
+
+		}
 
 	}
 
@@ -330,82 +421,99 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 
 		}
 
+		// track clip area sides crossed by intersects to allow detection
+		// of tris that overlap a corner of the clip area
+
+		clipSides = clipSides | side;
+
 		const dOriginal = Math.sqrt( Math.pow( v1.x - v2.x, 2 ) + Math.pow( v1.y - v2.y, 2 ) );
 
 		const dNew = Math.sqrt( Math.pow( nx - v2.x, 2 ) + Math.pow( ny - v2.y, 2 ) );
 
-		nz = v2.z + ( v1.z - v2.z ) * dNew / dOriginal;
+		const vFraction = dNew / dOriginal;
+
+		nz = v2.z + ( v1.z - v2.z ) * vFraction;
 
 		var newIndex = vertices.length / 3;
 
 		vertices.push( nx, ny, nz );
-		normals.push( 0, 0, 1 ); // FIXME correct normals and uvs (lerp)
-		uvs.push( 0.5, 0.5 );
+		normals.push( 0, 0, 1 ); // FIXME correct normals (lerp)
 
-		// console.log( side, a );
+		// get uv by interpolating between endpoints
+
+		const v1UV = _getUV( v1 );
+		const v2UV = _getUV( v2 );
+
+		const u = v2UV.u + ( v1UV.u - v2UV.u) * vFraction;
+		const v = v2UV.v + ( v1UV.v - v2UV.v) * vFraction;
+
+		uvs.push( u, v );
 
 		return newIndex;
 
 	}
 
-	function _clipEdges () {
+	function _getUV( v ) {
 
-		// adjust clip box to model space
+		const offset = v.indexV * 2;
 
-		clip.min.sub( offsets );
-		clip.max.sub( offsets );
+		return { u: uvs[ offset ], v: uvs[ offset + 1 ] };
 
-		for ( i = 0; i < indices.length; ) {
+	}
 
-			const i1 = indices[ i++ ];
-			const i2 = indices[ i++ ];
-			const i3 = indices[ i++ ];
+	function _getCorner() {
 
-			let outside = 0;
+		var x, y, u, v;
 
-			if ( clippedVertices[ i1 ] ) outside++;
-			if ( clippedVertices[ i2 ] ) outside++;
-			if ( clippedVertices[ i3 ] ) outside++;
+		switch ( clipSides ) {
 
-			//console.log( i1, i2, i3 );
+		case 5:
 
-			switch ( outside ) {
+			// bottom left
+			x = clip.min.x;
+			y = clip.min.y;
+			u = 0;
+			v = 0;
 
-			case 3:
+			break;
 
-				// skip this tri - totally outside area of interest
+		case 6:
 
-				break;
+			// bottom right
+			x = clip.max.x;
+			y = clip.min.y;
+			u = 1;
+			v = 0;
 
-			case 2:
+			break;
 
-				// handle tri with one point inside area of interest
-				// two edge reduced to intersect sides of area
+		case 9:
 
-				_handleOverlap2( i1, i2, i3 );
+			// top left
+			x = clip.min.x;
+			y = clip.max.y;
+			u = 0;
+			v = 1;
 
-				break;
+			break;
 
-			case 1:
+		case 10:
 
-				// handle tris with one point outside area of interest
+			// top right
+			x = clip.max.x;
+			y = clip.max.y;
+			u = 1;
+			v = 1;
 
-				_handleOverlap1( i1, i2, i3, i - 3 );
+			break;
 
-				break;
+		default:
 
-			case 0:
-
-				// tri within area of interest
-
-				newIndices.push( i1, i2, i3 );
-
-			}
-
+			return null;
 
 		}
 
-		return;
+		return { x: x, y: y, u: u, v: v };
 
 	}
 

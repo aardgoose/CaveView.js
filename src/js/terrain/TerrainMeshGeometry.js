@@ -8,7 +8,7 @@ import { Float32BufferAttribute } from '../../../../three.js/src/core/BufferAttr
 import { Vector3 } from '../../../../three.js/src/math/Vector3';
 import { Quaternion } from '../../../../three.js/src/math/Quaternion';
 
-function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform ) {
+function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, clip ) {
 
 	BufferGeometry.call( this );
 
@@ -20,6 +20,8 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform ) {
 	const vertices = [];
 	const uvs = [];
 	const normals = [];
+	const clippedVertices = [];
+	const vertex3cache = [];
 
 	const dataView = new DataView( meshData, 0 );
 
@@ -58,10 +60,9 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform ) {
 
 		const coords = transform.forward( { x: x + u * resolution, y: y + v * resolution } );
 
-		vertices.push( coords.x + offsetX );
-		vertices.push( coords.y + offsetY );
+		if ( ! clip.containsPoint( coords ) ) clippedVertices[ i ] = true;
 
-		vertices.push( hArray[ i ] / 32767 * rangeZ + offsetZ );
+		vertices.push( coords.x + offsetX, coords.y + offsetY, hArray[ i ] / 32767 * rangeZ + offsetZ );
 
 		uvs.push ( u, v );
 
@@ -120,9 +121,23 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform ) {
 
 	}
 
+	var newIndices = [];
+
+	if ( clippedVertices.length === 0 ) {
+
+		// console.log( 'not clipping tile' );
+		newIndices = indices;
+
+	} else {
+
+		// console.log( 'clipping tile' );
+		_clipEdges();
+
+	}
+
 	// build geometry
 
-	this.setIndex( indices );
+	this.setIndex( newIndices );
 
 	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 	this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
@@ -130,7 +145,6 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform ) {
 	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
 	this.computeBoundingBox();
-	//this.computeVertexNormals();
 
 	function _decode( tArray ) {
 
@@ -177,7 +191,226 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform ) {
 
 	}
 
+	function _handleOverlap1 ( i1, i2, i3 ) {
+
+		const v1 = _getVertex( i1 );
+		const v2 = _getVertex( i2 );
+		const v3 = _getVertex( i3 );
+
+		//return;
+
+		var p1, p2, p3;
+
+		// p1 - outside point
+
+		if ( v1.outside ) { p1 = v1, p2 = v2, p3 = v3; }
+		if ( v2.outside ) { p1 = v2, p2 = v3, p3 = v1; }
+		if ( v3.outside ) { p1 = v3, p2 = v1, p3 = v2; }
+
+		if ( p1 === undefined ) console.log( 'already done' );
+
+		// create new vertices which are where p1>p2 and p1>p3 intersect boundary
+		// _intersect returns index value
+
+		var i1n2 = _intersect( p1, p2 );
+		var i1n3 = _intersect( p1, p3 );
+
+		var common = new Vector3().addVectors( p2, p3 ).divideScalar( 2 );
+
+		var iCommon = vertices.length / 3;
+
+		vertices.push( common.x, common.y, common.z );
+		normals.push( 0, 0, 1 );
+		uvs.push( 0.5, 0.5 );
+
+		newIndices.push( i1n3, i1n2, iCommon );
+		newIndices.push( p2.indexV, iCommon, i1n2 );
+		newIndices.push( p3.indexV, i1n3, iCommon );
+
+	}
+
+
+	function _handleOverlap2 ( i1, i2, i3 ) {
+
+		// newIndices.push( i1, i2, i3 );
+
+		const v1 = _getVertex( i1 );
+		const v2 = _getVertex( i2 );
+		const v3 = _getVertex( i3 );
+
+		// console.log( 'doing:', i1, i2, i3, v1.outside, v2.outside, v3.outside );
+
+		var p1, p2, p3;
+
+		// p1 - inside point
+
+		if ( ! v1.outside ) { p1 = v1, p2 = v2, p3 = v3; }
+		if ( ! v2.outside ) { p1 = v2, p2 = v3, p3 = v1; }
+		if ( ! v3.outside ) { p1 = v3, p2 = v1, p3 = v2; }
+
+		const i2n1 = _intersect( p2, p1 );
+		const i3n1 = _intersect( p3, p1 );
+
+		newIndices.push( i2n1, i3n1, p1.indexV );
+
+	}
+
+	function _getVertex ( i ) {
+
+		var v = vertex3cache[ i ];
+
+		if ( v !== undefined ) return v;
+
+		let offset = i * 3;
+
+		v = new Vector3( vertices[ offset ], vertices[ offset + 1 ], vertices[ offset + 2 ] );
+
+		v.indexV = i;
+
+		if ( clippedVertices[ i ] ) v.outside = true;
+
+		vertex3cache[ i ] = v;
+
+		return v;
+
+	}
+
+	function _intersect ( v1, v2 ) {
+
+		// y = ax + b;
+		// y = (x - b) / a
+
+		const a = ( v1.y - v2.y ) / ( v1.x - v2.x );
+		const b = v1.y - a * v1.x;
+
+		var nx, ny, nz;
+		var side = 0;
+
+		if ( v1.x < clip.min.x ) {
+
+			const y = a * clip.min.x + b;
+
+			if ( y >= clip.min.y && y <= clip.max.y ) {
+
+				nx = clip.min.x;
+				ny = y;
+				side = 0x01;
+
+			}
+
+		}
+
+		if ( v1.x > clip.max.x ) {
+
+			const y = a * clip.max.x + b;
+
+			if ( y >= clip.min.y && y <= clip.max.y ) {
+
+				nx = clip.max.x;
+				ny = y;
+				side = 0x02;
+
+			}
+
+		}
+
+		if ( side === 0 && v1.y <= clip.min.y ) {
+
+			ny = clip.min.y;
+			nx = ( ny - b ) / a;
+			side = 0x04;
+
+		}
+
+		if ( side === 0 && v1.y >= clip.max.y ) {
+
+			ny = clip.max.y;
+			nx = ( ny - b ) / a;
+			side = 0x08;
+
+		}
+
+		const dOriginal = Math.sqrt( Math.pow( v1.x - v2.x, 2 ) + Math.pow( v1.y - v2.y, 2 ) );
+
+		const dNew = Math.sqrt( Math.pow( nx - v2.x, 2 ) + Math.pow( ny - v2.y, 2 ) );
+
+		nz = v2.z + ( v1.z - v2.z ) * dNew / dOriginal;
+
+		var newIndex = vertices.length / 3;
+
+		vertices.push( nx, ny, nz );
+		normals.push( 0, 0, 1 ); // FIXME correct normals and uvs (lerp)
+		uvs.push( 0.5, 0.5 );
+
+		// console.log( side, a );
+
+		return newIndex;
+
+	}
+
+	function _clipEdges () {
+
+		// adjust clip box to model space
+
+		clip.min.sub( offsets );
+		clip.max.sub( offsets );
+
+		for ( i = 0; i < indices.length; ) {
+
+			const i1 = indices[ i++ ];
+			const i2 = indices[ i++ ];
+			const i3 = indices[ i++ ];
+
+			let outside = 0;
+
+			if ( clippedVertices[ i1 ] ) outside++;
+			if ( clippedVertices[ i2 ] ) outside++;
+			if ( clippedVertices[ i3 ] ) outside++;
+
+			//console.log( i1, i2, i3 );
+
+			switch ( outside ) {
+
+			case 3:
+
+				// skip this tri - totally outside area of interest
+
+				break;
+
+			case 2:
+
+				// handle tri with one point inside area of interest
+				// two edge reduced to intersect sides of area
+
+				_handleOverlap2( i1, i2, i3 );
+
+				break;
+
+			case 1:
+
+				// handle tris with one point outside area of interest
+
+				_handleOverlap1( i1, i2, i3, i - 3 );
+
+				break;
+
+			case 0:
+
+				// tri within area of interest
+
+				newIndices.push( i1, i2, i3 );
+
+			}
+
+
+		}
+
+		return;
+
+	}
+
 }
+
 
 TerrainMeshGeometry.prototype = Object.create( BufferGeometry.prototype );
 

@@ -64,6 +64,8 @@ EPSG4326TileSet.prototype.getCoverage = function () {
 
 	return function getCoverage ( limits, zoom ) {
 
+		this.limits = limits;
+
 		const coverage = { zoom: zoom };
 
 		const S = - 90;
@@ -102,7 +104,7 @@ EPSG4326TileSet.prototype.getTileSpec = function ( x, y, z /* limits */ ) {
 		x: x,
 		y: y,
 		z: z,
-		clip: { top: 0, bottom: 0, left: 0, right: 0 },
+		clip: this.limits,
 		offsets: null,
 		flatZ: null,
 		displayCRS: this.CRS,

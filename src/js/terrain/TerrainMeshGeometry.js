@@ -14,12 +14,6 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 
 	this.type = 'TerrainMeshGeometry';
 
-	// buffers
-
-	const indices = [];
-	const vertices = [];
-	const uvs = [];
-	const normals = [];
 	const clippedVertices = [];
 	const vertex3cache = [];
 
@@ -47,6 +41,14 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 	const offsetX = - offsets.x;
 	const offsetY = - offsets.y;
 	const offsetZ = minZ - offsets.z;
+
+	// buffers
+
+	var indices = [];
+	var vertices = [];
+	var uvs = [];
+	var normals = [];
+
 
 	var i;
 	var v3 = new Vector3(); // tmp for normal decoding
@@ -124,24 +126,17 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 	var newIndices = [];
 	var clipSides = 0;
 
-	if ( clippedVertices.length === 0 ) {
+	if ( clippedVertices.length !== 0 ) {
 
-		// console.log( 'not clipping tile' );
-		newIndices = indices;
-
-		// FIXME - rewrite indices to rempve vertices/normals/uvs that
-		// are unused.
-
-	} else {
-
-		// console.log( 'clipping tile' );
 		_clipEdges();
+
+		_shrinkVertices();
 
 	}
 
 	// build geometry
 
-	this.setIndex( newIndices );
+	this.setIndex( indices );
 
 	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 	this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
@@ -192,6 +187,56 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 	function _signNotZero ( value ) {
 
 		return value < 0.0 ? -1.0 : 1.0;
+
+	}
+
+	function _shrinkVertices () {
+
+		const newVertices = [];
+		const newNormals = [];
+		const newUVS = [];
+
+		// clear original indices
+
+		indices = [];
+
+		const oldIndices = newIndices;
+
+		const mapping = [];
+
+		var i;
+
+		for ( i = 0; i < oldIndices.length; i++ ) {
+
+			const oldIndex = oldIndices[ i ];
+
+			var newIndex = mapping[ oldIndex ];
+
+			if ( newIndex === undefined ) {
+
+				const offset3 = oldIndex * 3;
+				const offset2 = oldIndex * 2;
+
+				// move vertex info to new arrays and allocate new index;
+				newIndex = newVertices.length / 3;
+				mapping[ oldIndex ] = newIndex;
+
+				newVertices.push( vertices[ offset3 ], vertices[ offset3 + 1 ], vertices[ offset3 + 2 ] );
+				newNormals.push( normals[ offset3 ], normals[ offset3 + 1 ], normals[ offset3 + 2 ] );
+
+				newUVS.push( uvs[ offset2 ], uvs[ offset2 + 1 ] );
+
+			}
+
+			indices.push( newIndex );
+
+		}
+
+		// replace original arrays
+
+		vertices = newVertices;
+		normals = newNormals;
+		uvs = newUVS;
 
 	}
 

@@ -1,4 +1,4 @@
-import { FileLoader, Vector2 } from '../Three';
+import { FileLoader, Box2 } from '../Three';
 import { Cfg } from '../core/lib';
 
 function EPSG4326TileSet( tileSetReady, crs ) {
@@ -6,10 +6,15 @@ function EPSG4326TileSet( tileSetReady, crs ) {
 	this.CRS = crs;
 	this.transform = proj4( crs, 'EPSG:4326' ); // eslint-disable-line no-undef
 
+	// survey limits
+
+	this.transformedLimits = null;
+
 	const self = this;
 
 	const accessToken = Cfg.value( 'cesiumAccessToken', 'no access token' );
 	const url = 'https://api.cesium.com/v1/assets/1/endpoint?access_token=' + accessToken;
+
 
 	new FileLoader().setResponseType( 'text' ).load( url, _getEndpoint, function () {}, _apiError );
 
@@ -57,54 +62,72 @@ EPSG4326TileSet.prototype.getTileSets = function () {
 
 };
 
-EPSG4326TileSet.prototype.getCoverage = function () {
+EPSG4326TileSet.prototype.getCoverage = function ( limits, zoom ) {
 
-	const min = new Vector2();
-	const max = new Vector2();
+	const coverage = { zoom: zoom };
 
-	return function getCoverage ( limits, zoom ) {
+	const S = - 90;
+	const W = - 180;
 
-		this.limits = limits;
+	if ( this.transformedLimits === null ) {
 
-		const coverage = { zoom: zoom };
+		this.transformedLimits = new Box2();
 
-		const S = - 90;
-		const W = - 180;
+	}
 
-		min.copy( limits.min );
-		max.copy( limits.max );
+	const transformedLimits =  this.transformedLimits;
 
-		min.copy( this.transform.forward( min ) );
-		max.copy( this.transform.forward( max ) );
+	const min = transformedLimits.min;
+	const max = transformedLimits.max;
 
-		const tileCount = Math.pow( 2, zoom ) / 180; // tile count per degree
+	min.copy( limits.min );
+	max.copy( limits.max );
 
-		coverage.min_x = Math.floor( ( min.x - W ) * tileCount );
-		coverage.max_x = Math.floor( ( max.x - W ) * tileCount );
+	min.copy( this.transform.forward( min ) );
+	max.copy( this.transform.forward( max ) );
 
-		coverage.min_y = Math.floor( ( min.y - S ) * tileCount );
-		coverage.max_y = Math.floor( ( max.y - S ) * tileCount );
+	const tileCount = Math.pow( 2, zoom ) / 180; // tile count per degree
 
-		coverage.count = ( coverage.max_x - coverage.min_x + 1 ) * ( coverage.max_y - coverage.min_y + 1 );
+	coverage.min_x = Math.floor( ( min.x - W ) * tileCount );
+	coverage.max_x = Math.floor( ( max.x - W ) * tileCount );
 
-		return coverage;
+	coverage.min_y = Math.floor( ( min.y - S ) * tileCount );
+	coverage.max_y = Math.floor( ( max.y - S ) * tileCount );
 
-	};
+	coverage.count = ( coverage.max_x - coverage.min_x + 1 ) * ( coverage.max_y - coverage.min_y + 1 );
 
-}();
+	return coverage;
 
-EPSG4326TileSet.prototype.getTileSpec = function ( x, y, z /* limits */ ) {
+};
 
-	// trim excess off sides of tile where overlapping with region
+
+EPSG4326TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
+
+	const tileBox = new Box2();
+
+	const S = - 90;
+	const W = - 180;
+
+	// ensure tile is within survey limits
+
+	const tileSize = 180 / Math.pow( 2, z ); // tileSize
+
+	tileBox.min.x = W + x * tileSize;
+	tileBox.min.y = S + y * tileSize;
+
+	tileBox.max.x = W + ( x + 1) * tileSize;
+	tileBox.max.y = S + ( y + 1 ) * tileSize;
+
+	if ( ! this.transformedLimits.intersectsBox( tileBox ) ) return null;
 
 	return {
 		tileSet: this.tileSet,
 		divisions: 1,
-		resolution: 180 / Math.pow( 2, z ),
+		resolution: tileSize,
 		x: x,
 		y: y,
 		z: z,
-		clip: this.limits,
+		clip: limits,
 		offsets: null,
 		flatZ: null,
 		displayCRS: this.CRS,

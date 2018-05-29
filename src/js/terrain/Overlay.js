@@ -47,9 +47,20 @@ Overlay.prototype.hasCoverage = function ( limits, crs ) {
 
 	if ( this.crsSupported.indexOf( crs ) === -1 ) return false;
 
+
+	// transform survey limits to wgs84 for comparison with overlay limits
+
+	const transform = proj4( crs, 'WGS84' );
+	const wgs84Limits = new Box2();
+
+	wgs84Limits.expandByPoint( transform.forward( { x: limits.min.x, y: limits.min.y } ) );
+	wgs84Limits.expandByPoint( transform.forward( { x: limits.min.x, y: limits.max.y } ) );
+	wgs84Limits.expandByPoint( transform.forward( { x: limits.max.x, y: limits.min.y } ) );
+	wgs84Limits.expandByPoint( transform.forward( { x: limits.max.x, y: limits.max.y } ) );
+
 	this.provider.crs = crs;
 
-	return ( coverage === undefined ) ? true : coverage.intersectsBox( limits );
+	return ( coverage === undefined ) ? true : coverage.intersectsBox( wgs84Limits );
 
 };
 

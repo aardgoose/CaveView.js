@@ -46,7 +46,7 @@ WebTerrain.prototype.isTiled = true;
 
 WebTerrain.prototype.load = function () {
 
-	// return indicates if sync coverage checking in progress
+	// return indicates if coverage checking in progress
 
 	const self = this;
 

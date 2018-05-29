@@ -311,9 +311,19 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 
 		// p1 - outside point
 
-		if ( v1.outside ) { p1 = v1, p2 = v2, p3 = v3; }
-		if ( v2.outside ) { p1 = v2, p2 = v3, p3 = v1; }
-		if ( v3.outside ) { p1 = v3, p2 = v1, p3 = v2; }
+		if ( v1.outside ) {
+
+			p1 = v1, p2 = v2, p3 = v3;
+
+		} else if ( v2.outside ) {
+
+			p1 = v2, p2 = v3, p3 = v1;
+
+		} else if ( v3.outside ) {
+
+			p1 = v3, p2 = v1, p3 = v2;
+
+		}
 
 		// create new vertices which are where p1>p2 and p1>p3 intersect boundary
 		// _intersect() creates new vertices entry etc and returns index value
@@ -364,9 +374,19 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 
 		// p1 - inside point
 
-		if ( ! v1.outside ) { p1 = v1, p2 = v2, p3 = v3; }
-		if ( ! v2.outside ) { p1 = v2, p2 = v3, p3 = v1; }
-		if ( ! v3.outside ) { p1 = v3, p2 = v1, p3 = v2; }
+		if ( ! v1.outside ) {
+
+			p1 = v1, p2 = v2, p3 = v3;
+
+		} else if ( ! v2.outside ) {
+
+			p1 = v2, p2 = v3, p3 = v1;
+
+		} else if ( ! v3.outside ) {
+
+			p1 = v3, p2 = v1, p3 = v2;
+
+		}
 
 		clipSides = 0;
 
@@ -509,6 +529,8 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 	function _getCorner() {
 
 		var x, y, u, v;
+
+		// clipSides is a bit mask representing area sides intersected by edges
 
 		switch ( clipSides ) {
 

@@ -50,6 +50,8 @@ WebTerrain.prototype.load = function () {
 
 	const self = this;
 
+	if ( window.proj4 === undefined ) return false;
+
 	switch ( this.displayCRS ) {
 
 	case 'EPSG:3857':

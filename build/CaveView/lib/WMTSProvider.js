@@ -20,7 +20,7 @@ WMTSProvider.prototype.coverage = {
 WMTSProvider.prototype.getUrl = function ( x, y, z ) {
 
 	var tileMatrixSet;
-	var g;
+	var tileMatrixPrefix;
 
 	switch ( this.crs ) {
 
@@ -28,6 +28,7 @@ WMTSProvider.prototype.getUrl = function ( x, y, z ) {
 	case 'ORIGINAL':
 
 		tileMatrixSet = 'EPSG:4326';
+		tileMatrixPrefix = 'EPSG:4326:';
 		y = Math.pow( 2, z ) - y - 1;
 
 		break;
@@ -35,10 +36,11 @@ WMTSProvider.prototype.getUrl = function ( x, y, z ) {
 	default:
 
 		tileMatrixSet = 'GoogleMapsCompatible';
+		tileMatrixPrefix = '';
 
 	}
 
-	return this.urlBase + '&TileMatrixSet=' + tileMatrixSet + '&TileMatrix=EPSG:4326:' + z + '&TileRow=' + y + '&TileCol=' + x;
+	return this.urlBase + '&TileMatrixSet=' + tileMatrixSet + '&TileMatrix=' + tileMatrixPrefix + z + '&TileRow=' + y + '&TileCol=' + x;
 
 };
 

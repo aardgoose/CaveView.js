@@ -10,14 +10,12 @@ function WMTSProvider () {
 WMTSProvider.prototype.minZoom = 10;
 WMTSProvider.prototype.maxZoom = 20;
 
-/*
-NLSProvider.prototype.coverage = {
-	minX: -1945261.298110,
-	minY: 5414691.645640,
-	maxX: 1134858.947510,
-	maxY: 10211684.489360
+WMTSProvider.prototype.coverage = {
+	minX: -9.39288367353,
+	minY: 35.946850084,
+	maxX: 3.03948408368,
+	maxY: 43.7483377142
 };
-*/
 
 WMTSProvider.prototype.getUrl = function ( x, y, z ) {
 

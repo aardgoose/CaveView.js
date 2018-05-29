@@ -25,20 +25,15 @@ Svx3dHandler.prototype.constructor = Svx3dHandler;
 
 Svx3dHandler.prototype.type = 'arraybuffer';
 
-Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
+Svx3dHandler.prototype.setCRS = function ( sourceCRS ) {
 
-	this.metadata = metadata;
+	if ( window.proj4 === undefined ) {
 
-	var pos = 0; // file position
+		console.log( 'Proj4 projection library not loaded' );
 
-	// read file header
+		return;
 
-	readLF(); // Survex 3D Image File
-	const version = readLF(); // 3d version
-	const auxInfo = readNSLF();
-	readLF(); // Date
-
-	var sourceCRS = ( auxInfo[ 1 ] === undefined ) ? null : auxInfo[ 1 ]; // coordinate reference system ( proj4 format )
+	}
 
 	if ( sourceCRS !== null ) {
 
@@ -90,7 +85,26 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	}
 
+};
+
+Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
+
+	this.metadata = metadata;
+
+	var pos = 0; // file position
+
+	// read file header
+
+	readLF(); // Survex 3D Image File
+	const version = readLF(); // 3d version
+	const auxInfo = readNSLF();
+	readLF(); // Date
+
+	var sourceCRS = ( auxInfo[ 1 ] === undefined ) ? null : auxInfo[ 1 ]; // coordinate reference system ( proj4 format )
+
 	console.log( 'Survex .3d version ', version );
+
+	this.setCRS( sourceCRS );
 
 	switch ( version ) {
 
@@ -113,7 +127,7 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	default:
 
-		alert( 'unknown .3d version ' + version );
+		alert( 'unsupported .3d version ' + version );
 
 	}
 

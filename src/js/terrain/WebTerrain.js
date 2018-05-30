@@ -9,7 +9,7 @@ import { EPSG3857TileSet } from './EPSG3857TileSet';
 
 import { Frustum, Matrix4 } from '../Three';
 
-function WebTerrain ( survey, onLoaded ) {
+function WebTerrain ( survey, onLoaded, container ) {
 
 	CommonTerrain.call( this );
 
@@ -23,6 +23,7 @@ function WebTerrain ( survey, onLoaded ) {
 	this.limits = survey.limits;
 	this.flatZ = survey.modelLimits.max.z;
 	this.offsets = survey.offsets;
+	this.container = container;
 
 	this.onLoaded        = onLoaded;
 	this.childrenLoading = 0;
@@ -80,6 +81,7 @@ WebTerrain.prototype.load = function () {
 	function _tileSetReady () {
 
 		self.tileSets = self.TS.getTileSets();
+		self.screenAttribution = self.TS.getScreenAttribution();
 
 		if ( self.hasCoverage() ) {
 

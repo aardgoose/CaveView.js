@@ -23,6 +23,7 @@ function CommonTerrain () {
 	this.terrainBase = null;
 	this.terrainRange = null;
 	this.isFlat = false;
+	this.screenAttribution = null;
 
 	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
 
@@ -163,17 +164,46 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 CommonTerrain.prototype.setVisibility = function ( mode ) {
 
-	if ( this.activeOverlay === null ) return;
-
 	if ( mode ) {
 
-		this.activeOverlay.showAttribution();
+		this.showAttribution();
 
 	} else {
 
-		this.activeOverlay.hideAttribution();
+		this.hideAttribution();
 
 	}
+
+};
+
+CommonTerrain.prototype.showAttribution = function () {
+
+	const attribution = this.screenAttribution;
+
+	if ( attribution !== null ) {
+
+		this.container.appendChild( attribution );
+
+	}
+
+	if ( this.activeOverlay !== null ) this.activeOverlay.showAttribution();
+
+};
+
+CommonTerrain.prototype.hideAttribution = function () {
+
+	const attribution = this.screenAttribution;
+
+	if ( attribution !== null ) {
+
+		const parent = attribution.parentNode;
+
+		if ( parent !== null ) parent.removeChild( attribution );
+
+
+	}
+
+	if ( this.activeOverlay !== null ) this.activeOverlay.hideAttribution();
 
 };
 

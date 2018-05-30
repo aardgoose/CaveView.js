@@ -58,6 +58,12 @@ EPSG3857TileSet.prototype.getTileSets = function () {
 
 };
 
+EPSG3857TileSet.prototype.getScreenAttributions = function () {
+
+	return null;
+
+};
+
 EPSG3857TileSet.prototype.getCoverage = function ( limits, zoom ) {
 
 	const coverage = { zoom: zoom };

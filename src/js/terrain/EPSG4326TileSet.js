@@ -24,6 +24,7 @@ function EPSG4326TileSet( tileSetReady, crs ) {
 
 		self.url = endpoint.url;
 		self.accessToken = endpoint.accessToken;
+		self.attributions = endpoint.attributions;
 
 		tileSetReady();
 
@@ -59,6 +60,39 @@ EPSG4326TileSet.prototype.workerScript = 'webMeshWorker.js';
 EPSG4326TileSet.prototype.getTileSets = function () {
 
 	return [ EPSG4326TileSet.defaultTileSet ];
+
+};
+
+EPSG4326TileSet.prototype.getScreenAttribution = function () {
+
+	const attributions = this.attributions;
+
+	if ( attributions.length === 0 ) return null;
+
+	const div = document.createElement( 'div' );
+
+	div.classList.add( 'overlay-branding' );
+
+	for ( var i = 0; i < attributions.length; i++ ) {
+
+		const attribution = attributions[ i ];
+
+		const a = document.createElement( 'a' );
+		const img = document.createElement( 'img' );
+
+		img.src = attribution.image;
+
+		a.textContent = attribution.text;
+		a.href = attribution.url;
+		a.target = '_blank';
+
+		a.appendChild( img );
+
+		div.appendChild( a );
+
+	}
+
+	return div;
 
 };
 

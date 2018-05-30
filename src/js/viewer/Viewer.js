@@ -1114,7 +1114,7 @@ function loadSurvey ( newSurvey ) {
 
 	if ( terrain === null ) {
 
-		terrain = new WebTerrain( survey, _tilesLoaded );
+		terrain = new WebTerrain( survey, _tilesLoaded, container );
 
 		HUD.getProgressDial( 0 ).watch( terrain );
 

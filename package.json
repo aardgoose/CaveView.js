@@ -41,8 +41,6 @@
   },
   "dependencies": {
     "alpha-shape": "^1.0.0",
-    "rollup": "^0.59.4",
-    "rollup-plugin-commonjs": "^9.1.3",
     "rollup-plugin-graph": "^1.2.0",
     "wkt-parser": "^1.2.1"
   }

@@ -775,7 +775,7 @@ function toggleFullScreen() {
 
 function keyDown ( event ) {
 
-	if ( ! isCaveLoaded ) return;
+	if ( ! isCaveLoaded || event.ctrlKey ) return;
 
 	switch ( event.keyCode ) {
 

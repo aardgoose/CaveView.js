@@ -273,7 +273,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	var modeLock = MODE_LOCK_UNLOCKED;
 	var lastMoveTime = 0;
-	var svxReverseSense = 1;
+	var svxReverseSense = -1;
 
 	//var svxMode;
 
@@ -315,8 +315,10 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		return function panLeft( distance, objectMatrix ) {
 
+			distance *= svxReverseSense;
+
 			v.setFromMatrixColumn( objectMatrix, 0 ); // get X column of objectMatrix
-			v.multiplyScalar( - distance );
+			v.multiplyScalar( distance );
 
 			panOffset.add( v );
 
@@ -330,8 +332,10 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		return function panUp( distance, objectMatrix ) {
 
+			distance *= svxReverseSense;
+
 			v.setFromMatrixColumn( objectMatrix, 1 );
-			v.multiplyScalar( distance );
+			v.multiplyScalar( - distance );
 
 			panOffset.add( v );
 
@@ -448,7 +452,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	}
 
-	function zoomSvx() {
+	function zoomSvx( event ) {
 
 		dollyStart.copy( svxStart );
 		handleMouseMoveDolly( event, svxReverseSense );
@@ -506,7 +510,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		} else {
 
-			zoomSvx();
+			zoomSvx( event );
 
 		}
 

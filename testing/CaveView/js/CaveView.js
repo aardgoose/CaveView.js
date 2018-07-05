@@ -29014,7 +29014,7 @@
 
 	// EOF
 
-	const VERSION = '1.8.1';
+	const VERSION = '1.9.0test';
 
 	const MATERIAL_LINE       = 1;
 	const MATERIAL_SURFACE    = 2;
@@ -40740,7 +40740,7 @@
 
 		var modeLock = MODE_LOCK_UNLOCKED;
 		var lastMoveTime = 0;
-		var svxReverseSense = 1;
+		var svxReverseSense = -1;
 
 		//var svxMode;
 
@@ -40782,8 +40782,10 @@
 
 			return function panLeft( distance, objectMatrix ) {
 
+				distance *= svxReverseSense;
+
 				v.setFromMatrixColumn( objectMatrix, 0 ); // get X column of objectMatrix
-				v.multiplyScalar( - distance );
+				v.multiplyScalar( distance );
 
 				panOffset.add( v );
 
@@ -40797,8 +40799,10 @@
 
 			return function panUp( distance, objectMatrix ) {
 
+				distance *= svxReverseSense;
+
 				v.setFromMatrixColumn( objectMatrix, 1 );
-				v.multiplyScalar( distance );
+				v.multiplyScalar( - distance );
 
 				panOffset.add( v );
 

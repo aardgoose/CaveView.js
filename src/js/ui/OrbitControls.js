@@ -22,7 +22,7 @@ const MODE_LOCK_UNLOCKED = 0;
 const MODE_LOCK_ROTATE = 1;
 const MODE_LOCK_ZOOM = 2;
 
-function OrbitControls ( object, domElement ) {
+function OrbitControls ( object, domElement, svxMode ) {
 
 	this.object = object;
 
@@ -52,11 +52,6 @@ function OrbitControls ( object, domElement ) {
 	// If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
 	this.minAzimuthAngle = - Infinity; // radians
 	this.maxAzimuthAngle = Infinity; // radians
-
-	// Set to true to enable damping (inertia)
-	// If damping is enabled, you must call controls.update() in your animation loop
-	this.enableDamping = false;
-	this.dampingFactor = 0.25;
 
 	// This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
 	// Set to false to disable zooming
@@ -190,20 +185,8 @@ function OrbitControls ( object, domElement ) {
 
 			camera.lookAt( target );
 
-			if ( scope.enableDamping === true ) {
-
-				sphericalDelta.theta *= ( 1 - scope.dampingFactor );
-				sphericalDelta.phi *= ( 1 - scope.dampingFactor );
-
-				panOffset.multiplyScalar( 1 - scope.dampingFactor );
-
-			} else {
-
-				sphericalDelta.set( 0, 0, 0 );
-
-				panOffset.set( 0, 0, 0 );
-
-			}
+			sphericalDelta.set( 0, 0, 0 );
+			panOffset.set( 0, 0, 0 );
 
 			scale = 1;
 
@@ -292,7 +275,7 @@ function OrbitControls ( object, domElement ) {
 	var lastMoveTime = 0;
 	var svxReverseSense = 1;
 
-	var svxMode = true;
+	//var svxMode;
 
 	// mode specific handlers
 
@@ -377,14 +360,14 @@ function OrbitControls ( object, domElement ) {
 				targetDistance *= Math.tan( ( camera.fov / 2 ) * Math.PI / 180.0 );
 
 				// we use only clientHeight here so aspect ratio does not distort speed
-				panLeft( 0.5 * deltaX * targetDistance / element.clientHeight, camera.matrix );
-				panUp( 0.5 * deltaY * targetDistance / element.clientHeight, camera.matrix );
+				panLeft( 2 * deltaX * targetDistance / element.clientHeight, camera.matrix );
+				panUp( 2 * deltaY * targetDistance / element.clientHeight, camera.matrix );
 
 			} else if ( camera.isOrthographicCamera ) {
 
 				// orthographic
-				panLeft( 0.25 * deltaX * ( camera.right - camera.left ) / ( camera.zoom * element.clientWidth ), camera.matrix );
-				panUp( 0.25 * deltaY * ( camera.top - camera.bottom ) / ( camera.zoom * element.clientHeight ), camera.matrix );
+				panLeft( deltaX * ( camera.right - camera.left ) / ( camera.zoom * element.clientWidth ), camera.matrix );
+				panUp( deltaY * ( camera.top - camera.bottom ) / ( camera.zoom * element.clientHeight ), camera.matrix );
 
 			}
 
@@ -484,6 +467,9 @@ function OrbitControls ( object, domElement ) {
 
 		lastMoveTime = now;
 
+		const deltaX2 = svxDelta.x * svxDelta.x;
+		const deltaY2 = svxDelta.y * svxDelta.y;
+
 		switch( modeLock ) {
 
 		case MODE_LOCK_UNLOCKED:
@@ -491,12 +477,10 @@ function OrbitControls ( object, domElement ) {
 			if ( Math.abs( svxDelta.x ) > Math.abs( svxDelta.y ) ) {
 
 				modeLock = MODE_LOCK_ROTATE;
-				rotateSvx();
 
 			} else {
 
 				modeLock = MODE_LOCK_ZOOM;
-				zoomSvx();
 
 			}
 
@@ -504,15 +488,25 @@ function OrbitControls ( object, domElement ) {
 
 		case MODE_LOCK_ROTATE:
 
-			rotateSvx();
+			if ( deltaY2 > 8 * deltaX2 ) modeLock = MODE_LOCK_ZOOM;
 
 			break;
 
 		case MODE_LOCK_ZOOM:
 
-			zoomSvx();
+			if ( deltaX2 > 8 * deltaY2 ) modeLock = MODE_LOCK_ROTATE;
 
 			break;
+
+		}
+
+		if ( modeLock === MODE_LOCK_ROTATE ) {
+
+			rotateSvx();
+
+		} else {
+
+			zoomSvx();
 
 		}
 
@@ -590,12 +584,6 @@ function OrbitControls ( object, domElement ) {
 		panStart.copy( panEnd );
 
 		scope.update();
-
-	}
-
-	function handleMouseUp( /* event */ ) {
-
-		modeLock = MODE_LOCK_UNLOCKED;
 
 	}
 
@@ -780,6 +768,8 @@ function OrbitControls ( object, domElement ) {
 
 			handleMouseDownPan( event );
 
+			scope.element.style.cursor = 'all-scroll';
+
 			state = STATE.PAN;
 
 			break;
@@ -833,11 +823,12 @@ function OrbitControls ( object, domElement ) {
 
 	}
 
-	function onMouseUp( event ) {
+	function onMouseUp( /* event */ ) {
 
 		if ( scope.enabled === false ) return;
 
-		handleMouseUp( event );
+		//handleMouseUp( event );
+		scope.element.style.cursor = 'default';
 
 		document.removeEventListener( 'mousemove', onMouseMove, false );
 		document.removeEventListener( 'mouseup', onMouseUp, false );

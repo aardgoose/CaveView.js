@@ -1,0 +1,583 @@
+body {
+	font-family: 'Source Sans Pro Regular','Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+
+.cv-container {
+	position: relative;
+	overflow: hidden;
+	height: 600px;
+	width: 1000px;
+	touch-action: none;
+}
+
+#status-text {
+	position: absolute;
+	top: 50%;
+	height: 20px;
+	padding-left: 4px;
+	background-color: black;
+	color: white;
+	z-index: 100;
+}
+
+#cv-frame *, #cv-tab-box *, #cv-frame, #cv-tab-box {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+#cv-frame {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 300px;
+	height: 100%;
+	background-color: #222222;
+	transform: translateX(-300px);
+	transition: transform 0.25s ease-in;
+	z-index: 100;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+#cv-frame div.page {
+	position: absolute;
+	top: 0px;
+	bottom: 40px;
+	left: 0px;
+	width: 280px;
+	height: 100%;
+	color: white;
+	background-color: #222222;
+	padding: 0 4px 20px 20px;
+	cursor: default;
+}
+
+#cv-frame div.page ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	width: 280px;
+	height: 100%;
+	cursor: default;
+	font-size: 12px;
+	overflow-y: visible;
+	overflow-x: hidden;
+}
+
+#cv-frame div.page li {
+	position: relative;
+	margin-left: 20px;
+	border-bottom: 1px solid #444444;
+}
+
+#cv-frame div.page li.selected {
+	color: #1ab4e5;
+}
+
+#cv-frame div.page li:hover {
+	color: yellow;
+}
+
+#cv-frame div.page div#ui-path {
+	font-size: 12px;
+	margin-top: 8px;
+	border-top: 1px solid grey;
+	border-bottom: 1px solid grey;
+	padding: 2px 0 2px 0px;
+}
+
+#cv-frame div.page div#ui-path span {
+	color: #1ab4e5;
+}
+
+#cv-frame div.page div.slide {
+	position: absolute;
+	top: 64px;
+	bottom: 4px;
+	left: 0px;
+	max-height: 100%;
+	background-color: #222222;
+	transition: transform 0.25s ease-in;
+}
+
+#cv-frame div.slide-out {
+	border-right: 1px grey solid;
+	transform: translateX(-100%);
+}
+
+#cv-frame div.page div.descend-tree {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	margin: 0;
+	color: #1ab4e5;
+	z-index: 110;
+}
+
+#cv-frame.onscreen {
+	transform: none;
+	transition: transform 0.25s ease-out;
+}
+
+#cv-frame a.download {
+	display: block;
+	width: 100%;
+	margin: 16px 0 4px 0;
+	border: none;
+	border-bottom: 4px solid #1ab4e5;
+	padding: 0 0 4px 0;
+	color: #dddddd;
+	background-color: black;
+	box-shadow: 1px 1px 8px 0px #888888;
+	outline: none;
+	text-decoration: none;
+	text-align: center;
+}
+
+#cv-frame a.download:hover {
+	color: white;
+}
+
+#cv-frame a.download:active {
+	color: #dddddd;
+	border-bottom: 4px solid #0c536a;
+	box-shadow: none;
+	box-shadow: inset 1px 1px 8px 0px #888888;
+}
+
+#cv-tab-box {
+	position: absolute;
+	top: 0px;
+	width: 40px;
+	z-index: 200;
+	transform: none;
+	transition: transform 0.25s ease-in;	
+}
+
+#cv-tab-box.onscreen {
+	transform: translateX( 300px );
+	transition: transform 0.25s ease-out;
+}
+
+#cv-tab-box .tab {
+	float: left;
+	width: 40px;
+	height: 40px;
+	border-top: 1px solid black;
+	border-left: thin #888888 solid;
+	background-color: #444444;
+	background-origin: content-box;
+	background-image: url(../images/icons.png);
+	padding: 1px;
+}
+
+#cv-tab-box #close {
+	background-color: #222222;
+	background-image: url(../images/icons.png);
+	background-position: -360px;
+	border-left: none;
+	display: none;
+}
+
+#cv-tab-box.onscreen #close {
+	display: block;
+	margin-left: -100px;
+	z-index: 200;
+}
+
+#cv-tab-box #fullscreen {
+	display: none;
+	border-left: none;
+	background-color: #222222;
+}
+
+#cv-tab-box.onscreen #fullscreen {
+	position: absolute;
+	top: 0px;
+	left: -60px;
+	display: block;
+	z-index: 400;
+}
+
+#fullscreen.expand {
+	background-image: url(../images/icons.png);
+	background-position: -252px;
+}
+
+#fullscreen.collapse {
+	background-image: url(../images/icons.png);
+	background-position: -216px;
+}
+
+#cv-tab-box #icon_settings {
+	background-position: 0 0;
+}
+
+#cv-tab-box #icon_terrain {
+	background-position: -36px 0;
+}
+
+#cv-tab-box #icon_explore {
+	background-position: -72px 0;
+}
+
+#cv-tab-box #icon_route {
+	background-position: -108px 0;
+}
+
+#cv-tab-box #icon_info {
+	background-position: -144px 0;
+}
+
+
+#cv-tab-box #icon_help {
+	background-position: -180px 0;
+}
+
+#cv-tab-box.onscreen div.toptab {
+	background-color: #222222;
+	border-top: 1px solid #888888;
+	border-bottom: 1px solid #888888;
+	border-left: none;
+	border-right: 2px solid #1ab4e5;
+}
+
+@media (min-width: 768px) {
+
+	/* default to normal size */
+	body div.toggle-fullscreen {
+		position: fixed !important;
+		top: 0px;
+		bottom: 0px;
+		left: 0px;
+		right: 0px;
+		width: auto !important;
+		height: auto !important;
+		margin: 0 !important;
+		padding: 0 !important;
+		z-index: 999;
+	}
+
+}
+
+@media (max-width: 767px) {
+
+	#cv-frame {
+		width: 100%;
+		transform: translateY(-100%);
+	}
+
+	#cv-frame.onscreen {
+		padding-top: 40px;
+	}
+
+	#cv-frame div.page {
+		width: 95%;
+		top: 40px;
+	}
+
+	#cv-frame div.page div.slide, #cv-frame div.slide ul {
+		width: 100%;
+	}
+
+	#cv-tab-box {
+		left: 0px;
+		right: 0px;
+		height: 40px;
+		width: auto;
+	}
+
+	#cv-tab-box.onscreen {
+		transform: none;
+		background-color: #444444;
+		border-bottom: thin solid white;
+	}
+
+	#cv-tab-box.onscreen .tab {
+		border-bottom: thin solid white;
+	}
+
+	#cv-tab-box.onscreen #fullscreen.tab {
+		position: static;
+		float: left;
+		margin: 0;
+		background-color: #444444;
+	}
+
+	/* default to full screen */
+	body div.cv-container:not( .toggle-fullscreen ) {
+		position: fixed !important;
+		top: 0px !important;
+		bottom: 0px !important;
+		left: 0px !important;
+		right: 0px !important;
+		width: auto !important;
+		height: auto !important;
+		margin: 0 !important;
+		padding: 0 !important;
+		z-index: 999;
+	}
+
+	#cv-tab-box.onscreen div.toptab {
+		background-color: #222222;
+		border-left: none;
+		border-right: 1px solid gray;
+		border-top: 4px solid #1ab4e5;
+		border-bottom: none;
+		z-index: 300;
+	}
+
+	#cv-tab-box #close {
+		position: fixed;
+		background-color: #444444;
+		background-image: url(../images/icons.png);
+		background-position: -324px;
+		top: 0px;
+		right: 0px;
+		left: auto;
+	}
+
+	#cv-tab-box.onscreen #close {
+		float: right;
+		margin: 0;
+	}
+
+}
+
+#cv-frame div.page div.header {
+	height: 16px;
+	margin: 16px 0px 8px 0px;
+	padding-left: 2px;
+	font-weight: bold;
+}
+
+#cv-frame div.page div.control {
+	margin: 2px 0 2px 0;
+	padding: 2px 2px 0 0;
+}
+
+#cv-frame div.page label {
+	display: block;
+	border-top: 1px solid grey;
+	padding: 2px 0 8px 0px;
+	font-size: 12px;
+}
+
+#cv-frame div.page select {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	margin: 0 0 5px 0px;
+	padding-top: 2px;
+}
+
+#cv-frame div.page select:empty {
+	background-color: #888888;
+}
+
+#cv-frame div.page button {
+	display: block;
+	width: 100%;
+	height: 28px;
+	margin: 16px 0 4px 0;
+	border: none;
+	border-bottom: 4px solid #1ab4e5;
+	padding-bottom: 4px;
+	color: #dddddd;
+	background-color: black;
+	box-shadow: 1px 1px 8px 0px #888888;
+	outline: none;
+}
+
+#cv-frame div.page button:hover {
+	color: white;
+}
+
+#cv-frame div.page button:active {
+	border-bottom: 4px solid #0c536a;
+	box-shadow: none;
+	box-shadow: inset 1px 1px 8px 0px #888888;
+	color: #dddddd;
+}
+
+#cv-frame div.page input[type="text"] {
+	display: block;
+	width: 100%;
+	margin-top: 2px;
+	margin-left: 0px;
+}
+
+div.cv-checkbox {
+	position: relative;
+	margin-right: 0;
+}
+
+#cv-frame div.page input[type="checkbox"] {
+	position: absolute;
+	right: 0px;
+	top: 4px;
+}
+
+#cv-frame div.page input[type="range"] {
+	display: block;
+	max-width: 100%;
+	margin-left: 0px;
+	margin-bottom: 3px;
+}
+
+#cv-frame dt, #cv-frame dd {
+	font-size: 12px;
+}
+
+#cv-frame dt {
+	clear: both;
+	float: left;
+	padding-left: 16px;
+}
+
+#cv-frame dd {
+	margin-left: 40px;
+}
+
+#cv-frame p {
+	padding-left: 8px;
+	font-size: 12px;
+	line-height: 18px;
+}
+
+#cv-frame p.spaced {
+	margin-top: 18px;
+}
+
+#cv-frame a, #cv-frame a:visited {
+	padding-left: 8px;
+	color: white;
+	text-decoration: none;
+}
+
+#cv-frame a, #cv-frame a:hover {
+	color: yellow;
+}
+
+div.station-info {
+	position: absolute;
+	border: 1px solid white;
+	padding: 4px;
+	color: white;
+	background-color: #222222;
+	z-index: 200;
+}
+
+
+.overlay-branding {
+	position: absolute;
+	right: 0;
+	top: 0;
+	color: white;
+	margin: 4px;
+}
+
+#cv-frame input[type=checkbox]:checked + label {
+	color: #1ab4e5;
+}
+
+#cv-frame input[type=range] {
+	height: 23px;
+	width: 100%;
+	-webkit-appearance: none;
+	margin: 10px 0;
+	background-color: transparent;
+}
+
+#cv-frame input[type=range]:focus {
+	outline: none;
+}
+
+#cv-frame input[type=range]::-webkit-slider-runnable-track {
+	width: 100%;
+	height: 4px;
+	cursor: pointer;
+	box-shadow: 0px 0px 0px #000000;
+	background: #eee;
+	border-radius: 0px;
+	border: 0px solid #010101;
+}
+
+#cv-frame input[type=range]::-webkit-slider-thumb {
+	box-shadow: 0px 0px 0px #000031;
+	border: 1px solid #00001E;
+	height: 16px;
+	width: 16px;
+	border-radius: 15px;
+	background: #1AB4E5;
+	cursor: pointer;
+	-webkit-appearance: none;
+	margin-top: -6px;
+}
+
+#cv-frame input[type=range]:focus::-webkit-slider-runnable-track {
+	background: #eee;
+}
+
+#cv-frame input[type=range]::-moz-range-track {
+	width: 100%;
+	height: 4px;
+	cursor: pointer;
+	box-shadow: 0px 0px 0px #000000;
+	background: #eee;
+	border-radius: 0px;
+	border: 0px solid #010101;
+}
+
+#cv-frame input[type=range]::-moz-range-thumb {
+	box-shadow: 0px 0px 0px #000031;
+	border: 1px solid #00001E;
+	height: 16px;
+	width: 16px;
+	border-radius: 15px;
+	background: #1AB4E5;
+	cursor: pointer;
+}
+
+#cv-frame input[type=range]::-ms-track {
+	width: 100%;
+	height: 4px;
+	cursor: pointer;
+	background: transparent;
+	border-color: transparent;
+	color: transparent;
+}
+
+#cv-frame input[type=range]::-ms-fill-lower {
+	background: #eee;
+	border: 0px solid #010101;
+	border-radius: 0px;
+	box-shadow: 0px 0px 0px #000000;
+}
+
+#cv-frame input[type=range]::-ms-fill-upper {
+	background: #eee;
+	border: 0px solid #010101;
+	border-radius: 0px;
+	box-shadow: 0px 0px 0px #000000;
+}
+
+#cv-frame input[type=range]::-ms-thumb {
+	margin-top: 1px;
+	box-shadow: 0px 0px 0px #000031;
+	border: 1px solid #00001E;
+	height: 16px;
+	width: 16px;
+	border-radius: 15px;
+	background: #1AB4E5;
+	cursor: pointer;
+}
+
+#cv-frame input[type=range]:focus::-ms-fill-lower {
+	background: #eee;
+}
+
+#cv-frame input[type=range]:focus::-ms-fill-upper {
+	background: #eee;
+}

@@ -2,7 +2,7 @@
 const defaultTheme = {
 	fieldOfView: 50,
 	background: 0x000000,
-	maxPolarAngle: 90,
+	maxPolarAngle: 180,
 	lighting: {
 		azimuth: 315,
 		inclination: 45

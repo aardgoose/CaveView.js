@@ -181,13 +181,12 @@ function init ( domID, configuration ) { // public method
 
 	container.appendChild( renderer.domElement );
 
-	controls = new OrbitControls( camera, renderer.domElement );
+	controls = new OrbitControls( camera, renderer.domElement, Cfg.value( 'survexControls', false ) );
 
 	cameraMove = new CameraMove( controls, renderView, onCameraMoveEnd );
 
 	controls.addEventListener( 'change', cameraMoved );
 
-	controls.enableDamping = true;
 	controls.maxPolarAngle = Cfg.themeAngle( 'maxPolarAngle' );
 
 	// event handler

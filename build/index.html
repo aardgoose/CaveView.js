@@ -31,13 +31,16 @@ function onload () {
 		terrainDirectory: "/terrain/",
 		surveyDirectory: "/surveys/",
 		home: "/CaveView/",
-		view: { walls: false, alpha: true },
+		survexControls: true,
+		view: { walls: false, alpha: false, terrain: false },
 		alphaWalls: false,
-//		displayCRS: 'ORIGINAL',
+		displayCRS: 'ORIGINAL',
 		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZTk5MmVmZC1iZDU5LTQzMWQtOWY0Zi1mZDYxNDA1MTNjMjgiLCJpZCI6OTEwLCJpYXQiOjE1MjYzMjczMDh9.aJWNt5jc-dt64lR4q7zw0bdp0PARsvupmWjUYUrQVQs',
 //		language: "template",
 //		defaultCRS: "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs",
+//		defaultCRS: "+proj=utm +zone=30 +ellps=WGS84 +datum=WGS84 +units=m +no_defs",
 		theme: {
+			maxPolarAngle: 180,
 			hud: {
 				progress: 0xff0000
 			},
@@ -51,14 +54,15 @@ function onload () {
 	CV.Viewer.addOverlay( 'NLS', new NLSProvider() );
 	CV.Viewer.addOverlay( 'Bing Aerial',  new BingProvider( 'Aerial', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
 	CV.Viewer.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
-	CV.Viewer.addOverlay( 'WMTS', new WMTSProvider() );
-	CV.Viewer.addOverlay( 'IGME', new IGMEProvider() );
+	CV.Viewer.addOverlay( 'Spanish IGN mapping', new WMTSProvider( true ) );
+	CV.Viewer.addOverlay( 'Spanish IGN aerial photography', new WMTSProvider( false ) );
+//	CV.Viewer.addOverlay( 'IGME', new IGMEProvider() );
 
 //	CV.Viewer.addFormatters( OSGBStationFormatter );
 
 	CV.UI.loadCaveList( [
-		"all.3d",
 		"P8_Master.3d",
+		"all.3d",
 		"MA-all.3d",
 		"titan.3d",
 		"Giants_Oxlow_Maskhill_System.3d",

@@ -11,12 +11,12 @@ const HudObject = {
 		font: 'bold helvetica,sans-serif'
 	},
 
-	createHitRegion: function ( onEnter ) {
+	createHitRegion: function ( width, height, onEnter ) {
 
 		const div = document.createElement( 'div' );
 
-		div.style.width = HudObject.stdWidth * 2 + 'px';
-		div.style.height = HudObject.stdWidth * 2 + 'px';
+		div.style.width = width + 'px';
+		div.style.height = height + 'px';
 		div.style.position = 'absolute';
 
 		div.addEventListener( 'mouseenter', onEnter );

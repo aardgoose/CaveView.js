@@ -19,7 +19,7 @@ function CompassControl( viewer ) {
 	var dragging = false;
 	var startAngle = 0;
 
-	const hr = HudObject.createHitRegion( handleEnter );
+	const hr = HudObject.createHitRegion( HudObject.stdWidth * 2, HudObject.stdWidth * 2, handleEnter );
 
 	hr.style.right = HudObject.stdMargin + 'px';
 	hr.style.bottom = HudObject.stdMargin + 'px';

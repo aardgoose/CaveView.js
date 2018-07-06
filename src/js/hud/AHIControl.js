@@ -10,7 +10,7 @@ function AHIControl( viewer ) {
 	const container = viewer.container;
 	const controls = viewer.getControls();
 
-	const hr = HudObject.createHitRegion( handleEnter );
+	const hr = HudObject.createHitRegion( HudObject.stdWidth * 2, HudObject.stdWidth * 2, handleEnter );
 	const ballSize = HudObject.stdWidth - 10;
 	var dragging = false;
 	var centerY;

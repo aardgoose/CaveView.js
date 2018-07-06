@@ -102,6 +102,20 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	};
 
+	this.rotateUp = function ( angle ) {
+
+		rotateUp( angle );
+		this.update();
+
+	};
+
+	this.rotateLeft = function ( angle ) {
+
+		rotateLeft( angle );
+		this.update();
+
+	};
+
 	this.saveState = function () {
 
 		scope.target0.copy( scope.target );

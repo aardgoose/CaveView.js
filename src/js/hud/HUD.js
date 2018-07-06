@@ -7,10 +7,12 @@ import {
 import { Cfg } from '../core/lib';
 
 import { AHI } from './AHI';
+import { AHIControl } from './AHIControl';
 import { AngleScale } from './AngleScale';
 import { Compass } from './Compass';
-import { LinearScale } from './LinearScale';
+import { CompassControl } from './CompassControl';
 import { CursorScale } from './CursorScale';
+import { LinearScale } from './LinearScale';
 import { ProgressDial } from './ProgressDial';
 import { ScaleBar } from './ScaleBar';
 import { HudObject } from './HudObject';
@@ -83,8 +85,8 @@ function init ( viewerIn, viewRenderer ) {
 	scene.addStatic( aLight );
 	scene.addStatic( dLight );
 
-	compass      = new Compass();
-	ahi          = new AHI();
+	compass = new Compass();
+	ahi     = new AHI();
 
 	progressDials = [ new ProgressDial( true, 0 ), new ProgressDial( false, 1 ) ];
 
@@ -103,6 +105,9 @@ function init ( viewerIn, viewRenderer ) {
 	Cfg.addEventListener( 'change', cfgChanged );
 
 	controls = viewer.getControls();
+
+	new CompassControl( viewer );
+	new AHIControl( viewer );
 
 }
 

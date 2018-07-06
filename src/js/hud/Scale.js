@@ -20,6 +20,7 @@ function Scale( container, geometry, material ) {
 
 	this.barHeight = barHeight;
 	this.barWidth = barWidth;
+	this.barOffset = barOffset;
 
 	this.offsetX = -barWidth / 2 - 5;
 	this.offsetY = barHeight / 2;

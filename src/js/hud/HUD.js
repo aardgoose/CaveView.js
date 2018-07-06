@@ -12,6 +12,7 @@ import { AngleScale } from './AngleScale';
 import { Compass } from './Compass';
 import { CompassControl } from './CompassControl';
 import { CursorScale } from './CursorScale';
+import { CursorControl } from './CursorControl';
 import { LinearScale } from './LinearScale';
 import { ProgressDial } from './ProgressDial';
 import { ScaleBar } from './ScaleBar';
@@ -39,6 +40,7 @@ var linearScale = null;
 var angleScale  = null;
 var cursorScale = null;
 var scaleBar    = null;
+var cursorControl = null;
 
 var compass;
 var ahi;
@@ -241,6 +243,8 @@ function newScales () {
 	if ( cursorScale ) scene.remove( cursorScale );
 
 	cursorScale = new CursorScale( container );
+
+	if ( cursorControl === null ) cursorControl = new CursorControl( viewer, cursorScale );
 
 	scene.addStatic( cursorScale );
 

@@ -41438,7 +41438,7 @@
 		if ( svxMode ) {
 
 			handleMouseDownLeft = handleMouseDownSvx;
-			handleMouseDownMiddle = handleMouseDownSvx;
+			handleMouseDownMiddle = handleMouseDownRotate;
 			handleMouseMoveLeft = handleMouseMoveSvxLeft;
 			handleMouseMoveMiddle = handleMouseMoveSvxMiddle;
 

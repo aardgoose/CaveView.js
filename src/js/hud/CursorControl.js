@@ -17,6 +17,8 @@ function CursorControl( viewer, cursorScale ) {
 
 	container.appendChild( hr );
 
+	this.hr = hr;
+
 	function handleEnter ( event ) {
 
 		if ( ! viewer.HUD ) return;
@@ -35,6 +37,7 @@ function CursorControl( viewer, cursorScale ) {
 		barTop = bc.top + hr.offsetTop;
 
 		hr.style.cursor = 'pointer';
+		// hr.style.height = cursorScale.barHeight + 'px';
 
 	}
 
@@ -90,5 +93,12 @@ function CursorControl( viewer, cursorScale ) {
 	}
 
 }
+
+CursorControl.prototype.dispose = function () {
+
+	var hr = this.hr;
+	hr.parentNode.removeChild( hr );
+
+};
 
 export { CursorControl };

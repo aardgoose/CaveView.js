@@ -58,7 +58,7 @@ EPSG3857TileSet.prototype.getTileSets = function () {
 
 };
 
-EPSG3857TileSet.prototype.getScreenAttributions = function () {
+EPSG3857TileSet.prototype.getScreenAttribution = function () {
 
 	return null;
 

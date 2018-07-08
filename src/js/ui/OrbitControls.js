@@ -53,18 +53,9 @@ function OrbitControls ( object, domElement, svxMode ) {
 	this.minAzimuthAngle = - Infinity; // radians
 	this.maxAzimuthAngle = Infinity; // radians
 
-	// This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
-	// Set to false to disable zooming
-	this.enableZoom = true;
 	this.zoomSpeed = 1.0;
 
-	// Set to false to disable rotating
-	this.enableRotate = true;
-	this.rotateSpeed = 1.0;
-
 	// Set to false to disable panning
-	this.enablePan = true;
-	this.panSpeed = 1.0;
 	this.keyPanSpeed = 7.0;	// pixels moved per arrow key push
 
 	// Set to true to automatically rotate around the target
@@ -289,8 +280,6 @@ function OrbitControls ( object, domElement, svxMode ) {
 	var lastMoveTime = 0;
 	var svxReverseSense = -1;
 
-	//var svxMode;
-
 	// mode specific handlers
 
 	var handleMouseDownLeft;
@@ -477,7 +466,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		svxEnd.set( event.clientX, event.clientY );
 
-		svxDelta.subVectors( svxEnd, svxStart ).multiplyScalar( scope.rotateSpeed );
+		svxDelta.subVectors( svxEnd, svxStart );
 
 		const now = performance.now();
 
@@ -536,7 +525,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		rotateEnd.set( event.clientX, event.clientY );
 
-		rotateDelta.subVectors( rotateEnd, rotateStart ).multiplyScalar( scope.rotateSpeed );
+		rotateDelta.subVectors( rotateEnd, rotateStart );
 
 		// rotating up and down along whole screen attempts to go 360, but limited to 180
 		rotateUp( 2 * Math.PI * rotateDelta.y * svxReverseSense / scope.element.clientHeight );
@@ -551,7 +540,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		rotateEnd.set( event.clientX, event.clientY );
 
-		rotateDelta.subVectors( rotateEnd, rotateStart ).multiplyScalar( scope.rotateSpeed );
+		rotateDelta.subVectors( rotateEnd, rotateStart );
 
 		var element = scope.element;
 
@@ -595,7 +584,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		panEnd.set( event.clientX, event.clientY );
 
-		panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
+		panDelta.subVectors( panEnd, panStart );
 
 		pan( panDelta.x, panDelta.y );
 
@@ -662,25 +651,17 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	function handleTouchStartDollyPan( event ) {
 
-		if ( scope.enableZoom ) {
+		var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
+		var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
 
-			var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-			var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+		var distance = Math.sqrt( dx * dx + dy * dy );
 
-			var distance = Math.sqrt( dx * dx + dy * dy );
+		dollyStart.set( 0, distance );
 
-			dollyStart.set( 0, distance );
+		var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
+		var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
 
-		}
-
-		if ( scope.enablePan ) {
-
-			var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
-			var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
-
-			panStart.set( x, y );
-
-		}
+		panStart.set( x, y );
 
 	}
 
@@ -688,7 +669,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		rotateEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
 
-		rotateDelta.subVectors( rotateEnd, rotateStart ).multiplyScalar( scope.rotateSpeed );
+		rotateDelta.subVectors( rotateEnd, rotateStart );
 
 		var element = scope.element;
 
@@ -706,37 +687,30 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	function handleTouchMoveDollyPan( event ) {
 
-		if ( scope.enableZoom ) {
+		var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
+		var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
 
-			var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-			var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+		var distance = Math.sqrt( dx * dx + dy * dy );
 
-			var distance = Math.sqrt( dx * dx + dy * dy );
+		dollyEnd.set( 0, distance );
 
-			dollyEnd.set( 0, distance );
+		dollyDelta.set( 0, Math.pow( dollyEnd.y / dollyStart.y, scope.zoomSpeed ) );
 
-			dollyDelta.set( 0, Math.pow( dollyEnd.y / dollyStart.y, scope.zoomSpeed ) );
+		dollyIn( dollyDelta.y );
 
-			dollyIn( dollyDelta.y );
+		dollyStart.copy( dollyEnd );
 
-			dollyStart.copy( dollyEnd );
 
-		}
+		var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
+		var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
 
-		if ( scope.enablePan ) {
+		panEnd.set( x, y );
 
-			var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
-			var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
+		panDelta.subVectors( panEnd, panStart );
 
-			panEnd.set( x, y );
+		pan( panDelta.x, panDelta.y );
 
-			panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
-
-			pan( panDelta.x, panDelta.y );
-
-			panStart.copy( panEnd );
-
-		}
+		panStart.copy( panEnd );
 
 		scope.update();
 
@@ -762,8 +736,6 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		case scope.mouseButtons.ORBIT:
 
-			if ( scope.enableRotate === false ) return;
-
 			handleMouseDownLeft( event );
 
 			state = STATE.ROTATE;
@@ -772,8 +744,6 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		case scope.mouseButtons.ZOOM:
 
-			if ( scope.enableZoom === false ) return;
-
 			handleMouseDownMiddle( event );
 
 			state = STATE.DOLLY;
@@ -781,8 +751,6 @@ function OrbitControls ( object, domElement, svxMode ) {
 			break;
 
 		case scope.mouseButtons.PAN:
-
-			if ( scope.enablePan === false ) return;
 
 			handleMouseDownPan( event );
 
@@ -815,23 +783,17 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		case STATE.ROTATE:
 
-			if ( scope.enableRotate === false ) return;
-
 			handleMouseMoveLeft( event );
 
 			break;
 
 		case STATE.DOLLY:
 
-			if ( scope.enableZoom === false ) return;
-
 			handleMouseMoveMiddle( event, 1 );
 
 			break;
 
 		case STATE.PAN:
-
-			if ( scope.enablePan === false ) return;
 
 			handleMouseMovePan( event );
 
@@ -859,7 +821,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	function onMouseWheel( event ) {
 
-		if ( scope.enabled === false || scope.enableZoom === false || ( state !== STATE.NONE && state !== STATE.ROTATE ) ) return;
+		if ( scope.enabled === false || ( state !== STATE.NONE && state !== STATE.ROTATE ) ) return;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -874,7 +836,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	function onKeyDown( event ) {
 
-		if ( scope.enabled === false || scope.enableKeys === false || scope.enablePan === false ) return;
+		if ( scope.enabled === false || scope.enableKeys === false ) return;
 
 		handleKeyDown( event );
 
@@ -890,8 +852,6 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		case 1:	// one-fingered touch: rotate
 
-			if ( scope.enableRotate === false ) return;
-
 			handleTouchStartRotate( event );
 
 			state = STATE.TOUCH_ROTATE;
@@ -899,8 +859,6 @@ function OrbitControls ( object, domElement, svxMode ) {
 			break;
 
 		case 2:	// two-fingered touch: dolly-pan
-
-			if ( scope.enableZoom === false && scope.enablePan === false ) return;
 
 			handleTouchStartDollyPan( event );
 
@@ -933,7 +891,6 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		case 1: // one-fingered touch: rotate
 
-			if ( scope.enableRotate === false ) return;
 			if ( state !== STATE.TOUCH_ROTATE ) return; // is this needed?
 
 			handleTouchMoveRotate( event );
@@ -942,7 +899,6 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		case 2: // two-fingered touch: dolly-pan
 
-			if ( scope.enableZoom === false && scope.enablePan === false ) return;
 			if ( state !== STATE.TOUCH_DOLLY_PAN ) return; // is this needed?
 
 			handleTouchMoveDollyPan( event );

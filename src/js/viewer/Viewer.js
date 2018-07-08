@@ -183,7 +183,7 @@ function init ( domID, configuration ) { // public method
 
 	controls = new OrbitControls( camera, renderer.domElement, Cfg.value( 'survexControls', false ) );
 
-	cameraMove = new CameraMove( controls, renderView, onCameraMoveEnd );
+	cameraMove = new CameraMove( controls, cameraMoved, onCameraMoveEnd );
 
 	controls.addEventListener( 'change', cameraMoved );
 
@@ -660,6 +660,7 @@ function setCameraMode ( mode ) {
 		offset.setLength( CAMERA_OFFSET / oCamera.zoom );
 
 		camera = pCamera;
+		Viewer.dispatchEvent( { type: 'camera', name: 'perspective' } );
 
 		break;
 
@@ -671,6 +672,7 @@ function setCameraMode ( mode ) {
 		offset.setLength( CAMERA_OFFSET * 2 );
 
 		camera = oCamera;
+		Viewer.dispatchEvent( { type: 'camera', name: 'orthographic' } );
 
 		break;
 
@@ -721,8 +723,6 @@ var cameraMoved = function () {
 
 	return function cameraMoved() {
 
-		cameraMove.prepare( null, null ).start( 80 );
-
 		rotation.setFromQuaternion( camera.getWorldQuaternion( q ) );
 
 		currentLightPosition.copy( lightPosition );
@@ -732,6 +732,8 @@ var cameraMoved = function () {
 		directionalLight.updateMatrix();
 
 		Viewer.dispatchEvent( { type: 'lightingChange', name: 'surface' } );
+
+		renderView();
 
 	};
 

@@ -48,7 +48,7 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	var zIndex = 0;
 
-	// setup vertices frmo height data (corrected by rotation matrix)
+	// setup vertices from height data (corrected by rotation matrix)
 
 	for ( iy = 0; iy < lines; iy++ ) {
 

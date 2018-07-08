@@ -244,7 +244,9 @@ function newScales () {
 
 	cursorScale = new CursorScale( container );
 
-	if ( cursorControl === null ) cursorControl = new CursorControl( viewer, cursorScale );
+	if ( cursorControl ) cursorControl.dispose();
+
+	cursorControl = new CursorControl( viewer, cursorScale );
 
 	scene.addStatic( cursorScale );
 
@@ -361,20 +363,23 @@ function cursorChanged ( /* event */ ) {
 	const range = viewer.maxHeight - viewer.minHeight;
 
 	var scaledHeight = 0;
+	var realHeight = 0;
 
 	if ( viewer.shadingMode === SHADING_CURSOR ) {
 
 		scaledHeight = ( viewer.cursorHeight + range / 2 ) / range;
+		realHeight = cursorHeight + range / 2 + viewer.minHeight;
 
 	} else {
 
 		scaledHeight = 1 - cursorHeight / range;
+		realHeight = cursorHeight;
 
 	}
 
 	scaledHeight = Math.max( Math.min( scaledHeight, 1 ), 0 );
 
-	cursorScale.setCursor( scaledHeight, Math.round( cursorHeight + range / 2 + viewer.minHeight ) );
+	cursorScale.setCursor( scaledHeight, Math.round( realHeight ) );
 
 }
 
@@ -402,12 +407,12 @@ function updateScaleBar ( camera ) {
 }
 
 export const HUD = {
-	init:               init,
-	renderHUD:          renderHUD,
-	setVisibility:		setVisibility,
-	getVisibility:		getVisibility,
-	getProgressDial:    getProgressDial,
-	setScale:           setScale
+	init:            init,
+	renderHUD:       renderHUD,
+	setVisibility:   setVisibility,
+	getVisibility:   getVisibility,
+	getProgressDial: getProgressDial,
+	setScale:        setScale
 };
 
 // EOF

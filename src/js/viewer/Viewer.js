@@ -844,6 +844,10 @@ function setShadingMode ( mode ) {
 		mouseMode = MOUSE_MODE_DISTANCE;
 		mouseTargets = survey.pointTargets;
 
+	} else {
+
+		mouseMode = MOUSE_MODE_NORMAL;
+
 	}
 
 	renderView();
@@ -926,7 +930,6 @@ function selectSection ( id ) {
 	} else {
 
 		// a single station
-
 		cameraMove.prepare( null, survey.getWorldPosition( node.p ) );
 
 	}

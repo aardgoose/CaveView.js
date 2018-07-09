@@ -26,9 +26,9 @@ function getSplays( survey, segments ) {
 
 		let linkedSegments;
 
-		if ( s1 === undefined || s2 === undefined ) continue;
+		if ( s1 === undefined && s2 === undefined ) continue;
 
-		if ( v1.connections === 0 ) {
+		if ( v1.connections === 0 || s1 === undefined ) {
 
 			linkedSegments = s2.linkedSegments;
 
@@ -37,8 +37,6 @@ function getSplays( survey, segments ) {
 			linkedSegments = s1.linkedSegments;
 
 		}
-
-		// console.log( station.name, segments );
 
 		for ( j = 0; j < linkedSegments.length; j++ ) {
 

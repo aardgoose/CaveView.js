@@ -87,14 +87,14 @@ function Stations () {
 
 		if ( event.name === 'orthographic' ) {
 
-			console.log( 'ortho' );
-
 			material.uniforms.pScale.value = 3;
 
 			material.sizeAttenuation = false;
 			material.needsUpdate = true;
 
 		} else {
+
+			material.uniforms.pScale.value = 1;
 
 			material.sizeAttenuation = true;
 			material.needsUpdate = true;

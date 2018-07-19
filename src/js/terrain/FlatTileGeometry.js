@@ -7,10 +7,10 @@
  * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
  */
 
-import { BufferGeometry } from '../../../../three.js/src/core/BufferGeometry';
-import { Float32BufferAttribute } from '../../../../three.js/src/core/BufferAttribute';
-import { Vector3 } from '../../../../three.js/src/math/Vector3';
-import { Box3 } from '../../../../three.js/src/math/Box3';
+import { BufferGeometry } from '../../../node_modules/three/src/core/BufferGeometry';
+import { Float32BufferAttribute } from '../../../node_modules/three/src/core/BufferAttribute';
+import { Vector3 } from '../../../node_modules/three/src/math/Vector3';
+import { Box3 } from '../../../node_modules/three/src/math/Box3';
 
 function FlatTileGeometry( width, height, clip, offsets, flatZ ) {
 

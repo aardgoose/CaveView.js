@@ -5,13 +5,13 @@
   "scripts": {
     "build-main": "rollup -c",
     "build-tw": "rollup -c rollup-webTileWorker.config.js",
-    "build-cw": "rollup -c rollup-caveWorker.config.js",
+    "build-mw": "rollup -c rollup-webMeshWorker.config.js",
     "build-main-min": "npm run build-main && uglifyjs build/CaveView/js/CaveView.js -cm --preamble \"// threejs.org/license\" > build/CaveView/js/CaveView-min.js",
     "build-tw-min": "npm run build-tw && uglifyjs build/CaveView/js/workers/webTileWorker.js -cm --preamble \"// threejs.org/license\" > build/CaveView/js/workers/webTileWorker-min.js",
-    "build-cw-min": "npm run build-cw && uglifyjs build/CaveView/js/workers/caveWorker.js -cm --preamble \"// threejs.org/license\" > build/CaveView/js/workers/caveWorker-min.js",
+    "build-mw-min": "npm run build-mw && uglifyjs build/CaveView/js/workers/webMeshWorker.js -cm --preamble \"// threejs.org/license\" > build/CaveView/js/workers/caveWorker-min.js",
     "lint": "eslint src",
-    "build": "npm run build-main && npm run build-tw",
-    "build-min": "npm run build-main-min && npm run build-tw-min",
+    "build": "npm run build-main && npm run build-tw && npm run build-mw",
+    "build-min": "npm run build-main-min && npm run build-tw-min && npm run build-mw-min",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -36,12 +36,9 @@
   "devDependencies": {
     "eslint": "^4.19.1",
     "http-server": "^0.10.0",
-    "rollup-plugin-visualizer": "^0.5.0",
-    "rollup-watch": ">=3.2.0"
-  },
-  "dependencies": {
+    "rollup-watch": ">=3.2.0",
+    "rollup": "^0.62.0",
     "alpha-shape": "^1.0.0",
-    "rollup-plugin-graph": "^1.2.0",
-    "wkt-parser": "^1.2.1"
+    "three": "0.92.0"
   }
 }

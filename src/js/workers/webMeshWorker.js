@@ -1,9 +1,9 @@
 
-import '../../../../three.js/src/polyfills';
+import '../../../node_modules/three/src/polyfills';
 import { TerrainMeshLoader } from '../loaders/TerrainMeshLoader';
 import { TerrainMeshGeometry } from '../terrain/TerrainMeshGeometry';
-import { Box2 } from '../../../../three.js/src/math/Box2';
-import { Vector3 } from '../../../../three.js/src/math/Vector3';
+import { Box2 } from '../../../node_modules/three/src/math/Box2';
+import { Vector3 } from '../../../node_modules/three/src/math/Vector3';
 
 importScripts( '../../lib/proj4.js' );
 

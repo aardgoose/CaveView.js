@@ -27,7 +27,7 @@ import { WorkerPool } from '../core/WorkerPool';
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
 //import { ClusterLegs } from '../analysis/ClusterLegs';
 
-import { OrbitControls } from '../UI/OrbitControls';
+import { OrbitControls } from '../ui/OrbitControls';
 
 import {
 	EventDispatcher,

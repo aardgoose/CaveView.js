@@ -39,6 +39,7 @@
     "rollup-watch": ">=3.2.0",
     "rollup": "^0.62.0",
     "alpha-shape": "^1.0.0",
-    "three": "0.92.0"
+    "three": "0.92.0",
+    "uglify-es": "^3.3.10"
   }
 }

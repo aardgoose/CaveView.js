@@ -1,10 +1,11 @@
 import { FileLoader, Box2 } from '../Three';
 import { Cfg } from '../core/lib';
+import proj4 from 'proj4';
 
 function EPSG4326TileSet( tileSetReady, crs ) {
 
 	this.CRS = crs;
-	this.transform = proj4( crs, 'EPSG:4326' ); // eslint-disable-line no-undef
+	this.transform = proj4( crs, 'EPSG:4326' );
 
 	// survey limits
 

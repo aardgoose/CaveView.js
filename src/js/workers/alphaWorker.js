@@ -1,5 +1,5 @@
 
-import alphaShape from '../../../node_modules/alpha-shape/alpha';
+import alphaShape from 'alpha-shape';
 
 onmessage = onMessage;
 

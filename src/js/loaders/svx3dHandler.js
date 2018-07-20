@@ -5,6 +5,7 @@ import { Tree } from '../core/Tree';
 import { Cfg } from '../core/lib';
 import { StationPosition } from '../core/StationPosition';
 import { Vector3, Box3 } from '../Three';
+import proj4 from 'proj4';
 
 function Svx3dHandler ( fileName ) {
 
@@ -26,14 +27,6 @@ Svx3dHandler.prototype.constructor = Svx3dHandler;
 Svx3dHandler.prototype.type = 'arraybuffer';
 
 Svx3dHandler.prototype.setCRS = function ( sourceCRS ) {
-
-	if ( window.proj4 === undefined ) {
-
-		console.log( 'Proj4 projection library not loaded' );
-
-		return;
-
-	}
 
 	if ( sourceCRS !== null ) {
 
@@ -78,7 +71,7 @@ Svx3dHandler.prototype.setCRS = function ( sourceCRS ) {
 
 			console.log( 'Reprojecting from', sourceCRS, 'to', this.targetCRS );
 
-			this.projection = proj4( this.sourceCRS, this.targetCRS ); // eslint-disable-line no-undef
+			this.projection = proj4( this.sourceCRS, this.targetCRS );
 			this.displayCRS = this.targetCRS;
 
 		}

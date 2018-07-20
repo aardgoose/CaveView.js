@@ -27,6 +27,7 @@ import { buildWallsSync, buildWallsAsync } from './walls/WallBuilders';
 
 import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
 import { StencilLib } from '../core/StencilLib';
+import proj4 from 'proj4';
 
 function Survey ( cave ) {
 
@@ -121,7 +122,7 @@ function Survey ( cave ) {
 
 		const l1 = p1.distanceTo( p2 );
 
-		const transform = proj4( displayCRS, survey.sourceCRS ); // eslint-disable-line no-undef
+		const transform = proj4( displayCRS, survey.sourceCRS );
 
 		p1.copy( transform.forward( p1 ) );
 		p2.copy( transform.forward( p2 ) );

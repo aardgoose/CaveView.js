@@ -87,14 +87,14 @@ function Stations () {
 
 		if ( event.name === 'orthographic' ) {
 
-			material.uniforms.pScale.value = 3;
+			material.scale = 3;
 
 			material.sizeAttenuation = false;
 			material.needsUpdate = true;
 
 		} else {
 
-			material.uniforms.pScale.value = 1;
+			material.scale = 1;
 
 			material.sizeAttenuation = true;
 			material.needsUpdate = true;
@@ -261,7 +261,7 @@ Stations.prototype.finalise = function () {
 
 Stations.prototype.setScale = function ( scale ) {
 
-	this.material.uniforms.pScale.value = scale;
+	this.material.scale = scale;
 	this.material.needsUpdate = true;
 
 };

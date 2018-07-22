@@ -1,30 +1,13 @@
 
-import { VertexColors, ShaderMaterial, TextureLoader, Vector4, Matrix3 } from '../Three';
-import { Shaders } from '../shaders/Shaders';
+import { PointsMaterial, TextureLoader, VertexColors } from '../Three';
 import { Cfg } from '../core/lib';
 import { ColourCache } from '../core/ColourCache';
 
 function ExtendedPointsMaterial () {
 
-	ShaderMaterial.call( this, {
-		vertexShader: Shaders.extendedPointsVertexShader,
-		fragmentShader: Shaders.extendedPointsFragmentShader,
-		type: 'CV.ExtendedPointsMaterial',
-		uniforms: {
-			diffuse: { value: ColourCache.white },
-			opacity: { value: 1.0 },
-			size: { value: 1.0 },
-			scale: { value: 1.0 },
-			pScale: { value: 1.0 },
-			offsetRepeat: { value: new Vector4() },
-			map: { value: null },
-			uvTransform: { value: new Matrix3() }
-		},
-		vertexColors: VertexColors
-	} );
+	PointsMaterial.call( this );
 
 	this.map = new TextureLoader().load( Cfg.value( 'home', '' ) + 'images/disc.png' );
-
 	this.color = ColourCache.white;
 	this.opacity = 1.0;
 	this.alphaTest = 0.8;
@@ -33,14 +16,24 @@ function ExtendedPointsMaterial () {
 	this.scale = 1;
 	this.sizeAttenuation = true;
 	this.transparent = true;
+	this.vertexColors = VertexColors;
 
-	this.isPointsMaterial = true;
+	this.onBeforeCompile = function ( shader ) {
+
+		var vertexShader = shader.vertexShader
+			.replace( '#include <common>', '\nattribute float pSize;\n\n$&' )
+			.replace( '\t\tgl_PointSize = size;', '\t\tgl_PointSize = pSize;' )
+			.replace( '\t\tgl_PointSize = size * ( scale / - mvPosition.z );', '\t\tgl_PointSize = pSize * ( scale / - mvPosition.z );' );
+
+		shader.vertexShader = vertexShader;
+
+	};
 
 	return this;
 
 }
 
-ExtendedPointsMaterial.prototype = Object.create( ShaderMaterial.prototype );
+ExtendedPointsMaterial.prototype = Object.create( PointsMaterial.prototype );
 
 export { ExtendedPointsMaterial };
 

@@ -1,8 +1,4 @@
 
-import {
-	VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_N, VIEW_ELEVATION_W
-} from '../core/constants';
-
 import { HudObject } from './HudObject';
 import { Vector2 } from '../Three';
 
@@ -11,11 +7,9 @@ function CompassControl( viewer ) {
 	const container = viewer.container;
 	const controls = viewer.getControls();
 
-	const views = [ VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_N, VIEW_ELEVATION_W ];
 	const point = new Vector2();
 	const center = new Vector2();
 
-	var compassSetting = 0;
 	var dragging = false;
 	var startAngle = 0;
 
@@ -37,8 +31,6 @@ function CompassControl( viewer ) {
 		target.addEventListener( 'mousedown',  handleMouseDown );
 		target.addEventListener( 'mouseup',    handleMouseUp );
 		target.addEventListener( 'dblclick',   handleDblClick );
-
-		compassSetting = 0;
 
 		// update center position (accounts for resizes)
 		const bc = container.getBoundingClientRect();
@@ -84,11 +76,33 @@ function CompassControl( viewer ) {
 
 		event.stopPropagation();
 
-		const viewMode = views[ compassSetting++ ];
+		// select cardinal point from quadrant of control clicked on
 
-		viewer.view = viewMode;
+		if ( point.x > point.y ) {
 
-		compassSetting %= 4;
+			if ( point.x < -point.y ) {
+
+				viewer.azimuthAngle = 0;
+
+			} else {
+
+				viewer.azimuthAngle = Math.PI / 2;
+
+			}
+
+		} else {
+
+			if ( point.x > -point.y ) {
+
+				viewer.azimuthAngle = Math.PI;
+
+			} else {
+
+				viewer.azimuthAngle = 3 * Math.PI / 2;
+
+			}
+
+		}
 
 	}
 

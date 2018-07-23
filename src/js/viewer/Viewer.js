@@ -123,6 +123,9 @@ var cameraMove;
 var lastActivityTime = 0;
 
 var popup = null;
+var animateFrames = 0;
+var animateDelta = 0;
+var animateFunction = null;
 
 //var leakWatcher;
 
@@ -181,7 +184,7 @@ function init ( domID, configuration ) { // public method
 
 	container.appendChild( renderer.domElement );
 
-	controls = new OrbitControls( camera, renderer.domElement, Cfg.value( 'survexControls', false ) );
+	controls = new OrbitControls( camera, renderer.domElement, Cfg.value( 'avenControls', false ) );
 
 	cameraMove = new CameraMove( controls, cameraMoved, onCameraMoveEnd );
 
@@ -309,6 +312,16 @@ function init ( domID, configuration ) { // public method
 		'highlight': {
 			writeable: true,
 			set: function ( x ) { _stateSetter( highlightSelection, 'highlight', x ); }
+		},
+
+		'polarAngle': {
+			writeable: true,
+			set: setPolarAngle
+		},
+
+		'azimuthAngle': {
+			writeable: true,
+			set: setAzimuthAngle
 		},
 
 		'routeEdit': {
@@ -811,6 +824,50 @@ function setViewMode ( mode, t ) {
 
 	cameraMove.cancel();
 	cameraMove.prepare( cameraPosition, defaultTarget ).start( renderRequired ? t || 240 : 1 );
+
+}
+
+function setAzimuthAngle( targetAngle ) {
+
+	var delta = ( controls.getAzimuthalAngle() - targetAngle );
+
+	animateFrames = Math.round( Math.abs( delta * 180 / Math.PI ) );
+	animateDelta = delta / animateFrames;
+
+	controls.enable = false;
+
+	animateFunction = controls.rotateLeft.bind( controls );
+
+	animateMove();
+
+}
+
+function setPolarAngle( targetAngle ) {
+
+	var delta = ( controls.getPolarAngle() - targetAngle );
+
+	animateFrames = Math.round( Math.abs( delta * 180 / Math.PI ) );
+	animateDelta = delta / animateFrames;
+
+	controls.enable = false;
+
+	animateFunction = controls.rotateUp.bind( controls );
+
+	animateMove();
+
+}
+
+function animateMove () {
+
+	if ( animateFrames-- === 0 ) {
+
+		controls.enable = true;
+		return;
+
+	}
+
+	animateFunction( animateDelta );
+	requestAnimationFrame( animateMove );
 
 }
 

@@ -21,6 +21,7 @@ import {
 const MODE_LOCK_UNLOCKED = 0;
 const MODE_LOCK_ROTATE = 1;
 const MODE_LOCK_ZOOM = 2;
+const SVX_DELTA = Math.PI / 60;
 
 function OrbitControls ( object, domElement, svxMode ) {
 
@@ -634,9 +635,54 @@ function OrbitControls ( object, domElement, svxMode ) {
 			scope.update();
 			break;
 
-		case 82:
+		case 67: // 'C'
+
+			if ( ! svxMode ) break;
+
+			rotateLeft( SVX_DELTA );
+			scope.update();
+			break;
+
+		case 82: // 'R'
+
+			if ( ! svxMode || ! event.ctrlKey ) break;
 			event.preventDefault();
 			svxReverseSense *= -1;
+			break;
+
+		case 86: // 'V'
+
+			if ( ! svxMode ) break;
+			rotateLeft( -SVX_DELTA );
+			scope.update();
+			break;
+
+		case 191: // '/
+
+			if ( ! svxMode ) break;
+			rotateUp( -SVX_DELTA );
+			scope.update();
+			break;
+
+		case 192: // '''
+
+			if ( ! svxMode ) break;
+			rotateUp( SVX_DELTA );
+			scope.update();
+			break;
+
+		case 219: // '['
+
+			if ( ! svxMode ) break;
+			dollyOut( getZoomScale() );
+			scope.update();
+			break;
+
+		case 221: // ']'
+
+			if ( ! svxMode ) break;
+			dollyIn( getZoomScale() );
+			scope.update();
 			break;
 
 		}

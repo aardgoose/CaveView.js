@@ -77,7 +77,7 @@ function AHIControl( viewer ) {
 
 		event.stopPropagation();
 
-		viewer.view = VIEW_PLAN;
+		viewer.polarAngle = 0;
 
 	}
 

@@ -398,6 +398,7 @@ function init ( domID, configuration ) { // public method
 	_conditionalLayer( FACE_SCRAPS,       'scraps' );
 	_conditionalLayer( FACE_WALLS,        'walls' );
 	_conditionalLayer( FACE_ALPHA,        'alpha' );
+	_conditionalLayer( LEG_CAVE,          'legs' );
 	_conditionalLayer( LEG_SPLAY,         'splays' );
 	_conditionalLayer( LEG_SURFACE,       'surfaceLegs' );
 	_conditionalLayer( LABEL_STATION,     'stationLabels' );
@@ -540,6 +541,8 @@ function setZScale ( scale ) {
 
 function setAutoRotate ( state ) {
 
+	if ( animateFrames > 0 ) return;
+
 	controls.autoRotate = state;
 
 	if ( state ) {
@@ -551,6 +554,8 @@ function setAutoRotate ( state ) {
 		cameraMove.stop();
 
 	}
+
+	Viewer.dispatchEvent( { type: 'change', name: 'autoRotate' } );
 
 }
 
@@ -829,9 +834,14 @@ function setViewMode ( mode, t ) {
 
 function setAzimuthAngle( targetAngle ) {
 
-	var delta = ( controls.getAzimuthalAngle() - targetAngle );
+	if ( Viewer.autoRotate || animateFrames > 0 ) return;
 
-	animateFrames = Math.round( Math.abs( delta * 180 / Math.PI ) );
+	var delta = ( controls.getAzimuthalAngle() - targetAngle );
+	var deltaSize = Math.abs( delta );
+
+	if ( deltaSize > Math.PI ) delta =  2 * Math.PI - deltaSize;
+
+	animateFrames = Math.round( deltaSize * 180 / Math.PI );
 	animateDelta = delta / animateFrames;
 
 	controls.enable = false;

@@ -211,14 +211,13 @@ CameraMove.prototype.animate = function () {
 
 CameraMove.prototype.animateMove = function () {
 
-	const tRemaining = this.frameCount - 1;
 	const curve = this.curve;
 
 	// update camera position
 
 	const camera = this.controls.object;
 
-	const t = Math.sin( ( 1 - tRemaining / this.frames ) * Math.PI / 2 );
+	const t = Math.sin( ( 1 - ( this.frameCount - 1 ) / this.frames ) * Math.PI / 2 );
 
 	if ( curve !== null ) camera.position.copy( this.curve.getPoint( t ) );
 

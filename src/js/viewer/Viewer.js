@@ -123,9 +123,6 @@ var cameraMove;
 var lastActivityTime = 0;
 
 var popup = null;
-var animateFrames = 0;
-var animateDelta = 0;
-var animateFunction = null;
 
 //var leakWatcher;
 
@@ -316,12 +313,12 @@ function init ( domID, configuration ) { // public method
 
 		'polarAngle': {
 			writeable: true,
-			set: setPolarAngle
+			set: function ( x ) { cameraMove.setPolarAngle( x ); }
 		},
 
 		'azimuthAngle': {
 			writeable: true,
-			set: setAzimuthAngle
+			set: function ( x ) { cameraMove.setAzimuthAngle( x ); }
 		},
 
 		'routeEdit': {
@@ -541,19 +538,7 @@ function setZScale ( scale ) {
 
 function setAutoRotate ( state ) {
 
-	if ( animateFrames > 0 ) return;
-
-	controls.autoRotate = state;
-
-	if ( state ) {
-
-		cameraMove.prepare( null, null ).start( 2952000 );
-
-	} else {
-
-		cameraMove.stop();
-
-	}
+	cameraMove.setAutoRotate( state );
 
 	Viewer.dispatchEvent( { type: 'change', name: 'autoRotate' } );
 
@@ -829,55 +814,6 @@ function setViewMode ( mode, t ) {
 
 	cameraMove.cancel();
 	cameraMove.prepare( cameraPosition, defaultTarget ).start( renderRequired ? t || 240 : 1 );
-
-}
-
-function setAzimuthAngle( targetAngle ) {
-
-	if ( Viewer.autoRotate || animateFrames > 0 ) return;
-
-	var delta = ( controls.getAzimuthalAngle() - targetAngle );
-	var deltaSize = Math.abs( delta );
-
-	if ( deltaSize > Math.PI ) delta =  2 * Math.PI - deltaSize;
-
-	animateFrames = Math.round( deltaSize * 180 / Math.PI );
-	animateDelta = delta / animateFrames;
-
-	controls.enable = false;
-
-	animateFunction = controls.rotateLeft.bind( controls );
-
-	animateMove();
-
-}
-
-function setPolarAngle( targetAngle ) {
-
-	var delta = ( controls.getPolarAngle() - targetAngle );
-
-	animateFrames = Math.round( Math.abs( delta * 180 / Math.PI ) );
-	animateDelta = delta / animateFrames;
-
-	controls.enable = false;
-
-	animateFunction = controls.rotateUp.bind( controls );
-
-	animateMove();
-
-}
-
-function animateMove () {
-
-	if ( animateFrames-- === 0 ) {
-
-		controls.enable = true;
-		return;
-
-	}
-
-	animateFunction( animateDelta );
-	requestAnimationFrame( animateMove );
 
 }
 

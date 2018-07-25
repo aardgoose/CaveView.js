@@ -313,6 +313,7 @@ function init ( domID, configuration ) { // public method
 
 		'polarAngle': {
 			writeable: true,
+			get: function () { return controls.getPolarAngle(); },
 			set: function ( x ) { cameraMove.setPolarAngle( x ); }
 		},
 

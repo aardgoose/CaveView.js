@@ -73,7 +73,15 @@ function AHIControl( viewer ) {
 
 		event.stopPropagation();
 
-		viewer.polarAngle = 0;
+		if ( viewer.polarAngle < 0.0001 ) {
+
+			viewer.polarAngle = Math.PI / 2;
+
+		} else {
+
+			viewer.polarAngle = 0;
+
+		}
 
 	}
 

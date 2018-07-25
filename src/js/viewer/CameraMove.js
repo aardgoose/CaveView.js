@@ -11,6 +11,7 @@ import {
 
 import { upAxis } from '../core/constants';
 
+
 function CameraMove ( controls, renderFunction, endCallback ) {
 
 	this.cameraTarget = null;
@@ -26,7 +27,10 @@ function CameraMove ( controls, renderFunction, endCallback ) {
 	this.curve = null;
 	this.skipNext = false;
 
-	this.moveRequired = false;
+	this.delta = 0;
+
+	this.running = false;
+	this.animationFunction = null;
 
 	this.doAnimate = this.animate.bind( this );
 
@@ -46,7 +50,7 @@ CameraMove.prototype.prepare = function () {
 
 	return function prepare ( cameraTarget, endPOI ) {
 
-		if ( this.frameCount !== 0 ) return this;
+		if ( this.running ) return this;
 
 		const camera = this.controls.object;
 		const startPOI = this.controls.target;
@@ -95,9 +99,7 @@ CameraMove.prototype.prepare = function () {
 		this.cameraTarget = cameraTarget;
 		this.endPOI = endPOI;
 
-		this.moveRequired = ( this.cameraTarget !== null || this.endPOI !== null );
-
-		if ( this.moveRequired ) {
+		if ( this.cameraTarget !== null || this.endPOI !== null ) {
 
 			m4.lookAt( ( cameraTarget !== null ? cameraTarget : cameraStart ), endPOI, upAxis );
 
@@ -119,8 +121,6 @@ CameraMove.prototype.prepare = function () {
 			if ( cameraTarget.equals( cameraStart ) ) {
 
 				// start and end camera positions are identical.
-
-				this.moveRequired = false;
 
 				if ( endPOI === null ) this.skipNext = true;
 
@@ -156,109 +156,99 @@ CameraMove.prototype.prepare = function () {
 
 CameraMove.prototype.start = function ( time ) {
 
-	if ( this.frameCount === 0 && ! this.skipNext ) {
+	if ( this.running || this.skipNext ) return;
 
-		const controls = this.controls;
+	const controls = this.controls;
 
-		if ( this.cameraTarget === null && this.endPOI !== null ) {
+	if ( this.cameraTarget === null && this.endPOI !== null ) {
 
-			// scale time for simple pans by angle panned through
+		// scale time for simple pans by angle panned through
 
-			const v1 = new Vector3().subVectors( controls.target, controls.object.position );
-			const v2 = new Vector3().subVectors( this.endPOI, controls.object.position );
+		const v1 = new Vector3().subVectors( controls.target, controls.object.position );
+		const v2 = new Vector3().subVectors( this.endPOI, controls.object.position );
 
-			time = Math.round( time * Math.acos( v1.normalize().dot( v2.normalize() ) ) / Math.PI );
-
-		}
-
-		this.frameCount = time + 1;
-		this.frames = this.frameCount;
-
-		controls.enabled = ! this.moveRequired;
-
-		this.animate();
+		time = Math.round( time * Math.acos( v1.normalize().dot( v2.normalize() ) ) / Math.PI );
 
 	}
+
+	this.frameCount = time + 1;
+	this.frames = this.frameCount;
+
+	controls.enabled = false;
+
+	this.running = true;
+
+	this.animationFunction = this.animateMove;
+
+	this.animate();
 
 };
 
 CameraMove.prototype.animate = function () {
 
-	const tRemaining = --this.frameCount;
 	const controls = this.controls;
-	const curve = this.curve;
 
-	if ( tRemaining < 0 ) {
-
-		this.frameCount = 0;
-		this.endAnimation();
-
-		return;
-
-	}
-
-	if ( this.moveRequired ) {
-
-		// update camera position
-
-		const camera = controls.object;
-
-		const t = Math.sin( ( 1 - tRemaining / this.frames ) * Math.PI / 2 );
-
-		if ( curve !== null ) camera.position.copy( this.curve.getPoint( t ) );
-
-		camera.zoom = camera.zoom + ( this.targetZoom - camera.zoom ) * t;
-
-		camera.quaternion.slerp( this.endQuaternion, t );
-
-		camera.updateProjectionMatrix();
-		camera.updateMatrixWorld();
-
-	} else {
+	if ( controls.autoRotate ) {
 
 		controls.update();
 
+	} else if ( this.animationFunction ) {
+
+		this.animationFunction();
+
+		if ( --this.frameCount === 0 ) {
+
+			this.animationFunction = null;
+			this.endAnimation();
+
+		}
+
 	}
 
-	if ( tRemaining === 0 ) {
+	if ( this.running ) requestAnimationFrame( this.doAnimate );
 
-		// end of animation
+};
 
-		this.endAnimation();
+CameraMove.prototype.animateMove = function () {
 
-		return;
+	const tRemaining = this.frameCount - 1;
+	const curve = this.curve;
 
-	}
+	// update camera position
 
-	requestAnimationFrame( this.doAnimate );
+	const camera = this.controls.object;
+
+	const t = Math.sin( ( 1 - tRemaining / this.frames ) * Math.PI / 2 );
+
+	if ( curve !== null ) camera.position.copy( this.curve.getPoint( t ) );
+
+	camera.zoom = camera.zoom + ( this.targetZoom - camera.zoom ) * t;
+
+	camera.quaternion.slerp( this.endQuaternion, t );
+
+	camera.updateProjectionMatrix();
+	camera.updateMatrixWorld();
 
 	this.renderFunction();
 
 };
 
+
 CameraMove.prototype.endAnimation = function () {
 
 	const controls = this.controls;
-
-	this.controls.enabled = true;
-	this.moveRequired = false;
 
 	if ( this.endPOI !== null ) controls.target.copy( this.endPOI );
 
 	this.cameraTarget = null;
 	this.endPOI = null;
 	this.curve = null;
+	this.running = false;
 
-	this.controls.update();
+	controls.update();
+	controls.enabled = true;
 
-	this.renderFunction();
 	this.endCallback();
-
-};
-
-CameraMove.prototype.stop = function () {
-
-	this.frameCount = 1;
 
 };
 
@@ -266,7 +256,87 @@ CameraMove.prototype.cancel = function () {
 
 	this.frameCount = 0;
 	this.skipNext = false;
+	this.running = false;
 
 };
+
+CameraMove.prototype.setAzimuthAngle = function ( targetAngle ) {
+
+	if ( this.running ) return;
+
+	const controls = this.controls;
+
+	if ( controls.autoRotate || this.frameCount !== 0 ) return;
+
+	var delta = ( controls.getAzimuthalAngle() - targetAngle );
+	var deltaSize = Math.abs( delta );
+
+	if ( deltaSize > Math.PI ) delta =  2 * Math.PI - deltaSize;
+
+	this.frameCount = Math.round( Math.abs( delta ) * 90 / Math.PI );
+
+	if ( this.frameCount === 0 ) return;
+
+	this.delta = delta / this.frameCount;
+
+	this.running = true;
+	this.animationFunction = this.animateAzimuthMove;
+
+	this.animate();
+
+};
+
+CameraMove.prototype.animateAzimuthMove = function () {
+
+	this.controls.rotateLeft( this.delta );
+
+};
+
+CameraMove.prototype.setPolarAngle = function ( targetAngle ) {
+
+	if ( this.running ) return;
+
+	const controls = this.controls;
+
+	var delta = ( controls.getPolarAngle() - targetAngle );
+
+	this.frameCount = Math.round( Math.abs( delta * 90 / Math.PI ) );
+	this.delta = delta / this.frameCount;
+
+	if ( this.frameCount === 0 ) return;
+
+	this.running = true;
+	this.animationFunction = this.animatePolarMove;
+
+	this.animate();
+
+};
+
+CameraMove.prototype.animatePolarMove = function () {
+
+	this.controls.rotateUp( this.delta );
+
+};
+
+CameraMove.prototype.setAutoRotate = function ( state ) {
+
+	if ( state ) {
+
+		if ( this.running ) return;
+
+		this.controls.autoRotate = true;
+		this.running = true;
+
+		this.animate();
+
+	} else {
+
+		this.controls.autoRotate = false;
+		this.running = false;
+
+	}
+
+};
+
 
 export { CameraMove };

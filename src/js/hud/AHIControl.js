@@ -1,8 +1,4 @@
 
-import {
-	VIEW_PLAN
-} from '../core/constants';
-
 import { HudObject } from './HudObject';
 
 function AHIControl( viewer ) {

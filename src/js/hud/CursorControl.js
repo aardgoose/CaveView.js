@@ -37,7 +37,6 @@ function CursorControl( viewer, cursorScale ) {
 		barTop = bc.top + hr.offsetTop;
 
 		hr.style.cursor = 'pointer';
-		// hr.style.height = cursorScale.barHeight + 'px';
 
 	}
 
@@ -46,7 +45,17 @@ function CursorControl( viewer, cursorScale ) {
 		const heightFraction =  ( cursorScale.barHeight - clientY + barTop ) / cursorScale.barHeight;
 		const range = viewer.maxHeight - viewer.minHeight;
 
-		viewer.cursorHeight = range * heightFraction - range / 2;
+		// handle direction of scale and range
+
+		if ( viewer.shadingMode === SHADING_DEPTH_CURSOR ) {
+
+			viewer.cursorHeight = range - range * heightFraction;
+
+		} else {
+
+			viewer.cursorHeight = range * heightFraction - range / 2;
+
+		}
 
 	}
 
@@ -96,7 +105,7 @@ function CursorControl( viewer, cursorScale ) {
 
 CursorControl.prototype.dispose = function () {
 
-	var hr = this.hr;
+	const hr = this.hr;
 	hr.parentNode.removeChild( hr );
 
 };

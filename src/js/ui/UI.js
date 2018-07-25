@@ -29,6 +29,7 @@ var loadedFile;
 
 var terrainControls = [];
 var routeControls = [];
+var avenControls;
 
 const legShadingModes = {
 	'shading.height':        SHADING_HEIGHT,
@@ -97,6 +98,8 @@ function init ( domID, configuration ) { // public method
 
 	// make sure we get new language strings if slow loading
 	Cfg.addEventListener( 'change', refresh );
+
+	avenControls = Cfg.value( 'avenControls', false );
 
 }
 
@@ -775,7 +778,293 @@ function toggleFullScreen() {
 
 function keyDown ( event ) {
 
-	if ( ! isCaveLoaded || event.ctrlKey ) return;
+	if ( ! isCaveLoaded ) return;
+
+	if ( handleKeyCommon( event ) ) return;
+
+	if ( avenControls ) {
+
+		handleKeyAven( event );
+
+	} else {
+
+		handleKeyDefault( event );
+
+	}
+
+}
+
+function handleKeyAven( event ) {
+
+	if ( event.ctrlKey ) {
+
+		switch ( event.keyCode ) {
+
+		case 66: // '<ctrl>B'
+
+			Viewer.box = ! Viewer.box;
+
+			break;
+
+		case 70: // '<ctrl>F'
+
+			event.preventDefault();
+			if ( Viewer.hasSurfaceLegs ) Viewer.surfaceLegs = ! Viewer.surfaceLegs;
+
+			break;
+
+		case 76: // '<ctrl>L'
+
+			event.preventDefault();
+			if ( Viewer.hasLegs ) Viewer.legs = ! Viewer.legs;
+
+			break;
+
+		case 78: // '<ctrl>N' (not available in Chrome)
+
+			event.preventDefault();
+			if ( Viewer.hasStationLabels ) Viewer.stationLabels = ! Viewer.stationLabels;
+
+			break;
+
+		case 88: // '<ctrl>X'
+
+			Viewer.stations = ! Viewer.stations;
+			break;
+
+		}
+
+	} else {
+
+		switch ( event.keyCode ) {
+
+		case 46: // '<delete>' reset view
+
+			Viewer.autoRotate = false;
+			Viewer.view = VIEW_PLAN;
+
+			break;
+
+		case 13:
+
+			Viewer.autoRotate = true;
+
+			break;
+
+		case 32:
+
+			Viewer.autoRotate = ! Viewer.autoRotate;
+
+			break;
+
+		case 76: // 'L' - plan
+
+			Viewer.polarAngle = Math.PI / 2;
+
+			break;
+
+		case 69: // 'E' - East
+
+			Viewer.azimuthAngle = 3 * Math.PI / 2;
+
+			break;
+
+		case 78: // 'N' - North
+
+			Viewer.azimuthAngle = 0;
+
+			break;
+
+		case 80: // 'P' - plan
+
+			Viewer.polarAngle = 0;
+
+			break;
+
+		case 82: // 'R' - reverse rotation direction
+
+			Viewer.autoRotateSpeed *= -1;
+
+			break;
+
+		case 83: // 'S' - South
+
+			Viewer.azimuthAngle = Math.PI;
+
+			break;
+
+		case 87: // 'W' - West
+
+			Viewer.azimuthAngle = Math.PI / 2;
+
+			break;
+
+		case 88: // 'X' - decrease rotation speed
+
+			Viewer.autoRotateSpeed -= 0.1;
+
+			break;
+
+		case 90: // 'Z' - increase rotation speed
+
+			Viewer.autoRotateSpeed += 0.1;
+
+			break;
+
+		default:
+
+			console.log( 'unused', event.keyCode );
+
+			break;
+
+		}
+
+	}
+
+}
+
+function handleKeyDefault( event ) {
+
+	if ( event.ctrlKey ) return;
+
+	switch ( event.keyCode ) {
+
+	case 65: // toggle alpha wall visibility - 'a'
+
+		if ( Viewer.hasAlpha ) Viewer.alpha = ! Viewer.alpha;
+
+		break;
+
+	case 67: // toggle scraps visibility - 'c'
+
+		if ( Viewer.hasScraps ) Viewer.scraps = ! Viewer.scraps;
+
+		break;
+
+	case 68: // toggle dye traces visibility - 'd'
+
+		if ( Viewer.hasTraces ) Viewer.traces = ! Viewer.traces;
+
+		break;
+
+	case 70: // toggle full screen - 'f'
+
+		toggleFullScreen();
+
+		break;
+
+	case 74: // toggle entrance labels - 'j'
+
+		if ( Viewer.hasStationLabels ) Viewer.stationLabels = ! Viewer.stationLabels;
+
+		break;
+
+	case 76: // toggle entrance labels - 'l'
+
+		if ( Viewer.hasEntrances ) Viewer.entrances = ! Viewer.entrances;
+
+		break;
+
+	case 78: // load next cave in list - 'n'
+
+		nextCave();
+
+		break;
+
+	case 79: // switch view to orthoganal - 'o'
+
+		Viewer.cameraType = CAMERA_ORTHOGRAPHIC;
+
+		break;
+
+	case 80: // switch view to perspective -'p'
+
+		Viewer.cameraType = CAMERA_PERSPECTIVE;
+
+		break;
+
+	case 81: // switch view to perspective -'q'
+
+		if ( Viewer.hasSplays ) Viewer.splays = ! Viewer.splays;
+
+		break;
+
+	case 82: // reset camera positions and settings to initial plan view -'r'
+
+		Viewer.view = VIEW_PLAN;
+
+		break;
+
+	case 83: // surface leg visibility - 's'
+
+		if ( Viewer.hasSurfaceLegs ) Viewer.surfaceLegs = ! Viewer.surfaceLegs;
+
+		break;
+
+	case 84: // switch terrain on/off - 't'
+
+		if ( Viewer.hasTerrain ) Viewer.terrain = ! Viewer.terrain;
+
+		break;
+
+	case 86: // cut selected survey section - 'v'
+
+		resetUI();
+		Viewer.cut = true;
+
+		break;
+
+	case 87: // switch walls on/off - 'w'
+
+		if ( Viewer.hasWalls ) Viewer.walls = ! Viewer.walls;
+
+		break;
+
+	case 88: // look ast last POI - 'x'
+
+		Viewer.setPOI = true; // actual value here is ignored.
+
+		break;
+
+	case 90: // show station markers - 'z'
+
+		Viewer.stations = ! Viewer.stations;
+
+		break;
+
+	case 219: // '[' key
+
+		Viewer.cursorHeight++;
+
+		break;
+
+	case 221: // ']' key
+
+		Viewer.cursorHeight--;
+
+		break;
+
+	case 188: // decrease terrain opacity '<' key
+
+		if ( Viewer.hasTerrain ) Viewer.terrainOpacity = Math.max( Viewer.terrainOpacity - 0.05, 0 );
+
+		break;
+
+	case 190: // increase terrain opacity '>' key
+
+		if ( Viewer.hasTerrain ) Viewer.terrainOpacity = Math.min( Viewer.terrainOpacity + 0.05, 1 );
+
+		break;
+
+	}
+
+}
+
+function handleKeyCommon( event ) {
+
+	if ( event.ctrlKey ) return false;
+
+	var handled = true;
 
 	switch ( event.keyCode ) {
 
@@ -845,18 +1134,6 @@ function keyDown ( event ) {
 
 		break;
 
-	case 67: // toggle scraps visibility - 'c'
-
-		if ( Viewer.hasScraps ) Viewer.scraps = ! Viewer.scraps;
-
-		break;
-
-	case 68: // toggle dye traces visibility - 'd'
-
-		if ( Viewer.hasTraces ) Viewer.traces = ! Viewer.traces;
-
-		break;
-
 	case 70: // toggle full screen - 'f'
 
 		toggleFullScreen();
@@ -869,27 +1146,9 @@ function keyDown ( event ) {
 
 		break;
 
-	case 76: // toggle entrance labels - 'l'
-
-		if ( Viewer.hasEntrances ) Viewer.entrances = ! Viewer.entrances;
-
-		break;
-
-	case 78: // load next cave in list - 'n'
-
-		nextCave();
-
-		break;
-
 	case 79: // switch view to orthoganal - 'o'
 
 		Viewer.cameraType = CAMERA_ORTHOGRAPHIC;
-
-		break;
-
-	case 80: // switch view to perspective -'p'
-
-		Viewer.cameraType = CAMERA_PERSPECTIVE;
 
 		break;
 
@@ -899,58 +1158,19 @@ function keyDown ( event ) {
 
 		break;
 
-	case 82: // reset camera positions and settings to initial plan view -'r'
-
-		Viewer.view = VIEW_PLAN;
-
-		break;
-
-	case 83: // switch view to perspective - 's'
-
-		if ( Viewer.hasSurfaceLegs ) Viewer.surfaceLegs = ! Viewer.surfaceLegs;
-
-		break;
-
 	case 84: // switch terrain on/off - 't'
 
 		if ( Viewer.hasTerrain ) Viewer.terrain = ! Viewer.terrain;
 
 		break;
 
-	case 86: // cut selected survey section - 'v'
-
-		resetUI();
-		Viewer.cut = true;
-
-		break;
-
-	case 87: // switch walls on/off - 'w'
-
-		if ( Viewer.hasWalls ) Viewer.walls = ! Viewer.walls;
-
-		break;
-
-	case 88: // look ast last POI - 'x'
-
-		Viewer.setPOI = true; // actual value here is ignored.
-
-		break;
-
-	case 90: // show station markers - 'z'
-
-		Viewer.stations = ! Viewer.stations;
-
-		break;
-
 	case 107: // increase cursor depth - '+' (keypad)
-	case 219: // '[' key
 
 		Viewer.cursorHeight++;
 
 		break;
 
 	case 109: // decrease cursor depth - '-' (keypad)
-	case 221: // ']' key
 
 		Viewer.cursorHeight--;
 
@@ -968,7 +1188,13 @@ function keyDown ( event ) {
 
 		break;
 
+	default:
+
+		handled = false;
+
 	}
+
+	return handled;
 
 }
 

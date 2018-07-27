@@ -3,10 +3,10 @@
  * @author Angus Sawyer
  */
 
-import { BufferGeometry } from '../../../node_modules/three/src/core/BufferGeometry';
-import { Float32BufferAttribute } from '../../../node_modules/three/src/core/BufferAttribute';
-import { Vector3 } from '../../../node_modules/three/src/math/Vector3';
-import { Quaternion } from '../../../node_modules/three/src/math/Quaternion';
+import { BufferGeometry } from 'three/src/core/BufferGeometry';
+import { Float32BufferAttribute } from 'three/src/core/BufferAttribute';
+import { Vector3 } from 'three/src/math/Vector3';
+import { Quaternion } from 'three/src/math/Quaternion';
 
 function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, clip ) {
 

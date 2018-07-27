@@ -7,10 +7,10 @@
  * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
  */
 
-import { BufferGeometry } from '../../../node_modules/three/src/core/BufferGeometry';
-import { Float32BufferAttribute } from '../../../node_modules/three/src/core/BufferAttribute';
-import { Vector3 } from '../../../node_modules/three/src/math/Vector3';
-import { Box3 } from '../../../node_modules/three/src/math/Box3';
+import { BufferGeometry } from 'three/src/core/BufferGeometry';
+import { Float32BufferAttribute } from 'three/src/core/BufferAttribute';
+import { Vector3 } from 'three/src/math/Vector3';
+import { Box3 } from 'three/src/math/Box3';
 
 function TerrainTileGeometry( width, height, widthSegments, heightSegments, terrainData, scale, clip, offsets ) {
 

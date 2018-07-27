@@ -1,9 +1,9 @@
 
-import '../../../node_modules/three/src/polyfills';
+import 'three/src/polyfills';
 import { TerrainMeshLoader } from '../loaders/TerrainMeshLoader';
 import { TerrainMeshGeometry } from '../terrain/TerrainMeshGeometry';
-import { Box2 } from '../../../node_modules/three/src/math/Box2';
-import { Vector3 } from '../../../node_modules/three/src/math/Vector3';
+import { Box2 } from 'three/src/math/Box2';
+import { Vector3 } from 'three/src/math/Vector3';
 import proj4 from 'proj4';
 
 var tileSpec;

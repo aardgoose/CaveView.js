@@ -367,7 +367,7 @@ function init ( domID, configuration ) { // public method
 		'autoRotateSpeed': {
 			writeable: true,
 			get: function () { return controls.autoRotateSpeed / 11; },
-			set: function ( x ) { controls.autoRotateSpeed = x * 11; }
+			set: setAutoRotateSpeed
 		},
 
 		'fullscreen': {
@@ -542,6 +542,14 @@ function setAutoRotate ( state ) {
 	cameraMove.setAutoRotate( state );
 
 	Viewer.dispatchEvent( { type: 'change', name: 'autoRotate' } );
+
+}
+
+function setAutoRotateSpeed ( speed ) {
+
+	controls.autoRotateSpeed = Math.max( Math.min( speed, 1.0 ), 0.0 ) * 11;
+
+	Viewer.dispatchEvent( { type: 'change', name: 'autoRotateSpeed' } );
 
 }
 

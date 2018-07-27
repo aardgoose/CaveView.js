@@ -454,14 +454,13 @@ Page.prototype.addRange = function ( title, obj, property ) {
 
 };
 
-Page.prototype.addSlide = function ( domElement, depth, handleClick ) {
+Page.prototype.addSlide = function ( domElement, depth ) {
 
 	const slide = document.createElement( 'div' );
 
 	slide.classList.add( 'slide' );
 	slide.style.zIndex = 200 - depth;
 
-	slide.addEventListener( 'click', handleClick );
 	slide.appendChild( domElement );
 
 	this.page.appendChild( slide );
@@ -473,7 +472,7 @@ Page.prototype.addSlide = function ( domElement, depth, handleClick ) {
 
 };
 
-Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
+Page.prototype.replaceSlide = function ( domElement, depth ) {
 
 	const newSlide = document.createElement( 'div' );
 	const oldSlide = this.slide;
@@ -483,7 +482,6 @@ Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 
 	newSlide.classList.add( 'slide' );
 	newSlide.style.zIndex = 200 - depth;
-	newSlide.addEventListener( 'click', handleClick );
 
 	if ( depth < this.slideDepth ) {
 
@@ -519,7 +517,7 @@ Page.prototype.replaceSlide = function ( domElement, depth, handleClick ) {
 	this.slide = newSlide;
 	this.slideDepth = depth;
 
-	return;
+	return newSlide;
 
 	function afterSlideOut () {
 

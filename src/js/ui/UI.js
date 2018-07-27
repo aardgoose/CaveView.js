@@ -174,7 +174,10 @@ function initSelectionPage () {
 
 	page.appendChild( titleBar );
 
-	page.addSlide( _displayPanel( currentTop ), depth, _handleSelectSurvey );
+	const slide = page.addSlide( _displayPanel( currentTop ), depth );
+
+	slide.addEventListener( 'click', _handleSelectSurveyClick );
+	slide.addEventListener( 'dblclick', _handleSelectSurveyDblClick );
 
 	var redraw = container.clientHeight; // eslint-disable-line no-unused-vars
 
@@ -188,9 +191,18 @@ function initSelectionPage () {
 
 		if ( event.name === 'section' || event.name === 'shadingMode' || event.name === 'splays' ) {
 
-			page.replaceSlide( _displayPanel( currentTop ), depth, _handleSelectSurvey );
+			_replaceSlide( _displayPanel( currentTop ), depth );
 
 		}
+
+	}
+
+	function _replaceSlide ( content, depth ) {
+
+		const slide = page.replaceSlide( content, depth );
+
+		slide.addEventListener( 'click', _handleSelectSurveyClick );
+		slide.addEventListener( 'dblclick', _handleSelectSurveyDblClick );
 
 	}
 
@@ -356,7 +368,7 @@ function initSelectionPage () {
 
 		if ( currentTop === surveyTree ) return;
 
-		page.replaceSlide( _displayPanel( currentTop.parent ), --depth, _handleSelectSurvey );
+		_replaceSlide( _displayPanel( currentTop.parent ), --depth );
 
 	}
 
@@ -366,7 +378,7 @@ function initSelectionPage () {
 
 	}
 
-	function _handleSelectSurvey ( event ) {
+	function _handleSelectSurveyClick ( event ) {
 
 		const target = event.target;
 		const id = Number( target.id.split( 'v' )[ 1 ] );
@@ -377,16 +389,37 @@ function initSelectionPage () {
 
 		case 'LI':
 
-			Viewer.section = ( Viewer.section !== id ) ? id : 0;
+		// Viewer.section = ( Viewer.section !== id ) ? id : 0;
+			Viewer.section = id;
 			Viewer.setPOI = true;
 
 			break;
 
 		case 'DIV':
 
-			if ( id ) page.replaceSlide( _displayPanel( currentTop.findById( id ) ), ++depth, _handleSelectSurvey );
+			if ( id ) {
+
+				_replaceSlide( _displayPanel( currentTop.findById( id ) ), ++depth );
+
+			}
 
 			break;
+
+		}
+
+	}
+
+	function _handleSelectSurveyDblClick ( event ) {
+
+		const target = event.target;
+		const id = Number( target.id.split( 'v' )[ 1 ] );
+
+		event.stopPropagation();
+
+		if ( id !== 0 ) {
+
+			Viewer.cut = true;
+			resetUI();
 
 		}
 

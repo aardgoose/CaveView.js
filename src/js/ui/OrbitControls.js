@@ -639,7 +639,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 			if ( ! svxMode ) break;
 
-			rotateLeft( SVX_DELTA );
+			rotateLeft( - SVX_DELTA );
 			scope.update();
 			break;
 
@@ -653,7 +653,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 		case 86: // 'V'
 
 			if ( ! svxMode ) break;
-			rotateLeft( -SVX_DELTA );
+			rotateLeft( SVX_DELTA );
 			scope.update();
 			break;
 

@@ -515,8 +515,12 @@ function initHelpPage () {
 	_addKey( '9', 'shading.depth_cursor' );
 	_addKey( '0', 'shading.distance' );
 
-	_addKey( '[', 'shading.cursor_up' );
-	_addKey( ']', 'shading.cursor_down' );
+	if ( ! avenControls ) {
+
+		_addKey( '[', 'shading.cursor_up' );
+		_addKey( ']', 'shading.cursor_down' );
+
+	}
 
 	help.appendChild( dl );
 
@@ -524,13 +528,49 @@ function initHelpPage () {
 
 	dl = document.createElement( 'dl' );
 
-	_addKey( 'F', 'view.full_screen' );
-	_addKey( 'O', 'view.orthogonal' );
-	_addKey( 'P', 'view.perspective' );
-	_addKey( 'R', 'view.reset' );
-	_addKey( '.', 'view.center' );
+	if ( avenControls ) {
 
-	if ( caveList.length > 0 ) _addKey( 'n', 'view.next' );
+		_addKey( 'P', 'view.plan' );
+		_addKey( 'L', 'view.elevation' );
+
+		_addKey( '', '-' );
+
+		_addKey( 'N', 'view.north' );
+		_addKey( 'E', 'view.east' );
+		_addKey( 'S', 'view.south' );
+		_addKey( 'W', 'view.west' );
+
+		_addKey( '', '-' );
+
+		_addKey( 'C', 'view.rotate_clockwise' );
+		_addKey( 'V', 'view.rotate_anticlockwise' );
+
+		_addKey( ']', 'view.zoom_in' );
+		_addKey( '[', 'view.zoom_out' );
+
+		_addKey( 'F', 'view.full_screen' );
+
+		_addKey( '', '-' );
+
+		_addKey( '" "', 'view.auto_rotate' );
+		_addKey( 'Z', 'view.rotate_speed_up', avenControls );
+		_addKey( 'V', 'view.rotate_speed_down', avenControls );
+		_addKey( 'R', 'view.reverse_rotation', avenControls );
+
+		_addKey( '', '-', avenControls );
+
+		_addKey( '<del>', 'view.reset', avenControls );
+
+	} else {
+
+		_addKey( 'F', 'view.full_screen' );
+		_addKey( 'O', 'view.orthogonal' );
+		_addKey( 'P', 'view.perspective' );
+		_addKey( 'R', 'view.reset' );
+		_addKey( '.', 'view.center' );
+		_addKey( 'N', 'view.next' );
+
+	}
 
 	help.appendChild( dl );
 
@@ -538,29 +578,53 @@ function initHelpPage () {
 
 	dl = document.createElement( 'dl' );
 
-	_addKey( 'C', 'visibility.scraps' );
-	_addKey( 'J', 'visibility.station_labels' );
-	_addKey( 'L', 'visibility.entrance_labels' );
-	_addKey( 'Q', 'visibility.splays' );
-	_addKey( 'S', 'visibility.surface' );
-	_addKey( 'T', 'visibility.terrain' );
-	_addKey( 'W', 'visibility.walls' );
-	_addKey( 'Z', 'visibility.stations' );
+	if ( avenControls ) {
 
-	_addKey( '', '-' );
+		_addKey( 'J', 'visibility.station_labels' );
+		_addKey( 'Q', 'visibility.splays' );
+		_addKey( 'T', 'visibility.terrain' );
+		_addKey( '<ctrl>N', 'visibility.station_labels' );
+		_addKey( '<ctrl>X', 'visibility.stations' );
+		_addKey( '<ctrl>L', 'visibility.survey' );
+		_addKey( '<ctrl>F', 'visibility.surface' );
 
-	_addKey( '<', 'visibility.opacity_down' );
-	_addKey( '>', 'visibility.opacity_up' );
+		_addKey( '', '-' );
+
+		_addKey( '<', 'visibility.opacity_down' );
+		_addKey( '>', 'visibility.opacity_up' );
+
+	} else {
+
+		_addKey( 'C', 'visibility.scraps' );
+		_addKey( 'J', 'visibility.station_labels' );
+		_addKey( 'L', 'visibility.entrance_labels' );
+		_addKey( 'Q', 'visibility.splays' );
+		_addKey( 'S', 'visibility.surface' );
+		_addKey( 'T', 'visibility.terrain' );
+		_addKey( 'W', 'visibility.walls' );
+		_addKey( 'Z', 'visibility.stations' );
+
+		_addKey( '', '-' );
+
+		_addKey( '<', 'visibility.opacity_down' );
+		_addKey( '>', 'visibility.opacity_up' );
+
+	}
 
 	help.appendChild( dl );
 
-	help.addHeader( 'selection.header' );
+	if ( ! avenControls ) {
 
-	dl = document.createElement( 'dl' );
 
-	_addKey( 'V', 'selection.remove' );
+		help.addHeader( 'selection.header' );
 
-	help.appendChild( dl );
+		dl = document.createElement( 'dl' );
+
+		_addKey( 'V', 'selection.remove' );
+
+		help.appendChild( dl );
+
+	}
 
 	function _addKey( key, description ) {
 

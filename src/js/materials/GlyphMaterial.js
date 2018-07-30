@@ -29,7 +29,7 @@ function GlyphMaterial ( glyphAtlasSpec, rotation, viewer ) {
 		}, MaterialFog.uniforms ),
 	} );
 
-	this.alphaTest = 0.8;
+	this.alphaTest = 0.9;
 	this.depthTest = false;
 	this.transparent = true;
 
@@ -45,6 +45,7 @@ function GlyphMaterial ( glyphAtlasSpec, rotation, viewer ) {
 
 		self.uniforms.scale.value = container.clientHeight / container.clientWidth;
 		self.scaleFactor = container.clientHeight * self.atlas.getCellScale() / 2;
+		console.log( self.uniforms.scale.value, self.id );
 
 	}
 

@@ -42,7 +42,7 @@
 		"visibility": {
 			"header": "Visibility",
 			"entrances": "Entrances",
-			"stations ": "Stations",
+			"stations": "Stations",
 			"labels": "Station Labels",
 			"walls": "Walls (LRUD)",
 			"scraps": "Scraps",

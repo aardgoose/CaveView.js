@@ -12,18 +12,15 @@ function ExtendedPointsMaterial () {
 	this.opacity = 1.0;
 	this.alphaTest = 0.8;
 
-	this.size = 1;
-	this.scale = 1;
-	this.sizeAttenuation = true;
-	this.transparent = true;
+	this.sizeAttenuation = false;
+	this.transparent = true; // to ensure points rendered over lines.
 	this.vertexColors = VertexColors;
 
 	this.onBeforeCompile = function ( shader ) {
 
 		var vertexShader = shader.vertexShader
 			.replace( '#include <common>', '\nattribute float pSize;\n\n$&' )
-			.replace( '\t\tgl_PointSize = size;', '\t\tgl_PointSize = pSize;' )
-			.replace( '\t\tgl_PointSize = size * ( scale / - mvPosition.z );', '\t\tgl_PointSize = pSize * ( scale / - mvPosition.z );' );
+			.replace( '\t\tgl_PointSize = size;', '\t\tgl_PointSize = pSize;' );
 
 		shader.vertexShader = vertexShader;
 

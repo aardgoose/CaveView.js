@@ -8,7 +8,7 @@ import { Walls } from './Walls';
 import { Vector3 } from '../../Three';
 
 
-function buildCrossSections ( cave, survey, alphaWalls ) {
+function buildCrossSections ( cave, survey ) {
 
 	const crossSectionGroups = cave.crossSections;
 	const mesh = survey.getFeature( FACE_WALLS, Walls );
@@ -212,9 +212,6 @@ function buildCrossSections ( cave, survey, alphaWalls ) {
 
 	survey.addFeature( mesh, FACE_WALLS, 'CV.Survey:faces:walls' );
 
-	// save vertices for alphaWall construction
-	if ( alphaWalls ) mesh.vertices = vertices;
-
 	return;
 
 	function _endCap() {
@@ -320,8 +317,6 @@ function buildCrossSections ( cave, survey, alphaWalls ) {
 			console.error( 'unsupported lrud shape', crossSection.type );
 
 		}
-
-		if ( alphaWalls ) station.lrudInfo = { start: vertexStart, count: vertexCount };
 
 		return vertexCount;
 

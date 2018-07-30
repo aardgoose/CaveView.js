@@ -34,7 +34,6 @@
   },
   "homepage": "https://github.com/aardgoose/CaveView.js#readme",
   "devDependencies": {
-    "alpha-shape": "^1.0.0",
     "eslint": "^4.19.1",
     "http-server": "^0.10.0",
     "proj4": "^2.4.4",

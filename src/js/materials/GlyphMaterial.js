@@ -35,17 +35,16 @@ function GlyphMaterial ( glyphAtlasSpec, rotation, viewer ) {
 
 	this.type = 'CV.GlyphMaterial';
 	this.atlas = glyphAtlas;
+	this.scaleFactor = container.clientHeight * cellScale / 2;
 
 	viewer.addEventListener( 'resized', _resize );
-
-	this.scaleFactor = container.clientHeight * this.atlas.getCellScale() / 2 ;
 
 	return this;
 
 	function _resize() {
 
 		self.uniforms.scale.value = container.clientHeight / container.clientWidth;
-		self.scaleFactor = container.clientHeight * self.atlas.getCellScale() / 2 ;
+		self.scaleFactor = container.clientHeight * self.atlas.getCellScale() / 2;
 
 	}
 

@@ -99,7 +99,7 @@ function init ( domID, configuration ) { // public method
 	// make sure we get new language strings if slow loading
 	Cfg.addEventListener( 'change', refresh );
 
-	avenControls = Cfg.value( 'avenControls', false );
+	avenControls = Cfg.value( 'avenControls', true );
 
 }
 

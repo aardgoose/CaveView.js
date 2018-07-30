@@ -180,7 +180,7 @@ function init ( domID, configuration ) { // public method
 
 	container.appendChild( renderer.domElement );
 
-	controls = new OrbitControls( camera, renderer.domElement, Cfg.value( 'avenControls', false ) );
+	controls = new OrbitControls( camera, renderer.domElement, Cfg.value( 'avenControls', true ) );
 
 	cameraMove = new CameraMove( controls, cameraMoved, onCameraMoveEnd );
 

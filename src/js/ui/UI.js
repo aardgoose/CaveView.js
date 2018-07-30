@@ -615,7 +615,6 @@ function initHelpPage () {
 
 	if ( ! avenControls ) {
 
-
 		help.addHeader( 'selection.header' );
 
 		dl = document.createElement( 'dl' );

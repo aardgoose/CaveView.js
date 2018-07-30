@@ -705,7 +705,6 @@ function initSettingsPage () {
 	if ( Viewer.hasStationLabels ) page.addCheckbox( 'visibility.labels', Viewer, 'stationLabels' );
 	if ( Viewer.hasSplays        ) page.addCheckbox( 'visibility.splays', Viewer, 'splays' );
 	if ( Viewer.hasWalls         ) page.addCheckbox( 'visibility.walls', Viewer, 'walls' );
-	if ( Viewer.hasAlpha         ) page.addCheckbox( 'visibility.alpha', Viewer, 'alpha' );
 	if ( Viewer.hasScraps        ) page.addCheckbox( 'visibility.scraps', Viewer, 'scraps' );
 	if ( Viewer.hasTraces        ) page.addCheckbox( 'visibility.traces', Viewer, 'traces' );
 
@@ -1025,12 +1024,6 @@ function handleKeyDefault( event ) {
 
 	switch ( event.keyCode ) {
 
-	case 65: // toggle alpha wall visibility - 'a'
-
-		if ( Viewer.hasAlpha ) Viewer.alpha = ! Viewer.alpha;
-
-		break;
-
 	case 67: // toggle scraps visibility - 'c'
 
 		if ( Viewer.hasScraps ) Viewer.scraps = ! Viewer.scraps;
@@ -1221,12 +1214,6 @@ function handleKeyCommon( event ) {
 	case 57: // change colouring scheme to depth - '9'
 
 		Viewer.shadingMode = SHADING_DEPTH_CURSOR;
-
-		break;
-
-	case 65: // toggle alpha wall visibility - 'a'
-
-		if ( Viewer.hasAlpha ) Viewer.alpha = ! Viewer.alpha;
 
 		break;
 

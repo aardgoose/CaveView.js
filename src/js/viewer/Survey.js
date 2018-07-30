@@ -1,6 +1,6 @@
 
 import {
-	FACE_SCRAPS, FACE_WALLS, FACE_ALPHA,
+	FACE_SCRAPS, FACE_WALLS,
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES, FEATURE_STATIONS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
@@ -23,7 +23,7 @@ import { DyeTraces } from './DyeTraces';
 import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
-import { buildWallsSync, buildWallsAsync } from './walls/WallBuilders';
+import { buildWallsSync } from './walls/WallBuilders';
 
 import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
 import { StencilLib } from '../core/StencilLib';
@@ -404,12 +404,6 @@ Survey.prototype.loadCave = function ( cave ) {
 		return;
 
 	}
-
-};
-
-Survey.prototype.asyncTasks = function () {
-
-	buildWallsAsync( this );
 
 };
 
@@ -931,7 +925,6 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 		this.setWallShading( this.features[ FACE_WALLS  ], mode, material );
 		this.setWallShading( this.features[ FACE_SCRAPS ], mode, material );
-		this.setWallShading( this.features[ FACE_ALPHA ], mode, material );
 
 		return true;
 

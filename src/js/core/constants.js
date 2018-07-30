@@ -56,7 +56,6 @@ export const FEATURE_TRACES        = 9;
 
 export const FACE_WALLS            = 10;
 export const FACE_SCRAPS           = 11;
-export const FACE_ALPHA            = 13;
 
 export const WALL_OVAL             = 1; // based on Therion .lox types
 export const WALL_SQUARE           = 2;

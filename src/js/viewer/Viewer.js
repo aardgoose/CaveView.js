@@ -2,7 +2,7 @@
 import {
 	VERSION,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_OFFSET,
-	FACE_WALLS, FACE_SCRAPS, FACE_ALPHA, FEATURE_TRACES,
+	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_RELIEF, SHADING_PATH,
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
@@ -54,7 +54,6 @@ const defaultView = {
 	terrainDatumShift: true,
 	surfaceLegs: false,
 	walls: false,
-	alpha: false,
 	scraps: false,
 	splays: false,
 	stations: false,
@@ -395,7 +394,6 @@ function init ( domID, configuration ) { // public method
 	_conditionalLayer( FEATURE_TRACES,    'traces' );
 	_conditionalLayer( FACE_SCRAPS,       'scraps' );
 	_conditionalLayer( FACE_WALLS,        'walls' );
-	_conditionalLayer( FACE_ALPHA,        'alpha' );
 	_conditionalLayer( LEG_CAVE,          'legs' );
 	_conditionalLayer( LEG_SPLAY,         'splays' );
 	_conditionalLayer( LEG_SURFACE,       'surfaceLegs' );
@@ -1092,8 +1090,6 @@ function setupView ( final ) {
 		// signal any listeners that we have a new cave
 
 		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
-
-		survey.asyncTasks();
 
 	}
 

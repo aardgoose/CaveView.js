@@ -1500,10 +1500,6 @@ function setScale ( obj ) {
 
 	HUD.setScale( vScale );
 
-	// pass to survey to adjust size of symbology
-
-	obj.setScale( vScale );
-
 }
 
 function getLegStats ( type ) {

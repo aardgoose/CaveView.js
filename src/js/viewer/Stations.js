@@ -41,7 +41,6 @@ function Stations () {
 	const self = this;
 
 	Viewer.addEventListener( 'change', _viewChanged );
-	Viewer.addEventListener( 'camera', _cameraChanged );
 
 	this.addEventListener( 'removed', _removed );
 
@@ -56,7 +55,7 @@ function Stations () {
 
 		if ( event.name === 'splays' ) {
 
-			const splaySize = Viewer.splays ? 1.0 : 0.0;
+			const splaySize = Viewer.splays ? 6.0 : 0.0;
 
 			const stations = self.stations;
 			const pSize = self.geometry.getAttribute( 'pSize' );
@@ -76,28 +75,6 @@ function Stations () {
 
 			pSize.needsUpdate = true;
 			Viewer.renderView();
-
-		}
-
-	}
-
-	function _cameraChanged( event ) {
-
-		const material = self.material;
-
-		if ( event.name === 'orthographic' ) {
-
-			material.scale = 3;
-
-			material.sizeAttenuation = false;
-			material.needsUpdate = true;
-
-		} else {
-
-			material.scale = 1;
-
-			material.sizeAttenuation = true;
-			material.needsUpdate = true;
 
 		}
 
@@ -136,19 +113,11 @@ Stations.prototype.addStation = function ( node ) {
 
 	if ( node.type === STATION_ENTRANCE ) {
 
-		pointSize = 8.0;
+		pointSize = 12.0;
 
 	} else {
 
-		if ( connections > 2 ) {
-
-			pointSize = 4.0;
-
-		} else if ( connections > 0 ) {
-
-			pointSize = 2.0;
-
-		}
+		pointSize = 8.0;
 
 	}
 
@@ -252,17 +221,11 @@ Stations.prototype.finalise = function () {
 	bufferGeometry.addAttribute( 'position', positions.copyVector3sArray( this.vertices ) );
 	bufferGeometry.addAttribute( 'color', colors.copyColorsArray( this.colors ) );
 
+	bufferGeometry.getAttribute( 'position' ).onUpload( onUploadDropBuffer );
 	bufferGeometry.getAttribute( 'color' ).onUpload( onUploadDropBuffer );
 
 	this.pointSizes = null;
 	this.colors     = null;
-
-};
-
-Stations.prototype.setScale = function ( scale ) {
-
-	this.material.scale = scale;
-	this.material.needsUpdate = true;
 
 };
 

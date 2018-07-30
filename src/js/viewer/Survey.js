@@ -582,12 +582,6 @@ Survey.prototype.getRoutes = function () {
 
 };
 
-Survey.prototype.setScale = function ( scale ) {
-
-	this.stations.setScale( scale );
-
-};
-
 Survey.prototype.getWorldPosition = function ( position ) {
 
 	return new Vector3().copy( position ).applyMatrix4( this.matrixWorld );

@@ -3,7 +3,7 @@
 // popup shader
 
 uniform mat2 rotate;
-uniform float scale;
+uniform vec2 scale;
 
 varying vec2 vUv;
 varying vec3 vColor;
@@ -27,15 +27,11 @@ void main() {
 
 	// scale popup
 
-	newPosition.xy *= 0.25;
-
-	// correct for aspect ratio
-
-	newPosition.x *= scale;
+	newPosition *= scale;
 
 	// move to clip space
 
-	newPosition.xy *= offset.w;
+	newPosition *= offset.w;
 
 	gl_Position = vec4( newPosition, 0.0, 0.0 ) + offset;
 

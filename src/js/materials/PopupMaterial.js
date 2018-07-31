@@ -1,5 +1,5 @@
 
-import { ShaderMaterial } from '../Three';
+import { ShaderMaterial, Vector2 } from '../Three';
 import { Shaders } from '../shaders/Shaders';
 
 function PopupMaterial ( container, popupImage, rotation, colour ) {
@@ -9,7 +9,7 @@ function PopupMaterial ( container, popupImage, rotation, colour ) {
 
 	const canvas = popupImage.image;
 	const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
-	const scale = ( canvas.width * container.clientHeight ) / ( canvas.height * container.clientWidth );
+	const scale = new Vector2( canvas.width / container.clientWidth,  canvas.height / container.clientHeight );
 
 	colour = colour || [ 1, 1, 1 ];
 
@@ -20,7 +20,7 @@ function PopupMaterial ( container, popupImage, rotation, colour ) {
 		uniforms: {
 			rotate: { value: rotationMatrix },
 			popupImage: { value: popupImage },
-			scale: { value: scale }
+			scale: { value: scale },
 		},
 		defines: {
 			USE_COLOR: true

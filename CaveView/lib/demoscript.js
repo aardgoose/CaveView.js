@@ -248,19 +248,7 @@ const demoScript = [
 		}
 	},
 	{
-		caption: 'mouse with right button - rotate view point...',
-		delay: 2
-	},
-	{
-		caption: 'mouse with left button - pan view point...',
-		delay: 2
-	},
-	{
-		caption: 'mouse wheel to zoom...',
-		delay: 2
-	},
-	{
-		caption: '... have a go!',
+		caption: 'Try the full demo ->',
 		delay: 2
 	}
 ];

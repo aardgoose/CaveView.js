@@ -120,6 +120,7 @@ var renderRequired = false;
 var cameraMove;
 
 var lastActivityTime = 0;
+var timerId = null;
 
 var popup = null;
 
@@ -185,6 +186,7 @@ function init ( domID, configuration ) { // public method
 	cameraMove = new CameraMove( controls, cameraMoved, onCameraMoveEnd );
 
 	controls.addEventListener( 'change', cameraMoved );
+	controls.addEventListener( 'end', onCameraMoveEnd );
 
 	controls.maxPolarAngle = Cfg.themeAngle( 'maxPolarAngle' );
 
@@ -1032,8 +1034,6 @@ function clearView () {
 
 	// remove event listeners
 
-	unloadTerrainListeners();
-
 	container.removeEventListener( 'mousedown', mouseDown );
 
 	initCamera( pCamera );
@@ -1176,8 +1176,6 @@ function loadSurvey ( newSurvey ) {
 
 			survey.addStatic( terrain );
 
-			loadTerrainListeners();
-
 			renderDepthTexture();
 
 			setupView( true );
@@ -1200,16 +1198,6 @@ function loadTerrain ( mode ) {
 
 	if ( terrain !== null && terrain.isLoaded ) {
 
-		if ( mode ) {
-
-			loadTerrainListeners();
-
-		} else {
-
-			unloadTerrainListeners();
-
-		}
-
 		terrain.setVisibility( mode );
 
 		setCameraLayer( FEATURE_TERRAIN, mode );
@@ -1217,34 +1205,6 @@ function loadTerrain ( mode ) {
 		Viewer.dispatchEvent( { type: 'change', name: 'terrain' } );
 
 	}
-
-}
-
-function loadTerrainListeners () {
-
-	clockStart();
-
-	controls.addEventListener( 'end', clockStart );
-
-}
-
-function unloadTerrainListeners () {
-
-	controls.removeEventListener( 'end', clockStart );
-
-	clockStop();
-
-}
-
-function clockStart ( /* event */ ) {
-
-	lastActivityTime = performance.now();
-
-}
-
-function clockStop ( /* event */ ) {
-
-	lastActivityTime = 0;
 
 }
 
@@ -1435,23 +1395,32 @@ function renderView () {
 
 	HUD.renderHUD();
 
-	clockStart();
-
 }
 
 function onCameraMoveEnd () {
 
 	Viewer.dispatchEvent( { type: 'moved' } );
 
-	if ( terrain && terrain.isTiled && Viewer.terrain ) setTimeout( updateTerrain, RETILE_TIMEOUT );
+	if ( terrain && terrain.isTiled && Viewer.terrain ) {
+
+		// schedule a timeout to load replace discarded tiles or higher res tiles
+
+		if ( timerId !== null ) {
+
+			clearTimeout( timerId );
+
+		}
+
+		lastActivityTime = performance.now();
+		timerId = setTimeout( updateTerrain, RETILE_TIMEOUT );
+
+	}
 
 }
 
 function updateTerrain () {
 
-	if ( lastActivityTime && performance.now() - lastActivityTime > RETILE_TIMEOUT ) {
-
-		clockStop();
+	if ( performance.now() - lastActivityTime > RETILE_TIMEOUT ) {
 
 		if ( terrain.zoomCheck( camera ) ) {
 
@@ -1460,6 +1429,8 @@ function updateTerrain () {
 		}
 
 	}
+
+	timerId = null;
 
 }
 

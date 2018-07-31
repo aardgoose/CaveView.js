@@ -1,7 +1,7 @@
 
-import { Vector3 }  from '../../../node_modules/three/src/math/Vector3';
+import { Vector3 }  from 'three/src/math/Vector3';
 
-export const VERSION = '1.9.0test';
+export const VERSION = '1.9.0';
 
 export const MATERIAL_LINE       = 1;
 export const MATERIAL_SURFACE    = 2;

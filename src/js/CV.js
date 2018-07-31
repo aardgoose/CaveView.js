@@ -1,5 +1,5 @@
 import './core/polyfills';
-import '../../node_modules/three/src/polyfills';
+import 'three/src/polyfills';
 
 import { Cfg } from './core/lib';
 

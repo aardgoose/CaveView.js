@@ -190,8 +190,6 @@ function resize () {
 
 	newScales();
 
-	setVisibility ( isVisible ); // set correct visibility of elements
-
 }
 
 function renderHUD () {
@@ -264,6 +262,8 @@ function newScales () {
 	}
 
 	updateScaleBar( controls.object );
+
+	setVisibility( isVisible );
 
 }
 

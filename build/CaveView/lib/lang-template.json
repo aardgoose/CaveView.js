@@ -1,7 +1,7 @@
 {
 	"settings": {
 		"survey": {
-			"header": "Survey*",
+			"header": "Survey",
 			"caption": "File"
 		},
 		"view": {
@@ -42,11 +42,10 @@
 		"visibility": {
 			"header": "Visibility",
 			"entrances": "Entrances",
-			"stations ": "Stations",
+			"stations": "Stations",
 			"labels": "Station Labels",
 			"walls": "Walls (LRUD)",
 			"scraps": "Scraps",
-			"alpha": "Alpha Shapes",
 			"splays": "Splay Legs",
 			"traces": "Dye Traces",
 			"box": "Bounding box",
@@ -117,7 +116,7 @@
 			"survey": "survey section",
 			"route": "route",
 			"depth": "depth below surface",
-			"depth_cursor": "depth_cursor",
+			"depth_cursor": "depth cursor",
 			"cursor_up": "move cursor up",
 			"cursor_down": "move cursor down",
 			"distance": "distance"
@@ -127,9 +126,23 @@
 			"full_screen": "toggle full screen",
 			"orthogonal": "orthogonal view",
 			"perspective": "perspective view",
-			"reset": "reset to plan view",
+			"reset": "reset to inital view",
 			"center": "center on selected feature",
-			"next": "next cave"
+			"next": "next cave",
+			"plan": "plan",
+			"elevation": "elevation",
+			"north": "face north",
+			"east": "face east",
+			"south": "face south",
+			"west": "face west",
+			"rotate_clockwise": "rotate clockwise",
+			"rotate_anticlockwise": "rotate anticlockwise",
+			"zoom_in": "zoom in",
+			"zoom_out": "zoom out",
+			"auto_rotate": "rotate continuosly",
+			"rotate_speed_up": "increase speed of rotation",
+			"rotate_speed_down": "decrease speed of rotation",
+			"reverse_rotation": "reverse direction of rotation"
 		},
 		"visibility": {
 			"header": "Visibility",
@@ -137,6 +150,7 @@
 			"station_labels": "station labels on/off",
 			"entrance_labels": "entrancel abels on/off",
 			"splays": "splay legs on/off",
+			"survey": "underground legs on/off",
 			"surface": "surface legs on/off",
 			"terrain": "terrain on/off",
 			"walls": "LRUD walls on/off",

@@ -237,6 +237,12 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	};
 
+	this.end = function () {
+
+		scope.dispatchEvent( endEvent );
+
+	};
+
 	//
 	// internals
 	//

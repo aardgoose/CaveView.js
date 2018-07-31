@@ -3,8 +3,8 @@
 // glyph shader, each instance represents one glyph.
 
 uniform float cellScale;
+uniform vec2 scale;
 uniform mat2 rotate;
-uniform float scale;
 
 attribute vec2 instanceUvs;
 attribute float instanceOffsets;
@@ -37,11 +37,7 @@ void main() {
 
 	// scale glyphs
 
-	newPosition.xy *= 0.0625;
-
-	// correct for aspect ratio
-
-	newPosition.x *= scale;
+	newPosition *= scale;
 
 	// move to clip space
 

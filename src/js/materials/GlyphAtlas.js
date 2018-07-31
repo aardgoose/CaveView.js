@@ -1,5 +1,4 @@
 import { CanvasTexture } from '../Three';
-import { NearestFilter } from 'three/src/constants';
 
 function GlyphAtlas ( glyphAtlasSpec ) {
 
@@ -56,7 +55,6 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 	}
 
 	this.texture = new CanvasTexture( canvas );
-	this.texture.minFilter = NearestFilter;
 
 	this.texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
 

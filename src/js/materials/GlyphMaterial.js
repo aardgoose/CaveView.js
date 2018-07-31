@@ -1,5 +1,5 @@
 
-import { ShaderMaterial } from '../Three';
+import { ShaderMaterial, Vector2 } from '../Three';
 import { Shaders } from '../shaders/Shaders';
 import { AtlasFactory } from '../materials/GlyphAtlas';
 import { MaterialFog } from './MaterialFog';
@@ -14,6 +14,7 @@ function GlyphMaterial ( glyphAtlasSpec, rotation, viewer ) {
 
 	const cos = Math.cos( rotation );
 	const sin = Math.sin( rotation );
+	const scale = new Vector2( 32 / container.clientWidth, 32 / container.clientHeight );
 
 	const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
 
@@ -25,7 +26,7 @@ function GlyphMaterial ( glyphAtlasSpec, rotation, viewer ) {
 			cellScale: { value: cellScale },
 			atlas: { value: glyphAtlas.getTexture() },
 			rotate: { value: rotationMatrix },
-			scale: { value: container.clientHeight / container.clientWidth },
+			scale: { value: scale }
 		}, MaterialFog.uniforms ),
 	} );
 
@@ -43,9 +44,8 @@ function GlyphMaterial ( glyphAtlasSpec, rotation, viewer ) {
 
 	function _resize() {
 
-		self.uniforms.scale.value = container.clientHeight / container.clientWidth;
+		self.uniforms.scale.value.set( 32 / container.clientWidth, 32 / container.clientHeight );
 		self.scaleFactor = container.clientHeight * self.atlas.getCellScale() / 2;
-		console.log( self.uniforms.scale.value, self.id );
 
 	}
 

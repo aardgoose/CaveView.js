@@ -248,6 +248,7 @@ CameraMove.prototype.endAnimation = function () {
 	controls.enabled = true;
 
 	this.endCallback();
+	controls.end();
 
 };
 

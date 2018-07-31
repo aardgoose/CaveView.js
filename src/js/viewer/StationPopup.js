@@ -2,7 +2,7 @@ import { Popup } from './Popup.js';
 
 function StationPopup ( container, station, survey, depth, formatter, showDistance ) {
 
-	Popup.call( this );
+	Popup.call( this, container );
 
 	const position = survey.getGeographicalPosition( station.p );
 
@@ -10,8 +10,6 @@ function StationPopup ( container, station, survey, depth, formatter, showDistan
 	var long = false;
 	var tmp;
 	var lines = null;
-
-	this.container = container;
 
 	// reduce name length if too long
 

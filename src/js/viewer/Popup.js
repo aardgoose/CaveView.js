@@ -11,7 +11,6 @@ import {
 	Mesh
 } from '../Three';
 
-
 function PopupGeometry () {
 
 	BufferGeometry.call( this );
@@ -37,7 +36,7 @@ function PopupGeometry () {
 
 PopupGeometry.prototype = Object.create( BufferGeometry.prototype );
 
-function Popup() {
+function Popup( container ) {
 
 	Mesh.call( this, new PopupGeometry() );
 
@@ -45,6 +44,7 @@ function Popup() {
 	this.layers.set( LEG_CAVE );
 	this.type = 'Popup';
 	this.renderOrder = Infinity;
+	this.container = container;
 
 	return this;
 
@@ -105,7 +105,11 @@ Popup.prototype.finish = function () {
 
 	}
 
-	const material = new PopupMaterial( this.container, new CanvasTexture( canvas ), 0 );
+	const texture = new CanvasTexture( canvas );
+
+	texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
+
+	const material = new PopupMaterial( this.container, texture, 0 );
 
 	this.material = material;
 	this.material.needsUpdate = true;

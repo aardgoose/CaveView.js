@@ -12,7 +12,7 @@ import {
 import { upAxis } from '../core/constants';
 
 
-function CameraMove ( controls, renderFunction, endCallback ) {
+function CameraMove ( controls, renderFunction ) {
 
 	this.cameraTarget = null;
 	this.endPOI = null;
@@ -20,7 +20,6 @@ function CameraMove ( controls, renderFunction, endCallback ) {
 
 	this.controls = controls;
 	this.renderFunction = renderFunction;
-	this.endCallback = endCallback;
 	this.frameCount = 0;
 	this.frames = 0;
 	this.targetZoom = 1;
@@ -247,7 +246,6 @@ CameraMove.prototype.endAnimation = function () {
 	controls.update();
 	controls.enabled = true;
 
-	this.endCallback();
 	controls.end();
 
 };

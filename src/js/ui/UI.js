@@ -1006,12 +1006,6 @@ function handleKeyAven( event ) {
 
 			break;
 
-		default:
-
-			console.log( 'unused', event.keyCode );
-
-			break;
-
 		}
 
 	}

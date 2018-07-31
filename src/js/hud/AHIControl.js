@@ -41,6 +41,8 @@ function AHIControl( viewer ) {
 
 		const target = event.currentTarget;
 
+		if ( dragging ) controls.end();
+
 		target.removeEventListener( 'mouseleave', handleLeave );
 		target.removeEventListener( 'mousemove',  handleMouseMove );
 		target.removeEventListener( 'mousedown',  handleMouseDown );
@@ -64,6 +66,7 @@ function AHIControl( viewer ) {
 	function handleMouseUp ( event ) {
 
 		event.stopPropagation();
+		controls.end();
 
 		dragging = false;
 

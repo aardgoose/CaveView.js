@@ -183,7 +183,7 @@ function init ( domID, configuration ) { // public method
 
 	controls = new OrbitControls( camera, renderer.domElement, Cfg.value( 'avenControls', true ) );
 
-	cameraMove = new CameraMove( controls, cameraMoved, onCameraMoveEnd );
+	cameraMove = new CameraMove( controls, cameraMoved );
 
 	controls.addEventListener( 'change', cameraMoved );
 	controls.addEventListener( 'end', onCameraMoveEnd );

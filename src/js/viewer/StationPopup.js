@@ -55,7 +55,8 @@ function StationPopup ( container, station, survey, depth, formatter, showDistan
 
 	} else {
 
-		this.addLine( 'x: ' + position.x + ' m' ).addLine( 'y: ' + position.y + ' m' ).addLine( 'z: ' + position.z + ' m' );
+		// this.addLine( 'x: ' + Math.round( position.x ) + ' m' ).addLine( 'y: ' + Math.round( position.y ) + ' m' ).addLine( 'z: ' + position.z + ' m' );
+		this.addLine( 'x: ' + Math.round( position.x ) + ' m, y: ' + Math.round( position.y ) + ' m' ).addLine( 'z: ' + position.z + ' m' );
 
 		if ( depth !== null ) this.addLine( 'depth from surface: ' + Math.round( depth ) + ' m' );
 

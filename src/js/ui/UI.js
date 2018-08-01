@@ -285,6 +285,8 @@ function initSelectionPage () {
 				key.style.color = '#' + colour;
 				key.textContent = '\u2588 ';
 
+				li.classList.add( 'section' );
+
 			} else if ( child.type !== undefined && child.type === STATION_ENTRANCE ) {
 
 				key.style.color = 'yellow';
@@ -413,6 +415,8 @@ function initSelectionPage () {
 
 		const target = event.target;
 		const id = Number( target.id.split( 'v' )[ 1 ] );
+
+		if ( ! target.classList.contains( 'section' ) ) return;
 
 		event.stopPropagation();
 

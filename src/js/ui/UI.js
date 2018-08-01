@@ -14,11 +14,7 @@ import { SurveyColours } from '../core/SurveyColours';
 const guiState = {};
 
 var caveList = [];
-var routes = null;
-
 var caveIndex = Infinity;
-var surveyTree;
-var currentTop;
 
 var isCaveLoaded = false;
 var fullscreenDiv;
@@ -154,9 +150,11 @@ function handleChange ( event ) {
 function initSelectionPage () {
 
 	const titleBar = document.createElement( 'div' );
+	const surveyTree = Viewer.getSurveyTree();
 
 	var depth = 0;
 	var currentHover = 0;
+	var currentTop;
 
 	const stringCompare = new Intl.Collator( 'en-GB', { numeric: true } ).compare;
 
@@ -435,6 +433,7 @@ function initRoutePage () {
 
 	const page = new Page( 'icon_route', 'routes', _onTop, _onLeave );
 
+	const routes = Viewer.getRoutes();
 	const routeNames = routes.getRouteNames();
 
 	var routeSelector;
@@ -820,8 +819,6 @@ function resetUI () {
 
 		Page.clear();
 
-		surveyTree = null;
-
 	}
 
 }
@@ -855,11 +852,6 @@ function loadCave ( file, section ) {
 }
 
 function viewComplete () {
-
-	// display shading mode and initialize
-
-	surveyTree = Viewer.getSurveyTree();
-	routes = Viewer.getRoutes();
 
 	isCaveLoaded = true;
 

@@ -42,7 +42,8 @@ const defaultTheme = {
 	},
 	stations: {
 		entrances: {
-			text: 0xffffff
+			text: 0xffffff,
+			marker: 0xffffff
 		},
 		junctions: {
 			text: 0xffff00,
@@ -75,7 +76,7 @@ const defaultTheme = {
 	popup: {
 		text: 0xffffff,
 		border: 0xffffff,
-		background: 0x222222
+		background: 0x111111
 	}
 };
 

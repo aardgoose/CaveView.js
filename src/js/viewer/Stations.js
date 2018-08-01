@@ -221,7 +221,6 @@ Stations.prototype.finalise = function () {
 	bufferGeometry.addAttribute( 'position', positions.copyVector3sArray( this.vertices ) );
 	bufferGeometry.addAttribute( 'color', colors.copyColorsArray( this.colors ) );
 
-	bufferGeometry.getAttribute( 'position' ).onUpload( onUploadDropBuffer );
 	bufferGeometry.getAttribute( 'color' ).onUpload( onUploadDropBuffer );
 
 	this.pointSizes = null;

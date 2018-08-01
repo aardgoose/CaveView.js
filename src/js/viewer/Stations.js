@@ -28,6 +28,7 @@ function Stations () {
 
 	this.baseColor     = Cfg.themeColor( 'stations.default.marker' );
 	this.junctionColor = Cfg.themeColor( 'stations.junctions.marker' );
+	this.entranceColor = Cfg.themeColor( 'stations.entrances.marker' );
 
 	this.pointSizes = [];
 	this.vertices   = [];
@@ -107,15 +108,18 @@ Stations.prototype.addStation = function ( node ) {
 
 	this.vertices.push( point );
 
-	this.colors.push( connections > 2 ? this.junctionColor : this.baseColor );
 
 	var pointSize = 0.0;
 
 	if ( node.type === STATION_ENTRANCE ) {
 
+		this.colors.push( this.entranceColor );
+
 		pointSize = 12.0;
 
 	} else {
+
+		this.colors.push( connections > 2 ? this.junctionColor : this.baseColor );
 
 		pointSize = 8.0;
 

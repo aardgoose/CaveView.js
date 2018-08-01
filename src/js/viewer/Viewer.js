@@ -890,6 +890,10 @@ function cutSection () {
 
 	if ( selectedSection === 0 ) return;
 
+	const node = survey.surveyTree.findById( selectedSection );
+
+	if ( node.p !== undefined ) return;
+
 	survey.remove( terrain );
 	survey.cutSection( selectedSection );
 

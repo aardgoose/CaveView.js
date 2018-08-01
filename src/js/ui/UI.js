@@ -289,22 +289,22 @@ function initSelectionPage () {
 
 			} else if ( child.type !== undefined && child.type === STATION_ENTRANCE ) {
 
-				key.style.color = 'yellow';
+				key.style.color = Cfg.themeColorCSS( 'stations.entrances.marker' );
 				key.textContent = '\u2229 ';
 
 			} else if ( connections > 2 ) { // station at junction
 
-				key.style.color = 'yellow';
+				key.style.color = Cfg.themeColorCSS( 'stations.junctions.marker' );
 				key.textContent = '\u25fc ';
 
 			} else if ( connections === 0 ) { // end of splay
 
-				key.style.color = 'red';
+				key.style.color = Cfg.themeColorCSS( 'stations.default.marker' );
 				key.textContent = '\u25fb ';
 
 			} else { // normal station in middle or end of leg
 
-				key.style.color = 'red';
+				key.style.color = Cfg.themeColorCSS( 'stations.default.marker' );
 				key.textContent = '\u25fc ';
 
 			}

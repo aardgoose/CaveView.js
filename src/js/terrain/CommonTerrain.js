@@ -78,7 +78,7 @@ CommonTerrain.prototype.getTerrainShadingModes = function ( renderer ) {
 
 			if ( overlays[ name ].hasCoverage( this.limits, this.displayCRS, this.surveyCRS ) ) {
 
-				overlays[ name ].active = false;
+				overlays[ name ].active =  ( this.activeOverlay === overlays[ name ] );
 				terrainShadingModes[ name ] = name;
 
 			}

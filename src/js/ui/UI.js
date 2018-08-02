@@ -745,7 +745,7 @@ function initSurfacePage () {
 
 		terrainControls.push( page.addCheckbox( 'terrain.datum_shift', Viewer, 'terrainDatumShift' ) );
 
-		setControlsVisibility( terrainControls, false );
+		setControlsVisibility( terrainControls, Viewer.terrain );
 
 		const attributions = Viewer.terrainAttributions;
 

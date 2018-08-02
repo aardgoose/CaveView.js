@@ -1071,6 +1071,7 @@ function caveLoaded ( cave ) {
 	loadSurvey( new Survey( cave ), false );
 
 }
+
 function setView( properties1, properties2 ) {
 
 	// don't render until all settings made.
@@ -1205,7 +1206,7 @@ function loadTerrain ( mode ) {
 		terrain.setVisibility( mode );
 
 		setCameraLayer( FEATURE_TERRAIN, mode );
-
+console.log( 'x' );
 		Viewer.dispatchEvent( { type: 'change', name: 'terrain' } );
 
 	}

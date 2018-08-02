@@ -1206,7 +1206,7 @@ function loadTerrain ( mode ) {
 		terrain.setVisibility( mode );
 
 		setCameraLayer( FEATURE_TERRAIN, mode );
-console.log( 'x' );
+
 		Viewer.dispatchEvent( { type: 'change', name: 'terrain' } );
 
 	}

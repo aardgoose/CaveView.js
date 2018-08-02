@@ -70,12 +70,6 @@ GlyphAtlas.prototype.getTexture = function () {
 
 };
 
-GlyphAtlas.prototype.getCellScale = function () {
-
-	return this.cellScale;
-
-};
-
 GlyphAtlas.prototype.getGlyph = function ( glyph ) {
 
 	var glyphData = this.map[ glyph ];

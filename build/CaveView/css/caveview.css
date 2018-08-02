@@ -10,16 +10,6 @@ body {
 	touch-action: none;
 }
 
-#status-text {
-	position: absolute;
-	top: 50%;
-	height: 20px;
-	padding-left: 4px;
-	background-color: black;
-	color: white;
-	z-index: 100;
-}
-
 #cv-frame *, #cv-tab-box *, #cv-frame, #cv-tab-box {
 	box-sizing: border-box;
 	margin: 0;
@@ -35,7 +25,7 @@ body {
 	background-color: #222222;
 	transform: translateX(-300px);
 	transition: transform 0.25s ease-in;
-	z-index: 100;
+	z-index: 10;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
@@ -325,7 +315,7 @@ body {
 		border-right: 1px solid gray;
 		border-top: 4px solid #1ab4e5;
 		border-bottom: none;
-		z-index: 300;
+		z-index: 20;
 	}
 
 	#cv-tab-box #close {
@@ -459,16 +449,6 @@ div.cv-checkbox {
 #cv-frame a, #cv-frame a:hover {
 	color: yellow;
 }
-
-div.station-info {
-	position: absolute;
-	border: 1px solid white;
-	padding: 4px;
-	color: white;
-	background-color: #222222;
-	z-index: 200;
-}
-
 
 .overlay-branding {
 	position: absolute;

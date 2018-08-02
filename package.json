@@ -1,6 +1,6 @@
 {
   "name": "caveview",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "3D Cave Survey Viewer",
   "scripts": {
     "build-main": "rollup -c",

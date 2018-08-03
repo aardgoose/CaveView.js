@@ -71,10 +71,10 @@ CameraMove.prototype.prepare = function () {
 
 				const tan2 = 2 * Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
 
-				const e1 = size.y / tan2 + size.z;
-				const e2 = ( 1 / camera.aspect ) * size.x / tan2 + size.z;
+				const e1 = size.y / tan2;
+				const e2 = ( 1 / camera.aspect ) * size.x / tan2;
 
-				elevation = Math.max( e1, e2 );
+				elevation = Math.max( e1, e2 ) * 1.1 + size.z / 2;
 
 				this.targetZoom = 1;
 

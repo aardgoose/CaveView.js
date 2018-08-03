@@ -16,7 +16,6 @@ const guiState = {};
 var caveList = [];
 var caveIndex = Infinity;
 
-var isCaveLoaded = false;
 var fullscreenDiv;
 
 var container;
@@ -90,7 +89,7 @@ function init ( domID, configuration ) { // public method
 	Viewer.addEventListener( 'change', Page.handleChange );
 	Viewer.addEventListener( 'change', handleChange );
 
-	Viewer.addEventListener( 'newCave', viewComplete );
+	Viewer.addEventListener( 'newCave', initUI );
 
 	// make sure we get new language strings if slow loading
 	Cfg.addEventListener( 'change', refresh );
@@ -101,7 +100,7 @@ function init ( domID, configuration ) { // public method
 
 function refresh() {
 
-	if ( isCaveLoaded ) {
+	if ( Viewer.surveyLoaded ) {
 
 		Page.clear();
 		initUI();
@@ -160,7 +159,7 @@ function initSelectionPage () {
 
 	currentTop = surveyTree;
 
-	if ( ! isCaveLoaded ) return;
+	if ( ! Viewer.surveyLoaded ) return;
 
 	const page = new Page( 'icon_explore', 'explore' );
 
@@ -185,7 +184,7 @@ function initSelectionPage () {
 
 	function _handleChange( event ) {
 
-		if ( ! isCaveLoaded ) return;
+		if ( ! Viewer.surveyLoaded ) return;
 
 		if ( event.name === 'section' || event.name === 'shadingMode' || event.name === 'splays' ) {
 
@@ -421,7 +420,8 @@ function initSelectionPage () {
 		if ( id !== 0 ) {
 
 			Viewer.cut = true;
-			resetUI();
+
+			Page.clear();
 
 		}
 
@@ -811,18 +811,6 @@ function handleDrop ( event ) {
 
 }
 
-function resetUI () {
-
-	if ( isCaveLoaded ) {
-
-		isCaveLoaded = false;
-
-		Page.clear();
-
-	}
-
-}
-
 function loadCaveList ( list ) {
 
 	caveList = list;
@@ -843,19 +831,11 @@ function nextCave () {
 
 function loadCave ( file, section ) {
 
-	resetUI();
+	Page.clear();
 	Viewer.clearView();
 
 	Viewer.loadCave( file, section );
 	loadedFile = file instanceof File ? file.name : file;
-
-}
-
-function viewComplete () {
-
-	isCaveLoaded = true;
-
-	initUI();
 
 }
 
@@ -869,7 +849,7 @@ function toggleFullScreen() {
 
 function keyDown ( event ) {
 
-	if ( ! isCaveLoaded ) return;
+	if ( ! Viewer.surveyLoaded ) return;
 
 	if ( handleKeyCommon( event ) ) return;
 
@@ -1088,7 +1068,7 @@ function handleKeyDefault( event ) {
 
 	case 86: // cut selected survey section - 'v'
 
-		resetUI();
+		Page.clear();
 		Viewer.cut = true;
 
 		break;

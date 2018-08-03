@@ -785,6 +785,8 @@ Survey.prototype.cutSection = function ( id ) {
 
 	this.loadStations( this.surveyTree );
 
+	this.pointTargets.push( this.stations );
+
 	// ordering is important here
 
 	this.clearSelection();

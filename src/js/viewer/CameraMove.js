@@ -69,10 +69,10 @@ CameraMove.prototype.prepare = function () {
 
 			if ( camera.isPerspectiveCamera ) {
 
-				const tan = Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
+				const tan2 = 2 * Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
 
-				const e1 = 1.5 * tan * size.y / 2 + size.z;
-				const e2 = tan * camera.aspect * size.x / 2 + size.z;
+				const e1 = size.y / tan2 + size.z;
+				const e2 = ( 1 / camera.aspect ) * size.x / tan2 + size.z;
 
 				elevation = Math.max( e1, e2 );
 

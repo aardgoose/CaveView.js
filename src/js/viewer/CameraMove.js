@@ -85,7 +85,7 @@ CameraMove.prototype.prepare = function () {
 				const hRatio = ( camera.right - camera.left ) / size.x;
 				const vRatio = ( camera.top - camera.bottom ) / size.y;
 
-				this.targetZoom = Math.min( hRatio, vRatio );
+				this.targetZoom = Math.min( hRatio, vRatio ) * 1 / 1.1;
 				elevation = 600;
 
 			}

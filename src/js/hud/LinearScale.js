@@ -12,16 +12,19 @@ function LinearScale ( container, Viewer ) {
 
 	const range = Viewer.maxHeight - Viewer.minHeight;
 	const geometry = new PlaneBufferGeometry( 1, range );
+	const material = Materials.getHeightMaterial( MATERIAL_LINE );
 
 	// rotate the model to put the plane in the xz plane, covering the range of view height values - the gradient shader works on z values.
 
 	geometry.rotateX( Math.PI / 2 );
+	geometry.translate( 0, 0, material.midRange );
 
-	Scale.call( this, container, geometry, Materials.getHeightMaterial( MATERIAL_LINE ) );
+	Scale.call( this, container, geometry, material );
 
 	this.name = 'CV.LinearScale';
 
 	this.scaleBar.applyMatrix( new Matrix4().makeScale( this.barWidth, 1, this.barHeight / range ) );
+	this.scaleBar.translateY( - material.midRange * this.barHeight / range );
 
 	// rotate the model in the world view.
 	this.scaleBar.rotateOnAxis( new Vector3( 1, 0, 0 ), -Math.PI / 2 );

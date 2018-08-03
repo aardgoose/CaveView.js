@@ -13,6 +13,8 @@ function HeightMaterial ( type, survey ) {
 	const zMin = limits.min.z;
 	const zMax = limits.max.z;
 
+	this.midRange = ( zMax + zMin ) / 2;
+
 	ShaderMaterial.call( this, {
 		vertexShader: Shaders.heightVertexShader,
 		fragmentShader: Shaders.heightFragmentShader,

@@ -199,6 +199,10 @@ function init ( domID, configuration ) { // public method
 			value: container
 		},
 
+		'surveyLoaded': {
+			get: function () { return caveIsLoaded; }
+		},
+
 		'terrain': {
 			writeable: true,
 			get: function () { return testCameraLayer( FEATURE_TERRAIN ); },

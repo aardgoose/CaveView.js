@@ -11,6 +11,7 @@ import {
 
 import { upAxis } from '../core/constants';
 
+const vTmp1 = new Vector3();
 
 function CameraMove ( controls, renderFunction ) {
 
@@ -35,19 +36,95 @@ function CameraMove ( controls, renderFunction ) {
 
 }
 
+CameraMove.fitBox = function ( camera, box, viewAxis ) {
+
+	const size = box.getSize( vTmp1 );
+
+	var elevation = 600;
+	var zoom = 1;
+
+	var dX, dY, dZ;
+
+	if ( viewAxis === undefined || viewAxis.z !== 0 ) {
+
+		dX = size.x;
+		dY = size.y;
+		dZ = size.z;
+
+	} else if ( viewAxis.x !== 0 ) {
+
+		dX = size.y;
+		dY = size.z;
+		dZ = size.x;
+
+	} else {
+
+		dX = size.x;
+		dY = size.z;
+		dZ = size.y;
+
+	}
+
+	if ( camera.isPerspectiveCamera ) {
+
+		const tan2 = 2 * Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
+
+		const e1 = dY / tan2;
+		const e2 = ( 1 / camera.aspect ) * dX / tan2;
+
+		elevation = Math.max( e1, e2 ) * 1.1 + dZ / 2;
+
+		if ( elevation === 0 ) elevation = 100;
+
+	} else {
+
+		const hRatio = ( camera.right - camera.left ) / dX;
+		const vRatio = ( camera.top - camera.bottom ) / dY;
+
+		zoom = Math.min( hRatio, vRatio ) * 1 / 1.1;
+
+	}
+
+	return { zoom: zoom, elevation: elevation };
+
+};
+
+CameraMove.prototype.getCardinalAxis = function ( targetAxis ) {
+
+	this.controls.object.getWorldDirection( vTmp1 );
+
+	const x = Math.abs( vTmp1.x );
+	const y = Math.abs( vTmp1.y );
+	const z = Math.abs( vTmp1.z );
+
+	if ( x > y && x > z ) {
+
+		targetAxis.set( Math.sign( vTmp1.x ), 0, 0 );
+
+	} else if ( y > z ) {
+
+		targetAxis.set( 0, Math.sign( vTmp1.y ), 0 );
+
+	} else {
+
+		targetAxis.set( 0, 0, Math.sign( vTmp1.z ) );
+
+	}
+
+};
 
 CameraMove.prototype.prepare = function () {
 
 	const vMidpoint = new Vector3();
 	const cameraLine = new Line3();
-	const vTmp1 = new Vector3();
 	const vTmp2 = new Vector3();
 	const controlPoint = new Vector3();
 	const m4 = new Matrix4();
 	const q90 = new Quaternion().setFromAxisAngle( upAxis, - Math.PI / 2 );
 	const euler = new Euler();
+	const targetAxis = new Vector3();
 
-	return function prepare ( cameraTarget, endPOI ) {
+	return function prepare ( cameraTarget, endPOI, requiredTargetAxis ) {
 
 		if ( this.running ) return this;
 
@@ -59,39 +136,27 @@ CameraMove.prototype.prepare = function () {
 
 		if ( endPOI && endPOI.isBox3 ) {
 
-			// target can be a Box3 in world space
-			// setup a target position above the box3 such that it fits the screen
+			// move camera to cardinal axis closest to current camera direction
+			// or axis provided by caller
 
-			const size = endPOI.getSize( vTmp1 );
-			var elevation;
+			if ( requiredTargetAxis === undefined ) {
 
-			endPOI = endPOI.getCenter( vTmp2 );
-
-			if ( camera.isPerspectiveCamera ) {
-
-				const tan2 = 2 * Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
-
-				const e1 = size.y / tan2;
-				const e2 = ( 1 / camera.aspect ) * size.x / tan2;
-
-				elevation = Math.max( e1, e2 ) * 1.1 + size.z / 2;
-
-				this.targetZoom = 1;
-
-				if ( elevation === 0 ) elevation = 100;
+				this.getCardinalAxis( targetAxis );
 
 			} else {
 
-				const hRatio = ( camera.right - camera.left ) / size.x;
-				const vRatio = ( camera.top - camera.bottom ) / size.y;
-
-				this.targetZoom = Math.min( hRatio, vRatio ) * 1 / 1.1;
-				elevation = 600;
+				targetAxis.copy( requiredTargetAxis );
 
 			}
 
-			cameraTarget   = endPOI.clone();
-			cameraTarget.z = cameraTarget.z + elevation;
+			const fit = CameraMove.fitBox( camera, endPOI, targetAxis );
+
+			endPOI = endPOI.getCenter( vTmp2 );
+
+			this.targetZoom = fit.zoom;
+
+			cameraTarget = endPOI.clone();
+			cameraTarget.add( targetAxis.negate().multiplyScalar( fit.elevation ) );
 
 		}
 

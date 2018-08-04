@@ -779,40 +779,42 @@ function testCameraLayer ( layerTag ) {
 
 }
 
-function setViewMode ( mode, t ) {
+function setViewMode ( mode ) {
 
-	const cameraPosition = new Vector3();
+	const boundingBox = survey.getWorldBoundingBox();
+	const targetAxis = new Vector3();
 
 	switch ( mode ) {
 
 	case VIEW_PLAN:
 
 		// reset camera to start position
-		cameraPosition.set( 0, 0, CAMERA_OFFSET );
+
+		targetAxis.set( 0, 0, -1 );
 
 		break;
 
 	case VIEW_ELEVATION_N:
 
-		cameraPosition.set( 0, CAMERA_OFFSET, 0 );
+		targetAxis.set( 0, 1, 0 );
 
 		break;
 
 	case VIEW_ELEVATION_S:
 
-		cameraPosition.set( 0, -CAMERA_OFFSET, 0 );
+		targetAxis.set( 0, -1, 0 );
 
 		break;
 
 	case VIEW_ELEVATION_E:
 
-		cameraPosition.set( CAMERA_OFFSET, 0, 0 );
+		targetAxis.set( 1, 0, 0 );
 
 		break;
 
 	case VIEW_ELEVATION_W:
 
-		cameraPosition.set( -CAMERA_OFFSET, 0, 0 );
+		targetAxis.set( -1, 0, 0 );
 
 		break;
 
@@ -823,10 +825,9 @@ function setViewMode ( mode, t ) {
 
 	}
 
-	cameraPosition.add( defaultTarget );
-
 	cameraMove.cancel();
-	cameraMove.prepare( cameraPosition, defaultTarget ).start( renderRequired ? t || 240 : 1 );
+	cameraMove.prepare( null, boundingBox, targetAxis );
+	cameraMove.start( renderRequired ? 240 : 1 );
 
 }
 
@@ -1400,7 +1401,7 @@ function renderView () {
 
 	}
 
-	if ( useFog ) Materials.setFog( false );
+//	if ( useFog ) Materials.setFog( false );
 
 	HUD.renderHUD();
 
@@ -1477,6 +1478,7 @@ function setScale ( obj ) {
 	obj.position.copy( survey.modelLimits.getCenter( new Vector3() ).multiply( scale ).negate() );
 
 	obj.updateMatrix();
+	obj.updateMatrixWorld();
 
 	HUD.setScale( vScale );
 

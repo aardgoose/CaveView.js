@@ -744,6 +744,22 @@ Survey.prototype.setFeatureBox = function () {
 
 };
 
+Survey.prototype.getWorldBoundingBox = function () {
+
+	if ( this.worldBoundingBox === undefined ) {
+
+		const geometry = this.featureBox.geometry;
+
+		geometry.computeBoundingBox();
+
+		this.worldBoundingBox = geometry.boundingBox.clone().applyMatrix4( this.matrixWorld );
+
+	}
+
+	return this.worldBoundingBox;
+
+};
+
 Survey.prototype.cutSection = function ( id ) {
 
 	const selectedSectionIds = this.selectedSectionIds;

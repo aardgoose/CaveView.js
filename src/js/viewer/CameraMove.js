@@ -291,7 +291,6 @@ CameraMove.prototype.animateMove = function () {
 	camera.quaternion.slerp( this.endQuaternion, t );
 
 	camera.updateProjectionMatrix();
-	camera.updateMatrixWorld();
 
 	this.renderFunction();
 

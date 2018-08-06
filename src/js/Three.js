@@ -76,6 +76,8 @@ _Math.generateUUID = function () { return null; };
 
 import { Object3D } from 'three/src/core/Object3D.js';
 
+Object3D.DefaultUp.set( 0, 0, 1 );
+
 Object3D.prototype.addStatic = function ( obj ) {
 
 	obj.matrixAutoUpdate = false;

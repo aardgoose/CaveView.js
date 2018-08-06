@@ -1,5 +1,6 @@
 
 import {
+	Object3D,
 	Vector3,
 	QuadraticBezierCurve3,
 	Quaternion,
@@ -9,7 +10,7 @@ import {
 	Math as _Math
 } from '../Three';
 
-import { upAxis } from '../core/constants';
+import { CAMERA_OFFSET } from '../core/constants';
 
 const vTmp1 = new Vector3();
 
@@ -40,7 +41,7 @@ CameraMove.fitBox = function ( camera, box, viewAxis ) {
 
 	const size = box.getSize( vTmp1 );
 
-	var elevation = 600;
+	var elevation = CAMERA_OFFSET;
 	var zoom = 1;
 
 	var dX, dY, dZ;
@@ -120,7 +121,7 @@ CameraMove.prototype.prepare = function () {
 	const vTmp2 = new Vector3();
 	const controlPoint = new Vector3();
 	const m4 = new Matrix4();
-	const q90 = new Quaternion().setFromAxisAngle( upAxis, - Math.PI / 2 );
+	const q90 = new Quaternion().setFromAxisAngle( Object3D.DefaultUp, - Math.PI / 2 );
 	const euler = new Euler();
 	const targetAxis = new Vector3();
 
@@ -165,7 +166,7 @@ CameraMove.prototype.prepare = function () {
 
 		if ( this.cameraTarget !== null || this.endPOI !== null ) {
 
-			m4.lookAt( ( cameraTarget !== null ? cameraTarget : cameraStart ), endPOI, upAxis );
+			m4.lookAt( ( cameraTarget !== null ? cameraTarget : cameraStart ), endPOI, Object3D.DefaultUp );
 
 			this.endQuaternion.setFromRotationMatrix( m4 );
 

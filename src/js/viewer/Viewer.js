@@ -671,7 +671,7 @@ function setCameraMode ( mode ) {
 
 	case CAMERA_PERSPECTIVE:
 
-		offsetLength = 4 * container.clientHeight * Math.tan( _Math.DEG2RAD * pCamera.getEffectiveFOV() / 2 ) / camera.zoom / 2;
+		offsetLength = 4 * container.clientHeight * Math.tan( _Math.DEG2RAD * pCamera.fov / 2 ) / camera.zoom / 2;
 
 		offset.setLength( offsetLength );
 

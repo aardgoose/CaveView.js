@@ -41,6 +41,7 @@ function Survey ( cave ) {
 	this.surveyTree = null;
 	this.projection = null;
 	this.wireframe = null;
+	this.worldBoundingBox = null;
 
 	// objects targetted by raycasters and objects with variable LOD
 
@@ -746,7 +747,7 @@ Survey.prototype.setFeatureBox = function () {
 
 Survey.prototype.getWorldBoundingBox = function () {
 
-	if ( this.worldBoundingBox === undefined ) {
+	if ( this.worldBoundingBox === null ) {
 
 		const geometry = this.featureBox.geometry;
 
@@ -816,6 +817,8 @@ Survey.prototype.cutSection = function ( id ) {
 
 	this.setFeatureBox();
 
+	this.worldBoundingBox = null;
+
 	this.loadEntrances();
 
 	this.cutInProgress = true;
@@ -865,7 +868,8 @@ Survey.prototype.getBounds = function () {
 
 	function _addObjectBounds ( obj ) {
 
-		if ( obj.type === 'CV.Survey' ) return; // skip survey which is positioned/scaled into world space
+		if ( obj.type === 'CV.Survey' || obj.type === 'CV.Box3' ) return;
+		// skip survey which is positioned/scaled into world space
 
 		const geometry = obj.geometry;
 

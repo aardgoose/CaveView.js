@@ -27,6 +27,7 @@ function Box3Helper( box3, color ) {
 
 	LineSegments.call( this, geometry, material );
 
+	this.type = 'CV.Box3';
 	this.matrixAutoUpdate = false;
 
 	this.update( box3 );

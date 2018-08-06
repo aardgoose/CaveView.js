@@ -1,14 +1,13 @@
 
 import {
 	VERSION,
-	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_OFFSET,
+	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_RELIEF, SHADING_PATH,
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	upAxis,
 	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE
 } from '../core/constants';
 
@@ -32,21 +31,21 @@ import { OrbitControls } from '../ui/OrbitControls';
 import {
 	EventDispatcher,
 	Vector2, Vector3, Matrix4, Euler,
-	Scene, Raycaster,
+	Object3D, Scene, Raycaster,
 	DirectionalLight, HemisphereLight,
 	LinearFilter, NearestFilter, RGBAFormat,
 	OrthographicCamera, PerspectiveCamera,
 	WebGLRenderer, WebGLRenderTarget,
 	MOUSE, FogExp2,
-	Quaternion, Spherical
+	Quaternion, Spherical, Math as _Math
 } from '../Three';
 
 const defaultView = {
 	autoRotate: false,
 	autoRotateSpeed: 0.5,
 	box: true,
-	view: VIEW_PLAN,
 	cameraType: CAMERA_PERSPECTIVE,
+	view: VIEW_PLAN,
 	shadingMode: SHADING_HEIGHT,
 	surfaceShading: SHADING_HEIGHT,
 	terrainShading: SHADING_RELIEF,
@@ -66,9 +65,6 @@ const defaultView = {
 };
 
 const renderer = new WebGLRenderer( { antialias: true } ) ;
-
-const defaultTarget = new Vector3();
-const initialCameraPosition = new Vector3( 0, 0, CAMERA_OFFSET ).add( defaultTarget );
 
 const lightPosition = new Vector3();
 const currentLightPosition = new Vector3();
@@ -148,17 +144,16 @@ function init ( domID, configuration ) { // public method
 
 	oCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
 
-	initCamera( oCamera );
+	scene.add( oCamera );
 
 	pCamera = new PerspectiveCamera( Cfg.themeValue( 'fieldOfView' ) , width / height, 1, 16000 );
 
-	initCamera( pCamera );
+	scene.add( pCamera );
 
 	camera = pCamera;
 
 	scene.fog = fog;
 	scene.name = 'CV.Viewer';
-	scene.up = upAxis;
 
 	// setup directional lighting
 
@@ -669,26 +664,32 @@ function setCameraMode ( mode ) {
 
 	const offset = camera.position.clone().sub( controls.target );
 
+	var offsetLength;
+	var eventName;
+
 	switch ( mode ) {
 
 	case CAMERA_PERSPECTIVE:
 
-		offset.setLength( CAMERA_OFFSET / oCamera.zoom );
+		offsetLength = 4 * container.clientHeight * Math.tan( _Math.DEG2RAD * pCamera.getEffectiveFOV() / 2 ) / camera.zoom / 2;
+
+		offset.setLength( offsetLength );
 
 		camera = pCamera;
-		Viewer.dispatchEvent( { type: 'camera', name: 'perspective' } );
+		eventName = 'perspective';
 
 		break;
 
 	case CAMERA_ORTHOGRAPHIC:
 
-		// calculate zoom from ratio of pCamera distance from target to base distance.
-		oCamera.zoom = CAMERA_OFFSET / offset.length();
+		offsetLength = offset.length();
 
-		offset.setLength( CAMERA_OFFSET * 2 );
+		oCamera.zoom = 2 * container.clientHeight * Math.tan( _Math.DEG2RAD * pCamera.fov / 2 ) / offsetLength;
+
+		offset.setLength( offsetLength );
 
 		camera = oCamera;
-		Viewer.dispatchEvent( { type: 'camera', name: 'orthographic' } );
+		eventName = 'orthographic';
 
 		break;
 
@@ -710,25 +711,20 @@ function setCameraMode ( mode ) {
 
 	cameraMode = mode;
 
+	Viewer.dispatchEvent( { type: 'camera', name: eventName } );
+
 	renderView();
 
 }
 
 function initCamera ( camera ) {
 
-	camera.up = upAxis;
 	camera.zoom = 1;
 
 	camera.layers.set( 0 );
 
 	camera.layers.enable( LEG_CAVE );
 	camera.layers.enable( FEATURE_SELECTED_BOX );
-
-	camera.position.set( 0, 0, CAMERA_OFFSET );
-	camera.lookAt( 0, 0, 0 );
-	camera.updateProjectionMatrix();
-
-	scene.add( camera );
 
 }
 
@@ -742,7 +738,7 @@ var cameraMoved = function () {
 		rotation.setFromQuaternion( camera.getWorldQuaternion( q ) );
 
 		currentLightPosition.copy( lightPosition );
-		currentLightPosition.applyAxisAngle( upAxis, rotation.z );
+		currentLightPosition.applyAxisAngle( Object3D.DefaultUp, rotation.z );
 
 		directionalLight.position.copy( currentLightPosition );
 		directionalLight.updateMatrix();
@@ -787,8 +783,6 @@ function setViewMode ( mode ) {
 	switch ( mode ) {
 
 	case VIEW_PLAN:
-
-		// reset camera to start position
 
 		targetAxis.set( 0, 0, -1 );
 
@@ -931,7 +925,8 @@ function selectSection ( id ) {
 	if ( id === 0 ) {
 
 		cameraMove.cancel();
-		cameraMove.prepare( initialCameraPosition, defaultTarget );
+		cameraMove.prepare( null, survey.getWorldBoundingBox() );
+		cameraMove.start( 30 );
 
 		highlightSelection( 0 );
 

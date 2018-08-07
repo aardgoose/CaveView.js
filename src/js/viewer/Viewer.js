@@ -818,7 +818,7 @@ function setViewMode ( mode ) {
 	}
 
 	cameraMove.cancel();
-	cameraMove.prepare( null, boundingBox, targetAxis );
+	cameraMove.prepare( boundingBox, targetAxis );
 	cameraMove.start( renderRequired ? 240 : 1 );
 
 }
@@ -923,7 +923,7 @@ function selectSection ( id ) {
 	if ( id === 0 ) {
 
 		cameraMove.cancel();
-		cameraMove.prepare( null, survey.getWorldBoundingBox() );
+		cameraMove.prepare( survey.getWorldBoundingBox() );
 		cameraMove.start( 30 );
 
 		highlightSelection( 0 );
@@ -939,12 +939,12 @@ function selectSection ( id ) {
 
 		const boundingBox = node.boundingBox.clone();
 
-		cameraMove.prepare( null, boundingBox.applyMatrix4( survey.matrixWorld ) );
+		cameraMove.prepare( boundingBox.applyMatrix4( survey.matrixWorld ) );
 
 	} else {
 
 		// a single station
-		cameraMove.prepare( null, survey.getWorldPosition( node.p ) );
+		cameraMove.prepare( survey.getWorldPosition( node.p ) );
 
 	}
 
@@ -1319,7 +1319,7 @@ function mouseDown ( event ) {
 
 		renderView();
 
-		cameraMove.prepare( null, survey.getWorldPosition( station.p ) );
+		cameraMove.prepare( survey.getWorldPosition( station.p ) );
 
 		return true;
 

@@ -12,12 +12,13 @@ import {
 
 import { CAMERA_OFFSET } from '../core/constants';
 
-const vTmp1 = new Vector3();
+const __v1 = new Vector3();
 
 function CameraMove ( controls, renderFunction ) {
 
 	this.cameraTarget = null;
 	this.endPOI = null;
+	this.startQuaternion = new Quaternion();
 	this.endQuaternion = new Quaternion();
 
 	this.controls = controls;
@@ -39,7 +40,7 @@ function CameraMove ( controls, renderFunction ) {
 
 CameraMove.fitBox = function ( camera, box, viewAxis ) {
 
-	const size = box.getSize( vTmp1 );
+	const size = box.getSize( __v1 );
 
 	var elevation = CAMERA_OFFSET;
 	var zoom = 1;
@@ -92,23 +93,23 @@ CameraMove.fitBox = function ( camera, box, viewAxis ) {
 
 CameraMove.prototype.getCardinalAxis = function ( targetAxis ) {
 
-	this.controls.object.getWorldDirection( vTmp1 );
+	this.controls.object.getWorldDirection( __v1 );
 
-	const x = Math.abs( vTmp1.x );
-	const y = Math.abs( vTmp1.y );
-	const z = Math.abs( vTmp1.z );
+	const x = Math.abs( __v1.x );
+	const y = Math.abs( __v1.y );
+	const z = Math.abs( __v1.z );
 
 	if ( x > y && x > z ) {
 
-		targetAxis.set( Math.sign( vTmp1.x ), 0, 0 );
+		targetAxis.set( Math.sign( __v1.x ), 0, 0 );
 
 	} else if ( y > z ) {
 
-		targetAxis.set( 0, Math.sign( vTmp1.y ), 0 );
+		targetAxis.set( 0, Math.sign( __v1.y ), 0 );
 
 	} else {
 
-		targetAxis.set( 0, 0, Math.sign( vTmp1.z ) );
+		targetAxis.set( 0, 0, Math.sign( __v1.z ) );
 
 	}
 
@@ -125,7 +126,7 @@ CameraMove.prototype.prepare = function () {
 	const euler = new Euler();
 	const targetAxis = new Vector3();
 
-	return function prepare ( cameraTarget, endPOI, requiredTargetAxis ) {
+	return function prepare ( endPOI, requiredTargetAxis ) {
 
 		if ( this.running ) return this;
 
@@ -133,9 +134,11 @@ CameraMove.prototype.prepare = function () {
 		const startPOI = this.controls.target;
 		const cameraStart = this.controls.object.position;
 
+		var cameraTarget = null;
+
 		this.skipNext = false;
 
-		if ( endPOI && endPOI.isBox3 ) {
+		if ( endPOI.isBox3 ) {
 
 			// move camera to cardinal axis closest to current camera direction
 			// or axis provided by caller
@@ -164,22 +167,21 @@ CameraMove.prototype.prepare = function () {
 		this.cameraTarget = cameraTarget;
 		this.endPOI = endPOI;
 
-		if ( this.cameraTarget !== null || this.endPOI !== null ) {
 
-			// calculate end state rotation of camera
+		// calculate end state rotation of camera
 
-			m4.lookAt( ( cameraTarget !== null ? cameraTarget : cameraStart ), endPOI, Object3D.DefaultUp );
+		this.startQuaternion.copy( camera.quaternion );
 
-			this.endQuaternion.setFromRotationMatrix( m4 );
+		m4.lookAt( ( cameraTarget !== null ? cameraTarget : cameraStart ), endPOI, Object3D.DefaultUp );
 
-			euler.setFromQuaternion( this.endQuaternion );
+		this.endQuaternion.setFromRotationMatrix( m4 );
 
-			if ( Math.abs( euler.x ) < 0.0001 ) {
+		euler.setFromQuaternion( this.endQuaternion );
 
-				// apply correction if looking verticaly
-				this.endQuaternion.multiply( q90 );
+		if ( Math.abs( euler.x ) < 0.0001 ) {
 
-			}
+			// apply correction if looking verticaly
+			this.endQuaternion.multiply( q90 );
 
 		}
 
@@ -194,7 +196,7 @@ CameraMove.prototype.prepare = function () {
 			// minimal camera position change
 			var qDiff = 1 - this.endQuaternion.dot( camera.quaternion );
 
-			if ( qDiff < 0.0000001 || endPOI === null ) {
+			if ( qDiff < 0.0000001 ) {
 
 				// minimal camera rotation or no change of POI
 				this.skipNext = true;
@@ -208,19 +210,24 @@ CameraMove.prototype.prepare = function () {
 
 			// setup curve for camera motion
 
-			if ( endPOI === null ) endPOI = startPOI;
+			if ( endPOI.equals( startPOI ) ) {
 
-			// get mid point between start and end POI
-			vMidpoint.addVectors( startPOI, endPOI ).multiplyScalar( 0.5 );
+				controlPoint.addVectors( cameraStart, cameraTarget ).multiplyScalar( 0.5 );
 
-			// line between camera positions
-			cameraLine.set( cameraStart, cameraTarget );
+			} else {
 
-			// closest point on line to POI midpoint
-			cameraLine.closestPointToPoint( vMidpoint, true, vTmp1 );
+				// get mid point between start and end POI
+				vMidpoint.addVectors( startPOI, endPOI ).multiplyScalar( 0.4 );
 
-			// reflect mid point around cameraLine in cameraLine + midPoint plane
-			controlPoint.subVectors( vTmp1, startPOI ).add( vTmp1 );
+				// line between camera positions
+				cameraLine.set( cameraStart, cameraTarget );
+
+				// closest point on line to POI midpoint
+				cameraLine.closestPointToPoint( vMidpoint, true, __v1 );
+
+				// reflect mid point around cameraLine in cameraLine + midPoint plane
+				controlPoint.subVectors( __v1, vMidpoint ).add( __v1 );
+			}
 
 			this.curve = new QuadraticBezierCurve3( cameraStart, controlPoint, cameraTarget );
 
@@ -238,7 +245,7 @@ CameraMove.prototype.start = function ( time ) {
 
 	const controls = this.controls;
 
-	if ( this.cameraTarget === null && this.endPOI !== null ) {
+	if ( this.cameraTarget === null ) {
 
 		// scale time for simple pans by angle panned through
 
@@ -302,7 +309,7 @@ CameraMove.prototype.animateMove = function () {
 
 	camera.zoom = camera.zoom + ( this.targetZoom - camera.zoom ) * t;
 
-	camera.quaternion.slerp( this.endQuaternion, t );
+	Quaternion.slerp( this.startQuaternion, this.endQuaternion, camera.quaternion, t );
 
 	camera.updateProjectionMatrix();
 

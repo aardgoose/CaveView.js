@@ -166,6 +166,8 @@ CameraMove.prototype.prepare = function () {
 
 		if ( this.cameraTarget !== null || this.endPOI !== null ) {
 
+			// calculate end state rotation of camera
+
 			m4.lookAt( ( cameraTarget !== null ? cameraTarget : cameraStart ), endPOI, Object3D.DefaultUp );
 
 			this.endQuaternion.setFromRotationMatrix( m4 );
@@ -181,15 +183,32 @@ CameraMove.prototype.prepare = function () {
 
 		}
 
+		// skip move if extremely small
+
+		var cameraOffset = 0;
+
+		if ( cameraTarget !== null ) cameraOffset = cameraStart.distanceTo( cameraTarget );
+
+		var qDiff = 1 - this.endQuaternion.dot( camera.quaternion );
+
+		if ( cameraOffset < 0.1 && qDiff < 0.0000001 ) {
+
+			this.skipNext = true;
+
+			return this;
+
+		}
+
+
 		if ( cameraTarget !== null ) {
 
 			if ( cameraTarget.equals( cameraStart ) ) {
 
-				// start and end camera positions are identical.
-
 				if ( endPOI === null ) this.skipNext = true;
 
 			} else {
+
+				// setup curve for camera motion
 
 				if ( endPOI === null ) endPOI = startPOI;
 
@@ -206,8 +225,6 @@ CameraMove.prototype.prepare = function () {
 				controlPoint.subVectors( vTmp1, startPOI ).add( vTmp1 );
 
 				this.curve = new QuadraticBezierCurve3( cameraStart, controlPoint, cameraTarget );
-
-				return this;
 
 			}
 

@@ -9,7 +9,7 @@ import {
 	Geometry, RingGeometry, CylinderBufferGeometry,
 	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
 	FrontSide, VertexColors,
-	Mesh, Group
+	Mesh, Group, Euler
 } from '../Three';
 
 
@@ -116,27 +116,22 @@ Compass.prototype = Object.create( Group.prototype );
 
 Compass.prototype.set = function () {
 
-	const direction     = new Vector3();
-	const yAxis         = new Vector3( 0, 1, 0 );
 	const negativeZAxis = new Vector3( 0, 0, -1 );
+	const e = new Euler();
 
 	return function set ( vCamera ) {
 
-		vCamera.getWorldDirection( direction );
+		e.setFromQuaternion( vCamera.quaternion );
 
-		// floating point limitations result in this being seldom called
-		if ( direction.x === 0 && direction.y === 0 ) return;
-
-		// we are only interested in angle to horizontal plane.
-		direction.z = 0;
-
-		var a = direction.angleTo( yAxis );
-
-		if ( direction.x >= 0 ) a = 2 * Math.PI - a;
+		var a = e.z;
 
 		if ( a === this.lastRotation ) return;
 
-		var degrees = 360 - Math.round( _Math.radToDeg( a ) );
+		if ( a < 0 ) a = Math.PI * 2 + a;
+
+		var degrees = Math.round( _Math.radToDeg( a ) );
+
+		if ( degrees === 360 ) degrees = 0;
 
 		const res = degrees.toString().padStart( 3, '0' ) + '\u00B0'; // unicode degree symbol
 

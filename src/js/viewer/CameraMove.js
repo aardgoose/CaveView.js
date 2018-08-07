@@ -189,44 +189,40 @@ CameraMove.prototype.prepare = function () {
 
 		if ( cameraTarget !== null ) cameraOffset = cameraStart.distanceTo( cameraTarget );
 
-		var qDiff = 1 - this.endQuaternion.dot( camera.quaternion );
+		if ( cameraOffset < 0.1 ) {
 
-		if ( cameraOffset < 0.1 && qDiff < 0.0000001 ) {
+			// minimal camera position change
+			var qDiff = 1 - this.endQuaternion.dot( camera.quaternion );
 
-			this.skipNext = true;
+			if ( qDiff < 0.0000001 || endPOI === null ) {
 
-			return this;
-
-		}
-
-
-		if ( cameraTarget !== null ) {
-
-			if ( cameraTarget.equals( cameraStart ) ) {
-
-				if ( endPOI === null ) this.skipNext = true;
-
-			} else {
-
-				// setup curve for camera motion
-
-				if ( endPOI === null ) endPOI = startPOI;
-
-				// get mid point between start and end POI
-				vMidpoint.addVectors( startPOI, endPOI ).multiplyScalar( 0.5 );
-
-				// line between camera positions
-				cameraLine.set( cameraStart, cameraTarget );
-
-				// closest point on line to POI midpoint
-				cameraLine.closestPointToPoint( vMidpoint, true, vTmp1 );
-
-				// reflect mid point around cameraLine in cameraLine + midPoint plane
-				controlPoint.subVectors( vTmp1, startPOI ).add( vTmp1 );
-
-				this.curve = new QuadraticBezierCurve3( cameraStart, controlPoint, cameraTarget );
+				// minimal camera rotation or no change of POI
+				this.skipNext = true;
+				return this;
 
 			}
+
+			this.cameraTarget = null;
+
+		} else  {
+
+			// setup curve for camera motion
+
+			if ( endPOI === null ) endPOI = startPOI;
+
+			// get mid point between start and end POI
+			vMidpoint.addVectors( startPOI, endPOI ).multiplyScalar( 0.5 );
+
+			// line between camera positions
+			cameraLine.set( cameraStart, cameraTarget );
+
+			// closest point on line to POI midpoint
+			cameraLine.closestPointToPoint( vMidpoint, true, vTmp1 );
+
+			// reflect mid point around cameraLine in cameraLine + midPoint plane
+			controlPoint.subVectors( vTmp1, startPOI ).add( vTmp1 );
+
+			this.curve = new QuadraticBezierCurve3( cameraStart, controlPoint, cameraTarget );
 
 		}
 
@@ -246,10 +242,11 @@ CameraMove.prototype.start = function ( time ) {
 
 		// scale time for simple pans by angle panned through
 
-		const v1 = new Vector3().subVectors( controls.target, controls.object.position );
-		const v2 = new Vector3().subVectors( this.endPOI, controls.object.position );
+		const v1 = new Vector3().subVectors( controls.target, controls.object.position ).normalize();
+		const v2 = new Vector3().subVectors( this.endPOI, controls.object.position ).normalize();
 
-		time = Math.round( time * Math.acos( v1.normalize().dot( v2.normalize() ) ) / Math.PI );
+		time = Math.round( time * Math.acos( Math.min( 1.0, v1.dot( v2 ) ) ) / Math.PI );
+		time = Math.max( time, 30 );
 
 	}
 

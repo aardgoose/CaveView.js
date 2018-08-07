@@ -9,6 +9,13 @@ import { Group, Box3, Vector3 } from '../Three';
 
 const overlays = {};
 
+// preallocated tmp objects
+
+const __pixelCoords = new Vector3();
+const __adjust = new Vector3();
+
+const __result = new Uint8Array( 4 );
+
 function CommonTerrain () {
 
 	Group.call( this );
@@ -253,43 +260,34 @@ CommonTerrain.prototype.addHeightMap = function ( renderer, renderTarget ) {
 
 };
 
-CommonTerrain.prototype.getHeight = function () {
+CommonTerrain.prototype.getHeight = function ( point ) {
 
-	const pixelCoords = new Vector3();
-	const adjust = new Vector3();
+	const renderTarget = this.renderTarget;
 
-	const result = new Uint8Array( 4 );
+	if ( this.terrainBase === null ) {
 
-	return function getHeight( point ) {
+		if ( this.boundingBox === undefined ) this.computeBoundingBox();
 
-		const renderTarget = this.renderTarget;
+		this.terrainBase = this.boundingBox.min;
+		this.terrainRange = this.boundingBox.getSize( new Vector3() );
 
-		if ( this.terrainBase === null ) {
+		// setup value cached in closure
 
-			if ( this.boundingBox === undefined ) this.computeBoundingBox();
+		__adjust.set( renderTarget.width, renderTarget.height, 1 ).divide( this.terrainRange );
 
-			this.terrainBase = this.boundingBox.min;
-			this.terrainRange = this.boundingBox.getSize( new Vector3() );
+	}
 
-			// setup value cached in closure
+	const terrainBase = this.terrainBase;
 
-			adjust.set( renderTarget.width, renderTarget.height, 1 ).divide( this.terrainRange );
+	__pixelCoords.copy( point ).sub( terrainBase ).multiply( __adjust ).round();
 
-		}
+	this.renderer.readRenderTargetPixels( renderTarget, __pixelCoords.x, __pixelCoords.y, 1, 1, __result );
 
-		const terrainBase = this.terrainBase;
+	// convert to survey units and return
 
-		pixelCoords.copy( point ).sub( terrainBase ).multiply( adjust ).round();
+	return unpackRGBA( __result ) * this.terrainRange.z + terrainBase.z;
 
-		this.renderer.readRenderTargetPixels( renderTarget, pixelCoords.x, pixelCoords.y, 1, 1, result );
-
-		// convert to survey units and return
-
-		return unpackRGBA( result ) * this.terrainRange.z + terrainBase.z;
-
-	};
-
-} ();
+};
 
 export { CommonTerrain };
 

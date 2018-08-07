@@ -12,6 +12,9 @@ import {
 	Mesh, Group, Euler
 } from '../Three';
 
+const __direction = new Vector3();
+const __negativeZAxis = new Vector3( 0, 0, -1 );
+const __e = new Euler();
 
 function Compass () {
 
@@ -114,48 +117,40 @@ function Compass () {
 
 Compass.prototype = Object.create( Group.prototype );
 
-Compass.prototype.set = function () {
+Compass.prototype.set = function ( vCamera ) {
 
-	const direction = new Vector3();
-	const negativeZAxis = new Vector3( 0, 0, -1 );
-	const e = new Euler();
+	var a;
 
-	return function set ( vCamera ) {
+	vCamera.getWorldDirection( __direction );
 
-		var a;
+	if ( Math.abs( __direction.z ) < 0.999 ) {
 
-		vCamera.getWorldDirection( direction );
+		a = Math.atan2( __direction.x, __direction.y );
 
-		if ( Math.abs( direction.z ) < 0.999 ) {
+	} else {
 
-			a = Math.atan2( direction.x, direction.y );
+		__e.setFromQuaternion( vCamera.quaternion );
+		a = __e.z;
 
-		} else {
+	}
 
-			e.setFromQuaternion( vCamera.quaternion );
-			a = e.z;
+	if ( a === this.lastRotation ) return;
 
-		}
+	if ( a < 0 ) a = Math.PI * 2 + a;
 
-		if ( a === this.lastRotation ) return;
+	var degrees = Math.round( _Math.radToDeg( a ) );
 
-		if ( a < 0 ) a = Math.PI * 2 + a;
+	if ( degrees === 360 ) degrees = 0;
 
-		var degrees = Math.round( _Math.radToDeg( a ) );
+	const res = degrees.toString().padStart( 3, '0' ) + '\u00B0'; // unicode degree symbol
 
-		if ( degrees === 360 ) degrees = 0;
+	this.label.replaceString( res );
 
-		const res = degrees.toString().padStart( 3, '0' ) + '\u00B0'; // unicode degree symbol
+	this.rotaryGroup.rotateOnAxis( __negativeZAxis, a - this.lastRotation );
 
-		this.label.replaceString( res );
+	this.lastRotation = a;
 
-		this.rotaryGroup.rotateOnAxis( negativeZAxis, a - this.lastRotation );
-
-		this.lastRotation = a;
-
-	};
-
-} ();
+};
 
 export { Compass };
 

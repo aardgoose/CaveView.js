@@ -1396,7 +1396,7 @@ function renderView () {
 
 	}
 
-//	if ( useFog ) Materials.setFog( false );
+	if ( useFog ) Materials.setFog( false );
 
 	HUD.renderHUD();
 

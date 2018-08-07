@@ -125,7 +125,7 @@ Compass.prototype.set = function ( vCamera ) {
 
 	if ( Math.abs( __direction.z ) < 0.999 ) {
 
-		a = Math.atan2( __direction.x, __direction.y );
+		a = Math.atan2( - __direction.x, __direction.y );
 
 	} else {
 

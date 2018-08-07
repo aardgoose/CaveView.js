@@ -19,6 +19,7 @@ const __t2 = new Triangle( __a, __c, __d );
 
 const __plane = new Plane();
 
+const __v = new Vector3();
 
 function QuadTree ( xMin, xMax, yMin, yMax ) {
 
@@ -321,29 +322,23 @@ ClusterMarkers.prototype.addMarker = function ( position, label ) {
 
 };
 
-ClusterMarkers.prototype.cluster = function () {
+ClusterMarkers.prototype.cluster = function ( camera, target ) {
 
-	const v = new Vector3();
+	// determine which labels are too close together to be usefully displayed as separate objects.
 
-	return function cluster ( camera, target ) {
+	// immediate exit if only a single label or none.
 
-		// determine which labels are too close together to be usefully displayed as separate objects.
+	if ( this.children.length < 2 ) return;
 
-		// immediate exit if only a single label or none.
+	this.camera = camera;
 
-		if ( this.children.length < 2 ) return;
+	const angle = this.camera.getWorldDirection( __v ).dot( upAxis );
 
-		this.camera = camera;
+	this.quadTree.check( this, target, 1 - Math.cos( angle ) );
 
-		const angle = this.camera.getWorldDirection( v ).dot( upAxis );
+	return;
 
-		this.quadTree.check( this, target, 1 - Math.cos( angle ) );
-
-		return;
-
-	};
-
-}();
+};
 
 export { ClusterMarkers };
 

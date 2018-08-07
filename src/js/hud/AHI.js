@@ -13,6 +13,11 @@ import {
 	Mesh, LineSegments, Group
 } from '../Three';
 
+// preallocated tmp objects
+
+const __xAxis = new Vector3( 1, 0, 0 );
+const __direction = new Vector3();
+
 function AHI () {
 
 	const stdWidth  = HudObject.stdWidth;
@@ -122,27 +127,20 @@ function AHI () {
 
 AHI.prototype = Object.create( Group.prototype );
 
-AHI.prototype.set = function () {
+AHI.prototype.set = function ( vCamera ) {
 
-	const xAxis = new Vector3( 1, 0, 0 );
-	const direction = new Vector3();
+	vCamera.getWorldDirection( __direction );
 
-	return function set ( vCamera ) {
+	const pitch = Math.PI / 2 - __direction.angleTo( upAxis );
 
-		vCamera.getWorldDirection( direction );
+	if ( pitch === this.lastPitch ) return;
 
-		const pitch = Math.PI / 2 - direction.angleTo( upAxis );
+	this.globe.rotateOnAxis( __xAxis, pitch - this.lastPitch );
+	this.lastPitch = pitch;
 
-		if ( pitch === this.lastPitch ) return;
+	this.label.replaceString( String( Math.round( _Math.radToDeg( pitch ) ) + '\u00B0' ).padStart( 4, ' ' ) );
 
-		this.globe.rotateOnAxis( xAxis, pitch - this.lastPitch );
-		this.lastPitch = pitch;
-
-		this.label.replaceString( String( Math.round( _Math.radToDeg( pitch ) ) + '\u00B0' ).padStart( 4, ' ' ) );
-
-	};
-
-} ();
+};
 
 export { AHI };
 

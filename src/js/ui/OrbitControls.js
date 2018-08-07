@@ -23,6 +23,8 @@ const MODE_LOCK_ROTATE = 1;
 const MODE_LOCK_ZOOM = 2;
 const SVX_DELTA = Math.PI / 60;
 
+const __v = new Vector3();
+
 function OrbitControls ( object, domElement, svxMode ) {
 
 	this.object = object;
@@ -319,75 +321,59 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	}
 
-	var panLeft = function () {
+	var panLeft = function ( distance, objectMatrix ) {
 
-		var v = new Vector3();
+		distance *= svxReverseSense;
 
-		return function panLeft( distance, objectMatrix ) {
+		__v.setFromMatrixColumn( objectMatrix, 0 ); // get X column of objectMatrix
+		__v.multiplyScalar( distance );
 
-			distance *= svxReverseSense;
+		panOffset.add( __v );
 
-			v.setFromMatrixColumn( objectMatrix, 0 ); // get X column of objectMatrix
-			v.multiplyScalar( distance );
+	};
 
-			panOffset.add( v );
 
-		};
+	var panUp = function ( distance, objectMatrix ) {
 
-	}();
+		distance *= svxReverseSense;
 
-	var panUp = function () {
+		__v.setFromMatrixColumn( objectMatrix, 1 );
+		__v.multiplyScalar( - distance );
 
-		var v = new Vector3();
+		panOffset.add( __v );
 
-		return function panUp( distance, objectMatrix ) {
-
-			distance *= svxReverseSense;
-
-			v.setFromMatrixColumn( objectMatrix, 1 );
-			v.multiplyScalar( - distance );
-
-			panOffset.add( v );
-
-		};
-
-	}();
+	};
 
 	// deltaX and deltaY are in pixels; right and down are positive
-	var pan = function () {
+	var pan = function ( deltaX, deltaY ) {
 
-		var offset = new Vector3();
+		var element = scope.element;
+		var camera = scope.object;
 
-		return function pan( deltaX, deltaY ) {
+		if ( camera.isPerspectiveCamera ) {
 
-			var element = scope.element;
-			var camera = scope.object;
+			// perspective
+			var position = camera.position;
+			__v.copy( position ).sub( scope.target );
 
-			if ( camera.isPerspectiveCamera ) {
+			var targetDistance = __v.length();
 
-				// perspective
-				var position = camera.position;
-				offset.copy( position ).sub( scope.target );
-				var targetDistance = offset.length();
+			// half of the fov is center to top of screen
+			targetDistance *= Math.tan( ( camera.fov / 2 ) * Math.PI / 180.0 );
 
-				// half of the fov is center to top of screen
-				targetDistance *= Math.tan( ( camera.fov / 2 ) * Math.PI / 180.0 );
+			// we use only clientHeight here so aspect ratio does not distort speed
+			panLeft( 2 * deltaX * targetDistance / element.clientHeight, camera.matrix );
+			panUp( 2 * deltaY * targetDistance / element.clientHeight, camera.matrix );
 
-				// we use only clientHeight here so aspect ratio does not distort speed
-				panLeft( 2 * deltaX * targetDistance / element.clientHeight, camera.matrix );
-				panUp( 2 * deltaY * targetDistance / element.clientHeight, camera.matrix );
+		} else if ( camera.isOrthographicCamera ) {
 
-			} else if ( camera.isOrthographicCamera ) {
+			// orthographic
+			panLeft( deltaX * ( camera.right - camera.left ) / ( camera.zoom * element.clientWidth ), camera.matrix );
+			panUp( deltaY * ( camera.top - camera.bottom ) / ( camera.zoom * element.clientHeight ), camera.matrix );
 
-				// orthographic
-				panLeft( deltaX * ( camera.right - camera.left ) / ( camera.zoom * element.clientWidth ), camera.matrix );
-				panUp( deltaY * ( camera.top - camera.bottom ) / ( camera.zoom * element.clientHeight ), camera.matrix );
+		}
 
-			}
-
-		};
-
-	}();
+	};
 
 	function dollyIn( dollyScale ) {
 

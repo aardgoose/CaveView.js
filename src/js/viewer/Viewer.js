@@ -120,6 +120,11 @@ var timerId = null;
 
 var popup = null;
 
+// preallocated tmp objects
+
+const __rotation = new Euler();
+const __q = new Quaternion();
+
 //var leakWatcher;
 
 const Viewer = Object.create( EventDispatcher.prototype );
@@ -728,28 +733,21 @@ function initCamera ( camera ) {
 
 }
 
-var cameraMoved = function () {
+function cameraMoved () {
 
-	const rotation = new Euler();
-	const q = new Quaternion();
+	__rotation.setFromQuaternion( camera.getWorldQuaternion( __q ) );
 
-	return function cameraMoved() {
+	currentLightPosition.copy( lightPosition );
+	currentLightPosition.applyAxisAngle( Object3D.DefaultUp, __rotation.z );
 
-		rotation.setFromQuaternion( camera.getWorldQuaternion( q ) );
+	directionalLight.position.copy( currentLightPosition );
+	directionalLight.updateMatrix();
 
-		currentLightPosition.copy( lightPosition );
-		currentLightPosition.applyAxisAngle( Object3D.DefaultUp, rotation.z );
+	Viewer.dispatchEvent( { type: 'lightingChange', name: 'surface' } );
 
-		directionalLight.position.copy( currentLightPosition );
-		directionalLight.updateMatrix();
+	renderView();
 
-		Viewer.dispatchEvent( { type: 'lightingChange', name: 'surface' } );
-
-		renderView();
-
-	};
-
-}();
+}
 
 function setCameraLayer ( layerTag, enable ) {
 

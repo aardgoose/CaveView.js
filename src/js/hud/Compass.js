@@ -116,14 +116,26 @@ Compass.prototype = Object.create( Group.prototype );
 
 Compass.prototype.set = function () {
 
+	const direction = new Vector3();
 	const negativeZAxis = new Vector3( 0, 0, -1 );
 	const e = new Euler();
 
 	return function set ( vCamera ) {
 
-		e.setFromQuaternion( vCamera.quaternion );
+		var a;
 
-		var a = e.z;
+		vCamera.getWorldDirection( direction );
+
+		if ( Math.abs( direction.z ) < 0.999 ) {
+
+			a = Math.atan2( direction.x, direction.y );
+
+		} else {
+
+			e.setFromQuaternion( vCamera.quaternion );
+			a = e.z;
+
+		}
 
 		if ( a === this.lastRotation ) return;
 

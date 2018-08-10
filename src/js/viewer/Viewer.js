@@ -817,9 +817,8 @@ function setViewMode ( mode ) {
 
 	}
 
-	cameraMove.cancel();
 	cameraMove.prepare( boundingBox, targetAxis );
-	cameraMove.start( renderRequired ? 240 : 1 );
+	cameraMove.start( renderRequired );
 
 }
 
@@ -922,9 +921,8 @@ function selectSection ( id ) {
 
 	if ( id === 0 ) {
 
-		cameraMove.cancel();
 		cameraMove.prepare( survey.getWorldBoundingBox() );
-		cameraMove.start( 30 );
+		cameraMove.start( true );
 
 		highlightSelection( 0 );
 
@@ -944,7 +942,7 @@ function selectSection ( id ) {
 	} else {
 
 		// a single station
-		cameraMove.prepare( survey.getWorldPosition( node.p ) );
+		cameraMove.preparePoint( survey.getWorldPosition( node.p ) );
 
 	}
 
@@ -1040,6 +1038,8 @@ function clearView () {
 
 	initCamera( pCamera );
 	initCamera( oCamera );
+
+	controls.reset();
 
 }
 
@@ -1271,7 +1271,7 @@ function mouseDown ( event ) {
 
 		selectSection( station.id );
 
-		cameraMove.start( 60 );
+		cameraMove.start( true );
 		event.stopPropagation();
 
 		controls.enabled = false;
@@ -1319,7 +1319,7 @@ function mouseDown ( event ) {
 
 		renderView();
 
-		cameraMove.prepare( survey.getWorldPosition( station.p ) );
+		cameraMove.preparePoint( survey.getWorldPosition( station.p ) );
 
 		return true;
 
@@ -1439,7 +1439,7 @@ function updateTerrain () {
 
 function setCameraPOI () {
 
-	cameraMove.start( 100 );
+	cameraMove.start( true );
 
 }
 

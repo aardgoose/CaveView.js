@@ -922,7 +922,7 @@ function selectSection ( id ) {
 	if ( id === 0 ) {
 
 		cameraMove.prepare( survey.getWorldBoundingBox() );
-		cameraMove.start( true );
+		cameraMove.start( renderRequired );
 
 		highlightSelection( 0 );
 

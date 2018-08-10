@@ -2,10 +2,7 @@
 import {
 	Object3D,
 	Vector3,
-	QuadraticBezierCurve3,
 	Quaternion,
-	Euler,
-	Line3,
 	Matrix4,
 	Math as _Math
 } from '../Three';
@@ -13,24 +10,23 @@ import {
 import { CAMERA_OFFSET } from '../core/constants';
 
 const __v1 = new Vector3();
+const __m4 = new Matrix4();
 
 function CameraMove ( controls, renderFunction ) {
 
-	this.cameraTarget = null;
-	this.endPOI = null;
+	this.cameraTarget = new Vector3();
+	this.endPOI = new Vector3();
 	this.startQuaternion = new Quaternion();
 	this.endQuaternion = new Quaternion();
 
 	this.controls = controls;
 	this.renderFunction = renderFunction;
 	this.frameCount = 0;
-	this.frames = 0;
 	this.targetZoom = 1;
-	this.curve = null;
 	this.skipNext = false;
+	this.rotation = 0;
 
 	this.delta = 0;
-
 	this.running = false;
 	this.animationFunction = null;
 
@@ -115,121 +111,106 @@ CameraMove.prototype.getCardinalAxis = function ( targetAxis ) {
 
 };
 
+CameraMove.prototype.prepareRotation = function ( endCamera, orientation ) {
+
+	const camera = this.controls.object;
+
+	__v1.copy( endCamera ).sub( this.endPOI ).normalize();
+
+	const zDot = __v1.dot( Object3D.DefaultUp );
+
+	if ( Math.abs( zDot ) > 0.99999 && orientation !== undefined ) {
+
+		// apply correction if looking verticaly
+		endCamera.add( orientation.multiplyScalar( 0.02 * __v1.z ) );
+
+	}
+
+	// calculate end state rotation of camera
+
+	this.startQuaternion.copy( camera.quaternion ).normalize();
+
+	__m4.lookAt( endCamera, this.endPOI, Object3D.DefaultUp );
+
+	this.endQuaternion.setFromRotationMatrix( __m4 ).normalize();
+
+	this.rotation = 2 * Math.acos( Math.abs( _Math.clamp( this.endQuaternion.dot( this.startQuaternion ), - 1, 1 ) ) );
+
+};
+
 CameraMove.prototype.prepare = function () {
 
-	const vMidpoint = new Vector3();
-	const cameraLine = new Line3();
-	const vTmp2 = new Vector3();
-	const controlPoint = new Vector3();
-	const m4 = new Matrix4();
-	const q90 = new Quaternion().setFromAxisAngle( Object3D.DefaultUp, - Math.PI / 2 );
-	const euler = new Euler();
 	const targetAxis = new Vector3();
+	const orientation = new Vector3();
 
-	return function prepare ( endPOI, requiredTargetAxis ) {
+	return function prepare ( endBox, requiredTargetAxis ) {
 
 		if ( this.running ) return this;
 
 		const camera = this.controls.object;
-		const startPOI = this.controls.target;
+		const endPOI = this.endPOI;
 		const cameraStart = this.controls.object.position;
-
-		var cameraTarget = null;
+		const cameraTarget = this.cameraTarget;
 
 		this.skipNext = false;
 
-		if ( endPOI.isBox3 ) {
+		// move camera to cardinal axis closest to current camera direction
+		// or axis provided by caller
 
-			// move camera to cardinal axis closest to current camera direction
-			// or axis provided by caller
+		if ( requiredTargetAxis === undefined ) {
 
-			if ( requiredTargetAxis === undefined ) {
+			this.getCardinalAxis( targetAxis );
 
-				this.getCardinalAxis( targetAxis );
+			if ( targetAxis.z !== 0 ) {
 
-			} else {
+				// set orientation from current orientation, snapping to cardinals
 
-				targetAxis.copy( requiredTargetAxis );
+				orientation.set( 0, -1, 0 ); // up = N when looking vertically
 
 			}
 
-			const fit = CameraMove.fitBox( camera, endPOI, targetAxis );
+		} else {
 
-			endPOI = endPOI.getCenter( vTmp2 );
-
-			this.targetZoom = fit.zoom;
-
-			cameraTarget = endPOI.clone();
-			cameraTarget.add( targetAxis.negate().multiplyScalar( fit.elevation ) );
+			targetAxis.copy( requiredTargetAxis );
+			orientation.set( 0, -1, 0 ); // up = N when looking vertically
 
 		}
 
-		this.cameraTarget = cameraTarget;
-		this.endPOI = endPOI;
+		const fit = CameraMove.fitBox( camera, endBox, targetAxis );
 
+		endBox.getCenter( endPOI );
 
-		// calculate end state rotation of camera
+		this.targetZoom = fit.zoom;
 
-		this.startQuaternion.copy( camera.quaternion );
-
-		m4.lookAt( ( cameraTarget !== null ? cameraTarget : cameraStart ), endPOI, Object3D.DefaultUp );
-
-		this.endQuaternion.setFromRotationMatrix( m4 );
-
-		euler.setFromQuaternion( this.endQuaternion );
-
-		if ( Math.abs( euler.x ) < 0.0001 ) {
-
-			// apply correction if looking verticaly
-			this.endQuaternion.multiply( q90 );
-
-		}
+		cameraTarget.copy( endPOI ).add( targetAxis.negate().multiplyScalar( fit.elevation ) );
 
 		// skip move if extremely small
 
-		var cameraOffset = 0;
+		const cameraOffset = cameraStart.distanceTo( cameraTarget );
 
-		if ( cameraTarget !== null ) cameraOffset = cameraStart.distanceTo( cameraTarget );
+		// calculate end state rotation of camera
 
-		if ( cameraOffset < 0.1 ) {
+		this.prepareRotation( cameraTarget, orientation );
 
-			// minimal camera position change
-			var qDiff = 1 - this.endQuaternion.dot( camera.quaternion );
+		if ( cameraOffset < 0.1 * cameraTarget.z ) {
 
-			if ( qDiff < 0.0000001 ) {
+			// simple rotation of camera, minimal camera position change
 
-				// minimal camera rotation or no change of POI
+			this.animationFunction = this.animateRotate;
+
+			if ( this.rotation < 0.005 ) {
+
+				// minimal camera rotation ( < .5 degree )
+
 				this.skipNext = true;
-				return this;
+				this.rotation = 0;
 
 			}
-
-			this.cameraTarget = null;
 
 		} else  {
 
-			// setup curve for camera motion
-
-			if ( endPOI.equals( startPOI ) ) {
-
-				controlPoint.addVectors( cameraStart, cameraTarget ).multiplyScalar( 0.5 );
-
-			} else {
-
-				// get mid point between start and end POI
-				vMidpoint.addVectors( startPOI, endPOI ).multiplyScalar( 0.4 );
-
-				// line between camera positions
-				cameraLine.set( cameraStart, cameraTarget );
-
-				// closest point on line to POI midpoint
-				cameraLine.closestPointToPoint( vMidpoint, true, __v1 );
-
-				// reflect mid point around cameraLine in cameraLine + midPoint plane
-				controlPoint.subVectors( __v1, vMidpoint ).add( __v1 );
-			}
-
-			this.curve = new QuadraticBezierCurve3( cameraStart, controlPoint, cameraTarget );
+			this.animationFunction = this.animateMove;
+			this.rotation = 0;
 
 		}
 
@@ -239,32 +220,55 @@ CameraMove.prototype.prepare = function () {
 
 }();
 
-CameraMove.prototype.start = function ( time ) {
+CameraMove.prototype.preparePoint = function ( endPOI ) {
+
+	if ( this.running ) return this;
+
+	const camera = this.controls.object;
+
+	// calculate end state rotation of camera
+	this.endPOI.copy( endPOI );
+
+	this.prepareRotation( camera.position );
+
+	// minimal camera rotation or no change of POI
+	this.skipNext = ( this.rotation < 0.005 );
+
+	this.animationFunction = this.animateRotate;
+
+	return this;
+
+};
+
+CameraMove.prototype.start = function ( timed ) {
 
 	if ( this.running || this.skipNext ) return;
 
 	const controls = this.controls;
 
-	if ( this.cameraTarget === null ) {
+	if ( timed ) {
 
-		// scale time for simple pans by angle panned through
+		if ( this.rotation > 0 ) {
 
-		const v1 = new Vector3().subVectors( controls.target, controls.object.position ).normalize();
-		const v2 = new Vector3().subVectors( this.endPOI, controls.object.position ).normalize();
+			// scale speed of rotation by angle of rotation
 
-		time = Math.round( time * Math.acos( Math.min( 1.0, v1.dot( v2 ) ) ) / Math.PI );
-		time = Math.max( time, 30 );
+			this.frameCount = Math.round( Math.min( this.rotation / Math.PI * 90 ) );
+
+		} else {
+
+			this.frameCount = 30;
+
+		}
+
+	} else {
+
+		this.frameCount = 1;
 
 	}
-
-	this.frameCount = time + 1;
-	this.frames = this.frameCount;
 
 	controls.enabled = false;
 
 	this.running = true;
-
-	this.animationFunction = this.animateMove;
 
 	this.animate();
 
@@ -295,23 +299,30 @@ CameraMove.prototype.animate = function () {
 
 };
 
-CameraMove.prototype.animateMove = function () {
+CameraMove.prototype.animateRotate = function () {
 
-	const curve = this.curve;
+	// update camera rotation
+	const camera = this.controls.object;
+	const dt = 1 - ( this.frameCount - 1 ) / this.frameCount;
+
+	camera.quaternion.slerp( this.endQuaternion, dt );
+
+	this.renderFunction();
+
+};
+
+CameraMove.prototype.animateMove = function () {
 
 	// update camera position
 
 	const camera = this.controls.object;
+	const target = this.controls.target;
+	const dt = 1 - ( this.frameCount - 1 ) / this.frameCount;
 
-	const t = Math.sin( ( 1 - ( this.frameCount - 1 ) / this.frames ) * Math.PI / 2 );
-
-	if ( curve !== null ) camera.position.copy( this.curve.getPoint( t ) );
-
-	camera.zoom = camera.zoom + ( this.targetZoom - camera.zoom ) * t;
-
-	Quaternion.slerp( this.startQuaternion, this.endQuaternion, camera.quaternion, t );
-
-	camera.updateProjectionMatrix();
+	camera.position.lerp( this.cameraTarget, dt);
+	camera.zoom = camera.zoom + ( this.targetZoom - camera.zoom ) * dt;
+	camera.lookAt( target.lerp( this.endPOI, dt ) );
+	camera.quaternion.slerp( this.endQuaternion, dt );
 
 	this.renderFunction();
 
@@ -322,12 +333,12 @@ CameraMove.prototype.endAnimation = function () {
 
 	const controls = this.controls;
 
-	if ( this.endPOI !== null ) controls.target.copy( this.endPOI );
+	controls.target.copy( this.endPOI );
 
-	this.cameraTarget = null;
-	this.endPOI = null;
-	this.curve = null;
+	if ( this.rotation > 0 ) controls.object.position.copy( this.cameraTarget );
+
 	this.running = false;
+	this.rotation = 0;
 
 	controls.update();
 	controls.enabled = true;
@@ -346,7 +357,7 @@ CameraMove.prototype.cancel = function () {
 
 CameraMove.prototype.setAzimuthAngle = function ( targetAngle ) {
 
-	if ( this.running ) return;
+	if ( this.running ) return this;
 
 	const controls = this.controls;
 
@@ -378,7 +389,7 @@ CameraMove.prototype.animateAzimuthMove = function () {
 
 CameraMove.prototype.setPolarAngle = function ( targetAngle ) {
 
-	if ( this.running ) return;
+	if ( this.running ) return this;
 
 	const controls = this.controls;
 
@@ -416,7 +427,7 @@ CameraMove.prototype.setAutoRotate = function ( state ) {
 	} else {
 
 		this.controls.autoRotate = false;
-		this.running = false;
+		//this.running = false; FIXME
 
 	}
 

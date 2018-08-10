@@ -4,6 +4,7 @@ import {
 	Vector3,
 	Quaternion,
 	Matrix4,
+	Euler,
 	Math as _Math
 } from '../Three';
 
@@ -11,6 +12,7 @@ import { CAMERA_OFFSET } from '../core/constants';
 
 const __v1 = new Vector3();
 const __m4 = new Matrix4();
+const __e = new Euler();
 
 function CameraMove ( controls, renderFunction ) {
 
@@ -134,7 +136,8 @@ CameraMove.prototype.prepareRotation = function ( endCamera, orientation ) {
 
 	this.endQuaternion.setFromRotationMatrix( __m4 ).normalize();
 
-	this.rotation = 2 * Math.acos( Math.abs( _Math.clamp( this.endQuaternion.dot( this.startQuaternion ), - 1, 1 ) ) );
+	// rotation to nearest degree
+	this.rotation = Math.round( 2 * Math.acos( Math.abs( _Math.clamp( this.endQuaternion.dot( this.startQuaternion ), - 1, 1 ) ) ) * _Math.RAD2DEG );
 
 };
 
@@ -164,8 +167,38 @@ CameraMove.prototype.prepare = function () {
 			if ( targetAxis.z !== 0 ) {
 
 				// set orientation from current orientation, snapping to cardinals
+				__e.setFromQuaternion( camera.quaternion );
 
-				orientation.set( 0, -1, 0 ); // up = N when looking vertically
+				const direction = Math.round( 2 * ( __e.z + Math.PI ) / Math.PI );
+
+				switch ( direction ) {
+
+				case 0:
+				case 4:
+
+					orientation.set( 0, 1, 0 ); // S
+					break;
+
+				case 1:
+
+					orientation.set( -1, 0, 0 ); // E
+					break;
+
+				case 2:
+
+					orientation.set( 0, -1, 0 ); // N
+					break;
+
+				case 3:
+
+					orientation.set( 1, 0, 0 ); // W
+					break;
+
+				default:
+
+					orientation.set( 0, -1, 0 ); // up = N when looking vertically
+
+				}
 
 			}
 
@@ -196,23 +229,15 @@ CameraMove.prototype.prepare = function () {
 
 			// simple rotation of camera, minimal camera position change
 
-			this.animationFunction = this.animateRotate;
+			this.skipNext = ( this.rotation === 0 );
 
-			if ( this.rotation < 0.005 ) {
+		} else {
 
-				// minimal camera rotation ( < .5 degree )
-
-				this.skipNext = true;
-				this.rotation = 0;
-
-			}
-
-		} else  {
-
-			this.animationFunction = this.animateMove;
 			this.rotation = 0;
 
 		}
+
+		this.animationFunction = this.animateMove;
 
 		return this;
 
@@ -228,13 +253,14 @@ CameraMove.prototype.preparePoint = function ( endPOI ) {
 
 	// calculate end state rotation of camera
 	this.endPOI.copy( endPOI );
+	this.cameraTarget.copy( camera.position );
 
 	this.prepareRotation( camera.position );
 
 	// minimal camera rotation or no change of POI
-	this.skipNext = ( this.rotation < 0.005 );
+	this.skipNext = ( this.rotation === 0 );
 
-	this.animationFunction = this.animateRotate;
+	this.animationFunction = this.animateMove;
 
 	return this;
 
@@ -248,17 +274,7 @@ CameraMove.prototype.start = function ( timed ) {
 
 	if ( timed ) {
 
-		if ( this.rotation > 0 ) {
-
-			// scale speed of rotation by angle of rotation
-
-			this.frameCount = Math.round( Math.min( this.rotation / Math.PI * 90 ) );
-
-		} else {
-
-			this.frameCount = 30;
-
-		}
+		this.frameCount = ( this.rotation > 0 ) ? Math.max( 1, Math.round( this.rotation / 2 ) ) : 30;
 
 	} else {
 
@@ -299,36 +315,6 @@ CameraMove.prototype.animate = function () {
 
 };
 
-CameraMove.prototype.animateRotate = function () {
-
-	// update camera rotation
-	const camera = this.controls.object;
-	const dt = 1 - ( this.frameCount - 1 ) / this.frameCount;
-
-	camera.quaternion.slerp( this.endQuaternion, dt );
-
-	this.renderFunction();
-
-};
-
-CameraMove.prototype.animateMove = function () {
-
-	// update camera position
-
-	const camera = this.controls.object;
-	const target = this.controls.target;
-	const dt = 1 - ( this.frameCount - 1 ) / this.frameCount;
-
-	camera.position.lerp( this.cameraTarget, dt);
-	camera.zoom = camera.zoom + ( this.targetZoom - camera.zoom ) * dt;
-	camera.lookAt( target.lerp( this.endPOI, dt ) );
-	camera.quaternion.slerp( this.endQuaternion, dt );
-
-	this.renderFunction();
-
-};
-
-
 CameraMove.prototype.endAnimation = function () {
 
 	const controls = this.controls;
@@ -347,37 +333,55 @@ CameraMove.prototype.endAnimation = function () {
 
 };
 
-CameraMove.prototype.cancel = function () {
+CameraMove.prototype.animateMove = function () {
 
-	this.frameCount = 0;
-	this.skipNext = false;
-	this.running = false;
+	// update camera position
+
+	const camera = this.controls.object;
+	const target = this.controls.target;
+	const dt = 1 - ( this.frameCount - 1 ) / this.frameCount;
+
+	if ( ! this.rotation ) {
+
+		camera.position.lerp( this.cameraTarget, dt);
+		camera.zoom = camera.zoom + ( this.targetZoom - camera.zoom ) * dt;
+
+		if ( camera.isOrthographicCamera ) camera.updateProjectionMatrix();
+
+		camera.lookAt( target.lerp( this.endPOI, dt ) );
+
+	}
+
+	camera.quaternion.slerp( this.endQuaternion, dt );
+
+	this.renderFunction();
+
+};
+
+CameraMove.prototype.setAngleCommon = function ( delta ) {
+
+	this.frameCount = Math.max( 1, Math.round( Math.abs( delta ) * 90 / Math.PI ) );
+	this.delta = delta / this.frameCount;
+	this.running = true;
+
+	this.animate();
 
 };
 
 CameraMove.prototype.setAzimuthAngle = function ( targetAngle ) {
 
-	if ( this.running ) return this;
-
 	const controls = this.controls;
 
-	if ( controls.autoRotate || this.frameCount !== 0 ) return;
+	if ( this.running || controls.autoRotate ) return this;
 
 	var delta = ( controls.getAzimuthalAngle() - targetAngle );
 	var deltaSize = Math.abs( delta );
 
 	if ( deltaSize > Math.PI ) delta =  2 * Math.PI - deltaSize;
 
-	this.frameCount = Math.round( Math.abs( delta ) * 90 / Math.PI );
-
-	if ( this.frameCount === 0 ) return;
-
-	this.delta = delta / this.frameCount;
-
-	this.running = true;
 	this.animationFunction = this.animateAzimuthMove;
 
-	this.animate();
+	this.setAngleCommon( delta );
 
 };
 
@@ -393,17 +397,9 @@ CameraMove.prototype.setPolarAngle = function ( targetAngle ) {
 
 	const controls = this.controls;
 
-	var delta = ( controls.getPolarAngle() - targetAngle );
-
-	this.frameCount = Math.round( Math.abs( delta * 90 / Math.PI ) );
-	this.delta = delta / this.frameCount;
-
-	if ( this.frameCount === 0 ) return;
-
-	this.running = true;
 	this.animationFunction = this.animatePolarMove;
 
-	this.animate();
+	this.setAngleCommon( controls.getPolarAngle() - targetAngle );
 
 };
 

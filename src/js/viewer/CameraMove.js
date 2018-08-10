@@ -415,19 +415,22 @@ CameraMove.prototype.animatePolarMove = function () {
 
 CameraMove.prototype.setAutoRotate = function ( state ) {
 
+	const controls = this.controls;
+
 	if ( state ) {
 
 		if ( this.running ) return;
 
-		this.controls.autoRotate = true;
+		controls.autoRotate = true;
 		this.running = true;
 
 		this.animate();
 
 	} else {
 
-		this.controls.autoRotate = false;
-		//this.running = false; FIXME
+		if ( controls.autoRotate ) this.running = false;
+
+		controls.autoRotate = false;
 
 	}
 

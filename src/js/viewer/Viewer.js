@@ -1125,8 +1125,6 @@ function loadSurvey ( newSurvey ) {
 
 	scene.addStatic( survey );
 
-	selectSection( 0 );
-
 	mouseTargets = survey.pointTargets;
 
 	// set if we have independant terrain maps

@@ -395,11 +395,9 @@ CameraMove.prototype.setPolarAngle = function ( targetAngle ) {
 
 	if ( this.running ) return this;
 
-	const controls = this.controls;
-
 	this.animationFunction = this.animatePolarMove;
 
-	this.setAngleCommon( controls.getPolarAngle() - targetAngle );
+	this.setAngleCommon( this.controls.getPolarAngle() - targetAngle );
 
 };
 

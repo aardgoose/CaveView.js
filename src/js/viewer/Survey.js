@@ -711,11 +711,17 @@ Survey.prototype.selectSection = function ( id ) {
 			this.selectedBox = this.boxSection( node, this.selectedBox, Cfg.themeValue( 'box.select' ) );
 			surveyTree.getSubtreeIds( id, selectedSectionIds );
 
+			this.stations.selectStations( selectedSectionIds );
+
 		} else {
 
 			if ( node.p !== undefined ) this.stations.selectStation( node );
 
 		}
+
+	} else {
+
+		this.stations.selectStations( null );
 
 	}
 

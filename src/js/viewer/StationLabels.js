@@ -1,6 +1,6 @@
 import { Group, Vector3 } from '../Three';
 
-import { CAMERA_OFFSET, LABEL_STATION, LEG_SPLAY } from '../core/constants';
+import { CAMERA_OFFSET, LABEL_STATION } from '../core/constants';
 import { Cfg } from '../core/lib';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';

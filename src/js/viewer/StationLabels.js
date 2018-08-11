@@ -49,28 +49,20 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 	cameraPosition.applyMatrix4( inverseWorld );
 
 	const stations = this.stations;
-	const splaysVisible = camera.layers.mask & 1 << LEG_SPLAY;
 	const points = stations.vertices;
 
 	for ( var i = 0, l = points.length; i < l; i++ ) {
 
 		const position = points[ i ];
 
-		const station = stations.getStation( position );
-		const connections = position.connections;
+		const station = stations.getVisibleStation( position );
 
-		var label = station.label;
+		if ( station !== null ) {
 
-		// only show labels for splay end stations if splays visible
-
-		if ( connections === 0 && ! splaysVisible && label !== undefined) {
-
-			label.visible = false;
-
-		} else {
+			let label = station.label;
 
 			// show labels for network vertices at greater distance than intermediate stations
-			const visible = ( position.distanceToSquared( cameraPosition ) < ( ( connections < 3 ) ? 5000 : 40000 ) );
+			const visible = ( position.distanceToSquared( cameraPosition ) < ( ( position.connections < 3 ) ? 5000 : 40000 ) );
 
 			if ( label === undefined ) {
 

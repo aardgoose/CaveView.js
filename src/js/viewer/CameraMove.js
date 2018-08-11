@@ -16,18 +16,17 @@ const __e = new Euler();
 
 function CameraMove ( controls, renderFunction ) {
 
-	this.cameraTarget = new Vector3();
-	this.endPOI = new Vector3();
-	this.startQuaternion = new Quaternion();
-	this.endQuaternion = new Quaternion();
-
 	this.controls = controls;
 	this.renderFunction = renderFunction;
+
+	this.endCameraPosition = new Vector3();
+	this.endPOI = new Vector3();
+	this.endZoom = 1;
+	this.endQuaternion = new Quaternion();
+
 	this.frameCount = 0;
-	this.targetZoom = 1;
 	this.skipNext = false;
 	this.rotation = 0;
-
 	this.delta = 0;
 	this.running = false;
 	this.animationFunction = null;
@@ -123,21 +122,19 @@ CameraMove.prototype.prepareRotation = function ( endCamera, orientation ) {
 
 	if ( Math.abs( zDot ) > 0.99999 && orientation !== undefined ) {
 
-		// apply correction if looking verticaly
+		// apply correction if looking verticaly to set to required cardinal direction for 'up'
 		endCamera.add( orientation.multiplyScalar( 0.02 * __v1.z ) );
 
 	}
 
 	// calculate end state rotation of camera
 
-	this.startQuaternion.copy( camera.quaternion ).normalize();
-
 	__m4.lookAt( endCamera, this.endPOI, Object3D.DefaultUp );
 
 	this.endQuaternion.setFromRotationMatrix( __m4 ).normalize();
 
 	// rotation to nearest degree
-	this.rotation = Math.round( 2 * Math.acos( Math.abs( _Math.clamp( this.endQuaternion.dot( this.startQuaternion ), - 1, 1 ) ) ) * _Math.RAD2DEG );
+	this.rotation = Math.round( 2 * Math.acos( Math.abs( _Math.clamp( this.endQuaternion.dot( camera.quaternion ), - 1, 1 ) ) ) * _Math.RAD2DEG );
 
 };
 
@@ -153,7 +150,7 @@ CameraMove.prototype.prepare = function () {
 		const camera = this.controls.object;
 		const endPOI = this.endPOI;
 		const cameraStart = this.controls.object.position;
-		const cameraTarget = this.cameraTarget;
+		const endCameraPosition = this.endCameraPosition;
 
 		this.skipNext = false;
 
@@ -213,19 +210,19 @@ CameraMove.prototype.prepare = function () {
 
 		endBox.getCenter( endPOI );
 
-		this.targetZoom = fit.zoom;
+		this.endZoom = fit.zoom;
 
-		cameraTarget.copy( endPOI ).add( targetAxis.negate().multiplyScalar( fit.elevation ) );
+		endCameraPosition.copy( endPOI ).add( targetAxis.negate().multiplyScalar( fit.elevation ) );
 
 		// skip move if extremely small
 
-		const cameraOffset = cameraStart.distanceTo( cameraTarget );
+		const cameraOffset = cameraStart.distanceTo( endCameraPosition );
 
 		// calculate end state rotation of camera
 
-		this.prepareRotation( cameraTarget, orientation );
+		this.prepareRotation( endCameraPosition, orientation );
 
-		if ( cameraOffset < 0.1 * cameraTarget.z ) {
+		if ( cameraOffset < 0.1 * endCameraPosition.z ) {
 
 			// simple rotation of camera, minimal camera position change
 
@@ -253,7 +250,7 @@ CameraMove.prototype.preparePoint = function ( endPOI ) {
 
 	// calculate end state rotation of camera
 	this.endPOI.copy( endPOI );
-	this.cameraTarget.copy( camera.position );
+	this.endCameraPosition.copy( camera.position );
 
 	this.prepareRotation( camera.position );
 
@@ -321,7 +318,7 @@ CameraMove.prototype.endAnimation = function () {
 
 	controls.target.copy( this.endPOI );
 
-	if ( this.rotation > 0 ) controls.object.position.copy( this.cameraTarget );
+	if ( this.rotation > 0 ) controls.object.position.copy( this.endCameraPosition );
 
 	this.running = false;
 	this.rotation = 0;
@@ -343,8 +340,8 @@ CameraMove.prototype.animateMove = function () {
 
 	if ( ! this.rotation ) {
 
-		camera.position.lerp( this.cameraTarget, dt);
-		camera.zoom = camera.zoom + ( this.targetZoom - camera.zoom ) * dt;
+		camera.position.lerp( this.endCameraPosition, dt);
+		camera.zoom = camera.zoom + ( this.endZoom - camera.zoom ) * dt;
 
 		if ( camera.isOrthographicCamera ) camera.updateProjectionMatrix();
 

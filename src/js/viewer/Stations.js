@@ -38,6 +38,7 @@ function Stations () {
 
 	this.selected = null;
 	this.selectedSize = 0;
+	this.sectionIdSet = null;
 
 	const self = this;
 
@@ -61,12 +62,15 @@ function Stations () {
 			const stations = self.stations;
 			const pSize = self.geometry.getAttribute( 'pSize' );
 			const l = stations.length;
+			const sectionIdSet = self.sectionIdSet;
 
 			var i;
 
 			for ( i = 0; i < l; i++ ) {
 
-				if ( stations[ i ].p.connections === 0 ) {
+				const node = stations[ i ];
+
+				if ( node.p.connections === 0 && ( sectionIdSet === null || sectionIdSet.has( node.id ) ) ) {
 
 					pSize.setX( i, splaySize );
 
@@ -211,6 +215,51 @@ Stations.prototype.selectStationByIndex = function ( index ) {
 	pSize.needsUpdate = true;
 
 	this.selected = index;
+
+};
+
+Stations.prototype.selectStations = function ( sectionIdSet ) {
+
+	const stations = this.stations;
+	const l = stations.length;
+	const pSize = this.geometry.getAttribute( 'pSize' );
+	const splaySize = Viewer.splays ? 6.0 : 0.0;
+
+	// track this to maintain spay settings
+
+	this.sectionIdSet = sectionIdSet;
+
+	var i;
+
+	for ( i = 0; i < l; i++ ) {
+
+		const node = stations[ i ];
+
+		let size = 8
+
+		if ( sectionIdSet === null || sectionIdSet.has( node.id ) ) {
+
+			if ( node.type === STATION_ENTRANCE ) {
+
+				size = 12;
+
+			} else if ( node.p.connections === 0 ) {
+
+				size = splaySize;
+
+			}
+
+			pSize.setX( i , size );
+
+		} else {
+
+			pSize.setX( i, 0 );
+
+		}
+
+	}
+
+	pSize.needsUpdate = true;
 
 };
 

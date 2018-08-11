@@ -57,6 +57,7 @@ const defaultView = {
 	splays: false,
 	stations: false,
 	stationLabels: false,
+	section: 0,
 	entrances: true,
 	terrain: false,
 	traces: false,

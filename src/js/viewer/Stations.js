@@ -147,6 +147,22 @@ Stations.prototype.getStation = function ( vertex ) {
 
 };
 
+Stations.prototype.getVisibleStation = function ( vertex ) {
+
+	const node = this.map.get( vertex );
+	const sectionIdSet = this.sectionIdSet;
+
+	if (
+		( sectionIdSet === null || sectionIdSet.has( node.id ) ) &&
+		( node.p.connections > 0 || Viewer.splays )
+	) return node;
+
+	if ( node.label !== undefined ) node.label.visible = false;
+
+	return null;
+
+};
+
 Stations.prototype.getStationByIndex = function ( index ) {
 
 	return this.stations[ index ];
@@ -235,7 +251,7 @@ Stations.prototype.selectStations = function ( sectionIdSet ) {
 
 		const node = stations[ i ];
 
-		let size = 8
+		let size = 8;
 
 		if ( sectionIdSet === null || sectionIdSet.has( node.id ) ) {
 
@@ -254,6 +270,8 @@ Stations.prototype.selectStations = function ( sectionIdSet ) {
 		} else {
 
 			pSize.setX( i, 0 );
+
+			if ( node.label !== undefined ) node.label.visible = false;
 
 		}
 

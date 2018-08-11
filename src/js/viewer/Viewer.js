@@ -198,7 +198,10 @@ function init ( domID, configuration ) { // public method
 		'container': {
 			value: container
 		},
-
+		'reset': {
+			writeable: true,
+			set: function () { setupView( false ); }
+		},
 		'surveyLoaded': {
 			get: function () { return caveIsLoaded; }
 		},

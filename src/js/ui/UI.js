@@ -911,9 +911,6 @@ function handleKeyAven( event ) {
 
 		case 46: // '<delete>' reset view
 
-//			Viewer.autoRotate = false;
-//			Viewer.view = VIEW_PLAN;
-//			Viewer.section = 0;
 			Viewer.reset = true;
 
 			break;

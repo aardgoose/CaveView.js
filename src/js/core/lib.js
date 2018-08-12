@@ -49,7 +49,7 @@ Cfg.setLanguage = function ( lang ) {
 
 	}
 
-	x18n.on( [ 'lang:change' ], function () { Cfg.dispatchEvent( { type: 'change', name: name } ); } );
+	x18n.on( [ 'lang:change' ], function () { Cfg.dispatchEvent( { type: 'change', name: 'language' } ); } );
 
 	return;
 

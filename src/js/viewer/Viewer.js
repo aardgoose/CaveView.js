@@ -238,7 +238,7 @@ function init ( domID, configuration ) { // public method
 		},
 
 		'terrainShadingModes': {
-			get: function () { return terrain.getTerrainShadingModes( renderer ); }
+			get: function () { return terrain.terrainShadingModes; }
 		},
 
 		'terrainOpacity': {
@@ -1141,6 +1141,8 @@ function loadSurvey ( newSurvey ) {
 
 	} else {
 
+		terrain.checkTerrainShadingModes( renderer );
+
 		survey.addStatic( terrain );
 
 		renderDepthTexture();
@@ -1178,6 +1180,8 @@ function loadSurvey ( newSurvey ) {
 			}
 
 			survey.terrain = terrain;
+
+			terrain.checkTerrainShadingModes( renderer );
 
 			survey.addStatic( terrain );
 

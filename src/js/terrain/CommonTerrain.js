@@ -31,6 +31,7 @@ function CommonTerrain () {
 	this.terrainRange = null;
 	this.isFlat = false;
 	this.screenAttribution = null;
+	this.terrainShadingModes = {};
 
 	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
 
@@ -65,7 +66,7 @@ CommonTerrain.prototype.commonRemoved = function () {
 
 };
 
-CommonTerrain.prototype.getTerrainShadingModes = function ( renderer ) {
+CommonTerrain.prototype.checkTerrainShadingModes = function ( renderer ) {
 
 	const terrainShadingModes = {};
 
@@ -83,9 +84,11 @@ CommonTerrain.prototype.getTerrainShadingModes = function ( renderer ) {
 
 		for ( name in overlays ) {
 
-			if ( overlays[ name ].hasCoverage( this.limits, this.displayCRS, this.surveyCRS ) ) {
+			const overlay = overlays[ name ];
 
-				overlays[ name ].active =  ( this.activeOverlay === overlays[ name ] );
+			if ( overlay.checkCoverage( this.limits, this.displayCRS, this.surveyCRS ) ) {
+
+				overlay.active =  ( this.activeOverlay === overlay );
 				terrainShadingModes[ name ] = name;
 
 			}
@@ -97,6 +100,8 @@ CommonTerrain.prototype.getTerrainShadingModes = function ( renderer ) {
 		terrainShadingModes[ 'terrain.shading.overlay' ] = SHADING_OVERLAY;
 
 	}
+
+	this.terrainShadingModes = terrainShadingModes;
 
 	return terrainShadingModes;
 
@@ -141,8 +146,18 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 		if ( overlay !== undefined ) {
 
-			this.setOverlay( overlay, renderCallback );
-			hideAttribution = false;
+			if ( this.isTiled && overlay.hasCoverage ) {
+
+				this.setOverlay( overlay, renderCallback );
+				hideAttribution = false;
+
+			} else {
+
+				// if initial setting is not valid, default to shaded relief
+				material = Materials.getHypsometricMaterial();
+				mode = SHADING_RELIEF;
+
+			}
 
 		} else {
 

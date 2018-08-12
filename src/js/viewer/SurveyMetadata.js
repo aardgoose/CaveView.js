@@ -14,7 +14,7 @@ function SurveyMetadata( name, metadata ) {
 
 	}
 
-	var localMetadata = Window.localStorage.getItem( name );
+	var localMetadata = window.localStorage.getItem( name );
 
 	if ( localMetadata !== null ) {
 
@@ -70,7 +70,7 @@ SurveyMetadata.prototype.saveLocal = function () {
 		entrances: this.entrances
 	};
 
-	Window.localStorage.setItem( this.name, JSON.stringify( localMetadata ) );
+	window.localStorage.setItem( this.name, JSON.stringify( localMetadata ) );
 
 };
 

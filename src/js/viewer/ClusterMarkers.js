@@ -49,7 +49,7 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 	const yMid = ( this.yMin + this.yMax ) / 2;
 
 	this.markers.push( marker );
-	this.centroid.add( marker.position );
+	this.centroid.add( position );
 
 	this.count++;
 

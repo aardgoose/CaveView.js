@@ -7,12 +7,18 @@ import { MutableGlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
 import {
-	RingGeometry,
+	RingBufferGeometry,
 	MeshBasicMaterial,
-	FaceColors,
-	Mesh
+	VertexColors,
+	Mesh, Float32BufferAttribute,
 } from '../Three';
 
+function onUploadDropBuffer() {
+
+	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
+	this.array = null;
+
+}
 
 function ProgressDial ( addText, ring ) {
 
@@ -22,10 +28,31 @@ function ProgressDial ( addText, ring ) {
 	const offset = stdWidth + stdMargin;
 
 	const gap = ring === 0 ? 0 : 1;
+	const segments = 50;
+	const geometry = new RingBufferGeometry( stdWidth * ( 0.9 - ring * 0.1 ), stdWidth * ( 1 - ring * 0.1 ) - gap, segments );
 
-	const geometry = new RingGeometry( stdWidth * ( 0.9 - ring * 0.1 ), stdWidth * ( 1 - ring * 0.1 ) - gap, 50 );
+	const colorCount = 2 * ( segments + 1);
 
-	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors } ) );
+	const backgroundColor = Cfg.themeColor( 'hud.progressBackground' );
+	const setColor = Cfg.themeColor( 'hud.progress' );
+
+	const colorsSrc = [];
+
+	for ( var i = 0; i < colorCount; i++ ) colorsSrc.push( backgroundColor );
+
+	const colors = new Float32BufferAttribute( colorCount * 3, 3 );
+
+	geometry.addAttribute( 'color', colors );
+
+	geometry.getAttribute( 'position' ).onUpload( onUploadDropBuffer );
+	geometry.getAttribute( 'normal' ).onUpload( onUploadDropBuffer );
+	geometry.getAttribute( 'uv' ).onUpload( onUploadDropBuffer );
+
+	this.colorsSrc = colorsSrc;
+	this.backgroundColor = backgroundColor;
+	this.setColor = setColor;
+
+	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
 
 	this.name = 'CV.ProgressDial';
 
@@ -63,6 +90,26 @@ function ProgressDial ( addText, ring ) {
 
 ProgressDial.prototype = Object.create( Mesh.prototype );
 
+ProgressDial.prototype.colorRange = function ( range, color ) {
+
+	const colors = this.geometry.getAttribute( 'color' );
+	const colorsSrc = this.colorsSrc;
+
+	const segmentMax = Math.round( range / 2 );
+	const end = colorsSrc.length - 1;
+
+	for ( var i = 0; i < segmentMax + 1; i++ ) {
+
+		colorsSrc[ end - i ] = color;
+		colorsSrc[ end - i - 50 ] = color;
+
+	}
+
+	colors.copyColorsArray( colorsSrc );
+	colors.needsUpdate = true;
+
+};
+
 ProgressDial.prototype.set = function ( progress ) {
 
 	if ( progress === this.progress ) return;
@@ -70,17 +117,9 @@ ProgressDial.prototype.set = function ( progress ) {
 	this.progress = progress;
 
 	const l = Math.floor( Math.min( 100, Math.round( progress ) ) / 2 ) * 2;
-	const faces = this.geometry.faces;
-	const color = this.color;
 	const pcent = this.pcent;
 
-	for ( var i = 0; i < l; i++ ) {
-
-		faces[ 99 - i ].color.set( color );
-
-	}
-
-	this.geometry.colorsNeedUpdate = true;
+	this.colorRange( l, this.setColor );
 
 	if ( pcent !== null ) {
 
@@ -103,15 +142,8 @@ ProgressDial.prototype.addValue = function ( progress ) {
 
 ProgressDial.prototype.start = function () {
 
-	const faces = this.geometry.faces;
+	this.colorRange( 100, this.backgroundColor );
 
-	for ( var i = 0; i < 100; i++ ) {
-
-		faces[ i ].color.set( 0x333333 );
-
-	}
-
-	this.geometry.colorsNeedUpdate = true;
 	this.progress = 0;
 	this.visible = true;
 

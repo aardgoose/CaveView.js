@@ -201,7 +201,7 @@ Survey.prototype.loadEntrances = function () {
 
 		if ( name === '-skip' ) return;
 
-		clusterMarkers.addMarker( node.p, ' ' + name + ' ' );
+		clusterMarkers.addMarker( node, ' ' + name + ' ' );
 
 	}
 
@@ -429,7 +429,7 @@ Survey.prototype.update = function ( camera, target ) {
 
 	if ( this.features[ FEATURE_ENTRANCES ] && cameraLayers.mask & 1 << FEATURE_ENTRANCES ) {
 
-		this.getFeature( FEATURE_ENTRANCES ).cluster( camera, target );
+		this.getFeature( FEATURE_ENTRANCES ).cluster( camera, target, this.selectedSectionIds );
 
 	}
 
@@ -721,7 +721,7 @@ Survey.prototype.selectSection = function ( id ) {
 
 	} else {
 
-		this.stations.selectStations( null );
+		this.stations.selectStations( this.selectedSectionIds );
 
 	}
 

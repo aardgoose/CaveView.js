@@ -94,7 +94,7 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 
 };
 
-QuadTree.prototype.check = function ( cluster, target, angleFactor ) {
+QuadTree.prototype.check = function ( cluster, target, angleFactor, selectedStationSet ) {
 
 	var subQuad, i;
 
@@ -152,8 +152,8 @@ QuadTree.prototype.check = function ( cluster, target, angleFactor ) {
 
 			} else {
 
-				subQuad.showMarkers( true );
-				subQuad.check( cluster, target, angleFactor );
+				subQuad.showMarkers( selectedStationSet );
+				subQuad.check( cluster, target, angleFactor, selectedStationSet );
 
 			}
 
@@ -163,7 +163,25 @@ QuadTree.prototype.check = function ( cluster, target, angleFactor ) {
 
 };
 
-QuadTree.prototype.showMarkers = function ( visible ) {
+QuadTree.prototype.showMarkers = function ( selectedStationSet ) {
+
+	// show the indiviual markers in this quad
+
+	const markers = this.markers;
+
+	for ( var i = 0, l = markers.length; i < l; i++ ) {
+
+		const marker = markers[ i ];
+
+		marker.visible = ( selectedStationSet.size === 0 || selectedStationSet.has( marker.stationID ) );
+
+	}
+
+	if ( this.quadMarker !== null ) this.quadMarker.visible = false;
+
+};
+
+QuadTree.prototype.hideMarkers = function () {
 
 	const markers = this.markers;
 
@@ -171,7 +189,7 @@ QuadTree.prototype.showMarkers = function ( visible ) {
 
 	for ( var i = 0, l = markers.length; i < l; i++ ) {
 
-		markers[ i ].visible = visible;
+		markers[ i ].visible = false;
 
 	}
 
@@ -185,7 +203,7 @@ QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
 	// hide the indiviual markers in this quad
 
-	this.showMarkers( false );
+	this.hideMarkers();
 
 	// hide quadMarkers for contained quads
 
@@ -300,7 +318,7 @@ ClusterMarkers.prototype.onRemoved = function () {
 
 };
 
-ClusterMarkers.prototype.addMarker = function ( position, label ) {
+ClusterMarkers.prototype.addMarker = function ( node, label ) {
 
 	// create marker
 	const atlasSpec = {
@@ -312,7 +330,8 @@ ClusterMarkers.prototype.addMarker = function ( position, label ) {
 	const marker = new GlyphString( label, material );
 
 	marker.layers.set( FEATURE_ENTRANCES );
-	marker.position.copy( position );
+	marker.position.copy( node.p );
+	marker.stationID = node.id;
 
 	this.quadTree.addNode( marker, this.maxDepth );
 
@@ -322,7 +341,7 @@ ClusterMarkers.prototype.addMarker = function ( position, label ) {
 
 };
 
-ClusterMarkers.prototype.cluster = function ( camera, target ) {
+ClusterMarkers.prototype.cluster = function ( camera, target, selectedStationSet ) {
 
 	// determine which labels are too close together to be usefully displayed as separate objects.
 
@@ -334,7 +353,7 @@ ClusterMarkers.prototype.cluster = function ( camera, target ) {
 
 	const angle = this.camera.getWorldDirection( __v ).dot( upAxis );
 
-	this.quadTree.check( this, target, 1 - Math.cos( angle ) );
+	this.quadTree.check( this, target, 1 - Math.cos( angle ), selectedStationSet );
 
 	return;
 

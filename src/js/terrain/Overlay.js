@@ -8,13 +8,14 @@ import {
 import { Cfg } from '../core/lib';
 import proj4 from 'proj4';
 
-const missingMaterial = new MeshLambertMaterial( { transparent: true, opacity: 0.5, color: 0xffffff } );
+const missingMaterial = new MeshLambertMaterial( { transparent: true, opacity: 0.5, color: 0xff8888 } );
 
 function Overlay ( overlayProvider, container ) {
 
 	this.provider = overlayProvider;
 	this.container = container;
 	this.active = false;
+	this.hasCoverage = false;
 	this.crsSupported = overlayProvider.crsSupported === undefined ? [ 'EPSG:3857', 'EPSG:4326', 'ORIGINAL' ] : overlayProvider.crsSupported;
 
 	const attribution = overlayProvider.getAttribution();
@@ -42,7 +43,7 @@ function Overlay ( overlayProvider, container ) {
 
 }
 
-Overlay.prototype.hasCoverage = function ( limits, displayCRS, surveyCRS ) {
+Overlay.prototype.checkCoverage = function ( limits, displayCRS, surveyCRS ) {
 
 	const coverage = this.coverage;
 
@@ -59,8 +60,9 @@ Overlay.prototype.hasCoverage = function ( limits, displayCRS, surveyCRS ) {
 	wgs84Limits.expandByPoint( transform.forward( { x: limits.max.x, y: limits.max.y } ) );
 
 	this.provider.crs = displayCRS;
+	this.hasCoverage = ( coverage === undefined ) ? true : coverage.intersectsBox( wgs84Limits );
 
-	return ( coverage === undefined ) ? true : coverage.intersectsBox( wgs84Limits );
+	return this.hasCoverage;
 
 };
 

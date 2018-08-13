@@ -499,6 +499,8 @@ function setFullscreen ( targetState ) {
 
 		resize();
 
+		Viewer.dispatchEvent( { type: 'change', name: 'fullscreen' } );
+
 	}
 
 }

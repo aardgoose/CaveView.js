@@ -16,11 +16,9 @@ function initKeyboardControls ( fileSelectorIn, avenControlsIn ) {
 	avenControls = avenControlsIn;
 	fileSelector = fileSelectorIn;
 
+	document.addEventListener( 'keydown', keyDown );
+
 }
-
-
-document.addEventListener( 'keydown', keyDown );
-
 
 function keyDown ( event ) {
 
@@ -182,7 +180,7 @@ function handleKeyDefault( event ) {
 
 	case 70: // toggle full screen - 'f'
 
-		//toggleFullScreen();
+		Viewer.fullscreen = ! Viewer.fullscreen;
 
 		break;
 
@@ -363,7 +361,7 @@ function handleKeyCommon( event ) {
 
 	case 70: // toggle full screen - 'f'
 
-		//toggleFullScreen();
+		Viewer.fullscreen = ! Viewer.fullscreen;
 
 		break;
 

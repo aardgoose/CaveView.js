@@ -10,6 +10,7 @@ const defaultTheme = {
 	hud: {
 		text: 0xffffff,
 		progress: 0x00ff00,
+		progressBackground: 0x333333,
 		bezel: 0x888888,
 		widgetSize: 40,
 		scale: {

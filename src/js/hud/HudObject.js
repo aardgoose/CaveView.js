@@ -37,6 +37,9 @@ const HudObject = {
 		geometry.getAttribute( 'position' ).onUpload( onUploadDropBuffer );
 		geometry.getAttribute( 'normal' ).onUpload( onUploadDropBuffer );
 		geometry.getAttribute( 'uv' ).onUpload( onUploadDropBuffer );
+
+		if ( geometry.index !== null ) geometry.index.onUpload( onUploadDropBuffer );
+
 	}
 
 };

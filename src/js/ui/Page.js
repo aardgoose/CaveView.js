@@ -132,20 +132,47 @@ Page.clear = function () {
 
 };
 
-Page.addTopButton= function ( id, handler ) {
+Page.addFullscreenButton= function ( id, obj, property ) {
 
 	const tabBox = this.tabBox;
 	const fullscreen = document.createElement( 'div' );
 
 	fullscreen.id = id;
 	fullscreen.classList.add( 'tab' );
-	fullscreen.classList.add( 'collapse' );
 
-	fullscreen.addEventListener( 'click', handler );
+	fullscreen.addEventListener( 'click', _toggleButton );
+
+	obj.addEventListener( 'change', _setButton );
 
 	tabBox.appendChild( fullscreen );
 
+	_setButton();
+
 	return fullscreen;
+
+	function _toggleButton () {
+
+		obj[ property ] = ! obj[ property ];
+
+		_setButton();
+
+	}
+
+	function _setButton () {
+
+		if ( obj[ property ] ) {
+
+			fullscreen.classList.remove( 'expand' );
+			fullscreen.classList.add( 'collapse' );
+
+		} else {
+
+			fullscreen.classList.add( 'expand' );
+			fullscreen.classList.remove( 'collapse' );
+
+		}
+
+	}
 
 };
 

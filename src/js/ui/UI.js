@@ -10,10 +10,9 @@ import { SurfacePage } from './SurfacePage';
 import { RoutePage } from './RoutePage';
 import { initKeyboardControls } from './KeyboardControls';
 
-var fullscreenDiv;
+
 var container;
 var avenControls;
-
 var fileSelector;
 
 function FileSelector ( container ) {
@@ -138,28 +137,9 @@ function initUI () {
 
 	Page.setParent( container );
 
-	fullscreenDiv = Page.addTopButton( 'fullscreen', toggleFullScreen );
-
-	setFullscreenUI ( fullscreenDiv );
+	Page.addFullscreenButton( 'fullscreen', Viewer, 'fullscreen' );
 
 }
-
-function setFullscreenUI ( element ) {
-
-	if ( Viewer.fullscreen ) {
-
-		element.classList.remove( 'expand' );
-		element.classList.add( 'collapse' );
-
-	} else {
-
-		element.classList.add( 'expand' );
-		element.classList.remove( 'collapse' );
-
-	}
-
-}
-
 
 function loadCaveList ( list ) {
 
@@ -167,7 +147,6 @@ function loadCaveList ( list ) {
 	fileSelector.nextFile();
 
 }
-
 
 function loadCave ( file, section ) {
 
@@ -177,15 +156,6 @@ function loadCave ( file, section ) {
 	fileSelector.loadFile( file, section );
 
 }
-
-function toggleFullScreen() {
-
-	Viewer.fullscreen = ! Viewer.fullscreen;
-
-	setFullscreenUI ( fullscreenDiv );
-
-}
-
 
 // export public interface
 

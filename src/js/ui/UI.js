@@ -440,6 +440,8 @@ function initRoutePage () {
 	var getNewRouteName;
 	var lastShadingMode;
 
+	routeControls = [];
+
 	page.addHeader( 'routes.header' );
 
 	page.addCheckbox( 'routes.edit', Viewer, 'routeEdit' );
@@ -761,6 +763,7 @@ function initSurfacePage () {
 
 function initUI () {
 
+	terrainControls = [];
 	// create UI side panel and reveal tabs
 
 	initSettingsPage();

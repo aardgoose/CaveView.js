@@ -13,13 +13,6 @@ import {
 	Mesh, Float32BufferAttribute,
 } from '../Three';
 
-function onUploadDropBuffer() {
-
-	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
-	this.array = null;
-
-}
-
 function ProgressDial ( addText, ring ) {
 
 	const stdWidth  = HudObject.stdWidth;
@@ -44,9 +37,7 @@ function ProgressDial ( addText, ring ) {
 
 	geometry.addAttribute( 'color', colors );
 
-	geometry.getAttribute( 'position' ).onUpload( onUploadDropBuffer );
-	geometry.getAttribute( 'normal' ).onUpload( onUploadDropBuffer );
-	geometry.getAttribute( 'uv' ).onUpload( onUploadDropBuffer );
+	HudObject.dropBuffers( geometry );
 
 	this.colorsSrc = colorsSrc;
 	this.backgroundColor = backgroundColor;

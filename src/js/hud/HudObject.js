@@ -1,6 +1,13 @@
 
 import { Cfg } from '../core/lib';
 
+function onUploadDropBuffer() {
+
+	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
+	this.array = null;
+
+}
+
 const HudObject = {
 
 	stdWidth: Cfg.themeValue( 'hud.widgetSize' ),
@@ -23,6 +30,13 @@ const HudObject = {
 
 		return div;
 
+	},
+
+	dropBuffers: function ( geometry ) {
+
+		geometry.getAttribute( 'position' ).onUpload( onUploadDropBuffer );
+		geometry.getAttribute( 'normal' ).onUpload( onUploadDropBuffer );
+		geometry.getAttribute( 'uv' ).onUpload( onUploadDropBuffer );
 	}
 
 };

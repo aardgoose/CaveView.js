@@ -63,6 +63,7 @@ function Page( id, x18nPrefix, onTop, onLeave ) {
 	this.onLeave = onLeave;
 	this.slide = undefined;
 	this.x18nPrefix = x18nPrefix + '.';
+	this.onChange = null;
 
 	function _closeFrame ( /* event */ ) {
 
@@ -85,6 +86,22 @@ Page.setParent = function ( parent ) {
 
 	parent.appendChild( Page.tabBox );
 	parent.appendChild( Page.frame );
+
+};
+
+Page.setControlsVisibility = function ( list, visible ) {
+
+	const display = visible ? 'block' : 'none';
+
+	for ( var i = 0, l = list.length; i < l; i++ ) {
+
+		const element = list[ i ];
+
+		if ( element === null ) continue;
+
+		element.style.display = display;
+
+	}
 
 };
 
@@ -181,6 +198,14 @@ Page.handleChange = function ( event ) {
 		}
 
 	}
+
+	Page.pages.forEach( function ( p )  {
+
+		const page = p.owner;
+
+		if ( page.onChange !== null ) page.onChange( event );
+
+	} );
 
 };
 
@@ -303,7 +328,6 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 	const label  = document.createElement( 'label' );
 	const select = document.createElement( 'select' );
 
-
 	div.classList.add( 'control' );
 
 	if ( obj instanceof Array ) {
@@ -350,7 +374,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 	}
 
-	this.addListener( select, 'change', function ( event ) { Page.inHandler = true; trgObj[ property ] = event.target.value; Page.inHandler = false; } );
+	this.addListener( select, 'change', function onChange ( event ) { Page.inHandler = true; trgObj[ property ] = event.target.value; Page.inHandler = false; } );
 
 	label.textContent = this.i18n( title );
 

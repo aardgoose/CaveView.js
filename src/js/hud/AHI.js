@@ -18,6 +18,7 @@ import {
 const __xAxis = new Vector3( 1, 0, 0 );
 const __direction = new Vector3();
 
+
 function AHI () {
 
 	const stdWidth  = HudObject.stdWidth;
@@ -43,6 +44,9 @@ function AHI () {
 	const marks  = new Geometry();
 
 	const sv = sphere.getAttribute( 'position' ).count;
+
+	HudObject.dropBuffers( sphere );
+	HudObject.dropBuffers( ring );
 
 	const sphereColors = new BufferAttribute( new Float32Array( sv * 3 ), 3 );
 

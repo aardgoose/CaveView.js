@@ -1,5 +1,5 @@
 
-import { Vector3 }  from 'three/src/math/Vector3';
+import { Vector3 } from 'three/src/math/Vector3';
 
 export const VERSION = '1.9.1';
 

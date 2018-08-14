@@ -193,7 +193,7 @@ function getLineMaterial () {
 
 	if ( material === undefined ) {
 
-		material = cacheMaterial( 'line',  new LineBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
+		material = cacheMaterial( 'line', new LineBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
 
 	}
 

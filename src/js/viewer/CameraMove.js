@@ -374,7 +374,7 @@ CameraMove.prototype.setAzimuthAngle = function ( targetAngle ) {
 	var delta = ( controls.getAzimuthalAngle() - targetAngle );
 	var deltaSize = Math.abs( delta );
 
-	if ( deltaSize > Math.PI ) delta =  2 * Math.PI - deltaSize;
+	if ( deltaSize > Math.PI ) delta = 2 * Math.PI - deltaSize;
 
 	this.animationFunction = this.animateAzimuthMove;
 

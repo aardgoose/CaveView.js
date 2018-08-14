@@ -1,6 +1,6 @@
 
 const float PackUpscale = 256. / 255.; // fraction -> 0..1 (including 1)
-const vec3 PackFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );
+const vec3 PackFactors = vec3( 256. * 256. * 256., 256. * 256., 256. );
 
 const float ShiftRight8 = 1. / 256.;
 

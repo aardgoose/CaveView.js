@@ -42,7 +42,7 @@ function CursorControl( viewer, cursorScale ) {
 
 	function setCursor( clientY ) {
 
-		const heightFraction =  ( cursorScale.barHeight - clientY + barTop ) / cursorScale.barHeight;
+		const heightFraction = ( cursorScale.barHeight - clientY + barTop ) / cursorScale.barHeight;
 		const range = viewer.maxHeight - viewer.minHeight;
 
 		// handle direction of scale and range

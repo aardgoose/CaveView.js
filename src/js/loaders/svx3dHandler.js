@@ -63,7 +63,7 @@ Svx3dHandler.prototype.setCRS = function ( sourceCRS ) {
 
 		this.sourceCRS = sourceCRS;
 
-		if ( displayCRS  === 'ORIGINAL' ) {
+		if ( displayCRS === 'ORIGINAL' ) {
 
 			this.displayCRS = 'ORIGINAL';
 
@@ -722,7 +722,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		if ( b !== 0 ) {
 
 			// handle 4b= bit del/add codes
-			del = b >> 4;   // left most 4 bits
+			del = b >> 4; // left most 4 bits
 			add = b & 0x0f; // right most 4 bits
 
 		} else {

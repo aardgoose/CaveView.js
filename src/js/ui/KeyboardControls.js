@@ -425,6 +425,6 @@ function handleKeyCommon( event ) {
 
 // export public interface
 
-export  { initKeyboardControls };
+export { initKeyboardControls };
 
 // EOF

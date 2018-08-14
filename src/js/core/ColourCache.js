@@ -1,8 +1,8 @@
 
 import { Colours } from './Colours';
-import { Color, DataTexture, RGBFormat, UnsignedByteType, LinearFilter }  from '../Three';
+import { Color, DataTexture, RGBFormat, UnsignedByteType, LinearFilter } from '../Three';
 
-// define colors to share THREE.Color objects
+// define colors to share THREE.color objects
 
 const caches = {
 	'colors': [],

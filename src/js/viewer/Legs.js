@@ -70,7 +70,7 @@ Legs.prototype.cutRuns = function ( selectedRuns ) {
 	const newVertices = newGeometry.vertices;
 	const newColors   = newGeometry.colors;
 
-	const newLegRuns  = [];
+	const newLegRuns = [];
 	const l = legRuns.length;
 
 	var run;

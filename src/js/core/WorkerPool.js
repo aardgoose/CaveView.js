@@ -58,7 +58,7 @@ WorkerPool.prototype.putWorker = function ( worker ) {
 
 	WorkerPool.activeWorkers.delete( worker );
 
-	if ( this.workers.length <  4 ) {
+	if ( this.workers.length < 4 ) {
 
 		this.workers.push( worker );
 

@@ -87,15 +87,17 @@ function init ( viewerIn, viewRenderer ) {
 	scene.addStatic( aLight );
 	scene.addStatic( dLight );
 
-	compass = new Compass();
-	ahi     = new AHI();
-
 	progressDials = [ new ProgressDial( true, 0 ), new ProgressDial( false, 1 ) ];
 
 	progressDial = progressDials [ 0 ];
 
-	attitudeGroup.addStatic( compass );
+	ahi = new AHI();
+	compass = new Compass();
+	angleScale = new AngleScale( i18n( 'inclination' ) );
+
 	attitudeGroup.addStatic( ahi );
+	attitudeGroup.addStatic( compass );
+	attitudeGroup.addStatic( angleScale );
 
 	attitudeGroup.addStatic( progressDials[ 0 ] );
 	attitudeGroup.addStatic( progressDials[ 1 ] );
@@ -232,13 +234,23 @@ function newScales () {
 
 	const container = viewer.container;
 
-	if ( linearScale ) scene.remove( linearScale );
+	if ( linearScale ) {
+
+		linearScale.dispose();
+		scene.remove( linearScale );
+
+	}
 
 	linearScale = new LinearScale( container, viewer );
 
 	scene.addStatic( linearScale );
 
-	if ( cursorScale ) scene.remove( cursorScale );
+	if ( cursorScale ) {
+
+		cursorScale.dispose();
+		scene.remove( cursorScale );
+
+	}
 
 	cursorScale = new CursorScale( container );
 
@@ -247,12 +259,6 @@ function newScales () {
 	cursorControl = new CursorControl( viewer, cursorScale );
 
 	scene.addStatic( cursorScale );
-
-	if ( angleScale ) scene.remove( angleScale );
-
-	angleScale = new AngleScale( container, i18n( 'inclination' ) );
-
-	scene.addStatic( angleScale );
 
 	if ( scaleBar ) {
 

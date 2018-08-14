@@ -12,10 +12,7 @@ import {
 	Mesh
 } from '../Three';
 
-function AngleScale ( container, caption ) {
-
-	const width  = container.clientWidth;
-	const height = container.clientHeight;
+function AngleScale ( caption ) {
 
 	const stdWidth  = HudObject.stdWidth;
 	const stdMargin = HudObject.stdMargin;
@@ -51,8 +48,8 @@ function AngleScale ( container, caption ) {
 
 	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
 
-	this.translateY( -height / 2 + 3 * ( stdWidth + stdMargin ) + stdMargin + 30 );
-	this.translateX(  width / 2 - 40 - 5 );
+	this.translateY( 3 * ( stdWidth + stdMargin ) + stdMargin + 30 );
+	this.translateX( - 40 - 5 );
 
 	this.name = 'CV.AngleScale';
 
@@ -63,6 +60,8 @@ function AngleScale ( container, caption ) {
 	label.translateY( 5 );
 
 	this.addStatic( label );
+
+	this.visible = false;
 
 	return this;
 

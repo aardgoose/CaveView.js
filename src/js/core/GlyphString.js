@@ -30,6 +30,7 @@ GlyphStringGeometryCache.prototype.getGeometry = function ( text ) {
 
 		entry = new GlyphStringGeometry( text, this.material.getAtlas() );
 		this.cache[ text ] = entry;
+		entry.isCached = true;
 
 	}
 

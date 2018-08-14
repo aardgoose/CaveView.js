@@ -14,12 +14,12 @@ function Page( id, x18nPrefix, onTop, onLeave ) {
 	tab.id = id;
 	tab.classList.add( 'tab' );
 
-	tab.addEventListener( 'click', this.tabHandleClick );
+	Page.addListener( tab, 'click', this.tabHandleClick );
 
 	if ( onTop !== undefined ) {
 
 		// callback when this page is made visible
-		tab.addEventListener( 'click', onTop );
+		Page.addListener( tab, 'click', onTop );
 
 	}
 
@@ -46,7 +46,7 @@ function Page( id, x18nPrefix, onTop, onLeave ) {
 		close.id = 'close';
 		close.classList.add( 'tab' );
 
-		close.addEventListener( 'click', _closeFrame );
+		Page.addListener( close, 'click', _closeFrame );
 
 		tabBox.appendChild( close );
 
@@ -140,9 +140,9 @@ Page.addFullscreenButton= function ( id, obj, property ) {
 	fullscreen.id = id;
 	fullscreen.classList.add( 'tab' );
 
-	fullscreen.addEventListener( 'click', _toggleButton );
+	Page.addListener( fullscreen, 'click', _toggleButton );
 
-	obj.addEventListener( 'change', _setButton );
+	Page.addListener( obj, 'change', _setButton );
 
 	tabBox.appendChild( fullscreen );
 

@@ -115,6 +115,18 @@ Scale.prototype.setCaption = function ( text ) {
 
 };
 
+Scale.prototype.dispose = function () {
+
+	this.traverse( function _dispose ( obj ) {
+
+		const geometry = obj.geometry;
+
+		if ( geometry !== undefined && ! geometry.isCached ) geometry.dispose();
+
+	} );
+
+};
+
 export { Scale };
 
 // EOF

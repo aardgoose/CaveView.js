@@ -275,8 +275,6 @@ function buildCrossSections ( cave, survey ) {
 
 		lastCross.copy( cross );
 
-		const vertexStart = vertices.length;
-
 		switch ( crossSection.type ) {
 
 		case WALL_DIAMOND:

@@ -7,7 +7,7 @@ import { Materials } from '../materials/Materials';
 
 import {
 	Vector3, Math as _Math,
-	Geometry, SphereBufferGeometry, BufferAttribute, CylinderBufferGeometry,
+	Geometry, SphereBufferGeometry, BufferAttribute,
 	LineBasicMaterial, MeshPhongMaterial,
 	VertexColors,
 	Mesh, LineSegments, Group
@@ -36,8 +36,7 @@ function AHI () {
 	// artificial horizon instrument
 	const globe = new Group();
 
-	const ring = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth, 3, 32, 1, true );
-	ring.rotateX( Math.PI / 2 );
+	const ring = HudObject.getCommonRing();
 
 	const sphere = new SphereBufferGeometry( stdWidth - 10, 31, 31 );
 	const bar    = new Geometry();
@@ -46,7 +45,6 @@ function AHI () {
 	const sv = sphere.getAttribute( 'position' ).count;
 
 	HudObject.dropBuffers( sphere );
-	HudObject.dropBuffers( ring );
 
 	const sphereColors = new BufferAttribute( new Float32Array( sv * 3 ), 3 );
 
@@ -61,15 +59,13 @@ function AHI () {
 
 	sphere.addAttribute( 'color', sphereColors.copyColorsArray( colours ) );
 
-	// view orinetation line
+	// view orientation line
 	bar.vertices.push( new Vector3( 4 - stdWidth, 0, stdWidth ) );
 	bar.vertices.push( new Vector3( stdWidth - 4, 0, stdWidth ) );
 
 	// pitch interval marks
 	const m1 = new Vector3(  4, 0, stdWidth - 10 );
 	const m2 = new Vector3( -4, 0, stdWidth - 10 );
-
-	const xAxis = new Vector3( 1, 0, 0 );
 
 	for ( i = 0; i < 12; i++ ) {
 
@@ -83,8 +79,8 @@ function AHI () {
 
 		}
 
-		mn1.applyAxisAngle( xAxis, i * Math.PI / 6 );
-		mn2.applyAxisAngle( xAxis, i * Math.PI / 6 );
+		mn1.applyAxisAngle( __xAxis, i * Math.PI / 6 );
+		mn2.applyAxisAngle( __xAxis, i * Math.PI / 6 );
 
 		marks.vertices.push( mn1 );
 		marks.vertices.push( mn2 );

@@ -1,5 +1,6 @@
 
 import { Cfg } from '../core/lib';
+import { CylinderBufferGeometry } from '../Three';
 
 function onUploadDropBuffer() {
 
@@ -7,6 +8,8 @@ function onUploadDropBuffer() {
 	this.array = null;
 
 }
+
+var commonRing;
 
 const HudObject = {
 
@@ -39,6 +42,21 @@ const HudObject = {
 		geometry.getAttribute( 'uv' ).onUpload( onUploadDropBuffer );
 
 		if ( geometry.index !== null ) geometry.index.onUpload( onUploadDropBuffer );
+
+	},
+
+	getCommonRing: function () {
+
+		if ( commonRing === undefined ) {
+
+			commonRing = new CylinderBufferGeometry( HudObject.stdWidth * 0.90, HudObject.stdWidth, 3, 32, 1, true );
+			commonRing.rotateX( Math.PI / 2 );
+
+			HudObject.dropBuffers( commonRing );
+
+		}
+
+		return commonRing;
 
 	}
 

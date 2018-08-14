@@ -6,7 +6,7 @@ import { Materials } from '../materials/Materials';
 
 import {
 	Vector3, Math as _Math, Face3,
-	Geometry, RingBufferGeometry, CylinderBufferGeometry,
+	Geometry, RingBufferGeometry,
 	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
 	FrontSide, VertexColors,
 	Mesh, Group, Euler
@@ -25,15 +25,13 @@ function Compass () {
 
 	this.name = 'CV.Compass';
 
-	const cg1 = new CylinderBufferGeometry( stdWidth * 0.90, stdWidth, 3, 32, 1, true );
-	cg1.rotateX( Math.PI / 2 );
+	const cg1 = HudObject.getCommonRing();
 
 	const c1 = new Mesh( cg1, new MeshPhongMaterial( { color: Cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ) );
 
 	const cg2 = new RingBufferGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 	cg2.translate( 0, 0, 5 );
 
-	HudObject.dropBuffers( cg1 );
 	HudObject.dropBuffers( cg2 );
 
 	const c2 = new Mesh( cg2, new MeshBasicMaterial( { color: Cfg.themeValue( 'hud.compass.top1' ) } ) );

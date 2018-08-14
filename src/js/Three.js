@@ -16,7 +16,7 @@ export { CanvasTexture } from 'three/src/textures/CanvasTexture.js';
 export { Texture } from 'three/src/textures/Texture.js';
 
 export { SphereBufferGeometry } from 'three/src/geometries/SphereGeometry.js';
-export { RingGeometry, RingBufferGeometry } from 'three/src/geometries/RingGeometry.js';
+export { RingBufferGeometry } from 'three/src/geometries/RingGeometry.js';
 export { PlaneGeometry, PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry.js';
 export { CylinderBufferGeometry } from 'three/src/geometries/CylinderGeometry.js';
 

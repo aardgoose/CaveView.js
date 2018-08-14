@@ -8,7 +8,7 @@ import {
 	Vector3,
 	Geometry, PlaneGeometry,
 	LineBasicMaterial, MeshBasicMaterial,
-	FaceColors, FrontSide,
+	FaceColors,
 	LineSegments, Group, Mesh
 } from '../Three';
 
@@ -143,8 +143,8 @@ ScaleBar.prototype.setScale = function ( scale ) {
 		bar.translate( rLength / 2, height + height / 2 + 1, 0 );
 		bar2.translate( rLength / 2, height / 2, 0 );
 
-		const mBar = new Mesh( bar, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
-		const mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors, side: FrontSide } ) );
+		const mBar = new Mesh( bar, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors } ) );
+		const mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors } ) );
 
 		bar.computeBoundingBox();
 

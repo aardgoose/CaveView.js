@@ -8,7 +8,7 @@ import {
 	Vector3, Math as _Math, Face3,
 	Geometry, RingBufferGeometry,
 	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
-	FrontSide, VertexColors,
+	VertexColors,
 	Mesh, Group, Euler
 } from '../Three';
 
@@ -42,7 +42,7 @@ function Compass () {
 	r1.rotateZ( Math.PI / 4 );
 	r1.merge( r2 );
 
-	const rMesh = new Mesh( r1, new MeshLambertMaterial( { vertexColors: VertexColors, side: FrontSide, flatShading: true } ) );
+	const rMesh = new Mesh( r1, new MeshLambertMaterial( { vertexColors: VertexColors, flatShading: true } ) );
 
 	const rotaryGroup = new Group();
 

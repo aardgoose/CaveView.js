@@ -8,76 +8,14 @@ import { SelectionPage } from './SelectionPage';
 import { SettingsPage } from './SettingsPage';
 import { SurfacePage } from './SurfacePage';
 import { RoutePage } from './RoutePage';
+
 import { initKeyboardControls } from './KeyboardControls';
+import { FileSelector } from './FileSelector';
 
 
 var container;
 var avenControls;
 var fileSelector;
-
-function FileSelector ( container ) {
-
-	this.fileList = [];
-	this.fileCount = 0;
-	this.currentIndex = Infinity;
-
-	container.addEventListener( 'drop', _handleDrop );
-	container.addEventListener( 'dragover', _handleDragover );
-
-	Object.defineProperty( this, 'file', {
-		get: function () { return this.loadedFile; },
-		set: this.loadFile
-	} );
-
-	return this;
-
-	function _handleDragover ( event ) {
-
-		event.preventDefault();
-		event.dataTransfer.dropEffect = 'copy';
-
-	}
-
-	function _handleDrop ( event ) {
-
-		const dt = event.dataTransfer;
-
-		event.preventDefault();
-
-		if ( dt.files.length === 1 ) loadCave( dt.files[ 0 ], null );
-
-	}
-
-}
-
-FileSelector.prototype.addList = function ( list ) {
-
-	this.fileList = list;
-	this.fileCount = list.length;
-
-};
-
-FileSelector.prototype.nextFile = function () {
-
-	const fileList = this.fileList;
-
-	//cycle through caves in list provided
-	if ( this.fileCount === 0 ) return false;
-
-	if ( ++this.currentIndex >= this.fileCount ) this.currentIndex = 0;
-
-	this.loadFile( fileList[ this.currentIndex ] );
-
-};
-
-FileSelector.prototype.loadFile = function ( file, section ) {
-
-	this.loadedFile = file instanceof File ? file.name : file;
-
-	Viewer.clearView();
-	Viewer.loadCave( file, section );
-
-};
 
 function init ( domID, configuration ) { // public method
 
@@ -102,28 +40,30 @@ function init ( domID, configuration ) { // public method
 	Viewer.addEventListener( 'newCave', initUI );
 
 	// make sure we get new language strings if slow loading
-	Cfg.addEventListener( 'change', refresh );
+	Cfg.addEventListener( 'change', initUI );
 
 	avenControls = Cfg.value( 'avenControls', true );
 
 	fileSelector = new FileSelector( container );
 
+	fileSelector.addEventListener( 'selected', selectFile );
+
 	initKeyboardControls( fileSelector, avenControls );
 
 }
 
-function refresh() {
+function selectFile( event ) {
 
-	if ( Viewer.surveyLoaded ) {
+	Page.clear();
+	Viewer.clearView();
 
-		Page.clear();
-		initUI();
-
-	}
+	Viewer.loadCave( event.file, event.section );
 
 }
 
 function initUI () {
+
+	if ( ! Viewer.surveyLoaded ) return;
 
 	// create UI side panel and reveal tabs
 	Page.clear();
@@ -149,9 +89,6 @@ function loadCaveList ( list ) {
 }
 
 function loadCave ( file, section ) {
-
-	Page.clear();
-	Viewer.clearView();
 
 	fileSelector.loadFile( file, section );
 

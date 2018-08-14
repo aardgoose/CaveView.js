@@ -226,7 +226,7 @@ Page.handleChange = function ( event ) {
 
 	}
 
-	Page.pages.forEach( function ( p )  {
+	Page.pages.forEach( function ( p ) {
 
 		const page = p.owner;
 
@@ -383,11 +383,11 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 			if ( s.length > 1 ) {
 
-				opt.text  = s.reduce( function ( res, val) { return res + ' ' + self.i18n( val ); }, '' ).trim();
+				opt.text = s.reduce( function ( res, val) { return res + ' ' + self.i18n( val ); }, '' ).trim();
 
 			} else {
 
-				opt.text  = self.i18n( p );
+				opt.text = self.i18n( p );
 
 			}
 

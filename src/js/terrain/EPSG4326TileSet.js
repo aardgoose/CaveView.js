@@ -110,7 +110,7 @@ EPSG4326TileSet.prototype.getCoverage = function ( limits, zoom ) {
 
 	}
 
-	const transformedLimits =  this.transformedLimits;
+	const transformedLimits = this.transformedLimits;
 
 	const min = transformedLimits.min;
 	const max = transformedLimits.max;

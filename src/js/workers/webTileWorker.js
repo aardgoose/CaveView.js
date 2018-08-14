@@ -13,7 +13,7 @@ function onMessage ( event ) {
 
 	tileSpec = event.data;
 
-	const tileSet   = tileSpec.tileSet;
+	const tileSet = tileSpec.tileSet;
 
 	if ( tileSet.isFlat ) {
 

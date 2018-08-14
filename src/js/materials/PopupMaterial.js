@@ -9,7 +9,7 @@ function PopupMaterial ( container, popupImage, rotation, colour ) {
 	const pixelRatio = window.devicePixelRatio || 1 ;
 	const canvas = popupImage.image;
 	const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
-	const scale = new Vector2( canvas.width * pixelRatio / container.clientWidth,  canvas.height * pixelRatio / container.clientHeight );
+	const scale = new Vector2( canvas.width * pixelRatio / container.clientWidth, canvas.height * pixelRatio / container.clientHeight );
 
 	colour = colour || [ 1, 1, 1 ];
 

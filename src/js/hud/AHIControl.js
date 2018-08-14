@@ -31,7 +31,7 @@ function AHIControl( viewer ) {
 
 		// update center position (accounts for resizes)
 		const bc = container.getBoundingClientRect();
-		centerY =  bc.top + hr.offsetTop + HudObject.stdWidth;
+		centerY = bc.top + hr.offsetTop + HudObject.stdWidth;
 
 		hr.style.cursor = 'pointer';
 

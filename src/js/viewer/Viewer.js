@@ -536,7 +536,7 @@ function setZScale ( scale ) {
 	// scale - in range 0 - 1
 
 	const lastScale = Math.pow( 2, ( zScale - 0.5 ) * 4 );
-	const newScale  = Math.pow( 2, ( scale - 0.5 )  * 4 );
+	const newScale  = Math.pow( 2, ( scale - 0.5 ) * 4 );
 
 	survey.applyMatrix( new Matrix4().makeScale( 1, 1, newScale / lastScale ) );
 	survey.updateMatrix();
@@ -840,7 +840,7 @@ function setFog( enable ) {
 
 function setTerrainShadingMode ( mode ) {
 
-	if ( survey.terrain === null  ) return;
+	if ( survey.terrain === null ) return;
 
 	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
 
@@ -1224,7 +1224,7 @@ function mouseDown ( event ) {
 	const bc = container.getBoundingClientRect();
 
 	// FIXME - handle scrolled container
-	mouse.x =   ( ( event.clientX - bc.left ) / container.clientWidth  ) * 2 - 1;
+	mouse.x =   ( ( event.clientX - bc.left ) / container.clientWidth ) * 2 - 1;
 	mouse.y = - ( ( event.clientY - bc.top ) / container.clientHeight ) * 2 + 1;
 
 	raycaster.setFromCamera( mouse, camera );

@@ -6,9 +6,9 @@ import { Materials } from '../materials/Materials';
 
 import {
 	Vector3,
-	RingGeometry,
+	RingBufferGeometry, BufferAttribute,
 	MeshBasicMaterial,
-	VertexColors, FrontSide,
+	VertexColors,
 	Mesh
 } from '../Three';
 
@@ -22,40 +22,34 @@ function AngleScale ( container, caption ) {
 
 	const pNormal = new Vector3( 1, 0, 0 );
 
-	const geometry = new RingGeometry( 1, 40, 36, 1, Math.PI, Math.PI );
-	const vertices = geometry.vertices;
+	const geometry = new RingBufferGeometry( 1, 40, 36, 1, Math.PI, Math.PI );
 
 	const hues = ColourCache.getColors( 'inclination' );
-	const c = [];
+	const colors = [];
 
-	const legNormal = new Vector3();
+	const vertices = geometry.getAttribute( 'position' );
+	const vertexCount = vertices.count;
+	const ringColors = new BufferAttribute( new Float32Array( vertexCount * 3 ), 3 );
 
-	var i, l, f;
+	const v3 = new Vector3();
 
-	for ( i = 0, l = vertices.length; i < l; i++ ) {
+	var i;
 
-		legNormal.copy( vertices[ i ] ).normalize();
+	for ( i = 0; i < vertexCount; i++ ) {
 
-		const dotProduct = legNormal.dot( pNormal );
-		const hueIndex = Math.floor( 127 * 2 * Math.asin( Math.abs( dotProduct ) ) / Math.PI );
+		v3.fromBufferAttribute( vertices, i ).normalize();
 
-		c[ i ] = hues[ hueIndex ];
+		const hueIndex = Math.floor( 127 * 2 * Math.asin( Math.abs( v3.dot( pNormal ) ) ) / Math.PI );
 
-	}
-
-	const faces = geometry.faces;
-
-	for ( i = 0, l = faces.length; i < l; i++ ) {
-
-		f = faces[ i ];
-
-		f.vertexColors = [ c[ f.a ], c[ f.b ], c[ f.c ] ];
+		colors.push( hues[ hueIndex ] );
 
 	}
 
-	geometry.colorsNeedUpdate = true;
+	geometry.addAttribute( 'color', ringColors.copyColorsArray( colors ) );
 
-	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors, side: FrontSide } ) );
+	HudObject.dropBuffers( geometry );
+
+	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
 
 	this.translateY( -height / 2 + 3 * ( stdWidth + stdMargin ) + stdMargin + 30 );
 	this.translateX(  width / 2 - 40 - 5 );

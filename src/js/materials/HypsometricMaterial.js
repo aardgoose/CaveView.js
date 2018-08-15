@@ -37,20 +37,29 @@ function HypsometricMaterial ( survey, viewer ) {
 		set: function ( value ) { this.uniforms.opacity.value = value; }
 	} );
 
-	const self = this;
+	this.callback = this.lightingChanged.bind( this );
 
-	viewer.addEventListener( 'lightingChange', _lightingChanged );
+	viewer.addEventListener( 'lightingChange', this.callback );
 
 	return this;
 
-	function _lightingChanged ( /* event */ ) {
-
-		self.uniforms.uLight.value = viewer.surfaceLightDirection;
-
-	}
 }
 
 HypsometricMaterial.prototype = Object.create( ShaderMaterial.prototype );
+
+HypsometricMaterial.prototype.lightingChanged = function ( event ) {
+
+	this.uniforms.uLight.value = event.position;
+
+};
+
+HypsometricMaterial.prototype.dispose = function ( viewer ) {
+
+	viewer.removeEventListener( 'lightingChange', this.callback );
+
+	ShaderMaterial.prototype.dispose.call( this );
+
+};
 
 export { HypsometricMaterial };
 

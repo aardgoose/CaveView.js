@@ -273,7 +273,7 @@ function flushCache( surveyIn ) {
 
 		const material = perSurveyMaterials[ name ];
 
-		material.dispose();
+		material.dispose( viewer );
 		cache.delete( name );
 
 	}

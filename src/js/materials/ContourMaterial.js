@@ -36,25 +36,33 @@ function ContourMaterial ( survey, viewer ) {
 		set: function ( value ) { this.uniforms.opacity.value = value; }
 	} );
 
-	const self = this;
+	this.callback = this.lightingChanged.bind( this );
 
-	viewer.addEventListener( 'lightingChange', _lightingChanged );
+	viewer.addEventListener( 'lightingChange', this.callback );
 
 	return this;
-
-	function _lightingChanged ( /* event */ ) {
-
-		self.uniforms.uLight.value = viewer.surfaceLightDirection;
-
-	}
 
 }
 
 ContourMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
+ContourMaterial.prototype.lightingChanged = function ( event ) {
+
+	this.uniforms.uLight.value = event.position;
+
+};
+
 ContourMaterial.prototype.setDatumShift = function ( shift ) {
 
 	this.uniforms.zAdjust.value = this.baseAdjust + shift;
+
+};
+
+ContourMaterial.prototype.dispose = function ( viewer ) {
+
+	viewer.removeEventListener( 'lightingChange', this.callback );
+
+	ShaderMaterial.prototype.dispose.call( this );
 
 };
 

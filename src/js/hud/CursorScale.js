@@ -26,8 +26,8 @@ function CursorScale ( container ) {
 
 	const cursorGeometry = new Geometry();
 
-	cursorGeometry.vertices.push( new Vector3(  barWidth / 2, -barHeight / 2, 0 ) );
-	cursorGeometry.vertices.push( new Vector3( -barWidth / 2, -barHeight / 2, 0 ) );
+	cursorGeometry.vertices.push( new Vector3(  barWidth / 2, -barHeight / 2, 10 ) );
+	cursorGeometry.vertices.push( new Vector3( -barWidth / 2, -barHeight / 2, 10 ) );
 
 	const cursor = new Line( cursorGeometry, new LineBasicMaterial( { color: Cfg.themeColor( 'hud.cursor' ) } ) );
 
@@ -42,7 +42,6 @@ function CursorScale ( container ) {
 	const cursorLabel = new MutableGlyphString( '      ', material );
 
 	cursorLabel.translateY( - barHeight / 2 - cursorLabel.getHeight() / 2 );
-	cursorLabel.translateZ( 10 );
 
 	this.addStatic( cursor );
 	cursor.addStatic( cursorLabel );

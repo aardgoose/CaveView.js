@@ -1113,8 +1113,6 @@ function loadSurvey ( newSurvey ) {
 
 	survey = newSurvey;
 
-	survey.surfaceLight = lightPosition.clone().negate();
-
 	HUD.getProgressDial( 1 ).watch( survey );
 
 	stats = getLegStats( LEG_CAVE );

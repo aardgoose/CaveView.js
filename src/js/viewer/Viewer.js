@@ -749,7 +749,7 @@ function cameraMoved () {
 	directionalLight.position.copy( currentLightPosition );
 	directionalLight.updateMatrix();
 
-	Viewer.dispatchEvent( { type: 'lightingChange', name: 'surface' } );
+	Viewer.dispatchEvent( { type: 'lightingChange', name: 'surface', position: currentLightPosition } );
 
 	renderView();
 

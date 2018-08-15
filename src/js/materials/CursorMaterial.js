@@ -29,15 +29,7 @@ function CursorMaterial ( type, survey ) {
 
 	this.halfRange = ( limits.max.z - limits.min.z ) / 2;
 
-	this.addEventListener( 'update', _update );
-
 	return this;
-
-	function _update() {
-
-		this.uniforms.surfaceOpacity.value = this.opacity;
-
-	}
 
 }
 

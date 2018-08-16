@@ -18,7 +18,7 @@ function LoxTerrain ( terrainData, offsets ) {
 	this.overlayMaterial = null;
 	this.attributions = [];
 
-	const tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ), Materials.getCursorMaterial() );
+	const tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ), Materials.getSurfaceMaterial( 0xff8888 ) );
 
 	tile.layers.set( FEATURE_TERRAIN );
 	tile.isTile = true;
@@ -109,6 +109,8 @@ LoxTerrain.prototype.removed = function () {
 		overlayMaterial.dispose();
 
 	}
+
+	this.tile.geometry.dispose();
 
 	this.commonRemoved();
 

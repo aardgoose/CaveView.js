@@ -364,7 +364,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 			const opt = document.createElement( 'option' );
 
 			opt.value = obj[ i ];
-			opt.text  = obj[ i ];
+			opt.text = obj[ i ];
 
 			if ( opt.text === trgObj[ property ] ) opt.selected = true;
 
@@ -434,7 +434,7 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 	div.classList.add( 'cv-checkbox' );
 
-	cb.type    = 'checkbox';
+	cb.type = 'checkbox';
 	cb.checked = obj[ property ];
 	cb.id = id;
 

@@ -90,7 +90,7 @@ function loadCaveList ( list ) {
 
 function loadCave ( file, section ) {
 
-	fileSelector.loadFile( file, section );
+	fileSelector.selectFile( file, section );
 
 }
 

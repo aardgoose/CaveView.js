@@ -64,7 +64,7 @@ FileSelector.prototype.selectFile = function ( file, section ) {
 
 	this.selectedFile = file instanceof File ? file.name : file;
 
-	this.dispatchEvent( { type: 'selected', file: this.selectedFile, section: section } );
+	this.dispatchEvent( { type: 'selected', file: file, section: section } );
 
 };
 

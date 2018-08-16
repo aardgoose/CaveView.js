@@ -557,7 +557,7 @@ function setAutoRotate ( state ) {
 
 function setAutoRotateSpeed ( speed ) {
 
-	controls.autoRotateSpeed = Math.max( Math.min( speed, 1.0 ), 0.0 ) * 11;
+	controls.autoRotateSpeed = Math.max( Math.min( speed, 1.0 ), -1.0 ) * 11;
 
 	Viewer.dispatchEvent( { type: 'change', name: 'autoRotateSpeed' } );
 

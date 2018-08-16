@@ -494,6 +494,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	const stations      = new Map();
 
 	const data       = new Uint8Array( source, 0 );
+	const dataView   = new DataView( source, 0 );
 	const dataLength = data.length;
 
 	var legs      = [];
@@ -503,6 +504,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	var move = false;
 	var lastPosition = new StationPosition();
+	var lastKey = null; // map key for last coordinates read
+
 	var lastXSectPosition = new Vector3(); // value to allow approach vector for xsect coord frame
 	var i;
 	var labelChanged = false;
@@ -663,24 +666,19 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		// find length of label and read label = v3 - v7 .3d format
 
 		var len = 0;
-		var l;
 
 		switch ( data[ pos ] ) {
 
 		case 0xfe:
 
-			l = new DataView( source, pos );
-
-			len = l.getUint16( 0, true ) + data[ pos ];
+			len = dataView.getUint16( pos, true ) + data[ pos ];
 			pos += 2;
 
 			break;
 
 		case 0xff:
 
-			l = new DataView( source, pos );
-
-			len = l.getUint32( 0, true );
+			len = dataView.getUint32( pos, true );
 			pos += 4;
 
 			break;
@@ -693,15 +691,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		if ( len === 0 ) return;
 
-		const db = [];
+		label += String.fromCharCode.apply( null, data.subarray( pos, ( pos += len ) ) );
 
-		for ( var i = 0; i < len; i++ ) {
-
-			db.push( data[ pos++ ] );
-
-		}
-
-		label += String.fromCharCode.apply( null, db );
 		labelChanged = true;
 
 		if ( section !== null ) inSection = label.startsWith( section );
@@ -717,7 +708,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		var b = data[ pos++ ];
 		var add = 0;
 		var del = 0;
-		var l;
 
 		if ( b !== 0 ) {
 
@@ -736,9 +726,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			} else {
 
-				l = new DataView( source, pos );
-
-				del = l.getUint32( 0, true );
+				del = dataView.getUint32( pos, true );
 				pos += 4;
 
 			}
@@ -751,12 +739,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			} else {
 
-				l = new DataView( source, pos );
-
-				add = l.getUint32( 0, true );
+				add = dataView.getUint32( pos, true );
 				pos += 4;
 
 			}
+
 		}
 
 		if ( add === 0 && del === 0 ) return;
@@ -765,15 +752,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		if ( add ) {
 
-			let db = [];
-
-			for ( var i = 0; i < add; i++ ) {
-
-				db.push( data[ pos++ ] );
-
-			}
-
-			label += String.fromCharCode.apply( null, db );
+			label += String.fromCharCode.apply( null, data.subarray( pos, ( pos += add ) ) );
 
 		}
 
@@ -969,7 +948,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			if ( move ) {
 
-				dropCoordinates( lastPosition );
+				dropLastCoordinates();
 				move = false;
 
 			}
@@ -990,7 +969,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		legs = [];
 
-		if ( ! inSection && move ) dropCoordinates( lastPosition );
+		if ( ! inSection && move ) dropLastCoordinates();
 
 		lastPosition = readCoordinates();
 
@@ -1167,6 +1146,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		const l = new DataView( source, pos );
 
+		lastKey = String.fromCharCode.apply( null, data.subarray( pos, pos + 12 ) );
+
 		var coords = new StationPosition(
 			l.getInt32( 0, true ) / 100,
 			l.getInt32( 4, true ) / 100,
@@ -1175,8 +1156,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		pos += 12;
 
-		const key = coords.x + ',' + coords.y + ',' + coords.z;
-		const cachedCoords = stationMap.get( key );
+		const cachedCoords = stationMap.get( lastKey );
 
 		if ( cachedCoords !== undefined ) {
 
@@ -1184,7 +1164,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		} else {
 
-			stationMap.set( key, coords );
+			stationMap.set( lastKey, coords );
 
 		}
 
@@ -1192,9 +1172,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	}
 
-	function dropCoordinates ( coords ) {
+	function dropLastCoordinates () {
 
-		stationMap.delete( coords.x + ',' + coords.y + ',' + coords.z );
+		stationMap.delete( lastKey );
 
 	}
 

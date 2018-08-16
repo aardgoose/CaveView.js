@@ -30,23 +30,11 @@ Walls.prototype.ready = true;
 Walls.prototype.addWalls = function ( vertices, indices, indexRuns ) {
 
 	const geometry = this.geometry;
-	const position = geometry.getAttribute( 'position' );
+	const positions = new Float32BufferAttribute( vertices.length * 3, 3 );
 
-	if ( position === undefined ) {
+	geometry.addAttribute( 'position', positions.copyVector3sArray( vertices ) );
 
-		const positions = new Float32BufferAttribute( vertices.length * 3, 3 );
-
-		geometry.addAttribute( 'position', positions.copyVector3sArray( vertices ) );
-
-		geometry.setIndex( indices );
-
-	} else {
-
-		// FIXME: alllocate new buffer of old + new length, adjust indexs and append old data after new data.
-
-		console.error( 'Walls: appending not yet implemented' );
-
-	}
+	geometry.setIndex( indices );
 
 	geometry.computeVertexNormals();
 	geometry.computeBoundingBox();

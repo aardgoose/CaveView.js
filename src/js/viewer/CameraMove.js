@@ -413,7 +413,9 @@ CameraMove.prototype.setAutoRotate = function ( state ) {
 		if ( this.running ) return;
 
 		controls.autoRotate = true;
+
 		this.running = true;
+		this.animationFunction = false;
 
 		this.animate();
 
@@ -422,6 +424,7 @@ CameraMove.prototype.setAutoRotate = function ( state ) {
 		if ( controls.autoRotate ) this.running = false;
 
 		controls.autoRotate = false;
+		controls.enabled = true;
 
 	}
 

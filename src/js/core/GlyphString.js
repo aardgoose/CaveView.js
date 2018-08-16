@@ -13,7 +13,7 @@ function onUploadDropBuffer() {
 
 }
 
-GlyphString.cache = new Map();
+const glyphStringCache = new Map();
 
 function GlyphStringGeometryCache ( material ) {
 
@@ -136,6 +136,14 @@ GlyphStringGeometry.prototype.setStringAttributes = function ( text, uvs, offset
 
 };
 
+GlyphStringGeometry.prototype.dispose = function () {
+
+	if ( this.isCached ) return;
+
+	InstancedBufferGeometry.prototype.dispose.call( this );
+
+};
+
 function GlyphString ( text, glyphMaterial ) {
 
 	var geometry;
@@ -146,12 +154,13 @@ function GlyphString ( text, glyphMaterial ) {
 
 	} else {
 
-		let cache = GlyphString.cache.get( glyphMaterial );
+		let cache = glyphStringCache.get( glyphMaterial );
 
 		if ( cache === undefined ) {
 
+			// create material cache
 			cache = new GlyphStringGeometryCache( glyphMaterial );
-			GlyphString.cache.set( glyphMaterial, cache );
+			glyphStringCache.set( glyphMaterial, cache );
 
 		}
 

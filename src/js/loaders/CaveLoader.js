@@ -184,6 +184,9 @@ CaveLoader.prototype.loadFile = function ( file, section ) {
 		self.dataResponse = fLoader.result;
 		self.callHandler();
 
+		fLoader.removeEventListener( 'load', _loaded );
+		fLoader.removeEventListener( 'progress', _progress );
+
 	}
 
 	function _progress ( e ) {

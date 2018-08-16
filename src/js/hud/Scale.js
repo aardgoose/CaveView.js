@@ -121,7 +121,7 @@ Scale.prototype.dispose = function () {
 
 		const geometry = obj.geometry;
 
-		if ( geometry !== undefined && ! geometry.isCached ) geometry.dispose();
+		if ( geometry !== undefined ) geometry.dispose();
 
 	} );
 

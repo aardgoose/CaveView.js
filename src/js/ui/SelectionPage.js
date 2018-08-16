@@ -27,19 +27,19 @@ function SelectionPage ( container ) {
 
 	titleBar.id = 'ui-path';
 
-	this.addListener( titleBar, 'click', _handleSelectTopSurvey );
-
 	this.appendChild( titleBar );
 
-	const slide = this.addSlide( _displayPanel( currentTop ), depth );
+	this.addSlide( _displayPanel( currentTop ), depth );
 
-	slide.addEventListener( 'click', _handleSelectSurveyClick );
-	slide.addEventListener( 'dblclick', _handleSelectSurveyDblClick );
+	this.addListener( this.page, 'click', _handleSelectSurveyClick );
+	this.addListener( this.page, 'dblclick', _handleSelectSurveyDblClick );
+
+	this.addListener( this.page, 'mouseover', _handleMouseover );
+	this.addListener( this.page, 'mouseleave', _handleMouseleave );
 
 	var redraw = container.clientHeight; // eslint-disable-line no-unused-vars
 
 	this.onChange = _onChange;
-
 
 	return this;
 
@@ -49,18 +49,9 @@ function SelectionPage ( container ) {
 
 		if ( event.name === 'section' || event.name === 'shadingMode' || event.name === 'splays' ) {
 
-			_replaceSlide( _displayPanel( currentTop ), depth );
+			self.replaceSlide( _displayPanel( currentTop ), depth );
 
 		}
-
-	}
-
-	function _replaceSlide ( content, depth ) {
-
-		const slide = self.replaceSlide( content, depth );
-
-		slide.addEventListener( 'click', _handleSelectSurveyClick );
-		slide.addEventListener( 'dblclick', _handleSelectSurveyDblClick );
 
 	}
 
@@ -80,9 +71,8 @@ function SelectionPage ( container ) {
 
 			const span = document.createElement( 'span' );
 
+			span.id ='surveyBack';
 			span.textContent = ' \u25C4';
-
-			self.addListener( span, 'click', _handleSelectSurveyBack );
 
 			titleBar.appendChild( span );
 			titleBar.appendChild( document.createTextNode( ' ' + top.name ) );
@@ -100,14 +90,9 @@ function SelectionPage ( container ) {
 
 		}
 
-		// FIXME need to add listener to allow survey list to be updated on dynamic load of survey
-
 		top.forEachChild( _addLine );
 
 		currentTop = top;
-
-		self.addListener( ul, 'mouseover', _handleMouseover );
-		self.addListener( ul, 'mouseleave', _handleMouseleave );
 
 		return ul;
 
@@ -120,7 +105,8 @@ function SelectionPage ( container ) {
 
 			const li  = document.createElement( 'li' );
 			const txt = document.createTextNode( child.name );
-			const key = document.createElement( 'span' );
+
+			var key;
 
 			li.id = 'sv' + id;
 
@@ -140,30 +126,25 @@ function SelectionPage ( container ) {
 
 				}
 
-				key.style.color = '#' + colour;
-				key.textContent = '\u2588 ';
+				key = _makeKey( '\u2588 ', '#' + colour );
 
 				li.classList.add( 'section' );
 
 			} else if ( child.type !== undefined && child.type === STATION_ENTRANCE ) {
 
-				key.style.color = Cfg.themeColorCSS( 'stations.entrances.marker' );
-				key.textContent = '\u2229 ';
+				key = _makeKey( '\u2229 ', Cfg.themeColorCSS( 'stations.entrances.marker' ) );
 
 			} else if ( connections > 2 ) { // station at junction
 
-				key.style.color = Cfg.themeColorCSS( 'stations.junctions.marker' );
-				key.textContent = '\u25fc ';
+				key = _makeKey( '\u25fc ', Cfg.themeColorCSS( 'stations.junctions.marker' ) );
 
 			} else if ( connections === 0 ) { // end of splay
 
-				key.style.color = Cfg.themeColorCSS( 'stations.default.marker' );
-				key.textContent = '\u25fb ';
+				key = _makeKey( '\u25fb ', Cfg.themeColorCSS( 'stations.default.marker' ) );
 
 			} else { // normal station in middle or end of leg
 
-				key.style.color = Cfg.themeColorCSS( 'stations.default.marker' );
-				key.textContent = '\u25fc ';
+				key = _makeKey( '\u25fc ', Cfg.themeColorCSS( 'stations.default.marker' ) );
 
 			}
 
@@ -191,6 +172,17 @@ function SelectionPage ( container ) {
 			return stringCompare( s1.name, s2.name );
 
 		}
+
+	}
+
+	function _makeKey ( text, color ) {
+
+		const key = document.createElement( 'span' );
+
+		key.style.color = color;
+		key.textContent = text;
+
+		return key;
 
 	}
 
@@ -222,22 +214,6 @@ function SelectionPage ( container ) {
 
 	}
 
-	function _handleSelectSurveyBack ( event ) {
-
-		event.stopPropagation();
-
-		if ( currentTop === surveyTree ) return;
-
-		_replaceSlide( _displayPanel( currentTop.parent ), --depth );
-
-	}
-
-	function _handleSelectTopSurvey ( /* event */ ) {
-
-		Viewer.section = currentTop.id;
-
-	}
-
 	function _handleSelectSurveyClick ( event ) {
 
 		const target = event.target;
@@ -245,7 +221,7 @@ function SelectionPage ( container ) {
 
 		event.stopPropagation();
 
-		switch ( target.nodeName ) {
+		switch ( target.tagName ) {
 
 		case 'LI':
 
@@ -259,11 +235,25 @@ function SelectionPage ( container ) {
 
 			if ( id ) {
 
-				_replaceSlide( _displayPanel( currentTop.findById( id ) ), ++depth );
+				self.replaceSlide( _displayPanel( currentTop.findById( id ) ), ++depth );
+
+			} else if ( target.id === 'ui-path' ) {
+
+				Viewer.section = currentTop.id;
 
 			}
 
 			break;
+
+		case 'SPAN':
+
+			if ( target.id === 'surveyBack' ) {
+
+				if ( currentTop === surveyTree ) return;
+
+				self.replaceSlide( _displayPanel( currentTop.parent ), --depth );
+
+			}
 
 		}
 

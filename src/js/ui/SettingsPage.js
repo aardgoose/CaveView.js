@@ -55,7 +55,7 @@ function SettingsPage ( fileSelector ) {
 
 	} else {
 
-		console.log( 'single file' );
+		this.addLine( fileSelector.selectedFile );
 
 	}
 

@@ -225,9 +225,6 @@ Stations.prototype.selectStationByIndex = function ( index ) {
 
 	pSize.setX( index, this.selectedSize * 2 );
 
-	//	pSize.updateRange.offset = index;
-	//	pSize.updateRange.count  = 1;
-
 	pSize.needsUpdate = true;
 
 	this.selected = index;
@@ -295,7 +292,7 @@ Stations.prototype.finalise = function () {
 	bufferGeometry.getAttribute( 'color' ).onUpload( onUploadDropBuffer );
 
 	this.pointSizes = null;
-	this.colors     = null;
+	this.colors = null;
 
 };
 

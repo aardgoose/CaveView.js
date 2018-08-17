@@ -184,7 +184,7 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 
 				for ( v = start; v < end; v += 2 ) {
 
-					colourSegment( geometry, v, v + 1, survey );
+					colourSegment( geometry, v, v + 1, survey, v );
 
 				}
 
@@ -205,7 +205,7 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 
 		for ( v = 0, l = geometry.vertices.length; v < l; v += 2 ) {
 
-			colourSegment( geometry, v, v + 1 );
+			colourSegment( geometry, v, v + 1, null, v );
 
 		}
 

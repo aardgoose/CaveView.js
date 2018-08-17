@@ -61,7 +61,7 @@ body {
 	border-bottom: 1px solid #444444;
 }
 
-#cv-frame div.page li.selected {
+#cv-frame div.page ul li.selected {
 	color: #1ab4e5;
 }
 

@@ -17,6 +17,7 @@ function SelectionPage ( container ) {
 	var currentHover = 0;
 	var currentTop;
 	var lastSelected = null;
+	var lastShadingMode = Viewer.shadingMode;
 
 	const stringCompare = new Intl.Collator( 'en-GB', { numeric: true } ).compare;
 
@@ -48,7 +49,11 @@ function SelectionPage ( container ) {
 
 		if ( ! Viewer.surveyLoaded ) return;
 
-		if ( event.name === 'shadingMode' || event.name === 'splays' ) {
+		if (
+			( event.name === 'splays' ) ||
+			( lastShadingMode === SHADING_SURVEY && Viewer.shadingMode !== SHADING_SURVEY ) ||
+			( lastShadingMode !== SHADING_SURVEY && Viewer.shadingMode === SHADING_SURVEY )
+		) {
 
 			self.replaceSlide( _displayPanel( currentTop ), depth );
 
@@ -61,6 +66,8 @@ function SelectionPage ( container ) {
 		const surveyColourMap = SurveyColours.getSurveyColourMap( surveyTree, Viewer.section );
 
 		var tmp;
+
+		lastShadingMode = Viewer.shadingMode;
 
 		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
 
@@ -266,12 +273,7 @@ function SelectionPage ( container ) {
 
 		if ( ! target.classList.contains( 'section' ) ) return;
 
-		if ( id !== 0 ) {
-
-			Viewer.cut = true;
-			Page.clear();
-
-		}
+		if ( id !== 0 ) Viewer.cut = true;
 
 	}
 

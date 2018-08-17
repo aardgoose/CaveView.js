@@ -515,8 +515,9 @@ Page.prototype.addSlide = function ( domElement, depth ) {
 Page.prototype.replaceSlide = function ( domElement, depth ) {
 
 	const newSlide = document.createElement( 'div' );
-	const oldSlide = this.slide;
 	const page = this.page;
+
+	var oldSlide = this.slide;
 
 	var redraw; // eslint-disable-line no-unused-vars
 
@@ -564,12 +565,16 @@ Page.prototype.replaceSlide = function ( domElement, depth ) {
 		oldSlide.removeEventListener( 'transitionend', afterSlideOut );
 		page.removeChild( oldSlide );
 
+		oldSlide = null;
+
 	}
 
 	function afterSlideIn () {
 
 		page.removeChild( oldSlide );
 		newSlide.removeEventListener( 'transitionend', afterSlideIn );
+
+		oldSlide = null;
 
 	}
 

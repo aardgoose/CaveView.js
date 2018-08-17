@@ -37,6 +37,7 @@ function Survey ( cave ) {
 	this.selectedSection = 0;
 	this.selectedBox = null;
 	this.highlightBox = null;
+	this.highlightPath = null;
 	this.featureBox = null;
 	this.surveyTree = null;
 	this.projection = null;
@@ -608,9 +609,19 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 
 Survey.prototype.shortestPathSearch = function ( station ) {
 
+	this.highlightPath = null;
+
 	this.routes.shortestPathSearch( station );
 	this.setShadingMode( SHADING_DISTANCE );
 	this.stations.highlightStation( station );
+
+};
+
+Survey.prototype.showShortestPath = function ( station ) {
+
+	this.highlightPath = this.routes.getShortestPath( station );
+
+	this.setLegShading( LEG_CAVE, SHADING_DISTANCE );
 
 };
 
@@ -1176,13 +1187,18 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 	const stations = this.stations;
 	const colourRange = colours.length - 1;
 	const maxDistance = this.routes.maxDistance;
+	const path = this.highlightPath;
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
-	function _colourSegment ( geometry, v1, v2 ) {
+	function _colourSegment ( geometry, v1, v2, survey, legIndex ) {
 
-		geometry.colors[ v1 ] = _setDistanceColour( geometry, v1 );
-		geometry.colors[ v2 ] = _setDistanceColour( geometry, v2 );
+		const onPath =  ( path === null || path.has( legIndex ) );
+
+		console.log( legIndex, onPath );
+
+		geometry.colors[ v1 ] = onPath ? _setDistanceColour( geometry, v1 ) : unconnected;
+		geometry.colors[ v2 ] = onPath ? _setDistanceColour( geometry, v2 ) : unconnected;
 
 	}
 

@@ -16,6 +16,7 @@ function SelectionPage ( container ) {
 	var depth = 0;
 	var currentHover = 0;
 	var currentTop;
+	var lastSelected = null;
 
 	const stringCompare = new Intl.Collator( 'en-GB', { numeric: true } ).compare;
 
@@ -31,8 +32,8 @@ function SelectionPage ( container ) {
 
 	this.addSlide( _displayPanel( currentTop ), depth );
 
-	this.addListener( this.page, 'click', _handleSelectSurveyClick );
 	this.addListener( this.page, 'dblclick', _handleSelectSurveyDblClick );
+	this.addListener( this.page, 'click', _handleSelectSurveyClick );
 
 	this.addListener( this.page, 'mouseover', _handleMouseover );
 	this.addListener( this.page, 'mouseleave', _handleMouseleave );
@@ -47,7 +48,7 @@ function SelectionPage ( container ) {
 
 		if ( ! Viewer.surveyLoaded ) return;
 
-		if ( event.name === 'section' || event.name === 'shadingMode' || event.name === 'splays' ) {
+		if ( event.name === 'shadingMode' || event.name === 'splays' ) {
 
 			self.replaceSlide( _displayPanel( currentTop ), depth );
 
@@ -93,6 +94,7 @@ function SelectionPage ( container ) {
 		top.forEachChild( _addLine );
 
 		currentTop = top;
+		lastSelected = null;
 
 		return ul;
 
@@ -186,16 +188,13 @@ function SelectionPage ( container ) {
 
 	}
 
-	function _handleMouseleave ( event ) {
+	function _handleMouseleave ( /* event */ ) {
 
-		event.stopPropagation();
 		Viewer.highlight = 0;
 
 	}
 
 	function _handleMouseover ( event ) {
-
-		event.stopPropagation();
 
 		const target = event.target;
 
@@ -210,8 +209,6 @@ function SelectionPage ( container ) {
 
 		}
 
-		return false;
-
 	}
 
 	function _handleSelectSurveyClick ( event ) {
@@ -219,15 +216,18 @@ function SelectionPage ( container ) {
 		const target = event.target;
 		const id = Number( target.id.split( 'v' )[ 1 ] );
 
-		event.stopPropagation();
-
 		switch ( target.tagName ) {
 
 		case 'LI':
 
-		// Viewer.section = ( Viewer.section !== id ) ? id : 0;
 			Viewer.section = id;
 			Viewer.setPOI = true;
+
+			target.classList.add( 'selected' );
+
+			if ( lastSelected !== null ) lastSelected.classList.remove( 'selected' );
+
+			lastSelected = target;
 
 			break;
 
@@ -266,12 +266,9 @@ function SelectionPage ( container ) {
 
 		if ( ! target.classList.contains( 'section' ) ) return;
 
-		event.stopPropagation();
-
 		if ( id !== 0 ) {
 
 			Viewer.cut = true;
-
 			Page.clear();
 
 		}

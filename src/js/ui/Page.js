@@ -1,7 +1,7 @@
 
 import { Cfg } from '../core/lib';
 
-function Page( id, x18nPrefix, onTop, onLeave ) {
+function Page ( id, x18nPrefix, onTop, onLeave ) {
 
 	const tab  = document.createElement( 'div' );
 	const page = document.createElement( 'div' );
@@ -93,15 +93,12 @@ Page.setControlsVisibility = function ( list, visible ) {
 
 	const display = visible ? 'block' : 'none';
 
-	for ( var i = 0, l = list.length; i < l; i++ ) {
+	list.forEach( function ( element ) {
 
-		const element = list[ i ];
-
-		if ( element === null ) continue;
-
+		if ( element === null ) return;
 		element.style.display = display;
 
-	}
+	} );
 
 };
 
@@ -113,15 +110,11 @@ Page.clear = function () {
 	if ( frame  !== null ) frame.parentElement.removeChild( frame );
 	if ( tabBox !== null ) tabBox.parentElement.removeChild( tabBox );
 
-	var i, l;
-
-	for ( i = 0, l = Page.listeners.length; i < l; i++ ) {
-
-		const listener = Page.listeners[ i ];
+	Page.listeners.forEach( function ( listener ) {
 
 		listener.obj.removeEventListener( listener.name, listener.handler );
 
-	}
+	} );
 
 	Page.listeners = [];
 	Page.pages     = [];
@@ -132,7 +125,7 @@ Page.clear = function () {
 
 };
 
-Page.addFullscreenButton= function ( id, obj, property ) {
+Page.addFullscreenButton = function ( id, obj, property ) {
 
 	const tabBox = this.tabBox;
 	const fullscreen = document.createElement( 'div' );
@@ -178,7 +171,7 @@ Page.addFullscreenButton= function ( id, obj, property ) {
 
 Page.addListener = function ( obj, name, handler ) {
 
-	obj.addEventListener( name, handler );
+	obj.addEventListener( name, handler, false );
 
 	Page.listeners.push( {
 		obj: obj,
@@ -261,13 +254,11 @@ Page.prototype.tabHandleClick = function ( event ) {
 	Page.tabBox.classList.add( 'onscreen' );
 	Page.frame.classList.add( 'onscreen' );
 
-	var i, l;
+	pages.forEach( function ( page ) {
 
-	for ( i = 0, l = pages.length; i < l; i++ ) {
-
-		const otherTab  = pages[ i ].tab;
-		const otherPage = pages[ i ].page;
-		const owner     = pages[ i ].owner;
+		const otherPage = page.page;
+		const otherTab = page.tab;
+		const owner = page.owner;
 
 		if ( otherTab === tab ) {
 
@@ -287,7 +278,7 @@ Page.prototype.tabHandleClick = function ( event ) {
 
 		}
 
-	}
+	} );
 
 };
 
@@ -312,12 +303,9 @@ Page.prototype.addHeader = function ( text ) {
 
 Page.prototype.addText = function ( text ) {
 
-	const p = document.createElement( 'p' );
+	const p = this.addLine( text );
 
 	p.classList.add( 'spaced' );
-	p.textContent = text;
-
-	this.page.appendChild( p );
 
 	return p;
 
@@ -359,18 +347,18 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 	if ( obj instanceof Array ) {
 
-		for ( var i = 0, l = obj.length; i < l; i++ ) {
+		obj.forEach( function ( element ) {
 
 			const opt = document.createElement( 'option' );
 
-			opt.value = obj[ i ];
-			opt.text = obj[ i ];
+			opt.value = element;
+			opt.text = element;
 
 			if ( opt.text === trgObj[ property ] ) opt.selected = true;
 
 			select.add( opt, null );
 
-		}
+		} );
 
 	} else {
 
@@ -444,6 +432,7 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 	this.addListener( cb, 'change', _checkboxChanged );
 
 	Page.controls[ property ] = cb;
+
 	div.appendChild( cb );
 	div.appendChild( label );
 

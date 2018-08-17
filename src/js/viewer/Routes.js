@@ -18,6 +18,7 @@ function Routes ( metadataSource ) {
 	this.currentRouteName = null;
 	this.adjacentSegments = new Set();
 	this.maxDistance = 0;
+	this.zeroStation = null;
 
 	this.stations = null;
 	this.legs = null;
@@ -342,10 +343,60 @@ Routes.prototype.shortestPathSearch = function ( station ) {
 	}
 
 	// console.log( 'max:', maxDistance );
+	this.zeroStation = station;
 	this.maxDistance = maxDistance;
 
 };
 
+Routes.prototype.getShortestPath = function ( startStation ) {
+
+	const zeroStation = this.zeroStation;
+
+	if ( this.zeroStation === null || startStation.distance === Infinity ) return;
+
+	const stations = this.stations;
+	const legsObject = this.legsObject;
+	const legs = legsObject.geometry.vertices;
+	const path = new Set();
+
+	var nextStation = startStation;
+	var testNext = true;
+
+	// for each station find station with shortest distance to zeroStation
+
+	while ( testNext ) {
+
+		const stationLegs = nextStation.legs;
+		const l = stationLegs.length;
+
+		let i;
+
+		for ( i = 0; i < l; i++ ) {
+
+			const leg = stationLegs[ i ];
+
+			const v1 = legs[ leg ];
+			const v2 = legs[ leg + 1 ];
+
+			const nextVertex = ( v1 !== nextStation.p ) ? v1 : v2;
+			const testStation = stations.getStation( nextVertex );
+
+			if ( testStation.distance < nextStation.distance ) {
+
+				nextStation = testStation;
+				path.add( leg );
+
+				if ( nextStation === zeroStation ) testNext = false;
+
+			}
+
+		}
+
+	}
+
+	return path;
+
+};
 
 export { Routes };
 

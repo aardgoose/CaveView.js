@@ -38,6 +38,7 @@ function Survey ( cave ) {
 	this.selectedBox = null;
 	this.highlightBox = null;
 	this.highlightPath = null;
+	this.lastMarkedStation = null;
 	this.featureBox = null;
 	this.surveyTree = null;
 	this.projection = null;
@@ -611,17 +612,25 @@ Survey.prototype.shortestPathSearch = function ( station ) {
 
 	this.highlightPath = null;
 
+	this.stations.clearMarkers();
+
 	this.routes.shortestPathSearch( station );
 
-	this.setShadingMode( SHADING_DISTANCE );
+	this.stations.markStation( station );
 
-	this.stations.highlightStation( station );
+	this.setShadingMode( SHADING_DISTANCE );
 
 };
 
 Survey.prototype.showShortestPath = function ( station ) {
 
 	this.highlightPath = this.routes.getShortestPath( station );
+
+	if ( this.lastMarkedStation !== null ) this.stations.unmarkStation( this.lastMarkedStation );
+
+	this.stations.markStation( station );
+
+	this.lastMarkedStation = station;
 
 	this.setLegShading( LEG_CAVE, SHADING_DISTANCE );
 
@@ -954,7 +963,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	}
 
-	if ( mode !== SHADING_DISTANCE ) this.stations.clearHighlight();
+	if ( mode !== SHADING_DISTANCE ) this.stations.clearMarkers();
 
 	if ( this.setLegShading( LEG_CAVE, mode ) ) {
 

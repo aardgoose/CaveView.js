@@ -351,13 +351,13 @@ Routes.prototype.shortestPathSearch = function ( station ) {
 Routes.prototype.getShortestPath = function ( startStation ) {
 
 	const zeroStation = this.zeroStation;
+	const path = new Set();
 
-	if ( this.zeroStation === null || startStation.distance === Infinity ) return;
+	if ( this.zeroStation === null || startStation.distance === Infinity ) return path;
 
 	const stations = this.stations;
 	const legsObject = this.legsObject;
 	const legs = legsObject.geometry.vertices;
-	const path = new Set();
 
 	var nextStation = startStation;
 	var testNext = true;

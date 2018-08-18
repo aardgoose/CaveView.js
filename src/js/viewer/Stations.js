@@ -35,6 +35,7 @@ function Stations () {
 	this.colors     = [];
 
 	this.stations = [];
+	this.stationMarkers = new Map();
 
 	this.selected = null;
 	this.selectedSize = 0;
@@ -46,7 +47,7 @@ function Stations () {
 
 	this.addEventListener( 'removed', _removed );
 
-	const point = new PointIndicator();
+	const point = new PointIndicator( 0xff0000 );
 
 	point.visible = false;
 
@@ -194,6 +195,54 @@ Stations.prototype.highlightStation = function ( node ) {
 	highlightPoint.visible = true;
 
 	return node;
+
+};
+
+Stations.prototype.markStation = function ( node ) {
+
+	const stationMarkers = this.stationMarkers;
+
+	if ( stationMarkers.has( node ) ) return;
+
+	const marker = new PointIndicator( 0x00ff00 );
+
+	marker.position.copy( node.p );
+
+	this.add( marker );
+
+	stationMarkers.set( node, marker );
+
+	return node;
+
+};
+
+Stations.prototype.unmarkStation = function ( node ) {
+
+	const stationMarkers = this.stationMarkers;
+
+	const marker = stationMarkers.get( node );
+
+	if ( marker === undefined ) return;
+
+	this.remove( marker );
+
+	stationMarkers.delete( node );
+
+	return node;
+
+};
+
+Stations.prototype.clearMarkers = function () {
+
+	const self = this;
+
+	this.stationMarkers.forEach( function ( marker ) {
+
+		self.remove( marker );
+
+	} );
+
+	this.stationMarkers.clear();
 
 };
 

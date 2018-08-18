@@ -40,7 +40,7 @@ function Survey ( cave ) {
 	this.highlightBox = null;
 	this.highlightPath = null;
 	this.lastMarkedStation = null;
-	this.markers = new StationMarkers();
+	this.markers = new StationMarkers( 0x00ff00 );
 	this.featureBox = null;
 	this.surveyTree = null;
 	this.projection = null;

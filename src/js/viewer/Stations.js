@@ -35,7 +35,6 @@ function Stations () {
 	this.colors     = [];
 
 	this.stations = [];
-	this.stationMarkers = new Map();
 
 	this.selected = null;
 	this.selectedSize = 0;
@@ -195,53 +194,6 @@ Stations.prototype.highlightStation = function ( node ) {
 	highlightPoint.visible = true;
 
 	return node;
-
-};
-
-Stations.prototype.markStation = function ( node ) {
-
-	const stationMarkers = this.stationMarkers;
-
-	if ( stationMarkers.has( node ) ) return;
-
-	const marker = new PointIndicator( 0x00ff00 );
-
-	marker.position.copy( node.p );
-
-	this.add( marker );
-
-	stationMarkers.set( node, marker );
-
-};
-
-Stations.prototype.unmarkStation = function ( node ) {
-
-	const stationMarkers = this.stationMarkers;
-
-	const marker = stationMarkers.get( node );
-
-	if ( marker === undefined ) return;
-
-	this.remove( marker );
-
-
-	stationMarkers.delete( node );
-
-};
-
-Stations.prototype.clearMarkers = function () {
-
-	const self = this;
-
-	this.stationMarkers.forEach( function ( marker ) {
-
-		marker.geometry.dispose();
-
-		self.remove( marker );
-
-	} );
-
-	this.stationMarkers.clear();
 
 };
 

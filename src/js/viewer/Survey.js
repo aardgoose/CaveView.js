@@ -17,7 +17,8 @@ import { Materials } from '../materials/Materials';
 import { ClusterMarkers } from './ClusterMarkers';
 import { Stations } from './Stations';
 import { StationLabels } from './StationLabels';
-import { Routes } from './Routes';
+import { StationMarkers } from './StationMarkers';
+import { Topology } from './Topology';
 import { Legs } from './Legs';
 import { DyeTraces } from './DyeTraces';
 import { SurveyMetadata } from './SurveyMetadata';
@@ -39,6 +40,7 @@ function Survey ( cave ) {
 	this.highlightBox = null;
 	this.highlightPath = null;
 	this.lastMarkedStation = null;
+	this.markers = new StationMarkers();
 	this.featureBox = null;
 	this.surveyTree = null;
 	this.projection = null;
@@ -54,7 +56,7 @@ function Survey ( cave ) {
 	this.cutInProgress = false;
 	this.terrain = null;
 	this.features = [];
-	this.routes = null;
+	this.topology = null;
 	this.stations = null;
 	this.inverseWorld = null;
 	this.colourAxis = [
@@ -97,6 +99,8 @@ function Survey ( cave ) {
 	this.loadEntrances();
 
 	this.setFeatureBox();
+
+	this.addStatic( this.markers );
 
 	this.addEventListener( 'removed', this.onRemoved );
 
@@ -285,7 +289,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.loadDyeTraces();
 
-	this.routes = new Routes( metadata ).mapSurvey( this.stations, this.getFeature( LEG_CAVE ), this.surveyTree );
+	this.topology = new Topology( metadata ).mapSurvey( this.stations, this.getFeature( LEG_CAVE ), this.surveyTree );
 
 	buildWallsSync( cave, this );
 
@@ -581,7 +585,7 @@ Survey.prototype.getLegs = function () {
 
 Survey.prototype.getRoutes = function () {
 
-	return this.routes;
+	return this.topology;
 
 };
 
@@ -612,11 +616,11 @@ Survey.prototype.shortestPathSearch = function ( station ) {
 
 	this.highlightPath = null;
 
-	this.stations.clearMarkers();
+	this.markers.clear();
 
-	this.routes.shortestPathSearch( station );
+	this.topology.shortestPathSearch( station );
 
-	this.stations.markStation( station );
+	this.markers.mark( station );
 
 	this.setShadingMode( SHADING_DISTANCE );
 
@@ -624,11 +628,11 @@ Survey.prototype.shortestPathSearch = function ( station ) {
 
 Survey.prototype.showShortestPath = function ( station ) {
 
-	this.highlightPath = this.routes.getShortestPath( station );
+	this.highlightPath = this.topology.getShortestPath( station );
 
-	if ( this.lastMarkedStation !== null ) this.stations.unmarkStation( this.lastMarkedStation );
+	if ( this.lastMarkedStation !== null ) this.markers.unmark( this.lastMarkedStation );
 
-	this.stations.markStation( station );
+	this.markers.mark( station );
 
 	this.lastMarkedStation = station;
 
@@ -638,7 +642,7 @@ Survey.prototype.showShortestPath = function ( station ) {
 
 Survey.prototype.getMaxDistance = function () {
 
-	return this.routes.maxDistance;
+	return this.topology.maxDistance;
 
 };
 
@@ -963,7 +967,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	}
 
-	if ( mode !== SHADING_DISTANCE ) this.stations.clearMarkers();
+	if ( mode !== SHADING_DISTANCE ) this.markers.clear();
 
 	if ( this.setLegShading( LEG_CAVE, mode ) ) {
 
@@ -1066,7 +1070,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	case SHADING_DISTANCE:
 
-		if ( this.routes.maxDistance === 0 ) {
+		if ( this.topology.maxDistance === 0 ) {
 
 			this.setLegColourByColour( mesh, Cfg.themeColor( 'shading.unconnected' ) );
 
@@ -1198,7 +1202,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 
 	const stations = this.stations;
 	const colourRange = colours.length - 1;
-	const maxDistance = this.routes.maxDistance;
+	const maxDistance = this.topology.maxDistance;
 	const path = this.highlightPath;
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );

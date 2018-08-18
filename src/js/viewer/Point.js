@@ -2,13 +2,11 @@ import {
 	Points, BufferGeometry, Float32BufferAttribute
 } from '../Three';
 
+const pointGeometry = new BufferGeometry().addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0 ], 3 ) );
+
 function Point ( material ) {
 
-	const geometry = new BufferGeometry();
-
-	geometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0 ], 3 ) );
-
-	Points.call( this, geometry, material );
+	Points.call( this, pointGeometry, material );
 
 	this.type = 'Point';
 

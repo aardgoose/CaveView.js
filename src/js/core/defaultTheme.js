@@ -1,21 +1,21 @@
 
 const defaultTheme = {
 	fieldOfView: 50,
-	background: 0x000000,
+	background: 'black',
 	maxPolarAngle: 180,
 	lighting: {
 		azimuth: 315,
 		inclination: 45
 	},
 	hud: {
-		text: 0xffffff,
-		progress: 0x00ff00,
-		progressBackground: 0x333333,
-		bezel: 0x888888,
+		text: 'white',
+		progress: 'green',
+		progressBackground: 'dimgray',
+		bezel: 'gray',
 		widgetSize: 40,
 		scale: {
-			bar1: 0xffffff,
-			bar2: 0xff0000,
+			bar1: 'white',
+			bar2: 'red',
 		},
 		compass: {
 			top1: 0xb03a14,
@@ -26,45 +26,45 @@ const defaultTheme = {
 		ahi: {
 			sky: 0x106f8d,
 			earth: 0x802100,
-			bar: 0xffff00,
-			marks: 0xffffff
+			bar: 'yellow',
+			marks: 'white'
 		},
-		cursor: 0xffff00
+		cursor: 'yellow'
 	},
 	box: {
-		bounding: 0xffffff,
-		select: 0x0000ff,
-		highlight: 0xff0000
+		bounding: 'white',
+		select: 'blue',
+		highlight: 'red'
 	},
 	routes: {
-		active: 0xffff00,
-		adjacent: 0xff0000,
-		default: 0x888888
+		active: 'yellow',
+		adjacent: 'red',
+		default: 'gray'
 	},
 	stations: {
 		entrances: {
-			text: 0xffffff,
-			marker: 0xffffff
+			text: 'white',
+			marker: 'white'
 		},
 		junctions: {
-			text: 0xffff00,
-			marker: 0xffff00
+			text: 'yellow',
+			marker: 'yellow'
 		},
 		default: {
-			text: 0xffffff,
-			marker: 0xff0000
+			text: 'white',
+			marker: 'red'
 		}
 	},
 	shading: {
-		single: 0xffffff,
-		cursor: 0xffff00,
-		cursorBase: 0x888888,
-		unselected: 0x444444,
+		single: 'white',
+		cursor: 'yellow',
+		cursorBase: 'gray',
+		unselected: 'gray',
 		contours: {
 			line: 0xe1bba2,
 			line10: 0xf29d62,
 			interval: 10,
-			base: 0xffffff
+			base: 'white'
 		},
 		/*
 		hypsometric: {
@@ -72,11 +72,11 @@ const defaultTheme = {
 			max: 400
 		},
 		*/
-		unconnected: 0x888888
+		unconnected: 'gray'
 	},
 	popup: {
-		text: 0xffffff,
-		border: 0xffffff,
+		text: 'white',
+		border: 'white',
 		background: 0x111111
 	}
 };

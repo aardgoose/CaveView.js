@@ -36,9 +36,13 @@ function PopupGeometry () {
 
 PopupGeometry.prototype = Object.create( BufferGeometry.prototype );
 
+var commonGeometry = null;
+
 function Popup( container ) {
 
-	Mesh.call( this, new PopupGeometry() );
+	if ( commonGeometry === null ) commonGeometry = new PopupGeometry();
+
+	Mesh.call( this, commonGeometry );
 
 	this.lines = [];
 	this.layers.set( LEG_CAVE );
@@ -123,7 +127,7 @@ Popup.prototype.close = function () {
 	this.parent.remove( this );
 
 	this.material.dispose();
-	this.geometry.dispose();
+	this.material.texture.dispose();
 
 };
 

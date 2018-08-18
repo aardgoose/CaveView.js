@@ -136,9 +136,7 @@ Cfg.treeValue = function ( theme, parts ) {
 
 Cfg.themeColorCSS = function getThemeColorCSS ( name ) {
 
-	const color = '#' + Cfg.themeValue( name ).toString( 16 ).padStart( 6, '0' );
-
-	return color;
+	return Cfg.themeColor( name ).getStyle();
 
 };
 

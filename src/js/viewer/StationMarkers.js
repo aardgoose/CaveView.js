@@ -46,13 +46,17 @@ StationMarkers.prototype.clear = function () {
 
 	this.markers.forEach( function ( marker ) {
 
-		marker.geometry.dispose();
-
 		self.remove( marker );
 
 	} );
 
 	this.markers.clear();
+
+};
+
+StationMarkers.prototype.setVisibility = function ( visible ) {
+
+	this.markers.forEach( function ( marker ) { marker.visible = visible; } );
 
 };
 

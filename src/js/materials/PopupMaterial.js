@@ -32,6 +32,8 @@ function PopupMaterial ( container, popupImage, rotation, colour ) {
 	this.depthTest = false;
 	this.transparent = true;
 
+	this.texture = popupImage;
+
 	this.defaultAttributeValues.color = colour;
 
 	return this;

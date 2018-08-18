@@ -353,7 +353,12 @@ Routes.prototype.getShortestPath = function ( startStation ) {
 	const zeroStation = this.zeroStation;
 	const path = new Set();
 
-	if ( this.zeroStation === null || startStation.distance === Infinity ) return path;
+	if (
+		this.zeroStation === null ||
+		startStation.distance === Infinity ||
+		this.zeroStation === startStation ||
+		startStation.distance === 0
+	) return path;
 
 	const stations = this.stations;
 	const legsObject = this.legsObject;
@@ -361,6 +366,7 @@ Routes.prototype.getShortestPath = function ( startStation ) {
 
 	var nextStation = startStation;
 	var testNext = true;
+
 
 	// for each station find station with shortest distance to zeroStation
 

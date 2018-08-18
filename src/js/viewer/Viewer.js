@@ -1291,8 +1291,9 @@ function mouseDown ( event ) {
 
 		if ( event.button === MOUSE.LEFT ) {
 
-			_showStationPopup( station );
 			survey.showShortestPath( station );
+
+			_showStationPopup( station );
 
 		} else if ( event.button === MOUSE.RIGHT ) {
 

@@ -212,8 +212,6 @@ Stations.prototype.markStation = function ( node ) {
 
 	stationMarkers.set( node, marker );
 
-	return node;
-
 };
 
 Stations.prototype.unmarkStation = function ( node ) {
@@ -226,9 +224,8 @@ Stations.prototype.unmarkStation = function ( node ) {
 
 	this.remove( marker );
 
-	stationMarkers.delete( node );
 
-	return node;
+	stationMarkers.delete( node );
 
 };
 
@@ -237,6 +234,8 @@ Stations.prototype.clearMarkers = function () {
 	const self = this;
 
 	this.stationMarkers.forEach( function ( marker ) {
+
+		marker.geometry.dispose();
 
 		self.remove( marker );
 

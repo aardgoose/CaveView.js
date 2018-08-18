@@ -967,7 +967,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	}
 
-	if ( mode !== SHADING_DISTANCE ) this.markers.clear();
+	this.markers.setVisibility( ( mode === SHADING_DISTANCE ) );
 
 	if ( this.setLegShading( LEG_CAVE, mode ) ) {
 

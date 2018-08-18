@@ -612,7 +612,9 @@ Survey.prototype.shortestPathSearch = function ( station ) {
 	this.highlightPath = null;
 
 	this.routes.shortestPathSearch( station );
+
 	this.setShadingMode( SHADING_DISTANCE );
+
 	this.stations.highlightStation( station );
 
 };
@@ -1183,6 +1185,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 
 	const colours = ColourCache.getColors( 'gradient' );
 	const unconnected = Cfg.themeColor( 'shading.unconnected' );
+	const pathColor = Cfg.themeColor( 'routes.active' );
 
 	const stations = this.stations;
 	const colourRange = colours.length - 1;
@@ -1193,12 +1196,10 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 
 	function _colourSegment ( geometry, v1, v2, survey, legIndex ) {
 
-		const onPath =  ( path === null || path.has( legIndex ) );
+		const onPath = ( path !== null && path.has( legIndex ) );
 
-		console.log( legIndex, onPath );
-
-		geometry.colors[ v1 ] = onPath ? _setDistanceColour( geometry, v1 ) : unconnected;
-		geometry.colors[ v2 ] = onPath ? _setDistanceColour( geometry, v2 ) : unconnected;
+		geometry.colors[ v1 ] = onPath ? pathColor : _setDistanceColour( geometry, v1 );
+		geometry.colors[ v2 ] = onPath ? pathColor : _setDistanceColour( geometry, v2 );
 
 	}
 

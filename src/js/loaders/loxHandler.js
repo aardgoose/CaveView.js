@@ -547,21 +547,16 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		const dtm = new Float64Array( ab, 0 );
 
-		// flip y direction
+		const data = new Float64Array( ab.byteLength );
 
-		const data = [];
-
-		var i, j;
+		var i;
 
 		for ( i = 0; i < m_height; i++ ) {
 
-			const offset = ( m_height - 1 - i ) * m_width;
+			const srcOffset = i * m_width;
+			const dstOffset = ( m_height - 1 - i ) * m_width;
 
-			for ( j = 0; j < m_width; j++ ) {
-
-				data.push( dtm[ offset + j ] );
-
-			}
+			data.set( dtm.subarray( srcOffset, srcOffset + m_width  ), dstOffset );
 
 		}
 

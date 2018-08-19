@@ -547,21 +547,8 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		const dtm = new Float64Array( ab, 0 );
 
-		const data = new Float64Array( ab.byteLength );
-
-		var i;
-
-		for ( i = 0; i < m_height; i++ ) {
-
-			const srcOffset = i * m_width;
-			const dstOffset = ( m_height - 1 - i ) * m_width;
-
-			data.set( dtm.subarray( srcOffset, srcOffset + m_width  ), dstOffset );
-
-		}
-
 		self.terrain.dtm = {
-			data: data,
+			data: dtm,
 			samples: m_width,
 			lines:   m_height,
 			xOrigin: m_calib[ 0 ],

@@ -46,18 +46,19 @@ function LoxTerrainGeometry( dtm, offsets ) {
 	var minZ = Infinity;
 	var maxZ = -Infinity;
 
-	var zIndex = 0;
-
 	// setup vertices from height data (corrected by rotation matrix)
+	// y coordinates inverted in .lox datm data
 
 	for ( iy = 0; iy < lines; iy++ ) {
+
+		const dstOffset = ( lines - 1 - iy ) * samples;
 
 		for ( ix = 0; ix < samples; ix++ ) {
 
 			const x = ix * xx + ( ly - iy ) * xy + xOffset;
 			const y = ix * yx + ( ly - iy ) * yy + yOffset;
 
-			const z = heightData[ zIndex++ ] + zOffset;
+			const z = heightData[ dstOffset + ix ] + zOffset;
 
 			vertices.push( x, y, z );
 

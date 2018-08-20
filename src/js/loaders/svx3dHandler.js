@@ -114,7 +114,9 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	case 'v7':
 	case 'v8':
 
+		var t1 = performance.now();
 		this.handleVx( dataStream, pos, Number( version.charAt( 1 ) ), section );
+		console.log( 'parse time:', performance.now() - t1 );
 
 		break;
 
@@ -374,7 +376,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		label = String.fromCharCode.apply( null, db );
 
-		var node = surveyTree.addPath( label.split( '.' ), { p: lastPosition, type: STATION_NORMAL } );
+		var node = surveyTree.addLeaf( label.split( '.' ), { p: lastPosition, type: STATION_NORMAL } );
 
 		// track coords to sectionId to allow survey ID's to be added to leg vertices
 		stations.set( lastPosition, node );
@@ -490,8 +492,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	const cmd = [];
 
-	const sectionLabels = new Set();
-	const stations      = new Map();
+	const stations = new Map();
 
 	const data       = new Uint8Array( source, 0 );
 	const dataView   = new DataView( source, 0 );
@@ -885,25 +886,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		if ( labelChanged && label !== '' ) {
 
 			// we have a new section name
-
-			const path = label.split( '.' );
-
-			var partLabel = path[ 0 ];
-
-			// save valid survey station prefixes
-
-			sectionLabels.add( partLabel );
-
-			for ( var i = 1, l = path.length; i < l; i++ ) {
-
-				partLabel = partLabel + '.' + path[ i ];
-				sectionLabels.add( partLabel );
-
-			}
-
 			// add it to the survey tree
-			sectionId = surveyTree.addPath( path ).id; // consumes path
 
+			sectionId = surveyTree.addPath( label ).id;
 			labelChanged = false;
 
 		}
@@ -1016,31 +1001,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		const coords = readCoordinates();
 
 		var path = label.split( '.' );
-		const prefix = path.slice( 0, -1 ).join( '.' );
-
-		if ( path.length > 1 && ! sectionLabels.has( prefix ) ) {
-
-			// handle station names containing separator character
-
-			let i = 0;
-			let test = path[ i ];
-
-			while ( sectionLabels.has( test ) ) {
-
-				test = test + '.' + path[ ++ i ];
-
-			}
-
-			const last = path.slice( i ).join( '.' );
-
-			path = path.slice( 0, i );
-			path.push( last );
-
-		}
 
 		stations.set( label, coords );
 
-		surveyTree.addPath( path, { p: coords, type: ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL } );
+		surveyTree.addLeaf( path, { p: coords, type: ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL } );
 
 		return true;
 

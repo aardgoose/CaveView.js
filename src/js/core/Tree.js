@@ -8,6 +8,7 @@ function Tree( name, id, root, parent ) { // root parameter only used internally
 		this.maxId = 0;
 		this.root = this;
 		this.parent = null;
+		this.pathCache = [];
 
 	} else {
 
@@ -107,7 +108,7 @@ Tree.prototype.getByPath = function ( path ) {
 
 Tree.prototype.getByPathArray = function ( path ) {
 
-	var node = this;
+	var node = this.root;
 	var search = true;
 
 	while ( search && path.length > 0 ) {
@@ -136,11 +137,50 @@ Tree.prototype.getByPathArray = function ( path ) {
 
 };
 
-Tree.prototype.addPath = function ( path, properties ) {
+Tree.prototype.addLeaf = function ( path, properties ) {
 
-	// find part of path that exists already
+	// shor cut for flat surveys with little tree structure
+	if ( path.length === 1 ) {
 
-	var node = this.getByPathArray( path );
+		const newNode = new Tree( path[ 0 ], null, this.root, this );
+
+		if ( properties !== undefined ) Object.assign( newNode, properties );
+
+		this.children.push( newNode );
+
+		return newNode;
+
+	}
+
+	// find part of path that exists already using cache
+
+	var node;
+	var leaf = [];
+
+	while ( node === undefined && path.length > 1 ) {
+
+		leaf.unshift( path.pop() );
+		node = this.root.pathCache[ path.join( '.' ) ];
+
+	}
+
+	// we have a valid path - attach the leaf here
+
+	if ( node !== undefined) {
+
+		const newNode = new Tree( leaf.join( '.' ), null, this.root, node );
+
+		node.children.push( newNode );
+
+		return newNode;
+
+	}
+
+	// fallback in case path not created
+
+	path = path.concat( leaf );
+
+	node = this.getByPathArray( path );
 
 	if ( path.length === 0 ) return node;
 
@@ -151,11 +191,39 @@ Tree.prototype.addPath = function ( path, properties ) {
 		const newNode = new Tree( path.shift(), null, this.root, node );
 
 		node.children.push( newNode );
+
 		node = newNode;
 
 	}
 
 	if ( properties !== undefined ) Object.assign( node, properties );
+
+	return node;
+
+};
+
+Tree.prototype.addPath = function ( path ) {
+
+	// find part of path that exists already
+	var pathArray = path.split( '.' );
+
+	var node = this.getByPathArray( pathArray );
+
+	if ( pathArray.length === 0 ) return node;
+
+	// add remainder of path to node
+
+	while ( pathArray.length > 0 ) {
+
+		const newNode = new Tree( pathArray.shift(), null, this.root, node );
+
+		node.children.push( newNode );
+
+		this.root.pathCache[ newNode.getPath() ] = newNode;
+
+		node = newNode;
+
+	}
 
 	return node;
 

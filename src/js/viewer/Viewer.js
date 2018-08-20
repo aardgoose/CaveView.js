@@ -896,6 +896,8 @@ function cutSection () {
 
 	if ( node.p !== undefined ) return;
 
+	cameraMove.cancel();
+
 	survey.remove( terrain );
 	survey.cutSection( selectedSection );
 

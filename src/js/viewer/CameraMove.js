@@ -30,6 +30,7 @@ function CameraMove ( controls, renderFunction ) {
 	this.delta = 0;
 	this.running = false;
 	this.animationFunction = null;
+	this.rafID = 0;
 
 	this.doAnimate = this.animate.bind( this );
 
@@ -287,6 +288,23 @@ CameraMove.prototype.start = function ( timed ) {
 
 };
 
+CameraMove.prototype.cancel = function () {
+
+	if ( this.rafID !== 0 ) window.cancelAnimationFrame( this.rafID );
+
+	if ( ! this.running ) return;
+
+	this.frameCount = 1;
+	this.running = false;
+	this.rafID = 0;
+
+	this.animate();
+
+	this.controls.enabled = true;
+	this.controls.autoRotate = false;
+
+};
+
 CameraMove.prototype.animate = function () {
 
 	const controls = this.controls;
@@ -308,7 +326,7 @@ CameraMove.prototype.animate = function () {
 
 	}
 
-	if ( this.running ) requestAnimationFrame( this.doAnimate );
+	if ( this.running ) this.rafID = window.requestAnimationFrame( this.doAnimate );
 
 };
 
@@ -322,6 +340,7 @@ CameraMove.prototype.endAnimation = function () {
 
 	this.running = false;
 	this.rotation = 0;
+	this.rafID = 0;
 
 	controls.update();
 	controls.enabled = true;
@@ -425,6 +444,7 @@ CameraMove.prototype.setAutoRotate = function ( state ) {
 
 		controls.autoRotate = false;
 		controls.enabled = true;
+		this.rafID = 0;
 
 	}
 

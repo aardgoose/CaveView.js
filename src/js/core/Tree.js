@@ -170,6 +170,8 @@ Tree.prototype.addLeaf = function ( path, properties ) {
 
 		const newNode = new Tree( leaf.join( '.' ), null, this.root, node );
 
+		if ( properties !== undefined ) Object.assign( newNode, properties );
+
 		node.children.push( newNode );
 
 		return newNode;

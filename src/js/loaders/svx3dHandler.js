@@ -114,9 +114,7 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	case 'v7':
 	case 'v8':
 
-		var t1 = performance.now();
 		this.handleVx( dataStream, pos, Number( version.charAt( 1 ) ), section );
-		console.log( 'parse time:', performance.now() - t1 );
 
 		break;
 

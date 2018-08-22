@@ -282,7 +282,7 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 
 				// handle tris with one point outside area of interest
 
-				_handleOverlap1( i1, i2, i3, i - 3 );
+				_handleOverlap1( i1, i2, i3 );
 
 				break;
 

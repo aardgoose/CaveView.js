@@ -64,13 +64,13 @@ function HelpPage ( avenControls ) {
 		_addKey( '', '-' );
 
 		_addKey( '" "', 'view.auto_rotate' );
-		_addKey( 'Z', 'view.rotate_speed_up', avenControls );
-		_addKey( 'V', 'view.rotate_speed_down', avenControls );
-		_addKey( 'R', 'view.reverse_rotation', avenControls );
+		_addKey( 'Z', 'view.rotate_speed_up' );
+		_addKey( 'V', 'view.rotate_speed_down' );
+		_addKey( 'R', 'view.reverse_rotation' );
 
-		_addKey( '', '-', avenControls );
+		_addKey( '', '-' );
 
-		_addKey( '<del>', 'view.reset', avenControls );
+		_addKey( '<del>', 'view.reset' );
 
 	} else {
 

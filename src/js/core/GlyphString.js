@@ -1,10 +1,10 @@
 import {
 	InstancedBufferGeometry,
 	InstancedBufferAttribute,
-	Float32BufferAttribute,
-	Uint16BufferAttribute,
 	Mesh
 } from '../Three';
+
+import { CommonAttributes } from './CommonAttributes';
 
 function onUploadDropBuffer() {
 
@@ -46,20 +46,8 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 	this.name = text;
 	this.width = 0;
 
-	const indexAttribute = new Uint16BufferAttribute( [ 0, 2, 1, 0, 3, 2 ], 1 );
-
-	// unit square
-	const positions = [
-		0, 0, 0,
-		0, 1, 0,
-		1, 1, 0,
-		1, 0, 0
-	];
-
-	const positionAttribute = new Float32BufferAttribute( positions, 3 );
-
-	this.setIndex( indexAttribute );
-	this.addAttribute( 'position', positionAttribute );
+	this.setIndex( CommonAttributes.index );
+	this.addAttribute( 'position', CommonAttributes.position );
 
 	const l = text.length;
 
@@ -173,11 +161,11 @@ function GlyphString ( text, glyphMaterial ) {
 	this.name = text;
 	this.frustumCulled = false;
 
-	const attributes = geometry.attributes;
-
 	if ( ! this.isMutableGlyphString ) {
 
-		for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
+		geometry.getAttribute( 'instanceUvs' ).onUpload( onUploadDropBuffer );
+		geometry.getAttribute( 'instanceOffsets' ).onUpload( onUploadDropBuffer );
+		geometry.getAttribute( 'instanceWidths' ).onUpload( onUploadDropBuffer );
 
 	}
 

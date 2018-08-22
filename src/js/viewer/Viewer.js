@@ -1133,13 +1133,17 @@ function loadSurvey ( newSurvey ) {
 
 	if ( terrain === null ) {
 
-		terrain = new WebTerrain( survey, _tilesLoaded, container );
+		if ( navigator.onLine ) {
 
-		HUD.getProgressDial( 0 ).watch( terrain );
+			terrain = new WebTerrain( survey, _tilesLoaded, container );
 
-		syncTerrainLoading = ! terrain.load();
+			HUD.getProgressDial( 0 ).watch( terrain );
 
-		if ( syncTerrainLoading ) terrain = null;
+			syncTerrainLoading = ! terrain.load();
+
+			if ( syncTerrainLoading ) terrain = null;
+
+		}
 
 	} else {
 

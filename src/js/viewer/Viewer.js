@@ -134,6 +134,24 @@ function init ( domID, configuration ) { // public method
 
 	console.log( 'CaveView v' + VERSION );
 
+	if ( 'serviceWorker' in navigator ) {
+
+		console.log( 'x' );
+
+		navigator.serviceWorker.register( '/sw.js' ).then( function ( registration ) {
+
+			// Registration was successful
+			console.log( 'ServiceWorker registration successful with scope: ', registration.scope );
+
+		}, function ( err ) {
+
+			// registration failed :(
+			console.log( 'ServiceWorker registration failed: ', err );
+
+		} );
+
+	}
+
 	container = document.getElementById( domID );
 
 	if ( ! container ) alert( 'No container DOM object [' + domID + '] available' );

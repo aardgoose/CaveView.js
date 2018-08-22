@@ -148,7 +148,7 @@ ProgressDial.prototype.end = function () {
 
 	const self = this;
 
-	setTimeout( function () { self.visible = false; Viewer.renderView(); }, 500 );
+	setTimeout( function endProgress () { self.visible = false; Viewer.renderView(); }, 500 );
 
 };
 

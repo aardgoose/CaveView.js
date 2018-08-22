@@ -754,12 +754,6 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	}
 
-	function handleTouchEnd( /* event */ ) {
-
-		//console.log( 'handleTouchEnd' );
-
-	}
-
 	//
 	// event handlers - FSM: listen for events and reset state
 	//
@@ -951,11 +945,11 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	}
 
-	function onTouchEnd( event ) {
+	function onTouchEnd( /* event */ ) {
 
 		if ( scope.enabled === false ) return;
 
-		handleTouchEnd( event );
+		//handleTouchEnd( event );
 
 		scope.dispatchEvent( endEvent );
 

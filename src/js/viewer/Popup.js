@@ -2,12 +2,11 @@
 import { LEG_CAVE } from '../core/constants';
 import { Cfg } from '../core/lib';
 import { PopupMaterial } from '../materials/PopupMaterial';
+import { CommonAttributes } from '../core/CommonAttributes';
 
 import {
 	CanvasTexture,
 	BufferGeometry,
-	Float32BufferAttribute,
-	Uint16BufferAttribute,
 	Mesh
 } from '../Three';
 
@@ -17,20 +16,8 @@ function PopupGeometry () {
 
 	this.type = 'PopupGeometry';
 
-	const indexAttribute = new Uint16BufferAttribute( [ 0, 2, 1, 0, 3, 2 ], 1 );
-
-	// unit square
-	const positions = [
-		0, 0, 0,
-		0, 1, 0,
-		1, 1, 0,
-		1, 0, 0
-	];
-
-	const positionAttribute = new Float32BufferAttribute( positions, 3 );
-
-	this.setIndex( indexAttribute );
-	this.addAttribute( 'position', positionAttribute );
+	this.setIndex( CommonAttributes.index );
+	this.addAttribute( 'position', CommonAttributes.position );
 
 }
 

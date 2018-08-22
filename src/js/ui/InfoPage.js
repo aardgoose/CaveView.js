@@ -3,13 +3,15 @@ import { VERSION, LEG_CAVE } from '../core/constants';
 import { Page } from './Page';
 import { Viewer } from '../viewer/Viewer';
 
-function InfoPage () {
+function InfoPage ( fileSelector ) {
 
 	Page.call( this, 'icon_info', 'info' );
 
 	this.addHeader( 'header' );
 
 	this.addHeader( 'stats.header' );
+
+	this.addText( 'file: ' + fileSelector.file );
 
 	const stats = Viewer.getLegStats ( LEG_CAVE );
 

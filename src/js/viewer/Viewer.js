@@ -907,7 +907,7 @@ function cutSection () {
 	// reset view
 	clearView();
 
-	loadSurvey( cutSurvey, true );
+	loadSurvey( cutSurvey );
 
 }
 
@@ -1074,7 +1074,7 @@ function caveLoaded ( cave ) {
 
 	}
 
-	loadSurvey( new Survey( cave ), false );
+	loadSurvey( new Survey( cave ) );
 
 }
 

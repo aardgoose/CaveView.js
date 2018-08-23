@@ -63,7 +63,7 @@ function SelectionPage ( container ) {
 
 	function _displayPanel ( top ) {
 
-		const surveyColourMap = SurveyColours.getSurveyColourMap( surveyTree, Viewer.section );
+		const surveyColourMap = ( Viewer.shadingMode === SHADING_SURVEY ) ? SurveyColours.getSurveyColourMap( surveyTree, Viewer.section ) : null;
 
 		var tmp;
 
@@ -125,7 +125,7 @@ function SelectionPage ( container ) {
 
 				let colour;
 
-				if ( Viewer.shadingMode === SHADING_SURVEY && surveyColourMap[ id ] !== undefined ) {
+				if ( surveyColourMap !== null && surveyColourMap[ id ] !== undefined ) {
 
 					colour = surveyColourMap[ id ].getHexString();
 

@@ -51,30 +51,26 @@ Tree.prototype.traverseDepthFirst = function ( func ) {
 
 };
 
-Tree.prototype.forEachChild = function ( func, recurse ) {
+Tree.prototype.forEachChild = function ( func ) {
 
 	const children = this.children;
 
 	for ( var i = 0; i < children.length; i++ ) {
 
-		const child = children[ i ];
-
-		func( child );
-
-		if ( recurse === true ) child.forEachChild( func, true );
+		func( children[ i ] );
 
 	}
 
 };
 
-Tree.prototype.addById = function ( name, id, parentNode, properties ) {
+Tree.prototype.addById = function ( name, id, properties ) {
 
-	const node = new Tree( name, id, this.root, parentNode );
 	const root = this.root;
+	const node = new Tree( name, id, root, this );
 
 	if ( properties !== undefined ) Object.assign( node, properties );
 
-	parentNode.children.push( node );
+	this.children.push( node );
 
 	root.maxId = Math.max( root.maxId, id );
 

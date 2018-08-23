@@ -270,7 +270,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		if ( m_parent != m_id ) {
 
-			const node = surveyTree.addById( readString( namePtr ), m_id, parentNode );
+			const node = parentNode.addById( readString( namePtr ), m_id );
 
 			if ( node === null ) console.warn( 'error constructing survey tree for', readString( titlePtr ) );
 
@@ -326,7 +326,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		}
 
-		surveyTree.addById( readString( namePtr ), - m_id, parentNode, { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
+		parentNode.addById( readString( namePtr ), - m_id, { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
 
 	}
 

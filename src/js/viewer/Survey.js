@@ -654,7 +654,7 @@ Survey.prototype.selectStation = function ( station ) {
 
 Survey.prototype.clearSelection = function () {
 
-	this.selectedSection = 0;
+	this.selectedSection = this.surveyTree;
 	this.selectedSectionIds.clear();
 
 	this.stations.clearSelected();
@@ -690,14 +690,17 @@ Survey.prototype.boxSection = function ( node, box, colour ) {
 
 };
 
-Survey.prototype.highlightSelection = function ( id ) {
+Survey.prototype.highlightSelection = function ( node ) {
 
-	const surveyTree = this.surveyTree;
 	const box = this.highlightBox;
 
-	if ( id ) {
+	if ( node === this.surveyTree ) {
 
-		const node = surveyTree.findById( id );
+		if ( box !== null ) box.visible = false;
+
+		this.stations.clearHighlight();
+
+	} else {
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
@@ -709,33 +712,23 @@ Survey.prototype.highlightSelection = function ( id ) {
 
 		}
 
-	} else {
-
-		if ( box !== null ) box.visible = false;
-
-		this.stations.clearHighlight();
-
 	}
 
 };
 
-Survey.prototype.selectSection = function ( id ) {
+Survey.prototype.selectSection = function ( node ) {
 
 	const selectedSectionIds = this.selectedSectionIds;
 	const surveyTree = this.surveyTree;
 
-	var node;
-
 	this.clearSelection();
 
-	if ( id ) {
-
-		node = surveyTree.findById( id );
+	if ( node !== surveyTree ) {
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
 			this.selectedBox = this.boxSection( node, this.selectedBox, Cfg.themeValue( 'box.select' ) );
-			surveyTree.getSubtreeIds( id, selectedSectionIds );
+			node.getSubtreeIds( selectedSectionIds );
 
 			this.stations.selectStations( selectedSectionIds );
 
@@ -751,7 +744,7 @@ Survey.prototype.selectSection = function ( id ) {
 
 	}
 
-	this.selectedSection = id;
+	this.selectedSection = node;
 
 	return node;
 
@@ -793,7 +786,7 @@ Survey.prototype.getWorldBoundingBox = function () {
 
 };
 
-Survey.prototype.cutSection = function ( id ) {
+Survey.prototype.cutSection = function ( node ) {
 
 	const selectedSectionIds = this.selectedSectionIds;
 	const self = this;
@@ -830,9 +823,9 @@ Survey.prototype.cutSection = function ( id ) {
 
 	}
 
-	this.surveyTree = this.surveyTree.findById( id );
+	this.surveyTree = node;
 
-	this.loadStations( this.surveyTree );
+	this.loadStations( node );
 
 	this.pointTargets.push( this.stations );
 
@@ -1235,11 +1228,11 @@ Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
 	var selectedSection = this.selectedSection;
 
-	if ( selectedSection === 0) selectedSection = surveyTree.id;
+	if ( selectedSection === 0 ) selectedSection = surveyTree;
 
-	const surveyToColourMap = SurveyColours.getSurveyColourMap( surveyTree, selectedSection );
+	const surveyToColourMap = SurveyColours.getSurveyColourMap( selectedSection );
 
-	if ( this.selectedSectionIds.size === 0 ) this.surveyTree.getSubtreeIds( selectedSection, this.selectedSectionIds );
+	if ( this.selectedSectionIds.size === 0 ) selectedSection.getSubtreeIds( this.selectedSectionIds );
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 

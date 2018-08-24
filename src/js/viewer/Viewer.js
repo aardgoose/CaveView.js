@@ -57,7 +57,6 @@ const defaultView = {
 	splays: false,
 	stations: false,
 	stationLabels: false,
-	section: 0,
 	entrances: true,
 	terrain: false,
 	traces: false,
@@ -109,7 +108,7 @@ var terrainShadingMode = SHADING_RELIEF;
 var useFog = false;
 
 var cameraMode;
-var selectedSection = 0;
+var selectedSection = null;
 
 var controls;
 var renderRequired = false;
@@ -890,11 +889,7 @@ function addFormatters( stationFormatter ) {
 
 function cutSection () {
 
-	if ( selectedSection === 0 ) return;
-
-	const node = survey.surveyTree.findById( selectedSection );
-
-	if ( node.p !== undefined ) return;
+	if ( selectedSection === survey.surveyTree || selectedSection.p !== undefined ) return;
 
 	cameraMove.cancel();
 
@@ -911,28 +906,28 @@ function cutSection () {
 
 }
 
-function highlightSelection ( id ) {
+function highlightSelection ( node ) {
 
-	survey.highlightSelection( id );
+	survey.highlightSelection( node );
 
 	renderView();
 
 }
 
-function selectSection ( id ) {
+function selectSection ( node ) {
 
-	const node = survey.selectSection( id );
+	survey.selectSection( node );
 
 	setShadingMode( shadingMode );
 
-	selectedSection = id;
+	selectedSection = node;
 
-	if ( id === 0 ) {
+	if ( node === survey.surveyTree ) {
 
 		cameraMove.prepare( survey.getWorldBoundingBox() );
 		cameraMove.start( renderRequired );
 
-		highlightSelection( 0 );
+		highlightSelection( node );
 
 		return;
 
@@ -961,15 +956,13 @@ function selectSection ( id ) {
 
 function getSelectedSectionName () {
 
-	if ( selectedSection === 0 ) {
+	if ( selectedSection === survey.surveyTree ) {
 
 		return '';
 
 	} else {
 
-		const node = survey.surveyTree.findById( selectedSection );
-
-		return node === undefined ? '' : node.getPath();
+		return selectedSection === undefined ? '' : selectedSection.getPath();
 
 	}
 
@@ -977,9 +970,9 @@ function getSelectedSectionName () {
 
 function setSelectedSectionName ( name ) {
 
-	const id = survey.surveyTree.getIdByPath( name );
+	const node = survey.surveyTree.getByPath( name );
 
-	selectSection( id === undefined ? 0 : id );
+	selectSection( node === undefined ? survey.surveyTree : node );
 
 }
 
@@ -1036,7 +1029,7 @@ function clearView () {
 	survey          = null;
 	terrain         = null;
 	limits          = null;
-	selectedSection = 0;
+	selectedSection = null;
 	mouseMode       = MOUSE_MODE_NORMAL;
 	mouseTargets    = [];
 
@@ -1163,6 +1156,8 @@ function loadSurvey ( newSurvey ) {
 
 	caveIsLoaded = true;
 
+	selectedSection = survey.surveyTree;
+
 	setupView( syncTerrainLoading );
 
 	function _tilesLoaded ( errors ) {
@@ -1277,7 +1272,7 @@ function mouseDown ( event ) {
 
 		if ( station === null || station.p === undefined ) return;
 
-		selectSection( station.id );
+		selectSection( station );
 
 		cameraMove.start( true );
 		event.stopPropagation();

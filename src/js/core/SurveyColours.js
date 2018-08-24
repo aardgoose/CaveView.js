@@ -22,7 +22,7 @@ SurveyColours.getSurveyColour = function ( surveyId ) {
 
 };
 
-SurveyColours.getSurveyColourMap = function ( surveyTree, newSelectedSection ) {
+SurveyColours.getSurveyColourMap = function ( newSelectedSection ) {
 
 	if ( selectedSection === newSelectedSection && map.length > 0 ) {
 
@@ -34,14 +34,12 @@ SurveyColours.getSurveyColourMap = function ( surveyTree, newSelectedSection ) {
 	map = [];
 	selectedSection = newSelectedSection;
 
-	const survey = ( selectedSection === 0 ) ? surveyTree.id : selectedSection;
-
 	// create mapping of survey id to colour
 	// map each child id _and_ all its lower level survey ids to the same colour
 
-	var subTree = surveyTree.findById( survey );
+	var subTree = selectedSection;
 
-	var colour = this.getSurveyColour( survey );
+	var colour = this.getSurveyColour( selectedSection.id );
 
 	_addMapping( subTree );
 
@@ -75,5 +73,4 @@ SurveyColours.getSurveyColourMap = function ( surveyTree, newSelectedSection ) {
 	}
 
 };
-
 export { SurveyColours };

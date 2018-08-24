@@ -246,11 +246,9 @@ Tree.prototype.getPath = function ( endNode ) {
 
 };
 
-Tree.prototype.getSubtreeIds = function ( id, idSet ) {
+Tree.prototype.getSubtreeIds = function ( idSet ) {
 
-	const node = this.findById( id );
-
-	node.traverse( _getId );
+	this.traverse( _getId );
 
 	function _getId( node ) {
 

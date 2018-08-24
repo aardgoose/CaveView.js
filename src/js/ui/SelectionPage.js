@@ -13,6 +13,7 @@ function SelectionPage ( container ) {
 	const surveyTree = Viewer.getSurveyTree();
 	const self = this;
 
+	var nodes = null;
 	var depth = 0;
 	var currentHover = 0;
 	var currentTop;
@@ -63,7 +64,9 @@ function SelectionPage ( container ) {
 
 	function _displayPanel ( top ) {
 
-		const surveyColourMap = ( Viewer.shadingMode === SHADING_SURVEY ) ? SurveyColours.getSurveyColourMap( surveyTree, Viewer.section ) : null;
+		const surveyColourMap = ( Viewer.shadingMode === SHADING_SURVEY ) ? SurveyColours.getSurveyColourMap( Viewer.section ) : null;
+
+		nodes = new WeakMap();
 
 		var tmp;
 
@@ -74,6 +77,7 @@ function SelectionPage ( container ) {
 		if ( top === surveyTree ) {
 
 			titleBar.textContent = ( top.name === '' ) ? '[model]' : top.name;
+			nodes.set( titleBar, top );
 
 		} else {
 
@@ -81,6 +85,8 @@ function SelectionPage ( container ) {
 
 			span.id ='surveyBack';
 			span.textContent = ' \u25C4';
+
+			nodes.set( span, top );
 
 			titleBar.appendChild( span );
 			titleBar.appendChild( document.createTextNode( ' ' + top.name ) );
@@ -107,7 +113,6 @@ function SelectionPage ( container ) {
 
 		function _addLine ( child ) {
 
-			const id = child.id;
 			const connections = ( child.p === undefined ) ? null : child.p.connections;
 
 			if ( connections === 0 && ! Viewer.splays && child.type !== STATION_ENTRANCE ) return; // skip spays if not displayed
@@ -117,11 +122,13 @@ function SelectionPage ( container ) {
 
 			var key;
 
-			li.id = 'sv' + id;
+			nodes.set( li, child );
 
-			if ( Viewer.section === id ) li.classList.add( 'selected' );
+			if ( Viewer.section === child ) li.classList.add( 'selected' );
 
 			if ( connections === null ) {
+
+				const id = child.id;
 
 				let colour;
 
@@ -165,8 +172,9 @@ function SelectionPage ( container ) {
 				const descend = document.createElement( 'div' );
 
 				descend.classList.add( 'descend-tree' );
-				descend.id = 'ssv' + id;
 				descend.textContent = '\u25bA';
+
+				nodes.set( descend, child );
 
 				li.appendChild( descend );
 
@@ -197,7 +205,7 @@ function SelectionPage ( container ) {
 
 	function _handleMouseleave ( /* event */ ) {
 
-		Viewer.highlight = 0;
+		Viewer.highlight = surveyTree;
 
 	}
 
@@ -207,12 +215,12 @@ function SelectionPage ( container ) {
 
 		if ( target.nodeName !== 'LI' ) return;
 
-		const id = Number( target.id.split( 'v' )[ 1 ] );
+		const node = nodes.get( target );
 
-		if ( id !== currentHover ) {
+		if ( node !== currentHover ) {
 
-			Viewer.highlight = ( Viewer.section !== id ) ? id : 0;
-			currentHover = id;
+			Viewer.highlight = ( Viewer.section !== node ) ? node : surveyTree;
+			currentHover = node;
 
 		}
 
@@ -221,13 +229,14 @@ function SelectionPage ( container ) {
 	function _handleSelectSurveyClick ( event ) {
 
 		const target = event.target;
-		const id = Number( target.id.split( 'v' )[ 1 ] );
+
+		const node = nodes.get( target );
 
 		switch ( target.tagName ) {
 
 		case 'LI':
 
-			Viewer.section = id;
+			Viewer.section = node;
 			Viewer.setPOI = true;
 
 			target.classList.add( 'selected' );
@@ -240,13 +249,13 @@ function SelectionPage ( container ) {
 
 		case 'DIV':
 
-			if ( id ) {
+			if ( node !== undefined && node !== surveyTree ) {
 
-				self.replaceSlide( _displayPanel( currentTop.findById( id ) ), ++depth );
+				self.replaceSlide( _displayPanel( node ), ++depth );
 
 			} else if ( target.id === 'ui-path' ) {
 
-				Viewer.section = currentTop.id;
+				Viewer.section = currentTop;
 
 			}
 
@@ -269,11 +278,12 @@ function SelectionPage ( container ) {
 	function _handleSelectSurveyDblClick ( event ) {
 
 		const target = event.target;
-		const id = Number( target.id.split( 'v' )[ 1 ] );
+
+		const node = nodes.get( target );
 
 		if ( ! target.classList.contains( 'section' ) ) return;
 
-		if ( id !== 0 ) Viewer.cut = true;
+		if ( node !== surveyTree ) Viewer.cut = true;
 
 	}
 

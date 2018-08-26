@@ -79,7 +79,7 @@ function Compass () {
 		const g = new Geometry();
 
 		g.vertices.push( new Vector3( 0, radius, 0 ) );
-		g.vertices.push( new Vector3( innerR ,innerR, 0 ) );
+		g.vertices.push( new Vector3( innerR, innerR, 0 ) );
 		g.vertices.push( new Vector3( 0, 0, 14 * scale ) );
 		g.vertices.push( new Vector3( -innerR, innerR, 0 ) );
 

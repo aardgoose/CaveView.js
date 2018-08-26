@@ -1277,7 +1277,6 @@ function mouseDown ( event ) {
 		cameraMove.start( true );
 		event.stopPropagation();
 
-		controls.enabled = false;
 		container.addEventListener( 'mouseup', _mouseUpLeft );
 
 	}

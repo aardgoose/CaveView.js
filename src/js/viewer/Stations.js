@@ -207,8 +207,6 @@ Stations.prototype.selectStation = function ( node ) {
 
 	this.selectStationByIndex( node.stationVertexIndex );
 
-	return node;
-
 };
 
 Stations.prototype.selectStationByIndex = function ( index ) {

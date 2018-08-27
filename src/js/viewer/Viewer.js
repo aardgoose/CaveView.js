@@ -675,7 +675,6 @@ function setCameraMode ( mode ) {
 	const offset = camera.position.clone().sub( controls.target );
 
 	var offsetLength;
-	var eventName;
 
 	switch ( mode ) {
 
@@ -686,7 +685,6 @@ function setCameraMode ( mode ) {
 		offset.setLength( offsetLength );
 
 		camera = pCamera;
-		eventName = 'perspective';
 
 		break;
 
@@ -699,7 +697,6 @@ function setCameraMode ( mode ) {
 		offset.setLength( offsetLength );
 
 		camera = oCamera;
-		eventName = 'orthographic';
 
 		break;
 
@@ -720,8 +717,6 @@ function setCameraMode ( mode ) {
 	controls.object = camera;
 
 	cameraMode = mode;
-
-	Viewer.dispatchEvent( { type: 'camera', name: eventName } );
 
 	renderView();
 

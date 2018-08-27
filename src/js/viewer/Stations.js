@@ -153,7 +153,7 @@ Stations.prototype.getVisibleStation = function ( vertex ) {
 	const sectionIdSet = this.sectionIdSet;
 
 	if (
-		( sectionIdSet.size === 0 || sectionIdSet.has( node.id ) ) &&
+		( sectionIdSet === null || sectionIdSet.has( node.id ) ) &&
 		( node.p.connections > 0 || Viewer.splays )
 	) return node;
 

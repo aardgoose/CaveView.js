@@ -21,6 +21,7 @@ import { WebTerrain } from '../terrain/WebTerrain';
 import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/lib';
 import { WorkerPool } from '../core/WorkerPool';
+import { AnaglyphEffect } from './AnaglyphEffect';
 
 // analysis tests
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
@@ -119,6 +120,7 @@ var lastActivityTime = 0;
 var timerId = null;
 
 var popup = null;
+var effect = null;
 
 // preallocated tmp objects
 
@@ -146,6 +148,9 @@ function init ( domID, configuration ) { // public method
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setClearColor( Cfg.themeValue( 'background' ) );
 	renderer.autoClear = false;
+
+	effect = new AnaglyphEffect( renderer );
+	effect.setSize( width, height );
 
 	oCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
 
@@ -762,6 +767,8 @@ function setCameraLayer ( layerTag, enable ) {
 		pCamera.layers.disable( layerTag );
 
 	}
+
+	effect.setLayers( camera.layers.mask );
 
 	renderView();
 
@@ -1389,7 +1396,8 @@ function renderView () {
 		survey.update( camera, controls.target );
 
 		if ( useFog ) Materials.setFog( true );
-		renderer.render( scene, camera );
+//		renderer.render( scene, camera );
+		effect.render( scene, camera );
 
 	}
 

@@ -9,7 +9,8 @@
 			"camera": {
 				"caption": "Camera type",
 				"orthographic": "Orthographic",
-				"perspective": "Perspective"
+				"perspective": "Perspective",
+				"anaglyph": "Anaglyph"
 			},
 			"viewpoints": {
 				"caption": "Viewpoint",

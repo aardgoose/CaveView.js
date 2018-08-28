@@ -1,4 +1,7 @@
 
+import anaglyphVertexShader from './anaglyphVertexShader.glsl';
+import anaglyphFragmentShader from './anaglyphFragmentShader.glsl';
+
 import contourVertexShader from './contourVertexShader.glsl';
 import contourFragmentShader from './contourFragmentShader.glsl';
 
@@ -30,6 +33,8 @@ import waterVertexShader from './waterVertexShader.glsl';
 import waterFragmentShader from './waterFragmentShader.glsl';
 
 export const Shaders = {
+	anaglyphVertexShader:	anaglyphVertexShader,
+	anaglyphFragmentShader:	anaglyphFragmentShader,
 	contourVertexShader:	contourVertexShader,
 	contourFragmentShader:	contourFragmentShader,
 	cursorVertexShader:		cursorVertexShader,

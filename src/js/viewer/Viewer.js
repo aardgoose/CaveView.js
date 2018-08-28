@@ -1,7 +1,7 @@
 
 import {
 	VERSION,
-	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_ANAGLYPH,
+	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_ANAGLYPH, CAMERA_STEREO,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_RELIEF, SHADING_PATH,
@@ -22,6 +22,7 @@ import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/lib';
 import { WorkerPool } from '../core/WorkerPool';
 import { AnaglyphEffect } from './AnaglyphEffect';
+import { StereoEffect } from './StereoEffect';
 
 // analysis tests
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
@@ -120,7 +121,7 @@ var lastActivityTime = 0;
 var timerId = null;
 
 var popup = null;
-var anaglyphEffect = null;
+var effect = null;
 
 var activeRenderer;
 
@@ -682,28 +683,19 @@ function setCameraMode ( mode ) {
 
 	var offsetLength;
 
-	if ( cameraMode === CAMERA_ANAGLYPH ) {
+	if ( effect !== null ) {
 
-		// last mode was anaglyph
-
-		anaglyphEffect.dispose();
-		anaglyphEffect = null;
-		activeRenderer = renderer.render.bind( renderer );
+		effect.dispose();
+		effect = null;
 
 	}
 
 	switch ( mode ) {
 
+	case CAMERA_STEREO:
 	case CAMERA_ANAGLYPH:
 
-		if ( anaglyphEffect === null) {
-
-			anaglyphEffect = new AnaglyphEffect( renderer, container.clientWidth, container.clientHeight );
-			activeRenderer = anaglyphEffect.render.bind( anaglyphEffect );
-
-			anaglyphEffect.setLayers( camera.layers.mask );
-
-		}
+		effect = ( mode === CAMERA_STEREO ) ? new StereoEffect( renderer ) : new AnaglyphEffect( renderer, container.clientWidth, container.clientHeight );
 
 		if ( camera.isPerspective ) break;
 
@@ -733,6 +725,18 @@ function setCameraMode ( mode ) {
 
 		console.warn( 'unknown camera mode', mode );
 		return;
+
+	}
+
+	if ( effect === null ) {
+
+		activeRenderer = renderer.render.bind( renderer );
+
+	} else {
+
+		activeRenderer = effect.render.bind( effect );
+
+		effect.setLayers( camera.layers.mask );
 
 	}
 
@@ -792,7 +796,7 @@ function setCameraLayer ( layerTag, enable ) {
 
 	}
 
-	if ( anaglyphEffect !== null ) anaglyphEffect.setLayers( camera.layers.mask );
+	if ( effect !== null ) effect.setLayers( camera.layers.mask );
 
 	renderView();
 
@@ -1024,7 +1028,7 @@ function resize () {
 
 	pCamera.updateProjectionMatrix();
 
-	if ( anaglyphEffect !== null ) anaglyphEffect.setSize( width, height );
+	if ( effect !== null ) effect.setSize( width, height );
 
 	Viewer.dispatchEvent( { type: 'resized', name: '-' } );
 

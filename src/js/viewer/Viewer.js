@@ -1,7 +1,7 @@
 
 import {
 	VERSION,
-	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE,
+	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_ANAGLYPH,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_RELIEF, SHADING_PATH,
@@ -120,7 +120,9 @@ var lastActivityTime = 0;
 var timerId = null;
 
 var popup = null;
-var effect = null;
+var anaglyphEffect = null;
+
+var activeRenderer;
 
 // preallocated tmp objects
 
@@ -149,8 +151,7 @@ function init ( domID, configuration ) { // public method
 	renderer.setClearColor( Cfg.themeValue( 'background' ) );
 	renderer.autoClear = false;
 
-	effect = new AnaglyphEffect( renderer );
-	effect.setSize( width, height );
+	activeRenderer = renderer.render.bind( renderer );
 
 	oCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
 
@@ -681,9 +682,32 @@ function setCameraMode ( mode ) {
 
 	var offsetLength;
 
+	if ( cameraMode === CAMERA_ANAGLYPH ) {
+
+		// last mode was anaglyph
+
+		anaglyphEffect.dispose();
+		anaglyphEffect = null;
+		activeRenderer = renderer.render.bind( renderer );
+
+	}
+
 	switch ( mode ) {
 
-	case CAMERA_PERSPECTIVE:
+	case CAMERA_ANAGLYPH:
+
+		if ( anaglyphEffect === null) {
+
+			anaglyphEffect = new AnaglyphEffect( renderer, container.clientWidth, container.clientHeight );
+			activeRenderer = anaglyphEffect.render.bind( anaglyphEffect );
+
+			anaglyphEffect.setLayers( camera.layers.mask );
+
+		}
+
+		if ( camera.isPerspective ) break;
+
+	case CAMERA_PERSPECTIVE: // eslint-disable-line no-fallthrough
 
 		offsetLength = 4 * container.clientHeight * Math.tan( _Math.DEG2RAD * pCamera.fov / 2 ) / camera.zoom / 2;
 
@@ -768,7 +792,7 @@ function setCameraLayer ( layerTag, enable ) {
 
 	}
 
-	effect.setLayers( camera.layers.mask );
+	if ( anaglyphEffect !== null ) anaglyphEffect.setLayers( camera.layers.mask );
 
 	renderView();
 
@@ -999,6 +1023,8 @@ function resize () {
 	pCamera.aspect = width / height;
 
 	pCamera.updateProjectionMatrix();
+
+	if ( anaglyphEffect !== null ) anaglyphEffect.setSize( width, height );
 
 	Viewer.dispatchEvent( { type: 'resized', name: '-' } );
 
@@ -1396,8 +1422,8 @@ function renderView () {
 		survey.update( camera, controls.target );
 
 		if ( useFog ) Materials.setFog( true );
-//		renderer.render( scene, camera );
-		effect.render( scene, camera );
+
+		activeRenderer( scene, camera );
 
 	}
 

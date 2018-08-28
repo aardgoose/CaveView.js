@@ -74,8 +74,8 @@ function AnaglyphEffect ( renderer, width, height ) {
 
 	} );
 
-	var mesh = new Mesh( new PlaneBufferGeometry( 2, 2 ), _material );
-	_scene.add( mesh );
+	var _mesh = new Mesh( new PlaneBufferGeometry( 2, 2 ), _material );
+	_scene.add( _mesh );
 
 	this.setLayers = function ( mask ) {
 
@@ -114,6 +114,8 @@ function AnaglyphEffect ( renderer, width, height ) {
 		if ( _renderTargetL ) _renderTargetL.dispose();
 		if ( _renderTargetR ) _renderTargetR.dispose();
 
+		if ( _material ) _material.dispose();
+		if ( _mesh ) _mesh.geometry.dispose();
 	};
 
 }

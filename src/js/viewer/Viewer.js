@@ -1479,7 +1479,7 @@ function updateTerrain () {
 
 	if ( performance.now() - lastActivityTime > RETILE_TIMEOUT ) {
 
-		if ( terrain.zoomCheck( camera ) ) {
+		if ( Viewer.terrain && terrain.zoomCheck( camera ) ) {
 
 			setTimeout( updateTerrain, RETILE_TIMEOUT * 5 );
 

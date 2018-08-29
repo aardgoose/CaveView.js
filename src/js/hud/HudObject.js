@@ -13,11 +13,9 @@ var commonRing;
 
 const HudObject = {
 
-	stdWidth: Cfg.themeValue( 'hud.widgetSize' ),
 	stdMargin: 5,
 
 	atlasSpec: {
-		color: Cfg.themeColorCSS( 'hud.text' ),
 		font: 'bold helvetica,sans-serif'
 	},
 
@@ -57,6 +55,13 @@ const HudObject = {
 		}
 
 		return commonRing;
+
+	},
+
+	init: function () {
+
+		HudObject.stdWidth = Cfg.themeValue( 'hud.widgetSize' );
+		HudObject.atlasSpec.color = Cfg.themeColorCSS( 'hud.text' );
 
 	}
 

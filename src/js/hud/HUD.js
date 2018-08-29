@@ -79,6 +79,8 @@ function init ( viewerIn, viewRenderer ) {
 
 	scene.name = 'HUD';
 
+	HudObject.init();
+
 	const aLight = new AmbientLight( 0x888888 );
 	const dLight = new DirectionalLight( 0xFFFFFF );
 

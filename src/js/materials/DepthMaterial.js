@@ -5,6 +5,7 @@ import { ColourCache } from '../core/ColourCache';
 
 import { ShaderMaterial, Vector3 } from '../Three';
 import { MaterialFog } from './MaterialFog';
+import { Cfg } from '../core/lib';
 
 function DepthMaterial ( type, survey ) {
 
@@ -12,6 +13,7 @@ function DepthMaterial ( type, survey ) {
 	const terrain = survey.terrain;
 	const limits = terrain.boundingBox;
 	const range = limits.getSize( new Vector3() );
+	const gradient = Cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 
 	ShaderMaterial.call( this, {
 		vertexShader: Shaders.depthVertexShader,
@@ -25,7 +27,7 @@ function DepthMaterial ( type, survey ) {
 			scaleY:     { value: 1 / range.y },
 			rangeZ:     { value: range.z },
 			depthScale: { value: 1 / ( surveyLimits.max.z - surveyLimits.min.z ) },
-			cmap:       { value: ColourCache.getTexture( 'gradient' ) },
+			cmap:       { value: ColourCache.getTexture( gradient ) },
 			depthMap:   { value: terrain.depthTexture },
 			datumShift: { value: 0.0 },
 		}, MaterialFog.uniforms ),

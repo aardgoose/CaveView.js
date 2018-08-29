@@ -1170,7 +1170,9 @@ Survey.prototype.setLegColourByAxis = function ( mesh ) {
 
 Survey.prototype.setLegColourByLength = function ( mesh ) {
 
-	const colours = ColourCache.getColors( 'gradient' );
+	const gradient = Cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
+
+	const colours = ColourCache.getColors( gradient );
 	const colourRange = colours.length - 1;
 	const stats = mesh.stats;
 	const legLengths = mesh.legLengths;

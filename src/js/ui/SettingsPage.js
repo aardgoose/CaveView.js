@@ -40,6 +40,8 @@ function SettingsPage ( fileSelector ) {
 
 	Page.call( this, 'icon_settings', 'settings' );
 
+	const controls = [];
+
 	const legShadingModesActive = Object.assign( {}, legShadingModes );
 
 	if ( Viewer.hasRealTerrain ) {
@@ -64,6 +66,9 @@ function SettingsPage ( fileSelector ) {
 	this.addHeader( 'view.header' );
 
 	this.addSelect( 'view.camera.caption', cameraModes, Viewer, 'cameraType' );
+
+	controls.push( this.addRange( 'view.eye_separation', Viewer, 'eyeSeparation' ) );
+
 	this.addSelect( 'view.viewpoints.caption', cameraViews, Viewer, 'view' );
 
 	this.addRange( 'view.vertical_scaling', Viewer, 'zScale' );
@@ -89,6 +94,23 @@ function SettingsPage ( fileSelector ) {
 	this.addCheckbox( 'visibility.fog', Viewer, 'fog' );
 	this.addCheckbox( 'visibility.hud', Viewer, 'HUD' );
 	this.addCheckbox( 'visibility.box', Viewer, 'box' );
+
+	_onChange( { name: 'cameraType' } );
+
+	this.onChange = _onChange;
+
+	return this;
+
+	function _onChange ( event ) {
+
+		// change UI dynamicly to only display useful controls
+		if ( event.name === 'cameraType' ) {
+
+			Page.setControlsVisibility( controls, Viewer.cameraType === CAMERA_ANAGLYPH || Viewer.cameraType === CAMERA_STEREO );
+
+		}
+
+	}
 
 }
 

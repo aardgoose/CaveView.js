@@ -22,6 +22,7 @@
 				"elevation_e": "E Elevation",
 				"elevation_w": "W Elevation"
 			},
+			"eye_separation": "Eye Separation",
 			"vertical_scaling": "Vertical Scaling",
 			"autorotate": "Auto Rotate",
 			"rotation_speed": "Rotation Speed"

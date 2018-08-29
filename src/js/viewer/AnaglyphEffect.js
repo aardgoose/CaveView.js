@@ -95,6 +95,12 @@ function AnaglyphEffect ( renderer, width, height ) {
 
 	};
 
+	this.setEyeSeparation = function ( x ) {
+
+		_stereo.eyeSep = x;
+
+	};
+
 	this.render = function ( scene, camera ) {
 
 		scene.updateMatrixWorld();

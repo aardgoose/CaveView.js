@@ -1,5 +1,4 @@
 
-import { upAxis } from '../core/constants';
 import { Cfg } from '../core/lib';
 import { HudObject } from './HudObject';
 import { Viewer } from '../viewer/Viewer';
@@ -10,7 +9,7 @@ import {
 	RingBufferGeometry,
 	MeshBasicMaterial,
 	VertexColors,
-	Mesh, Float32BufferAttribute,
+	Object3D, Mesh, Float32BufferAttribute,
 } from '../Three';
 
 function ProgressDial ( addText, ring ) {
@@ -50,7 +49,7 @@ function ProgressDial ( addText, ring ) {
 	this.translateX( -offset * 5 );
 	this.translateY(  offset );
 
-	this.rotateOnAxis( upAxis, Math.PI / 2 );
+	this.rotateOnAxis( Object3D.DefaultUp, Math.PI / 2 );
 
 	this.visible = false;
 	this.isVisible = true;

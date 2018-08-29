@@ -1,6 +1,4 @@
 
-import { Vector3 } from 'three/src/math/Vector3';
-
 export const VERSION = '1.9.2';
 
 export const MATERIAL_LINE       = 1;
@@ -75,7 +73,5 @@ export const DIVING  = 3;
 
 export const STATION_NORMAL = 0;
 export const STATION_ENTRANCE = 1;
-
-export const upAxis = new Vector3( 0, 0, 1 );
 
 // EOF

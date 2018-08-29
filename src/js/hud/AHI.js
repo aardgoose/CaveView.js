@@ -1,5 +1,4 @@
 
-import { upAxis } from '../core/constants';
 import { HudObject } from './HudObject';
 import { Cfg } from '../core/lib';
 import { MutableGlyphString } from '../core/GlyphString';
@@ -10,7 +9,7 @@ import {
 	Geometry, SphereBufferGeometry, BufferAttribute,
 	LineBasicMaterial, MeshPhongMaterial,
 	VertexColors,
-	Mesh, LineSegments, Group
+	Object3D, Mesh, LineSegments, Group
 } from '../Three';
 
 // preallocated tmp objects
@@ -131,7 +130,7 @@ AHI.prototype.set = function ( vCamera ) {
 
 	vCamera.getWorldDirection( __direction );
 
-	const pitch = Math.PI / 2 - __direction.angleTo( upAxis );
+	const pitch = Math.PI / 2 - __direction.angleTo( Object3D.DefaultUp );
 
 	if ( pitch === this.lastPitch ) return;
 

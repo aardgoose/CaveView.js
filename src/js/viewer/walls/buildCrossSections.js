@@ -1,11 +1,11 @@
 import {
 	FACE_WALLS,
-	WALL_DIAMOND, WALL_SQUARE, WALL_OVAL, upAxis
+	WALL_DIAMOND, WALL_SQUARE, WALL_OVAL
 } from '../../core/constants';
 
 import { Walls } from './Walls';
 
-import { Vector3 } from '../../Three';
+import { Object3D, Vector3 } from '../../Three';
 
 
 function buildCrossSections ( cave, survey ) {
@@ -20,6 +20,7 @@ function buildCrossSections ( cave, survey ) {
 
 	// survey to face index mapping
 	const indexRuns = [];
+	const upAxis = Object3D.DefaultUp;
 
 	var currentSurvey;
 

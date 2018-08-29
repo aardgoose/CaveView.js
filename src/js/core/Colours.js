@@ -8,8 +8,8 @@ const hypometric = [[148,191,139],[148,191,139],[168,198,143],[168,198,143],[189
 
 export const Colours = {
 	inclination: inclinationColours,
-	gradientLow:    gradientColoursLow,
-	gradientHi:    gradientColoursHi,
+	gradientLow: gradientColoursLow,
+	gradientHi:  gradientColoursHi,
 	survey:      surveyColours,
 	depth:       depthColours,
 	hypsometric: hypometric

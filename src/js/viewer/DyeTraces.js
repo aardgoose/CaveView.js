@@ -1,9 +1,9 @@
 import {
-	Vector3, BufferGeometry, Float32BufferAttribute, Mesh
+	Vector3, BufferGeometry, Float32BufferAttribute, Object3D, Mesh
 } from '../Three';
 
 import { WaterMaterial } from '../materials/WaterMaterial';
-import { FEATURE_TRACES, upAxis } from '../core/constants';
+import { FEATURE_TRACES } from '../core/constants';
 
 function beforeRender ( renderer, scene, camera, geometry, material ) {
 
@@ -53,7 +53,7 @@ DyeTraces.prototype.addTrace = function ( startStation, endStation ) {
 
 	const end = new Vector3().copy( endStation );
 
-	const v = new Vector3().subVectors( endStation, startStation ).cross( upAxis ).setLength( 2 );
+	const v = new Vector3().subVectors( endStation, startStation ).cross( Object3D.DefaultUp ).setLength( 2 );
 
 	const v1 = new Vector3().add( startStation ).add( v );
 	const v2 = new Vector3().add( startStation ).sub( v );

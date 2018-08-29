@@ -6,7 +6,6 @@ import {
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
-	upAxis
 } from '../core/constants';
 
 import { Cfg } from '../core/lib';
@@ -1015,7 +1014,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	case SHADING_INCLINATION:
 
-		this.setLegColourByInclination( mesh, upAxis );
+		this.setLegColourByInclination( mesh, Object3D.DefaultUp );
 
 		break;
 

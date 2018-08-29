@@ -1,5 +1,5 @@
 
-import { FEATURE_ENTRANCES, upAxis } from '../core/constants';
+import { FEATURE_ENTRANCES } from '../core/constants';
 import { Cfg } from '../core/lib';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
@@ -351,7 +351,7 @@ ClusterMarkers.prototype.cluster = function ( camera, target, selectedStationSet
 
 	this.camera = camera;
 
-	const angle = this.camera.getWorldDirection( __v ).dot( upAxis );
+	const angle = this.camera.getWorldDirection( __v ).dot( Object3D.DefaultUp );
 
 	this.quadTree.check( this, target, 1 - Math.cos( angle ), selectedStationSet );
 

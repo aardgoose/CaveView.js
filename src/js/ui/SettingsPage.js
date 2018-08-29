@@ -32,8 +32,8 @@ const cameraViews = {
 const cameraModes = {
 	'view.camera.orthographic': CAMERA_ORTHOGRAPHIC,
 	'view.camera.perspective':  CAMERA_PERSPECTIVE,
-	'view.camera.anaglyph':     CAMERA_ANAGLYPH,
-	'view.camera.stereo':       CAMERA_STEREO
+	'view.camera.anaglyph':     CAMERA_ANAGLYPH
+//	'view.camera.stereo':       CAMERA_STEREO
 };
 
 function SettingsPage ( fileSelector ) {
@@ -67,7 +67,7 @@ function SettingsPage ( fileSelector ) {
 
 	this.addSelect( 'view.camera.caption', cameraModes, Viewer, 'cameraType' );
 
-	controls.push( this.addRange( 'view.eye_separation', Viewer, 'eyeSeparation' ) );
+//	controls.push( this.addRange( 'view.eye_separation', Viewer, 'eyeSeparation' ) );
 
 	this.addSelect( 'view.viewpoints.caption', cameraViews, Viewer, 'view' );
 

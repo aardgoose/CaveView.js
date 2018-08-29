@@ -38,8 +38,6 @@ function SurfacePage () {
 
 		controls.push( this.addCheckbox( 'terrain.datum_shift', Viewer, 'terrainDatumShift' ) );
 
-		Page.setControlsVisibility( controls, Viewer.terrain );
-
 		const attributions = Viewer.terrainAttributions;
 
 		for ( var i = 0; i < attributions.length; i++ ) {
@@ -49,6 +47,8 @@ function SurfacePage () {
 		}
 
 	}
+
+	_onChange( { name: 'terrain' } );
 
 	this.onChange = _onChange;
 

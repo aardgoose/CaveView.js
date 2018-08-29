@@ -24,6 +24,12 @@ function StereoEffect ( renderer ) {
 
 	};
 
+	this.setEyeSeparation = function ( x ) {
+
+		_stereo.eyeSep = x;
+
+	};
+
 	this.render = function ( scene, camera ) {
 
 		scene.updateMatrixWorld();

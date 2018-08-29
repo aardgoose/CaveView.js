@@ -102,6 +102,7 @@ var zScale;
 var caveLoader;
 
 var cursorHeight;
+var eyeSeparation = 0.5;
 
 var shadingMode = SHADING_SINGLE;
 var surfaceShadingMode = SHADING_SINGLE;
@@ -269,6 +270,12 @@ function init ( domID, configuration ) { // public method
 			writeable: true,
 			get: function () { return cameraMode; },
 			set: function ( x ) { _stateSetter( setCameraMode, 'cameraType', x ); }
+		},
+
+		'eyeSeparation': {
+			writeable: true,
+			get: function () { return eyeSeparation; },
+			set: setEyeSeparation
 		},
 
 		'view': {
@@ -798,6 +805,16 @@ function setCameraLayer ( layerTag, enable ) {
 
 	if ( effect !== null ) effect.setLayers( camera.layers.mask );
 
+	renderView();
+
+}
+
+function setEyeSeparation ( x ) {
+
+	// x varies from 0 to 1
+	// base separation = 0.064
+
+	if ( effect !== null ) effect.setEyeSeparation( 0.064 + ( x - 0.5 ) * 0.06 );
 	renderView();
 
 }

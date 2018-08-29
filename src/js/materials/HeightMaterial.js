@@ -5,6 +5,7 @@ import { ColourCache } from '../core/ColourCache';
 
 import { ShaderMaterial } from '../Three';
 import { MaterialFog } from './MaterialFog';
+import { Cfg } from '../core/lib';
 
 function HeightMaterial ( type, survey ) {
 
@@ -12,6 +13,7 @@ function HeightMaterial ( type, survey ) {
 
 	const zMin = limits.min.z;
 	const zMax = limits.max.z;
+	const gradient = Cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 
 	this.midRange = ( zMax + zMin ) / 2;
 
@@ -23,7 +25,7 @@ function HeightMaterial ( type, survey ) {
 			uLight: { value: survey.lightDirection },
 			minZ:   { value: zMin },
 			scaleZ: { value: 1 / ( zMax - zMin ) },
-			cmap:   { value: ColourCache.getTexture( 'gradient' ) },
+			cmap:   { value: ColourCache.getTexture( gradient ) },
 		}, MaterialFog.uniforms ),
 		defines: {
 			USE_COLOR: true,

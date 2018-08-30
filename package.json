@@ -1,6 +1,6 @@
 {
   "name": "caveview",
-  "version": "1.9.2",
+  "version": "1.10.0",
   "description": "3D Cave Survey Viewer",
   "scripts": {
     "build-main": "rollup -c",
@@ -34,11 +34,11 @@
   },
   "homepage": "https://github.com/aardgoose/CaveView.js#readme",
   "devDependencies": {
-    "eslint": "^4.19.1",
+    "eslint": "^5.4.0",
     "http-server": "^0.10.0",
-    "proj4": "^2.4.4",
+    "proj4": "^2.5.0",
     "rollup": "^0.62.0",
-    "rollup-plugin-commonjs": "^9.1.4",
+    "rollup-plugin-commonjs": "^9.1.6",
     "rollup-plugin-json": "^3.0.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-watch": ">=3.2.0",

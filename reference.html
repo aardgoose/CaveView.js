@@ -52,10 +52,16 @@
 <p>The configuration object defines the location of the resources required to display models and the initial view.</p>
 <h4>Properties</h4>
 <dl>
+	<dt>avenControls</dt>
+	<dd><span>boolean</span>Use Aven style mouse and keyboard controls (true) or original mode [default: true]. (optional).</dd>
+	<dt>cesiumAccessToken</dt>
+	<dd><span>string</span>Cesium access token required to use Cesium terrain mesh tiles </dd>
 	<dt>home</dt>
 	<dd><span>string</span> The path to the installtion of the CaveView package.</dd>
 	<dt>language</dt>
 	<dd><span>string</span> The suffix of a UI translation file to load (CaveView/lib/lang-<i>language</i>.json).</dd>
+	<dt>saturatedGradient</dt>
+	<dd><span>boolean</span>Use more saturated colours in gradients for several shading modes (true) or original mode [default: false]. (optional).</dd>
 	<dt>surveyDirectory</dt>
 	<dd><span>string</span>The path of the directory containing the survey model(s) to be displayed.</dd>
 	<dt>terrainDirectory</dt>
@@ -64,10 +70,6 @@
 	<dd><span>Object</span>An object, that allows the display colour scheme to be changed. <a href="theme.html" >See annotated default setttings here</a>.</dd>
 	<dt>view</dt>
 	<dd><span>Object</span>An object, the properties of which determine the view settings applied to all models when loaded (optional).</dd>
-	<dt>avenControls</dt>
-	<dd><span>boolean</span>Use Aven style mouse and keyboard controls (true) or original mode [default: true]. (optional).</dd>
-	<dt>saturatedGradient</dt>
-	<dd><span>boolean</span>Use more saturated colours in gradients for several shading modes (true) or original mode [default: false]. (optional).</dd>
 </dl>
 <h3>view Object</h3>
 <h4>Properties</h4>

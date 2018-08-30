@@ -68,7 +68,7 @@ const demoScript = [
 		caption: 'survey section ...',
 		delay: 5,
 		view: {
-			section: 1,
+			section: 'p8',
 			walls: false,
 			shadingMode: CV.SHADING_SURVEY
 		}
@@ -227,6 +227,14 @@ const demoScript = [
 		view: {
 			view: CV.VIEW_ELEVATION_N,
 			cameraType: CV.CAMERA_ORTHOGRAPHIC
+		}
+	},
+	{
+		caption: 'Anaglyph view',
+		delay: 5,
+		view: {
+			view: CV.VIEW_ELEVATION_N,
+			cameraType: CV.CAMERA_ANAGLYPH
 		}
 	},
 	{

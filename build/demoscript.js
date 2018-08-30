@@ -68,7 +68,7 @@ const demoScript = [
 		caption: 'survey section ...',
 		delay: 5,
 		view: {
-			section: 1,
+			sectionName: 'p8',
 			walls: false,
 			shadingMode: CV.SHADING_SURVEY
 		}

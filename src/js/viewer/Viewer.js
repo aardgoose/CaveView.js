@@ -8,7 +8,7 @@ import {
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -344,10 +344,10 @@ function init ( domID, configuration ) { // public method
 			set: function ( x ) { cameraMove.setAzimuthAngle( x ); }
 		},
 
-		'routeEdit': {
+		'editMode': {
 			writeable: true,
-			get: function () { return ( mouseMode === MOUSE_MODE_ROUTE_EDIT ); },
-			set: function ( x ) { _setRouteEdit( x ); this.dispatchEvent( { type: 'change', name: 'routeEdit' } ); }
+			get: function () { return mouseMode; },
+			set: function ( x ) { _setEditMode( x ); this.dispatchEvent( { type: 'change', name: 'routeEdit' } ); }
 		},
 
 		'setPOI': {
@@ -465,13 +465,14 @@ function init ( domID, configuration ) { // public method
 
 	}
 
-	function _setRouteEdit ( x ) {
-
-		mouseMode = x ? MOUSE_MODE_ROUTE_EDIT : MOUSE_MODE_NORMAL;
+	function _setEditMode ( x ) {
+console.log( 'c', x  );
+		mouseMode = Number( x );
 
 		switch ( mouseMode ) {
 
 		case MOUSE_MODE_NORMAL:
+		case MOUSE_MODE_TRACE_EDIT:
 
 			mouseTargets = survey.pointTargets;
 
@@ -485,7 +486,7 @@ function init ( domID, configuration ) { // public method
 
 		default:
 
-			console.warn( 'invalid mouse mode' );
+			console.warn( 'invalid mouse mode', x );
 
 		}
 
@@ -1297,6 +1298,12 @@ function mouseDown ( event ) {
 
 		break;
 
+	case MOUSE_MODE_TRACE_EDIT:
+
+		_selectTrace( visibleStation( intersects ) );
+
+		break;
+
 	}
 
 	function _selectStation ( station ) {
@@ -1346,6 +1353,24 @@ function mouseDown ( event ) {
 
 			Viewer.dispatchEvent( { type: 'change', name: 'shadingMode' } );
 			renderView();
+
+		}
+
+	}
+
+	function _selectTrace ( station ) {
+
+		if ( station === null || station.p === undefined ) return;
+
+		survey.selectStation( station );
+
+		if ( event.button === MOUSE.LEFT ) {
+
+			_showStationPopup( station );
+
+		} else if ( event.button === MOUSE.RIGHT ) {
+
+			_setStationPOI( station );
 
 		}
 

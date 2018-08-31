@@ -25,6 +25,8 @@ export const VIEW_ELEVATION_W    = 5;
 export const MOUSE_MODE_NORMAL     = 0;
 export const MOUSE_MODE_ROUTE_EDIT = 1;
 export const MOUSE_MODE_DISTANCE   = 2;
+export const MOUSE_MODE_TRACE_EDIT = 3;
+
 // shading types
 
 export const SHADING_HEIGHT       = 1;

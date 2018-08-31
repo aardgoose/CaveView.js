@@ -85,10 +85,14 @@
 			"datum_shift": "Vertical datum shift"
 		}
 	},
-	"routes": {
+	"edit": {
+		"header": "Edit",
+		"mode": {
+			"none": "none",
+			"route": "route",
+			"trace": "trace"
+		},
 		"routes": {
-			"header": "Routes",
-			"edit": "Edit routes",
 			"current": "Current route",
 			"save": "Save",
 			"new": "New route",

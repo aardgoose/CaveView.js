@@ -42,7 +42,7 @@
     "rollup-plugin-json": "^3.0.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-watch": ">=3.2.0",
-    "three": "0.92.0",
+    "three": "0.96.0",
     "uglify-es": "^3.3.10",
     "x18n": "^2.0.3"
   }

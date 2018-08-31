@@ -59,9 +59,9 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 	this.setStringAttributes( text, uvs, offsets, widths );
 
-	this.addAttribute( 'instanceUvs', new InstancedBufferAttribute( uvs, 2, 1 ) );
-	this.addAttribute( 'instanceOffsets', new InstancedBufferAttribute( offsets, 1, 1 ) );
-	this.addAttribute( 'instanceWidths', new InstancedBufferAttribute( widths, 1, 1 ) );
+	this.addAttribute( 'instanceUvs', new InstancedBufferAttribute( uvs, 2, false, 1 ) );
+	this.addAttribute( 'instanceOffsets', new InstancedBufferAttribute( offsets, 1, false, 1 ) );
+	this.addAttribute( 'instanceWidths', new InstancedBufferAttribute( widths, 1, false, 1 ) );
 
 	this.computeBoundingSphere();
 

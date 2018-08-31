@@ -5,7 +5,7 @@ function StationMarkers ( color ) {
 
 	Group.call( this );
 
-	this.markers = new Map();
+	this.markers = [];
 	this.markerColor = color;
 
 	return this;
@@ -18,7 +18,7 @@ StationMarkers.prototype.mark = function ( node ) {
 
 	const markers = this.markers;
 
-	if ( markers.has( node ) ) return;
+	if ( markers[ node.id ] !== undefined ) return;
 
 	const marker = new PointIndicator( this.markerColor );
 
@@ -26,7 +26,7 @@ StationMarkers.prototype.mark = function ( node ) {
 
 	this.add( marker );
 
-	markers.set( node, marker );
+	markers[ node.id ] = marker;
 
 };
 
@@ -34,13 +34,13 @@ StationMarkers.prototype.unmark = function ( node ) {
 
 	const markers = this.markers;
 
-	const marker = markers.get( node );
+	const marker = markers[ node.id ];
 
 	if ( marker === undefined ) return;
 
 	this.remove( marker );
 
-	markers.delete( node );
+	delete markers[ node.id ];
 
 };
 
@@ -54,7 +54,7 @@ StationMarkers.prototype.clear = function () {
 
 	} );
 
-	this.markers.clear();
+	this.markers = [];
 
 };
 

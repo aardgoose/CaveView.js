@@ -70,6 +70,8 @@ function Survey ( cave ) {
 
 	SurveyColours.clearMap(); // clear cache of survey section to colour
 
+	this.gradientName = Cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
+
 	const survey = cave.getSurvey();
 
 	this.name = survey.title;
@@ -569,6 +571,8 @@ Survey.prototype.loadDyeTraces = function () {
 	this.addFeature( dyeTraces, FEATURE_TRACES, 'CV.DyeTraces' );
 
 };
+
+
 
 Survey.prototype.getMetadataURL = function () {
 
@@ -1169,9 +1173,8 @@ Survey.prototype.setLegColourByAxis = function ( mesh ) {
 
 Survey.prototype.setLegColourByLength = function ( mesh ) {
 
-	const gradient = Cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 
-	const colours = ColourCache.getColors( gradient );
+	const colours = ColourCache.getColors( this.gradientName );
 	const colourRange = colours.length - 1;
 	const stats = mesh.stats;
 	const legLengths = mesh.legLengths;
@@ -1192,7 +1195,7 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 Survey.prototype.setLegColourByDistance = function ( mesh ) {
 
-	const colours = ColourCache.getColors( 'gradient' );
+	const colours = ColourCache.getColors( this.gradientName );
 	const unconnected = Cfg.themeColor( 'shading.unconnected' );
 	const pathColor = Cfg.themeColor( 'routes.active' );
 

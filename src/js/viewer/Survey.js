@@ -572,7 +572,20 @@ Survey.prototype.loadDyeTraces = function () {
 
 };
 
+Survey.prototype.addTraceFromMarkers = function () {
 
+	const list = this.markers.getStations();
+
+	const dyeTraces = new DyeTraces();
+
+	dyeTraces.addTrace( list[ 0 ].p, list[ 1 ].p );
+	dyeTraces.finish();
+
+	this.markers.clear();
+
+	this.addFeature( dyeTraces, FEATURE_TRACES, 'CV.DyeTraces' );
+
+};
 
 Survey.prototype.getMetadataURL = function () {
 

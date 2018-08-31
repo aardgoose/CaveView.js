@@ -93,6 +93,7 @@ var camera;
 
 var mouseMode = MOUSE_MODE_NORMAL;
 var mouseTargets = [];
+var clickCount = 0;
 
 var terrain = null;
 var survey;
@@ -466,13 +467,27 @@ function init ( domID, configuration ) { // public method
 	}
 
 	function _setEditMode ( x ) {
-console.log( 'c', x  );
+
+		if ( mouseMode === MOUSE_MODE_TRACE_EDIT ) {
+
+			document.removeEventListener( 'keydown', keyDown );
+
+		}
+
 		mouseMode = Number( x );
+
+		clickCount = 0;
+		survey.markers.clear();
+		renderView();
+
 
 		switch ( mouseMode ) {
 
-		case MOUSE_MODE_NORMAL:
 		case MOUSE_MODE_TRACE_EDIT:
+
+			document.addEventListener( 'keydown', keyDown );
+
+		case MOUSE_MODE_NORMAL: // eslint-disable-line no-fallthrough
 
 			mouseTargets = survey.pointTargets;
 
@@ -1264,6 +1279,18 @@ function loadTerrain ( mode ) {
 
 }
 
+function keyDown ( event ) {
+
+	if ( event.keyCode === 88 ) { // 'x'
+
+		survey.addTraceFromMarkers();
+		Viewer.traces = true;
+		renderView();
+
+	}
+
+}
+
 function mouseDown ( event ) {
 
 	const bc = container.getBoundingClientRect();
@@ -1366,13 +1393,18 @@ function mouseDown ( event ) {
 
 		if ( event.button === MOUSE.LEFT ) {
 
-			_showStationPopup( station );
+			if ( ++clickCount === 3 ) {
 
-		} else if ( event.button === MOUSE.RIGHT ) {
+				survey.markers.clear();
+				clickCount = 1;
 
-			_setStationPOI( station );
+			}
+
+			survey.markers.mark( station );
 
 		}
+
+		renderView();
 
 	}
 

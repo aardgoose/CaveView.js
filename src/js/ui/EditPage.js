@@ -6,9 +6,9 @@ import { Viewer } from '../viewer/Viewer';
 
 
 const mode = {
-	'no_edit': MOUSE_MODE_NORMAL,
-	'route_edit': MOUSE_MODE_ROUTE_EDIT,
-	'trace_edit': MOUSE_MODE_TRACE_EDIT
+	'mode.none': MOUSE_MODE_NORMAL,
+	'mode.route': MOUSE_MODE_ROUTE_EDIT,
+	'mode.trace': MOUSE_MODE_TRACE_EDIT
 };
 
 function EditPage ( fileSelector ) {
@@ -24,7 +24,7 @@ function EditPage ( fileSelector ) {
 	var getNewRouteName;
 	var lastShadingMode;
 
-	this.addHeader( 'edit.header' );
+	this.addHeader( 'header' );
 
 	this.addRadioBoxes( 'mode', Viewer, 'editMode', mode );
 

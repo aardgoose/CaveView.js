@@ -7,7 +7,7 @@ import { InfoPage } from './InfoPage';
 import { SelectionPage } from './SelectionPage';
 import { SettingsPage } from './SettingsPage';
 import { SurfacePage } from './SurfacePage';
-import { RoutePage } from './RoutePage';
+import { EditPage } from './EditPage';
 
 import { initKeyboardControls } from './KeyboardControls';
 import { FileSelector } from './FileSelector';
@@ -71,7 +71,7 @@ function initUI () {
 	new SettingsPage( fileSelector );
 	new SurfacePage();
 	new SelectionPage( container );
-	new RoutePage( fileSelector );
+	new EditPage( fileSelector );
 	new InfoPage( fileSelector );
 	new HelpPage( avenControls );
 

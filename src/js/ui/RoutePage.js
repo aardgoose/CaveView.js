@@ -1,13 +1,19 @@
-import { SHADING_PATH } from '../core/constants';
+import { SHADING_PATH, MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_NORMAL } from '../core/constants';
 
 import { replaceExtension } from '../core/lib';
 import { Page } from './Page';
 import { Viewer } from '../viewer/Viewer';
 
 
-function RoutePage ( fileSelector ) {
+const mode = {
+	'no_edit': MOUSE_MODE_NORMAL,
+	'route_edit': MOUSE_MODE_ROUTE_EDIT,
+	'trace_edit': MOUSE_MODE_TRACE_EDIT
+};
 
-	Page.call( this, 'icon_route', 'routes', _onTop, _onLeave );
+function EditPage ( fileSelector ) {
+
+	Page.call( this, 'icon_route', 'edit', _onTop, _onLeave );
 
 	const routes = Viewer.getRoutes();
 	const routeNames = routes.getRouteNames();
@@ -18,9 +24,9 @@ function RoutePage ( fileSelector ) {
 	var getNewRouteName;
 	var lastShadingMode;
 
-	this.addHeader( 'routes.header' );
+	this.addHeader( 'edit.header' );
 
-	this.addCheckbox( 'routes.edit', Viewer, 'routeEdit' );
+	this.addRadioBoxes( 'mode', Viewer, 'editMode', mode );
 
 	routeSelector = this.addSelect( 'routes.current', routeNames, routes, 'setRoute' );
 
@@ -87,9 +93,9 @@ function RoutePage ( fileSelector ) {
 
 }
 
-RoutePage.prototype = Object.create( Page.prototype );
+EditPage.prototype = Object.create( Page.prototype );
 
-export { RoutePage };
+export { EditPage };
 
 
 // EOF

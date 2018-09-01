@@ -41,8 +41,12 @@ function SettingsPage ( fileSelector ) {
 	Page.call( this, 'icon_settings', 'settings' );
 
 	const controls = [];
+	const routeControls = [];
 
 	const legShadingModesActive = Object.assign( {}, legShadingModes );
+
+	const routes = Viewer.getRoutes();
+	const routeNames = routes.getRouteNames();
 
 	if ( Viewer.hasRealTerrain ) {
 
@@ -67,7 +71,7 @@ function SettingsPage ( fileSelector ) {
 
 	this.addSelect( 'view.camera.caption', cameraModes, Viewer, 'cameraType' );
 
-//	controls.push( this.addRange( 'view.eye_separation', Viewer, 'eyeSeparation' ) );
+	//	controls.push( this.addRange( 'view.eye_separation', Viewer, 'eyeSeparation' ) );
 
 	this.addSelect( 'view.viewpoints.caption', cameraViews, Viewer, 'view' );
 
@@ -80,6 +84,18 @@ function SettingsPage ( fileSelector ) {
 	this.addHeader( 'shading.header' );
 
 	this.addSelect( 'shading.caption', legShadingModesActive, Viewer, 'shadingMode' );
+
+	if ( routeNames.length !== 0 ) {
+
+		if ( ! routes.setRoute ) routes.setRoute = routeNames[ 0 ];
+
+		routeControls.push( this.addSelect( 'selected_route', routeNames, routes, 'setRoute' ) );
+
+	} else {
+
+		routeControls.push( this.addText( this.i18n( 'no_routes') ) );
+
+	}
 
 	this.addHeader( 'visibility.header' );
 
@@ -96,12 +112,19 @@ function SettingsPage ( fileSelector ) {
 	this.addCheckbox( 'visibility.box', Viewer, 'box' );
 
 	_onChange( { name: 'cameraType' } );
+	_onChange( { name: 'shadingMode' } );
 
 	this.onChange = _onChange;
 
 	return this;
 
 	function _onChange ( event ) {
+
+		if ( event.name === 'shadingMode' ) {
+
+			Page.setControlsVisibility( routeControls, ( Viewer.shadingMode === SHADING_PATH ) );
+
+		}
 
 		// change UI dynamicly to only display useful controls
 		if ( event.name === 'cameraType' ) {

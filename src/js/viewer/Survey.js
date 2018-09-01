@@ -562,7 +562,7 @@ Survey.prototype.loadDyeTraces = function () {
 
 		if ( endStation === undefined || startStation === undefined ) continue;
 
-		dyeTraces.addTrace( startStation.p, endStation.p );
+		dyeTraces.addTrace( startStation, endStation );
 
 	}
 
@@ -576,9 +576,11 @@ Survey.prototype.addTraceFromMarkers = function () {
 
 	const list = this.markers.getStations();
 
+	if ( list.length !== 2 ) return;
+
 	const dyeTraces = new DyeTraces();
 
-	dyeTraces.addTrace( list[ 0 ].p, list[ 1 ].p );
+	dyeTraces.addTrace( list[ 0 ], list[ 1 ] );
 	dyeTraces.finish();
 
 	this.markers.clear();

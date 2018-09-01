@@ -595,48 +595,6 @@ Page.prototype.addButton = function ( title, func ) {
 
 };
 
-Page.prototype.addRadioBoxes = function ( title, obj, property, options ) {
-
-	const container = document.createElement( 'div' );
-	const currentValue = obj[ property ];
-	const name = 'rb' + Page.seq;
-
-	for ( var p in options ) {
-
-		const value = options[ p ];
-
-		const input = document.createElement( 'input' );
-		const label = document.createElement( 'label' );
-
-		input.type = 'radio';
-		input.name =  name;
-		input.value = value;
-		input.id = 'cv-' + Page.seq;
-
-		if ( value === currentValue ) input.checked = true;
-
-		label.textContent = this.i18n( p );
-		label.for = 'cv-' + Page.seq++;
-
-		container.appendChild( input );
-		container.appendChild( label );
-
-	}
-
-	this.addListener( container, 'change', function _onChange ( event ) {
-
-		Page.inHandler = true;
-		obj[ property ] = event.target.value;
-		Page.inHandler = false; }
-
-	);
-
-	this.page.appendChild( container );
-
-	return container;
-
-};
-
 Page.prototype.addTextBox = function ( labelText, placeholder, getResultGetter ) {
 
 	const div = document.createElement( 'div' );

@@ -6,9 +6,9 @@ import { Viewer } from '../viewer/Viewer';
 
 
 const mode = {
-	'mode.none': MOUSE_MODE_NORMAL,
-	'mode.route': MOUSE_MODE_ROUTE_EDIT,
-	'mode.trace': MOUSE_MODE_TRACE_EDIT
+	'modes.none': MOUSE_MODE_NORMAL,
+	'modes.route': MOUSE_MODE_ROUTE_EDIT,
+	'modes.trace': MOUSE_MODE_TRACE_EDIT
 };
 
 function EditPage ( fileSelector ) {
@@ -26,7 +26,7 @@ function EditPage ( fileSelector ) {
 
 	this.addHeader( 'header' );
 
-	this.addRadioBoxes( 'mode', Viewer, 'editMode', mode );
+	this.addSelect( 'mode', mode, Viewer, 'editMode' );
 
 	routeSelector = this.addSelect( 'routes.current', routeNames, routes, 'setRoute' );
 

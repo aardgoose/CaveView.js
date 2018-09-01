@@ -17,7 +17,7 @@ function EditPage ( fileSelector ) {
 
 	const routes = Viewer.getRoutes();
 	const routeNames = routes.getRouteNames();
-	const controls = [];
+	const routeControls = [];
 	const self = this;
 
 	var routeSelector;
@@ -30,15 +30,17 @@ function EditPage ( fileSelector ) {
 
 	routeSelector = this.addSelect( 'routes.current', routeNames, routes, 'setRoute' );
 
-	controls.push( this.addButton( 'routes.save', _saveRoute ) );
+	routeControls.push( routeSelector );
 
-	controls.push( this.addTextBox( 'routes.new', '---', function ( getter ) { getNewRouteName = getter; } ) );
+	routeControls.push( this.addButton( 'routes.save', _saveRoute ) );
 
-	controls.push( this.addButton( 'routes.add', _newRoute ) );
+	routeControls.push( this.addTextBox( 'routes.new', '---', function ( getter ) { getNewRouteName = getter; } ) );
 
-	controls.push( this.addDownloadButton( 'routes.download', Viewer.getMetadata, replaceExtension( fileSelector.file, 'json' ) ) );
+	routeControls.push( this.addButton( 'routes.add', _newRoute ) );
 
-	Page.setControlsVisibility( controls, false );
+	routeControls.push( this.addDownloadButton( 'routes.download', Viewer.getMetadata, replaceExtension( fileSelector.file, 'json' ) ) );
+
+	Page.setControlsVisibility( routeControls, false );
 
 	this.addListener( routes, 'changed', Page.handleChange );
 
@@ -49,9 +51,19 @@ function EditPage ( fileSelector ) {
 	function _onChange ( event ) {
 
 		// change UI dynamicly to only display useful controls
-		if ( event.name === 'routeEdit' ) {
+		if ( event.name === 'editMode' ) {
 
-			Page.setControlsVisibility( controls, Viewer.routeEdit );
+			if ( Viewer.editMode === MOUSE_MODE_ROUTE_EDIT ) {
+
+				Page.setControlsVisibility( routeControls, true );
+				Viewer.shadingMode = SHADING_PATH;
+
+			} else {
+
+				Page.setControlsVisibility( routeControls, false );
+				Viewer.shadingMode = lastShadingMode;
+
+			}
 
 		}
 
@@ -77,11 +89,10 @@ function EditPage ( fileSelector ) {
 
 		// when selecting route editing mode - select correct leg shading mode
 		lastShadingMode = Viewer.shadingMode;
-		Viewer.shadingMode = SHADING_PATH;
 
 		// display first route if present
 
-		if ( ! routes.setRoute && routeNames.length > 0 ) routes.setRoute = routeNames[ 0 ];
+//		if ( ! routes.setRoute && routeNames.length > 0 ) routes.setRoute = routeNames[ 0 ];
 
 	}
 

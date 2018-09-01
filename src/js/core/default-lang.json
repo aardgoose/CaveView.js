@@ -42,6 +42,8 @@
 			"distance": "distance",
 			"beck": "beck"
 		},
+		"selected_route": "Selected route",
+		"no_routes": "no routes defined",
 		"visibility": {
 			"header": "Visibility",
 			"entrances": "Entrances",
@@ -87,7 +89,8 @@
 	},
 	"edit": {
 		"header": "Edit",
-		"mode": {
+		"mode": "edit mode",
+		"modes": {
 			"none": "none",
 			"route": "route",
 			"trace": "trace"

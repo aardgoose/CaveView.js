@@ -91,6 +91,7 @@ var pCamera;
 
 var camera;
 
+var lastMouseMode = MOUSE_MODE_NORMAL;
 var mouseMode = MOUSE_MODE_NORMAL;
 var mouseTargets = [];
 var clickCount = 0;
@@ -348,7 +349,7 @@ function init ( domID, configuration ) { // public method
 		'editMode': {
 			writeable: true,
 			get: function () { return mouseMode; },
-			set: function ( x ) { _setEditMode( x ); this.dispatchEvent( { type: 'change', name: 'routeEdit' } ); }
+			set: function ( x ) { _setEditMode( x ); this.dispatchEvent( { type: 'change', name: 'editMode' } ); }
 		},
 
 		'setPOI': {
@@ -475,6 +476,7 @@ function init ( domID, configuration ) { // public method
 		}
 
 		mouseMode = Number( x );
+		lastMouseMode = mouseMode;
 
 		clickCount = 0;
 		survey.markers.clear();
@@ -917,12 +919,13 @@ function setShadingMode ( mode ) {
 
 	if ( shadingMode === SHADING_DISTANCE ) {
 
+		lastMouseMode = mouseMode;
 		mouseMode = MOUSE_MODE_DISTANCE;
 		mouseTargets = survey.pointTargets;
 
 	} else {
 
-		mouseMode = MOUSE_MODE_NORMAL;
+		mouseMode = lastMouseMode;
 
 	}
 
@@ -979,40 +982,66 @@ function highlightSelection ( node ) {
 
 function selectSection ( node ) {
 
-	survey.selectSection( node );
-
-	setShadingMode( shadingMode );
-
-	selectedSection = node;
-
-	if ( node === survey.surveyTree ) {
-
-		cameraMove.prepare( survey.getWorldBoundingBox() );
-		cameraMove.start( renderRequired );
-
-		highlightSelection( node );
-
-		return;
-
-	}
-
 	if ( node.p === undefined ) {
 
-		if ( node.boundingBox === undefined ) return;
-		// a section of the survey rather than a station
-
-		const boundingBox = node.boundingBox.clone();
-
-		cameraMove.prepare( boundingBox.applyMatrix4( survey.matrixWorld ) );
+		_selectSection( node );
 
 	} else {
 
-		// a single station
-		cameraMove.preparePoint( survey.getWorldPosition( node.p ) );
+		_selectStation( node );
 
 	}
 
+	selectedSection = node;
+
 	renderView();
+
+	return;
+
+	function _selectSection ( node ) {
+
+		survey.selectSection( node );
+
+		setShadingMode( shadingMode );
+
+		if ( node === survey.surveyTree ) {
+
+			cameraMove.prepare( survey.getWorldBoundingBox() );
+			cameraMove.start( renderRequired );
+
+			highlightSelection( node );
+
+			return;
+
+		} else {
+
+			if ( node.boundingBox === undefined ) return;
+
+			const boundingBox = node.boundingBox.clone();
+
+			cameraMove.prepare( boundingBox.applyMatrix4( survey.matrixWorld ) );
+
+		}
+
+	}
+
+	function _selectStation( node ) {
+
+		if ( mouseMode === MOUSE_MODE_TRACE_EDIT ) {
+
+			selectTraceStation( node );
+
+		} else {
+
+			survey.selectSection( node );
+
+			setShadingMode( shadingMode );
+
+			cameraMove.preparePoint( survey.getWorldPosition( node.p ) );
+
+		}
+
+	}
 
 }
 
@@ -1327,7 +1356,7 @@ function mouseDown ( event ) {
 
 	case MOUSE_MODE_TRACE_EDIT:
 
-		_selectTrace( visibleStation( intersects ) );
+		if ( event.button === MOUSE.LEFT ) selectTraceStation( visibleStation( intersects ) );
 
 		break;
 
@@ -1335,7 +1364,7 @@ function mouseDown ( event ) {
 
 	function _selectStation ( station ) {
 
-		if ( station === null || station.p === undefined ) return;
+		if ( station === null ) return;
 
 		survey.selectStation( station );
 
@@ -1353,8 +1382,6 @@ function mouseDown ( event ) {
 
 	function _setStationPOI( station ) {
 
-		if ( station === null || station.p === undefined ) return;
-
 		selectSection( station );
 
 		cameraMove.start( true );
@@ -1366,7 +1393,7 @@ function mouseDown ( event ) {
 
 	function _selectDistance ( station ) {
 
-		if ( station === null || station.p === undefined ) return;
+		if ( station === null ) return;
 
 		if ( event.button === MOUSE.LEFT ) {
 
@@ -1382,29 +1409,6 @@ function mouseDown ( event ) {
 			renderView();
 
 		}
-
-	}
-
-	function _selectTrace ( station ) {
-
-		if ( station === null || station.p === undefined ) return;
-
-		survey.selectStation( station );
-
-		if ( event.button === MOUSE.LEFT ) {
-
-			if ( ++clickCount === 3 ) {
-
-				survey.markers.clear();
-				clickCount = 1;
-
-			}
-
-			survey.markers.mark( station );
-
-		}
-
-		renderView();
 
 	}
 
@@ -1464,10 +1468,27 @@ function mouseDown ( event ) {
 
 }
 
+function selectTraceStation ( station ) {
+
+	if ( station === null ) return;
+
+	if ( ++clickCount === 3 ) {
+
+		survey.markers.clear();
+		clickCount = 1;
+
+	}
+
+	survey.markers.mark( station );
+
+	renderView();
+
+}
+
 function visibleStation ( intersects ) {
 
 	var i;
-	var station;
+	var station = null;
 
 	for ( i = 0; i < intersects.length; i++ ) {
 

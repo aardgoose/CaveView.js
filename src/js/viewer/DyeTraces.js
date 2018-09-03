@@ -19,9 +19,11 @@ function DyeTraces () {
 
 	this.vertices = [];
 	this.ends = [];
+	this.stations = [];
 
 	this.onBeforeRender = beforeRender;
 	this.layers.set( FEATURE_TRACES );
+	this.empty = true;
 
 	return this;
 
@@ -32,15 +34,28 @@ DyeTraces.prototype = Object.create( Mesh.prototype );
 DyeTraces.prototype.finish = function () {
 
 	const geometry = this.geometry;
-
 	const vertices = this.vertices;
 	const ends = this.ends;
 
 	const positions = new Float32BufferAttribute( vertices.length * 3, 3 );
 	const sinks = new Float32BufferAttribute( ends.length * 3, 3 );
 
-	geometry.addAttribute( 'position', positions.copyVector3sArray( vertices ) );
-	geometry.addAttribute( 'sinks', sinks.copyVector3sArray( ends ) );
+	positions.copyVector3sArray( vertices );
+	sinks.copyVector3sArray( ends );
+
+	if ( this.empty ) {
+
+		geometry.addAttribute( 'position', positions );
+		geometry.addAttribute( 'sinks', sinks );
+
+	} else {
+
+		geometry.getAttribute( 'position' ).copy( positions ).needsUpdate = true;
+		geometry.getAttribute( 'sinks' ).copy( sinks ).needsUpdate = true;
+
+	}
+
+	this.empty = false;
 
 	return this;
 
@@ -65,6 +80,26 @@ DyeTraces.prototype.addTrace = function ( startStation, endStation ) {
 	ends.push ( end );
 	ends.push ( end );
 	ends.push ( end );
+
+	this.stations.push( startStation, endStation );
+
+};
+
+DyeTraces.prototype.json = function () {
+
+	const stations = this.stations;
+	const traces = [];
+
+	for ( var i = 0, l = stations.length; i < l; i += 2 ) {
+
+		traces.push( {
+			start: stations[ i ].getPath(),
+			end: stations[ i + 1 ].getPath()
+		} );
+
+	}
+
+	return traces;
 
 };
 

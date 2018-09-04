@@ -578,7 +578,7 @@ Survey.prototype.addTraceFromMarkers = function () {
 
 	if ( list.length !== 2 ) return;
 
-	const dyeTraces = new DyeTraces();
+	const dyeTraces = this.getFeature( FEATURE_TRACES, DyeTraces );
 
 	dyeTraces.addTrace( list[ 0 ], list[ 1 ] );
 	dyeTraces.finish();
@@ -586,6 +586,8 @@ Survey.prototype.addTraceFromMarkers = function () {
 	this.markers.clear();
 
 	this.addFeature( dyeTraces, FEATURE_TRACES, 'CV.DyeTraces' );
+
+	this.metadata.saveTraces( dyeTraces.serialise() );
 
 };
 

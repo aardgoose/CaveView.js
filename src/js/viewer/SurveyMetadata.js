@@ -34,6 +34,8 @@ function SurveyMetadata( name, metadata ) {
 
 		}
 
+		traces = localMetadata.traces; // FIXME - merge with preexisting
+
 	}
 
 	this.routes = routes;
@@ -45,6 +47,14 @@ function SurveyMetadata( name, metadata ) {
 SurveyMetadata.prototype.getTraces = function () {
 
 	return this.traces;
+
+};
+
+SurveyMetadata.prototype.saveTraces = function ( traces ) {
+
+	this.traces = traces;
+
+	this.saveLocal();
 
 };
 

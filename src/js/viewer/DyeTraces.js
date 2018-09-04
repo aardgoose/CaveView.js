@@ -85,7 +85,7 @@ DyeTraces.prototype.addTrace = function ( startStation, endStation ) {
 
 };
 
-DyeTraces.prototype.json = function () {
+DyeTraces.prototype.serialise = function () {
 
 	const stations = this.stations;
 	const traces = [];

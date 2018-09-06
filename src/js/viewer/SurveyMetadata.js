@@ -1,3 +1,6 @@
+
+import { EventDispatcher } from '../Three';
+
 function SurveyMetadata( name, metadata ) {
 
 	this.name = name;
@@ -44,6 +47,8 @@ function SurveyMetadata( name, metadata ) {
 
 }
 
+SurveyMetadata.prototype = Object.create( EventDispatcher.prototype );
+
 SurveyMetadata.prototype.getTraces = function () {
 
 	return this.traces;
@@ -55,6 +60,7 @@ SurveyMetadata.prototype.saveTraces = function ( traces ) {
 	this.traces = traces;
 
 	this.saveLocal();
+	this.dispatchEvent( { name: 'change', type: 'traces' } );
 
 };
 
@@ -69,6 +75,7 @@ SurveyMetadata.prototype.saveRoute = function ( routeName, route ) {
 	this.routes[ routeName ] = route;
 
 	this.saveLocal();
+	this.dispatchEvent( { name: 'change', type: 'routes' } );
 
 };
 

@@ -91,9 +91,10 @@
 		"header": "Edit",
 		"mode": "edit mode",
 		"modes": {
-			"none": "none",
-			"route": "route",
-			"trace": "trace"
+			"none": "- none -",
+			"route": "Routes",
+			"trace": "Traces",
+			"entrances": "Entrances"
 		},
 		"routes": {
 			"current": "Current route",

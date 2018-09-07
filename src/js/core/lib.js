@@ -1,7 +1,7 @@
 
 import { Color, FileLoader, EventDispatcher, Math as _Math } from '../Three';
 import x18n from 'x18n';
-import lang_en from './default-lang.json';
+import lang_en from './defaultLanguage.json';
 import { defaultTheme } from './defaultTheme';
 
 const environment = new Map();

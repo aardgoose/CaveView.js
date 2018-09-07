@@ -37,7 +37,7 @@
     "eslint": "^5.5.0",
     "http-server": "^0.11.0",
     "proj4": "^2.5.0",
-    "rollup": "^0.65.0",
+    "rollup": "^0.65.2",
     "rollup-plugin-commonjs": "^9.1.6",
     "rollup-plugin-json": "^3.0.0",
     "rollup-plugin-node-resolve": "^3.4.0",

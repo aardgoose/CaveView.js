@@ -1,61 +1,17 @@
 
-import { EventDispatcher } from '../Three';
+function Topology ( stations, legsObject ) {
 
-function Topology ( metadataSource ) {
+	this.stations = stations;
+	this.legsObject = legsObject;
 
-	// determine segments between junctions and entrances/passage ends and create mapping array.
-
-	this.metadataSource = metadataSource;
-	this.surveyTree = null;
 	this.vertexPairToSegment = []; // maps vertex index to segment membership
 	this.segmentMap = new Map(); // maps segments of survey between ends of passages and junctions.
 	this.segmentToInfo = {};
 
-	this.routes = new Map();
-	this.routeNames = [];
-
-	this.currentRoute = new Set();
-	this.currentRouteName = null;
-	this.adjacentSegments = new Set();
 	this.maxDistance = 0;
 	this.zeroStation = null;
 
-	this.stations = null;
-	this.legs = null;
-
-	Object.defineProperty( this, 'setRoute', {
-		set: function ( x ) { this.loadRoute( x ); },
-		get: function () { return this.currentRouteName; }
-	} );
-
-	const routes = metadataSource.getRoutes();
-	const routeNames = this.routeNames;
-
-	var routeName;
-
-	for ( routeName in routes ) {
-
-		const route = routes[ routeName ];
-
-		routeNames.push( routeName );
-		this.routes.set( routeName, route.segments );
-
-	}
-
-	routeNames.sort();
-
-	this.dispatchEvent( { type: 'changed', name: 'download' } );
-
-}
-
-Object.assign( Topology.prototype, EventDispatcher.prototype );
-
-Topology.prototype.mapSurvey = function ( stations, legsObject, surveyTree ) {
-
 	// determine segments between junctions and entrances/passage ends and create mapping array.
-	this.surveyTree = surveyTree;
-	this.stations = stations;
-	this.legsObject = legsObject;
 
 	const legs = legsObject.geometry.vertices;
 	const segmentMap = this.segmentMap;
@@ -132,158 +88,11 @@ Topology.prototype.mapSurvey = function ( stations, legsObject, surveyTree ) {
 
 	return this;
 
-};
+}
 
-Topology.prototype.addRoute = function ( routeName ) {
+Topology.prototype.vertexSegment = function ( index ) {
 
-	if ( routeName === this.currentRouteName || routeName === undefined ) return;
-
-	if ( this.routeNames.indexOf( routeName ) < 0 ) {
-
-		// create entry for empty route if a new name
-
-		this.routeNames.push( routeName );
-		this.routes.set( routeName, [] );
-
-	}
-
-	this.loadRoute( routeName );
-
-};
-
-Topology.prototype.loadRoute = function ( routeName ) {
-
-	const self = this;
-
-	const surveyTree = this.surveyTree;
-	const currentRoute = this.currentRoute;
-	const segmentMap = this.segmentMap;
-	const routeSegments = this.routes.get( routeName );
-
-	var i;
-
-	if ( ! routeSegments ) {
-
-		alert( 'route ' + routeName + ' does not exist' );
-		return false;
-
-	}
-
-	currentRoute.clear();
-
-	for ( i = 0; i < routeSegments.length; i++ ) {
-
-		const segment = routeSegments[ i ];
-
-		const map = segmentMap.get( surveyTree.getIdByPath( segment.start ) + ':' + surveyTree.getIdByPath( segment.end ) );
-
-		if ( map !== undefined ) currentRoute.add( map.segment );
-
-	}
-
-	this.currentRouteName = routeName;
-
-	self.dispatchEvent( { type: 'changed', name: '' } );
-
-	return true;
-
-};
-
-Topology.prototype.getCurrentRoute = function () {
-
-	return this.currentRoute;
-
-};
-
-Topology.prototype.saveCurrent = function () {
-
-	const routeName = this.currentRouteName;
-	const segmentMap = this.segmentMap;
-	const route = this.currentRoute;
-
-	if ( ! routeName ) return;
-
-	const routeSegments = [];
-
-	segmentMap.forEach( _addRoute );
-
-	// update in memory route
-
-	this.routes.set( routeName, routeSegments );
-
-	// update persistant browser storage
-
-	this.metadataSource.saveRoute( routeName, { segments: routeSegments } );
-
-	function _addRoute ( value /*, key */ ) {
-
-		if ( route.has( value.segment ) ) {
-
-			routeSegments.push( {
-				start: value.startStation.getPath(),
-				end: value.endStation.getPath()
-			} );
-
-		}
-
-	}
-
-};
-
-Topology.prototype.getRouteNames = function () {
-
-	return this.routeNames;
-
-};
-
-Topology.prototype.toggleSegment = function ( index ) {
-
-	const self = this;
-	const route = this.currentRoute;
-	const segment = this.vertexPairToSegment[ index / 2 ];
-
-	this.adjacentSegments.clear();
-
-	if ( route.has( segment ) ) {
-
-		route.delete( segment );
-
-	} else {
-
-		route.add( segment );
-
-		// handle adjacent segments to the latest segment toggled 'on'
-
-		const segmentInfo = this.segmentToInfo[ segment ];
-
-		if ( segmentInfo !== undefined ) {
-
-			segmentInfo.startStation.linkedSegments.forEach( _setAdjacentSegments );
-			segmentInfo.endStation.linkedSegments.forEach( _setAdjacentSegments );
-
-		}
-
-	}
-
-	return;
-
-	function _setAdjacentSegments ( segment ) {
-
-		if ( ! route.has( segment ) ) self.adjacentSegments.add( segment );
-
-	}
-
-};
-
-Topology.prototype.inCurrentRoute = function ( index ) {
-
-	return this.currentRoute.has( this.vertexPairToSegment[ index / 2 ] );
-
-};
-
-Topology.prototype.adjacentToRoute = function ( index ) {
-
-	return this.adjacentSegments.has( this.vertexPairToSegment[ index / 2 ] );
+	return this.vertexPairToSegment[ index / 2 ];
 
 };
 

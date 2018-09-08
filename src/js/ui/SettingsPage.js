@@ -45,8 +45,7 @@ function SettingsPage ( fileSelector ) {
 
 	const legShadingModesActive = Object.assign( {}, legShadingModes );
 
-	const routes = Viewer.getRoutes();
-	const routeNames = routes.getRouteNames();
+	const routeNames = Viewer.routeNames;
 
 	if ( Viewer.hasRealTerrain ) {
 
@@ -87,9 +86,9 @@ function SettingsPage ( fileSelector ) {
 
 	if ( routeNames.length !== 0 ) {
 
-		if ( ! routes.setRoute ) routes.setRoute = routeNames[ 0 ];
+		if ( ! Viewer.route ) Viewer.route = routeNames[ 0 ];
 
-		routeControls.push( this.addSelect( 'selected_route', routeNames, routes, 'setRoute' ) );
+		routeControls.push( this.addSelect( 'selected_route', routeNames, Viewer, 'route' ) );
 
 	} else {
 

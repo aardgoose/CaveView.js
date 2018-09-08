@@ -23,6 +23,7 @@ StationMarkers.prototype.mark = function ( node ) {
 	const marker = new PointIndicator( this.markerColor );
 
 	marker.position.copy( node.p );
+	marker.station = node;
 
 	this.add( marker );
 

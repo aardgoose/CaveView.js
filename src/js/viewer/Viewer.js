@@ -8,7 +8,7 @@ import {
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -262,6 +262,16 @@ function init ( domID, configuration ) { // public method
 			set: function ( x ) { _stateSetter( setShadingMode, 'shadingMode', x ); }
 		},
 
+		'route': {
+			writeable: true,
+			get: function () { return survey.getRoutes().setRoute; },
+			set: function ( x ) { survey.getRoutes().setRoute = x; }
+		},
+
+		'routeNames': {
+			get: function () { return survey.getRoutes().getRouteNames(); },
+		},
+
 		'surfaceShading': {
 			writeable: true,
 			get: function () { return surfaceShadingMode; },
@@ -482,14 +492,19 @@ function init ( domID, configuration ) { // public method
 		survey.markers.clear();
 		renderView();
 
+		raycaster.params.Points.threshold = 3;
 
 		switch ( mouseMode ) {
 
 		case MOUSE_MODE_TRACE_EDIT:
 
+			mouseTargets = survey.pointTargets.concat( [ survey.dyeTraces ] );
+
 			document.addEventListener( 'keydown', keyDown );
 
-		case MOUSE_MODE_NORMAL: // eslint-disable-line no-fallthrough
+			break;
+
+		case MOUSE_MODE_NORMAL:
 
 			mouseTargets = survey.pointTargets;
 
@@ -498,6 +513,13 @@ function init ( domID, configuration ) { // public method
 		case MOUSE_MODE_ROUTE_EDIT:
 
 			mouseTargets = survey.legTargets;
+
+			break;
+
+		case MOUSE_MODE_ENTRANCES:
+
+			mouseTargets = survey.entranceTargets;
+			raycaster.params.Points.threshold = 15;
 
 			break;
 
@@ -1314,6 +1336,7 @@ function keyDown ( event ) {
 
 		survey.addTraceFromMarkers();
 		Viewer.traces = true;
+
 		renderView();
 
 	}
@@ -1356,9 +1379,25 @@ function mouseDown ( event ) {
 
 	case MOUSE_MODE_TRACE_EDIT:
 
-		if ( event.button === MOUSE.LEFT ) selectTraceStation( visibleStation( intersects ) );
+		if ( event.button === MOUSE.LEFT ) {
+
+			if ( intersects[ 0 ].object.type === 'Mesh' ) {
+
+				selectTrace( intersects[ 0 ] );
+
+			} else {
+
+				selectTraceStation( visibleStation( intersects ) );
+
+			}
+
+		}
 
 		break;
+
+	case MOUSE_MODE_ENTRANCES:
+
+		console.log( 'ccc' );
 
 	}
 
@@ -1441,7 +1480,7 @@ function mouseDown ( event ) {
 
 	function _selectSegment ( picked ) {
 
-		const routes = getRoutes();
+		const routes = survey.getRoutes();
 
 		routes.toggleSegment( picked.index );
 
@@ -1468,9 +1507,23 @@ function mouseDown ( event ) {
 
 }
 
+function selectTrace ( hit ) {
+
+	survey.markers.clear();
+	survey.dyeTraces.outlineTrace( hit.faceIndex );
+	clickCount = 0;
+
+	Viewer.dispatchEvent( { type: 'selected', trace: hit } );
+
+	renderView();
+
+}
+
 function selectTraceStation ( station ) {
 
 	if ( station === null ) return;
+
+	survey.dyeTraces.outlineTrace( null );
 
 	if ( ++clickCount === 3 ) {
 
@@ -1480,6 +1533,8 @@ function selectTraceStation ( station ) {
 	}
 
 	survey.markers.mark( station );
+
+	Viewer.dispatchEvent( { type: 'selected', station: station } );
 
 	renderView();
 
@@ -1623,13 +1678,7 @@ function getControls () {
 
 function getMetadata () {
 
-	return survey.getMetadataURL();
-
-}
-
-function getRoutes () {
-
-	return survey.getRoutes();
+	return survey.metadata;
 
 }
 
@@ -1646,7 +1695,6 @@ Object.assign( Viewer, {
 	clearView:     clearView,
 	loadCave:      loadCave,
 	getMetadata:   getMetadata,
-	getRoutes:     getRoutes,
 	getLegStats:   getLegStats,
 	getSurveyTree: getSurveyTree,
 	getControls:   getControls,

@@ -1,5 +1,6 @@
 import {
-	Vector3, BufferGeometry, Float32BufferAttribute, Object3D, Mesh
+	Vector3, BufferGeometry, Float32BufferAttribute, Object3D, Mesh,
+	LineBasicMaterial, LineSegments
 } from '../Three';
 
 import { WaterMaterial } from '../materials/WaterMaterial';
@@ -24,6 +25,7 @@ function DyeTraces () {
 	this.onBeforeRender = beforeRender;
 	this.layers.set( FEATURE_TRACES );
 	this.empty = true;
+	this.outline = null;
 
 	return this;
 
@@ -48,6 +50,7 @@ DyeTraces.prototype.finish = function () {
 		geometry.addAttribute( 'position', positions );
 		geometry.addAttribute( 'sinks', sinks );
 
+
 	} else {
 
 		geometry.getAttribute( 'position' ).copy( positions ).needsUpdate = true;
@@ -58,6 +61,17 @@ DyeTraces.prototype.finish = function () {
 	this.empty = false;
 
 	return this;
+
+};
+
+DyeTraces.prototype.getTraceStations = function ( hit ) {
+
+	const stations = this.stations;
+
+	return {
+		start: stations[ hit * 2 ].getPath(),
+		end: stations [ hit * 2 + 1 ].getPath()
+	};
 
 };
 
@@ -82,6 +96,48 @@ DyeTraces.prototype.addTrace = function ( startStation, endStation ) {
 	ends.push ( end );
 
 	this.stations.push( startStation, endStation );
+
+};
+
+DyeTraces.prototype.outlineTrace = function ( hit ) {
+
+	var outline = this.outline;
+
+	if ( outline !== null) {
+
+		outline.geometry.dispose();
+		this.remove( outline );
+
+	}
+
+	// if null remove any existing outlines
+
+	if ( hit === null ) return;
+
+	const geometry = new BufferGeometry();
+
+	outline = new LineSegments( geometry, new LineBasicMaterial( { color: 0xffff00 } ) );
+
+	outline.layers.set( FEATURE_TRACES );
+
+	const vertices = this.vertices;
+	const lineVertices = [];
+
+	var i = hit * 3;
+
+	const v1 = vertices[ i++ ];
+	const v2 = vertices[ i++ ];
+	const v3 = vertices[ i++ ];
+
+	lineVertices.push( v1, v2, v2, v3, v3, v1 );
+
+	const positions = new Float32BufferAttribute( lineVertices.length * 3, 3 );
+
+	positions.copyVector3sArray( lineVertices );
+	geometry.addAttribute( 'position', positions );
+
+	this.addStatic( outline );
+	this.outline = outline;
 
 };
 

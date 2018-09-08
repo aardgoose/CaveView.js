@@ -286,6 +286,8 @@ Page.prototype.appendChild = function ( domElement ) {
 
 	this.page.appendChild( domElement );
 
+	return domElement;
+
 };
 
 Page.prototype.addHeader = function ( text ) {

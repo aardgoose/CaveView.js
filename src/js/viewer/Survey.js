@@ -18,6 +18,7 @@ import { Stations } from './Stations';
 import { StationLabels } from './StationLabels';
 import { StationMarkers } from './StationMarkers';
 import { Topology } from './Topology';
+import { Routes } from './Routes';
 import { Legs } from './Legs';
 import { DyeTraces } from './DyeTraces';
 import { SurveyMetadata } from './SurveyMetadata';
@@ -40,6 +41,7 @@ function Survey ( cave ) {
 	this.highlightPath = null;
 	this.lastMarkedStation = null;
 	this.markers = new StationMarkers( 0x00ff00 );
+	this.entranceMarkers = new StationMarkers( 0x0000ff );
 	this.featureBox = null;
 	this.surveyTree = null;
 	this.projection = null;
@@ -50,13 +52,15 @@ function Survey ( cave ) {
 
 	this.pointTargets = [];
 	this.legTargets = [];
+	this.entranceTargets = [];
 
 	this.type = 'CV.Survey';
 	this.cutInProgress = false;
-	this.terrain = null;
 	this.features = [];
-	this.topology = null;
+	this.routes = null;
 	this.stations = null;
+	this.terrain = null;
+	this.topology = null;
 	this.inverseWorld = null;
 	this.colourAxis = [
 		new Vector3( 1, 0, 0),
@@ -178,6 +182,7 @@ Survey.prototype.onRemoved = function ( /* event */ ) {
 
 Survey.prototype.loadEntrances = function () {
 
+	const self = this;
 	const surveyTree = this.surveyTree;
 	const entrances = this.metadata.entrances;
 	const clusterMarkers = new ClusterMarkers( this.modelLimits, 4 );
@@ -192,7 +197,11 @@ Survey.prototype.loadEntrances = function () {
 
 	surveyTree.traverse( _addEntrance );
 
+	this.entranceTargets = this.entranceMarkers.children;
+
 	this.addFeature( clusterMarkers, FEATURE_ENTRANCES, 'CV.Survey:entrances' );
+
+	this.addStatic( this.entranceMarkers );
 
 	return;
 
@@ -201,10 +210,9 @@ Survey.prototype.loadEntrances = function () {
 		if ( node.type !== STATION_ENTRANCE ) return;
 
 		const entranceInfo = entrances[ node.getPath() ];
-
-		// if ( entranceInfo === undefined || entranceInfo.name == undefined ) console.log( node.getPath( endNode ) );
-
 		const name = ( entranceInfo !== undefined && entranceInfo.name !== undefined ) ? entranceInfo.name : node.getPath( endNode );
+
+		self.entranceMarkers.mark( node );
 
 		if ( name === '-skip' ) return;
 
@@ -290,7 +298,10 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.loadDyeTraces();
 
-	this.topology = new Topology( metadata ).mapSurvey( this.stations, this.getFeature( LEG_CAVE ), this.surveyTree );
+	// this.topology = new Topology( metadata ).mapSurvey( this.stations, this.getFeature( LEG_CAVE ), this.surveyTree );
+	this.topology = new Topology( this.stations, this.getFeature( LEG_CAVE ) );
+
+	this.routes = new Routes( this );
 
 	buildWallsSync( cave, this );
 
@@ -569,6 +580,7 @@ Survey.prototype.loadDyeTraces = function () {
 	dyeTraces.finish();
 
 	this.addFeature( dyeTraces, FEATURE_TRACES, 'CV.DyeTraces' );
+	this.dyeTraces = dyeTraces;
 
 };
 
@@ -591,12 +603,6 @@ Survey.prototype.addTraceFromMarkers = function () {
 
 };
 
-Survey.prototype.getMetadataURL = function () {
-
-	return this.metadata.getURL();
-
-};
-
 Survey.prototype.getLegs = function () {
 
 	return this.getFeature( LEG_CAVE ).geometry.vertices;
@@ -605,7 +611,7 @@ Survey.prototype.getLegs = function () {
 
 Survey.prototype.getRoutes = function () {
 
-	return this.topology;
+	return this.routes;
 
 };
 
@@ -817,6 +823,7 @@ Survey.prototype.cutSection = function ( node ) {
 
 	this.pointTargets = [];
 	this.legTargets   = [];
+	this.entranceTargets = [];
 
 	this.terrain = null;
 
@@ -1270,7 +1277,7 @@ Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
 Survey.prototype.setLegColourByPath = function ( mesh ) {
 
-	const routes = this.getRoutes();
+	const routes = this.routes;
 
 	const c1 = Cfg.themeColor( 'routes.active' );
 	const c2 = Cfg.themeColor( 'routes.adjacent' );

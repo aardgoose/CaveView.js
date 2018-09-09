@@ -20,12 +20,12 @@ function DyeTraces ( traces, surveyTree ) {
 
 	this.vertices = [];
 	this.ends = [];
+	this.selected = [];
 	this.stations = [];
 
 	this.onBeforeRender = beforeRender;
 	this.layers.set( FEATURE_TRACES );
 	this.empty = true;
-	this.outline = null;
 
 	const l = traces.length;
 
@@ -60,23 +60,30 @@ DyeTraces.prototype.finish = function () {
 
 	const geometry = this.geometry;
 	const vertices = this.vertices;
+	const selected = this.selected;
+
 	const ends = this.ends;
 
-	const positions = new Float32BufferAttribute( vertices.length * 3, 3 );
-	const sinks = new Float32BufferAttribute( ends.length * 3, 3 );
+	const traceCount = vertices.length;
+
+	const positions = new Float32BufferAttribute( traceCount * 3, 3 );
+	const selection = new Float32BufferAttribute( traceCount * 3, 3 );
+	const sinks = new Float32BufferAttribute( traceCount * 3, 3 );
 
 	positions.copyVector3sArray( vertices );
+	selection.copyArray( selected );
 	sinks.copyVector3sArray( ends );
 
 	if ( this.empty ) {
 
 		geometry.addAttribute( 'position', positions );
+		geometry.addAttribute( 'selection', selection );
 		geometry.addAttribute( 'sinks', sinks );
-
 
 	} else {
 
 		geometry.getAttribute( 'position' ).copy( positions ).needsUpdate = true;
+		geometry.getAttribute( 'selection' ).copy( selection ).needsUpdate = true;
 		geometry.getAttribute( 'sinks' ).copy( sinks ).needsUpdate = true;
 
 	}
@@ -98,9 +105,26 @@ DyeTraces.prototype.getTraceStations = function ( hit ) {
 
 };
 
+DyeTraces.prototype.deleteTrace = function ( hit ) {
+
+	// remove from arrays
+
+	this.stations.splice( hit * 2, 2 );
+
+	this.vertices.splice( hit * 3, 3 );
+	this.selected.splice( hit * 3, 3 );
+	this.ends.splice( hit * 3, 3 );
+
+	// rebuild geometry without deleted trace
+
+	this.finish();
+
+};
+
 DyeTraces.prototype.addTrace = function ( startStation, endStation ) {
 
 	const vertices = this.vertices;
+	const selected = this.selected;
 	const ends = this.ends;
 
 	const end = new Vector3().copy( endStation.p );
@@ -110,13 +134,9 @@ DyeTraces.prototype.addTrace = function ( startStation, endStation ) {
 	const v1 = new Vector3().add( startStation.p ).add( v );
 	const v2 = new Vector3().add( startStation.p ).sub( v );
 
-	vertices.push( v1 );
-	vertices.push( v2 );
-	vertices.push( end );
-
-	ends.push ( end );
-	ends.push ( end );
-	ends.push ( end );
+	vertices.push( v1, v2, end );
+	ends.push( end, end, end );
+	selected.push( 0, 0, 0 );
 
 	this.stations.push( startStation, endStation );
 
@@ -124,43 +144,30 @@ DyeTraces.prototype.addTrace = function ( startStation, endStation ) {
 
 DyeTraces.prototype.outlineTrace = function ( hit ) {
 
-	var outline = this.outline;
+	const selection = this.geometry.getAttribute( 'selection' );
+	const l = selection.count;
 
-	if ( outline !== null) {
+	for( var i = 0; i < l; i++ ) {
 
-		outline.geometry.dispose();
-		this.remove( outline );
+		selection.setX( i, 0 );
 
 	}
 
-	// if null remove any existing outlines
+	if ( hit !== null ) {
 
-	if ( hit === null ) return;
+		let offset = hit * 3;
 
-	const geometry = new BufferGeometry();
+		selection.setX( offset++, 1 );
+		selection.setX( offset++, 1 );
+		selection.setX( offset++, 1 );
 
-	outline = new LineSegments( geometry, new LineBasicMaterial( { color: 0xffff00 } ) );
+		console.log( selection );
 
-	outline.layers.set( FEATURE_TRACES );
+	}
 
-	const vertices = this.vertices;
-	const lineVertices = [];
+	selection.needsUpdate = true;
 
-	var i = hit * 3;
-
-	const v1 = vertices[ i++ ];
-	const v2 = vertices[ i++ ];
-	const v3 = vertices[ i++ ];
-
-	lineVertices.push( v1, v2, v2, v3, v3, v1 );
-
-	const positions = new Float32BufferAttribute( lineVertices.length * 3, 3 );
-
-	positions.copyVector3sArray( lineVertices );
-	geometry.addAttribute( 'position', positions );
-
-	this.addStatic( outline );
-	this.outline = outline;
+	return;
 
 };
 

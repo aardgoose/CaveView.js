@@ -555,31 +555,10 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 
 Survey.prototype.loadDyeTraces = function () {
 
-	const traces = this.metadata.getTraces();
-
-	if ( traces.length === 0 ) return;
-
-	const surveyTree = this.surveyTree;
-	const dyeTraces = new DyeTraces();
-
-	var i, l;
-
-	for ( i = 0, l = traces.length; i < l; i++ ) {
-
-		const trace = traces[ i ];
-
-		const startStation = surveyTree.getByPath( trace.start );
-		const endStation   = surveyTree.getByPath( trace.end );
-
-		if ( endStation === undefined || startStation === undefined ) continue;
-
-		dyeTraces.addTrace( startStation, endStation );
-
-	}
-
-	dyeTraces.finish();
+	const dyeTraces = new DyeTraces( this.metadata.getTraces(), this.surveyTree );
 
 	this.addFeature( dyeTraces, FEATURE_TRACES, 'CV.DyeTraces' );
+
 	this.dyeTraces = dyeTraces;
 
 };

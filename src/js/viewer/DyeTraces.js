@@ -12,7 +12,7 @@ function beforeRender ( renderer, scene, camera, geometry, material ) {
 
 }
 
-function DyeTraces () {
+function DyeTraces ( traces, surveyTree ) {
 
 	const geometry = new BufferGeometry();
 
@@ -26,6 +26,29 @@ function DyeTraces () {
 	this.layers.set( FEATURE_TRACES );
 	this.empty = true;
 	this.outline = null;
+
+	const l = traces.length;
+
+	if ( l > 0 ) {
+
+		let i;
+
+		for ( i = 0; i < l; i++ ) {
+
+			const trace = traces[ i ];
+
+			const startStation = surveyTree.getByPath( trace.start );
+			const endStation   = surveyTree.getByPath( trace.end );
+
+			if ( endStation === undefined || startStation === undefined ) continue;
+
+			this.addTrace( startStation, endStation );
+
+		}
+
+		this.finish();
+
+	}
 
 	return this;
 

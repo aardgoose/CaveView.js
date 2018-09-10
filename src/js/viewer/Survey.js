@@ -555,7 +555,7 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 
 Survey.prototype.loadDyeTraces = function () {
 
-	const dyeTraces = new DyeTraces( this.metadata.getTraces(), this.surveyTree );
+	const dyeTraces = new DyeTraces( this.metadata, this.surveyTree );
 
 	this.addFeature( dyeTraces, FEATURE_TRACES, 'CV.DyeTraces' );
 
@@ -569,16 +569,12 @@ Survey.prototype.addTraceFromMarkers = function () {
 
 	if ( list.length !== 2 ) return;
 
-	const dyeTraces = this.getFeature( FEATURE_TRACES, DyeTraces );
+	const dyeTraces = this.dyeTraces;
 
 	dyeTraces.addTrace( list[ 0 ], list[ 1 ] );
 	dyeTraces.finish();
 
 	this.markers.clear();
-
-	this.addFeature( dyeTraces, FEATURE_TRACES, 'CV.DyeTraces' );
-
-	this.metadata.saveTraces( dyeTraces.serialise() );
 
 };
 

@@ -1,6 +1,5 @@
 import {
-	Vector3, BufferGeometry, Float32BufferAttribute, Object3D, Mesh,
-	LineBasicMaterial, LineSegments
+	Vector3, BufferGeometry, Float32BufferAttribute, Object3D, Mesh
 } from '../Three';
 
 import { WaterMaterial } from '../materials/WaterMaterial';
@@ -12,12 +11,13 @@ function beforeRender ( renderer, scene, camera, geometry, material ) {
 
 }
 
-function DyeTraces ( traces, surveyTree ) {
+function DyeTraces ( metadata, surveyTree ) {
 
 	const geometry = new BufferGeometry();
 
 	Mesh.call( this, geometry, new WaterMaterial() );
 
+	this.metadata = metadata;
 	this.vertices = [];
 	this.ends = [];
 	this.selected = [];
@@ -25,8 +25,9 @@ function DyeTraces ( traces, surveyTree ) {
 
 	this.onBeforeRender = beforeRender;
 	this.layers.set( FEATURE_TRACES );
-	this.empty = true;
+	this.visible = false;
 
+	const traces = metadata.getTraces();
 	const l = traces.length;
 
 	if ( l > 0 ) {
@@ -62,6 +63,8 @@ DyeTraces.prototype.finish = function () {
 	const vertices = this.vertices;
 	const selected = this.selected;
 
+	if ( vertices.length === 0 ) return;
+
 	const ends = this.ends;
 
 	const traceCount = vertices.length;
@@ -74,7 +77,7 @@ DyeTraces.prototype.finish = function () {
 	selection.copyArray( selected );
 	sinks.copyVector3sArray( ends );
 
-	if ( this.empty ) {
+	if ( ! this.visible ) {
 
 		geometry.addAttribute( 'position', positions );
 		geometry.addAttribute( 'selection', selection );
@@ -88,7 +91,10 @@ DyeTraces.prototype.finish = function () {
 
 	}
 
-	this.empty = false;
+	this.visible = true;
+
+	// save to browser local storage
+	this.metadata.saveTraces( this.serialise() );
 
 	return this;
 
@@ -143,6 +149,8 @@ DyeTraces.prototype.addTrace = function ( startStation, endStation ) {
 };
 
 DyeTraces.prototype.outlineTrace = function ( hit ) {
+
+	if ( ! this.visible ) return;
 
 	const selection = this.geometry.getAttribute( 'selection' );
 	const l = selection.count;

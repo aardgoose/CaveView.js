@@ -1,4 +1,4 @@
-import { SHADING_PATH, MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_ENTRANCES } from '../core/constants';
+import { SHADING_PATH, MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE } from '../core/constants';
 
 import { replaceExtension } from '../core/lib';
 import { Page } from './Page';
@@ -9,7 +9,8 @@ const mode = {
 	'modes.none': MOUSE_MODE_NORMAL,
 	'modes.route': MOUSE_MODE_ROUTE_EDIT,
 	'modes.trace': MOUSE_MODE_TRACE_EDIT,
-	'modes.entrances': MOUSE_MODE_ENTRANCES
+	'modes.entrances': MOUSE_MODE_ENTRANCES,
+	'modes.annotate': MOUSE_MODE_ANNOTATE
 };
 
 function Panel ( page ) {
@@ -95,6 +96,7 @@ function TracePanel ( page ) {
 			if ( self.stations.length === 2 ) self.stations = [];
 
 			self.stations.push( event.station );
+			self.trace = null;
 
 		} else if ( event.trace !== undefined ) {
 
@@ -144,14 +146,81 @@ TracePanel.prototype.updatePanel = function () {
 
 	if ( trace !== null ) {
 
-		console.log( trace.object.getTraceStations( trace.faceIndex ) );
+		const dyeTraces = trace.object;
+		const traceIndex = trace.faceIndex;
+
+		console.log( dyeTraces.getTraceStations( traceIndex ) );
 
 		// FIXME add <delete> button
+//		dyeTraces.deleteTrace( traceIndex );
 
 	}
 
 	this.add( this.page.appendChild( div ) );
 	this.div = div;
+
+};
+
+function AnnotatePanel ( page ) {
+
+	Panel.call( this, page );
+
+	const self = this;
+
+	this.div = null;
+
+	this.add( page.addLine( 'annnotate dummy') );
+
+	page.addListener( Viewer, 'selected', _onSelect );
+
+	return this;
+
+	function _onSelect ( event ) {
+
+		if ( event.annotate === undefined ) return;
+
+		self.updatePanel( event.annotate );
+
+	}
+
+}
+
+AnnotatePanel.prototype = Object.create( Panel.prototype );
+
+AnnotatePanel.prototype.updatePanel = function ( station ) {
+
+	console.log( 'annotate', station.getPath() );
+
+};
+function EntrancePanel ( page ) {
+
+	Panel.call( this, page );
+
+	const self = this;
+
+	this.div = null;
+
+	this.add( page.addLine( 'entrance dummy') );
+
+	page.addListener( Viewer, 'selected', _onSelect );
+
+	return this;
+
+	function _onSelect ( event ) {
+
+		if ( event.entrance === undefined ) return;
+
+		self.updatePanel( event.entrance );
+
+	}
+
+}
+
+EntrancePanel.prototype = Object.create( Panel.prototype );
+
+EntrancePanel.prototype.updatePanel = function ( station ) {
+
+	console.log( 'entrace', station.getPath() );
 
 };
 
@@ -163,9 +232,12 @@ function EditPage ( fileSelector ) {
 	const metadata = Viewer.getMetadata();
 	const self = this;
 
-	var lastShadingMode;
+	var initialState;
+
+	var annotatePanel = null;
 	var routePanel = null;
 	var tracePanel = null;
+	var entrancePanel = null;
 
 	this.addHeader( 'header' );
 
@@ -188,14 +260,15 @@ function EditPage ( fileSelector ) {
 		// change UI dynamicly to only display appropriate controls
 		if ( event.name === 'editMode' ) {
 
+			const newState = Object.assign( {}, initialState );
+
 			switch ( Viewer.editMode ) {
 
 			case MOUSE_MODE_TRACE_EDIT:
 
 				if ( tracePanel === null ) tracePanel = new TracePanel( self );
 
-				Viewer.traces = true;
-				Viewer.shadingMode = lastShadingMode;
+				newState.traces = true;
 
 				break;
 
@@ -203,22 +276,32 @@ function EditPage ( fileSelector ) {
 
 				if ( routePanel === null ) routePanel = new RoutePanel( self, fileSelector );
 
-				Viewer.shadingMode = SHADING_PATH;
+				newState.shadingMode = SHADING_PATH;
 
 				break;
 
 			case MOUSE_MODE_ENTRANCES:
 
-				Viewer.entrances = true;
+				if ( entrancePanel === null ) entrancePanel = new EntrancePanel( self );
+
+				newState.entrances = true;
 
 				break;
 
-			default:
+			case MOUSE_MODE_ANNOTATE:
 
-				Viewer.shadingMode = lastShadingMode;
+				if ( annotatePanel === null ) annotatePanel = new AnnotatePanel( self );
+
+				newState.stations = true;
+
+				break;
 
 			}
 
+			Viewer.setView( newState );
+
+			if ( annotatePanel !== null ) annotatePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ANNOTATE );
+			if ( entrancePanel !== null ) entrancePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ENTRANCES );
 			if ( routePanel !== null ) routePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ROUTE_EDIT );
 			if ( tracePanel !== null ) tracePanel.setVisibility( Viewer.editMode === MOUSE_MODE_TRACE_EDIT );
 
@@ -228,8 +311,16 @@ function EditPage ( fileSelector ) {
 
 	function _onTop () {
 
-		// when selecting route editing mode - select correct leg shading mode
-		lastShadingMode = Viewer.shadingMode;
+		// save initial view settings
+
+		initialState = {
+			shadingMode: Viewer.shadingMode,
+			entrances: Viewer.entrances,
+			stations: Viewer.stations,
+			traces: Viewer.traces
+		};
+
+		console.log( initialState );
 
 		_onChange( { type: 'change', name: 'editMode' } );
 
@@ -237,7 +328,8 @@ function EditPage ( fileSelector ) {
 
 	function _onLeave () {
 
-		Viewer.shadingMode = lastShadingMode;
+		// restore inital view settings
+		Viewer.setView( initialState );
 
 	}
 

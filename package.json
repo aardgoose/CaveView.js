@@ -9,6 +9,7 @@
     "build-main-min": "npm run build-main && uglifyjs build/CaveView/js/CaveView.js -cm --preamble \"// threejs.org/license\" > build/CaveView/js/CaveView-min.js",
     "build-tw-min": "npm run build-tw && uglifyjs build/CaveView/js/workers/webTileWorker.js -cm --preamble \"// threejs.org/license\" > build/CaveView/js/workers/webTileWorker-min.js",
     "build-mw-min": "npm run build-mw && uglifyjs build/CaveView/js/workers/webMeshWorker.js -cm --preamble \"// threejs.org/license\" > build/CaveView/js/workers/webMeshWorker-min.js",
+    "dev": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c -w -m inline\" \"http-server build -c-1 -p 8080\"",
     "lint": "eslint src",
     "build": "npm run build-main && npm run build-tw && npm run build-mw",
     "build-min": "npm run build-main-min && npm run build-tw-min && npm run build-mw-min",
@@ -34,6 +35,7 @@
   },
   "homepage": "https://github.com/aardgoose/CaveView.js#readme",
   "devDependencies": {
+    "concurrently": "^4.0.1",
     "eslint": "^5.5.0",
     "http-server": "^0.11.0",
     "proj4": "^2.5.0",
@@ -45,5 +47,6 @@
     "uglify-es": "^3.3.10",
     "x18n": "^2.0.3"
   },
-  "dependencies": {}
+  "dependencies": {
+  }
 }

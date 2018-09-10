@@ -8,7 +8,7 @@ import {
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -490,6 +490,8 @@ function init ( domID, configuration ) { // public method
 
 		clickCount = 0;
 		survey.markers.clear();
+		survey.clearSelection();
+
 		renderView();
 
 		raycaster.params.Points.threshold = 3;
@@ -520,6 +522,12 @@ function init ( domID, configuration ) { // public method
 
 			mouseTargets = survey.entranceTargets;
 			raycaster.params.Points.threshold = 15;
+
+			break;
+
+		case MOUSE_MODE_ANNOTATE:
+
+			mouseTargets = survey.pointTargets;
 
 			break;
 
@@ -1399,6 +1407,12 @@ function mouseDown ( event ) {
 
 		console.log( 'ccc' );
 
+		break;
+
+	case MOUSE_MODE_ANNOTATE:
+
+		_selectAnnotation( visibleStation( intersects ) );
+
 	}
 
 	function _selectStation ( station ) {
@@ -1416,6 +1430,18 @@ function mouseDown ( event ) {
 			_setStationPOI( station );
 
 		}
+
+	}
+
+	function _selectAnnotation ( station ) {
+
+		if ( station === null ) return;
+
+		survey.selectStation( station );
+
+		Viewer.dispatchEvent( { type: 'selected', annotate: station } );
+
+		renderView();
 
 	}
 

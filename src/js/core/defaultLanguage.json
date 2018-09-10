@@ -94,7 +94,8 @@
 			"none": "- none -",
 			"route": "Routes",
 			"trace": "Traces",
-			"entrances": "Entrances"
+			"entrances": "Entrances",
+			"annotate": "Annotate"
 		},
 		"routes": {
 			"current": "Current route",

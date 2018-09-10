@@ -161,8 +161,6 @@ DyeTraces.prototype.outlineTrace = function ( hit ) {
 		selection.setX( offset++, 1 );
 		selection.setX( offset++, 1 );
 
-		console.log( selection );
-
 	}
 
 	selection.needsUpdate = true;

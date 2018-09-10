@@ -17,6 +17,7 @@ function Panel ( page ) {
 
 	this.page = page;
 	this.elements = [];
+	this.onShow = null;
 
 }
 
@@ -24,11 +25,15 @@ Panel.prototype.add = function ( element ) {
 
 	this.elements.push( element );
 
+	return element;
+
 };
 
 Panel.prototype.setVisibility = function ( visible ) {
 
 	Page.setControlsVisibility( this.elements, visible );
+
+	if ( visible && this.onShow !== null ) this.onShow();
 
 };
 
@@ -81,85 +86,106 @@ function TracePanel ( page ) {
 
 	const self = this;
 
-	this.div = null;
-	this.stations = [];
-	this.trace = null;
+	this.onShow = _onShow;
+
+	var stations = [];
+
+	var line1 = null;
+	var line2 = null;
+
+	var deleteControls = [];
 
 	page.addListener( Viewer, 'selected', _onSelect );
 
-	return this;
+	function _initPanel () {
+
+		line1.textContent = 'Start:';
+		line2.textContent = 'End:';
+
+		deleteControls.forEach ( function _deleteControls ( element ) {
+
+			element.parentElement.removeChild( element );
+
+		} );
+
+		deleteControls = [];
+		stations = [];
+
+	}
+
+	function _onShow () {
+
+		if ( line1 === null ) line1 = this.add( page.addLine( 'line1' ) );
+		if ( line2 === null ) line2 = this.add( page.addLine( 'line2' ) );
+
+		_initPanel();
+
+	}
 
 	function _onSelect ( event ) {
 
 		if ( event.station !== undefined ) {
 
-			if ( self.stations.length === 2 ) self.stations = [];
-
-			self.stations.push( event.station );
-			self.trace = null;
+			_showStations( event.station );
 
 		} else if ( event.trace !== undefined ) {
 
-			self.stations = [];
-			self.trace = event.trace;
+			_showTrace ( event.trace );
 
 		}
 
-		self.updatePanel();
+	}
+
+	function _showTrace ( trace ) {
+
+		const dyeTraces = trace.object;
+		const traceIndex = trace.faceIndex;
+
+		const traceInfo = dyeTraces.getTraceStations( traceIndex );
+
+		_initPanel();
+
+		line1.textContent = 'Start: ' + traceInfo.start;
+		line2.textContent = 'End: ' + traceInfo.end;
+
+		const button = self.add( page.addButton( 'trace.delete', function deleteTrace () {
+
+			dyeTraces.deleteTrace( traceIndex );
+			Viewer.renderView();
+
+			_initPanel();
+
+		} ) );
+
+		deleteControls.push( button );
+
+	}
+
+	function _showStations ( station ) {
+
+		if ( stations.length === 2 ) _initPanel();
+
+		stations.push( station );
+
+		if ( stations[ 0 ] !== undefined ) {
+
+			line1.textContent = 'Start: ' + stations[ 0 ].getPath();
+
+		}
+
+		if ( stations[ 1 ] !== undefined ) {
+
+			line2.textContent = 'End: ' + stations[ 1 ].getPath();
+
+			// FIXME add <add> button
+
+		}
 
 	}
 
 }
 
 TracePanel.prototype = Object.create( Panel.prototype );
-
-TracePanel.prototype.updatePanel = function () {
-
-	const stations = this.stations;
-
-	var div = this.div;
-
-	if ( div !== null ) div.parentElement.removeChild( div );
-
-	div = document.createElement( 'div' );
-
-	if ( stations[ 0 ] !== undefined ) {
-
-		const line = document.createElement( 'div' );
-
-		line.textContent = 'Start: ' + stations[ 0 ].getPath();
-		div.appendChild( line );
-
-	}
-
-	if ( stations[ 1 ] !== undefined ) {
-
-		const line = document.createElement( 'div' );
-
-		line.textContent = 'End: ' + stations[ 1 ].getPath();
-		div.appendChild( line );
-
-		// FIXME add <add> button
-	}
-
-	const trace = this.trace;
-
-	if ( trace !== null ) {
-
-		const dyeTraces = trace.object;
-		const traceIndex = trace.faceIndex;
-
-		console.log( dyeTraces.getTraceStations( traceIndex ) );
-
-		// FIXME add <delete> button
-//		dyeTraces.deleteTrace( traceIndex );
-
-	}
-
-	this.add( this.page.appendChild( div ) );
-	this.div = div;
-
-};
 
 function AnnotatePanel ( page ) {
 
@@ -192,6 +218,7 @@ AnnotatePanel.prototype.updatePanel = function ( station ) {
 	console.log( 'annotate', station.getPath() );
 
 };
+
 function EntrancePanel ( page ) {
 
 	Panel.call( this, page );
@@ -231,6 +258,7 @@ function EditPage ( fileSelector ) {
 
 	const metadata = Viewer.getMetadata();
 	const self = this;
+	const intro = [];
 
 	var initialState;
 
@@ -242,6 +270,8 @@ function EditPage ( fileSelector ) {
 	this.addHeader( 'header' );
 
 	this.addSelect( 'mode', mode, Viewer, 'editMode' );
+
+	intro.push( this.addText( this.i18n( 'intro' ) ) );
 
 	this.addListener( metadata, 'change', _onMetadataChange );
 
@@ -300,6 +330,8 @@ function EditPage ( fileSelector ) {
 
 			Viewer.setView( newState );
 
+			Page.setControlsVisibility( intro, Viewer.editMode === MOUSE_MODE_NORMAL );
+
 			if ( annotatePanel !== null ) annotatePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ANNOTATE );
 			if ( entrancePanel !== null ) entrancePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ENTRANCES );
 			if ( routePanel !== null ) routePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ROUTE_EDIT );
@@ -320,8 +352,6 @@ function EditPage ( fileSelector ) {
 			traces: Viewer.traces
 		};
 
-		console.log( initialState );
-
 		_onChange( { type: 'change', name: 'editMode' } );
 
 	}
@@ -329,6 +359,7 @@ function EditPage ( fileSelector ) {
 	function _onLeave () {
 
 		// restore inital view settings
+
 		Viewer.setView( initialState );
 
 	}

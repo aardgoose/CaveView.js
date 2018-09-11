@@ -13,7 +13,7 @@ import { StationPosition } from '../core/StationPosition';
 import { ColourCache } from '../core/ColourCache';
 import { Box3Helper } from '../core/Box3';
 import { Materials } from '../materials/Materials';
-import { ClusterMarkers } from './ClusterMarkers';
+import { Entrances } from './Entrances';
 import { Stations } from './Stations';
 import { StationLabels } from './StationLabels';
 import { StationMarkers } from './StationMarkers';
@@ -41,7 +41,6 @@ function Survey ( cave ) {
 	this.highlightPath = null;
 	this.lastMarkedStation = null;
 	this.markers = new StationMarkers( 0x00ff00 );
-	this.entranceMarkers = new StationMarkers( 0x0000ff );
 	this.featureBox = null;
 	this.surveyTree = null;
 	this.projection = null;
@@ -182,43 +181,12 @@ Survey.prototype.onRemoved = function ( /* event */ ) {
 
 Survey.prototype.loadEntrances = function () {
 
-	const self = this;
-	const surveyTree = this.surveyTree;
-	const entrances = this.metadata.entrances;
-	const clusterMarkers = new ClusterMarkers( this.modelLimits, 4 );
+	const entrances = new Entrances( this );
 
-	// remove common elements from station names if no alternatives available
+	this.addFeature( entrances, FEATURE_ENTRANCES, 'CV.Survey:entrances' );
 
-	var endNode = surveyTree;
-
-	while ( endNode.children.length === 1 ) endNode = endNode.children [ 0 ];
-
-	// find entrances and add Markers
-
-	surveyTree.traverse( _addEntrance );
-
-	this.entranceTargets = this.entranceMarkers.children;
-
-	this.addFeature( clusterMarkers, FEATURE_ENTRANCES, 'CV.Survey:entrances' );
-
-	this.addStatic( this.entranceMarkers );
-
-	return;
-
-	function _addEntrance( node ) {
-
-		if ( node.type !== STATION_ENTRANCE ) return;
-
-		const entranceInfo = entrances[ node.getPath() ];
-		const name = ( entranceInfo !== undefined && entranceInfo.name !== undefined ) ? entranceInfo.name : node.getPath( endNode );
-
-		self.entranceMarkers.mark( node );
-
-		if ( name === '-skip' ) return;
-
-		clusterMarkers.addMarker( node, ' ' + name + ' ' );
-
-	}
+	this.entranceTargets = [ entrances.markers ];
+	this.entrances = entrances;
 
 };
 
@@ -560,21 +528,6 @@ Survey.prototype.loadDyeTraces = function () {
 	this.addFeature( dyeTraces, FEATURE_TRACES, 'CV.DyeTraces' );
 
 	this.dyeTraces = dyeTraces;
-
-};
-
-Survey.prototype.addTraceFromMarkers = function () {
-
-	const list = this.markers.getStations();
-
-	if ( list.length !== 2 ) return;
-
-	const dyeTraces = this.dyeTraces;
-
-	dyeTraces.addTrace( list[ 0 ], list[ 1 ] );
-	dyeTraces.finish();
-
-	this.markers.clear();
 
 };
 

@@ -1,12 +1,13 @@
-import { Shaders } from '../shaders/Shaders';
 import { ColourCache } from '../core/ColourCache';
 import { Cfg } from '../core/lib';
 
-import { ShaderMaterial } from '../Three';
+import { MeshLambertMaterial} from '../Three';
 
-function HypsometricMaterial ( survey, viewer ) {
+function HypsometricMaterial ( survey ) {
 
 	const terrain = survey.terrain;
+
+	MeshLambertMaterial.call( this );
 
 	var zMin = Cfg.themeValue( 'shading.hypsometric.min' );
 	var zMax = Cfg.themeValue( 'shading.hypsometric.max' );
@@ -16,50 +17,35 @@ function HypsometricMaterial ( survey, viewer ) {
 	if ( zMin === undefined ) zMin = terrain.boundingBox.min.z;
 	if ( zMax === undefined ) zMax = terrain.boundingBox.max.z;
 
-	ShaderMaterial.call( this, {
-		vertexShader: Shaders.surfaceVertexShader,
-		fragmentShader: Shaders.surfaceFragmentShader,
-		type: 'CV.HypsometricMaterial',
-		uniforms: {
-			uLight:     { value: viewer.surfaceLightDirection },
-			minZ:       { value: zMin },
-			scaleZ:     { value: 1 / ( zMax - zMin ) },
-			cmap:       { value: ColourCache.getTexture( 'hypsometric' ) },
-			opacity:    { value: 0.5 }
-		}
-	} );
-
 	this.transparent = true;
+	this.opacity = 0.5;
 
-	Object.defineProperty( this, 'opacity', {
-		writeable: true,
-		get: function () { return this.uniforms.opacity.value; },
-		set: function ( value ) { this.uniforms.opacity.value = value; }
-	} );
+	this.onBeforeCompile = function ( shader ) {
 
-	this.callback = this.lightingChanged.bind( this );
+		Object.assign( shader.uniforms, {
+			minZ:   { value: zMin },
+			scaleZ: { value: 1 / ( zMax - zMin ) },
+			cmap:   { value: ColourCache.getTexture( 'hypsometric' ) },
+		} );
 
-	viewer.addEventListener( 'lightingChange', this.callback );
+		var vertexShader = shader.vertexShader
+			.replace( '#include <common>', '\nuniform float minZ;\nuniform float scaleZ;\nvarying float zMap;\n$&' )
+			.replace( 'include <begin_vertex>', '$&\nzMap = saturate( ( position.z - minZ ) * scaleZ );' );
+
+		var fragmentShader = shader.fragmentShader
+			.replace( '#include <common>', 'uniform sampler2D cmap;\nvarying float zMap;\n$&' )
+			.replace( '#include <color_fragment>', 'diffuseColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) );diffuseColor.a = opacity;' );
+
+		shader.vertexShader = vertexShader;
+		shader.fragmentShader = fragmentShader;
+
+	};
 
 	return this;
 
 }
 
-HypsometricMaterial.prototype = Object.create( ShaderMaterial.prototype );
-
-HypsometricMaterial.prototype.lightingChanged = function ( event ) {
-
-	this.uniforms.uLight.value = event.position;
-
-};
-
-HypsometricMaterial.prototype.dispose = function ( viewer ) {
-
-	viewer.removeEventListener( 'lightingChange', this.callback );
-
-	ShaderMaterial.prototype.dispose.call( this );
-
-};
+HypsometricMaterial.prototype = Object.create( MeshLambertMaterial.prototype );
 
 export { HypsometricMaterial };
 

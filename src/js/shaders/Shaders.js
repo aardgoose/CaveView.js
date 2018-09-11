@@ -2,9 +2,6 @@
 import anaglyphVertexShader from './anaglyphVertexShader.glsl';
 import anaglyphFragmentShader from './anaglyphFragmentShader.glsl';
 
-import contourVertexShader from './contourVertexShader.glsl';
-import contourFragmentShader from './contourFragmentShader.glsl';
-
 import cursorVertexShader from './cursorVertexShader.glsl';
 import cursorFragmentShader from './cursorFragmentShader.glsl';
 
@@ -26,17 +23,12 @@ import heightFragmentShader from './heightFragmentShader.glsl';
 import popupVertexShader from './popupVertexShader.glsl';
 import popupFragmentShader from './popupFragmentShader.glsl';
 
-import surfaceVertexShader from './surfaceVertexShader.glsl';
-import surfaceFragmentShader from './surfaceFragmentShader.glsl';
-
 import waterVertexShader from './waterVertexShader.glsl';
 import waterFragmentShader from './waterFragmentShader.glsl';
 
 export const Shaders = {
 	anaglyphVertexShader:	anaglyphVertexShader,
 	anaglyphFragmentShader:	anaglyphFragmentShader,
-	contourVertexShader:	contourVertexShader,
-	contourFragmentShader:	contourFragmentShader,
 	cursorVertexShader:		cursorVertexShader,
 	cursorFragmentShader:	cursorFragmentShader,
 	depthMapVertexShader:	depthMapVertexShader,
@@ -51,8 +43,6 @@ export const Shaders = {
 	heightFragmentShader:	heightFragmentShader,
 	popupVertexShader:		popupVertexShader,
 	popupFragmentShader:	popupFragmentShader,
-	surfaceVertexShader:	surfaceVertexShader,
-	surfaceFragmentShader:	surfaceFragmentShader,
 	waterVertexShader:		waterVertexShader,
 	waterFragmentShader:	waterFragmentShader
 };

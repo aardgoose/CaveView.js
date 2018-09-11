@@ -206,10 +206,12 @@ function init ( domID, configuration ) { // public method
 		'container': {
 			value: container
 		},
+
 		'reset': {
 			writeable: true,
 			set: function () { setupView( false ); }
 		},
+
 		'surveyLoaded': {
 			get: function () { return caveIsLoaded; }
 		},
@@ -229,7 +231,6 @@ function init ( domID, configuration ) { // public method
 		'hasTerrain': {
 			get: function () { return !! terrain; }
 		},
-
 		'hasRealTerrain': {
 			get: function () { return ( terrain && ! terrain.isFlat ); }
 		},
@@ -786,8 +787,6 @@ function cameraMoved () {
 
 	directionalLight.position.copy( currentLightPosition );
 	directionalLight.updateMatrix();
-
-	Viewer.dispatchEvent( { type: 'lightingChange', name: 'surface', position: currentLightPosition } );
 
 	renderView();
 
@@ -1420,7 +1419,7 @@ function visibleStation ( intersects ) {
 
 		station = survey.stations.getStationByIndex( intersects[ i ].index );
 
-		if ( ! Viewer.splays && station.p.connections === 0 ) {
+		if ( ! Viewer.splays && station !== null && station.p.connections === 0 ) {
 
 			// don't select spays unless visible
 			station = null;

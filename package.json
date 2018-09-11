@@ -47,6 +47,5 @@
     "uglify-es": "^3.3.10",
     "x18n": "^2.0.3"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

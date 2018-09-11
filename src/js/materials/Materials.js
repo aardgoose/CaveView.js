@@ -90,7 +90,7 @@ function getHypsometricMaterial () {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( name, new HypsometricMaterial( survey, viewer ) );
+		material = cacheSurveyMaterial( name, new HypsometricMaterial( survey ) );
 
 	}
 
@@ -207,7 +207,7 @@ function getContourMaterial () {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( 'contour', new ContourMaterial( survey, viewer ) );
+		material = cacheSurveyMaterial( 'contour', new ContourMaterial( survey ) );
 
 		depthMaterials.push( material );
 

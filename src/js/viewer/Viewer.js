@@ -48,6 +48,7 @@ const defaultView = {
 	box: true,
 	cameraType: CAMERA_PERSPECTIVE,
 	view: VIEW_PLAN,
+	editMode: MOUSE_MODE_NORMAL,
 	shadingMode: SHADING_HEIGHT,
 	surfaceShading: SHADING_HEIGHT,
 	terrainShading: SHADING_RELIEF,
@@ -480,12 +481,6 @@ function init ( domID, configuration ) { // public method
 
 	function _setEditMode ( x ) {
 
-		if ( mouseMode === MOUSE_MODE_TRACE_EDIT ) {
-
-			document.removeEventListener( 'keydown', keyDown );
-
-		}
-
 		mouseMode = Number( x );
 		lastMouseMode = mouseMode;
 
@@ -502,8 +497,6 @@ function init ( domID, configuration ) { // public method
 		case MOUSE_MODE_TRACE_EDIT:
 
 			mouseTargets = survey.pointTargets.concat( [ survey.dyeTraces ] );
-
-			document.addEventListener( 'keydown', keyDown );
 
 			break;
 
@@ -1337,19 +1330,6 @@ function loadTerrain ( mode ) {
 
 }
 
-function keyDown ( event ) {
-
-	if ( event.keyCode === 88 ) { // 'x'
-
-		survey.addTraceFromMarkers();
-		Viewer.traces = true;
-
-		renderView();
-
-	}
-
-}
-
 function mouseDown ( event ) {
 
 	const bc = container.getBoundingClientRect();
@@ -1404,7 +1384,7 @@ function mouseDown ( event ) {
 
 	case MOUSE_MODE_ENTRANCES:
 
-		console.log( 'ccc' );
+		selectEntrance( intersects[ 0 ] );
 
 		break;
 
@@ -1532,13 +1512,35 @@ function mouseDown ( event ) {
 
 }
 
+function selectEntrance ( hit ) {
+
+	const entrances = survey.entrances;
+	const entranceName = entrances.getStation( hit.index ).getPath();
+
+	Viewer.dispatchEvent( {
+		type: 'selectedEntrance',
+		entrance: entranceName,
+	} );
+
+}
+
 function selectTrace ( hit ) {
 
-	survey.markers.clear();
-	survey.dyeTraces.outlineTrace( hit.faceIndex );
-	clickCount = 0;
+	const dyeTraces = survey.dyeTraces;
+	const traceIndex = hit.faceIndex;
 
-	Viewer.dispatchEvent( { type: 'selected', trace: hit } );
+	survey.markers.clear();
+
+	dyeTraces.outlineTrace( traceIndex );
+
+	Viewer.dispatchEvent( {
+		type: 'selectedTrace',
+		trace: dyeTraces.getTraceStations( traceIndex ),
+		delete: function _deleteTrace () {
+			dyeTraces.deleteTrace( traceIndex );
+			renderView();
+		}
+	} );
 
 	renderView();
 
@@ -1548,18 +1550,42 @@ function selectTraceStation ( station ) {
 
 	if ( station === null ) return;
 
-	survey.dyeTraces.outlineTrace( null );
+	const dyeTraces = survey.dyeTraces;
+	const markers = survey.markers;
+
+	dyeTraces.outlineTrace( null );
 
 	if ( ++clickCount === 3 ) {
 
-		survey.markers.clear();
+		markers.clear();
 		clickCount = 1;
 
 	}
 
-	survey.markers.mark( station );
+	markers.mark( station );
 
-	Viewer.dispatchEvent( { type: 'selected', station: station, traces: survey.dyeTraces } );
+	const list = markers.getStations();
+
+	var start, end;
+
+	if ( list[ 0 ] !== undefined ) start = list[ 0 ].getPath();
+	if ( list[ 1 ] !== undefined ) end = list[ 1 ].getPath();
+
+	Viewer.dispatchEvent( {
+		type: 'selectedTrace',
+		start: start,
+		end: end,
+		add: function () {
+			if ( list.length !== 2 ) return;
+
+			dyeTraces.addTrace( list[ 0 ], list[ 1 ] );
+			dyeTraces.finish();
+
+			markers.clear();
+			renderView();
+
+		}
+	} );
 
 	renderView();
 

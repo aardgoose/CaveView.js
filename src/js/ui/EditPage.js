@@ -88,14 +88,12 @@ function TracePanel ( page ) {
 
 	this.onShow = _onShow;
 
-	var stations = [];
-
 	var line1 = null;
 	var line2 = null;
 
 	var deleteControls = [];
 
-	page.addListener( Viewer, 'selected', _onSelect );
+	page.addListener( Viewer, 'selectedTrace', _onSelect );
 
 	function _initPanel () {
 
@@ -109,7 +107,6 @@ function TracePanel ( page ) {
 		} );
 
 		deleteControls = [];
-		stations = [];
 
 	}
 
@@ -124,60 +121,52 @@ function TracePanel ( page ) {
 
 	function _onSelect ( event ) {
 
-		if ( event.station !== undefined ) {
+		if ( event.add !== undefined ) {
 
-			_showStations( event.station );
+			_showStations( event );
 
-		} else if ( event.trace !== undefined ) {
+		} else if ( event.delete !== undefined ) {
 
-			_showTrace ( event.trace );
+			_showTrace ( event );
 
 		}
 
 	}
 
-	function _showTrace ( trace ) {
+	function _showTrace ( event ) {
 
-		const dyeTraces = trace.object;
-		const traceIndex = trace.faceIndex;
-
-		const traceInfo = dyeTraces.getTraceStations( traceIndex );
+		const traceInfo = event.trace;
 
 		_initPanel();
 
 		line1.textContent = 'Start: ' + traceInfo.start;
 		line2.textContent = 'End: ' + traceInfo.end;
 
-		const button = self.add( page.addButton( 'trace.delete', function deleteTrace () {
-
-			dyeTraces.deleteTrace( traceIndex );
-			Viewer.renderView();
-
+		const button = self.add( page.addButton( 'trace.delete', function() {
+			event.delete();
 			_initPanel();
-
 		} ) );
 
 		deleteControls.push( button );
 
 	}
 
-	function _showStations ( station ) {
+	function _showStations ( event ) {
 
-		if ( stations.length === 2 ) _initPanel();
+		_initPanel();
 
-		stations.push( station );
+		if ( event.start !== undefined ) line1.textContent = 'Start: ' + event.start;
 
-		if ( stations[ 0 ] !== undefined ) {
+		if ( event.end !== undefined ) {
 
-			line1.textContent = 'Start: ' + stations[ 0 ].getPath();
+			line2.textContent = 'End: ' + event.end;
 
-		}
+			const button = self.add( page.addButton( 'trace.add', function() {
+				event.add();
+				_initPanel();
+			} ) );
 
-		if ( stations[ 1 ] !== undefined ) {
-
-			line2.textContent = 'End: ' + stations[ 1 ].getPath();
-
-			// FIXME add <add> button
+			deleteControls.push( button );
 
 		}
 
@@ -229,7 +218,7 @@ function EntrancePanel ( page ) {
 
 	this.add( page.addLine( 'entrance dummy') );
 
-	page.addListener( Viewer, 'selected', _onSelect );
+	page.addListener( Viewer, 'selectedEntrance', _onSelect );
 
 	return this;
 
@@ -237,19 +226,13 @@ function EntrancePanel ( page ) {
 
 		if ( event.entrance === undefined ) return;
 
-		self.updatePanel( event.entrance );
+		self.add( page.addLine( event.entrance ) );
 
 	}
 
 }
 
 EntrancePanel.prototype = Object.create( Panel.prototype );
-
-EntrancePanel.prototype.updatePanel = function ( station ) {
-
-	console.log( 'entrace', station.getPath() );
-
-};
 
 
 function EditPage ( fileSelector ) {

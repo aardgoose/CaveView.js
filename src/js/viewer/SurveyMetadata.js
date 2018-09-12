@@ -37,7 +37,8 @@ function SurveyMetadata( name, metadata ) {
 
 		}
 
-		traces = localMetadata.traces; // FIXME - merge with preexisting
+		if ( localMetadata.traces !== undefined ) traces = localMetadata.traces; // FIXME - merge with preexisting
+		if ( localMetadata.entrances !== undefined ) entrances = localMetadata.entrances;
 
 	}
 
@@ -49,20 +50,6 @@ function SurveyMetadata( name, metadata ) {
 
 SurveyMetadata.prototype = Object.create( EventDispatcher.prototype );
 
-SurveyMetadata.prototype.getTraces = function () {
-
-	return this.traces;
-
-};
-
-SurveyMetadata.prototype.saveTraces = function ( traces ) {
-
-	this.traces = traces;
-
-	this.saveLocal();
-	this.dispatchEvent( { name: 'change', type: 'traces' } );
-
-};
 
 SurveyMetadata.prototype.getRoutes = function () {
 

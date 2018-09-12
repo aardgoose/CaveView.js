@@ -27,7 +27,7 @@ function DyeTraces ( metadata, surveyTree ) {
 	this.layers.set( FEATURE_TRACES );
 	this.visible = false;
 
-	const traces = metadata.getTraces();
+	const traces = metadata.traces;
 	const l = traces.length;
 
 	if ( l > 0 ) {
@@ -43,7 +43,7 @@ function DyeTraces ( metadata, surveyTree ) {
 
 			if ( endStation === undefined || startStation === undefined ) continue;
 
-			this.addTrace( startStation, endStation );
+			this._addTrace( startStation, endStation );
 
 		}
 
@@ -94,7 +94,8 @@ DyeTraces.prototype.finish = function () {
 	this.visible = true;
 
 	// save to browser local storage
-	this.metadata.saveTraces( this.serialise() );
+	this.metadata.traces = this.serialise();
+	this.metadata.saveLocal();
 
 	return this;
 
@@ -127,7 +128,7 @@ DyeTraces.prototype.deleteTrace = function ( hit ) {
 
 };
 
-DyeTraces.prototype.addTrace = function ( startStation, endStation ) {
+DyeTraces.prototype._addTrace = function ( startStation, endStation ) {
 
 	const vertices = this.vertices;
 	const selected = this.selected;
@@ -145,6 +146,13 @@ DyeTraces.prototype.addTrace = function ( startStation, endStation ) {
 	selected.push( 0, 0, 0 );
 
 	this.stations.push( startStation, endStation );
+
+};
+
+DyeTraces.prototype.addTrace = function ( startStation, endStation ) {
+
+	this._addTrace( startStation, endStation );
+	this.finish();
 
 };
 

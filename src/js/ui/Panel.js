@@ -6,7 +6,20 @@ function Panel ( page ) {
 
 	this.page = page;
 	this.elements = [];
-	this.onShow = null;
+
+	this.deleteControls = [];
+
+	this.onShow = function () {
+
+		this.deleteControls.forEach ( function _deleteControls ( element ) {
+
+			element.parentElement.removeChild( element );
+
+		} );
+
+		this.deleteControls = [];
+
+	};
 
 }
 

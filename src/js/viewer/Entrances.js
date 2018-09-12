@@ -50,6 +50,7 @@ function Entrances ( survey ) {
 
 	this.markers = markers;
 	this.stations = stations;
+	this.metadata = survey.metadata;
 
 	this.addStatic( markers );
 
@@ -77,7 +78,23 @@ Entrances.prototype = Object.create( ClusterMarkers.prototype );
 
 Entrances.prototype.getStation = function ( index ) {
 
-	return this.stations[ index ];
+	const entrances = this.metadata.entrances;
+	const station = this.stations[ index ];
+
+	return {
+		station: station.getPath(),
+		info: entrances[ station.getPath() ]
+	};
+
+};
+
+Entrances.prototype.setStation = function ( station, info ) {
+
+	const metadata = this.metadata;
+
+	metadata.entrances[ station ] = info;
+
+	metadata.saveLocal();
 
 };
 

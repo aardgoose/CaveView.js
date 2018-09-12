@@ -1390,7 +1390,7 @@ function mouseDown ( event ) {
 
 	case MOUSE_MODE_ANNOTATE:
 
-		_selectAnnotation( visibleStation( intersects ) );
+		selectAnnotation( visibleStation( intersects ) );
 
 	}
 
@@ -1409,18 +1409,6 @@ function mouseDown ( event ) {
 			_setStationPOI( station );
 
 		}
-
-	}
-
-	function _selectAnnotation ( station ) {
-
-		if ( station === null ) return;
-
-		survey.selectStation( station );
-
-		Viewer.dispatchEvent( { type: 'selected', annotate: station } );
-
-		renderView();
 
 	}
 
@@ -1512,14 +1500,34 @@ function mouseDown ( event ) {
 
 }
 
+function selectAnnotation ( station ) {
+
+	if ( station === null ) return;
+
+	survey.selectStation( station );
+
+	Viewer.dispatchEvent( {
+		type: 'selectedAnnotation',
+		station: station.getPath(),
+		add: function _setAnnotation( annotationHandler) {
+
+			console.log( 'annotation handler: ' + annotationHandler );
+
+		}
+	} );
+
+	renderView();
+
+}
+
 function selectEntrance ( hit ) {
 
 	const entrances = survey.entrances;
-	const entranceName = entrances.getStation( hit.index ).getPath();
+	const info = entrances.getStation( hit.index );
 
 	Viewer.dispatchEvent( {
 		type: 'selectedEntrance',
-		entrance: entranceName,
+		entrance: info
 	} );
 
 }
@@ -1579,7 +1587,6 @@ function selectTraceStation ( station ) {
 			if ( list.length !== 2 ) return;
 
 			dyeTraces.addTrace( list[ 0 ], list[ 1 ] );
-			dyeTraces.finish();
 
 			markers.clear();
 			renderView();

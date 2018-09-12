@@ -9,38 +9,18 @@ function TracePanel ( page ) {
 
 	const self = this;
 
-	this.onShow = _onShow;
-
-	var line1 = null;
-	var line2 = null;
-
-	var deleteControls = [];
-
 	page.addListener( Viewer, 'selectedTrace', _onSelect );
 
 	this.add( page.addHeader( 'trace.header' ) );
 
+	var line1 = this.add( page.addLine( 'line1' ) );
+	var line2 = this.add( page.addLine( 'line2' ) );
+
 	function _initPanel () {
 
+		self.onShow();
 		line1.textContent = 'Start:';
 		line2.textContent = 'End:';
-
-		deleteControls.forEach ( function _deleteControls ( element ) {
-
-			element.parentElement.removeChild( element );
-
-		} );
-
-		deleteControls = [];
-
-	}
-
-	function _onShow () {
-
-		if ( line1 === null ) line1 = this.add( page.addLine( 'line1' ) );
-		if ( line2 === null ) line2 = this.add( page.addLine( 'line2' ) );
-
-		_initPanel();
 
 	}
 
@@ -67,12 +47,12 @@ function TracePanel ( page ) {
 		line1.textContent = 'Start: ' + traceInfo.start;
 		line2.textContent = 'End: ' + traceInfo.end;
 
-		const button = self.add( page.addButton( 'trace.delete', function() {
-			event.delete();
-			_initPanel();
-		} ) );
-
-		deleteControls.push( button );
+		self.deleteControls.push(
+			self.add( page.addButton( 'trace.delete', function() {
+				event.delete();
+				_initPanel();
+			} ) )
+		);
 
 	}
 
@@ -86,12 +66,12 @@ function TracePanel ( page ) {
 
 			line2.textContent = 'End: ' + event.end;
 
-			const button = self.add( page.addButton( 'trace.add', function() {
-				event.add();
-				_initPanel();
-			} ) );
-
-			deleteControls.push( button );
+			self.deleteControls.push(
+				self.add( page.addButton( 'trace.add', function() {
+					event.add();
+					_initPanel();
+				} ) )
+			);
 
 		}
 

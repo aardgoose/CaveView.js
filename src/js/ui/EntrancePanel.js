@@ -9,23 +9,9 @@ function EntrancePanel ( page ) {
 
 	const self = this;
 
-	var deleteControls = [];
-
 	this.add( page.addHeader( 'entrance.header' ) );
 
 	page.addListener( Viewer, 'selectedEntrance', _onSelect );
-
-	this.onShow = function () {
-
-		deleteControls.forEach ( function _deleteControls ( element ) {
-
-			element.parentElement.removeChild( element );
-
-		} );
-
-		deleteControls = [];
-
-	};
 
 	return this;
 
@@ -34,8 +20,9 @@ function EntrancePanel ( page ) {
 		self.onShow();
 		if ( event.entrance === undefined ) return;
 
-		deleteControls.push(
-			self.add( page.addLine( event.entrance ) )
+		self.deleteControls.push(
+			self.add( page.addLine( event.entrance.station ) ),
+			self.add( page.addLine( event.entrance.info.name ) )
 		);
 
 	}

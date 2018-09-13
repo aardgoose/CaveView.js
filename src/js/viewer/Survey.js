@@ -266,7 +266,6 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.loadDyeTraces();
 
-	// this.topology = new Topology( metadata ).mapSurvey( this.stations, this.getFeature( LEG_CAVE ), this.surveyTree );
 	this.topology = new Topology( this.stations, this.getFeature( LEG_CAVE ) );
 
 	this.routes = new Routes( this );

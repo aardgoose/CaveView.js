@@ -20,10 +20,9 @@ function EntrancePanel ( page ) {
 		self.onShow();
 		if ( event.entrance === undefined ) return;
 
-		self.deleteControls.push(
-			self.add( page.addLine( event.entrance.station ) ),
-			self.add( page.addLine( event.entrance.info.name ) )
-		);
+		self.addDynamic( page.addLine( event.entrance.station ) );
+		self.addDynamic( page.addLine( event.entrance.info.name ) );
+
 
 	}
 

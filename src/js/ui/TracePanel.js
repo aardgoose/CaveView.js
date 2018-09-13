@@ -13,8 +13,8 @@ function TracePanel ( page ) {
 
 	this.add( page.addHeader( 'trace.header' ) );
 
-	var line1 = this.add( page.addLine( 'line1' ) );
-	var line2 = this.add( page.addLine( 'line2' ) );
+	var line1 = this.add( page.addLine( 'Start:' ) );
+	var line2 = this.add( page.addLine( 'End:' ) );
 
 	function _initPanel () {
 
@@ -47,12 +47,10 @@ function TracePanel ( page ) {
 		line1.textContent = 'Start: ' + traceInfo.start;
 		line2.textContent = 'End: ' + traceInfo.end;
 
-		self.deleteControls.push(
-			self.add( page.addButton( 'trace.delete', function() {
-				event.delete();
-				_initPanel();
-			} ) )
-		);
+		self.addDynamic( page.addButton( 'trace.delete', function() {
+			event.delete();
+			_initPanel();
+		} ) );
 
 	}
 
@@ -66,12 +64,10 @@ function TracePanel ( page ) {
 
 			line2.textContent = 'End: ' + event.end;
 
-			self.deleteControls.push(
-				self.add( page.addButton( 'trace.add', function() {
-					event.add();
-					_initPanel();
-				} ) )
-			);
+			self.addDynamic( page.addButton( 'trace.add', function() {
+				event.add();
+				_initPanel();
+			} ) );
 
 		}
 

@@ -26,15 +26,13 @@ function AnnotatePanel ( page ) {
 
 		self.onShow();
 
-		self.deleteControls.push(
-			self.add( page.addLine( event.station ) ),
-			self.add( page.addSelect( 'annotate.type', annotators, annotator, 'type' ) ),
+		self.addDynamic( page.addLine( event.station ) );
+		self.addDynamic( page.addSelect( 'annotate.type', annotators, annotator, 'type' ) );
 
-			self.add( page.addButton( 'annotate.set', function () {
-				console.log( 'set annotation: ' + annotator.type );
-				self.onShow();
-			} ) )
-		);
+		self.addDynamic( page.addButton( 'annotate.set', function () {
+			console.log( 'set annotation: ' + annotator.type );
+			self.onShow();
+		} ) );
 
 	}
 

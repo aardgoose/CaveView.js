@@ -7,17 +7,17 @@ function Panel ( page ) {
 	this.page = page;
 	this.elements = [];
 
-	this.deleteControls = [];
+	this.dynamic = [];
 
 	this.onShow = function () {
 
-		this.deleteControls.forEach ( function _deleteControls ( element ) {
+		this.dynamic.forEach ( function _deleteDynamic( element ) {
 
 			element.parentElement.removeChild( element );
 
 		} );
 
-		this.deleteControls = [];
+		this.dynamic = [];
 
 	};
 
@@ -31,9 +31,18 @@ Panel.prototype.add = function ( element ) {
 
 };
 
+Panel.prototype.addDynamic = function ( element ) {
+
+	this.dynamic.push ( element );
+
+	return element;
+
+};
+
 Panel.prototype.setVisibility = function ( visible ) {
 
 	Page.setControlsVisibility( this.elements, visible );
+	Page.setControlsVisibility( this.dynamic, visible );
 
 	if ( visible && this.onShow !== null ) this.onShow();
 

@@ -8,12 +8,14 @@ function SurveyMetadata( name, metadata ) {
 	var routes = {};
 	var traces = [];
 	var entrances = {};
+	var annotations = {};
 
 	if ( metadata !== null ) {
 
 		if ( metadata.routes ) routes = metadata.routes;
 		if ( metadata.traces ) traces = metadata.traces;
 		if ( metadata.entrances ) entrances = metadata.entrances;
+		if ( metadata.annotations ) annotations = metadata.annotations;
 
 	}
 
@@ -39,14 +41,25 @@ function SurveyMetadata( name, metadata ) {
 
 		if ( localMetadata.traces !== undefined ) traces = localMetadata.traces; // FIXME - merge with preexisting
 		if ( localMetadata.entrances !== undefined ) entrances = localMetadata.entrances;
+		if ( localMetadata.annotations !== undefined ) annotations = localMetadata.annotations;
 
 	}
 
 	this.routes = routes;
 	this.traces = traces;
 	this.entrances = entrances;
+	this.annotations = annotations;
 
 }
+
+SurveyMetadata.annotators = {};
+
+SurveyMetadata.addAnnotator = function ( annotator ) {
+
+	console.log( annotator );
+	SurveyMetadata.annotators[ annotator.name ] = annotator;
+
+};
 
 SurveyMetadata.prototype = Object.create( EventDispatcher.prototype );
 
@@ -86,7 +99,9 @@ SurveyMetadata.prototype.getURL = function () {
 		name: 'test',
 		version: 1.0,
 		routes: this.routes,
-		traces: this.traces
+		traces: this.traces,
+		entrances: this.entrances,
+		annotations: this.annotations
 	};
 
 	return 'data:text/json;charset=utf8,' + encodeURIComponent( JSON.stringify( routesJSON ) );

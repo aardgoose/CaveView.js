@@ -16,6 +16,7 @@ import { Materials } from '../materials/Materials';
 import { CameraMove } from './CameraMove';
 import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
+import { SurveyMetadata } from './SurveyMetadata';
 import { StationPopup } from './StationPopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { CommonTerrain } from '../terrain/CommonTerrain';
@@ -975,6 +976,7 @@ function addFormatters( stationFormatter ) {
 
 }
 
+
 function cutSection () {
 
 	if ( selectedSection === survey.surveyTree || selectedSection.p !== undefined ) return;
@@ -1759,6 +1761,7 @@ Object.assign( Viewer, {
 	renderView:    renderView,
 	addOverlay:    addOverlay,
 	addFormatters: addFormatters,
+	addAnnotator:  SurveyMetadata.addAnnotator,
 	setView:       setView,
 	surfaceLightDirection: currentLightPosition
 } );

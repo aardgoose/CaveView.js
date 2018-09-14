@@ -84,7 +84,8 @@ SurveyMetadata.prototype.saveLocal = function () {
 	const localMetadata = {
 		routes: this.routes,
 		traces: this.traces,
-		entrances: this.entrances
+		entrances: this.entrances,
+		annotations: this.annotations
 	};
 
 	window.localStorage.setItem( this.name, JSON.stringify( localMetadata ) );

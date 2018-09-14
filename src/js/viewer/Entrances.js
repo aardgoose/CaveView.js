@@ -78,12 +78,13 @@ Entrances.prototype = Object.create( ClusterMarkers.prototype );
 
 Entrances.prototype.getStation = function ( index ) {
 
-	const entrances = this.metadata.entrances;
 	const station = this.stations[ index ];
+	const stationName = station.getPath();
 
 	return {
-		station: station.getPath(),
-		info: entrances[ station.getPath() ]
+		station: station,
+		name: stationName,
+		info: this.metadata.entrances[ stationName ]
 	};
 
 };
@@ -92,7 +93,7 @@ Entrances.prototype.setStation = function ( station, info ) {
 
 	const metadata = this.metadata;
 
-	metadata.entrances[ station ] = info;
+	metadata.entrances[ station.getPath() ] = info;
 
 	metadata.saveLocal();
 

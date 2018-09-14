@@ -21,7 +21,6 @@ function EditPage ( fileSelector ) {
 
 	Page.call( this, 'icon_route', 'edit', _onTop, _onLeave );
 
-	const metadata = Viewer.getMetadata();
 	const self = this;
 	const intro = [];
 
@@ -38,17 +37,9 @@ function EditPage ( fileSelector ) {
 
 	intro.push( this.addText( this.i18n( 'intro' ) ) );
 
-	this.addListener( metadata, 'change', _onMetadataChange );
-
 	this.onChange = _onChange;
 
 	return this;
-
-	function _onMetadataChange ( event ) {
-
-		console.log( 'event:', event.type, 'name:', event.name );
-
-	}
 
 	function _onChange ( event ) {
 
@@ -88,6 +79,7 @@ function EditPage ( fileSelector ) {
 				if ( annotatePanel === null ) annotatePanel = new AnnotatePanel( self );
 
 				newState.stations = true;
+				newState.annotations = true;
 
 				break;
 
@@ -111,6 +103,7 @@ function EditPage ( fileSelector ) {
 		// save initial view settings
 
 		initialState = {
+			annotations: Viewer.annotations,
 			shadingMode: Viewer.shadingMode,
 			entrances: Viewer.entrances,
 			stations: Viewer.stations,

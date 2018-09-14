@@ -14,7 +14,6 @@ function AnnotatePanel ( page ) {
 	Panel.call( this, page );
 
 	const self = this;
-	const annotator = { type: 'none' };
 
 	this.add( page.addHeader( 'annotate.header' ) );
 
@@ -26,11 +25,26 @@ function AnnotatePanel ( page ) {
 
 		self.onShow();
 
-		self.addDynamic( page.addLine( event.station ) );
-		self.addDynamic( page.addSelect( 'annotate.type', annotators, annotator, 'type' ) );
+		const annotationInfo = event.annotationInfo;
+
+		var annotation = annotationInfo.annotation;
+
+		if ( annotation === undefined ) {
+
+			annotation = {
+				type: 'none'
+			};
+
+		}
+
+		console.log( 'annot: ', annotation );
+
+		self.addDynamic( page.addLine( annotationInfo.name ) );
+		self.addDynamic( page.addSelect( 'annotate.type', annotators, annotation, 'type' ) );
 
 		self.addDynamic( page.addButton( 'annotate.set', function () {
-			console.log( 'set annotation: ' + annotator.type );
+			console.log( 'set annotation: ', annotation );
+			event.add( annotation );
 			self.onShow();
 		} ) );
 

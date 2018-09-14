@@ -1,7 +1,8 @@
 
 import {
 	FACE_SCRAPS, FACE_WALLS,
-	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES, FEATURE_STATIONS,
+	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES,
+	FEATURE_STATIONS, FEATURE_ANNOTATIONS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
@@ -21,6 +22,7 @@ import { Topology } from './Topology';
 import { Routes } from './Routes';
 import { Legs } from './Legs';
 import { DyeTraces } from './DyeTraces';
+import { Annotations } from './Annotations';
 import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
@@ -60,6 +62,7 @@ function Survey ( cave ) {
 	this.stations = null;
 	this.terrain = null;
 	this.topology = null;
+	this.annotations = null;
 	this.inverseWorld = null;
 	this.colourAxis = [
 		new Vector3( 1, 0, 0),
@@ -265,6 +268,7 @@ Survey.prototype.loadCave = function ( cave ) {
 	this.metadata = metadata;
 
 	this.loadDyeTraces();
+	this.loadAnnotations();
 
 	this.topology = new Topology( this.stations, this.getFeature( LEG_CAVE ) );
 
@@ -527,6 +531,16 @@ Survey.prototype.loadDyeTraces = function () {
 	this.addFeature( dyeTraces, FEATURE_TRACES, 'CV.DyeTraces' );
 
 	this.dyeTraces = dyeTraces;
+
+};
+
+Survey.prototype.loadAnnotations = function () {
+
+	const annotations = new Annotations( this );
+
+	this.addFeature( annotations, FEATURE_ANNOTATIONS, 'CV.DyeTraces' );
+
+	this.annotations = annotations;
 
 };
 

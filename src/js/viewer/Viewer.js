@@ -8,7 +8,7 @@ import {
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE, FEATURE_ANNOTATIONS
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -16,7 +16,6 @@ import { Materials } from '../materials/Materials';
 import { CameraMove } from './CameraMove';
 import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
-import { SurveyMetadata } from './SurveyMetadata';
 import { StationPopup } from './StationPopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { CommonTerrain } from '../terrain/CommonTerrain';
@@ -24,6 +23,7 @@ import { Cfg } from '../core/lib';
 import { WorkerPool } from '../core/WorkerPool';
 import { AnaglyphEffect } from './AnaglyphEffect';
 import { StereoEffect } from './StereoEffect';
+import { Annotations } from './Annotations';
 
 // analysis tests
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
@@ -436,6 +436,7 @@ function init ( domID, configuration ) { // public method
 	_conditionalLayer( LEG_SPLAY,         'splays' );
 	_conditionalLayer( LEG_SURFACE,       'surfaceLegs' );
 	_conditionalLayer( LABEL_STATION,     'stationLabels' );
+	_conditionalLayer( FEATURE_ANNOTATIONS, 'annotations' );
 
 	Materials.initCache( Viewer );
 
@@ -1504,16 +1505,20 @@ function mouseDown ( event ) {
 
 function selectAnnotation ( station ) {
 
+	const annotations = survey.annotations;
+
 	if ( station === null ) return;
 
 	survey.selectStation( station );
 
 	Viewer.dispatchEvent( {
 		type: 'selectedAnnotation',
-		station: station.getPath(),
-		add: function _setAnnotation( annotationHandler) {
+		annotationInfo: annotations.getStation( station ),
+		add: function _setAnnotation( annotation ) {
 
-			console.log( 'annotation handler: ' + annotationHandler );
+			console.log( 'annotation handler: ', annotation );
+			annotations.setStation( station, annotation );
+			renderView();
 
 		}
 	} );
@@ -1761,7 +1766,7 @@ Object.assign( Viewer, {
 	renderView:    renderView,
 	addOverlay:    addOverlay,
 	addFormatters: addFormatters,
-	addAnnotator:  SurveyMetadata.addAnnotator,
+	addAnnotator:  Annotations.addAnnotator,
 	setView:       setView,
 	surfaceLightDirection: currentLightPosition
 } );

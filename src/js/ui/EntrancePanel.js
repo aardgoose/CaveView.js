@@ -20,7 +20,7 @@ function EntrancePanel ( page ) {
 		self.onShow();
 		if ( event.entrance === undefined ) return;
 
-		self.addDynamic( page.addLine( event.entrance.station ) );
+		self.addDynamic( page.addLine( event.entrance.name ) );
 		self.addDynamic( page.addLine( event.entrance.info.name ) );
 
 

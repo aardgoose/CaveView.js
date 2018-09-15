@@ -58,7 +58,13 @@ Annotations.annotators = {};
 Annotations.addAnnotator = function ( annotator ) {
 
 	console.log( annotator );
-	Annotations.annotators[ annotator.name ] = annotator;
+	Annotations.annotators[ annotator.type ] = annotator;
+
+};
+
+Annotations.getAnnotator = function ( type ) {
+
+	return Annotations.annotators[ type ];
 
 };
 
@@ -93,6 +99,12 @@ Annotations.prototype.finish = function () {
 	this.metadata.saveLocal();
 
 	return this;
+
+};
+
+Annotations.getAnnotator = function ( type ) {
+
+	return Annotations.annotators[ type ];
 
 };
 

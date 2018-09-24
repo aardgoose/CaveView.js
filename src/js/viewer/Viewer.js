@@ -143,6 +143,24 @@ function init ( domID, configuration ) { // public method
 
 	console.log( 'CaveView v' + VERSION );
 
+	if ( 'serviceWorker' in navigator ) {
+
+		console.log( 'x' );
+
+		navigator.serviceWorker.register( '/sw.js' ).then( function ( registration ) {
+
+			// Registration was successful
+			console.log( 'ServiceWorker registration successful with scope: ', registration.scope );
+
+		}, function ( err ) {
+
+			// registration failed :(
+			console.log( 'ServiceWorker registration failed: ', err );
+
+		} );
+
+	}
+
 	container = document.getElementById( domID );
 
 	if ( ! container ) alert( 'No container DOM object [' + domID + '] available' );
@@ -1245,13 +1263,17 @@ function loadSurvey ( newSurvey ) {
 
 	if ( terrain === null ) {
 
-		terrain = new WebTerrain( survey, _tilesLoaded, container );
+		if ( navigator.onLine ) {
 
-		HUD.getProgressDial( 0 ).watch( terrain );
+			terrain = new WebTerrain( survey, _tilesLoaded, container );
 
-		syncTerrainLoading = ! terrain.load();
+			HUD.getProgressDial( 0 ).watch( terrain );
 
-		if ( syncTerrainLoading ) terrain = null;
+			syncTerrainLoading = ! terrain.load();
+
+			if ( syncTerrainLoading ) terrain = null;
+
+		}
 
 	} else {
 

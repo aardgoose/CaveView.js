@@ -35,5 +35,21 @@
 			"Contains Ordnance Survey data © Crown copyright and database right 2015."
 		]
 
+	},
+	{
+		"title": "Pokljuka",
+		"dtmMaxZoom": 17,
+		"maxZoom": 18,
+		"minZoom": 16,
+		"divisions": 128,
+		"directory": "",
+		"subdirectory": "Pokljuka",
+		"dtmScale": 64,
+		"minX": 35298,
+		"maxX": 35299,
+		"minY": 23219,
+		"maxY": 23220,
+		"attributions": [ "Slovenia" ],
+		"log": true
 	}
 ]

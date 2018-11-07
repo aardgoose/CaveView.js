@@ -814,7 +814,7 @@ Survey.prototype.cutSection = function ( node ) {
 
 	this.loadEntrances();
 
-	this.topology = new Topology( this.metadata ).mapSurvey( this.stations, this.getFeature( LEG_CAVE ), this.surveyTree );
+	this.topology = new Topology( this.stations, this.getFeature( LEG_CAVE ) );
 
 	this.cutInProgress = true;
 

@@ -145,8 +145,6 @@ function init ( domID, configuration ) { // public method
 
 	if ( 'serviceWorker' in navigator ) {
 
-		console.log( 'x' );
-
 		navigator.serviceWorker.register( '/sw.js' ).then( function ( registration ) {
 
 			// Registration was successful

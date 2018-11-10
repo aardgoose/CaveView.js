@@ -15,4 +15,17 @@ CaveView supports two DTM tile formats:
 
 ### Custom Tiles
 
-The custom tile format supported uses the same [Slippy Map](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames) tiling scheme as OpenStreetMap. The default DTM resolution is tile size ( width or height ) / 127. By creating DTM Tiles for a range of zoom levels, high resolution terrains can be displayed effeciently. Note: because of the nature of the [Web Mercator](https://epsg.io/3857) projection used by Slippy Maps, the x and y resolutions vary by latitude. 
+The custom tile format supported uses the same [Slippy Map](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames) tiling scheme as OpenStreetMap. The default DTM resolution is tile size ( width or height ) / 127. By creating DTM Tiles for a range of zoom levels, high resolution terrains can be displayed efficiently. Note: because of the nature of the [Web Mercator](https://epsg.io/3857) projection used by Slippy Maps, the x and y resolutions vary by latitude.
+
+#### Tile File Format
+
+The tile format used is a simple sequence of 16 bit unsigned integers. The DTM height grid is in row major order. Heights ( in metres )  are multiplied by a scale factor ( by default 64 ) and rounded, to allow a vertical resolution better than 1m to be obtained.
+
+#### Tile Creation
+
+Tile can be created using a combination of open source GIS tools and simple node.js scripts in the CaveView git repository. The process is documented [here](tilecreation.html).
+
+### Cesium@tm; Tiles
+
+The Cesium World Terrain data is availble at no cost or low data requirements and non-commercial projects.  This data covers the entire globe at various resolutions, and uses a publically [documented](https://github.com/AnalyticalGraphicsInc/quantized-mesh) triangulated mesh format to provide simplified terrain tiles. Use of Cesium tiles is documented [here](cesiumtiles.html).
+

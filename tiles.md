@@ -11,7 +11,7 @@ CaveView can display Digital Terrain Models (DTM) over a cave model. The terrain
 CaveView supports two DTM tile formats:
 
 * Custom tiles
-* Cesium&reg; terrain tiles.
+* Cesium&reg; terrain tiles
 
 ### Custom Tiles
 

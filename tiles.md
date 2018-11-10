@@ -7,6 +7,8 @@ CaveView can display Digital Terrain Models (DTM) over a cave model. The terrain
 CaveView supports two DTM tile formats:
 
 * Custom tiles
-* Cesium terrain tiles.
+* Cesium&reg; terrain tiles.
 
 ### Custom Tiles
+
+The custom tile format supported uses the same [Slippy Map](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames) tiling scheme as OpenStreetMap. The default DTM resolution is 

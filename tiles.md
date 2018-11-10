@@ -25,7 +25,7 @@ The tile format used is a simple sequence of 16 bit unsigned integers. The DTM h
 
 Tile can be created using a combination of open source GIS tools and simple node.js scripts in the CaveView git repository. The process is documented [here](tilecreation.html).
 
-### Cesium@tm; Tiles
+### Cesium&reg; Tiles
 
 The Cesium World Terrain data is availble at no cost or low data requirements and non-commercial projects.  This data covers the entire globe at various resolutions, and uses a publically [documented](https://github.com/AnalyticalGraphicsInc/quantized-mesh) triangulated mesh format to provide simplified terrain tiles. Use of Cesium tiles is documented [here](cesiumtiles.html).
 

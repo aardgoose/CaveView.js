@@ -27,5 +27,5 @@ Tile can be created using a combination of open source GIS tools and simple node
 
 ### Cesium&reg; Tiles
 
-The Cesium World Terrain data is availble at no cost or low data requirements and non-commercial projects.  This data covers the entire globe at various resolutions, and uses a publically [documented](https://github.com/AnalyticalGraphicsInc/quantized-mesh) triangulated mesh format to provide simplified terrain tiles. Use of Cesium tiles is documented [here](cesiumtiles.html).
+The Cesium World Terrain data is availble at no cost for non-commercial projects with limited bandwidth requirements. This data covers the entire globe at various resolutions depending on availability, and uses a publically [documented](https://github.com/AnalyticalGraphicsInc/quantized-mesh) triangulated mesh format to provide simplified terrain tiles. Use of Cesium tiles is documented [here](cesiumtiles.html).
 

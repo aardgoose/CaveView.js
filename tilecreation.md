@@ -29,7 +29,7 @@ load: [  16/32433/21248 ] ...
 
 The tile set is specified in a file tileSet.json which has the following format:
 
-`
+```json
 [
 	{
 		"title": "Peak District",
@@ -51,7 +51,7 @@ The tile set is specified in a file tileSet.json which has the following format:
 		"log": true // display load: [ z/x/y ] messages in console
 	},
 ]
-`
+```
 
 
 

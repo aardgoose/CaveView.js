@@ -1,4 +1,8 @@
-# Terrain Tiling
+---
+title: Terrain Tiles
+---
+
+# Terrain Tiles
 
 ## Introduction
 
@@ -11,4 +15,4 @@ CaveView supports two DTM tile formats:
 
 ### Custom Tiles
 
-The custom tile format supported uses the same [Slippy Map](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames) tiling scheme as OpenStreetMap. The default DTM resolution is tile size ( width or height ) / 127. By creaing DTM Tiles for a range of zoom levels, high resolution terrains can be displayed effeciently. Note: because of the nature of the [Web Mercator](https://epsg.io/3857) projection used by Slippy Maps, the x and y resolutions very by latitude. 
+The custom tile format supported uses the same [Slippy Map](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames) tiling scheme as OpenStreetMap. The default DTM resolution is tile size ( width or height ) / 127. By creating DTM Tiles for a range of zoom levels, high resolution terrains can be displayed effeciently. Note: because of the nature of the [Web Mercator](https://epsg.io/3857) projection used by Slippy Maps, the x and y resolutions vary by latitude. 

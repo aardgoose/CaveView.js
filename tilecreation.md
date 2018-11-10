@@ -20,16 +20,16 @@ To define a tile set, you must determine the specifications of the Slippy Map ti
 `load: [ zoom/x/y ] `, where zoom, x and y are the tile zoom level, x and y coordinates.
 
 Example:
-`
+```
 load: [  16/32432/21247 ] ...
 load: [  16/32432/21248 ] ...
 load: [  16/32433/21247 ] ...
 load: [  16/32433/21248 ] ...
-`
+```
 
 The tile set is specified in a file tileSet.json which has the following format:
 
-```json
+```javascript
 [
 	{
 		"title": "Peak District",

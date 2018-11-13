@@ -41,8 +41,8 @@ function EPSG4326TileSet( tileSetReady, crs ) {
 
 EPSG4326TileSet.defaultTileSet = {
 	title: 'Cesium',
-	dtmMaxZoom: 16,
 	overlayMaxZoom: 16,
+	maxZoom: 16,
 	minZoom: 10,
 	divisions: 1,
 	directory: null,

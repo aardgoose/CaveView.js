@@ -249,7 +249,7 @@ function init ( domID, configuration ) { // public method
 		},
 
 		'terrainTileSet': {
-			get: function () { return terrain.tileSet(); }
+			get: function () { return terrain.tileSet.bind( terrain ); }
 		},
 
 		'terrainOpacity': {

@@ -36,7 +36,7 @@ EPSG3857TileSet.defaultTileSet = {
 	isFlat: true,
 	title: 'flat',
 	dtmMaxZoom: 16,
-	maxZoom: 18,
+	overlayMaxZoom: 18,
 	minZoom: 10,
 	divisions: 128,
 	directory: null,

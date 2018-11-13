@@ -89,7 +89,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 	const key = x + ':' + y + ':' + z;
 
 	const material = this.materialCache[ key ];
-	const maxZoom = this.provider.maxZoom;
+	const overlayMaxZoom = this.provider.overlayMaxZoom;
 
 	var repeat = 1;
 	var xOffset = 0;
@@ -103,7 +103,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 	}
 
-	const zoomDelta = z - maxZoom;
+	const zoomDelta = z - overlayMaxZoom;
 
 	if ( zoomDelta > 0 ) {
 
@@ -121,7 +121,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 		x = newX;
 		y = newY;
-		z = maxZoom;
+		z = overlayMaxZoom;
 
 		//console.log( 'max zoom exceeded', repeat, x, y, z, xOffset, yOffset );
 

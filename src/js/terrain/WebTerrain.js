@@ -140,7 +140,7 @@ WebTerrain.prototype.pickCoverage = function ( limits ) {
 
 	const tileSet = this.TS.tileSet;
 
-	var zoom = tileSet.maxZoom + 1;
+	var zoom = tileSet.overlayMaxZoom + 1;
 	var coverage;
 
 	do {

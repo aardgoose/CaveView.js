@@ -164,7 +164,7 @@ function replaceExtension( fileName, newExtention ) {
 
 function dataURL( json ) {
 
-	return 'data:text/json;charset=utf8,' + encodeURIComponent( JSON.stringify( json ) );
+	return 'data:text/json;charset=utf8,' + encodeURIComponent( JSON.stringify( json, null, '\t' ) );
 
 }
 

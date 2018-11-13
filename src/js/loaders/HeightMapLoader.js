@@ -9,13 +9,13 @@ function HeightMapLoader ( tileSpec, loadCallback, errorCallback ) {
 	this.loadCallback  = loadCallback;
 	this.errorCallback = errorCallback;
 
-	if ( tileSpec.z > tileSet.dtmMaxZoom ) {
+	if ( tileSpec.z > tileSet.maxZoom ) {
 
-		const scale = Math.pow( 2, tileSpec.z - tileSet.dtmMaxZoom );
+		const scale = Math.pow( 2, tileSpec.z - tileSet.maxZoom );
 
 		this.x = Math.floor( tileSpec.x / scale );
 		this.y = Math.floor( tileSpec.y / scale );
-		this.z = tileSet.dtmMaxZoom;
+		this.z = tileSet.maxZoom;
 
 		// calculate offset in terrain cells of covering DTM tile for this smaller image tile.
 

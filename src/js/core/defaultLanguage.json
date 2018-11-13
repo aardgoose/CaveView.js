@@ -84,7 +84,8 @@
 				"caption": "Overlay"
 			},
 			"opacity": "Opacity",
-			"datum_shift": "Vertical datum shift"
+			"datum_shift": "Vertical datum shift",
+			"downloadTileSet": "download tile set spec"
 		}
 	},
 	"edit": {

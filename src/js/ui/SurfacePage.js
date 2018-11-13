@@ -38,6 +38,12 @@ function SurfacePage () {
 
 		controls.push( this.addCheckbox( 'terrain.datum_shift', Viewer, 'terrainDatumShift' ) );
 
+		if ( ! Viewer.hasRealTerrain ) {
+
+			controls.push( this.addDownloadButton( 'terrain.downloadTileSet', Viewer.terrainTileSet, 'tileSetEntry.json' ) );
+
+		}
+
 		const attributions = Viewer.terrainAttributions;
 
 		for ( var i = 0; i < attributions.length; i++ ) {

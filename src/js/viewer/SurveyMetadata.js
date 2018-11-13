@@ -1,3 +1,5 @@
+import { dataURL } from '../core/lib';
+
 function SurveyMetadata( name, metadata ) {
 
 	this.name = name;
@@ -78,14 +80,14 @@ SurveyMetadata.prototype.getURL = function () {
 
 	// dump of json top window for cut and paste capture
 
-	const routesJSON = {
-		name: 'test',
-		version: 1.0,
-		routes: this.routes,
-		traces: this.traces
-	};
-
-	return 'data:text/json;charset=utf8,' + encodeURIComponent( JSON.stringify( routesJSON ) );
+	return dataURL(
+		{
+			name: 'test',
+			version: 1.0,
+			routes: this.routes,
+			traces: this.traces
+		}
+	);
 
 };
 

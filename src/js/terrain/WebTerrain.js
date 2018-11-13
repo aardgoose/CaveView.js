@@ -269,7 +269,23 @@ WebTerrain.prototype.tileArea = function ( limits ) {
 
 WebTerrain.prototype.tileSet = function () {
 
-	return dataURL( this.coverage );
+	const tileSet = Object.assign( {}, EPSG3857TileSet.defaultTileSet );
+	const coverage = this.coverage;
+
+	delete tileSet.isFlat;
+	delete tileSet.directory;
+
+	tileSet.title = 'new tile set';
+	tileSet.subdirectory = 'new_tile_set';
+
+	tileSet.minZoom = coverage.zoom;
+
+	tileSet.minX = coverage.min_x;
+	tileSet.maxX = coverage.max_x;
+	tileSet.minY = coverage.min_y;
+	tileSet.maxY = coverage.max_y;
+
+	return dataURL( tileSet );
 
 };
 

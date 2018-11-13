@@ -39,7 +39,7 @@ function Tile ( x, y, zoom, tileSpec ) {
 	this.clip    = tileSpec.clip;
 	this.clippedFraction = tileSpec.clippedFraction;
 
-	this.canZoom  = ( zoom < tileSpec.tileSet.maxZoom );
+	this.canZoom  = ( zoom < tileSpec.tileSet.overlayMaxZoom );
 	this.evicted  = false;
 	this.replaced = false;
 	this.evictionCount = 1;

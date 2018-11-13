@@ -33,7 +33,7 @@ function tileArea( x, y, z, maxZoom ) {
 
 		outFile = 'dtm\\' + z + '\\DTM-' + x + '-' + y + '.bin';
 
-		runCmd( 'r.out.bin -b bytes=2 input=DTM' + z + 'X@' + mapSet +  ' output=' + outFile );
+		runCmd( 'r.out.bin bytes=2 input=DTM' + z + 'X@' + mapSet +  ' output=' + outFile );
 
 	}
 
@@ -55,23 +55,22 @@ function tileArea( x, y, z, maxZoom ) {
 
 // EPSG:3875 "Web Mercator" tile range
 
-var mapSet = 'Matienzo';
+var mapSet = 'TEST';
 
 var tileSet = {
-	title: 'Matienzo',
-	dtmMaxZoom: 16,
+	title: 'Pokljuka',
+	dtmMaxZoom: 17,
 	maxZoom: 18,
-	minZoom: 12,
+	minZoom: 16,
 	divisions: 128,
 	directory: '',
-	subdirectory: 'Matienzo',
+	subdirectory: 'Pokljuka',
 	dtmScale: 64,
-	minX: 2005,
-	maxX: 2008,
-	minY: 1498,
-	maxY: 1500
+	minX: 35298,
+	maxX: 35299,
+	minY: 23219,
+	maxY: 23220
 };
-
 
 var x, y;
 

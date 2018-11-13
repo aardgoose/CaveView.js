@@ -39,7 +39,6 @@ EPSG3857TileSet.defaultTileSet = {
 	maxZoom: 16,
 	minZoom: 10,
 	divisions: 128,
-	directory: null,
 	subdirectory: null,
 	dtmScale: 64,
 	minX: 0,

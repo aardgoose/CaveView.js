@@ -1,5 +1,6 @@
 
 import { EventDispatcher } from '../Three';
+import { dataURL } from '../core/lib';
 
 function SurveyMetadata( name, metadata ) {
 
@@ -96,16 +97,14 @@ SurveyMetadata.prototype.getURL = function () {
 
 	// dump of json top window for cut and paste capture
 
-	const routesJSON = {
+	return dataURL( {
 		name: 'test',
 		version: 1.0,
 		routes: this.routes,
 		traces: this.traces,
 		entrances: this.entrances,
 		annotations: this.annotations
-	};
-
-	return 'data:text/json;charset=utf8,' + encodeURIComponent( JSON.stringify( routesJSON ) );
+	} );
 
 };
 

@@ -2,7 +2,7 @@ import { Materials } from '../materials/Materials';
 import { CommonTerrain } from './CommonTerrain';
 import { Tile } from './Tile';
 import { WorkerPool } from '../core/WorkerPool';
-import { Cfg } from '../core/lib';
+import { Cfg, dataURL } from '../core/lib';
 
 import { EPSG4326TileSet } from './EPSG4326TileSet';
 import { EPSG3857TileSet } from './EPSG3857TileSet';
@@ -35,6 +35,7 @@ function WebTerrain ( survey, onLoaded, container ) {
 	this.tilesLoading = 0;
 	this.overlaysLoading = 0;
 	this.debug = true;
+	this.coverage = null;
 
 	this.material = Materials.getCursorMaterial();
 	this.canZoom = true;
@@ -140,7 +141,7 @@ WebTerrain.prototype.pickCoverage = function ( limits ) {
 
 	const tileSet = this.TS.tileSet;
 
-	var zoom = tileSet.maxZoom + 1;
+	var zoom = tileSet.overlayMaxZoom + 1;
 	var coverage;
 
 	do {
@@ -243,6 +244,7 @@ WebTerrain.prototype.tileArea = function ( limits ) {
 	const zoom = coverage.zoom;
 
 	this.initialZoom = zoom;
+	this.coverage = coverage;
 
 	for ( var x = coverage.min_x; x < coverage.max_x + 1; x++ ) {
 
@@ -262,6 +264,28 @@ WebTerrain.prototype.tileArea = function ( limits ) {
 	}
 
 	return;
+
+};
+
+WebTerrain.prototype.tileSet = function () {
+
+	const tileSet = Object.assign( {}, EPSG3857TileSet.defaultTileSet );
+	const coverage = this.coverage;
+
+	delete tileSet.isFlat;
+	delete tileSet.directory;
+
+	tileSet.title = 'new tile set';
+	tileSet.subdirectory = 'new_tile_set';
+
+	tileSet.minZoom = coverage.zoom;
+
+	tileSet.minX = coverage.min_x;
+	tileSet.maxX = coverage.max_x;
+	tileSet.minY = coverage.min_y;
+	tileSet.maxY = coverage.max_y;
+
+	return dataURL( tileSet );
 
 };
 

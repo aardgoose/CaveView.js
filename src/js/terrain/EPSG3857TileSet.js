@@ -35,11 +35,10 @@ function EPSG3857TileSet( tileSetReady ) {
 EPSG3857TileSet.defaultTileSet = {
 	isFlat: true,
 	title: 'flat',
-	dtmMaxZoom: 16,
-	maxZoom: 18,
+	overlayMaxZoom: 18,
+	maxZoom: 16,
 	minZoom: 10,
 	divisions: 128,
-	directory: null,
 	subdirectory: null,
 	dtmScale: 64,
 	minX: 0,
@@ -88,7 +87,7 @@ EPSG3857TileSet.prototype.getCoverage = function ( limits, zoom ) {
 EPSG3857TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
 
 	const tileSet = this.tileSet;
-	const scale = ( z > tileSet.dtmMaxZoom ) ? Math.pow( 2, tileSet.dtmMaxZoom - z ) : 1;
+	const scale = ( z > tileSet.maxZoom ) ? Math.pow( 2, tileSet.maxZoom - z ) : 1;
 
 	// don't zoom in with no overlay - no improvement of terrain rendering in this case
 

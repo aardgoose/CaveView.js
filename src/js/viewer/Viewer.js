@@ -248,6 +248,10 @@ function init ( domID, configuration ) { // public method
 			get: function () { return terrain.terrainShadingModes; }
 		},
 
+		'terrainTileSet': {
+			get: function () { return terrain.tileSet(); }
+		},
+
 		'terrainOpacity': {
 			writeable: true,
 			get: function () { return ( terrain !== null ) ? terrain.getOpacity() : 0; },

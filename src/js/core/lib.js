@@ -162,6 +162,12 @@ function replaceExtension( fileName, newExtention ) {
 
 }
 
-export { Cfg, replaceExtension };
+function dataURL( json ) {
+
+	return 'data:text/json;charset=utf8,' + encodeURIComponent( JSON.stringify( json ) );
+
+}
+
+export { Cfg, replaceExtension, dataURL };
 
 // EOF

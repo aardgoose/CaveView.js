@@ -59,8 +59,8 @@ WMTSProvider.prototype.getAttribution = function () {
 
 	var a = document.createElement( 'a' );
 
-	a.href = 'http://maps.nls.uk';
-	a.textContent = 'map overlay by National Library of Scotland';
+	a.href = 'http://www.ign.es/';
+	a.textContent = '© Instituto Geográfico Nacional de España';
 
 	return a;
 

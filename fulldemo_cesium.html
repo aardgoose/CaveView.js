@@ -35,7 +35,6 @@
 
 <script type="text/javascript" src="/CaveView.js/CaveView/js/CaveView.js" ></script>
 
-<script type="text/javascript" src="/CaveView.js/CaveView/lib/BingProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/WMTSProvider.js" ></script>
 
 <script type="text/javascript" >
@@ -46,14 +45,13 @@ function onload () {
 		home: '/CaveView.js/CaveView/', 
 		terrainDirectory: '/CaveView.js/terrain/', 
 		surveyDirectory: '/CaveView.js/surveys/',
-		view: { terrain: true },
+		view: { terrain: true, terrainShading: "Spanish IGN aerial photography" },
 		displayCRS: 'ORIGINAL',
 		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZTk5MmVmZC1iZDU5LTQzMWQtOWY0Zi1mZDYxNDA1MTNjMjgiLCJpZCI6OTEwLCJpYXQiOjE1MjYzMjczMDh9.aJWNt5jc-dt64lR4q7zw0bdp0PARsvupmWjUYUrQVQs',
 	} );
 
 	CV.Viewer.addOverlay( 'Spanish IGN mapping', new WMTSProvider( true ) );
 	CV.Viewer.addOverlay( 'Spanish IGN aerial photography', new WMTSProvider( false ) );
-	CV.Viewer.addOverlay( 'Bing Aerial', new BingProvider( 'Aerial', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
 
 	CV.UI.loadCave( 'andara.3d' );
 

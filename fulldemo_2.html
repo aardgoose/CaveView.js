@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>demo 3d cave viewer</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+
+		body {
+			padding: 30px;
+		}
+	
+		h3 {
+			margin-left: 0;
+		}
+
+		#credits p {
+			margin-left: 10px;
+		}
+
+		#hints ul {
+			margin-left: 10px;
+			font-style: bold;
+		}
+
+		div#scene {
+			width: 100%;
+			height: 800px
+		}
+
+	</style>
+	<link type="text/css" href="/CaveView.js/CaveView/css/caveview.css" rel="stylesheet"/>
+</head>
+<body onload="onload();" >
+
+<script type="text/javascript" src="/CaveView.js/CaveView/js/CaveView.js" ></script>
+
+<script type="text/javascript" src="/CaveView.js/CaveView/lib/BingProvider.js" ></script>
+<script type="text/javascript" src="CaveView/lib/WMTSProvider.js" ></script>
+
+<script type="text/javascript" >
+
+function onload () {
+
+	CV.UI.init( 'scene', {
+		home: '/CaveView.js/CaveView/', 
+		terrainDirectory: '/CaveView.js/terrain/', 
+		surveyDirectory: '/CaveView.js/surveys/',
+		view: { terrain: true },
+		displayCRS: 'ORIGINAL',
+		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZTk5MmVmZC1iZDU5LTQzMWQtOWY0Zi1mZDYxNDA1MTNjMjgiLCJpZCI6OTEwLCJpYXQiOjE1MjYzMjczMDh9.aJWNt5jc-dt64lR4q7zw0bdp0PARsvupmWjUYUrQVQs',
+	} );
+
+	CV.Viewer.addOverlay( 'Spanish IGN mapping', new WMTSProvider( true ) );
+	CV.Viewer.addOverlay( 'Spanish IGN aerial photography', new WMTSProvider( false ) );
+	CV.Viewer.addOverlay( 'Bing Aerial', new BingProvider( 'Aerial', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
+
+	CV.UI.loadCave( 'andara.3d' );
+
+}
+
+</script>
+<div id="scene" ></div>
+<div id="hints" >
+<h3>Controls</h3>
+<ul>
+<li>Mouse: left button down - left/right - rotate, up/down - zoom</li>
+<li>Mouse: middle - tilt/pitch</li>
+<li>Mouse: right button down - pan</li>
+<li>Keyboard shortcuts - see '?' sidebar</li>
+<li>Your own surveys can be drag 'n' dropped onto the viewer</li>
+</ul>
+</div>
+<div id="credits" >
+<h3>Credits</h3>
+<p>The Cheddar Survey "Therion" 3D file by University of Bristol Spelaeological Society is released under a
+<a rel="license" title="Creative Commons Attribution-Non-Commercial-Share Alike 2.0 UK: England &amp; Wales License" href="http://creativecommons.org/licenses/by-nc-sa/2.0/uk/">Creative Commons</a> license.
+<br>
+<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/2.0/uk/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-nc-sa/2.0/uk/88x31.png"></a>
+</p>
+<p>Open Street Map overlay <a href="http://www.openstreetmap.org/copyright">&copy; OpenStreetMap</a> contributors.</p>
+<p>Overlay of old Ordnance Survey maps from <a href="http://www.nls.uk/" >National Library of Scotland</a> under a <a href="https://creativecommons.org/licenses/by/3.0/" >Creative Commons Attribution 3.0 Unported Licence.</a>
+You can also read the full <a href="https://creativecommons.org/licenses/by/3.0/legalcode" >legal code</a> of the licence.</p>
+<p>Contains Ordnance Survey data &copy; Crown copyright and database right 2015.</p>
+<p>Contains DTM data &copy; Environment Agency copyright and/or database right 2015.</p>
+</div>
+</body>
+</html>

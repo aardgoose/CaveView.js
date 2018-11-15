@@ -48,5 +48,20 @@
 		"maxY": 23220,
 		"attributions": [ "Slovenia" ],
 		"log": true
+	},
+	{
+		"title": "Andara",
+		"overlayMaxZoom": 18,
+		"maxZoom": 16,
+		"minZoom": 11,
+		"divisions": 128,
+		"subdirectory": "Andara",
+		"dtmScale": 16,
+		"minX": 996,
+		"maxX": 997,
+		"minY": 750,
+		"maxY": 751,
+		"attributions": [ "Work derived from PNOA 2012 CC-BY scne.es[www.scne.es]" ],
+		"log": true
 	}
 ]

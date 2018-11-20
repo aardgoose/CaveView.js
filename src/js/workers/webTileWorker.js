@@ -27,6 +27,40 @@ function onMessage ( event ) {
 
 }
 
+
+function dzzDecode( data, size ) {
+
+	const buffer = new Uint8Array( data );
+	const target = new Uint32Array( size );
+
+	var last = 0, i, outPos = 0;
+
+	for ( i = 0; i < buffer.length; i++ ) {
+
+		var z = 0, shift = 0;
+		var b = buffer[ i ];
+
+		while ( b & 0x80 ) {
+
+			z |= ( b & 0x7F ) << shift;
+			shift += 7;
+			b = buffer[ ++i ];
+
+		}
+
+		z |= b << shift;
+
+		var v = ( z & 1 ) ? ( z >> 1 ) ^ -1 : ( z >> 1 );
+
+		last += v;
+		target[ outPos++ ] = last;
+
+	}
+
+	return target;
+
+}
+
 function mapLoaded ( data ) {
 
 	// clip height map data
@@ -36,7 +70,18 @@ function mapLoaded ( data ) {
 	const tileSet   = tileSpec.tileSet;
 	const divisions = tileSpec.divisions;
 
-	const terrainData = new Uint16Array( data );
+	var terrainData;
+
+	if ( tileSet.encoding === 'dzz' ) {
+
+		const dtmDivisions = tileSet.divisions + 1;
+		terrainData = dzzDecode( data, dtmDivisions * dtmDivisions );
+
+	} else {
+
+		terrainData = new Uint16Array( data );
+
+	}
 
 	const xDivisions = divisions - clip.left - clip.right;
 	const yDivisions = divisions - clip.top - clip.bottom;

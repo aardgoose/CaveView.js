@@ -52,6 +52,7 @@
 	{
 		"title": "Andara",
 		"overlayMaxZoom": 18,
+		"encoding": "dzz",
 		"maxZoom": 16,
 		"minZoom": 11,
 		"divisions": 128,

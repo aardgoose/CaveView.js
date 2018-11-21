@@ -33,6 +33,9 @@ function dzzDecode( data, size ) {
 	const buffer = new Uint8Array( data );
 	const target = new Uint32Array( size );
 
+	// handle empty files.
+	if ( buffer.length === 4 ) return target;
+
 	var last = 0, i, outPos = 0;
 
 	for ( i = 0; i < buffer.length; i++ ) {

@@ -20,7 +20,7 @@ function ExtendedPointsMaterial () {
 
 		var vertexShader = shader.vertexShader
 			.replace( '#include <common>', '\nattribute float pSize;\n\n$&' )
-			.replace( '\t\tgl_PointSize = size;', '\t\tgl_PointSize = pSize;' );
+			.replace( '\tgl_PointSize = size;', '\tgl_PointSize = pSize;' );
 
 		shader.vertexShader = vertexShader;
 

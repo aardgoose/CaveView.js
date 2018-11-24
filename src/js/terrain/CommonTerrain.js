@@ -286,7 +286,7 @@ CommonTerrain.prototype.getHeight = function ( point ) {
 		this.terrainBase = this.boundingBox.min;
 		this.terrainRange = this.boundingBox.getSize( new Vector3() );
 
-		// setup value cached in closure
+		// setup value cached
 
 		__adjust.set( renderTarget.width, renderTarget.height, 1 ).divide( this.terrainRange );
 

@@ -1510,7 +1510,7 @@ function setScale ( obj ) {
 
 	limits = survey.limits;
 
-	const range = limits.getSize( new Vector3() );
+	const range = survey.combinedLimits.getSize( new Vector3() );
 
 	// initialize cursor height to be mid range of heights
 	cursorHeight = 0;
@@ -1525,7 +1525,7 @@ function setScale ( obj ) {
 
 	obj.scale.copy( scale );
 
-	obj.position.copy( survey.modelLimits.getCenter( new Vector3() ).multiply( scale ).negate() );
+	obj.position.copy( survey.combinedLimits.getCenter( new Vector3() ).multiply( scale ).negate() );
 
 	obj.updateMatrix();
 	obj.updateMatrixWorld();

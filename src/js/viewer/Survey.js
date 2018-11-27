@@ -87,6 +87,7 @@ function Survey ( cave ) {
 	modelLimits.max.sub( this.offsets );
 
 	this.modelLimits = modelLimits;
+	this.combinedLimits = modelLimits;
 
 	// this needs to be defined before loading the leg data to
 	// allow correct leg lengths to be calculated
@@ -235,7 +236,7 @@ Survey.prototype.calibrateTerrain = function ( terrain ) {
 
 		terrain.datumShift = s1 / n;
 
-		console.log( 'Adjustmenting terrain height by ', terrain.datumShift, sd );
+		console.log( 'Adjustmenting terrain height by:', terrain.datumShift, 'sd:',sd );
 
 	}
 
@@ -397,15 +398,9 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		const terrain = new LoxTerrain( cave.terrain, self.offsets );
 
-		// get limits of terrain - ignoring maximum which distorts height shading etc
-		const terrainLimits = new Box3().copy( terrain.tile.geometry.boundingBox );
+		// expand limits with terrain
 
-		const modelLimits = self.modelLimits;
-
-		terrainLimits.min.z = modelLimits.min.z;
-		terrainLimits.max.z = modelLimits.max.z;
-
-		modelLimits.union( terrainLimits );
+		self.combinedLimits = new Box3().copy( terrain.tile.geometry.boundingBox ).union( self.modelLimits );
 
 		self.terrain = terrain;
 
@@ -757,7 +752,7 @@ Survey.prototype.setFeatureBox = function () {
 
 	if ( this.featureBox === null ) {
 
-		const box = new Box3Helper( this.modelLimits, Cfg.themeValue( 'box.bounding' ) );
+		const box = new Box3Helper( this.combinedLimits, Cfg.themeValue( 'box.bounding' ) );
 
 		box.layers.set( FEATURE_BOX );
 		box.name = 'survey-boundingbox';
@@ -767,7 +762,7 @@ Survey.prototype.setFeatureBox = function () {
 
 	} else {
 
-		this.featureBox.update( this.modelLimits );
+		this.featureBox.update( this.combinedLimits );
 
 	}
 
@@ -838,6 +833,8 @@ Survey.prototype.cutSection = function ( node ) {
 	this.highlightSelection( 0 );
 
 	this.modelLimits = this.getBounds();
+	this.combinedLimits = this.modelLimits;
+
 	this.limits.copy( this.modelLimits );
 
 	this.limits.min.add( this.offsets );

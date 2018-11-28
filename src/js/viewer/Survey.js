@@ -830,7 +830,7 @@ Survey.prototype.cutSection = function ( node ) {
 	// ordering is important here
 
 	this.clearSelection();
-	this.highlightSelection( 0 );
+	this.highlightSelection( this.surveyTree );
 
 	this.modelLimits = this.getBounds();
 	this.combinedLimits = this.modelLimits;

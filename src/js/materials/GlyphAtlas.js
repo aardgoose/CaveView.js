@@ -4,7 +4,7 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 	const atlasSize = 512;
 	const cellSize = 32;
-	const fontSize = 30;
+	const fontSize = 30 / window.devicePixelRatio;
 	const divisions = atlasSize / cellSize;
 
 	const canvas = document.createElement( 'canvas' );

@@ -931,6 +931,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			if ( move ) {
 
+				// correct marking of last position moved to.
+				lastPosition.inSection = false;
+
 				dropLastCoordinates();
 				move = false;
 

@@ -932,8 +932,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 			if ( move ) {
 
 				// correct marking of last position moved to.
-				lastPosition.inSection = false;
-
 				dropLastCoordinates();
 				move = false;
 
@@ -1129,8 +1127,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		} else {
 
-			if ( ! inSection ) coords.inSection = false;
-
 			stationMap.set( lastKey, coords );
 
 		}
@@ -1142,7 +1138,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	function dropLastCoordinates () {
 
 		// don't drop coordinates we know are in the section being extracted
-		if ( lastPosition.inSection ) return;
+		if ( lastPosition.connections ) return;
 
 		stationMap.delete( lastKey );
 

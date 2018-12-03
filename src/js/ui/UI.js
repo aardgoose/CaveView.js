@@ -70,7 +70,7 @@ function initUI () {
 
 	new SettingsPage( fileSelector );
 	new SurfacePage();
-	new SelectionPage( container );
+	new SelectionPage( container, fileSelector );
 	new RoutePage( fileSelector );
 	new InfoPage( fileSelector );
 	new HelpPage( avenControls );

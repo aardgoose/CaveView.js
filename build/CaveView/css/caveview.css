@@ -561,3 +561,6 @@ div.cv-checkbox {
 #cv-frame input[type=range]:focus::-ms-fill-upper {
 	background: #eee;
 }
+#cv-frame div.reload:hover {
+	color: lime;
+}

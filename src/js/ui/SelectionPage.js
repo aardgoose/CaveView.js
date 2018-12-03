@@ -5,7 +5,7 @@ import { Viewer } from '../viewer/Viewer';
 import { SurveyColours } from '../core/SurveyColours';
 import { Cfg } from '../core/lib';
 
-function SelectionPage ( container ) {
+function SelectionPage ( container, fileSelector ) {
 
 	Page.call( this, 'icon_explore', 'explore' );
 
@@ -29,6 +29,13 @@ function SelectionPage ( container ) {
 	this.addHeader( 'Selection' );
 
 	titleBar.id = 'ui-path';
+
+	if ( Viewer.isClipped ) {
+
+		titleBar.classList.add( 'reload' );
+		this.addListener( titleBar, 'click', __handleLoadFull );
+
+	}
 
 	this.appendChild( titleBar );
 
@@ -284,6 +291,12 @@ function SelectionPage ( container ) {
 		if ( ! target.classList.contains( 'section' ) ) return;
 
 		if ( node !== surveyTree ) Viewer.cut = true;
+
+	}
+
+	function __handleLoadFull () {
+
+		fileSelector.reload();
 
 	}
 

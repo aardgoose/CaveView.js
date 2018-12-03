@@ -6,6 +6,7 @@ function FileSelector ( container ) {
 	this.fileList = [];
 	this.fileCount = 0;
 	this.currentIndex = Infinity;
+	this.loadedFile;
 
 	const self = this;
 
@@ -63,8 +64,15 @@ FileSelector.prototype.nextFile = function () {
 FileSelector.prototype.selectFile = function ( file, section ) {
 
 	this.selectedFile = file instanceof File ? file.name : file;
+	this.loadedFile = file;
 
 	this.dispatchEvent( { type: 'selected', file: file, section: section } );
+
+};
+
+FileSelector.prototype.reload = function () {
+
+	this.selectFile( this.loadedFile );
 
 };
 

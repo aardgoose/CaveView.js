@@ -125,6 +125,7 @@ var popup = null;
 var effect = null;
 
 var activeRenderer;
+var clipped = false;
 
 // preallocated tmp objects
 
@@ -231,6 +232,7 @@ function init ( domID, configuration ) { // public method
 		'hasTerrain': {
 			get: function () { return !! terrain; }
 		},
+
 		'hasRealTerrain': {
 			get: function () { return ( terrain && ! terrain.isFlat ); }
 		},
@@ -411,6 +413,10 @@ function init ( domID, configuration ) { // public method
 			writeable: true,
 			get: function () { return useFog; },
 			set: setFog
+		},
+
+		'isClipped': {
+			get: function () { return clipped; }
 		},
 
 	} );
@@ -952,6 +958,8 @@ function cutSection () {
 	// reset view
 	clearView();
 
+	clipped = true;
+
 	loadSurvey( cutSurvey );
 
 }
@@ -1107,6 +1115,8 @@ function loadCave ( file, section ) {
 		caveLoader.loadURL( file, section );
 
 	}
+
+	clipped = ( section !== undefined && section != '' );
 
 }
 

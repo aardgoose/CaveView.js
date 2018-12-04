@@ -1106,15 +1106,7 @@ function clearView () {
 
 function loadCave ( file, section ) {
 
-	if ( file instanceof File ) {
-
-		caveLoader.loadFile( file );
-
-	} else {
-
-		caveLoader.loadURL( file, section );
-
-	}
+	caveLoader.loadFile( file, section );
 
 	clipped = ( section !== undefined && section != '' );
 
@@ -1122,7 +1114,7 @@ function loadCave ( file, section ) {
 
 function loadCaves ( files ) {
 
-	caveLoader.loadURLs( files );
+	caveLoader.loadFiles( files );
 
 }
 

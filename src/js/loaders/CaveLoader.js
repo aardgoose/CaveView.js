@@ -18,6 +18,8 @@ function CaveLoader ( callback ) {
 	this.metadataResponse = null;
 	this.taskCount = 0;
 	this.section = null;
+	this.handler = null;
+	this.files = null;
 
 }
 
@@ -26,6 +28,8 @@ CaveLoader.prototype = Object.create( EventDispatcher.prototype );
 CaveLoader.prototype.constructor = CaveLoader;
 
 CaveLoader.prototype.setHandler = function ( fileName ) {
+
+	if ( this.handler !== null ) return true;
 
 	const rev = fileName.split( '.' ).reverse();
 
@@ -63,7 +67,16 @@ CaveLoader.prototype.setHandler = function ( fileName ) {
 
 };
 
+CaveLoader.prototype.loadURLs = function ( files ) {
+
+	this.files = files;
+	this.loadURL( files.pop() );
+
+};
+
 CaveLoader.prototype.loadURL = function ( fileName, section ) {
+
+	console.log( fileName );
 
 	this.dispatchEvent( { type: 'progress', name: 'start' } );
 
@@ -211,15 +224,28 @@ CaveLoader.prototype.callHandler = function () {
 	const data = this.dataResponse;
 	const metadata = this.metadataResponse;
 	const section = this.section;
+	const files = this.files;
 
 	this.dataResponse = null;
 	this.metadataResponse = null;
 	this.section = null;
 
-	this.callback( this.handler.parse( data, metadata, section ) );
-	this.dispatchEvent( { type: 'progress', name: 'end' } );
+	const moreFiles = files !== null && files.length > 0;
 
-	this.handler = null;
+	// start the next download to overlap parsing previous file
+
+	if ( moreFiles ) this.loadURL( files.pop() );
+
+	this.handler.parse( data, metadata, section );
+
+	if ( ! moreFiles ) {t
+
+		this.callback( this.handler.end() );
+		this.dispatchEvent( { type: 'progress', name: 'end' } );
+
+		this.handler = null;
+
+	}
 
 };
 

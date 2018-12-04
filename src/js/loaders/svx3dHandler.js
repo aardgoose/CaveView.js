@@ -19,6 +19,7 @@ function Svx3dHandler ( fileName ) {
 	this.displayCRS = null;
 	this.projection = null;
 	this.stationMap = new Map();
+	this.section = null;
 
 }
 
@@ -83,6 +84,7 @@ Svx3dHandler.prototype.setCRS = function ( sourceCRS ) {
 Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	this.metadata = metadata;
+	this.section = section;
 
 	var pos = 0; // file position
 
@@ -124,11 +126,52 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	}
 
+	return;
+
+	function readLF () { // read until Line feed
+
+		return readNSLF()[ 0 ];
+
+	}
+
+	function readNSLF () { // read until Line feed and split by null bytes
+
+		const bytes = new Uint8Array( dataStream, 0 );
+		const strings = [];
+
+		var lfString = [];
+		var b;
+
+		do {
+
+			b = bytes[ pos++ ];
+
+			if ( b === 0x0a || b === 0 ) {
+
+				strings.push( String.fromCharCode.apply( null, lfString ).trim() );
+				lfString = [];
+
+			} else {
+
+				lfString.push( b );
+
+			}
+
+		} while ( b != 0x0a );
+
+		return strings;
+
+	}
+
+};
+
+Svx3dHandler.prototype.end = function () {
+
 	const surveyTree = this.surveyTree;
 
-	if ( section !== null ) {
+	if ( this.section !== null ) {
 
-		surveyTree.trim( section.split( '.' ) );
+		surveyTree.trim( this.section.split( '.' ) );
 
 	}
 
@@ -197,41 +240,6 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	function adjustCoords ( coords ) {
 
 		coords.sub( offsets );
-
-	}
-
-	function readLF () { // read until Line feed
-
-		return readNSLF()[ 0 ];
-
-	}
-
-	function readNSLF () { // read until Line feed and split by null bytes
-
-		const bytes = new Uint8Array( dataStream, 0 );
-		const strings = [];
-
-		var lfString = [];
-		var b;
-
-		do {
-
-			b = bytes[ pos++ ];
-
-			if ( b === 0x0a || b === 0 ) {
-
-				strings.push( String.fromCharCode.apply( null, lfString ).trim() );
-				lfString = [];
-
-			} else {
-
-				lfString.push( b );
-
-			}
-
-		} while ( b != 0x0a );
-
-		return strings;
 
 	}
 

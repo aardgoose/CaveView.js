@@ -67,10 +67,24 @@ CaveLoader.prototype.setHandler = function ( fileName ) {
 
 };
 
-CaveLoader.prototype.loadURLs = function ( files ) {
+CaveLoader.prototype.loadFile = function ( file, section ) {
+
+	if ( file instanceof File ) {
+
+		this.loadLocalFile( file, section );
+
+	} else {
+
+		this.loadURL( file, section );
+
+	}
+
+};
+
+CaveLoader.prototype.loadFiles = function ( files ) {
 
 	this.files = files;
-	this.loadURL( files.pop() );
+	this.loadFile( files.pop() );
 
 };
 
@@ -154,7 +168,7 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 };
 
-CaveLoader.prototype.loadFile = function ( file, section ) {
+CaveLoader.prototype.loadLocalFile = function ( file, section ) {
 
 	this.dispatchEvent( { type: 'progress', name: 'start' } );
 
@@ -234,7 +248,7 @@ CaveLoader.prototype.callHandler = function () {
 
 	// start the next download to overlap parsing previous file
 
-	if ( moreFiles ) this.loadURL( files.pop() );
+	if ( moreFiles ) this.loadFile( files.pop() );
 
 	this.handler.parse( data, metadata, section );
 

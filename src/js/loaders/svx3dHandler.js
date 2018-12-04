@@ -509,6 +509,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	var i;
 	var labelChanged = false;
 	var inSection = ( section === null );
+	var splayExpected = false; // xsect expected to end on a splay
 
 	// functions
 
@@ -911,6 +912,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			} else if ( flags & 0x04 ) {
 
+				lastPosition.splays++;
 				legs.push( { coords: thisPosition, type: LEG_SPLAY, survey: sectionId } );
 
 			} else {
@@ -1087,8 +1089,21 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		} else if ( position.connections === 1 && xSects.length > 1 ) {
 
-			endRun = true;
-			// console.log( 'unterminated LRUD passage at ', label, 'ref count ', position.connections );
+			if ( position.splays === 0 ) {
+
+				endRun = true;
+				// console.log( 'unterminated LRUD passage at ', label, 'ref count ', position.splays );
+
+			} else {
+
+				// expecting next is a splay
+				splayExpected = true;
+
+			}
+
+		} else if ( splayExpected && position.connections !== 0 ) {
+
+			// console.log( 'LRUD passing through splay', label );
 
 		}
 
@@ -1098,6 +1113,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			lastXSectPosition = new Vector3();
 			xSects = [];
+			splayExpected = false;
 
 		}
 

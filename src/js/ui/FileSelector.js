@@ -33,7 +33,20 @@ function FileSelector ( container ) {
 
 		event.preventDefault();
 
-		if ( dt.files.length === 1 ) self.selectFile( dt.files[ 0 ], null );
+		const count = dt.files.length;
+		const files = [];
+
+		if ( count > 0 ) {
+
+			for( var i = 0; i < count; i++ ) {
+
+				files.push( dt.files[ i ] );
+
+			}
+
+			self.selectFile( files, null );
+
+		}
 
 	}
 
@@ -63,8 +76,27 @@ FileSelector.prototype.nextFile = function () {
 
 FileSelector.prototype.selectFile = function ( file, section ) {
 
-	this.selectedFile = file instanceof File ? file.name : file;
+	if ( Array.isArray( file ) ) {
+
+		if ( file.length === 1 ) {
+
+			this.selectedFile = file.name;
+
+		} else {
+
+			this.selectedFile = '[multiple]';
+
+		}
+
+	} else {
+
+		this.selectedFile = file;
+
+	}
+
 	this.loadedFile = file;
+
+	console.log( 'load', file );
 
 	this.dispatchEvent( { type: 'selected', file: file, section: section } );
 

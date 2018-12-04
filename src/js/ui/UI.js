@@ -57,7 +57,15 @@ function selectFile( event ) {
 	Page.clear();
 	Viewer.clearView();
 
-	Viewer.loadCave( event.file, event.section );
+	if ( Array.isArray( event.file ) ) {
+
+		Viewer.loadCaves( event.file );
+
+	} else {
+
+		Viewer.loadCave( event.file, event.section );
+
+	}
 
 }
 

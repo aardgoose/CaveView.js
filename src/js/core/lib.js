@@ -158,6 +158,8 @@ Cfg.themeColor = function getThemeColor ( name ) {
 
 function replaceExtension( fileName, newExtention ) {
 
+	if ( fileName === undefined ) return 'file set';
+
 	return fileName.split( '.' ).shift() + '.' + newExtention;
 
 }

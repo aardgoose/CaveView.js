@@ -1120,6 +1120,12 @@ function loadCave ( file, section ) {
 
 }
 
+function loadCaves ( files ) {
+
+	caveLoader.loadURLs( files );
+
+}
+
 function caveLoaded ( cave ) {
 
 	if ( ! cave ) {
@@ -1580,6 +1586,7 @@ Object.assign( Viewer, {
 	init:          init,
 	clearView:     clearView,
 	loadCave:      loadCave,
+	loadCaves:     loadCaves,
 	getMetadata:   getMetadata,
 	getRoutes:     getRoutes,
 	getLegStats:   getLegStats,

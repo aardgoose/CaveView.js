@@ -625,6 +625,12 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 };
 
+loxHandler.prototype.end = function () {
+
+	return this;
+
+};
+
 loxHandler.prototype.getSurvey = function () {
 
 	return {

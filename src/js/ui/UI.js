@@ -94,11 +94,19 @@ function loadCave ( file, section ) {
 
 }
 
+function loadCaves ( files ) {
+
+	Viewer.clearView();
+	Viewer.loadCaves( files );
+
+}
+
 // export public interface
 
 export const UI = {
 	init:         init,
 	loadCave:     loadCave,
+	loadCaves:    loadCaves,
 	loadCaveList: loadCaveList
 };
 

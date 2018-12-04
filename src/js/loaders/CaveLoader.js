@@ -238,7 +238,7 @@ CaveLoader.prototype.callHandler = function () {
 
 	this.handler.parse( data, metadata, section );
 
-	if ( ! moreFiles ) {t
+	if ( ! moreFiles ) {
 
 		this.callback( this.handler.end() );
 		this.dispatchEvent( { type: 'progress', name: 'end' } );

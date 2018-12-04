@@ -14,6 +14,7 @@ StationPosition.scaleFactor = 1;
 Object.assign( StationPosition.prototype, Vector3.prototype );
 
 StationPosition.prototype.connections = 0;
+StationPosition.prototype.splays = 0;
 
 StationPosition.prototype.correctedDistanceTo = function ( v ) {
 

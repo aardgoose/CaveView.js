@@ -42202,6 +42202,7 @@
 		this.taskCount = 0;
 		this.section = null;
 		this.handler = null;
+		this.extention = null;
 		this.files = null;
 
 	}
@@ -42214,7 +42215,7 @@
 
 		const extention = fileName.split( '.' ).reverse().shift().toLowerCase();
 
-		if ( this.extention !== undefined && extention !== this.extention ) {
+		if ( this.extention !== null && extention !== this.extention ) {
 
 			alert( 'CaveView: mismatched file extension for [' + fileName + ']' );
 			return false;
@@ -42429,6 +42430,7 @@
 			this.dispatchEvent( { type: 'progress', name: 'end' } );
 
 			this.handler = null;
+			this.extention = null;
 
 		}
 

@@ -18,6 +18,7 @@ function CaveLoader ( callback ) {
 	this.taskCount = 0;
 	this.section = null;
 	this.handler = null;
+	this.extention = null;
 	this.files = null;
 
 }
@@ -30,7 +31,7 @@ CaveLoader.prototype.setHandler = function ( fileName ) {
 
 	const extention = fileName.split( '.' ).reverse().shift().toLowerCase();
 
-	if ( this.extention !== undefined && extention !== this.extention ) {
+	if ( this.extention !== null && extention !== this.extention ) {
 
 		alert( 'CaveView: mismatched file extension for [' + fileName + ']' );
 		return false;
@@ -245,6 +246,7 @@ CaveLoader.prototype.callHandler = function () {
 		this.dispatchEvent( { type: 'progress', name: 'end' } );
 
 		this.handler = null;
+		this.extention = null;
 
 	}
 

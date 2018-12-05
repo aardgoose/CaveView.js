@@ -2,7 +2,6 @@
 import { Cfg, replaceExtension } from '../core/lib';
 import { Svx3dHandler } from './svx3dHandler';
 import { loxHandler } from './loxHandler';
-import { kmlHandler } from './kmlHandler';
 import { FileLoader, EventDispatcher } from '../Three';
 
 function CaveLoader ( callback ) {
@@ -29,11 +28,18 @@ CaveLoader.prototype.constructor = CaveLoader;
 
 CaveLoader.prototype.setHandler = function ( fileName ) {
 
+	const extention = fileName.split( '.' ).reverse().shift().toLowerCase();
+
+	if ( this.extention !== undefined && extention !== this.extention ) {
+
+		alert( 'CaveView: mismatched file extension for [' + fileName + ']' );
+		return false;
+
+	}
+
 	if ( this.handler !== null ) return true;
 
-	const rev = fileName.split( '.' ).reverse();
-
-	this.extention = rev.shift().toLowerCase();
+	this.extention = extention;
 
 	switch ( this.extention ) {
 
@@ -49,16 +55,9 @@ CaveLoader.prototype.setHandler = function ( fileName ) {
 
 		break;
 
-
-	case 'kml':
-
-		this.handler = new kmlHandler( fileName );
-
-		break;
-
 	default:
 
-		console.warn( 'Cave: unknown response extension [', self.extention, ']' );
+		console.warn( 'CaveView: unknown file extension [', this.extention, ']' );
 		return false;
 
 	}
@@ -90,8 +89,6 @@ CaveLoader.prototype.loadFiles = function ( files ) {
 
 CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
-	console.log( fileName );
-
 	this.dispatchEvent( { type: 'progress', name: 'start' } );
 
 	if ( section !== undefined ) this.section = section;
@@ -100,17 +97,12 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 	const prefix = Cfg.value( 'surveyDirectory', '' );
 
 	// setup file handler
-	if ( ! this.setHandler( fileName ) ) {
-
-		alert( 'Cave: unknown file extension [' + self.extention + ']' );
-		return false;
-
-	}
+	if ( ! this.setHandler( fileName ) ) return false;
 
 	const handler = this.handler;
 
 	this.doneCount = 0;
-	this.taskCount = handler.isRegion ? 1 : 2;
+	this.taskCount = 2;
 
 	const loader = new FileLoader().setPath( prefix );
 
@@ -177,12 +169,7 @@ CaveLoader.prototype.loadLocalFile = function ( file, section ) {
 	const self = this;
 	const fileName = file.name;
 
-	if ( ! this.setHandler( fileName ) ) {
-
-		alert( 'Cave: unknown file extension [' + this.extention + ']' );
-		return false;
-
-	}
+	if ( ! this.setHandler( fileName ) ) return false;
 
 	const fLoader = new FileReader();
 

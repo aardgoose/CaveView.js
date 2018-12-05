@@ -12,7 +12,7 @@ function loxHandler ( fileName ) {
 	this.lineSegments = [];
 	this.xGroups      = [];
 	this.xSects       = [];
-	this.stations     = [];
+	this.allStations  = [];
 	this.surveyTree   = new Tree( '', 0 );
 	this.limits       = new Box3();
 	this.terrain      = {};
@@ -31,7 +31,6 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	this.modelOffset += 100000;
 
 	const lineSegments = this.lineSegments;
-	const stations     = this.stations;
 	const self         = this;
 	const surveyTree   = this.surveyTree;
 	const xSects       = this.xSects;
@@ -40,8 +39,12 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	// assumes little endian data ATM - FIXME
 
 	var source = dataStream;
+
 	const l = source.byteLength;
 	const idOffset = this.modelOffset;
+	const stations = [];
+
+	this.allStations.push( stations );
 
 	var pos = 0; // file position
 	var dataStart;
@@ -212,9 +215,8 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		const m_flags = readUint();
 		const coords = readCoords();
-		const id = m_id + idOffset;
 
-		stations[ id ] = coords;
+		stations[ m_id ] = coords;
 
 		// add stations to surveyTree make station id negative to avoid clashes with survey id space.
 
@@ -227,7 +229,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		}
 
-		parentNode.addById( readString( namePtr ), - id, { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
+		parentNode.addById( readString( namePtr ), - ( m_id + idOffset ), { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
 
 	}
 
@@ -281,11 +283,8 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		if ( m_flags & 0x01 ) type = LEG_SURFACE;
 		if ( m_flags & 0x08 ) type = LEG_SPLAY;
 
-		const fromId = m_from + idOffset;
-		const toId   = m_to + idOffset;
-
-		const from = stations[ fromId ];
-		const to   = stations[ toId ];
+		const from = stations[ m_from ];
+		const to   = stations[ m_to ];
 
 		/*
 		.lox section types
@@ -301,7 +300,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		if ( m_sectionType !== 0x00 && type === LEG_CAVE ) {
 
-			xSects.push( { m_from: fromId, m_to: toId, start: from, end: to, fromLRUD: fromLRUD, lrud: toLRUD, survey: surveyId, type: m_sectionType } );
+			xSects.push( { m_from: m_from, m_to: m_to, start: from, end: to, fromLRUD: fromLRUD, lrud: toLRUD, survey: surveyId, type: m_sectionType } );
 
 		}
 
@@ -534,7 +533,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 loxHandler.prototype.end = function () {
 
 	const self = this;
-	const stations = this.stations;
+	const allStations = this.allStations;
 	const offsets = this.limits.getCenter( new Vector3() );
 
 	this.offsets = offsets;
@@ -543,7 +542,11 @@ loxHandler.prototype.end = function () {
 
 	var i, j;
 
-	stations.forEach( function ( s ) { s.sub( offsets ); } );
+	allStations.forEach( function ( all ) {
+
+		all.forEach( function ( s ) { s.sub( offsets ); } );
+
+	} );
 
 	const scraps = this.scraps;
 

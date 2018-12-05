@@ -11,9 +11,13 @@ function loxHandler ( fileName ) {
 	this.faults       = [];
 	this.lineSegments = [];
 	this.xGroups      = [];
+	this.xSects       = [];
+	this.stations     = [];
 	this.surveyTree   = new Tree( '', 0 );
+	this.limits       = new Box3();
 	this.terrain      = {};
 	this.hasTerrain   = false;
+	this.modelOffset  = 0;
 
 }
 
@@ -24,17 +28,20 @@ loxHandler.prototype.type = 'arraybuffer';
 loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	this.metadata = metadata;
+	this.modelOffset += 100000;
 
-	const lineSegments = [];
-	const stations     = [];
+	const lineSegments = this.lineSegments;
+	const stations     = this.stations;
 	const self         = this;
 	const surveyTree   = this.surveyTree;
-	const xSects       = [];
+	const xSects       = this.xSects;
+	const limits       = this.limits;
 
 	// assumes little endian data ATM - FIXME
 
 	var source = dataStream;
 	const l = source.byteLength;
+	const idOffset = this.modelOffset;
 
 	var pos = 0; // file position
 	var dataStart;
@@ -44,49 +51,13 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	var lastParentId;
 	var parentNode;
 
-	// range
-
-	const limits = new Box3();
+	// read file and parse chunk by chunk
 
 	while ( pos < l ) readChunkHdr();
 
-	this.lineSegments = lineSegments;
-
 	// Drop data to give GC a chance ASAP
+
 	source = null;
-
-	const offsets = limits.getCenter( new Vector3() );
-
-	this.limits = limits;
-	this.offsets = offsets;
-
-	// convert to origin centered coordinates
-
-	var i, j;
-
-	for ( i = 0; i < stations.length; i++ ) {
-
-		stations[ i ].sub( offsets );
-
-	}
-
-	const scraps = this.scraps;
-
-	// covert scraps coordinates
-
-	for ( i = 0; i < scraps.length; i++ ) {
-
-		const vertices = scraps[ i ].vertices;
-
-		for ( j = 0; j < vertices.length; j++ ) {
-
-			vertices[ j ].sub( offsets );
-
-		}
-
-	}
-
-	procXsects();
 
 	return this;
 
@@ -162,77 +133,6 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	}
 
-	function procXsects () {
-
-		const xGroups = self.xGroups;
-		const ends = [];
-
-		var lastTo, xGroup, i;
-
-		xSects.sort( function ( a, b ) { return a.m_from - b.m_from; } );
-
-		for ( i = 0; i < xSects.length; i++ ) {
-
-			const xSect = xSects[ i ];
-
-			if ( xSect.m_from !== lastTo ) {
-
-				xGroup = [];
-				self.xGroups.push( xGroup );
-
-			}
-
-			lastTo = xSect.m_to;
-
-			xGroup.push( xSect );
-
-		}
-
-		for ( i = 0; i < xGroups.length; i++ ) {
-
-			const group = xGroups[ i ];
-
-			const start = group[ 0 ].m_from;
-			const end = group[ group.length - 1 ].m_to;
-
-			// concatenate adjacent groups
-
-			const prepend = ends.indexOf( start );
-
-			if ( prepend !== -1 ) {
-
-				// keep the new run in the same slot - thus end record remains correct
-				xGroups[ i ] = xGroups[ prepend ].concat( group );
-
-				// remove entry from moved group
-				xGroups[ prepend ] = [];
-				ends[ prepend ] = undefined;
-
-			}
-
-			ends.push( end );
-
-		}
-
-		for ( i = 0; i < xGroups.length; i++ ) {
-
-			const group = xGroups[ i ];
-			const xSect = group[ 0 ];
-
-			if ( xSect === undefined ) continue; // groups that have been merged
-
-			const start = xSect.start;
-			const end = xSect.end;
-
-			// fake approach vector for initial xSect ( mirrors first segment vector )
-
-			const newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
-
-			group.unshift( { start: newStart, end: start, lrud: xSect.fromLRUD, survey: xSect.survey, type: xSect.type } );
-
-		}
-
-	}
 
 	function readUint () {
 
@@ -263,14 +163,14 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		if ( lastParentId !== m_parent ) {
 
-			parentNode = surveyTree.findById( m_parent );
+			parentNode = surveyTree.findById( ( lastParentId === undefined ) ? 0 : m_parent + idOffset );
 			lastParentId = m_parent;
 
 		}
 
 		if ( m_parent != m_id ) {
 
-			const node = parentNode.addById( readString( namePtr ), m_id );
+			const node = parentNode.addById( readString( namePtr ), m_id + idOffset );
 
 			if ( node === null ) console.warn( 'error constructing survey tree for', readString( titlePtr ) );
 
@@ -312,8 +212,9 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		const m_flags = readUint();
 		const coords = readCoords();
+		const id = m_id + idOffset;
 
-		stations[ m_id ] = coords;
+		stations[ id ] = coords;
 
 		// add stations to surveyTree make station id negative to avoid clashes with survey id space.
 
@@ -321,12 +222,12 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		if ( lastParentId !== m_surveyId ) {
 
-			parentNode = surveyTree.findById( m_surveyId );
+			parentNode = surveyTree.findById( m_surveyId + idOffset );
 			lastParentId = m_surveyId;
 
 		}
 
-		parentNode.addById( readString( namePtr ), - m_id, { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
+		parentNode.addById( readString( namePtr ), - id, { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
 
 	}
 
@@ -380,8 +281,11 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		if ( m_flags & 0x01 ) type = LEG_SURFACE;
 		if ( m_flags & 0x08 ) type = LEG_SPLAY;
 
-		const from = stations[ m_from ];
-		const to   = stations[ m_to ];
+		const fromId = m_from + idOffset;
+		const toId   = m_to + idOffset;
+
+		const from = stations[ fromId ];
+		const to   = stations[ toId ];
 
 		/*
 		.lox section types
@@ -393,9 +297,11 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		LXFILE_SHOT_SECTION_TUNNEL 4
 		*/
 
+		const surveyId = m_surveyId + idOffset;
+
 		if ( m_sectionType !== 0x00 && type === LEG_CAVE ) {
 
-			xSects.push( { m_from: m_from, m_to: m_to, start: from, end: to, fromLRUD: fromLRUD, lrud: toLRUD, survey: m_surveyId, type: m_sectionType } );
+			xSects.push( { m_from: fromId, m_to: toId, start: from, end: to, fromLRUD: fromLRUD, lrud: toLRUD, survey: surveyId, type: m_sectionType } );
 
 		}
 
@@ -412,7 +318,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		}
 
-		lineSegments.push( { from: from, to: to, type: type, survey: m_surveyId } );
+		lineSegments.push( { from: from, to: to, type: type, survey: surveyId } );
 
 	}
 
@@ -452,7 +358,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		const m_num3Angles = readUint();
 		const facesPtr     = readDataPtr();
 
-		const scrap = { vertices: [], faces: [], survey: m_surveyId };
+		const scrap = { vertices: [], faces: [], survey: m_surveyId + idOffset };
 
 		var lastFace;
 		var i, j;
@@ -627,7 +533,110 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 loxHandler.prototype.end = function () {
 
+	const self = this;
+	const stations = this.stations;
+	const offsets = this.limits.getCenter( new Vector3() );
+
+	this.offsets = offsets;
+
+	// convert to origin centered coordinates
+
+	var i, j;
+
+	stations.forEach( function ( s ) { s.sub( offsets ); } );
+
+	const scraps = this.scraps;
+
+	// covert scraps coordinates
+
+	for ( i = 0; i < scraps.length; i++ ) {
+
+		const vertices = scraps[ i ].vertices;
+
+		for ( j = 0; j < vertices.length; j++ ) {
+
+			vertices[ j ].sub( offsets );
+
+		}
+
+	}
+
+	procXsects();
+
 	return this;
+
+	function procXsects () {
+
+		const xGroups = self.xGroups;
+		const xSects  = self.xSects;
+		const ends = [];
+
+		var lastTo, xGroup, i;
+
+		xSects.sort( function ( a, b ) { return a.m_from - b.m_from; } );
+
+		for ( i = 0; i < xSects.length; i++ ) {
+
+			const xSect = xSects[ i ];
+
+			if ( xSect.m_from !== lastTo ) {
+
+				xGroup = [];
+				xGroups.push( xGroup );
+
+			}
+
+			lastTo = xSect.m_to;
+
+			xGroup.push( xSect );
+
+		}
+
+		for ( i = 0; i < xGroups.length; i++ ) {
+
+			const group = xGroups[ i ];
+
+			const start = group[ 0 ].m_from;
+			const end = group[ group.length - 1 ].m_to;
+
+			// concatenate adjacent groups
+
+			const prepend = ends.indexOf( start );
+
+			if ( prepend !== -1 ) {
+
+				// keep the new run in the same slot - thus end record remains correct
+				xGroups[ i ] = xGroups[ prepend ].concat( group );
+
+				// remove entry from moved group
+				xGroups[ prepend ] = [];
+				ends[ prepend ] = undefined;
+
+			}
+
+			ends.push( end );
+
+		}
+
+		for ( i = 0; i < xGroups.length; i++ ) {
+
+			const group = xGroups[ i ];
+			const xSect = group[ 0 ];
+
+			if ( xSect === undefined ) continue; // groups that have been merged
+
+			const start = xSect.start;
+			const end = xSect.end;
+
+			// fake approach vector for initial xSect ( mirrors first segment vector )
+
+			const newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
+
+			group.unshift( { start: newStart, end: start, lrud: xSect.fromLRUD, survey: xSect.survey, type: xSect.type } );
+
+		}
+
+	}
 
 };
 

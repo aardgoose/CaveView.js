@@ -29966,6 +29966,8 @@
 
 	function replaceExtension( fileName, newExtention ) {
 
+		if ( fileName === undefined ) return 'file set';
+
 		return fileName.split( '.' ).shift() + '.' + newExtention;
 
 	}
@@ -33784,6 +33786,7 @@
 	Object.assign( StationPosition.prototype, Vector3.prototype );
 
 	StationPosition.prototype.connections = 0;
+	StationPosition.prototype.splays = 0;
 
 	StationPosition.prototype.correctedDistanceTo = function ( v ) {
 
@@ -40317,6 +40320,7 @@
 		this.displayCRS = null;
 		this.projection = null;
 		this.stationMap = new Map();
+		this.section = null;
 
 	}
 
@@ -40381,6 +40385,7 @@
 	Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		this.metadata = metadata;
+		this.section = section;
 
 		var pos = 0; // file position
 
@@ -40422,11 +40427,52 @@
 
 		}
 
+		return;
+
+		function readLF () { // read until Line feed
+
+			return readNSLF()[ 0 ];
+
+		}
+
+		function readNSLF () { // read until Line feed and split by null bytes
+
+			const bytes = new Uint8Array( dataStream, 0 );
+			const strings = [];
+
+			var lfString = [];
+			var b;
+
+			do {
+
+				b = bytes[ pos++ ];
+
+				if ( b === 0x0a || b === 0 ) {
+
+					strings.push( String.fromCharCode.apply( null, lfString ).trim() );
+					lfString = [];
+
+				} else {
+
+					lfString.push( b );
+
+				}
+
+			} while ( b != 0x0a );
+
+			return strings;
+
+		}
+
+	};
+
+	Svx3dHandler.prototype.end = function () {
+
 		const surveyTree = this.surveyTree;
 
-		if ( section !== null ) {
+		if ( this.section !== null ) {
 
-			surveyTree.trim( section.split( '.' ) );
+			surveyTree.trim( this.section.split( '.' ) );
 
 		}
 
@@ -40495,41 +40541,6 @@
 		function adjustCoords ( coords ) {
 
 			coords.sub( offsets );
-
-		}
-
-		function readLF () { // read until Line feed
-
-			return readNSLF()[ 0 ];
-
-		}
-
-		function readNSLF () { // read until Line feed and split by null bytes
-
-			const bytes = new Uint8Array( dataStream, 0 );
-			const strings = [];
-
-			var lfString = [];
-			var b;
-
-			do {
-
-				b = bytes[ pos++ ];
-
-				if ( b === 0x0a || b === 0 ) {
-
-					strings.push( String.fromCharCode.apply( null, lfString ).trim() );
-					lfString = [];
-
-				} else {
-
-					lfString.push( b );
-
-				}
-
-			} while ( b != 0x0a );
-
-			return strings;
 
 		}
 
@@ -40807,6 +40818,7 @@
 		var i;
 		var labelChanged = false;
 		var inSection = ( section === null );
+		var splayExpected = false; // xsect expected to end on a splay
 
 		// functions
 
@@ -41209,6 +41221,7 @@
 
 				} else if ( flags & 0x04 ) {
 
+					lastPosition.splays++;
 					legs.push( { coords: thisPosition, type: LEG_SPLAY, survey: sectionId } );
 
 				} else {
@@ -41229,6 +41242,7 @@
 
 				if ( move ) {
 
+					// correct marking of last position moved to.
 					dropLastCoordinates();
 					move = false;
 
@@ -41384,10 +41398,19 @@
 
 			} else if ( position.connections === 1 && xSects.length > 1 ) {
 
-				endRun = true;
-				// console.log( 'unterminated LRUD passage at ', label, 'ref count ', position.connections );
+				if ( position.splays === 0 ) {
 
-			}
+					endRun = true;
+					// console.log( 'unterminated LRUD passage at ', label, 'ref count ', position.splays );
+
+				} else {
+
+					// expecting next is a splay
+					splayExpected = true;
+
+				}
+
+			} else if ( splayExpected && position.connections !== 0 ) ;
 
 			if ( endRun ) {
 
@@ -41395,6 +41418,7 @@
 
 				lastXSectPosition = new Vector3();
 				xSects = [];
+				splayExpected = false;
 
 			}
 
@@ -41433,6 +41457,9 @@
 		}
 
 		function dropLastCoordinates () {
+
+			// don't drop coordinates we know are in the section being extracted
+			if ( lastPosition.connections ) return;
 
 			stationMap.delete( lastKey );
 
@@ -41508,9 +41535,13 @@
 		this.faults       = [];
 		this.lineSegments = [];
 		this.xGroups      = [];
+		this.xSects       = [];
+		this.allStations  = [];
 		this.surveyTree   = new Tree( '', 0 );
+		this.limits       = new Box3();
 		this.terrain      = {};
 		this.hasTerrain   = false;
+		this.modelOffset  = 0;
 
 	}
 
@@ -41521,17 +41552,23 @@
 	loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		this.metadata = metadata;
+		this.modelOffset += 100000;
 
-		const lineSegments = [];
-		const stations     = [];
+		const lineSegments = this.lineSegments;
 		const self         = this;
 		const surveyTree   = this.surveyTree;
-		const xSects       = [];
+		const xSects       = this.xSects;
+		const limits       = this.limits;
 
 		// assumes little endian data ATM - FIXME
 
 		var source = dataStream;
+
 		const l = source.byteLength;
+		const idOffset = this.modelOffset;
+		const stations = [];
+
+		this.allStations.push( stations );
 
 		var pos = 0; // file position
 		var dataStart;
@@ -41541,49 +41578,13 @@
 		var lastParentId;
 		var parentNode;
 
-		// range
-
-		const limits = new Box3();
+		// read file and parse chunk by chunk
 
 		while ( pos < l ) readChunkHdr();
 
-		this.lineSegments = lineSegments;
-
 		// Drop data to give GC a chance ASAP
+
 		source = null;
-
-		const offsets = limits.getCenter( new Vector3() );
-
-		this.limits = limits;
-		this.offsets = offsets;
-
-		// convert to origin centered coordinates
-
-		var i, j;
-
-		for ( i = 0; i < stations.length; i++ ) {
-
-			stations[ i ].sub( offsets );
-
-		}
-
-		const scraps = this.scraps;
-
-		// covert scraps coordinates
-
-		for ( i = 0; i < scraps.length; i++ ) {
-
-			const vertices = scraps[ i ].vertices;
-
-			for ( j = 0; j < vertices.length; j++ ) {
-
-				vertices[ j ].sub( offsets );
-
-			}
-
-		}
-
-		procXsects();
 
 		return this;
 
@@ -41659,77 +41660,6 @@
 
 		}
 
-		function procXsects () {
-
-			const xGroups = self.xGroups;
-			const ends = [];
-
-			var lastTo, xGroup, i;
-
-			xSects.sort( function ( a, b ) { return a.m_from - b.m_from; } );
-
-			for ( i = 0; i < xSects.length; i++ ) {
-
-				const xSect = xSects[ i ];
-
-				if ( xSect.m_from !== lastTo ) {
-
-					xGroup = [];
-					self.xGroups.push( xGroup );
-
-				}
-
-				lastTo = xSect.m_to;
-
-				xGroup.push( xSect );
-
-			}
-
-			for ( i = 0; i < xGroups.length; i++ ) {
-
-				const group = xGroups[ i ];
-
-				const start = group[ 0 ].m_from;
-				const end = group[ group.length - 1 ].m_to;
-
-				// concatenate adjacent groups
-
-				const prepend = ends.indexOf( start );
-
-				if ( prepend !== -1 ) {
-
-					// keep the new run in the same slot - thus end record remains correct
-					xGroups[ i ] = xGroups[ prepend ].concat( group );
-
-					// remove entry from moved group
-					xGroups[ prepend ] = [];
-					ends[ prepend ] = undefined;
-
-				}
-
-				ends.push( end );
-
-			}
-
-			for ( i = 0; i < xGroups.length; i++ ) {
-
-				const group = xGroups[ i ];
-				const xSect = group[ 0 ];
-
-				if ( xSect === undefined ) continue; // groups that have been merged
-
-				const start = xSect.start;
-				const end = xSect.end;
-
-				// fake approach vector for initial xSect ( mirrors first segment vector )
-
-				const newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
-
-				group.unshift( { start: newStart, end: start, lrud: xSect.fromLRUD, survey: xSect.survey, type: xSect.type } );
-
-			}
-
-		}
 
 		function readUint () {
 
@@ -41760,14 +41690,14 @@
 
 			if ( lastParentId !== m_parent ) {
 
-				parentNode = surveyTree.findById( m_parent );
+				parentNode = surveyTree.findById( ( lastParentId === undefined ) ? 0 : m_parent + idOffset );
 				lastParentId = m_parent;
 
 			}
 
 			if ( m_parent != m_id ) {
 
-				const node = parentNode.addById( readString( namePtr ), m_id );
+				const node = parentNode.addById( readString( namePtr ), m_id + idOffset );
 
 				if ( node === null ) console.warn( 'error constructing survey tree for', readString( titlePtr ) );
 
@@ -41818,12 +41748,12 @@
 
 			if ( lastParentId !== m_surveyId ) {
 
-				parentNode = surveyTree.findById( m_surveyId );
+				parentNode = surveyTree.findById( m_surveyId + idOffset );
 				lastParentId = m_surveyId;
 
 			}
 
-			parentNode.addById( readString( namePtr ), - m_id, { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
+			parentNode.addById( readString( namePtr ), - ( m_id + idOffset ), { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
 
 		}
 
@@ -41890,9 +41820,11 @@
 			LXFILE_SHOT_SECTION_TUNNEL 4
 			*/
 
+			const surveyId = m_surveyId + idOffset;
+
 			if ( m_sectionType !== 0x00 && type === LEG_CAVE ) {
 
-				xSects.push( { m_from: m_from, m_to: m_to, start: from, end: to, fromLRUD: fromLRUD, lrud: toLRUD, survey: m_surveyId, type: m_sectionType } );
+				xSects.push( { m_from: m_from, m_to: m_to, start: from, end: to, fromLRUD: fromLRUD, lrud: toLRUD, survey: surveyId, type: m_sectionType } );
 
 			}
 
@@ -41909,7 +41841,7 @@
 
 			}
 
-			lineSegments.push( { from: from, to: to, type: type, survey: m_surveyId } );
+			lineSegments.push( { from: from, to: to, type: type, survey: surveyId } );
 
 		}
 
@@ -41949,7 +41881,7 @@
 			const m_num3Angles = readUint();
 			const facesPtr     = readDataPtr();
 
-			const scrap = { vertices: [], faces: [], survey: m_surveyId };
+			const scrap = { vertices: [], faces: [], survey: m_surveyId + idOffset };
 
 			var lastFace;
 			var i, j;
@@ -42122,6 +42054,119 @@
 
 	};
 
+	loxHandler.prototype.end = function () {
+
+		const self = this;
+		const allStations = this.allStations;
+		const offsets = this.limits.getCenter( new Vector3() );
+
+		this.offsets = offsets;
+
+		// convert to origin centered coordinates
+
+		var i, j;
+
+		allStations.forEach( function ( all ) {
+
+			all.forEach( function ( s ) { s.sub( offsets ); } );
+
+		} );
+
+		const scraps = this.scraps;
+
+		// covert scraps coordinates
+
+		for ( i = 0; i < scraps.length; i++ ) {
+
+			const vertices = scraps[ i ].vertices;
+
+			for ( j = 0; j < vertices.length; j++ ) {
+
+				vertices[ j ].sub( offsets );
+
+			}
+
+		}
+
+		procXsects();
+
+		return this;
+
+		function procXsects () {
+
+			const xGroups = self.xGroups;
+			const xSects  = self.xSects;
+			const ends = [];
+
+			var lastTo, xGroup, i;
+
+			xSects.sort( function ( a, b ) { return a.m_from - b.m_from; } );
+
+			for ( i = 0; i < xSects.length; i++ ) {
+
+				const xSect = xSects[ i ];
+
+				if ( xSect.m_from !== lastTo ) {
+
+					xGroup = [];
+					xGroups.push( xGroup );
+
+				}
+
+				lastTo = xSect.m_to;
+
+				xGroup.push( xSect );
+
+			}
+
+			for ( i = 0; i < xGroups.length; i++ ) {
+
+				const group = xGroups[ i ];
+
+				const start = group[ 0 ].m_from;
+				const end = group[ group.length - 1 ].m_to;
+
+				// concatenate adjacent groups
+
+				const prepend = ends.indexOf( start );
+
+				if ( prepend !== -1 ) {
+
+					// keep the new run in the same slot - thus end record remains correct
+					xGroups[ i ] = xGroups[ prepend ].concat( group );
+
+					// remove entry from moved group
+					xGroups[ prepend ] = [];
+					ends[ prepend ] = undefined;
+
+				}
+
+				ends.push( end );
+
+			}
+
+			for ( i = 0; i < xGroups.length; i++ ) {
+
+				const group = xGroups[ i ];
+				const xSect = group[ 0 ];
+
+				if ( xSect === undefined ) continue; // groups that have been merged
+
+				const start = xSect.start;
+				const end = xSect.end;
+
+				// fake approach vector for initial xSect ( mirrors first segment vector )
+
+				const newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
+
+				group.unshift( { start: newStart, end: start, lrud: xSect.fromLRUD, survey: xSect.survey, type: xSect.type } );
+
+			}
+
+		}
+
+	};
+
 	loxHandler.prototype.getSurvey = function () {
 
 		return {
@@ -42143,121 +42188,6 @@
 
 	// EOF
 
-	// Survex kml file handler
-
-	function kmlHandler ( fileName ) {
-
-		this.fileName   = fileName;
-		this.groups     = [];
-		this.surface    = [];
-		this.xGroups    = [];
-		this.surveyTree = new Tree();
-		this.sourceCRS  = null;
-		this.targetCRS  = 'EPSG:3857'; // "web mercator"
-		this.projection = null;
-
-	}
-
-	kmlHandler.prototype.constructor = kmlHandler;
-
-	kmlHandler.prototype.type = 'document';
-	kmlHandler.prototype.isRegion = false;
-	kmlHandler.prototype.mimeType = 'text/xml';
-
-	kmlHandler.prototype.parse = function ( dataStream, metadata ) {
-
-		this.metadata = metadata;
-
-		console.log( 'x', dataStream );
-		for ( var n in dataStream ) {
-
-			console.log( ':', n );
-
-		}
-
-		return this;
-
-	};
-
-
-	kmlHandler.prototype.getLineSegments = function () {
-
-		var lineSegments = [];
-		var groups = this.groups;
-		var offsets = this.offsets;
-
-		for ( var i = 0, l = groups.length; i < l; i++ ) {
-
-			var g = groups[ i ];
-
-			for ( var v = 0, vMax = g.length - 1; v < vMax; v++ ) {
-
-				// create vertex pairs for each line segment.
-				// all vertices except first and last are duplicated.
-				var from = g[ v ];
-				var to   = g[ v + 1 ];
-
-
-				// move coordinates around origin
-
-				from.coords.x -= offsets.x;
-				from.coords.y -= offsets.y;
-				from.coords.z -= offsets.z;
-
-				var fromCoords = from.coords;
-				var toCoords = to.coords;
-
-				// skip repeated points ( co-located stations )
-				if ( fromCoords.x === toCoords.x && fromCoords.y === toCoords.y && fromCoords.z === toCoords.z ) continue;
-
-				lineSegments.push( { from: fromCoords, to: toCoords, type: to.type, survey: to.survey } );
-
-			}
-
-			// move coordinates around origin
-
-			to.coords.x -= offsets.x;
-			to.coords.y -= offsets.y;
-			to.coords.z -= offsets.z;
-
-		}
-
-		return lineSegments;
-
-	};
-
-	kmlHandler.prototype.getTerrainDimensions = function () {
-
-		return { lines: 0, samples: 0 };
-
-	};
-
-	kmlHandler.prototype.getTerrainBitmap = function () {
-
-		return false;
-
-	};
-
-	kmlHandler.prototype.getSurvey = function () {
-
-		return {
-			title: this.fileName,
-			surveyTree: this.surveyTree,
-			sourceCRS: this.sourceCRS,
-			targetCRS: this.targetCRS,
-			limits: this.limits,
-			offsets: this.offsets,
-			lineSegments: this.getLineSegments(),
-			crossSections: this.xGroups,
-			scraps: [],
-			hasTerrain: false,
-			metadata: this.metadata
-		};
-
-	};
-
-	// EOF
-
 	function CaveLoader ( callback ) {
 
 		if ( ! callback ) {
@@ -42271,6 +42201,8 @@
 		this.metadataResponse = null;
 		this.taskCount = 0;
 		this.section = null;
+		this.handler = null;
+		this.files = null;
 
 	}
 
@@ -42280,9 +42212,18 @@
 
 	CaveLoader.prototype.setHandler = function ( fileName ) {
 
-		const rev = fileName.split( '.' ).reverse();
+		const extention = fileName.split( '.' ).reverse().shift().toLowerCase();
 
-		this.extention = rev.shift().toLowerCase();
+		if ( this.extention !== undefined && extention !== this.extention ) {
+
+			alert( 'CaveView: mismatched file extension for [' + fileName + ']' );
+			return false;
+
+		}
+
+		if ( this.handler !== null ) return true;
+
+		this.extention = extention;
 
 		switch ( this.extention ) {
 
@@ -42298,21 +42239,35 @@
 
 			break;
 
-
-		case 'kml':
-
-			this.handler = new kmlHandler( fileName );
-
-			break;
-
 		default:
 
-			console.warn( 'Cave: unknown response extension [', self.extention, ']' );
+			console.warn( 'CaveView: unknown file extension [', this.extention, ']' );
 			return false;
 
 		}
 
 		return true;
+
+	};
+
+	CaveLoader.prototype.loadFile = function ( file, section ) {
+
+		if ( file instanceof File ) {
+
+			this.loadLocalFile( file, section );
+
+		} else {
+
+			this.loadURL( file, section );
+
+		}
+
+	};
+
+	CaveLoader.prototype.loadFiles = function ( files ) {
+
+		this.files = files;
+		this.loadFile( files.pop() );
 
 	};
 
@@ -42326,17 +42281,12 @@
 		const prefix = Cfg.value( 'surveyDirectory', '' );
 
 		// setup file handler
-		if ( ! this.setHandler( fileName ) ) {
-
-			alert( 'Cave: unknown file extension [' + self.extention + ']' );
-			return false;
-
-		}
+		if ( ! this.setHandler( fileName ) ) return false;
 
 		const handler = this.handler;
 
 		this.doneCount = 0;
-		this.taskCount = handler.isRegion ? 1 : 2;
+		this.taskCount = 2;
 
 		const loader = new FileLoader().setPath( prefix );
 
@@ -42394,7 +42344,7 @@
 
 	};
 
-	CaveLoader.prototype.loadFile = function ( file, section ) {
+	CaveLoader.prototype.loadLocalFile = function ( file, section ) {
 
 		this.dispatchEvent( { type: 'progress', name: 'start' } );
 
@@ -42403,12 +42353,7 @@
 		const self = this;
 		const fileName = file.name;
 
-		if ( ! this.setHandler( fileName ) ) {
-
-			alert( 'Cave: unknown file extension [' + this.extention + ']' );
-			return false;
-
-		}
+		if ( ! this.setHandler( fileName ) ) return false;
 
 		const fLoader = new FileReader();
 
@@ -42464,15 +42409,28 @@
 		const data = this.dataResponse;
 		const metadata = this.metadataResponse;
 		const section = this.section;
+		const files = this.files;
 
 		this.dataResponse = null;
 		this.metadataResponse = null;
 		this.section = null;
 
-		this.callback( this.handler.parse( data, metadata, section ) );
-		this.dispatchEvent( { type: 'progress', name: 'end' } );
+		const moreFiles = files !== null && files.length > 0;
 
-		this.handler = null;
+		// start the next download to overlap parsing previous file
+
+		if ( moreFiles ) this.loadFile( files.pop() );
+
+		this.handler.parse( data, metadata, section );
+
+		if ( ! moreFiles ) {
+
+			this.callback( this.handler.end() );
+			this.dispatchEvent( { type: 'progress', name: 'end' } );
+
+			this.handler = null;
+
+		}
 
 	};
 
@@ -49821,6 +49779,7 @@
 	var effect = null;
 
 	var activeRenderer;
+	var clipped = false;
 
 	// preallocated tmp objects
 
@@ -49927,6 +49886,7 @@
 			'hasTerrain': {
 				get: function () { return !! terrain; }
 			},
+
 			'hasRealTerrain': {
 				get: function () { return ( terrain && ! terrain.isFlat ); }
 			},
@@ -50107,6 +50067,10 @@
 				writeable: true,
 				get: function () { return useFog; },
 				set: setFog$1
+			},
+
+			'isClipped': {
+				get: function () { return clipped; }
 			},
 
 		} );
@@ -50648,6 +50612,8 @@
 		// reset view
 		clearView();
 
+		clipped = true;
+
 		loadSurvey( cutSurvey );
 
 	}
@@ -50794,15 +50760,15 @@
 
 	function loadCave ( file, section ) {
 
-		if ( file instanceof File ) {
+		caveLoader.loadFile( file, section );
 
-			caveLoader.loadFile( file );
+		clipped = ( section !== undefined && section != '' );
 
-		} else {
+	}
 
-			caveLoader.loadURL( file, section );
+	function loadCaves ( files ) {
 
-		}
+		caveLoader.loadFiles( files );
 
 	}
 
@@ -51266,6 +51232,7 @@
 		init:          init$u,
 		clearView:     clearView,
 		loadCave:      loadCave,
+		loadCaves:     loadCaves,
 		getMetadata:   getMetadata,
 		getRoutes:     getRoutes,
 		getLegStats:   getLegStats,
@@ -52125,7 +52092,7 @@
 
 	// EOF
 
-	function SelectionPage ( container ) {
+	function SelectionPage ( container, fileSelector ) {
 
 		Page.call( this, 'icon_explore', 'explore' );
 
@@ -52149,6 +52116,13 @@
 		this.addHeader( 'Selection' );
 
 		titleBar.id = 'ui-path';
+
+		if ( Viewer.isClipped ) {
+
+			titleBar.classList.add( 'reload' );
+			this.addListener( titleBar, 'click', __handleLoadFull );
+
+		}
 
 		this.appendChild( titleBar );
 
@@ -52404,6 +52378,12 @@
 			if ( ! target.classList.contains( 'section' ) ) return;
 
 			if ( node !== surveyTree ) Viewer.cut = true;
+
+		}
+
+		function __handleLoadFull () {
+
+			fileSelector.reload();
 
 		}
 
@@ -53109,6 +53089,7 @@
 		this.fileList = [];
 		this.fileCount = 0;
 		this.currentIndex = Infinity;
+		this.loadedFile;
 
 		const self = this;
 
@@ -53135,7 +53116,20 @@
 
 			event.preventDefault();
 
-			if ( dt.files.length === 1 ) self.selectFile( dt.files[ 0 ], null );
+			const count = dt.files.length;
+			const files = [];
+
+			if ( count > 0 ) {
+
+				for( var i = 0; i < count; i++ ) {
+
+					files.push( dt.files[ i ] );
+
+				}
+
+				self.selectFile( files, null );
+
+			}
 
 		}
 
@@ -53165,9 +53159,35 @@
 
 	FileSelector.prototype.selectFile = function ( file, section ) {
 
-		this.selectedFile = file instanceof File ? file.name : file;
+		if ( Array.isArray( file ) ) {
+
+			if ( file.length === 1 ) {
+
+				this.selectedFile = file.name;
+
+			} else {
+
+				this.selectedFile = '[multiple]';
+
+			}
+
+		} else {
+
+			this.selectedFile = file;
+
+		}
+
+		this.loadedFile = file;
+
+		console.log( 'load', file );
 
 		this.dispatchEvent( { type: 'selected', file: file, section: section } );
+
+	};
+
+	FileSelector.prototype.reload = function () {
+
+		this.selectFile( this.loadedFile );
 
 	};
 
@@ -53218,7 +53238,15 @@
 		Page.clear();
 		Viewer.clearView();
 
-		Viewer.loadCave( event.file, event.section );
+		if ( Array.isArray( event.file ) ) {
+
+			Viewer.loadCaves( event.file );
+
+		} else {
+
+			Viewer.loadCave( event.file, event.section );
+
+		}
 
 	}
 
@@ -53231,7 +53259,7 @@
 
 		new SettingsPage( fileSelector$1 );
 		new SurfacePage();
-		new SelectionPage( container$1 );
+		new SelectionPage( container$1, fileSelector$1 );
 		new RoutePage( fileSelector$1 );
 		new InfoPage( fileSelector$1 );
 		new HelpPage( avenControls$1 );
@@ -53255,11 +53283,19 @@
 
 	}
 
+	function loadCaves$1 ( files ) {
+
+		Viewer.clearView();
+		Viewer.loadCaves( files );
+
+	}
+
 	// export public interface
 
 	const UI = {
 		init:         init$v,
 		loadCave:     loadCave$1,
+		loadCaves:    loadCaves$1,
 		loadCaveList: loadCaveList
 	};
 

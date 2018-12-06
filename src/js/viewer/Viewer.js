@@ -1493,7 +1493,7 @@ function mouseDown ( event ) {
 
 		if ( popup !== null ) return;
 
-		popup = new StationPopup( container, station, survey, depth, formatters.station, ( shadingMode === SHADING_DISTANCE ) );
+		popup = new StationPopup( container, station, survey, depth, formatters.station, ( shadingMode === SHADING_DISTANCE ), Viewer.warnings );
 
 		survey.add( popup );
 

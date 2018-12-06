@@ -1,6 +1,6 @@
 import { Popup } from './Popup.js';
 
-function StationPopup ( container, station, survey, depth, formatter, showDistance ) {
+function StationPopup ( container, station, survey, depth, formatter, showDistance, warnings ) {
 
 	Popup.call( this, container );
 
@@ -39,29 +39,37 @@ function StationPopup ( container, station, survey, depth, formatter, showDistan
 
 	this.addLine( name );
 
-	if ( formatter !== undefined ) {
+	if ( warnings && station.messageText !== undefined ) {
 
-		lines = formatter( survey.CRS, position, depth, distance );
-
-	}
-
-	if ( lines !== null ) {
-
-		for ( let i = 0; i < lines.length; i++ ) {
-
-			this.addLine( lines[ i ] );
-
-		}
+		this.addLine( station.messageText );
 
 	} else {
 
-		this.addLine( 'x: ' + Math.round( position.x ) + ' m, y: ' + Math.round( position.y ) + ' m' ).addLine( 'z: ' + position.z + ' m' );
+		if ( formatter !== undefined ) {
 
-		if ( depth !== null ) this.addLine( 'depth from surface: ' + Math.round( depth ) + ' m' );
+			lines = formatter( survey.CRS, position, depth, distance );
 
-		if ( showDistance ) {
+		}
 
-			this.addLine( 'distance: ' + distance + '\u202fm' );
+		if ( lines !== null ) {
+
+			for ( let i = 0; i < lines.length; i++ ) {
+
+				this.addLine( lines[ i ] );
+
+			}
+
+		} else {
+
+			this.addLine( 'x: ' + Math.round( position.x ) + ' m, y: ' + Math.round( position.y ) + ' m' ).addLine( 'z: ' + position.z + ' m' );
+
+			if ( depth !== null ) this.addLine( 'depth from surface: ' + Math.round( depth ) + ' m' );
+
+			if ( showDistance ) {
+
+				this.addLine( 'distance: ' + distance + '\u202fm' );
+
+			}
 
 		}
 

@@ -96,8 +96,6 @@ FileSelector.prototype.selectFile = function ( file, section ) {
 
 	this.loadedFile = file;
 
-	console.log( 'load', file );
-
 	this.dispatchEvent( { type: 'selected', file: file, section: section } );
 
 };

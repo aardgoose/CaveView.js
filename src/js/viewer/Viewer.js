@@ -126,6 +126,7 @@ var effect = null;
 
 var activeRenderer;
 var clipped = false;
+var messages = [];
 
 // preallocated tmp objects
 
@@ -418,6 +419,10 @@ function init ( domID, configuration ) { // public method
 		'isClipped': {
 			get: function () { return clipped; }
 		},
+
+		'messages': {
+			get: function () { return messages; }
+		}
 
 	} );
 
@@ -1126,6 +1131,9 @@ function caveLoaded ( cave ) {
 		return;
 
 	}
+
+	// save warning/error messages from parser
+	messages = cave.messages;
 
 	loadSurvey( new Survey( cave ) );
 

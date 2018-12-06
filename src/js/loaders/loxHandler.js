@@ -18,6 +18,7 @@ function loxHandler ( fileName ) {
 	this.terrain      = {};
 	this.hasTerrain   = false;
 	this.modelOffset  = 0;
+	this.messages     = 0;
 
 }
 

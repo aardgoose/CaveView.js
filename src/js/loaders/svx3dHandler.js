@@ -20,6 +20,7 @@ function Svx3dHandler ( fileName ) {
 	this.projection = null;
 	this.stationMap = new Map();
 	this.section = null;
+	this.messages = [];
 
 }
 
@@ -47,7 +48,7 @@ Svx3dHandler.prototype.setCRS = function ( sourceCRS ) {
 
 			default:
 
-				console.warn( 'unsupported projection' );
+				throw new Error( 'Unsupported projection' );
 
 			}
 
@@ -122,7 +123,7 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	default:
 
-		alert( 'unsupported .3d version ' + version );
+		throw new Error( 'unsupported .3d version ' + version );
 
 	}
 
@@ -267,7 +268,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 	// init cmd handler table with error handler for unsupported records or invalid records
 
-	function _errorHandler ( e ) { console.warn( 'unhandled command: ', e.toString( 16 ) ); return false; }
+	function _errorHandler ( e ) { throw new Error( 'unhandled command: ', e.toString( 16 ) ); }
 
 	for ( i = 0; i < 256; i++ ) {
 
@@ -495,6 +496,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	const xGroups    = this.xGroups;
 	const surveyTree = this.surveyTree;
 	const stationMap = this.stationMap;
+	const messages   = this.messages;
 
 	const cmd = [];
 
@@ -520,7 +522,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	var splayExpected = false; // xsect expected to end on a splay
 
 	var message;
-	var lastLabel;
 
 	// functions
 
@@ -528,7 +529,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	// init cmd handler table with error handler for unsupported records or invalid records
 
-	function _errorHandler ( e ) { console.warn( 'unhandled command: ', e.toString( 16 ) ); return false; }
+	function _errorHandler ( e ) { throw new Error( 'unhandled command: ', e.toString( 16 ) ); }
 
 	for ( i = 0; i < 256; i++ ) {
 
@@ -1074,10 +1075,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		const position = stations.get( label );
 
-		if ( ! position ) {
-			// console.warn( 'missing station in XSECT :', label );
-			return true;
-		}
+		if ( ! position ) return true;
 
 		const station = label.split( '.' );
 
@@ -1101,12 +1099,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		} else if ( position.connections === 1 && xSects.length > 1 && ! lastPosition.connections == 0 ) {
 
 			message = 'unterminated LRUD passage at ' + label + ' splay count: ' + position.splays;
-			message += 'last: ' + lastLabel;
 
 			if ( position.splays === 0 ) {
 
 				endRun = true;
-				//console.log( message );
+				messages.push( message );
 
 			} else {
 
@@ -1117,14 +1114,11 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		} else if ( splayExpected && position.connections !== 0 ) {
 
-			//console.log( message );
-			//console.log( '- continues to:', label );
+			messages.push( message );
 
 			splayExpected = false;
 
 		}
-
-		lastLabel = label;
 
 		if ( endRun ) {
 

@@ -20,12 +20,6 @@ function InfoPage ( fileSelector ) {
 	this.addLine( this.i18n( 'stats.minLength' ) + ': ' + stats.minLegLength.toFixed( 2 ) + '\u202fm' );
 	this.addLine( this.i18n( 'stats.maxLength' ) + ': ' + stats.maxLegLength.toFixed( 2 ) + '\u202fm' );
 
-	const self = this;
-
-	Viewer.messages.forEach( function ( messages ) {
-		self.addLine( messages.text );
-	} );
-
 	this.addHeader( 'CaveView v' + VERSION + '.' );
 	this.addText( 'A WebGL 3d cave viewer for Survex (.3d) and Therion (.lox) models.' );
 

@@ -519,6 +519,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	var inSection = ( section === null );
 	var splayExpected = false; // xsect expected to end on a splay
 
+	var message;
+	var lastLabel;
+
 	// functions
 
 	var readLabel;
@@ -923,6 +926,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 				lastPosition.splays++;
 				legs.push( { coords: thisPosition, type: LEG_SPLAY, survey: sectionId } );
 
+				thisPosition.splays = -1;
+
 			} else {
 
 				// reference count underground legs ignoring splay and surface legs
@@ -1083,8 +1088,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		xSects.push( { start: lastXSectPosition, end: position, lrud: lrud, survey: surveyId, type: WALL_SQUARE } );
 
-		lastXSectPosition = position;
-
 		// some XSECTS are not flagged as last in passage
 		// if a station has only one connection and is not the first in a set of XSECTS
 		// it is at the end of a run of legs. Add a break to remove flyback artifacts
@@ -1095,12 +1098,15 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			endRun = true;
 
-		} else if ( position.connections === 1 && xSects.length > 1 ) {
+		} else if ( position.connections === 1 && xSects.length > 1 && ! lastPosition.connections == 0 ) {
+
+			message = 'unterminated LRUD passage at ' + label + ' splay count: ' + position.splays;
+			message += 'last: ' + lastLabel;
 
 			if ( position.splays === 0 ) {
 
 				endRun = true;
-				// console.log( 'unterminated LRUD passage at ', label, 'ref count ', position.splays );
+				//console.log( message );
 
 			} else {
 
@@ -1111,9 +1117,14 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		} else if ( splayExpected && position.connections !== 0 ) {
 
-			// console.log( 'LRUD passing through splay', label );
+			//console.log( message );
+			//console.log( '- continues to:', label );
+
+			splayExpected = false;
 
 		}
+
+		lastLabel = label;
 
 		if ( endRun ) {
 
@@ -1122,6 +1133,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 			lastXSectPosition = new Vector3();
 			xSects = [];
 			splayExpected = false;
+
+		} else {
+
+			lastXSectPosition = position;
 
 		}
 

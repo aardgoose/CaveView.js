@@ -1100,7 +1100,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			message = {
 				station: label,
-				text: 'unterminated LRUD passage, splay count: ' + position.splays
+				text: 'LRUD fault'
 			};
 
 			if ( position.splays === 0 ) {

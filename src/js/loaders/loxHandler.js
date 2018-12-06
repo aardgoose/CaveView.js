@@ -118,7 +118,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		default:
 
-			console.warn( 'unknown chunk header. type : ', m_type );
+			throw new Error( 'unknown chunk header. type : ', m_type );
 
 		}
 
@@ -175,7 +175,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 			const node = parentNode.addById( readString( namePtr ), m_id + idOffset );
 
-			if ( node === null ) console.warn( 'error constructing survey tree for', readString( titlePtr ) );
+			if ( node === null ) throw new Error( 'error constructing survey tree for', readString( titlePtr ) );
 
 			if ( section !== null && node.getPath() === section ) {
 
@@ -304,11 +304,9 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		}
 
-		if ( from.equals( to ) ) {
-			// console.log( 'dup leg ', surveyTree.findById( -m_from ).getPath() );
-			// console.log( '        ', surveyTree.findById( -m_to ).getPath() );
-			return;
-		}
+		// ommit zero length legs
+
+		if ( from.equals( to ) ) return;
 
 		if ( type === LEG_CAVE ) {
 

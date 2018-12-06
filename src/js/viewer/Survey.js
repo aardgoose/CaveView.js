@@ -482,7 +482,7 @@ Survey.prototype.hasFeature = function ( tag ) {
 
 Survey.prototype.loadStations = function ( surveyTree ) {
 
-	const stations = new Stations();
+	const stations = new Stations( this.selectedSectionIds );
 
 	surveyTree.traverse( _addStation );
 
@@ -728,7 +728,7 @@ Survey.prototype.selectSection = function ( node ) {
 			this.selectedBox = this.boxSection( node, this.selectedBox, Cfg.themeValue( 'box.select' ) );
 			node.getSubtreeIds( selectedSectionIds );
 
-			this.stations.selectStations( selectedSectionIds );
+			this.stations.selectStations();
 
 		} else {
 

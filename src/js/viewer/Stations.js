@@ -18,7 +18,7 @@ function onUploadDropBuffer() {
 
 }
 
-function Stations () {
+function Stations ( sectionIdSet ) {
 
 	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial() );
 
@@ -38,7 +38,7 @@ function Stations () {
 
 	this.selected = null;
 	this.selectedSize = 0;
-	this.sectionIdSet = null;
+	this.sectionIdSet = sectionIdSet;
 
 	const self = this;
 
@@ -153,7 +153,7 @@ Stations.prototype.getVisibleStation = function ( vertex ) {
 	const sectionIdSet = this.sectionIdSet;
 
 	if (
-		( sectionIdSet === null || sectionIdSet.size === 0 || sectionIdSet.has( node.id ) ) &&
+		( sectionIdSet.size === 0 || sectionIdSet.has( node.id ) ) &&
 		( node.p.connections > 0 || Viewer.splays )
 	) return node;
 
@@ -229,16 +229,13 @@ Stations.prototype.selectStationByIndex = function ( index ) {
 
 };
 
-Stations.prototype.selectStations = function ( sectionIdSet ) {
+Stations.prototype.selectStations = function () {
 
 	const stations = this.stations;
 	const l = stations.length;
 	const pSize = this.geometry.getAttribute( 'pSize' );
 	const splaySize = Viewer.splays ? 6.0 : 0.0;
-
-	// track this to maintain spay settings
-
-	this.sectionIdSet = sectionIdSet;
+	const sectionIdSet = this.sectionIdSet;
 
 	var i;
 

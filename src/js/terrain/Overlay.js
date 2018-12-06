@@ -89,7 +89,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 	const key = x + ':' + y + ':' + z;
 
 	const material = this.materialCache[ key ];
-	const overlayMaxZoom = this.provider.overlayMaxZoom;
+	const overlayMaxZoom = this.provider.maxZoom;
 
 	var repeat = 1;
 	var xOffset = 0;

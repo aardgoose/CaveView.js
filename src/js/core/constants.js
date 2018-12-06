@@ -25,6 +25,10 @@ export const VIEW_ELEVATION_W    = 5;
 export const MOUSE_MODE_NORMAL     = 0;
 export const MOUSE_MODE_ROUTE_EDIT = 1;
 export const MOUSE_MODE_DISTANCE   = 2;
+export const MOUSE_MODE_TRACE_EDIT = 3;
+export const MOUSE_MODE_ENTRANCES  = 4;
+export const MOUSE_MODE_ANNOTATE   = 5;
+
 // shading types
 
 export const SHADING_HEIGHT       = 1;
@@ -54,15 +58,15 @@ export const FEATURE_ENTRANCES     = 6;
 export const FEATURE_TERRAIN       = 7;
 export const FEATURE_STATIONS      = 8;
 export const FEATURE_TRACES        = 9;
-
-export const FACE_WALLS            = 10;
-export const FACE_SCRAPS           = 11;
+export const FEATURE_ANNOTATIONS   = 10;
+export const FACE_WALLS            = 11;
+export const FACE_SCRAPS           = 12;
+export const LABEL_STATION         = 13;
 
 export const WALL_OVAL             = 1; // based on Therion .lox types
 export const WALL_SQUARE           = 2;
 export const WALL_DIAMOND          = 3;
 
-export const LABEL_STATION         = 12;
 
 // flags in legs exported by Cave models
 

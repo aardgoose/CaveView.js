@@ -98,7 +98,7 @@ Tree.prototype.getByPath = function ( path ) {
 
 	const pathArray = path.split( '.' );
 
-	return pathArray.length === 0 ? this.getByPathArray( pathArray ) : undefined;
+	return ( pathArray.length !== 0 ) ? this.getByPathArray( pathArray ) : undefined;
 
 };
 

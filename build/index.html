@@ -5,6 +5,24 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+	<link rel="manifest" href="/manifest.webmanifest" />
+	<meta name="Description" content="CaveView - 3d Cave model viewer">
+	<meta name="theme-color" content="#00FF00"/>
+	<link rel="apple-touch-icon" sizes="57x57" href="fav/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="fav/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="fav/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="fav/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="fav/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="fav/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="fav/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="fav/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="fav/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="fav/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="fav/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="fav/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="fav/favicon-16x16.png">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
 </head>
 <body onload="onload();" >
 
@@ -30,18 +48,13 @@ function onload () {
 		surveyDirectory: "/surveys/",
 		home: "/CaveView/",
 		view: { walls: false, alpha: false, terrain: false },
+		saturatedGradient: true,
 		// alphaWalls: true,
 //		displayCRS: 'ORIGINAL',
 		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZTk5MmVmZC1iZDU5LTQzMWQtOWY0Zi1mZDYxNDA1MTNjMjgiLCJpZCI6OTEwLCJpYXQiOjE1MjYzMjczMDh9.aJWNt5jc-dt64lR4q7zw0bdp0PARsvupmWjUYUrQVQs',
 //		language: "template",
 //		defaultCRS: "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs",
 //		defaultCRS: "+proj=utm +zone=30 +ellps=WGS84 +datum=WGS84 +units=m +no_defs",
-		theme: {
-			maxPolarAngle: 180,
-			hud: {
-				progress: 0xff0000
-			},
-		}
 	} );
 
 	CV.Viewer.addOverlay( 'Barmaster', new BarmasterProvider() );
@@ -74,11 +87,46 @@ var caves = [
 	"Cheddar.lox"
 ];
 
-	CV.UI.loadCaveList( caves );
-//	CV.UI.loadCaves( [ "ours.lox", "caylar.lox", "garrel.lox", "surface.lox" ] );
+	function LinkAnnotator () {
 
-//	CV.UI.loadCave( "Giants_Oxlow_Maskhill_System.3d" );
-//	CV.UI.loadCaves( [ "lathkill.3d", "Bradwell_Master_NoSurface.3d" , "Castleton_Master_NoSurface.3d" ] );
+		this.type = 'link';
+
+		this.parameters = [
+			{
+				name: 'url',
+				caption: 'URL',
+				valid: function _urlValidator ( value ) {
+					return true;
+				}
+			}
+		];
+
+	}
+
+	function ImageAnnotator () {
+
+		this.type = 'image';
+
+		this.parameters = [
+			{
+				name: 'file',
+				caption: 'Image Name',
+				valid: function _imageValidator ( value ) {
+					return true;
+				}
+			}
+		];
+
+	}
+
+	CV.Viewer.addAnnotator( new LinkAnnotator() );
+	CV.Viewer.addAnnotator( new ImageAnnotator() );
+
+	CV.UI.loadCaveList( caves );
+
+	//	CV.UI.loadCaves( [ "ours.lox", "caylar.lox", "garrel.lox", "surface.lox" ] );
+	//	CV.UI.loadCave( "Giants_Oxlow_Maskhill_System.3d" );
+	//	CV.UI.loadCaves( [ "lathkill.3d", "Bradwell_Master_NoSurface.3d" , "Castleton_Master_NoSurface.3d" ] );
 
 }
 

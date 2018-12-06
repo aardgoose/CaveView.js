@@ -190,6 +190,7 @@ Survey.prototype.loadWarnings = function ( cave ) {
 	if ( cave.messages.length > 0 ) {
 
 		const errorMarkers = new StationMarkers( 0xff00ff );
+
 		cave.messages.forEach( function ( message ) {
 
 			const node = cave.surveyTree.getByPath( message.station );

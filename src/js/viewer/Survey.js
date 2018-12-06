@@ -795,6 +795,7 @@ Survey.prototype.cutSection = function ( node ) {
 
 	this.pointTargets = [];
 	this.legTargets   = [];
+	this.inverseWorld = null;
 
 	this.terrain = null;
 

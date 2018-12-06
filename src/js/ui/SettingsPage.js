@@ -105,11 +105,12 @@ function SettingsPage ( fileSelector ) {
 	if ( Viewer.hasWalls         ) this.addCheckbox( 'visibility.walls', Viewer, 'walls' );
 	if ( Viewer.hasScraps        ) this.addCheckbox( 'visibility.scraps', Viewer, 'scraps' );
 	if ( Viewer.hasTraces        ) this.addCheckbox( 'visibility.traces', Viewer, 'traces' );
-	if ( Viewer.hasWarnings      ) this.addCheckbox( 'visibility.warnings', Viewer, 'warnings' );
 
 	this.addCheckbox( 'visibility.fog', Viewer, 'fog' );
 	this.addCheckbox( 'visibility.hud', Viewer, 'HUD' );
 	this.addCheckbox( 'visibility.box', Viewer, 'box' );
+
+	if ( Viewer.hasWarnings ) this.addCheckbox( 'visibility.warnings', Viewer, 'warnings' );
 
 	_onChange( { name: 'cameraType' } );
 	_onChange( { name: 'shadingMode' } );

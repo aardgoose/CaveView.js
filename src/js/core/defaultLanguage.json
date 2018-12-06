@@ -53,6 +53,7 @@
 			"scraps": "Scraps",
 			"splays": "Splay Legs",
 			"traces": "Dye Traces",
+			"warnings": "Warnings",
 			"box": "Bounding box",
 			"hud": "Indicators",
 			"fog": "Fog"
@@ -96,14 +97,24 @@
 			"route": "Routes",
 			"trace": "Traces",
 			"entrances": "Entrances",
-			"annotate": "Annotate"
+			"annotate": "Annotations"
 		},
-		"routes": {
+		"entrance": {
+			"header": "Entrances"
+		},
+		"annotate": {
+			"header": "Annotations"
+		},
+		"route": {
+			"header": "Routes",
 			"current": "Current route",
 			"save": "Save",
 			"new": "New route",
 			"add": "Add",
 			"download": "Download"
+		},
+		"trace": {
+			"header": "Traces"
 		}
 	},
 	"info": {

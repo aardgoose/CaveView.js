@@ -14,18 +14,18 @@ function RoutePanel ( page, fileSelector ) {
 
 	this.add( page.addHeader( 'route.header' ) );
 
-	var routeSelector = page.addSelect( 'routes.current', routeNames, Viewer, 'route' );
+	var routeSelector = page.addSelect( 'route.current', routeNames, Viewer, 'route' );
 	var getNewRouteName;
 
 	this.add( routeSelector );
 
-	this.add( page.addButton( 'routes.save', _saveRoute ) );
+	this.add( page.addButton( 'route.save', _saveRoute ) );
 
-	this.add( page.addTextBox( 'routes.new', '---', function ( getter ) { getNewRouteName = getter; } ) );
+	this.add( page.addTextBox( 'route.new', '---', function ( getter ) { getNewRouteName = getter; } ) );
 
-	this.add( page.addButton( 'routes.add', _newRoute ) );
+	this.add( page.addButton( 'route.add', _newRoute ) );
 
-	this.add( page.addDownloadButton( 'routes.download', metadata.getURL, replaceExtension( fileSelector.file, 'json' ) ) );
+	this.add( page.addDownloadButton( 'route.download', metadata.getURL, replaceExtension( fileSelector.file, 'json' ) ) );
 
 	function _newRoute () {
 

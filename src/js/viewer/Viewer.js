@@ -2,7 +2,7 @@
 import {
 	VERSION,
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_ANAGLYPH, CAMERA_STEREO,
-	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES,
+	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES, SURVEY_WARNINGS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION,
 	SHADING_HEIGHT, SHADING_SINGLE, SHADING_RELIEF, SHADING_PATH,
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
@@ -130,7 +130,6 @@ var effect = null;
 
 var activeRenderer;
 var clipped = false;
-var messages = [];
 
 // preallocated tmp objects
 
@@ -144,7 +143,7 @@ const Viewer = Object.create( EventDispatcher.prototype );
 function init ( domID, configuration ) { // public method
 
 	console.log( 'CaveView v' + VERSION );
-
+	/*
 	if ( 'serviceWorker' in navigator ) {
 
 		navigator.serviceWorker.register( '/sw.js' ).then( function ( registration ) {
@@ -160,6 +159,7 @@ function init ( domID, configuration ) { // public method
 		} );
 
 	}
+	*/
 
 	container = document.getElementById( domID );
 
@@ -447,10 +447,6 @@ function init ( domID, configuration ) { // public method
 
 		'isClipped': {
 			get: function () { return clipped; }
-		},
-
-		'messages': {
-			get: function () { return messages; }
 		}
 
 	} );
@@ -467,6 +463,7 @@ function init ( domID, configuration ) { // public method
 	_conditionalLayer( LEG_SURFACE,       'surfaceLegs' );
 	_conditionalLayer( LABEL_STATION,     'stationLabels' );
 	_conditionalLayer( FEATURE_ANNOTATIONS, 'annotations' );
+	_conditionalLayer( SURVEY_WARNINGS,     'warnings' );
 
 	Materials.initCache( Viewer );
 
@@ -1217,9 +1214,6 @@ function caveLoaded ( cave ) {
 		return;
 
 	}
-
-	// save warning/error messages from parser
-	messages = cave.messages;
 
 	loadSurvey( new Survey( cave ) );
 

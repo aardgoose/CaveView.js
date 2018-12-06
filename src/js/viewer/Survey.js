@@ -102,21 +102,7 @@ function Survey ( cave ) {
 
 	this.loadCave( survey );
 
-	if ( cave.messages.length > 0 ) {
-
-		const errorMarkers = new StationMarkers( 0xff00ff );
-		cave.messages.forEach( function ( message ) {
-
-			const node = cave.surveyTree.getByPath( message.station );
-
-			errorMarkers.mark( node );
-			node.messageText = message.text;
-
-		} );
-
-		this.addFeature( errorMarkers, SURVEY_WARNINGS, 'CV.Survey:warnings' );
-
-	}
+	this.loadWarnings( cave );
 
 	this.legTargets = [ this.features[ LEG_CAVE ] ];
 
@@ -194,6 +180,28 @@ Survey.prototype.onRemoved = function ( /* event */ ) {
 	function _dispose ( object ) {
 
 		if ( object.geometry ) object.geometry.dispose();
+
+	}
+
+};
+
+Survey.prototype.loadWarnings = function ( cave ) {
+
+	if ( cave.messages.length > 0 ) {
+
+		const errorMarkers = new StationMarkers( 0xff00ff );
+		cave.messages.forEach( function ( message ) {
+
+			const node = cave.surveyTree.getByPath( message.station );
+
+			if ( node !== undefined ) {
+				errorMarkers.mark( node );
+				node.messageText = message.text;
+			}
+
+		} );
+
+		this.addFeature( errorMarkers, SURVEY_WARNINGS, 'CV.Survey:warnings' );
 
 	}
 

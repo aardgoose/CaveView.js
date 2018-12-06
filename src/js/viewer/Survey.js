@@ -2,7 +2,7 @@
 import {
 	FACE_SCRAPS, FACE_WALLS,
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES,
-	FEATURE_STATIONS, FEATURE_ANNOTATIONS,
+	FEATURE_STATIONS, FEATURE_ANNOTATIONS, SURVEY_WARNINGS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
@@ -101,6 +101,22 @@ function Survey ( cave ) {
 	_setProjectionScale();
 
 	this.loadCave( survey );
+
+	if ( cave.messages.length > 0 ) {
+
+		const errorMarkers = new StationMarkers( 0xff00ff );
+		cave.messages.forEach( function ( message ) {
+
+			const node = cave.surveyTree.getByPath( message.station );
+
+			errorMarkers.mark( node );
+			node.messageText = message.txt;
+
+		} );
+
+		this.addFeature( errorMarkers, SURVEY_WARNINGS, 'CV.Survey:warnings' );
+
+	}
 
 	this.legTargets = [ this.features[ LEG_CAVE ] ];
 

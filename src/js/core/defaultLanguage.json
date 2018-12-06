@@ -42,6 +42,8 @@
 			"distance": "distance",
 			"beck": "beck"
 		},
+		"selected_route": "Selected route",
+		"no_routes": "no routes defined",
 		"visibility": {
 			"header": "Visibility",
 			"entrances": "Entrances",
@@ -86,10 +88,17 @@
 			"downloadTileSet": "download tile set spec"
 		}
 	},
-	"routes": {
+	"edit": {
+		"header": "Edit",
+		"mode": "edit mode",
+		"modes": {
+			"none": "- none -",
+			"route": "Routes",
+			"trace": "Traces",
+			"entrances": "Entrances",
+			"annotate": "Annotate"
+		},
 		"routes": {
-			"header": "Routes",
-			"edit": "Edit routes",
 			"current": "Current route",
 			"save": "Save",
 			"new": "New route",

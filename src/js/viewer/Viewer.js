@@ -8,7 +8,7 @@ import {
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE, FEATURE_ANNOTATIONS
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -23,6 +23,7 @@ import { Cfg } from '../core/lib';
 import { WorkerPool } from '../core/WorkerPool';
 import { AnaglyphEffect } from './AnaglyphEffect';
 import { StereoEffect } from './StereoEffect';
+import { Annotations } from './Annotations';
 
 // analysis tests
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
@@ -48,6 +49,7 @@ const defaultView = {
 	box: true,
 	cameraType: CAMERA_PERSPECTIVE,
 	view: VIEW_PLAN,
+	editMode: MOUSE_MODE_NORMAL,
 	shadingMode: SHADING_HEIGHT,
 	surfaceShading: SHADING_HEIGHT,
 	terrainShading: SHADING_RELIEF,
@@ -91,8 +93,10 @@ var pCamera;
 
 var camera;
 
+var lastMouseMode = MOUSE_MODE_NORMAL;
 var mouseMode = MOUSE_MODE_NORMAL;
 var mouseTargets = [];
+var clickCount = 0;
 
 var terrain = null;
 var survey;
@@ -140,6 +144,22 @@ const Viewer = Object.create( EventDispatcher.prototype );
 function init ( domID, configuration ) { // public method
 
 	console.log( 'CaveView v' + VERSION );
+
+	if ( 'serviceWorker' in navigator ) {
+
+		navigator.serviceWorker.register( '/sw.js' ).then( function ( registration ) {
+
+			// Registration was successful
+			console.log( 'ServiceWorker registration successful with scope: ', registration.scope );
+
+		}, function ( err ) {
+
+			// registration failed :(
+			console.log( 'ServiceWorker registration failed: ', err );
+
+		} );
+
+	}
 
 	container = document.getElementById( domID );
 
@@ -233,7 +253,6 @@ function init ( domID, configuration ) { // public method
 		'hasTerrain': {
 			get: function () { return !! terrain; }
 		},
-
 		'hasRealTerrain': {
 			get: function () { return ( terrain && ! terrain.isFlat ); }
 		},
@@ -266,6 +285,16 @@ function init ( domID, configuration ) { // public method
 			writeable: true,
 			get: function () { return shadingMode; },
 			set: function ( x ) { _stateSetter( setShadingMode, 'shadingMode', x ); }
+		},
+
+		'route': {
+			writeable: true,
+			get: function () { return survey.getRoutes().setRoute; },
+			set: function ( x ) { survey.getRoutes().setRoute = x; }
+		},
+
+		'routeNames': {
+			get: function () { return survey.getRoutes().getRouteNames(); },
 		},
 
 		'surfaceShading': {
@@ -352,10 +381,10 @@ function init ( domID, configuration ) { // public method
 			set: function ( x ) { cameraMove.setAzimuthAngle( x ); }
 		},
 
-		'routeEdit': {
+		'editMode': {
 			writeable: true,
-			get: function () { return ( mouseMode === MOUSE_MODE_ROUTE_EDIT ); },
-			set: function ( x ) { _setRouteEdit( x ); this.dispatchEvent( { type: 'change', name: 'routeEdit' } ); }
+			get: function () { return mouseMode; },
+			set: function ( x ) { _setEditMode( x ); this.dispatchEvent( { type: 'change', name: 'editMode' } ); }
 		},
 
 		'setPOI': {
@@ -437,6 +466,7 @@ function init ( domID, configuration ) { // public method
 	_conditionalLayer( LEG_SPLAY,         'splays' );
 	_conditionalLayer( LEG_SURFACE,       'surfaceLegs' );
 	_conditionalLayer( LABEL_STATION,     'stationLabels' );
+	_conditionalLayer( FEATURE_ANNOTATIONS, 'annotations' );
 
 	Materials.initCache( Viewer );
 
@@ -481,11 +511,26 @@ function init ( domID, configuration ) { // public method
 
 	}
 
-	function _setRouteEdit ( x ) {
+	function _setEditMode ( x ) {
 
-		mouseMode = x ? MOUSE_MODE_ROUTE_EDIT : MOUSE_MODE_NORMAL;
+		mouseMode = Number( x );
+		lastMouseMode = mouseMode;
+
+		clickCount = 0;
+		survey.markers.clear();
+		survey.clearSelection();
+
+		renderView();
+
+		raycaster.params.Points.threshold = 3;
 
 		switch ( mouseMode ) {
+
+		case MOUSE_MODE_TRACE_EDIT:
+
+			mouseTargets = survey.pointTargets.concat( [ survey.dyeTraces ] );
+
+			break;
 
 		case MOUSE_MODE_NORMAL:
 
@@ -499,9 +544,22 @@ function init ( domID, configuration ) { // public method
 
 			break;
 
+		case MOUSE_MODE_ENTRANCES:
+
+			mouseTargets = survey.entranceTargets;
+			raycaster.params.Points.threshold = 15;
+
+			break;
+
+		case MOUSE_MODE_ANNOTATE:
+
+			mouseTargets = survey.pointTargets;
+
+			break;
+
 		default:
 
-			console.warn( 'invalid mouse mode' );
+			console.warn( 'invalid mouse mode', x );
 
 		}
 
@@ -915,12 +973,13 @@ function setShadingMode ( mode ) {
 
 	if ( shadingMode === SHADING_DISTANCE ) {
 
+		lastMouseMode = mouseMode;
 		mouseMode = MOUSE_MODE_DISTANCE;
 		mouseTargets = survey.pointTargets;
 
 	} else {
 
-		mouseMode = MOUSE_MODE_NORMAL;
+		mouseMode = lastMouseMode;
 
 	}
 
@@ -947,6 +1006,7 @@ function addFormatters( stationFormatter ) {
 	formatters.station = stationFormatter;
 
 }
+
 
 function cutSection () {
 
@@ -979,40 +1039,66 @@ function highlightSelection ( node ) {
 
 function selectSection ( node ) {
 
-	survey.selectSection( node );
-
-	setShadingMode( shadingMode );
-
-	selectedSection = node;
-
-	if ( node === survey.surveyTree ) {
-
-		cameraMove.prepare( survey.getWorldBoundingBox() );
-		cameraMove.start( renderRequired );
-
-		highlightSelection( node );
-
-		return;
-
-	}
-
 	if ( node.p === undefined ) {
 
-		if ( node.boundingBox === undefined ) return;
-		// a section of the survey rather than a station
-
-		const boundingBox = node.boundingBox.clone();
-
-		cameraMove.prepare( boundingBox.applyMatrix4( survey.matrixWorld ) );
+		_selectSection( node );
 
 	} else {
 
-		// a single station
-		cameraMove.preparePoint( survey.getWorldPosition( node.p ) );
+		_selectStation( node );
 
 	}
 
+	selectedSection = node;
+
 	renderView();
+
+	return;
+
+	function _selectSection ( node ) {
+
+		survey.selectSection( node );
+
+		setShadingMode( shadingMode );
+
+		if ( node === survey.surveyTree ) {
+
+			cameraMove.prepare( survey.getWorldBoundingBox() );
+			cameraMove.start( renderRequired );
+
+			highlightSelection( node );
+
+			return;
+
+		} else {
+
+			if ( node.boundingBox === undefined ) return;
+
+			const boundingBox = node.boundingBox.clone();
+
+			cameraMove.prepare( boundingBox.applyMatrix4( survey.matrixWorld ) );
+
+		}
+
+	}
+
+	function _selectStation( node ) {
+
+		if ( mouseMode === MOUSE_MODE_TRACE_EDIT ) {
+
+			selectTraceStation( node );
+
+		} else {
+
+			survey.selectSection( node );
+
+			setShadingMode( shadingMode );
+
+			cameraMove.preparePoint( survey.getWorldPosition( node.p ) );
+
+		}
+
+	}
 
 }
 
@@ -1194,13 +1280,17 @@ function loadSurvey ( newSurvey ) {
 
 	if ( terrain === null ) {
 
-		terrain = new WebTerrain( survey, _tilesLoaded, container );
+		if ( navigator.onLine ) {
 
-		HUD.getProgressDial( 0 ).watch( terrain );
+			terrain = new WebTerrain( survey, _tilesLoaded, container );
 
-		syncTerrainLoading = ! terrain.load();
+			HUD.getProgressDial( 0 ).watch( terrain );
 
-		if ( syncTerrainLoading ) terrain = null;
+			syncTerrainLoading = ! terrain.load();
+
+			if ( syncTerrainLoading ) terrain = null;
+
+		}
 
 	} else {
 
@@ -1316,11 +1406,39 @@ function mouseDown ( event ) {
 
 		break;
 
+	case MOUSE_MODE_TRACE_EDIT:
+
+		if ( event.button === MOUSE.LEFT ) {
+
+			if ( intersects[ 0 ].object.type === 'Mesh' ) {
+
+				selectTrace( intersects[ 0 ] );
+
+			} else {
+
+				selectTraceStation( visibleStation( intersects ) );
+
+			}
+
+		}
+
+		break;
+
+	case MOUSE_MODE_ENTRANCES:
+
+		selectEntrance( intersects[ 0 ] );
+
+		break;
+
+	case MOUSE_MODE_ANNOTATE:
+
+		selectAnnotation( visibleStation( intersects ) );
+
 	}
 
 	function _selectStation ( station ) {
 
-		if ( station === null || station.p === undefined ) return;
+		if ( station === null ) return;
 
 		survey.selectStation( station );
 
@@ -1338,8 +1456,6 @@ function mouseDown ( event ) {
 
 	function _setStationPOI( station ) {
 
-		if ( station === null || station.p === undefined ) return;
-
 		selectSection( station );
 
 		cameraMove.start( true );
@@ -1351,7 +1467,7 @@ function mouseDown ( event ) {
 
 	function _selectDistance ( station ) {
 
-		if ( station === null || station.p === undefined ) return;
+		if ( station === null ) return;
 
 		if ( event.button === MOUSE.LEFT ) {
 
@@ -1399,7 +1515,7 @@ function mouseDown ( event ) {
 
 	function _selectSegment ( picked ) {
 
-		const routes = getRoutes();
+		const routes = survey.getRoutes();
 
 		routes.toggleSegment( picked.index );
 
@@ -1426,10 +1542,112 @@ function mouseDown ( event ) {
 
 }
 
+function selectAnnotation ( station ) {
+
+	const annotations = survey.annotations;
+
+	if ( station === null ) return;
+
+	survey.selectStation( station );
+
+	Viewer.dispatchEvent( {
+		type: 'selectedAnnotation',
+		annotationInfo: annotations.getStation( station ),
+		add: function _setAnnotation( annotation ) {
+
+			console.log( 'annotation handler: ', annotation );
+			annotations.setStation( station, annotation );
+			renderView();
+
+		}
+	} );
+
+	renderView();
+
+}
+
+function selectEntrance ( hit ) {
+
+	const entrances = survey.entrances;
+	const info = entrances.getStation( hit.index );
+
+	Viewer.dispatchEvent( {
+		type: 'selectedEntrance',
+		entrance: info
+	} );
+
+}
+
+function selectTrace ( hit ) {
+
+	const dyeTraces = survey.dyeTraces;
+	const traceIndex = hit.faceIndex;
+
+	survey.markers.clear();
+
+	dyeTraces.outlineTrace( traceIndex );
+
+	Viewer.dispatchEvent( {
+		type: 'selectedTrace',
+		trace: dyeTraces.getTraceStations( traceIndex ),
+		delete: function _deleteTrace () {
+			dyeTraces.deleteTrace( traceIndex );
+			renderView();
+		}
+	} );
+
+	renderView();
+
+}
+
+function selectTraceStation ( station ) {
+
+	if ( station === null ) return;
+
+	const dyeTraces = survey.dyeTraces;
+	const markers = survey.markers;
+
+	dyeTraces.outlineTrace( null );
+
+	if ( ++clickCount === 3 ) {
+
+		markers.clear();
+		clickCount = 1;
+
+	}
+
+	markers.mark( station );
+
+	const list = markers.getStations();
+
+	var start, end;
+
+	if ( list[ 0 ] !== undefined ) start = list[ 0 ].getPath();
+	if ( list[ 1 ] !== undefined ) end = list[ 1 ].getPath();
+
+	Viewer.dispatchEvent( {
+		type: 'selectedTrace',
+		start: start,
+		end: end,
+		add: function () {
+			if ( list.length !== 2 ) return;
+
+			dyeTraces.addTrace( list[ 0 ], list[ 1 ] );
+
+			markers.clear();
+			renderView();
+
+		}
+	} );
+
+	renderView();
+
+}
+
 function visibleStation ( intersects ) {
 
 	var i;
-	var station;
+	var station = null;
 
 	for ( i = 0; i < intersects.length; i++ ) {
 
@@ -1564,13 +1782,7 @@ function getControls () {
 
 function getMetadata () {
 
-	return survey.getMetadataURL();
-
-}
-
-function getRoutes () {
-
-	return survey.getRoutes();
+	return survey.metadata;
 
 }
 
@@ -1588,13 +1800,13 @@ Object.assign( Viewer, {
 	loadCave:      loadCave,
 	loadCaves:     loadCaves,
 	getMetadata:   getMetadata,
-	getRoutes:     getRoutes,
 	getLegStats:   getLegStats,
 	getSurveyTree: getSurveyTree,
 	getControls:   getControls,
 	renderView:    renderView,
 	addOverlay:    addOverlay,
 	addFormatters: addFormatters,
+	addAnnotator:  Annotations.addAnnotator,
 	setView:       setView,
 	surfaceLightDirection: currentLightPosition
 } );

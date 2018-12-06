@@ -286,6 +286,8 @@ Page.prototype.appendChild = function ( domElement ) {
 
 	this.page.appendChild( domElement );
 
+	return domElement;
+
 };
 
 Page.prototype.addHeader = function ( text ) {
@@ -594,7 +596,6 @@ Page.prototype.addButton = function ( title, func ) {
 	return button;
 
 };
-
 
 Page.prototype.addTextBox = function ( labelText, placeholder, getResultGetter ) {
 

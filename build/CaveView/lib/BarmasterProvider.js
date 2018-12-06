@@ -10,10 +10,10 @@ BarmasterProvider.prototype.maxZoom = 15;
 BarmasterProvider.prototype.crsSupported = [ 'EPSG:3857' ];
 
 BarmasterProvider.prototype.coverage = {
-	minX: -206138,
-	minY: 7035233,
-	maxX: -190472,
-	maxY: 7046226
+	minX: -8,
+	minY: 50,
+	maxX: 2,
+	maxY: 62
 };
 
 BarmasterProvider.prototype.getUrl = function ( x, y, z ) {

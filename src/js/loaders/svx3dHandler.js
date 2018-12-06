@@ -1098,7 +1098,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		} else if ( position.connections === 1 && xSects.length > 1 && ! lastPosition.connections == 0 ) {
 
-			message = 'unterminated LRUD passage at ' + label + ' splay count: ' + position.splays;
+			message = {
+				station: label,
+				text: 'unterminated LRUD passage, splay count: ' + position.splays
+			};
 
 			if ( position.splays === 0 ) {
 

@@ -24,6 +24,7 @@ StationMarkers.prototype.mark = function ( node ) {
 
 	marker.position.copy( node.p );
 	marker.station = node;
+	marker.layers = this.layers;
 
 	this.add( marker );
 

@@ -110,7 +110,7 @@ function Survey ( cave ) {
 			const node = cave.surveyTree.getByPath( message.station );
 
 			errorMarkers.mark( node );
-			node.messageText = message.txt;
+			node.messageText = message.text;
 
 		} );
 

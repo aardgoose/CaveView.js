@@ -25,11 +25,17 @@
 	<dt>section</dt><dd><span>string</span>The section name of the survey to be displayed (optional).</dd>
 </dl>
 
-<h3>CV.UI.loadCaves( &lt;array&gt; )</h3>
+<h3>CV.UI.loadCaveList( &lt;array&gt; )</h3>
 <p>The user interface displays a list of models to display, the first model is by default.</p>
 <h4>Parameters</h4>
 <dl>
 	<dt>array</dt><dd><span>Array</span>an array of filenames of models to be displayed. The first file specified will be displayed initially.</dd>
+</dl>
+<h3>CV.UI.loadCaves( &lt;array&gt; )</h3>
+<p>Display multiple models together. All files must be of the same type and CRS.</p>
+<h4>Parameters</h4>
+<dl>
+	<dt>array</dt><dd><span>Array</span>an array of filenames of models to be displayed.</dd>
 </dl>
 <h3>CV.Viewer.init( &lt;id&gt;, &lt;configuration Object&gt; )</h3>
 <p>Initialise CaveView with no user interface other than mouse controls - a blank screen is displayed.</p>
@@ -46,6 +52,12 @@
 <dl>
 	<dt>filename</dt><dd><span>string</span>The filename of the model to be loaded from the survey directory (specified by the configuration object).</dd>
 	<dt>section</dt><dd><span>string</span>The section name of the survey to be displayed (optional).</dd>
+</dl>
+<h3>CV.Viewer.loadCaves( &lt;array&gt; )</h3>
+<p>Display multiple models together. All files must be of the same type and CRS.</p>
+<h4>Parameters</h4>
+<dl>
+	<dt>array</dt><dd><span>Array</span>an array of filenames of models to be displayed.</dd>
 </dl>
 <h2>API Objects</h2>
 <h3>configuration Object</h3>

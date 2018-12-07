@@ -11,13 +11,13 @@ function beforeRender ( renderer, scene, camera, geometry, material ) {
 
 }
 
-function DyeTraces ( metadata, surveyTree ) {
+function DyeTraces ( survey ) {
 
 	const geometry = new BufferGeometry();
 
 	Mesh.call( this, geometry, new WaterMaterial() );
 
-	this.metadata = metadata;
+	this.metadata = survey.metadata;
 	this.vertices = [];
 	this.ends = [];
 	this.selected = [];
@@ -27,8 +27,9 @@ function DyeTraces ( metadata, surveyTree ) {
 	this.layers.set( FEATURE_TRACES );
 	this.visible = false;
 
-	const traces = metadata.traces;
+	const traces = survey.metadata.traces;
 	const l = traces.length;
+	const surveyTree = survey.surveyTree;
 
 	if ( l > 0 ) {
 

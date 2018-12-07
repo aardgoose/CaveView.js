@@ -61,8 +61,20 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
 			let label = station.label;
 
+			let d2 = 40000;
+
+			if ( position.connections === 0 ) {
+
+				d2 = 250;
+
+			} else if ( position.connections < 3 ) {
+
+				d2 = 5000;
+
+			}
+
 			// show labels for network vertices at greater distance than intermediate stations
-			const visible = ( position.distanceToSquared( cameraPosition ) < ( ( position.connections < 3 ) ? 5000 : 40000 ) );
+			const visible = ( position.distanceToSquared( cameraPosition ) < d2 );
 
 			if ( label === undefined ) {
 

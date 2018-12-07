@@ -80,7 +80,7 @@ const demoScript = [
 			section: 0,
 			shadingMode: CV.SHADING_DEPTH
 		}
-	},
+	},/*
 	{
 		caption: 'and selected paths',
 		delay: 3,
@@ -94,7 +94,7 @@ const demoScript = [
 		caption: 'and another path.',
 		delay: 3,
 		route: 'demo2'
-	},
+	},*/
 	{
 		caption: 'Terrain',
 		delay: 3,

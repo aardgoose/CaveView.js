@@ -70,7 +70,7 @@ function Stations ( sectionIdSet ) {
 
 				const node = stations[ i ];
 
-				if ( node.p.connections === 0 && ( sectionIdSet === null || sectionIdSet.has( node.id ) ) ) {
+				if ( node.p.connections === 0 && ( splaySize == 0 || sectionIdSet.size === 0 || sectionIdSet.has( node.id ) ) ) {
 
 					pSize.setX( i, splaySize );
 

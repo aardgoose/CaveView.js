@@ -65,7 +65,8 @@ const defaultView = {
 	terrain: false,
 	traces: false,
 	HUD: true,
-	fog: false
+	fog: false,
+	warnings: false
 };
 
 const renderer = new WebGLRenderer( { antialias: true } ) ;

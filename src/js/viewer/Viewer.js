@@ -23,7 +23,7 @@ import { Cfg } from '../core/lib';
 import { WorkerPool } from '../core/WorkerPool';
 import { AnaglyphEffect } from './AnaglyphEffect';
 import { StereoEffect } from './StereoEffect';
-import { Annotations } from './Annotations';
+// import { Annotations } from './Annotations';
 
 // analysis tests
 //import { DirectionGlobe } from '../analysis/DirectionGlobe';
@@ -206,7 +206,7 @@ function init ( domID, configuration ) { // public method
 	scene.addStatic( directionalLight );
 	scene.addStatic( new HemisphereLight( 0xffffff, 0xffffff, 0.3 ) );
 
-	raycaster.params.Points.threshold = 3;
+	raycaster.params.Points.threshold = 2;
 
 	renderer.clear();
 
@@ -1418,7 +1418,7 @@ function mouseDown ( event ) {
 		}
 
 		break;
-
+	/*
 	case MOUSE_MODE_ENTRANCES:
 
 		selectEntrance( intersects[ 0 ] );
@@ -1428,7 +1428,7 @@ function mouseDown ( event ) {
 	case MOUSE_MODE_ANNOTATE:
 
 		selectAnnotation( visibleStation( intersects ) );
-
+	*/
 	}
 
 	function _selectStation ( station ) {
@@ -1536,7 +1536,7 @@ function mouseDown ( event ) {
 	}
 
 }
-
+/*
 function selectAnnotation ( station ) {
 
 	const annotations = survey.annotations;
@@ -1572,7 +1572,7 @@ function selectEntrance ( hit ) {
 	} );
 
 }
-
+*/
 function selectTrace ( hit ) {
 
 	const dyeTraces = survey.dyeTraces;
@@ -1801,7 +1801,7 @@ Object.assign( Viewer, {
 	renderView:    renderView,
 	addOverlay:    addOverlay,
 	addFormatters: addFormatters,
-	addAnnotator:  Annotations.addAnnotator,
+	// addAnnotator:  Annotations.addAnnotator,
 	setView:       setView,
 	surfaceLightDirection: currentLightPosition
 } );

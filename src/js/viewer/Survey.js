@@ -22,7 +22,7 @@ import { Topology } from './Topology';
 import { Routes } from './Routes';
 import { Legs } from './Legs';
 import { DyeTraces } from './DyeTraces';
-import { Annotations } from './Annotations';
+// import { Annotations } from './Annotations';
 import { SurveyMetadata } from './SurveyMetadata';
 import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
@@ -86,6 +86,7 @@ function Survey ( cave ) {
 
 	this.limits = survey.limits;
 	this.offsets = survey.offsets;
+	this.messages = cave.messages;
 
 	const modelLimits = new Box3().copy( this.limits );
 
@@ -102,7 +103,7 @@ function Survey ( cave ) {
 
 	this.loadCave( survey );
 
-	this.loadWarnings( cave );
+	this.loadWarnings();
 
 	this.legTargets = [ this.features[ LEG_CAVE ] ];
 
@@ -185,17 +186,21 @@ Survey.prototype.onRemoved = function ( /* event */ ) {
 
 };
 
-Survey.prototype.loadWarnings = function ( cave ) {
+Survey.prototype.loadWarnings = function () {
 
-	if ( cave.messages.length > 0 ) {
+	const surveyTree = this.surveyTree;
+	const messages = this.messages;
+	const selected = this.selectedSectionIds;
+
+	if ( messages.length > 0 ) {
 
 		const errorMarkers = new StationMarkers( 0xff00ff );
 
-		cave.messages.forEach( function ( message ) {
+		messages.forEach( function ( message ) {
 
-			const node = cave.surveyTree.getByPath( message.station );
+			const node = surveyTree.getByPath( message.station );
 
-			if ( node !== undefined ) {
+			if ( node !== undefined && ( selected.size === 0 || selected.has( node.id ) ) ) {
 				errorMarkers.mark( node );
 				node.messageText = message.text;
 			}
@@ -294,7 +299,7 @@ Survey.prototype.loadCave = function ( cave ) {
 	this.metadata = metadata;
 
 	this.loadDyeTraces();
-	this.loadAnnotations();
+	// this.loadAnnotations();
 
 	this.topology = new Topology( this.stations, this.getFeature( LEG_CAVE ) );
 
@@ -546,14 +551,14 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 
 Survey.prototype.loadDyeTraces = function () {
 
-	const dyeTraces = new DyeTraces( this.metadata, this.surveyTree );
+	const dyeTraces = new DyeTraces( this );
 
 	this.addFeature( dyeTraces, FEATURE_TRACES, 'CV.DyeTraces' );
 
 	this.dyeTraces = dyeTraces;
 
 };
-
+/*
 Survey.prototype.loadAnnotations = function () {
 
 	const annotations = new Annotations( this );
@@ -563,7 +568,7 @@ Survey.prototype.loadAnnotations = function () {
 	this.annotations = annotations;
 
 };
-
+*/
 Survey.prototype.getLegs = function () {
 
 	return this.getFeature( LEG_CAVE ).geometry.vertices;
@@ -836,6 +841,9 @@ Survey.prototype.cutSection = function ( node ) {
 	this.worldBoundingBox = null;
 
 	this.loadEntrances();
+
+	// this.loadWarnings();
+	// this.loadDyeTraces();
 
 	this.topology = new Topology( this.stations, this.getFeature( LEG_CAVE ) );
 

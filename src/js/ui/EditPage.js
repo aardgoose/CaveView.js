@@ -4,14 +4,14 @@ import { Page } from './Page';
 import { Viewer } from '../viewer/Viewer';
 import { RoutePanel } from './RoutePanel';
 import { TracePanel } from './TracePanel';
-import { AnnotatePanel } from './AnnotatePanel';
-import { EntrancePanel } from './EntrancePanel';
+//import { AnnotatePanel } from './AnnotatePanel';
+//import { EntrancePanel } from './EntrancePanel';
 
 
 const mode = {
 	'modes.none': MOUSE_MODE_NORMAL,
-	'modes.annotate': MOUSE_MODE_ANNOTATE,
-	'modes.entrances': MOUSE_MODE_ENTRANCES,
+	//	'modes.annotate': MOUSE_MODE_ANNOTATE,
+	// 'modes.entrances': MOUSE_MODE_ENTRANCES,
 	'modes.route': MOUSE_MODE_ROUTE_EDIT,
 	'modes.trace': MOUSE_MODE_TRACE_EDIT
 };
@@ -26,10 +26,10 @@ function EditPage ( fileSelector ) {
 
 	var initialState;
 
-	var annotatePanel = null;
+	// var annotatePanel = null;
 	var routePanel = null;
 	var tracePanel = null;
-	var entrancePanel = null;
+	// var entrancePanel = null;
 
 	this.addHeader( 'header' );
 
@@ -65,7 +65,7 @@ function EditPage ( fileSelector ) {
 				newState.shadingMode = SHADING_PATH;
 
 				break;
-
+			/*
 			case MOUSE_MODE_ENTRANCES:
 
 				if ( entrancePanel === null ) entrancePanel = new EntrancePanel( self );
@@ -82,6 +82,7 @@ function EditPage ( fileSelector ) {
 				newState.annotations = true;
 
 				break;
+			*/
 
 			}
 
@@ -89,8 +90,8 @@ function EditPage ( fileSelector ) {
 
 			Page.setControlsVisibility( intro, Viewer.editMode === MOUSE_MODE_NORMAL );
 
-			if ( annotatePanel !== null ) annotatePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ANNOTATE );
-			if ( entrancePanel !== null ) entrancePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ENTRANCES );
+			// if ( annotatePanel !== null ) annotatePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ANNOTATE );
+			// if ( entrancePanel !== null ) entrancePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ENTRANCES );
 			if ( routePanel !== null ) routePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ROUTE_EDIT );
 			if ( tracePanel !== null ) tracePanel.setVisibility( Viewer.editMode === MOUSE_MODE_TRACE_EDIT );
 
@@ -103,9 +104,9 @@ function EditPage ( fileSelector ) {
 		// save initial view settings
 
 		initialState = {
-			annotations: Viewer.annotations,
+			// annotations: Viewer.annotations,
 			shadingMode: Viewer.shadingMode,
-			entrances: Viewer.entrances,
+			// entrances: Viewer.entrances,
 			stations: Viewer.stations,
 			traces: Viewer.traces
 		};

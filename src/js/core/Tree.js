@@ -136,7 +136,7 @@ Tree.prototype.getByPathArray = function ( path ) {
 
 Tree.prototype.addLeaf = function ( path, properties ) {
 
-	// shor cut for flat surveys with little tree structure
+	// short cut for flat surveys with little tree structure
 	if ( path.length === 1 ) {
 
 		const newNode = new Tree( path[ 0 ], null, this.root, this );

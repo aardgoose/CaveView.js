@@ -97,8 +97,9 @@ Tree.prototype.findById = function ( id ) {
 Tree.prototype.getByPath = function ( path ) {
 
 	const pathArray = path.split( '.' );
+	const node = this.getByPathArray( pathArray );
 
-	return ( pathArray.length !== 0 ) ? this.getByPathArray( pathArray ) : undefined;
+	return ( pathArray.length === 0 ) ? node: undefined;
 
 };
 

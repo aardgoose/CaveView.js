@@ -408,11 +408,11 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		if ( cave.hasTerrain === false ) return;
 
-		const terrain = new LoxTerrain( cave.terrain, self.offsets );
+		const terrain = new LoxTerrain( cave.terrains, self.offsets );
 
 		// expand limits with terrain
 
-		self.combinedLimits = new Box3().copy( terrain.tile.geometry.boundingBox ).union( self.modelLimits );
+		self.combinedLimits = new Box3().copy( terrain.getBoundingBox() ).union( self.modelLimits );
 
 		self.terrain = terrain;
 

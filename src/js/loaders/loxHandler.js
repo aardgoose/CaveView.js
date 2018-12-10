@@ -15,7 +15,7 @@ function loxHandler ( fileName ) {
 	this.allStations  = [];
 	this.surveyTree   = new Tree( '', 0 );
 	this.limits       = new Box3();
-	this.terrain      = {};
+	this.terrains     = [];
 	this.hasTerrain   = false;
 	this.modelOffset  = 0;
 	this.messages     = 0;
@@ -36,6 +36,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	const surveyTree   = this.surveyTree;
 	const xSects       = this.xSects;
 	const limits       = this.limits;
+	const terrain      = {};
 
 	// assumes little endian data ATM - FIXME
 
@@ -451,7 +452,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		const dtm = new Float64Array( ab, 0 );
 
-		self.terrain.dtm = {
+		terrain.dtm = {
 			data: dtm,
 			samples: m_width,
 			lines:   m_height,
@@ -463,6 +464,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 			yy:      m_calib[ 5 ]
 		};
 
+		self.terrains.push( terrain );
 		self.hasTerrain = true;
 
 	}
@@ -488,7 +490,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		const imagePtr = readDataPtr();
 		const m_calib = readCalibration();
 
-		self.terrain.bitmap = {
+		terrain.bitmap = {
 			image:   extractImage( imagePtr ),
 			xOrigin: m_calib[ 0 ],
 			yOrigin: m_calib[ 1 ],
@@ -654,7 +656,7 @@ loxHandler.prototype.getSurvey = function () {
 		scraps: this.scraps,
 		hasTerrain: this.hasTerrain,
 		metadata: this.metadata,
-		terrain: this.terrain,
+		terrains: this.terrains,
 		limits: this.limits,
 		offsets: this.offsets
 	};

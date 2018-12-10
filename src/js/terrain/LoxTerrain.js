@@ -6,68 +6,51 @@ import { Materials } from '../materials/Materials';
 import { Cfg } from '../core/lib';
 import { FEATURE_TERRAIN } from '../core/constants';
 
-import { MeshLambertMaterial, TextureLoader, Mesh } from '../Three';
+import { MeshLambertMaterial, TextureLoader, Mesh, Box3 } from '../Three';
 
-function LoxTerrain ( terrainData, offsets ) {
+function LoxTile( terrain, offsets ) {
 
-	CommonTerrain.call( this );
+	Mesh.call( this, new LoxTerrainGeometry( terrain.dtm, offsets ), Materials.getSurfaceMaterial( 0xff8888 ) );
 
-	this.type = 'CV.Terrain';
-	this.offsets = offsets;
-	this.bitmap = terrainData.bitmap;
+	this.type = 'CV.LoxTile';
+	this.layers.set( FEATURE_TERRAIN );
 	this.overlayMaterial = null;
-	this.attributions = [];
 
-	const tile = new Mesh( new LoxTerrainGeometry( terrainData.dtm, offsets ), Materials.getSurfaceMaterial( 0xff8888 ) );
+	if ( terrain.bitmap === undefined ) {
 
-	tile.layers.set( FEATURE_TERRAIN );
-	tile.isTile = true;
-	tile.onBeforeRender = StencilLib.terrainOnBeforeRender;
-	tile.onAfterRender = StencilLib.terrainOnAfterRender;
+		this.bitmap = null;
 
-	this.tile = tile;
-	this.overlayLoaded = false;
+	} else {
 
-	this.add( tile );
-
-	this.hasOverlay = ( terrainData.bitmap ) ? true : false;
-
-}
-
-LoxTerrain.prototype = Object.create( CommonTerrain.prototype );
-
-LoxTerrain.prototype.isTiled = false;
-
-LoxTerrain.prototype.isLoaded = true;
-
-LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
-
-	if ( ! this.hasOverlay ) return;
-
-	if ( this.overlayMaterial !== null ) {
-
-		this.setMaterial( this.overlayMaterial );
-
-		overlayLoadedCallback();
-
-		return;
+		this.bitmap = terrain.bitmap;
+		this.offsets = offsets;
 
 	}
 
-	if ( this.overlayLoaded ) return;
+}
+
+LoxTile.prototype = Object.create( Mesh.prototype );
+
+LoxTile.prototype.onBeforeRender = StencilLib.terrainOnBeforeRender;
+LoxTile.prototype.onAfterRender = StencilLib.terrainOnAfterRender;
+LoxTile.prototype.isTile = true;
+
+LoxTile.prototype.loadOverlay = function ( overlayLoadedCallback ) {
+
+	if ( this.bitmap === null ) return;
 
 	const texture = new TextureLoader().load( this.bitmap.image, _overlayLoaded );
 	const self = this;
 
 	texture.anisotropy = Cfg.value( 'anisotropy', 4 );
 
-	this.overlayLoaded = true;
+	return;
 
-	function _overlayLoaded( ) {
+	function _overlayLoaded () {
 
 		const bitmap = self.bitmap;
 
-		self.tile.geometry.setupUVs( bitmap, texture.image, self.offsets );
+		self.geometry.setupUVs( bitmap, texture.image, self.offsets );
 
 		texture.onUpdate = function ( texture ) {
 
@@ -89,7 +72,7 @@ LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
 		bitmap.data = null;
 		bitmap.image = null;
 
-		self.setMaterial( self.overlayMaterial );
+		self.material = self.overlayMaterial;
 
 		overlayLoadedCallback();
 
@@ -97,20 +80,95 @@ LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
 
 };
 
-LoxTerrain.prototype.removed = function () {
+LoxTile.prototype.removed = function () {
 
-	const overlayMaterial = this.overlayMaterial;
+	const material = this.overlayMaterial;
 
-	if ( overlayMaterial !== null ) {
+	if ( material !== null ) {
 
-		// dispose of overlay texture and material
-
-		overlayMaterial.map.dispose();
-		overlayMaterial.dispose();
+		material.map.dispose();
+		material.dispose();
 
 	}
 
-	this.tile.geometry.dispose();
+	this.geometry.dipose();
+
+};
+
+function LoxTerrain ( terrains, offsets ) {
+
+	CommonTerrain.call( this );
+
+	this.type = 'CV.Terrain';
+	this.overlayMaterial = null;
+	this.attributions = [];
+
+	const self = this;
+
+	var bitmapCount = 0;
+
+	terrains.forEach( function ( terrain ) {
+
+		const tile = new LoxTile( terrain, offsets );
+
+		if ( tile.bitmap !== null ) bitmapCount++;
+
+		self.add( tile );
+
+	} );
+
+	this.overlayLoaded = false;
+	this.hasOverlay = ( bitmapCount > 0 ) ? true : false;
+
+}
+
+LoxTerrain.prototype = Object.create( CommonTerrain.prototype );
+
+LoxTerrain.prototype.isTiled = false;
+
+LoxTerrain.prototype.isLoaded = true;
+
+LoxTerrain.prototype.getBoundingBox = function () {
+
+	const box = new Box3();
+
+	this.children.forEach( function ( tile ) { box.union( tile.geometry.boundingBox ); } );
+
+	return box;
+
+};
+
+LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
+
+	if ( ! this.hasOverlay ) return;
+
+	if ( this.overlayLoaded ) {
+
+		this.children.forEach( function ( tile ) {
+
+			if ( tile.overlayMaterial !== null ) {
+
+				tile.material = tile.overlayMaterial;
+
+			}
+
+		} );
+
+		overlayLoadedCallback();
+
+		return;
+
+	}
+
+	this.children.forEach( function ( tile ) { tile.loadOverlay( overlayLoadedCallback ); } );
+
+	this.overlayLoaded = true;
+
+};
+
+LoxTerrain.prototype.removed = function () {
+
+	this.children.forEach( function ( tile ) { tile.removed(); } );
 
 	this.commonRemoved();
 
@@ -118,16 +176,22 @@ LoxTerrain.prototype.removed = function () {
 
 LoxTerrain.prototype.setMaterial = function ( material ) {
 
-	this.tile.material = material;
+	this.children.forEach( function ( tile ) { tile.material = material; } );
 
 };
 
 LoxTerrain.prototype.setOpacity = function ( opacity ) {
 
-	const material = this.tile.material;
+	this.children.forEach( function ( tile ) {
 
-	material.opacity = opacity;
-	material.needsUpdate = true;
+		const material = tile.material;
+
+		tile.opacity = opacity;
+
+		material.opacity = opacity;
+		material.needsUpdate = true;
+
+	} );
 
 	this.opacity = opacity;
 

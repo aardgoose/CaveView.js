@@ -91,7 +91,7 @@ LoxTile.prototype.removed = function () {
 
 	}
 
-	this.geometry.dipose();
+	this.geometry.dispose();
 
 };
 

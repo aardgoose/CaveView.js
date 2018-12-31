@@ -231,7 +231,9 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		}
 
-		parentNode.addById( readString( namePtr ), - ( m_id + idOffset ), { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
+		const name = ( namePtr.size === 0 ) ? '[' + m_id + ']' : readString( namePtr );
+
+		parentNode.addById( name, - ( m_id + idOffset ), { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
 
 	}
 

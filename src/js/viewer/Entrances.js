@@ -46,6 +46,10 @@ function Entrances ( survey ) {
 		positions.copyVector3sArray( vertices );
 		geometry.addAttribute( 'position', positions );
 
+	} else {
+
+		this.visible = false;
+
 	}
 
 	this.markers = markers;

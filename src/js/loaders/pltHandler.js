@@ -46,7 +46,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	const lines = dataStream.split( /[\n\r]+/ );
 
 	const l = lines.length;
-	var i;
+	var lrud, i;
 
 	for ( i = 0; i < l; i++ ) {
 
@@ -75,6 +75,19 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 			if ( coords.connections === 0 ) surveyTree.addLeaf( path, { p: coords, type: STATION_NORMAL } );
 
 			coords.connections++;
+
+			if ( parts[ 5 ] === 'P' ) {
+
+				var lrud = {
+					l: +parts[ 6 ],
+					u: +parts[ 7 ],
+					d: +parts[ 8 ],
+					r: +parts[ 9 ]
+				};
+
+				console.log( 'xsect', stationName, lrud );
+
+			}
 
 			break;
 

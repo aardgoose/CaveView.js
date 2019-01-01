@@ -2,6 +2,7 @@
 import { Cfg, replaceExtension } from '../core/lib';
 import { Svx3dHandler } from './svx3dHandler';
 import { loxHandler } from './loxHandler';
+import { pltHandler } from './pltHandler';
 import { FileLoader, EventDispatcher } from '../Three';
 
 function CaveLoader ( callback ) {
@@ -53,6 +54,12 @@ CaveLoader.prototype.setHandler = function ( fileName ) {
 	case 'lox':
 
 		this.handler = new loxHandler( fileName );
+
+		break;
+
+	case 'plt':
+
+		this.handler = new pltHandler( fileName );
 
 		break;
 

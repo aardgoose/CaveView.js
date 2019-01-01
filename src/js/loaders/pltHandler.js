@@ -30,11 +30,11 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	this.metadata = metadata;
 
-	const groups     = this.groups;
-	const surveyTree = this.surveyTree;
-	const xSects     = this.xSects;
-	const limits     = this.limits;
-	const stationMap = new Map();
+	const groups      = this.groups;
+	const surveyTree  = this.surveyTree;
+	const xSects      = this.xSects;
+	const limits      = this.limits;
+	const stationMap  = new Map();
 	const allStations = this.allStations;
 
 	var path = [];
@@ -64,17 +64,17 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		case 'D': // eslint-disable-line no-fallthrough
 
-			var coords = readCoords( parts );
-
 			stationName = parts[ 4 ].substring( 1 );
-
-			segments.push( { coords: coords, type: LEG_CAVE, survey: surveyId } );
 
 			path[ 1 ] = stationName;
 
-			surveyTree.addLeaf( path, { p: coords, type: STATION_NORMAL } );
+			var coords = readCoords( parts );
 
-			console.log( 'sname', stationName );
+			segments.push( { coords: coords, type: LEG_CAVE, survey: surveyId } );
+
+			if ( coords.connections === 0 ) surveyTree.addLeaf( path, { p: coords, type: STATION_NORMAL } );
+
+			coords.connections++;
 
 			break;
 
@@ -82,7 +82,6 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 			surveyName = parts[ 0 ].substring( 1 );
 
-			console.log( 'survey', surveyName );
 			path = [ surveyName ];
 			surveyId = surveyTree.addPath( surveyName ).id;
 
@@ -90,6 +89,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		case 'Z': // end of survey
 
+			/*
 			limits.min.set(
 				+parts[ 3 ],
 				+parts[ 1 ],
@@ -101,8 +101,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 				+parts[ 2 ],
 				+parts[ 6 ]
 			);
-
-			console.log( 'limits ', limits );
+			*/
 
 			break;
 
@@ -152,6 +151,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 			stationMap.set( lastKey, coords );
 			allStations.push( coords );
+			limits.expandByPoint( coords );
 
 		}
 
@@ -204,8 +204,6 @@ pltHandler.prototype.end = function () {
 		s.sub( offsets );
 
 	} );
-
-	console.log( this.surveyTree );
 
 	return this;
 

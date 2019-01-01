@@ -171,8 +171,6 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 			parentNode = surveyTree.findById( ( lastParentId === undefined ) ? 0 : m_parent + idOffset );
 			lastParentId = m_parent;
 
-			if ( parentNode === undefined ) parentNode = surveyTree;
-
 		}
 
 		if ( m_parent != m_id ) {

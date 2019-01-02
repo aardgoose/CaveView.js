@@ -28,7 +28,7 @@ pltHandler.prototype.constructor = pltHandler;
 
 pltHandler.prototype.type = 'text';
 
-pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
+pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 	this.metadata = metadata;
 
@@ -95,6 +95,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 				xSects.push( { m_from: lastStationIndex, m_to: stationIndex, start: from, end: coords, lrud: lrud, survey: surveyId, type: 2  } );
 
 				lastStationIndex = stationIndex;
+
 			}
 
 			break;
@@ -131,6 +132,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		case 'X': // end of survey
 		case 'O': // Datum
 		case 'G': // UTM Zone
+		case '\x1A': // end of file
 
 			break;
 
@@ -141,7 +143,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		default:
 
-			console.log( 'unknown command ', parts[ 0 ] );
+			console.log( 'unknown command ', cmd );
 
 		}
 
@@ -300,9 +302,9 @@ pltHandler.prototype.end = function () {
 			group.shift();
 			// fake approach vector for initial xSect ( mirrors first segment vector )
 
-//			const newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
+			// const newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
 
-//			group.unshift( { start: newStart, end: start, lrud: xSect.fromLRUD, survey: xSect.survey, type: xSect.type } );
+			// group.unshift( { start: newStart, end: start, lrud: xSect.fromLRUD, survey: xSect.survey, type: xSect.type } );
 
 		}
 

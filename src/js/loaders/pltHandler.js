@@ -4,6 +4,8 @@ import { Tree } from '../core/Tree';
 import { Vector3, Box3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';
 
+const ftom = 12 * 0.0254;
+
 function pltHandler ( fileName ) {
 
 	this.fileName     = fileName;
@@ -42,11 +44,12 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	var stationName;
 	var surveyName;
 	var surveyId = 0;
+	var lastStationIndex = -1;
 
 	const lines = dataStream.split( /[\n\r]+/ );
 
 	const l = lines.length;
-	var lrud, i;
+	var lrud, i, stationIndex, coords;
 
 	for ( i = 0; i < l; i++ ) {
 
@@ -61,6 +64,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 			if ( segments.length > 1 ) groups.push( segments );
 
 			segments = [];
+			lastStationIndex = -1;
 
 		case 'D': // eslint-disable-line no-fallthrough
 
@@ -68,7 +72,8 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 			path[ 1 ] = stationName;
 
-			var coords = readCoords( parts );
+			coords = readCoords( parts );
+			stationIndex = coords.stationIndex;
 
 			segments.push( { coords: coords, type: LEG_CAVE, survey: surveyId } );
 
@@ -78,15 +83,18 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 			if ( parts[ 5 ] === 'P' ) {
 
-				var lrud = {
-					l: +parts[ 6 ],
-					u: +parts[ 7 ],
-					d: +parts[ 8 ],
-					r: +parts[ 9 ]
+				lrud = {
+					l: +parts[ 6 ] * ftom,
+					u: +parts[ 7 ] * ftom,
+					d: +parts[ 8 ] * ftom,
+					r: +parts[ 9 ] * ftom
 				};
 
-				console.log( 'xsect', stationName, lrud );
+				var from = ( lastStationIndex !== -1 ) ? allStations[ lastStationIndex ] : null;
 
+				xSects.push( { m_from: lastStationIndex, m_to: stationIndex, start: from, end: coords, lrud: lrud, survey: surveyId, type: 2  } );
+
+				lastStationIndex = stationIndex;
 			}
 
 			break;
@@ -157,13 +165,17 @@ pltHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		} else {
 
 			coords = new StationPosition(
-				+parts[ 2 ],
-				+parts[ 1 ],
-				+parts[ 3 ]
+				+parts[ 2 ] * ftom,
+				+parts[ 1 ] * ftom,
+				+parts[ 3 ] * ftom
 			);
 
-			stationMap.set( lastKey, coords );
+
+			coords.stationIndex = allStations.length;
+
 			allStations.push( coords );
+			stationMap.set( lastKey, coords );
+
 			limits.expandByPoint( coords );
 
 		}
@@ -205,6 +217,7 @@ pltHandler.prototype.getLineSegments = function () {
 
 pltHandler.prototype.end = function () {
 
+	const self = this;
 	const allStations = this.allStations;
 	const offsets = this.limits.getCenter( new Vector3() );
 
@@ -218,7 +231,82 @@ pltHandler.prototype.end = function () {
 
 	} );
 
+	procXsects();
+
 	return this;
+
+	function procXsects () {
+
+		const xGroups = self.xGroups;
+		const xSects  = self.xSects;
+		const ends = [];
+
+		var lastTo, xGroup, i;
+
+		xSects.sort( function ( a, b ) { return a.m_from - b.m_from; } );
+
+		for ( i = 0; i < xSects.length; i++ ) {
+
+			const xSect = xSects[ i ];
+
+			if ( xSect.m_from !== lastTo ) {
+
+				xGroup = [];
+				xGroups.push( xGroup );
+
+			}
+
+			lastTo = xSect.m_to;
+
+			xGroup.push( xSect );
+
+		}
+
+		for ( i = 0; i < xGroups.length; i++ ) {
+
+			const group = xGroups[ i ];
+
+			const start = group[ 0 ].m_from;
+			const end = group[ group.length - 1 ].m_to;
+
+			// concatenate adjacent groups
+
+			const prepend = ends.indexOf( start );
+
+			if ( prepend !== -1 ) {
+
+				// keep the new run in the same slot - thus end record remains correct
+				xGroups[ i ] = xGroups[ prepend ].concat( group );
+
+				// remove entry from moved group
+				xGroups[ prepend ] = [];
+				ends[ prepend ] = undefined;
+
+			}
+
+			ends.push( end );
+
+		}
+
+		for ( i = 0; i < xGroups.length; i++ ) {
+
+			const group = xGroups[ i ];
+			const xSect = group[ 0 ];
+
+			if ( xSect === undefined ) continue; // groups that have been merged
+
+			const start = xSect.start;
+			const end = xSect.end;
+			group.shift();
+			// fake approach vector for initial xSect ( mirrors first segment vector )
+
+//			const newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
+
+//			group.unshift( { start: newStart, end: start, lrud: xSect.fromLRUD, survey: xSect.survey, type: xSect.type } );
+
+		}
+
+	}
 
 };
 

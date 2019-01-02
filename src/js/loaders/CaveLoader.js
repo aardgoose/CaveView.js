@@ -192,6 +192,12 @@ CaveLoader.prototype.loadLocalFile = function ( file, section ) {
 
 		break;
 
+	case 'text':
+
+		fLoader.readAsText( file );
+
+		break;
+
 	default:
 
 		alert( 'unknown file data type' );

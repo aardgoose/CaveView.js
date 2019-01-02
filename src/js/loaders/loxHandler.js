@@ -262,15 +262,15 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 			m_from = m_from_r;
 			m_to = m_to_r;
-			fromLRUD = readLRUD( true );
-			toLRUD   = readLRUD( true );
+			fromLRUD = readLrudForward();
+			toLRUD   = readLrudForward();
 
 		} else {
 
 			m_from = m_to_r;
 			m_to = m_from_r;
-			toLRUD   = readLRUD( false );
-			fromLRUD = readLRUD( false );
+			toLRUD   = readLrudReverse();
+			fromLRUD = readLrudReverse();
 
 		}
 
@@ -323,27 +323,25 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	}
 
-	function readLRUD ( forward ) {
+	function readLrudForward () {
 
-		if ( forward ) {
+		return {
+			l: readFloat64(),
+			r: readFloat64(),
+			u: readFloat64(),
+			d: readFloat64()
+		};
 
-			return {
-				l: readFloat64(),
-				r: readFloat64(),
-				u: readFloat64(),
-				d: readFloat64()
-			};
+	}
 
-		} else {
+	function readLrudReverse () {
 
-			return {
-				r: readFloat64(),
-				l: readFloat64(),
-				u: readFloat64(),
-				d: readFloat64()
-			};
-
-		}
+		return {
+			r: readFloat64(),
+			l: readFloat64(),
+			u: readFloat64(),
+			d: readFloat64()
+		};
 
 	}
 

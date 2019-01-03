@@ -90,7 +90,7 @@ Tree.prototype.findById = function ( id ) {
 
 	}
 
-	return this.root;
+	return undefined;
 
 };
 

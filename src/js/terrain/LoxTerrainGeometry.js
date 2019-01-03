@@ -37,7 +37,7 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	const xOffset = calib.xOrigin - offsets.x;
 	const yOffset = calib.yOrigin - offsets.y;
-	const zOffset =             - offsets.z;
+	const zOffset = - offsets.z;
 
 	const lx = samples - 1;
 	const ly = lines - 1;

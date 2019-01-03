@@ -456,12 +456,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 			data: dtm,
 			samples: m_width,
 			lines:   m_height,
-			xOrigin: m_calib[ 0 ],
-			yOrigin: m_calib[ 1 ],
-			xx:      m_calib[ 2 ],
-			xy:      m_calib[ 3 ],
-			yx:      m_calib[ 4 ],
-			yy:      m_calib[ 5 ]
+			calib:   m_calib
 		};
 
 		self.terrains.push( terrain );
@@ -471,14 +466,21 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	function readCalibration () {
 
-		return [
-			readFloat64(), // x origin
-			readFloat64(), // y origin
-			readFloat64(), // xx ( 2 x 2 ) rotate and scale matrix
-			readFloat64(), // xy "
-			readFloat64(), // yx "
-			readFloat64() // yy "
-		]; // m_calib
+		const xOrigin =	readFloat64(); // x origin
+		const yOrigin =	readFloat64(); // y origin
+		const xx = readFloat64(); // xx ( 2 x 2 ) rotate and scale matrix
+		const xy = readFloat64(); // xy "
+		const yx = readFloat64(); // yx "
+		const yy = readFloat64(); // yy "
+
+		return {
+			xOrigin: xOrigin,
+			yOrigin: yOrigin,
+			xx: xx,
+			xy: xy,
+			yx: yx,
+			yy: yy
+		};
 
 	}
 
@@ -492,12 +494,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		terrain.bitmap = {
 			image:   extractImage( imagePtr ),
-			xOrigin: m_calib[ 0 ],
-			yOrigin: m_calib[ 1 ],
-			xx:      m_calib[ 2 ],
-			xy:      m_calib[ 3 ],
-			yx:      m_calib[ 4 ],
-			yy:      m_calib[ 5 ]
+			calib:   m_calib
 		};
 
 	}

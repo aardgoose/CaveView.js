@@ -19,6 +19,7 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	const lines = dtm.lines;
 	const samples = dtm.samples;
+	const calib = dtm.calib;
 
 	// buffers
 
@@ -27,15 +28,15 @@ function LoxTerrainGeometry( dtm, offsets ) {
 
 	// 2 x 2 scale & rotate callibration matrix
 
-	const xx = dtm.xx;
-	const xy = dtm.xy;
-	const yx = dtm.yx;
-	const yy = dtm.yy;
+	const xx = calib.xx;
+	const xy = calib.xy;
+	const yx = calib.yx;
+	const yy = calib.yy;
 
 	// offsets from dtm -> survey -> model
 
-	const xOffset = dtm.xOrigin - offsets.x;
-	const yOffset = dtm.yOrigin - offsets.y;
+	const xOffset = calib.xOrigin - offsets.x;
+	const yOffset = calib.yOrigin - offsets.y;
 	const zOffset =             - offsets.z;
 
 	const lx = samples - 1;
@@ -122,23 +123,24 @@ LoxTerrainGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 LoxTerrainGeometry.prototype.setupUVs = function ( bitmap, image, offsets ) {
 
-	const det = bitmap.xx * bitmap.yy - bitmap.xy * bitmap.yx;
+	const calib = bitmap.calib;
+	const det = calib.xx * calib.yy - calib.xy * calib.yx;
 
 	if ( det === 0 ) return false;
 
 	// rotation matrix of bitmap over CRS
-	const xx =   bitmap.yy / det;
-	const xy = - bitmap.xy / det;
-	const yx = - bitmap.yx / det;
-	const yy =   bitmap.xx / det;
+	const xx =   calib.yy / det;
+	const xy = - calib.xy / det;
+	const yx = - calib.yx / det;
+	const yy =   calib.xx / det;
 
 	const vertices = this.getAttribute( 'position' ).array;
 
 	const width  = image.naturalWidth;
 	const height = image.naturalHeight;
 
-	const xOffset = - ( xx * bitmap.xOrigin + xy * bitmap.yOrigin );
-	const yOffset = - ( yx * bitmap.xOrigin + yy * bitmap.yOrigin );
+	const xOffset = - ( xx * calib.xOrigin + xy * calib.yOrigin );
+	const yOffset = - ( yx * calib.xOrigin + yy * calib.yOrigin );
 
 	const uvs = [];
 

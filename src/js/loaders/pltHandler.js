@@ -172,7 +172,6 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 				+parts[ 3 ] * ftom
 			);
 
-
 			coords.stationIndex = allStations.length;
 
 			allStations.push( coords );
@@ -293,18 +292,20 @@ pltHandler.prototype.end = function () {
 		for ( i = 0; i < xGroups.length; i++ ) {
 
 			const group = xGroups[ i ];
+
+			if ( group.length < 2 ) continue;
+
 			const xSect = group[ 0 ];
+			const xSectNext = group[ 1 ];
 
 			if ( xSect === undefined ) continue; // groups that have been merged
 
-			const start = xSect.start;
-			const end = xSect.end;
-			group.shift();
-			// fake approach vector for initial xSect ( mirrors first segment vector )
+			const start = xSectNext.start;
+			const end = xSectNext.end;
 
-			// const newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
+			// fake approach vector for initial xSect ( mirrors first section vector )
 
-			// group.unshift( { start: newStart, end: start, lrud: xSect.fromLRUD, survey: xSect.survey, type: xSect.type } );
+			xSect.start = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
 
 		}
 

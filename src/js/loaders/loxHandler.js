@@ -497,8 +497,8 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		const m_calib = readCalibration();
 
 		terrain.bitmap = {
-			image:   extractImage( imagePtr ),
-			calib:   m_calib
+			image: extractImage( imagePtr ),
+			calib: m_calib
 		};
 
 	}

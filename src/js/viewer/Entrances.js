@@ -62,10 +62,25 @@ function Entrances ( survey ) {
 
 	function _addEntrance( node ) {
 
+		var name;
+
 		if ( node.type !== STATION_ENTRANCE ) return;
 
 		const entranceInfo = entrances[ node.getPath() ];
-		const name = ( entranceInfo !== undefined && entranceInfo.name !== undefined ) ? entranceInfo.name : node.getPath( endNode );
+
+		if ( entranceInfo !== undefined && entranceInfo.name !== undefined ) {
+
+			name = entranceInfo.name;
+
+		} else if ( node.comment !== undefined ) {
+
+			name = node.comment;
+
+		} else {
+
+			name = node.getPath( endNode );
+
+		}
 
 		vertices.push( node.p );
 		stations.push( node );

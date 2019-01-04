@@ -214,8 +214,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		const m_id       = readUint();
 		const m_surveyId = readUint();
 		const namePtr    = readDataPtr();
-
-		pos += 8; // readDataPtr(); // commentPtr - ignored
+		const commentPtr = readDataPtr();
 
 		const m_flags = readUint();
 		const coords = readCoords();
@@ -234,8 +233,11 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		}
 
 		const name = ( namePtr.size === 0 ) ? '[' + m_id + ']' : readString( namePtr );
+		const obj = { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL };
 
-		parentNode.addById( name, - ( m_id + idOffset ), { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL } );
+		if ( commentPtr.size > 0 ) obj.comment = readString( commentPtr );
+
+		parentNode.addById( name, - ( m_id + idOffset ), obj );
 
 	}
 

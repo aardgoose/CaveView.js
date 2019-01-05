@@ -1195,6 +1195,7 @@ function clearView () {
 
 function loadCave ( file, section ) {
 
+	caveLoader.reset();
 	caveLoader.loadFile( file, section );
 
 	clipped = ( section !== undefined && section != '' );
@@ -1203,6 +1204,7 @@ function loadCave ( file, section ) {
 
 function loadCaves ( files ) {
 
+	caveLoader.reset();
 	caveLoader.loadFiles( files );
 
 }

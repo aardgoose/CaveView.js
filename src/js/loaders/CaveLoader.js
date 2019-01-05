@@ -16,17 +16,29 @@ function CaveLoader ( callback ) {
 	this.callback = callback;
 	this.dataResponse = null;
 	this.metadataResponse = null;
+	this.requests = [];
+	this.doneCount = 0;
 	this.taskCount = 0;
-	this.section = null;
-	this.handler = null;
-	this.extention = null;
-	this.files = null;
+
+	this.reset();
 
 }
 
 CaveLoader.prototype = Object.create( EventDispatcher.prototype );
 
 CaveLoader.prototype.constructor = CaveLoader;
+
+CaveLoader.prototype.reset = function () {
+
+	this.files = null;
+	this.extention = null;
+	this.handler = null;
+	this.section = null;
+
+	this.requests.forEach( function ( request ) { request.abort(); } );
+	this.requests = [];
+
+};
 
 CaveLoader.prototype.setHandler = function ( fileName ) {
 
@@ -114,13 +126,13 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	const loader = new FileLoader().setPath( prefix );
 
-	loader.setResponseType( 'json' ).load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _metadataError );
+	loader.setResponseType( 'json' );
 
-	if ( handler.mimeType !== undefined ) loader.setMimeType( 'text/xml' );
+	this.requests.push( loader.load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _metadataError ) );
 
 	loader.setResponseType( handler.type );
 
-	loader.load( fileName, _dataLoaded, _progress, _dataError );
+	this.requests.push( loader.load( fileName, _dataLoaded, _progress, _dataError ) );
 
 	return true;
 
@@ -142,27 +154,31 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	}
 
-	function _progress ( e ) {
+	function _progress ( event ) {
 
-		self.dispatchEvent( { type: 'progress', name: 'set', progress: Math.round( 100 * e.loaded / e.total ) } );
+		self.dispatchEvent( { type: 'progress', name: 'set', progress: Math.round( 100 * event.loaded / event.total ) } );
 
 	}
 
 	function _dataError ( event ) {
 
+		if ( event.type === 'abort' ) return;
+
 		self.doneCount++;
 
 		console.warn( ' error event', event );
 
-		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
+		if ( self.doneCount === self.taskCount ) self.callHandler();
 
 	}
 
 	function _metadataError ( /* event */ ) {
 
+		if ( event.type === 'abort' ) return;
+
 		self.doneCount++;
 
-		if ( self.doneCount === self.taskCount ) self.callHandler( fileName );
+		if ( self.doneCount === self.taskCount ) self.callHandler();
 
 	}
 
@@ -243,7 +259,6 @@ CaveLoader.prototype.callHandler = function () {
 
 	this.dataResponse = null;
 	this.metadataResponse = null;
-	this.section = null;
 
 	const moreFiles = files !== null && files.length > 0;
 
@@ -257,9 +272,6 @@ CaveLoader.prototype.callHandler = function () {
 
 		this.callback( this.handler.end() );
 		this.dispatchEvent( { type: 'progress', name: 'end' } );
-
-		this.handler = null;
-		this.extention = null;
 
 	}
 

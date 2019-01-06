@@ -104,10 +104,10 @@ function SelectionPage ( container, fileSelector ) {
 
 		const children = top.children;
 
-		if ( ! children.sorted ) {
+		if ( ! top.sorted ) {
 
 			children.sort( _sortSurveys );
-			children.sorted = true;
+			top.sorted = true;
 
 		}
 

@@ -136,10 +136,9 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	function _dataLoaded ( result ) {
 
-		doneCount++;
 		self.dataResponse = result;
 
-		if ( doneCount === taskCount ) self.callHandler();
+		if ( ++doneCount === taskCount ) self.callHandler();
 
 	}
 

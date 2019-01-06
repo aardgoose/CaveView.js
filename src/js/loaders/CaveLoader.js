@@ -17,8 +17,6 @@ function CaveLoader ( callback ) {
 	this.dataResponse = null;
 	this.metadataResponse = null;
 	this.requests = [];
-	this.doneCount = 0;
-	this.taskCount = 0;
 
 	this.reset();
 
@@ -120,9 +118,9 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 	if ( ! this.setHandler( fileName ) ) return false;
 
 	const handler = this.handler;
+	const taskCount = 2;
 
-	this.doneCount = 0;
-	this.taskCount = 2;
+	var doneCount = 0;
 
 	const loader = new FileLoader().setPath( prefix );
 
@@ -138,19 +136,18 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	function _dataLoaded ( result ) {
 
-		self.doneCount++;
+		doneCount++;
 		self.dataResponse = result;
 
-		if ( self.doneCount === self.taskCount ) self.callHandler();
+		if ( doneCount === taskCount ) self.callHandler();
 
 	}
 
 	function _metadataLoaded ( result ) {
 
-		self.doneCount++;
 		self.metadataResponse = result;
 
-		if ( self.doneCount === self.taskCount ) self.callHandler();
+		if ( ++doneCount === taskCount ) self.callHandler();
 
 	}
 
@@ -164,11 +161,9 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 		if ( event.type === 'abort' ) return;
 
-		self.doneCount++;
+		console.warn( 'error event', event );
 
-		console.warn( ' error event', event );
-
-		if ( self.doneCount === self.taskCount ) self.callHandler();
+		if ( ++doneCount === taskCount ) self.callHandler();
 
 	}
 
@@ -176,9 +171,7 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 		if ( event.type === 'abort' ) return;
 
-		self.doneCount++;
-
-		if ( self.doneCount === self.taskCount ) self.callHandler();
+		if ( ++doneCount === taskCount ) self.callHandler();
 
 	}
 

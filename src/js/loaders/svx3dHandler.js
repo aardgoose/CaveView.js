@@ -34,11 +34,11 @@ Svx3dHandler.prototype.setCRS = function ( sourceCRS ) {
 
 		// work around lack of +init string support in proj4js
 
-		const matches = sourceCRS.match( /\+init=(.*)\s/);
+		const matches = sourceCRS.match( /\+init=(.*)\s/ );
 
 		if ( matches && matches.length === 2 ) {
 
-			switch( matches[ 1 ] ) {
+			switch ( matches[ 1 ] ) {
 
 			case 'epsg:27700' :
 
@@ -56,9 +56,9 @@ Svx3dHandler.prototype.setCRS = function ( sourceCRS ) {
 
 	}
 
-	const displayCRS = Cfg.value( 'displayCRS' , 'EPSG:3857' );
+	const displayCRS = Cfg.value( 'displayCRS', 'EPSG:3857' );
 
-	if ( sourceCRS === null ) sourceCRS = Cfg.value( 'defaultCRS' , null );
+	if ( sourceCRS === null ) sourceCRS = Cfg.value( 'defaultCRS', null );
 
 	// FIXME use NAD grid corrections OSTM15 etc ( UK Centric )
 	if ( sourceCRS !== null ) {
@@ -177,8 +177,8 @@ Svx3dHandler.prototype.end = function () {
 	}
 
 	const stationMap = this.stationMap;
-	const limits = new Box3();
 	const projection = this.projection;
+	const limits = new Box3();
 
 	// get bounding box of all stations in survey
 
@@ -252,16 +252,16 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 	const surveyTree = this.surveyTree;
 	const stationMap = this.stationMap;
 
-	const cmd       = [];
-	const stations  = new Map();
+	const cmd      = [];
+	const stations = new Map();
 
 	const dataView   = new DataView( source, 0 );
 	const data       = new Uint8Array( source, 0 );
 	const dataLength = data.length;
 
-	var label       = '';
-	var sectionId   = 0;
-	var legs        = [];
+	var label     = '';
+	var sectionId = 0;
+	var legs      = [];
 
 	var lastPosition = new StationPosition(); // value to allow approach vector for xsect coord frame
 	var i, j, li, lj;
@@ -651,7 +651,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	// fake approach vector for initial leg in xSect sequence
 
-	for ( i = 0; i < xGroups.length; i ++ ) {
+	for ( i = 0; i < xGroups.length; i++ ) {
 
 		const group = xGroups[ i ];
 
@@ -788,7 +788,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		label = label.slice( 0, -16 );
 
-		if ( label.charAt( label.length - 1 ) === '.') label = label.slice( 0, -1 ); // strip trailing '.'
+		if ( label.charAt( label.length - 1 ) === '.' ) label = label.slice( 0, -1 ); // strip trailing '.'
 
 		const parts = label.split( '.' );
 

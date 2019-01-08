@@ -79,7 +79,9 @@ function initUI () {
 	new SettingsPage( fileSelector );
 	new SurfacePage();
 	new SelectionPage( container, fileSelector );
-	new EditPage( fileSelector );
+
+	if ( Cfg.value( 'showEditPage', false ) ) new EditPage( fileSelector );
+
 	new InfoPage( fileSelector );
 	new HelpPage( avenControls );
 

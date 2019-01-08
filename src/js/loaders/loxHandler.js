@@ -520,9 +520,11 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 			type = 'image/png';
 
-		}
+		} else {
 
-		if ( ! type ) return '';
+			return '';
+
+		}
 
 		const blob = new Blob( [ imgData ], { type: type } );
 

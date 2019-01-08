@@ -113,20 +113,25 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	const self = this;
 	const prefix = Cfg.value( 'surveyDirectory', '' );
+	const loadMetadata = Cfg.value( 'loadMetadata', false );
 
 	// setup file handler
 	if ( ! this.setHandler( fileName ) ) return false;
 
 	const handler = this.handler;
-	const taskCount = 2;
+	const taskCount = loadMetadata ? 2 : 1;
 
 	var doneCount = 0;
 
 	const loader = new FileLoader().setPath( prefix );
 
-	loader.setResponseType( 'json' );
+	if ( loadMetadata ) {
 
-	this.requests.push( loader.load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _metadataError ) );
+		loader.setResponseType( 'json' );
+
+		this.requests.push( loader.load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _metadataError ) );
+
+	}
 
 	loader.setResponseType( handler.type );
 

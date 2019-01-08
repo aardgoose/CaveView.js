@@ -394,12 +394,6 @@ function init ( domID, configuration ) { // public method
 			set: function ( x ) { _stateSetter( setCameraPOI, 'setPOI', x ); }
 		},
 
-		'developerInfo': {
-			writeable: true,
-			get: function () { return true; },
-			set: showDeveloperInfo
-		},
-
 		'HUD': {
 			writeable: true,
 			get: HUD.getVisibility,
@@ -676,10 +670,6 @@ function applyTerrainDatumShift( x ) {
 	Viewer.dispatchEvent( { type: 'change', name: 'terrainDatumShift' } );
 
 	renderView();
-
-}
-
-function showDeveloperInfo( /* x */ ) {
 
 }
 

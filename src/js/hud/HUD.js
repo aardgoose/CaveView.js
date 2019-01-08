@@ -89,7 +89,7 @@ function init ( viewerIn, viewRenderer ) {
 	scene.addStatic( aLight );
 	scene.addStatic( dLight );
 
-	progressDials = [ new ProgressDial( true, 0 ), new ProgressDial( false, 1 ) ];
+	progressDials = [ new ProgressDial( true, 0, viewer ), new ProgressDial( false, 1, viewer ) ];
 
 	progressDial = progressDials [ 0 ];
 

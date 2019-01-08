@@ -1,7 +1,6 @@
 
 import { Cfg } from '../core/lib';
 import { HudObject } from './HudObject';
-import { Viewer } from '../viewer/Viewer';
 import { MutableGlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
@@ -12,7 +11,7 @@ import {
 	Object3D, Mesh, Float32BufferAttribute,
 } from '../Three';
 
-function ProgressDial ( addText, ring ) {
+function ProgressDial ( addText, ring, viewer ) {
 
 	const stdWidth  = HudObject.stdWidth;
 	const stdMargin = HudObject.stdMargin;
@@ -41,6 +40,7 @@ function ProgressDial ( addText, ring ) {
 	this.colorsSrc = colorsSrc;
 	this.backgroundColor = backgroundColor;
 	this.setColor = setColor;
+	this.viewer = viewer;
 
 	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
 
@@ -120,7 +120,7 @@ ProgressDial.prototype.set = function ( progress ) {
 
 	}
 
-	Viewer.renderView();
+	this.viewer.renderView();
 
 };
 
@@ -139,7 +139,7 @@ ProgressDial.prototype.start = function () {
 
 	if ( this.pcent !== null ) this.pcent.replaceString( '  0%' );
 
-	Viewer.renderView();
+	this.viewer.renderView();
 
 };
 
@@ -147,7 +147,7 @@ ProgressDial.prototype.end = function () {
 
 	const self = this;
 
-	setTimeout( function endProgress () { self.visible = false; Viewer.renderView(); }, 500 );
+	setTimeout( function endProgress () { self.visible = false; self.viewer.renderView(); }, 500 );
 
 };
 

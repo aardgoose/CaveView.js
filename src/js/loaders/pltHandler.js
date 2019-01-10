@@ -83,18 +83,34 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 			if ( parts[ 5 ] === 'P' ) {
 
-				lrud = {
-					l: +parts[ 6 ] * ftom,
-					u: +parts[ 7 ] * ftom,
-					d: +parts[ 8 ] * ftom,
-					r: +parts[ 9 ] * ftom
-				};
+				let l = +parts[ 6 ];
+				let u = +parts[ 7 ];
+				let d = +parts[ 8 ];
+				let r = +parts[ 9 ];
 
-				var from = ( lastStationIndex !== -1 ) ? allStations[ lastStationIndex ] : null;
+				let nCount = 0;
 
-				xSects.push( { m_from: lastStationIndex, m_to: stationIndex, start: from, end: coords, lrud: lrud, survey: surveyId, type: 2  } );
+				if ( l < 0 ) { l = 0; nCount++; }
+				if ( u < 0 ) { u = 0; nCount++; }
+				if ( d < 0 ) { d = 0; nCount++; }
+				if ( r < 0 ) { r = 0; nCount++; }
 
-				lastStationIndex = stationIndex;
+				if ( nCount !== 4 ) {
+
+					lrud = {
+						l: l * ftom,
+						u: u * ftom,
+						d: d * ftom,
+						r: r * ftom
+					};
+
+					var from = ( lastStationIndex !== -1 ) ? allStations[ lastStationIndex ] : null;
+
+					xSects.push( { m_from: lastStationIndex, m_to: stationIndex, start: from, end: coords, lrud: lrud, survey: surveyId, type: 2  } );
+
+					lastStationIndex = stationIndex;
+
+				}
 
 			}
 

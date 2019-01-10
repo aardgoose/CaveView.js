@@ -136,6 +136,7 @@ var clipped = false;
 
 const __rotation = new Euler();
 const __q = new Quaternion();
+const __v = new Vector3();
 
 //var leakWatcher;
 
@@ -1633,26 +1634,36 @@ function selectTraceStation ( station ) {
 
 function visibleStation ( intersects ) {
 
-	var i;
-	var station = null;
+	var minD2 = Infinity;
+	var closestStation = null;
 
-	for ( i = 0; i < intersects.length; i++ ) {
+	intersects.forEach( function _checkIntersects( intersect ) {
 
-		station = survey.stations.getStationByIndex( intersects[ i ].index );
+		const station = survey.stations.getStationByIndex( intersect.index );
 
-		if ( ! Viewer.splays && station !== null && station.p.connections === 0 ) {
+		// don't select spays unless visible
 
-			// don't select spays unless visible
-			station = null;
-			continue;
+		if ( ! Viewer.splays && station !== null && station.p.connections === 0 ) return;
+
+		// station in screen NDC
+		__v.copy( station.p ).applyMatrix4( survey.matrixWorld ).project( camera );
+
+		__v.sub( intersect.point.project( camera ) );
+
+		const d2 = __v.x * __v.x + __v.y * __v.y;
+
+		// choose closest of potential matches in screen x/y space
+
+		if ( d2 < minD2 ) {
+
+			minD2 = d2;
+			closestStation = station;
 
 		}
 
-		break;
+	} );
 
-	}
-
-	return station;
+	return closestStation;
 
 }
 

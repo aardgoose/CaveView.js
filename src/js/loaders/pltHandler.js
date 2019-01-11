@@ -39,6 +39,9 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 	const stationMap  = new Map();
 	const allStations = this.allStations;
 
+	const lines = dataStream.split( /[\n\r]+/ );
+	const l = lines.length;
+
 	var path = [];
 	var segments = [];
 	var stationName;
@@ -46,10 +49,6 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 	var surveyId = 0;
 	var lastStationIndex = -1;
 	var section = 'root';
-
-	const lines = dataStream.split( /[\n\r]+/ );
-
-	const l = lines.length;
 	var lrud, i, stationIndex, coords;
 
 	for ( i = 0; i < l; i++ ) {
@@ -108,7 +107,6 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 					var from = ( lastStationIndex !== -1 ) ? allStations[ lastStationIndex ] : null;
 
 					xSects.push( { m_from: lastStationIndex, m_to: stationIndex, start: from, end: coords, lrud: lrud, survey: surveyId, type: 2  } );
-
 
 				}
 

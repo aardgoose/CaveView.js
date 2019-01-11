@@ -308,7 +308,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		if ( m_sectionType !== 0x00 && type === LEG_CAVE ) {
 
-			xSects.push( { m_from: m_from, m_to: m_to, start: from, end: to, fromLRUD: fromLRUD, lrud: toLRUD, survey: surveyId, type: m_sectionType } );
+			xSects.push( { m_from: m_from + idOffset, m_to: m_to + idOffset, start: from, end: to, fromLRUD: fromLRUD, lrud: toLRUD, survey: surveyId, type: m_sectionType } );
 
 		}
 

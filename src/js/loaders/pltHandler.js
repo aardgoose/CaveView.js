@@ -109,9 +109,10 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 					xSects.push( { m_from: lastStationIndex, m_to: stationIndex, start: from, end: coords, lrud: lrud, survey: surveyId, type: 2  } );
 
-					lastStationIndex = stationIndex;
 
 				}
+
+				lastStationIndex = stationIndex;
 
 			}
 

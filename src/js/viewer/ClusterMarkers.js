@@ -353,7 +353,7 @@ ClusterMarkers.prototype.cluster = function ( camera, target, selectedStationSet
 
 	const angle = this.camera.getWorldDirection( __v ).dot( Object3D.DefaultUp );
 
-	this.quadTree.check( this, target, 1 - Math.cos( angle ), selectedStationSet );
+	this.quadTree.check( this, target, Math.max( 0.05, 1 - Math.cos( angle ) ), selectedStationSet );
 
 	return;
 

@@ -47,7 +47,12 @@
 
 function onload () {
 
-	CV.UI.init( 'scene', { home: '/CaveView.js/CaveView/', terrainDirectory: '/CaveView.js/terrain/', surveyDirectory: '/CaveView.js/surveys/' } );
+	CV.UI.init( 'scene', {
+		home: '/CaveView.js/CaveView/', terrainDirectory: '/CaveView.js/terrain/',
+		surveyDirectory: '/CaveView.js/surveys/',
+		loadMetadata: true,
+		showEditPage: true
+	} );
 
 	CV.Viewer.addOverlay( 'OSM', new OSMProvider() );
 	CV.Viewer.addOverlay( 'BGS Solid', new BGSProvider( [ 'BGS.50k.Bedrock', 'BGS.50k.Linear.features' ] ) );

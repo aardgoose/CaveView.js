@@ -312,7 +312,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		}
 
-		// ommit zero length legs
+		// omit zero length legs
 
 		if ( from.equals( to ) ) return;
 

@@ -498,17 +498,14 @@ div.cv-checkbox {
 	outline: none;
 }
 
-#cv-frame input[type=range]::-webkit-slider-runnable-track {
-	width: 100%;
-	height: 4px;
-	cursor: pointer;
+.track-mixin() {
 	box-shadow: @track-box-shadow;
 	background: @track-background;
 	border-radius: @track-border-radius;
 	border: @track-border;
 }
 
-#cv-frame input[type=range]::-webkit-slider-thumb {
+.thumb-mixin() {
 	box-shadow: @thumb-box-shadow;
 	border: @thumb-border;
 	height: @thumb-size;
@@ -516,6 +513,17 @@ div.cv-checkbox {
 	border-radius: @thumb-radius;
 	background: @highlight;
 	cursor: pointer;
+}
+
+#cv-frame input[type=range]::-webkit-slider-runnable-track {
+	width: 100%;
+	height: 4px;
+	cursor: pointer;
+	.track-mixin();
+}
+
+#cv-frame input[type=range]::-webkit-slider-thumb {
+	.thumb-mixin();
 	-webkit-appearance: none;
 	margin-top: -6px;
 }
@@ -528,20 +536,11 @@ div.cv-checkbox {
 	width: 100%;
 	height: 4px;
 	cursor: pointer;
-	box-shadow: @track-box-shadow;
-	background: @track-background;
-	border-radius: @track-border-radius;
-	border: @track-border;
+	.track-mixin();
 }
 
 #cv-frame input[type=range]::-moz-range-thumb {
-	box-shadow: @thumb-box-shadow;
-	border: @thumb-border;
-	height: @thumb-size;
-	width: @thumb-size;
-	border-radius: @thumb-radius;
-	background: @highlight;
-	cursor: pointer;
+	.thumb-mixin();
 }
 
 #cv-frame input[type=range]::-ms-track {
@@ -554,28 +553,16 @@ div.cv-checkbox {
 }
 
 #cv-frame input[type=range]::-ms-fill-lower {
-	background: @track-background;
-	border: @track-border;
-	border-radius: @track-border-radius;
-	box-shadow: @track-box-shadow;
+	.track-mixin();
 }
 
 #cv-frame input[type=range]::-ms-fill-upper {
-	background: @track-background;
-	border: @track-border;
-	border-radius: @track-border-radius;
-	box-shadow: @track-box-shadow;
+	.track-mixin();
 }
 
 #cv-frame input[type=range]::-ms-thumb {
+	.thumb-mixin();
 	margin-top: 1px;
-	box-shadow: @thumb-box-shadow;
-	border: @thumb-border;
-	height: @thumb-size;
-	width: @thumb-size;
-	border-radius: @thumb-radius;
-	background: @highlight;
-	cursor: pointer;
 }
 
 #cv-frame input[type=range]:focus::-ms-fill-lower {

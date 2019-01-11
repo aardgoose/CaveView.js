@@ -1,0 +1,590 @@
+
+
+@box-shadow: #888888;
+@highlight: #1ab4e5;
+@background: #222222;
+@border-tab: #888888;
+@font-size: 12px;
+@tab-size: 40px;
+@tab-inactive: #444444;
+
+@thumb-size: 16px;
+@thumb-radius: 15px;
+@thumb-border: 1px solid #00001E;
+@thumb-box-shadow: 0px 0px 0px #000031;
+
+@track-background: #eeeeee;
+@track-box-shadow: 0px 0px 0px #000000;
+@track-border: 0px solid #010101;
+@track-border-radius: 0px;
+
+@icon-sheet: url(../images/icons.png);
+
+
+
+body {
+	font-family: 'Source Sans Pro Regular','Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+
+.cv-container {
+	position: relative;
+	overflow: hidden;
+	height: 600px;
+	width: 1000px;
+	touch-action: none;
+}
+
+#cv-frame *, #cv-tab-box *, #cv-frame, #cv-tab-box {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+#cv-frame {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 300px;
+	height: 100%;
+	background-color: @background;
+	transform: translateX(-300px);
+	transition: transform 0.25s ease-in;
+	z-index: 10;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+#cv-frame div.page {
+	position: absolute;
+	top: 0px;
+	bottom: 40px;
+	left: 0px;
+	width: 280px;
+	height: 100%;
+	color: white;
+	background-color: @background;
+	padding: 0 4px 20px 20px;
+	cursor: default;
+}
+
+#cv-frame div.page ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	width: 280px;
+	height: 100%;
+	cursor: default;
+	font-size: @font-size;
+	overflow-y: visible;
+	overflow-x: hidden;
+}
+
+#cv-frame div.page li {
+	position: relative;
+	margin-left: 20px;
+	border-bottom: 1px solid #444444;
+}
+
+#cv-frame div.page ul li.selected {
+	color: #1ab4e5;
+}
+
+#cv-frame div.page li:hover {
+	color: yellow;
+}
+
+#cv-frame div.page div#ui-path {
+	font-size: @font-size;
+	margin-top: 8px;
+	border-top: 1px solid grey;
+	border-bottom: 1px solid grey;
+	padding: 2px 0 2px 0px;
+}
+
+#cv-frame div.page div#ui-path span {
+	color: #1ab4e5;
+}
+
+#cv-frame div.page div.slide {
+	position: absolute;
+	top: 64px;
+	bottom: 4px;
+	left: 0px;
+	max-height: 100%;
+	background-color: @background;
+	transition: transform 0.25s ease-in;
+}
+
+#cv-frame div.slide-out {
+	border-right: 1px grey solid;
+	transform: translateX(-100%);
+}
+
+#cv-frame div.page div.descend-tree {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	margin: 0;
+	color: @highlight;
+	z-index: 110;
+}
+
+#cv-frame.onscreen {
+	transform: none;
+	transition: transform 0.25s ease-out;
+}
+
+#cv-frame a.download {
+	display: block;
+	width: 100%;
+	margin: 16px 0 4px 0;
+	border: none;
+	border-bottom: 4px solid @highlight;
+	padding: 0 0 4px 0;
+	color: #dddddd;
+	background-color: black;
+	box-shadow: 1px 1px 8px 0px @box-shadow;
+	outline: none;
+	text-decoration: none;
+	text-align: center;
+}
+
+#cv-frame a.download:hover {
+	color: white;
+}
+
+#cv-frame a.download:active {
+	color: #dddddd;
+	border-bottom: 4px solid #0c536a;
+	box-shadow: none;
+	box-shadow: inset 1px 1px 8px 0px @box-shadow;
+}
+
+#cv-tab-box {
+	position: absolute;
+	top: 0px;
+	width: @tab-size;
+	z-index: 200;
+	transform: none;
+	transition: transform 0.25s ease-in;	
+}
+
+#cv-tab-box.onscreen {
+	transform: translateX( 300px );
+	transition: transform 0.25s ease-out;
+}
+
+#cv-tab-box .tab {
+	float: left;
+	width: @tab-size;
+	height: @tab-size;
+	border-top: 1px solid black;
+	border-left: thin @border-tab solid;
+	background-color: @tab-inactive;
+	background-origin: content-box;
+	background-image: @icon-sheet;
+	padding: 1px;
+}
+
+#cv-tab-box #close {
+	background-color: @background;
+	background-image: @icon-sheet;
+	background-position: -360px;
+	border-left: none;
+	display: none;
+}
+
+#cv-tab-box.onscreen #close {
+	display: block;
+	margin-left: -100px;
+	z-index: 200;
+}
+
+#cv-tab-box #fullscreen {
+	display: none;
+	border-left: none;
+	background-color: @background;
+}
+
+#cv-tab-box.onscreen #fullscreen {
+	position: absolute;
+	top: 0px;
+	left: -60px;
+	display: block;
+	z-index: 400;
+}
+
+#fullscreen.expand {
+	background-image: @icon-sheet;
+	background-position: -252px;
+}
+
+#fullscreen.collapse {
+	background-image: @icon-sheet;
+	background-position: -216px;
+}
+
+#cv-tab-box #icon_settings {
+	background-position: 0 0;
+}
+
+#cv-tab-box #icon_terrain {
+	background-position: -36px 0;
+}
+
+#cv-tab-box #icon_explore {
+	background-position: -72px 0;
+}
+
+#cv-tab-box #icon_route {
+	background-position: -108px 0;
+}
+
+#cv-tab-box #icon_info {
+	background-position: -144px 0;
+}
+
+
+#cv-tab-box #icon_help {
+	background-position: -180px 0;
+}
+
+#cv-tab-box.onscreen div.toptab {
+	background-color: @background;
+	border-top: 1px solid @border-tab;
+	border-bottom: 1px solid @border-tab;
+	border-left: none;
+	border-right: 2px solid @highlight;
+}
+
+@media (min-width: 768px) {
+
+	/* default to normal size */
+	body div.toggle-fullscreen {
+		position: fixed !important;
+		top: 0px;
+		bottom: 0px;
+		left: 0px;
+		right: 0px;
+		width: auto !important;
+		height: auto !important;
+		margin: 0 !important;
+		padding: 0 !important;
+		z-index: 999;
+	}
+
+}
+
+@media (max-width: 767px) {
+
+	#cv-frame {
+		width: 100%;
+		transform: translateY(-100%);
+	}
+
+	#cv-frame.onscreen {
+		padding-top: @tab-size;
+	}
+
+	#cv-frame div.page {
+		width: 95%;
+		top: @tab-size;
+	}
+
+	#cv-frame div.page div.slide, #cv-frame div.slide ul {
+		width: 100%;
+	}
+
+	#cv-tab-box {
+		left: 0px;
+		right: 0px;
+		height: @tab-size;
+		width: auto;
+	}
+
+	#cv-tab-box.onscreen {
+		transform: none;
+		background-color: @tab-inactive;
+		border-bottom: thin solid white;
+	}
+
+	#cv-tab-box.onscreen .tab {
+		border-bottom: thin solid white;
+	}
+
+	#cv-tab-box.onscreen #fullscreen.tab {
+		position: static;
+		float: left;
+		margin: 0;
+		background-color: @tab-inactive;
+	}
+
+	/* default to full screen */
+	body div.cv-container:not( .toggle-fullscreen ) {
+		position: fixed !important;
+		top: 0px !important;
+		bottom: 0px !important;
+		left: 0px !important;
+		right: 0px !important;
+		width: auto !important;
+		height: auto !important;
+		margin: 0 !important;
+		padding: 0 !important;
+		z-index: 999;
+	}
+
+	#cv-tab-box.onscreen div.toptab {
+		background-color: @background;
+		border-left: none;
+		border-right: 1px solid gray;
+		border-top: 4px solid @highlight;
+		border-bottom: none;
+		z-index: 20;
+	}
+
+	#cv-tab-box #close {
+		position: fixed;
+		background-color: @tab-inactive;
+		background-image: @icon-sheet;
+		background-position: -324px;
+		top: 0px;
+		right: 0px;
+		left: auto;
+	}
+
+	#cv-tab-box.onscreen #close {
+		float: right;
+		margin: 0;
+	}
+
+}
+
+#cv-frame div.page div.header {
+	height: 16px;
+	margin: 16px 0px 8px 0px;
+	padding-left: 2px;
+	font-weight: bold;
+}
+
+#cv-frame div.page div.control {
+	margin: 2px 0 2px 0;
+	padding: 2px 2px 0 0;
+}
+
+#cv-frame div.page label {
+	display: block;
+	border-top: 1px solid grey;
+	padding: 2px 0 8px 0px;
+	font-size: @font-size;
+}
+
+#cv-frame div.page select {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	margin: 0 0 5px 0px;
+	padding-top: 2px;
+}
+
+#cv-frame div.page select:empty {
+	background-color: #888888;
+}
+
+#cv-frame div.page button {
+	display: block;
+	width: 100%;
+	height: 28px;
+	margin: 16px 0 4px 0;
+	border: none;
+	border-bottom: 4px solid @highlight;
+	padding-bottom: 4px;
+	color: #dddddd;
+	background-color: black;
+	box-shadow: 1px 1px 8px 0px @box-shadow;
+	outline: none;
+}
+
+#cv-frame div.page button:hover {
+	color: white;
+}
+
+#cv-frame div.page button:active {
+	border-bottom: 4px solid #0c536a;
+	box-shadow: none;
+	box-shadow: inset 1px 1px 8px 0px @box-shadow;
+	color: #dddddd;
+}
+
+#cv-frame div.page input[type="text"] {
+	display: block;
+	width: 100%;
+	margin-top: 2px;
+	margin-left: 0px;
+}
+
+div.cv-checkbox {
+	position: relative;
+	margin-right: 0;
+}
+
+#cv-frame div.page input[type="checkbox"] {
+	position: absolute;
+	right: 0px;
+	top: 4px;
+}
+
+#cv-frame div.page input[type="range"] {
+	display: block;
+	max-width: 100%;
+	margin-left: 0px;
+	margin-bottom: 3px;
+}
+
+#cv-frame dt, #cv-frame dd {
+	font-size: @font-size;
+}
+
+#cv-frame dt {
+	clear: both;
+	float: left;
+	padding-left: 16px;
+}
+
+#cv-frame dd {
+	margin-left: 60px;
+}
+
+#cv-frame p {
+	padding-left: 8px;
+	font-size: @font-size;
+	line-height: 18px;
+}
+
+#cv-frame p.spaced {
+	margin-top: 18px;
+}
+
+#cv-frame a, #cv-frame a:visited {
+	padding-left: 8px;
+	color: white;
+	text-decoration: none;
+}
+
+#cv-frame a, #cv-frame a:hover {
+	color: yellow;
+}
+
+.overlay-branding {
+	position: absolute;
+	right: 0;
+	top: 0;
+	color: white;
+	margin: 4px;
+}
+
+#cv-frame input[type=checkbox]:checked + label {
+	color: @highlight;
+}
+
+#cv-frame input[type=range] {
+	height: 23px;
+	width: 100%;
+	-webkit-appearance: none;
+	margin: 10px 0;
+	background-color: transparent;
+}
+
+#cv-frame input[type=range]:focus {
+	outline: none;
+}
+
+#cv-frame input[type=range]::-webkit-slider-runnable-track {
+	width: 100%;
+	height: 4px;
+	cursor: pointer;
+	box-shadow: @track-box-shadow;
+	background: @track-background;
+	border-radius: @track-border-radius;
+	border: @track-border;
+}
+
+#cv-frame input[type=range]::-webkit-slider-thumb {
+	box-shadow: @thumb-box-shadow;
+	border: @thumb-border;
+	height: @thumb-size;
+	width: @thumb-size;
+	border-radius: @thumb-radius;
+	background: @highlight;
+	cursor: pointer;
+	-webkit-appearance: none;
+	margin-top: -6px;
+}
+
+#cv-frame input[type=range]:focus::-webkit-slider-runnable-track {
+	background: @track-background;
+}
+
+#cv-frame input[type=range]::-moz-range-track {
+	width: 100%;
+	height: 4px;
+	cursor: pointer;
+	box-shadow: @track-box-shadow;
+	background: @track-background;
+	border-radius: @track-border-radius;
+	border: @track-border;
+}
+
+#cv-frame input[type=range]::-moz-range-thumb {
+	box-shadow: @thumb-box-shadow;
+	border: @thumb-border;
+	height: @thumb-size;
+	width: @thumb-size;
+	border-radius: @thumb-radius;
+	background: @highlight;
+	cursor: pointer;
+}
+
+#cv-frame input[type=range]::-ms-track {
+	width: 100%;
+	height: 4px;
+	cursor: pointer;
+	background: transparent;
+	border-color: transparent;
+	color: transparent;
+}
+
+#cv-frame input[type=range]::-ms-fill-lower {
+	background: @track-background;
+	border: @track-border;
+	border-radius: @track-border-radius;
+	box-shadow: @track-box-shadow;
+}
+
+#cv-frame input[type=range]::-ms-fill-upper {
+	background: @track-background;
+	border: @track-border;
+	border-radius: @track-border-radius;
+	box-shadow: @track-box-shadow;
+}
+
+#cv-frame input[type=range]::-ms-thumb {
+	margin-top: 1px;
+	box-shadow: @thumb-box-shadow;
+	border: @thumb-border;
+	height: @thumb-size;
+	width: @thumb-size;
+	border-radius: @thumb-radius;
+	background: @highlight;
+	cursor: pointer;
+}
+
+#cv-frame input[type=range]:focus::-ms-fill-lower {
+	background: @track-background;
+}
+
+#cv-frame input[type=range]:focus::-ms-fill-upper {
+	background: @track-background;
+}
+#cv-frame div.reload:hover {
+	color: lime;
+}

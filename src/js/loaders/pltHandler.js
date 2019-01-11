@@ -45,6 +45,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 	var surveyName;
 	var surveyId = 0;
 	var lastStationIndex = -1;
+	var section = 'root';
 
 	const lines = dataStream.split( /[\n\r]+/ );
 
@@ -70,7 +71,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 			stationName = parts[ 4 ].substring( 1 );
 
-			path[ 1 ] = stationName;
+			path[ 2 ] = stationName;
 
 			coords = readCoords( parts );
 			stationIndex = coords.stationIndex;
@@ -120,8 +121,8 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 			surveyName = parts[ 0 ].substring( 1 );
 
-			path = [ surveyName ];
-			surveyId = surveyTree.addPath( surveyName ).id;
+			path = [ section, surveyName ];
+			surveyId = surveyTree.addPath( section + '.' + surveyName ).id;
 
 			break;
 
@@ -154,7 +155,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 		case 'S':
 
-			console.log( 'section name', lines[ 1 ].substring( 1 ) );
+			section = lines[ 1 ].substring( 1 );
 			break;
 
 		default:

@@ -1,12 +1,19 @@
 
 
-@box-shadow: #888888;
+@frame-width: 300px;
+
+@page-width: @frame-width - 20px;
+@page-rule: 1px solid grey;
+
+@box-shadow: grey;
 @highlight: #1ab4e5;
 @background: #222222;
-@border-tab: #888888;
+
 @font-size: 12px;
+
 @tab-size: 40px;
 @tab-inactive: #444444;
+@tab-border: 1px solid grey;
 
 @thumb-size: 16px;
 @thumb-radius: 15px;
@@ -17,9 +24,11 @@
 @track-box-shadow: 0px 0px 0px #000000;
 @track-border: 0px solid #010101;
 @track-border-radius: 0px;
+@track-height: 4px;
+
+@animation-speed: 0.25s;
 
 @icon-sheet: url(../images/icons.png);
-
 
 
 body {
@@ -44,11 +53,11 @@ body {
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	width: 300px;
+	width: @frame-width;
 	height: 100%;
 	background-color: @background;
-	transform: translateX(-300px);
-	transition: transform 0.25s ease-in;
+	transform: translateX(-@frame-width);
+	transition: transform @animation-speed ease-in;
 	z-index: 10;
 	overflow-y: auto;
 	overflow-x: hidden;
@@ -59,7 +68,7 @@ body {
 	top: 0px;
 	bottom: 40px;
 	left: 0px;
-	width: 280px;
+	width: @page-width;
 	height: 100%;
 	color: white;
 	background-color: @background;
@@ -71,7 +80,7 @@ body {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-	width: 280px;
+	width: @page-width;
 	height: 100%;
 	cursor: default;
 	font-size: @font-size;
@@ -86,23 +95,23 @@ body {
 }
 
 #cv-frame div.page ul li.selected {
-	color: #1ab4e5;
+	color: @highlight;
 }
 
 #cv-frame div.page li:hover {
-	color: yellow;
+	color: @highlight;
 }
 
 #cv-frame div.page div#ui-path {
 	font-size: @font-size;
 	margin-top: 8px;
-	border-top: 1px solid grey;
-	border-bottom: 1px solid grey;
+	border-top: @page-rule;
+	border-bottom: @page-rule;
 	padding: 2px 0 2px 0px;
 }
 
 #cv-frame div.page div#ui-path span {
-	color: #1ab4e5;
+	color: @highlight;
 }
 
 #cv-frame div.page div.slide {
@@ -112,7 +121,7 @@ body {
 	left: 0px;
 	max-height: 100%;
 	background-color: @background;
-	transition: transform 0.25s ease-in;
+	transition: transform @animation-speed ease-in;
 }
 
 #cv-frame div.slide-out {
@@ -131,7 +140,7 @@ body {
 
 #cv-frame.onscreen {
 	transform: none;
-	transition: transform 0.25s ease-out;
+	transition: transform @animation-speed ease-out;
 }
 
 #cv-frame a.download {
@@ -166,12 +175,12 @@ body {
 	width: @tab-size;
 	z-index: 200;
 	transform: none;
-	transition: transform 0.25s ease-in;	
+	transition: transform @animation-speed ease-in;
 }
 
 #cv-tab-box.onscreen {
-	transform: translateX( 300px );
-	transition: transform 0.25s ease-out;
+	transform: translateX( @frame-width );
+	transition: transform @animation-speed ease-out;
 }
 
 #cv-tab-box .tab {
@@ -179,7 +188,7 @@ body {
 	width: @tab-size;
 	height: @tab-size;
 	border-top: 1px solid black;
-	border-left: thin @border-tab solid;
+	border-left: @tab-border;
 	background-color: @tab-inactive;
 	background-origin: content-box;
 	background-image: @icon-sheet;
@@ -251,8 +260,8 @@ body {
 
 #cv-tab-box.onscreen div.toptab {
 	background-color: @background;
-	border-top: 1px solid @border-tab;
-	border-bottom: 1px solid @border-tab;
+	border-top: @tab-border;
+	border-bottom: @tab-border;
 	border-left: none;
 	border-right: 2px solid @highlight;
 }
@@ -373,7 +382,7 @@ body {
 
 #cv-frame div.page label {
 	display: block;
-	border-top: 1px solid grey;
+	border-top: @page-rule;
 	padding: 2px 0 8px 0px;
 	font-size: @font-size;
 }
@@ -471,7 +480,7 @@ div.cv-checkbox {
 }
 
 #cv-frame a, #cv-frame a:hover {
-	color: yellow;
+	color: @highlight;
 }
 
 .overlay-branding {
@@ -490,12 +499,18 @@ div.cv-checkbox {
 	height: 23px;
 	width: 100%;
 	-webkit-appearance: none;
-	margin: 10px 0;
+	margin: 0px 0;
 	background-color: transparent;
 }
 
 #cv-frame input[type=range]:focus {
 	outline: none;
+}
+
+.track-size-mixin() {
+	width: 100%;
+	height: @track-height;
+	cursor: pointer;
 }
 
 .track-mixin() {
@@ -516,9 +531,7 @@ div.cv-checkbox {
 }
 
 #cv-frame input[type=range]::-webkit-slider-runnable-track {
-	width: 100%;
-	height: 4px;
-	cursor: pointer;
+	.track-size-mixin();
 	.track-mixin();
 }
 
@@ -533,9 +546,7 @@ div.cv-checkbox {
 }
 
 #cv-frame input[type=range]::-moz-range-track {
-	width: 100%;
-	height: 4px;
-	cursor: pointer;
+	.track-size-mixin();
 	.track-mixin();
 }
 
@@ -544,9 +555,7 @@ div.cv-checkbox {
 }
 
 #cv-frame input[type=range]::-ms-track {
-	width: 100%;
-	height: 4px;
-	cursor: pointer;
+	.track-size-mixin();
 	background: transparent;
 	border-color: transparent;
 	color: transparent;

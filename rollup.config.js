@@ -59,7 +59,8 @@ export default {
 	},
 	plugins: [
 		less( {
-			output: 'build/CaveView/css/caveviewnew.css'
+			include: 'src/css/*.less',
+			output: 'build/CaveView/css/caveview.css'
 		}),
 		glsl(),
 		glslThree(),

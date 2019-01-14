@@ -61,6 +61,7 @@ body {
 	z-index: 10;
 	overflow-y: auto;
 	overflow-x: hidden;
+	font-size: @font-size;
 }
 
 #cv-frame div.page {
@@ -83,7 +84,6 @@ body {
 	width: @page-width;
 	height: 100%;
 	cursor: default;
-	font-size: @font-size;
 	overflow-y: visible;
 	overflow-x: hidden;
 }
@@ -103,7 +103,6 @@ body {
 }
 
 #cv-frame div.page div#ui-path {
-	font-size: @font-size;
 	margin-top: 8px;
 	border-top: @page-rule;
 	border-bottom: @page-rule;
@@ -125,7 +124,7 @@ body {
 }
 
 #cv-frame div.slide-out {
-	border-right: 1px grey solid;
+	border-right: @page-rule;
 	transform: translateX(-100%);
 }
 
@@ -343,9 +342,8 @@ body {
 	}
 
 	#cv-tab-box.onscreen div.toptab {
-		background-color: @background;
 		border-left: none;
-		border-right: 1px solid gray;
+		border-right: @tab-border;
 		border-top: 4px solid @highlight;
 		border-bottom: none;
 		z-index: 20;
@@ -384,7 +382,6 @@ body {
 	display: block;
 	border-top: @page-rule;
 	padding: 2px 0 8px 0px;
-	font-size: @font-size;
 }
 
 #cv-frame div.page select {
@@ -449,10 +446,6 @@ div.cv-checkbox {
 	margin-bottom: 3px;
 }
 
-#cv-frame dt, #cv-frame dd {
-	font-size: @font-size;
-}
-
 #cv-frame dt {
 	clear: both;
 	float: left;
@@ -465,7 +458,6 @@ div.cv-checkbox {
 
 #cv-frame p {
 	padding-left: 8px;
-	font-size: @font-size;
 	line-height: 18px;
 }
 

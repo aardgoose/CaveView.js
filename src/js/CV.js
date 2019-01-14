@@ -1,6 +1,6 @@
 import './core/polyfills';
 import 'three/src/polyfills';
-
+import '../css/caveview.less';
 import { Cfg } from './core/lib';
 
 // backwards compat

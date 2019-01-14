@@ -5,9 +5,11 @@
 @page-width: @frame-width - 20px;
 @page-rule: 1px solid grey;
 
-@box-shadow: grey;
+@box-shadow: 1px 1px 8px 0px grey;
 @highlight: #1ab4e5;
+@foreground: white;
 @background: #222222;
+@offwhite: #dddddd;
 
 @font-size: 12px;
 
@@ -53,8 +55,8 @@ body {
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	width: @frame-width;
 	height: 100%;
+	width: @frame-width;
 	background-color: @background;
 	transform: translateX(-@frame-width);
 	transition: transform @animation-speed ease-in;
@@ -69,20 +71,20 @@ body {
 	top: 0px;
 	bottom: 40px;
 	left: 0px;
-	width: @page-width;
 	height: 100%;
-	color: white;
+	width: @page-width;
+	padding: 2px 4px 20px 20px;
 	background-color: @background;
-	padding: 0 4px 20px 20px;
+	color: @foreground;
 	cursor: default;
 }
 
 #cv-frame div.page ul {
 	list-style-type: none;
-	margin: 0;
-	padding: 0;
-	width: @page-width;
 	height: 100%;
+	width: @page-width;
+	margin: 0;
+	padding: 0 4px 0 0;
 	cursor: default;
 	overflow-y: visible;
 	overflow-x: hidden;
@@ -98,15 +100,8 @@ body {
 	color: @highlight;
 }
 
-#cv-frame div.page li:hover {
+#cv-frame div.page li:hover, #cv-frame div.page div#ui-path:hover {
 	color: @highlight;
-}
-
-#cv-frame div.page div#ui-path {
-	margin-top: 8px;
-	border-top: @page-rule;
-	border-bottom: @page-rule;
-	padding: 2px 0 2px 0px;
 }
 
 #cv-frame div.page div#ui-path span {
@@ -115,7 +110,7 @@ body {
 
 #cv-frame div.page div.slide {
 	position: absolute;
-	top: 64px;
+	top: 82px;
 	bottom: 4px;
 	left: 0px;
 	max-height: 100%;
@@ -142,32 +137,6 @@ body {
 	transition: transform @animation-speed ease-out;
 }
 
-#cv-frame a.download {
-	display: block;
-	width: 100%;
-	margin: 16px 0 4px 0;
-	border: none;
-	border-bottom: 4px solid @highlight;
-	padding: 0 0 4px 0;
-	color: #dddddd;
-	background-color: black;
-	box-shadow: 1px 1px 8px 0px @box-shadow;
-	outline: none;
-	text-decoration: none;
-	text-align: center;
-}
-
-#cv-frame a.download:hover {
-	color: white;
-}
-
-#cv-frame a.download:active {
-	color: #dddddd;
-	border-bottom: 4px solid #0c536a;
-	box-shadow: none;
-	box-shadow: inset 1px 1px 8px 0px @box-shadow;
-}
-
 #cv-tab-box {
 	position: absolute;
 	top: 0px;
@@ -184,8 +153,8 @@ body {
 
 #cv-tab-box .tab {
 	float: left;
-	width: @tab-size;
 	height: @tab-size;
+	width: @tab-size;
 	border-top: 1px solid black;
 	border-left: @tab-border;
 	background-color: @tab-inactive;
@@ -215,10 +184,10 @@ body {
 }
 
 #cv-tab-box.onscreen #fullscreen {
+	display: block;
 	position: absolute;
 	top: 0px;
 	left: -60px;
-	display: block;
 	z-index: 400;
 }
 
@@ -274,8 +243,8 @@ body {
 		bottom: 0px;
 		left: 0px;
 		right: 0px;
-		width: auto !important;
 		height: auto !important;
+		width: auto !important;
 		margin: 0 !important;
 		padding: 0 !important;
 		z-index: 999;
@@ -367,58 +336,76 @@ body {
 }
 
 #cv-frame div.page div.header {
-	height: 16px;
-	margin: 16px 0px 8px 0px;
-	padding-left: 2px;
+	height: 40px;
+	margin: 0;
+	padding: 22px 0 1px 0;
+	border-bottom: @page-rule;
+	border-bottom-color: white;
+	line-height: 16px;
 	font-weight: bold;
 }
 
 #cv-frame div.page div.control {
-	margin: 2px 0 2px 0;
-	padding: 2px 2px 0 0;
+	position: relative;
+	margin: 0;
+	padding: 0;
+	border-bottom: @page-rule;
 }
 
 #cv-frame div.page label {
 	display: block;
-	border-top: @page-rule;
-	padding: 2px 0 8px 0px;
+	height: 24px;
+	padding: 4px 0 4px 0px;
+	line-height: 16px;
 }
 
 #cv-frame div.page select {
-	display: block;
-	width: 100%;
+	display: inline-block;
+	height: 18px;
+	width: 60%;
 	max-width: 100%;
-	margin: 0 0 5px 0px;
-	padding-top: 2px;
+	margin: 0 0 4px 0;
+	padding: 0;
+	border: none;
+	background-color: lighten( @background, 10% );
+	color: @foreground;
+	outline: none;
 }
 
 #cv-frame div.page select:empty {
 	background-color: #888888;
+	display: none;
 }
 
+#cv-frame a.download,
 #cv-frame div.page button {
 	display: block;
+	height: 24px;
 	width: 100%;
-	height: 28px;
 	margin: 16px 0 4px 0;
+	padding: 0;
 	border: none;
-	border-bottom: 4px solid @highlight;
-	padding-bottom: 4px;
-	color: #dddddd;
+	border-bottom: 4px solid darken( @highlight, 20% );
 	background-color: black;
-	box-shadow: 1px 1px 8px 0px @box-shadow;
+	color: @offwhite;
+	box-shadow: @box-shadow;
 	outline: none;
+	text-decoration: none;
+	text-align: center;
 }
 
+#cv-frame a.download:hover,
 #cv-frame div.page button:hover {
-	color: white;
+	border-bottom-color: @highlight;
+	color: @foreground;
 }
 
+#cv-frame a.download:active,
 #cv-frame div.page button:active {
-	border-bottom: 4px solid #0c536a;
+	border-bottom-color: darken( @highlight, 20% );
 	box-shadow: none;
-	box-shadow: inset 1px 1px 8px 0px @box-shadow;
-	color: #dddddd;
+	box-shadow: inset @box-shadow;
+	color: @offwhite;
 }
 
 #cv-frame div.page input[type="text"] {
@@ -428,22 +415,10 @@ body {
 	margin-left: 0px;
 }
 
-div.cv-checkbox {
-	position: relative;
-	margin-right: 0;
-}
-
 #cv-frame div.page input[type="checkbox"] {
 	position: absolute;
 	right: 0px;
-	top: 4px;
-}
-
-#cv-frame div.page input[type="range"] {
-	display: block;
-	max-width: 100%;
-	margin-left: 0px;
-	margin-bottom: 3px;
+	bottom: 4px;
 }
 
 #cv-frame dt {
@@ -467,7 +442,7 @@ div.cv-checkbox {
 
 #cv-frame a, #cv-frame a:visited {
 	padding-left: 8px;
-	color: white;
+	color: @foreground;
 	text-decoration: none;
 }
 
@@ -479,7 +454,7 @@ div.cv-checkbox {
 	position: absolute;
 	right: 0;
 	top: 0;
-	color: white;
+	color: @foreground;
 	margin: 4px;
 }
 
@@ -487,11 +462,20 @@ div.cv-checkbox {
 	color: @highlight;
 }
 
-#cv-frame input[type=range] {
-	height: 23px;
-	width: 100%;
+#cv-frame div.page label.cv-range,
+#cv-frame div.page label.cv-select {
+	width: 40%;
+	display: inline-block;
+}
+
+#cv-frame div.page input[type="range"] {
+	display: inline-block;
+	vertical-align: bottom;
+	height: 24px;
+	width: 60%;
+	max-width: 100%;
+	margin: 0;
 	-webkit-appearance: none;
-	margin: 0px 0;
 	background-color: transparent;
 }
 
@@ -500,8 +484,8 @@ div.cv-checkbox {
 }
 
 .track-size-mixin() {
-	width: 100%;
 	height: @track-height;
+	width: 100%;
 	cursor: pointer;
 }
 
@@ -513,12 +497,12 @@ div.cv-checkbox {
 }
 
 .thumb-mixin() {
-	box-shadow: @thumb-box-shadow;
-	border: @thumb-border;
 	height: @thumb-size;
 	width: @thumb-size;
+	border: @thumb-border;
 	border-radius: @thumb-radius;
 	background: @highlight;
+	box-shadow: @thumb-box-shadow;
 	cursor: pointer;
 }
 
@@ -566,13 +550,7 @@ div.cv-checkbox {
 	margin-top: 1px;
 }
 
-#cv-frame input[type=range]:focus::-ms-fill-lower {
-	background: @track-background;
-}
-
+#cv-frame input[type=range]:focus::-ms-fill-lower,
 #cv-frame input[type=range]:focus::-ms-fill-upper {
 	background: @track-background;
-}
-#cv-frame div.reload:hover {
-	color: lime;
 }

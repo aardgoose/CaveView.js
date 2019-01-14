@@ -394,6 +394,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 	this.addListener( select, 'change', function onChange ( event ) { Page.inHandler = true; trgObj[ property ] = event.target.value; Page.inHandler = false; } );
 
 	label.textContent = this.i18n( title );
+	label.classList.add( 'cv-select' );
 
 	Page.controls[ property ] = select;
 
@@ -422,7 +423,7 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 	const id = 'cv-' + Page.seq++;
 
-	div.classList.add( 'cv-checkbox' );
+	div.classList.add( 'control' );
 
 	cb.type = 'checkbox';
 	cb.checked = obj[ property ];
@@ -430,6 +431,7 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 	label.textContent = this.i18n( title );
 	label.htmlFor = id;
+	label.classList.add( 'check' );
 
 	this.addListener( cb, 'change', _checkboxChanged );
 
@@ -474,6 +476,7 @@ Page.prototype.addRange = function ( title, obj, property ) {
 	this.addListener( range, 'change', _rangeChanged ); // for IE11 support
 
 	label.textContent = this.i18n( title );
+	label.classList.add( 'cv-range' );
 
 	Page.controls[ property ] = range;
 

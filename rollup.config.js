@@ -1,6 +1,7 @@
 import json from 'rollup-plugin-json';
 import commonjs from 'rollup-plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
+import less from 'rollup-plugin-less';
 
 function glsl () {
 	return {
@@ -57,6 +58,9 @@ export default {
 		format: 'umd'
 	},
 	plugins: [
+		less( {
+			output: 'build/CaveView/css/caveviewnew.css'
+		}),
 		glsl(),
 		glslThree(),
 		json({

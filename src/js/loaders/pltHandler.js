@@ -148,13 +148,16 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 		case 'X': // end of survey
 		case 'O': // Datum
 		case 'G': // UTM Zone
+		case 'P': // position ??
+		case 'R': // ??
+		case 'C': // ??
 		case '\x1A': // end of file
 
 			break;
 
 		case 'S':
 
-			section = lines[ 1 ].substring( 1 );
+			section = lines[ i ].substring( 1 );
 			break;
 
 		default:

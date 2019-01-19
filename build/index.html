@@ -47,9 +47,10 @@ function onload () {
 		terrainDirectory: "/terrain/",
 		surveyDirectory: "/surveys/",
 		home: "/CaveView/",
+		showEditPage: true,
+		loadMetadata: true,
 		view: { walls: false, alpha: false, terrain: false },
 		saturatedGradient: true,
-		// alphaWalls: true,
 //		displayCRS: 'ORIGINAL',
 		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZTk5MmVmZC1iZDU5LTQzMWQtOWY0Zi1mZDYxNDA1MTNjMjgiLCJpZCI6OTEwLCJpYXQiOjE1MjYzMjczMDh9.aJWNt5jc-dt64lR4q7zw0bdp0PARsvupmWjUYUrQVQs',
 //		language: "template",
@@ -126,8 +127,10 @@ var caves = [
 //	CV.Viewer.addAnnotator( new ImageAnnotator() );
 
 	CV.UI.loadCaveList( caves );
+//	CV.UI.loadCaveList( [ "ours.lox", "caylar.lox", "garrel.lox" ] );
 
-	//	CV.UI.loadCaves( [ "ours.lox", "caylar.lox", "garrel.lox", "surface.lox" ] );
+//	CV.UI.loadCaves( [ "Bradwell_Master_NoSurface.3d" ] );
+//	CV.UI.loadCaves( [ "ours.lox", "caylar.lox" ] );
 	//	CV.UI.loadCave( "Giants_Oxlow_Maskhill_System.3d" );
 	//	CV.UI.loadCaves( [ "lathkill.3d", "Bradwell_Master_NoSurface.3d" , "Castleton_Master_NoSurface.3d" ] );
 

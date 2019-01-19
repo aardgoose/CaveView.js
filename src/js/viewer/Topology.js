@@ -1,6 +1,8 @@
 
 function Topology ( stations, legsObject ) {
 
+	if ( stations.length === 0 || ! legsObject ) return;
+
 	this.stations = stations;
 	this.legsObject = legsObject;
 

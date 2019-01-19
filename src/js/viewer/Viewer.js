@@ -1768,7 +1768,14 @@ function setScale ( obj ) {
 
 function getLegStats ( type ) {
 
-	return survey.getFeature( type ).stats;
+	const legs = survey.getFeature( type );
+
+	return ( legs !== undefined ) ? survey.getFeature( type ).stats : {
+		legs: 0,
+		legLength: 0,
+		minLegLength: 0,
+		maxLegLength: 0
+	};
 
 }
 

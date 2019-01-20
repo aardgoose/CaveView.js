@@ -231,7 +231,6 @@ function caveChanged ( /* event */ ) {
 
 }
 
-
 function newScales () {
 
 	const container = viewer.container;

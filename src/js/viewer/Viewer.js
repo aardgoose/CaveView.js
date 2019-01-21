@@ -1750,7 +1750,10 @@ function setScale ( obj ) {
 	// initialize vertical scaling to none
 	zScale = 0.5;
 
-	const hScale = Math.min( width / range.x, height / range.y );
+	var hScale = Math.min( width / range.x, height / range.y );
+
+	if ( hScale === Infinity ) hScale = 1;
+
 	const vScale = hScale * scaleFactor;
 
 	const scale = new Vector3( hScale, hScale, vScale );

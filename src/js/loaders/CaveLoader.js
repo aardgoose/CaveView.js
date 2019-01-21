@@ -171,7 +171,7 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	}
 
-	function _metadataError ( /* event */ ) {
+	function _metadataError ( event ) {
 
 		if ( event.type === 'abort' ) return;
 

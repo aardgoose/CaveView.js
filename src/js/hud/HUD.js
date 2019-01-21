@@ -231,10 +231,10 @@ function caveChanged ( /* event */ ) {
 
 }
 
-
 function newScales () {
 
 	const container = viewer.container;
+	const hasLegs = viewer.minHeight !== Infinity && viewer.maxHeight !== -Infinity;
 
 	if ( linearScale ) {
 
@@ -243,9 +243,12 @@ function newScales () {
 
 	}
 
-	linearScale = new LinearScale( container, viewer );
+	if ( hasLegs ) {
 
-	scene.addStatic( linearScale );
+		linearScale = new LinearScale( container, viewer );
+		scene.addStatic( linearScale );
+
+	}
 
 	if ( cursorScale ) {
 
@@ -254,13 +257,17 @@ function newScales () {
 
 	}
 
-	cursorScale = new CursorScale( container );
+	if ( hasLegs ) {
 
-	if ( cursorControl ) cursorControl.dispose();
+		cursorScale = new CursorScale( container );
 
-	cursorControl = new CursorControl( viewer, cursorScale );
+		if ( cursorControl ) cursorControl.dispose();
 
-	scene.addStatic( cursorScale );
+		cursorControl = new CursorControl( viewer, cursorScale );
+
+		scene.addStatic( cursorScale );
+
+	}
 
 	if ( scaleBar ) {
 

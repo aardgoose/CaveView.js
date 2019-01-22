@@ -1,7 +1,26 @@
 import { Cfg } from '../core/lib';
+import { Tree } from '../core/Tree';
+import { Box3 } from '../Three';
+
 import proj4 from 'proj4';
 
-function Handler() {}
+function Handler( fileName ) {
+
+	this.fileName   = fileName;
+	this.surveyTree = new Tree();
+	this.limits     = new Box3();
+	this.lineSegments = [];
+	this.xGroups      = [];
+	this.scraps     = [];
+	this.terrains   = [];
+	this.sourceCRS  = null;
+	this.targetCRS  = 'EPSG:3857'; // "web mercator"
+	this.displayCRS = null;
+	this.projection = null;
+	this.lineSegments = [];
+	this.messages = [];
+
+}
 
 Handler.prototype.setCRS = function ( sourceCRS ) {
 
@@ -57,6 +76,24 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 };
 
+Handler.prototype.getSurvey = function () {
+
+	return {
+		title: this.fileName,
+		surveyTree: this.surveyTree,
+		sourceCRS: this.sourceCRS,
+		displayCRS: this.displayCRS,
+		lineSegments: this.lineSegments,
+		crossSections: this.xGroups,
+		scraps: this.scraps,
+		hasTerrain: this.hasTerrain,
+		metadata: this.metadata,
+		terrains: this.terrains,
+		limits: this.limits,
+		offsets: this.offsets
+	};
+
+};
 
 export { Handler };
 

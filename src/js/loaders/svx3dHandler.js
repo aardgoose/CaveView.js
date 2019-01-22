@@ -2,24 +2,17 @@
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
 import { Handler } from './Handler';
-import { Tree } from '../core/Tree';
 import { StationPosition } from '../core/StationPosition';
-import { Vector3, Box3 } from '../Three';
+import { Vector3 } from '../Three';
 
 function Svx3dHandler ( fileName ) {
 
-	this.fileName   = fileName;
-	this.groups     = [];
-	this.surface    = [];
-	this.xGroups    = [];
-	this.surveyTree = new Tree();
-	this.sourceCRS  = null;
-	this.targetCRS  = 'EPSG:3857'; // "web mercator"
-	this.displayCRS = null;
-	this.projection = null;
-	this.stationMap = new Map();
+	Handler.call( this, fileName );
+
+	this.groups = [];
 	this.section = null;
-	this.messages = [];
+	this.stationMap = new Map();
+	this.hasTerrain = false;
 
 }
 
@@ -125,7 +118,7 @@ Svx3dHandler.prototype.end = function () {
 
 	const stationMap = this.stationMap;
 	const projection = this.projection;
-	const limits = new Box3();
+	const limits     = this.limits;
 
 	// get bounding box of all stations in survey
 
@@ -162,6 +155,8 @@ Svx3dHandler.prototype.end = function () {
 
 	this.limits = limits;
 	this.offsets = offsets;
+
+	this.lineSegments = this.getLineSegments();
 
 	return this;
 
@@ -1167,24 +1162,6 @@ Svx3dHandler.prototype.getTerrainDimensions = function () {
 Svx3dHandler.prototype.getTerrainBitmap = function () {
 
 	return false;
-
-};
-
-Svx3dHandler.prototype.getSurvey = function () {
-
-	return {
-		title: this.fileName,
-		surveyTree: this.surveyTree,
-		sourceCRS: this.sourceCRS,
-		displayCRS: this.displayCRS,
-		limits: this.limits,
-		offsets: this.offsets,
-		lineSegments: this.getLineSegments(),
-		crossSections: this.xGroups,
-		scraps: [],
-		hasTerrain: false,
-		metadata: this.metadata
-	};
 
 };
 

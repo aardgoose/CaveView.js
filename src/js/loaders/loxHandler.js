@@ -1,25 +1,17 @@
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_ENTRANCE, STATION_NORMAL } from '../core/constants';
 import { Handler } from './Handler';
-import { Tree } from '../core/Tree';
-import { Vector3, Box3 } from '../Three';
+import { Vector3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';
 
 function loxHandler ( fileName ) {
 
-	this.fileName     = fileName;
-	this.scraps       = [];
-	this.faults       = [];
-	this.lineSegments = [];
-	this.xGroups      = [];
-	this.xSects       = [];
-	this.allStations  = [];
-	this.surveyTree   = new Tree( '', 0 );
-	this.limits       = new Box3();
-	this.terrains     = [];
-	this.hasTerrain   = false;
-	this.modelOffset  = 0;
-	this.messages     = 0;
+	Handler.call( this, fileName );
+
+	this.xSects      = [];
+	this.allStations = [];
+	this.hasTerrain  = false;
+	this.modelOffset = 0;
 
 }
 
@@ -647,25 +639,6 @@ loxHandler.prototype.end = function () {
 		}
 
 	}
-
-};
-
-loxHandler.prototype.getSurvey = function () {
-
-	return {
-		title: this.fileName,
-		surveyTree: this.surveyTree,
-		sourceCRS: null,
-		targetCRS: null,
-		lineSegments: this.lineSegments,
-		crossSections: this.xGroups,
-		scraps: this.scraps,
-		hasTerrain: this.hasTerrain,
-		metadata: this.metadata,
-		terrains: this.terrains,
-		limits: this.limits,
-		offsets: this.offsets
-	};
 
 };
 

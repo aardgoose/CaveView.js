@@ -12,7 +12,6 @@ function Svx3dHandler ( fileName ) {
 	this.groups = [];
 	this.section = null;
 	this.stationMap = new Map();
-	this.hasTerrain = false;
 
 }
 

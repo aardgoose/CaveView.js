@@ -13,8 +13,6 @@ function pltHandler ( fileName ) {
 	this.groups      = [];
 	this.xSects      = [];
 	this.allStations = [];
-	this.hasTerrain  = false;
-	this.modelOffset = 0;
 
 }
 

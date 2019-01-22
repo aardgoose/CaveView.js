@@ -17,7 +17,7 @@ function Handler( fileName ) {
 	this.targetCRS  = 'EPSG:3857'; // "web mercator"
 	this.displayCRS = null;
 	this.projection = null;
-	this.lineSegments = [];
+	this.hasTerrain  = false;
 	this.messages = [];
 
 }

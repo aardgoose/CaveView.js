@@ -10,7 +10,6 @@ function loxHandler ( fileName ) {
 
 	this.xSects      = [];
 	this.allStations = [];
-	this.hasTerrain  = false;
 	this.modelOffset = 0;
 
 }

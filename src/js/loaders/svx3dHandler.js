@@ -1,11 +1,10 @@
 // Survex 3d file handler
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
+import { Handler } from './Handler';
 import { Tree } from '../core/Tree';
-import { Cfg } from '../core/lib';
 import { StationPosition } from '../core/StationPosition';
 import { Vector3, Box3 } from '../Three';
-import proj4 from 'proj4';
 
 function Svx3dHandler ( fileName ) {
 
@@ -24,63 +23,11 @@ function Svx3dHandler ( fileName ) {
 
 }
 
+Svx3dHandler.prototype = Object.create( Handler.prototype );
+
 Svx3dHandler.prototype.constructor = Svx3dHandler;
 
 Svx3dHandler.prototype.type = 'arraybuffer';
-
-Svx3dHandler.prototype.setCRS = function ( sourceCRS ) {
-
-	if ( sourceCRS !== null ) {
-
-		// work around lack of +init string support in proj4js
-
-		const matches = sourceCRS.match( /\+init=(.*)\s/ );
-
-		if ( matches && matches.length === 2 ) {
-
-			switch ( matches[ 1 ] ) {
-
-			case 'epsg:27700' :
-
-				sourceCRS = '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs';
-
-				break;
-
-			default:
-
-				throw new Error( 'Unsupported projection' );
-
-			}
-
-		}
-
-	}
-
-	const displayCRS = Cfg.value( 'displayCRS', 'EPSG:3857' );
-
-	if ( sourceCRS === null ) sourceCRS = Cfg.value( 'defaultCRS', null );
-
-	// FIXME use NAD grid corrections OSTM15 etc ( UK Centric )
-	if ( sourceCRS !== null ) {
-
-		this.sourceCRS = sourceCRS;
-
-		if ( displayCRS === 'ORIGINAL' ) {
-
-			this.displayCRS = 'ORIGINAL';
-
-		} else {
-
-			console.log( 'Reprojecting from', sourceCRS, 'to', this.targetCRS );
-
-			this.projection = proj4( this.sourceCRS, this.targetCRS );
-			this.displayCRS = this.targetCRS;
-
-		}
-
-	}
-
-};
 
 Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 

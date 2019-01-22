@@ -1,5 +1,6 @@
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_ENTRANCE, STATION_NORMAL } from '../core/constants';
+import { Handler } from './Handler';
 import { Tree } from '../core/Tree';
 import { Vector3, Box3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';
@@ -21,6 +22,8 @@ function loxHandler ( fileName ) {
 	this.messages     = 0;
 
 }
+
+loxHandler.prototype = Object.create( Handler.prototype );
 
 loxHandler.prototype.constructor = loxHandler;
 

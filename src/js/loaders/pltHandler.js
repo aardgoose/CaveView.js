@@ -1,5 +1,6 @@
 
 import { LEG_CAVE, STATION_NORMAL } from '../core/constants';
+import { Handler } from './Handler';
 import { Tree } from '../core/Tree';
 import { Vector3, Box3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';
@@ -23,6 +24,8 @@ function pltHandler ( fileName ) {
 	this.messages     = 0;
 
 }
+
+pltHandler.prototype = Object.create( Handler.prototype );
 
 pltHandler.prototype.constructor = pltHandler;
 

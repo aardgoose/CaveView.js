@@ -1,27 +1,20 @@
 
 import { LEG_CAVE, STATION_NORMAL } from '../core/constants';
 import { Handler } from './Handler';
-import { Tree } from '../core/Tree';
-import { Vector3, Box3 } from '../Three';
+import { Vector3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';
 
 const ftom = 12 * 0.0254;
 
 function pltHandler ( fileName ) {
 
-	this.fileName     = fileName;
-	this.scraps       = [];
-	this.faults       = [];
-	this.groups       = [];
-	this.xGroups      = [];
-	this.xSects       = [];
-	this.allStations  = [];
-	this.surveyTree   = new Tree( '', 0 );
-	this.limits       = new Box3();
-	this.terrains     = [];
-	this.hasTerrain   = false;
-	this.modelOffset  = 0;
-	this.messages     = 0;
+	Handler.call( this, fileName );
+
+	this.groups      = [];
+	this.xSects      = [];
+	this.allStations = [];
+	this.hasTerrain  = false;
+	this.modelOffset = 0;
 
 }
 
@@ -256,6 +249,8 @@ pltHandler.prototype.end = function () {
 
 	procXsects();
 
+	this.lineSegments = this.getLineSegments();
+
 	return this;
 
 	function procXsects () {
@@ -332,24 +327,6 @@ pltHandler.prototype.end = function () {
 		}
 
 	}
-
-};
-
-pltHandler.prototype.getSurvey = function () {
-
-	return {
-		title: this.fileName,
-		surveyTree: this.surveyTree,
-		sourceCRS: null,
-		targetCRS: null,
-		lineSegments: this.getLineSegments(),
-		crossSections: this.xGroups,
-		scraps: [],
-		hasTerrain: false,
-		metadata: this.metadata,
-		limits: this.limits,
-		offsets: this.offsets
-	};
 
 };
 

@@ -12,6 +12,8 @@ function loxHandler ( fileName ) {
 	this.allStations = [];
 	this.modelOffset = 0;
 
+	this.setCRS( null );
+
 }
 
 loxHandler.prototype = Object.create( Handler.prototype );
@@ -30,6 +32,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	const surveyTree   = this.surveyTree;
 	const xSects       = this.xSects;
 	const limits       = this.limits;
+	const projection   = this.projection;
 	const terrain      = {};
 
 	// assumes little endian data ATM - FIXME
@@ -242,6 +245,18 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 			readFloat64(),
 			readFloat64()
 		);
+
+		if ( projection !== null ) {
+
+			const projectedCoords = projection.forward( {
+				x: coords.x,
+				y: coords.y
+			} );
+
+			coords.x = projectedCoords.x;
+			coords.y = projectedCoords.y;
+
+		}
 
 		limits.expandByPoint( coords );
 
@@ -563,6 +578,8 @@ loxHandler.prototype.end = function () {
 	}
 
 	procXsects();
+
+	if ( this.projection !== null ) this.hasTerrain = false;
 
 	return this;
 

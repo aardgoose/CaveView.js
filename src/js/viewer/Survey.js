@@ -3,7 +3,7 @@ import {
 	FACE_SCRAPS, FACE_WALLS,
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES,
 	FEATURE_STATIONS, FEATURE_ANNOTATIONS, SURVEY_WARNINGS,
-	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, STATION_ENTRANCE,
+	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, LABEL_STATION_COMMENT,STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
@@ -64,6 +64,7 @@ function Survey ( cave ) {
 	this.topology = null;
 	this.annotations = null;
 	this.inverseWorld = null;
+
 	this.colourAxis = [
 		new Vector3( 1, 0, 0),
 		new Vector3( 0, 1, 0),
@@ -201,8 +202,10 @@ Survey.prototype.loadWarnings = function () {
 			const node = surveyTree.getByPath( message.station );
 
 			if ( node !== undefined && ( selected.size === 0 || selected.has( node.id ) ) ) {
+
 				errorMarkers.mark( node );
 				node.messageText = message.text;
+
 			}
 
 		} );
@@ -441,21 +444,22 @@ Survey.prototype.update = function ( camera, target ) {
 
 	const cameraLayers = camera.layers;
 
-	if ( this.features[ FEATURE_ENTRANCES ] && cameraLayers.mask & 1 << FEATURE_ENTRANCES ) {
+	const entrances = this.features[ FEATURE_ENTRANCES ];
 
-		this.getFeature( FEATURE_ENTRANCES ).cluster( camera, target, this.selectedSectionIds );
+	if ( entrances && cameraLayers.mask & 1 << FEATURE_ENTRANCES ) {
+
+		entrances.cluster( camera, target, this.selectedSectionIds );
 
 	}
 
-	if ( this.features[ LABEL_STATION ] && cameraLayers.mask & 1 << LABEL_STATION ) {
+	const stationLabels = this.features[ LABEL_STATION ];
 
-		if ( this.inverseWorld === null ) {
+	if ( ( stationLabels && cameraLayers.mask & 1 << LABEL_STATION ) ||
+		stationLabels.commentCount > 0 && cameraLayers.mask & 1 << LABEL_STATION_COMMENT ) {
 
-			this.inverseWorld = new Matrix4().getInverse( this.matrixWorld );
+		if ( this.inverseWorld === null ) this.inverseWorld = new Matrix4().getInverse( this.matrixWorld );
 
-		}
-
-		this.getFeature( LABEL_STATION ).update( camera, target, this.inverseWorld );
+		stationLabels.update( camera, target, this.inverseWorld );
 
 	}
 
@@ -496,15 +500,24 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 
 	const stations = new Stations( this.selectedSectionIds );
 
+	var commentCount = 0;
+
 	surveyTree.traverse( _addStation );
 
 	// we have finished adding stations.
 	stations.finalise();
 
-	const stationLabels = new StationLabels( stations );
+	const stationLabels = new StationLabels( stations, commentCount );
 
 	this.addFeature( stations, FEATURE_STATIONS, 'CV.Stations' );
 	this.addFeature( stationLabels, LABEL_STATION, 'CV.StationLabels' );
+
+	if ( commentCount > 0 ) {
+
+		this.features[ LABEL_STATION_COMMENT ] = stationLabels;
+		stationLabels.layers.enable( LABEL_STATION_COMMENT );
+
+	}
 
 	this.stations = stations;
 
@@ -512,6 +525,7 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 
 	function _addStation ( node ) {
 
+		if ( node.comment !== undefined ) commentCount++;
 		if ( node.p === undefined ) return;
 
 		stations.addStation( node );

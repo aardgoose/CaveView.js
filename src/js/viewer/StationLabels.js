@@ -1,18 +1,19 @@
 import { Group, Vector3 } from '../Three';
 
-import { CAMERA_OFFSET, LABEL_STATION } from '../core/constants';
+import { CAMERA_OFFSET, LABEL_STATION, LABEL_STATION_COMMENT } from '../core/constants';
 import { Cfg } from '../core/lib';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
 const _tmpVector3 = new Vector3();
 
-function StationLabels ( stations ) {
+function StationLabels ( stations, commentCount ) {
 
 	Group.call( this );
 
 	this.type = 'CV.StationLabels';
 	this.stations = stations;
+	this.commentCount = commentCount;
 
 	const atlasSpec = {
 		color: Cfg.themeColorCSS( 'stations.default.text' ),
@@ -47,11 +48,15 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 	// transform camera position into model coordinate system
 
 	cameraPosition.applyMatrix4( inverseWorld );
-
 	const stations = this.stations;
 	const points = stations.vertices;
+	const l = points.length;
 
-	for ( var i = 0, l = points.length; i < l; i++ ) {
+	const showName = ( ( camera.layers.mask & 1 << LABEL_STATION ) !== 0 );
+	const showComment = ( ( camera.layers.mask & 1 << LABEL_STATION_COMMENT ) !== 0 );
+	const commentRatio = l / this.commentCount;
+
+	for ( var i = 0; i < l; i++ ) {
 
 		const position = points[ i ];
 
@@ -73,12 +78,24 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
 			}
 
+			// eager display of comments scaled by density of comments in survey
+			if ( showComment && station.comment !== undefined ) d2 *= commentRatio;
+
 			// show labels for network vertices at greater distance than intermediate stations
 			const visible = ( position.distanceToSquared( cameraPosition ) < d2 );
 
-			if ( label === undefined ) {
+			let name = '';
 
-				if ( visible ) this.addLabel( station );
+			if ( showName ) name += station.name;
+			if ( showName && showComment && station.comment !== undefined ) name += ' ';
+			if ( showComment && station.comment !== undefined ) name += station.comment;
+
+			if ( label === undefined || label.name !== name ) {
+
+				// remove label with the wrong text
+				if ( label !== undefined ) this.remove( label );
+
+				if ( visible ) this.addLabel( station, name );
 
 			} else {
 
@@ -92,7 +109,7 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
 };
 
-StationLabels.prototype.addLabel = function ( station ) {
+StationLabels.prototype.addLabel = function ( station, name ) {
 
 	var material;
 
@@ -113,9 +130,9 @@ StationLabels.prototype.addLabel = function ( station ) {
 
 	}
 
-	const label = new GlyphString( station.name, material );
+	const label = new GlyphString( name, material );
 
-	label.layers.set( LABEL_STATION );
+	label.layers.mask = this.layers.mask;
 	label.position.copy( position );
 
 	station.label = label;

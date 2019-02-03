@@ -98,13 +98,14 @@ function SettingsPage ( fileSelector ) {
 
 	this.addHeader( 'visibility.header' );
 
-	if ( Viewer.hasEntrances     ) this.addCheckbox( 'visibility.entrances', Viewer, 'entrances' );
-	if ( Viewer.hasStations      ) this.addCheckbox( 'visibility.stations', Viewer, 'stations' );
-	if ( Viewer.hasStationLabels ) this.addCheckbox( 'visibility.labels', Viewer, 'stationLabels' );
-	if ( Viewer.hasSplays        ) this.addCheckbox( 'visibility.splays', Viewer, 'splays' );
-	if ( Viewer.hasWalls         ) this.addCheckbox( 'visibility.walls', Viewer, 'walls' );
-	if ( Viewer.hasScraps        ) this.addCheckbox( 'visibility.scraps', Viewer, 'scraps' );
-	if ( Viewer.hasTraces        ) this.addCheckbox( 'visibility.traces', Viewer, 'traces' );
+	if ( Viewer.hasEntrances       ) this.addCheckbox( 'visibility.entrances', Viewer, 'entrances' );
+	if ( Viewer.hasStations        ) this.addCheckbox( 'visibility.stations', Viewer, 'stations' );
+	if ( Viewer.hasStationLabels   ) this.addCheckbox( 'visibility.labels', Viewer, 'stationLabels' );
+	if ( Viewer.hasStationComments ) this.addCheckbox( 'visibility.comments', Viewer, 'stationComments' );
+	if ( Viewer.hasSplays          ) this.addCheckbox( 'visibility.splays', Viewer, 'splays' );
+	if ( Viewer.hasWalls           ) this.addCheckbox( 'visibility.walls', Viewer, 'walls' );
+	if ( Viewer.hasScraps          ) this.addCheckbox( 'visibility.scraps', Viewer, 'scraps' );
+	if ( Viewer.hasTraces          ) this.addCheckbox( 'visibility.traces', Viewer, 'traces' );
 
 	this.addCheckbox( 'visibility.fog', Viewer, 'fog' );
 	this.addCheckbox( 'visibility.hud', Viewer, 'HUD' );

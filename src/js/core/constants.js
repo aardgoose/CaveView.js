@@ -63,6 +63,7 @@ export const FACE_WALLS            = 11;
 export const FACE_SCRAPS           = 12;
 export const LABEL_STATION         = 13;
 export const SURVEY_WARNINGS       = 14;
+export const LABEL_STATION_COMMENT = 15;
 
 export const WALL_OVAL             = 1; // based on Therion .lox types
 export const WALL_SQUARE           = 2;

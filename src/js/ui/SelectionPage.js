@@ -126,7 +126,10 @@ function SelectionPage ( container, fileSelector ) {
 			if ( connections === 0 && ! Viewer.splays && child.type !== STATION_ENTRANCE ) return; // skip spays if not displayed
 
 			const li  = document.createElement( 'li' );
-			const txt = document.createTextNode( child.name );
+
+			const text = ( child.comment === undefined ) ? child.name : child.name + ' ( ' + child.comment + ' )';
+
+			const txt = document.createTextNode( text );
 
 			var key;
 

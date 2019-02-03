@@ -14,6 +14,8 @@ function pltHandler ( fileName ) {
 	this.xSects      = [];
 	this.allStations = [];
 
+	this.setCRS( null );
+
 }
 
 pltHandler.prototype = Object.create( Handler.prototype );
@@ -32,6 +34,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 	const limits      = this.limits;
 	const stationMap  = new Map();
 	const allStations = this.allStations;
+	const projection  = this.projection;
 
 	const lines = dataStream.split( /[\n\r]+/ );
 	const l = lines.length;
@@ -71,7 +74,19 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 			segments.push( { coords: coords, type: LEG_CAVE, survey: surveyId } );
 
-			if ( coords.connections === 0 ) surveyTree.addLeaf( path, { p: coords, type: STATION_NORMAL } );
+			if ( coords.connections === 0 ) {
+
+				const obj = { p: coords, type: STATION_NORMAL };
+
+				if ( parts[ 13 ] !== undefined ) {
+
+					obj.comment = parts.slice( 13 ).join( ' ' );
+					console.log( obj.comment );
+				}
+
+				surveyTree.addLeaf( path, obj );
+
+			}
 
 			coords.connections++;
 
@@ -184,6 +199,18 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 				+parts[ 1 ] * ftom,
 				+parts[ 3 ] * ftom
 			);
+
+			if ( projection !== null ) {
+
+				const projectedCoords = projection.forward( {
+					x: coords.x,
+					y: coords.y
+				} );
+
+				coords.x = projectedCoords.x;
+				coords.y = projectedCoords.y;
+
+			}
 
 			coords.stationIndex = allStations.length;
 

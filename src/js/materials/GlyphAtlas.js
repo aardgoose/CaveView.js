@@ -12,7 +12,6 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 	const glyphs = '\u202f\u00B0\u2610 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%,.-_/()[]\'"';
 	const glyphCount = glyphs.length;
 
-	this.fontSize = fontSize;
 	this.cellScale = cellSize / atlasSize;
 	this.cellSize = cellSize;
 	this.glyphCount = glyphCount;
@@ -42,7 +41,7 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 	// set up text settings
 	ctx.textAlign = 'left';
-	ctx.font = this.fontSize + 'px ' + glyphAtlasSpec.font;
+	ctx.font = fontSize + 'px ' + glyphAtlasSpec.font;
 	ctx.fillStyle = glyphAtlasSpec.color || '#ffffff';
 
 	this.ctx = ctx;
@@ -70,7 +69,11 @@ GlyphAtlas.prototype.addGlyphToCanvas = function ( glyph, i ) {
 	const row = Math.floor( i / divisions ) + 1;
 	const column = i % divisions;
 
-	const glyphData =  { row: ( divisions - row ) / divisions, column: column / divisions, width: glyphWidth };
+	const glyphData = {
+		row: ( divisions - row ) / divisions,
+		column: column / divisions,
+		width: glyphWidth
+	};
 
 	this.map[ glyph ] = glyphData;
 
@@ -110,8 +113,8 @@ GlyphAtlas.prototype.getGlyph = function ( glyph ) {
 };
 
 
-var atlasCache = {};
-var AtlasFactory = {};
+const atlasCache = {};
+const AtlasFactory = {};
 
 AtlasFactory.getAtlas = function ( glyphAtlasSpec ) {
 

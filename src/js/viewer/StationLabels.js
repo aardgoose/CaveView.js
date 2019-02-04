@@ -15,16 +15,20 @@ function StationLabels ( stations, commentCount ) {
 	this.stations = stations;
 	this.commentCount = commentCount;
 
-	const atlasSpec = {
+	const atlasSpecDefault = {
 		color: Cfg.themeColorCSS( 'stations.default.text' ),
 		font: 'normal helvetica,sans-serif'
 	};
 
-	this.defaultLabelMaterial = Materials.getGlyphMaterial( atlasSpec, 0 );
-	this.splayLabelMaterial = Materials.getGlyphMaterial( atlasSpec, 0 );
+	this.defaultLabelMaterial = Materials.getGlyphMaterial( atlasSpecDefault, 0 );
+	this.splayLabelMaterial = Materials.getGlyphMaterial( atlasSpecDefault, 0 );
 
-	atlasSpec.color = Cfg.themeColorCSS( 'stations.junctions.text' );
-	this.junctionLabelMaterial = Materials.getGlyphMaterial( atlasSpec, 0 );
+	const atlasSpecJunction = {
+		color: Cfg.themeColorCSS( 'stations.junctions.text' ),
+		font: 'normal helvetica,sans-serif'
+	};
+
+	this.junctionLabelMaterial = Materials.getGlyphMaterial( atlasSpecJunction, 0 );
 
 }
 

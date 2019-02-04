@@ -35,6 +35,9 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	const projection   = this.projection;
 	const terrain      = {};
 
+	// polyfilled for IE11, or otherwise not available.
+	const utf8Decoder = new TextDecoder( 'utf-8' );
+
 	// assumes little endian data ATM - FIXME
 
 	var source = dataStream;
@@ -202,7 +205,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		// strings are null terminated. Ignore last byte in string
 		const bytes = new Uint8Array( source, dataStart + ptr.position, ptr.size - 1 );
 
-		return String.fromCharCode.apply( null, bytes );
+		return utf8Decoder.decode( bytes );
 
 	}
 

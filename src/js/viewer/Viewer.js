@@ -1805,7 +1805,6 @@ function getSurveyTree () {
 
 Object.assign( Viewer, {
 	init:          init,
-	renderer:      renderer,
 	clearView:     clearView,
 	loadCave:      loadCave,
 	loadCaves:     loadCaves,

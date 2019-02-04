@@ -8,7 +8,7 @@ function GlyphMaterial ( glyphAtlasSpec, rotation, viewer ) {
 
 	const self = this;
 
-	const glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec, viewer );
+	const glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec );
 	const cellScale = glyphAtlas.cellScale;
 	const container = viewer.container;
 	const realPixels = glyphAtlas.cellSize * ( window.devicePixelRatio || 1 );

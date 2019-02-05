@@ -119,7 +119,7 @@ var cameraMode;
 var selectedSection = null;
 
 var controls;
-var renderRequired = false;
+var renderRequired = true;
 
 var cameraMove;
 

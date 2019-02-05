@@ -550,9 +550,7 @@ loxHandler.prototype.end = function () {
 
 	const self = this;
 	const allStations = this.allStations;
-	const offsets = this.limits.getCenter( new Vector3() );
-
-	this.offsets = offsets;
+	const offsets = this.limits.getCenter( this.offsets );
 
 	// convert to origin centered coordinates
 

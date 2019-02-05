@@ -11,7 +11,7 @@ function Svx3dHandler ( fileName ) {
 
 	this.groups = [];
 	this.section = null;
-	this.stationMap = new Map();
+	this.allStations = new Map();
 
 }
 
@@ -115,23 +115,10 @@ Svx3dHandler.prototype.end = function () {
 
 	}
 
-	const stationMap = this.stationMap;
-	const projection = this.projection;
-	const limits     = this.limits;
+	const stationMap = this.allStations;
+	const limits = this.limits;
 
-	// get bounding box of all stations in survey
-
-	if ( projection === null ) {
-
-		stationMap.forEach( getLimits );
-
-	} else {
-
-		stationMap.forEach( getLimitsProjected );
-
-	}
-
-	const offsets = limits.getCenter( new Vector3() );
+	const offsets = limits.getCenter( this.offsets );
 
 	// adjust coordinates to be centered on ( 0, 0, 0 )
 
@@ -152,32 +139,9 @@ Svx3dHandler.prototype.end = function () {
 
 	);
 
-	this.limits = limits;
-	this.offsets = offsets;
-
 	this.lineSegments = this.getLineSegments();
 
 	return this;
-
-	function getLimits ( coords ) {
-
-		limits.expandByPoint( coords );
-
-	}
-
-	function getLimitsProjected ( coords ) {
-
-		const projectedCoords = projection.forward( {
-			x: coords.x,
-			y: coords.y
-		} );
-
-		coords.x = projectedCoords.x;
-		coords.y = projectedCoords.y;
-
-		limits.expandByPoint( coords );
-
-	}
 
 	function adjustCoords ( coords ) {
 
@@ -191,7 +155,9 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 	const groups     = this.groups;
 	const surveyTree = this.surveyTree;
-	const stationMap = this.stationMap;
+	const stationMap = this.allStations;
+	const projection = this.projection;
+	const limits     = this.limits;
 
 	const cmd      = [];
 	const stations = new Map();
@@ -421,6 +387,20 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		} else {
 
+			if ( projection !== null) {
+
+				const projectedCoords = projection.forward( {
+					x: coords.x,
+					y: coords.y
+				} );
+
+				coords.x = projectedCoords.x;
+				coords.y = projectedCoords.y;
+
+			}
+
+			limits.expandByPoint( coords );
+
 			stationMap.set( key, coords );
 
 		}
@@ -436,8 +416,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	const groups     = this.groups;
 	const xGroups    = this.xGroups;
 	const surveyTree = this.surveyTree;
-	const stationMap = this.stationMap;
+	const stationMap = this.allStations;
 	const messages   = this.messages;
+	const projection = this.projection;
+	const limits     = this.limits;
 
 	const cmd = [];
 
@@ -1103,6 +1085,20 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 			coords = cachedCoords;
 
 		} else {
+
+			if ( projection !== null) {
+
+				const projectedCoords = projection.forward( {
+					x: coords.x,
+					y: coords.y
+				} );
+
+				coords.x = projectedCoords.x;
+				coords.y = projectedCoords.y;
+
+			}
+
+			limits.expandByPoint( coords );
 
 			stationMap.set( lastKey, coords );
 

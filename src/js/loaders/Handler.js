@@ -1,6 +1,6 @@
 import { Cfg } from '../core/lib';
 import { Tree } from '../core/Tree';
-import { Box3 } from '../Three';
+import { Box3, Vector3 } from '../Three';
 
 import proj4 from 'proj4';
 
@@ -9,6 +9,7 @@ function Handler( fileName ) {
 	this.fileName   = fileName;
 	this.surveyTree = new Tree();
 	this.limits     = new Box3();
+	this.offsets    = new Vector3();
 	this.lineSegments = [];
 	this.xGroups      = [];
 	this.scraps     = [];

@@ -52,6 +52,7 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 	// transform camera position into model coordinate system
 
 	cameraPosition.applyMatrix4( inverseWorld );
+
 	const stations = this.stations;
 	const points = stations.vertices;
 	const l = points.length;
@@ -94,10 +95,15 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 			if ( showName && showComment && station.comment !== undefined ) name += ' ';
 			if ( showComment && station.comment !== undefined ) name += station.comment;
 
-			if ( label === undefined || label.name !== name ) {
+			if ( ! label || label.name !== name ) {
 
 				// remove label with the wrong text
-				if ( label !== undefined ) this.remove( label );
+				if ( label !== undefined ) {
+
+					this.remove( label );
+					station.label = null;
+
+				}
 
 				if ( visible ) this.addLabel( station, name );
 

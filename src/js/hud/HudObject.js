@@ -15,9 +15,7 @@ const HudObject = {
 
 	stdMargin: 5,
 
-	atlasSpec: {
-		font: 'bold helvetica,sans-serif'
-	},
+	atlasSpec: {},
 
 	createHitRegion: function ( width, height, onEnter ) {
 
@@ -62,6 +60,7 @@ const HudObject = {
 
 		HudObject.stdWidth = Cfg.themeValue( 'hud.widgetSize' );
 		HudObject.atlasSpec.color = Cfg.themeColorCSS( 'hud.text' );
+		HudObject.atlasSpec.font = Cfg.themeValue( 'hud.font' );
 
 	}
 

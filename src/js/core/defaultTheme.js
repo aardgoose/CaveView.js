@@ -8,6 +8,7 @@ const defaultTheme = {
 		inclination: 45
 	},
 	hud: {
+		font: 'normal Arial, sans-serif',
 		text: 'white',
 		progress: 'green',
 		progressBackground: 'dimgray',
@@ -42,6 +43,7 @@ const defaultTheme = {
 		default: 'gray'
 	},
 	stations: {
+		font: 'normal Arial, sans-serif',
 		entrances: {
 			text: 'white',
 			marker: 'white'

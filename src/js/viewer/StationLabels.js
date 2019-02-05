@@ -17,7 +17,7 @@ function StationLabels ( stations, commentCount ) {
 
 	const atlasSpecDefault = {
 		color: Cfg.themeColorCSS( 'stations.default.text' ),
-		font: 'normal helvetica,sans-serif'
+		font: Cfg.themeValue( 'stations.font' )
 	};
 
 	this.defaultLabelMaterial = Materials.getGlyphMaterial( atlasSpecDefault, 0 );
@@ -25,7 +25,7 @@ function StationLabels ( stations, commentCount ) {
 
 	const atlasSpecJunction = {
 		color: Cfg.themeColorCSS( 'stations.junctions.text' ),
-		font: 'normal helvetica,sans-serif'
+		font: Cfg.themeValue( 'stations.font' )
 	};
 
 	this.junctionLabelMaterial = Materials.getGlyphMaterial( atlasSpecJunction, 0 );

@@ -267,7 +267,7 @@ CaveLoader.prototype.callHandler = function () {
 
 	if ( ! moreFiles ) {
 
-		this.callback( this.handler.end() );
+		this.callback( this.handler );
 		this.dispatchEvent( { type: 'progress', name: 'end' } );
 
 	}

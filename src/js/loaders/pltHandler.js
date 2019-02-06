@@ -226,13 +226,6 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 };
 
-pltHandler.prototype.end = function () {
-
-
-	return this;
-
-};
-
 export { pltHandler };
 
 // EOF

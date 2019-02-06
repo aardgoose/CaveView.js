@@ -661,6 +661,17 @@ Page.prototype.addDownloadButton = function ( title, urlProvider, fileName ) {
 
 };
 
+Page.prototype.addLogo = function () {
+
+	const img = document.createElement( 'div' );
+
+	img.id = 'logo';
+	img.title = 'logo';
+
+	this.appendChild( img );
+
+};
+
 export { Page };
 
 // EOF

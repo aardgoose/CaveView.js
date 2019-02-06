@@ -9,7 +9,6 @@ function loxHandler ( fileName ) {
 	Handler.call( this, fileName );
 
 	this.xSects      = [];
-	this.allStations = [];
 	this.modelOffset = 0;
 
 	this.setCRS( null );
@@ -549,20 +548,10 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 loxHandler.prototype.end = function () {
 
 	const self = this;
-	const allStations = this.allStations;
 	const offsets = this.limits.getCenter( this.offsets );
-
-	// convert to origin centered coordinates
+	const scraps = this.scraps;
 
 	var i, j;
-
-	allStations.forEach( function ( all ) {
-
-		all.forEach( function ( s ) { s.sub( offsets ); } );
-
-	} );
-
-	const scraps = this.scraps;
 
 	// covert scraps coordinates
 

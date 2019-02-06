@@ -11,7 +11,6 @@ function Svx3dHandler ( fileName ) {
 
 	this.groups = [];
 	this.section = null;
-	this.allStations = new Map();
 
 }
 
@@ -115,14 +114,7 @@ Svx3dHandler.prototype.end = function () {
 
 	}
 
-	const stationMap = this.allStations;
 	const limits = this.limits;
-
-	const offsets = limits.getCenter( this.offsets );
-
-	// adjust coordinates to be centered on ( 0, 0, 0 )
-
-	stationMap.forEach( adjustCoords );
 
 	const min = limits.min;
 	const max = limits.max;
@@ -143,21 +135,17 @@ Svx3dHandler.prototype.end = function () {
 
 	return this;
 
-	function adjustCoords ( coords ) {
-
-		coords.sub( offsets );
-
-	}
-
 };
 
 Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 	const groups     = this.groups;
 	const surveyTree = this.surveyTree;
-	const stationMap = this.allStations;
 	const projection = this.projection;
 	const limits     = this.limits;
+	const stationMap = new Map();
+
+	this.allStations.push( stationMap );
 
 	const cmd      = [];
 	const stations = new Map();
@@ -416,10 +404,12 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	const groups     = this.groups;
 	const xGroups    = this.xGroups;
 	const surveyTree = this.surveyTree;
-	const stationMap = this.allStations;
 	const messages   = this.messages;
 	const projection = this.projection;
 	const limits     = this.limits;
+	const stationMap = new Map();
+
+	this.allStations.push( stationMap );
 
 	const cmd = [];
 

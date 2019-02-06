@@ -10,6 +10,7 @@ function Handler( fileName ) {
 	this.surveyTree = new Tree();
 	this.limits     = new Box3();
 	this.offsets    = new Vector3();
+	this.allStations  = [];
 	this.lineSegments = [];
 	this.xGroups      = [];
 	this.scraps     = [];
@@ -78,6 +79,17 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 };
 
 Handler.prototype.getSurvey = function () {
+
+	// convert to origin centered coordinates
+
+	const offsets = this.limits.getCenter( this.offsets );
+	const allStations = this.allStations;
+
+	allStations.forEach( function ( all ) {
+
+		all.forEach( function ( s ) { s.sub( offsets ); } );
+
+	} );
 
 	return {
 		title: this.fileName,

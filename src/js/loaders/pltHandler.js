@@ -12,7 +12,6 @@ function pltHandler ( fileName ) {
 
 	this.groups      = [];
 	this.xSects      = [];
-	this.allStations = [];
 
 	this.setCRS( null );
 
@@ -32,9 +31,11 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 	const surveyTree  = this.surveyTree;
 	const xSects      = this.xSects;
 	const limits      = this.limits;
-	const stationMap  = new Map();
-	const allStations = this.allStations;
 	const projection  = this.projection;
+	const stationMap  = new Map();
+	const stations    = [];
+
+	this.allStations.push( stations );
 
 	const lines = dataStream.split( /[\n\r]+/ );
 	const l = lines.length;
@@ -78,11 +79,8 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 				const obj = { p: coords, type: STATION_NORMAL };
 
-				if ( parts[ 13 ] !== undefined ) {
-
-					obj.comment = parts.slice( 13 ).join( ' ' );
-					console.log( obj.comment );
-				}
+				// parse comment
+				if ( parts[ 13 ] !== undefined ) obj.comment = parts.slice( 13 ).join( ' ' );
 
 				surveyTree.addLeaf( path, obj );
 
@@ -113,7 +111,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 						r: r * ftom
 					};
 
-					var from = ( lastStationIndex !== -1 ) ? allStations[ lastStationIndex ] : null;
+					var from = ( lastStationIndex !== -1 ) ? stations[ lastStationIndex ] : null;
 
 					xSects.push( { m_from: lastStationIndex, m_to: stationIndex, start: from, end: coords, lrud: lrud, survey: surveyId, type: 2  } );
 
@@ -212,9 +210,9 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 			}
 
-			coords.stationIndex = allStations.length;
+			coords.stationIndex = stations.length;
 
-			allStations.push( coords );
+			stations.push( coords );
 			stationMap.set( lastKey, coords );
 
 			limits.expandByPoint( coords );
@@ -259,16 +257,6 @@ pltHandler.prototype.getLineSegments = function () {
 pltHandler.prototype.end = function () {
 
 	const self = this;
-	const allStations = this.allStations;
-	const offsets = this.limits.getCenter( this.offsets );
-
-	// convert to origin centered coordinates
-
-	allStations.forEach( function ( s ) {
-
-		s.sub( offsets );
-
-	} );
 
 	procXsects();
 

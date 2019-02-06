@@ -4,6 +4,7 @@ import { Svx3dHandler } from './svx3dHandler';
 import { loxHandler } from './loxHandler';
 import { pltHandler } from './pltHandler';
 import { FileLoader, EventDispatcher } from '../Three';
+import { Handler } from './Handler';
 
 function CaveLoader ( callback ) {
 
@@ -29,12 +30,12 @@ CaveLoader.prototype.constructor = CaveLoader;
 CaveLoader.prototype.reset = function () {
 
 	this.files = null;
-	this.extention = null;
 	this.handler = null;
 	this.section = null;
 
 	this.requests.forEach( function ( request ) { request.abort(); } );
 	this.requests = [];
+	this.models = new Handler();
 
 };
 
@@ -42,18 +43,7 @@ CaveLoader.prototype.setHandler = function ( fileName ) {
 
 	const extention = fileName.split( '.' ).reverse().shift().toLowerCase();
 
-	if ( this.extention !== null && extention !== this.extention ) {
-
-		alert( 'CaveView: mismatched file extension for [' + fileName + ']' );
-		return false;
-
-	}
-
-	if ( this.handler !== null ) return true;
-
-	this.extention = extention;
-
-	switch ( this.extention ) {
+	switch ( extention ) {
 
 	case '3d':
 
@@ -75,7 +65,7 @@ CaveLoader.prototype.setHandler = function ( fileName ) {
 
 	default:
 
-		console.warn( 'CaveView: unknown file extension [', this.extention, ']' );
+		console.warn( 'CaveView: unknown file extension [', extention, ']' );
 		return false;
 
 	}
@@ -118,7 +108,6 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 	// setup file handler
 	if ( ! this.setHandler( fileName ) ) return false;
 
-	const handler = this.handler;
 	const taskCount = loadMetadata ? 2 : 1;
 
 	var doneCount = 0;
@@ -133,7 +122,7 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	}
 
-	loader.setResponseType( handler.type );
+	loader.setResponseType( this.handler.type );
 
 	this.requests.push( loader.load( fileName, _dataLoaded, _progress, _dataError ) );
 
@@ -260,14 +249,17 @@ CaveLoader.prototype.callHandler = function () {
 	const moreFiles = files !== null && files.length > 0;
 
 	// start the next download to overlap parsing previous file
+	const handler = this.handler;
+
+	this.handler = null;
 
 	if ( moreFiles ) this.loadFile( files.pop() );
 
-	this.handler.parse( data, metadata, section );
+	handler.parse( this.models, data, metadata, section );
 
 	if ( ! moreFiles ) {
 
-		this.callback( this.handler );
+		this.callback( this.models );
 		this.dispatchEvent( { type: 'progress', name: 'end' } );
 
 	}

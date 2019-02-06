@@ -21,11 +21,13 @@ Svx3dHandler.prototype.constructor = Svx3dHandler;
 
 Svx3dHandler.prototype.type = 'arraybuffer';
 
-Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
+Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
-	this.metadata = metadata;
+	cave.metadata = metadata;
+
 	this.section = section;
 	this.groups = [];
+	this.cave = cave;
 
 	var pos = 0; // file position
 
@@ -40,7 +42,7 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	console.log( 'Survex .3d version ', version );
 
-	this.setCRS( sourceCRS );
+	cave.setCRS( sourceCRS );
 
 	switch ( version ) {
 
@@ -68,9 +70,9 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	}
 
 	// if pre selecting a section - trim returned surveyTree
-	if ( this.section !== null ) this.surveyTree.trim( this.section.split( '.' ) );
+	if ( this.section !== null ) cave.surveyTree.trim( this.section.split( '.' ) );
 
-	HandlerLib.addLineSegments( this.groups, this.lineSegments );
+	HandlerLib.addLineSegments( this.groups, cave.lineSegments );
 
 	return;
 
@@ -113,13 +115,14 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
+	const cave       = this.cave;
 	const groups     = this.groups;
-	const surveyTree = this.surveyTree;
-	const projection = this.projection;
-	const limits     = this.limits;
+	const surveyTree = cave.surveyTree;
+	const projection = cave.projection;
+	const limits     = cave.limits;
 	const stationMap = new Map();
 
-	this.allStations.push( stationMap );
+	cave.allStations.push( stationMap );
 
 	const cmd      = [];
 	const stations = new Map();
@@ -375,15 +378,16 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
+	const cave       = this.cave;
 	const groups     = this.groups;
-	const xGroups    = this.xGroups;
-	const surveyTree = this.surveyTree;
-	const messages   = this.messages;
-	const projection = this.projection;
-	const limits     = this.limits;
+	const xGroups    = [];
+	const surveyTree = cave.surveyTree;
+	const messages   = cave.messages;
+	const projection = cave.projection;
+	const limits     = cave.limits;
 	const stationMap = new Map();
 
-	this.allStations.push( stationMap );
+	cave.allStations.push( stationMap );
 
 	const cmd = [];
 
@@ -537,6 +541,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	}
 
 	// fake approach vector for initial leg in xSect sequence
+	// FIXME = only xsects from current file
+
+	const caveXgroups = cave.xGroups;
 
 	for ( i = 0; i < xGroups.length; i++ ) {
 
@@ -554,6 +561,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		const newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
 
 		x1.start = newStart;
+
+		caveXgroups.push( group );
 
 	}
 

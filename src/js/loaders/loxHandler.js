@@ -11,7 +11,6 @@ function loxHandler ( fileName ) {
 
 	this.modelOffset = 0;
 
-	this.setCRS( null );
 
 }
 
@@ -21,21 +20,23 @@ loxHandler.prototype.constructor = loxHandler;
 
 loxHandler.prototype.type = 'arraybuffer';
 
-loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
+loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
-	this.metadata = metadata;
+	cave.metadata = metadata;
+	cave.setCRS( null );
+
 	this.modelOffset += 100000;
 
-	const lineSegments = this.lineSegments;
-	const self         = this;
-	const surveyTree   = this.surveyTree;
+	const lineSegments = cave.lineSegments;
+	const surveyTree   = cave.surveyTree;
 	const xSects       = [];
-	const limits       = this.limits;
+	const limits       = cave.limits;
 	const projection   = this.projection;
 	const terrain      = {};
 
 	// polyfilled for IE11, or otherwise not available.
 	const utf8Decoder = new TextDecoder( 'utf-8' );
+
 
 	// assumes little endian data ATM - FIXME
 
@@ -45,7 +46,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 	const idOffset = this.modelOffset;
 	const stations = [];
 
-	this.allStations.push( stations );
+	cave.allStations.push( stations );
 
 	var pos = 0; // file position
 	var dataStart;
@@ -63,9 +64,9 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	source = null;
 
-	this.xGroups = this.xGroups.concat( HandlerLib.procXsects( xSects) );
+	cave.xGroups = cave.xGroups.concat( HandlerLib.procXsects( xSects) );
 
-	if ( this.projection !== null ) this.hasTerrain = false;
+//if ( this.projection !== null ) this.hasTerrain = false;
 
 	return this;
 
@@ -162,6 +163,24 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	}
 
+	function readDataPtr () {
+
+		const m_position = readUint();
+		const m_size     = readUint();
+
+		return { position: m_position, size: m_size };
+
+	}
+
+	function readString ( ptr ) {
+
+		// strings are null terminated. Ignore last byte in string
+		const bytes = new Uint8Array( source, dataStart + ptr.position, ptr.size - 1 );
+
+		return utf8Decoder.decode( bytes );
+
+	}
+
 	function readSurvey () {
 
 		const m_id     = readUint();
@@ -191,24 +210,6 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 			}
 
 		}
-
-	}
-
-	function readDataPtr () {
-
-		const m_position = readUint();
-		const m_size     = readUint();
-
-		return { position: m_position, size: m_size };
-
-	}
-
-	function readString ( ptr ) {
-
-		// strings are null terminated. Ignore last byte in string
-		const bytes = new Uint8Array( source, dataStart + ptr.position, ptr.size - 1 );
-
-		return utf8Decoder.decode( bytes );
 
 	}
 
@@ -453,7 +454,7 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 		}
 
-		self.scraps.push( scrap );
+		cave.scraps.push( scrap );
 
 	}
 
@@ -478,8 +479,8 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 			calib:   m_calib
 		};
 
-		self.terrains.push( terrain );
-		self.hasTerrain = true;
+		cave.terrains.push( terrain );
+		cave.hasTerrain = true;
 
 	}
 

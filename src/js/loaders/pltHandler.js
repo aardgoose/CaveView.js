@@ -10,7 +10,6 @@ function pltHandler ( fileName ) {
 
 	Handler.call( this, fileName );
 
-	this.setCRS( null );
 
 }
 
@@ -20,19 +19,20 @@ pltHandler.prototype.constructor = pltHandler;
 
 pltHandler.prototype.type = 'text';
 
-pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
+pltHandler.prototype.parse = function ( cave, dataStream, metadata /*, section */ ) {
 
-	this.metadata = metadata;
+	cave.metadata = metadata;
+	cave.setCRS( null );
 
 	const groups      = [];
-	const surveyTree  = this.surveyTree;
+	const surveyTree  = cave.surveyTree;
 	const xSects      = [];
-	const limits      = this.limits;
-	const projection  = this.projection;
+	const limits      = cave.limits;
+	const projection  = cave.projection;
 	const stationMap  = new Map();
 	const stations    = [];
 
-	this.allStations.push( stations );
+	cave.allStations.push( stations );
 
 	const lines = dataStream.split( /[\n\r]+/ );
 	const l = lines.length;
@@ -174,9 +174,9 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 	if ( segments.length > 1 ) groups.push( segments );
 
-	HandlerLib.addLineSegments( groups, this.lineSegments );
+	HandlerLib.addLineSegments( groups, cave.lineSegments );
 
-	this.xGroups = this.xGroups.concat( HandlerLib.procXsects( xSects) );
+	cave.xGroups = cave.xGroups.concat( HandlerLib.procXsects( xSects) );
 
 	return this;
 

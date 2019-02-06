@@ -80,9 +80,30 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 Handler.prototype.getSurvey = function () {
 
+	const limits = this.limits;
+
+	if ( ! this.hasTerrain ) {
+
+		const min = limits.min;
+		const max = limits.max;
+
+		// expand survey area by 10%
+
+		limits.expandByVector(
+
+			new Vector3(
+				( max.x - min.x ) * 0.05,
+				( max.y - min.y ) * 0.05,
+				0
+			)
+
+		);
+
+	}
+
 	// convert to origin centered coordinates
 
-	const offsets = this.limits.getCenter( this.offsets );
+	const offsets = limits.getCenter( this.offsets );
 	const allStations = this.allStations;
 
 	allStations.forEach( function ( all ) {
@@ -90,7 +111,6 @@ Handler.prototype.getSurvey = function () {
 		all.forEach( function ( s ) { s.sub( offsets ); } );
 
 	} );
-
 
 	// convert scraps if present
 

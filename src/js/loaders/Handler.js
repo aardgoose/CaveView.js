@@ -91,6 +91,27 @@ Handler.prototype.getSurvey = function () {
 
 	} );
 
+
+	// convert scraps if present
+
+	const scraps = this.scraps;
+
+	var i, j;
+
+	// covert scraps coordinates
+
+	for ( i = 0; i < scraps.length; i++ ) {
+
+		const vertices = scraps[ i ].vertices;
+
+		for ( j = 0; j < vertices.length; j++ ) {
+
+			vertices[ j ].sub( offsets );
+
+		}
+
+	}
+
 	return {
 		title: this.fileName,
 		surveyTree: this.surveyTree,

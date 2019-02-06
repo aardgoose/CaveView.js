@@ -548,24 +548,6 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 loxHandler.prototype.end = function () {
 
 	const self = this;
-	const offsets = this.limits.getCenter( this.offsets );
-	const scraps = this.scraps;
-
-	var i, j;
-
-	// covert scraps coordinates
-
-	for ( i = 0; i < scraps.length; i++ ) {
-
-		const vertices = scraps[ i ].vertices;
-
-		for ( j = 0; j < vertices.length; j++ ) {
-
-			vertices[ j ].sub( offsets );
-
-		}
-
-	}
 
 	procXsects();
 

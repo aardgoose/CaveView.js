@@ -111,12 +111,6 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 };
 
-Svx3dHandler.prototype.end = function () {
-
-	return this;
-
-};
-
 Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 	const groups     = this.groups;

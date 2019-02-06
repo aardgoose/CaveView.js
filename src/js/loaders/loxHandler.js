@@ -65,6 +65,8 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	this.xGroups = this.xGroups.concat( HandlerLib.procXsects( xSects) );
 
+	if ( this.projection !== null ) this.hasTerrain = false;
+
 	return this;
 
 	// .lox parsing functions
@@ -544,14 +546,6 @@ loxHandler.prototype.parse = function ( dataStream, metadata, section ) {
 		return URL.createObjectURL( blob );
 
 	}
-
-};
-
-loxHandler.prototype.end = function () {
-
-	if ( this.projection !== null ) this.hasTerrain = false;
-
-	return this;
 
 };
 

@@ -1,7 +1,7 @@
 
 import { LEG_CAVE, STATION_NORMAL } from '../core/constants';
 import { Handler } from './Handler';
-import { Vector3 } from '../Three';
+import { HandlerLib } from './HandlerLib';
 import { StationPosition } from '../core/StationPosition';
 
 const ftom = 12 * 0.0254;
@@ -10,8 +10,7 @@ function pltHandler ( fileName ) {
 
 	Handler.call( this, fileName );
 
-	this.groups      = [];
-	this.xSects      = [];
+	this.groups = [];
 
 	this.setCRS( null );
 
@@ -29,7 +28,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 	const groups      = this.groups;
 	const surveyTree  = this.surveyTree;
-	const xSects      = this.xSects;
+	const xSects      = [];
 	const limits      = this.limits;
 	const projection  = this.projection;
 	const stationMap  = new Map();
@@ -177,6 +176,8 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 	if ( segments.length > 1 ) groups.push( segments );
 
+	this.xGroups = this.xGroups.concat( HandlerLib.procXsects( xSects) );
+
 	return this;
 
 	function readCoords( parts ) {
@@ -225,119 +226,11 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 };
 
-pltHandler.prototype.getLineSegments = function () {
-
-	const lineSegments = [];
-	const groups = this.groups;
-
-	for ( var i = 0, l = groups.length; i < l; i++ ) {
-
-		const g = groups[ i ];
-
-		for ( var v = 0, vMax = g.length - 1; v < vMax; v++ ) {
-
-			// create vertex pairs for each line segment.
-			// all vertices except first and last are duplicated.
-			const from = g[ v ];
-			const to   = g[ v + 1 ];
-
-			const fromCoords = from.coords;
-			const toCoords = to.coords;
-
-			lineSegments.push( { from: fromCoords, to: toCoords, type: to.type, survey: to.survey } );
-
-		}
-
-	}
-
-	return lineSegments;
-
-};
-
 pltHandler.prototype.end = function () {
 
-	const self = this;
-
-	procXsects();
-
-	this.lineSegments = this.getLineSegments();
+	this.lineSegments = HandlerLib.getLineSegments( this.groups );
 
 	return this;
-
-	function procXsects () {
-
-		const xGroups = self.xGroups;
-		const xSects  = self.xSects;
-		const ends = [];
-
-		var lastTo, xGroup, i;
-
-		xSects.sort( function ( a, b ) { return a.m_from - b.m_from; } );
-
-		for ( i = 0; i < xSects.length; i++ ) {
-
-			const xSect = xSects[ i ];
-
-			if ( xSect.m_from !== lastTo ) {
-
-				xGroup = [];
-				xGroups.push( xGroup );
-
-			}
-
-			lastTo = xSect.m_to;
-
-			xGroup.push( xSect );
-
-		}
-
-		for ( i = 0; i < xGroups.length; i++ ) {
-
-			const group = xGroups[ i ];
-
-			const start = group[ 0 ].m_from;
-			const end = group[ group.length - 1 ].m_to;
-
-			// concatenate adjacent groups
-
-			const prepend = ends.indexOf( start );
-
-			if ( prepend !== -1 ) {
-
-				// keep the new run in the same slot - thus end record remains correct
-				xGroups[ i ] = xGroups[ prepend ].concat( group );
-
-				// remove entry from moved group
-				xGroups[ prepend ] = [];
-				ends[ prepend ] = undefined;
-
-			}
-
-			ends.push( end );
-
-		}
-
-		for ( i = 0; i < xGroups.length; i++ ) {
-
-			const group = xGroups[ i ];
-
-			if ( group.length < 2 ) continue;
-
-			const xSect = group[ 0 ];
-			const xSectNext = group[ 1 ];
-
-			if ( xSect === undefined ) continue; // groups that have been merged
-
-			const start = xSectNext.start;
-			const end = xSectNext.end;
-
-			// fake approach vector for initial xSect ( mirrors first section vector )
-
-			xSect.start = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
-
-		}
-
-	}
 
 };
 

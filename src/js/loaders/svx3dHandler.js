@@ -2,6 +2,7 @@
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
 import { Handler } from './Handler';
+import { HandlerLib } from './HandlerLib';
 import { StationPosition } from '../core/StationPosition';
 import { Vector3 } from '../Three';
 
@@ -131,7 +132,7 @@ Svx3dHandler.prototype.end = function () {
 
 	);
 
-	this.lineSegments = this.getLineSegments();
+	this.lineSegments = HandlerLib.getLineSegments( this.groups );
 
 	return this;
 

@@ -3,15 +3,19 @@ import { Vector3 } from '../Three';
 
 const HandlerLib = {
 
-	getLineSegments: function ( groups ) {
+	addLineSegments: function ( groups, lineSegments ) {
 
-		const lineSegments = [];
+		const l = groups.length;
 
-		for ( var i = 0, l = groups.length; i < l; i++ ) {
+		var i;
+
+		for ( i = 0; i < l; i++ ) {
 
 			const g = groups[ i ];
 
-			for ( var v = 0, vMax = g.length - 1; v < vMax; v++ ) {
+			let v, vMax = g.length - 1;
+
+			for ( v = 0; v < vMax; v++ ) {
 
 				// create vertex pairs for each line segment.
 				// all vertices except first and last are duplicated.

@@ -25,6 +25,7 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	this.metadata = metadata;
 	this.section = section;
+	this.groups = [];
 
 	var pos = 0; // file position
 
@@ -66,6 +67,11 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 
 	}
 
+	// if pre selecting a section - trim returned surveyTree
+	if ( this.section !== null ) this.surveyTree.trim( this.section.split( '.' ) );
+
+	HandlerLib.addLineSegments( this.groups, this.lineSegments );
+
 	return;
 
 	function readLF () { // read until Line feed
@@ -106,33 +112,6 @@ Svx3dHandler.prototype.parse = function ( dataStream, metadata, section ) {
 };
 
 Svx3dHandler.prototype.end = function () {
-
-	const surveyTree = this.surveyTree;
-
-	if ( this.section !== null ) {
-
-		surveyTree.trim( this.section.split( '.' ) );
-
-	}
-
-	const limits = this.limits;
-
-	const min = limits.min;
-	const max = limits.max;
-
-	// expand survey area by 10%
-
-	limits.expandByVector(
-
-		new Vector3(
-			( max.x - min.x ) * 0.05,
-			( max.y - min.y ) * 0.05,
-			0
-		)
-
-	);
-
-	this.lineSegments = HandlerLib.getLineSegments( this.groups );
 
 	return this;
 

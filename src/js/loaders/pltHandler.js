@@ -10,8 +10,6 @@ function pltHandler ( fileName ) {
 
 	Handler.call( this, fileName );
 
-	this.groups = [];
-
 	this.setCRS( null );
 
 }
@@ -26,7 +24,7 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 	this.metadata = metadata;
 
-	const groups      = this.groups;
+	const groups      = [];
 	const surveyTree  = this.surveyTree;
 	const xSects      = [];
 	const limits      = this.limits;
@@ -176,6 +174,8 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 	if ( segments.length > 1 ) groups.push( segments );
 
+	HandlerLib.addLineSegments( groups, this.lineSegments );
+
 	this.xGroups = this.xGroups.concat( HandlerLib.procXsects( xSects) );
 
 	return this;
@@ -228,7 +228,6 @@ pltHandler.prototype.parse = function ( dataStream, metadata /*, section */ ) {
 
 pltHandler.prototype.end = function () {
 
-	this.lineSegments = HandlerLib.getLineSegments( this.groups );
 
 	return this;
 

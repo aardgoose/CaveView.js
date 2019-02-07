@@ -1,6 +1,5 @@
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_ENTRANCE, STATION_NORMAL } from '../core/constants';
-import { Handler } from './Handler';
 import { Vector3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';
 
@@ -8,11 +7,9 @@ var modelOffset = 0;
 
 function loxHandler ( fileName ) {
 
-	Handler.call( this, fileName );
+	this.fileName = fileName;
 
 }
-
-loxHandler.prototype = Object.create( Handler.prototype );
 
 loxHandler.prototype.constructor = loxHandler;
 
@@ -20,21 +17,24 @@ loxHandler.prototype.type = 'arraybuffer';
 
 loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
-	cave.metadata = metadata;
-	cave.setCRS( null );
-
 	modelOffset += 100000;
+
+	cave.metadata = metadata;
+
+	cave.setCRS( null );
 
 	const lineSegments = cave.lineSegments;
 	const surveyTree   = cave.surveyTree;
-	const xSects       = [];
 	const limits       = cave.limits;
-	const projection   = this.projection;
-	const terrain      = {};
+	const projection   = cave.projection;
+
+	const xSects  = [];
+	const terrain = {};
+
+	const skipTerrain = ( projection !== null );
 
 	// polyfilled for IE11, or otherwise not available.
 	const utf8Decoder = new TextDecoder( 'utf-8' );
-
 
 	// assumes little endian data ATM - FIXME
 
@@ -63,8 +63,6 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 	cave.addStations( stations );
 
 	cave.addXsects( xSects );
-
-//if ( this.projection !== null ) this.hasTerrain = false;
 
 	return this;
 
@@ -126,20 +124,11 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 		}
 
-		if ( doFunction !== undefined ) {
-
-			for ( var i = 0; i < m_recCount; i++ ) {
-
-				doFunction();
-
-			}
-
-		}
+		for ( var i = 0; i < m_recCount; i++ ) doFunction();
 
 		pos += m_dataSize;
 
 	}
-
 
 	function readUint () {
 
@@ -466,6 +455,8 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 		const surfacePtr = readDataPtr();
 		const m_calib    = readCalibration();
 
+		if ( skipTerrain ) return;
+
 		const ab = source.slice( pos, pos + surfacePtr.size ); // required for 64b alignment
 
 		const dtm = new Float64Array( ab, 0 );
@@ -509,6 +500,8 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 		const imagePtr = readDataPtr();
 		const m_calib = readCalibration();
+
+		if ( skipTerrain ) return;
 
 		terrain.bitmap = {
 			image: extractImage( imagePtr ),

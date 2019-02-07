@@ -113,13 +113,21 @@ function loadCaves ( files ) {
 
 }
 
+function clearView () {
+
+	Page.clear();
+	Viewer.clearView();
+
+}
+
 // export public interface
 
 export const UI = {
 	init:         init,
 	loadCave:     loadCave,
 	loadCaves:    loadCaves,
-	loadCaveList: loadCaveList
+	loadCaveList: loadCaveList,
+	clearView: clearView
 };
 
 

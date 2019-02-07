@@ -2,7 +2,6 @@
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
 import { Handler } from './Handler';
-import { HandlerLib } from './HandlerLib';
 import { StationPosition } from '../core/StationPosition';
 import { Vector3 } from '../Three';
 
@@ -72,7 +71,7 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) 
 	// if pre selecting a section - trim returned surveyTree
 	if ( this.section !== null ) cave.surveyTree.trim( this.section.split( '.' ) );
 
-	HandlerLib.addLineSegments( this.groups, cave.lineSegments );
+	cave.addLineSegments( this.groups );
 
 	return;
 

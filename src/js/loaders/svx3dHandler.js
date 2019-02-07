@@ -1,20 +1,16 @@
 // Survex 3d file handler
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
-import { Handler } from './Handler';
 import { StationPosition } from '../core/StationPosition';
 import { Vector3 } from '../Three';
 
 function Svx3dHandler ( fileName ) {
 
-	Handler.call( this, fileName );
-
+	this.fileName = fileName;
 	this.groups = [];
 	this.section = null;
 
 }
-
-Svx3dHandler.prototype = Object.create( Handler.prototype );
 
 Svx3dHandler.prototype.constructor = Svx3dHandler;
 
@@ -118,10 +114,12 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) 
 Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 	const cave       = this.cave;
-	const groups     = this.groups;
+
 	const surveyTree = cave.surveyTree;
 	const projection = cave.projection;
 	const limits     = cave.limits;
+
+	const groups     = this.groups;
 	const stationMap = this.stationMap;
 
 	const cmd      = [];
@@ -379,12 +377,14 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	const cave       = this.cave;
-	const groups     = this.groups;
-	const xGroups    = [];
+
 	const surveyTree = cave.surveyTree;
 	const messages   = cave.messages;
 	const projection = cave.projection;
 	const limits     = cave.limits;
+
+	const groups     = this.groups;
+	const xGroups    = [];
 	const stationMap = this.stationMap;
 
 	const cmd = [];

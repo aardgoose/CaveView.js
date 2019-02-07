@@ -1,18 +1,14 @@
 
 import { LEG_CAVE, STATION_NORMAL } from '../core/constants';
-import { Handler } from './Handler';
 import { StationPosition } from '../core/StationPosition';
 
 const ftom = 12 * 0.0254;
 
 function pltHandler ( fileName ) {
 
-	Handler.call( this, fileName );
-
+	this.fileName = fileName;
 
 }
-
-pltHandler.prototype = Object.create( Handler.prototype );
 
 pltHandler.prototype.constructor = pltHandler;
 
@@ -21,15 +17,17 @@ pltHandler.prototype.type = 'text';
 pltHandler.prototype.parse = function ( cave, dataStream, metadata /*, section */ ) {
 
 	cave.metadata = metadata;
+
 	cave.setCRS( null );
 
-	const groups      = [];
 	const surveyTree  = cave.surveyTree;
-	const xSects      = [];
 	const limits      = cave.limits;
 	const projection  = cave.projection;
+
 	const stationMap  = new Map();
+	const xSects      = [];
 	const stations    = [];
+	const groups      = [];
 
 	const lines = dataStream.split( /[\n\r]+/ );
 	const l = lines.length;

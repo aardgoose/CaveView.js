@@ -4,9 +4,8 @@ import { Box3, Vector3 } from '../Three';
 
 import proj4 from 'proj4';
 
-function Handler( fileName ) {
+function Handler () {
 
-	this.fileName   = fileName;
 	this.surveyTree = new Tree();
 	this.limits     = new Box3();
 	this.offsets    = new Vector3();
@@ -21,6 +20,8 @@ function Handler( fileName ) {
 	this.projection = null;
 	this.hasTerrain  = false;
 	this.messages = [];
+	this.metadata = null;
+	this.fileCount = 0;
 
 }
 
@@ -80,7 +81,10 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 Handler.prototype.addStations = function ( stations ) {
 
+	this.fileCount++;
+
 	this.allStations.push( stations );
+
 };
 
 Handler.prototype.addLineSegments = function ( groups ) {

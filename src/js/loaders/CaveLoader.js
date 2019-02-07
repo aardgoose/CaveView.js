@@ -146,7 +146,7 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	function _progress ( event ) {
 
-		self.dispatchEvent( { type: 'progress', name: 'set', progress: Math.round( 100 * event.loaded / event.total ) } );
+		if ( event.total > 0 ) self.dispatchEvent( { type: 'progress', name: 'set', progress: Math.round( 100 * event.loaded / event.total ) } );
 
 	}
 
@@ -221,7 +221,7 @@ CaveLoader.prototype.loadLocalFile = function ( file, section ) {
 
 	function _progress ( e ) {
 
-		self.dispatchEvent( { type: 'progress', name: 'set', progress: Math.round( 100 * e.loaded / e.total ) } );
+		if ( e.total > 0 ) self.dispatchEvent( { type: 'progress', name: 'set', progress: Math.round( 100 * e.loaded / e.total ) } );
 
 	}
 
@@ -232,7 +232,7 @@ CaveLoader.prototype.callHandler = function () {
 	if ( this.dataResponse === null ) {
 
 		this.callback( false );
-		this.dispatchEvent( { type: 'progress', name: 'stop' } );
+		this.dispatchEvent( { type: 'progress', name: 'end' } );
 
 		return;
 

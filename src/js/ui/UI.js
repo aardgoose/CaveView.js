@@ -77,7 +77,9 @@ function initUI () {
 	Page.clear();
 
 	new SettingsPage( fileSelector );
-	new SurfacePage();
+
+	if ( Viewer.hasSurfaceLegs || Viewer.hasTerrain ) new SurfacePage();
+
 	new SelectionPage( container, fileSelector );
 
 	if ( Cfg.value( 'showEditPage', false ) ) new EditPage( fileSelector );

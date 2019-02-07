@@ -7,6 +7,7 @@ function FileSelector ( container ) {
 	this.fileCount = 0;
 	this.currentIndex = Infinity;
 	this.loadedFile;
+	this.isMultiple = false;
 
 	const self = this;
 
@@ -81,10 +82,12 @@ FileSelector.prototype.selectFile = function ( file, section ) {
 		if ( file.length === 1 ) {
 
 			this.selectedFile = file.name;
+			this.isMultiple = false;
 
 		} else {
 
 			this.selectedFile = '[multiple]';
+			this.isMultiple = true;
 
 		}
 

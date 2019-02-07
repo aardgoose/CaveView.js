@@ -1,7 +1,6 @@
 
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_ENTRANCE, STATION_NORMAL } from '../core/constants';
 import { Handler } from './Handler';
-import { HandlerLib } from './HandlerLib';
 import { Vector3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';
 
@@ -64,7 +63,7 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 	source = null;
 
-	cave.xGroups = cave.xGroups.concat( HandlerLib.procXsects( xSects) );
+	cave.addXsects( xSects );
 
 //if ( this.projection !== null ) this.hasTerrain = false;
 

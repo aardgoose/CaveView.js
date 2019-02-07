@@ -1,7 +1,6 @@
 
 import { LEG_CAVE, STATION_NORMAL } from '../core/constants';
 import { Handler } from './Handler';
-import { HandlerLib } from './HandlerLib';
 import { StationPosition } from '../core/StationPosition';
 
 const ftom = 12 * 0.0254;
@@ -174,9 +173,9 @@ pltHandler.prototype.parse = function ( cave, dataStream, metadata /*, section *
 
 	if ( segments.length > 1 ) groups.push( segments );
 
-	HandlerLib.addLineSegments( groups, cave.lineSegments );
+	cave.addLineSegments( groups );
 
-	cave.xGroups = cave.xGroups.concat( HandlerLib.procXsects( xSects) );
+	cave.addXsects( xSects);
 
 	return this;
 

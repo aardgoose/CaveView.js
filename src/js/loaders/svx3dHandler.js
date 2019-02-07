@@ -27,6 +27,7 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) 
 	this.section = section;
 	this.groups = [];
 	this.cave = cave;
+	this.stationMap = new Map();
 
 	var pos = 0; // file position
 
@@ -70,6 +71,8 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) 
 
 	// if pre selecting a section - trim returned surveyTree
 	if ( this.section !== null ) cave.surveyTree.trim( this.section.split( '.' ) );
+
+	cave.addStations( this.stationMap );
 
 	cave.addLineSegments( this.groups );
 
@@ -119,9 +122,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 	const surveyTree = cave.surveyTree;
 	const projection = cave.projection;
 	const limits     = cave.limits;
-	const stationMap = new Map();
-
-	cave.allStations.push( stationMap );
+	const stationMap = this.stationMap;
 
 	const cmd      = [];
 	const stations = new Map();
@@ -384,9 +385,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	const messages   = cave.messages;
 	const projection = cave.projection;
 	const limits     = cave.limits;
-	const stationMap = new Map();
-
-	cave.allStations.push( stationMap );
+	const stationMap = this.stationMap;
 
 	const cmd = [];
 

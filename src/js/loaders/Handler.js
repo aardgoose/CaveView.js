@@ -78,6 +78,11 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 };
 
+Handler.prototype.addStations = function ( stations ) {
+
+	this.allStations.push( stations );
+};
+
 Handler.prototype.addLineSegments = function ( groups ) {
 
 	const lineSegments = this.lineSegments;

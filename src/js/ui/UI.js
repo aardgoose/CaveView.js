@@ -82,7 +82,7 @@ function initUI () {
 
 	new SelectionPage( container, fileSelector );
 
-	if ( Cfg.value( 'showEditPage', false ) ) new EditPage( fileSelector );
+	if ( Cfg.value( 'showEditPage', false ) && ! fileSelector.isMultiple ) new EditPage( fileSelector );
 
 	new InfoPage( fileSelector );
 	new HelpPage( avenControls );

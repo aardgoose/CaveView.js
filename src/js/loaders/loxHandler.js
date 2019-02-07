@@ -4,12 +4,11 @@ import { Handler } from './Handler';
 import { Vector3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';
 
+var modelOffset = 0;
+
 function loxHandler ( fileName ) {
 
 	Handler.call( this, fileName );
-
-	this.modelOffset = 0;
-
 
 }
 
@@ -24,7 +23,7 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 	cave.metadata = metadata;
 	cave.setCRS( null );
 
-	this.modelOffset += 100000;
+	modelOffset += 100000;
 
 	const lineSegments = cave.lineSegments;
 	const surveyTree   = cave.surveyTree;
@@ -42,10 +41,8 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 	var source = dataStream;
 
 	const l = source.byteLength;
-	const idOffset = this.modelOffset;
+	const idOffset = modelOffset;
 	const stations = [];
-
-	cave.allStations.push( stations );
 
 	var pos = 0; // file position
 	var dataStart;
@@ -62,6 +59,8 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 	// Drop data to give GC a chance ASAP
 
 	source = null;
+
+	cave.addStations( stations );
 
 	cave.addXsects( xSects );
 

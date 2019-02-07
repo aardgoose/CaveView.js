@@ -31,8 +31,6 @@ pltHandler.prototype.parse = function ( cave, dataStream, metadata /*, section *
 	const stationMap  = new Map();
 	const stations    = [];
 
-	cave.allStations.push( stations );
-
 	const lines = dataStream.split( /[\n\r]+/ );
 	const l = lines.length;
 
@@ -173,9 +171,11 @@ pltHandler.prototype.parse = function ( cave, dataStream, metadata /*, section *
 
 	if ( segments.length > 1 ) groups.push( segments );
 
+	cave.addStations( stations );
+
 	cave.addLineSegments( groups );
 
-	cave.addXsects( xSects);
+	cave.addXsects( xSects );
 
 	return this;
 

@@ -35,7 +35,7 @@ import {
 	EventDispatcher,
 	Vector2, Vector3, Matrix4, Euler,
 	Object3D, Scene, Raycaster,
-	DirectionalLight, HemisphereLight,
+	DirectionalLight, AmbientLight,
 	LinearFilter, NearestFilter, RGBAFormat,
 	OrthographicCamera, PerspectiveCamera,
 	WebGLRenderer, WebGLRenderTarget,
@@ -204,8 +204,10 @@ function init ( domID, configuration ) { // public method
 
 	directionalLight.position.copy( lightPosition );
 
+	directionalLight.visible = false;
+
 	scene.addStatic( directionalLight );
-	scene.addStatic( new HemisphereLight( 0xffffff, 0xffffff, 0.3 ) );
+	scene.addStatic( new AmbientLight( 0xffffff, 0.9 ) );
 
 	raycaster.params.Points.threshold = 2;
 

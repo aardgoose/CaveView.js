@@ -582,7 +582,7 @@ function isFullscreen () {
 function setTerrainLighting( on ) {
 
 	directionalLight.visible = on;
-	ambientLight.intensity =  on ? 0.3 : 1.0;
+	ambientLight.intensity = on ? 0.3 : 1.0;
 
 	renderView();
 

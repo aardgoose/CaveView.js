@@ -87,6 +87,7 @@
 			},
 			"opacity": "Opacity",
 			"datum_shift": "Vertical datum shift",
+			"lighting": "Directional Lighting",
 			"downloadTileSet": "download tile set spec"
 		}
 	},

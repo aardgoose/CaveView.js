@@ -53,6 +53,7 @@ const defaultView = {
 	shadingMode: SHADING_HEIGHT,
 	surfaceShading: SHADING_HEIGHT,
 	terrainShading: SHADING_RELIEF,
+	terrainDirectionLighting: true,
 	terrainOpacity: 0.5,
 	terrainDatumShift: true,
 	surfaceLegs: false,
@@ -74,6 +75,8 @@ const renderer = new WebGLRenderer( { antialias: true } ) ;
 const lightPosition = new Vector3();
 const currentLightPosition = new Vector3();
 const directionalLight = new DirectionalLight( 0xffffff );
+const ambientLight = new AmbientLight( 0xffffff, 0.3 );
+
 const scene = new Scene();
 const fog = new FogExp2( Cfg.themeValue( 'background' ), 0.0025 );
 const mouse = new Vector2();
@@ -204,10 +207,8 @@ function init ( domID, configuration ) { // public method
 
 	directionalLight.position.copy( lightPosition );
 
-	directionalLight.visible = false;
-
 	scene.addStatic( directionalLight );
-	scene.addStatic( new AmbientLight( 0xffffff, 0.9 ) );
+	scene.addStatic( ambientLight );
 
 	raycaster.params.Points.threshold = 2;
 
@@ -269,6 +270,12 @@ function init ( domID, configuration ) { // public method
 			writeable: true,
 			get: function () { return !! terrain.activeDatumShift; },
 			set: applyTerrainDatumShift
+		},
+
+		'terrainDirectionalLighting': {
+			writeable: true,
+			get: function () { return directionalLight.visible; },
+			set: setTerrainLighting
 		},
 
 		'terrainShadingModes': {
@@ -569,6 +576,15 @@ function isFullscreen () {
 		window.innerHeight === container.clientHeight &&
 		window.innerWidth === container.clientWidth
 	);
+
+}
+
+function setTerrainLighting( on ) {
+
+	directionalLight.visible = on;
+	ambientLight.intensity =  on ? 0.3 : 1.0;
+
+	renderView();
 
 }
 

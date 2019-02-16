@@ -37,6 +37,7 @@ function SurfacePage () {
 		controls.push( this.addRange( 'terrain.opacity', Viewer, 'terrainOpacity' ) );
 
 		controls.push( this.addCheckbox( 'terrain.datum_shift', Viewer, 'terrainDatumShift' ) );
+		controls.push( this.addCheckbox( 'terrain.lighting', Viewer, 'terrainDirectionalLighting' ) );
 
 		if ( ! Viewer.hasRealTerrain ) {
 

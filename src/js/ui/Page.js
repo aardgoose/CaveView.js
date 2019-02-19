@@ -437,11 +437,7 @@ Page.prototype.addFileSelect = function ( title, obj, trgObj, property ) {
 
 		if ( count > 0 ) {
 
-			for( var i = 0; i < count; i++ ) {
-
-				files.push( input.files[ i ] );
-
-			}
+			for ( var i = 0; i < count; i++ ) files.push( input.files[ i ] );
 
 			trgObj[ property ] = files;
 

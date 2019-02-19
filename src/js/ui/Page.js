@@ -415,6 +415,46 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 };
 
+Page.prototype.addFileSelect = function ( title, obj, trgObj, property ) {
+
+	const div = this.addSelect( title, obj, trgObj, property );
+
+	const label = div.firstChild;
+
+	label.for = 'cv-file';
+	label.id = 'cv-file-label';
+
+	const input = document.createElement( 'input' );
+
+	input.id = 'cv-file';
+	input.type = 'file';
+	input.accept = '.svx,.lox,.plt';
+
+	this.addListener( input, 'change', function _handleFileChange () {
+
+		const count = input.files.length;
+		const files = [];
+
+		if ( count > 0 ) {
+
+			for( var i = 0; i < count; i++ ) {
+
+				files.push( input.files[ i ] );
+
+			}
+
+			trgObj[ property ] = files;
+
+		}
+
+	} );
+
+	label.appendChild( input );
+
+	return div;
+
+};
+
 Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 	const label = document.createElement( 'label' );

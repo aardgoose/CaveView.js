@@ -58,7 +58,7 @@ function SettingsPage ( fileSelector ) {
 
 	if ( fileSelector.fileCount > 1 ) {
 
-		this.addSelect( 'survey.caption', fileSelector.fileList, fileSelector, 'file' );
+		this.addFileSelect( 'survey.caption', fileSelector.fileList, fileSelector, 'file' );
 
 	} else {
 

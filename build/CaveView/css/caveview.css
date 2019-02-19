@@ -462,6 +462,16 @@ body {
 #cv-frame input[type=range]:focus::-ms-fill-upper {
   background: #eeeeee;
 }
+#cv-frame label#cv-file-label {
+  background-image: url("../images/open.png");
+  background-repeat: no-repeat;
+  background-position: 0px 5px;
+  padding-left: 20px;
+}
+#cv-frame input[type=file] {
+  width: 1px;
+  opacity: 0;
+}
 #logo {
   width: 48px;
   height: 48px;

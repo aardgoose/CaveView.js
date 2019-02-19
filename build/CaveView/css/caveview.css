@@ -463,10 +463,20 @@ body {
   background: #eeeeee;
 }
 #cv-frame label#cv-file-label {
-  background-image: url("../images/open.png");
-  background-repeat: no-repeat;
-  background-position: 0px 5px;
   padding-left: 20px;
+}
+#cv-frame label#cv-file-label img {
+  position: absolute;
+  left: 0px;
+  width: 18px;
+  height: 18px;
+  background-color: white;
+}
+#cv-frame label#cv-file-label:hover {
+  color: #1ab4e5;
+}
+#cv-frame label#cv-file-label:hover img {
+  background-color: #1ab4e5;
 }
 #cv-frame input[type=file] {
   width: 1px;

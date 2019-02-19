@@ -425,10 +425,14 @@ Page.prototype.addFileSelect = function ( title, obj, trgObj, property ) {
 	label.id = 'cv-file-label';
 
 	const input = document.createElement( 'input' );
+	const img = document.createElement( 'img' );
+
+	img.src = Cfg.value( 'home' ) + 'images/open.png';
 
 	input.id = 'cv-file';
 	input.type = 'file';
 	input.accept = '.svx,.lox,.plt';
+	input.multiple = true;
 
 	this.addListener( input, 'change', function _handleFileChange () {
 
@@ -445,6 +449,7 @@ Page.prototype.addFileSelect = function ( title, obj, trgObj, property ) {
 
 	} );
 
+	label.appendChild( img );
 	label.appendChild( input );
 
 	return div;

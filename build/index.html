@@ -72,15 +72,17 @@ function onload () {
 //	CV.Viewer.addFormatters( OSGBStationFormatter );
 
 var caves = [
-	"demo.plt",
-	"Castleton_Master_NoSurface.3d",
+	"all.3d",
+	"test/demo.plt",
+	"andara.3d",
+	"ELSaguaro.lox",
 	"Fighiera-sin-2018.lox",
+	"Castleton_Master_NoSurface.3d",
 	"20181128_Wmap_3D_Apuane.lox",
+	"demo.plt",
 	"Peak_Master_NoSurface.3d",
 	"garrel.lox",
-	"andara.3d",
 	"P8_Master.3d",
-	"all.3d",
 	"MA-all.3d",
 	"titan.3d",
 	"Giants_Oxlow_Maskhill_System.3d",
@@ -89,6 +91,18 @@ var caves = [
 	"BlueWater.lox",
 	"Castleton_Master.3d",
 	"Cheddar.lox"
+];
+
+const uk = [
+	"all.3d",
+	"Peak_Master_NoSurface.3d",
+	//"Cheddar.lox",
+	"OFDCPT.3d"
+];
+
+const spain = [
+	"andara.3d",
+	"MA-all.3d",
 ];
 
 	function LinkAnnotator () {
@@ -123,14 +137,17 @@ var caves = [
 
 	}
 
-//	CV.Viewer.addAnnotator( new LinkAnnotator() );
-//	CV.Viewer.addAnnotator( new ImageAnnotator() );
+	//	CV.Viewer.addAnnotator( new LinkAnnotator() );
+	//	CV.Viewer.addAnnotator( new ImageAnnotator() );
+
 
 	CV.UI.loadCaveList( caves );
-//	CV.UI.loadCaveList( [ "ours.lox", "caylar.lox", "garrel.lox" ] );
+	// setTimeout( CV.UI.clearView, 5000 );
+	//CV.UI.loadCaves( [ "ours.lox", "caylar.lox", "garrel.lox", "surface.lox" ] );
 
-//	CV.UI.loadCaves( [ "Bradwell_Master_NoSurface.3d" ] );
-//	CV.UI.loadCaves( [ "ours.lox", "caylar.lox" ] );
+	//	CV.UI.loadCaves( [ "Bradwell_Master_NoSurface.3d" ] );
+	//	CV.UI.loadCaves( [ "ours.lox", "caylar.lox" ] );
+	//	CV.UI.loadCaves( uk );
 	//	CV.UI.loadCave( "Giants_Oxlow_Maskhill_System.3d" );
 	//	CV.UI.loadCaves( [ "lathkill.3d", "Bradwell_Master_NoSurface.3d" , "Castleton_Master_NoSurface.3d" ] );
 

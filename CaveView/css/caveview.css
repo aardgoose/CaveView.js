@@ -29,6 +29,7 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   font-size: 12px;
+  border-right: 1px solid grey;
 }
 #cv-frame div.page {
   position: absolute;
@@ -105,7 +106,7 @@ body {
   height: 40px;
   width: 40px;
   border-top: 1px solid black;
-  border-left: 1px solid grey;
+  border-left: 1px solid black;
   background-color: #444444;
   background-origin: content-box;
   background-image: url(../images/icons.png);
@@ -167,6 +168,8 @@ body {
   border-bottom: 1px solid grey;
   border-left: none;
   border-right: 2px solid #1ab4e5;
+  width: 41px;
+  margin-left: -1px;
 }
 @media (min-width: 768px) {
   /* default to normal size */
@@ -238,6 +241,8 @@ body {
     border-top: 4px solid #1ab4e5;
     border-bottom: none;
     z-index: 20;
+    margin-left: 0;
+    width: 40px;
   }
   #cv-tab-box #close {
     position: fixed;
@@ -456,4 +461,33 @@ body {
 #cv-frame input[type=range]:focus::-ms-fill-lower,
 #cv-frame input[type=range]:focus::-ms-fill-upper {
   background: #eeeeee;
+}
+#cv-frame label#cv-file-label {
+  padding-left: 20px;
+}
+#cv-frame label#cv-file-label img {
+  position: absolute;
+  left: 0px;
+  width: 18px;
+  height: 18px;
+  background-color: white;
+}
+#cv-frame label#cv-file-label:hover {
+  color: #1ab4e5;
+}
+#cv-frame label#cv-file-label:hover img {
+  background-color: #1ab4e5;
+}
+#cv-frame input[type=file] {
+  width: 1px;
+  opacity: 0;
+}
+#logo {
+  width: 48px;
+  height: 48px;
+  margin-top: 15px;
+  margin-right: 8px;
+  background-image: url("../images/logo.svg");
+  background-size: cover;
+  float: left;
 }

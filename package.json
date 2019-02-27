@@ -1,6 +1,6 @@
 {
   "name": "caveview",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "description": "3D Cave Survey Viewer",
   "scripts": {
     "build-main": "rollup -c",
@@ -24,6 +24,7 @@
     "cave",
     "survey",
     "3d",
+    "compass",
     "webgl",
     "browser",
     "survex",

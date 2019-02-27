@@ -1,5 +1,5 @@
 
-export const VERSION = '1.14.1-test';
+export const VERSION = '1.15.0';
 
 export const MATERIAL_LINE       = 1;
 export const MATERIAL_SURFACE    = 2;

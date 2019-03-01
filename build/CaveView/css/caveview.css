@@ -463,17 +463,28 @@ body {
   background: #eeeeee;
 }
 #cv-frame label#cv-file-label {
-  padding-left: 20px;
+  margin: 2px 0px 2px 0px;
+  padding: 0px 0px 3px 20px;
+  height: 20px;
+  border: 1px solid grey;
+  vertical-align: bottom;
+}
+#cv-frame label#cv-file-label + select {
+  margin-top: 2px;
+  border-left: 2px solid #222222;
 }
 #cv-frame label#cv-file-label img {
   position: absolute;
-  left: 0px;
+  left: 2px;
+  top: 3px;
   width: 18px;
-  height: 18px;
+  height: 16px;
   background-color: white;
+  display: block;
 }
 #cv-frame label#cv-file-label:hover {
   color: #1ab4e5;
+  border-color: #1ab4e5;
 }
 #cv-frame label#cv-file-label:hover img {
   background-color: #1ab4e5;

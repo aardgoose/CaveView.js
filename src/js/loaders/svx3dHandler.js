@@ -564,6 +564,8 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	}
 
+	stationMap.forEach( function ( coords ) { limits.expandByPoint( coords ); } );
+
 	groups.push( legs );
 
 	return;
@@ -1068,8 +1070,6 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 				coords.y = projectedCoords.y;
 
 			}
-
-			limits.expandByPoint( coords );
 
 			stationMap.set( lastKey, coords );
 

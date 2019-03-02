@@ -53,7 +53,7 @@ const defaultView = {
 	shadingMode: SHADING_HEIGHT,
 	surfaceShading: SHADING_HEIGHT,
 	terrainShading: SHADING_RELIEF,
-	terrainDirectionalLighting: false,
+	terrainDirectionalLighting: true,
 	terrainOpacity: 0.5,
 	terrainDatumShift: true,
 	surfaceLegs: false,

@@ -23,6 +23,28 @@ function BingProvider ( imagerySet, key ) {
 	this.attribution = div;
 	this.OS = ( imagerySet === 'OrdnanceSurvey' );
 
+	// coverage in WGS84
+	if ( this.OS ) {
+
+		this.coverage = {
+			minX: -8,
+			minY: 50,
+			maxX: 2,
+			maxY: 62
+		};
+
+	} else {
+
+		this.coverage = {
+			minX: -180,
+			minY: -90,
+			maxX: 180,
+			maxY: 90
+		};
+
+	}
+
+
 	var self = this;
 
 	var metadata;
@@ -137,6 +159,8 @@ BingProvider.quadkey = function ( x, y, z ) {
 	return quadKey.join( '' );
 
 };
+
+BingProvider.prototype.crsSupported = [ 'EPSG:3857' ];
 
 BingProvider.prototype.getAttribution = function () {
 

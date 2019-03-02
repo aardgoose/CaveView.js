@@ -4,6 +4,8 @@ function OSMProvider () {
 
 }
 
+OSMProvider.prototype.crsSupported = [ 'EPSG:3857' ];
+
 OSMProvider.prototype.getUrl = function ( x, y, z ) {
 
 	return 'https://b.tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png';

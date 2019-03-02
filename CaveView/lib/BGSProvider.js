@@ -10,14 +10,16 @@ function BGSProvider ( layers ) {
 
 }
 
+BGSProvider.prototype.crsSupported = [ 'EPSG:3857' ];
+
 BGSProvider.prototype.minZoom = 12;
 BGSProvider.prototype.maxZoom = 14;
 
 BGSProvider.prototype.coverage = {
-	minX: -1945261.298110,
-	minY: 5414691.645640,
-	maxX: 1134858.947510,
-	maxY: 10211684.489360
+	minX: -8,
+	minY: 50,
+	maxX: 2,
+	maxY: 62
 };
 
 BGSProvider.prototype.getUrl = function ( x, y, z ) {

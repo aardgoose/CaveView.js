@@ -78,10 +78,7 @@ export default {
 			// defaults to '\t'
 			indent: '  '
 		}),
-		nodeResolve({
-			jsnext: true,
-			main: true
-		}),
+		nodeResolve({}),
 		commonjs({
 			// non-CommonJS modules will be ignored, but you can also
 			// specifically include/exclude files

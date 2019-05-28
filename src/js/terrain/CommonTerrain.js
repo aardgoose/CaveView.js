@@ -72,7 +72,7 @@ CommonTerrain.prototype.checkTerrainShadingModes = function ( renderer ) {
 
 	terrainShadingModes[ 'terrain.shading.height' ] = SHADING_RELIEF;
 
-	if ( renderer.extensions.get( 'OES_standard_derivatives' ) !== null && ! this.isFlat ) {
+	if ( renderer.capabilities.isWebGL2 || renderer.extensions.get( 'OES_standard_derivatives' ) !== null && ! this.isFlat ) {
 
 		terrainShadingModes[ 'terrain.shading.contours' + ' (' + Cfg.themeValue( 'shading.contours.interval' ) + '\u202fm)' ] = SHADING_CONTOURS;
 

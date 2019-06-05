@@ -738,7 +738,10 @@ function renderDepthTexture () {
 	renderer.setPixelRatio( 1 );
 
 	renderer.clear();
-	renderer.render( scene, rtCamera, renderTarget, true );
+
+	renderer.setRenderTarget( renderTarget );
+
+	renderer.render( scene, rtCamera );
 
 	// correct height between entrances and terrain ( compensates for mismatch beween CRS and datums )
 
@@ -748,7 +751,7 @@ function renderDepthTexture () {
 
 	// restore renderer to normal render size and target
 
-	renderer.setRenderTarget(); // revert to screen canvas
+	renderer.setRenderTarget( null ); // revert to screen canvas
 
 	renderer.setSize( container.clientWidth, container.clientHeight );
 	renderer.setPixelRatio( window.devicePixelRatio );

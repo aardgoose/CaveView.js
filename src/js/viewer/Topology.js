@@ -15,7 +15,7 @@ function Topology ( stations, legsObject ) {
 
 	// determine segments between junctions and entrances/passage ends and create mapping array.
 
-	const legs = legsObject.geometry.vertices;
+	const legs = legsObject.legVertices;
 	const segmentMap = this.segmentMap;
 	const vertexPairToSegment = this.vertexPairToSegment;
 	const segmentToInfo = this.segmentToInfo;
@@ -104,7 +104,7 @@ Topology.prototype.shortestPathSearch = function ( station ) {
 	const queue = [ station ];
 
 	const legsObject = this.legsObject;
-	const legs = legsObject.geometry.vertices;
+	const legs = legsObject.legVertices;
 	const stations = this.stations;
 
 	stations.resetDistances();
@@ -173,7 +173,7 @@ Topology.prototype.getShortestPath = function ( startStation ) {
 
 	const stations = this.stations;
 	const legsObject = this.legsObject;
-	const legs = legsObject.geometry.vertices;
+	const legs = legsObject.legVertices;
 
 	var nextStation = startStation;
 	var testNext = true;

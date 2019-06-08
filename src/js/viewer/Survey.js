@@ -317,9 +317,9 @@ Survey.prototype.loadCave = function ( cave ) {
 		const l = srcSegments.length;
 		const typeLegs = [];
 
-		typeLegs[ LEG_CAVE    ] = { vertices: [], colors: [], runs: [] };
-		typeLegs[ LEG_SURFACE ] = { vertices: [], colors: [], runs: [] };
-		typeLegs[ LEG_SPLAY   ] = { vertices: [], colors: [], runs: [] };
+		typeLegs[ LEG_CAVE    ] = { vertices: [], runs: [] };
+		typeLegs[ LEG_SURFACE ] = { vertices: [], runs: [] };
+		typeLegs[ LEG_SPLAY   ] = { vertices: [], runs: [] };
 
 		var legs, run, i;
 		var currentType;
@@ -371,9 +371,6 @@ Survey.prototype.loadCave = function ( cave ) {
 			legs.vertices.push( leg.from );
 			legs.vertices.push( leg.to );
 
-			legs.colors.push( ColourCache.white );
-			legs.colors.push( ColourCache.white );
-
 		}
 
 		// add vertices run for last survey section encountered
@@ -399,7 +396,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			const legObject = self.getFeature( tag, Legs );
 
-			legObject.addLegs( legs.vertices, legs.colors, legs.runs );
+			legObject.addLegs( legs.vertices, legs.runs );
 
 			self.addFeature( legObject, tag, name + ':g' );
 
@@ -1108,10 +1105,10 @@ Survey.prototype.setLegColourByMaterial = function ( mesh, material ) {
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, material );
 
-	function _colourSegment ( geometry, v1, v2 ) {
+	function _colourSegment ( vertices, colors, v1, v2 ) {
 
-		geometry.colors[ v1 ] = ColourCache.white;
-		geometry.colors[ v2 ] = ColourCache.white;
+		ColourCache.white.toArray( colors, v1 * 3 );
+		ColourCache.white.toArray( colors, v2 * 3 );
 
 	}
 
@@ -1145,10 +1142,10 @@ Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
-	function _colourSegment ( geometry, v1, v2 ) {
+	function _colourSegment ( vertices, colors, v1, v2 ) {
 
-		geometry.colors[ v1 ] = colour;
-		geometry.colors[ v2 ] = colour;
+		colour.toArray( colors, v1 * 3 );
+		colour.toArray( colors, v2 * 3 );
 
 	}
 
@@ -1164,9 +1161,9 @@ Survey.prototype.setLegColourByAxis = function ( mesh ) {
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
-	function _colourSegment ( geometry, v1, v2 ) {
+	function _colourSegment ( vertices, colors, v1, v2 ) {
 
-		vector.copy( geometry.vertices[ v1 ] ).sub( geometry.vertices[ v2 ] ).normalize();
+		vector.copy( vertices[ v1 ] ).sub( vertices[ v2 ] ).normalize();
 
 		const colour = new Color(
 			Math.abs( vector.dot( c1 ) ),
@@ -1174,8 +1171,8 @@ Survey.prototype.setLegColourByAxis = function ( mesh ) {
 			Math.abs( vector.dot( c3 ) )
 		);
 
-		geometry.colors[ v1 ] = colour;
-		geometry.colors[ v2 ] = colour;
+		colour.toArray( colors, v1 * 3 );
+		colour.toArray( colors, v2 * 3 );
 
 	}
 
@@ -1191,13 +1188,13 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
-	function _colourSegment ( geometry, v1, v2 ) {
+	function _colourSegment ( vertices, colors, v1, v2 ) {
 
 		const relLength = ( legLengths[ v1 / 2 ] - stats.minLegLength ) / stats.legLengthRange;
 		const colour = colours[ Math.floor( relLength * colourRange ) ];
 
-		geometry.colors[ v1 ] = colour;
-		geometry.colors[ v2 ] = colour;
+		colour.toArray( colors, v1 * 3 );
+		colour.toArray( colors, v2 * 3 );
 
 	}
 
@@ -1216,18 +1213,21 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
-	function _colourSegment ( geometry, v1, v2, survey, legIndex ) {
+	function _colourSegment ( vertices, colors, v1, v2 ) {
 
-		const onPath = ( path !== null && path.has( legIndex ) );
+		const onPath = ( path !== null && path.has( v1 ) );
 
-		geometry.colors[ v1 ] = onPath ? pathColor : _setDistanceColour( geometry, v1 );
-		geometry.colors[ v2 ] = onPath ? pathColor : _setDistanceColour( geometry, v2 );
+		const c1 = onPath ? pathColor : _setDistanceColour( vertices, v1 );
+		const c2 = onPath ? pathColor : _setDistanceColour( vertices, v2 );
+
+		c1.toArray( colors, v1 * 3 );
+		c2.toArray( colors, v2 * 3 );
 
 	}
 
-	function _setDistanceColour( geometry, vertexIndex ) {
+	function _setDistanceColour( vertices, vertexIndex ) {
 
-		const vertex = geometry.vertices[ vertexIndex ];
+		const vertex = vertices[ vertexIndex ];
 		const distance = stations.getStation( vertex ).distance;
 
 		return ( distance === Infinity ) ? unconnected : colours[ Math.floor( colourRange * distance / maxDistance ) ];
@@ -1250,12 +1250,12 @@ Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
-	function _colourSegment ( geometry, v1, v2, survey ) {
+	function _colourSegment ( vertices, colors, v1, v2, survey ) {
 
 		const colour = surveyToColourMap[ survey ];
 
-		geometry.colors[ v1 ] = colour;
-		geometry.colors[ v2 ] = colour;
+		colour.toArray( colors, v1 * 3 );
+		colour.toArray( colors, v2 * 3 );
 
 	}
 
@@ -1271,7 +1271,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
-	function _colourSegment ( geometry, v1, v2 /*, survey */ ) {
+	function _colourSegment ( vertices, colors, v1, v2 /*, survey */ ) {
 
 		var colour;
 
@@ -1288,8 +1288,8 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 			colour = c3;
 		}
 
-		geometry.colors[ v1 ] = colour;
-		geometry.colors[ v2 ] = colour;
+		colour.toArray( colors, v1 * 3 );
+		colour.toArray( colors, v2 * 3 );
 
 	}
 
@@ -1307,10 +1307,10 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
-	function _colourSegment ( geometry, v1, v2 ) {
+	function _colourSegment ( vertices, colors, v1, v2 ) {
 
-		const vertex1 = geometry.vertices[ v1 ];
-		const vertex2 = geometry.vertices[ v2 ];
+		const vertex1 = vertices[ v1 ];
+		const vertex2 = vertices[ v2 ];
 
 		legNormal.subVectors( vertex1, vertex2 ).normalize();
 
@@ -1319,8 +1319,8 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 		const hueIndex = Math.floor( hueFactor * Math.acos( Math.abs( dotProduct ) ) );
 		const colour = colours[ hueIndex ];
 
-		geometry.colors[ v1 ] = colour;
-		geometry.colors[ v2 ] = colour;
+		colour.toArray( colors, v1 * 3 );
+		colour.toArray( colors, v2 * 3 );
 
 	}
 

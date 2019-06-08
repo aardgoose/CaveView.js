@@ -1,7 +1,8 @@
 import {
-	Geometry,
+	BufferGeometry,
 	VertexColors, LineSegments,
-	LineBasicMaterial
+	LineBasicMaterial,
+	Float32BufferAttribute
 } from '../Three';
 
 import { Cfg } from '../core/lib';
@@ -11,7 +12,7 @@ const unselectedMaterial = new LineBasicMaterial( { color: 0x444444, vertexColor
 
 function Legs () {
 
-	const geometry = new Geometry();
+	const geometry = new BufferGeometry();
 
 	LineSegments.call( this, geometry, unselectedMaterial );
 
@@ -27,26 +28,20 @@ Legs.prototype = Object.create( LineSegments.prototype );
 Legs.prototype.onBeforeRender = StencilLib.featureOnBeforeRender;
 Legs.prototype.onAfterRender = StencilLib.featureOnAfterRender;
 
-Legs.prototype.addLegs = function ( vertices, colors, legRuns ) {
+Legs.prototype.addLegs = function ( vertices, legRuns ) {
 
 	const geometry = this.geometry;
 
-	if ( geometry.vertices.length === 0 ) {
+	this.legVertices = vertices;
+	this.legRuns = legRuns;
 
-		geometry.vertices = vertices;
-		geometry.colors = colors;
+	var positions = new Float32BufferAttribute( vertices.length * 3, 3 );
+	var colors = new Float32BufferAttribute( vertices.length * 3, 3 );
 
-	} else {
-
-		// FIXME: alllocate new buffer of old + new length, adjust indexs and append old data after new data.
-
-		console.error( 'Legs: appending not yet implemented' );
-
-	}
+	geometry.addAttribute( 'position', positions.copyVector3sArray( vertices ) );
+	geometry.addAttribute( 'color', colors );
 
 	geometry.computeBoundingBox();
-
-	this.legRuns = legRuns;
 
 	this.computeStats();
 
@@ -61,16 +56,11 @@ Legs.prototype.cutRuns = function ( selectedRuns ) {
 	if ( ! legRuns ) return;
 
 	const geometry = this.geometry;
+	const vertices = this.legVertices;
 
-	const vertices = geometry.vertices;
-	const colors   = geometry.colors;
-
-	const newGeometry = new Geometry();
-
-	const newVertices = newGeometry.vertices;
-	const newColors   = newGeometry.colors;
-
+	const newVertices = [];
 	const newLegRuns = [];
+
 	const l = legRuns.length;
 
 	var run;
@@ -90,7 +80,6 @@ Legs.prototype.cutRuns = function ( selectedRuns ) {
 			for ( var v = start; v < end; v++ ) {
 
 				newVertices.push( vertices[ v ] );
-				newColors.push( colors[ v ] );
 
 			}
 
@@ -108,29 +97,27 @@ Legs.prototype.cutRuns = function ( selectedRuns ) {
 
 	}
 
-	if ( newGeometry.vertices.length === 0 ) return false;
+	if ( newVertices.length === 0 ) return false;
 
-	newGeometry.computeBoundingBox();
-	newGeometry.name = geometry.name;
-
-	this.geometry = newGeometry;
-	this.legRuns = newLegRuns;
+	this.geometry = new BufferGeometry();
+	this.geometry.name = geometry.name;
 
 	geometry.dispose();
 
-	this.computeStats();
+	this.addLegs( newVertices, newLegRuns );
 
 	return true;
 
 };
 
+
 Legs.prototype.computeStats = function () {
 
 	const stats = { maxLegLength: -Infinity, minLegLength: Infinity, legCount: 0, legLength: 0 };
-	const vertices = this.geometry.vertices;
+	const vertices = this.legVertices;
 	const l = vertices.length;
 
-	const legLengths = [];
+	const legLengths = new Array( l / 2 );
 
 	var i;
 
@@ -163,12 +150,15 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 
 	this.material = material;
 
-	const geometry = this.geometry;
 	const legRuns = this.legRuns;
-	const colors = geometry.colors;
 	const unselectedColor = Cfg.themeColor( 'shading.unselected' );
 
 	var l, run, v;
+
+	const vertices = this.legVertices;
+
+	const colorsAttribute = this.geometry.getAttribute( 'color' );
+	const colors = colorsAttribute.array;
 
 	if ( selectedRuns.size && legRuns ) {
 
@@ -184,7 +174,7 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 
 				for ( v = start; v < end; v += 2 ) {
 
-					colourSegment( geometry, v, v + 1, survey, v );
+					colourSegment( vertices, colors, v, v + 1, survey );
 
 				}
 
@@ -192,8 +182,8 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 
 				for ( v = start; v < end; v += 2 ) {
 
-					colors[ v ]     = unselectedColor;
-					colors[ v + 1 ] = unselectedColor;
+					unselectedColor.toArray( colors, v * 3 );
+					unselectedColor.toArray( colors, ( v + 1 ) * 3 );
 
 				}
 
@@ -203,15 +193,17 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 
 	} else {
 
-		for ( v = 0, l = geometry.vertices.length; v < l; v += 2 ) {
+		for ( v = 0, l = vertices.length; v < l; v += 2 ) {
 
-			colourSegment( geometry, v, v + 1, null, v );
+			colourSegment( vertices, colors, v, v + 1, null );
 
 		}
 
 	}
 
-	geometry.colorsNeedUpdate = true;
+	// update bufferGeometry
+	colorsAttribute.needsUpdate = true;
+
 
 };
 

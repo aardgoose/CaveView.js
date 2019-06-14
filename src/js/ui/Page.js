@@ -585,13 +585,13 @@ Page.prototype.replaceSlide = function ( domElement, depth ) {
 		oldSlide.addEventListener( 'transitionend', afterSlideOut );
 		oldSlide.classList.add( 'slide-out' );
 
-		redraw = oldSlide.clientHeight;
+		redraw = oldSlide.clientHeight; // lgtm
 
 	} else if ( depth < this.slideDepth ) {
 
 		newSlide.addEventListener( 'transitionend', afterSlideIn );
 
-		redraw = newSlide.clientHeight;
+		redraw = newSlide.clientHeight; // lgtm
 
 		newSlide.classList.remove( 'slide-out' );
 

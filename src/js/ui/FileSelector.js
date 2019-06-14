@@ -6,7 +6,7 @@ function FileSelector ( container ) {
 	this.fileList = [];
 	this.fileCount = 0;
 	this.currentIndex = Infinity;
-	this.loadedFile;
+	this.loadedFile = null;
 	this.isMultiple = false;
 
 	const self = this;

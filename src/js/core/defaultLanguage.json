@@ -11,6 +11,7 @@
 				"orthographic": "Orthographic",
 				"perspective": "Perspective",
 				"anaglyph": "Anaglyph",
+				"dynamic": "Dynamic",
 				"stereo": "Stereo"
 			},
 			"viewpoints": {

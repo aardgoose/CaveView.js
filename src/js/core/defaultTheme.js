@@ -58,7 +58,7 @@ const defaultTheme = {
 		}
 	},
 	shading: {
-		single: 'white',
+		single: 'red',
 		cursor: 'yellow',
 		cursorBase: 'gray',
 		unselected: 'gray',

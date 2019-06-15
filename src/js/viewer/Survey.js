@@ -46,6 +46,7 @@ function Survey ( cave ) {
 	this.featureBox = null;
 	this.surveyTree = null;
 	this.projection = null;
+	this.projectionWGS84 = null;
 	this.wireframe = null;
 	this.worldBoundingBox = null;
 
@@ -152,6 +153,8 @@ function Survey ( cave ) {
 
 		self.scaleFactor = l1 / l2;
 		StationPosition.scaleFactor = 1 / self.scaleFactor;
+
+		self.projectionWGS84 = proj4( 'WGS84', survey.displayCRS );
 
 	}
 
@@ -612,6 +615,16 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 	originalPosition.z = position.z + offsets.z;
 
 	return originalPosition;
+
+};
+
+Survey.prototype.getModelSurfaceFromWGS84 = function ( position ) {
+
+	position.copy( this.projectionWGS84.forward( position ) );
+
+	position.sub( this.offsets );
+
+	position.z = this.terrain.getHeight( position );
 
 };
 

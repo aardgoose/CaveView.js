@@ -1,9 +1,10 @@
 
-export const VERSION = '1.15.0';
+export const VERSION = '1.16.dev';
 
 export const MATERIAL_LINE       = 1;
 export const MATERIAL_SURFACE    = 2;
 
+export const CAMERA_NONE         = 0;
 export const CAMERA_ORTHOGRAPHIC = 1;
 export const CAMERA_PERSPECTIVE  = 2;
 export const CAMERA_ANAGLYPH     = 3;

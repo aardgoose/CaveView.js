@@ -8,7 +8,7 @@ import {
 	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE, FEATURE_ANNOTATIONS
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE, FEATURE_ANNOTATIONS, CAMERA_DYNAMIC
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -30,6 +30,7 @@ import { StereoEffect } from './StereoEffect';
 //import { ClusterLegs } from '../analysis/ClusterLegs';
 
 import { OrbitControls } from '../ui/OrbitControls';
+import { DeviceOrientationControls } from '../ui/DeviceOrientationControls';
 
 import {
 	EventDispatcher,
@@ -40,8 +41,10 @@ import {
 	OrthographicCamera, PerspectiveCamera,
 	WebGLRenderer, WebGLRenderTarget,
 	MOUSE, FogExp2,
+	//	WebGLMultisampleRenderTarget,
 	Quaternion, Spherical, Math as _Math
 } from '../Three';
+
 
 const defaultView = {
 	autoRotate: false,
@@ -70,7 +73,7 @@ const defaultView = {
 	warnings: false
 };
 
-const renderer = new WebGLRenderer( { antialias: true } ) ;
+var renderer;
 
 const lightPosition = new Vector3();
 const currentLightPosition = new Vector3();
@@ -89,6 +92,7 @@ const RETILE_TIMEOUT = 80; // ms pause after last movement before attempting ret
 var caveIsLoaded = false;
 
 var container;
+var defaultRenderTarget = null;
 
 // THREE.js objects
 
@@ -122,6 +126,8 @@ var cameraMode;
 var selectedSection = null;
 
 var controls;
+var orientationControls;
+
 var renderRequired = true;
 
 var cameraMove;
@@ -175,10 +181,29 @@ function init ( domID, configuration ) { // public method
 	const width  = container.clientWidth;
 	const height = container.clientHeight;
 
+	var canvas = document.createElement( 'canvas' );
+	var context = canvas.getContext( 'webgl2', { antialias: false } );
+
+	renderer = new WebGLRenderer( { canvas: canvas, context: context } );
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setClearColor( Cfg.themeValue( 'background' ) );
 	renderer.autoClear = false;
+
+	/*
+	var size = renderer.getDrawingBufferSize( new Vector2() );
+	var parameters = {
+		format: RGBAFormat,
+		stencilBuffer: true
+	};
+
+	defaultRenderTarget = new WebGLMultisampleRenderTarget( Math.round( size.width ), Math.round( size.height ), parameters );
+
+	defaultRenderTarget.targetCanvas = true;
+	defaultRenderTarget.targetCanvasMask = renderer.context.COLOR_BUFFER_BIT;
+	*/
+	console.log( window );
+	renderer.setRenderTarget( defaultRenderTarget );
 
 	activeRenderer = renderer.render.bind( renderer );
 
@@ -217,13 +242,19 @@ function init ( domID, configuration ) { // public method
 	container.appendChild( renderer.domElement );
 
 	controls = new OrbitControls( camera, renderer.domElement, Cfg.value( 'avenControls', true ) );
-
 	cameraMove = new CameraMove( controls, cameraMoved );
 
 	controls.addEventListener( 'change', cameraMoved );
 	controls.addEventListener( 'end', onCameraMoveEnd );
 
 	controls.maxPolarAngle = Cfg.themeAngle( 'maxPolarAngle' );
+
+	if ( 'geolocation' in navigator ) {
+
+		console.log( 'has location' );
+		orientationControls = new DeviceOrientationControls( camera, cameraMoved, setCamera, cameraMove );
+
+	}
 
 	// event handler
 	window.addEventListener( 'resize', resize );
@@ -570,6 +601,13 @@ function init ( domID, configuration ) { // public method
 
 }
 
+function onDeviceOrientationChangeEvent() {
+
+	orientationControls.update();
+	renderView();
+
+}
+
 function isFullscreen () {
 
 	return (
@@ -727,7 +765,7 @@ function renderDepthTexture () {
 
 	scene.overrideMaterial = Materials.getDepthMapMaterial( terrain );
 
-	const renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat } );
+	const renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, stencilBuffer: true } );
 
 	renderTarget.texture.generateMipmaps = false;
 	renderTarget.texture.name = 'CV.DepthMapTexture';
@@ -751,12 +789,14 @@ function renderDepthTexture () {
 
 	// restore renderer to normal render size and target
 
-	renderer.setRenderTarget( null ); // revert to screen canvas
+	renderer.setRenderTarget( defaultRenderTarget ); // revert to screen canvas
 
 	renderer.setSize( container.clientWidth, container.clientHeight );
 	renderer.setPixelRatio( window.devicePixelRatio );
 
 	scene.overrideMaterial = null;
+
+	orientationControls.survey = survey;
 
 	renderView();
 
@@ -768,6 +808,33 @@ function renderDepthTexture () {
 function setCameraMode ( mode ) {
 
 	if ( mode === cameraMode ) return;
+
+	if ( mode === CAMERA_DYNAMIC ) {
+
+		orientationControls.connect();
+		orientationControls.object = camera;
+
+	} else {
+
+		if ( cameraMode === CAMERA_DYNAMIC ) {
+
+			window.removeEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
+
+		}
+
+		// disable orientation controls
+		orientationControls.disconnect();
+		setCamera( mode );
+
+	}
+
+	cameraMode = mode;
+
+	renderView();
+
+}
+
+function setCamera ( mode ) {
 
 	// get offset vector of current camera from target
 
@@ -841,9 +908,7 @@ function setCameraMode ( mode ) {
 
 	controls.object = camera;
 
-	cameraMode = mode;
-
-	renderView();
+	return camera;
 
 }
 
@@ -974,6 +1039,7 @@ function setTerrainShadingMode ( mode ) {
 	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
 
 	renderView();
+	updateTerrain();
 
 }
 
@@ -1105,7 +1171,7 @@ function selectSection ( node ) {
 
 			setShadingMode( shadingMode );
 
-			cameraMove.preparePoint( survey.getWorldPosition( node.p ) );
+			cameraMove.preparePoint( survey.getWorldPosition( node.p.clone() ) );
 
 		}
 
@@ -1517,7 +1583,7 @@ function mouseDown ( event ) {
 
 		renderView();
 
-		cameraMove.preparePoint( survey.getWorldPosition( station.p ) );
+		cameraMove.preparePoint( survey.getWorldPosition( station.p.clone() ) );
 
 		return true;
 

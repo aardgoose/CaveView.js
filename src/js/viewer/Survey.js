@@ -2,7 +2,7 @@
 import {
 	FACE_SCRAPS, FACE_WALLS,
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES,
-	FEATURE_STATIONS, FEATURE_ANNOTATIONS, SURVEY_WARNINGS,
+	FEATURE_STATIONS, SURVEY_WARNINGS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, LABEL_STATION_COMMENT,STATION_ENTRANCE,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
@@ -597,7 +597,7 @@ Survey.prototype.getRoutes = function () {
 
 Survey.prototype.getWorldPosition = function ( position ) {
 
-	return new Vector3().copy( position ).applyMatrix4( this.matrixWorld );
+	return position.applyMatrix4( this.matrixWorld );
 
 };
 
@@ -625,6 +625,8 @@ Survey.prototype.getModelSurfaceFromWGS84 = function ( position ) {
 	position.sub( this.offsets );
 
 	position.z = this.terrain.getHeight( position );
+
+	this.markers.mark( { p: position } );
 
 };
 

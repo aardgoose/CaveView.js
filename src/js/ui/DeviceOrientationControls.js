@@ -15,7 +15,12 @@ import {
 
 import { CAMERA_PERSPECTIVE, CAMERA_ORTHOGRAPHIC, CAMERA_NONE } from '../core/constants';
 
-const _box3 = new Box3();
+const down = new Vector3( 0, 0, -1 );
+
+const __vector3 = new Vector3();
+const __box3 = new Box3();
+const __euler = new Euler();
+const __quaternion = new Quaternion();
 
 var DeviceOrientationControls = function ( object, onMove, setCamera, mover ) {
 
@@ -38,6 +43,7 @@ var DeviceOrientationControls = function ( object, onMove, setCamera, mover ) {
 	this.survey = null;
 	this.watch = null;
 	this.position = new Vector3();
+	this.positionChanged = false;
 
 	var onDeviceOrientationChangeEvent = function ( event ) {
 		console.log( 'orientation' );
@@ -64,6 +70,7 @@ var DeviceOrientationControls = function ( object, onMove, setCamera, mover ) {
 		position.set( coords.longitude, coords.latitude, 0 );
 
 		scope.survey.getModelSurfaceFromWGS84( position );
+		scope.positionChanged = true;
 
 		scope.update();
 
@@ -71,22 +78,15 @@ var DeviceOrientationControls = function ( object, onMove, setCamera, mover ) {
 
 	// The angles alpha, beta and gamma form a set of intrinsic Tait-Bryan angles of type Z-X'-Y''
 
-	var setObjectQuaternion = function () {
+	var setObjectQuaternion = function ( quaternion, alpha, beta, gamma, orient ) {
 
-		var euler = new Euler();
-		var q0 = new Quaternion();
+		__euler.set( beta, - gamma, alpha, 'ZXY' ); // 'ZXY' for the device, but 'YXZ' for us
 
-		return function ( quaternion, alpha, beta, gamma, orient ) {
+		quaternion.setFromEuler( __euler ); // orient the device
 
-			euler.set( beta, - gamma, alpha, 'ZXY' ); // 'ZXY' for the device, but 'YXZ' for us
+		quaternion.multiply( __quaternion.setFromAxisAngle( Object3D.DefaultUp, - orient ) ); // adjust for screen orientation
 
-			quaternion.setFromEuler( euler ); // orient the device
-
-			quaternion.multiply( q0.setFromAxisAngle( Object3D.DefaultUp, - orient ) ); // adjust for screen orientation
-
-		};
-
-	}();
+	};
 
 	this.connect = function () {
 
@@ -120,10 +120,6 @@ var DeviceOrientationControls = function ( object, onMove, setCamera, mover ) {
 
 		if ( scope.enabled === false ) return;
 
-		const position = scope.position;
-
-		console.log( 'pos', position );
-
 		var device = scope.deviceOrientation;
 		const camera = scope.object;
 
@@ -137,13 +133,44 @@ var DeviceOrientationControls = function ( object, onMove, setCamera, mover ) {
 
 			var orient = scope.screenOrientation ? _Math.degToRad( scope.screenOrientation ) : 0; // O
 
-			scope.selectCameraType( 0 ); // FIXME angle
+			scope.selectCameraType( 90 ); // FIXME angle
+
+			if ( scope.positionChanged ) {
+
+				scope.updatePosition();
+				return;
+			}
 
 			setObjectQuaternion( camera.quaternion, alpha, beta, gamma, orient );
 
 		}
 
 		this.onMove();
+
+	};
+
+	this.updatePosition = function () {
+
+		__vector3.copy( scope.position );
+
+		if ( scope.cameraType === CAMERA_ORTHOGRAPHIC ) {
+
+			// FIXME - scale to real world sizes adjusted by accuracy
+			__box3.setFromCenterAndSize(
+				scope.survey.getWorldPosition( __vector3 ),
+				new Vector3( 100, 100, 0 )
+			);
+
+			scope.cameraMove.prepare( __box3, down );
+
+		} else {
+			__vector3.z += 2; // adjust camera position to local surface
+			scope.cameraMove.prepareSimpleMove( scope.survey.getWorldPosition( __vector3 ) );
+
+		}
+
+		scope.cameraMove.start();
+		scope.positionChanged = false;
 
 	};
 
@@ -172,14 +199,7 @@ var DeviceOrientationControls = function ( object, onMove, setCamera, mover ) {
 			scope.object = scope.setCamera( cameraType );
 			scope.cameraType = cameraType;
 
-			// FIXME - scale to real world sizes adjusted by accuracy
-			_box3.setFromCenterAndSize(
-				scope.survey.getWorldPosition( scope.position.clone() ),
-				new Vector3( 100, 100, 0 )
-			);
-
-			scope.cameraMove.prepare( _box3, new Vector3( 0, 0, -1 ) );
-			scope.cameraMove.start();
+			scope.positionChanged = true;
 
 		}
 

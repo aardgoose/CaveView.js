@@ -252,7 +252,11 @@ function init ( domID, configuration ) { // public method
 	if ( 'geolocation' in navigator ) {
 
 		console.log( 'has location' );
-		orientationControls = new DeviceOrientationControls( camera, cameraMoved, setCamera, cameraMove );
+
+		orientationControls = new DeviceOrientationControls( camera, setCamera, cameraMove );
+
+		orientationControls.addEventListener( 'change', cameraMoved );
+		orientationControls.addEventListener( 'end', onCameraMoveEnd );
 
 	}
 

@@ -10,7 +10,8 @@ import {
 	Math as _Math,
 	Vector3, Box3,
 	Quaternion,
-	Object3D
+	Object3D,
+	EventDispatcher
 } from '../Three';
 
 import { CAMERA_PERSPECTIVE, CAMERA_ORTHOGRAPHIC, CAMERA_NONE } from '../core/constants';
@@ -22,12 +23,14 @@ const __box3 = new Box3();
 const __euler = new Euler();
 const __quaternion = new Quaternion();
 
-var DeviceOrientationControls = function ( object, onMove, setCamera, mover ) {
+const changeEvent = { type: 'change' };
+const endEvent = { type: 'end' };
+
+var DeviceOrientationControls = function ( object, setCamera, mover ) {
 
 	var scope = this;
 
 	this.object = object;
-	this.onMove = onMove;
 	this.setCamera = setCamera;
 	this.cameraMove = mover;
 
@@ -145,7 +148,8 @@ var DeviceOrientationControls = function ( object, onMove, setCamera, mover ) {
 
 		}
 
-		this.onMove();
+		scope.dispatchEvent( changeEvent );
+		scope.dispatchEvent( endEvent );
 
 	};
 
@@ -212,5 +216,8 @@ var DeviceOrientationControls = function ( object, onMove, setCamera, mover ) {
 	};
 
 };
+
+DeviceOrientationControls.prototype = Object.create( EventDispatcher.prototype );
+DeviceOrientationControls.prototype.constructor = DeviceOrientationControls;
 
 export { DeviceOrientationControls };

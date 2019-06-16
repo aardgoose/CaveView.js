@@ -264,6 +264,19 @@ CameraMove.prototype.preparePoint = function ( endPOI ) {
 
 };
 
+CameraMove.prototype.prepareSimpleMove = function ( endCameraPosition ) {
+
+	if ( this.running ) return this;
+
+	this.endCameraPosition.copy( endCameraPosition );
+
+	this.animationFunction = this.animateSimpleMove;
+	this.skipNext = false;
+
+	return this;
+
+};
+
 CameraMove.prototype.start = function ( timed ) {
 
 	if ( this.running || this.skipNext ) return;
@@ -369,6 +382,19 @@ CameraMove.prototype.animateMove = function () {
 	}
 
 	camera.quaternion.slerp( this.endQuaternion, dt );
+
+	this.renderFunction();
+
+};
+
+CameraMove.prototype.animateSimpleMove = function () {
+
+	// update camera position
+
+	const camera = this.controls.object;
+	const dt = 1 - ( this.frameCount - 1 ) / this.frameCount;
+
+	camera.position.lerp( this.endCameraPosition, dt);
 
 	this.renderFunction();
 

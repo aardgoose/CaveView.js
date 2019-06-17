@@ -132,7 +132,40 @@ EPSG3857TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
 		clip: clip,
 		offsets: null,
 		flatZ: null,
-		clippedFraction: clippedFraction
+		clippedFraction: clippedFraction,
+		request: 'tile'
+	};
+
+};
+
+EPSG3857TileSet.prototype.findTile = function ( point ) {
+
+	const tileSet = this.tileSet;
+
+	const tileWidth = halfMapExtent / Math.pow( 2, tileSet.maxZoom - 1 );
+
+	const xTc = ( point.x + halfMapExtent ) / tileWidth;
+	const yTc = ( halfMapExtent - point.y ) / tileWidth;
+
+	const tileX = Math.floor( xTc );
+	const tileY = Math.floor( yTc );
+	const tileZ = tileSet.maxZoom;
+
+	const offsetX = xTc - tileX;
+	const offsetY = yTc - tileY;
+
+	const samples = tileSet.divisions + 1;
+	const dataOffset = Math.floor( samples * offsetX ) + samples * Math.floor( samples * offsetY - 1 );
+
+	// construct a tileSpec for passing to web worker
+	return {
+		x: tileX,
+		y: tileY,
+		z: tileZ,
+		tileSet: tileSet,
+		dataOffset: dataOffset,
+		request: 'height',
+		clip: {}
 	};
 
 };

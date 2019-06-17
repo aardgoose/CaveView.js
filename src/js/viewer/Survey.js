@@ -618,15 +618,32 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 
 };
 
-Survey.prototype.getModelSurfaceFromWGS84 = function ( position ) {
+Survey.prototype.getModelSurfaceFromWGS84 = function ( position, callback ) {
+
+	const self = this;
 
 	position.copy( this.projectionWGS84.forward( position ) );
 
-	position.sub( this.offsets );
+	const height = this.terrain.getAccurateHeight( position, _handleResult );
 
-	position.z = this.terrain.getHeight( position );
+	if ( height !== null ) {
 
-	this.markers.mark( { p: position } );
+		_handleResult( height );
+
+	}
+
+	return;
+
+	function _handleResult ( height ) {
+
+		position.z = height;
+		position.sub( self.offsets );
+
+		self.markers.mark( { p: position } );
+
+		callback();
+
+	}
 
 };
 

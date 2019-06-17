@@ -8,9 +8,6 @@ export default {
 		format: 'umd'
 	},
 	plugins: [
-		nodeResolve({
-			jsnext: true,
-			main: true
-		})
+		nodeResolve( {} )
 	]
 };

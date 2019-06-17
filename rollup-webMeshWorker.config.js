@@ -10,10 +10,7 @@ export default {
 		format: 'umd'
 	},
 	plugins: [
-		nodeResolve({
-			jsnext: true,
-			main: true
-		}),
+		nodeResolve( {} ),
 		commonjs({
 			include: 'node_modules/**',  // Default: undefined
 			sourceMap: false,  // Default: true

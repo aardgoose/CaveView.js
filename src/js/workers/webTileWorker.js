@@ -66,12 +66,7 @@ function dzzDecode( data, size ) {
 
 function mapLoaded ( data ) {
 
-	// clip height map data
-
-	const clip      = tileSpec.clip;
-	const offsets   = tileSpec.offsets;
-	const tileSet   = tileSpec.tileSet;
-	const divisions = tileSpec.divisions;
+	var tileSet = tileSpec.tileSet;
 
 	var terrainData;
 
@@ -85,6 +80,44 @@ function mapLoaded ( data ) {
 		terrainData = new Uint16Array( data );
 
 	}
+
+	switch ( tileSpec.request ) {
+
+	case 'tile':
+
+		loadTile( terrainData );
+		break;
+
+	case 'height':
+
+		getHeight( terrainData );
+		break;
+
+	default:
+
+		console.log( 'webTileWorker: unknown request type' );
+		mapError();
+
+	}
+
+}
+
+function getHeight ( terrainData ) {
+
+	const height = terrainData[ tileSpec.dataOffset ] / tileSpec.tileSet.dtmScale;
+
+	postMessage( { status: 'ok', height: height } );
+
+}
+
+function loadTile ( terrainData ) {
+
+	// clip height map data
+
+	const clip      = tileSpec.clip;
+	const offsets   = tileSpec.offsets;
+	const tileSet   = tileSpec.tileSet;
+	const divisions = tileSpec.divisions;
 
 	const xDivisions = divisions - clip.left - clip.right;
 	const yDivisions = divisions - clip.top - clip.bottom;

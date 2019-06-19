@@ -6,7 +6,7 @@ import {
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, LABEL_STATION_COMMENT,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
-	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
+	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE, CLUSTER_MARKERS,
 } from '../core/constants';
 
 import { Cfg } from '../core/lib';
@@ -31,6 +31,7 @@ import { buildWallsSync } from './walls/WallBuilders';
 import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
 import { StencilLib } from '../core/StencilLib';
 import proj4 from 'proj4';
+import { CameraManager } from './CameraManager';
 
 function Survey ( cave ) {
 
@@ -442,22 +443,27 @@ Survey.prototype.getFeature = function ( tag, obj ) {
 
 };
 
-Survey.prototype.update = function ( camera, target ) {
+Survey.prototype.update = function ( cameraManager, target, showClusterMarkers ) {
 
-	const cameraLayers = camera.layers;
+	const camera = cameraManager.activeCamera;
 
 	const entrances = this.features[ FEATURE_ENTRANCES ];
 
-	if ( entrances && cameraLayers.mask & 1 << FEATURE_ENTRANCES ) {
+	if ( entrances && cameraManager.testCameraLayer( FEATURE_ENTRANCES ) ) {
 
-		entrances.cluster( camera, target, this.selectedSectionIds );
+		cameraManager.setCameraLayer( CLUSTER_MARKERS, showClusterMarkers );
+		entrances.cluster( camera, target, this.selectedSectionIds, showClusterMarkers );
+
+	} else {
+
+		cameraManager.setCameraLayer( CLUSTER_MARKERS, false );
 
 	}
 
 	const stationLabels = this.features[ LABEL_STATION ];
 
-	if ( ( stationLabels && cameraLayers.mask & 1 << LABEL_STATION ) ||
-		stationLabels.commentCount > 0 && cameraLayers.mask & 1 << LABEL_STATION_COMMENT ) {
+	if ( ( stationLabels && cameraManager.testCameraLayer( LABEL_STATION ) ) ||
+		stationLabels.commentCount > 0 && cameraManager.testCameraLayer( LABEL_STATION_COMMENT ) ) {
 
 		if ( this.inverseWorld === null ) this.inverseWorld = new Matrix4().getInverse( this.matrixWorld );
 

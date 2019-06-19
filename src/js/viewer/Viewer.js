@@ -1588,7 +1588,7 @@ function renderView () {
 
 		const camera = cameraManager.activeCamera;
 
-		survey.update( camera, controls.target );
+		survey.update( cameraManager, controls.target, ( cameraMode !== CAMERA_DYNAMIC ) );
 
 		if ( useFog ) Materials.setFog( true );
 

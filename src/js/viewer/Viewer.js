@@ -1,18 +1,19 @@
 
 import {
 	VERSION,
-	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_ANAGLYPH, CAMERA_STEREO,
+	CAMERA_DYNAMIC,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES, SURVEY_WARNINGS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, LABEL_STATION_COMMENT,
-	SHADING_HEIGHT, SHADING_SINGLE, SHADING_RELIEF, SHADING_PATH,
-	SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
-	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_TERRAIN, FEATURE_STATIONS,
+	SHADING_SINGLE, SHADING_RELIEF, SHADING_PATH, SHADING_DISTANCE,
+	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE, FEATURE_ANNOTATIONS, CAMERA_DYNAMIC
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE, FEATURE_ANNOTATIONS
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
 import { Materials } from '../materials/Materials';
+import { CameraManager } from './CameraManager';
+import { LightingManager } from './LightingManager';
 import { CameraMove } from './CameraMove';
 import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
@@ -21,64 +22,25 @@ import { WebTerrain } from '../terrain/WebTerrain';
 import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/lib';
 import { WorkerPool } from '../core/WorkerPool';
-import { AnaglyphEffect } from './AnaglyphEffect';
-import { StereoEffect } from './StereoEffect';
-// import { Annotations } from './Annotations';
+import { defaultView, dynamicView, ViewState } from './ViewState';
 
-// analysis tests
-//import { DirectionGlobe } from '../analysis/DirectionGlobe';
-//import { ClusterLegs } from '../analysis/ClusterLegs';
+// import { Annotations } from './Annotations';
 
 import { OrbitControls } from '../ui/OrbitControls';
 import { DeviceOrientationControls } from '../ui/DeviceOrientationControls';
 
 import {
 	EventDispatcher,
-	Vector2, Vector3, Matrix4, Euler,
-	Object3D, Scene, Raycaster,
-	DirectionalLight, AmbientLight,
+	Vector2, Vector3, Matrix4, Euler, Quaternion,
+	Scene, Raycaster,
 	LinearFilter, NearestFilter, RGBAFormat,
-	OrthographicCamera, PerspectiveCamera,
+	OrthographicCamera,
 	WebGLRenderer, WebGLRenderTarget,
-	MOUSE, FogExp2,
 	//	WebGLMultisampleRenderTarget,
-	Quaternion, Spherical, Math as _Math
+	MOUSE, FogExp2
 } from '../Three';
 
-
-const defaultView = {
-	autoRotate: false,
-	autoRotateSpeed: 0.5,
-	box: true,
-	cameraType: CAMERA_PERSPECTIVE,
-	view: VIEW_PLAN,
-	editMode: MOUSE_MODE_NORMAL,
-	shadingMode: SHADING_HEIGHT,
-	surfaceShading: SHADING_HEIGHT,
-	terrainShading: SHADING_RELIEF,
-	terrainDirectionalLighting: true,
-	terrainOpacity: 0.5,
-	terrainDatumShift: true,
-	surfaceLegs: false,
-	walls: false,
-	scraps: false,
-	splays: false,
-	stations: false,
-	stationLabels: false,
-	entrances: true,
-	terrain: false,
-	traces: false,
-	HUD: true,
-	fog: false,
-	warnings: false
-};
-
 var renderer;
-
-const lightPosition = new Vector3();
-const currentLightPosition = new Vector3();
-const directionalLight = new DirectionalLight( 0xffffff );
-const ambientLight = new AmbientLight( 0xffffff, 0.3 );
 
 const scene = new Scene();
 const fog = new FogExp2( Cfg.themeValue( 'background' ), 0.0025 );
@@ -94,12 +56,8 @@ var caveIsLoaded = false;
 var container;
 var defaultRenderTarget = null;
 
-// THREE.js objects
-
-var oCamera;
-var pCamera;
-
-var camera;
+var cameraManager;
+var lightingManager;
 
 var lastMouseMode = MOUSE_MODE_NORMAL;
 var mouseMode = MOUSE_MODE_NORMAL;
@@ -136,7 +94,6 @@ var lastActivityTime = 0;
 var timerId = null;
 
 var popup = null;
-var effect = null;
 
 var activeRenderer;
 var clipped = false;
@@ -147,9 +104,10 @@ const __rotation = new Euler();
 const __q = new Quaternion();
 const __v = new Vector3();
 
-//var leakWatcher;
-
 const Viewer = Object.create( EventDispatcher.prototype );
+
+var viewState;
+var savedView = {};
 
 function init ( domID, configuration ) { // public method
 
@@ -182,9 +140,10 @@ function init ( domID, configuration ) { // public method
 	const height = container.clientHeight;
 
 	var canvas = document.createElement( 'canvas' );
-	var context = canvas.getContext( 'webgl2', { antialias: false } );
+	var context = canvas.getContext( 'webgl2', { antialias: false , stencil: true } );
 
 	renderer = new WebGLRenderer( { canvas: canvas, context: context } );
+	// renderer = new WebGLRenderer( { antialias: false });
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setClearColor( Cfg.themeValue( 'background' ) );
@@ -202,38 +161,18 @@ function init ( domID, configuration ) { // public method
 	defaultRenderTarget.targetCanvas = true;
 	defaultRenderTarget.targetCanvasMask = renderer.context.COLOR_BUFFER_BIT;
 	*/
-	console.log( window );
+
 	renderer.setRenderTarget( defaultRenderTarget );
 
 	activeRenderer = renderer.render.bind( renderer );
 
-	oCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
-
-	scene.add( oCamera );
-
-	pCamera = new PerspectiveCamera( Cfg.themeValue( 'fieldOfView' ) , width / height, 1, 16000 );
-
-	scene.add( pCamera );
-
-	camera = pCamera;
+	cameraManager = new CameraManager( container, renderer, scene );
 
 	scene.fog = fog;
 	scene.name = 'CV.Viewer';
 
-	// setup directional lighting
-
-	const inclination = Cfg.themeAngle( 'lighting.inclination' );
-	const azimuth = Cfg.themeAngle( 'lighting.azimuth' ) - Math.PI / 2;
-
-	lightPosition.setFromSpherical( new Spherical( 1, inclination, azimuth ) );
-	lightPosition.applyAxisAngle( new Vector3( 1, 0, 0 ), Math.PI / 2 );
-
-	currentLightPosition.copy( lightPosition );
-
-	directionalLight.position.copy( lightPosition );
-
-	scene.addStatic( directionalLight );
-	scene.addStatic( ambientLight );
+	// setup lighting
+	lightingManager = new LightingManager( scene );
 
 	raycaster.params.Points.threshold = 2;
 
@@ -241,7 +180,7 @@ function init ( domID, configuration ) { // public method
 
 	container.appendChild( renderer.domElement );
 
-	controls = new OrbitControls( camera, renderer.domElement, Cfg.value( 'avenControls', true ) );
+	controls = new OrbitControls( cameraManager, renderer.domElement, Cfg.value( 'avenControls', true ) );
 	cameraMove = new CameraMove( controls, cameraMoved );
 
 	controls.addEventListener( 'change', cameraMoved );
@@ -253,7 +192,7 @@ function init ( domID, configuration ) { // public method
 
 		console.log( 'has location' );
 
-		orientationControls = new DeviceOrientationControls( camera, setCamera, cameraMove );
+		orientationControls = new DeviceOrientationControls( cameraManager, cameraMove );
 
 		orientationControls.addEventListener( 'change', cameraMoved );
 		orientationControls.addEventListener( 'end', onCameraMoveEnd );
@@ -280,7 +219,7 @@ function init ( domID, configuration ) { // public method
 
 		'terrain': {
 			writeable: true,
-			get: function () { return testCameraLayer( FEATURE_TERRAIN ); },
+			get: function () { return cameraManager.testCameraLayer( FEATURE_TERRAIN ); },
 			set: loadTerrain
 		},
 
@@ -293,6 +232,7 @@ function init ( domID, configuration ) { // public method
 		'hasTerrain': {
 			get: function () { return !! terrain; }
 		},
+
 		'hasRealTerrain': {
 			get: function () { return ( terrain && ! terrain.isFlat ); }
 		},
@@ -301,15 +241,9 @@ function init ( domID, configuration ) { // public method
 			get: function () { return terrain.attributions; }
 		},
 
-		'terrainDatumShift': {
-			writeable: true,
-			get: function () { return !! terrain.activeDatumShift; },
-			set: applyTerrainDatumShift
-		},
-
 		'terrainDirectionalLighting': {
 			writeable: true,
-			get: function () { return directionalLight.visible; },
+			get: function () { return lightingManager.directionalLighting; },
 			set: setTerrainLighting
 		},
 
@@ -319,6 +253,12 @@ function init ( domID, configuration ) { // public method
 
 		'terrainTileSet': {
 			get: function () { return terrain.tileSet.bind( terrain ); }
+		},
+
+		'terrainDatumShift': {
+			writeable: true,
+			get: function () { return !! terrain.activeDatumShift; },
+			set: applyTerrainDatumShift
 		},
 
 		'terrainOpacity': {
@@ -435,7 +375,7 @@ function init ( domID, configuration ) { // public method
 
 		'setPOI': {
 			writeable: true,
-			get: function () { return true; },
+			//get: function () { return true; },
 			set: function ( x ) { _stateSetter( setCameraPOI, 'setPOI', x ); }
 		},
 
@@ -447,7 +387,7 @@ function init ( domID, configuration ) { // public method
 
 		'cut': {
 			writeable: true,
-			get: function () { return true; },
+			// get: function () { return true; },
 			set: cutSection
 		},
 
@@ -517,13 +457,15 @@ function init ( domID, configuration ) { // public method
 	// check if we are defaulting to full screen
 	if ( isFullscreen() ) setBrowserFullscreen( true );
 
+	viewState = new ViewState( Viewer );
+
 	return;
 
 	function _enableLayer ( layerTag, name ) {
 
 		Object.defineProperty( Viewer, name, {
 			writeable: true,
-			get: function () { return testCameraLayer( layerTag ); },
+			get: function () { return cameraManager.testCameraLayer( layerTag ); },
 			set: function ( x ) { setCameraLayer( layerTag, x ); this.dispatchEvent( { type: 'change', name: name } ); }
 		} );
 
@@ -605,28 +547,12 @@ function init ( domID, configuration ) { // public method
 
 }
 
-function onDeviceOrientationChangeEvent() {
-
-	orientationControls.update();
-	renderView();
-
-}
-
 function isFullscreen () {
 
 	return (
 		window.innerHeight === container.clientHeight &&
 		window.innerWidth === container.clientWidth
 	);
-
-}
-
-function setTerrainLighting( on ) {
-
-	directionalLight.visible = on;
-	ambientLight.intensity = on ? 0.3 : 1.0;
-
-	renderView();
 
 }
 
@@ -713,12 +639,31 @@ function setCursorHeight ( x ) {
 
 }
 
+function setTerrainShadingMode ( mode ) {
+
+	if ( survey.terrain === null ) return;
+
+	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
+
+	renderView();
+	updateTerrain();
+
+}
+
 function setTerrainOpacity ( x ) {
 
 	if ( terrain === null ) return;
 
 	terrain.setOpacity( x );
 	Viewer.dispatchEvent( { type: 'change', name: 'terrainOpacity' } );
+
+	renderView();
+
+}
+
+function setTerrainLighting( on ) {
+
+	lightingManager.directionalLighting = on;
 
 	renderView();
 
@@ -739,14 +684,14 @@ function renderDepthTexture () {
 
 	if ( ! terrain.isLoaded ) return;
 
-	const dim = 512;
+	const dim = 1024;
 
 	// set camera frustrum to cover region/survey area
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
 
-	const range = limits.getSize( new Vector3() );
+	const range = survey.combinedLimits.getSize( __v );
 
 	const scaleX = width / range.x;
 	const scaleY = height / range.y;
@@ -774,8 +719,6 @@ function renderDepthTexture () {
 	renderTarget.texture.generateMipmaps = false;
 	renderTarget.texture.name = 'CV.DepthMapTexture';
 
-	Materials.setTerrain( terrain );
-
 	renderer.setSize( dim, dim );
 	renderer.setPixelRatio( 1 );
 
@@ -785,11 +728,13 @@ function renderDepthTexture () {
 
 	renderer.render( scene, rtCamera );
 
-	// correct height between entrances and terrain ( compensates for mismatch beween CRS and datums )
+	// correct height between entrances and terrain
 
 	terrain.addHeightMap( renderer, renderTarget );
 
 	survey.calibrateTerrain( terrain );
+
+	Materials.setTerrain( terrain );
 
 	// restore renderer to normal render size and target
 
@@ -811,24 +756,29 @@ function renderDepthTexture () {
 
 function setCameraMode ( mode ) {
 
-	if ( mode === cameraMode ) return;
+	if ( mode === cameraMode || ! renderRequired ) return;
 
 	if ( mode === CAMERA_DYNAMIC ) {
 
+		savedView = viewState.saveState();
 		orientationControls.connect();
-		orientationControls.object = camera;
+
+		setView( dynamicView, null );
 
 	} else {
 
 		if ( cameraMode === CAMERA_DYNAMIC ) {
 
-			window.removeEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
+			// disable orientation controls
+			orientationControls.disconnect();
+
+			// restore previous settings
+			setView( savedView, null );
 
 		}
 
-		// disable orientation controls
-		orientationControls.disconnect();
-		setCamera( mode );
+		cameraManager.setCamera( mode, controls.target );
+		activeRenderer = cameraManager.activeRenderer;
 
 	}
 
@@ -838,104 +788,11 @@ function setCameraMode ( mode ) {
 
 }
 
-function setCamera ( mode ) {
-
-	// get offset vector of current camera from target
-
-	const offset = camera.position.clone().sub( controls.target );
-
-	var offsetLength;
-
-	if ( effect !== null ) {
-
-		effect.dispose();
-		effect = null;
-
-	}
-
-	switch ( mode ) {
-
-	case CAMERA_STEREO:
-	case CAMERA_ANAGLYPH:
-
-		effect = ( mode === CAMERA_STEREO ) ? new StereoEffect( renderer ) : new AnaglyphEffect( renderer, container.clientWidth, container.clientHeight );
-
-		if ( camera.isPerspective ) break;
-
-	case CAMERA_PERSPECTIVE: // eslint-disable-line no-fallthrough
-
-		offsetLength = 4 * container.clientHeight * Math.tan( _Math.DEG2RAD * pCamera.fov / 2 ) / camera.zoom / 2;
-
-		offset.setLength( offsetLength );
-
-		camera = pCamera;
-
-		break;
-
-	case CAMERA_ORTHOGRAPHIC:
-
-		offsetLength = offset.length();
-
-		oCamera.zoom = 2 * container.clientHeight * Math.tan( _Math.DEG2RAD * pCamera.fov / 2 ) / offsetLength;
-
-		offset.setLength( offsetLength );
-
-		camera = oCamera;
-
-		break;
-
-	default:
-
-		console.warn( 'unknown camera mode', mode );
-		return;
-
-	}
-
-	if ( effect === null ) {
-
-		activeRenderer = renderer.render.bind( renderer );
-
-	} else {
-
-		activeRenderer = effect.render.bind( effect );
-
-		effect.setLayers( camera.layers.mask );
-
-	}
-
-	// update new camera with position to give same apparent zoom and view
-
-	camera.position.copy( offset.add( controls.target ) );
-
-	camera.updateProjectionMatrix();
-	camera.lookAt( controls.target );
-
-	controls.object = camera;
-
-	return camera;
-
-}
-
-function initCamera ( camera ) {
-
-	camera.zoom = 1;
-
-	camera.layers.set( 0 );
-
-	camera.layers.enable( LEG_CAVE );
-	camera.layers.enable( FEATURE_SELECTED_BOX );
-
-}
-
 function cameraMoved () {
 
-	__rotation.setFromQuaternion( camera.getWorldQuaternion( __q ) );
+	__rotation.setFromQuaternion( cameraManager.activeCamera.getWorldQuaternion( __q ) );
 
-	currentLightPosition.copy( lightPosition );
-	currentLightPosition.applyAxisAngle( Object3D.DefaultUp, __rotation.z );
-
-	directionalLight.position.copy( currentLightPosition );
-	directionalLight.updateMatrix();
+	lightingManager.setRotation( __rotation );
 
 	renderView();
 
@@ -943,46 +800,28 @@ function cameraMoved () {
 
 function setCameraLayer ( layerTag, enable ) {
 
-	if ( enable ) {
-
-		oCamera.layers.enable( layerTag );
-		pCamera.layers.enable( layerTag );
-
-	} else {
-
-		oCamera.layers.disable( layerTag );
-		pCamera.layers.disable( layerTag );
-
-	}
-
-	if ( effect !== null ) effect.setLayers( camera.layers.mask );
-
+	cameraManager.setCameraLayer( layerTag, enable );
 	renderView();
 
 }
 
 function setEyeSeparation ( x ) {
 
-	// x varies from 0 to 1
-	// base separation = 0.064
-
-	if ( effect !== null ) effect.setEyeSeparation( 0.064 + ( x - 0.5 ) * 0.06 );
+	cameraManager.setEyeSeparation( x );
 	renderView();
-
-}
-
-function testCameraLayer ( layerTag ) {
-
-	return ( ( camera.layers.mask & 1 << layerTag ) > 0 );
 
 }
 
 function setViewMode ( mode ) {
 
 	const boundingBox = survey.getWorldBoundingBox();
-	const targetAxis = new Vector3();
+	const targetAxis = __v;
 
 	switch ( mode ) {
+
+	case VIEW_NONE:
+
+		return;
 
 	case VIEW_PLAN:
 
@@ -1036,20 +875,8 @@ function setFog( enable ) {
 
 }
 
-function setTerrainShadingMode ( mode ) {
-
-	if ( survey.terrain === null ) return;
-
-	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
-
-	renderView();
-	updateTerrain();
-
-}
-
 function setShadingMode ( mode ) {
 
-	if ( terrain === 0 && ( mode === SHADING_DEPTH || mode === SHADING_DEPTH_CURSOR ) ) return;
 	if ( survey.setShadingMode( mode ) ) shadingMode = mode;
 
 	if ( shadingMode === SHADING_DISTANCE ) {
@@ -1214,21 +1041,7 @@ function resize () {
 	// adjust the renderer to the new canvas size
 	renderer.setSize( width, height );
 
-	if ( oCamera === undefined ) return;
-
-	// adjust cameras to new aspect ratio etc.
-	oCamera.left   = -width / 2;
-	oCamera.right  =  width / 2;
-	oCamera.top    =  height / 2;
-	oCamera.bottom = -height / 2;
-
-	oCamera.updateProjectionMatrix();
-
-	pCamera.aspect = width / height;
-
-	pCamera.updateProjectionMatrix();
-
-	if ( effect !== null ) effect.setSize( width, height );
+	cameraManager.resize( width, height );
 
 	Viewer.dispatchEvent( { type: 'resized', name: '-' } );
 
@@ -1249,12 +1062,7 @@ function clearView () {
 
 	WorkerPool.terminateActive();
 
-	if ( survey ) {
-
-		survey.remove( terrain );
-		scene.remove( survey );
-
-	}
+	scene.remove( survey );
 
 	controls.enabled = false;
 
@@ -1269,8 +1077,7 @@ function clearView () {
 
 	container.removeEventListener( 'mousedown', mouseDown );
 
-	initCamera( pCamera );
-	initCamera( oCamera );
+	cameraManager.resetCameras();
 
 	controls.reset();
 
@@ -1305,7 +1112,7 @@ function caveLoaded ( cave ) {
 
 }
 
-function setView( properties1, properties2 ) {
+function setView ( properties1, properties2 ) {
 
 	// don't render until all settings made.
 
@@ -1346,7 +1153,7 @@ function loadSurvey ( newSurvey ) {
 
 	stats = getLegStats( LEG_CAVE );
 
-	setScale( survey );
+	setScale();
 
 	Materials.flushCache( survey );
 
@@ -1386,7 +1193,6 @@ function loadSurvey ( newSurvey ) {
 
 	container.addEventListener( 'mousedown', mouseDown, false );
 
-	controls.object = camera;
 	controls.enabled = true;
 
 	survey.getRoutes().addEventListener( 'changed', surveyChanged );
@@ -1460,7 +1266,7 @@ function mouseDown ( event ) {
 	mouse.x =   ( ( event.clientX - bc.left ) / container.clientWidth ) * 2 - 1;
 	mouse.y = - ( ( event.clientY - bc.top ) / container.clientHeight ) * 2 + 1;
 
-	raycaster.setFromCamera( mouse, camera );
+	raycaster.setFromCamera( mouse, cameraManager.activeCamera );
 
 	const intersects = raycaster.intersectObjects( mouseTargets, false );
 
@@ -1726,6 +1532,8 @@ function selectTraceStation ( station ) {
 
 function visibleStation ( intersects ) {
 
+	const camera = cameraManager.activeCamera;
+
 	var minD2 = Infinity;
 	var closestStation = null;
 
@@ -1767,6 +1575,8 @@ function renderView () {
 
 	if ( caveIsLoaded ) {
 
+		const camera = cameraManager.activeCamera;
+
 		survey.update( camera, controls.target );
 
 		if ( useFog ) Materials.setFog( true );
@@ -1806,7 +1616,7 @@ function updateTerrain () {
 
 	if ( performance.now() - lastActivityTime > RETILE_TIMEOUT ) {
 
-		if ( Viewer.terrain && terrain.zoomCheck( camera ) ) {
+		if ( Viewer.terrain && terrain.zoomCheck( cameraManager.activeCamera ) ) {
 
 			setTimeout( updateTerrain, RETILE_TIMEOUT * 5 );
 
@@ -1824,7 +1634,7 @@ function setCameraPOI () {
 
 }
 
-function setScale ( obj ) {
+function setScale () {
 
 	const width  = container.clientWidth;
 	const height = container.clientHeight;
@@ -1834,7 +1644,7 @@ function setScale ( obj ) {
 
 	limits = survey.limits;
 
-	const range = survey.combinedLimits.getSize( new Vector3() );
+	const range = survey.combinedLimits.getSize( __v );
 
 	// initialize cursor height to be mid range of heights
 	cursorHeight = 0;
@@ -1848,14 +1658,7 @@ function setScale ( obj ) {
 
 	const vScale = hScale * scaleFactor;
 
-	const scale = new Vector3( hScale, hScale, vScale );
-
-	obj.scale.copy( scale );
-
-	obj.position.copy( survey.combinedLimits.getCenter( new Vector3() ).multiply( scale ).negate() );
-
-	obj.updateMatrix();
-	obj.updateMatrixWorld();
+	survey.setScale( hScale, vScale );
 
 	HUD.setScale( vScale );
 
@@ -1907,8 +1710,7 @@ Object.assign( Viewer, {
 	addOverlay:    addOverlay,
 	addFormatters: addFormatters,
 	// addAnnotator:  Annotations.addAnnotator,
-	setView:       setView,
-	surfaceLightDirection: currentLightPosition
+	setView:       setView
 } );
 
 export { Viewer };

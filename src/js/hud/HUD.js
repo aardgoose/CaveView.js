@@ -200,7 +200,7 @@ function renderHUD () {
 
 	// update HUD components
 
-	const currentCamera = controls.object;
+	const currentCamera = controls.cameraManager.activeCamera;
 
 	compass.set( currentCamera );
 	ahi.set( currentCamera );

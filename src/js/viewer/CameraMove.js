@@ -91,7 +91,9 @@ CameraMove.fitBox = function ( camera, box, viewAxis ) {
 
 CameraMove.prototype.getCardinalAxis = function ( targetAxis ) {
 
-	this.controls.object.getWorldDirection( __v1 );
+	const camera = this.controls.cameraManager.activeCamera;
+
+	camera.getWorldDirection( __v1 );
 
 	const x = Math.abs( __v1.x );
 	const y = Math.abs( __v1.y );
@@ -115,7 +117,7 @@ CameraMove.prototype.getCardinalAxis = function ( targetAxis ) {
 
 CameraMove.prototype.prepareRotation = function ( endCamera, orientation ) {
 
-	const camera = this.controls.object;
+	const camera = this.controls.cameraManager.activeCamera;
 
 	__v1.copy( endCamera ).sub( this.endPOI ).normalize();
 
@@ -148,9 +150,9 @@ CameraMove.prototype.prepare = function () {
 
 		if ( this.running ) return this;
 
-		const camera = this.controls.object;
+		const camera = this.controls.cameraManager.activeCamera;
 		const endPOI = this.endPOI;
-		const cameraStart = this.controls.object.position;
+		const cameraStart = camera.position;
 		const endCameraPosition = this.endCameraPosition;
 
 		this.skipNext = false;
@@ -247,7 +249,7 @@ CameraMove.prototype.preparePoint = function ( endPOI ) {
 
 	if ( this.running ) return this;
 
-	const camera = this.controls.object;
+	const camera = this.controls.cameraManager.activeCamera;
 
 	// calculate end state rotation of camera
 	this.endPOI.copy( endPOI );
@@ -346,10 +348,11 @@ CameraMove.prototype.animate = function () {
 CameraMove.prototype.endAnimation = function () {
 
 	const controls = this.controls;
+	const camera = controls.cameraManager.activeCamera;
 
 	controls.target.copy( this.endPOI );
 
-	if ( this.rotation > 0 ) controls.object.position.copy( this.endCameraPosition );
+	if ( this.rotation > 0 ) camera.position.copy( this.endCameraPosition );
 
 	this.running = false;
 	this.rotation = 0;
@@ -366,7 +369,7 @@ CameraMove.prototype.animateMove = function () {
 
 	// update camera position
 
-	const camera = this.controls.object;
+	const camera = this.controls.cameraManager.activeCamera;
 	const target = this.controls.target;
 	const dt = 1 - ( this.frameCount - 1 ) / this.frameCount;
 
@@ -391,7 +394,7 @@ CameraMove.prototype.animateSimpleMove = function () {
 
 	// update camera position
 
-	const camera = this.controls.object;
+	const camera = this.controls.cameraManager.activeCamera;
 	const dt = 1 - ( this.frameCount - 1 ) / this.frameCount;
 
 	camera.position.lerp( this.endCameraPosition, dt);

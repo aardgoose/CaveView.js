@@ -1,6 +1,6 @@
 
 import { ClusterMarkers } from './ClusterMarkers';
-import { STATION_ENTRANCE } from '../core/constants';
+import { STATION_ENTRANCE, FEATURE_ENTRANCES } from '../core/constants';
 import { Points, PointsMaterial, BufferGeometry, Float32BufferAttribute, TextureLoader } from '../Three';
 import { Cfg } from '../core/lib';
 
@@ -26,6 +26,8 @@ function Entrances ( survey ) {
 	material.size = 10;
 
 	const markers = new Points( geometry, material );
+
+	markers.layers.set( FEATURE_ENTRANCES );
 
 	// remove common elements from station names if no alternatives available
 

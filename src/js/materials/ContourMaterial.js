@@ -30,6 +30,7 @@ function ContourMaterial ( survey ) {
 	const terrain = survey.terrain;
 	const zAdjust = this.baseAdjust + terrain.activeDatumShift;
 
+	var materialShader; // get reference to shader in before compile.
 
 	this.transparent = true;
 	this.extensions = { derivatives: true };
@@ -55,6 +56,14 @@ function ContourMaterial ( survey ) {
 		shader.vertexShader = vertexShader;
 		shader.fragmentShader = fragmentShader;
 
+		materialShader = shader;
+
+	};
+
+	this.setDatumShift = function ( shift ) {
+
+		materialShader.uniforms.zAdjust.value = this.baseAdjust + shift;
+
 	};
 
 	return this;
@@ -62,13 +71,6 @@ function ContourMaterial ( survey ) {
 }
 
 ContourMaterial.prototype = Object.create( MeshLambertMaterial.prototype );
-
-
-ContourMaterial.prototype.setDatumShift = function ( shift ) {
-
-	this.uniforms.zAdjust.value = this.baseAdjust + shift;
-
-};
 
 export { ContourMaterial };
 

@@ -1,5 +1,5 @@
 
-import { FEATURE_ENTRANCES } from '../core/constants';
+import { FEATURE_ENTRANCES, CLUSTER_MARKERS } from '../core/constants';
 import { Cfg } from '../core/lib';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
@@ -221,7 +221,7 @@ QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
 		// set to center of distribution of markers in this quad.
 		quadMarker.position.copy( this.centroid ).divideScalar( this.count );
-		quadMarker.layers.set( FEATURE_ENTRANCES );
+		quadMarker.layers.set( CLUSTER_MARKERS );
 
 		if ( cluster.heightProvider !== null ) {
 

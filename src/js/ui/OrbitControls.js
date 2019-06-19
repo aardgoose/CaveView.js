@@ -25,9 +25,9 @@ const SVX_DELTA = Math.PI / 60;
 
 const __v = new Vector3();
 
-function OrbitControls ( object, domElement, svxMode ) {
+function OrbitControls ( cameraManager, domElement, svxMode ) {
 
-	this.object = object;
+	this.cameraManager = cameraManager;
 
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
 	this.element = this.domElement === document ? this.domElement.body : this.domElement;
@@ -76,9 +76,12 @@ function OrbitControls ( object, domElement, svxMode ) {
 	this.mouseButtons = { ORBIT: MOUSE.LEFT, ZOOM: MOUSE.MIDDLE, PAN: MOUSE.RIGHT };
 
 	// for reset
+
+	const camera = this.cameraManager.activeCamera;
+
 	this.target0 = this.target.clone();
-	this.position0 = this.object.position.clone();
-	this.zoom0 = this.object.zoom;
+	this.position0 = camera.position.clone();
+	this.zoom0 = camera.zoom;
 
 	//
 	// public methods
@@ -112,19 +115,23 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	this.saveState = function () {
 
+		const camera = scope.cameraManager.activeCamera;
+
 		scope.target0.copy( scope.target );
-		scope.position0.copy( scope.object.position );
-		scope.zoom0 = scope.object.zoom;
+		scope.position0.copy( camera.position );
+		scope.zoom0 = camera.zoom;
 
 	};
 
 	this.reset = function () {
 
-		scope.target.copy( scope.target0 );
-		scope.object.position.copy( scope.position0 );
-		scope.object.zoom = scope.zoom0;
+		const camera = scope.cameraManager.activeCamera;
 
-		scope.object.updateProjectionMatrix();
+		scope.target.copy( scope.target0 );
+		camera.position.copy( scope.position0 );
+		camera.zoom = scope.zoom0;
+
+		camera.updateProjectionMatrix();
 		scope.dispatchEvent( changeEvent );
 
 		scope.update();
@@ -137,9 +144,10 @@ function OrbitControls ( object, domElement, svxMode ) {
 	this.update = function () {
 
 		var offset = new Vector3();
+		const up = cameraManager.activeCamera.up;
 
 		// so camera.up is the orbit axis
-		var quat = new Quaternion().setFromUnitVectors( object.up, new Vector3( 0, 1, 0 ) );
+		var quat = new Quaternion().setFromUnitVectors( up, new Vector3( 0, 1, 0 ) );
 		var quatInverse = quat.clone().inverse();
 
 		var lastPosition = new Vector3();
@@ -147,7 +155,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 		return function update() {
 
-			var camera = scope.object;
+			var camera = scope.cameraManager.activeCamera;
 			var target = scope.target;
 			var position = camera.position;
 
@@ -348,7 +356,7 @@ function OrbitControls ( object, domElement, svxMode ) {
 	var pan = function ( deltaX, deltaY ) {
 
 		var element = scope.element;
-		var camera = scope.object;
+		var camera = scope.cameraManager.activeCamera;
 
 		if ( camera.isPerspectiveCamera ) {
 
@@ -377,14 +385,16 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	function dollyIn( dollyScale ) {
 
-		if ( scope.object.isPerspectiveCamera ) {
+		const camera = scope.cameraManager.activeCamera;
+
+		if ( camera.isPerspectiveCamera ) {
 
 			scale /= dollyScale;
 
-		} else if ( scope.object.isOrthographicCamera ) {
+		} else if ( camera.isOrthographicCamera ) {
 
-			scope.object.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, scope.object.zoom * dollyScale ) );
-			scope.object.updateProjectionMatrix();
+			camera.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, camera.zoom * dollyScale ) );
+			camera.updateProjectionMatrix();
 			zoomChanged = true;
 
 		}
@@ -393,14 +403,16 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	function dollyOut( dollyScale ) {
 
-		if ( scope.object.isPerspectiveCamera ) {
+		const camera = scope.cameraManager.activeCamera;
+
+		if ( camera.isPerspectiveCamera ) {
 
 			scale *= dollyScale;
 
-		} else if ( scope.object.isOrthographicCamera ) {
+		} else if ( camera.isOrthographicCamera ) {
 
-			scope.object.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, scope.object.zoom / dollyScale ) );
-			scope.object.updateProjectionMatrix();
+			camera.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, camera.zoom / dollyScale ) );
+			camera.updateProjectionMatrix();
 			zoomChanged = true;
 
 		}

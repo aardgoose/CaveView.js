@@ -2,8 +2,8 @@
 import {
 	FACE_SCRAPS, FACE_WALLS,
 	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES,
-	FEATURE_STATIONS, SURVEY_WARNINGS,
-	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, LABEL_STATION_COMMENT,STATION_ENTRANCE,
+	FEATURE_STATIONS, SURVEY_WARNINGS, STATION_ENTRANCE,
+	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, LABEL_STATION_COMMENT,
 	MATERIAL_LINE, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
@@ -177,8 +177,10 @@ Survey.prototype.onRemoved = function ( /* event */ ) {
 
 	// needs explicit removal to call removed handlers atm
 	this.remove( this.stations );
+	this.remove( this.terrain );
 
 	this.traverse( _dispose );
+
 
 	return;
 
@@ -583,6 +585,18 @@ Survey.prototype.loadAnnotations = function () {
 
 };
 */
+
+Survey.prototype.setScale = function ( hScale, vScale ) {
+
+	this.scale.set( hScale, hScale, vScale );
+
+	this.position.copy( this.combinedLimits.getCenter( new Vector3() ).multiply( this.scale ).negate() );
+
+	this.updateMatrix();
+	this.updateMatrixWorld();
+
+};
+
 Survey.prototype.getLegs = function () {
 
 	return this.getFeature( LEG_CAVE ).geometry.vertices;
@@ -988,6 +1002,8 @@ Survey.prototype.setShadingMode = function ( mode ) {
 		break;
 
 	case SHADING_DEPTH_CURSOR:
+
+		if ( this.terrain === null ) return false;
 
 		material = Materials.getDepthCursorMaterial( MATERIAL_SURFACE );
 

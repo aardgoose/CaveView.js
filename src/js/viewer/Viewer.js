@@ -107,7 +107,7 @@ const __v = new Vector3();
 const Viewer = Object.create( EventDispatcher.prototype );
 
 var viewState;
-var savedView = {};
+var savedView = null;
 
 function init ( domID, configuration ) { // public method
 
@@ -928,6 +928,8 @@ function cutSection () {
 	// grab a reference to prevent survey being destroyed in clearView()
 	const cutSurvey = survey;
 
+	savedView = viewState.saveState();
+
 	// reset view
 	clearView();
 
@@ -1128,7 +1130,16 @@ function setView ( properties1, properties2 ) {
 
 function setupView ( final ) {
 
-	setView( defaultView, Cfg.value( 'view', {} ) );
+	if ( savedView === null ) {
+
+		setView( defaultView, Cfg.value( 'view', {} ) );
+
+	} else {
+
+		setView( savedView );
+		savedView = null;
+
+	}
 
 	if ( final ) {
 

@@ -1,7 +1,7 @@
 
 import {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_ANAGLYPH, CAMERA_STEREO,
-	LEG_CAVE, FEATURE_SELECTED_BOX,
+	LEG_CAVE, FEATURE_SELECTED_BOX, FEATURE_SURVEY, FEATURE_TERRAIN
 } from '../core/constants';
 
 import { Cfg } from '../core/lib';
@@ -10,7 +10,8 @@ import { StereoEffect } from './StereoEffect';
 
 import {
 	OrthographicCamera, PerspectiveCamera,
-	Math as _Math
+	Math as _Math,
+	MeshBasicMaterial, BackSide
 } from '../Three';
 
 
@@ -22,14 +23,47 @@ function CameraManager ( container, renderer, scene ) {
 	const orthographicCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
 	const perspectiveCamera = new PerspectiveCamera( Cfg.themeValue( 'fieldOfView' ) , width / height, 1, 16000 );
 
+	const self = this;
+
 	scene.add( perspectiveCamera );
 	scene.add( orthographicCamera );
 
 	initCamera( perspectiveCamera );
 	initCamera( orthographicCamera );
 
-	this.activeRenderer = renderer.render.bind( renderer );
 	this.activeCamera = perspectiveCamera;
+
+	const backMaterial = new MeshBasicMaterial( { side: BackSide, colorWrite: false } );
+	const backMask = 1 << FEATURE_SURVEY | 1 << FEATURE_TERRAIN;
+
+	var savedMask;
+
+	const basicRenderer = function () {
+
+		renderer.render( scene, self.activeCamera );
+
+	};
+
+	const maskedRenderer = function () {
+
+		// render depth buffer from underside of terrain
+		const camera = self.activeCamera;
+
+		camera.layers.mask = backMask;
+		scene.overrideMaterial = backMaterial;
+
+		renderer.render( scene, camera );
+
+		scene.overrideMaterial = null;
+		camera.layers.mask = savedMask;
+
+		renderer.render( scene, camera );
+
+	};
+
+	this.maskedTerrain = true;
+	this.activeRenderer = maskedRenderer;
+
 	this.activeEffect = null;
 
 	function initCamera ( camera ) {
@@ -64,9 +98,11 @@ function CameraManager ( container, renderer, scene ) {
 
 		}
 
+		savedMask = this.activeCamera.layers.mask;
+
 		if ( this.activeEffect !== null ) {
 
-			this.activeEffect.setLayers( this.activeCamera.layers.mask );
+			this.activeEffect.setLayers( savedMask );
 
 		}
 
@@ -74,7 +110,7 @@ function CameraManager ( container, renderer, scene ) {
 
 	this.testCameraLayer = function ( layerTag ) {
 
-		return ( ( this.activeCamera.layers.mask & 1 << layerTag ) > 0 );
+		return ( ( savedMask & 1 << layerTag ) > 0 );
 
 	};
 
@@ -157,11 +193,24 @@ function CameraManager ( container, renderer, scene ) {
 		if ( activeEffect !== null ) {
 
 			activeEffect.setLayers( activeCamera.layers.mask );
-			this.activeRenderer = activeEffect.render.bind( activeEffect );
+
+			this.activeRenderer = function () {
+
+				activeEffect.render( scene, self.activeCamera );
+
+			};
 
 		} else {
 
-			this.activeRenderer = renderer.render.bind( renderer );
+			if ( this.maskedTerrain ) {
+
+				this.activeRenderer = maskedRenderer;
+
+			} else {
+
+				this.activeRenderer = basicRenderer;
+
+			}
 
 		}
 

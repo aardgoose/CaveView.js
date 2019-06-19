@@ -164,9 +164,9 @@ function init ( domID, configuration ) { // public method
 
 	renderer.setRenderTarget( defaultRenderTarget );
 
-	activeRenderer = renderer.render.bind( renderer );
-
 	cameraManager = new CameraManager( container, renderer, scene );
+
+	activeRenderer = cameraManager.activeRenderer;
 
 	scene.fog = fog;
 	scene.name = 'CV.Viewer';
@@ -1586,13 +1586,11 @@ function renderView () {
 
 	if ( caveIsLoaded ) {
 
-		const camera = cameraManager.activeCamera;
-
 		survey.update( cameraManager, controls.target, ( cameraMode !== CAMERA_DYNAMIC ) );
 
 		if ( useFog ) Materials.setFog( true );
 
-		activeRenderer( scene, camera );
+		activeRenderer();
 
 	}
 

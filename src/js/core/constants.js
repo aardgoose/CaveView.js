@@ -51,6 +51,7 @@ export const SHADING_CONTOURS     = 15;
 
 // layer tags for scene objects
 
+export const FEATURE_SURVEY        = 0;
 export const LEG_CAVE              = 1;
 export const LEG_SPLAY             = 2;
 export const LEG_SURFACE           = 3;

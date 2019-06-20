@@ -46,6 +46,7 @@ const defaultTheme = {
 		font: 'normal Arial, sans-serif',
 		entrances: {
 			text: 'white',
+			background: 'darkred',
 			marker: 'white'
 		},
 		junctions: {

@@ -322,6 +322,7 @@ ClusterMarkers.prototype.addMarker = function ( node, label ) {
 
 	// create marker
 	const atlasSpec = {
+		background: Cfg.themeColorCSS( 'stations.entrances.background' ),
 		color: Cfg.themeColorCSS( 'stations.entrances.text' ),
 		font: 'normal helvetica,sans-serif'
 	};

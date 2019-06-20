@@ -37,6 +37,7 @@ function CameraManager ( container, renderer, scene ) {
 	const backMask = 1 << FEATURE_SURVEY | 1 << FEATURE_TERRAIN;
 
 	var savedMask;
+	var eyeSeparation = 0.5;
 
 	const basicRenderer = function () {
 
@@ -226,18 +227,25 @@ function CameraManager ( container, renderer, scene ) {
 
 	};
 
-	this.setEyeSeparation = function ( x ) {
+	Object.defineProperty( this, 'eyeSeparation', {
+		writeable: true,
+		get: function () { return eyeSeparation; },
+		set: function ( x ) {
 
-		// x varies from 0 to 1
-		// base separation = 0.064
+			// x varies from 0 to 1
+			// base separation = 0.064
+			eyeSeparation = x;
 
-		if ( this.activeEffect !== null ) {
+			if ( this.activeEffect !== null ) {
 
-			this.activeEffect.setEyeSeparation( 0.064 + ( x - 0.5 ) * 0.06 );
+				this.activeEffect.setEyeSeparation( 0.064 + ( x - 0.5 ) * 0.06 );
+
+			}
 
 		}
 
-	};
+	} );
+
 }
 
 export { CameraManager };

@@ -328,6 +328,9 @@ ClusterMarkers.prototype.addMarker = function ( node, label ) {
 	};
 
 	const material = Materials.getGlyphMaterial( atlasSpec, Math.PI / 4 );
+
+	material.depthTest = true;
+
 	const marker = new GlyphString( label, material );
 
 	marker.layers.set( FEATURE_ENTRANCES );

@@ -732,7 +732,7 @@ function renderDepthTexture () {
 
 	terrain.addHeightMap( renderer, renderTarget );
 
-	survey.calibrateTerrain( terrain );
+	survey.setupTerrain( terrain );
 
 	Materials.setTerrain( terrain );
 

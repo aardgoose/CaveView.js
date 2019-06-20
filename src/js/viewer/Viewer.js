@@ -33,10 +33,7 @@ import {
 	EventDispatcher,
 	Vector2, Vector3, Matrix4, Euler, Quaternion,
 	Scene, Raycaster,
-	LinearFilter, NearestFilter, RGBAFormat,
-	OrthographicCamera,
-	WebGLRenderer, WebGLRenderTarget,
-	//	WebGLMultisampleRenderTarget,
+	WebGLRenderer, // WebGLMultisampleRenderTarget,
 	MOUSE, FogExp2
 } from '../Three';
 
@@ -646,7 +643,8 @@ function setTerrainShadingMode ( mode ) {
 	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
 
 	renderView();
-	updateTerrain();
+
+	if ( terrain.isTiled ) updateTerrain();
 
 }
 
@@ -680,77 +678,19 @@ function applyTerrainDatumShift( x ) {
 
 }
 
-function renderDepthTexture () {
+function setupTerrain () {
 
 	if ( ! terrain.isLoaded ) return;
 
-	const dim = 1024;
+	survey.addStatic( terrain );
 
-	// set camera frustrum to cover region/survey area
-
-	var width  = container.clientWidth;
-	var height = container.clientHeight;
-
-	const range = survey.combinedLimits.getSize( __v );
-
-	const scaleX = width / range.x;
-	const scaleY = height / range.y;
-
-	if ( scaleX < scaleY ) {
-
-		height = height * scaleX / scaleY;
-
-	} else {
-
-		width = width * scaleY / scaleX;
-
-	}
-
-	// render the terrain to a new canvas square canvas and extract image data
-
-	const rtCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, -10000, 10000 );
-
-	rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
-
-	scene.overrideMaterial = Materials.getDepthMapMaterial( terrain );
-
-	const renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, stencilBuffer: true } );
-
-	renderTarget.texture.generateMipmaps = false;
-	renderTarget.texture.name = 'CV.DepthMapTexture';
-
-	renderer.setSize( dim, dim );
-	renderer.setPixelRatio( 1 );
-
-	renderer.clear();
-
-	renderer.setRenderTarget( renderTarget );
-
-	renderer.render( scene, rtCamera );
-
-	// correct height between entrances and terrain
-
-	terrain.addHeightMap( renderer, renderTarget );
+	terrain.setup( renderer, scene, survey );
 
 	survey.setupTerrain( terrain );
 
 	Materials.setTerrain( terrain );
 
-	// restore renderer to normal render size and target
-
-	renderer.setRenderTarget( defaultRenderTarget ); // revert to screen canvas
-
-	renderer.setSize( container.clientWidth, container.clientHeight );
-	renderer.setPixelRatio( window.devicePixelRatio );
-
-	scene.overrideMaterial = null;
-
-	orientationControls.survey = survey;
-
 	renderView();
-
-	// clear renderList to release objects on heap associated with rtCamera
-	renderer.renderLists.dispose();
 
 }
 
@@ -1192,11 +1132,7 @@ function loadSurvey ( newSurvey ) {
 
 	} else {
 
-		terrain.checkTerrainShadingModes( renderer );
-
-		survey.addStatic( terrain );
-
-		renderDepthTexture();
+		setupTerrain();
 
 	}
 
@@ -1231,13 +1167,7 @@ function loadSurvey ( newSurvey ) {
 
 			}
 
-			survey.terrain = terrain;
-
-			terrain.checkTerrainShadingModes( renderer );
-
-			survey.addStatic( terrain );
-
-			renderDepthTexture();
+			setupTerrain();
 
 			setupView( true );
 

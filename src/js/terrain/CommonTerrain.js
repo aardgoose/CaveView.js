@@ -1,17 +1,21 @@
 
-import { SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS } from '../core/constants';
+import { FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS } from '../core/constants';
 import { Cfg } from '../core/lib';
 import { Materials } from '../materials/Materials';
 import { unpackRGBA } from '../core/unpackRGBA';
 import { StencilLib } from '../core/StencilLib';
 import { Overlay } from './Overlay';
-import { Group, Box3, Vector3 } from '../Three';
+import {
+	Group, OrthographicCamera,
+	Box3, Vector3,
+	WebGLRenderTarget, LinearFilter, NearestFilter, RGBAFormat
+} from '../Three';
 
 const overlays = {};
 
 // preallocated tmp objects
 
-const __pixelCoords = new Vector3();
+const __vector3 = new Vector3();
 const __adjust = new Vector3();
 
 const __result = new Uint8Array( 4 );
@@ -104,6 +108,75 @@ CommonTerrain.prototype.checkTerrainShadingModes = function ( renderer ) {
 	this.terrainShadingModes = terrainShadingModes;
 
 	return terrainShadingModes;
+
+};
+
+CommonTerrain.prototype.setup = function ( renderer, scene, survey ) {
+
+	const dim = 1024;
+
+	// set camera frustrum to cover region/survey area
+	const container = renderer.domElement.parentElement;
+	const originalRenderTarget = renderer.getRenderTarget();
+
+	var width  = container.clientWidth;
+	var height = container.clientHeight;
+
+	const range = survey.combinedLimits.getSize( __vector3 );
+
+	const scaleX = width / range.x;
+	const scaleY = height / range.y;
+
+	if ( scaleX < scaleY ) {
+
+		height = height * scaleX / scaleY;
+
+	} else {
+
+		width = width * scaleY / scaleX;
+
+	}
+
+	// render the terrain to a new canvas square canvas and extract image data
+
+	const rtCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, -10000, 10000 );
+
+	rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
+
+	const renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, stencilBuffer: true } );
+
+	renderTarget.texture.generateMipmaps = false;
+	renderTarget.texture.name = 'CV.DepthMapTexture';
+
+	renderer.setSize( dim, dim );
+	renderer.setPixelRatio( 1 );
+
+	renderer.clear();
+
+	renderer.setRenderTarget( renderTarget );
+
+	scene.overrideMaterial = Materials.getDepthMapMaterial( this );
+
+	renderer.render( scene, rtCamera );
+
+	scene.overrideMaterial = null;
+
+	// correct height between entrances and terrain
+
+	this.addHeightMap( renderer, renderTarget );
+
+	this.checkTerrainShadingModes( renderer );
+
+	// restore renderer to normal render size and target
+
+	renderer.renderLists.dispose();
+
+	// restore renderer to normal render size and target
+
+	renderer.setRenderTarget( originalRenderTarget );
+
+	renderer.setSize( container.clientWidth, container.clientHeight );
+	renderer.setPixelRatio( window.devicePixelRatio );
 
 };
 
@@ -294,9 +367,9 @@ CommonTerrain.prototype.getHeight = function ( point ) {
 
 	const terrainBase = this.terrainBase;
 
-	__pixelCoords.copy( point ).sub( terrainBase ).multiply( __adjust ).round();
+	__vector3.copy( point ).sub( terrainBase ).multiply( __adjust ).round();
 
-	this.renderer.readRenderTargetPixels( renderTarget, __pixelCoords.x, __pixelCoords.y, 1, 1, __result );
+	this.renderer.readRenderTargetPixels( renderTarget, __vector3.x, __vector3.y, 1, 1, __result );
 
 	// convert to survey units and return
 

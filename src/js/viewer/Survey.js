@@ -31,7 +31,6 @@ import { buildWallsSync } from './walls/WallBuilders';
 import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
 import { StencilLib } from '../core/StencilLib';
 import proj4 from 'proj4';
-import { CameraManager } from './CameraManager';
 
 function Survey ( cave ) {
 
@@ -233,7 +232,7 @@ Survey.prototype.loadEntrances = function () {
 
 };
 
-Survey.prototype.calibrateTerrain = function ( terrain ) {
+Survey.prototype.setupTerrain = function ( terrain ) {
 
 	var s1 = 0, s2 = 0, n = 0;
 

@@ -117,6 +117,26 @@ function Survey ( cave ) {
 
 	this.addEventListener( 'removed', this.onRemoved );
 
+	var zScale = 0.5;
+
+	Object.defineProperty( this, 'zScale', {
+		writeable: true,
+		get: function () { return zScale; },
+		set: function ( scale ) {
+
+			// scale - in range 0 - 1
+
+			const lastScale = Math.pow( 2, ( zScale - 0.5 ) * 4 );
+			const newScale  = Math.pow( 2, ( scale - 0.5 ) * 4 );
+
+			this.applyMatrix( new Matrix4().makeScale( 1, 1, newScale / lastScale ) );
+			this.updateMatrix();
+
+			zScale = scale;
+
+		}
+	} );
+
 	return;
 
 	function _setProjectionScale () {

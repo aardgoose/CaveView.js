@@ -31,7 +31,7 @@ import { DeviceOrientationControls } from '../ui/DeviceOrientationControls';
 
 import {
 	EventDispatcher,
-	Vector2, Vector3, Matrix4, Euler, Quaternion,
+	Vector2, Vector3, Euler, Quaternion,
 	Scene, Raycaster,
 	WebGLRenderer, // WebGLMultisampleRenderTarget,
 	MOUSE, FogExp2
@@ -65,11 +65,9 @@ var terrain = null;
 var survey;
 var limits = null;
 var stats = {};
-var zScale;
 var caveLoader;
 
 var cursorHeight;
-var eyeSeparation = 0.5;
 
 var shadingMode = SHADING_SINGLE;
 var surfaceShadingMode = SHADING_SINGLE;
@@ -294,7 +292,7 @@ function init ( domID, configuration ) { // public method
 
 		'eyeSeparation': {
 			writeable: true,
-			get: function () { return eyeSeparation; },
+			get: function () { return cameraManager.eyeSeparation; },
 			set: setEyeSeparation
 		},
 
@@ -390,7 +388,7 @@ function init ( domID, configuration ) { // public method
 
 		'zScale': {
 			writeable: true,
-			get: function () { return zScale; },
+			get: function () { return survey.zScale; },
 			set: setZScale
 		},
 
@@ -597,16 +595,7 @@ function setBrowserFullscreen ( targetState ) {
 
 function setZScale ( scale ) {
 
-	// scale - in range 0 - 1
-
-	const lastScale = Math.pow( 2, ( zScale - 0.5 ) * 4 );
-	const newScale  = Math.pow( 2, ( scale - 0.5 ) * 4 );
-
-	survey.applyMatrix( new Matrix4().makeScale( 1, 1, newScale / lastScale ) );
-	survey.updateMatrix();
-
-	zScale = scale;
-
+	survey.zScale = scale;
 	renderView();
 
 }
@@ -747,7 +736,7 @@ function setCameraLayer ( layerTag, enable ) {
 
 function setEyeSeparation ( x ) {
 
-	cameraManager.setEyeSeparation( x );
+	cameraManager.eyeSeparation = x;
 	renderView();
 
 }
@@ -1587,9 +1576,6 @@ function setScale () {
 
 	// initialize cursor height to be mid range of heights
 	cursorHeight = 0;
-
-	// initialize vertical scaling to none
-	zScale = 0.5;
 
 	var hScale = Math.min( width / range.x, height / range.y );
 

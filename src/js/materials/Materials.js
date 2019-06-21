@@ -19,6 +19,7 @@ var cursorMaterials = [];
 
 var depthMaterials = [];
 var perSurveyMaterials = {};
+var cursorHeight = 0;
 
 var viewer;
 var survey;
@@ -39,15 +40,14 @@ function cacheSurveyMaterial ( name, material ) {
 
 }
 
-function updateMaterialCursor ( material ) {
 
-	viewer.initCursorHeight = material.setCursor( viewer.cursorHeight );
+function updateCursors( newHeight ) {
 
-}
+	cursorMaterials.forEach( function ( material ) {
 
-function updateCursors( /* event */ ) {
+		cursorHeight = material.setCursor( newHeight );
 
-	cursorMaterials.forEach( updateMaterialCursor );
+	} );
 
 }
 
@@ -261,7 +261,6 @@ function initCache ( Viewer ) {
 
 	viewer = Viewer;
 
-	viewer.addEventListener( 'cursorChange', updateCursors );
 
 }
 
@@ -281,6 +280,7 @@ function flushCache( surveyIn ) {
 	depthMaterials = [];
 	perSurveyMaterials = {};
 	GlyphString.cache = new Map();
+	cursorHeight = 0;
 
 	survey = surveyIn;
 
@@ -294,7 +294,7 @@ function setFog( enable ) {
 
 }
 
-export const Materials = {
+const Materials = {
 	getContourMaterial:     getContourMaterial,
 	getHeightMaterial:      getHeightMaterial,
 	getHypsometricMaterial: getHypsometricMaterial,
@@ -312,4 +312,12 @@ export const Materials = {
 	setFog:                 setFog
 };
 
+Object.defineProperty( Materials, 'cursorHeight', {
+	writeable: true,
+	get: function () { return cursorHeight; },
+	set: updateCursors
+} );
+
+
+export { Materials };
 // EOF

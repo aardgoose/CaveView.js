@@ -67,8 +67,6 @@ var limits = null;
 var stats = {};
 var caveLoader;
 
-var cursorHeight;
-
 var shadingMode = SHADING_SINGLE;
 var surfaceShadingMode = SHADING_SINGLE;
 var terrainShadingMode = SHADING_RELIEF;
@@ -304,14 +302,8 @@ function init ( domID, configuration ) { // public method
 
 		'cursorHeight': {
 			writeable: true,
-			get: function () { return cursorHeight; },
+			get: function () { return Materials.cursorHeight; },
 			set: setCursorHeight
-		},
-
-		'initCursorHeight': {
-			writeable: true,
-			get: function () { return cursorHeight; },
-			set: function ( x ) { cursorHeight = x; }
 		},
 
 		'maxDistance': {
@@ -618,7 +610,7 @@ function setAutoRotateSpeed ( speed ) {
 
 function setCursorHeight ( x ) {
 
-	cursorHeight = x;
+	Materials.cursorHeight = x;
 	Viewer.dispatchEvent( { type: 'cursorChange', name: 'cursorHeight' } );
 
 	renderView();
@@ -679,6 +671,8 @@ function setupTerrain () {
 
 	Materials.setTerrain( terrain );
 
+	orientationControls.survey = survey;
+
 	renderView();
 
 }
@@ -690,6 +684,7 @@ function setCameraMode ( mode ) {
 	if ( mode === CAMERA_DYNAMIC ) {
 
 		savedView = viewState.saveState();
+
 		orientationControls.connect();
 
 		setView( dynamicView, null );
@@ -1573,9 +1568,6 @@ function setScale () {
 	limits = survey.limits;
 
 	const range = survey.combinedLimits.getSize( __v );
-
-	// initialize cursor height to be mid range of heights
-	cursorHeight = 0;
 
 	var hScale = Math.min( width / range.x, height / range.y );
 

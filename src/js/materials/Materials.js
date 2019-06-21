@@ -134,10 +134,6 @@ function getCursorMaterial ( type ) {
 
 	}
 
-	// restore current cursor
-
-	viewer.initCursorHeight = material.getCursor();
-
 	// set active cursor material for updating
 
 	cursorMaterials[ type ] = material;
@@ -159,10 +155,6 @@ function getDepthCursorMaterial( type ) {
 		depthMaterials.push( material );
 
 	}
-
-	// restore current cursor
-
-	viewer.initCursorHeight = material.getCursor();
 
 	// set active cursor material for updating
 

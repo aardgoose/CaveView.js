@@ -159,7 +159,6 @@ function GlyphString ( text, glyphMaterial ) {
 	Mesh.call( this, geometry, glyphMaterial );
 
 	this.name = text;
-	this.frustumCulled = false;
 
 	if ( ! this.isMutableGlyphString ) {
 
@@ -184,6 +183,12 @@ GlyphString.prototype.getWidth = function () {
 GlyphString.prototype.getHeight = function () {
 
 	return this.material.scaleFactor;
+
+};
+
+GlyphString.prototype.intersects = function ( position ) {
+
+	console.log( 'c', position );
 
 };
 

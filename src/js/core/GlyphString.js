@@ -198,6 +198,8 @@ GlyphString.prototype.getHeight = function () {
 
 GlyphString.prototype.intersects = function ( position, camera, scale ) {
 
+	if ( ! this.visible ) return false;
+
 	const width = this.getWidth() / scale.x;
 	const height = this.getHeight() / scale.y;
 	const rotation = this.material.rotation;
@@ -208,6 +210,8 @@ GlyphString.prototype.intersects = function ( position, camera, scale ) {
 	// label bottom left in NDC
 	__v1.setFromMatrixPosition( this.modelViewMatrix );
 	__v1.applyMatrix4( camera.projectionMatrix );
+
+	this.depth = __v1.z;
 
 	__v1.z = 0;
 

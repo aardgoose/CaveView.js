@@ -6,6 +6,8 @@ import { MaterialFog } from './MaterialFog';
 
 function GlyphMaterial ( glyphAtlasSpec, rotation, viewer ) {
 
+	this.rotation = rotation;
+
 	const self = this;
 
 	const glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec );

@@ -1,7 +1,8 @@
 import {
 	InstancedBufferGeometry,
 	InstancedBufferAttribute,
-	Mesh
+	Mesh, Vector3, Triangle,
+	Object3D
 } from '../Three';
 
 import { CommonAttributes } from './CommonAttributes';
@@ -21,6 +22,15 @@ function GlyphStringGeometryCache ( material ) {
 	this.cache = {};
 
 }
+
+const __v0 = new Vector3();
+const __v1 = new Vector3();
+const __v2 = new Vector3();
+const __v3 = new Vector3();
+const __v4 = new Vector3();
+
+const __triangle1 = new Triangle();
+const __triangle2 = new Triangle();
 
 GlyphStringGeometryCache.prototype.getGeometry = function ( text ) {
 
@@ -186,9 +196,44 @@ GlyphString.prototype.getHeight = function () {
 
 };
 
-GlyphString.prototype.intersects = function ( position ) {
+GlyphString.prototype.intersects = function ( position, camera, scale ) {
 
-	console.log( 'c', position );
+	const width = this.getWidth() / scale.x;
+	const height = this.getHeight() / scale.y;
+	const rotation = this.material.rotation;
+
+	// mouse position in NDC
+	__v0.set( position.x, position.y, 0 );
+
+	// label bottom left in NDC
+	__v1.setFromMatrixPosition( this.modelViewMatrix );
+	__v1.applyMatrix4( camera.projectionMatrix );
+
+	__v1.z = 0;
+
+	if ( isNaN( __v1.x ) ) return;
+
+	// remaining vertices of label
+	__v2.set( width, 0, 0 ).applyAxisAngle( Object3D.DefaultUp, rotation );
+	__v3.set( width, height, 0 ).applyAxisAngle( Object3D.DefaultUp, rotation );
+	__v4.set( 0, height, 0 ).applyAxisAngle( Object3D.DefaultUp, rotation );
+
+	// adjust for aspect ratio
+	__v2.y *= scale.x / scale.y;
+	__v3.y *= scale.x / scale.y;
+	__v4.y *= scale.x / scale.y;
+
+	__v2.add( __v1 );
+	__v3.add( __v1 );
+	__v4.add( __v1 );
+
+	__triangle1.set( __v1, __v2, __v3 );
+	__triangle2.set( __v1, __v3, __v4 );
+
+	return (
+		( __triangle1.containsPoint( __v0 ) ) ||
+		( __triangle2.containsPoint( __v0 ) )
+	);
 
 };
 

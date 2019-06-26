@@ -50,13 +50,17 @@ function CameraManager ( container, renderer, scene ) {
 		// render depth buffer from underside of terrain
 		const camera = self.activeCamera;
 
-		camera.layers.mask = backMask;
-		scene.overrideMaterial = backMaterial;
+		if ( self.testCameraLayer( FEATURE_TERRAIN ) ) {
 
-		renderer.render( scene, camera );
+			camera.layers.mask = backMask;
+			scene.overrideMaterial = backMaterial;
 
-		scene.overrideMaterial = null;
-		camera.layers.mask = savedMask;
+			renderer.render( scene, camera );
+
+			scene.overrideMaterial = null;
+			camera.layers.mask = savedMask;
+
+		}
 
 		renderer.render( scene, camera );
 

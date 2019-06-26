@@ -50,7 +50,7 @@ function Survey ( cave ) {
 	this.wireframe = null;
 	this.worldBoundingBox = null;
 
-	// objects targetted by raycasters and objects with variable LOD
+	// objects targeted by raycasters and objects with variable LOD
 
 	this.pointTargets = [];
 	this.legTargets = [];

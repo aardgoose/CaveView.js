@@ -120,4 +120,22 @@ Entrances.prototype.setStation = function ( station, info ) {
 
 };
 
+Entrances.prototype.intersectLabels = function ( mouse, camera, scale ) {
+
+	return this.labels.filter( _filter ).sort( _sort );
+
+	function _filter ( label ) {
+
+		return label.intersects( mouse, camera, scale );
+
+	}
+
+	function _sort ( a, b ) {
+
+		return a.depth < b.depth;
+
+	}
+
+};
+
 export { Entrances };

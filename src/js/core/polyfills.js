@@ -126,4 +126,10 @@ if ( window.TextDecoder === undefined ) {
 
 }
 
+if ( ! Float32Array.prototype.fill) {
+
+	Float32Array.prototype.fill = Array.prototype.fill;
+
+}
+
 // EOF

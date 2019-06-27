@@ -38,6 +38,8 @@ Legs.prototype.addLegs = function ( vertices, legRuns ) {
 	var positions = new Float32BufferAttribute( vertices.length * 3, 3 );
 	var colors = new Float32BufferAttribute( vertices.length * 3, 3 );
 
+	colors.array.fill( 1.0 );
+
 	geometry.addAttribute( 'position', positions.copyVector3sArray( vertices ) );
 	geometry.addAttribute( 'color', colors );
 

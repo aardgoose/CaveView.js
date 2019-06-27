@@ -132,7 +132,7 @@ Entrances.prototype.intersectLabels = function ( mouse, camera, scale ) {
 
 	function _sort ( a, b ) {
 
-		return a.depth < b.depth;
+		return a.depth - b.depth;
 
 	}
 

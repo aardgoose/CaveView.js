@@ -2,14 +2,17 @@ import {
 	BufferGeometry,
 	Points,
 	Float32BufferAttribute,
+	Vector3
 } from '../Three';
 
 import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
-import { STATION_ENTRANCE } from '../core/constants';
+import { STATION_ENTRANCE, LEG_SPLAY } from '../core/constants';
 import { Viewer } from '../viewer/Viewer';
 import { Cfg } from '../core/lib';
 import { PointIndicator } from './PointIndicator';
+
+const __v = new Vector3();
 
 function onUploadDropBuffer() {
 
@@ -294,6 +297,44 @@ Stations.prototype.finalise = function () {
 Stations.prototype.resetDistances = function () {
 
 	this.stations.forEach( function _resetDistance( node ) { node.distance = Infinity; } );
+
+};
+
+Stations.prototype.getClosestVisibleStation = function ( survey, camera, intersects ) {
+
+	const splaysVisible = ( camera.layers.mask & 1 << LEG_SPLAY > 0 );
+	const self = this;
+
+	var minD2 = Infinity;
+	var closestStation = null;
+
+	intersects.forEach( function _checkIntersects( intersect ) {
+
+		const station = self.getStationByIndex( intersect.index );
+
+		// don't select spays unless visible
+
+		if ( ! splaysVisible && station !== null && station.p.connections === 0 ) return;
+
+		// station in screen NDC
+		__v.copy( station.p ).applyMatrix4( survey.matrixWorld ).project( camera );
+
+		__v.sub( intersect.point.project( camera ) );
+
+		const d2 = __v.x * __v.x + __v.y * __v.y;
+
+		// choose closest of potential matches in screen x/y space
+
+		if ( d2 < minD2 ) {
+
+			minD2 = d2;
+			closestStation = station;
+
+		}
+
+	} );
+
+	return closestStation;
 
 };
 

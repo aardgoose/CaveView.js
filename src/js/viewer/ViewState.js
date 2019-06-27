@@ -35,7 +35,6 @@ const dynamicView = {
 	walls: true,
 	scraps: true,
 	box: false,
-	fog: true,
 	terrain: true,
 	terrainOpacity: 1
 };

@@ -105,6 +105,7 @@ var savedView = null;
 function init ( domID, configuration ) { // public method
 
 	console.log( 'CaveView v' + VERSION );
+
 	/*
 	if ( 'serviceWorker' in navigator ) {
 
@@ -132,28 +133,11 @@ function init ( domID, configuration ) { // public method
 	const width  = container.clientWidth;
 	const height = container.clientHeight;
 
-	var canvas = document.createElement( 'canvas' );
-	var context = canvas.getContext( 'webgl2', { antialias: false , stencil: true } );
-
-	renderer = new WebGLRenderer( { canvas: canvas, context: context } );
-	// renderer = new WebGLRenderer( { antialias: false });
+	renderer = new WebGLRenderer( { antialias: true });
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setClearColor( Cfg.themeValue( 'background' ) );
 	renderer.autoClear = false;
-
-	/*
-	var size = renderer.getDrawingBufferSize( new Vector2() );
-	var parameters = {
-		format: RGBAFormat,
-		stencilBuffer: true
-	};
-
-	defaultRenderTarget = new WebGLMultisampleRenderTarget( Math.round( size.width ), Math.round( size.height ), parameters );
-
-	defaultRenderTarget.targetCanvas = true;
-	defaultRenderTarget.targetCanvasMask = renderer.context.COLOR_BUFFER_BIT;
-	*/
 
 	renderer.setRenderTarget( defaultRenderTarget );
 
@@ -1183,17 +1167,28 @@ function loadTerrain ( mode ) {
 
 }
 
+
 function mouseDown ( event ) {
 
 	const bc = container.getBoundingClientRect();
 
+	const scale = __v.set( container.clientWidth / 2, container.clientHeight / 2, 0 );
+
 	// FIXME - handle scrolled container
-	mouse.x =   ( ( event.clientX - bc.left ) / container.clientWidth ) * 2 - 1;
-	mouse.y = - ( ( event.clientY - bc.top ) / container.clientHeight ) * 2 + 1;
+	mouse.x =   ( ( event.clientX - bc.left ) / scale.x ) - 1;
+	mouse.y = - ( ( event.clientY - bc.top ) / scale.y ) + 1;
 
 	raycaster.setFromCamera( mouse, cameraManager.activeCamera );
 
 	const intersects = raycaster.intersectObjects( mouseTargets, false );
+	var matches;
+
+	if ( mouseMode === MOUSE_MODE_NORMAL && Viewer.entrances ) {
+
+		matches = survey.entrances.intersectLabels( mouse, cameraManager.activeCamera, scale );
+		console.log( matches );
+
+	}
 
 	if ( intersects.length < 1 ) return;
 
@@ -1457,38 +1452,7 @@ function selectTraceStation ( station ) {
 
 function visibleStation ( intersects ) {
 
-	const camera = cameraManager.activeCamera;
-
-	var minD2 = Infinity;
-	var closestStation = null;
-
-	intersects.forEach( function _checkIntersects( intersect ) {
-
-		const station = survey.stations.getStationByIndex( intersect.index );
-
-		// don't select spays unless visible
-
-		if ( ! Viewer.splays && station !== null && station.p.connections === 0 ) return;
-
-		// station in screen NDC
-		__v.copy( station.p ).applyMatrix4( survey.matrixWorld ).project( camera );
-
-		__v.sub( intersect.point.project( camera ) );
-
-		const d2 = __v.x * __v.x + __v.y * __v.y;
-
-		// choose closest of potential matches in screen x/y space
-
-		if ( d2 < minD2 ) {
-
-			minD2 = d2;
-			closestStation = station;
-
-		}
-
-	} );
-
-	return closestStation;
+	return survey.stations.getClosestVisibleStation( survey, cameraManager.activeCamera, intersects );
 
 }
 

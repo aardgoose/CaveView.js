@@ -122,7 +122,9 @@ Entrances.prototype.setStation = function ( station, info ) {
 
 Entrances.prototype.intersectLabels = function ( mouse, camera, scale ) {
 
-	return this.labels.filter( _filter ).sort( _sort );
+	var labels = this.labels.filter( _filter ).sort( _sort );
+
+	return ( labels.length === 0 ) ? null : labels[ 0 ];
 
 	function _filter ( label ) {
 

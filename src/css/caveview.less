@@ -157,6 +157,7 @@ body {
 	background-color: @tab-inactive;
 	background-origin: content-box;
 	background-image: @icon-sheet;
+	background-repeat: no-repeat;
 	padding: 1px;
 }
 
@@ -232,6 +233,28 @@ body {
 	width: @tab-size + 1;
 	margin-left: -1px;
 }
+
+#cv-gps-button {
+	box-sizing: border-box;
+	position: absolute;
+	bottom: 0px;
+	height: @tab-size;
+	width: @tab-size;
+	border: 2px solid transparent;
+	background-color: none;;
+	background-origin: content-box;
+	background-image: @icon-sheet;
+	background-repeat: no-repeat;
+	background-position: -395px 0;
+	filter: brightness( 0.6 );
+}
+
+
+#cv-gps-button.on {
+	background-position: -432px 0;
+	filter: brightness( 1.0 );
+}
+
 
 @media (min-width: 768px) {
 

@@ -8,6 +8,7 @@ import { SelectionPage } from './SelectionPage';
 import { SettingsPage } from './SettingsPage';
 import { SurfacePage } from './SurfacePage';
 import { EditPage } from './EditPage';
+import { GPSButton } from './GPS';
 
 import { initKeyboardControls } from './KeyboardControls';
 import { FileSelector } from './FileSelector';
@@ -86,6 +87,8 @@ function initUI () {
 
 	new InfoPage( fileSelector );
 	new HelpPage( avenControls );
+
+	GPSButton( container );
 
 	Page.setParent( container );
 

@@ -1,7 +1,6 @@
 
 import {
 	VERSION,
-	CAMERA_DYNAMIC,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES, SURVEY_WARNINGS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, LABEL_STATION_COMMENT,
 	SHADING_SINGLE, SHADING_RELIEF, SHADING_PATH, SHADING_DISTANCE,
@@ -33,7 +32,7 @@ import {
 	EventDispatcher,
 	Vector2, Vector3, Euler, Quaternion,
 	Scene, Raycaster,
-	WebGLRenderer, // WebGLMultisampleRenderTarget,
+	WebGLRenderer,
 	MOUSE, FogExp2
 } from '../Three';
 
@@ -101,6 +100,11 @@ const Viewer = Object.create( EventDispatcher.prototype );
 
 var viewState;
 var savedView = null;
+
+// WIP
+
+var hasGPS = true;
+var trackGPS = false;
 
 function init ( domID, configuration ) { // public method
 
@@ -398,6 +402,16 @@ function init ( domID, configuration ) { // public method
 
 		'isClipped': {
 			get: function () { return clipped; }
+		},
+
+		'hasGPS': {
+			value: hasGPS,
+		},
+
+		'trackGPS': {
+			writeable: true,
+			get: function () { return trackGPS; },
+			set: setGPS
 		}
 
 	} );
@@ -661,11 +675,9 @@ function setupTerrain () {
 
 }
 
-function setCameraMode ( mode ) {
+function setGPS ( x ) {
 
-	if ( mode === cameraMode || ! renderRequired ) return;
-
-	if ( mode === CAMERA_DYNAMIC ) {
+	if ( x ) {
 
 		savedView = viewState.saveState();
 
@@ -675,20 +687,25 @@ function setCameraMode ( mode ) {
 
 	} else {
 
-		if ( cameraMode === CAMERA_DYNAMIC ) {
+		// disable orientation controls
+		orientationControls.disconnect();
 
-			// disable orientation controls
-			orientationControls.disconnect();
-
-			// restore previous settings
-			setView( savedView, null );
-
-		}
-
-		cameraManager.setCamera( mode, controls.target );
-		activeRenderer = cameraManager.activeRenderer;
+		// restore previous settings
+		setView( savedView, null );
+		savedView = null;
 
 	}
+
+	trackGPS = x;
+
+}
+
+function setCameraMode ( mode ) {
+
+	if ( mode === cameraMode ) return;
+
+	cameraManager.setCamera( mode, controls.target );
+	activeRenderer = cameraManager.activeRenderer;
 
 	cameraMode = mode;
 
@@ -1025,6 +1042,7 @@ function caveLoaded ( cave ) {
 function setView ( properties1, properties2 ) {
 
 	// don't render until all settings made.
+	if ( ! renderRequired ) return;
 
 	renderRequired = false;
 
@@ -1037,6 +1055,8 @@ function setView ( properties1, properties2 ) {
 }
 
 function setupView ( final ) {
+
+	renderRequired = true;
 
 	if ( savedView === null ) {
 
@@ -1181,12 +1201,19 @@ function mouseDown ( event ) {
 	raycaster.setFromCamera( mouse, cameraManager.activeCamera );
 
 	const intersects = raycaster.intersectObjects( mouseTargets, false );
-	var matches;
+	var entrance;
 
 	if ( mouseMode === MOUSE_MODE_NORMAL && Viewer.entrances ) {
 
-		matches = survey.entrances.intersectLabels( mouse, cameraManager.activeCamera, scale );
-		console.log( matches );
+		entrance = survey.entrances.intersectLabels( mouse, cameraManager.activeCamera, scale );
+
+		if ( entrance !== null ) {
+
+			let node = survey.surveyTree.findById( entrance.stationID );
+			console.log( node );
+			orientationControls.connect( node.p );
+
+		}
 
 	}
 
@@ -1464,7 +1491,7 @@ function renderView () {
 
 	if ( caveIsLoaded ) {
 
-		survey.update( cameraManager, controls.target, ( cameraMode !== CAMERA_DYNAMIC ) );
+		survey.update( cameraManager, controls.target, ! trackGPS );
 
 		if ( useFog ) Materials.setFog( true );
 

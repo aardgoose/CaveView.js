@@ -2,18 +2,19 @@
 import { Cfg } from '../core/lib';
 
 import {
-	RingBufferGeometry,
-	MeshBasicMaterial,
-	Mesh,
+	BufferGeometry,
+	LineBasicMaterial,
+	LineLoop,
+	Float32BufferAttribute
 } from '../Three';
 
 
 function PositionRing () {
 
-	const material = new MeshBasicMaterial( { color: Cfg.themeValue( 'hud.compass.top1' ) } );
-	const geometry = new RingBufferGeometry( 97, 100, 64 );
+	const material = new LineBasicMaterial( { color: Cfg.themeValue( 'hud.compass.top1' ) } );
+	const geometry = new BufferGeometry();
 
-	Mesh.call( this, geometry, material );
+	LineLoop.call( this, geometry, material );
 
 	this.name = 'CV.PositionRing';
 
@@ -29,15 +30,37 @@ function PositionRing () {
 	this.label = label;
 	*/
 
+	const vertices = [];
+	var i;
+
+	for ( i = 0; i < 64; i++ ) {
+
+		let segment = i / 64 * Math.PI * 2;
+
+		vertices.push(
+			Math.cos( segment ),
+			Math.sin( segment ),
+			0
+		);
+
+	}
+
+	geometry.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+
 	return this;
 
 }
 
-PositionRing.prototype = Object.create( Mesh.prototype );
+PositionRing.prototype = Object.create( LineLoop.prototype );
 
-PositionRing.prototype.set = function ( diameter ) {
+PositionRing.prototype.update = function ( hScale, zoom, diameter ) {
 
-	console.log( 'pr', diameter );
+	this.visible = true;
+
+	console.log( 'pr', hScale, zoom, diameter );
+	const scale = zoom * diameter * hScale;
+
+	this.scale.set( scale, scale, scale );
 	/*
 	this.label.replaceString( res );
 	*/

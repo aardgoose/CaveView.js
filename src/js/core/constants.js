@@ -9,7 +9,6 @@ export const CAMERA_ORTHOGRAPHIC = 1;
 export const CAMERA_PERSPECTIVE  = 2;
 export const CAMERA_ANAGLYPH     = 3;
 export const CAMERA_STEREO       = 4;
-export const CAMERA_DYNAMIC      = 5;
 
 export const CAMERA_OFFSET       = 600;
 

@@ -5,8 +5,8 @@ import { MutableGlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
 import {
-	Vector3,
-	Geometry, PlaneGeometry,
+	Float32BufferAttribute,
+	BufferGeometry, PlaneGeometry,
 	LineBasicMaterial, MeshBasicMaterial,
 	FaceColors,
 	LineSegments, Group, Mesh
@@ -25,8 +25,8 @@ function ScaleBar ( container, hScale, rightMargin ) {
 	this.currentLength = 0;
 	this.wScale = container.clientHeight / container.clientWidth;
 
-	this.position.set( -container.clientWidth / 2 + 5, -container.clientHeight / 2 + leftMargin, 0 );
-	this.scaleMax = container.clientWidth - ( leftMargin + rightMargin );
+	this.position.set( -container.clientWidth / 2 + 45, -container.clientHeight / 2 + leftMargin, 0 );
+	this.scaleMax = container.clientWidth - ( 40 + leftMargin + rightMargin );
 
 	const material = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
 	const label = new MutableGlyphString( '--------', material );
@@ -126,12 +126,15 @@ ScaleBar.prototype.setScale = function ( scale ) {
 		const height = 4;
 		const rLength = length * self.hScale;
 
-		const line = new Geometry();
+		const line = new BufferGeometry();
+		const vertices = [];
 
-		line.vertices.push( new Vector3( -rLength / 2, 0, 1 ) );
-		line.vertices.push( new Vector3(  rLength / 2, 0, 1 ) );
+		vertices.push( 0, height, 1 );
+		vertices.push( rLength, height, 1 );
 
-		line.translate( rLength / 2, height, 0 );
+		const positions = new Float32BufferAttribute( vertices.length, 3 );
+
+		line.addAttribute( 'position', positions.copyArray( vertices ) );
 
 		const sb = Cfg.themeValue( 'hud.scale.bar1' );
 

@@ -5,10 +5,10 @@ import { MutableGlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
 import {
-	Vector3, Math as _Math, Face3,
-	Geometry, RingBufferGeometry,
+	Vector3, Math as _Math,
+	RingBufferGeometry,
 	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
-	VertexColors,
+	VertexColors, BufferGeometry, Float32BufferAttribute,
 	Mesh, Group, Euler
 } from '../Three';
 
@@ -36,13 +36,7 @@ function Compass () {
 
 	const c2 = new Mesh( cg2, new MeshBasicMaterial( { color: Cfg.themeValue( 'hud.compass.top1' ) } ) );
 
-	const r1 = _makeRose( stdWidth * 0.9, 0.141, Cfg.themeColor( 'hud.compass.bottom1' ), Cfg.themeColor( 'hud.compass.bottom2' ) );
-	const r2 = _makeRose( stdWidth * 0.9, 0.141, Cfg.themeColor( 'hud.compass.top1' ), Cfg.themeColor( 'hud.compass.top2' ) );
-
-	r1.rotateZ( Math.PI / 4 );
-	r1.merge( r2 );
-
-	const rMesh = new Mesh( r1, new MeshLambertMaterial( { vertexColors: VertexColors, flatShading: true } ) );
+	const rMesh = _makeRose();
 
 	const rotaryGroup = new Group();
 
@@ -72,45 +66,57 @@ function Compass () {
 
 	return this;
 
-	// make 'petal' for compass rose
-	function _makePetal ( radius, scale, color1, color2 ) {
+	function _makeRose() {
 
-		const innerR = radius * scale;
-		const g = new Geometry();
+		const geometry = new BufferGeometry();
+		const material = new MeshLambertMaterial( { vertexColors: VertexColors, flatShading: true } );
 
-		g.vertices.push( new Vector3( 0, radius, 0 ) );
-		g.vertices.push( new Vector3( innerR, innerR, 0 ) );
-		g.vertices.push( new Vector3( 0, 0, 14 * scale ) );
-		g.vertices.push( new Vector3( -innerR, innerR, 0 ) );
+		const mesh = new Mesh( geometry, material );
 
-		var f1 = new Face3( 0, 2, 1, new Vector3( 0, 0, 1 ), color1, 0 );
-		var f2 = new Face3( 0, 3, 2, new Vector3( 0, 0, 1 ), color2, 0 );
+		const vertices = [];
+		const colours = [];
 
-		g.faces.push( f1 );
-		g.faces.push( f2 );
+		_makeRose2( Cfg.themeColor( 'hud.compass.bottom1' ), Cfg.themeColor( 'hud.compass.bottom2' ), Math.PI / 4 );
+		_makeRose2( Cfg.themeColor( 'hud.compass.top1' ), Cfg.themeColor( 'hud.compass.top2' ), 0 );
 
-		return g;
+		const positions = new Float32BufferAttribute( vertices.length, 3 );
+		const colors = new Float32BufferAttribute( vertices.length * 3, 3 );
 
-	}
+		geometry.addAttribute( 'position', positions.copyArray( vertices ) );
+		geometry.addAttribute( 'color', colors.copyColorsArray( colours ) );
 
-	function _makeRose ( radius, scale, color1, color2 ) {
+		geometry.computeVertexNormals();
 
-		const p1 = _makePetal( radius, scale, color1, color2 );
-		const p2 = p1.clone();
-		const p3 = p1.clone();
-		const p4 = p1.clone();
+		return mesh;
 
-		p2.rotateZ( Math.PI / 2 );
-		p3.rotateZ( Math.PI );
-		p4.rotateZ( Math.PI / 2 * 3 );
+		function _makeRose2( color1, color2, offset ) {
 
-		p1.merge( p2 );
-		p1.merge( p3 );
-		p1.merge( p4 );
+			const radius = stdWidth * 0.9;
+			const innerR = radius * 0.2;
 
-		p1.computeFaceNormals();
+			var i;
+			let xlv = Math.PI / 4;
+			let xc = Math.PI / 2;
 
-		return p1;
+			for ( i = 0; i < 4; i++ ) {
+
+				const a = i * Math.PI / 2 + offset;
+
+				vertices.push( Math.sin( a )* radius, Math.cos( a ) * radius, 0 );
+				vertices.push( 0, 0, 2 );
+				vertices.push( Math.sin( a + xlv ) * innerR, Math.cos( a + xlv ) * innerR, 0 );
+
+				colours.push( color1, color1, color1 );
+
+				vertices.push( Math.sin( a + xlv ) * innerR, Math.cos( a + xlv ) * innerR, 0 );
+				vertices.push( 0, 0, 2 );
+				vertices.push( Math.sin( a + xc )* radius, Math.cos( a + xc ) * radius, 0 );
+
+				colours.push( color2, color2, color2 );
+
+			}
+
+		}
 
 	}
 

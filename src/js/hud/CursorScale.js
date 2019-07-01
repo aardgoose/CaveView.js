@@ -5,7 +5,7 @@ import { MutableGlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
 import {
-	PlaneBufferGeometry, Geometry, Vector3,
+	PlaneBufferGeometry, Float32BufferAttribute, BufferGeometry,
 	MeshBasicMaterial, Line, LineBasicMaterial
 } from '../Three';
 
@@ -24,10 +24,15 @@ function CursorScale ( container ) {
 
 	// make cursor line
 
-	const cursorGeometry = new Geometry();
+	const cursorGeometry = new BufferGeometry();
+	const vertices = [];
 
-	cursorGeometry.vertices.push( new Vector3(  barWidth / 2, -barHeight / 2, 10 ) );
-	cursorGeometry.vertices.push( new Vector3( -barWidth / 2, -barHeight / 2, 10 ) );
+	vertices.push(  barWidth / 2, -barHeight / 2, 10 );
+	vertices.push( -barWidth / 2, -barHeight / 2, 10 );
+
+	const positions = new Float32BufferAttribute( vertices.length, 3 );
+
+	cursorGeometry.addAttribute( 'position', positions.copyArray( vertices ) );
 
 	const cursor = new Line( cursorGeometry, new LineBasicMaterial( { color: Cfg.themeColor( 'hud.cursor' ) } ) );
 

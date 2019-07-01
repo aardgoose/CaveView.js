@@ -41,7 +41,6 @@ export { Camera } from 'three/src/cameras/Camera.js';
 export { Uniform } from 'three/src/core/Uniform.js';
 export { InstancedBufferGeometry } from 'three/src/core/InstancedBufferGeometry.js';
 export { BufferGeometry } from 'three/src/core/BufferGeometry.js';
-export { Geometry } from 'three/src/core/Geometry.js';
 export { InstancedBufferAttribute } from 'three/src/core/InstancedBufferAttribute.js';
 export * from 'three/src/core/BufferAttribute.js';
 export { Object3D } from 'three/src/core/Object3D.js';

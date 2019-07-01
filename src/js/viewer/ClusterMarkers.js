@@ -6,6 +6,7 @@ import { Materials } from '../materials/Materials';
 import { Marker } from './Marker';
 import { Object3D, Vector3, Triangle, Plane } from '../Three';
 
+import { StencilLib } from '../core/StencilLib';
 
 // preallocated objects for projected area calculation and cluster visibility checks
 
@@ -283,6 +284,7 @@ function ClusterMarkers ( limits, maxDepth ) {
 
 	this.quadTree = new QuadTree( min.x, max.x, min.y, max.y );
 	this.heightProvider = null;
+	this.labels = [];
 
 	this.addEventListener( 'removed', this.onRemoved );
 
@@ -330,6 +332,8 @@ ClusterMarkers.prototype.addMarker = function ( node, label ) {
 	const material = Materials.getGlyphMaterial( atlasSpec, Math.PI / 4 );
 
 	material.depthTest = true;
+	material.transparent = false;
+	material.alphaTest = 0;
 
 	const marker = new GlyphString( label, material );
 
@@ -337,6 +341,10 @@ ClusterMarkers.prototype.addMarker = function ( node, label ) {
 	marker.position.copy( node.p );
 	marker.stationID = node.id;
 
+	marker.onBeforeRender = StencilLib.featureOnBeforeRender;
+	marker.onAfterRender = StencilLib.featureOnAfterRender;
+
+	this.labels.push( marker );
 	this.quadTree.addNode( marker, this.maxDepth );
 
 	this.addStatic( marker );

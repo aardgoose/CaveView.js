@@ -6,8 +6,9 @@ import { Materials } from '../materials/Materials';
 
 import {
 	Vector3, Math as _Math,
-	Geometry, SphereBufferGeometry, BufferAttribute,
+	BufferGeometry, SphereBufferGeometry,
 	LineBasicMaterial, MeshPhongMaterial,
+	Float32BufferAttribute,
 	VertexColors,
 	Object3D, Mesh, LineSegments, Group
 } from '../Three';
@@ -38,14 +39,14 @@ function AHI () {
 	const ring = HudObject.getCommonRing();
 
 	const sphere = new SphereBufferGeometry( stdWidth - 10, 31, 31 );
-	const bar    = new Geometry();
-	const marks  = new Geometry();
+	const bar    = new BufferGeometry();
+	const marks  = new BufferGeometry();
 
 	const sv = sphere.getAttribute( 'position' ).count;
 
 	HudObject.dropBuffers( sphere );
 
-	const sphereColors = new BufferAttribute( new Float32Array( sv * 3 ), 3 );
+	const sphereColors = new Float32BufferAttribute( new Float32Array( sv * 3 ), 3 );
 
 	const colours = [];
 	var i;
@@ -58,13 +59,21 @@ function AHI () {
 
 	sphere.addAttribute( 'color', sphereColors.copyColorsArray( colours ) );
 
+	var vertices = [];
+
 	// view orientation line
-	bar.vertices.push( new Vector3( 4 - stdWidth, 0, stdWidth ) );
-	bar.vertices.push( new Vector3( stdWidth - 4, 0, stdWidth ) );
+	vertices.push( 4 - stdWidth, 0, stdWidth );
+	vertices.push( stdWidth - 4, 0, stdWidth );
+
+	const positions = new Float32BufferAttribute( vertices.length, 3 );
+
+	bar.addAttribute( 'position', positions.copyArray( vertices ) );
 
 	// pitch interval marks
 	const m1 = new Vector3(  4, 0, stdWidth - 10 );
 	const m2 = new Vector3( -4, 0, stdWidth - 10 );
+
+	vertices = [];
 
 	for ( i = 0; i < 12; i++ ) {
 
@@ -81,10 +90,14 @@ function AHI () {
 		mn1.applyAxisAngle( __xAxis, i * Math.PI / 6 );
 		mn2.applyAxisAngle( __xAxis, i * Math.PI / 6 );
 
-		marks.vertices.push( mn1 );
-		marks.vertices.push( mn2 );
+		vertices.push( mn1 );
+		vertices.push( mn2 );
 
 	}
+
+	const markPositions = new Float32BufferAttribute( vertices.length * 3, 3 );
+
+	marks.addAttribute( 'position', markPositions.copyVector3sArray( vertices ) );
 
 	const mRing   = new Mesh( ring, new MeshPhongMaterial( { color: Cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ) );
 	const mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: VertexColors, specular: 0x666666, shininess: 20 } ) );

@@ -420,7 +420,7 @@ function updateScaleBar ( camera ) {
 
 		scaleBar.setScale( camera.zoom );
 
-		if ( viewer.trackGPS ) {
+		if ( viewer.trackLocation ) {
 
 			positionRing.update( hScale, camera.zoom, 10 );
 

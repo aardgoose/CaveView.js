@@ -26,7 +26,7 @@ import { defaultView, dynamicView, ViewState } from './ViewState';
 // import { Annotations } from './Annotations';
 
 import { OrbitControls } from '../ui/OrbitControls';
-import { DeviceOrientationControls } from '../ui/DeviceOrientationControls';
+import { LocationControls } from '../ui/LocationControls';
 
 import {
 	EventDispatcher,
@@ -76,7 +76,7 @@ var cameraMode;
 var selectedSection = null;
 
 var controls;
-var orientationControls;
+var locationControls;
 
 var renderRequired = true;
 
@@ -103,8 +103,8 @@ var savedView = null;
 
 // WIP
 
-var hasGPS = true;
-var trackGPS = false;
+var hasLocation = true;
+var trackLocation = false;
 
 function init ( domID, configuration ) { // public method
 
@@ -173,10 +173,10 @@ function init ( domID, configuration ) { // public method
 
 		console.log( 'has location' );
 
-		orientationControls = new DeviceOrientationControls( cameraManager, cameraMove );
+		locationControls = new LocationControls( Viewer, cameraManager, cameraMove );
 
-		orientationControls.addEventListener( 'change', cameraMoved );
-		orientationControls.addEventListener( 'end', onCameraMoveEnd );
+		locationControls.addEventListener( 'change', cameraMoved );
+		locationControls.addEventListener( 'end', onCameraMoveEnd );
 
 	}
 
@@ -404,14 +404,14 @@ function init ( domID, configuration ) { // public method
 			get: function () { return clipped; }
 		},
 
-		'hasGPS': {
-			value: hasGPS,
+		'hasLocation': {
+			value: hasLocation,
 		},
 
-		'trackGPS': {
+		'trackLocation': {
 			writeable: true,
-			get: function () { return trackGPS; },
-			set: setGPS
+			get: function () { return trackLocation; },
+			set: setLocation
 		}
 
 	} );
@@ -669,26 +669,26 @@ function setupTerrain () {
 
 	Materials.setTerrain( terrain );
 
-	orientationControls.survey = survey;
+	locationControls.hasLocation( survey );
 
 	renderView();
 
 }
 
-function setGPS ( x ) {
+function setLocation ( x ) {
 
 	if ( x ) {
 
 		savedView = viewState.saveState();
 
-		orientationControls.connect();
+		locationControls.connect();
 
 		setView( dynamicView, null );
 
 	} else {
 
-		// disable orientation controls
-		orientationControls.disconnect();
+		// disable location controls
+		locationControls.disconnect();
 
 		// restore previous settings
 		setView( savedView, null );
@@ -696,7 +696,8 @@ function setGPS ( x ) {
 
 	}
 
-	trackGPS = x;
+	trackLocation = x;
+	renderView();
 
 }
 
@@ -1211,7 +1212,7 @@ function mouseDown ( event ) {
 
 			let node = survey.surveyTree.findById( entrance.stationID );
 			console.log( node );
-			orientationControls.connect( node.p );
+			locationControls.connect( node.p );
 
 		}
 
@@ -1491,7 +1492,7 @@ function renderView () {
 
 	if ( caveIsLoaded ) {
 
-		survey.update( cameraManager, controls.target, ! trackGPS );
+		survey.update( cameraManager, controls.target, ! trackLocation );
 
 		if ( useFog ) Materials.setFog( true );
 

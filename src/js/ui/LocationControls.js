@@ -45,7 +45,7 @@ var LocationControls = function ( viewer, cameraManager, mover ) {
 
 	this.alphaOffset = 0; // radians
 	this.watch = null;
-	this.position = new Vector3();
+	this.location = new Vector3();
 	this.gettingHeight = false;
 
 	function onDeviceOrientationChangeEvent ( event ) {
@@ -62,6 +62,31 @@ var LocationControls = function ( viewer, cameraManager, mover ) {
 
 	}
 
+	function onPositionChangeEvent ( GPSPosition ) {
+
+		if ( scope.gettingHeight ) return;
+
+		scope.gettingHeight = true;
+
+		const coords = GPSPosition.coords;
+
+		var location = scope.location;
+
+		location.set( coords.longitude, coords.latitude, 0 );
+
+		survey.getModelSurfaceFromWGS84( location, onHeightReturned );
+
+	}
+
+	function onHeightReturned () {
+
+		console.log( 'hr', scope.location );
+
+		updatePosition();
+
+		scope.gettingHeight = false;
+
+	}
 
 	// The angles alpha, beta and gamma form a set of intrinsic Tait-Bryan angles of type Z-X'-Y''
 
@@ -136,71 +161,48 @@ var LocationControls = function ( viewer, cameraManager, mover ) {
 
 	}
 
-	function onPositionChange ( GPSPosition ) {
-
-		if ( scope.gettingHeight ) return;
-
-		scope.gettingHeight = true;
-
-		const coords = GPSPosition.coords;
-
-		var position = scope.position;
-
-		position.set( coords.longitude, coords.latitude, 0 );
-
-		survey.getModelSurfaceFromWGS84( position, onHeightReturned );
-
-	}
-
-	function onHeightReturned () {
-
-		console.log( 'hr', scope.position );
-
-		updatePosition();
-
-		scope.gettingHeight = false;
-
-	}
-
-	this.hasLocation = function ( newSurvey ) {
+	this.hasLocation = function ( newSurvey, locationChecked ) {
 
 		survey = newSurvey;
 
-		if ( navigator.geolocation ) {
+		if ( 'geolocation' in navigator ) {
 
-			navigator.geolocation.getCurrentPosition( onPositionChange );
+			navigator.geolocation.getCurrentPosition( _currentPosition );
 
+		} else {
+
+			locationChecked( false );
 
 		}
 
+		function _currentPosition ( GPSPosition ) {
+
+			console.log( GPSPosition );
+
+			const coords = GPSPosition.coords;
+			const location = scope.location;
+
+			location.set( coords.longitude, coords.latitude, 0 );
+
+			locationChecked( survey.containsWGS84Position( location ) );
+
+		}
 
 	};
 
-	this.connect = function ( position ) {
+	this.connect = function () {
 
 		onScreenOrientationChangeEvent(); // run once on load
 
 		window.addEventListener( 'orientationchange', onScreenOrientationChangeEvent, false );
 		window.addEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
 
+		var geolocation = navigator.geolocation;
+
+		geolocation.getCurrentPosition( onPositionChangeEvent );
+		scope.watch = geolocation.watchPosition( onPositionChangeEvent );
+
 		scope.enabled = true;
-
-		if ( position === undefined ) {
-
-			var geolocation = navigator.geolocation;
-
-			geolocation.getCurrentPosition( onPositionChange );
-			scope.watch = geolocation.watchPosition( onPositionChange );
-
-		} else {
-
-			scope.position.copy( position );
-
-			selectCameraType( 0 );
-
-			updatePosition();
-
-		}
 
 	};
 

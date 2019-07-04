@@ -103,7 +103,7 @@ var savedView = null;
 
 // WIP
 
-var hasLocation = true;
+var hasLocation = false;
 var trackLocation = false;
 
 function init ( domID, configuration ) { // public method
@@ -169,16 +169,10 @@ function init ( domID, configuration ) { // public method
 
 	controls.maxPolarAngle = Cfg.themeAngle( 'maxPolarAngle' );
 
-	if ( 'geolocation' in navigator ) {
+	locationControls = new LocationControls( Viewer, cameraManager, cameraMove );
 
-		console.log( 'has location' );
-
-		locationControls = new LocationControls( Viewer, cameraManager, cameraMove );
-
-		locationControls.addEventListener( 'change', cameraMoved );
-		locationControls.addEventListener( 'end', onCameraMoveEnd );
-
-	}
+	locationControls.addEventListener( 'change', cameraMoved );
+	locationControls.addEventListener( 'end', onCameraMoveEnd );
 
 	// event handler
 	window.addEventListener( 'resize', resize );
@@ -405,7 +399,7 @@ function init ( domID, configuration ) { // public method
 		},
 
 		'hasLocation': {
-			value: hasLocation,
+			get: function () { return hasLocation; }
 		},
 
 		'trackLocation': {
@@ -669,9 +663,22 @@ function setupTerrain () {
 
 	Materials.setTerrain( terrain );
 
-	locationControls.hasLocation( survey );
+	locationControls.hasLocation( survey, locationChecked );
 
 	renderView();
+
+}
+
+function locationChecked( locationOK ) {
+
+	if ( locationOK ) {
+
+		console.log( 'loc ok', locationOK );
+
+		hasLocation = true;
+		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+
+	}
 
 }
 
@@ -681,6 +688,7 @@ function setLocation ( x ) {
 
 		savedView = viewState.saveState();
 
+		controls.enabled = false;
 		locationControls.connect();
 
 		setView( dynamicView, null );
@@ -689,6 +697,7 @@ function setLocation ( x ) {
 
 		// disable location controls
 		locationControls.disconnect();
+		controls.enabled = true;
 
 		// restore previous settings
 		setView( savedView, null );
@@ -1000,6 +1009,7 @@ function clearView () {
 	selectedSection = null;
 	mouseMode       = MOUSE_MODE_NORMAL;
 	mouseTargets    = [];
+	hasLocation     = false;
 
 	// remove event listeners
 

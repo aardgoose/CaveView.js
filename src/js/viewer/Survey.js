@@ -657,6 +657,17 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 
 };
 
+Survey.prototype.containsWGS84Position = function ( position ) {
+
+	position.copy( this.projectionWGS84.forward( position ) );
+
+	const min = this.limits.min;
+	const max = this.limits.max;
+
+	return ( position.x >= min.x && position.x <= max.x && position.y >= min.y && position.y <= max.y );
+
+};
+
 Survey.prototype.getModelSurfaceFromWGS84 = function ( position, callback ) {
 
 	const self = this;

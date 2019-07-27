@@ -106,7 +106,7 @@ var LocationControls = function ( viewer, cameraManager, mover ) {
 
 		const cameraMove = scope.cameraMove;
 
-		__vector3.copy( scope.position );
+		__vector3.copy( scope.location );
 
 		if ( viewer.cameraType === CAMERA_ORTHOGRAPHIC ) {
 

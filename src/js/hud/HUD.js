@@ -15,7 +15,6 @@ import { CursorScale } from './CursorScale';
 import { CursorControl } from './CursorControl';
 import { LinearScale } from './LinearScale';
 import { ProgressDial } from './ProgressDial';
-import { PositionRing } from './PositionRing';
 import { ScaleBar } from './ScaleBar';
 import { HudObject } from './HudObject';
 
@@ -42,7 +41,6 @@ var angleScale  = null;
 var cursorScale = null;
 var scaleBar    = null;
 var cursorControl = null;
-var positionRing = null;
 
 var compass;
 var ahi;
@@ -106,10 +104,6 @@ function init ( viewerIn, viewRenderer ) {
 
 	attitudeGroup.addStatic( progressDials[ 0 ] );
 	attitudeGroup.addStatic( progressDials[ 1 ] );
-
-	positionRing = new PositionRing();
-
-	scene.add( positionRing );
 
 	viewer.addEventListener( 'newCave', caveChanged );
 	viewer.addEventListener( 'change', viewChanged );
@@ -420,21 +414,9 @@ function updateScaleBar ( camera ) {
 
 		scaleBar.setScale( camera.zoom );
 
-		if ( viewer.trackLocation ) {
-
-			positionRing.update( hScale, camera.zoom, 10 );
-
-		} else {
-
-			positionRing.visible = false;
-
-		}
-
 	} else {
 
 		if ( scaleBar !== null && scaleBar.visible ) scaleBar.visible = false;
-
-		positionRing.visible = false;
 
 	}
 

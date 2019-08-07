@@ -14,7 +14,6 @@ import {
 	MeshBasicMaterial, BackSide
 } from '../Three';
 
-
 function CameraManager ( container, renderer, scene ) {
 
 	const width = container.clientWidth;
@@ -32,6 +31,7 @@ function CameraManager ( container, renderer, scene ) {
 	initCamera( orthographicCamera );
 
 	this.activeCamera = perspectiveCamera;
+	this.mode = CAMERA_PERSPECTIVE;
 
 	const backMaterial = new MeshBasicMaterial( { side: BackSide, colorWrite: false } );
 	const backMask = 1 << FEATURE_SURVEY | 1 << FEATURE_TERRAIN;
@@ -142,6 +142,8 @@ function CameraManager ( container, renderer, scene ) {
 	};
 
 	this.setCamera = function ( mode, target ) {
+
+		if ( this.mode === mode ) return;
 
 		const height = container.clientHeight;
 		const width = container.clientWidth;

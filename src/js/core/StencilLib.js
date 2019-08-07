@@ -2,14 +2,14 @@
 
 const StencilLib = {
 
-	featureShowThrough: true,
+	featureShowThrough: false,
 
 	featureOnBeforeRender: function ( renderer ) {
 
 		if ( ! StencilLib.featureShowThrough ) return;
 
 		const stencil = renderer.state.buffers.stencil;
-		const gl = renderer.context;
+		const gl = renderer.getContext();
 
 		stencil.setTest( true );
 
@@ -34,7 +34,7 @@ const StencilLib = {
 		if ( ! StencilLib.featureShowThrough ) return;
 
 		const stencil = renderer.state.buffers.stencil;
-		const gl = renderer.context;
+		const gl = renderer.getContext();
 
 		stencil.setTest( true );
 		stencil.setOp( gl.KEEP, gl.KEEP, gl.KEEP );

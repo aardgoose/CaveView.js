@@ -35,6 +35,7 @@ import {
 	WebGLRenderer,
 	MOUSE, FogExp2
 } from '../Three';
+import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 
 var renderer;
 
@@ -725,9 +726,17 @@ function setCameraMode ( mode ) {
 
 function cameraMoved () {
 
-	__rotation.setFromQuaternion( cameraManager.activeCamera.getWorldQuaternion( __q ) );
+	const camera = cameraManager.activeCamera;
+
+	__rotation.setFromQuaternion( camera.getWorldQuaternion( __q ) );
 
 	lightingManager.setRotation( __rotation );
+
+	if ( survey !== null ) {
+
+		TerrainOverlayMaterial.setScale( camera.zoom * survey.scale.z );
+
+	}
 
 	renderView();
 

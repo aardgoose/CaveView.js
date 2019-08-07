@@ -1,10 +1,10 @@
-
 import {
 	TextureLoader,
 	MeshLambertMaterial,
 	Box2, Vector2
 } from '../Three';
 
+import {TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 import { Cfg } from '../core/lib';
 import proj4 from 'proj4';
 
@@ -152,7 +152,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 		}
 
-		const material = new MeshLambertMaterial( { transparent: true, opacity: opacity, color: 0xffffff } );
+		const material = new TerrainOverlayMaterial( { transparent: true, opacity: opacity, color: 0xffffff } );
 
 		texture.anisotropy = Cfg.value( 'anisotropy', 4 );
 

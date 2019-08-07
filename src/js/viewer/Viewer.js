@@ -73,7 +73,6 @@ var terrainShadingMode = SHADING_RELIEF;
 
 var useFog = false;
 
-var cameraMode;
 var selectedSection = null;
 
 var controls;
@@ -267,7 +266,7 @@ function init ( domID, configuration ) { // public method
 
 		'cameraType': {
 			writeable: true,
-			get: function () { return cameraMode; },
+			get: function () { return cameraManager.mode; },
 			set: function ( x ) { _stateSetter( setCameraMode, 'cameraType', x ); }
 		},
 
@@ -713,12 +712,8 @@ function setLocation ( x ) {
 
 function setCameraMode ( mode ) {
 
-	if ( mode === cameraMode ) return;
-
 	cameraManager.setCamera( mode, controls.target );
 	activeRenderer = cameraManager.activeRenderer;
-
-	cameraMode = mode;
 
 	renderView();
 
@@ -732,7 +727,7 @@ function cameraMoved () {
 
 	lightingManager.setRotation( __rotation );
 
-	if ( survey !== null ) {
+	if ( trackLocation && camera.isOrthographicCamera ) {
 
 		TerrainOverlayMaterial.setScale( camera.zoom * survey.scale.z );
 

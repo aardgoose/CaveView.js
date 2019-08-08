@@ -87,7 +87,6 @@ var timerId = null;
 
 var popup = null;
 
-var activeRenderer;
 var clipped = false;
 
 // preallocated tmp objects
@@ -147,8 +146,6 @@ function init ( domID, configuration ) { // public method
 
 	cameraManager = new CameraManager( container, renderer, scene );
 
-	activeRenderer = cameraManager.activeRenderer;
-
 	scene.fog = fog;
 	scene.name = 'CV.Viewer';
 
@@ -169,10 +166,11 @@ function init ( domID, configuration ) { // public method
 
 	controls.maxPolarAngle = Cfg.themeAngle( 'maxPolarAngle' );
 
-	locationControls = new LocationControls( Viewer, cameraManager, cameraMove );
+	locationControls = new LocationControls( cameraManager );
 
 	locationControls.addEventListener( 'change', cameraMoved );
 	locationControls.addEventListener( 'end', onCameraMoveEnd );
+	locationControls.addEventListener( 'accuracy', onLocationAccuracyChange );
 
 	// event handler
 	window.addEventListener( 'resize', resize );
@@ -710,10 +708,16 @@ function setLocation ( x ) {
 
 }
 
+function onLocationAccuracyChange( event ) {
+
+	console.log( 'acc', event );
+	TerrainOverlayMaterial.setAccuracy( event.value );
+
+}
+
 function setCameraMode ( mode ) {
 
 	cameraManager.setCamera( mode, controls.target );
-	activeRenderer = cameraManager.activeRenderer;
 
 	renderView();
 
@@ -1510,7 +1514,7 @@ function renderView () {
 
 		if ( useFog ) Materials.setFog( true );
 
-		activeRenderer();
+		cameraManager.activeRenderer();
 
 	}
 

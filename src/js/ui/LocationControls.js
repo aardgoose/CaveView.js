@@ -8,7 +8,7 @@
 import {
 	Euler,
 	Math as _Math,
-	Vector3, Box3,
+	Vector3,
 	Quaternion,
 	Object3D,
 	EventDispatcher
@@ -16,75 +16,77 @@ import {
 
 import { CAMERA_PERSPECTIVE, CAMERA_ORTHOGRAPHIC, CAMERA_NONE } from '../core/constants';
 
-const down = new Vector3( 0, 0, -1 );
-
 const __vector3 = new Vector3();
-const __box3 = new Box3();
 const __euler = new Euler();
 const __quaternion1 = new Quaternion();
 const __quaternion2 = new Quaternion();
 
 const changeEvent = { type: 'change' };
 const endEvent = { type: 'end' };
+const accuracyEvent = { type: 'accuracy', value: 0 };
 
 var survey = null;
 
-var LocationControls = function ( viewer, cameraManager, mover ) {
+var LocationControls = function ( cameraManager ) {
 
 	var scope = this;
 
-	this.cameraManager = cameraManager;
-	this.cameraMove = mover;
-
 	this.enabled = false;
 
-	this.deviceOrientation = {};
-	this.screenOrientation = 0;
-	this.thresholdHigh = 60;
-	this.thresholdLow = 30;
+	const alphaOffset = 0; // radians
 
-	this.alphaOffset = 0; // radians
-	this.watch = null;
-	this.location = new Vector3();
-	this.gettingHeight = false;
+	const location = new Vector3();
+
+	const thresholdHigh = 60;
+	const thresholdLow = 30;
+
+	var deviceOrientation = null;
+	var screenOrientation = null;
+
+	var watch = null;
+	var gettingHeight = false;
 
 	function onDeviceOrientationChangeEvent ( event ) {
 
-		scope.deviceOrientation = event;
-		scope.update();
+		deviceOrientation = event;
+		updateOrientation();
 
 	}
 
 	function onScreenOrientationChangeEvent () {
 
-		scope.screenOrientation = window.orientation || 0;
-		scope.update();
+		screenOrientation = window.orientation || 0;
+		updateOrientation();
 
 	}
 
 	function onPositionChangeEvent ( GPSPosition ) {
 
-		if ( scope.gettingHeight ) return;
+		if ( gettingHeight ) return;
 
-		scope.gettingHeight = true;
+		gettingHeight = true;
 
 		const coords = GPSPosition.coords;
 
-		var location = scope.location;
+		if ( coords.accuracy !== accuracyEvent.value ) {
+
+			accuracyEvent.value = coords.accuracy;
+			scope.dispatchEvent( accuracyEvent );
+
+		}
 
 		location.set( coords.longitude, coords.latitude, 0 );
-
 		survey.getModelSurfaceFromWGS84( location, onHeightReturned );
 
 	}
 
 	function onHeightReturned () {
 
-		console.log( 'hr', scope.location );
+		console.log( 'hr', location );
 
 		updatePosition();
 
-		scope.gettingHeight = false;
+		gettingHeight = false;
 
 	}
 
@@ -104,44 +106,46 @@ var LocationControls = function ( viewer, cameraManager, mover ) {
 
 		console.log( 'up' );
 
-		const cameraMove = scope.cameraMove;
+		__vector3.copy( location );
 
-		__vector3.copy( scope.location );
+		const position = cameraManager.activeCamera.position;
 
-		if ( viewer.cameraType === CAMERA_ORTHOGRAPHIC ) {
+		if ( cameraManager.mode === CAMERA_ORTHOGRAPHIC ) {
 
-			// FIXME - scale to real world sizes adjusted by accuracy
-			__box3.setFromCenterAndSize(
-				survey.getWorldPosition( __vector3 ),
-				new Vector3( 100, 100, 0 )
-			);
+			__vector3.z += 100;
 
-			cameraMove.prepare( __box3, down );
+			survey.getWorldPosition( __vector3 );
+
+			position.copy( __vector3 );
+
+			__vector3.z = -Infinity;
+			cameraManager.activeCamera.lookAt( __vector3 );
 
 		} else {
 
-			__vector3.z += 2; // adjust camera position to local surface
-			cameraMove.prepareSimpleMove( survey.getWorldPosition( __vector3 ) );
+			__vector3.z += 2; // adjust to head height
+			survey.getWorldPosition( __vector3 );
+
+			position.copy( __vector3 );
 
 		}
 
-		scope.update();
-
-		cameraMove.start();
+		scope.dispatchEvent( changeEvent );
+		console.log( position );
 
 	}
 
 	function selectCameraType ( angle ) {
 
-		var cameraType = viewer.cameraType;
+		var cameraType = cameraManager.mode;
 
 		// apply hysteresis
 
-		if ( angle > scope.thresholdHigh ) {
+		if ( angle > thresholdHigh ) {
 
 			cameraType = CAMERA_ORTHOGRAPHIC;
 
-		} else if ( angle < scope.thresholdLow ) {
+		} else if ( angle < thresholdLow ) {
 
 			cameraType = CAMERA_PERSPECTIVE;
 
@@ -151,13 +155,47 @@ var LocationControls = function ( viewer, cameraManager, mover ) {
 
 		}
 
-		if ( cameraType !== viewer.cameraType ) {
+		if ( cameraType !== cameraManager.mode ) {
 
-			viewer.cameraType = cameraType;
+			cameraManager.setCamera( cameraType, location );
 
 			updatePosition();
 
 		}
+
+	}
+
+	function updateOrientation () {
+
+		if ( scope.enabled === false || deviceOrientation === null ) return;
+
+		console.log( 'update', deviceOrientation );
+
+		let alpha = deviceOrientation.alpha ? _Math.degToRad( deviceOrientation.alpha ) + alphaOffset : 0; // Z
+
+		let beta = deviceOrientation.beta ? _Math.degToRad( deviceOrientation.beta ) : 0; // X'
+
+		let gamma = deviceOrientation.gamma ? _Math.degToRad( deviceOrientation.gamma ) : 0; // Y''
+
+		let orient = screenOrientation ? _Math.degToRad( screenOrientation ) : 0; // O
+
+		getQuaternion( __quaternion1, alpha, beta, gamma, orient );
+
+		// get angle to vertical
+		__vector3.set( 0, 0, 1 ).applyQuaternion( __quaternion1 );
+
+		const angle = __vector3.angleTo( Object3D.DefaultUp );
+
+		selectCameraType( Math.abs( angle * _Math.RAD2DEG - 90 ) );
+
+		if ( cameraManager.mode === CAMERA_PERSPECTIVE ) {
+
+			cameraManager.activeCamera.quaternion.copy( __quaternion1 );
+
+		}
+
+		scope.dispatchEvent( changeEvent );
+		scope.dispatchEvent( endEvent );
 
 	}
 
@@ -180,7 +218,6 @@ var LocationControls = function ( viewer, cameraManager, mover ) {
 			console.log( GPSPosition );
 
 			const coords = GPSPosition.coords;
-			const location = scope.location;
 
 			location.set( coords.longitude, coords.latitude, 0 );
 
@@ -200,7 +237,7 @@ var LocationControls = function ( viewer, cameraManager, mover ) {
 		var geolocation = navigator.geolocation;
 
 		geolocation.getCurrentPosition( onPositionChangeEvent );
-		scope.watch = geolocation.watchPosition( onPositionChangeEvent );
+		watch = geolocation.watchPosition( onPositionChangeEvent );
 
 		scope.enabled = true;
 
@@ -211,47 +248,9 @@ var LocationControls = function ( viewer, cameraManager, mover ) {
 		window.removeEventListener( 'orientationchange', onScreenOrientationChangeEvent, false );
 		window.removeEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
 
-		navigator.geolocation.clearWatch( this.watch );
+		navigator.geolocation.clearWatch( watch );
 
 		scope.enabled = false;
-
-	};
-
-	this.update = function () {
-
-		if ( scope.enabled === false ) return;
-
-		var device = scope.deviceOrientation;
-
-		if ( device ) {
-
-			let alpha = device.alpha ? _Math.degToRad( device.alpha ) + scope.alphaOffset : 0; // Z
-
-			let beta = device.beta ? _Math.degToRad( device.beta ) : 0; // X'
-
-			let gamma = device.gamma ? _Math.degToRad( device.gamma ) : 0; // Y''
-
-			let orient = scope.screenOrientation ? _Math.degToRad( scope.screenOrientation ) : 0; // O
-
-			getQuaternion( __quaternion1, alpha, beta, gamma, orient );
-
-			// get angle to vertical
-			__vector3.set( 0, 0, 1 ).applyQuaternion( __quaternion1 );
-
-			const angle = __vector3.angleTo( Object3D.DefaultUp );
-
-			selectCameraType( Math.abs( angle * _Math.RAD2DEG - 90 ) );
-
-			if ( viewer.cameraType === CAMERA_PERSPECTIVE ) {
-
-				scope.cameraManager.activeCamera.quaternion.copy( __quaternion1 );
-
-			}
-
-		}
-
-		scope.dispatchEvent( changeEvent );
-		scope.dispatchEvent( endEvent );
 
 	};
 

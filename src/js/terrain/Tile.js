@@ -264,7 +264,6 @@ Tile.prototype.setOpacity = function ( opacity ) {
 	const material = this.material;
 
 	material.opacity = opacity;
-	material.needsUpdate = true;
 
 };
 

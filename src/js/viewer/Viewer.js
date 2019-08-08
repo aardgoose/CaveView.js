@@ -734,6 +734,7 @@ function cameraMoved () {
 	if ( trackLocation && camera.isOrthographicCamera ) {
 
 		TerrainOverlayMaterial.setScale( camera.zoom * survey.scale.z );
+		TerrainOverlayMaterial.setTarget( locationControls.location );
 
 	}
 

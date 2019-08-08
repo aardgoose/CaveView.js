@@ -5,6 +5,7 @@ import { Vector2 } from 'three';
 
 const fragment_pars = [
 	'uniform float scale;',
+	'uniform float accuracy;',
 	'uniform vec2 target;',
 	'uniform vec3 contourColor;',
 	'uniform float contourInterval;',
@@ -13,7 +14,7 @@ const fragment_pars = [
 
 const fragment_color = [
 	'float targetDistance = distance( target, vPosition );',
-	'float f = abs( targetDistance - 20.0 ) * scale;',
+	'float f = abs( targetDistance - accuracy ) * scale;',
 	'float c = smoothstep( 1.0, 6.0, f );',
 	'diffuseColor = mix( vec4( contourColor, 0.7 ), diffuseColor, c );'
 ].join( '\n' );
@@ -29,6 +30,7 @@ function TerrainOverlayMaterial ( parameters ) {
 
 		Object.assign( shader.uniforms, {
 			scale: TerrainOverlayMaterial.scale,
+			accuracy: TerrainOverlayMaterial.accuracy,
 			target: { value: new Vector2( 0.0, 0.0 ) },
 			contourInterval: { value: Cfg.themeValue( 'shading.contours.interval' ) },
 			contourColor:    { value: Cfg.themeColor( 'shading.contours.line' ) },
@@ -52,10 +54,17 @@ function TerrainOverlayMaterial ( parameters ) {
 }
 
 TerrainOverlayMaterial.scale = { value: 1.0 };
+TerrainOverlayMaterial.accuracy = { value: 0.0 };
 
 TerrainOverlayMaterial.setScale = function ( scale ) {
 
 	TerrainOverlayMaterial.scale.value = scale;
+
+};
+
+TerrainOverlayMaterial.setAccuracy = function ( accuracy ) {
+
+	TerrainOverlayMaterial.accuracy.value = accuracy;
 
 };
 

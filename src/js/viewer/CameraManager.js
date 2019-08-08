@@ -230,6 +230,7 @@ function CameraManager ( container, renderer, scene ) {
 
 		this.activeCamera = activeCamera;
 		this.activeEffect = activeEffect;
+		this.mode = mode;
 
 	};
 

@@ -23,7 +23,7 @@ const __quaternion2 = new Quaternion();
 
 const changeEvent = { type: 'change' };
 const endEvent = { type: 'end' };
-const accuracyEvent = { type: 'accuracy', value: 0 };
+const accuracyEvent = { type: 'accuracy', value: 1000 };
 
 var survey = null;
 
@@ -45,6 +45,8 @@ var LocationControls = function ( cameraManager ) {
 
 	var watch = null;
 	var gettingHeight = false;
+
+	this.location = location;
 
 	function onDeviceOrientationChangeEvent ( event ) {
 
@@ -108,18 +110,31 @@ var LocationControls = function ( cameraManager ) {
 
 		__vector3.copy( location );
 
-		const position = cameraManager.activeCamera.position;
+		const camera = cameraManager.activeCamera;
+		const position = camera.position;
+
+		console.log( camera );
+		console.log( cameraManager.mode );
 
 		if ( cameraManager.mode === CAMERA_ORTHOGRAPHIC ) {
 
-			__vector3.z += 100;
+			__vector3.z += 500;
 
 			survey.getWorldPosition( __vector3 );
 
 			position.copy( __vector3 );
 
-			__vector3.z = -Infinity;
-			cameraManager.activeCamera.lookAt( __vector3 );
+			//__vector3.z = -Infinity;
+			camera.lookAt( __vector3 );
+
+			const width = camera.right - camera.left;
+			const height = camera.top - camera.bottom;
+
+			console.log( 'zoom', width, height, survey.scale );
+
+			camera.zoom = Math.min( width, height ) * 1 / ( 2 * accuracyEvent.value * survey.scale.x );
+
+			camera.updateProjectionMatrix();
 
 		} else {
 
@@ -131,7 +146,6 @@ var LocationControls = function ( cameraManager ) {
 		}
 
 		scope.dispatchEvent( changeEvent );
-		console.log( position );
 
 	}
 
@@ -168,8 +182,6 @@ var LocationControls = function ( cameraManager ) {
 	function updateOrientation () {
 
 		if ( scope.enabled === false || deviceOrientation === null ) return;
-
-		console.log( 'update', deviceOrientation );
 
 		let alpha = deviceOrientation.alpha ? _Math.degToRad( deviceOrientation.alpha ) + alphaOffset : 0; // Z
 

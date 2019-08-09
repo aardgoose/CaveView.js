@@ -689,8 +689,6 @@ Survey.prototype.getModelSurfaceFromWGS84 = function ( position, callback ) {
 		position.z = height;
 		position.sub( self.offsets );
 
-		self.markers.mark( { p: position } );
-
 		callback();
 
 	}

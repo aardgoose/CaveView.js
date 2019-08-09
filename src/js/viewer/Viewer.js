@@ -35,7 +35,6 @@ import {
 	WebGLRenderer,
 	MOUSE, FogExp2
 } from '../Three';
-import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 
 var renderer;
 
@@ -711,7 +710,7 @@ function setLocation ( x ) {
 function onLocationAccuracyChange( event ) {
 
 	console.log( 'acc', event );
-	TerrainOverlayMaterial.setAccuracy( event.value );
+	terrain.setAccuracy( event.value );
 
 }
 
@@ -733,8 +732,8 @@ function cameraMoved () {
 
 	if ( trackLocation && camera.isOrthographicCamera ) {
 
-		TerrainOverlayMaterial.setScale( camera.zoom * survey.scale.z );
-		TerrainOverlayMaterial.setTarget( locationControls.location );
+		terrain.setScale( camera.zoom * survey.scale.z );
+		terrain.setTarget( locationControls.location );
 
 	}
 

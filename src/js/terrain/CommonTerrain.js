@@ -2,6 +2,7 @@
 import { FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS } from '../core/constants';
 import { Cfg } from '../core/lib';
 import { Materials } from '../materials/Materials';
+import { CommonTerrainUniforms } from '../materials/CommonTerrainUniforms';
 import { unpackRGBA } from '../core/unpackRGBA';
 import { StencilLib } from '../core/StencilLib';
 import { Overlay } from './Overlay';
@@ -374,6 +375,24 @@ CommonTerrain.prototype.getHeight = function ( point ) {
 	// convert to survey units and return
 
 	return unpackRGBA( __result ) * this.terrainRange.z + terrainBase.z;
+
+};
+CommonTerrain.prototype.setScale = function ( scale ) {
+
+	CommonTerrainUniforms.scale.value = scale;
+
+};
+
+CommonTerrain.prototype.setAccuracy = function ( accuracy ) {
+
+	CommonTerrainUniforms.accuracy.value = accuracy;
+	CommonTerrainUniforms.ringColor.value.g = 1 - ( accuracy / 1000 );
+
+};
+
+CommonTerrain.prototype.setTarget = function ( target ) {
+
+	CommonTerrainUniforms.target.value.copy( target );
 
 };
 

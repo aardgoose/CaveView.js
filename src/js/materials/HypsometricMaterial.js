@@ -2,6 +2,20 @@ import { ColourCache } from '../core/ColourCache';
 import { Cfg } from '../core/lib';
 
 import { MeshLambertMaterial} from '../Three';
+import { CommonTerrainUniforms } from './CommonTerrainUniforms';
+import { Shaders } from '../shaders/Shaders';
+
+const fragment_pars = [
+	'uniform sampler2D cmap;',
+	'varying float zMap;',
+	Shaders.commonTerrainCodePars
+].join( '\n' );
+
+const fragment_color = [
+	'diffuseColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) );',
+	'diffuseColor.a = opacity;',
+	Shaders.commonTerrainCodeColor
+].join( '\n' );
 
 function HypsometricMaterial ( survey ) {
 
@@ -22,19 +36,23 @@ function HypsometricMaterial ( survey ) {
 
 	this.onBeforeCompile = function ( shader ) {
 
-		Object.assign( shader.uniforms, {
-			minZ:   { value: zMin },
-			scaleZ: { value: 1 / ( zMax - zMin ) },
-			cmap:   { value: ColourCache.getTexture( 'hypsometric' ) },
-		} );
+		Object.assign(
+			shader.uniforms,
+			CommonTerrainUniforms,
+			{
+				minZ:   { value: zMin },
+				scaleZ: { value: 1 / ( zMax - zMin ) },
+				cmap:   { value: ColourCache.getTexture( 'hypsometric' ) }
+			}
+		);
 
 		var vertexShader = shader.vertexShader
-			.replace( '#include <common>', '\nuniform float minZ;\nuniform float scaleZ;\nvarying float zMap;\n$&' )
-			.replace( 'include <begin_vertex>', '$&\nzMap = saturate( ( position.z - minZ ) * scaleZ );' );
+			.replace( '#include <common>', '\nuniform float minZ;\nuniform float scaleZ;\nvarying float zMap;\nvarying vec2 vPosition;\n$&' )
+			.replace( 'include <begin_vertex>', '$&\nvPosition = vec2( position.x, position.y );\nzMap = saturate( ( position.z - minZ ) * scaleZ );' );
 
 		var fragmentShader = shader.fragmentShader
-			.replace( '#include <common>', 'uniform sampler2D cmap;\nvarying float zMap;\n$&' )
-			.replace( '#include <color_fragment>', 'diffuseColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) );diffuseColor.a = opacity;' );
+			.replace( '#include <common>', '$&\n' + fragment_pars + '\n' )
+			.replace( '#include <color_fragment>', fragment_color );
 
 		shader.vertexShader = vertexShader;
 		shader.fragmentShader = fragmentShader;

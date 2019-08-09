@@ -11,7 +11,10 @@ import { GlyphMaterial } from './GlyphMaterial';
 import { GlyphString } from '../core/GlyphString';
 import { MaterialFog } from './MaterialFog';
 
-import { LineBasicMaterial, MeshLambertMaterial, NoColors, VertexColors } from '../Three';
+import {
+	LineBasicMaterial, MeshLambertMaterial,
+	NoColors, VertexColors, IncrementStencilOp, EqualStencilFunc
+} from '../Three';
 
 const cache = new Map();
 
@@ -24,6 +27,21 @@ var cursorHeight = 0;
 var viewer;
 var survey;
 
+function setStencil( material ) {
+
+	material.stencilWrite = true;
+	material.stencilZPass = IncrementStencilOp;
+
+}
+
+function testStencil( material ) {
+
+	material.stencilWrite = true;
+	material.stencilFunc = EqualStencilFunc;
+
+
+}
+
 function cacheMaterial ( name, material ) {
 
 	cache.set( name, material );
@@ -31,6 +49,7 @@ function cacheMaterial ( name, material ) {
 	return material;
 
 }
+
 function cacheSurveyMaterial ( name, material ) {
 
 	cache.set( name, material );
@@ -75,6 +94,7 @@ function getHeightMaterial ( type ) {
 	if ( material === undefined ) {
 
 		material = cacheSurveyMaterial( name, new HeightMaterial( type, survey ) );
+		setStencil( material );
 
 	}
 
@@ -91,6 +111,7 @@ function getHypsometricMaterial () {
 	if ( material === undefined ) {
 
 		material = cacheSurveyMaterial( name, new HypsometricMaterial( survey ) );
+		testStencil( material );
 
 	}
 
@@ -113,6 +134,7 @@ function getDepthMaterial ( type ) {
 	if ( material === undefined ) {
 
 		material = cacheSurveyMaterial( name, new DepthMaterial( type, survey ) );
+		setStencil( material );
 
 		depthMaterials.push( material );
 
@@ -131,6 +153,7 @@ function getCursorMaterial ( type ) {
 	if ( material === undefined ) {
 
 		material = cacheSurveyMaterial( name, new CursorMaterial( type, survey ) );
+		setStencil( material );
 
 	}
 
@@ -151,6 +174,7 @@ function getDepthCursorMaterial( type ) {
 	if ( material === undefined ) {
 
 		material = cacheSurveyMaterial( name, new DepthCursorMaterial( type, survey ) );
+		setStencil( material );
 
 		depthMaterials.push( material );
 
@@ -186,6 +210,7 @@ function getLineMaterial () {
 	if ( material === undefined ) {
 
 		material = cacheMaterial( 'line', new LineBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
+		setStencil( material );
 
 	}
 
@@ -234,6 +259,7 @@ function getClusterMaterial ( count ) {
 	if ( material === undefined ) {
 
 		material = cacheMaterial( name, new ClusterMaterial( count ) );
+		setStencil( material );
 
 	}
 

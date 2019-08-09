@@ -695,6 +695,7 @@ function setLocation ( x ) {
 		// disable location controls
 		locationControls.disconnect();
 		controls.enabled = true;
+		terrain.setScale( 0.0 );
 
 		// restore previous settings
 		setView( savedView, null );

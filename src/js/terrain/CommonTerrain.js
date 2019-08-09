@@ -4,7 +4,6 @@ import { Cfg } from '../core/lib';
 import { Materials } from '../materials/Materials';
 import { CommonTerrainUniforms } from '../materials/CommonTerrainUniforms';
 import { unpackRGBA } from '../core/unpackRGBA';
-import { StencilLib } from '../core/StencilLib';
 import { Overlay } from './Overlay';
 import {
 	Group, OrthographicCamera,
@@ -187,9 +186,6 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	var material;
 	var hideAttribution = true;
-
-	StencilLib.featureShowThrough = true;
-
 	var overlay = null;
 
 	switch ( mode ) {
@@ -210,7 +206,6 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 	case SHADING_CONTOURS:
 
 		material = Materials.getContourMaterial();
-		StencilLib.featureShowThrough = false;
 
 		break;
 

@@ -28,8 +28,7 @@ import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
 import { buildWallsSync } from './walls/WallBuilders';
 
-import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
-import { StencilLib } from '../core/StencilLib';
+import { Matrix4, Vector3, Box3, Object3D, Color, IncrementStencilOp } from '../Three';
 import proj4 from 'proj4';
 
 function Survey ( cave ) {
@@ -754,8 +753,10 @@ Survey.prototype.boxSection = function ( node, box, colour ) {
 
 		box = new Box3Helper( node.boundingBox, colour );
 
-		box.onBeforeRender = StencilLib.featureOnBeforeRender;
-		box.onAfterRender = StencilLib.featureOnAfterRender;
+		const material = box.material;
+
+		material.stencilWrite = true;
+		material.stencilZPass = IncrementStencilOp;
 
 		box.layers.set( FEATURE_SELECTED_BOX );
 

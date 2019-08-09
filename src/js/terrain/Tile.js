@@ -1,6 +1,5 @@
 
 import { FEATURE_TERRAIN } from '../core/constants';
-import { StencilLib } from '../core/StencilLib';
 import { Materials } from '../materials/Materials';
 
 import {
@@ -63,9 +62,6 @@ function Tile ( x, y, zoom, tileSpec ) {
 Tile.liveTiles = 0;
 
 Tile.prototype = Object.create( Mesh.prototype );
-
-Tile.prototype.onBeforeRender = StencilLib.terrainOnBeforeRender;
-Tile.prototype.onAfterRender = StencilLib.terrainOnAfterRender;
 
 Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox, material ) {
 

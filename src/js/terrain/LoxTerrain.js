@@ -1,7 +1,6 @@
 
 import { CommonTerrain } from './CommonTerrain';
 import { LoxTerrainGeometry } from './LoxTerrainGeometry';
-import { StencilLib } from '../core/StencilLib';
 import { Materials } from '../materials/Materials';
 import { Cfg } from '../core/lib';
 import { FEATURE_TERRAIN } from '../core/constants';
@@ -31,8 +30,6 @@ function LoxTile( terrain, offsets ) {
 
 LoxTile.prototype = Object.create( Mesh.prototype );
 
-LoxTile.prototype.onBeforeRender = StencilLib.terrainOnBeforeRender;
-LoxTile.prototype.onAfterRender = StencilLib.terrainOnAfterRender;
 LoxTile.prototype.isTile = true;
 
 LoxTile.prototype.loadOverlay = function ( overlayLoadedCallback ) {

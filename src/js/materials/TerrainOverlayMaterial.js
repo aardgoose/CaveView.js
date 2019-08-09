@@ -1,5 +1,5 @@
 
-import { MeshLambertMaterial } from '../Three';
+import { MeshLambertMaterial, EqualStencilFunc } from '../Three';
 import { CommonTerrainUniforms } from './CommonTerrainUniforms';
 import { Shaders } from '../shaders/Shaders';
 
@@ -27,6 +27,9 @@ function TerrainOverlayMaterial ( parameters ) {
 		shader.fragmentShader = fragmentShader;
 
 	};
+
+	this.stencilWrite = true;
+	this.stencilFunc = EqualStencilFunc;
 
 	return this;
 

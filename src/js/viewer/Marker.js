@@ -1,6 +1,5 @@
 import { Materials } from '../materials/Materials';
 import { Point } from './Point';
-import { StencilLib } from '../core/StencilLib';
 
 function Marker( count ) {
 
@@ -13,9 +12,6 @@ function Marker( count ) {
 Marker.prototype = Object.create( Point.prototype );
 
 Marker.prototype.isMarker = true;
-
-Marker.prototype.onBeforeRender = StencilLib.featureOnBeforeRender;
-Marker.prototype.onAfterRender = StencilLib.featureOnAfterRender;
 
 Marker.prototype.adjustHeight = function ( func ) {
 

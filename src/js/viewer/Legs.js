@@ -6,7 +6,6 @@ import {
 } from '../Three';
 
 import { Cfg } from '../core/lib';
-import { StencilLib } from '../core/StencilLib';
 
 const unselectedMaterial = new LineBasicMaterial( { color: 0x444444, vertexColors: VertexColors } );
 
@@ -24,9 +23,6 @@ function Legs () {
 }
 
 Legs.prototype = Object.create( LineSegments.prototype );
-
-Legs.prototype.onBeforeRender = StencilLib.featureOnBeforeRender;
-Legs.prototype.onAfterRender = StencilLib.featureOnAfterRender;
 
 Legs.prototype.addLegs = function ( vertices, legRuns ) {
 

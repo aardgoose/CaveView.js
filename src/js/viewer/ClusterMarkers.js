@@ -6,8 +6,6 @@ import { Materials } from '../materials/Materials';
 import { Marker } from './Marker';
 import { Object3D, Vector3, Triangle, Plane } from '../Three';
 
-import { StencilLib } from '../core/StencilLib';
-
 // preallocated objects for projected area calculation and cluster visibility checks
 
 const __a = new Vector3();
@@ -341,8 +339,8 @@ ClusterMarkers.prototype.addMarker = function ( node, label ) {
 	marker.position.copy( node.p );
 	marker.stationID = node.id;
 
-	marker.onBeforeRender = StencilLib.featureOnBeforeRender;
-	marker.onAfterRender = StencilLib.featureOnAfterRender;
+	//marker.onBeforeRender = StencilLib.featureOnBeforeRender;
+	//marker.onAfterRender = StencilLib.featureOnAfterRender;
 
 	this.labels.push( marker );
 	this.quadTree.addNode( marker, this.maxDepth );

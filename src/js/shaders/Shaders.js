@@ -26,6 +26,9 @@ import popupFragmentShader from './popupFragmentShader.glsl';
 import waterVertexShader from './waterVertexShader.glsl';
 import waterFragmentShader from './waterFragmentShader.glsl';
 
+import commonTerrainCodeColor from './commonTerrainCodeColor.glsl';
+import commonTerrainCodePars from './commonTerrainCodePars.glsl';
+
 export const Shaders = {
 	anaglyphVertexShader:	anaglyphVertexShader,
 	anaglyphFragmentShader:	anaglyphFragmentShader,
@@ -44,7 +47,9 @@ export const Shaders = {
 	popupVertexShader:		popupVertexShader,
 	popupFragmentShader:	popupFragmentShader,
 	waterVertexShader:		waterVertexShader,
-	waterFragmentShader:	waterFragmentShader
+	waterFragmentShader:	waterFragmentShader,
+	commonTerrainCodeColor: commonTerrainCodeColor,
+	commonTerrainCodePars: commonTerrainCodePars
 };
 
 // EOF

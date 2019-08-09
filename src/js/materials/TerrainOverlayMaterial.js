@@ -1,21 +1,7 @@
 
 import { MeshLambertMaterial } from '../Three';
 import { CommonTerrainUniforms } from './CommonTerrainUniforms';
-
-const fragment_pars = [
-	'uniform float scale;',
-	'uniform float accuracy;',
-	'uniform vec2 target;',
-	'uniform vec3 ringColor;',
-	'varying vec2 vPosition;'
-].join( '\n' );
-
-const fragment_color = [
-	'float targetDistance = distance( target, vPosition );',
-	'float f = abs( targetDistance - accuracy ) * scale;',
-	'float c = smoothstep( 1.0, 6.0, f );',
-	'diffuseColor = mix( vec4( ringColor, 0.7 ), diffuseColor, c );'
-].join( '\n' );
+import { Shaders } from '../shaders/Shaders';
 
 function TerrainOverlayMaterial ( parameters ) {
 
@@ -34,8 +20,8 @@ function TerrainOverlayMaterial ( parameters ) {
 			.replace( 'include <begin_vertex>', '$&\nvPosition = vec2( position.x, position.y );\n' );
 
 		var fragmentShader = shader.fragmentShader
-			.replace( '#include <common>', '$&\n' + fragment_pars + '\n' )
-			.replace( '#include <color_fragment>', fragment_color );
+			.replace( '#include <common>', '$&\n' + Shaders.commonTerrainCodePars + '\n' )
+			.replace( '#include <color_fragment>', Shaders.commonTerrainCodeColor );
 
 		shader.vertexShader = vertexShader;
 		shader.fragmentShader = fragmentShader;

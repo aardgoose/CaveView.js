@@ -670,8 +670,6 @@ function locationChecked( locationOK ) {
 
 	if ( locationOK ) {
 
-		console.log( 'loc ok', locationOK );
-
 		hasLocation = true;
 		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 

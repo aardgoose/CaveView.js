@@ -43,12 +43,6 @@ function DepthMaterial ( type, survey ) {
 
 DepthMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
-DepthMaterial.prototype.setDatumShift = function ( shift ) {
-
-	this.uniforms.datumShift.value = shift;
-
-};
-
 export { DepthMaterial };
 
 // EOF

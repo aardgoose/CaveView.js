@@ -64,12 +64,6 @@ DepthCursorMaterial.prototype.getCursor = function () {
 
 };
 
-DepthCursorMaterial.prototype.setDatumShift = function ( shift ) {
-
-	this.uniforms.datumShift.value = shift;
-
-};
-
 export { DepthCursorMaterial };
 
 // EOF

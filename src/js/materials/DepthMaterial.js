@@ -6,6 +6,7 @@ import { ColourCache } from '../core/ColourCache';
 import { ShaderMaterial, Vector3 } from '../Three';
 import { MaterialFog } from './MaterialFog';
 import { Cfg } from '../core/lib';
+import { CommonDepthUniforms } from './CommonDepthUniforms';
 
 function DepthMaterial ( type, survey ) {
 
@@ -29,8 +30,7 @@ function DepthMaterial ( type, survey ) {
 			depthScale: { value: 1 / ( surveyLimits.max.z - surveyLimits.min.z ) },
 			cmap:       { value: ColourCache.getTexture( gradient ) },
 			depthMap:   { value: terrain.depthTexture },
-			datumShift: { value: 0.0 },
-		}, MaterialFog.uniforms ),
+		}, MaterialFog.uniforms, CommonDepthUniforms ),
 		defines: {
 			USE_COLOR: true,
 			SURFACE: ( type !== MATERIAL_LINE )

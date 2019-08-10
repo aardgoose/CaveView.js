@@ -264,7 +264,6 @@ function initCache ( Viewer ) {
 
 	viewer = Viewer;
 
-
 }
 
 function flushCache( surveyIn ) {

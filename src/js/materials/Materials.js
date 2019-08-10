@@ -15,12 +15,12 @@ import {
 	LineBasicMaterial, MeshLambertMaterial,
 	NoColors, VertexColors, IncrementStencilOp, EqualStencilFunc
 } from '../Three';
+import { CommonDepthUniforms } from './CommonDepthUniforms';
 
 const cache = new Map();
 
 var cursorMaterials = [];
 
-var depthMaterials = [];
 var perSurveyMaterials = {};
 var cursorHeight = 0;
 
@@ -38,7 +38,6 @@ function testStencil( material ) {
 
 	material.stencilWrite = true;
 	material.stencilFunc = EqualStencilFunc;
-
 
 }
 
@@ -72,18 +71,9 @@ function updateCursors( newHeight ) {
 
 function updateDatumShifts( event ) {
 
-	const datumShift = event.value;
-
-	depthMaterials.forEach( _updateMaterialDepth );
-
-	function _updateMaterialDepth ( material ) {
-
-		material.setDatumShift( datumShift );
-
-	}
+	CommonDepthUniforms.datumShift.value = event.value;
 
 }
-
 
 function getHeightMaterial ( type ) {
 
@@ -136,8 +126,6 @@ function getDepthMaterial ( type ) {
 		material = cacheSurveyMaterial( name, new DepthMaterial( type, survey ) );
 		setStencil( material );
 
-		depthMaterials.push( material );
-
 	}
 
 	return material;
@@ -176,8 +164,6 @@ function getDepthCursorMaterial( type ) {
 		material = cacheSurveyMaterial( name, new DepthCursorMaterial( type, survey ) );
 		setStencil( material );
 
-		depthMaterials.push( material );
-
 	}
 
 	// set active cursor material for updating
@@ -196,6 +182,7 @@ function getSurfaceMaterial ( color ) {
 	if ( material === undefined ) {
 
 		material = cacheMaterial( name, new MeshLambertMaterial( { color: color, vertexColors: NoColors } ) );
+		setStencil( material );
 
 	}
 
@@ -225,8 +212,6 @@ function getContourMaterial () {
 	if ( material === undefined ) {
 
 		material = cacheSurveyMaterial( 'contour', new ContourMaterial( survey ) );
-
-		depthMaterials.push( material );
 
 	}
 
@@ -295,7 +280,6 @@ function flushCache( surveyIn ) {
 
 	}
 
-	depthMaterials = [];
 	perSurveyMaterials = {};
 	GlyphString.cache = new Map();
 	cursorHeight = 0;
@@ -307,8 +291,6 @@ function flushCache( surveyIn ) {
 function setFog( enable ) {
 
 	MaterialFog.uniforms.fogEnabled.value = enable ? 1 : 0;
-
-	return;
 
 }
 

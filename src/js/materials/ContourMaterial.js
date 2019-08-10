@@ -1,6 +1,7 @@
 
 import { MeshLambertMaterial } from '../Three';
 import { Cfg } from '../core/lib';
+import { CommonDepthUniforms } from './CommonDepthUniforms';
 
 const fragment_pars = [
 	'uniform vec3 contourColor;',
@@ -25,29 +26,22 @@ function ContourMaterial ( survey ) {
 
 	MeshLambertMaterial.call( this );
 
-	this.baseAdjust = survey.offsets.z;
-
-	const terrain = survey.terrain;
-	const zAdjust = this.baseAdjust + terrain.activeDatumShift;
-
-	var materialShader; // get reference to shader in before compile.
-
 	this.transparent = true;
 	this.extensions = { derivatives: true };
 
 	this.onBeforeCompile = function ( shader ) {
 
 		Object.assign( shader.uniforms, {
-			zAdjust:         { value: zAdjust },
+			zOffset:         { value: survey.offsets.z },
 			contourInterval: { value: Cfg.themeValue( 'shading.contours.interval' ) },
 			contourColor:    { value: Cfg.themeColor( 'shading.contours.line' ) },
 			contourColor10:  { value: Cfg.themeColor( 'shading.contours.line10' ) },
 			baseColor:       { value: Cfg.themeColor( 'shading.contours.base' ) }
-		} );
+		}, CommonDepthUniforms );
 
 		var vertexShader = shader.vertexShader
-			.replace( '#include <common>', '$&\nuniform float zAdjust;\nvarying float vPositionZ;\n' )
-			.replace( 'include <begin_vertex>', '$&\nvPositionZ = position.z + zAdjust;\n' );
+			.replace( '#include <common>', '$&\nuniform float zOffset;\nuniform float datumShift;\nvarying float vPositionZ;\n' )
+			.replace( 'include <begin_vertex>', '$&\nvPositionZ = position.z + zOffset + datumShift;\n' );
 
 		var fragmentShader = shader.fragmentShader
 			.replace( '#include <common>', '$&\n' + fragment_pars + '\n' )
@@ -55,14 +49,6 @@ function ContourMaterial ( survey ) {
 
 		shader.vertexShader = vertexShader;
 		shader.fragmentShader = fragmentShader;
-
-		materialShader = shader;
-
-	};
-
-	this.setDatumShift = function ( shift ) {
-
-		materialShader.uniforms.zAdjust.value = this.baseAdjust + shift;
 
 	};
 

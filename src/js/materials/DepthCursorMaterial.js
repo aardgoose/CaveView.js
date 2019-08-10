@@ -5,6 +5,7 @@ import { Cfg } from '../core/lib';
 
 import { ShaderMaterial, Vector3 } from '../Three';
 import { MaterialFog } from './MaterialFog';
+import { CommonDepthUniforms } from './CommonDepthUniforms';
 
 function DepthCursorMaterial ( type, survey ) {
 
@@ -28,17 +29,18 @@ function DepthCursorMaterial ( type, survey ) {
 			scaleY:      { value: 1 / range.y },
 			rangeZ:      { value: range.z },
 			depthMap:    { value: terrain.depthTexture },
-			datumShift:  { value: 0.0 },
 			cursor:      { value: this.max / 2 },
 			cursorWidth: { value: 5.0 },
 			baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },
 			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) },
-		}, MaterialFog.uniforms ),
+		}, MaterialFog.uniforms, CommonDepthUniforms ),
 		defines: {
 			USE_COLOR: true,
 			SURFACE: ( type !== MATERIAL_LINE )
 		}
 	} );
+
+	Object.assign( this.uniforms, CommonDepthUniforms );
 
 	return this;
 

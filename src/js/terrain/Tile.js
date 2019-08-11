@@ -10,7 +10,6 @@ import {
 	Mesh
 } from '../Three';
 
-
 // preallocated for projected area calculations
 
 const __a = new Vector3();
@@ -41,7 +40,8 @@ function Tile ( x, y, zoom, tileSpec ) {
 	this.canZoom  = ( zoom < tileSpec.tileSet.overlayMaxZoom );
 	this.evicted  = false;
 	this.replaced = false;
-	this.evictionCount = 1;
+	this.evictionCount = 0;
+	this.lastFrame = 0;
 	this.resurrectionPending = false;
 	this.childrenLoading = 0;
 	this.childErrors = 0;
@@ -62,6 +62,12 @@ function Tile ( x, y, zoom, tileSpec ) {
 Tile.liveTiles = 0;
 
 Tile.prototype = Object.create( Mesh.prototype );
+
+Tile.prototype.onBeforeRender = function ( renderer ) {
+
+	this.lastFrame = renderer.info.render.frame;
+
+};
 
 Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox, material ) {
 
@@ -138,9 +144,9 @@ Tile.prototype.empty = function () {
 
 Tile.prototype.evict = function () {
 
-	this.evictionCount++;
 	this.evicted = true;
 	this.replaced = false;
+	this.evictionCount = 0;
 
 	this.empty();
 
@@ -168,6 +174,7 @@ Tile.prototype.setPending = function ( parentTile ) {
 
 	this.isMesh = false;
 	this.evicted = false;
+	this.evictionCount = 0;
 
 };
 

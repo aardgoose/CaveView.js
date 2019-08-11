@@ -436,8 +436,6 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 WebTerrain.prototype.zoomCheck = function ( camera ) {
 
-	const initialZoom = this.initialZoom;
-
 	const frustum = new Frustum();
 
 	const candidateTiles      = [];
@@ -551,27 +549,32 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 	function _evictTiles() {
 
-		const EVICT_PRESSURE = 5;
-		const evictCount = candidateEvictTiles.length;
+		const TILE_MAX = 128; // FIXME: tune this value based on platform spec
 
-		var i;
+		const candidateCount = candidateEvictTiles.length;
+		const evictTarget = Tile.liveTiles - TILE_MAX;
+		const evictCount = Math.min( candidateCount, evictTarget );
 
-		if ( evictCount !== 0 ) {
+		if ( evictCount > 0 ) {
 
 			candidateEvictTiles.sort( _sortByPressure );
+
+			let i;
+			let now = performance.now();
 
 			for ( i = 0; i < evictCount; i++ ) {
 
 				const tile = candidateEvictTiles[ i ];
 
-				// heuristics for evicting tiles - needs refinement
+				if ( tile.evictionCount === 0 ) {
 
-				const pressure = Tile.liveTiles / EVICT_PRESSURE;
-				const tilePressure = tile.evictionCount * Math.pow( 2, initialZoom - tile.zoom );
+					tile.evictionCount = now;
 
-				// console.log( 'ir', initialZoom, 'p: ', pressure, ' tp: ', tilePressure, ( pressure > tilePressure ? '*** EVICTING ***' : 'KEEP' ) );
+				} else if ( now - tile.evictionCount > 1000 ) {
 
-				if ( pressure > tilePressure ) tile.evict();
+					tile.evict();
+
+				}
 
 			}
 
@@ -579,7 +582,9 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		function _sortByPressure( tileA, tileB ) {
 
-			return tileA.evictionCount / tileA.zoom - tileB.evictionCount / tileB.zoom;
+			const frameDiff = tileA.lastFrame - tileB.lastFrame;
+
+			return frameDiff === 0 ? tileB.zoom - tileA.zoom : frameDiff;
 
 		}
 

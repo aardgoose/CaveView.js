@@ -104,9 +104,20 @@ function mapLoaded ( data ) {
 
 function getHeight ( terrainData ) {
 
-	const height = terrainData[ tileSpec.dataOffset ] / tileSpec.tileSet.dtmScale;
+	const offsets = tileSpec.dataOffsets;
+	const points = tileSpec.points;
 
-	postMessage( { status: 'ok', height: height } );
+	const pointCount = offsets.length;
+
+	var i;
+
+	for ( i = 0; i < pointCount; i++ ) {
+
+		points[ i ].z = terrainData[ offsets[ i ] ] / tileSpec.tileSet.dtmScale;
+
+	}
+
+	postMessage( { status: 'ok', points: points} );
 
 }
 

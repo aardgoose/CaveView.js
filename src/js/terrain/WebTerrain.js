@@ -592,14 +592,14 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 };
 
-WebTerrain.prototype.getAccurateHeight = function ( point, callback ) {
+WebTerrain.prototype.getAccurateHeights = function ( points, callback ) {
 
 	const self = this;
-	const tileSpec = this.TS.findTile( point );
+	const tileSpec = this.TS.findTile( points[ 0 ] );
 
 	this.workerPool.runWorker( tileSpec, _mapLoaded );
 
-	return null;
+	return;
 
 	function _mapLoaded ( event ) {
 
@@ -609,7 +609,7 @@ WebTerrain.prototype.getAccurateHeight = function ( point, callback ) {
 
 		self.workerPool.putWorker( worker );
 
-		callback( event.data.height );
+		callback( event.data.points );
 
 	}
 

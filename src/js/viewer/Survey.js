@@ -673,19 +673,13 @@ Survey.prototype.getModelSurfaceFromWGS84 = function ( position, callback ) {
 
 	position.copy( this.projectionWGS84.forward( position ) );
 
-	const height = this.terrain.getAccurateHeight( position, _handleResult );
-
-	if ( height !== null ) {
-
-		_handleResult( height );
-
-	}
+	this.terrain.getAccurateHeights( [ position ], _handleResult );
 
 	return;
 
-	function _handleResult ( height ) {
+	function _handleResult ( points ) {
 
-		position.z = height;
+		position.z = points[ 0 ].z;
 		position.sub( self.offsets );
 
 		callback();

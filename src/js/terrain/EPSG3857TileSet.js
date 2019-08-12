@@ -163,7 +163,8 @@ EPSG3857TileSet.prototype.findTile = function ( point ) {
 		y: tileY,
 		z: tileZ,
 		tileSet: tileSet,
-		dataOffset: dataOffset,
+		dataOffsets: [ dataOffset ],
+		points: [ point ],
 		request: 'height',
 		clip: {}
 	};

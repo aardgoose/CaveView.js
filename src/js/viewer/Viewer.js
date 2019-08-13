@@ -22,6 +22,7 @@ import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/lib';
 import { WorkerPool } from '../core/WorkerPool';
 import { defaultView, dynamicView, ViewState } from './ViewState';
+import { getSkyBox } from '../core/SkyBox';
 
 // import { Annotations } from './Annotations';
 
@@ -685,6 +686,7 @@ function setLocation ( x ) {
 
 		controls.enabled = false;
 		locationControls.connect();
+		scene.background = getSkyBox();
 
 		setView( dynamicView, null );
 
@@ -694,6 +696,7 @@ function setLocation ( x ) {
 		locationControls.disconnect();
 		controls.enabled = true;
 		terrain.setScale( 0.0 );
+		scene.background = null;
 
 		// restore previous settings
 		setView( savedView, null );
@@ -729,10 +732,18 @@ function cameraMoved () {
 
 	lightingManager.setRotation( __rotation );
 
-	if ( trackLocation && camera.isOrthographicCamera ) {
+	if ( trackLocation && terrain !== null ) {
 
-		terrain.setScale( camera.zoom * survey.scale.z );
-		terrain.setTarget( locationControls.location );
+		if ( camera.isOrthographicCamera ) {
+
+			terrain.setScale( camera.zoom * survey.scale.z );
+			terrain.setTarget( locationControls.location );
+
+		} else {
+
+			terrain.setScale( 0.0 );
+
+		}
 
 	}
 

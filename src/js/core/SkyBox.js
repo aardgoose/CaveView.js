@@ -4,7 +4,11 @@ import {
 	RGBFormat, UnsignedByteType, CubeRefractionMapping
 } from 'three';
 
+var skyBox = null;
+
 function getSkyBox () {
+
+	if ( skyBox !== null ) return skyBox;
 
 	const topData = new Uint8Array( [
 		117,213,227, 117,213,227, 117,213,227, 117,213,227,
@@ -56,14 +60,14 @@ function getSkyBox () {
 	const sideTextureW = new DataTexture( sideDataW, 4, 4, RGBFormat, UnsignedByteType );
 	const bottomTexture = new DataTexture( bottomData, 4, 4, RGBFormat, UnsignedByteType );
 
-	const cubeTexture  = new CubeTexture( [
+	skyBox  = new CubeTexture( [
 		sideTextureW, sideTextureE, sideTextureN, sideTextureS,
 		topTexture, bottomTexture
 	], CubeRefractionMapping );
 
-	cubeTexture.needsUpdate = true;
+	skyBox.needsUpdate = true;
 
-	return cubeTexture;
+	return skyBox;
 
 }
 

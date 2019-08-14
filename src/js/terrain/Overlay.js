@@ -43,6 +43,12 @@ function Overlay ( overlayProvider, container ) {
 
 }
 
+Overlay.prototype.getMinZoom = function () {
+
+	return this.provider.minZoom;
+
+};
+
 Overlay.prototype.checkCoverage = function ( limits, displayCRS, surveyCRS ) {
 
 	const coverage = this.coverage;
@@ -123,7 +129,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 		y = newY;
 		z = overlayMaxZoom;
 
-		//console.log( 'max zoom exceeded', repeat, x, y, z, xOffset, yOffset );
+		console.log( 'max zoom exceeded', repeat, x, y, z, xOffset, yOffset );
 
 	}
 

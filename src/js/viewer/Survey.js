@@ -260,7 +260,33 @@ Survey.prototype.setupTerrain = function ( terrain ) {
 	// find height difference between all entrance locations and terrain
 	// find average differences and use to alter height of terrain
 
+	const points = [];
+	const offsets = this.offsets;
+
 	this.surveyTree.traverse( _testHeight );
+
+	terrain.getAccurateHeights( points, ccc );
+
+
+	function ccc ( ret ) {
+
+		var t = 0;
+		var n = 0;
+
+		ret.forEach( function ( a ) {
+
+			if ( Number.isNaN( a.z ) ) return;
+
+			t += a.z - points[ a.index ].z;
+			n++;
+
+		} );
+
+		console.log( t / n );
+		terrain.datumShift = -t / n;
+
+	}
+
 
 	if ( n > 0 ) {
 
@@ -300,6 +326,8 @@ Survey.prototype.setupTerrain = function ( terrain ) {
 		s1 += v;
 		s2 += v * v;
 		n++;
+
+		points.push( node.p.clone().add( offsets) );
 
 	}
 

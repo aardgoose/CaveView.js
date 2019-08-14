@@ -87,10 +87,17 @@ function BingProvider ( imagerySet, key ) {
 
 				self.minZoom = r.zoomMin;
 				self.maxZoom = r.zoomMax;
-
 				self.subdomainCount = self.subdomains.length;
 
 				_setAttribution( r );
+
+				if ( self.OS ) {
+
+					// work around for poor values for OS Maps
+					self.minZoom = 12;
+					self.maxZoom = 17;
+
+				}
 
 				return;
 

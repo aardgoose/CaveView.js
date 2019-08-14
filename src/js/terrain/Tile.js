@@ -53,7 +53,7 @@ function Tile ( x, y, zoom, tileSpec ) {
 	Mesh.call( this, new BufferGeometry(), Materials.getSurfaceMaterial( 0xff8888 ) );
 
 	this.type = 'Tile';
-	this.isTile = true;
+	this.isTile = false;
 
 	return this;
 
@@ -104,26 +104,14 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 	this.layers.set( FEATURE_TERRAIN );
 
 	this.material = material;
+	this.isTile = true;
+
+	this.updateMatrixWorld();
+
+	this.worldBoundingBox = this.geometry.boundingBox.clone();
+	this.worldBoundingBox.applyMatrix4( this.matrixWorld );
 
 	return this;
-
-};
-
-Tile.prototype.getWorldBoundingBox = function () {
-
-	if ( this.worldBoundingBox === null ) {
-
-		this.updateMatrixWorld();
-
-		const boundingBox = this.geometry.boundingBox.clone();
-
-		boundingBox.applyMatrix4( this.matrixWorld );
-
-		this.worldBoundingBox = boundingBox;
-
-	}
-
-	return this.worldBoundingBox;
 
 };
 
@@ -290,7 +278,7 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
 Tile.prototype.computeProjectedArea = function ( camera ) {
 
-	const boundingBox = this.getWorldBoundingBox();
+	const boundingBox = this.worldBoundingBox;
 	const z = boundingBox.max.z;
 
 	__a.copy( boundingBox.min ).setZ( z );

@@ -40,7 +40,7 @@ var LocationControls = function ( cameraManager ) {
 	const thresholdHigh = 60;
 	const thresholdLow = 30;
 
-	var deviceOrientation = null;
+	var deviceOrientation = { alpha: 0, beta: 0, gamma: 0 };
 	var screenOrientation = null;
 
 	var watch = null;
@@ -84,10 +84,8 @@ var LocationControls = function ( cameraManager ) {
 
 	function onHeightReturned () {
 
-		console.log( 'hr', location );
-
+		console.log( location );
 		updatePosition();
-
 		gettingHeight = false;
 
 	}
@@ -106,15 +104,10 @@ var LocationControls = function ( cameraManager ) {
 
 	function updatePosition () {
 
-		console.log( 'up' );
-
 		__vector3.copy( location );
 
 		const camera = cameraManager.activeCamera;
 		const position = camera.position;
-
-		console.log( camera );
-		console.log( cameraManager.mode );
 
 		if ( cameraManager.mode === CAMERA_ORTHOGRAPHIC ) {
 
@@ -130,9 +123,7 @@ var LocationControls = function ( cameraManager ) {
 			const width = camera.right - camera.left;
 			const height = camera.top - camera.bottom;
 
-			console.log( 'zoom', width, height, survey.scale );
-
-			camera.zoom = Math.min( width, height ) * 1 / ( 2 * accuracyEvent.value * survey.scale.x );
+			camera.zoom = Math.min( width, height ) / ( 2 * accuracyEvent.value * survey.scale.x );
 
 			camera.updateProjectionMatrix();
 
@@ -146,6 +137,7 @@ var LocationControls = function ( cameraManager ) {
 		}
 
 		scope.dispatchEvent( changeEvent );
+		scope.dispatchEvent( endEvent );
 
 	}
 
@@ -181,7 +173,7 @@ var LocationControls = function ( cameraManager ) {
 
 	function updateOrientation () {
 
-		if ( scope.enabled === false || deviceOrientation === null ) return;
+		if ( scope.enabled === false ) return;
 
 		let alpha = deviceOrientation.alpha ? _Math.degToRad( deviceOrientation.alpha ) + alphaOffset : 0; // Z
 
@@ -203,6 +195,10 @@ var LocationControls = function ( cameraManager ) {
 		if ( cameraManager.mode === CAMERA_PERSPECTIVE ) {
 
 			cameraManager.activeCamera.quaternion.copy( __quaternion1 );
+
+		} else {
+
+			cameraManager.activeCamera.setRotationFromAxisAngle( Object3D.DefaultUp, alpha );
 
 		}
 
@@ -252,6 +248,8 @@ var LocationControls = function ( cameraManager ) {
 		watch = geolocation.watchPosition( onPositionChangeEvent );
 
 		scope.enabled = true;
+
+		updateOrientation();
 
 	};
 

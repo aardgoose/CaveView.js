@@ -332,6 +332,8 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	this.activeOverlay = overlay;
 
+	let overlayMinZoom = overlay.getMinZoom();
+
 	this.traverse( _setTileOverlays );
 
 	return;
@@ -340,9 +342,17 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 		if ( ! obj.isTile ) return;
 
-		obj.setOverlay( overlay, self.opacity, _overlayLoaded );
+		if ( obj.zoom < overlayMinZoom ) {
 
-		self.overlaysLoading++;
+			// no overlay for this zoom layer, zoom to next level
+			self.zoomTile( obj );
+
+		} else {
+
+			obj.setOverlay( overlay, self.opacity, _overlayLoaded );
+			self.overlaysLoading++;
+
+		}
 
 	}
 
@@ -507,7 +517,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		if ( ! tile.isTile || parent.resurrectionPending || ! parent.canZoom ) return;
 
-		if ( frustum.intersectsBox( tile.getWorldBoundingBox() ) ) {
+		if ( frustum.intersectsBox( tile.worldBoundingBox ) ) {
 
 			// this tile intersects the screen
 
@@ -594,22 +604,64 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 WebTerrain.prototype.getAccurateHeights = function ( points, callback ) {
 
+	const tileSet = this.TS;
 	const self = this;
-	const tileSpec = this.TS.findTile( points[ 0 ] );
 
-	this.workerPool.runWorker( tileSpec, _mapLoaded );
+	const tileSpecs = {};
+	const results = [];
+
+	// sort points in to requests per tile
+
+	points.forEach( function ( point, i ) {
+
+		const tileSpec = tileSet.findTile( point );
+		const key = tileSpec.x + ':' + tileSpec.y + ':' + tileSpec.z;
+
+		point.index = i;
+
+		if ( tileSpecs[ key ] === undefined ) {
+
+			// new tile query
+			tileSpecs[ key ] = tileSpec;
+
+		} else {
+
+			// merge requested point with existing query
+			tileSpecs[ key ].dataOffsets.push( tileSpec.dataOffsets[ 0 ] );
+			tileSpecs[ key ].points.push( tileSpec.points[ 0 ] );
+
+		}
+
+	} );
+
+	// dispatch requests
+
+	let requestCount = 0;
+
+	for ( var key in tileSpecs) {
+
+		this.workerPool.runWorker( tileSpecs[ key ], _mapLoaded );
+		requestCount++;
+
+	}
 
 	return;
 
 	function _mapLoaded ( event ) {
 
-		const worker = event.currentTarget;
-
 		// return worker to pool
 
-		self.workerPool.putWorker( worker );
+		self.workerPool.putWorker( event.currentTarget );
 
-		callback( event.data.points );
+		const resultPoints = event.data.points;
+
+		resultPoints.forEach( function ( point ) { results[ point.index ] = point; } );
+
+		if ( --requestCount === 0 ) {
+
+			callback( results );
+
+		}
 
 	}
 

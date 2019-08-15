@@ -9,10 +9,10 @@ export { Scene } from 'three/src/scenes/Scene.js';
 export { Mesh } from 'three/src/objects/Mesh.js';
 export { LineSegments } from 'three/src/objects/LineSegments.js';
 export { Line } from 'three/src/objects/Line.js';
-export { LineLoop } from 'three/src/objects/LineLoop.js';
 export { Points } from 'three/src/objects/Points.js';
 export { Group } from 'three/src/objects/Group.js';
 export { DataTexture } from 'three/src/textures/DataTexture.js';
+export { CubeTexture } from 'three/src/textures/CubeTexture.js';
 export { CanvasTexture } from 'three/src/textures/CanvasTexture.js';
 export { Texture } from 'three/src/textures/Texture.js';
 

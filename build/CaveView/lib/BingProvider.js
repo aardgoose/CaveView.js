@@ -94,7 +94,7 @@ function BingProvider ( imagerySet, key ) {
 				if ( self.OS ) {
 
 					// work around for poor values for OS Maps
-					self.minZoom = 12;
+					self.minZoom = 13;
 					self.maxZoom = 17;
 
 				}

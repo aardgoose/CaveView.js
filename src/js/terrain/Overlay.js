@@ -129,8 +129,6 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 		y = newY;
 		z = overlayMaxZoom;
 
-		console.log( 'max zoom exceeded', repeat, x, y, z, xOffset, yOffset );
-
 	}
 
 	const url = this.provider.getUrl( x, y, z );

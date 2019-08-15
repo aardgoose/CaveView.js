@@ -183,6 +183,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 		const tileData = event.data;
 		const worker = event.currentTarget;
+		const overlay = self.activeOverlay;
 
 		// return worker to pool
 
@@ -221,7 +222,13 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 		self.dispatchEvent( { type: 'progress', name: 'add', value: self.progressInc } );
 
-		if ( tile.setLoaded( self.activeOverlay, self.opacity, _loaded ) ) {
+		if ( tile.setLoaded( overlay, self.opacity, _loaded ) ) {
+
+			if ( overlay !== null && tile.zoom < overlay.getMinZoom() ) {
+
+				self.zoomTile( tile );
+
+			}
 
 			self.dispatchEvent( { type: 'progress', name: 'end' } );
 

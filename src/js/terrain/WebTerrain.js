@@ -338,18 +338,18 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	return;
 
-	function _setTileOverlays ( obj ) {
+	function _setTileOverlays ( tile ) {
 
-		if ( ! obj.isTile ) return;
+		if ( ! tile.isTile || ! tile.isMesh ) return;
 
-		if ( obj.zoom < overlayMinZoom ) {
+		if ( tile.zoom < overlayMinZoom ) {
 
 			// no overlay for this zoom layer, zoom to next level
-			self.zoomTile( obj );
+			self.zoomTile( tile );
 
 		} else {
 
-			obj.setOverlay( overlay, self.opacity, _overlayLoaded );
+			tile.setOverlay( overlay, self.opacity, _overlayLoaded );
 			self.overlaysLoading++;
 
 		}

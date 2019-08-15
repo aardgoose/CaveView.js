@@ -9,6 +9,9 @@ import { EPSG3857TileSet } from './EPSG3857TileSet';
 
 import { Frustum, Matrix4 } from '../Three';
 
+const __frustum = new Frustum();
+const __matrix4 = new Matrix4();
+
 function WebTerrain ( survey, onLoaded, container ) {
 
 	CommonTerrain.call( this );
@@ -156,8 +159,15 @@ WebTerrain.prototype.pickCoverage = function ( limits ) {
 
 WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
-	const self = this;
+	if ( existingTile === undefined ) {
 
+		existingTile = parentTile.children.find( function ( tile ) {
+			return ( tile.x === x && tile.y === y && tile.zoom === z );
+		} );
+
+	}
+
+	const self = this;
 	const tileSpec = this.TS.getTileSpec( x, y, z, this.limits );
 
 	if ( tileSpec === null ) return;
@@ -453,7 +463,7 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 WebTerrain.prototype.zoomCheck = function ( camera ) {
 
-	const frustum = new Frustum();
+	const frustum = __frustum;
 
 	const candidateTiles      = [];
 	const candidateEvictTiles = [];
@@ -468,7 +478,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 	camera.updateMatrixWorld(); // make sure camera's world matrix is updated
 	camera.matrixWorldInverse.getInverse( camera.matrixWorld );
 
-	frustum.setFromMatrix( new Matrix4().multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
+	frustum.setFromMatrix( __matrix4.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
 
 	// scan scene graph of terrain
 
@@ -546,7 +556,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 			} else {
 
-				if ( ! tile.isMesh && tile.evicted && ! this.parent.resurrectionPending ) {
+				if ( ! tile.isMesh && tile.evicted && ! parent.resurrectionPending ) {
 
 					tile.resurrectionPending = true;
 					resurrectTiles.push( tile );

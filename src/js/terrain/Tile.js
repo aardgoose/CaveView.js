@@ -93,9 +93,11 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
 	);
 
-	attributes = bufferGeometry.attributes;
+	this.boundingBox = bufferGeometry.boundingBox;
 
 	// discard javascript attribute buffers after upload to GPU
+
+	attributes = bufferGeometry.attributes;
 
 	for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
 
@@ -106,12 +108,26 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 	this.material = material;
 	this.isTile = true;
 
-	this.updateMatrixWorld();
-
-	this.worldBoundingBox = this.geometry.boundingBox.clone();
-	this.worldBoundingBox.applyMatrix4( this.matrixWorld );
-
 	return this;
+
+};
+
+Tile.prototype.getWorldBoundingBox = function () {
+
+	// delay calculating this until the terrain is in the scene graph.
+	if ( this.worldBoundingBox === null ) {
+
+		this.updateWorldMatrix( true, false );
+
+		const boundingBox = this.boundingBox.clone();
+
+		boundingBox.applyMatrix4( this.matrixWorld );
+
+		this.worldBoundingBox = boundingBox;
+
+	}
+
+	return this.worldBoundingBox;
 
 };
 

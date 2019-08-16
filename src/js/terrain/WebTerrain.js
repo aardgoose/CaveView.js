@@ -320,8 +320,6 @@ WebTerrain.prototype.zoomTile = function ( tile ) {
 	this.dispatchEvent( { type: 'progress', name: 'start' } );
 	this.progressInc = 100 / 8;
 
-	return;
-
 };
 
 WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
@@ -476,7 +474,6 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 	camera.updateMatrix(); // make sure camera's local matrix is updated
 	camera.updateMatrixWorld(); // make sure camera's world matrix is updated
-	camera.matrixWorldInverse.getInverse( camera.matrixWorld );
 
 	frustum.setFromMatrix( __matrix4.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
 
@@ -509,13 +506,11 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 	} else if ( candidateCount !== 0 ) {
 
-		let totalArea = candidateTiles.reduce( function ( a , b ) { return a + b.area; }, 0 );
-
 		for ( i = 0; i < candidateCount; i++ ) {
 
 			tile = candidateTiles[ i ];
 
-			if ( tile.canZoom && tile.area / totalArea > 0.3 ) { // FIXME - weight by tile resolution to balance view across all visible areas first.
+			if ( tile.canZoom && tile.area / 4 > 0.25 ) {
 
 				this.zoomTile( tile );
 				retry = true;
@@ -534,7 +529,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		if ( ! tile.isTile || parent.resurrectionPending || ! parent.canZoom ) return;
 
-		if ( frustum.intersectsBox( tile.worldBoundingBox ) ) {
+		if ( frustum.intersectsBox( tile.getWorldBoundingBox() ) ) {
 
 			// this tile intersects the screen
 

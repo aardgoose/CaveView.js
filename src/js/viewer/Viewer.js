@@ -84,6 +84,7 @@ var cameraMove;
 
 var lastActivityTime = 0;
 var timerId = null;
+var retileScaler = 1;
 
 var popup = null;
 
@@ -1548,6 +1549,7 @@ function onCameraMoveEnd () {
 
 		}
 
+		retileScaler = 4;
 		lastActivityTime = performance.now();
 		timerId = setTimeout( updateTerrain, RETILE_TIMEOUT );
 
@@ -1561,7 +1563,8 @@ function updateTerrain () {
 
 		if ( Viewer.terrain && terrain.zoomCheck( cameraManager.activeCamera ) ) {
 
-			timerId = setTimeout( updateTerrain, RETILE_TIMEOUT * 5 );
+			timerId = setTimeout( updateTerrain, RETILE_TIMEOUT * retileScaler );
+			retileScaler *= 2;
 
 		}
 

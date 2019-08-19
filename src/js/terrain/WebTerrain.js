@@ -510,7 +510,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 			tile = candidateTiles[ i ];
 
-			if ( tile.canZoom && tile.area / 4 > 0.25 ) {
+			if ( tile.canZoom && tile.area / 4 > 0.64 ) {
 
 				this.zoomTile( tile );
 				retry = true;
@@ -533,30 +533,20 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 			// this tile intersects the screen
 
-			if ( tile.children.length === 0 ) {
+			if ( tile.isMesh ) {
 
-				if ( tile.isMesh ) {
+				// this tile is loaded, maybe increase resolution?
+				// now safe if tile has evicted children or not
 
-					// this tile is loaded, maybe increase resolution?
-					if ( tile.canZoom ) candidateTiles.push( tile.computeProjectedArea( camera ) );
+				if ( tile.canZoom ) candidateTiles.push( tile.computeProjectedArea( camera ) );
 
-				} else if ( tile.evicted ) {
+			} else if ( ! parent.isMesh &&  tile.evicted  &&  ! parent.resurrectionPending ) {
 
-					// this tile is not loaded, but has been previously
+				// this tile is not loaded, but has been previously
 
-					tile.resurrectionPending = true;
-					resurrectTiles.push( tile );
+				tile.resurrectionPending = true;
+				resurrectTiles.push( tile );
 
-				}
-
-			} else {
-
-				if ( ! tile.isMesh && tile.evicted && ! parent.resurrectionPending ) {
-
-					tile.resurrectionPending = true;
-					resurrectTiles.push( tile );
-
-				}
 
 			}
 

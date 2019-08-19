@@ -3,8 +3,9 @@ import { CanvasTexture, LinearFilter } from '../Three';
 function GlyphAtlas ( glyphAtlasSpec ) {
 
 	const atlasSize = 512;
+	const fontSize = 28;
 	const cellSize = 32;
-	const fontSize = 30 / window.devicePixelRatio;
+
 	const divisions = atlasSize / cellSize;
 
 	const canvas = document.createElement( 'canvas' );
@@ -77,7 +78,7 @@ GlyphAtlas.prototype.addGlyphToCanvas = function ( glyph, i ) {
 
 	this.map[ glyph ] = glyphData;
 
-	ctx.fillText( glyph, cellSize * column, cellSize * row - 8 );
+	ctx.fillText( glyph, cellSize * column, cellSize * row - 7 );
 
 	return glyphData;
 

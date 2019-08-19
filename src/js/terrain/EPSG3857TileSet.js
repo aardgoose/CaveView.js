@@ -153,9 +153,9 @@ EPSG3857TileSet.prototype.findTile = function ( point ) {
 
 	const offsetX = xTc - tileX;
 	const offsetY = yTc - tileY;
-
 	const samples = tileSet.divisions + 1;
-	const dataOffset = Math.floor( samples * offsetX ) + samples * Math.floor( samples * offsetY - 1 );
+
+	const dataOffset = Math.floor( samples * offsetX ) + samples * Math.floor( samples * offsetY );
 
 	// construct a tileSpec for passing to web worker
 	return {

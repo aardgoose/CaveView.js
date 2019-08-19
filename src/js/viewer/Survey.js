@@ -275,8 +275,6 @@ Survey.prototype.setupTerrain = function ( terrain ) {
 
 		ret.forEach( function ( a ) {
 
-			if ( Number.isNaN( a.z ) ) return;
-
 			t += a.z - points[ a.index ].z;
 			n++;
 

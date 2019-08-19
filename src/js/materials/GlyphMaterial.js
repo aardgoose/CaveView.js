@@ -13,7 +13,7 @@ function GlyphMaterial ( glyphAtlasSpec, rotation, viewer ) {
 	const glyphAtlas = AtlasFactory.getAtlas( glyphAtlasSpec );
 	const cellScale = glyphAtlas.cellScale;
 	const container = viewer.container;
-	const realPixels = glyphAtlas.cellSize * ( window.devicePixelRatio || 1 );
+	const realPixels = glyphAtlas.cellSize;
 
 	const cos = Math.cos( rotation );
 	const sin = Math.sin( rotation );
@@ -39,7 +39,7 @@ function GlyphMaterial ( glyphAtlasSpec, rotation, viewer ) {
 
 	this.type = 'CV.GlyphMaterial';
 	this.atlas = glyphAtlas;
-	this.scaleFactor = window.devicePixelRatio / glyphAtlas.cellScale;
+	this.scaleFactor = 1 / glyphAtlas.cellScale;
 
 	viewer.addEventListener( 'resized', _resize );
 

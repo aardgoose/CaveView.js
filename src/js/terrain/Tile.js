@@ -42,7 +42,6 @@ function Tile ( x, y, zoom, tileSpec ) {
 	this.replaced = false;
 	this.evictionCount = 0;
 	this.lastFrame = 0;
-	this.resurrectionPending = false;
 	this.childrenLoading = 0;
 	this.childErrors = 0;
 	this.area = 0;
@@ -178,6 +177,7 @@ Tile.prototype.setPending = function ( parentTile ) {
 
 	this.isMesh = false;
 	this.evicted = false;
+	this.replaced = false;
 	this.evictionCount = 0;
 
 };

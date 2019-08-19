@@ -495,7 +495,6 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 			const tile = resurrectTiles[ i ];
 
 			// reload tile (use exiting tile object to preserve canZoom).
-			tile.resurrectionPending = false;
 			this.loadTile( tile.x, tile.y, tile.zoom, tile.parent, tile );
 
 		}
@@ -527,7 +526,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		const parent = tile.parent;
 
-		if ( ! tile.isTile || parent.resurrectionPending || ! parent.canZoom ) return;
+		if ( ! tile.isTile || ! parent.canZoom ) return;
 
 		if ( frustum.intersectsBox( tile.getWorldBoundingBox() ) ) {
 
@@ -540,11 +539,19 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 				if ( tile.canZoom ) candidateTiles.push( tile.computeProjectedArea( camera ) );
 
-			} else if ( ! parent.isMesh &&  tile.evicted  &&  ! parent.resurrectionPending ) {
+			} else if ( ! parent.isMesh && tile.evicted ) {
 
 				// this tile is not loaded, but has been previously
 
-				tile.resurrectionPending = true;
+				// flag subtiles to prevent premature resurrection
+				// and indicate replaced by superior
+				tile.traverse( function ( subtile ) {
+
+					subtile.evicted = false;
+					if ( subtile !== tile ) subtile.replaced = true;
+
+				} );
+
 				resurrectTiles.push( tile );
 
 
@@ -594,9 +601,33 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		function _sortByPressure( tileA, tileB ) {
 
+			const zoomDiff = tileB.zoom - tileA.zoom;
+
+			if ( zoomDiff !== 0 ) {
+
+				return zoomDiff;
+
+			}
+
 			const frameDiff = tileA.lastFrame - tileB.lastFrame;
 
-			return frameDiff === 0 ? tileB.zoom - tileA.zoom : frameDiff;
+			if ( frameDiff !== 0 ) {
+
+				return frameDiff;
+
+			}
+
+			const xDiff = tileA.x - tileB.x;
+
+			if ( xDiff !== 0 ) {
+
+				return xDiff;
+
+			} else {
+
+				return tileA.y - tileB.y;
+
+			}
 
 		}
 

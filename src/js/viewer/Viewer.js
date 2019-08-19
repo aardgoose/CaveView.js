@@ -1561,7 +1561,7 @@ function updateTerrain () {
 
 		if ( Viewer.terrain && terrain.zoomCheck( cameraManager.activeCamera ) ) {
 
-			setTimeout( updateTerrain, RETILE_TIMEOUT * 5 );
+			timerId = setTimeout( updateTerrain, RETILE_TIMEOUT * 5 );
 
 		}
 

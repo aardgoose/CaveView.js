@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/aardgoose/CaveView.js#readme",
   "devDependencies": {
-    "concurrently": "^4.1.1",
+    "concurrently": "^4.1.2",
     "eslint": "^5.16.0",
     "http-server": "^0.11.1",
     "proj4": "^2.5.0",
@@ -46,7 +46,7 @@
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-less": "^1.1.0",
     "rollup-plugin-node-resolve": "^4.2.4",
-    "terser": "^4.1.4",
+    "terser": "^4.2.0",
     "three": "^0.107.0",
     "x18n": "^2.0.3"
   },

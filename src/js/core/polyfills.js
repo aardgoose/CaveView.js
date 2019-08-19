@@ -84,7 +84,7 @@ if ( ! String.prototype.padStart ) {
 		targetLength = targetLength >> 0; //floor if number or convert non-number to 0;
 		padString = String( padString || ' ' );
 
-		if (this.length > targetLength) {
+		if ( this.length > targetLength ) {
 
 			return String( this );
 
@@ -130,13 +130,13 @@ if ( ! String.prototype.repeat ) {
 		// main part. But anyway, most current (August 2014) browsers can't handle
 		// strings 1 << 28 chars or longer, so:
 
-		if ( str.length * count >= 1 << 28 ) throw new RangeError('repeat count must not overflow maximum string size');
+		if ( str.length * count >= 1 << 28 ) throw new RangeError( 'repeat count must not overflow maximum string size' );
 
 		var rpt = '';
 
-		for (;;) {
+		for ( ;; ) {
 
-			if ( ( count & 1) == 1 ) rpt += str;
+			if ( ( count & 1 ) == 1 ) rpt += str;
 
 			count >>>= 1;
 
@@ -167,7 +167,7 @@ if ( window.TextDecoder === undefined ) {
 
 		for ( var i = 0; i < l; i++ ) {
 
-			encoded += '%' + bytes[ i ].toString(16);
+			encoded += '%' + bytes[ i ].toString( 16 );
 
 		}
 
@@ -180,7 +180,7 @@ if ( window.TextDecoder === undefined ) {
 
 }
 
-if ( ! Float32Array.prototype.fill) {
+if ( ! Float32Array.prototype.fill ) {
 
 	Float32Array.prototype.fill = Array.prototype.fill;
 

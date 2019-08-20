@@ -194,6 +194,31 @@ LoxTerrain.prototype.setOpacity = function ( opacity ) {
 
 };
 
+LoxTerrain.prototype.fitSurface = function ( modelPoints /* , offsets */ ) {
+
+	const self = this;
+	const points = modelPoints;
+
+	var n = 0, s1 = 0, s2 = 0;
+
+	points.forEach( function ( point ) {
+
+		const v = self.getHeight( point );
+		s1 += v;
+		s2 += v * v;
+		n++;
+
+	} );
+
+	let sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
+
+	// simple average
+	this.datumShift = s1 / n;
+
+	console.log( 'Adjustmenting terrain height by:', this.datumShift, 'sd:',sd );
+
+};
+
 export { LoxTerrain };
 
 // EOF

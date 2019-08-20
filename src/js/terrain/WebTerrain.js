@@ -534,7 +534,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 				if ( tile.canZoom ) {
 
 					tile.computeProjectedArea( camera );
-					if ( tile.area / 4 > 0.64 ) candidateTiles.push( tile );
+					if ( tile.area / 4 > 0.81 ) candidateTiles.push( tile );
 
 				}
 
@@ -634,7 +634,7 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 };
 
-WebTerrain.prototype.getAccurateHeights = function ( points, callback ) {
+WebTerrain.prototype.getHeights = function ( points, callback ) {
 
 	const tileSet = this.TS;
 	const self = this;
@@ -694,6 +694,39 @@ WebTerrain.prototype.getAccurateHeights = function ( points, callback ) {
 			callback( results );
 
 		}
+
+	}
+
+};
+
+WebTerrain.prototype.fitSurface = function ( modelPoints, offsets ) {
+
+	const self = this;
+
+	// adjust to geographical values
+	const points = modelPoints.map( function ( point ) { return point.clone().add( offsets); } );
+
+	this.getHeights( points, _heightsReturned );
+
+	function _heightsReturned ( ret ) {
+
+		var n = 0, s1 = 0, s2 = 0;
+
+		ret.forEach( function ( a ) {
+
+			const v = points[ a.index ].z - a.z;
+			s1 += v;
+			s2 += v * v;
+			n++;
+
+		} );
+
+		let sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
+
+		// simple average
+		self.datumShift = s1 / n;
+
+		console.log( 'Adjustmenting terrain height by:', self.datumShift, 'sd:',sd );
 
 	}
 

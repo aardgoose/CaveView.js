@@ -253,52 +253,16 @@ Survey.prototype.loadEntrances = function () {
 
 Survey.prototype.setupTerrain = function ( terrain ) {
 
-	var s1 = 0, s2 = 0, n = 0;
-
 	if ( terrain.isFlat ) return;
 
 	// find height difference between all entrance locations and terrain
 	// find average differences and use to alter height of terrain
 
 	const points = [];
-	const offsets = this.offsets;
 
-	this.surveyTree.traverse( _testHeight );
+	this.surveyTree.traverse( _getSurfacePoints );
 
-	terrain.getAccurateHeights( points, ccc );
-
-
-	function ccc ( ret ) {
-
-		var t = 0;
-		var n = 0;
-
-		ret.forEach( function ( a ) {
-
-			t += a.z - points[ a.index ].z;
-			n++;
-
-		} );
-
-		console.log( t / n );
-		terrain.datumShift = -t / n;
-
-	}
-
-
-	if ( n > 0 ) {
-
-		// standard deviation
-
-		let sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
-
-		// simple average
-
-		terrain.datumShift = s1 / n;
-
-		console.log( 'Adjustmenting terrain height by:', terrain.datumShift, 'sd:',sd );
-
-	}
+	terrain.fitSurface( points, this.offsets );
 
 	if ( this.terrain === null ) this.terrain = terrain;
 
@@ -308,24 +272,17 @@ Survey.prototype.setupTerrain = function ( terrain ) {
 
 	if ( markers !== undefined ) {
 
-		markers.addHeightProvider( terrain.getHeight.bind ( terrain ) );
+		markers.addHeightProvider( terrain.getHeight.bind( terrain ) );
 
 	}
 
 	return;
 
-	function _testHeight( node ) {
+	function _getSurfacePoints( node ) {
 
 		// FIXME to extend to surface points
 		if ( node.type !== STATION_ENTRANCE) return;
-
-		const v = node.p.z - terrain.getHeight( node.p );
-
-		s1 += v;
-		s2 += v * v;
-		n++;
-
-		points.push( node.p.clone().add( offsets) );
+		points.push( node.p );
 
 	}
 

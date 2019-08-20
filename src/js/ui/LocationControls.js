@@ -211,7 +211,7 @@ var LocationControls = function ( cameraManager ) {
 
 		survey = newSurvey;
 
-		if ( 'geolocation' in navigator ) {
+		if ( 'geolocation' in navigator && survey.CRS !== null ) {
 
 			navigator.geolocation.getCurrentPosition( _currentPosition );
 

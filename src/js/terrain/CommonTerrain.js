@@ -372,6 +372,7 @@ CommonTerrain.prototype.getHeight = function ( point ) {
 	return unpackRGBA( __result ) * this.terrainRange.z + terrainBase.z;
 
 };
+
 CommonTerrain.prototype.setScale = function ( scale ) {
 
 	CommonTerrainUniforms.scale.value = scale;

@@ -656,7 +656,7 @@ Survey.prototype.getModelSurfaceFromWGS84 = function ( position, callback ) {
 
 	position.copy( this.projectionWGS84.forward( position ) );
 
-	this.terrain.getAccurateHeights( [ position ], _handleResult );
+	this.terrain.getHeights( [ position ], _handleResult );
 
 	return;
 

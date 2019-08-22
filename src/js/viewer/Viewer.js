@@ -22,7 +22,6 @@ import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/lib';
 import { WorkerPool } from '../core/WorkerPool';
 import { defaultView, dynamicView, ViewState } from './ViewState';
-import { getSkyBox } from '../core/SkyBox';
 
 // import { Annotations } from './Annotations';
 
@@ -137,12 +136,14 @@ function init ( domID, configuration ) { // public method
 	const width  = container.clientWidth;
 	const height = container.clientHeight;
 
-	renderer = new WebGLRenderer( { antialias: true });
+	renderer = new WebGLRenderer( { antialias: true, alpha: true });
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setClearColor( Cfg.themeValue( 'background' ) );
 	renderer.autoClear = false;
+	renderer.setClearAlpha( 0.0 );
 
+	container.style.backgroundColor = Cfg.themeValue( 'background' );
 	renderer.setRenderTarget( defaultRenderTarget );
 
 	cameraManager = new CameraManager( container, renderer, scene );
@@ -687,8 +688,7 @@ function setLocation ( x ) {
 
 		controls.enabled = false;
 		locationControls.connect();
-		scene.background = getSkyBox();
-
+		container.style.backgroundColor = Cfg.themeColorCSS( 'sky' );
 		setView( dynamicView, null );
 
 	} else {
@@ -697,8 +697,7 @@ function setLocation ( x ) {
 		locationControls.disconnect();
 		controls.enabled = true;
 		terrain.setScale( 0.0 );
-		scene.background = null;
-
+		container.style.backgroundColor = Cfg.themeValue( 'background' );
 		// restore previous settings
 		setView( savedView, null );
 		savedView = null;

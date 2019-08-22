@@ -2,6 +2,7 @@
 const defaultTheme = {
 	fieldOfView: 50,
 	background: 'black',
+	sky: 0x106f8d,
 	maxPolarAngle: 180,
 	lighting: {
 		azimuth: 315,

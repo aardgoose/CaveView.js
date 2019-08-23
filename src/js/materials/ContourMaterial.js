@@ -2,6 +2,7 @@
 import { MeshLambertMaterial } from '../Three';
 import { Cfg } from '../core/lib';
 import { CommonDepthUniforms } from './CommonDepthUniforms';
+import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 
 const fragment_pars = [
 	'uniform vec3 contourColor;',
@@ -58,6 +59,8 @@ function ContourMaterial ( survey ) {
 }
 
 ContourMaterial.prototype = Object.create( MeshLambertMaterial.prototype );
+
+Object.assign( ContourMaterial.prototype, CommonTerrainMaterial.prototype );
 
 export { ContourMaterial };
 

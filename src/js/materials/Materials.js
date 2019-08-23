@@ -13,8 +13,9 @@ import { MaterialFog } from './MaterialFog';
 
 import {
 	LineBasicMaterial, MeshLambertMaterial,
-	NoColors, VertexColors, IncrementStencilOp, EqualStencilFunc
+	NoColors, VertexColors, IncrementStencilOp
 } from '../Three';
+
 import { CommonDepthUniforms } from './CommonDepthUniforms';
 
 const cache = new Map();
@@ -27,17 +28,10 @@ var cursorHeight = 0;
 var viewer;
 var survey;
 
-function setStencil( material ) {
+function setStencil ( material ) {
 
 	material.stencilWrite = true;
 	material.stencilZPass = IncrementStencilOp;
-
-}
-
-function testStencil( material ) {
-
-	material.stencilWrite = true;
-	material.stencilFunc = EqualStencilFunc;
 
 }
 
@@ -101,7 +95,6 @@ function getHypsometricMaterial () {
 	if ( material === undefined ) {
 
 		material = cacheSurveyMaterial( name, new HypsometricMaterial( survey ) );
-		testStencil( material );
 
 	}
 

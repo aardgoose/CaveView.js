@@ -12,10 +12,13 @@ varying float fogDepth;
 
 varying float zMap;
 varying vec3 vColor;
+varying vec3 vMvPosition;
 
 void main() {
 
 	gl_FragColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * vec4( vColor, 1.0 );
+
+	gl_FragColor.a = 1.0 - length( vMvPosition.xyz ) / 200.0;
 
 	if ( fogEnabled != 0 ) {
 

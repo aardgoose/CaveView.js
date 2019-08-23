@@ -2,7 +2,7 @@ import { ColourCache } from '../core/ColourCache';
 import { Cfg } from '../core/lib';
 
 import { MeshLambertMaterial} from '../Three';
-import { CommonTerrainUniforms } from './CommonTerrainUniforms';
+import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 import { Shaders } from '../shaders/Shaders';
 
 const fragment_pars = [
@@ -38,7 +38,7 @@ function HypsometricMaterial ( survey ) {
 
 		Object.assign(
 			shader.uniforms,
-			CommonTerrainUniforms,
+			CommonTerrainMaterial.uniforms,
 			{
 				minZ:   { value: zMin },
 				scaleZ: { value: 1 / ( zMax - zMin ) },
@@ -64,6 +64,8 @@ function HypsometricMaterial ( survey ) {
 }
 
 HypsometricMaterial.prototype = Object.create( MeshLambertMaterial.prototype );
+
+Object.assign( HypsometricMaterial.prototype, CommonTerrainMaterial.prototype );
 
 export { HypsometricMaterial };
 

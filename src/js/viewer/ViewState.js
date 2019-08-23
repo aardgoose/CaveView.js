@@ -1,6 +1,6 @@
 
 import {
-	CAMERA_PERSPECTIVE, SHADING_HEIGHT, SHADING_RELIEF, VIEW_PLAN, MOUSE_MODE_NORMAL
+	CAMERA_PERSPECTIVE, SHADING_HEIGHT, SHADING_RELIEF, VIEW_PLAN, MOUSE_MODE_NORMAL, TERRAIN_BLEND
 } from '../core/constants';
 
 const defaultView = {
@@ -36,7 +36,9 @@ const dynamicView = {
 	scraps: true,
 	box: false,
 	terrain: true,
-	terrainOpacity: 1
+	terrainOpacity: 1,
+	terrainDatumShift: true,
+	terrainThroughMode: TERRAIN_BLEND
 };
 
 function ViewState ( viewer ) {

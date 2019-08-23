@@ -1240,7 +1240,6 @@ function mouseDown ( event ) {
 
 			let node = survey.surveyTree.findById( entrance.stationID );
 			console.log( node );
-			locationControls.connect( node.p );
 
 		}
 

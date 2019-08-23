@@ -9,6 +9,7 @@ uniform vec3 uLight;
 varying vec3 vColor;
 varying float zMap;
 varying float fogDepth;
+varying vec3 vMvPosition;
 
 void main() {
 
@@ -29,6 +30,8 @@ void main() {
 	zMap = ( position.z - minZ ) * scaleZ;
 
 	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+	vMvPosition = mvPosition.xyz;
 
 	fogDepth = -mvPosition.z;
 

@@ -58,6 +58,8 @@ function Tile ( x, y, zoom, tileSpec ) {
 
 }
 
+Tile.opacity = 1.0;
+
 Tile.liveTiles = 0;
 
 Tile.prototype = Object.create( Mesh.prototype );
@@ -266,11 +268,9 @@ Tile.prototype.setMaterial = function ( material ) {
 
 };
 
-Tile.prototype.setOpacity = function ( opacity ) {
+Tile.prototype.setThroughMode = function ( mode ) {
 
-	const material = this.material;
-
-	material.opacity = opacity;
+	this.material.setThroughMode( mode );
 
 };
 
@@ -284,7 +284,17 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
 	function _overlayLoaded ( material ) {
 
-		if ( material !== null ) self.material = material;
+		if ( material !== null ) {
+
+			self.material = material;
+			material.setThroughMode( overlay.throughMode );
+
+			Object.defineProperty( material, 'opacity', {
+				get: function () { return Tile.opacity; },
+				set: function ( opacity ) { Tile.opacity = opacity; }
+			} );
+
+		}
 
 		imageLoadedCallback( self );
 

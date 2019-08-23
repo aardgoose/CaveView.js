@@ -7,6 +7,7 @@ import {
 import {TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 import { Cfg } from '../core/lib';
 import proj4 from 'proj4';
+import { TERRAIN_BLEND } from '../core/constants';
 
 const missingMaterial = new MeshLambertMaterial( { transparent: true, opacity: 0.5, color: 0xff8888 } );
 
@@ -17,6 +18,7 @@ function Overlay ( overlayProvider, container ) {
 	this.active = false;
 	this.hasCoverage = false;
 	this.crsSupported = overlayProvider.crsSupported === undefined ? [ 'EPSG:3857', 'EPSG:4326', 'ORIGINAL' ] : overlayProvider.crsSupported;
+	this.throughMode = TERRAIN_BLEND;
 
 	const attribution = overlayProvider.getAttribution();
 

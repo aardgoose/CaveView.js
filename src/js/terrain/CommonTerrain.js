@@ -1,8 +1,8 @@
 
-import { FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS } from '../core/constants';
+import { FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS, TERRAIN_STENCIL } from '../core/constants';
 import { Cfg } from '../core/lib';
 import { Materials } from '../materials/Materials';
-import { CommonTerrainUniforms } from '../materials/CommonTerrainUniforms';
+import { CommonTerrainMaterial } from '../materials/CommonTerrainMaterial';
 import { unpackRGBA } from '../core/unpackRGBA';
 import { Overlay } from './Overlay';
 import {
@@ -36,6 +36,7 @@ function CommonTerrain () {
 	this.isFlat = false;
 	this.screenAttribution = null;
 	this.terrainShadingModes = {};
+	this.throughMode = TERRAIN_STENCIL;
 
 	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
 
@@ -217,6 +218,8 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 			if ( this.isTiled && overlay.hasCoverage ) {
 
+				overlay.throughMode = this.throughMode;
+
 				this.setOverlay( overlay, renderCallback );
 				hideAttribution = false;
 
@@ -245,11 +248,22 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	}
 
-	if ( material !== undefined ) this.setMaterial( material );
+	if ( material !== undefined ) {
+
+		material.setThroughMode( this.throughMode );
+		this.setMaterial( material );
+
+	}
 
 	this.shadingMode = mode;
 
 	return true;
+
+};
+
+CommonTerrain.prototype.setThroughMode = function ( mode ) {
+
+	this.throughMode = mode;
 
 };
 
@@ -375,20 +389,20 @@ CommonTerrain.prototype.getHeight = function ( point ) {
 
 CommonTerrain.prototype.setScale = function ( scale ) {
 
-	CommonTerrainUniforms.scale.value = scale;
+	CommonTerrainMaterial.uniforms.scale.value = scale;
 
 };
 
 CommonTerrain.prototype.setAccuracy = function ( accuracy ) {
 
-	CommonTerrainUniforms.accuracy.value = accuracy;
-	CommonTerrainUniforms.ringColor.value.g = 1 - ( accuracy / 1000 );
+	CommonTerrainMaterial.uniforms.accuracy.value = accuracy;
+	CommonTerrainMaterial.uniforms.ringColor.value.g = 1 - ( accuracy / 1000 );
 
 };
 
 CommonTerrain.prototype.setTarget = function ( target ) {
 
-	CommonTerrainUniforms.target.value.copy( target );
+	CommonTerrainMaterial.uniforms.target.value.copy( target );
 
 };
 

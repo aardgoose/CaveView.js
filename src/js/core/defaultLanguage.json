@@ -82,6 +82,11 @@
 				"overlay": "map overlay",
 				"contours": "contours"
 			},
+			"through": {
+				"caption": "Through",
+				"stencil": "stencil",
+				"blend":"blend"
+			},
 			"overlay": {
 				"caption": "Overlay"
 			},

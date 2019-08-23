@@ -222,6 +222,12 @@ function init ( domID, configuration ) { // public method
 			set: setTerrainLighting
 		},
 
+		'terrainThrough': {
+			writeable: true,
+			get: function () { return terrain.throughMode; },
+			set: function ( x ) { _stateSetter( setTerrainThroughMode, 'throughMode', x ); }
+		},
+
 		'terrainShadingModes': {
 			get: function () { return terrain.terrainShadingModes; }
 		},
@@ -618,6 +624,16 @@ function setTerrainShadingMode ( mode ) {
 	renderView();
 
 	if ( terrain.isTiled ) updateTerrain();
+
+}
+
+function setTerrainThroughMode ( mode ) {
+
+	if ( survey.terrain === null ) return;
+
+	terrain.setThroughMode( mode );
+
+	setTerrainShadingMode( terrainShadingMode );
 
 }
 

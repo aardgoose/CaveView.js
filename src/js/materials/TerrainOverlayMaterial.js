@@ -1,6 +1,6 @@
 
 import { MeshLambertMaterial, EqualStencilFunc } from '../Three';
-import { CommonTerrainUniforms } from './CommonTerrainUniforms';
+import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 import { Shaders } from '../shaders/Shaders';
 
 function TerrainOverlayMaterial ( parameters ) {
@@ -13,7 +13,7 @@ function TerrainOverlayMaterial ( parameters ) {
 	this.onBeforeCompile = function ( shader ) {
 
 		// some uniforms shared by all material instances
-		Object.assign( shader.uniforms, CommonTerrainUniforms );
+		Object.assign( shader.uniforms, CommonTerrainMaterial.uniforms );
 
 		var vertexShader = shader.vertexShader
 			.replace( '#include <common>', '$&\nvarying vec2 vPosition;\n' )
@@ -36,6 +36,8 @@ function TerrainOverlayMaterial ( parameters ) {
 }
 
 TerrainOverlayMaterial.prototype = Object.create( MeshLambertMaterial.prototype );
+
+Object.assign( TerrainOverlayMaterial.prototype, CommonTerrainMaterial.prototype );
 
 export { TerrainOverlayMaterial };
 

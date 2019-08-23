@@ -328,10 +328,13 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	const self = this;
 	const currentOverlay = this.activeOverlay;
+	const throughMode = overlay.throughMode;
 
 	if ( currentOverlay !== null ) {
 
 		if ( currentOverlay === overlay ) {
+
+			this.traverse( _setTileThroughMode );
 
 			return;
 
@@ -371,9 +374,15 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	}
 
-	function _overlayLoaded ( tile ) {
+	function _setTileThroughMode ( tile ) {
 
-		tile.setOpacity( self.opacity );
+		if ( ! tile.isTile || ! tile.isMesh ) return;
+
+		tile.setThroughMode( throughMode );
+
+	}
+
+	function _overlayLoaded () {
 
 		if ( --self.overlaysLoading === 0 ) overlayLoadedCallback();
 
@@ -444,18 +453,12 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 	} else {
 
-		// each tile has its own material, therefore need setting separately
-		this.traverse( _setTileOpacity );
+		Tile.opacity = opacity;
 
 	}
 
 	return;
 
-	function _setTileOpacity ( obj ) {
-
-		if ( obj.isTile ) obj.setOpacity( opacity );
-
-	}
 
 };
 

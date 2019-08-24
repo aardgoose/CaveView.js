@@ -58,8 +58,6 @@ function Tile ( x, y, zoom, tileSpec ) {
 
 }
 
-Tile.opacity = 1.0;
-
 Tile.liveTiles = 0;
 
 Tile.prototype = Object.create( Mesh.prototype );
@@ -288,11 +286,6 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
 			self.material = material;
 			material.setThroughMode( overlay.throughMode );
-
-			Object.defineProperty( material, 'opacity', {
-				get: function () { return Tile.opacity; },
-				set: function ( opacity ) { Tile.opacity = opacity; }
-			} );
 
 		}
 

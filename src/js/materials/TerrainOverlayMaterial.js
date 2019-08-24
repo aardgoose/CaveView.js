@@ -1,5 +1,5 @@
 
-import { MeshLambertMaterial, EqualStencilFunc } from '../Three';
+import { MeshLambertMaterial } from '../Three';
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 import { Shaders } from '../shaders/Shaders';
 
@@ -28,12 +28,16 @@ function TerrainOverlayMaterial ( parameters ) {
 
 	};
 
-	this.stencilWrite = true;
-	this.stencilFunc = EqualStencilFunc;
+	Object.defineProperty( this, 'opacity', {
+		get: function () { return TerrainOverlayMaterial.opacity; },
+		set: function ( opacity ) { TerrainOverlayMaterial.opacity = opacity; }
+	} );
 
 	return this;
 
 }
+
+TerrainOverlayMaterial.opacity = 0.5;
 
 TerrainOverlayMaterial.prototype = Object.create( MeshLambertMaterial.prototype );
 

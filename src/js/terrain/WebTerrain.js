@@ -8,6 +8,7 @@ import { EPSG4326TileSet } from './EPSG4326TileSet';
 import { EPSG3857TileSet } from './EPSG3857TileSet';
 
 import { Frustum, Matrix4 } from '../Three';
+import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 
 const __frustum = new Frustum();
 const __matrix4 = new Matrix4();
@@ -453,7 +454,7 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 	} else {
 
-		Tile.opacity = opacity;
+		TerrainOverlayMaterial.opacity = opacity;
 
 	}
 

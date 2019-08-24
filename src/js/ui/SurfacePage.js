@@ -1,6 +1,6 @@
 import {
 	SHADING_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_SINGLE,
-	TERRAIN_BLEND, TERRAIN_STENCIL
+	TERRAIN_BLEND, TERRAIN_STENCIL, TERRAIN_BASIC
 } from '../core/constants';
 
 import { Page } from './Page';
@@ -14,6 +14,7 @@ const surfaceShadingModes = {
 };
 
 const terrainThroughModes = {
+	'terrain.through.basic':   TERRAIN_BASIC,
 	'terrain.through.blend':   TERRAIN_BLEND,
 	'terrain.through.stencil': TERRAIN_STENCIL
 };

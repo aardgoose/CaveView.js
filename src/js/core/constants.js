@@ -83,8 +83,9 @@ export const DIVING  = 3;
 export const STATION_NORMAL = 0;
 export const STATION_ENTRANCE = 1;
 
-export const TERRAIN_STENCIL = 0;
-export const TERRAIN_BLEND   = 1;
+export const TERRAIN_BASIC   = 0;
+export const TERRAIN_STENCIL = 1;
+export const TERRAIN_BLEND   = 2;
 
 
 // EOF

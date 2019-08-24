@@ -84,6 +84,7 @@
 			},
 			"through": {
 				"caption": "Through",
+				"basic": "basic",
 				"stencil": "stencil",
 				"blend":"blend"
 			},

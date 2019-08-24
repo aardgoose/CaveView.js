@@ -5,7 +5,7 @@ import {
 	CustomBlending, NormalBlending, OneMinusDstAlphaFactor, DstAlphaFactor
 } from '../Three';
 
-import { TERRAIN_BLEND, TERRAIN_STENCIL } from '../core/constants';
+import { TERRAIN_BLEND, TERRAIN_STENCIL, TERRAIN_BASIC } from '../core/constants';
 
 function CommonTerrainMaterial () {}
 
@@ -18,11 +18,12 @@ CommonTerrainMaterial.uniforms = {
 
 CommonTerrainMaterial.prototype.setThroughMode = function ( mode ) {
 
+	this.stencilWrite = false;
+	this.blending = NormalBlending;
+
 	switch ( mode ) {
 
 	case TERRAIN_BLEND:
-
-		this.stencilWrite = false;
 
 		this.blending = CustomBlending;
 		this.blendSrc = OneMinusDstAlphaFactor;
@@ -32,16 +33,16 @@ CommonTerrainMaterial.prototype.setThroughMode = function ( mode ) {
 
 	case TERRAIN_STENCIL:
 
-		this.blending = NormalBlending;
-
 		this.stencilWrite = true;
 		this.stencilFunc = EqualStencilFunc;
 
 		break;
 
-	}
+	case TERRAIN_BASIC:
 
-	//this.needsUpdate = true;
+		break;
+
+	}
 
 };
 

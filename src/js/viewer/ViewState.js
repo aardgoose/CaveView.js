@@ -38,7 +38,7 @@ const dynamicView = {
 	terrain: true,
 	terrainOpacity: 1,
 	terrainDatumShift: true,
-	terrainThroughMode: TERRAIN_BLEND
+	terrainThrough: TERRAIN_BLEND
 };
 
 function ViewState ( viewer ) {

@@ -6,11 +6,49 @@ import { Materials } from '../materials/Materials';
 
 import {
 	Float32BufferAttribute,
-	BufferGeometry, PlaneGeometry,
+	BufferGeometry,
 	LineBasicMaterial, MeshBasicMaterial,
 	FaceColors,
 	LineSegments, Group, Mesh
 } from '../Three';
+
+function BarGeometry ( length, height, divisions ) {
+
+	BufferGeometry.call( this );
+
+	const c1 = Cfg.themeColor( 'hud.scale.bar1' );
+	const c2 = Cfg.themeColor( 'hud.scale.bar2' );
+
+	const dWidth = length / divisions;
+	const vertices = [];
+	const colors = [];
+
+	var i;
+
+	for ( i = 0; i < divisions; i++ ) {
+
+		vertices.push(
+			i * dWidth, 0, 0,
+			( i + 1 ) * dWidth, height, 0,
+			i * dWidth, height, 0,
+			( i + 1 ) * dWidth, height, 0,
+			i * dWidth, 0, 0,
+			( i + 1 ) * dWidth, 0, 0
+		);
+
+		const c = ( i % 2 ) ? c1 : c2;
+		colors.push( c, c, c, c, c, c );
+
+	}
+
+	const colorBuffer = new Float32BufferAttribute( colors.length * 3, 3 );
+
+	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+	this.addAttribute( 'color', colorBuffer.copyColorsArray( colors ) );
+
+}
+
+BarGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 function ScaleBar ( container, hScale, rightMargin ) {
 
@@ -140,11 +178,10 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 		const mLine = new LineSegments( line, new LineBasicMaterial( { color: sb } ) );
 
-		const bar = _makeBarGeometry( length );
-		const bar2 = _makeBarGeometry( length * 10 );
+		const bar = new BarGeometry( rLength, height, length );
+		const bar2 = new BarGeometry( rLength, height, length * 10 );
 
-		bar.translate( rLength / 2, height + height / 2 + 1, 0 );
-		bar2.translate( rLength / 2, height / 2, 0 );
+		bar.translate( 0, height + 1, 0 );
 
 		const mBar = new Mesh( bar, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors } ) );
 		const mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors } ) );
@@ -158,28 +195,6 @@ ScaleBar.prototype.setScale = function ( scale ) {
 		group.addStatic( mLine );
 
 		return { mesh: group, topRight: bar.boundingBox.max.x };
-
-		function _makeBarGeometry( divisions ) {
-
-			const c1 = Cfg.themeColor( 'hud.scale.bar1' );
-			const c2 = Cfg.themeColor( 'hud.scale.bar2' );
-
-			const bar = new PlaneGeometry( rLength, height, divisions );
-
-			const faces = bar.faces;
-			const l = faces.length;
-
-			var i;
-
-			for ( i = 0; i < l; i++ ) {
-
-				faces[ i ].color = ( i % 4 < 2 ) ? c1 : c2;
-
-			}
-
-			return bar;
-
-		}
 
 	}
 

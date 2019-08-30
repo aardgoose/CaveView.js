@@ -7,9 +7,9 @@ import { Materials } from '../materials/Materials';
 import {
 	Float32BufferAttribute,
 	BufferGeometry,
-	LineBasicMaterial, MeshBasicMaterial,
+	MeshBasicMaterial,
 	VertexColors,
-	LineSegments, Group, Mesh
+	Group, Mesh
 } from '../Three';
 
 function BarGeometry ( length, height, divisions ) {
@@ -38,13 +38,18 @@ function BarGeometry ( length, height, divisions ) {
 
 		for ( i = 0; i < divisions; i++ ) {
 
+			const x1 = i * dWidth;
+			const x2 = x1 + dWidth;
+			const y1 = offset;
+			const y2 = y1 + height;
+
 			vertices.push(
-				i * dWidth, offset, 0,
-				( i + 1 ) * dWidth, height + offset, 0,
-				i * dWidth, height + offset, 0,
-				( i + 1 ) * dWidth, height + offset, 0,
-				i * dWidth, offset, 0,
-				( i + 1 ) * dWidth, offset, 0
+				x1, y1, 0,
+				x2, y2, 0,
+				x1, y2, 0,
+				x2, y2, 0,
+				x1, y1, 0,
+				x2, y1, 0
 			);
 
 			const c = ( i % 2 ) ? c1 : c2;
@@ -164,40 +169,18 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	label.translateX( scale * scaleBars[ length ].topRight - label.position.x - w );
 
-
 	return this;
 
 	function _makeScaleBar ( length ) {
 
-		const height = 4;
-		const rLength = length * self.hScale;
-
-		const line = new BufferGeometry();
-		const vertices = [];
-
-		vertices.push( 0, height, 1 );
-		vertices.push( rLength, height, 1 );
-
-		const positions = new Float32BufferAttribute( vertices.length, 3 );
-
-		line.addAttribute( 'position', positions.copyArray( vertices ) );
-
-		const sb = Cfg.themeValue( 'hud.scale.bar1' );
-
-		const mLine = new LineSegments( line, new LineBasicMaterial( { color: sb } ) );
-
-		const bar = new BarGeometry( rLength, height, length );
-
-		const mBar = new Mesh( bar, new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
+		const bar = new BarGeometry( length * self.hScale, 4, length );
 
 		bar.computeBoundingBox();
 
-		const group = new Group();
-
-		group.addStatic( mBar );
-		group.addStatic( mLine );
-
-		return { mesh: group, topRight: bar.boundingBox.max.x };
+		return {
+			mesh: new Mesh( bar, new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) ),
+			topRight: bar.boundingBox.max.x
+		};
 
 	}
 

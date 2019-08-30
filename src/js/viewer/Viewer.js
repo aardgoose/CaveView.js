@@ -704,7 +704,7 @@ function setLocation ( x ) {
 
 		controls.enabled = false;
 		locationControls.connect();
-		container.style.backgroundColor = Cfg.themeColorCSS( 'sky' );
+
 		setView( dynamicView, null );
 
 	} else {
@@ -713,7 +713,7 @@ function setLocation ( x ) {
 		locationControls.disconnect();
 		controls.enabled = true;
 		terrain.setScale( 0.0 );
-		container.style.backgroundColor = Cfg.themeValue( 'background' );
+
 		// restore previous settings
 		setView( savedView, null );
 		savedView = null;

@@ -8,7 +8,7 @@ import {
 	Float32BufferAttribute,
 	BufferGeometry,
 	LineBasicMaterial, MeshBasicMaterial,
-	FaceColors,
+	VertexColors,
 	LineSegments, Group, Mesh
 } from '../Three';
 
@@ -19,32 +19,40 @@ function BarGeometry ( length, height, divisions ) {
 	const c1 = Cfg.themeColor( 'hud.scale.bar1' );
 	const c2 = Cfg.themeColor( 'hud.scale.bar2' );
 
-	const dWidth = length / divisions;
 	const vertices = [];
 	const colors = [];
 
-	var i;
-
-	for ( i = 0; i < divisions; i++ ) {
-
-		vertices.push(
-			i * dWidth, 0, 0,
-			( i + 1 ) * dWidth, height, 0,
-			i * dWidth, height, 0,
-			( i + 1 ) * dWidth, height, 0,
-			i * dWidth, 0, 0,
-			( i + 1 ) * dWidth, 0, 0
-		);
-
-		const c = ( i % 2 ) ? c1 : c2;
-		colors.push( c, c, c, c, c, c );
-
-	}
+	_makeBar( divisions * 10, 0 );
+	_makeBar( divisions, height + 1 );
 
 	const colorBuffer = new Float32BufferAttribute( colors.length * 3, 3 );
 
 	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 	this.addAttribute( 'color', colorBuffer.copyColorsArray( colors ) );
+
+	function _makeBar( divisions, offset ) {
+
+		const dWidth = length / divisions;
+
+		var i;
+
+		for ( i = 0; i < divisions; i++ ) {
+
+			vertices.push(
+				i * dWidth, offset, 0,
+				( i + 1 ) * dWidth, height + offset, 0,
+				i * dWidth, height + offset, 0,
+				( i + 1 ) * dWidth, height + offset, 0,
+				i * dWidth, offset, 0,
+				( i + 1 ) * dWidth, offset, 0
+			);
+
+			const c = ( i % 2 ) ? c1 : c2;
+			colors.push( c, c, c, c, c, c );
+
+		}
+
+	}
 
 }
 
@@ -179,19 +187,14 @@ ScaleBar.prototype.setScale = function ( scale ) {
 		const mLine = new LineSegments( line, new LineBasicMaterial( { color: sb } ) );
 
 		const bar = new BarGeometry( rLength, height, length );
-		const bar2 = new BarGeometry( rLength, height, length * 10 );
 
-		bar.translate( 0, height + 1, 0 );
-
-		const mBar = new Mesh( bar, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors } ) );
-		const mBar2 = new Mesh( bar2, new MeshBasicMaterial( { color: 0xffffff, vertexColors: FaceColors } ) );
+		const mBar = new Mesh( bar, new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
 
 		bar.computeBoundingBox();
 
 		const group = new Group();
 
 		group.addStatic( mBar );
-		group.addStatic( mBar2 );
 		group.addStatic( mLine );
 
 		return { mesh: group, topRight: bar.boundingBox.max.x };

@@ -28,7 +28,7 @@ import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
 import { buildWallsSync } from './walls/WallBuilders';
 
-import { Matrix4, Vector3, Box3, Object3D, Color, IncrementStencilOp } from '../Three';
+import { Matrix4, Vector3, Box3, Object3D, IncrementStencilOp } from '../Three';
 import proj4 from 'proj4';
 
 function Survey ( cave ) {
@@ -64,12 +64,6 @@ function Survey ( cave ) {
 	this.topology = null;
 	this.annotations = null;
 	this.inverseWorld = null;
-
-	this.colourAxis = [
-		new Vector3( 1, 0, 0),
-		new Vector3( 0, 1, 0),
-		new Vector3( 0, 1, 1)
-	];
 
 	this.lightDirection = new Vector3( -1, -1, 2 ).normalize();
 
@@ -1203,33 +1197,6 @@ Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
-
-		colour.toArray( colors, v1 * 3 );
-		colour.toArray( colors, v2 * 3 );
-
-	}
-
-};
-
-Survey.prototype.setLegColourByAxis = function ( mesh ) {
-
-	const vector = new Vector3();
-
-	const c1 = this.colourAxis[ 0 ];
-	const c2 = this.colourAxis[ 1 ];
-	const c3 = this.colourAxis[ 2 ];
-
-	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
-
-	function _colourSegment ( vertices, colors, v1, v2 ) {
-
-		vector.copy( vertices[ v1 ] ).sub( vertices[ v2 ] ).normalize();
-
-		const colour = new Color(
-			Math.abs( vector.dot( c1 ) ),
-			Math.abs( vector.dot( c2 ) ),
-			Math.abs( vector.dot( c3 ) )
-		);
 
 		colour.toArray( colors, v1 * 3 );
 		colour.toArray( colors, v2 * 3 );

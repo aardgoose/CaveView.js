@@ -1,9 +1,5 @@
 export { WebGLRenderTarget } from 'three/src/renderers/WebGLRenderTarget.js';
 export { WebGLRenderer } from 'three/src/renderers/WebGLRenderer.js';
-export { ShaderLib } from 'three/src/renderers/shaders/ShaderLib.js';
-export { UniformsLib } from 'three/src/renderers/shaders/UniformsLib.js';
-export { UniformsUtils } from 'three/src/renderers/shaders/UniformsUtils.js';
-export { ShaderChunk } from 'three/src/renderers/shaders/ShaderChunk.js';
 export { FogExp2 } from 'three/src/scenes/FogExp2.js';
 export { Scene } from 'three/src/scenes/Scene.js';
 export { Mesh } from 'three/src/objects/Mesh.js';
@@ -11,6 +7,7 @@ export { LineSegments } from 'three/src/objects/LineSegments.js';
 export { Line } from 'three/src/objects/Line.js';
 export { Points } from 'three/src/objects/Points.js';
 export { Group } from 'three/src/objects/Group.js';
+
 export { DataTexture } from 'three/src/textures/DataTexture.js';
 export { CubeTexture } from 'three/src/textures/CubeTexture.js';
 export { CanvasTexture } from 'three/src/textures/CanvasTexture.js';
@@ -18,27 +15,29 @@ export { Texture } from 'three/src/textures/Texture.js';
 
 export { SphereBufferGeometry } from 'three/src/geometries/SphereGeometry.js';
 export { RingBufferGeometry } from 'three/src/geometries/RingGeometry.js';
-export { PlaneGeometry, PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry.js';
+export { PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry.js';
 export { CylinderBufferGeometry } from 'three/src/geometries/CylinderGeometry.js';
 
-export * from 'three/src/materials/Materials.js';
+export { ShaderMaterial } from 'three/src/materials/ShaderMaterial';
+export { PointsMaterial } from 'three/src/materials/PointsMaterial';
+export { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
+export { MeshLambertMaterial } from 'three/src/materials/MeshLambertMaterial';
+export { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
+export { LineBasicMaterial } from 'three/src/materials/LineBasicMaterial';
+
 export { TextureLoader } from 'three/src/loaders/TextureLoader.js';
-export { DefaultLoadingManager, LoadingManager } from 'three/src/loaders/LoadingManager.js';
 export { ImageLoader } from 'three/src/loaders/ImageLoader.js';
 export { FileLoader } from 'three/src/loaders/FileLoader.js';
 export { Loader } from 'three/src/loaders/Loader.js';
-export { LoaderUtils } from 'three/src/loaders/LoaderUtils.js';
-export { Cache } from 'three/src/loaders/Cache.js';
+
 export { HemisphereLight } from 'three/src/lights/HemisphereLight.js';
 export { DirectionalLight } from 'three/src/lights/DirectionalLight.js';
 export { AmbientLight } from 'three/src/lights/AmbientLight.js';
-export { Light } from 'three/src/lights/Light.js';
+
 export { StereoCamera } from 'three/src/cameras/StereoCamera.js';
 export { PerspectiveCamera } from 'three/src/cameras/PerspectiveCamera.js';
 export { OrthographicCamera } from 'three/src/cameras/OrthographicCamera.js';
-export { ArrayCamera } from 'three/src/cameras/ArrayCamera.js';
-export { Camera } from 'three/src/cameras/Camera.js';
-export { Uniform } from 'three/src/core/Uniform.js';
+
 export { InstancedBufferGeometry } from 'three/src/core/InstancedBufferGeometry.js';
 export { BufferGeometry } from 'three/src/core/BufferGeometry.js';
 export { InstancedBufferAttribute } from 'three/src/core/InstancedBufferAttribute.js';

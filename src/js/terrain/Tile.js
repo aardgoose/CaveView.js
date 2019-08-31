@@ -118,11 +118,7 @@ Tile.prototype.getWorldBoundingBox = function () {
 
 		this.updateWorldMatrix( true, false );
 
-		const boundingBox = this.boundingBox.clone();
-
-		boundingBox.applyMatrix4( this.matrixWorld );
-
-		this.worldBoundingBox = boundingBox;
+		this.worldBoundingBox = this.boundingBox.clone().applyMatrix4( this.matrixWorld );
 
 	}
 

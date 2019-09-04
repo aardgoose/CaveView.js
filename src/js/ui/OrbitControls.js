@@ -72,9 +72,6 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 	// The four arrow keys
 	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
 
-	// Mouse buttons
-	this.mouseButtons = { ORBIT: MOUSE.LEFT, ZOOM: MOUSE.MIDDLE, PAN: MOUSE.RIGHT };
-
 	// for reset
 
 	const camera = this.cameraManager.activeCamera;
@@ -262,6 +259,13 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 	var changeEvent = { type: 'change' };
 	var startEvent = { type: 'start' };
 	var endEvent = { type: 'end' };
+
+	const LEFT_BUTTON = 1;
+	const RIGHT_BUTTON = 2;
+	const MIDDLE_BUTTON = 4;
+	const EMULATED_MIDDLE_BUTTON = 3;
+
+	var buttons = 0;
 
 	var STATE = { NONE: - 1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY_PAN: 4 };
 
@@ -482,7 +486,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 		const deltaX2 = svxDelta.x * svxDelta.x;
 		const deltaY2 = svxDelta.y * svxDelta.y;
 
-		switch( modeLock ) {
+		switch ( modeLock ) {
 
 		case MODE_LOCK_UNLOCKED:
 
@@ -766,6 +770,32 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 	}
 
+	function setButtons( button ) {
+
+		// add to current buttons depressed set
+		// allows emulation of 3rd button in absence of event.buttons
+
+		switch ( button ) {
+
+		case MOUSE.LEFT:
+
+			buttons |= LEFT_BUTTON;
+			break;
+
+		case MOUSE.MIDDLE:
+
+			buttons |= MIDDLE_BUTTON;
+			break;
+
+		case MOUSE.RIGHT:
+
+			buttons |= RIGHT_BUTTON;
+			break;
+
+		}
+
+	}
+
 	//
 	// event handlers - FSM: listen for events and reset state
 	//
@@ -776,9 +806,11 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 		event.preventDefault();
 
-		switch ( event.button ) {
+		setButtons( event.button );
 
-		case scope.mouseButtons.ORBIT:
+		switch ( buttons ) {
+
+		case LEFT_BUTTON:
 
 			handleMouseDownLeft( event );
 
@@ -786,7 +818,8 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 			break;
 
-		case scope.mouseButtons.ZOOM:
+		case MIDDLE_BUTTON:
+		case EMULATED_MIDDLE_BUTTON:
 
 			handleMouseDownMiddle( event );
 
@@ -794,7 +827,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 			break;
 
-		case scope.mouseButtons.PAN:
+		case RIGHT_BUTTON:
 
 			handleMouseDownPan( event );
 
@@ -851,7 +884,6 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 		if ( scope.enabled === false ) return;
 
-		//handleMouseUp( event );
 		scope.element.style.cursor = 'default';
 
 		document.removeEventListener( 'mousemove', onMouseMove, false );
@@ -860,6 +892,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 		scope.dispatchEvent( endEvent );
 
 		state = STATE.NONE;
+		buttons = 0;
 
 	}
 
@@ -960,8 +993,6 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 	function onTouchEnd( /* event */ ) {
 
 		if ( scope.enabled === false ) return;
-
-		//handleTouchEnd( event );
 
 		scope.dispatchEvent( endEvent );
 

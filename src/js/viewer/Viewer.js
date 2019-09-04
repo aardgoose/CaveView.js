@@ -872,9 +872,9 @@ function setSurfaceShadingMode ( mode ) {
 
 }
 
-function addOverlay ( name, overlayProvider ) {
+function addOverlay ( name, overlayProvider, locationDefault ) {
 
-	CommonTerrain.addOverlay( name, overlayProvider, container );
+	CommonTerrain.addOverlay( name, overlayProvider, container, locationDefault );
 
 }
 

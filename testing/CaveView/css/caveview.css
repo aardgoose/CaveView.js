@@ -110,6 +110,7 @@ body {
   background-color: #444444;
   background-origin: content-box;
   background-image: url(../images/icons.png);
+  background-repeat: no-repeat;
   padding: 1px;
 }
 #cv-tab-box #close {
@@ -170,6 +171,24 @@ body {
   border-right: 2px solid #1ab4e5;
   width: 41px;
   margin-left: -1px;
+}
+#cv-gps-button {
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 0px;
+  height: 40px;
+  width: 40px;
+  border: 2px solid transparent;
+  background-color: none;
+  background-origin: content-box;
+  background-image: url(../images/icons.png);
+  background-repeat: no-repeat;
+  background-position: -395px 0;
+  filter: brightness(0.6);
+}
+#cv-gps-button.on {
+  background-position: -432px 0;
+  filter: brightness(1);
 }
 @media (min-width: 768px) {
   /* default to normal size */
@@ -461,6 +480,37 @@ body {
 #cv-frame input[type=range]:focus::-ms-fill-lower,
 #cv-frame input[type=range]:focus::-ms-fill-upper {
   background: #eeeeee;
+}
+#cv-frame label#cv-file-label {
+  margin: 2px 0px 2px 0px;
+  padding: 0px 0px 3px 20px;
+  height: 20px;
+  border: 1px solid grey;
+  vertical-align: bottom;
+}
+#cv-frame label#cv-file-label + select {
+  margin-top: 2px;
+  border-left: 2px solid #222222;
+}
+#cv-frame label#cv-file-label img {
+  position: absolute;
+  left: 2px;
+  top: 3px;
+  width: 18px;
+  height: 16px;
+  background-color: white;
+  display: block;
+}
+#cv-frame label#cv-file-label:hover {
+  color: #1ab4e5;
+  border-color: #1ab4e5;
+}
+#cv-frame label#cv-file-label:hover img {
+  background-color: #1ab4e5;
+}
+#cv-frame input[type=file] {
+  width: 1px;
+  opacity: 0;
 }
 #logo {
   width: 48px;

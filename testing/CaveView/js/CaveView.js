@@ -50257,6 +50257,7 @@
 		const EMULATED_MIDDLE_BUTTON = 3;
 
 		var buttons = 0;
+		var lastButtonDownTime = 0;
 
 		var STATE = { NONE: - 1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY_PAN: 4 };
 
@@ -50766,24 +50767,40 @@
 			// add to current buttons depressed set
 			// allows emulation of 3rd button in absence of event.buttons
 
+			var newButtons = 0;
+
 			switch ( button ) {
 
 			case MOUSE.LEFT:
 
-				buttons |= LEFT_BUTTON;
+				newButtons = LEFT_BUTTON;
 				break;
 
 			case MOUSE.MIDDLE:
 
-				buttons |= MIDDLE_BUTTON;
+				newButtons = MIDDLE_BUTTON;
 				break;
 
 			case MOUSE.RIGHT:
 
-				buttons |= RIGHT_BUTTON;
+				newButtons = RIGHT_BUTTON;
 				break;
 
 			}
+
+			var now = performance.now();
+
+			if ( now - lastButtonDownTime < 100 ) {
+
+				buttons |= newButtons;
+
+			} else {
+
+				buttons = newButtons;
+
+			}
+
+			lastButtonDownTime = now;
 
 		}
 

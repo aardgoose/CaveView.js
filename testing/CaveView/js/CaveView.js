@@ -50596,7 +50596,7 @@
 		}
 
 		function handleMouseWheel( event ) {
-
+			console.log( 'mw', event );
 			if ( event.deltaY < 0 ) {
 
 				dollyOut( getZoomScale() );
@@ -50811,10 +50811,10 @@
 		function onMouseDown( event ) {
 
 			if ( scope.enabled === false ) return;
-
 			event.preventDefault();
 
 			setButtons( event.button );
+			console.log( 'md', event.button, buttons );
 
 			switch ( buttons ) {
 

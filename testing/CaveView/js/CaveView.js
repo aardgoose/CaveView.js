@@ -50063,6 +50063,9 @@
 		// The four arrow keys
 		this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
 
+		// mouse wheel mode
+		this.wheelTilt = false;
+
 		// for reset
 
 		const camera = this.cameraManager.activeCamera;
@@ -50596,14 +50599,28 @@
 		}
 
 		function handleMouseWheel( event ) {
-			console.log( 'mw', event );
-			if ( event.deltaY < 0 ) {
 
-				dollyOut( getZoomScale() );
+			const deltaY = event.deltaY;
+			console.log( 'mw', deltaY, event.deltaMode );
 
-			} else if ( event.deltaY > 0 ) {
+			if ( scope.wheelTilt || event.ctrlKey ) {
 
-				dollyIn( getZoomScale() );
+				var element = scope.element;
+
+				// rotating up and down along whole screen attempts to go 360, but limited to 180
+				rotateUp( 2 * Math.PI * deltaY / 12500 );
+
+			} else {
+
+				if ( deltaY < 0 ) {
+
+					dollyOut( getZoomScale() );
+
+				} else if ( deltaY > 0 ) {
+
+					dollyIn( getZoomScale() );
+
+				}
 
 			}
 
@@ -50814,7 +50831,6 @@
 			event.preventDefault();
 
 			setButtons( event.button );
-			console.log( 'md', event.button, buttons );
 
 			switch ( buttons ) {
 
@@ -51660,6 +51676,12 @@
 				writeable: true,
 				get: function () { return controls$1.autoRotate; },
 				set: function ( x ) { setAutoRotate( !! x ); }
+			},
+
+			'wheelTilt': {
+				writeable: true,
+				get: function () { return controls$1.wheelTilt; },
+				set: function ( x ) { console.log( 'wt', x ); controls$1.wheelTilt = !! x; }
 			},
 
 			'autoRotateSpeed': {
@@ -54751,6 +54773,13 @@
 			case 66: // '<ctrl>B'
 
 				Viewer.box = ! Viewer.box;
+
+				break;
+
+			case 69: // 'E' - mouse wheel tilt
+
+				event.preventDefault();
+				Viewer.wheelTilt = ! Viewer.wheelTilt;
 
 				break;
 

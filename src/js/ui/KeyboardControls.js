@@ -50,6 +50,13 @@ function handleKeyAven( event ) {
 
 			break;
 
+		case 69: // 'E' - mouse wheel tilt
+
+			event.preventDefault();
+			Viewer.wheelTilt = ! Viewer.wheelTilt;
+
+			break;
+
 		case 70: // '<ctrl>F'
 
 			event.preventDefault();

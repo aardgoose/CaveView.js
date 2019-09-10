@@ -428,6 +428,12 @@ function init ( domID, configuration ) { // public method
 			set: function ( x ) { setAutoRotate( !! x ); }
 		},
 
+		'wheelTilt': {
+			writeable: true,
+			get: function () { return controls.wheelTilt; },
+			set: function ( x ) { controls.wheelTilt = !! x; }
+		},
+
 		'autoRotateSpeed': {
 			writeable: true,
 			get: function () { return controls.autoRotateSpeed / 11; },

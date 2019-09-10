@@ -75,6 +75,9 @@ function OrbitControls ( object, domElement, svxMode ) {
 	// Mouse buttons
 	this.mouseButtons = { ORBIT: MOUSE.LEFT, ZOOM: MOUSE.MIDDLE, PAN: MOUSE.RIGHT };
 
+	// mouse wheel mode
+	this.wheelTilt = false;
+
 	// for reset
 	this.target0 = this.target.clone();
 	this.position0 = this.object.position.clone();
@@ -589,13 +592,24 @@ function OrbitControls ( object, domElement, svxMode ) {
 
 	function handleMouseWheel( event ) {
 
-		if ( event.deltaY < 0 ) {
+		const deltaY = event.deltaY;
 
-			dollyOut( getZoomScale() );
+		if ( scope.wheelTilt ) {
 
-		} else if ( event.deltaY > 0 ) {
+			// rotating up and down along whole screen attempts to go 360, but limited to 180
+			rotateUp( 2 * Math.PI * deltaY / 12500 );
 
-			dollyIn( getZoomScale() );
+		} else {
+
+			if ( deltaY < 0 ) {
+
+				dollyOut( getZoomScale() );
+
+			} else if ( deltaY > 0 ) {
+
+				dollyIn( getZoomScale() );
+
+			}
 
 		}
 
@@ -761,7 +775,6 @@ function OrbitControls ( object, domElement, svxMode ) {
 	function onMouseDown( event ) {
 
 		if ( scope.enabled === false ) return;
-
 		event.preventDefault();
 
 		switch ( event.button ) {

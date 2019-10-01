@@ -463,9 +463,11 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 };
 
-WebTerrain.prototype.zoomCheck = function ( camera ) {
+WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 
 	const frustum = __frustum;
+	const camera = cameraManager.activeCamera;
+	const lastFrame = cameraManager.getLastFrame();
 
 	const candidateTiles      = [];
 	const candidateEvictTiles = [];
@@ -512,9 +514,10 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 		for ( i = 0; i < candidateCount; i++ ) {
 
 			this.zoomTile( candidateTiles[ i ] );
-			retry = true;
 
 		}
+
+		retry = true;
 
 	}
 
@@ -526,44 +529,35 @@ WebTerrain.prototype.zoomCheck = function ( camera ) {
 
 		if ( ! tile.isTile || ! parent.canZoom ) return;
 
-		if ( frustum.intersectsBox( tile.getWorldBoundingBox() ) ) {
+		if ( tile.isMesh && tile.canZoom && tile.lastFrame === lastFrame ) {
 
 			// this tile intersects the screen
 
-			if ( tile.isMesh ) {
+			// this tile is loaded, maybe increase resolution?
+			// now safe if tile has evicted children or not
 
-				// this tile is loaded, maybe increase resolution?
-				// now safe if tile has evicted children or not
+			tile.computeProjectedArea( camera );
+			if ( tile.area / 4 > 0.81 ) candidateTiles.push( tile );
 
-				if ( tile.canZoom ) {
+		} else if ( ! parent.isMesh && tile.evicted && frustum.intersectsBox( tile.getWorldBoundingBox() ) ) {
 
-					tile.computeProjectedArea( camera );
-					if ( tile.area / 4 > 0.81 ) candidateTiles.push( tile );
+			// this tile is not loaded, but has been previously
 
-				}
+			// flag subtiles to prevent premature resurrection
+			// and indicate replaced by superior
+			tile.traverse( function ( subtile ) {
 
-			} else if ( ! parent.isMesh && tile.evicted ) {
+				subtile.evicted = false;
+				if ( subtile !== tile ) subtile.replaced = true;
 
-				// this tile is not loaded, but has been previously
+			} );
 
-				// flag subtiles to prevent premature resurrection
-				// and indicate replaced by superior
-				tile.traverse( function ( subtile ) {
-
-					subtile.evicted = false;
-					if ( subtile !== tile ) subtile.replaced = true;
-
-				} );
-
-				resurrectTiles.push( tile );
-
-
-			}
+			resurrectTiles.push( tile );
 
 		} else {
 
 			// off screen tile
-			if ( tile.isMesh ) candidateEvictTiles.push( tile );
+			if ( tile.isMesh && tile.lastFrame !== lastFrame ) candidateEvictTiles.push( tile );
 
 		}
 

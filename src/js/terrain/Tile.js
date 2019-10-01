@@ -293,7 +293,7 @@ Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
 
 Tile.prototype.computeProjectedArea = function ( camera ) {
 
-	const boundingBox = this.worldBoundingBox;
+	const boundingBox = this.getWorldBoundingBox();
 	const z = boundingBox.max.z;
 
 	__a.copy( boundingBox.min ).setZ( z );

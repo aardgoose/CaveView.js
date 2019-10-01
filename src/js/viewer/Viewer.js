@@ -1581,7 +1581,7 @@ function updateTerrain () {
 
 	if ( performance.now() - lastActivityTime > RETILE_TIMEOUT ) {
 
-		if ( Viewer.terrain && terrain.zoomCheck( cameraManager.activeCamera ) ) {
+		if ( Viewer.terrain && terrain.zoomCheck( cameraManager ) ) {
 
 			timerId = setTimeout( updateTerrain, RETILE_TIMEOUT * retileScaler );
 			retileScaler *= 2;

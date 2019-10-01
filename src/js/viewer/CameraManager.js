@@ -38,10 +38,12 @@ function CameraManager ( container, renderer, scene ) {
 
 	var savedMask;
 	var eyeSeparation = 0.5;
+	var lastFrame = 0;
 
 	const basicRenderer = function () {
 
 		renderer.render( scene, self.activeCamera );
+		lastFrame = renderer.info.render.frame;
 
 	};
 
@@ -63,6 +65,7 @@ function CameraManager ( container, renderer, scene ) {
 		}
 
 		renderer.render( scene, camera );
+		lastFrame = renderer.info.render.frame;
 
 	};
 
@@ -231,6 +234,12 @@ function CameraManager ( container, renderer, scene ) {
 		this.activeCamera = activeCamera;
 		this.activeEffect = activeEffect;
 		this.mode = mode;
+
+	};
+
+	this.getLastFrame = function () {
+
+		return lastFrame;
 
 	};
 

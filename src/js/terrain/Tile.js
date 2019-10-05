@@ -79,7 +79,7 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 	for ( attributeName in attributes ) {
 
 		attribute = attributes[ attributeName ];
-		bufferGeometry.addAttribute( attributeName, new Float32BufferAttribute( attribute.array, attribute.itemSize ) );
+		bufferGeometry.setAttribute( attributeName, new Float32BufferAttribute( attribute.array, attribute.itemSize ) );
 
 	}
 

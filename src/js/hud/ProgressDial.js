@@ -33,7 +33,7 @@ function ProgressDial ( addText, ring, viewer ) {
 
 	const colors = new Float32BufferAttribute( colorCount * 3, 3 );
 
-	geometry.addAttribute( 'color', colors );
+	geometry.setAttribute( 'color', colors );
 
 	HudObject.dropBuffers( geometry );
 

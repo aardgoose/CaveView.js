@@ -80,9 +80,9 @@ DyeTraces.prototype.finish = function () {
 
 	if ( ! this.visible ) {
 
-		geometry.addAttribute( 'position', positions );
-		geometry.addAttribute( 'selection', selection );
-		geometry.addAttribute( 'sinks', sinks );
+		geometry.setAttribute( 'position', positions );
+		geometry.setAttribute( 'selection', selection );
+		geometry.setAttribute( 'sinks', sinks );
 
 	} else {
 

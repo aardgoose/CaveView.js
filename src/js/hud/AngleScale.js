@@ -42,7 +42,7 @@ function AngleScale ( caption ) {
 
 	}
 
-	geometry.addAttribute( 'color', ringColors.copyColorsArray( colors ) );
+	geometry.setAttribute( 'color', ringColors.copyColorsArray( colors ) );
 
 	HudObject.dropBuffers( geometry );
 

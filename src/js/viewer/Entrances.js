@@ -46,7 +46,7 @@ function Entrances ( survey ) {
 		const positions = new Float32BufferAttribute( l * 3, 3 );
 
 		positions.copyVector3sArray( vertices );
-		geometry.addAttribute( 'position', positions );
+		geometry.setAttribute( 'position', positions );
 
 	} else {
 

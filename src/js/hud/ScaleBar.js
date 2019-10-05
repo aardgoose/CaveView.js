@@ -27,8 +27,8 @@ function BarGeometry ( length, height, divisions ) {
 
 	const colorBuffer = new Float32BufferAttribute( colors.length * 3, 3 );
 
-	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-	this.addAttribute( 'color', colorBuffer.copyColorsArray( colors ) );
+	this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+	this.setAttribute( 'color', colorBuffer.copyColorsArray( colors ) );
 
 	function _makeBar( divisions, offset ) {
 

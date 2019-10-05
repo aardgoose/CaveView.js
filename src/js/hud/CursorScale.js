@@ -32,7 +32,7 @@ function CursorScale ( container ) {
 
 	const positions = new Float32BufferAttribute( vertices.length, 3 );
 
-	cursorGeometry.addAttribute( 'position', positions.copyArray( vertices ) );
+	cursorGeometry.setAttribute( 'position', positions.copyArray( vertices ) );
 
 	const cursor = new Line( cursorGeometry, new LineBasicMaterial( { color: Cfg.themeColor( 'hud.cursor' ) } ) );
 

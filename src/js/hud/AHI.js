@@ -57,7 +57,7 @@ function AHI () {
 
 	}
 
-	sphere.addAttribute( 'color', sphereColors.copyColorsArray( colours ) );
+	sphere.setAttribute( 'color', sphereColors.copyColorsArray( colours ) );
 
 	var vertices = [];
 
@@ -67,7 +67,7 @@ function AHI () {
 
 	const positions = new Float32BufferAttribute( vertices.length, 3 );
 
-	bar.addAttribute( 'position', positions.copyArray( vertices ) );
+	bar.setAttribute( 'position', positions.copyArray( vertices ) );
 
 	// pitch interval marks
 	const m1 = new Vector3(  4, 0, stdWidth - 10 );
@@ -97,7 +97,7 @@ function AHI () {
 
 	const markPositions = new Float32BufferAttribute( vertices.length * 3, 3 );
 
-	marks.addAttribute( 'position', markPositions.copyVector3sArray( vertices ) );
+	marks.setAttribute( 'position', markPositions.copyVector3sArray( vertices ) );
 
 	const mRing   = new Mesh( ring, new MeshPhongMaterial( { color: Cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ) );
 	const mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: VertexColors, specular: 0x666666, shininess: 20 } ) );

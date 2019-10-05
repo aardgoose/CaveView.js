@@ -2,7 +2,7 @@ import {
 	Points, BufferGeometry, Float32BufferAttribute
 } from '../Three';
 
-const pointGeometry = new BufferGeometry().addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0 ], 3 ) );
+const pointGeometry = new BufferGeometry().setAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0 ], 3 ) );
 
 function Point ( material ) {
 

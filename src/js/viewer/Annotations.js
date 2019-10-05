@@ -85,7 +85,7 @@ Annotations.prototype.finish = function () {
 
 	if ( ! this.visible ) {
 
-		geometry.addAttribute( 'position', positions );
+		geometry.setAttribute( 'position', positions );
 
 	} else {
 

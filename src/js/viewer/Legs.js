@@ -36,8 +36,8 @@ Legs.prototype.addLegs = function ( vertices, legRuns ) {
 
 	colors.array.fill( 1.0 );
 
-	geometry.addAttribute( 'position', positions.copyVector3sArray( vertices ) );
-	geometry.addAttribute( 'color', colors );
+	geometry.setAttribute( 'position', positions.copyVector3sArray( vertices ) );
+	geometry.setAttribute( 'color', colors );
 
 	geometry.computeBoundingBox();
 

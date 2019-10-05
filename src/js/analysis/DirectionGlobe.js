@@ -59,9 +59,9 @@ function DirectionGlobe ( survey ) {
 	const positions = new Float32BufferAttribute( geometry.vertices.length * 3, 3 );
 	const colors = new Float32BufferAttribute( geometry.colors.length * 3, 3 );
 
-	bufferGeometry.addAttribute( 'pSize', new Float32BufferAttribute( pSize, 1 ) );
-	bufferGeometry.addAttribute( 'position', positions.copyVector3sArray( geometry.vertices ) );
-	bufferGeometry.addAttribute( 'color', colors.copyColorsArray( geometry.colors ) );
+	bufferGeometry.setAttribute( 'pSize', new Float32BufferAttribute( pSize, 1 ) );
+	bufferGeometry.setAttribute( 'position', positions.copyVector3sArray( geometry.vertices ) );
+	bufferGeometry.setAttribute( 'color', colors.copyColorsArray( geometry.colors ) );
 
 	survey.addEventListener( 'removed', _onSurveyRemoved );
 

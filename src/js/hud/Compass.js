@@ -82,8 +82,8 @@ function Compass () {
 		const positions = new Float32BufferAttribute( vertices.length, 3 );
 		const colors = new Float32BufferAttribute( vertices.length * 3, 3 );
 
-		geometry.addAttribute( 'position', positions.copyArray( vertices ) );
-		geometry.addAttribute( 'color', colors.copyColorsArray( colours ) );
+		geometry.setAttribute( 'position', positions.copyArray( vertices ) );
+		geometry.setAttribute( 'color', colors.copyColorsArray( colours ) );
 
 		geometry.computeVertexNormals();
 

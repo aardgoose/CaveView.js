@@ -42,8 +42,8 @@ function FlatTileGeometry( width, height, clip, offsets, flatZ ) {
 	// build geometry
 
 	this.setIndex( [ 0, 2, 1, 0, 3, 2 ] );
-	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+	this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+	this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
 	this.computeVertexNormals();
 

@@ -126,8 +126,8 @@ function TerrainTileGeometry( width, height, widthSegments, heightSegments, terr
 	// build geometry
 
 	this.setIndex( indices );
-	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+	this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+	this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
 	this.computeVertexNormals();
 

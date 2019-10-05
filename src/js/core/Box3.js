@@ -19,7 +19,7 @@ function Box3Helper( box3, color ) {
 	const geometry = new BufferGeometry();
 
 	geometry.setIndex( new BufferAttribute( indices, 1 ) );
-	geometry.addAttribute( 'position', new BufferAttribute( positions, 3 ) );
+	geometry.setAttribute( 'position', new BufferAttribute( positions, 3 ) );
 
 	const material = new LineBasicMaterial( { color: color } );
 

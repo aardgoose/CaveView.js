@@ -17,7 +17,7 @@ function PopupGeometry () {
 	this.type = 'PopupGeometry';
 
 	this.setIndex( CommonAttributes.index );
-	this.addAttribute( 'position', CommonAttributes.position );
+	this.setAttribute( 'position', CommonAttributes.position );
 
 }
 

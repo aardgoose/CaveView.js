@@ -111,7 +111,7 @@ function LoxTerrainGeometry( dtm, offsets ) {
 	// build geometry
 
 	this.setIndex( indices );
-	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+	this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 
 	// calibration data from terrain and local survey -> model - offsets
 
@@ -164,7 +164,7 @@ LoxTerrainGeometry.prototype.setupUVs = function ( bitmap, image, offsets ) {
 
 	}
 
-	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+	this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
 };
 

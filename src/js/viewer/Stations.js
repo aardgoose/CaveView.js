@@ -283,9 +283,9 @@ Stations.prototype.finalise = function () {
 	const positions = new Float32BufferAttribute(this.vertices.length * 3, 3 );
 	const colors = new Float32BufferAttribute( this.colors.length * 3, 3 );
 
-	bufferGeometry.addAttribute( 'pSize', new Float32BufferAttribute( this.pointSizes, 1 ) );
-	bufferGeometry.addAttribute( 'position', positions.copyVector3sArray( this.vertices ) );
-	bufferGeometry.addAttribute( 'color', colors.copyColorsArray( this.colors ) );
+	bufferGeometry.setAttribute( 'pSize', new Float32BufferAttribute( this.pointSizes, 1 ) );
+	bufferGeometry.setAttribute( 'position', positions.copyVector3sArray( this.vertices ) );
+	bufferGeometry.setAttribute( 'color', colors.copyColorsArray( this.colors ) );
 
 	bufferGeometry.getAttribute( 'color' ).onUpload( onUploadDropBuffer );
 

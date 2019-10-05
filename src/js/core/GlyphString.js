@@ -57,7 +57,7 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 	this.width = 0;
 
 	this.setIndex( CommonAttributes.index );
-	this.addAttribute( 'position', CommonAttributes.position );
+	this.setAttribute( 'position', CommonAttributes.position );
 
 	const l = text.length;
 
@@ -69,9 +69,9 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 	this.setStringAttributes( text, uvs, offsets, widths );
 
-	this.addAttribute( 'instanceUvs', new InstancedBufferAttribute( uvs, 2, false, 1 ) );
-	this.addAttribute( 'instanceOffsets', new InstancedBufferAttribute( offsets, 1, false, 1 ) );
-	this.addAttribute( 'instanceWidths', new InstancedBufferAttribute( widths, 1, false, 1 ) );
+	this.setAttribute( 'instanceUvs', new InstancedBufferAttribute( uvs, 2, false, 1 ) );
+	this.setAttribute( 'instanceOffsets', new InstancedBufferAttribute( offsets, 1, false, 1 ) );
+	this.setAttribute( 'instanceWidths', new InstancedBufferAttribute( widths, 1, false, 1 ) );
 
 	this.computeBoundingSphere();
 

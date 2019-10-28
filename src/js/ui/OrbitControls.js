@@ -232,18 +232,20 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 	this.dispose = function () {
 
-		scope.domElement.removeEventListener( 'contextmenu', onContextMenu, false );
-		scope.domElement.removeEventListener( 'mousedown', onMouseDown, false );
-		scope.domElement.removeEventListener( 'wheel', onMouseWheel, false );
+		const el = scope.domElement;
 
-		scope.domElement.removeEventListener( 'touchstart', onTouchStart, false );
-		scope.domElement.removeEventListener( 'touchend', onTouchEnd, false );
-		scope.domElement.removeEventListener( 'touchmove', onTouchMove, false );
+		el.removeEventListener( 'contextmenu', onContextMenu, false );
+		el.removeEventListener( 'mousedown', onMouseDown, false );
+		el.removeEventListener( 'wheel', onMouseWheel, false );
+
+		el.removeEventListener( 'touchstart', onTouchStart, false );
+		el.removeEventListener( 'touchend', onTouchEnd, false );
+		el.removeEventListener( 'touchmove', onTouchMove, false );
 
 		document.removeEventListener( 'mousemove', onMouseMove, false );
 		document.removeEventListener( 'mouseup', onMouseUp, false );
 
-		window.removeEventListener( 'keydown', onKeyDown, false );
+		el.removeEventListener( 'keydown', onKeyDown, false );
 
 	};
 
@@ -1039,17 +1041,18 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 	}
 
 	//
+	const el = scope.domElement;
 
-	scope.domElement.addEventListener( 'contextmenu', onContextMenu, false );
+	el.addEventListener( 'contextmenu', onContextMenu, false );
 
-	scope.domElement.addEventListener( 'mousedown', onMouseDown, false );
-	scope.domElement.addEventListener( 'wheel', onMouseWheel, false );
+	el.addEventListener( 'mousedown', onMouseDown, false );
+	el.addEventListener( 'wheel', onMouseWheel, false );
 
-	scope.domElement.addEventListener( 'touchstart', onTouchStart, false );
-	scope.domElement.addEventListener( 'touchend', onTouchEnd, false );
-	scope.domElement.addEventListener( 'touchmove', onTouchMove, false );
+	el.addEventListener( 'touchstart', onTouchStart, false );
+	el.addEventListener( 'touchend', onTouchEnd, false );
+	el.addEventListener( 'touchmove', onTouchMove, false );
 
-	window.addEventListener( 'keydown', onKeyDown, false );
+	el.addEventListener( 'keydown', onKeyDown, false );
 
 	if ( svxMode ) {
 

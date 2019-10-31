@@ -483,13 +483,9 @@ Survey.prototype.removeFeature = function ( obj ) {
 
 	this.layers.mask &= ~ obj.layers.mask;
 
-	const features = this.features;
-
-	for ( var i = 0, l = features.length; i < l; i++ ) {
-
-		if ( features[ i ] === obj ) delete features[ i ];
-
-	}
+	this.features = this.features.filter( function ( feature ) {
+		return feature !== obj;
+	});
 
 };
 
@@ -863,11 +859,8 @@ Survey.prototype.cutSection = function ( node ) {
 
 	this.traverse( _cutObject );
 
-	var i, l;
+	cutList.forEach( function ( obj ) {
 
-	for ( i = 0, l = cutList.length; i < l; i++ ) {
-
-		const obj = cutList[ i ];
 		const parent = obj.parent;
 
 		if ( parent ) parent.remove( obj );
@@ -878,7 +871,7 @@ Survey.prototype.cutSection = function ( node ) {
 
 		this.removeFeature( obj );
 
-	}
+	} );
 
 	this.surveyTree = node;
 

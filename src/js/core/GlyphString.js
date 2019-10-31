@@ -115,7 +115,7 @@ GlyphStringGeometry.prototype.setStringAttributes = function ( text, uvs, offset
 
 	for ( i = 0; i < l; i++ ) {
 
-		if ( text.charCodeAt() === 0 ) continue; // skip null characters
+		if ( text.charCodeAt( i ) === 0 ) continue; // skip null characters
 
 		const glyphData = glyphAtlas.getGlyph( text[ i ] );
 

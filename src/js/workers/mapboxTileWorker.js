@@ -2,15 +2,18 @@
 import 'three/src/polyfills';
 import { HeightMapboxLoader } from '../loaders/HeightMapboxLoader';
 import { TerrainTileGeometry } from '../terrain/TerrainTileGeometry';
-import { decode } from 'fast-png';
+import { FlatTileGeometry } from '../terrain/FlatTileGeometry';
 
 const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
+const offscreen = new OffscreenCanvas(256, 256);
+const ctx = offscreen.getContext( '2d' );
+
 var tileSpec;
 
 onmessage = onMessage;
 
 function onMessage ( event ) {
-console.log( decode );
+
 	tileSpec = event.data;
 
 	const tileSet = tileSpec.tileSet;
@@ -29,12 +32,41 @@ console.log( decode );
 
 function mapLoaded ( data ) {
 
-	var tileSet = tileSpec.tileSet;
-	console.log( 'oooo', data );
+	if ( data === null ) {
 
-	var terrainData;
+		handleMap( new Uint8Array( 256 * 256 ) );
+		return;
 
-	terrainData = new Uint16Array( data );
+	}
+
+	createImageBitmap( new Blob( [ data ] ) ).then( function ( ib ) {
+
+		ctx.drawImage( ib, 0, 0, 256, 256 );
+
+		const imageData = ctx.getImageData( 0, 0, 256, 256 );
+
+		const d = imageData.data;
+		const terrainData = Array( 256 * 256 );
+
+		for (var i = 0; i < 256 * 256 * 4; i += 4 ) {
+
+			const R = d[ i ];
+			const G = d[ i + 1 ];
+			const B = d[ i + 2 ];
+
+			const height = -10000 + ((R * 256 * 256 + G * 256 + B) * 0.1);
+
+			terrainData[ i / 4 ] = height;
+
+		}
+
+		handleMap( terrainData );
+
+	} );
+
+}
+
+function handleMap ( terrainData ) {
 
 	switch ( tileSpec.request ) {
 
@@ -103,7 +135,7 @@ function loadTile ( terrainData ) {
 
 	var terrainTile;
 
-	if ( tileSet.isFlat ) {
+	if ( tileSet.isFlat || terrainData === null ) {
 
 		terrainTile = new FlatTileGeometry( xTileWidth, yTileWidth, clip, offsets, tileSpec.flatZ );
 

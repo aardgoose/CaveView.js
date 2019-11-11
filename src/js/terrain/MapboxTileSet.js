@@ -5,7 +5,6 @@ var tileSets;
 
 function MapboxTileSet( tileSetReady ) {
 
-
 	tileSets = [ MapboxTileSet.defaultTileSet ];
 
 	setTimeout( tileSetReady );
@@ -20,7 +19,7 @@ MapboxTileSet.defaultTileSet = {
 	minZoom: 15,
 	divisions: 255,
 	subdirectory: null,
-	dtmScale: 0,
+	dtmScale: 1,
 	minX: 0,
 	maxX: 32767,
 	minY: 0,

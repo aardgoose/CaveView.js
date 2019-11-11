@@ -1,6 +1,4 @@
 import nodeResolve from 'rollup-plugin-node-resolve';
-//import builtins from 'rollup-plugin-node-builtins';
-//import globals from 'rollup-plugin-node-globals';
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 
@@ -12,8 +10,6 @@ export default {
 		format: 'umd'
 	},
 	plugins: [
-//		builtins(),
-//		globals(),
 		json({
 			// All JSON files will be parsed by default,
 			// but you can also specifically include/exclude files

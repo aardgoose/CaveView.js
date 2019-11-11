@@ -70,7 +70,15 @@ HeightMapboxLoader.prototype.load = function () {
 
 		} else {
 
-			self.errorCallback( xhr.response );
+			if ( xhr.response.byteLength == 33 ) {
+
+				self.loadCallback( null );
+
+			} else {
+
+				self.errorCallback( xhr.response );
+
+			}
 
 		}
 

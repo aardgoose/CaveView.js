@@ -6,6 +6,7 @@ import { Cfg, dataURL } from '../core/lib';
 
 import { EPSG4326TileSet } from './EPSG4326TileSet';
 import { EPSG3857TileSet } from './EPSG3857TileSet';
+import { MapboxTileSet } from './MapboxTileSet';
 
 import { Frustum, Matrix4 } from '../Three';
 
@@ -59,7 +60,8 @@ WebTerrain.prototype.load = function () {
 
 	case 'EPSG:3857':
 
-		this.TS = new EPSG3857TileSet( _tileSetReady );
+//		this.TS = new EPSG3857TileSet( _tileSetReady );
+		this.TS = new MapboxTileSet( _tileSetReady );
 
 		break;
 

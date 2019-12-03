@@ -38,16 +38,16 @@
   "homepage": "https://github.com/aardgoose/CaveView.js#readme",
   "devDependencies": {
     "concurrently": "^5.0.0",
-    "eslint": "^6.6.0",
+    "eslint": "^6.7.2",
     "http-server": "^0.11.1",
-    "proj4": "^2.5.0",
-    "rollup": "^1.26.2",
+    "proj4": "^2.6.0",
+    "rollup": "^1.27.8",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-less": "^1.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "terser": "^4.3.9",
-    "three": "^0.110.0",
+    "terser": "^4.4.2",
+    "three": "^0.111.0",
     "x18n": "^2.0.3"
   },
   "dependencies": {}

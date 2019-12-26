@@ -124,12 +124,6 @@ ProgressDial.prototype.set = function ( progress ) {
 
 };
 
-ProgressDial.prototype.addValue = function ( progress ) {
-
-	this.set( this.progress + progress );
-
-};
-
 ProgressDial.prototype.start = function () {
 
 	this.colorRange( 100, this.backgroundColor );
@@ -177,11 +171,6 @@ ProgressDial.prototype.handleProgess = function ( event ) {
 	case 'set':
 
 		this.set( event.progress );
-		break;
-
-	case 'add':
-
-		this.addValue( event.value );
 		break;
 
 	case 'end':

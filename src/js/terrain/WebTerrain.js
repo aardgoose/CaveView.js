@@ -37,6 +37,7 @@ function WebTerrain ( survey, onLoaded, container ) {
 	this.initialZoom     = null;
 	this.dying = false;
 	this.tilesLoading = 0;
+	this.maxTilesLoading = 0;
 	this.overlaysLoading = 0;
 	this.debug = true;
 	this.coverage = null;
@@ -227,21 +228,18 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 		}
 
-		self.dispatchEvent( { type: 'progress', name: 'add', value: self.progressInc } );
-
 		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox, self.material );
 
-		self.dispatchEvent( { type: 'progress', name: 'add', value: self.progressInc } );
+		self.dispatchEvent( { type: 'progress', name: 'set', progress: 100 * ( self.maxTilesLoading - self.tilesLoading ) / self.maxTilesLoading } );
 
 		if ( tile.setLoaded( overlay, self.opacity, _loaded ) ) {
 
 			if ( overlay !== null && tile.zoom < overlay.getMinZoom() ) {
 
 				self.zoomTile( tile );
+				this.maxTilesLoading = Math.max( self.maxTilesLoading, self.tilesLoading );
 
 			}
-
-			self.dispatchEvent( { type: 'progress', name: 'end' } );
 
 		}
 
@@ -249,12 +247,25 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 	function _loaded () {
 
+		if ( self.tilesLoading === 0 ) self.dispatchEvent( { type: 'progress', name: 'end' } );
+
 		self.isLoaded = true;
 		self.onLoaded();
 
 	}
 
 };
+
+WebTerrain.prototype.initProgress = function () {
+
+	if ( this.tilesLoading > 0 ) {
+
+		this.dispatchEvent( { type: 'progress', name: 'start' } );
+		this.maxTilesLoading = this.tilesLoading;
+
+	}
+
+}
 
 WebTerrain.prototype.tileArea = function ( limits ) {
 
@@ -274,12 +285,7 @@ WebTerrain.prototype.tileArea = function ( limits ) {
 
 	}
 
-	if ( this.tilesLoading > 0 ) {
-
-		this.dispatchEvent( { type: 'progress', name: 'start' } );
-		this.progressInc = 100 / ( this.tilesLoading * 2 );
-
-	}
+	this.initProgress();
 
 	return;
 
@@ -317,9 +323,6 @@ WebTerrain.prototype.zoomTile = function ( tile ) {
 	this.loadTile( x + 1, y,     zoom, tile );
 	this.loadTile( x,     y + 1, zoom, tile );
 	this.loadTile( x + 1, y + 1, zoom, tile );
-
-	this.dispatchEvent( { type: 'progress', name: 'start' } );
-	this.progressInc = 100 / 8;
 
 };
 
@@ -494,8 +497,6 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 
 	if ( resurrectCount !== 0 ) {
 
-		this.dispatchEvent( { type: 'progress', name: 'start' } );
-
 		for ( i = 0; i < resurrectCount; i++ ) {
 
 			const tile = resurrectTiles[ i ];
@@ -504,8 +505,6 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 			this.loadTile( tile.x, tile.y, tile.zoom, tile.parent, tile );
 
 		}
-
-		this.progressInc = 100 / ( 2 * resurrectCount );
 
 		retry = true;
 
@@ -520,6 +519,8 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 		retry = true;
 
 	}
+
+	this.initProgress();
 
 	return retry;
 

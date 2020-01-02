@@ -46,7 +46,7 @@
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-less": "^1.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "terser": "^4.4.3",
+    "terser": "^4.5.1",
     "three": "^0.112.1",
     "x18n": "^2.0.3"
   },

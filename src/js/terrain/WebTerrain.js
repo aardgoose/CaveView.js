@@ -265,7 +265,7 @@ WebTerrain.prototype.initProgress = function () {
 
 	}
 
-}
+};
 
 WebTerrain.prototype.tileArea = function ( limits ) {
 

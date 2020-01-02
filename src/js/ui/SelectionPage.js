@@ -29,7 +29,7 @@ function SelectionPage ( container, fileSelector ) {
 	this.addHeader( 'Selection' );
 
 	titleBar.id = 'ui-path';
-	titleBar.classList.add( 'header' ); 
+	titleBar.classList.add( 'header' );
 
 	if ( Viewer.isClipped ) {
 

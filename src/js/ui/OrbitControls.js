@@ -49,7 +49,9 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 	// How far you can orbit vertically, upper and lower limits.
 	// Range is 0 to Math.PI radians.
 	this.minPolarAngle = 0; // radians
-	this.maxPolarAngle = Math.PI; // radians
+	//	this.maxPolarAngle = Math.PI; // radians - FIXME
+
+	this.maxPolarAngle = Math.PI / 3; // radians
 
 	// How far you can orbit horizontally, upper and lower limits.
 	// If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
@@ -57,6 +59,8 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 	this.maxAzimuthAngle = Infinity; // radians
 
 	this.zoomSpeed = 1.0;
+
+	this.zoomToCursor = true; // FIXME
 
 	// Set to false to disable panning
 	this.keyPanSpeed = 7.0;	// pixels moved per arrow key push
@@ -184,6 +188,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 			spherical.makeSafe();
 
+			var prevRadius = Math.max( spherical.radius, EPS );
 			spherical.radius *= scale;
 
 			// restrict radius to be between desired limits
@@ -191,6 +196,22 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 			// move target to panned location
 			target.add( panOffset );
+
+			// suport zoomToCursor (mouse only)
+
+			if ( scope.zoomToCursor ) {
+
+				if ( camera.isPerspectiveCamera ) {
+
+					scope.target.lerp( mouse3D, 1 - spherical.radius / prevRadius );
+
+				} else if ( camera.isOrthographicCamera ) {
+
+					scope.target.lerp( mouse3D, 1 - zoomFactor );
+
+				}
+
+			}
 
 			offset.setFromSpherical( spherical );
 
@@ -219,6 +240,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 				lastPosition.copy( position );
 				lastQuaternion.copy( camera.quaternion );
 				zoomChanged = false;
+				zoomFactor = 1;
 
 				return true;
 
@@ -286,6 +308,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 	var scale = 1;
 	var panOffset = new Vector3();
 	var zoomChanged = false;
+	var zoomFactor = 1;
 
 	var rotateStart = new Vector2();
 	var rotateEnd = new Vector2();
@@ -298,6 +321,8 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 	var dollyStart = new Vector2();
 	var dollyEnd = new Vector2();
 	var dollyDelta = new Vector2();
+
+	var mouse3D = new Vector3();
 
 	var svxStart = new Vector2();
 	var svxEnd = new Vector2();
@@ -403,7 +428,9 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 		} else if ( camera.isOrthographicCamera ) {
 
+			zoomFactor = camera.zoom;
 			camera.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, camera.zoom * dollyScale ) );
+			zoomFactor /= camera.zoom;
 			camera.updateProjectionMatrix();
 			zoomChanged = true;
 
@@ -421,7 +448,9 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 		} else if ( camera.isOrthographicCamera ) {
 
+			zoomFactor = camera.zoom;
 			camera.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, camera.zoom / dollyScale ) );
+			zoomFactor /= camera.zoom;
 			camera.updateProjectionMatrix();
 			zoomChanged = true;
 
@@ -609,6 +638,61 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 	}
 
+	var updateMouse3D = function () {
+
+		var v = new Vector3();
+		var v1 = new Vector3();
+
+		return function updateMouse3D( event ) {
+
+			const camera = scope.cameraManager.activeCamera;
+			const element = scope.element;
+
+			var distance;
+
+			if ( camera.isPerspectiveCamera ) {
+
+				v.set(
+					( event.clientX / element.clientWidth ) * 2 - 1,
+					- ( event.clientY / element.clientHeight ) * 2 + 1,
+					0.5 );
+
+				v.unproject( camera );
+
+				v.sub( camera.position ).normalize();
+
+				distance = v1.copy( scope.target ).sub( camera.position ).dot( camera.up ) / v.dot( camera.up );
+
+				mouse3D.copy( camera.position ).add( v.multiplyScalar( distance ) );
+
+			} else if ( camera.isOrthographicCamera ) {
+
+				v.set(
+					( event.clientX / element.clientWidth ) * 2 - 1,
+					- ( event.clientY / element.clientHeight ) * 2 + 1,
+					( camera.near + camera.far ) / ( camera.near - camera.far ) );
+
+				v.unproject( camera );
+
+				v1.set( 0, 0, - 1 ).applyQuaternion( camera.quaternion );
+
+				distance = - v.dot( camera.up ) / v1.dot( camera.up );
+
+				mouse3D.copy( v ).add( v1.multiplyScalar( distance ) );
+
+			} else {
+
+				// camera neither orthographic nor perspective
+				console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type.' );
+
+			}
+
+			//console.log( mouse3D );
+
+		};
+
+	}();
+
 	function handleMouseWheel( event ) {
 
 		const deltaY = event.deltaY;
@@ -619,6 +703,8 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 			rotateUp( 2 * Math.PI * deltaY / 12500 );
 
 		} else {
+
+			updateMouse3D( event );
 
 			if ( deltaY < 0 ) {
 

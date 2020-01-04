@@ -83,6 +83,8 @@ function HelpPage ( avenControls ) {
 
 	}
 
+	_addKey( '<ctrl>Z', 'view.zoom_to_cursor' );
+
 	this.appendChild( dl );
 
 	this.addHeader( 'visibility.header' );

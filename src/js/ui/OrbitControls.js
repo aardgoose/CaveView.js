@@ -49,9 +49,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 	// How far you can orbit vertically, upper and lower limits.
 	// Range is 0 to Math.PI radians.
 	this.minPolarAngle = 0; // radians
-	//	this.maxPolarAngle = Math.PI; // radians - FIXME
-
-	this.maxPolarAngle = Math.PI / 3; // radians
+	this.maxPolarAngle = Math.PI; // radians
 
 	// How far you can orbit horizontally, upper and lower limits.
 	// If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
@@ -60,7 +58,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 	this.zoomSpeed = 1.0;
 
-	this.zoomToCursor = true; // FIXME
+	this.zoomToCursor = true;
 
 	// Set to false to disable panning
 	this.keyPanSpeed = 7.0;	// pixels moved per arrow key push
@@ -647,36 +645,35 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 			const camera = scope.cameraManager.activeCamera;
 			const element = scope.element;
+			const bc = element.getBoundingClientRect();
+			const up = camera.up;
 
 			var distance;
 
+			const x =  ( ( event.clientX - bc.left ) / element.clientWidth ) * 2 - 1;
+			const y = - ( ( event.clientY - bc.top ) / element.clientHeight ) * 2 + 1;
+
 			if ( camera.isPerspectiveCamera ) {
 
-				v.set(
-					( event.clientX / element.clientWidth ) * 2 - 1,
-					- ( event.clientY / element.clientHeight ) * 2 + 1,
-					0.5 );
+				v.set( x, y, 0.5 );
 
 				v.unproject( camera );
 
 				v.sub( camera.position ).normalize();
 
-				distance = v1.copy( scope.target ).sub( camera.position ).dot( camera.up ) / v.dot( camera.up );
+				distance = v1.copy( scope.target ).sub( camera.position ).dot( up ) / v.dot( up );
 
 				mouse3D.copy( camera.position ).add( v.multiplyScalar( distance ) );
 
 			} else if ( camera.isOrthographicCamera ) {
 
-				v.set(
-					( event.clientX / element.clientWidth ) * 2 - 1,
-					- ( event.clientY / element.clientHeight ) * 2 + 1,
-					( camera.near + camera.far ) / ( camera.near - camera.far ) );
+				v.set( x, y, ( camera.near + camera.far ) / ( camera.near - camera.far ) );
 
 				v.unproject( camera );
 
 				v1.set( 0, 0, - 1 ).applyQuaternion( camera.quaternion );
 
-				distance = - v.dot( camera.up ) / v1.dot( camera.up );
+				distance = - v.dot( up ) / v1.dot( up );
 
 				mouse3D.copy( v ).add( v1.multiplyScalar( distance ) );
 
@@ -686,8 +683,6 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 				console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type.' );
 
 			}
-
-			//console.log( mouse3D );
 
 		};
 

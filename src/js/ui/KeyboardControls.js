@@ -83,6 +83,11 @@ function handleKeyAven( event ) {
 			Viewer.stations = ! Viewer.stations;
 			break;
 
+		case 90: // '<ctrl>Z'
+
+			Viewer.zoomToCursor = ! Viewer.zoomToCursor;
+			break;
+
 		}
 
 	} else {

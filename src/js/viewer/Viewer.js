@@ -384,6 +384,12 @@ function init ( domID, configuration ) { // public method
 			set: function ( x ) { controls.wheelTilt = !! x; }
 		},
 
+		'zoomToCursor': {
+			writeable: true,
+			get: function () { return controls.zoomToCursor; },
+			set: function ( x ) { controls.zoomToCursor = !! x; }
+		},
+
 		'autoRotateSpeed': {
 			writeable: true,
 			get: function () { return controls.autoRotateSpeed / 11; },

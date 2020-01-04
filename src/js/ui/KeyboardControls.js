@@ -83,11 +83,6 @@ function handleKeyAven( event ) {
 			Viewer.stations = ! Viewer.stations;
 			break;
 
-		case 90: // '<ctrl>Z'
-
-			Viewer.zoomToCursor = ! Viewer.zoomToCursor;
-			break;
-
 		}
 
 	} else {
@@ -309,125 +304,144 @@ function handleKeyCommon( event ) {
 
 	var handled = true;
 
-	switch ( event.keyCode ) {
+	if ( event.ctrlKey ) {
 
-	case 48: // change colouring scheme to distance = '0'
+		switch ( event.keyCode ) {
 
-		Viewer.shadingMode = SHADING_DISTANCE;
+		case 90: // '<ctrl>Z'
 
-		break;
+			Viewer.zoomToCursor = ! Viewer.zoomToCursor;
+			break;
 
-	case 49: // change colouring scheme to depth - '1'
+		default:
 
-		Viewer.shadingMode = SHADING_HEIGHT;
+			handled = false;
 
-		break;
+		}
 
-	case 50: // change colouring scheme to angle - '2'
+	} else {
 
-		Viewer.shadingMode = SHADING_INCLINATION;
+		switch ( event.keyCode ) {
 
-		break;
+		case 48: // change colouring scheme to distance = '0'
 
-	case 51: // change colouring scheme to length - '3'
+			Viewer.shadingMode = SHADING_DISTANCE;
 
-		Viewer.shadingMode = SHADING_LENGTH;
+			break;
 
-		break;
+		case 49: // change colouring scheme to depth - '1'
 
-	case 52: // change colouring scheme to height cursor - '4'
+			Viewer.shadingMode = SHADING_HEIGHT;
 
-		Viewer.shadingMode = SHADING_CURSOR;
+			break;
 
-		break;
+		case 50: // change colouring scheme to angle - '2'
 
-	case 53: // change colouring scheme to white - '5'
+			Viewer.shadingMode = SHADING_INCLINATION;
 
-		Viewer.shadingMode = SHADING_SINGLE;
+			break;
 
-		break;
+		case 51: // change colouring scheme to length - '3'
 
-	case 54: // change colouring scheme to per survey section - '6'
+			Viewer.shadingMode = SHADING_LENGTH;
 
-		Viewer.shadingMode = SHADING_SURVEY;
+			break;
 
-		break;
+		case 52: // change colouring scheme to height cursor - '4'
 
-	case 55: // change colouring scheme to per survey section - '7'
+			Viewer.shadingMode = SHADING_CURSOR;
 
-		Viewer.shadingMode = SHADING_PATH;
+			break;
 
-		break;
+		case 53: // change colouring scheme to white - '5'
 
-	case 56: // change colouring scheme to per survey section - '8'
+			Viewer.shadingMode = SHADING_SINGLE;
 
-		Viewer.shadingMode = SHADING_DEPTH;
+			break;
 
-		break;
+		case 54: // change colouring scheme to per survey section - '6'
 
-	case 57: // change colouring scheme to depth - '9'
+			Viewer.shadingMode = SHADING_SURVEY;
 
-		Viewer.shadingMode = SHADING_DEPTH_CURSOR;
+			break;
 
-		break;
+		case 55: // change colouring scheme to per survey section - '7'
 
-	case 70: // toggle full screen - 'f'
+			Viewer.shadingMode = SHADING_PATH;
 
-		Viewer.fullscreen = ! Viewer.fullscreen;
+			break;
 
-		break;
+		case 56: // change colouring scheme to per survey section - '8'
 
-	case 74: // toggle entrance labels - 'j'
+			Viewer.shadingMode = SHADING_DEPTH;
 
-		if ( Viewer.hasStationLabels ) Viewer.stationLabels = ! Viewer.stationLabels;
+			break;
 
-		break;
+		case 57: // change colouring scheme to depth - '9'
 
-	case 79: // switch view to orthoganal - 'o'
+			Viewer.shadingMode = SHADING_DEPTH_CURSOR;
 
-		Viewer.cameraType = CAMERA_ORTHOGRAPHIC;
+			break;
 
-		break;
+		case 70: // toggle full screen - 'f'
 
-	case 81: // switch view to perspective -'q'
+			Viewer.fullscreen = ! Viewer.fullscreen;
 
-		if ( Viewer.hasSplays ) Viewer.splays = ! Viewer.splays;
+			break;
 
-		break;
+		case 74: // toggle entrance labels - 'j'
 
-	case 84: // switch terrain on/off - 't'
+			if ( Viewer.hasStationLabels ) Viewer.stationLabels = ! Viewer.stationLabels;
 
-		if ( Viewer.hasTerrain ) Viewer.terrain = ! Viewer.terrain;
+			break;
 
-		break;
+		case 79: // switch view to orthoganal - 'o'
 
-	case 107: // increase cursor depth - '+' (keypad)
+			Viewer.cameraType = CAMERA_ORTHOGRAPHIC;
 
-		Viewer.cursorHeight++;
+			break;
 
-		break;
+		case 81: // switch view to perspective -'q'
 
-	case 109: // decrease cursor depth - '-' (keypad)
+			if ( Viewer.hasSplays ) Viewer.splays = ! Viewer.splays;
 
-		Viewer.cursorHeight--;
+			break;
 
-		break;
+		case 84: // switch terrain on/off - 't'
 
-	case 188: // decrease terrain opacity '<' key
+			if ( Viewer.hasTerrain ) Viewer.terrain = ! Viewer.terrain;
 
-		if ( Viewer.hasTerrain ) Viewer.terrainOpacity = Math.max( Viewer.terrainOpacity - 0.05, 0 );
+			break;
 
-		break;
+		case 107: // increase cursor depth - '+' (keypad)
 
-	case 190: // increase terrain opacity '>' key
+			Viewer.cursorHeight++;
 
-		if ( Viewer.hasTerrain ) Viewer.terrainOpacity = Math.min( Viewer.terrainOpacity + 0.05, 1 );
+			break;
 
-		break;
+		case 109: // decrease cursor depth - '-' (keypad)
 
-	default:
+			Viewer.cursorHeight--;
 
-		handled = false;
+			break;
+
+		case 188: // decrease terrain opacity '<' key
+
+			if ( Viewer.hasTerrain ) Viewer.terrainOpacity = Math.max( Viewer.terrainOpacity - 0.05, 0 );
+
+			break;
+
+		case 190: // increase terrain opacity '>' key
+
+			if ( Viewer.hasTerrain ) Viewer.terrainOpacity = Math.min( Viewer.terrainOpacity + 0.05, 1 );
+
+			break;
+
+		default:
+
+			handled = false;
+
+		}
 
 	}
 

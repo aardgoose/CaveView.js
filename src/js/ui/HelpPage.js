@@ -9,7 +9,7 @@ function HelpPage ( avenControls ) {
 
 	var dl;
 
-	this.addHeader( 'header' );
+	this.addHeader( avenControls ? 'header_svx' : 'header_native' );
 
 	this.addHeader( 'shading.header' );
 
@@ -83,7 +83,8 @@ function HelpPage ( avenControls ) {
 
 	}
 
-	_addKey( '<ctrl>Z', 'view.zoom_to_cursor' );
+	_addKey( '<alt>S', 'view.control_mode' );
+	_addKey( '<alt>X', 'view.zoom_to_cursor' );
 
 	this.appendChild( dl );
 

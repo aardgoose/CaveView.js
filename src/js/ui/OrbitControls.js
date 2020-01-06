@@ -275,6 +275,12 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 	};
 
+	Object.defineProperty( this, 'svxControlMode', {
+		set: setControlMode,
+		get: function () { return svxControlMode; }
+
+	});
+
 	//
 	// internals
 	//
@@ -330,6 +336,8 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 	var lastMoveTime = 0;
 	var svxReverseSense = -1;
 
+	var svxControlMode  = false;
+
 	// mode specific handlers
 
 	var handleMouseDownLeft;
@@ -337,6 +345,28 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 	var handleMouseMoveLeft;
 	var handleMouseMoveMiddle;
 
+
+	function setControlMode ( svxMode ) {
+
+		if ( svxMode ) {
+
+			handleMouseDownLeft = handleMouseDownSvx;
+			handleMouseDownMiddle = handleMouseDownRotate;
+			handleMouseMoveLeft = handleMouseMoveSvxLeft;
+			handleMouseMoveMiddle = handleMouseMoveSvxMiddle;
+
+		} else {
+
+			handleMouseDownLeft = handleMouseDownRotate;
+			handleMouseDownMiddle = handleMouseDownDolly;
+			handleMouseMoveLeft = handleMouseMoveRotate;
+			handleMouseMoveMiddle = handleMouseMoveDolly;
+
+		}
+
+		svxControlMode = svxMode;
+
+	}
 
 	function getAutoRotationAngle() {
 
@@ -743,7 +773,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 		case 67: // 'C'
 
-			if ( ! svxMode ) break;
+			if ( ! svxControlMode ) break;
 
 			rotateLeft( - SVX_DELTA );
 			scope.update();
@@ -751,42 +781,42 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 		case 82: // 'R'
 
-			if ( ! svxMode || ! event.ctrlKey ) break;
+			if ( ! svxControlMode || ! event.ctrlKey ) break;
 			event.preventDefault();
 			svxReverseSense *= -1;
 			break;
 
 		case 86: // 'V'
 
-			if ( ! svxMode ) break;
+			if ( ! svxControlMode ) break;
 			rotateLeft( SVX_DELTA );
 			scope.update();
 			break;
 
 		case 191: // '/
 
-			if ( ! svxMode ) break;
+			if ( ! svxControlMode ) break;
 			rotateUp( -SVX_DELTA );
 			scope.update();
 			break;
 
 		case 192: // '''
 
-			if ( ! svxMode ) break;
+			if ( ! svxControlMode ) break;
 			rotateUp( SVX_DELTA );
 			scope.update();
 			break;
 
 		case 219: // '['
 
-			if ( ! svxMode ) break;
+			if ( ! svxControlMode ) break;
 			dollyOut( getZoomScale() );
 			scope.update();
 			break;
 
 		case 221: // ']'
 
-			if ( ! svxMode ) break;
+			if ( ! svxControlMode ) break;
 			dollyIn( getZoomScale() );
 			scope.update();
 			break;
@@ -1135,21 +1165,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 	el.addEventListener( 'keydown', onKeyDown, false );
 
-	if ( svxMode ) {
-
-		handleMouseDownLeft = handleMouseDownSvx;
-		handleMouseDownMiddle = handleMouseDownRotate;
-		handleMouseMoveLeft = handleMouseMoveSvxLeft;
-		handleMouseMoveMiddle = handleMouseMoveSvxMiddle;
-
-	} else {
-
-		handleMouseDownLeft = handleMouseDownRotate;
-		handleMouseDownMiddle = handleMouseDownDolly;
-		handleMouseMoveLeft = handleMouseMoveRotate;
-		handleMouseMoveMiddle = handleMouseMoveDolly;
-
-	}
+	setControlMode( svxMode );
 
 	// force an update at start
 

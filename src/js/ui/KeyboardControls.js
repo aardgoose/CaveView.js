@@ -304,11 +304,16 @@ function handleKeyCommon( event ) {
 
 	var handled = true;
 
-	if ( event.ctrlKey ) {
+	if ( event.altKey ) {
 
 		switch ( event.keyCode ) {
 
-		case 90: // '<ctrl>Z'
+		case 83: // '<alt>S' - South
+
+			Viewer.svxControlMode = ! Viewer.svxControlMode;
+			break;
+
+		case 88: // '<alt>X'
 
 			Viewer.zoomToCursor = ! Viewer.zoomToCursor;
 			break;

@@ -384,6 +384,16 @@ function init ( domID, configuration ) { // public method
 			set: function ( x ) { controls.wheelTilt = !! x; }
 		},
 
+		'svxControlMode': {
+			writeable: true,
+			get: function () { return controls.svxControlMode; },
+			set: function ( x ) {
+				controls.svxControlMode = !! x;
+				// force refresh of help tab
+				Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+			}
+		},
+
 		'zoomToCursor': {
 			writeable: true,
 			get: function () { return controls.zoomToCursor; },

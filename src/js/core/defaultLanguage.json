@@ -137,7 +137,8 @@
 
 	},
 	"help": {
-		"header": "Help - key commands",
+		"header_svx": "Help - key commands (survex)",
+		"header_native": "Help - key commands (native)",
 		"shading": {
 			"header": "Shading",
 			"height": "height",
@@ -175,7 +176,8 @@
 			"rotate_speed_up": "increase speed of rotation",
 			"rotate_speed_down": "decrease speed of rotation",
 			"reverse_rotation": "reverse direction of rotation",
-			"zoom_to_cursor": "toggle zoom to cursor mode"
+			"zoom_to_cursor": "toggle zoom to cursor mode",
+			"control_mode":"toggle control mode"
 		},
 		"visibility": {
 			"header": "Visibility",

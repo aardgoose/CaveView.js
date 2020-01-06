@@ -86,7 +86,7 @@ function initUI () {
 	if ( Cfg.value( 'showEditPage', false ) && ! fileSelector.isMultiple ) new EditPage( fileSelector );
 
 	new InfoPage( fileSelector );
-	new HelpPage( avenControls );
+	new HelpPage( Viewer.svxControlMode );
 
 	LocationButton( container );
 

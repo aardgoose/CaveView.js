@@ -16,8 +16,8 @@ import {
 
 function CameraManager ( container, renderer, scene ) {
 
-	const width = container.clientWidth;
-	const height = container.clientHeight;
+	var width = container.clientWidth;
+	var height = container.clientHeight;
 
 	const orthographicCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
 	const perspectiveCamera = new PerspectiveCamera( Cfg.themeValue( 'fieldOfView' ) , width / height, 1, 16000 );
@@ -122,7 +122,10 @@ function CameraManager ( container, renderer, scene ) {
 
 	};
 
-	this.resize = function ( width, height ) {
+	this.resize = function () {
+
+		width = container.clientWidth;
+		height = container.clientHeight;
 
 		// adjust cameras to new aspect ratio etc.
 		orthographicCamera.left   = -width / 2;
@@ -147,9 +150,6 @@ function CameraManager ( container, renderer, scene ) {
 	this.setCamera = function ( mode, target ) {
 
 		if ( this.mode === mode ) return;
-
-		const height = container.clientHeight;
-		const width = container.clientWidth;
 
 		var offsetLength;
 		var activeCamera = this.activeCamera;

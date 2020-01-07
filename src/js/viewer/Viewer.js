@@ -1028,13 +1028,10 @@ function setSelectedSectionName ( name ) {
 
 function resize () {
 
-	const width  = container.clientWidth;
-	const height = container.clientHeight;
-
 	// adjust the renderer to the new canvas size
-	renderer.setSize( width, height );
+	renderer.setSize( container.clientWidth, container.clientHeight );
 
-	cameraManager.resize( width, height );
+	cameraManager.resize();
 
 	Viewer.dispatchEvent( { type: 'resized', name: '-' } );
 

@@ -11,16 +11,19 @@ import { StereoEffect } from './StereoEffect';
 import {
 	OrthographicCamera, PerspectiveCamera,
 	Math as _Math,
-	MeshBasicMaterial, BackSide
+	MeshBasicMaterial, BackSide, Vector2
 } from '../Three';
 
 function CameraManager ( container, renderer, scene ) {
 
 	var width = container.clientWidth;
 	var height = container.clientHeight;
+	var boundingRect = container.getBoundingClientRect();
 
 	const orthographicCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
 	const perspectiveCamera = new PerspectiveCamera( Cfg.themeValue( 'fieldOfView' ) , width / height, 1, 16000 );
+
+	const mouse = new Vector2();
 
 	const self = this;
 
@@ -126,6 +129,7 @@ function CameraManager ( container, renderer, scene ) {
 
 		width = container.clientWidth;
 		height = container.clientHeight;
+		boundingRect = container.getBoundingClientRect();
 
 		// adjust cameras to new aspect ratio etc.
 		orthographicCamera.left   = -width / 2;
@@ -240,6 +244,17 @@ function CameraManager ( container, renderer, scene ) {
 	this.getLastFrame = function () {
 
 		return lastFrame;
+
+	};
+
+	this.getMouse = function ( event ) {
+
+		mouse.set(
+			( ( event.clientX - boundingRect.left ) / container.clientWidth ) * 2 - 1,
+			- ( ( event.clientY - boundingRect.top ) / container.clientHeight ) * 2 + 1
+		);
+
+		return mouse;
 
 	};
 

@@ -30,7 +30,7 @@ import { LocationControls } from '../ui/LocationControls';
 
 import {
 	EventDispatcher,
-	Vector2, Vector3, Euler, Quaternion,
+	Vector3, Euler, Quaternion,
 	Scene, Raycaster,
 	WebGLRenderer,
 	MOUSE, FogExp2
@@ -40,7 +40,6 @@ var renderer;
 
 const scene = new Scene();
 const fog = new FogExp2( Cfg.themeValue( 'background' ), 0.0025 );
-const mouse = new Vector2();
 const raycaster = new Raycaster();
 
 const formatters = {};
@@ -160,7 +159,7 @@ function init ( domID, configuration ) { // public method
 
 	container.appendChild( renderer.domElement );
 
-	controls = new OrbitControls( cameraManager, renderer.domElement, Cfg.value( 'avenControls', true ) );
+	controls = new OrbitControls( cameraManager, renderer.domElement, Viewer );
 	cameraMove = new CameraMove( controls, cameraMoved );
 
 	controls.addEventListener( 'change', cameraMoved );
@@ -1251,20 +1250,36 @@ function loadTerrain ( mode ) {
 
 }
 
+function getStation ( mouse ) {
+
+	const threshold = raycaster.params.Points.threshold;
+
+	raycaster.setFromCamera( mouse, cameraManager.activeCamera );
+	raycaster.params.Points.threshold = 20;
+
+	const intersects = raycaster.intersectObjects( survey.pointTargets, false );
+
+	raycaster.params.Points.threshold = threshold;
+
+	if ( intersects.length < 1 ) return null;
+
+	const station = visibleStation( intersects );
+
+	if ( station == null ) return;
+
+	return survey.getWorldPosition( station.p.clone() );
+
+}
 
 function mouseDown ( event ) {
 
-	const bc = container.getBoundingClientRect();
-
 	const scale = __v.set( container.clientWidth / 2, container.clientHeight / 2, 0 );
-
-	// FIXME - handle scrolled container
-	mouse.x =   ( ( event.clientX - bc.left ) / scale.x ) - 1;
-	mouse.y = - ( ( event.clientY - bc.top ) / scale.y ) + 1;
+	const mouse = cameraManager.getMouse( event );
 
 	raycaster.setFromCamera( mouse, cameraManager.activeCamera );
 
 	const intersects = raycaster.intersectObjects( mouseTargets, false );
+
 	var entrance;
 
 	if ( mouseMode === MOUSE_MODE_NORMAL && Viewer.entrances ) {
@@ -1675,6 +1690,7 @@ Object.assign( Viewer, {
 	clearView:     clearView,
 	loadCave:      loadCave,
 	loadCaves:     loadCaves,
+	getStation:    getStation,
 	getMetadata:   getMetadata,
 	getLegStats:   getLegStats,
 	getSurveyTree: getSurveyTree,

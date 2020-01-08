@@ -18,6 +18,8 @@ import {
 	EventDispatcher
 } from '../Three';
 
+import { Cfg } from '../core/lib';
+
 const MODE_LOCK_UNLOCKED = 0;
 const MODE_LOCK_ROTATE = 1;
 const MODE_LOCK_ZOOM = 2;
@@ -25,7 +27,7 @@ const SVX_DELTA = Math.PI / 60;
 
 const __v = new Vector3();
 
-function OrbitControls ( cameraManager, domElement, svxMode ) {
+function OrbitControls ( cameraManager, domElement, viewer ) {
 
 	this.cameraManager = cameraManager;
 
@@ -79,7 +81,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 	// for reset
 
-	const camera = this.cameraManager.activeCamera;
+	const camera = cameraManager.activeCamera;
 
 	this.target0 = this.target.clone();
 	this.position0 = camera.position.clone();
@@ -117,7 +119,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 	this.saveState = function () {
 
-		const camera = scope.cameraManager.activeCamera;
+		const camera = cameraManager.activeCamera;
 
 		scope.target0.copy( scope.target );
 		scope.position0.copy( camera.position );
@@ -127,7 +129,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 	this.reset = function () {
 
-		const camera = scope.cameraManager.activeCamera;
+		const camera = cameraManager.activeCamera;
 
 		scope.target.copy( scope.target0 );
 		camera.position.copy( scope.position0 );
@@ -157,7 +159,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 		return function update() {
 
-			var camera = scope.cameraManager.activeCamera;
+			var camera = cameraManager.activeCamera;
 			var target = scope.target;
 			var position = camera.position;
 
@@ -326,7 +328,10 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 	var dollyEnd = new Vector2();
 	var dollyDelta = new Vector2();
 
-	var mouse3D = new Vector3();
+	const mouse3D = new Vector3();
+	const mouseStart = new Vector3();
+
+	var firstWheelMove = true;
 
 	var svxStart = new Vector2();
 	var svxEnd = new Vector2();
@@ -419,7 +424,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 	var pan = function ( deltaX, deltaY ) {
 
 		var element = scope.element;
-		var camera = scope.cameraManager.activeCamera;
+		var camera = cameraManager.activeCamera;
 
 		if ( camera.isPerspectiveCamera ) {
 
@@ -448,7 +453,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 	function dollyIn( dollyScale ) {
 
-		const camera = scope.cameraManager.activeCamera;
+		const camera = cameraManager.activeCamera;
 
 		if ( camera.isPerspectiveCamera ) {
 
@@ -468,7 +473,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 	function dollyOut( dollyScale ) {
 
-		const camera = scope.cameraManager.activeCamera;
+		const camera = cameraManager.activeCamera;
 
 		if ( camera.isPerspectiveCamera ) {
 
@@ -673,19 +678,28 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 		return function updateMouse3D( event ) {
 
-			const camera = scope.cameraManager.activeCamera;
-			const element = scope.element;
-			const bc = element.getBoundingClientRect();
+			const camera = cameraManager.activeCamera;
 			const up = camera.up;
 
 			var distance;
 
-			const x =  ( ( event.clientX - bc.left ) / element.clientWidth ) * 2 - 1;
-			const y = - ( ( event.clientY - bc.top ) / element.clientHeight ) * 2 + 1;
+			// get mouse in ndc
+			const mouse = cameraManager.getMouse( event );
+
+			if ( firstWheelMove || mouseStart.x != mouse.x || mouseStart.y != mouse.y ) {
+
+				const station = viewer.getStation( mouse );
+
+				if ( station !== null ) station.project( camera );
+
+				mouseStart.set( mouse.x, mouse.y, station == null ? 0.5 : station.z );
+				firstWheelMove = false;
+
+			}
 
 			if ( camera.isPerspectiveCamera ) {
 
-				v.set( x, y, 0.5 );
+				v.set( mouse.x, mouse.y, mouseStart.z );
 
 				v.unproject( camera );
 
@@ -697,7 +711,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 			} else if ( camera.isOrthographicCamera ) {
 
-				v.set( x, y, ( camera.near + camera.far ) / ( camera.near - camera.far ) );
+				v.set( mouse.x, mouse.y, ( camera.near + camera.far ) / ( camera.near - camera.far ) );
 
 				v.unproject( camera );
 
@@ -991,6 +1005,8 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 		}
 
+		firstWheelMove = true;
+
 	}
 
 	function onMouseMove( event ) {
@@ -1020,6 +1036,8 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 			break;
 
 		}
+
+		firstWheelMove = true;
 
 	}
 
@@ -1165,7 +1183,7 @@ function OrbitControls ( cameraManager, domElement, svxMode ) {
 
 	el.addEventListener( 'keydown', onKeyDown, false );
 
-	setControlMode( svxMode );
+	setControlMode(  Cfg.value( 'avenControls', true ) );
 
 	// force an update at start
 

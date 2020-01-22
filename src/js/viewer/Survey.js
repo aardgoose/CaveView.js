@@ -141,6 +141,12 @@ function Survey ( cave ) {
 
 			self.scaleFactor = 1;
 
+			if ( survey.sourceCRS !== null ) {
+
+				self.projectionWGS84 = proj4( 'WGS84', survey.sourceCRS );
+
+			}
+
 			return;
 
 		}

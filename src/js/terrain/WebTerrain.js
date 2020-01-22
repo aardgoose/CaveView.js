@@ -41,6 +41,7 @@ function WebTerrain ( survey, onLoaded, container ) {
 	this.overlaysLoading = 0;
 	this.debug = true;
 	this.coverage = null;
+	this.TS = null;
 
 	this.material = Materials.getCursorMaterial();
 	this.canZoom = true;
@@ -699,6 +700,13 @@ WebTerrain.prototype.getHeights = function ( points, callback ) {
 };
 
 WebTerrain.prototype.fitSurface = function ( modelPoints, offsets ) {
+
+	if ( this.TS.findTile === undefined ) {
+
+		this._fitSurface( modelPoints );
+		return;
+
+	}
 
 	const self = this;
 

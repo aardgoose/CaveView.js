@@ -804,7 +804,6 @@ function setEyeSeparation ( x ) {
 
 function setViewMode ( mode ) {
 
-	const boundingBox = survey.getWorldBoundingBox();
 	const targetAxis = __v;
 
 	switch ( mode ) {
@@ -850,7 +849,7 @@ function setViewMode ( mode ) {
 
 	}
 
-	cameraMove.prepare( boundingBox, targetAxis );
+	cameraMove.prepare( survey.getWorldBoundingBox(), targetAxis );
 	cameraMove.start( renderRequired );
 
 }

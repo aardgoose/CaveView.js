@@ -1,6 +1,5 @@
 
 import {
-	MATERIAL_LINE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_DISTANCE
 } from '../core/constants';
 
@@ -17,8 +16,6 @@ import { LinearScale } from './LinearScale';
 import { ProgressDial } from './ProgressDial';
 import { ScaleBar } from './ScaleBar';
 import { HudObject } from './HudObject';
-
-import { Materials } from '../materials/Materials';
 
 import {
 	Scene, Group,
@@ -246,7 +243,7 @@ function newScales () {
 
 	if ( hasLegs ) {
 
-		linearScale = new LinearScale( container, viewer );
+		linearScale = new LinearScale( container );
 		scene.addStatic( linearScale );
 
 	}
@@ -299,7 +296,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( viewer.minHeight, viewer.maxHeight, i18n( 'height' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
+		linearScale.setRange( viewer.minHeight, viewer.maxHeight, i18n( 'height' ) );
 
 		break;
 
@@ -307,7 +304,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( viewer.maxHeight - viewer.minHeight, 0, i18n( 'depth' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
+		linearScale.setRange( viewer.maxHeight - viewer.minHeight, 0, i18n( 'depth' ) );
 
 		break;
 
@@ -315,7 +312,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( 0, viewer.maxDistance, i18n( 'distance' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE ) );
+		linearScale.setRange( 0, viewer.maxDistance, i18n( 'distance' ) );
 
 		break;
 
@@ -343,7 +340,7 @@ function viewChanged ( event ) {
 
 		useLinearScale = true;
 
-		linearScale.setRange( viewer.minLegLength, viewer.maxLegLength, i18n( 'leg_length' ) ).setMaterial( Materials.getHeightMaterial( MATERIAL_LINE, true ) );
+		linearScale.setRange( viewer.minLegLength, viewer.maxLegLength, i18n( 'leg_length' ) );
 
 		break;
 

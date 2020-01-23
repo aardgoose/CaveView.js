@@ -10,9 +10,11 @@ import { HypsometricMaterial } from './HypsometricMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
 import { GlyphString } from '../core/GlyphString';
 import { MaterialFog } from './MaterialFog';
+import { ColourCache } from '../core/ColourCache';
+import { Cfg } from '../core/lib';
 
 import {
-	LineBasicMaterial, MeshLambertMaterial,
+	LineBasicMaterial, MeshLambertMaterial, MeshBasicMaterial,
 	NoColors, VertexColors, IncrementStencilOp
 } from '../Three';
 
@@ -198,6 +200,26 @@ function getLineMaterial () {
 
 }
 
+function getScaleMaterial () {
+
+	const gradient = Cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
+
+	var material = cache.get( 'scale' );
+
+	if ( material === undefined ) {
+
+		material = cacheMaterial( 'scale', new MeshBasicMaterial(
+			{
+				color: 0xffffff,
+				map: ColourCache.getTexture( gradient )
+			} ) );
+
+	}
+
+	return material;
+
+}
+
 function getContourMaterial () {
 
 	var material = cache.get( 'contour' );
@@ -297,6 +319,7 @@ const Materials = {
 	getCursorMaterial:      getCursorMaterial,
 	getSurfaceMaterial:     getSurfaceMaterial,
 	getLineMaterial:        getLineMaterial,
+	getScaleMaterial:       getScaleMaterial,
 	getGlyphMaterial:       getGlyphMaterial,
 	setTerrain:             setTerrain,
 	initCache:              initCache,

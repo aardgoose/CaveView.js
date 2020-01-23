@@ -11,7 +11,7 @@ import {
 
 function CursorScale ( container ) {
 
-	const geometry = new PlaneBufferGeometry( 1, 1 );
+	const geometry = new PlaneBufferGeometry();
 
 	Scale.call( this, container, geometry, new MeshBasicMaterial( { color: 0x676767 } ) );
 
@@ -30,9 +30,9 @@ function CursorScale ( container ) {
 	vertices.push(  barWidth / 2, -barHeight / 2, 10 );
 	vertices.push( -barWidth / 2, -barHeight / 2, 10 );
 
-	const positions = new Float32BufferAttribute( vertices.length, 3 );
+	const positions = new Float32BufferAttribute( vertices, 3 );
 
-	cursorGeometry.setAttribute( 'position', positions.copyArray( vertices ) );
+	cursorGeometry.setAttribute( 'position', positions );
 
 	const cursor = new Line( cursorGeometry, new LineBasicMaterial( { color: Cfg.themeColor( 'hud.cursor' ) } ) );
 

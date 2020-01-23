@@ -6,7 +6,7 @@ import { Materials } from '../materials/Materials';
 
 import {
 	Vector3,
-	RingBufferGeometry, BufferAttribute,
+	RingBufferGeometry, Float32BufferAttribute,
 	MeshBasicMaterial,
 	VertexColors,
 	Mesh
@@ -26,7 +26,7 @@ function AngleScale ( caption ) {
 
 	const vertices = geometry.getAttribute( 'position' );
 	const vertexCount = vertices.count;
-	const ringColors = new BufferAttribute( new Float32Array( vertexCount * 3 ), 3 );
+	const ringColors = new Float32BufferAttribute( vertexCount * 3, 3 );
 
 	const v3 = new Vector3();
 

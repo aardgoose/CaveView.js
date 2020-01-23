@@ -1029,8 +1029,8 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	if ( this.setLegShading( LEG_CAVE, mode ) ) {
 
-		this.setWallShading( this.features[ FACE_WALLS  ], mode, material );
-		this.setWallShading( this.features[ FACE_SCRAPS ], mode, material );
+		this.setWallShading( this.features[ FACE_WALLS  ], material );
+		this.setWallShading( this.features[ FACE_SCRAPS ], material );
 
 		return true;
 
@@ -1040,7 +1040,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 };
 
-Survey.prototype.setWallShading = function ( mesh, node, selectedMaterial ) {
+Survey.prototype.setWallShading = function ( mesh, selectedMaterial ) {
 
 	if ( ! mesh ) return;
 

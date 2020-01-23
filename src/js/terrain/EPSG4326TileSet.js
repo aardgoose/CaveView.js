@@ -77,18 +77,8 @@ EPSG4326TileSet.prototype.getScreenAttribution = function () {
 
 		const attribution = attributions[ i ];
 
-		const a = document.createElement( 'a' );
-		const img = document.createElement( 'img' );
-
-		img.src = attribution.image;
-
-		a.textContent = attribution.text;
-		a.href = attribution.url;
-		a.target = '_blank';
-
-		a.appendChild( img );
-
-		div.appendChild( a );
+		div.innerHTML = attribution.html;
+		break;
 
 	}
 

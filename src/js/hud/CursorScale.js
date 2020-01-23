@@ -25,10 +25,11 @@ function CursorScale ( container ) {
 	// make cursor line
 
 	const cursorGeometry = new BufferGeometry();
-	const vertices = [];
 
-	vertices.push(  barWidth / 2, -barHeight / 2, 10 );
-	vertices.push( -barWidth / 2, -barHeight / 2, 10 );
+	const vertices = [
+		barWidth / 2, -barHeight / 2, 10,
+		-barWidth / 2, -barHeight / 2, 10
+	];
 
 	const positions = new Float32BufferAttribute( vertices, 3 );
 

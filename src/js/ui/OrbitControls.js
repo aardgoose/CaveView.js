@@ -641,6 +641,8 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 		dollyDelta.y *= sense;
 
+		updateMouse3D( event );
+
 		if ( dollyDelta.y > 0 ) {
 
 			dollyIn( getZoomScale() );
@@ -1183,7 +1185,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 	el.addEventListener( 'keydown', onKeyDown, false );
 
-	setControlMode(  Cfg.value( 'avenControls', true ) );
+	setControlMode( Cfg.value( 'avenControls', true ) );
 
 	// force an update at start
 

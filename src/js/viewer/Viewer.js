@@ -333,12 +333,12 @@ function init ( domID, configuration ) { // public method
 		'polarAngle': {
 			writeable: true,
 			get: function () { return controls.getPolarAngle(); },
-			set: cameraMove.setPolarAngle
+			set: function (x ) { cameraMove.setPolarAngle( x ); }
 		},
 
 		'azimuthAngle': {
 			writeable: true,
-			set: cameraMove.setAzimuthAngle
+			set: function ( x ) { cameraMove.setAzimuthAngle( x ); }
 		},
 
 		'editMode': {

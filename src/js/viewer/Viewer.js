@@ -724,6 +724,8 @@ function setLocation ( x ) {
 		savedView = viewState.saveState();
 
 		controls.enabled = false;
+		controls.saveState();
+
 		locationControls.connect();
 
 		setView( dynamicView, null );
@@ -732,11 +734,18 @@ function setLocation ( x ) {
 
 		// disable location controls
 		locationControls.disconnect();
-		controls.enabled = true;
+
 		terrain.setScale( 0.0 );
 
 		// restore previous settings
 		setView( savedView, null );
+
+		// setting the saved view may attempt to reset Viewer.view
+		cameraMove.cancel();
+
+		controls.enabled = true;
+		controls.reset();
+
 		savedView = null;
 
 	}

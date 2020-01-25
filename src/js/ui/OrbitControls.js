@@ -641,7 +641,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 		dollyDelta.y *= sense;
 
-		updateMouse3D( event );
+		updateMouse3D( event.clientX, event.clientY );
 
 		if ( dollyDelta.y > 0 ) {
 
@@ -678,7 +678,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 		var v = new Vector3();
 		var v1 = new Vector3();
 
-		return function updateMouse3D( event ) {
+		return function updateMouse3D( x, y ) {
 
 			const camera = cameraManager.activeCamera;
 			const up = camera.up;
@@ -686,7 +686,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 			var distance;
 
 			// get mouse in ndc
-			const mouse = cameraManager.getMouse( event.clientX, event.clientY );
+			const mouse = cameraManager.getMouse( x, y );
 
 			if ( firstWheelMove || mouseStart.x != mouse.x || mouseStart.y != mouse.y ) {
 
@@ -745,7 +745,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 		} else {
 
-			updateMouse3D( event );
+			updateMouse3D( event.clientX, event.clientY );
 
 			if ( deltaY < 0 ) {
 
@@ -859,6 +859,8 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 		var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
 		var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
 
+		updateMouse3D( x, y );
+
 		panStart.set( x, y );
 
 	}
@@ -898,9 +900,10 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 		dollyStart.copy( dollyEnd );
 
-
 		var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
 		var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
+
+		updateMouse3D( x, y );
 
 		panEnd.set( x, y );
 

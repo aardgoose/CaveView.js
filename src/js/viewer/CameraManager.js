@@ -247,11 +247,11 @@ function CameraManager ( container, renderer, scene ) {
 
 	};
 
-	this.getMouse = function ( event ) {
+	this.getMouse = function ( x, y ) {
 
 		mouse.set(
-			( ( event.clientX - boundingRect.left ) / container.clientWidth ) * 2 - 1,
-			- ( ( event.clientY - boundingRect.top ) / container.clientHeight ) * 2 + 1
+			( ( x - boundingRect.left ) / container.clientWidth ) * 2 - 1,
+			- ( ( y - boundingRect.top ) / container.clientHeight ) * 2 + 1
 		);
 
 		return mouse;

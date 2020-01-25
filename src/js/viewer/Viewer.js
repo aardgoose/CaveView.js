@@ -1273,7 +1273,7 @@ function getStation ( mouse ) {
 function mouseDown ( event ) {
 
 	const scale = __v.set( container.clientWidth / 2, container.clientHeight / 2, 0 );
-	const mouse = cameraManager.getMouse( event );
+	const mouse = cameraManager.getMouse( event.clientX, event.clientY );
 
 	raycaster.setFromCamera( mouse, cameraManager.activeCamera );
 

@@ -686,7 +686,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 			var distance;
 
 			// get mouse in ndc
-			const mouse = cameraManager.getMouse( event );
+			const mouse = cameraManager.getMouse( event.clientX, event.clientY );
 
 			if ( firstWheelMove || mouseStart.x != mouse.x || mouseStart.y != mouse.y ) {
 

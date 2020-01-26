@@ -1273,7 +1273,7 @@ function getStation ( mouse ) {
 
 	const station = visibleStation( intersects );
 
-	if ( station == null ) return;
+	if ( station === null ) return null;
 
 	return survey.getWorldPosition( station.p.clone() );
 

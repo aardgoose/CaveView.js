@@ -712,14 +712,10 @@ function setupTerrain () {
 
 }
 
-function locationChecked ( locationOK ) {
+function locationChecked () {
 
-	if ( locationOK ) {
-
-		hasLocation = true;
-		Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
-
-	}
+	hasLocation = true;
+	Viewer.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
 }
 

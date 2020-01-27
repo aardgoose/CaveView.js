@@ -215,10 +215,6 @@ var LocationControls = function ( cameraManager ) {
 
 			navigator.geolocation.getCurrentPosition( _currentPosition );
 
-		} else {
-
-			locationChecked( false );
-
 		}
 
 		function _currentPosition ( GPSPosition ) {
@@ -229,7 +225,11 @@ var LocationControls = function ( cameraManager ) {
 
 			location.set( coords.longitude, coords.latitude, 0 );
 
-			locationChecked( survey.containsWGS84Position( location ) );
+			if ( survey.containsWGS84Position( location ) ) {
+
+				locationChecked();
+
+			}
 
 		}
 

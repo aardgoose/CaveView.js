@@ -300,7 +300,7 @@ Stations.prototype.resetDistances = function () {
 
 };
 
-Stations.prototype.getClosestVisibleStation = function ( survey, camera, intersects ) {
+Stations.prototype.getClosestVisibleStation = function ( camera, intersects ) {
 
 	const splaysVisible = ( camera.layers.mask & 1 << LEG_SPLAY > 0 );
 	const self = this;
@@ -317,7 +317,7 @@ Stations.prototype.getClosestVisibleStation = function ( survey, camera, interse
 		if ( ! splaysVisible && station !== null && station.p.connections === 0 ) return;
 
 		// station in screen NDC
-		__v.copy( station.p ).applyMatrix4( survey.matrixWorld ).project( camera );
+		__v.copy( station.p ).applyMatrix4( self.matrixWorld ).project( camera );
 
 		__v.sub( intersect.point.project( camera ) );
 

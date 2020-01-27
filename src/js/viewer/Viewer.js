@@ -1565,7 +1565,7 @@ function selectTraceStation ( station ) {
 
 function visibleStation ( intersects ) {
 
-	return survey.stations.getClosestVisibleStation( survey, cameraManager.activeCamera, intersects );
+	return survey.stations.getClosestVisibleStation( cameraManager.activeCamera, intersects );
 
 }
 

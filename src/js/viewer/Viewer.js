@@ -380,7 +380,10 @@ function init ( domID, configuration ) { // public method
 		'wheelTilt': {
 			writeable: true,
 			get: function () { return controls.wheelTilt; },
-			set: function ( x ) { controls.wheelTilt = !! x; }
+			set: function ( x ) {
+				controls.wheelTilt = !! x;
+				Viewer.dispatchEvent( { type: 'change', name: 'wheelTilt' } );
+			}
 		},
 
 		'svxControlMode': {
@@ -396,7 +399,10 @@ function init ( domID, configuration ) { // public method
 		'zoomToCursor': {
 			writeable: true,
 			get: function () { return controls.zoomToCursor; },
-			set: function ( x ) { controls.zoomToCursor = !! x; }
+			set: function ( x ) {
+				controls.zoomToCursor = !! x;
+				Viewer.dispatchEvent( { type: 'change', name: 'zoomToCursor' } );
+			}
 		},
 
 		'autoRotateSpeed': {
@@ -706,7 +712,7 @@ function setupTerrain () {
 
 }
 
-function locationChecked( locationOK ) {
+function locationChecked ( locationOK ) {
 
 	if ( locationOK ) {
 

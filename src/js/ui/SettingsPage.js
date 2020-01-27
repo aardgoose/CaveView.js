@@ -113,6 +113,13 @@ function SettingsPage ( fileSelector ) {
 
 	if ( Viewer.hasWarnings ) this.addCheckbox( 'visibility.warnings', Viewer, 'warnings' );
 
+	this.addHeader( 'controls.header' );
+
+	this.addCheckbox( 'controls.svx_control_mode', Viewer, 'svxControlMode' );
+	this.addCheckbox( 'controls.zoom_to_cursor', Viewer, 'zoomToCursor' );
+
+	if ( Viewer.svxControlMode ) this.addCheckbox( 'controls.wheel_tilt', Viewer, 'wheelTilt' );
+
 	_onChange( { name: 'cameraType' } );
 	_onChange( { name: 'shadingMode' } );
 

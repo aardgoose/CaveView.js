@@ -59,8 +59,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 	this.maxAzimuthAngle = Infinity; // radians
 
 	this.zoomSpeed = 1.0;
-
-	this.zoomToCursor = true;
+	this.zoomToCursor = false;
 
 	// Set to false to disable panning
 	this.keyPanSpeed = 7.0;	// pixels moved per arrow key push

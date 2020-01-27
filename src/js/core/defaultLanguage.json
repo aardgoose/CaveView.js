@@ -58,6 +58,12 @@
 			"box": "Bounding box",
 			"hud": "Indicators",
 			"fog": "Fog"
+		},
+		"controls": {
+			"header": "Controls",
+			"svx_control_mode": "'Aven' controls",
+			"zoom_to_cursor": "Zoom to cursor",
+			"wheel_tilt": "Mouse wheel - tilt"
 		}
 	},
 	"surface": {

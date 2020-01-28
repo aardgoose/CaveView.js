@@ -84,7 +84,6 @@ var LocationControls = function ( cameraManager ) {
 
 	function onHeightReturned () {
 
-		console.log( location );
 		updatePosition();
 		gettingHeight = false;
 

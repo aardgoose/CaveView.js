@@ -645,7 +645,7 @@ function setCursorHeight ( x ) {
 
 function setTerrainShadingMode ( mode ) {
 
-	if ( terrain === null ) return;
+	if ( survey.terrain === null ) return;
 
 	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
 
@@ -1300,8 +1300,8 @@ function mouseDown ( event ) {
 
 		if ( entrance !== null ) {
 
-			let node = survey.surveyTree.findById( entrance.stationID );
-			console.log( node );
+			_selectStation( survey.surveyTree.findById( entrance.stationID ) );
+			return;
 
 		}
 

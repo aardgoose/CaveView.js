@@ -132,7 +132,7 @@ function init ( domID, configuration ) { // public method
 
 	Cfg.set( configuration );
 
-	const width  = container.clientWidth;
+	const width = container.clientWidth;
 	const height = container.clientHeight;
 
 	renderer = new WebGLRenderer( { antialias: true, alpha: true });
@@ -160,7 +160,6 @@ function init ( domID, configuration ) { // public method
 	container.appendChild( renderer.domElement );
 
 	controls = new OrbitControls( cameraManager, renderer.domElement, Viewer );
-	cameraMove = new CameraMove( controls, cameraMoved );
 
 	controls.addEventListener( 'change', cameraMoved );
 	controls.addEventListener( 'end', onCameraMoveEnd );
@@ -172,6 +171,8 @@ function init ( domID, configuration ) { // public method
 	locationControls.addEventListener( 'change', cameraMoved );
 	locationControls.addEventListener( 'end', onCameraMoveEnd );
 	locationControls.addEventListener( 'accuracy', onLocationAccuracyChange );
+
+	cameraMove = new CameraMove( controls, cameraMoved );
 
 	// event handler
 	window.addEventListener( 'resize', resize );
@@ -224,7 +225,7 @@ function init ( domID, configuration ) { // public method
 		'terrainThrough': {
 			writeable: true,
 			get: function () { return terrain.throughMode; },
-			set: function ( x ) { _stateSetter( setTerrainThroughMode, 'throughMode', x ); }
+			set: function ( x ) { _stateSetter( setTerrainThroughMode, 'terrainThrough', x ); }
 		},
 
 		'terrainShadingModes': {
@@ -725,12 +726,13 @@ function setLocation ( x ) {
 
 		savedView = viewState.saveState();
 
-		controls.enabled = false;
 		controls.saveState();
 
 		locationControls.connect();
 
 		setView( dynamicView, null );
+		cameraMove.cancel();
+
 
 	} else {
 
@@ -745,21 +747,21 @@ function setLocation ( x ) {
 		// setting the saved view may attempt to reset Viewer.view
 		cameraMove.cancel();
 
-		controls.enabled = true;
 		controls.reset();
 
 		savedView = null;
 
 	}
 
+	controls.enabled = ! x;
 	trackLocation = x;
+
 	renderView();
 
 }
 
 function onLocationAccuracyChange( event ) {
 
-	console.log( 'acc', event );
 	terrain.setAccuracy( event.value );
 
 }
@@ -1409,7 +1411,7 @@ function mouseDown ( event ) {
 
 	function _mouseUpLeft () {
 
-		controls.enabled = true;
+		if ( ! trackLocation ) controls.enabled = true;
 		container.removeEventListener( 'mouseup', _mouseUpLeft );
 
 	}

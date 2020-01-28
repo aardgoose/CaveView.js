@@ -645,7 +645,7 @@ function setCursorHeight ( x ) {
 
 function setTerrainShadingMode ( mode ) {
 
-	if ( survey.terrain === null ) return;
+	if ( terrain === null ) return;
 
 	if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
 
@@ -657,7 +657,7 @@ function setTerrainShadingMode ( mode ) {
 
 function setTerrainThroughMode ( mode ) {
 
-	if ( survey.terrain === null ) return;
+	if ( terrain === null ) return;
 
 	terrain.setThroughMode( mode );
 

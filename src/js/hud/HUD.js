@@ -25,75 +25,56 @@ import {
 
 // THREE objects
 
-var renderer;
-var camera;
-var scene;
+function HUD ( viewer, renderer ) {
 
-var hScale = 0;
-
-var attitudeGroup;
-
-var linearScale = null;
-var angleScale  = null;
-var cursorScale = null;
-var scaleBar    = null;
-var cursorControl = null;
-
-var compass;
-var ahi;
-
-var progressDials;
-var progressDial;
-
-// viewer state
-
-var viewer;
-var controls;
-var isVisible = true;
-var caveLoaded = false;
-
-
-function init ( viewerIn, viewRenderer ) {
-
-	viewer = viewerIn;
-	renderer = viewRenderer;
+	const self = this;
 
 	const container = viewer.container;
 
 	const hHeight = container.clientHeight / 2;
 	const hWidth  = container.clientWidth / 2;
 
+	var hScale = 0;
+
+	var linearScale = null;
+	var cursorScale = null;
+	var scaleBar    = null;
+	var cursorControl = null;
+
+	// viewer state
+
+	var controls;
+	var isVisible = true;
+	var caveLoaded = false;
+
 	// create GL scene and camera for overlay
-	camera = new OrthographicCamera( -hWidth, hWidth, hHeight, -hHeight, 1, 1000 );
+	const camera = new OrthographicCamera( -hWidth, hWidth, hHeight, -hHeight, 1, 1000 );
 	camera.position.z = 600;
 
-	scene = new Scene();
+	const scene = new Scene();
+	scene.name = 'HUD';
 
 	// group to simplyfy resize handling
-	attitudeGroup = new Group();
+	const attitudeGroup = new Group();
 	attitudeGroup.position.set( hWidth, -hHeight, 0 );
 
 	scene.addStatic( attitudeGroup );
-
-	scene.name = 'HUD';
 
 	HudObject.init();
 
 	const aLight = new AmbientLight( 0x888888 );
 	const dLight = new DirectionalLight( 0xFFFFFF );
-
 	dLight.position.set( -1, 1, 1 );
 
 	scene.addStatic( aLight );
 	scene.addStatic( dLight );
 
-	progressDials = [ new ProgressDial( true, 0, viewer ), new ProgressDial( false, 1, viewer ) ];
+	const progressDials = [ new ProgressDial( true, 0, viewer ), new ProgressDial( false, 1, viewer ) ];
+	const progressDial = progressDials [ 0 ];
 
-	progressDial = progressDials [ 0 ];
-
-	ahi = new AHI();
-	compass = new Compass();
-	angleScale = new AngleScale( i18n( 'inclination' ) );
+	const ahi = new AHI();
+	const compass = new Compass();
+	const angleScale = new AngleScale( i18n( 'inclination' ) );
 
 	attitudeGroup.addStatic( ahi );
 	attitudeGroup.addStatic( compass );
@@ -113,319 +94,312 @@ function init ( viewerIn, viewRenderer ) {
 	new CompassControl( viewer );
 	new AHIControl( viewer );
 
-}
+	function i18n ( text ) {
 
-function i18n ( text ) {
+		const tr = Cfg.i18n( 'hud.' + text );
 
-	const tr = Cfg.i18n( 'hud.' + text );
+		return ( tr === undefined ) ? text : tr;
 
-	return ( tr === undefined ) ? text : tr;
+	}
 
-}
+	this.setVisibility = function ( visible ) {
 
-function setVisibility ( visible ) {
+		compass.visible = visible;
+		ahi.visible = visible;
+		progressDial.setVisibility( visible );
 
-	compass.visible = visible;
-	ahi.visible = visible;
-	progressDial.setVisibility( visible );
+		if ( scaleBar ) scaleBar.visible = visible;
 
-	if ( scaleBar ) scaleBar.visible = visible;
+		isVisible = visible;
 
-	isVisible = visible;
+		// reset correct disposition of colour keys etc.
+		if ( linearScale ) {
 
-	// reset correct disposition of colour keys etc.
-	if ( linearScale ) {
+			if ( visible ) {
 
-		if ( visible ) {
+				viewChanged ( { type: 'change', name: 'shadingMode' } );
 
-			viewChanged ( { type: 'change', name: 'shadingMode' } );
+			} else {
+
+				linearScale.visible = false;
+				cursorScale.visible = false;
+				angleScale.visible = false;
+
+			}
+
+		}
+
+		viewer.renderView();
+
+	};
+
+	this.getVisibility = function () {
+
+		return isVisible;
+
+	};
+
+	this.getProgressDial = function ( ring ) {
+
+		return progressDials[ ring ];
+
+	};
+
+	this.setScale = function ( scale ) {
+
+		hScale = scale;
+
+	};
+
+	function resize () {
+
+		const container = viewer.container;
+
+		const hWidth  = container.clientWidth / 2;
+		const hHeight = container.clientHeight / 2;
+
+		// adjust cameras to new aspect ratio etc.
+		camera.left   = -hWidth;
+		camera.right  =  hWidth;
+		camera.top    =  hHeight;
+		camera.bottom = -hHeight;
+
+		camera.updateProjectionMatrix();
+
+		attitudeGroup.position.set( hWidth, -hHeight, 0 );
+		attitudeGroup.updateMatrix();
+
+		newScales();
+
+	}
+
+	this.renderHUD = function () {
+
+		// update HUD components
+
+		const currentCamera = controls.cameraManager.activeCamera;
+
+		compass.set( currentCamera );
+		ahi.set( currentCamera );
+
+		updateScaleBar( currentCamera );
+
+		// render on screen
+		renderer.clearDepth();
+		renderer.render( scene, camera );
+
+	};
+
+	function cfgChanged ( /* event */ ) {
+
+		// only change controls when a cave has been loaded already
+		// prevents flicker when racing with i18n resource loading
+		if ( caveLoaded ) caveChanged();
+
+	}
+
+	function caveChanged ( /* event */ ) {
+
+		caveLoaded = true;
+
+		newScales();
+
+		viewChanged ( { type: 'change', name: 'shadingMode' } );
+
+	}
+
+	function newScales () {
+
+		const container = viewer.container;
+		const hasLegs = viewer.minHeight !== Infinity && viewer.maxHeight !== -Infinity;
+
+		if ( linearScale ) {
+
+			linearScale.dispose();
+			scene.remove( linearScale );
+
+		}
+
+		if ( hasLegs ) {
+
+			linearScale = new LinearScale( container );
+			scene.addStatic( linearScale );
+
+		}
+
+		if ( cursorScale ) {
+
+			cursorScale.dispose();
+			scene.remove( cursorScale );
+
+		}
+
+		if ( hasLegs ) {
+
+			cursorScale = new CursorScale( container );
+
+			if ( cursorControl ) cursorControl.dispose();
+
+			cursorControl = new CursorControl( viewer, cursorScale );
+
+			scene.addStatic( cursorScale );
+
+		}
+
+		if ( scaleBar ) {
+
+			scene.remove( scaleBar );
+			scaleBar = null;
+
+		}
+
+		updateScaleBar( controls.object );
+
+		self.setVisibility( isVisible );
+
+	}
+
+	function viewChanged ( event ) {
+
+		if ( event.name !== 'shadingMode' || ! isVisible || ! caveLoaded ) return;
+
+		// hide all - and only make required elements visible
+
+		var useAngleScale = false;
+		var useLinearScale = false;
+		var useCursorScale = false;
+
+		switch ( viewer.shadingMode ) {
+
+		case SHADING_HEIGHT:
+
+			useLinearScale = true;
+
+			linearScale.setRange( viewer.minHeight, viewer.maxHeight, i18n( 'height' ) );
+
+			break;
+
+		case SHADING_DEPTH:
+
+			useLinearScale = true;
+
+			linearScale.setRange( viewer.maxHeight - viewer.minHeight, 0, i18n( 'depth' ) );
+
+			break;
+
+		case SHADING_DISTANCE:
+
+			useLinearScale = true;
+
+			linearScale.setRange( 0, viewer.maxDistance, i18n( 'distance' ) );
+
+			break;
+
+		case SHADING_CURSOR:
+
+			useCursorScale = true;
+
+			cursorScale.setRange( viewer.minHeight, viewer.maxHeight, i18n( 'height' ) );
+
+			cursorChanged();
+
+			break;
+
+		case SHADING_DEPTH_CURSOR:
+
+			useCursorScale = true;
+
+			cursorScale.setRange( viewer.maxHeight - viewer.minHeight, 0, i18n( 'depth' ) );
+
+			cursorChanged();
+
+			break;
+
+		case SHADING_LENGTH:
+
+			useLinearScale = true;
+
+			linearScale.setRange( viewer.minLegLength, viewer.maxLegLength, i18n( 'leg_length' ) );
+
+			break;
+
+		case SHADING_INCLINATION:
+
+			useAngleScale = true;
+
+			break;
+
+		}
+
+		angleScale.visible = useAngleScale;
+		linearScale.visible= useLinearScale;
+		cursorScale.visible = useCursorScale;
+
+		if ( useCursorScale ) {
+
+			viewer.addEventListener( 'cursorChange', cursorChanged );
 
 		} else {
 
-			linearScale.visible = false;
-			cursorScale.visible = false;
-			angleScale.visible = false;
+			viewer.removeEventListener( 'cursorChange', cursorChanged );
+
+		}
+
+		viewer.renderView();
+
+	}
+
+	function cursorChanged ( /* event */ ) {
+
+		const cursorHeight = viewer.cursorHeight;
+		const range = viewer.maxHeight - viewer.minHeight;
+
+		var scaledHeight = 0;
+		var realHeight = 0;
+
+		if ( viewer.shadingMode === SHADING_CURSOR ) {
+
+			scaledHeight = ( viewer.cursorHeight + range / 2 ) / range;
+			realHeight = cursorHeight + range / 2 + viewer.minHeight;
+
+		} else {
+
+			scaledHeight = 1 - cursorHeight / range;
+			realHeight = cursorHeight;
+
+		}
+
+		scaledHeight = Math.max( Math.min( scaledHeight, 1 ), 0 );
+
+		cursorScale.setCursor( scaledHeight, Math.round( realHeight ) );
+
+	}
+
+	function updateScaleBar ( camera ) {
+
+		if ( camera instanceof OrthographicCamera ) {
+
+			if ( scaleBar === null ) {
+
+				scaleBar = new ScaleBar( viewer.container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
+				scene.addStatic( scaleBar );
+
+			}
+
+			if ( isVisible !== scaleBar.visible ) scaleBar.visible = isVisible;
+
+			scaleBar.setScale( camera.zoom );
+
+		} else {
+
+			if ( scaleBar !== null && scaleBar.visible ) scaleBar.visible = false;
 
 		}
 
 	}
 
-	viewer.renderView();
-
 }
 
-function getVisibility() {
-
-	return isVisible;
-
-}
-
-function getProgressDial( ring ) {
-
-	return progressDials[ ring ];
-
-}
-
-function setScale( scale ) {
-
-	hScale = scale;
-
-}
-
-function resize () {
-
-	const container = viewer.container;
-
-	const hWidth  = container.clientWidth / 2;
-	const hHeight = container.clientHeight / 2;
-
-	// adjust cameras to new aspect ratio etc.
-	camera.left   = -hWidth;
-	camera.right  =  hWidth;
-	camera.top    =  hHeight;
-	camera.bottom = -hHeight;
-
-	camera.updateProjectionMatrix();
-
-	attitudeGroup.position.set( hWidth, -hHeight, 0 );
-	attitudeGroup.updateMatrix();
-
-	newScales();
-
-}
-
-function renderHUD () {
-
-	// update HUD components
-
-	const currentCamera = controls.cameraManager.activeCamera;
-
-	compass.set( currentCamera );
-	ahi.set( currentCamera );
-
-	updateScaleBar( currentCamera );
-
-	// render on screen
-	renderer.clearDepth();
-	renderer.render( scene, camera );
-
-}
-
-function cfgChanged ( /* event */ ) {
-
-	// only change controls when a cave has been loaded already
-	// prevents flicker when racing with i18n resource loading
-	if ( caveLoaded ) caveChanged();
-
-}
-
-function caveChanged ( /* event */ ) {
-
-	caveLoaded = true;
-
-	newScales();
-
-	viewChanged ( { type: 'change', name: 'shadingMode' } );
-
-}
-
-function newScales () {
-
-	const container = viewer.container;
-	const hasLegs = viewer.minHeight !== Infinity && viewer.maxHeight !== -Infinity;
-
-	if ( linearScale ) {
-
-		linearScale.dispose();
-		scene.remove( linearScale );
-
-	}
-
-	if ( hasLegs ) {
-
-		linearScale = new LinearScale( container );
-		scene.addStatic( linearScale );
-
-	}
-
-	if ( cursorScale ) {
-
-		cursorScale.dispose();
-		scene.remove( cursorScale );
-
-	}
-
-	if ( hasLegs ) {
-
-		cursorScale = new CursorScale( container );
-
-		if ( cursorControl ) cursorControl.dispose();
-
-		cursorControl = new CursorControl( viewer, cursorScale );
-
-		scene.addStatic( cursorScale );
-
-	}
-
-	if ( scaleBar ) {
-
-		scene.remove( scaleBar );
-		scaleBar = null;
-
-	}
-
-	updateScaleBar( controls.object );
-
-	setVisibility( isVisible );
-
-}
-
-function viewChanged ( event ) {
-
-	if ( event.name !== 'shadingMode' || ! isVisible || ! caveLoaded ) return;
-
-	// hide all - and only make required elements visible
-
-	var useAngleScale = false;
-	var useLinearScale = false;
-	var useCursorScale = false;
-
-	switch ( viewer.shadingMode ) {
-
-	case SHADING_HEIGHT:
-
-		useLinearScale = true;
-
-		linearScale.setRange( viewer.minHeight, viewer.maxHeight, i18n( 'height' ) );
-
-		break;
-
-	case SHADING_DEPTH:
-
-		useLinearScale = true;
-
-		linearScale.setRange( viewer.maxHeight - viewer.minHeight, 0, i18n( 'depth' ) );
-
-		break;
-
-	case SHADING_DISTANCE:
-
-		useLinearScale = true;
-
-		linearScale.setRange( 0, viewer.maxDistance, i18n( 'distance' ) );
-
-		break;
-
-	case SHADING_CURSOR:
-
-		useCursorScale = true;
-
-		cursorScale.setRange( viewer.minHeight, viewer.maxHeight, i18n( 'height' ) );
-
-		cursorChanged();
-
-		break;
-
-	case SHADING_DEPTH_CURSOR:
-
-		useCursorScale = true;
-
-		cursorScale.setRange( viewer.maxHeight - viewer.minHeight, 0, i18n( 'depth' ) );
-
-		cursorChanged();
-
-		break;
-
-	case SHADING_LENGTH:
-
-		useLinearScale = true;
-
-		linearScale.setRange( viewer.minLegLength, viewer.maxLegLength, i18n( 'leg_length' ) );
-
-		break;
-
-	case SHADING_INCLINATION:
-
-		useAngleScale = true;
-
-		break;
-
-	}
-
-	angleScale.visible = useAngleScale;
-	linearScale.visible= useLinearScale;
-	cursorScale.visible = useCursorScale;
-
-	if ( useCursorScale ) {
-
-		viewer.addEventListener( 'cursorChange', cursorChanged );
-
-	} else {
-
-		viewer.removeEventListener( 'cursorChange', cursorChanged );
-
-	}
-
-	viewer.renderView();
-
-}
-
-function cursorChanged ( /* event */ ) {
-
-	const cursorHeight = viewer.cursorHeight;
-	const range = viewer.maxHeight - viewer.minHeight;
-
-	var scaledHeight = 0;
-	var realHeight = 0;
-
-	if ( viewer.shadingMode === SHADING_CURSOR ) {
-
-		scaledHeight = ( viewer.cursorHeight + range / 2 ) / range;
-		realHeight = cursorHeight + range / 2 + viewer.minHeight;
-
-	} else {
-
-		scaledHeight = 1 - cursorHeight / range;
-		realHeight = cursorHeight;
-
-	}
-
-	scaledHeight = Math.max( Math.min( scaledHeight, 1 ), 0 );
-
-	cursorScale.setCursor( scaledHeight, Math.round( realHeight ) );
-
-}
-
-function updateScaleBar ( camera ) {
-
-	if ( camera instanceof OrthographicCamera ) {
-
-		if ( scaleBar === null ) {
-
-			scaleBar = new ScaleBar( viewer.container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
-			scene.addStatic( scaleBar );
-
-		}
-
-		if ( isVisible !== scaleBar.visible ) scaleBar.visible = isVisible;
-
-		scaleBar.setScale( camera.zoom );
-
-	} else {
-
-		if ( scaleBar !== null && scaleBar.visible ) scaleBar.visible = false;
-
-	}
-
-}
-
-export const HUD = {
-	init:            init,
-	renderHUD:       renderHUD,
-	setVisibility:   setVisibility,
-	getVisibility:   getVisibility,
-	getProgressDial: getProgressDial,
-	setScale:        setScale
-};
+export { HUD };
 
 // EOF

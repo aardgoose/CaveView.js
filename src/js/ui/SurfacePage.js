@@ -4,7 +4,6 @@ import {
 } from '../core/constants';
 
 import { Page } from './Page';
-import { Viewer } from '../viewer/Viewer';
 
 const surfaceShadingModes = {
 	'surface.shading.height':        SHADING_HEIGHT,
@@ -19,7 +18,7 @@ const terrainThroughModes = {
 	'terrain.through.stencil': TERRAIN_STENCIL
 };
 
-function SurfacePage () {
+function SurfacePage ( viewer ) {
 
 	const controls = [];
 
@@ -27,35 +26,35 @@ function SurfacePage () {
 
 	this.addHeader( 'surface.header' );
 
-	if ( Viewer.hasSurfaceLegs ) {
+	if ( viewer.hasSurfaceLegs ) {
 
-		this.addCheckbox( 'surface.legs', Viewer, 'surfaceLegs' );
-		this.addSelect( 'surface.shading.caption', surfaceShadingModes, Viewer, 'surfaceShading' );
+		this.addCheckbox( 'surface.legs', viewer, 'surfaceLegs' );
+		this.addSelect( 'surface.shading.caption', surfaceShadingModes, viewer, 'surfaceShading' );
 
 	}
 
-	if ( Viewer.hasTerrain ) {
+	if ( viewer.hasTerrain ) {
 
 		this.addHeader( 'terrain.header' );
 
-		this.addCheckbox( 'terrain.terrain', Viewer, 'terrain' );
+		this.addCheckbox( 'terrain.terrain', viewer, 'terrain' );
 
-		controls.push( this.addSelect( 'terrain.shading.caption', Viewer.terrainShadingModes, Viewer, 'terrainShading' ) );
+		controls.push( this.addSelect( 'terrain.shading.caption', viewer.terrainShadingModes, viewer, 'terrainShading' ) );
 
-		controls.push( this.addSelect( 'terrain.through.caption', terrainThroughModes, Viewer, 'terrainThrough' ) );
+		controls.push( this.addSelect( 'terrain.through.caption', terrainThroughModes, viewer, 'terrainThrough' ) );
 
-		controls.push( this.addRange( 'terrain.opacity', Viewer, 'terrainOpacity' ) );
+		controls.push( this.addRange( 'terrain.opacity', viewer, 'terrainOpacity' ) );
 
-		controls.push( this.addCheckbox( 'terrain.datum_shift', Viewer, 'terrainDatumShift' ) );
-		controls.push( this.addCheckbox( 'terrain.lighting', Viewer, 'terrainDirectionalLighting' ) );
+		controls.push( this.addCheckbox( 'terrain.datum_shift', viewer, 'terrainDatumShift' ) );
+		controls.push( this.addCheckbox( 'terrain.lighting', viewer, 'terrainDirectionalLighting' ) );
 
-		if ( ! Viewer.hasRealTerrain ) {
+		if ( ! viewer.hasRealTerrain ) {
 
-			controls.push( this.addDownloadButton( 'terrain.downloadTileSet', Viewer.terrainTileSet, 'tileSetEntry.json' ) );
+			controls.push( this.addDownloadButton( 'terrain.downloadTileSet', viewer.terrainTileSet, 'tileSetEntry.json' ) );
 
 		}
 
-		const attributions = Viewer.terrainAttributions;
+		const attributions = viewer.terrainAttributions;
 
 		for ( var i = 0; i < attributions.length; i++ ) {
 
@@ -76,7 +75,7 @@ function SurfacePage () {
 		// change UI dynamicly to only display useful controls
 		if ( event.name === 'terrain' ) {
 
-			Page.setControlsVisibility( controls, Viewer.terrain );
+			Page.setControlsVisibility( controls, viewer.terrain );
 
 		}
 

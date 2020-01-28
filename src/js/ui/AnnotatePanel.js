@@ -1,8 +1,5 @@
-
-import { Viewer } from '../viewer/Viewer';
 import { Panel } from './Panel';
 import { Annotations } from '../viewer/Annotations';
-
 
 const annotators = [
 	'none',
@@ -10,7 +7,7 @@ const annotators = [
 	'link'
 ];
 
-function AnnotatePanel ( page ) {
+function AnnotatePanel ( page, viewer ) {
 
 	Panel.call( this, page );
 
@@ -18,7 +15,7 @@ function AnnotatePanel ( page ) {
 
 	this.add( page.addHeader( 'annotate.header' ) );
 
-	page.addListener( Viewer, 'selectedAnnotation', _onSelect );
+	page.addListener( viewer, 'selectedAnnotation', _onSelect );
 
 	return this;
 

@@ -1,12 +1,11 @@
-import { Viewer } from '../viewer/Viewer';
 
-function LocationButton ( container ) { // public method
+function LocationButton ( viewer, container ) { // public method
 
 	var oldButton = document.getElementById( 'cv-gps-button' );
 
 	if ( oldButton !== null ) container.removeChild( oldButton );
 
-	if ( ! Viewer.hasLocation ) return;
+	if ( ! viewer.hasLocation ) return;
 
 	var div = document.createElement( 'div' );
 
@@ -14,7 +13,7 @@ function LocationButton ( container ) { // public method
 
 	div.addEventListener( 'click', function () {
 
-		if ( Viewer.trackLocation ) {
+		if ( viewer.trackLocation ) {
 
 			div.classList.remove( 'on' );
 
@@ -24,7 +23,7 @@ function LocationButton ( container ) { // public method
 
 		}
 
-		Viewer.trackLocation = ! Viewer.trackLocation;
+		viewer.trackLocation = ! viewer.trackLocation;
 
 	} );
 

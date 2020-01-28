@@ -6,7 +6,6 @@ import {
 } from '../core/constants';
 
 import { Page } from './Page';
-import { Viewer } from '../viewer/Viewer';
 
 const legShadingModes = {
 	'shading.height':        SHADING_HEIGHT,
@@ -36,7 +35,7 @@ const cameraModes = {
 //	'view.camera.stereo':       CAMERA_STEREO
 };
 
-function SettingsPage ( fileSelector ) {
+function SettingsPage ( viewer, fileSelector ) {
 
 	Page.call( this, 'icon_settings', 'settings' );
 
@@ -45,9 +44,9 @@ function SettingsPage ( fileSelector ) {
 
 	const legShadingModesActive = Object.assign( {}, legShadingModes );
 
-	const routeNames = Viewer.routeNames;
+	const routeNames = viewer.routeNames;
 
-	if ( Viewer.hasRealTerrain ) {
+	if ( viewer.hasRealTerrain ) {
 
 		legShadingModesActive[ 'shading.depth' ] = SHADING_DEPTH;
 		legShadingModesActive[ 'shading.depth_cursor' ] = SHADING_DEPTH_CURSOR;
@@ -68,27 +67,27 @@ function SettingsPage ( fileSelector ) {
 
 	this.addHeader( 'view.header' );
 
-	this.addSelect( 'view.camera.caption', cameraModes, Viewer, 'cameraType' );
+	this.addSelect( 'view.camera.caption', cameraModes, viewer, 'cameraType' );
 
-	//	controls.push( this.addRange( 'view.eye_separation', Viewer, 'eyeSeparation' ) );
+	//	controls.push( this.addRange( 'view.eye_separation', viewer, 'eyeSeparation' ) );
 
-	this.addSelect( 'view.viewpoints.caption', cameraViews, Viewer, 'view' );
+	this.addSelect( 'view.viewpoints.caption', cameraViews, viewer, 'view' );
 
-	this.addRange( 'view.vertical_scaling', Viewer, 'zScale' );
+	this.addRange( 'view.vertical_scaling', viewer, 'zScale' );
 
-	this.addCheckbox( 'view.autorotate', Viewer, 'autoRotate' );
+	this.addCheckbox( 'view.autorotate', viewer, 'autoRotate' );
 
-	this.addRange( 'view.rotation_speed', Viewer, 'autoRotateSpeed' );
+	this.addRange( 'view.rotation_speed', viewer, 'autoRotateSpeed' );
 
 	this.addHeader( 'shading.header' );
 
-	this.addSelect( 'shading.caption', legShadingModesActive, Viewer, 'shadingMode' );
+	this.addSelect( 'shading.caption', legShadingModesActive, viewer, 'shadingMode' );
 
 	if ( routeNames.length !== 0 ) {
 
-		if ( ! Viewer.route ) Viewer.route = routeNames[ 0 ];
+		if ( ! viewer.route ) viewer.route = routeNames[ 0 ];
 
-		routeControls.push( this.addSelect( 'selected_route', routeNames, Viewer, 'route' ) );
+		routeControls.push( this.addSelect( 'selected_route', routeNames, viewer, 'route' ) );
 
 	} else {
 
@@ -98,27 +97,27 @@ function SettingsPage ( fileSelector ) {
 
 	this.addHeader( 'visibility.header' );
 
-	if ( Viewer.hasEntrances       ) this.addCheckbox( 'visibility.entrances', Viewer, 'entrances' );
-	if ( Viewer.hasStations        ) this.addCheckbox( 'visibility.stations', Viewer, 'stations' );
-	if ( Viewer.hasStationLabels   ) this.addCheckbox( 'visibility.labels', Viewer, 'stationLabels' );
-	if ( Viewer.hasStationComments ) this.addCheckbox( 'visibility.comments', Viewer, 'stationComments' );
-	if ( Viewer.hasSplays          ) this.addCheckbox( 'visibility.splays', Viewer, 'splays' );
-	if ( Viewer.hasWalls           ) this.addCheckbox( 'visibility.walls', Viewer, 'walls' );
-	if ( Viewer.hasScraps          ) this.addCheckbox( 'visibility.scraps', Viewer, 'scraps' );
-	if ( Viewer.hasTraces          ) this.addCheckbox( 'visibility.traces', Viewer, 'traces' );
+	if ( viewer.hasEntrances       ) this.addCheckbox( 'visibility.entrances', viewer, 'entrances' );
+	if ( viewer.hasStations        ) this.addCheckbox( 'visibility.stations', viewer, 'stations' );
+	if ( viewer.hasStationLabels   ) this.addCheckbox( 'visibility.labels', viewer, 'stationLabels' );
+	if ( viewer.hasStationComments ) this.addCheckbox( 'visibility.comments', viewer, 'stationComments' );
+	if ( viewer.hasSplays          ) this.addCheckbox( 'visibility.splays', viewer, 'splays' );
+	if ( viewer.hasWalls           ) this.addCheckbox( 'visibility.walls', viewer, 'walls' );
+	if ( viewer.hasScraps          ) this.addCheckbox( 'visibility.scraps', viewer, 'scraps' );
+	if ( viewer.hasTraces          ) this.addCheckbox( 'visibility.traces', viewer, 'traces' );
 
-	this.addCheckbox( 'visibility.fog', Viewer, 'fog' );
-	this.addCheckbox( 'visibility.hud', Viewer, 'HUD' );
-	this.addCheckbox( 'visibility.box', Viewer, 'box' );
+	this.addCheckbox( 'visibility.fog', viewer, 'fog' );
+	this.addCheckbox( 'visibility.hud', viewer, 'HUD' );
+	this.addCheckbox( 'visibility.box', viewer, 'box' );
 
-	if ( Viewer.hasWarnings ) this.addCheckbox( 'visibility.warnings', Viewer, 'warnings' );
+	if ( viewer.hasWarnings ) this.addCheckbox( 'visibility.warnings', viewer, 'warnings' );
 
 	this.addHeader( 'controls.header' );
 
-	this.addCheckbox( 'controls.svx_control_mode', Viewer, 'svxControlMode' );
-	this.addCheckbox( 'controls.zoom_to_cursor', Viewer, 'zoomToCursor' );
+	this.addCheckbox( 'controls.svx_control_mode', viewer, 'svxControlMode' );
+	this.addCheckbox( 'controls.zoom_to_cursor', viewer, 'zoomToCursor' );
 
-	if ( Viewer.svxControlMode ) this.addCheckbox( 'controls.wheel_tilt', Viewer, 'wheelTilt' );
+	if ( viewer.svxControlMode ) this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' );
 
 	_onChange( { name: 'cameraType' } );
 	_onChange( { name: 'shadingMode' } );
@@ -131,14 +130,14 @@ function SettingsPage ( fileSelector ) {
 
 		if ( event.name === 'shadingMode' ) {
 
-			Page.setControlsVisibility( routeControls, ( Viewer.shadingMode === SHADING_PATH ) );
+			Page.setControlsVisibility( routeControls, ( viewer.shadingMode === SHADING_PATH ) );
 
 		}
 
 		// change UI dynamicly to only display useful controls
 		if ( event.name === 'cameraType' ) {
 
-			Page.setControlsVisibility( controls, Viewer.cameraType === CAMERA_ANAGLYPH || Viewer.cameraType === CAMERA_STEREO );
+			Page.setControlsVisibility( controls, viewer.cameraType === CAMERA_ANAGLYPH || viewer.cameraType === CAMERA_STEREO );
 
 		}
 

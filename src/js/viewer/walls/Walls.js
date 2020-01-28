@@ -167,11 +167,8 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 	if ( newIndices.length === 0 ) return false;
 
 	// replace position and index attributes - dispose of old attributes
-	geometry.index.setArray( new indices.array.constructor( newIndices ) );
-	geometry.index.needsUpdate = true;
-
-	vertices.setArray( new Float32Array( newVertices ) );
-	vertices.needsUpdate = true;
+	geometry.index = new indices.constructor( newIndices );
+	geometry.setAttribute( 'position', new Float32BufferAttribute( newVertices, 3 ) );
 
 	geometry.computeVertexNormals();
 	geometry.computeBoundingBox();

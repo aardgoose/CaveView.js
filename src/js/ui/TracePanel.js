@@ -1,15 +1,13 @@
 
-import { Viewer } from '../viewer/Viewer';
 import { Panel } from './Panel';
 
-
-function TracePanel ( page ) {
+function TracePanel ( page, viewer ) {
 
 	Panel.call( this, page );
 
 	const self = this;
 
-	page.addListener( Viewer, 'selectedTrace', _onSelect );
+	page.addListener( viewer, 'selectedTrace', _onSelect );
 
 	this.add( page.addHeader( 'trace.header' ) );
 

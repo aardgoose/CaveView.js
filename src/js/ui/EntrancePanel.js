@@ -1,9 +1,6 @@
-
-import { Viewer } from '../viewer/Viewer';
 import { Panel } from './Panel';
 
-
-function EntrancePanel ( page ) {
+function EntrancePanel ( page, viewer ) {
 
 	Panel.call( this, page );
 
@@ -11,7 +8,7 @@ function EntrancePanel ( page ) {
 
 	this.add( page.addHeader( 'entrance.header' ) );
 
-	page.addListener( Viewer, 'selectedEntrance', _onSelect );
+	page.addListener( viewer, 'selectedEntrance', _onSelect );
 
 	return this;
 

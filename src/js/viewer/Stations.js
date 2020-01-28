@@ -8,7 +8,6 @@ import {
 import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
 import { STATION_ENTRANCE, LEG_SPLAY } from '../core/constants';
-import { Viewer } from '../viewer/Viewer';
 import { Cfg } from '../core/lib';
 import { PointIndicator } from './PointIndicator';
 
@@ -20,8 +19,11 @@ function onUploadDropBuffer() {
 	this.array = null;
 
 }
+var Viewer;
 
 function Stations ( sectionIdSet ) {
+
+	Viewer = CV.Viewer;
 
 	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial() );
 

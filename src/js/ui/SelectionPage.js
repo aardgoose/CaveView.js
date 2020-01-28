@@ -1,16 +1,15 @@
 import { STATION_ENTRANCE, SHADING_SURVEY } from '../core/constants';
 
 import { Page } from './Page';
-import { Viewer } from '../viewer/Viewer';
 import { SurveyColours } from '../core/SurveyColours';
 import { Cfg } from '../core/lib';
 
-function SelectionPage ( container, fileSelector ) {
+function SelectionPage ( viewer, container, fileSelector ) {
 
 	Page.call( this, 'icon_explore', 'explore' );
 
 	const titleBar = document.createElement( 'div' );
-	const surveyTree = Viewer.getSurveyTree();
+	const surveyTree = viewer.getSurveyTree();
 	const self = this;
 
 	var nodes = null;
@@ -18,20 +17,20 @@ function SelectionPage ( container, fileSelector ) {
 	var currentHover = 0;
 	var currentTop;
 	var lastSelected = null;
-	var lastShadingMode = Viewer.shadingMode;
+	var lastShadingMode = viewer.shadingMode;
 
 	const stringCompare = new Intl.Collator( 'en-GB', { numeric: true } ).compare;
 
 	currentTop = surveyTree;
 
-	if ( ! Viewer.surveyLoaded ) return;
+	if ( ! viewer.surveyLoaded ) return;
 
 	this.addHeader( 'Selection' );
 
 	titleBar.id = 'ui-path';
 	titleBar.classList.add( 'header' );
 
-	if ( Viewer.isClipped ) {
+	if ( viewer.isClipped ) {
 
 		titleBar.classList.add( 'reload' );
 		this.addListener( titleBar, 'click', __handleLoadFull );
@@ -56,12 +55,12 @@ function SelectionPage ( container, fileSelector ) {
 
 	function _onChange( event ) {
 
-		if ( ! Viewer.surveyLoaded ) return;
+		if ( ! viewer.surveyLoaded ) return;
 
 		if (
 			( event.name === 'splays' ) ||
-			( lastShadingMode === SHADING_SURVEY && Viewer.shadingMode !== SHADING_SURVEY ) ||
-			( lastShadingMode !== SHADING_SURVEY && Viewer.shadingMode === SHADING_SURVEY )
+			( lastShadingMode === SHADING_SURVEY && viewer.shadingMode !== SHADING_SURVEY ) ||
+			( lastShadingMode !== SHADING_SURVEY && viewer.shadingMode === SHADING_SURVEY )
 		) {
 
 			self.replaceSlide( _displayPanel( currentTop ), depth );
@@ -72,13 +71,13 @@ function SelectionPage ( container, fileSelector ) {
 
 	function _displayPanel ( top ) {
 
-		const surveyColourMap = ( Viewer.shadingMode === SHADING_SURVEY ) ? SurveyColours.getSurveyColourMap( Viewer.section ) : null;
+		const surveyColourMap = ( viewer.shadingMode === SHADING_SURVEY ) ? SurveyColours.getSurveyColourMap( viewer.section ) : null;
 
 		nodes = new WeakMap();
 
 		var tmp;
 
-		lastShadingMode = Viewer.shadingMode;
+		lastShadingMode = viewer.shadingMode;
 
 		while ( tmp = titleBar.firstChild ) titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
 
@@ -123,7 +122,7 @@ function SelectionPage ( container, fileSelector ) {
 
 			const connections = ( child.p === undefined ) ? null : child.p.connections;
 
-			if ( connections === 0 && ! Viewer.splays && child.type !== STATION_ENTRANCE ) return; // skip spays if not displayed
+			if ( connections === 0 && ! viewer.splays && child.type !== STATION_ENTRANCE ) return; // skip spays if not displayed
 
 			const li  = document.createElement( 'li' );
 
@@ -135,7 +134,7 @@ function SelectionPage ( container, fileSelector ) {
 
 			nodes.set( li, child );
 
-			if ( Viewer.section === child ) li.classList.add( 'selected' );
+			if ( viewer.section === child ) li.classList.add( 'selected' );
 
 			if ( connections === null ) {
 
@@ -216,7 +215,7 @@ function SelectionPage ( container, fileSelector ) {
 
 	function _handleMouseleave ( /* event */ ) {
 
-		Viewer.highlight = surveyTree;
+		viewer.highlight = surveyTree;
 
 	}
 
@@ -230,7 +229,7 @@ function SelectionPage ( container, fileSelector ) {
 
 		if ( node !== currentHover ) {
 
-			Viewer.highlight = ( Viewer.section !== node ) ? node : surveyTree;
+			viewer.highlight = ( viewer.section !== node ) ? node : surveyTree;
 			currentHover = node;
 
 		}
@@ -247,8 +246,8 @@ function SelectionPage ( container, fileSelector ) {
 
 		case 'LI':
 
-			Viewer.section = node;
-			Viewer.setPOI = true;
+			viewer.section = node;
+			viewer.setPOI = true;
 
 			target.classList.add( 'selected' );
 
@@ -266,7 +265,7 @@ function SelectionPage ( container, fileSelector ) {
 
 			} else if ( target.id === 'ui-path' ) {
 
-				Viewer.section = currentTop;
+				viewer.section = currentTop;
 
 			}
 
@@ -294,7 +293,7 @@ function SelectionPage ( container, fileSelector ) {
 
 		if ( ! target.classList.contains( 'section' ) ) return;
 
-		if ( node !== surveyTree ) Viewer.cut = true;
+		if ( node !== surveyTree ) viewer.cut = true;
 
 	}
 

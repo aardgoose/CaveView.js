@@ -1,20 +1,18 @@
 
 import { replaceExtension } from '../core/lib';
-import { Viewer } from '../viewer/Viewer';
 import { Panel } from './Panel';
 
-
-function RoutePanel ( page, fileSelector ) {
+function RoutePanel ( page, viewer, fileSelector ) {
 
 	Panel.call( this, page );
 
 	const self = this;
-	const metadata = Viewer.getMetadata();
-	const routeNames = Viewer.routeNames;
+	const metadata = viewer.getMetadata();
+	const routeNames = viewer.routeNames;
 
 	this.add( page.addHeader( 'route.header' ) );
 
-	var routeSelector = page.addSelect( 'route.current', routeNames, Viewer, 'route' );
+	var routeSelector = page.addSelect( 'route.current', routeNames, viewer, 'route' );
 	var getNewRouteName;
 
 	this.add( routeSelector );
@@ -34,7 +32,7 @@ function RoutePanel ( page, fileSelector ) {
 
 		// update selector
 
-		routeSelector = self.addSelect( 'Current Route', Viewer.routeNames, Viewer, 'route', routeSelector );
+		routeSelector = self.addSelect( 'Current Route', viewer.routeNames, viewer, 'route', routeSelector );
 
 	}
 

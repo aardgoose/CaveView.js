@@ -1,12 +1,10 @@
 import { SHADING_PATH, MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE } from '../core/constants';
 
 import { Page } from './Page';
-import { Viewer } from '../viewer/Viewer';
 import { RoutePanel } from './RoutePanel';
 import { TracePanel } from './TracePanel';
 //import { AnnotatePanel } from './AnnotatePanel';
 //import { EntrancePanel } from './EntrancePanel';
-
 
 const mode = {
 	'modes.none': MOUSE_MODE_NORMAL,
@@ -17,7 +15,7 @@ const mode = {
 };
 
 
-function EditPage ( fileSelector ) {
+function EditPage ( viewer, fileSelector ) {
 
 	Page.call( this, 'icon_route', 'edit', _onTop, _onLeave );
 
@@ -33,7 +31,7 @@ function EditPage ( fileSelector ) {
 
 	this.addHeader( 'header' );
 
-	this.addSelect( 'mode', mode, Viewer, 'editMode' );
+	this.addSelect( 'mode', mode, viewer, 'editMode' );
 
 	intro.push( this.addText( this.i18n( 'intro' ) ) );
 
@@ -48,11 +46,11 @@ function EditPage ( fileSelector ) {
 
 			const newState = Object.assign( {}, initialState );
 
-			switch ( Viewer.editMode ) {
+			switch ( viewer.editMode ) {
 
 			case MOUSE_MODE_TRACE_EDIT:
 
-				if ( tracePanel === null ) tracePanel = new TracePanel( self );
+				if ( tracePanel === null ) tracePanel = new TracePanel( self, viewer );
 
 				newState.traces = true;
 
@@ -60,7 +58,7 @@ function EditPage ( fileSelector ) {
 
 			case MOUSE_MODE_ROUTE_EDIT:
 
-				if ( routePanel === null ) routePanel = new RoutePanel( self, fileSelector );
+				if ( routePanel === null ) routePanel = new RoutePanel( self, viewer, fileSelector );
 
 				newState.shadingMode = SHADING_PATH;
 
@@ -68,7 +66,7 @@ function EditPage ( fileSelector ) {
 			/*
 			case MOUSE_MODE_ENTRANCES:
 
-				if ( entrancePanel === null ) entrancePanel = new EntrancePanel( self );
+				if ( entrancePanel === null ) entrancePanel = new EntrancePanel( self, viewer );
 
 				newState.entrances = true;
 
@@ -76,7 +74,7 @@ function EditPage ( fileSelector ) {
 
 			case MOUSE_MODE_ANNOTATE:
 
-				if ( annotatePanel === null ) annotatePanel = new AnnotatePanel( self );
+				if ( annotatePanel === null ) annotatePanel = new AnnotatePanel( self, viewer );
 
 				newState.stations = true;
 				newState.annotations = true;
@@ -86,14 +84,14 @@ function EditPage ( fileSelector ) {
 
 			}
 
-			Viewer.setView( newState );
+			viewer.setView( newState );
 
-			Page.setControlsVisibility( intro, Viewer.editMode === MOUSE_MODE_NORMAL );
+			Page.setControlsVisibility( intro, viewer.editMode === MOUSE_MODE_NORMAL );
 
-			// if ( annotatePanel !== null ) annotatePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ANNOTATE );
-			// if ( entrancePanel !== null ) entrancePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ENTRANCES );
-			if ( routePanel !== null ) routePanel.setVisibility( Viewer.editMode === MOUSE_MODE_ROUTE_EDIT );
-			if ( tracePanel !== null ) tracePanel.setVisibility( Viewer.editMode === MOUSE_MODE_TRACE_EDIT );
+			// if ( annotatePanel !== null ) annotatePanel.setVisibility( viewer.editMode === MOUSE_MODE_ANNOTATE );
+			// if ( entrancePanel !== null ) entrancePanel.setVisibility( viewer.editMode === MOUSE_MODE_ENTRANCES );
+			if ( routePanel !== null ) routePanel.setVisibility( viewer.editMode === MOUSE_MODE_ROUTE_EDIT );
+			if ( tracePanel !== null ) tracePanel.setVisibility( viewer.editMode === MOUSE_MODE_TRACE_EDIT );
 
 		}
 
@@ -104,11 +102,11 @@ function EditPage ( fileSelector ) {
 		// save initial view settings
 
 		initialState = {
-			// annotations: Viewer.annotations,
-			shadingMode: Viewer.shadingMode,
-			// entrances: Viewer.entrances,
-			stations: Viewer.stations,
-			traces: Viewer.traces
+			// annotations: viewer.annotations,
+			shadingMode: viewer.shadingMode,
+			// entrances: viewer.entrances,
+			stations: viewer.stations,
+			traces: viewer.traces
 		};
 
 		_onChange( { type: 'change', name: 'editMode' } );
@@ -119,7 +117,7 @@ function EditPage ( fileSelector ) {
 
 		// restore inital view settings
 
-		Viewer.setView( initialState );
+		viewer.setView( initialState );
 
 	}
 

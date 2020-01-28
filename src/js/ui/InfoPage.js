@@ -1,9 +1,8 @@
 import { VERSION, LEG_CAVE } from '../core/constants';
 
 import { Page } from './Page';
-import { Viewer } from '../viewer/Viewer';
 
-function InfoPage ( fileSelector ) {
+function InfoPage ( viewer, fileSelector ) {
 
 	Page.call( this, 'icon_info', 'info' );
 
@@ -13,7 +12,7 @@ function InfoPage ( fileSelector ) {
 
 	this.addText( 'file: ' + fileSelector.file );
 
-	const stats = Viewer.getLegStats ( LEG_CAVE );
+	const stats = viewer.getLegStats ( LEG_CAVE );
 
 	this.addLine( this.i18n( 'stats.legs' ) + ': ' + stats.legCount );
 	this.addLine( this.i18n( 'stats.totalLength' ) + ': ' + stats.legLength.toFixed( 2 ) + '\u202fm' );

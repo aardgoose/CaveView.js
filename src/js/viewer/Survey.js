@@ -875,7 +875,7 @@ Survey.prototype.cutSection = function ( node ) {
 
 		if ( obj.geometry ) obj.geometry.dispose();
 
-		this.removeFeature( obj );
+		self.removeFeature( obj );
 
 	} );
 
@@ -1065,7 +1065,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	switch ( legShadingMode ) {
 
 	case SHADING_HEIGHT:
-
+console.log( mesh );
 		this.setLegColourByHeight( mesh );
 
 		break;

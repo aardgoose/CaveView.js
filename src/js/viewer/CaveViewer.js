@@ -1675,12 +1675,6 @@ function CaveViewer ( domID, configuration ) {
 
 CaveViewer.prototype = Object.create( EventDispatcher.prototype );
 
-// export public interface
-/*
-Object.assign( Viewer, {
-		// addAnnotator:  Annotations.addAnnotator,
-	} );
-*/
 export { CaveViewer };
 
 

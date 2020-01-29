@@ -31,8 +31,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 	this.cameraManager = cameraManager;
 
-	this.domElement = ( domElement !== undefined ) ? domElement : document;
-	this.element = this.domElement === document ? this.domElement.body : this.domElement;
+	this.domElement = domElement;
 
 	// Set to false to disable this control
 	this.enabled = true;
@@ -300,32 +299,32 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 	var buttons = 0;
 	var lastButtonDownTime = 0;
 
-	var STATE = { NONE: - 1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY_PAN: 4 };
+	const STATE = { NONE: - 1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY_PAN: 4 };
 
 	var state = STATE.NONE;
 
 	var EPS = 0.000001;
 
 	// current position in spherical coordinates
-	var spherical = new Spherical();
-	var sphericalDelta = new Spherical();
+	const spherical = new Spherical();
+	const sphericalDelta = new Spherical();
 
 	var scale = 1;
 	var panOffset = new Vector3();
 	var zoomChanged = false;
 	var zoomFactor = 1;
 
-	var rotateStart = new Vector2();
-	var rotateEnd = new Vector2();
-	var rotateDelta = new Vector2();
+	const rotateStart = new Vector2();
+	const rotateEnd = new Vector2();
+	const rotateDelta = new Vector2();
 
-	var panStart = new Vector2();
-	var panEnd = new Vector2();
-	var panDelta = new Vector2();
+	const panStart = new Vector2();
+	const panEnd = new Vector2();
+	const panDelta = new Vector2();
 
-	var dollyStart = new Vector2();
-	var dollyEnd = new Vector2();
-	var dollyDelta = new Vector2();
+	const dollyStart = new Vector2();
+	const dollyEnd = new Vector2();
+	const dollyDelta = new Vector2();
 
 	const mouse3D = new Vector3();
 	const mouseStart = new Vector3();
@@ -422,14 +421,13 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 	// deltaX and deltaY are in pixels; right and down are positive
 	var pan = function ( deltaX, deltaY ) {
 
-		var element = scope.element;
-		var camera = cameraManager.activeCamera;
+		const element = scope.domElement;
+		const camera = cameraManager.activeCamera;
 
 		if ( camera.isPerspectiveCamera ) {
 
 			// perspective
-			var position = camera.position;
-			__v.copy( position ).sub( scope.target );
+			__v.copy( camera.position ).sub( scope.target );
 
 			var targetDistance = __v.length();
 
@@ -524,7 +522,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 	function rotateSvx() {
 
 		rotateStart.copy( svxStart );
-		rotateLeft( 2 * Math.PI * svxDelta.x * svxReverseSense / scope.element.clientWidth );
+		rotateLeft( 2 * Math.PI * svxDelta.x * svxReverseSense / scope.domElement.clientWidth );
 		rotateStart.copy( svxEnd );
 
 		scope.update();
@@ -604,7 +602,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 		rotateDelta.subVectors( rotateEnd, rotateStart );
 
 		// rotating up and down along whole screen attempts to go 360, but limited to 180
-		rotateUp( 2 * Math.PI * rotateDelta.y * svxReverseSense / scope.element.clientHeight );
+		rotateUp( 2 * Math.PI * rotateDelta.y * svxReverseSense / scope.domElement.clientHeight );
 
 		rotateStart.copy( rotateEnd );
 
@@ -618,7 +616,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 		rotateDelta.subVectors( rotateEnd, rotateStart );
 
-		var element = scope.element;
+		const element = scope.domElement;
 
 		// rotating across whole screen goes 360 degrees around
 		rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientWidth );
@@ -674,8 +672,8 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 	var updateMouse3D = function () {
 
-		var v = new Vector3();
-		var v1 = new Vector3();
+		const v = new Vector3();
+		const v1 = new Vector3();
 
 		return function updateMouse3D( x, y ) {
 
@@ -848,15 +846,15 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 	function handleTouchStartDollyPan( event ) {
 
-		var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-		var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+		const dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
+		const dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
 
 		var distance = Math.sqrt( dx * dx + dy * dy );
 
 		dollyStart.set( 0, distance );
 
-		var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
-		var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
+		const x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
+		const y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
 
 		updateMouse3D( x, y );
 
@@ -870,7 +868,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 		rotateDelta.subVectors( rotateEnd, rotateStart );
 
-		var element = scope.element;
+		const element = scope.domElement;
 
 		// rotating across whole screen goes 360 degrees around
 		rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientWidth );
@@ -886,8 +884,8 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 	function handleTouchMoveDollyPan( event ) {
 
-		var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-		var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+		const dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
+		const dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
 
 		var distance = Math.sqrt( dx * dx + dy * dy );
 
@@ -899,8 +897,8 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 		dollyStart.copy( dollyEnd );
 
-		var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
-		var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
+		const x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
+		const y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
 
 		updateMouse3D( x, y );
 
@@ -992,7 +990,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 			handleMouseDownPan( event );
 
-			scope.element.style.cursor = 'all-scroll';
+			scope.domElement.style.cursor = 'all-scroll';
 
 			state = STATE.PAN;
 
@@ -1049,7 +1047,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 		if ( scope.enabled === false ) return;
 
-		scope.element.style.cursor = 'default';
+		scope.domElement.style.cursor = 'default';
 
 		document.removeEventListener( 'mousemove', onMouseMove, false );
 		document.removeEventListener( 'mouseup', onMouseUp, false );

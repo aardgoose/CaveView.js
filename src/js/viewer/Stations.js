@@ -7,7 +7,7 @@ import {
 
 import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
-import { STATION_ENTRANCE, LEG_SPLAY } from '../core/constants';
+import { STATION_ENTRANCE } from '../core/constants';
 import { Cfg } from '../core/lib';
 import { PointIndicator } from './PointIndicator';
 
@@ -19,11 +19,8 @@ function onUploadDropBuffer() {
 	this.array = null;
 
 }
-var Viewer;
 
 function Stations ( sectionIdSet ) {
-
-	Viewer = CV.Viewer;
 
 	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial() );
 
@@ -44,12 +41,7 @@ function Stations ( sectionIdSet ) {
 	this.selected = null;
 	this.selectedSize = 0;
 	this.sectionIdSet = sectionIdSet;
-
-	const self = this;
-
-	Viewer.addEventListener( 'change', _viewChanged );
-
-	this.addEventListener( 'removed', _removed );
+	this.splaysVisible = false;
 
 	const point = new PointIndicator( 0xff0000 );
 
@@ -57,44 +49,6 @@ function Stations ( sectionIdSet ) {
 
 	this.addStatic( point );
 	this.highlightPoint = point;
-
-	function _viewChanged( event ) {
-
-		if ( event.name === 'splays' ) {
-
-			const splaySize = Viewer.splays ? 6.0 : 0.0;
-
-			const stations = self.stations;
-			const pSize = self.geometry.getAttribute( 'pSize' );
-			const l = stations.length;
-			const sectionIdSet = self.sectionIdSet;
-
-			var i;
-
-			for ( i = 0; i < l; i++ ) {
-
-				const node = stations[ i ];
-
-				if ( node.p.connections === 0 && ( splaySize == 0 || sectionIdSet.size === 0 || sectionIdSet.has( node.id ) ) ) {
-
-					pSize.setX( i, splaySize );
-
-				}
-
-			}
-
-			pSize.needsUpdate = true;
-			Viewer.renderView();
-
-		}
-
-	}
-
-	function _removed ( ) {
-
-		Viewer.removeEventListener( 'change', _viewChanged );
-
-	}
 
 }
 
@@ -159,7 +113,7 @@ Stations.prototype.getVisibleStation = function ( vertex ) {
 
 	if (
 		( sectionIdSet.size === 0 || sectionIdSet.has( node.id ) ) &&
-		( node.p.connections > 0 || Viewer.splays )
+		( node.p.connections > 0 || this.splaysVisible )
 	) return node;
 
 	if ( node.label !== undefined ) node.label.visible = false;
@@ -239,7 +193,7 @@ Stations.prototype.selectStations = function () {
 	const stations = this.stations;
 	const l = stations.length;
 	const pSize = this.geometry.getAttribute( 'pSize' );
-	const splaySize = Viewer.splays ? 6.0 : 0.0;
+	const splaySize = this.splaysVisible ? 6.0 : 0.0;
 	const sectionIdSet = this.sectionIdSet;
 
 	var i;
@@ -304,7 +258,7 @@ Stations.prototype.resetDistances = function () {
 
 Stations.prototype.getClosestVisibleStation = function ( camera, intersects ) {
 
-	const splaysVisible = ( camera.layers.mask & 1 << LEG_SPLAY > 0 );
+	const splaysVisible = this.splaysVisible;
 	const self = this;
 
 	var minD2 = Infinity;
@@ -339,5 +293,34 @@ Stations.prototype.getClosestVisibleStation = function ( camera, intersects ) {
 	return closestStation;
 
 };
+
+Stations.prototype.setSplaysVisibility = function ( visible ) {
+
+	this.splaysVisible = visible;
+	const splaySize = visible ? 6.0 : 0.0;
+
+	const stations = this.stations;
+	const pSize = this.geometry.getAttribute( 'pSize' );
+	const l = stations.length;
+	const sectionIdSet = this.sectionIdSet;
+
+	var i;
+
+	for ( i = 0; i < l; i++ ) {
+
+		const node = stations[ i ];
+
+		if ( node.p.connections === 0 && ( splaySize == 0 || sectionIdSet.size === 0 || sectionIdSet.has( node.id ) ) ) {
+
+			pSize.setX( i, splaySize );
+
+		}
+
+	}
+
+	pSize.needsUpdate = true;
+
+};
+
 
 export { Stations };

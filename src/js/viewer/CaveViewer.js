@@ -101,7 +101,7 @@ function CaveViewer ( domID, configuration ) {
 	var clickCount = 0;
 
 	var terrain = null;
-	var survey;
+	var survey = null;
 	var limits = null;
 	var stats = {};
 	var caveLoader;
@@ -424,11 +424,23 @@ function CaveViewer ( domID, configuration ) {
 
 	Materials.initCache( this );
 
+	this.addEventListener( 'change', viewChanged );
+
 	this.getControls = function () {
 
 		return controls;
 
 	};
+
+	function viewChanged( event ) {
+
+		if ( survey !== null && event.name === 'splays' ) {
+
+			survey.stations.setSplaysVisibility( self.splays );
+
+		}
+
+	}
 
 	const hud = new HUD( this, renderer );
 
@@ -446,7 +458,11 @@ function CaveViewer ( domID, configuration ) {
 		Object.defineProperty( self, name, {
 			writeable: true,
 			get: function () { return cameraManager.testCameraLayer( layerTag ); },
-			set: function ( x ) { setCameraLayer( layerTag, x ); self.dispatchEvent( { type: 'change', name: name } ); }
+			set: function ( x ) {
+				cameraManager.setCameraLayer( layerTag, x );
+				self.dispatchEvent( { type: 'change', name: name } );
+				renderView();
+			}
 		} );
 
 	}
@@ -644,7 +660,7 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
-	function setTerrainLighting( on ) {
+	function setTerrainLighting ( on ) {
 
 		lightingManager.directionalLighting = on;
 
@@ -652,7 +668,7 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
-	function applyTerrainDatumShift( x ) {
+	function applyTerrainDatumShift ( x ) {
 
 		if ( terrain === null ) return;
 
@@ -728,7 +744,7 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
-	function onLocationAccuracyChange( event ) {
+	function onLocationAccuracyChange ( event ) {
 
 		terrain.setAccuracy( event.value );
 
@@ -765,13 +781,6 @@ function CaveViewer ( domID, configuration ) {
 
 		}
 
-		renderView();
-
-	}
-
-	function setCameraLayer ( layerTag, enable ) {
-
-		cameraManager.setCameraLayer( layerTag, enable );
 		renderView();
 
 	}
@@ -835,7 +844,7 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
-	function setFog( enable ) {
+	function setFog ( enable ) {
 
 		useFog = enable;
 
@@ -962,7 +971,7 @@ function CaveViewer ( domID, configuration ) {
 
 		}
 
-		function _selectStation( node ) {
+		function _selectStation ( node ) {
 
 			if ( mouseMode === MOUSE_MODE_TRACE_EDIT ) {
 
@@ -1223,9 +1232,11 @@ function CaveViewer ( domID, configuration ) {
 
 			terrain.setVisibility( mode );
 
-			setCameraLayer( FEATURE_TERRAIN, mode );
+			cameraManager.setCameraLayer( FEATURE_TERRAIN, mode );
 
 			self.dispatchEvent( { type: 'change', name: 'terrain' } );
+
+			renderView();
 
 		}
 

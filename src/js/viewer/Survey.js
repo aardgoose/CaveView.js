@@ -57,7 +57,7 @@ function Survey ( cave ) {
 
 	this.type = 'CV.Survey';
 	this.cutInProgress = false;
-	this.features = [];
+	this.features = new Map();
 	this.routes = null;
 	this.stations = null;
 	this.terrain = null;
@@ -100,7 +100,7 @@ function Survey ( cave ) {
 
 	this.loadWarnings();
 
-	this.legTargets = [ this.features[ LEG_CAVE ] ];
+	this.legTargets = [ this.features.get( LEG_CAVE ) ];
 
 	this.loadEntrances();
 
@@ -431,7 +431,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 Survey.prototype.getFeature = function ( tag, obj ) {
 
-	var o = this.features[ tag ];
+	var o = this.features.get( tag );
 
 	if ( o === undefined && obj ) {
 
@@ -448,7 +448,7 @@ Survey.prototype.update = function ( cameraManager, target, showClusterMarkers )
 
 	const camera = cameraManager.activeCamera;
 
-	const entrances = this.features[ FEATURE_ENTRANCES ];
+	const entrances = this.features.get( FEATURE_ENTRANCES );
 
 	if ( entrances && cameraManager.testCameraLayer( FEATURE_ENTRANCES ) ) {
 
@@ -461,7 +461,7 @@ Survey.prototype.update = function ( cameraManager, target, showClusterMarkers )
 
 	}
 
-	const stationLabels = this.features[ LABEL_STATION ];
+	const stationLabels = this.features.get( LABEL_STATION );
 
 	if ( ( stationLabels && cameraManager.testCameraLayer( LABEL_STATION ) ) ||
 		stationLabels.commentCount > 0 && cameraManager.testCameraLayer( LABEL_STATION_COMMENT ) ) {
@@ -479,7 +479,7 @@ Survey.prototype.addFeature = function ( obj, tag, name ) {
 	obj.name = name;
 	obj.layers.set( tag );
 
-	this.features[ tag ] = obj;
+	this.features.set( tag, obj );
 
 	this.addStatic( obj );
 
@@ -489,15 +489,19 @@ Survey.prototype.removeFeature = function ( obj ) {
 
 	this.layers.mask &= ~ obj.layers.mask;
 
-	this.features = this.features.filter( function ( feature ) {
-		return feature !== obj;
-	});
+	const features = this.features;
+
+	features.forEach( function ( value, key ) {
+
+		if ( value === obj ) features.delete( key );
+
+	} );
 
 };
 
 Survey.prototype.hasFeature = function ( tag ) {
 
-	return ! ( this.features[ tag ] === undefined );
+	return this.features.has( tag );
 
 };
 
@@ -519,7 +523,7 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 
 	if ( commentCount > 0 ) {
 
-		this.features[ LABEL_STATION_COMMENT ] = stationLabels;
+		this.features.set( LABEL_STATION_COMMENT, stationLabels );
 		stationLabels.layers.enable( LABEL_STATION_COMMENT );
 
 	}
@@ -1029,8 +1033,8 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	if ( this.setLegShading( LEG_CAVE, mode ) ) {
 
-		this.setWallShading( this.features[ FACE_WALLS  ], material );
-		this.setWallShading( this.features[ FACE_SCRAPS ], material );
+		this.setWallShading( this.features.get( FACE_WALLS  ), material );
+		this.setWallShading( this.features.get( FACE_SCRAPS ), material );
 
 		return true;
 
@@ -1058,14 +1062,14 @@ Survey.prototype.setWallShading = function ( mesh, selectedMaterial ) {
 
 Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
-	const mesh = this.features[ legType ];
+	const mesh = this.features.get( legType );
 
 	if ( mesh === undefined ) return;
 
 	switch ( legShadingMode ) {
 
 	case SHADING_HEIGHT:
-console.log( mesh );
+
 		this.setLegColourByHeight( mesh );
 
 		break;

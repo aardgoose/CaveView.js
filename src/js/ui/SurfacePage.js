@@ -1,6 +1,6 @@
 import {
 	SHADING_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_SINGLE,
-	TERRAIN_BLEND, TERRAIN_STENCIL, TERRAIN_BASIC
+	// TERRAIN_BLEND, TERRAIN_STENCIL, TERRAIN_BASIC
 } from '../core/constants';
 
 import { Page } from './Page';
@@ -12,11 +12,13 @@ const surfaceShadingModes = {
 	'surface.shading.fixed':         SHADING_SINGLE
 };
 
+/*
 const terrainThroughModes = {
 	'terrain.through.basic':   TERRAIN_BASIC,
 	'terrain.through.blend':   TERRAIN_BLEND,
 	'terrain.through.stencil': TERRAIN_STENCIL
 };
+*/
 
 function SurfacePage ( viewer ) {
 
@@ -41,7 +43,7 @@ function SurfacePage ( viewer ) {
 
 		controls.push( this.addSelect( 'terrain.shading.caption', viewer.terrainShadingModes, viewer, 'terrainShading' ) );
 
-		controls.push( this.addSelect( 'terrain.through.caption', terrainThroughModes, viewer, 'terrainThrough' ) );
+		// controls.push( this.addSelect( 'terrain.through.caption', terrainThroughModes, viewer, 'terrainThrough' ) );
 
 		controls.push( this.addRange( 'terrain.opacity', viewer, 'terrainOpacity' ) );
 

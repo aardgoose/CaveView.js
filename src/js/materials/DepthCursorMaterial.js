@@ -4,7 +4,7 @@ import { MATERIAL_LINE } from '../core/constants';
 import { Cfg } from '../core/lib';
 
 import { ShaderMaterial, Vector3 } from '../Three';
-import { MaterialFog } from './MaterialFog';
+import { MaterialCommon } from './MaterialCommon';
 import { CommonDepthUniforms } from './CommonDepthUniforms';
 
 function DepthCursorMaterial ( type, survey ) {
@@ -33,7 +33,7 @@ function DepthCursorMaterial ( type, survey ) {
 			cursorWidth: { value: 5.0 },
 			baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },
 			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) },
-		}, MaterialFog.uniforms, CommonDepthUniforms ),
+		}, MaterialCommon.uniforms, CommonDepthUniforms ),
 		defines: {
 			USE_COLOR: true,
 			SURFACE: ( type !== MATERIAL_LINE )

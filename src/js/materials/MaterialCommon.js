@@ -1,14 +1,15 @@
 
 import { Cfg } from '../core/lib';
 
-var MaterialFog = {
+var MaterialCommon = {
 
 	uniforms: {
 		fogColor: { value: Cfg.themeColor( 'background' ) },
 		fogDensity: { value: 0.0025 },
-		fogEnabled: { value: 0 }
+		fogEnabled: { value: 0 },
+		distanceTransparency: { value: 0.0 }
 	}
 
 };
 
-export { MaterialFog };
+export { MaterialCommon };

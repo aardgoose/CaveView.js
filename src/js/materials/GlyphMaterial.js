@@ -2,7 +2,7 @@
 import { ShaderMaterial, Vector2 } from '../Three';
 import { Shaders } from '../shaders/Shaders';
 import { AtlasFactory } from '../materials/GlyphAtlas';
-import { MaterialFog } from './MaterialFog';
+import { MaterialCommon } from './MaterialCommon';
 
 function GlyphMaterial ( glyphAtlasSpec, rotation, viewer ) {
 
@@ -30,7 +30,7 @@ function GlyphMaterial ( glyphAtlasSpec, rotation, viewer ) {
 			atlas: { value: glyphAtlas.getTexture() },
 			rotate: { value: rotationMatrix },
 			scale: { value: scale }
-		}, MaterialFog.uniforms ),
+		}, MaterialCommon.uniforms ),
 	} );
 
 	this.alphaTest = 0.9;

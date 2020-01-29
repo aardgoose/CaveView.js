@@ -6,7 +6,7 @@ import {
 	SHADING_SINGLE, SHADING_RELIEF, SHADING_PATH, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE, FEATURE_ANNOTATIONS
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE, FEATURE_ANNOTATIONS, TERRAIN_BLEND
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -407,30 +407,23 @@ function CaveViewer ( domID, configuration ) {
 
 	} );
 
-	_enableLayer( FEATURE_BOX, 'box' );
-
-	_conditionalLayer( FEATURE_ENTRANCES, 'entrances' );
-	_conditionalLayer( FEATURE_STATIONS,  'stations' );
-	_conditionalLayer( FEATURE_TRACES,    'traces' );
-	_conditionalLayer( FACE_SCRAPS,       'scraps' );
-	_conditionalLayer( FACE_WALLS,        'walls' );
-	_conditionalLayer( LEG_CAVE,          'legs' );
-	_conditionalLayer( LEG_SPLAY,         'splays' );
-	_conditionalLayer( LEG_SURFACE,       'surfaceLegs' );
-	_conditionalLayer( LABEL_STATION,     'stationLabels' );
-	_conditionalLayer( LABEL_STATION_COMMENT, 'stationComments' );
-	_conditionalLayer( FEATURE_ANNOTATIONS, 'annotations' );
-	_conditionalLayer( SURVEY_WARNINGS,     'warnings' );
+	_enableLayer( FEATURE_BOX,       'box' );
+	_enableLayer( FEATURE_ENTRANCES, 'entrances' );
+	_enableLayer( FEATURE_STATIONS,  'stations' );
+	_enableLayer( FEATURE_TRACES,    'traces' );
+	_enableLayer( FACE_SCRAPS,       'scraps' );
+	_enableLayer( FACE_WALLS,        'walls' );
+	_enableLayer( LEG_CAVE,          'legs' );
+	_enableLayer( LEG_SPLAY,         'splays' );
+	_enableLayer( LEG_SURFACE,       'surfaceLegs' );
+	_enableLayer( LABEL_STATION,     'stationLabels' );
+	_enableLayer( LABEL_STATION_COMMENT, 'stationComments' );
+	_enableLayer( FEATURE_ANNOTATIONS, 'annotations' );
+	_enableLayer( SURVEY_WARNINGS,     'warnings' );
 
 	Materials.initCache( this );
 
 	this.addEventListener( 'change', viewChanged );
-
-	this.getControls = function () {
-
-		return controls;
-
-	};
 
 	function viewChanged( event ) {
 
@@ -441,6 +434,12 @@ function CaveViewer ( domID, configuration ) {
 		}
 
 	}
+
+	this.getControls = function () {
+
+		return controls;
+
+	};
 
 	const hud = new HUD( this, renderer );
 
@@ -464,12 +463,6 @@ function CaveViewer ( domID, configuration ) {
 				renderView();
 			}
 		} );
-
-	}
-
-	function _conditionalLayer ( layerTag, name ) {
-
-		_enableLayer ( layerTag, name );
 
 		name = 'has' + name.substr( 0, 1 ).toUpperCase() + name.substr( 1 );
 
@@ -644,6 +637,8 @@ function CaveViewer ( domID, configuration ) {
 		if ( terrain === null ) return;
 
 		terrain.setThroughMode( mode );
+
+		Materials.setDistanceTransparency( mode === TERRAIN_BLEND ? 200 : 0 );
 
 		setTerrainShadingMode( terrainShadingMode );
 

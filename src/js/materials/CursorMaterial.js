@@ -4,7 +4,7 @@ import { MATERIAL_LINE } from '../core/constants';
 import { Cfg } from '../core/lib';
 
 import { ShaderMaterial } from '../Three';
-import { MaterialFog } from './MaterialFog';
+import { MaterialCommon } from './MaterialCommon';
 
 function CursorMaterial ( type, survey ) {
 
@@ -20,7 +20,7 @@ function CursorMaterial ( type, survey ) {
 			cursorWidth: { value: 5.0 },
 			baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },
 			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) },
-		}, MaterialFog.uniforms ),
+		}, MaterialCommon.uniforms ),
 		defines: {
 			USE_COLOR: true,
 			SURFACE: ( type !== MATERIAL_LINE )

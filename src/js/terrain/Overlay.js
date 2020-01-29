@@ -11,6 +11,8 @@ import { TERRAIN_BLEND } from '../core/constants';
 
 const missingMaterial = new MeshLambertMaterial( { transparent: true, opacity: 0.5, color: 0xff8888 } );
 
+missingMaterial.setThroughMode = function () {};
+
 function Overlay ( overlayProvider, container ) {
 
 	this.provider = overlayProvider;

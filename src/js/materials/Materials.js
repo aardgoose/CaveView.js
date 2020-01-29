@@ -9,7 +9,7 @@ import { HeightMaterial } from './HeightMaterial';
 import { HypsometricMaterial } from './HypsometricMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
 import { GlyphString } from '../core/GlyphString';
-import { MaterialFog } from './MaterialFog';
+import { MaterialCommon } from './MaterialCommon';
 import { ColourCache } from '../core/ColourCache';
 import { Cfg } from '../core/lib';
 
@@ -304,7 +304,13 @@ function flushCache( surveyIn ) {
 
 function setFog( enable ) {
 
-	MaterialFog.uniforms.fogEnabled.value = enable ? 1 : 0;
+	MaterialCommon.uniforms.fogEnabled.value = enable ? 1 : 0;
+
+}
+
+function setDistanceTransparency( distance ) {
+
+	MaterialCommon.uniforms.distanceTransparency.value = distance;
 
 }
 
@@ -324,7 +330,8 @@ const Materials = {
 	setTerrain:             setTerrain,
 	initCache:              initCache,
 	flushCache:             flushCache,
-	setFog:                 setFog
+	setFog:                 setFog,
+	setDistanceTransparency:setDistanceTransparency
 };
 
 Object.defineProperty( Materials, 'cursorHeight', {

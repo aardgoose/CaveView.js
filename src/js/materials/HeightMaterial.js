@@ -4,7 +4,7 @@ import { Shaders } from '../shaders/Shaders';
 import { ColourCache } from '../core/ColourCache';
 
 import { ShaderMaterial } from '../Three';
-import { MaterialFog } from './MaterialFog';
+import { MaterialCommon } from './MaterialCommon';
 import { Cfg } from '../core/lib';
 
 function HeightMaterial ( type, survey ) {
@@ -26,7 +26,7 @@ function HeightMaterial ( type, survey ) {
 			minZ:   { value: zMin },
 			scaleZ: { value: 1 / ( zMax - zMin ) },
 			cmap:   { value: ColourCache.getTexture( gradient ) },
-		}, MaterialFog.uniforms ),
+		}, MaterialCommon.uniforms ),
 		defines: {
 			USE_COLOR: true,
 			SURFACE: ( type !== MATERIAL_LINE )

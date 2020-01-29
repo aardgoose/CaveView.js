@@ -133,7 +133,6 @@ function CaveViewer ( domID, configuration ) {
 
 	var viewState;
 	var savedView = null;
-	var hud;
 
 	var hasLocation = false;
 	var trackLocation = false;
@@ -431,7 +430,7 @@ function CaveViewer ( domID, configuration ) {
 
 	};
 
-	hud = new HUD( this, renderer );
+	const hud = new HUD( this, renderer );
 
 	caveLoader = new CaveLoader( caveLoaded );
 

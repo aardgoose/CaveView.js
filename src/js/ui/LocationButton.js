@@ -1,15 +1,15 @@
 
 function LocationButton ( viewer, container ) { // public method
 
-	var oldButton = document.getElementById( 'cv-gps-button' );
+	var oldButtons = container.getElementsByClassName( 'cv-gps-button' ); //FIXME Id can be duplicated
 
-	if ( oldButton !== null ) container.removeChild( oldButton );
+	if ( oldButtons.length != 0 ) container.removeChild( oldButtons[ 0 ] );
 
 	if ( ! viewer.hasLocation ) return;
 
 	var div = document.createElement( 'div' );
 
-	div.id = 'cv-gps-button';
+	div.classList.add( 'cv-gps-button' );
 
 	div.addEventListener( 'click', function () {
 

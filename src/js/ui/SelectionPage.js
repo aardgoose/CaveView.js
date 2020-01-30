@@ -4,9 +4,11 @@ import { Page } from './Page';
 import { SurveyColours } from '../core/SurveyColours';
 import { Cfg } from '../core/lib';
 
-function SelectionPage ( viewer, container, fileSelector ) {
+function SelectionPage ( frame, viewer, container, fileSelector ) {
 
 	Page.call( this, 'icon_explore', 'explore' );
+
+	frame.addPage( this );
 
 	const titleBar = document.createElement( 'div' );
 	const surveyTree = viewer.getSurveyTree();

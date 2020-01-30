@@ -1,10 +1,11 @@
 
 import { Page } from './Page';
 
-function HelpPage ( avenControls ) {
+function HelpPage ( frame, avenControls ) {
 
 	Page.call( this, 'icon_help', 'help' );
 
+	frame.addPage( this );
 	const self = this;
 
 	var dl;

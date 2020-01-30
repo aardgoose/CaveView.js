@@ -1,6 +1,5 @@
 import { Cfg } from '../core/lib';
-import { Page } from './Page';
-
+import { Frame } from './Frame';
 import { HelpPage } from './HelpPage';
 import { InfoPage } from './InfoPage';
 import { SelectionPage } from './SelectionPage';
@@ -14,15 +13,16 @@ import { FileSelector } from './FileSelector';
 function CaveViewUI ( viewer ) {
 
 	const container = viewer.container;
+	const frame = new Frame();
 
-	const fileSelector = new FileSelector( container );
+	const fileSelector = new FileSelector( container, frame );
 	fileSelector.addEventListener( 'selected', selectFile );
 
 	// target with css for fullscreen on small screen devices
 	container.classList.add( 'cv-container' );
 
 	// event handlers
-	viewer.addEventListener( 'change', Page.handleChange );
+	viewer.addEventListener( 'change', frame.handleChange.bind( frame ) );
 	viewer.addEventListener( 'newCave', initUI );
 
 	// make sure we get new language strings if slow loading
@@ -32,7 +32,7 @@ function CaveViewUI ( viewer ) {
 
 	function selectFile( event ) {
 
-		Page.clear();
+		frame.clear();
 		viewer.clearView();
 
 		if ( Array.isArray( event.file ) ) {
@@ -52,24 +52,24 @@ function CaveViewUI ( viewer ) {
 		if ( ! viewer.surveyLoaded ) return;
 
 		// create UI side panel and reveal tabs
-		Page.clear();
+		frame.clear();
 
-		new SettingsPage( viewer, fileSelector );
+		new SettingsPage( frame, viewer, fileSelector );
 
-		if ( viewer.hasSurfaceLegs || viewer.hasTerrain ) new SurfacePage( viewer );
+		if ( viewer.hasSurfaceLegs || viewer.hasTerrain ) new SurfacePage( frame, viewer );
 
-		new SelectionPage( viewer, container, fileSelector );
+		new SelectionPage( frame, viewer, container, fileSelector );
 
-		if ( Cfg.value( 'showEditPage', false ) && ! fileSelector.isMultiple ) new EditPage( viewer, fileSelector );
+		if ( Cfg.value( 'showEditPage', false ) && ! fileSelector.isMultiple ) new EditPage( frame, viewer, fileSelector );
 
-		new InfoPage( viewer, fileSelector );
-		new HelpPage( viewer.svxControlMode );
+		new InfoPage( frame, viewer, fileSelector );
+		new HelpPage( frame, viewer.svxControlMode );
 
 		LocationButton( viewer, container );
 
-		Page.setParent( container );
+		frame.setParent( container );
 
-		Page.addFullscreenButton( 'fullscreen', viewer, 'fullscreen' );
+		frame.addFullscreenButton( 'fullscreen', viewer, 'fullscreen' );
 
 	}
 
@@ -95,7 +95,7 @@ function CaveViewUI ( viewer ) {
 
 	this.clearView = function () {
 
-		Page.clear();
+		frame.clear();
 		viewer.clearView();
 
 	};

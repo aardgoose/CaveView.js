@@ -1,4 +1,4 @@
-import { SHADING_PATH, MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE } from '../core/constants';
+import { SHADING_PATH, MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_NORMAL, /* MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE */ } from '../core/constants';
 
 import { Page } from './Page';
 import { RoutePanel } from './RoutePanel';
@@ -15,9 +15,11 @@ const mode = {
 };
 
 
-function EditPage ( viewer, fileSelector ) {
+function EditPage ( frame, viewer, fileSelector ) {
 
 	Page.call( this, 'icon_route', 'edit', _onTop, _onLeave );
+
+	frame.addPage( this );
 
 	const self = this;
 	const intro = [];
@@ -86,7 +88,7 @@ function EditPage ( viewer, fileSelector ) {
 
 			viewer.setView( newState );
 
-			Page.setControlsVisibility( intro, viewer.editMode === MOUSE_MODE_NORMAL );
+			frame.setControlsVisibility( intro, viewer.editMode === MOUSE_MODE_NORMAL );
 
 			// if ( annotatePanel !== null ) annotatePanel.setVisibility( viewer.editMode === MOUSE_MODE_ANNOTATE );
 			// if ( entrancePanel !== null ) entrancePanel.setVisibility( viewer.editMode === MOUSE_MODE_ENTRANCES );

@@ -35,9 +35,11 @@ const cameraModes = {
 //	'view.camera.stereo':       CAMERA_STEREO
 };
 
-function SettingsPage ( viewer, fileSelector ) {
+function SettingsPage ( frame, viewer, fileSelector ) {
 
 	Page.call( this, 'icon_settings', 'settings' );
+
+	frame.addPage( this );
 
 	const controls = [];
 	const routeControls = [];
@@ -130,14 +132,14 @@ function SettingsPage ( viewer, fileSelector ) {
 
 		if ( event.name === 'shadingMode' ) {
 
-			Page.setControlsVisibility( routeControls, ( viewer.shadingMode === SHADING_PATH ) );
+			frame.setControlsVisibility( routeControls, ( viewer.shadingMode === SHADING_PATH ) );
 
 		}
 
 		// change UI dynamicly to only display useful controls
 		if ( event.name === 'cameraType' ) {
 
-			Page.setControlsVisibility( controls, viewer.cameraType === CAMERA_ANAGLYPH || viewer.cameraType === CAMERA_STEREO );
+			frame.setControlsVisibility( controls, viewer.cameraType === CAMERA_ANAGLYPH || viewer.cameraType === CAMERA_STEREO );
 
 		}
 

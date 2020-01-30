@@ -20,11 +20,13 @@ const terrainThroughModes = {
 };
 */
 
-function SurfacePage ( viewer ) {
+function SurfacePage ( frame, viewer ) {
 
 	const controls = [];
 
 	Page.call( this, 'icon_terrain', 'surface' );
+
+	frame.addPage ( this );
 
 	this.addHeader( 'surface.header' );
 
@@ -77,7 +79,7 @@ function SurfacePage ( viewer ) {
 		// change UI dynamicly to only display useful controls
 		if ( event.name === 'terrain' ) {
 
-			Page.setControlsVisibility( controls, viewer.terrain );
+			frame.setControlsVisibility( controls, viewer.terrain );
 
 		}
 

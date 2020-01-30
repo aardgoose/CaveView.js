@@ -6,228 +6,21 @@ function Page ( id, x18nPrefix, onTop, onLeave ) {
 	const tab  = document.createElement( 'div' );
 	const page = document.createElement( 'div' );
 
-	var frame = Page.frame;
-	var tabBox = Page.tabBox;
-
 	page.classList.add( 'page' );
 
-	tab.id = id;
+	tab.classList.add( id );
 	tab.classList.add( 'tab' );
 
-	Page.addListener( tab, 'click', this.tabHandleClick );
-
-	if ( onTop !== undefined ) {
-
-		// callback when this page is made visible
-		Page.addListener( tab, 'click', onTop );
-
-	}
-
-	if ( frame === null ) {
-
-		// create UI side panel and reveal tabs
-		frame = document.createElement( 'div' );
-
-		frame.id = 'cv-frame';
-
-		Page.frame = frame;
-
-	}
-
-	if ( tabBox === null ) {
-
-		// create UI box to contain tabs - reorients for small screen widths
-		tabBox = document.createElement( 'div' );
-
-		tabBox.id = 'cv-tab-box';
-
-		const close = document.createElement( 'div' );
-
-		close.id = 'close';
-		close.classList.add( 'tab' );
-
-		Page.addListener( close, 'click', _closeFrame );
-
-		tabBox.appendChild( close );
-
-		Page.tabBox = tabBox;
-
-	}
-
-	tabBox.appendChild( tab );
-	frame.appendChild( page );
-
-	Page.pages.push( { tab: tab, page: page, owner: this } );
-
 	this.page = page;
+	this.tab = tab;
+	this.onTop = onTop;
+	this.frame = null;
 	this.onLeave = onLeave;
 	this.slide = undefined;
 	this.x18nPrefix = x18nPrefix + '.';
 	this.onChange = null;
 
-	function _closeFrame ( /* event */ ) {
-
-		Page.tabBox.classList.remove( 'onscreen' );
-		Page.frame.classList.remove( 'onscreen' );
-
-	}
-
 }
-
-Page.pages     = [];
-Page.listeners = [];
-Page.inHandler = false;
-Page.controls  = [];
-Page.frame = null;
-Page.tabBox = null;
-Page.seq = 0;
-
-Page.setParent = function ( parent ) {
-
-	parent.appendChild( Page.tabBox );
-	parent.appendChild( Page.frame );
-
-};
-
-Page.setControlsVisibility = function ( list, visible ) {
-
-	const display = visible ? 'block' : 'none';
-
-	list.forEach( function ( element ) {
-
-		if ( element === null ) return;
-		element.style.display = display;
-
-	} );
-
-};
-
-Page.clear = function () {
-
-	const frame  = Page.frame;
-	const tabBox = Page.tabBox;
-
-	if ( frame  !== null ) frame.parentElement.removeChild( frame );
-	if ( tabBox !== null ) tabBox.parentElement.removeChild( tabBox );
-
-	Page.listeners.forEach( function ( listener ) {
-
-		listener.obj.removeEventListener( listener.name, listener.handler );
-
-	} );
-
-	Page.listeners = [];
-	Page.pages     = [];
-	Page.inHandler = false;
-	Page.controls  = [];
-	Page.frame     = null;
-	Page.tabBox    = null;
-
-};
-
-Page.addFullscreenButton = function ( id, obj, property ) {
-
-	const tabBox = this.tabBox;
-	const fullscreen = document.createElement( 'div' );
-
-	fullscreen.id = id;
-	fullscreen.classList.add( 'tab' );
-
-	Page.addListener( fullscreen, 'click', _toggleButton );
-
-	Page.addListener( obj, 'change', _setButton );
-
-	tabBox.appendChild( fullscreen );
-
-	_setButton();
-
-	return fullscreen;
-
-	function _toggleButton () {
-
-		obj[ property ] = ! obj[ property ];
-
-		_setButton();
-
-	}
-
-	function _setButton () {
-
-		if ( obj[ property ] ) {
-
-			fullscreen.classList.remove( 'expand' );
-			fullscreen.classList.add( 'collapse' );
-
-		} else {
-
-			fullscreen.classList.add( 'expand' );
-			fullscreen.classList.remove( 'collapse' );
-
-		}
-
-	}
-
-};
-
-Page.addListener = function ( obj, name, handler ) {
-
-	obj.addEventListener( name, handler, false );
-
-	Page.listeners.push( {
-		obj: obj,
-		name: name,
-		handler: handler
-	} );
-
-};
-
-Page.handleChange = function ( event ) {
-
-	const obj = event.target;
-	const property = event.name;
-
-	if ( ! Page.inHandle ) {
-
-		if ( Page.controls[ property ] ) {
-
-			const ctrl = Page.controls[ property ];
-
-			switch ( ctrl.type ) {
-
-			case 'checkbox':
-
-				ctrl.checked = obj[ property ];
-
-				break;
-
-			case 'select-one':
-			case 'range':
-
-				ctrl.value = obj[ property ];
-
-				break;
-
-			case 'download':
-
-				ctrl.href = obj[ property ];
-
-				break;
-
-			}
-
-		}
-
-	}
-
-	Page.pages.forEach( function ( p ) {
-
-		const page = p.owner;
-
-		if ( page.onChange !== null ) page.onChange( event );
-
-	} );
-
-};
 
 Page.prototype.constructor = Page;
 
@@ -241,18 +34,19 @@ Page.prototype.i18n = function ( text ) {
 
 Page.prototype.addListener = function ( obj, name, handler ) {
 
-	Page.addListener( obj, name, handler ); // redirect to :: method - allows later rework to page specific destruction
+	this.frame.addListener( obj, name, handler );
+	// redirect to frame method - allows later rework to page specific destruction
 
 };
 
 Page.prototype.tabHandleClick = function ( event ) {
 
 	const tab = event.target;
-	const pages = Page.pages;
+	const pages = this.frame.pages;
 
 	tab.classList.add( 'toptab' );
-	Page.tabBox.classList.add( 'onscreen' );
-	Page.frame.classList.add( 'onscreen' );
+
+	this.frame.onScreen();
 
 	pages.forEach( function ( page ) {
 
@@ -391,12 +185,14 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 	}
 
-	this.addListener( select, 'change', function onChange ( event ) { Page.inHandler = true; trgObj[ property ] = event.target.value; Page.inHandler = false; } );
+	const frame = this.frame;
+
+	this.addListener( select, 'change', function onChange ( event ) { frame.inHandler = true; trgObj[ property ] = event.target.value; frame.inHandler = false; } );
 
 	label.textContent = this.i18n( title );
 	label.classList.add( 'cv-select' );
 
-	Page.controls[ property ] = select;
+	frame.controls[ property ] = select;
 
 	div.appendChild( label );
 	div.appendChild( select );
@@ -417,19 +213,22 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 Page.prototype.addFileSelect = function ( title, obj, trgObj, property ) {
 
+	const frame = this.frame;
 	const div = this.addSelect( title, obj, trgObj, property );
 
 	const label = div.firstChild;
+	const id = 'cv-' + frame.seq++;
 
-	label.for = 'cv-file';
-	label.id = 'cv-file-label';
+	label.for = id;
+	label.classList.add( 'cv-file-label' );
 
 	const input = document.createElement( 'input' );
 	const img = document.createElement( 'img' );
 
 	img.src = Cfg.value( 'home' ) + 'images/open.png';
 
-	input.id = 'cv-file';
+	input.id = id;
+	input.classList.add( 'cv-file' );
 	input.type = 'file';
 	input.accept = '.svx,.lox,.plt';
 	input.multiple = true;
@@ -458,11 +257,12 @@ Page.prototype.addFileSelect = function ( title, obj, trgObj, property ) {
 
 Page.prototype.addCheckbox = function ( title, obj, property ) {
 
+	const frame = this.frame;
 	const label = document.createElement( 'label' );
 	const cb    = document.createElement( 'input' );
 	const div   = document.createElement( 'div' );
 
-	const id = 'cv-' + Page.seq++;
+	const id = 'cv-' + frame.seq++;
 
 	div.classList.add( 'control' );
 
@@ -476,7 +276,7 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 	this.addListener( cb, 'change', _checkboxChanged );
 
-	Page.controls[ property ] = cb;
+	frame.controls[ property ] = cb;
 
 	div.appendChild( cb );
 	div.appendChild( label );
@@ -487,11 +287,11 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 	function _checkboxChanged ( event ) {
 
-		Page.inHandler = true;
+		frame.inHandler = true;
 
 		obj[ property ] = event.target.checked;
 
-		Page.inHandler = false;
+		frame.inHandler = false;
 
 	}
 
@@ -499,6 +299,7 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 Page.prototype.addRange = function ( title, obj, property ) {
 
+	const frame = this.frame;
 	const div = document.createElement( 'div' );
 	const label = document.createElement( 'label' );
 	const range = document.createElement( 'input' );
@@ -519,7 +320,7 @@ Page.prototype.addRange = function ( title, obj, property ) {
 	label.textContent = this.i18n( title );
 	label.classList.add( 'cv-range' );
 
-	Page.controls[ property ] = range;
+	frame.controls[ property ] = range;
 
 	div.appendChild( label );
 	div.appendChild( range );
@@ -530,11 +331,11 @@ Page.prototype.addRange = function ( title, obj, property ) {
 
 	function _rangeChanged ( event ) {
 
-		Page.inHandler = true;
+		frame.inHandler = true;
 
 		obj[ property ] = event.target.value;
 
-		Page.inHandler = false;
+		frame.inHandler = false;
 
 	}
 
@@ -706,7 +507,7 @@ Page.prototype.addLogo = function () {
 
 	const img = document.createElement( 'div' );
 
-	img.id = 'logo';
+	img.classList.add( 'logo' );
 	img.title = 'logo';
 
 	this.appendChild( img );

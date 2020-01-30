@@ -2,9 +2,11 @@ import { VERSION, LEG_CAVE } from '../core/constants';
 
 import { Page } from './Page';
 
-function InfoPage ( viewer, fileSelector ) {
+function InfoPage ( frame, viewer, fileSelector ) {
 
 	Page.call( this, 'icon_info', 'info' );
+
+	frame.addPage( this );
 
 	this.addHeader( 'header' );
 

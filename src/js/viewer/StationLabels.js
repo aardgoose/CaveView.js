@@ -12,6 +12,7 @@ function StationLabels ( ctx, stations, commentCount ) {
 	this.type = 'CV.StationLabels';
 	this.stations = stations;
 	this.commentCount = commentCount;
+	this.ctx = ctx;
 
 	const cfg = ctx.cfg;
 	const materials = ctx.materials;
@@ -141,7 +142,7 @@ StationLabels.prototype.addLabel = function ( station, name ) {
 
 	}
 
-	const label = new GlyphString( name, material );
+	const label = new GlyphString( name, material, this.ctx );
 
 	label.layers.mask = this.layers.mask;
 	label.position.copy( position );

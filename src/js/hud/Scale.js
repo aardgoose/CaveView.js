@@ -16,6 +16,7 @@ function Scale( hudObject, container, geometry, material ) {
 	const barHeight = ( height - barOffset ) / 2;
 	const barWidth  = stdWidth / 2;
 
+	this.ctx = hudObject.ctx;
 	this.barHeight = barHeight;
 	this.barWidth = barWidth;
 	this.barOffset = barOffset;
@@ -63,8 +64,8 @@ Scale.prototype.setRange = function ( min, max, caption ) {
 
 		}
 
-		const topLabel = new GlyphString( Math.round( max ) + '\u202fm', material );
-		const bottomLabel = new GlyphString( Math.round( min ) + '\u202fm', material );
+		const topLabel = new GlyphString( Math.round( max ) + '\u202fm', material, this.ctx );
+		const bottomLabel = new GlyphString( Math.round( min ) + '\u202fm', material, this.ctx );
 
 		topLabel.translateX( offsetX - topLabel.getWidth() );
 		bottomLabel.translateX( offsetX - bottomLabel.getWidth() );
@@ -102,7 +103,7 @@ Scale.prototype.setCaption = function ( text ) {
 
 	}
 
-	caption = new GlyphString( text, this.textMaterial );
+	caption = new GlyphString( text, this.textMaterial, this.ctx );
 	caption.translateX( this.barWidth / 2 - caption.getWidth() );
 	caption.translateY( this.offsetY + this.barWidth / 2 );
 

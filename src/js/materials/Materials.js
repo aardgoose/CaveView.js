@@ -8,7 +8,6 @@ import { DepthMapMaterial } from './DepthMapMaterial';
 import { HeightMaterial } from './HeightMaterial';
 import { HypsometricMaterial } from './HypsometricMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
-import { GlyphString } from '../core/GlyphString';
 import { ColourCache } from '../core/ColourCache';
 
 import {
@@ -301,7 +300,7 @@ function Materials ( viewer ) {
 		}
 
 		perSurveyMaterials = {};
-		GlyphString.cache = new Map();
+		ctx.lyphStringCache = new Map();
 		cursorHeight = 0;
 
 		survey = surveyIn;

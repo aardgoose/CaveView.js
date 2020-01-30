@@ -10,11 +10,9 @@ import { CommonAttributes } from './CommonAttributes';
 function onUploadDropBuffer() {
 
 	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
-//	this.array = null;
+	this.array = null;
 
 }
-
-const glyphStringCache = new Map();
 
 function GlyphStringGeometryCache ( material ) {
 
@@ -142,7 +140,7 @@ GlyphStringGeometry.prototype.dispose = function () {
 
 };
 
-function GlyphString ( text, glyphMaterial ) {
+function GlyphString ( text, glyphMaterial, ctx ) {
 
 	var geometry;
 
@@ -151,6 +149,8 @@ function GlyphString ( text, glyphMaterial ) {
 		geometry = new GlyphStringGeometry( text, glyphMaterial.getAtlas() );
 
 	} else {
+
+		const glyphStringCache = ctx.glyphStringCache;
 
 		let cache = glyphStringCache.get( glyphMaterial );
 

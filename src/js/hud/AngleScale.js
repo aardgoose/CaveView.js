@@ -52,7 +52,7 @@ function AngleScale ( hudObject, caption ) {
 	this.name = 'CV.AngleScale';
 
 	const material = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
-	const label = new GlyphString( caption, material );
+	const label = new GlyphString( caption, material, hudObject.ctx );
 
 	label.translateX( - label.getWidth() / 2 );
 	label.translateY( 5 );

@@ -425,6 +425,7 @@ function CaveViewer ( domID, configuration ) {
 	_enableLayer( SURVEY_WARNINGS,     'warnings' );
 
 	ctx.materials = new Materials( this );
+	ctx.glyphStringCache = new Map();
 
 	this.addEventListener( 'change', viewChanged );
 

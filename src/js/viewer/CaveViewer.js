@@ -256,7 +256,7 @@ function CaveViewer ( domID, configuration ) {
 
 		'cursorHeight': {
 			writeable: true,
-			get: function () { return Materials.cursorHeight; },
+			get: function () { return materials.cursorHeight; },
 			set: setCursorHeight
 		},
 
@@ -424,7 +424,9 @@ function CaveViewer ( domID, configuration ) {
 	_enableLayer( FEATURE_ANNOTATIONS, 'annotations' );
 	_enableLayer( SURVEY_WARNINGS,     'warnings' );
 
-	ctx.materials = new Materials( this );
+	const materials = new Materials( this );
+
+	ctx.materials = materials;
 	ctx.glyphStringCache = new Map();
 
 	this.addEventListener( 'change', viewChanged );
@@ -617,7 +619,7 @@ function CaveViewer ( domID, configuration ) {
 
 	function setCursorHeight ( x ) {
 
-		Materials.cursorHeight = x;
+		materials.cursorHeight = x;
 		self.dispatchEvent( { type: 'cursorChange', name: 'cursorHeight' } );
 
 		renderView();
@@ -642,7 +644,7 @@ function CaveViewer ( domID, configuration ) {
 
 		terrain.setThroughMode( mode );
 
-		Materials.setDistanceTransparency( mode === TERRAIN_BLEND ? 200 : 0 );
+		materials.setDistanceTransparency( mode === TERRAIN_BLEND ? 200 : 0 );
 
 		setTerrainShadingMode( terrainShadingMode );
 
@@ -688,7 +690,7 @@ function CaveViewer ( domID, configuration ) {
 
 		survey.setupTerrain( terrain );
 
-		ctx.materials.setTerrain( terrain );
+		materials.setTerrain( terrain );
 
 		locationControls.hasLocation( survey, locationChecked );
 
@@ -1146,7 +1148,7 @@ function CaveViewer ( domID, configuration ) {
 
 		setScale();
 
-		ctx.materials.flushCache( survey );
+		materials.flushCache( survey );
 
 		terrain = survey.terrain;
 
@@ -1562,13 +1564,13 @@ function CaveViewer ( domID, configuration ) {
 
 			survey.update( cameraManager, controls.target, ! trackLocation );
 
-			if ( useFog ) Materials.setFog( true );
+			if ( useFog ) materials.setFog( true );
 
 			cameraManager.activeRenderer();
 
 		}
 
-		if ( useFog ) Materials.setFog( false );
+		if ( useFog ) materials.setFog( false );
 
 		hud.renderHUD();
 

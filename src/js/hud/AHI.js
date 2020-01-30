@@ -1,6 +1,3 @@
-
-import { HudObject } from './HudObject';
-import { Cfg } from '../core/lib';
 import { MutableGlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
@@ -14,18 +11,17 @@ import {
 } from '../Three';
 
 // preallocated tmp objects
-
 const __xAxis = new Vector3( 1, 0, 0 );
-const __direction = new Vector3();
 
+function AHI ( hudObject ) {
 
-function AHI () {
+	const stdWidth  = hudObject.stdWidth;
+	const stdMargin = hudObject.stdMargin;
 
-	const stdWidth  = HudObject.stdWidth;
-	const stdMargin = HudObject.stdMargin;
+	const cfg = hudObject.ctx.cfg;
 
-	const c1 = Cfg.themeColor( 'hud.ahi.sky' );
-	const c2 = Cfg.themeColor( 'hud.ahi.earth' );
+	const c1 = cfg.themeColor( 'hud.ahi.sky' );
+	const c2 = cfg.themeColor( 'hud.ahi.earth' );
 
 	Group.call( this );
 
@@ -36,7 +32,7 @@ function AHI () {
 	// artificial horizon instrument
 	const globe = new Group();
 
-	const ring = HudObject.getCommonRing();
+	const ring = hudObject.getCommonRing();
 
 	const sphere = new SphereBufferGeometry( stdWidth - 10, 31, 31 );
 	const bar    = new BufferGeometry();
@@ -44,7 +40,7 @@ function AHI () {
 
 	const sv = sphere.getAttribute( 'position' ).count;
 
-	HudObject.dropBuffers( sphere );
+	hudObject.dropBuffers( sphere );
 
 	const sphereColors = new Float32BufferAttribute( new Float32Array( sv * 3 ), 3 );
 
@@ -99,10 +95,10 @@ function AHI () {
 
 	marks.setAttribute( 'position', markPositions.copyVector3sArray( vertices ) );
 
-	const mRing   = new Mesh( ring, new MeshPhongMaterial( { color: Cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ) );
+	const mRing   = new Mesh( ring, new MeshPhongMaterial( { color: cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ) );
 	const mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: VertexColors, specular: 0x666666, shininess: 20 } ) );
-	const mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: Cfg.themeValue( 'hud.ahi.bar' ) } ) );
-	const mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: Cfg.themeValue( 'hud.ahi.marks' ) } ) );
+	const mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: cfg.themeValue( 'hud.ahi.bar' ) } ) );
+	const mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: cfg.themeValue( 'hud.ahi.marks' ) } ) );
 
 	mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 	mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );
@@ -123,7 +119,7 @@ function AHI () {
 
 	this.globe = globe;
 
-	const material = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
+	const material = Materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 	const label = new MutableGlyphString( '-90\u00B0', material );
 
 	label.translateX( - label.getWidth() / 2 );
@@ -139,20 +135,26 @@ function AHI () {
 
 AHI.prototype = Object.create( Group.prototype );
 
-AHI.prototype.set = function ( vCamera ) {
+AHI.prototype.set = function () {
 
-	vCamera.getWorldDirection( __direction );
+	const __direction = new Vector3();
 
-	const pitch = Math.PI / 2 - __direction.angleTo( Object3D.DefaultUp );
+	return function set ( vCamera ) {
 
-	if ( pitch === this.lastPitch ) return;
+		vCamera.getWorldDirection( __direction );
 
-	this.globe.rotateOnAxis( __xAxis, pitch - this.lastPitch );
-	this.lastPitch = pitch;
+		const pitch = Math.PI / 2 - __direction.angleTo( Object3D.DefaultUp );
 
-	this.label.replaceString( String( Math.round( _Math.radToDeg( pitch ) ) + '\u00B0' ).padStart( 4, ' ' ) );
+		if ( pitch === this.lastPitch ) return;
 
-};
+		this.globe.rotateOnAxis( __xAxis, pitch - this.lastPitch );
+		this.lastPitch = pitch;
+
+		this.label.replaceString( String( Math.round( _Math.radToDeg( pitch ) ) + '\u00B0' ).padStart( 4, ' ' ) );
+
+	};
+
+}();
 
 export { AHI };
 

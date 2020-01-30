@@ -1,10 +1,9 @@
-import { Cfg } from '../core/lib';
 import { Tree } from '../core/Tree';
 import { Box3, Vector3 } from '../Three';
 
 import proj4 from 'proj4';
 
-function Handler () {
+function Handler ( ctx ) {
 
 	this.surveyTree = new Tree();
 	this.limits     = new Box3();
@@ -22,6 +21,7 @@ function Handler () {
 	this.messages = [];
 	this.metadata = null;
 	this.fileCount = 0;
+	this.ctx = ctx;
 
 }
 
@@ -53,9 +53,11 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 	}
 
-	const displayCRS = Cfg.value( 'displayCRS', 'EPSG:3857' );
+	const cfg = this.ctx.cfg;
 
-	if ( sourceCRS === null ) sourceCRS = Cfg.value( 'defaultCRS', null );
+	const displayCRS = cfg.value( 'displayCRS', 'EPSG:3857' );
+
+	if ( sourceCRS === null ) sourceCRS = cfg.value( 'defaultCRS', null );
 
 	// FIXME use NAD grid corrections OSTM15 etc ( UK Centric )
 	if ( sourceCRS !== null ) {

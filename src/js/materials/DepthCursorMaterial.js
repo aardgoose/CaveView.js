@@ -1,14 +1,12 @@
 
 import { Shaders } from '../shaders/Shaders';
 import { MATERIAL_LINE } from '../core/constants';
-import { Cfg } from '../core/lib';
 
 import { ShaderMaterial, Vector3 } from '../Three';
-import { MaterialCommon } from './MaterialCommon';
-import { CommonDepthUniforms } from './CommonDepthUniforms';
 
-function DepthCursorMaterial ( type, survey ) {
+function DepthCursorMaterial ( ctx, type, survey ) {
 
+	const cfg = ctx.cfg;
 	const surveyLimits = survey.modelLimits;
 	const terrain = survey.terrain;
 
@@ -31,16 +29,16 @@ function DepthCursorMaterial ( type, survey ) {
 			depthMap:    { value: terrain.depthTexture },
 			cursor:      { value: this.max / 2 },
 			cursorWidth: { value: 5.0 },
-			baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },
-			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) },
-		}, MaterialCommon.uniforms, CommonDepthUniforms ),
+			baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
+			cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
+		}, ctx.materials.commonUniforms, ctx.materials.commonDepthUniforms ),
 		defines: {
 			USE_COLOR: true,
 			SURFACE: ( type !== MATERIAL_LINE )
 		}
 	} );
 
-	Object.assign( this.uniforms, CommonDepthUniforms );
+	//	Object.assign( this.uniforms, ctx.materials.commonDepthUniforms ); FIXME?
 
 	return this;
 

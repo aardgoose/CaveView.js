@@ -18,8 +18,6 @@ import {
 	EventDispatcher
 } from '../Three';
 
-import { Cfg } from '../core/lib';
-
 const MODE_LOCK_UNLOCKED = 0;
 const MODE_LOCK_ROTATE = 1;
 const MODE_LOCK_ZOOM = 2;
@@ -1185,7 +1183,9 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 	el.addEventListener( 'keydown', onKeyDown, false );
 
-	setControlMode( Cfg.value( 'avenControls', true ) );
+	const cfg = viewer.ctx.cfg;
+
+	setControlMode( cfg.value( 'avenControls', true ) );
 
 	// force an update at start
 

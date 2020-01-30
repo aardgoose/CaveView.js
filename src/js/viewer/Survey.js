@@ -9,7 +9,6 @@ import {
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE, CLUSTER_MARKERS,
 } from '../core/constants';
 
-import { Cfg } from '../core/lib';
 import { StationPosition } from '../core/StationPosition';
 import { ColourCache } from '../core/ColourCache';
 import { Box3Helper } from '../core/Box3';
@@ -31,7 +30,7 @@ import { buildWallsSync } from './walls/WallBuilders';
 import { Matrix4, Vector3, Box3, Object3D, IncrementStencilOp } from '../Three';
 import proj4 from 'proj4';
 
-function Survey ( cave ) {
+function Survey ( ctx, cave ) {
 
 	Object3D.call( this );
 
@@ -41,13 +40,14 @@ function Survey ( cave ) {
 	this.highlightBox = null;
 	this.highlightPath = null;
 	this.lastMarkedStation = null;
-	this.markers = new StationMarkers( 0x00ff00 );
+	this.markers = new StationMarkers( ctx, 0x00ff00 );
 	this.featureBox = null;
 	this.surveyTree = null;
 	this.projection = null;
 	this.projectionWGS84 = null;
 	this.wireframe = null;
 	this.worldBoundingBox = null;
+	this.ctx = ctx;
 
 	// objects targeted by raycasters and objects with variable LOD
 
@@ -71,7 +71,7 @@ function Survey ( cave ) {
 
 	SurveyColours.clearMap(); // clear cache of survey section to colour
 
-	this.gradientName = Cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
+	this.gradientName = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 
 	const survey = cave.getSurvey();
 
@@ -219,7 +219,7 @@ Survey.prototype.loadWarnings = function () {
 
 	if ( messages.length > 0 ) {
 
-		const errorMarkers = new StationMarkers( 0xff00ff );
+		const errorMarkers = new StationMarkers( this.ctx, 0xff00ff );
 
 		messages.forEach( function ( message ) {
 
@@ -242,7 +242,7 @@ Survey.prototype.loadWarnings = function () {
 
 Survey.prototype.loadEntrances = function () {
 
-	const entrances = new Entrances( this );
+	const entrances = new Entrances( this.ctx, this );
 
 	this.addFeature( entrances, FEATURE_ENTRANCES, 'CV.Survey:entrances' );
 
@@ -291,6 +291,7 @@ Survey.prototype.setupTerrain = function ( terrain ) {
 Survey.prototype.loadCave = function ( cave ) {
 
 	const self = this;
+	const ctx = this.ctx;
 
 	this.surveyTree = cave.surveyTree;
 
@@ -401,7 +402,9 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			if ( legs.vertices.length === 0 ) return;
 
-			const legObject = self.getFeature( tag, Legs );
+			// old code to allow combined surveys
+			// const legObject = self.getFeature( tag, Legs );
+			const legObject = new Legs( self.ctx );
 
 			legObject.addLegs( legs.vertices, legs.runs );
 
@@ -415,7 +418,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		if ( cave.hasTerrain === false ) return;
 
-		const terrain = new LoxTerrain( cave.terrains, self.offsets );
+		const terrain = new LoxTerrain( ctx, cave.terrains, self.offsets );
 
 		// expand limits with terrain
 
@@ -507,7 +510,7 @@ Survey.prototype.hasFeature = function ( tag ) {
 
 Survey.prototype.loadStations = function ( surveyTree ) {
 
-	const stations = new Stations( this.selectedSectionIds );
+	const stations = new Stations( this.ctx, this.selectedSectionIds );
 
 	var commentCount = 0;
 
@@ -516,7 +519,7 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 	// we have finished adding stations.
 	stations.finalise();
 
-	const stationLabels = new StationLabels( stations, commentCount );
+	const stationLabels = new StationLabels( this.ctx, stations, commentCount );
 
 	this.addFeature( stations, FEATURE_STATIONS, 'CV.Stations' );
 	this.addFeature( stationLabels, LABEL_STATION, 'CV.StationLabels' );
@@ -765,7 +768,7 @@ Survey.prototype.highlightSelection = function ( node ) {
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
-			this.highlightBox = this.boxSection( node, box, Cfg.themeValue( 'box.highlight' ) );
+			this.highlightBox = this.boxSection( node, box, this.ctx.cfg.themeValue( 'box.highlight' ) );
 
 		} else if ( node.p ) {
 
@@ -788,7 +791,7 @@ Survey.prototype.selectSection = function ( node ) {
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
-			this.selectedBox = this.boxSection( node, this.selectedBox, Cfg.themeValue( 'box.select' ) );
+			this.selectedBox = this.boxSection( node, this.selectedBox, this.ctx.cfg.themeValue( 'box.select' ) );
 			node.getSubtreeIds( selectedSectionIds );
 
 			this.stations.selectStations();
@@ -815,7 +818,7 @@ Survey.prototype.setFeatureBox = function () {
 
 	if ( this.featureBox === null ) {
 
-		const box = new Box3Helper( this.combinedLimits, Cfg.themeValue( 'box.bounding' ) );
+		const box = new Box3Helper( this.combinedLimits, this.ctx.cfg.themeValue( 'box.bounding' ) );
 
 		box.layers.set( FEATURE_BOX );
 		box.name = 'survey-boundingbox';
@@ -996,7 +999,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_SINGLE:
 
-		material = Materials.getSurfaceMaterial( Cfg.themeValue( 'shading.single' ) );
+		material = Materials.getSurfaceMaterial( this.ctx.cfg.themeValue( 'shading.single' ) );
 
 		break;
 
@@ -1100,7 +1103,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	case SHADING_SINGLE:
 
-		this.setLegColourByColour( mesh, Cfg.themeColor( 'shading.single' ) );
+		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.single' ) );
 
 		break;
 
@@ -1134,7 +1137,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 		if ( this.topology.maxDistance === 0 ) {
 
-			this.setLegColourByColour( mesh, Cfg.themeColor( 'shading.unconnected' ) );
+			this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.unconnected' ) );
 
 		} else {
 
@@ -1232,9 +1235,11 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 Survey.prototype.setLegColourByDistance = function ( mesh ) {
 
+	const cfg = this.ctx.cfg;
+
 	const colours = ColourCache.getColors( this.gradientName );
-	const unconnected = Cfg.themeColor( 'shading.unconnected' );
-	const pathColor = Cfg.themeColor( 'routes.active' );
+	const unconnected = cfg.themeColor( 'shading.unconnected' );
+	const pathColor = cfg.themeColor( 'routes.active' );
 
 	const stations = this.stations;
 	const colourRange = colours.length - 1;
@@ -1294,10 +1299,11 @@ Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	const routes = this.routes;
+	const cfg = this.ctx.cfg;
 
-	const c1 = Cfg.themeColor( 'routes.active' );
-	const c2 = Cfg.themeColor( 'routes.adjacent' );
-	const c3 = Cfg.themeColor( 'routes.default' );
+	const c1 = cfg.themeColor( 'routes.active' );
+	const c2 = cfg.themeColor( 'routes.adjacent' );
+	const c3 = cfg.themeColor( 'routes.default' );
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
 

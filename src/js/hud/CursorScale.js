@@ -1,5 +1,4 @@
 
-import { Cfg } from '../core/lib';
 import { Scale } from './Scale';
 import { MutableGlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
@@ -9,11 +8,12 @@ import {
 	MeshBasicMaterial, Line, LineBasicMaterial
 } from '../Three';
 
-function CursorScale ( container ) {
+function CursorScale ( hudObject, container ) {
 
+	const cfg = hudObject.ctx.cfg;
 	const geometry = new PlaneBufferGeometry();
 
-	Scale.call( this, container, geometry, new MeshBasicMaterial( { color: 0x676767 } ) );
+	Scale.call( this, hudObject, container, geometry, new MeshBasicMaterial( { color: 0x676767 } ) );
 
 	this.name = 'CV.CursorScale';
 
@@ -35,10 +35,10 @@ function CursorScale ( container ) {
 
 	cursorGeometry.setAttribute( 'position', positions );
 
-	const cursor = new Line( cursorGeometry, new LineBasicMaterial( { color: Cfg.themeColor( 'hud.cursor' ) } ) );
+	const cursor = new Line( cursorGeometry, new LineBasicMaterial( { color: cfg.themeColor( 'hud.cursor' ) } ) );
 
 	const atlasSpec = {
-		color: Cfg.themeColorCSS( 'hud.cursor' ),
+		color: cfg.themeColorCSS( 'hud.cursor' ),
 		background: '#444444',
 		font: 'bold helvetica,sans-serif'
 	};

@@ -1,12 +1,13 @@
 import { Group } from '../Three';
 import { PointIndicator } from './PointIndicator';
 
-function StationMarkers ( color ) {
+function StationMarkers ( ctx, color ) {
 
 	Group.call( this );
 
 	this.markers = new Map();
 	this.markerColor = color;
+	this.ctx = ctx;
 
 	return this;
 
@@ -20,7 +21,7 @@ StationMarkers.prototype.mark = function ( node ) {
 
 	if ( markers.has( node ) ) return;
 
-	const marker = new PointIndicator( this.markerColor );
+	const marker = new PointIndicator( this.ctx, this.markerColor );
 
 	marker.position.copy( node.p );
 	marker.station = node;

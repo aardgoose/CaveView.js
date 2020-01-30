@@ -5,7 +5,6 @@ import {
 } from '../Three';
 
 import {TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
-import { Cfg } from '../core/lib';
 import proj4 from 'proj4';
 import { TERRAIN_BLEND } from '../core/constants';
 
@@ -13,7 +12,7 @@ const missingMaterial = new MeshLambertMaterial( { transparent: true, opacity: 0
 
 missingMaterial.setThroughMode = function () {};
 
-function Overlay ( overlayProvider, container ) {
+function Overlay ( ctx, overlayProvider, container ) {
 
 	this.provider = overlayProvider;
 	this.container = container;
@@ -21,6 +20,7 @@ function Overlay ( overlayProvider, container ) {
 	this.hasCoverage = false;
 	this.crsSupported = overlayProvider.crsSupported === undefined ? [ 'EPSG:3857', 'EPSG:4326', 'ORIGINAL' ] : overlayProvider.crsSupported;
 	this.throughMode = TERRAIN_BLEND;
+	this.ctx = ctx;
 
 	const attribution = overlayProvider.getAttribution();
 
@@ -97,6 +97,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 	const self = this;
 	const key = x + ':' + y + ':' + z;
+	const cfg = this.ctx.cfg;
 
 	const material = this.materialCache[ key ];
 	const overlayMaxZoom = this.provider.maxZoom;
@@ -162,7 +163,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 		const material = new TerrainOverlayMaterial( { transparent: true, opacity: opacity, color: 0xffffff } );
 
-		texture.anisotropy = Cfg.value( 'anisotropy', 4 );
+		texture.anisotropy = cfg.value( 'anisotropy', 4 );
 
 		texture.repeat.setScalar( repeat );
 

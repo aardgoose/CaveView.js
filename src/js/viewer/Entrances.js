@@ -2,11 +2,10 @@
 import { ClusterMarkers } from './ClusterMarkers';
 import { STATION_ENTRANCE, FEATURE_ENTRANCES } from '../core/constants';
 import { Points, PointsMaterial, BufferGeometry, Float32BufferAttribute, TextureLoader } from '../Three';
-import { Cfg } from '../core/lib';
 
-function Entrances ( survey ) {
+function Entrances ( ctx, survey ) {
 
-	ClusterMarkers.call( this, survey.modelLimits, 4 );
+	ClusterMarkers.call( this, ctx, survey.modelLimits, 4 );
 
 	const self = this;
 	const surveyTree = survey.surveyTree;
@@ -17,7 +16,7 @@ function Entrances ( survey ) {
 	const geometry = new BufferGeometry();
 	const material = new PointsMaterial();
 
-	material.map = new TextureLoader().load( Cfg.value( 'home', '' ) + 'images/disc.png' );
+	material.map = new TextureLoader().load( ctx.cfg.value( 'home', '' ) + 'images/disc.png' );
 	material.opacity = 1.0;
 	material.alphaTest = 0.8;
 	material.sizeAttenuation = false;

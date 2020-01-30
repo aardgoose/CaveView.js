@@ -1,5 +1,3 @@
-
-import { HudObject } from './HudObject';
 import { ColourCache } from '../core/ColourCache';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
@@ -12,10 +10,10 @@ import {
 	Mesh
 } from '../Three';
 
-function AngleScale ( caption ) {
+function AngleScale ( hudObject, caption ) {
 
-	const stdWidth  = HudObject.stdWidth;
-	const stdMargin = HudObject.stdMargin;
+	const stdWidth  = hudObject.stdWidth;
+	const stdMargin = hudObject.stdMargin;
 
 	const pNormal = new Vector3( 1, 0, 0 );
 
@@ -44,7 +42,7 @@ function AngleScale ( caption ) {
 
 	geometry.setAttribute( 'color', ringColors.copyColorsArray( colors ) );
 
-	HudObject.dropBuffers( geometry );
+	hudObject.dropBuffers( geometry );
 
 	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
 
@@ -53,7 +51,7 @@ function AngleScale ( caption ) {
 
 	this.name = 'CV.AngleScale';
 
-	const material = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
+	const material = Materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 	const label = new GlyphString( caption, material );
 
 	label.translateX( - label.getWidth() / 2 );

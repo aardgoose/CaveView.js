@@ -10,7 +10,7 @@ import { CommonAttributes } from './CommonAttributes';
 function onUploadDropBuffer() {
 
 	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
-	this.array = null;
+//	this.array = null;
 
 }
 

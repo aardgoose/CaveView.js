@@ -1,18 +1,15 @@
-
-
-import { HudObject } from './HudObject';
 import { SHADING_CURSOR, SHADING_DEPTH_CURSOR } from '../core/constants';
 
-function CursorControl( viewer, cursorScale ) {
+function CursorControl( hudObject, viewer, cursorScale ) {
 
 	const container = viewer.container;
 
-	const hr = HudObject.createHitRegion( cursorScale.barWidth, cursorScale.barHeight, handleEnter );
+	const hr = hudObject.createHitRegion( cursorScale.barWidth, cursorScale.barHeight, handleEnter );
 
 	var dragging = false;
 	var barTop;
 
-	hr.style.right = HudObject.stdMargin + 'px';
+	hr.style.right = hudObject.stdMargin + 'px';
 	hr.style.bottom = cursorScale.barOffset + 'px';
 
 	container.appendChild( hr );

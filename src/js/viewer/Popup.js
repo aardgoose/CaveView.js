@@ -1,6 +1,5 @@
 
 import { LEG_CAVE } from '../core/constants';
-import { Cfg } from '../core/lib';
 import { PopupMaterial } from '../materials/PopupMaterial';
 import { CommonAttributes } from '../core/CommonAttributes';
 
@@ -25,7 +24,7 @@ PopupGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 var commonGeometry = null;
 
-function Popup( container ) {
+function Popup( ctx, container ) {
 
 	if ( commonGeometry === null ) commonGeometry = new PopupGeometry();
 
@@ -36,6 +35,7 @@ function Popup( container ) {
 	this.type = 'Popup';
 	this.renderOrder = Infinity;
 	this.container = container;
+	this.ctx = ctx;
 
 	return this;
 
@@ -53,6 +53,7 @@ Popup.prototype.addLine = function ( line ) {
 
 Popup.prototype.finish = function () {
 
+	const cfg = this.ctx.cfg;
 	const cellSize = 32;
 	const fontSize = 20;
 
@@ -75,10 +76,10 @@ Popup.prototype.finish = function () {
 
 	// set background
 
-	ctx.fillStyle = Cfg.themeColorCSS( 'popup.background' );
+	ctx.fillStyle = cfg.themeColorCSS( 'popup.background' );
 	ctx.fillRect( 0, 0, popupWidth, popupHeight );
 
-	ctx.strokeStyle = Cfg.themeColorCSS( 'popup.border' );
+	ctx.strokeStyle = cfg.themeColorCSS( 'popup.border' );
 	ctx.lineWidth = 2.0;
 	ctx.strokeRect( 0, 0, popupWidth, popupHeight );
 
@@ -86,7 +87,7 @@ Popup.prototype.finish = function () {
 
 	ctx.textAlign = 'left';
 	ctx.font = fontSize + 'px ' + 'normal helvetica,sans-serif';
-	ctx.fillStyle = Cfg.themeColorCSS( 'popup.text' );
+	ctx.fillStyle = cfg.themeColorCSS( 'popup.text' );
 
 	var i;
 

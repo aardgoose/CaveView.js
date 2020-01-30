@@ -1,5 +1,4 @@
 import { ColourCache } from '../core/ColourCache';
-import { Cfg } from '../core/lib';
 
 import { MeshLambertMaterial} from '../Three';
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
@@ -17,14 +16,15 @@ const fragment_color = [
 	Shaders.commonTerrainCodeColor
 ].join( '\n' );
 
-function HypsometricMaterial ( survey ) {
+function HypsometricMaterial ( ctx, survey ) {
 
+	const cfg = ctx.cfg;
 	const terrain = survey.terrain;
 
 	MeshLambertMaterial.call( this );
 
-	var zMin = Cfg.themeValue( 'shading.hypsometric.min' );
-	var zMax = Cfg.themeValue( 'shading.hypsometric.max' );
+	var zMin = cfg.themeValue( 'shading.hypsometric.min' );
+	var zMax = cfg.themeValue( 'shading.hypsometric.max' );
 
 	if ( terrain.boundBox === undefined ) terrain.computeBoundingBox();
 

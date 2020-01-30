@@ -1,19 +1,16 @@
-
 import { MATERIAL_LINE } from '../core/constants';
 import { Shaders } from '../shaders/Shaders';
 import { ColourCache } from '../core/ColourCache';
 
 import { ShaderMaterial } from '../Three';
-import { MaterialCommon } from './MaterialCommon';
-import { Cfg } from '../core/lib';
 
-function HeightMaterial ( type, survey ) {
+function HeightMaterial ( ctx, type, survey ) {
 
 	const limits = survey.modelLimits;
 
 	const zMin = limits.min.z;
 	const zMax = limits.max.z;
-	const gradient = Cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
+	const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 
 	this.midRange = ( zMax + zMin ) / 2;
 
@@ -26,7 +23,7 @@ function HeightMaterial ( type, survey ) {
 			minZ:   { value: zMin },
 			scaleZ: { value: 1 / ( zMax - zMin ) },
 			cmap:   { value: ColourCache.getTexture( gradient ) },
-		}, MaterialCommon.uniforms ),
+		}, ctx.materials.commonUniforms ),
 		defines: {
 			USE_COLOR: true,
 			SURFACE: ( type !== MATERIAL_LINE )

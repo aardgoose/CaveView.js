@@ -1,19 +1,17 @@
 
-import { HudObject } from './HudObject';
-
-function AHIControl( viewer ) {
+function AHIControl( hudObject, viewer ) {
 
 	const container = viewer.container;
 	const controls = viewer.getControls();
 
-	const hr = HudObject.createHitRegion( HudObject.stdWidth * 2, HudObject.stdWidth * 2, handleEnter );
-	const ballSize = HudObject.stdWidth - 10;
+	const hr = hudObject.createHitRegion( hudObject.stdWidth * 2, hudObject.stdWidth * 2, handleEnter );
+	const ballSize = hudObject.stdWidth - 10;
 	var dragging = false;
 	var centerY;
 	var lastAngle;
 
-	hr.style.right = HudObject.stdMargin * 3 + HudObject.stdWidth * 2 + 'px';
-	hr.style.bottom = HudObject.stdMargin + 'px';
+	hr.style.right = hudObject.stdMargin * 3 + hudObject.stdWidth * 2 + 'px';
+	hr.style.bottom = hudObject.stdMargin + 'px';
 
 	container.appendChild( hr );
 
@@ -31,7 +29,7 @@ function AHIControl( viewer ) {
 
 		// update center position (accounts for resizes)
 		const bc = container.getBoundingClientRect();
-		centerY = bc.top + hr.offsetTop + HudObject.stdWidth;
+		centerY = bc.top + hr.offsetTop + hudObject.stdWidth;
 
 		hr.style.cursor = 'pointer';
 

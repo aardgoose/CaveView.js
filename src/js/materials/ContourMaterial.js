@@ -1,7 +1,4 @@
-
 import { MeshLambertMaterial } from '../Three';
-import { Cfg } from '../core/lib';
-import { CommonDepthUniforms } from './CommonDepthUniforms';
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 
 const fragment_pars = [
@@ -24,7 +21,9 @@ const fragment_color = [
 	'diffuseColor = mix( finalColor, baseColorAlpha, c );'
 ].join( '\n' );
 
-function ContourMaterial ( survey ) {
+function ContourMaterial ( ctx, survey ) {
+
+	const cfg = ctx.cfg;
 
 	MeshLambertMaterial.call( this );
 
@@ -35,11 +34,11 @@ function ContourMaterial ( survey ) {
 
 		Object.assign( shader.uniforms, {
 			zOffset:         { value: survey.offsets.z },
-			contourInterval: { value: Cfg.themeValue( 'shading.contours.interval' ) },
-			contourColor:    { value: Cfg.themeColor( 'shading.contours.line' ) },
-			contourColor10:  { value: Cfg.themeColor( 'shading.contours.line10' ) },
-			baseColor:       { value: Cfg.themeColor( 'shading.contours.base' ) }
-		}, CommonDepthUniforms );
+			contourInterval: { value: cfg.themeValue( 'shading.contours.interval' ) },
+			contourColor:    { value: cfg.themeColor( 'shading.contours.line' ) },
+			contourColor10:  { value: cfg.themeColor( 'shading.contours.line10' ) },
+			baseColor:       { value: cfg.themeColor( 'shading.contours.base' ) }
+		}, ctx.materials.commonDepthUniforms );
 
 		var vertexShader = shader.vertexShader
 			.replace( '#include <common>', '$&\nuniform float zOffset;\nuniform float datumShift;\nvarying float vPositionZ;\n' )

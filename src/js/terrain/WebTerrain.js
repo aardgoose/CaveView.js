@@ -2,7 +2,6 @@ import { Materials } from '../materials/Materials';
 import { CommonTerrain } from './CommonTerrain';
 import { Tile } from './Tile';
 import { WorkerPool } from '../core/WorkerPool';
-import { Cfg, dataURL } from '../core/lib';
 
 import { EPSG4326TileSet } from './EPSG4326TileSet';
 import { EPSG3857TileSet } from './EPSG3857TileSet';
@@ -13,14 +12,15 @@ import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 const __frustum = new Frustum();
 const __matrix4 = new Matrix4();
 
-function WebTerrain ( survey, onLoaded, container ) {
+function WebTerrain ( ctx, survey, onLoaded, container ) {
 
-	CommonTerrain.call( this );
+	CommonTerrain.call( this, ctx );
 
 	this.name = 'WebTerrain';
 	this.type = 'CV.WebTerrain';
 	this.attributions = [];
 	this.log = false;
+	this.ctx = ctx;
 
 	this.displayCRS = survey.displayCRS;
 	this.surveyCRS = survey.CRS;
@@ -57,19 +57,20 @@ WebTerrain.prototype.load = function () {
 	// return indicates if coverage checking in progress
 
 	const self = this;
+	const ctx = this.ctx;
 
 	switch ( this.displayCRS ) {
 
 	case 'EPSG:3857':
 
-		this.TS = new EPSG3857TileSet( _tileSetReady );
+		this.TS = new EPSG3857TileSet( ctx, _tileSetReady );
 
 		break;
 
 	case 'EPSG:4326':
 	case 'ORIGINAL':
 
-		this.TS = new EPSG4326TileSet( _tileSetReady, this.surveyCRS );
+		this.TS = new EPSG4326TileSet( ctx, _tileSetReady, this.surveyCRS );
 
 		break;
 
@@ -79,7 +80,7 @@ WebTerrain.prototype.load = function () {
 
 	}
 
-	this.workerPool = new WorkerPool( this.TS.workerScript );
+	this.workerPool = new WorkerPool( this.ctx, this.TS.workerScript );
 
 	return true;
 
@@ -106,7 +107,7 @@ WebTerrain.prototype.hasCoverage = function () {
 	// iterate through available tileSets and pick the first match
 
 	const limits = this.limits;
-	const baseDirectory = Cfg.value( 'terrainDirectory', '' );
+	const baseDirectory = this.ctx.cfg.value( 'terrainDirectory', '' );
 	const tileSets = this.tileSets;
 	const TS = this.TS;
 

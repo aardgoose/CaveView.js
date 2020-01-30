@@ -8,7 +8,6 @@ import {
 import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
 import { STATION_ENTRANCE } from '../core/constants';
-import { Cfg } from '../core/lib';
 import { PointIndicator } from './PointIndicator';
 
 const __v = new Vector3();
@@ -20,17 +19,19 @@ function onUploadDropBuffer() {
 
 }
 
-function Stations ( sectionIdSet ) {
+function Stations ( ctx, sectionIdSet ) {
 
-	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial() );
+	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial( ctx ) );
 
 	this.type = 'CV.Stations';
 	this.map = new Map();
 	this.stationCount = 0;
 
-	this.baseColor     = Cfg.themeColor( 'stations.default.marker' );
-	this.junctionColor = Cfg.themeColor( 'stations.junctions.marker' );
-	this.entranceColor = Cfg.themeColor( 'stations.entrances.marker' );
+	const cfg = ctx.cfg;
+
+	this.baseColor     = cfg.themeColor( 'stations.default.marker' );
+	this.junctionColor = cfg.themeColor( 'stations.junctions.marker' );
+	this.entranceColor = cfg.themeColor( 'stations.entrances.marker' );
 
 	this.pointSizes = [];
 	this.vertices   = [];
@@ -43,7 +44,7 @@ function Stations ( sectionIdSet ) {
 	this.sectionIdSet = sectionIdSet;
 	this.splaysVisible = false;
 
-	const point = new PointIndicator( 0xff0000 );
+	const point = new PointIndicator( ctx, 0xff0000 );
 
 	point.visible = false;
 

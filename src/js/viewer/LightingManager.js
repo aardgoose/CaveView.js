@@ -5,17 +5,16 @@ import {
 	DirectionalLight
 } from '../Three';
 
-import { Cfg } from '../core/lib';
+function LightingManager ( ctx, scene ) {
 
-function LightingManager ( scene ) {
-
+	const cfg = ctx.cfg;
 	const lightPosition = new Vector3();
 	const currentLightPosition = new Vector3();
 	const directionalLight = new DirectionalLight( 0xffffff );
 	const ambientLight = new AmbientLight( 0xffffff, 0.3 );
 
-	const inclination = Cfg.themeAngle( 'lighting.inclination' );
-	const azimuth = Cfg.themeAngle( 'lighting.azimuth' ) - Math.PI / 2;
+	const inclination = cfg.themeAngle( 'lighting.inclination' );
+	const azimuth = cfg.themeAngle( 'lighting.azimuth' ) - Math.PI / 2;
 
 	lightPosition.setFromSpherical( new Spherical( 1, inclination, azimuth ) );
 	lightPosition.applyAxisAngle( new Vector3( 1, 0, 0 ), Math.PI / 2 );

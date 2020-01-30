@@ -4,17 +4,14 @@ import { MATERIAL_LINE } from '../core/constants';
 import { ColourCache } from '../core/ColourCache';
 
 import { ShaderMaterial, Vector3 } from '../Three';
-import { MaterialCommon } from './MaterialCommon';
-import { Cfg } from '../core/lib';
-import { CommonDepthUniforms } from './CommonDepthUniforms';
 
-function DepthMaterial ( type, survey ) {
+function DepthMaterial ( ctx, type, survey ) {
 
 	const surveyLimits = survey.modelLimits;
 	const terrain = survey.terrain;
 	const limits = terrain.boundingBox;
 	const range = limits.getSize( new Vector3() );
-	const gradient = Cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
+	const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 
 	ShaderMaterial.call( this, {
 		vertexShader: Shaders.depthVertexShader,
@@ -30,7 +27,7 @@ function DepthMaterial ( type, survey ) {
 			depthScale: { value: 1 / ( surveyLimits.max.z - surveyLimits.min.z ) },
 			cmap:       { value: ColourCache.getTexture( gradient ) },
 			depthMap:   { value: terrain.depthTexture },
-		}, MaterialCommon.uniforms, CommonDepthUniforms ),
+		}, ctx.materials.commonUniforms, ctx.materials.commonDepthUniforms ),
 		defines: {
 			USE_COLOR: true,
 			SURFACE: ( type !== MATERIAL_LINE )

@@ -1,7 +1,8 @@
 
 
-function Frame () {
+function Frame ( ctx ) {
 
+	this.ctx = ctx;
 	this.reset();
 
 }
@@ -85,7 +86,6 @@ Frame.prototype.onScreen = function () {
 
 Frame.prototype.setParent = function ( parent ) {
 
-	console.log( this, parent );
 	parent.appendChild( this.tabBox );
 	parent.appendChild( this.frame );
 

@@ -1,8 +1,6 @@
-
-import { HudObject } from './HudObject';
 import { Vector2 } from '../Three';
 
-function CompassControl( viewer ) {
+function CompassControl( hudObject, viewer ) {
 
 	const container = viewer.container;
 	const controls = viewer.getControls();
@@ -13,10 +11,10 @@ function CompassControl( viewer ) {
 	var dragging = false;
 	var startAngle = 0;
 
-	const hr = HudObject.createHitRegion( HudObject.stdWidth * 2, HudObject.stdWidth * 2, handleEnter );
+	const hr = hudObject.createHitRegion( hudObject.stdWidth * 2, hudObject.stdWidth * 2, handleEnter );
 
-	hr.style.right = HudObject.stdMargin + 'px';
-	hr.style.bottom = HudObject.stdMargin + 'px';
+	hr.style.right = hudObject.stdMargin + 'px';
+	hr.style.bottom = hudObject.stdMargin + 'px';
 
 	container.appendChild( hr );
 
@@ -34,7 +32,7 @@ function CompassControl( viewer ) {
 
 		// update center position (accounts for resizes)
 		const bc = container.getBoundingClientRect();
-		center.set( bc.left + hr.offsetLeft + HudObject.stdWidth, bc.top + hr.offsetTop + HudObject.stdWidth );
+		center.set( bc.left + hr.offsetLeft + hudObject.stdWidth, bc.top + hr.offsetTop + hudObject.stdWidth );
 		hr.style.cursor = 'pointer';
 
 	}

@@ -1,8 +1,8 @@
 import { Popup } from './Popup.js';
 
-function StationPopup ( container, station, survey, depth, formatter, showDistance, warnings ) {
+function StationPopup ( ctx, container, station, survey, depth, formatter, showDistance, warnings ) {
 
-	Popup.call( this, container );
+	Popup.call( this, ctx, container );
 
 	const position = survey.getGeographicalPosition( station.p );
 

@@ -1,6 +1,3 @@
-
-import { Cfg } from '../core/lib';
-import { HudObject } from './HudObject';
 import { MutableGlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
@@ -11,10 +8,11 @@ import {
 	Object3D, Mesh, Float32BufferAttribute,
 } from '../Three';
 
-function ProgressDial ( addText, ring, viewer ) {
+function ProgressDial ( hudObject, addText, ring, viewer ) {
 
-	const stdWidth  = HudObject.stdWidth;
-	const stdMargin = HudObject.stdMargin;
+	const cfg = hudObject.ctx.cfg;
+	const stdWidth  = hudObject.stdWidth;
+	const stdMargin = hudObject.stdMargin;
 
 	const offset = stdWidth + stdMargin;
 
@@ -24,8 +22,8 @@ function ProgressDial ( addText, ring, viewer ) {
 
 	const colorCount = 2 * ( segments + 1);
 
-	const backgroundColor = Cfg.themeColor( 'hud.progressBackground' );
-	const setColor = Cfg.themeColor( 'hud.progress' );
+	const backgroundColor = cfg.themeColor( 'hud.progressBackground' );
+	const setColor = cfg.themeColor( 'hud.progress' );
 
 	const colorsSrc = [];
 
@@ -35,7 +33,7 @@ function ProgressDial ( addText, ring, viewer ) {
 
 	geometry.setAttribute( 'color', colors );
 
-	HudObject.dropBuffers( geometry );
+	hudObject.dropBuffers( geometry );
 
 	this.colorsSrc = colorsSrc;
 	this.backgroundColor = backgroundColor;
@@ -54,11 +52,11 @@ function ProgressDial ( addText, ring, viewer ) {
 	this.visible = false;
 	this.isVisible = true;
 
-	this.color = Cfg.themeValue( 'hud.progress' );
+	this.color = cfg.themeValue( 'hud.progress' );
 
 	if ( addText ) {
 
-		var glyphMaterial = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
+		var glyphMaterial = Materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 
 		const pcent = new MutableGlyphString( '----', glyphMaterial );
 

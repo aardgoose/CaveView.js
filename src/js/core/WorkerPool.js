@@ -1,9 +1,7 @@
-import { Cfg } from './lib';
-
-function WorkerPool ( script ) {
+function WorkerPool ( ctx, script ) {
 
 	this.baseScript = script;
-	this.script = Cfg.value( 'home', '' ) + 'js/workers/' + script;
+	this.script = ctx.cfg.value( 'home', '' ) + 'js/workers/' + script;
 
 	if ( WorkerPool.workers[ script ] === undefined ) {
 

@@ -4,12 +4,12 @@ import { Materials } from '../materials/Materials';
 
 import { PlaneBufferGeometry } from '../Three';
 
-function LinearScale ( container ) {
+function LinearScale ( hudObject, container ) {
 
 	const geometry = new PlaneBufferGeometry();
 	const material = Materials.getScaleMaterial();
 
-	Scale.call( this, container, geometry, material );
+	Scale.call( this, hudObject, container, geometry, material );
 
 	this.name = 'CV.LinearScale';
 

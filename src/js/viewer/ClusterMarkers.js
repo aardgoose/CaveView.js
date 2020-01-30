@@ -1,6 +1,5 @@
 
 import { FEATURE_ENTRANCES, CLUSTER_MARKERS } from '../core/constants';
-import { Cfg } from '../core/lib';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 import { Marker } from './Marker';
@@ -20,13 +19,14 @@ const __plane = new Plane();
 
 const __v = new Vector3();
 
-function QuadTree ( xMin, xMax, yMin, yMax ) {
+function QuadTree ( ctx, xMin, xMax, yMin, yMax ) {
 
 	this.nodes = new Array( 4 );
 	this.count = 0;
 	this.markers = [];
 	this.quadMarker = null;
 	this.centroid = new Vector3();
+	this.ctx = ctx;
 
 	this.xMin = xMin;
 	this.xMax = xMax;
@@ -43,6 +43,7 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 	if ( depth-- === 0 ) return;
 
 	const position = marker.position;
+	const ctx = this.ctx;
 
 	const xMid = ( this.xMin + this.xMax ) / 2;
 	const yMid = ( this.yMin + this.yMax ) / 2;
@@ -65,22 +66,22 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 
 		case 0:
 
-			subQuad = new QuadTree( this.xMin, xMid, this.yMin, yMid );
+			subQuad = new QuadTree( ctx, this.xMin, xMid, this.yMin, yMid );
 			break;
 
 		case 1:
 
-			subQuad = new QuadTree( xMid, this.xMax, this.yMin, yMid );
+			subQuad = new QuadTree( ctx, xMid, this.xMax, this.yMin, yMid );
 			break;
 
 		case 2:
 
-			subQuad = new QuadTree( this.xMin, xMid, yMid, this.yMax );
+			subQuad = new QuadTree( ctx, this.xMin, xMid, yMid, this.yMax );
 			break;
 
 		case 3:
 
-			subQuad = new QuadTree( xMid, this.xMax, yMid, this.yMax );
+			subQuad = new QuadTree( ctx, xMid, this.xMax, yMid, this.yMax );
 			break;
 
 		}
@@ -269,7 +270,7 @@ QuadTree.prototype.projectedArea = function ( cluster ) {
 
 };
 
-function ClusterMarkers ( limits, maxDepth ) {
+function ClusterMarkers ( ctx, limits, maxDepth ) {
 
 	Object3D.call( this );
 
@@ -280,9 +281,10 @@ function ClusterMarkers ( limits, maxDepth ) {
 
 	this.type = 'CV.ClusterMarker';
 
-	this.quadTree = new QuadTree( min.x, max.x, min.y, max.y );
+	this.quadTree = new QuadTree( ctx, min.x, max.x, min.y, max.y );
 	this.heightProvider = null;
 	this.labels = [];
+	this.ctx = ctx;
 
 	this.addEventListener( 'removed', this.onRemoved );
 
@@ -320,10 +322,12 @@ ClusterMarkers.prototype.onRemoved = function () {
 
 ClusterMarkers.prototype.addMarker = function ( node, label ) {
 
+	const cfg = this.ctx.cfg;
+
 	// create marker
 	const atlasSpec = {
-		background: Cfg.themeColorCSS( 'stations.entrances.background' ),
-		color: Cfg.themeColorCSS( 'stations.entrances.text' ),
+		background: cfg.themeColorCSS( 'stations.entrances.background' ),
+		color: cfg.themeColorCSS( 'stations.entrances.text' ),
 		font: 'normal helvetica,sans-serif'
 	};
 

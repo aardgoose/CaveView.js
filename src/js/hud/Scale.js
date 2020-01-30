@@ -1,17 +1,15 @@
-
-import { HudObject } from './HudObject';
 import { GlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 import { Mesh, Group } from '../Three';
 
 
-function Scale( container, geometry, material ) {
+function Scale( hudObject, container, geometry, material ) {
 
 	const width  = container.clientWidth;
 	const height = container.clientHeight;
 
-	const stdWidth  = HudObject.stdWidth;
-	const stdMargin = HudObject.stdMargin;
+	const stdWidth  = hudObject.stdWidth;
+	const stdMargin = hudObject.stdMargin;
 
 	const barOffset = 3 * ( stdWidth + stdMargin );
 
@@ -34,7 +32,7 @@ function Scale( container, geometry, material ) {
 	this.scaleBar = new Mesh( geometry, material );
 	this.scaleBar.name = 'scale bar';
 
-	this.textMaterial = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
+	this.textMaterial = Materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 
 	this.add( this.scaleBar );
 

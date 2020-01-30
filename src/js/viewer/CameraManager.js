@@ -4,7 +4,6 @@ import {
 	LEG_CAVE, FEATURE_SELECTED_BOX, FEATURE_SURVEY, FEATURE_TERRAIN
 } from '../core/constants';
 
-import { Cfg } from '../core/lib';
 import { AnaglyphEffect } from './AnaglyphEffect';
 import { StereoEffect } from './StereoEffect';
 
@@ -14,14 +13,14 @@ import {
 	MeshBasicMaterial, BackSide, Vector2
 } from '../Three';
 
-function CameraManager ( container, renderer, scene ) {
+function CameraManager ( ctx, container, renderer, scene ) {
 
 	var width = container.clientWidth;
 	var height = container.clientHeight;
 	var boundingRect = container.getBoundingClientRect();
 
 	const orthographicCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
-	const perspectiveCamera = new PerspectiveCamera( Cfg.themeValue( 'fieldOfView' ) , width / height, 1, 16000 );
+	const perspectiveCamera = new PerspectiveCamera( ctx.cfg.themeValue( 'fieldOfView' ) , width / height, 1, 16000 );
 
 	const mouse = new Vector2();
 

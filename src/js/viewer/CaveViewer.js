@@ -19,7 +19,7 @@ import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { CommonTerrain } from '../terrain/CommonTerrain';
-import { Cfg } from '../core/lib';
+import { Cfg } from '../core/Cfg';
 import { WorkerPool } from '../core/WorkerPool';
 import { defaultView, dynamicView, ViewState } from './ViewState';
 
@@ -47,14 +47,17 @@ function CaveViewer ( domID, configuration ) {
 	const width = container.clientWidth;
 	const height = container.clientHeight;
 
-	Cfg.set( configuration );
+	const cfg = new Cfg( configuration );
+	const ctx = { cfg: cfg };
 
-	container.style.backgroundColor = Cfg.themeValue( 'background' );
+	this.ctx = ctx;
+
+	container.style.backgroundColor = cfg.themeValue( 'background' );
 
 	const renderer = new WebGLRenderer( { antialias: true, alpha: true });
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setClearColor( Cfg.themeValue( 'background' ) );
+	renderer.setClearColor( cfg.themeValue( 'background' ) );
 	renderer.autoClear = false;
 	renderer.setClearAlpha( 0.0 );
 	renderer.setRenderTarget( null );
@@ -62,23 +65,23 @@ function CaveViewer ( domID, configuration ) {
 
 	container.appendChild( renderer.domElement );
 
-	const fog = new FogExp2( Cfg.themeValue( 'background' ), 0.0025 );
+	const fog = new FogExp2( cfg.themeValue( 'background' ), 0.0025 );
 
 	const scene = new Scene();
 	scene.fog = fog;
 	scene.name = 'CV.Viewer';
 
-	const cameraManager = new CameraManager( container, renderer, scene );
+	const cameraManager = new CameraManager( ctx, container, renderer, scene );
 
 	const raycaster = new Raycaster();
 	raycaster.params.Points.threshold = 2;
 
 	// setup lighting
-	const lightingManager = new LightingManager( scene );
+	const lightingManager = new LightingManager( ctx, scene );
 
 	// setup controllers
 	const controls = new OrbitControls( cameraManager, renderer.domElement, this );
-	controls.maxPolarAngle = Cfg.themeAngle( 'maxPolarAngle' );
+	controls.maxPolarAngle = cfg.themeAngle( 'maxPolarAngle' );
 	controls.addEventListener( 'change', cameraMoved );
 	controls.addEventListener( 'end', onCameraMoveEnd );
 
@@ -443,7 +446,7 @@ function CaveViewer ( domID, configuration ) {
 
 	const hud = new HUD( this, renderer );
 
-	caveLoader = new CaveLoader( caveLoaded );
+	caveLoader = new CaveLoader( ctx, caveLoaded );
 
 	hud.getProgressDial( 0 ).watch( caveLoader );
 
@@ -879,7 +882,7 @@ function CaveViewer ( domID, configuration ) {
 
 	self.addOverlay = function ( name, overlayProvider, locationDefault ) {
 
-		CommonTerrain.addOverlay( name, overlayProvider, container, locationDefault );
+		CommonTerrain.addOverlay( ctx, name, overlayProvider, container, locationDefault );
 
 	};
 
@@ -1083,7 +1086,7 @@ function CaveViewer ( domID, configuration ) {
 		}
 
 		resize();
-		loadSurvey( new Survey( cave ) );
+		loadSurvey( new Survey( ctx, cave ) );
 
 	}
 
@@ -1108,7 +1111,7 @@ function CaveViewer ( domID, configuration ) {
 
 		if ( savedView === null ) {
 
-			self.setView( defaultView, Cfg.value( 'view', {} ) );
+			self.setView( defaultView, cfg.value( 'view', {} ) );
 
 		} else {
 
@@ -1156,7 +1159,7 @@ function CaveViewer ( domID, configuration ) {
 
 			if ( navigator.onLine ) {
 
-				terrain = new WebTerrain( survey, _tilesLoaded, container );
+				terrain = new WebTerrain( ctx, survey, _tilesLoaded, container );
 
 				hud.getProgressDial( 0 ).watch( terrain );
 
@@ -1397,7 +1400,7 @@ function CaveViewer ( domID, configuration ) {
 
 			if ( popup !== null ) return;
 
-			popup = new StationPopup( container, station, survey, depth, formatters.station, ( shadingMode === SHADING_DISTANCE ), self.warnings );
+			popup = new StationPopup( ctx, container, station, survey, depth, formatters.station, ( shadingMode === SHADING_DISTANCE ), self.warnings );
 
 			survey.add( popup );
 

@@ -1,4 +1,3 @@
-import { Cfg } from '../core/lib';
 import { Frame } from './Frame';
 import { HelpPage } from './HelpPage';
 import { InfoPage } from './InfoPage';
@@ -12,8 +11,10 @@ import { FileSelector } from './FileSelector';
 
 function CaveViewUI ( viewer ) {
 
+	const ctx = viewer.ctx;
 	const container = viewer.container;
-	const frame = new Frame();
+	const frame = new Frame( ctx );
+	const cfg = ctx.cfg;
 
 	const fileSelector = new FileSelector( container, frame );
 	fileSelector.addEventListener( 'selected', selectFile );
@@ -26,9 +27,9 @@ function CaveViewUI ( viewer ) {
 	viewer.addEventListener( 'newCave', initUI );
 
 	// make sure we get new language strings if slow loading
-	Cfg.addEventListener( 'change', initUI );
+	cfg.addEventListener( 'change', initUI );
 
-	new KeyboardControls( viewer, fileSelector, Cfg.value( 'avenControls', true ) );
+	new KeyboardControls( viewer, fileSelector, cfg.value( 'avenControls', true ) );
 
 	function selectFile( event ) {
 
@@ -60,7 +61,7 @@ function CaveViewUI ( viewer ) {
 
 		new SelectionPage( frame, viewer, container, fileSelector );
 
-		if ( Cfg.value( 'showEditPage', false ) && ! fileSelector.isMultiple ) new EditPage( frame, viewer, fileSelector );
+		if ( cfg.value( 'showEditPage', false ) && ! fileSelector.isMultiple ) new EditPage( frame, viewer, fileSelector );
 
 		new InfoPage( frame, viewer, fileSelector );
 		new HelpPage( frame, viewer.svxControlMode );

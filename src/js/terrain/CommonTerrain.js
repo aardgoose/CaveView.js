@@ -5,7 +5,6 @@ import {
 	TERRAIN_STENCIL
 } from '../core/constants';
 
-import { Cfg } from '../core/lib';
 import { Materials } from '../materials/Materials';
 import { CommonTerrainMaterial } from '../materials/CommonTerrainMaterial';
 import { unpackRGBA } from '../core/unpackRGBA';
@@ -26,7 +25,7 @@ const __adjust = new Vector3();
 
 const __result = new Uint8Array( 4 );
 
-function CommonTerrain () {
+function CommonTerrain ( ctx ) {
 
 	Group.call( this );
 
@@ -43,14 +42,15 @@ function CommonTerrain () {
 	this.screenAttribution = null;
 	this.terrainShadingModes = {};
 	this.throughMode = TERRAIN_STENCIL;
+	this.ctx = ctx;
 
 	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
 
 }
 
-CommonTerrain.addOverlay = function ( name, overlayProvider, container, locationDefault ) {
+CommonTerrain.addOverlay = function ( ctx, name, overlayProvider, container, locationDefault ) {
 
-	overlays[ name ] = new Overlay( overlayProvider, container );
+	overlays[ name ] = new Overlay( ctx, overlayProvider, container );
 
 	if ( locationDefault ) locationDefaultOverlay = name;
 
@@ -87,7 +87,7 @@ CommonTerrain.prototype.checkTerrainShadingModes = function ( renderer ) {
 
 	if ( renderer.capabilities.isWebGL2 || renderer.extensions.get( 'OES_standard_derivatives' ) !== null && ! this.isFlat ) {
 
-		terrainShadingModes[ 'terrain.shading.contours' + ' (' + Cfg.themeValue( 'shading.contours.interval' ) + '\u202fm)' ] = SHADING_CONTOURS;
+		terrainShadingModes[ 'terrain.shading.contours' + ' (' + this.ctx.cfg.themeValue( 'shading.contours.interval' ) + '\u202fm)' ] = SHADING_CONTOURS;
 
 	}
 

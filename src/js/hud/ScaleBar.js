@@ -1,6 +1,3 @@
-
-import { HudObject } from './HudObject';
-import { Cfg } from '../core/lib';
 import { MutableGlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
@@ -12,12 +9,14 @@ import {
 	Group, Mesh
 } from '../Three';
 
-function BarGeometry ( length, height, divisions ) {
+function BarGeometry ( ctx, length, height, divisions ) {
 
 	BufferGeometry.call( this );
+console.log( 'x', ctx );
+	const cfg = ctx.cfg;
 
-	const c1 = Cfg.themeColor( 'hud.scale.bar1' );
-	const c2 = Cfg.themeColor( 'hud.scale.bar2' );
+	const c1 = cfg.themeColor( 'hud.scale.bar1' );
+	const c2 = cfg.themeColor( 'hud.scale.bar2' );
 
 	const vertices = [];
 	const colors = [];
@@ -63,7 +62,7 @@ function BarGeometry ( length, height, divisions ) {
 
 BarGeometry.prototype = Object.create( BufferGeometry.prototype );
 
-function ScaleBar ( container, hScale, rightMargin ) {
+function ScaleBar ( hudObject, container, hScale, rightMargin ) {
 
 	const leftMargin = 10;
 
@@ -75,11 +74,12 @@ function ScaleBar ( container, hScale, rightMargin ) {
 	this.scaleBars     = [];
 	this.currentLength = 0;
 	this.wScale = container.clientHeight / container.clientWidth;
+	this.hudObject = hudObject;
 
 	this.position.set( -container.clientWidth / 2 + 45, -container.clientHeight / 2 + leftMargin, 0 );
 	this.scaleMax = container.clientWidth - ( 40 + leftMargin + rightMargin );
 
-	const material = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
+	const material = Materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 	const label = new MutableGlyphString( '--------', material );
 
 	label.translateX( 0 );
@@ -99,6 +99,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	const scaleBars = this.scaleBars;
 	const self = this;
+	const ctx = this.hudObject.ctx;
 
 	const maxVisible = this.scaleMax / ( scale * this.hScale );
 
@@ -173,7 +174,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 
 	function _makeScaleBar ( length ) {
 
-		const bar = new BarGeometry( length * self.hScale, 4, length );
+		const bar = new BarGeometry( ctx, length * self.hScale, 4, length );
 
 		bar.computeBoundingBox();
 

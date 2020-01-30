@@ -1,5 +1,4 @@
 
-import { Cfg } from '../core/lib';
 import { CylinderBufferGeometry } from '../Three';
 
 function onUploadDropBuffer() {
@@ -9,9 +8,17 @@ function onUploadDropBuffer() {
 
 }
 
-var commonRing;
+function HudObject ( ctx ) {
 
-const HudObject = {
+	const cfg = ctx.cfg;
+	this.stdWidth = cfg.themeValue( 'hud.widgetSize' );
+	this.atlasSpec.color = cfg.themeColorCSS( 'hud.text' );
+	this.atlasSpec.font = cfg.themeValue( 'hud.font' );
+	this.commonRing = null;
+	this.ctx = ctx;
+}
+
+Object.assign( HudObject.prototype, {
 
 	stdMargin: 5,
 
@@ -43,28 +50,22 @@ const HudObject = {
 
 	getCommonRing: function () {
 
-		if ( commonRing === undefined ) {
+		var commonRing = this.commonRing;
 
-			commonRing = new CylinderBufferGeometry( HudObject.stdWidth * 0.90, HudObject.stdWidth, 3, 32, 1, true );
+		if ( commonRing === null ) {
+
+			commonRing = new CylinderBufferGeometry( this.stdWidth * 0.90, this.stdWidth, 3, 32, 1, true );
 			commonRing.rotateX( Math.PI / 2 );
 
-			HudObject.dropBuffers( commonRing );
-
+			this.dropBuffers( commonRing );
+			this.commonRing = commonRing;
 		}
 
 		return commonRing;
 
 	},
 
-	init: function () {
-
-		HudObject.stdWidth = Cfg.themeValue( 'hud.widgetSize' );
-		HudObject.atlasSpec.color = Cfg.themeColorCSS( 'hud.text' );
-		HudObject.atlasSpec.font = Cfg.themeValue( 'hud.font' );
-
-	}
-
-};
+} );
 
 export { HudObject };
 

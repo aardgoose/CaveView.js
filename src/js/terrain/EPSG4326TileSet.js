@@ -1,8 +1,7 @@
 import { FileLoader, Box2 } from '../Three';
-import { Cfg } from '../core/lib';
 import proj4 from 'proj4';
 
-function EPSG4326TileSet( tileSetReady, crs ) {
+function EPSG4326TileSet( ctx, tileSetReady, crs ) {
 
 	this.CRS = crs;
 	this.transform = proj4( crs, 'EPSG:4326' );
@@ -13,7 +12,7 @@ function EPSG4326TileSet( tileSetReady, crs ) {
 
 	const self = this;
 
-	const accessToken = Cfg.value( 'cesiumAccessToken', 'no access token' );
+	const accessToken = ctx.cfg.value( 'cesiumAccessToken', 'no access token' );
 	const url = 'https://api.cesium.com/v1/assets/1/endpoint?access_token=' + accessToken;
 
 

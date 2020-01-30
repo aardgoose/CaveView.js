@@ -1,13 +1,11 @@
-
 import { Shaders } from '../shaders/Shaders';
 import { MATERIAL_LINE } from '../core/constants';
-import { Cfg } from '../core/lib';
 
 import { ShaderMaterial } from '../Three';
-import { MaterialCommon } from './MaterialCommon';
 
-function CursorMaterial ( type, survey ) {
+function CursorMaterial ( ctx, type, survey ) {
 
+	const cfg = ctx.cfg;
 	const limits = survey.modelLimits;
 
 	ShaderMaterial.call( this, {
@@ -18,9 +16,9 @@ function CursorMaterial ( type, survey ) {
 			uLight:      { value: survey.lightDirection },
 			cursor:      { value: 0 },
 			cursorWidth: { value: 5.0 },
-			baseColor:   { value: Cfg.themeColor( 'shading.cursorBase' ) },
-			cursorColor: { value: Cfg.themeColor( 'shading.cursor' ) },
-		}, MaterialCommon.uniforms ),
+			baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
+			cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
+		}, ctx.materials.commonUniforms ),
 		defines: {
 			USE_COLOR: true,
 			SURFACE: ( type !== MATERIAL_LINE )

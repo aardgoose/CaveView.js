@@ -3,8 +3,6 @@ import {
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_DISTANCE
 } from '../core/constants';
 
-import { Cfg } from '../core/lib';
-
 import { AHI } from './AHI';
 import { AHIControl } from './AHIControl';
 import { AngleScale } from './AngleScale';
@@ -28,6 +26,7 @@ import {
 function HUD ( viewer, renderer ) {
 
 	const self = this;
+	const cfg = viewer.ctx.cfg;
 
 	const container = viewer.container;
 
@@ -60,7 +59,7 @@ function HUD ( viewer, renderer ) {
 
 	scene.addStatic( attitudeGroup );
 
-	HudObject.init();
+	const hudObject = new HudObject( viewer.ctx );
 
 	const aLight = new AmbientLight( 0x888888 );
 	const dLight = new DirectionalLight( 0xFFFFFF );
@@ -69,12 +68,16 @@ function HUD ( viewer, renderer ) {
 	scene.addStatic( aLight );
 	scene.addStatic( dLight );
 
-	const progressDials = [ new ProgressDial( true, 0, viewer ), new ProgressDial( false, 1, viewer ) ];
+	const progressDials = [
+		new ProgressDial( hudObject, true, 0, viewer ),
+		new ProgressDial( hudObject, false, 1, viewer )
+	];
+
 	const progressDial = progressDials [ 0 ];
 
-	const ahi = new AHI();
-	const compass = new Compass();
-	const angleScale = new AngleScale( i18n( 'inclination' ) );
+	const ahi = new AHI( hudObject );
+	const compass = new Compass( hudObject );
+	const angleScale = new AngleScale( hudObject, i18n( 'inclination' ) );
 
 	attitudeGroup.addStatic( ahi );
 	attitudeGroup.addStatic( compass );
@@ -87,16 +90,16 @@ function HUD ( viewer, renderer ) {
 	viewer.addEventListener( 'change', viewChanged );
 	viewer.addEventListener( 'resized', resize );
 
-	Cfg.addEventListener( 'change', cfgChanged );
+	cfg.addEventListener( 'change', cfgChanged );
 
 	controls = viewer.getControls();
 
-	new CompassControl( viewer );
-	new AHIControl( viewer );
+	new CompassControl( hudObject, viewer );
+	new AHIControl( hudObject, viewer );
 
 	function i18n ( text ) {
 
-		const tr = Cfg.i18n( 'hud.' + text );
+		const tr = cfg.i18n( 'hud.' + text );
 
 		return ( tr === undefined ) ? text : tr;
 
@@ -222,7 +225,7 @@ function HUD ( viewer, renderer ) {
 
 		if ( hasLegs ) {
 
-			linearScale = new LinearScale( container );
+			linearScale = new LinearScale( hudObject, container );
 			scene.addStatic( linearScale );
 
 		}
@@ -236,11 +239,11 @@ function HUD ( viewer, renderer ) {
 
 		if ( hasLegs ) {
 
-			cursorScale = new CursorScale( container );
+			cursorScale = new CursorScale( hudObject, container );
 
 			if ( cursorControl ) cursorControl.dispose();
 
-			cursorControl = new CursorControl( viewer, cursorScale );
+			cursorControl = new CursorControl( hudObject, viewer, cursorScale );
 
 			scene.addStatic( cursorScale );
 
@@ -381,7 +384,7 @@ function HUD ( viewer, renderer ) {
 
 			if ( scaleBar === null ) {
 
-				scaleBar = new ScaleBar( viewer.container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
+				scaleBar = new ScaleBar( hudObject, viewer.container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
 				scene.addStatic( scaleBar );
 
 			}

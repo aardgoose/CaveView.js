@@ -9,21 +9,17 @@ import { HeightMaterial } from './HeightMaterial';
 import { HypsometricMaterial } from './HypsometricMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
 import { GlyphString } from '../core/GlyphString';
-import { MaterialCommon } from './MaterialCommon';
 import { ColourCache } from '../core/ColourCache';
-import { Cfg } from '../core/lib';
 
 import {
 	LineBasicMaterial, MeshLambertMaterial, MeshBasicMaterial,
 	NoColors, VertexColors, IncrementStencilOp
 } from '../Three';
 
-import { CommonDepthUniforms } from './CommonDepthUniforms';
-
 const cache = new Map();
 
 var cursorMaterials = [];
-
+var ctx;
 var perSurveyMaterials = {};
 var cursorHeight = 0;
 
@@ -67,7 +63,7 @@ function updateCursors( newHeight ) {
 
 function updateDatumShifts( event ) {
 
-	CommonDepthUniforms.datumShift.value = event.value;
+	ctx.materials.commonDepthUniforms.datumShift.value = event.value;
 
 }
 
@@ -79,7 +75,7 @@ function getHeightMaterial ( type ) {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( name, new HeightMaterial( type, survey ) );
+		material = cacheSurveyMaterial( name, new HeightMaterial( ctx, type, survey ) );
 		setStencil( material );
 
 	}
@@ -96,7 +92,7 @@ function getHypsometricMaterial () {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( name, new HypsometricMaterial( survey ) );
+		material = cacheSurveyMaterial( name, new HypsometricMaterial( ctx, survey ) );
 
 	}
 
@@ -118,7 +114,7 @@ function getDepthMaterial ( type ) {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( name, new DepthMaterial( type, survey ) );
+		material = cacheSurveyMaterial( name, new DepthMaterial( ctx, type, survey ) );
 		setStencil( material );
 
 	}
@@ -135,7 +131,7 @@ function getCursorMaterial ( type ) {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( name, new CursorMaterial( type, survey ) );
+		material = cacheSurveyMaterial( name, new CursorMaterial( ctx, type, survey ) );
 		setStencil( material );
 
 	}
@@ -156,7 +152,7 @@ function getDepthCursorMaterial( type ) {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( name, new DepthCursorMaterial( type, survey ) );
+		material = cacheSurveyMaterial( name, new DepthCursorMaterial( ctx, type, survey ) );
 		setStencil( material );
 
 	}
@@ -202,7 +198,7 @@ function getLineMaterial () {
 
 function getScaleMaterial () {
 
-	const gradient = Cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
+	const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 
 	var material = cache.get( 'scale' );
 
@@ -226,7 +222,7 @@ function getContourMaterial () {
 
 	if ( material === undefined ) {
 
-		material = cacheSurveyMaterial( 'contour', new ContourMaterial( survey ) );
+		material = cacheSurveyMaterial( 'contour', new ContourMaterial( ctx, survey ) );
 
 	}
 
@@ -242,7 +238,7 @@ function getGlyphMaterial ( glyphAtlasSpec, rotation ) {
 
 	if ( material === undefined ) {
 
-		material = cacheMaterial( name, new GlyphMaterial( glyphAtlasSpec, rotation, viewer ) );
+		material = cacheMaterial( name, new GlyphMaterial( ctx, glyphAtlasSpec, rotation, viewer ) );
 
 	}
 
@@ -278,6 +274,19 @@ function initCache ( Viewer ) {
 	cache.clear();
 
 	viewer = Viewer;
+	ctx = viewer.ctx;
+
+	ctx.materials = {};
+	ctx.materials.commonUniforms = {
+		fogColor: { value: ctx.cfg.themeColor( 'background' ) },
+		fogDensity: { value: 0.0025 },
+		fogEnabled: { value: 0 },
+		distanceTransparency: { value: 0.0 }
+	};
+
+	ctx.materials.commonDepthUniforms = {
+		datumShift: { value: 0.0 }
+	};
 
 }
 
@@ -304,13 +313,13 @@ function flushCache( surveyIn ) {
 
 function setFog( enable ) {
 
-	MaterialCommon.uniforms.fogEnabled.value = enable ? 1 : 0;
+	ctx.materials.commonUniforms.fogEnabled.value = enable ? 1 : 0;
 
 }
 
 function setDistanceTransparency( distance ) {
 
-	MaterialCommon.uniforms.distanceTransparency.value = distance;
+	ctx.materials.commonUniforms.distanceTransparency.value = distance;
 
 }
 

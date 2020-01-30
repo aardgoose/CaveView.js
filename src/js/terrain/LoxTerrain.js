@@ -2,7 +2,6 @@
 import { CommonTerrain } from './CommonTerrain';
 import { LoxTerrainGeometry } from './LoxTerrainGeometry';
 import { Materials } from '../materials/Materials';
-import { Cfg } from '../core/lib';
 import { FEATURE_TERRAIN } from '../core/constants';
 
 import { MeshLambertMaterial, TextureLoader, Mesh, Box3 } from '../Three';
@@ -39,7 +38,7 @@ LoxTile.prototype.loadOverlay = function ( overlayLoadedCallback ) {
 	const texture = new TextureLoader().load( this.bitmap.image, _overlayLoaded );
 	const self = this;
 
-	texture.anisotropy = Cfg.value( 'anisotropy', 4 );
+	texture.anisotropy = this.ctx.cfg.value( 'anisotropy', 4 );
 
 	return;
 
@@ -92,9 +91,9 @@ LoxTile.prototype.removed = function () {
 
 };
 
-function LoxTerrain ( terrains, offsets ) {
+function LoxTerrain ( ctx, terrains, offsets ) {
 
-	CommonTerrain.call( this );
+	CommonTerrain.call( this, ctx );
 
 	this.type = 'CV.Terrain';
 	this.overlayMaterial = null;

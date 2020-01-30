@@ -1,6 +1,3 @@
-
-import { HudObject } from './HudObject';
-import { Cfg } from '../core/lib';
 import { MutableGlyphString } from '../core/GlyphString';
 import { Materials } from '../materials/Materials';
 
@@ -12,29 +9,26 @@ import {
 	Mesh, Group, Euler
 } from '../Three';
 
-const __direction = new Vector3();
-const __negativeZAxis = new Vector3( 0, 0, -1 );
-const __e = new Euler();
+function Compass ( hudObject ) {
 
-function Compass () {
-
-	const stdWidth  = HudObject.stdWidth;
-	const stdMargin = HudObject.stdMargin;
+	const stdWidth  = hudObject.stdWidth;
+	const stdMargin = hudObject.stdMargin;
+	const cfg = hudObject.ctx.cfg;
 
 	Group.call( this );
 
 	this.name = 'CV.Compass';
 
-	const cg1 = HudObject.getCommonRing();
+	const cg1 = hudObject.getCommonRing();
 
-	const c1 = new Mesh( cg1, new MeshPhongMaterial( { color: Cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ) );
+	const c1 = new Mesh( cg1, new MeshPhongMaterial( { color: cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ) );
 
 	const cg2 = new RingBufferGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 	cg2.translate( 0, 0, 5 );
 
-	HudObject.dropBuffers( cg2 );
+	hudObject.dropBuffers( cg2 );
 
-	const c2 = new Mesh( cg2, new MeshBasicMaterial( { color: Cfg.themeValue( 'hud.compass.top1' ) } ) );
+	const c2 = new Mesh( cg2, new MeshBasicMaterial( { color: cfg.themeValue( 'hud.compass.top1' ) } ) );
 
 	const rMesh = _makeRose();
 
@@ -54,7 +48,7 @@ function Compass () {
 
 	this.lastRotation = 0;
 
-	const material = Materials.getGlyphMaterial( HudObject.atlasSpec, 0 );
+	const material = Materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 	const label = new MutableGlyphString( '000\u00B0', material );
 
 	label.translateX( - label.getWidth() / 2 );
@@ -76,8 +70,8 @@ function Compass () {
 		const vertices = [];
 		const colours = [];
 
-		_makeRose2( Cfg.themeColor( 'hud.compass.bottom1' ), Cfg.themeColor( 'hud.compass.bottom2' ), Math.PI / 4 );
-		_makeRose2( Cfg.themeColor( 'hud.compass.top1' ), Cfg.themeColor( 'hud.compass.top2' ), 0 );
+		_makeRose2( cfg.themeColor( 'hud.compass.bottom1' ),cfg.themeColor( 'hud.compass.bottom2' ), Math.PI / 4 );
+		_makeRose2( cfg.themeColor( 'hud.compass.top1' ), cfg.themeColor( 'hud.compass.top2' ), 0 );
 
 		const positions = new Float32BufferAttribute( vertices.length, 3 );
 		const colors = new Float32BufferAttribute( vertices.length * 3, 3 );
@@ -124,40 +118,47 @@ function Compass () {
 
 Compass.prototype = Object.create( Group.prototype );
 
-Compass.prototype.set = function ( vCamera ) {
+Compass.prototype.set = function () {
 
-	var a;
+	const __direction = new Vector3();
+	const __negativeZAxis = new Vector3( 0, 0, -1 );
+	const __e = new Euler();
 
-	vCamera.getWorldDirection( __direction );
+	return function set ( vCamera ) {
 
-	if ( Math.abs( __direction.z ) < 0.999 ) {
+		var a;
 
-		a = Math.atan2( - __direction.x, __direction.y );
+		vCamera.getWorldDirection( __direction );
 
-	} else {
+		if ( Math.abs( __direction.z ) < 0.999 ) {
 
-		__e.setFromQuaternion( vCamera.quaternion );
-		a = __e.z;
+			a = Math.atan2( - __direction.x, __direction.y );
 
-	}
+		} else {
 
-	if ( a === this.lastRotation ) return;
+			__e.setFromQuaternion( vCamera.quaternion );
+			a = __e.z;
 
-	if ( a < 0 ) a = Math.PI * 2 + a;
+		}
 
-	var degrees = Math.round( _Math.radToDeg( a ) );
+		if ( a === this.lastRotation ) return;
 
-	if ( degrees === 360 ) degrees = 0;
+		if ( a < 0 ) a = Math.PI * 2 + a;
 
-	const res = degrees.toString().padStart( 3, '0' ) + '\u00B0'; // unicode degree symbol
+		var degrees = Math.round( _Math.radToDeg( a ) );
 
-	this.label.replaceString( res );
+		if ( degrees === 360 ) degrees = 0;
 
-	this.rotaryGroup.rotateOnAxis( __negativeZAxis, a - this.lastRotation );
+		const res = degrees.toString().padStart( 3, '0' ) + '\u00B0'; // unicode degree symbol
 
-	this.lastRotation = a;
+		this.label.replaceString( res );
 
-};
+		this.rotaryGroup.rotateOnAxis( __negativeZAxis, a - this.lastRotation );
+
+		this.lastRotation = a;
+	};
+
+}();
 
 export { Compass };
 

@@ -2,7 +2,6 @@ import { STATION_ENTRANCE, SHADING_SURVEY } from '../core/constants';
 
 import { Page } from './Page';
 import { SurveyColours } from '../core/SurveyColours';
-import { Cfg } from '../core/lib';
 
 function SelectionPage ( frame, viewer, container, fileSelector ) {
 
@@ -74,6 +73,7 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 	function _displayPanel ( top ) {
 
 		const surveyColourMap = ( viewer.shadingMode === SHADING_SURVEY ) ? SurveyColours.getSurveyColourMap( viewer.section ) : null;
+		const cfg = self.frame.ctx.cfg;
 
 		nodes = new WeakMap();
 
@@ -160,19 +160,19 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 
 			} else if ( child.type !== undefined && child.type === STATION_ENTRANCE ) {
 
-				key = _makeKey( '\u2229 ', Cfg.themeColorCSS( 'stations.entrances.marker' ) );
+				key = _makeKey( '\u2229 ', cfg.themeColorCSS( 'stations.entrances.marker' ) );
 
 			} else if ( connections > 2 ) { // station at junction
 
-				key = _makeKey( '\u25fc ', Cfg.themeColorCSS( 'stations.junctions.marker' ) );
+				key = _makeKey( '\u25fc ', cfg.themeColorCSS( 'stations.junctions.marker' ) );
 
 			} else if ( connections === 0 ) { // end of splay
 
-				key = _makeKey( '\u25fb ', Cfg.themeColorCSS( 'stations.default.marker' ) );
+				key = _makeKey( '\u25fb ', cfg.themeColorCSS( 'stations.default.marker' ) );
 
 			} else { // normal station in middle or end of leg
 
-				key = _makeKey( '\u25fc ', Cfg.themeColorCSS( 'stations.default.marker' ) );
+				key = _makeKey( '\u25fc ', cfg.themeColorCSS( 'stations.default.marker' ) );
 
 			}
 

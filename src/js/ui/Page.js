@@ -1,6 +1,4 @@
 
-import { Cfg } from '../core/lib';
-
 function Page ( id, x18nPrefix, onTop, onLeave ) {
 
 	const tab  = document.createElement( 'div' );
@@ -26,7 +24,8 @@ Page.prototype.constructor = Page;
 
 Page.prototype.i18n = function ( text ) {
 
-	const tr = Cfg.i18n( this.x18nPrefix + text );
+	const cfg = this.frame.ctx.cfg;
+	const tr = cfg.i18n( this.x18nPrefix + text );
 
 	return ( tr === undefined ) ? text : tr;
 
@@ -225,7 +224,7 @@ Page.prototype.addFileSelect = function ( title, obj, trgObj, property ) {
 	const input = document.createElement( 'input' );
 	const img = document.createElement( 'img' );
 
-	img.src = Cfg.value( 'home' ) + 'images/open.png';
+	img.src = frame.ctx.cfg.value( 'home' ) + 'images/open.png';
 
 	input.id = id;
 	input.classList.add( 'cv-file' );

@@ -5,11 +5,9 @@ import {
 	Float32BufferAttribute
 } from '../Three';
 
-import { Cfg } from '../core/lib';
-
 const unselectedMaterial = new LineBasicMaterial( { color: 0x444444, vertexColors: VertexColors } );
 
-function Legs () {
+function Legs ( ctx ) {
 
 	const geometry = new BufferGeometry();
 
@@ -17,6 +15,7 @@ function Legs () {
 
 	this.type = 'Legs';
 	this.legLengths = [];
+	this.ctx = ctx;
 
 	return this;
 
@@ -149,7 +148,7 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 	this.material = material;
 
 	const legRuns = this.legRuns;
-	const unselectedColor = Cfg.themeColor( 'shading.unselected' );
+	const unselectedColor = this.ctx.cfg.themeColor( 'shading.unselected' );
 
 	var l, run, v;
 

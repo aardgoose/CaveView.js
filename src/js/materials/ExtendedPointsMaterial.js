@@ -1,13 +1,12 @@
 
 import { PointsMaterial, TextureLoader, VertexColors } from '../Three';
-import { Cfg } from '../core/lib';
 import { ColourCache } from '../core/ColourCache';
 
-function ExtendedPointsMaterial () {
+function ExtendedPointsMaterial ( ctx ) {
 
 	PointsMaterial.call( this );
 
-	this.map = new TextureLoader().load( Cfg.value( 'home', '' ) + 'images/disc.png' );
+	this.map = new TextureLoader().load( ctx.cfg.value( 'home', '' ) + 'images/disc.png' );
 	this.color = ColourCache.white;
 	this.opacity = 1.0;
 	this.alphaTest = 0.8;

@@ -1,15 +1,12 @@
-
-import { Cfg } from '../core/lib';
-
 import { FileLoader } from '../Three';
 
 const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
 var tileSets;
 
-function EPSG3857TileSet( tileSetReady ) {
+function EPSG3857TileSet( ctx, tileSetReady ) {
 
-	new FileLoader().setResponseType( 'text' ).load( Cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
+	new FileLoader().setResponseType( 'text' ).load( ctx.cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
 
 	return;
 

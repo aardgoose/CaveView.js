@@ -1,12 +1,12 @@
 
-import { Cfg, replaceExtension } from '../core/lib';
+import { replaceExtension } from '../core/lib';
 import { Svx3dHandler } from './svx3dHandler';
 import { loxHandler } from './loxHandler';
 import { pltHandler } from './pltHandler';
 import { FileLoader, EventDispatcher } from '../Three';
 import { Handler } from './Handler';
 
-function CaveLoader ( callback ) {
+function CaveLoader ( ctx, callback ) {
 
 	if ( ! callback ) {
 
@@ -18,6 +18,7 @@ function CaveLoader ( callback ) {
 	this.dataResponse = null;
 	this.metadataResponse = null;
 	this.requests = [];
+	this.ctx = ctx;
 
 	this.reset();
 
@@ -35,7 +36,7 @@ CaveLoader.prototype.reset = function () {
 
 	this.requests.forEach( function ( request ) { request.abort(); } );
 	this.requests = [];
-	this.models = new Handler();
+	this.models = new Handler( this.ctx );
 
 };
 
@@ -97,13 +98,15 @@ CaveLoader.prototype.loadFiles = function ( files ) {
 
 CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
+	const cfg = this.ctx.cfg;
+
 	this.dispatchEvent( { type: 'progress', name: 'start' } );
 
 	if ( section !== undefined ) this.section = section;
 
 	const self = this;
-	const prefix = Cfg.value( 'surveyDirectory', '' );
-	const loadMetadata = Cfg.value( 'loadMetadata', false );
+	const prefix = cfg.value( 'surveyDirectory', '' );
+	const loadMetadata = cfg.value( 'loadMetadata', false );
 
 	// setup file handler
 	if ( ! this.setHandler( fileName ) ) return false;

@@ -217,7 +217,7 @@ Page.prototype.addFileSelect = function ( title, obj, trgObj, property ) {
 	const div = this.addSelect( title, obj, trgObj, property );
 
 	const label = div.firstChild;
-	const id = 'cv-' + frame.seq++;
+	const id = 'cv-' + frame.getSeq();
 
 	label.for = id;
 	label.classList.add( 'cv-file-label' );
@@ -262,7 +262,7 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 	const cb    = document.createElement( 'input' );
 	const div   = document.createElement( 'div' );
 
-	const id = 'cv-' + frame.seq++;
+	const id = 'cv-' + frame.getSeq();
 
 	div.classList.add( 'control' );
 

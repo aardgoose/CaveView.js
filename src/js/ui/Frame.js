@@ -2,10 +2,16 @@
 
 function Frame () {
 
+	this.reset();
+
+}
+
+Frame.prototype.reset = function () {
+
+	const self = this;
 	// create UI side panel and reveal tabs
 	const frame = document.createElement( 'div' );
 	frame.classList.add( 'cv-frame' );
-
 
 	// create UI box to contain tabs - reorients for small screen widths
 	const tabBox = document.createElement( 'div' );
@@ -28,13 +34,15 @@ function Frame () {
 	tabBox.appendChild( close );
 
 	function _closeFrame ( /* event */ ) {
-console.log( 'c' );
-		this.tabBox.classList.remove( 'onscreen' );
-		this.frame.classList.remove( 'onscreen' );
+
+		self.tabBox.classList.remove( 'onscreen' );
+		self.frame.classList.remove( 'onscreen' );
 
 	}
 
-}
+};
+
+Frame.seq = 0;
 
 Frame.prototype.addPage = function ( page ) {
 
@@ -60,6 +68,13 @@ Frame.prototype.addPage = function ( page ) {
 	return this;
 
 };
+
+Frame.prototype.getSeq = function () {
+
+	return Frame.seq++;
+
+};
+
 
 Frame.prototype.onScreen = function () {
 
@@ -103,12 +118,9 @@ Frame.prototype.clear = function () {
 
 	} );
 
-	this.listeners = [];
-	this.pages     = [];
-	this.inHandler = false;
-	this.controls  = [];
-//	this.frame     = null;
-//	this.tabBox    = null;
+	this.reset();
+
+	return;
 
 };
 

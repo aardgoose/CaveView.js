@@ -1,10 +1,10 @@
 import { GlyphString } from '../core/GlyphString';
-import { Materials } from '../materials/Materials';
 import { Mesh, Group } from '../Three';
 
 
 function Scale( hudObject, container, geometry, material ) {
 
+	const materials = hudObject.ctx.materials;
 	const width  = container.clientWidth;
 	const height = container.clientHeight;
 
@@ -32,7 +32,7 @@ function Scale( hudObject, container, geometry, material ) {
 	this.scaleBar = new Mesh( geometry, material );
 	this.scaleBar.name = 'scale bar';
 
-	this.textMaterial = Materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
+	this.textMaterial = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 
 	this.add( this.scaleBar );
 

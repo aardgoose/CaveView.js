@@ -1,5 +1,4 @@
 import { MutableGlyphString } from '../core/GlyphString';
-import { Materials } from '../materials/Materials';
 
 import {
 	Vector3, Math as _Math,
@@ -14,6 +13,7 @@ function Compass ( hudObject ) {
 	const stdWidth  = hudObject.stdWidth;
 	const stdMargin = hudObject.stdMargin;
 	const cfg = hudObject.ctx.cfg;
+	const materials = hudObject.ctx.materials;
 
 	Group.call( this );
 
@@ -48,7 +48,7 @@ function Compass ( hudObject ) {
 
 	this.lastRotation = 0;
 
-	const material = Materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
+	const material = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 	const label = new MutableGlyphString( '000\u00B0', material );
 
 	label.translateX( - label.getWidth() / 2 );

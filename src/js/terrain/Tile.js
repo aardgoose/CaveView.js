@@ -1,6 +1,5 @@
 
 import { FEATURE_TERRAIN } from '../core/constants';
-import { Materials } from '../materials/Materials';
 
 import {
 	Vector3, Triangle, Box3,
@@ -27,7 +26,7 @@ function onUploadDropBuffer() {
 
 }
 
-function Tile ( x, y, zoom, tileSpec ) {
+function Tile ( ctx, x, y, zoom, tileSpec ) {
 
 	this.x = x;
 	this.y = y;
@@ -49,7 +48,7 @@ function Tile ( x, y, zoom, tileSpec ) {
 	this.boundingBox = null;
 	this.worldBoundingBox = null;
 
-	Mesh.call( this, new BufferGeometry(), Materials.getSurfaceMaterial( 0xff8888 ) );
+	Mesh.call( this, new BufferGeometry(), ctx.materials.getSurfaceMaterial( 0xff8888 ) );
 
 	this.type = 'Tile';
 	this.isTile = false;

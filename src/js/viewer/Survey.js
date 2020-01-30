@@ -12,7 +12,6 @@ import {
 import { StationPosition } from '../core/StationPosition';
 import { ColourCache } from '../core/ColourCache';
 import { Box3Helper } from '../core/Box3';
-import { Materials } from '../materials/Materials';
 import { Entrances } from './Entrances';
 import { Stations } from './Stations';
 import { StationLabels } from './StationLabels';
@@ -981,25 +980,27 @@ Survey.prototype.getBounds = function () {
 
 Survey.prototype.setShadingMode = function ( mode ) {
 
+	const materials = this.ctx.materials;
+
 	var material;
 
 	switch ( mode ) {
 
 	case SHADING_HEIGHT:
 
-		material = Materials.getHeightMaterial( MATERIAL_SURFACE );
+		material = materials.getHeightMaterial( MATERIAL_SURFACE );
 
 		break;
 
 	case SHADING_CURSOR:
 
-		material = Materials.getCursorMaterial( MATERIAL_SURFACE );
+		material = materials.getCursorMaterial( MATERIAL_SURFACE );
 
 		break;
 
 	case SHADING_SINGLE:
 
-		material = Materials.getSurfaceMaterial( this.ctx.cfg.themeValue( 'shading.single' ) );
+		material = materials.getSurfaceMaterial( this.ctx.cfg.themeValue( 'shading.single' ) );
 
 		break;
 
@@ -1007,7 +1008,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 		if ( this.terrain === null ) return false;
 
-		material = Materials.getDepthMaterial( MATERIAL_SURFACE );
+		material = materials.getDepthMaterial( MATERIAL_SURFACE );
 
 		if ( ! material ) return false;
 
@@ -1017,7 +1018,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 		if ( this.terrain === null ) return false;
 
-		material = Materials.getDepthCursorMaterial( MATERIAL_SURFACE );
+		material = materials.getDepthCursorMaterial( MATERIAL_SURFACE );
 
 		if ( ! material ) return false;
 
@@ -1176,31 +1177,41 @@ Survey.prototype.setLegColourByMaterial = function ( mesh, material ) {
 
 Survey.prototype.setLegColourByDepth = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getDepthMaterial( MATERIAL_LINE ) );
+	const materials = this.ctx.materials;
+
+	this.setLegColourByMaterial( mesh, materials.getDepthMaterial( MATERIAL_LINE ) );
 
 };
 
 Survey.prototype.setLegColourByDepthCursor = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getDepthCursorMaterial( MATERIAL_LINE ) );
+	const materials = this.ctx.materials;
+
+	this.setLegColourByMaterial( mesh, materials.getDepthCursorMaterial( MATERIAL_LINE ) );
 
 };
 
 Survey.prototype.setLegColourByHeight = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getHeightMaterial( MATERIAL_LINE ) );
+	const materials = this.ctx.materials;
+
+	this.setLegColourByMaterial( mesh, materials.getHeightMaterial( MATERIAL_LINE ) );
 
 };
 
 Survey.prototype.setLegColourByCursor = function ( mesh ) {
 
-	this.setLegColourByMaterial( mesh, Materials.getCursorMaterial( MATERIAL_LINE ) );
+	const materials = this.ctx.materials;
+
+	this.setLegColourByMaterial( mesh, materials.getCursorMaterial( MATERIAL_LINE ) );
 
 };
 
 Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
 
-	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
+	const materials = this.ctx.materials;
+
+	mesh.setShading( this.selectedSectionIds, _colourSegment, materials.getLineMaterial() );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1213,13 +1224,13 @@ Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
 
 Survey.prototype.setLegColourByLength = function ( mesh ) {
 
-
+	const materials = this.ctx.materials;
 	const colours = ColourCache.getColors( this.gradientName );
 	const colourRange = colours.length - 1;
 	const stats = mesh.stats;
 	const legLengths = mesh.legLengths;
 
-	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
+	mesh.setShading( this.selectedSectionIds, _colourSegment, materials.getLineMaterial() );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1236,6 +1247,7 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 Survey.prototype.setLegColourByDistance = function ( mesh ) {
 
 	const cfg = this.ctx.cfg;
+	const materials = this.ctx.materials;
 
 	const colours = ColourCache.getColors( this.gradientName );
 	const unconnected = cfg.themeColor( 'shading.unconnected' );
@@ -1246,7 +1258,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 	const maxDistance = this.topology.maxDistance;
 	const path = this.highlightPath;
 
-	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
+	mesh.setShading( this.selectedSectionIds, _colourSegment, materials.getLineMaterial() );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1273,6 +1285,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 
 Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
+	const materials = this.ctx.materials;
 	const surveyTree = this.surveyTree;
 
 	var selectedSection = this.selectedSection;
@@ -1283,7 +1296,7 @@ Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
 	if ( this.selectedSectionIds.size === 0 ) selectedSection.getSubtreeIds( this.selectedSectionIds );
 
-	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
+	mesh.setShading( this.selectedSectionIds, _colourSegment, materials.getLineMaterial() );
 
 	function _colourSegment ( vertices, colors, v1, v2, survey ) {
 
@@ -1300,12 +1313,13 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	const routes = this.routes;
 	const cfg = this.ctx.cfg;
+	const materials = this.ctx.materials;
 
 	const c1 = cfg.themeColor( 'routes.active' );
 	const c2 = cfg.themeColor( 'routes.adjacent' );
 	const c3 = cfg.themeColor( 'routes.default' );
 
-	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
+	mesh.setShading( this.selectedSectionIds, _colourSegment, materials.getLineMaterial() );
 
 	function _colourSegment ( vertices, colors, v1, v2 /*, survey */ ) {
 
@@ -1334,6 +1348,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 	const colours = ColourCache.getColors( 'inclination' );
+	const materials = this.ctx.materials;
 
 	const colourRange = colours.length - 1;
 	const hueFactor = colourRange * 2 / Math.PI;
@@ -1341,7 +1356,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 	// pNormal = normal of reference plane in model space
 
-	mesh.setShading( this.selectedSectionIds, _colourSegment, Materials.getLineMaterial() );
+	mesh.setShading( this.selectedSectionIds, _colourSegment, materials.getLineMaterial() );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 

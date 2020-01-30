@@ -1,5 +1,4 @@
 import { MutableGlyphString } from '../core/GlyphString';
-import { Materials } from '../materials/Materials';
 
 import {
 	Float32BufferAttribute,
@@ -65,6 +64,7 @@ BarGeometry.prototype = Object.create( BufferGeometry.prototype );
 function ScaleBar ( hudObject, container, hScale, rightMargin ) {
 
 	const leftMargin = 10;
+	const materials = hudObject.ctx.materials;
 
 	Group.call( this );
 
@@ -79,7 +79,7 @@ function ScaleBar ( hudObject, container, hScale, rightMargin ) {
 	this.position.set( -container.clientWidth / 2 + 45, -container.clientHeight / 2 + leftMargin, 0 );
 	this.scaleMax = container.clientWidth - ( 40 + leftMargin + rightMargin );
 
-	const material = Materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
+	const material = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 	const label = new MutableGlyphString( '--------', material );
 
 	label.translateX( 0 );

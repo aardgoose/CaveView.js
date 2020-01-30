@@ -1,9 +1,10 @@
-import { Materials } from '../materials/Materials';
 import { Point } from './Point';
 
-function Marker( count ) {
+function Marker( ctx, count ) {
 
-	Point.call( this, Materials.getClusterMaterial( count ) );
+	const materials = ctx.materials;
+
+	Point.call( this, materials.getClusterMaterial( count ) );
 
 	return this;
 

@@ -1,14 +1,13 @@
 
 import { CommonTerrain } from './CommonTerrain';
 import { LoxTerrainGeometry } from './LoxTerrainGeometry';
-import { Materials } from '../materials/Materials';
 import { FEATURE_TERRAIN } from '../core/constants';
 
 import { MeshLambertMaterial, TextureLoader, Mesh, Box3 } from '../Three';
 
-function LoxTile( terrain, offsets ) {
+function LoxTile( ctx, terrain, offsets ) {
 
-	Mesh.call( this, new LoxTerrainGeometry( terrain.dtm, offsets ), Materials.getSurfaceMaterial( 0xff8888 ) );
+	Mesh.call( this, new LoxTerrainGeometry( terrain.dtm, offsets ), ctx.materials.getSurfaceMaterial( 0xff8888 ) );
 
 	this.type = 'CV.LoxTile';
 	this.layers.set( FEATURE_TERRAIN );
@@ -105,7 +104,7 @@ function LoxTerrain ( ctx, terrains, offsets ) {
 
 	terrains.forEach( function ( terrain ) {
 
-		const tile = new LoxTile( terrain, offsets );
+		const tile = new LoxTile( ctx, terrain, offsets );
 
 		if ( tile.bitmap !== null ) bitmapCount++;
 

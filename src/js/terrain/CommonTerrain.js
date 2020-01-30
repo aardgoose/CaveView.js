@@ -5,7 +5,6 @@ import {
 	TERRAIN_STENCIL
 } from '../core/constants';
 
-import { Materials } from '../materials/Materials';
 import { CommonTerrainMaterial } from '../materials/CommonTerrainMaterial';
 import { unpackRGBA } from '../core/unpackRGBA';
 import { Overlay } from './Overlay';
@@ -48,9 +47,9 @@ function CommonTerrain ( ctx ) {
 
 }
 
-CommonTerrain.addOverlay = function ( ctx, name, overlayProvider, container, locationDefault ) {
+CommonTerrain.addOverlay = function ( ctx, name, overlayProvider, locationDefault ) {
 
-	overlays[ name ] = new Overlay( ctx, overlayProvider, container );
+	overlays[ name ] = new Overlay( ctx, overlayProvider );
 
 	if ( locationDefault ) locationDefaultOverlay = name;
 
@@ -123,9 +122,10 @@ CommonTerrain.prototype.checkTerrainShadingModes = function ( renderer ) {
 CommonTerrain.prototype.setup = function ( renderer, scene, survey ) {
 
 	const dim = 1024;
+	const materials = this.ctx.materials;
 
 	// set camera frustrum to cover region/survey area
-	const container = renderer.domElement.parentElement;
+	const container = this.ctx.container;
 	const originalRenderTarget = renderer.getRenderTarget();
 
 	var width  = container.clientWidth;
@@ -164,7 +164,7 @@ CommonTerrain.prototype.setup = function ( renderer, scene, survey ) {
 
 	renderer.setRenderTarget( renderTarget );
 
-	scene.overrideMaterial = Materials.getDepthMapMaterial( this );
+	scene.overrideMaterial = materials.getDepthMapMaterial( this );
 
 	renderer.render( scene, rtCamera );
 
@@ -192,6 +192,7 @@ CommonTerrain.prototype.setup = function ( renderer, scene, survey ) {
 CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	const activeOverlay = this.activeOverlay;
+	const materials = this.ctx.materials;
 
 	var material;
 	var hideAttribution = true;
@@ -201,7 +202,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	case SHADING_RELIEF:
 
-		material = Materials.getHypsometricMaterial();
+		material = materials.getHypsometricMaterial();
 
 		break;
 
@@ -214,7 +215,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	case SHADING_CONTOURS:
 
-		material = Materials.getContourMaterial();
+		material = materials.getContourMaterial();
 
 		break;
 
@@ -222,7 +223,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 		if ( locationDefaultOverlay === null ) {
 
-			material = Materials.getHypsometricMaterial();
+			material = materials.getHypsometricMaterial();
 			mode = SHADING_RELIEF;
 			break;
 
@@ -246,7 +247,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 			} else {
 
 				// if initial setting is not valid, default to shaded relief
-				material = Materials.getHypsometricMaterial();
+				material = materials.getHypsometricMaterial();
 				mode = SHADING_RELIEF;
 
 			}

@@ -1,13 +1,12 @@
-
 import { Scale } from './Scale';
-import { Materials } from '../materials/Materials';
 
 import { PlaneBufferGeometry } from '../Three';
 
 function LinearScale ( hudObject, container ) {
 
+	const materials = hudObject.ctx.materials;
 	const geometry = new PlaneBufferGeometry();
-	const material = Materials.getScaleMaterial();
+	const material = materials.getScaleMaterial();
 
 	Scale.call( this, hudObject, container, geometry, material );
 

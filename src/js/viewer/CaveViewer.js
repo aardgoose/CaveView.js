@@ -48,7 +48,7 @@ function CaveViewer ( domID, configuration ) {
 	const height = container.clientHeight;
 
 	const cfg = new Cfg( configuration );
-	const ctx = { cfg: cfg };
+	const ctx = { cfg: cfg, container: container };
 
 	this.ctx = ctx;
 
@@ -71,7 +71,7 @@ function CaveViewer ( domID, configuration ) {
 	scene.fog = fog;
 	scene.name = 'CV.Viewer';
 
-	const cameraManager = new CameraManager( ctx, container, renderer, scene );
+	const cameraManager = new CameraManager( ctx, renderer, scene );
 
 	const raycaster = new Raycaster();
 	raycaster.params.Points.threshold = 2;
@@ -424,7 +424,7 @@ function CaveViewer ( domID, configuration ) {
 	_enableLayer( FEATURE_ANNOTATIONS, 'annotations' );
 	_enableLayer( SURVEY_WARNINGS,     'warnings' );
 
-	Materials.initCache( this );
+	ctx.materials = new Materials( this );
 
 	this.addEventListener( 'change', viewChanged );
 
@@ -687,7 +687,7 @@ function CaveViewer ( domID, configuration ) {
 
 		survey.setupTerrain( terrain );
 
-		Materials.setTerrain( terrain );
+		ctx.materials.setTerrain( terrain );
 
 		locationControls.hasLocation( survey, locationChecked );
 
@@ -882,7 +882,7 @@ function CaveViewer ( domID, configuration ) {
 
 	self.addOverlay = function ( name, overlayProvider, locationDefault ) {
 
-		CommonTerrain.addOverlay( ctx, name, overlayProvider, container, locationDefault );
+		CommonTerrain.addOverlay( ctx, name, overlayProvider, locationDefault );
 
 	};
 
@@ -1145,7 +1145,7 @@ function CaveViewer ( domID, configuration ) {
 
 		setScale();
 
-		Materials.flushCache( survey );
+		ctx.materials.flushCache( survey );
 
 		terrain = survey.terrain;
 
@@ -1159,7 +1159,7 @@ function CaveViewer ( domID, configuration ) {
 
 			if ( navigator.onLine ) {
 
-				terrain = new WebTerrain( ctx, survey, _tilesLoaded, container );
+				terrain = new WebTerrain( ctx, survey, _tilesLoaded );
 
 				hud.getProgressDial( 0 ).watch( terrain );
 
@@ -1400,7 +1400,7 @@ function CaveViewer ( domID, configuration ) {
 
 			if ( popup !== null ) return;
 
-			popup = new StationPopup( ctx, container, station, survey, depth, formatters.station, ( shadingMode === SHADING_DISTANCE ), self.warnings );
+			popup = new StationPopup( ctx, station, survey, depth, formatters.station, ( shadingMode === SHADING_DISTANCE ), self.warnings );
 
 			survey.add( popup );
 

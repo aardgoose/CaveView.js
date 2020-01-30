@@ -13,7 +13,9 @@ import {
 	MeshBasicMaterial, BackSide, Vector2
 } from '../Three';
 
-function CameraManager ( ctx, container, renderer, scene ) {
+function CameraManager ( ctx, renderer, scene ) {
+
+	const container = ctx.container;
 
 	var width = container.clientWidth;
 	var height = container.clientHeight;

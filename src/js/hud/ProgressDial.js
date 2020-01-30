@@ -1,5 +1,4 @@
 import { MutableGlyphString } from '../core/GlyphString';
-import { Materials } from '../materials/Materials';
 
 import {
 	RingBufferGeometry,
@@ -11,6 +10,7 @@ import {
 function ProgressDial ( hudObject, addText, ring, viewer ) {
 
 	const cfg = hudObject.ctx.cfg;
+	const materials = hudObject.ctx.materials;
 	const stdWidth  = hudObject.stdWidth;
 	const stdMargin = hudObject.stdMargin;
 
@@ -56,7 +56,7 @@ function ProgressDial ( hudObject, addText, ring, viewer ) {
 
 	if ( addText ) {
 
-		var glyphMaterial = Materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
+		var glyphMaterial = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 
 		const pcent = new MutableGlyphString( '----', glyphMaterial );
 

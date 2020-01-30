@@ -1,7 +1,6 @@
 
 import { FEATURE_ENTRANCES, CLUSTER_MARKERS } from '../core/constants';
 import { GlyphString } from '../core/GlyphString';
-import { Materials } from '../materials/Materials';
 import { Marker } from './Marker';
 import { Object3D, Vector3, Triangle, Plane } from '../Three';
 
@@ -217,7 +216,7 @@ QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
 	if ( this.quadMarker === null ) {
 
-		const quadMarker = new Marker( this.count );
+		const quadMarker = new Marker( this.ctx, this.count );
 
 		// set to center of distribution of markers in this quad.
 		quadMarker.position.copy( this.centroid ).divideScalar( this.count );
@@ -323,6 +322,7 @@ ClusterMarkers.prototype.onRemoved = function () {
 ClusterMarkers.prototype.addMarker = function ( node, label ) {
 
 	const cfg = this.ctx.cfg;
+	const materials = this.ctx.materials;
 
 	// create marker
 	const atlasSpec = {
@@ -331,7 +331,7 @@ ClusterMarkers.prototype.addMarker = function ( node, label ) {
 		font: 'normal helvetica,sans-serif'
 	};
 
-	const material = Materials.getGlyphMaterial( atlasSpec, Math.PI / 4 );
+	const material = materials.getGlyphMaterial( atlasSpec, Math.PI / 4 );
 
 	material.depthTest = true;
 	material.transparent = false;

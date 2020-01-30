@@ -1,5 +1,4 @@
 import { MutableGlyphString } from '../core/GlyphString';
-import { Materials } from '../materials/Materials';
 
 import {
 	Vector3, Math as _Math,
@@ -19,6 +18,7 @@ function AHI ( hudObject ) {
 	const stdMargin = hudObject.stdMargin;
 
 	const cfg = hudObject.ctx.cfg;
+	const materials = hudObject.ctx.materials;
 
 	const c1 = cfg.themeColor( 'hud.ahi.sky' );
 	const c2 = cfg.themeColor( 'hud.ahi.earth' );
@@ -119,7 +119,7 @@ function AHI ( hudObject ) {
 
 	this.globe = globe;
 
-	const material = Materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
+	const material = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 	const label = new MutableGlyphString( '-90\u00B0', material );
 
 	label.translateX( - label.getWidth() / 2 );

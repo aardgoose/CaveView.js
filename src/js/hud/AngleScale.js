@@ -1,6 +1,5 @@
 import { ColourCache } from '../core/ColourCache';
 import { GlyphString } from '../core/GlyphString';
-import { Materials } from '../materials/Materials';
 
 import {
 	Vector3,
@@ -14,6 +13,7 @@ function AngleScale ( hudObject, caption ) {
 
 	const stdWidth  = hudObject.stdWidth;
 	const stdMargin = hudObject.stdMargin;
+	const materials = hudObject.ctx.materials;
 
 	const pNormal = new Vector3( 1, 0, 0 );
 
@@ -51,7 +51,7 @@ function AngleScale ( hudObject, caption ) {
 
 	this.name = 'CV.AngleScale';
 
-	const material = Materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
+	const material = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 	const label = new GlyphString( caption, material );
 
 	label.translateX( - label.getWidth() / 2 );

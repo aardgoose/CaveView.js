@@ -24,7 +24,7 @@ PopupGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 var commonGeometry = null;
 
-function Popup( ctx, container ) {
+function Popup( ctx ) {
 
 	if ( commonGeometry === null ) commonGeometry = new PopupGeometry();
 
@@ -34,7 +34,6 @@ function Popup( ctx, container ) {
 	this.layers.set( LEG_CAVE );
 	this.type = 'Popup';
 	this.renderOrder = Infinity;
-	this.container = container;
 	this.ctx = ctx;
 
 	return this;
@@ -54,6 +53,7 @@ Popup.prototype.addLine = function ( line ) {
 Popup.prototype.finish = function () {
 
 	const cfg = this.ctx.cfg;
+	const container = this.ctx.container;
 	const cellSize = 32;
 	const fontSize = 20;
 
@@ -101,7 +101,7 @@ Popup.prototype.finish = function () {
 
 	texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
 
-	const material = new PopupMaterial( this.container, texture, 0 );
+	const material = new PopupMaterial( container, texture, 0 );
 
 	this.material = material;
 	this.material.needsUpdate = true;

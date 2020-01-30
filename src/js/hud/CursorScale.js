@@ -1,7 +1,6 @@
 
 import { Scale } from './Scale';
 import { MutableGlyphString } from '../core/GlyphString';
-import { Materials } from '../materials/Materials';
 
 import {
 	PlaneBufferGeometry, Float32BufferAttribute, BufferGeometry,
@@ -11,6 +10,7 @@ import {
 function CursorScale ( hudObject, container ) {
 
 	const cfg = hudObject.ctx.cfg;
+	const materials = hudObject.ctx.materials;
 	const geometry = new PlaneBufferGeometry();
 
 	Scale.call( this, hudObject, container, geometry, new MeshBasicMaterial( { color: 0x676767 } ) );
@@ -43,7 +43,7 @@ function CursorScale ( hudObject, container ) {
 		font: 'bold helvetica,sans-serif'
 	};
 
-	const material = Materials.getGlyphMaterial( atlasSpec, 0 );
+	const material = materials.getGlyphMaterial( atlasSpec, 0 );
 
 	const cursorLabel = new MutableGlyphString( '      ', material );
 

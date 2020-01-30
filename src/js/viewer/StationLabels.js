@@ -2,7 +2,6 @@ import { Group, Vector3 } from '../Three';
 
 import { CAMERA_OFFSET, LABEL_STATION, LABEL_STATION_COMMENT } from '../core/constants';
 import { GlyphString } from '../core/GlyphString';
-import { Materials } from '../materials/Materials';
 
 const _tmpVector3 = new Vector3();
 
@@ -15,21 +14,22 @@ function StationLabels ( ctx, stations, commentCount ) {
 	this.commentCount = commentCount;
 
 	const cfg = ctx.cfg;
+	const materials = ctx.materials;
 
 	const atlasSpecDefault = {
 		color: cfg.themeColorCSS( 'stations.default.text' ),
 		font: cfg.themeValue( 'stations.font' )
 	};
 
-	this.defaultLabelMaterial = Materials.getGlyphMaterial( atlasSpecDefault, 0 );
-	this.splayLabelMaterial = Materials.getGlyphMaterial( atlasSpecDefault, 0 );
+	this.defaultLabelMaterial = materials.getGlyphMaterial( atlasSpecDefault, 0 );
+	this.splayLabelMaterial = materials.getGlyphMaterial( atlasSpecDefault, 0 );
 
 	const atlasSpecJunction = {
 		color: cfg.themeColorCSS( 'stations.junctions.text' ),
 		font: cfg.themeValue( 'stations.font' )
 	};
 
-	this.junctionLabelMaterial = Materials.getGlyphMaterial( atlasSpecJunction, 0 );
+	this.junctionLabelMaterial = materials.getGlyphMaterial( atlasSpecJunction, 0 );
 
 }
 

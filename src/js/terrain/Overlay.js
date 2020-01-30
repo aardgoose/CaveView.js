@@ -12,10 +12,9 @@ const missingMaterial = new MeshLambertMaterial( { transparent: true, opacity: 0
 
 missingMaterial.setThroughMode = function () {};
 
-function Overlay ( ctx, overlayProvider, container ) {
+function Overlay ( ctx, overlayProvider ) {
 
 	this.provider = overlayProvider;
-	this.container = container;
 	this.active = false;
 	this.hasCoverage = false;
 	this.crsSupported = overlayProvider.crsSupported === undefined ? [ 'EPSG:3857', 'EPSG:4326', 'ORIGINAL' ] : overlayProvider.crsSupported;
@@ -80,7 +79,7 @@ Overlay.prototype.showAttribution = function () {
 
 	const attribution = this.attribution;
 
-	if ( attribution !== undefined ) this.container.appendChild( attribution );
+	if ( attribution !== undefined ) this.ctx.container.appendChild( attribution );
 
 };
 

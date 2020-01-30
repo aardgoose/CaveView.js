@@ -1,4 +1,3 @@
-import { Materials } from '../materials/Materials';
 import { CommonTerrain } from './CommonTerrain';
 import { Tile } from './Tile';
 import { WorkerPool } from '../core/WorkerPool';
@@ -12,7 +11,7 @@ import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 const __frustum = new Frustum();
 const __matrix4 = new Matrix4();
 
-function WebTerrain ( ctx, survey, onLoaded, container ) {
+function WebTerrain ( ctx, survey, onLoaded ) {
 
 	CommonTerrain.call( this, ctx );
 
@@ -27,7 +26,6 @@ function WebTerrain ( ctx, survey, onLoaded, container ) {
 	this.limits = survey.limits;
 	this.flatZ = survey.modelLimits.max.z;
 	this.offsets = survey.offsets;
-	this.container = container;
 
 	this.onLoaded        = onLoaded;
 	this.childrenLoading = 0;
@@ -43,7 +41,7 @@ function WebTerrain ( ctx, survey, onLoaded, container ) {
 	this.coverage = null;
 	this.TS = null;
 
-	this.material = Materials.getCursorMaterial();
+	this.material = ctx.materials.getCursorMaterial();
 	this.canZoom = true;
 
 }
@@ -185,7 +183,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 	// get Tile instance.
 
-	const tile = existingTile ? existingTile : new Tile( x, y, z, tileSpec );
+	const tile = existingTile ? existingTile : new Tile(this.ctx, x, y, z, tileSpec );
 
 	tile.setPending( parentTile ); // tile load/reload pending
 

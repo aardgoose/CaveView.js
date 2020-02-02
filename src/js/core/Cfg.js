@@ -1,5 +1,5 @@
 
-import { Color, FileLoader, EventDispatcher, Math as _Math } from '../Three';
+import { Color, FileLoader, EventDispatcher, MathUtils } from '../Three';
 import x18n from 'x18n';
 import lang_en from './defaultLanguage.json';
 import { defaultTheme } from './defaultTheme';
@@ -111,7 +111,7 @@ Cfg.prototype.themeValue = function ( name ) {
 
 Cfg.prototype.themeAngle = function ( name ) {
 
-	return _Math.degToRad( this.themeValue ( name ) );
+	return MathUtils.degToRad( this.themeValue ( name ) );
 
 };
 

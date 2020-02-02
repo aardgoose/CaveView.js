@@ -47,7 +47,7 @@ export { Raycaster } from 'three/src/core/Raycaster.js';
 export { Layers } from 'three/src/core/Layers.js';
 export { EventDispatcher } from 'three/src/core/EventDispatcher.js';
 export { Triangle } from 'three/src/math/Triangle.js';
-export { _Math as Math } from 'three/src/math/Math.js';
+export { MathUtils  } from 'three/src/math/MathUtils.js';
 export { Spherical } from 'three/src/math/Spherical.js';
 export { Plane } from 'three/src/math/Plane.js';
 export { Frustum } from 'three/src/math/Frustum.js';
@@ -65,9 +65,9 @@ export { Quaternion } from 'three/src/math/Quaternion.js';
 export { Color } from 'three/src/math/Color.js';
 export * from 'three/src/constants.js';
 
-import { _Math } from 'three/src/math/Math.js';
+import { MathUtils } from 'three/src/math/MathUtils.js';
 
-_Math.generateUUID = function () { return null; };
+MathUtils.generateUUID = function () { return null; };
 
 import { Object3D } from 'three/src/core/Object3D.js';
 

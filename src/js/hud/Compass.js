@@ -1,7 +1,7 @@
 import { MutableGlyphString } from '../core/GlyphString';
 
 import {
-	Vector3, Math as _Math,
+	Vector3, MathUtils,
 	RingBufferGeometry,
 	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
 	VertexColors, BufferGeometry, Float32BufferAttribute,
@@ -145,7 +145,7 @@ Compass.prototype.set = function () {
 
 		if ( a < 0 ) a = Math.PI * 2 + a;
 
-		var degrees = Math.round( _Math.radToDeg( a ) );
+		var degrees = Math.round( MathUtils.radToDeg( a ) );
 
 		if ( degrees === 360 ) degrees = 0;
 

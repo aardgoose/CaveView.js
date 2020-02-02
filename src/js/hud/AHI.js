@@ -1,7 +1,7 @@
 import { MutableGlyphString } from '../core/GlyphString';
 
 import {
-	Vector3, Math as _Math,
+	Vector3, MathUtils,
 	BufferGeometry, SphereBufferGeometry,
 	LineBasicMaterial, MeshPhongMaterial,
 	Float32BufferAttribute,
@@ -150,7 +150,7 @@ AHI.prototype.set = function () {
 		this.globe.rotateOnAxis( __xAxis, pitch - this.lastPitch );
 		this.lastPitch = pitch;
 
-		this.label.replaceString( String( Math.round( _Math.radToDeg( pitch ) ) + '\u00B0' ).padStart( 4, ' ' ) );
+		this.label.replaceString( String( Math.round( MathUtils.radToDeg( pitch ) ) + '\u00B0' ).padStart( 4, ' ' ) );
 
 	};
 

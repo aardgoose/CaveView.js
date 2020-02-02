@@ -9,7 +9,7 @@ import { StereoEffect } from './StereoEffect';
 
 import {
 	OrthographicCamera, PerspectiveCamera,
-	Math as _Math,
+	MathUtils,
 	MeshBasicMaterial, BackSide, Vector2
 } from '../Three';
 
@@ -180,7 +180,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		case CAMERA_PERSPECTIVE: // eslint-disable-line no-fallthrough
 
-			offsetLength = 4 * height * Math.tan( _Math.DEG2RAD * perspectiveCamera.fov / 2 ) / orthographicCamera.zoom / 2;
+			offsetLength = 4 * height * Math.tan( MathUtils.DEG2RAD * perspectiveCamera.fov / 2 ) / orthographicCamera.zoom / 2;
 
 			offset.setLength( offsetLength );
 
@@ -192,7 +192,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 			offsetLength = offset.length();
 
-			orthographicCamera.zoom = 2 * height * Math.tan( _Math.DEG2RAD * perspectiveCamera.fov / 2 ) / offsetLength;
+			orthographicCamera.zoom = 2 * height * Math.tan( MathUtils.DEG2RAD * perspectiveCamera.fov / 2 ) / offsetLength;
 
 			activeCamera = orthographicCamera;
 

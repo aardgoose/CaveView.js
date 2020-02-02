@@ -5,7 +5,7 @@ import {
 	Quaternion,
 	Matrix4,
 	Euler,
-	Math as _Math
+	MathUtils
 } from '../Three';
 
 import { CAMERA_OFFSET } from '../core/constants';
@@ -67,7 +67,7 @@ CameraMove.fitBox = function ( camera, box, viewAxis ) {
 
 	if ( camera.isPerspectiveCamera ) {
 
-		const tan2 = 2 * Math.tan( _Math.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
+		const tan2 = 2 * Math.tan( MathUtils.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
 
 		const e1 = dY / tan2;
 		const e2 = ( 1 / camera.aspect ) * dX / tan2;
@@ -137,7 +137,7 @@ CameraMove.prototype.prepareRotation = function ( endCamera, orientation ) {
 	this.endQuaternion.setFromRotationMatrix( __m4 ).normalize();
 
 	// rotation to nearest degree
-	this.rotation = Math.round( 2 * Math.acos( Math.abs( _Math.clamp( this.endQuaternion.dot( camera.quaternion ), - 1, 1 ) ) ) * _Math.RAD2DEG );
+	this.rotation = Math.round( 2 * Math.acos( Math.abs( MathUtils.clamp( this.endQuaternion.dot( camera.quaternion ), - 1, 1 ) ) ) * MathUtils.RAD2DEG );
 
 };
 

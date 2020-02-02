@@ -7,7 +7,7 @@
 
 import {
 	Euler,
-	Math as _Math,
+	MathUtils,
 	Vector3,
 	Quaternion,
 	Object3D,
@@ -174,13 +174,13 @@ var LocationControls = function ( cameraManager ) {
 
 		if ( scope.enabled === false ) return;
 
-		let alpha = deviceOrientation.alpha ? _Math.degToRad( deviceOrientation.alpha ) + alphaOffset : 0; // Z
+		let alpha = deviceOrientation.alpha ? MathUtils.degToRad( deviceOrientation.alpha ) + alphaOffset : 0; // Z
 
-		let beta = deviceOrientation.beta ? _Math.degToRad( deviceOrientation.beta ) : 0; // X'
+		let beta = deviceOrientation.beta ? MathUtils.degToRad( deviceOrientation.beta ) : 0; // X'
 
-		let gamma = deviceOrientation.gamma ? _Math.degToRad( deviceOrientation.gamma ) : 0; // Y''
+		let gamma = deviceOrientation.gamma ? MathUtils.degToRad( deviceOrientation.gamma ) : 0; // Y''
 
-		let orient = screenOrientation ? _Math.degToRad( screenOrientation ) : 0; // O
+		let orient = screenOrientation ? MathUtils.degToRad( screenOrientation ) : 0; // O
 
 		getQuaternion( __quaternion1, alpha, beta, gamma, orient );
 
@@ -189,7 +189,7 @@ var LocationControls = function ( cameraManager ) {
 
 		const angle = __vector3.angleTo( Object3D.DefaultUp );
 
-		selectCameraType( Math.abs( angle * _Math.RAD2DEG - 90 ) );
+		selectCameraType( Math.abs( angle * MathUtils.RAD2DEG - 90 ) );
 
 		if ( cameraManager.mode === CAMERA_PERSPECTIVE ) {
 

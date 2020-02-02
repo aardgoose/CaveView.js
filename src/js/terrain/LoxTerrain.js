@@ -12,6 +12,7 @@ function LoxTile( ctx, terrain, offsets ) {
 	this.type = 'CV.LoxTile';
 	this.layers.set( FEATURE_TERRAIN );
 	this.overlayMaterial = null;
+	this.ctx = ctx;
 
 	if ( terrain.bitmap === undefined ) {
 

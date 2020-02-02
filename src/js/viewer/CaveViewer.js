@@ -883,13 +883,13 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
-	self.addOverlay = function ( name, overlayProvider, locationDefault ) {
+	this.addOverlay = function ( name, overlayProvider, locationDefault ) {
 
 		CommonTerrain.addOverlay( ctx, name, overlayProvider, locationDefault );
 
 	};
 
-	self.addFormatters = function ( stationFormatter ) {
+	this.addFormatters = function ( stationFormatter ) {
 
 		formatters.station = stationFormatter;
 

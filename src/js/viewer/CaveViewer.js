@@ -470,9 +470,9 @@ function CaveViewer ( domID, configuration ) {
 			}
 		} );
 
-		name = 'has' + name.substr( 0, 1 ).toUpperCase() + name.substr( 1 );
+		const hasName = 'has' + name.substr( 0, 1 ).toUpperCase() + name.substr( 1 );
 
-		Object.defineProperty( self, name, {
+		Object.defineProperty( self, hasName, {
 			get: function () { return survey.hasFeature( layerTag ); }
 		} );
 

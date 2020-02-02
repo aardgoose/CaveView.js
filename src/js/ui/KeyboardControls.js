@@ -15,7 +15,7 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 	function keyDown ( event ) {
 
-		if ( ! viewer.surveyLoaded ) return;
+		if ( ! viewer.surveyLoaded || ! viewer.mouseOver ) return;
 
 		if ( handleKeyCommon( event ) ) return;
 

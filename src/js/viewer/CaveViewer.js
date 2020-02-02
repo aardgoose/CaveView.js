@@ -136,6 +136,7 @@ function CaveViewer ( domID, configuration ) {
 
 	var viewState;
 	var savedView = null;
+	var mouseOver = false;
 
 	var hasLocation = false;
 	var trackLocation = false;
@@ -147,6 +148,10 @@ function CaveViewer ( domID, configuration ) {
 
 		'container': {
 			value: container
+		},
+
+		'mouseOver': {
+			get: function () { return mouseOver; }
 		},
 
 		'reset': {
@@ -428,6 +433,9 @@ function CaveViewer ( domID, configuration ) {
 
 	ctx.materials = materials;
 	ctx.glyphStringCache = new Map();
+
+	container.addEventListener( 'mouseover', function () { console.log( 'x'); mouseOver = true; } );
+	container.addEventListener( 'mouseleave', function () { console.log( 'y'); mouseOver = false; } );
 
 	this.addEventListener( 'change', viewChanged );
 

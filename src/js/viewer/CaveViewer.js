@@ -74,7 +74,6 @@ function CaveViewer ( domID, configuration ) {
 	const cameraManager = new CameraManager( ctx, renderer, scene );
 
 	const raycaster = new Raycaster();
-	raycaster.params.Points.threshold = 2;
 
 	// setup lighting
 	const lightingManager = new LightingManager( ctx, scene );

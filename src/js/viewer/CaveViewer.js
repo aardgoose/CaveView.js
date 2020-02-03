@@ -434,8 +434,8 @@ function CaveViewer ( domID, configuration ) {
 	ctx.materials = materials;
 	ctx.glyphStringCache = new Map();
 
-	container.addEventListener( 'mouseover', function () { console.log( 'x'); mouseOver = true; } );
-	container.addEventListener( 'mouseleave', function () { console.log( 'y'); mouseOver = false; } );
+	container.addEventListener( 'mouseover', function () { mouseOver = true; } );
+	container.addEventListener( 'mouseleave', function () { mouseOver = false; } );
 
 	this.addEventListener( 'change', viewChanged );
 

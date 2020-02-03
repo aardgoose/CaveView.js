@@ -1074,6 +1074,8 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 	function onKeyDown( event ) {
 
+		event.preventDefault();
+
 		if ( scope.enabled === false || scope.enableKeys === false ) return;
 		if ( ! viewer.mouseOver ) return;
 

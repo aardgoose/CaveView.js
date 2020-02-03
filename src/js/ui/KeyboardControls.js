@@ -15,6 +15,8 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 	function keyDown ( event ) {
 
+		event.preventDefault();
+
 		if ( ! viewer.surveyLoaded || ! viewer.mouseOver ) return;
 
 		if ( handleKeyCommon( event ) ) return;
@@ -45,28 +47,24 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 			case 69: // 'E' - mouse wheel tilt
 
-				event.preventDefault();
 				viewer.wheelTilt = ! viewer.wheelTilt;
 
 				break;
 
 			case 70: // '<ctrl>F'
 
-				event.preventDefault();
 				if ( viewer.hasSurfaceLegs ) viewer.surfaceLegs = ! viewer.surfaceLegs;
 
 				break;
 
 			case 76: // '<ctrl>L'
 
-				event.preventDefault();
 				if ( viewer.hasLegs ) viewer.legs = ! viewer.legs;
 
 				break;
 
 			case 78: // '<ctrl>N' (not available in Chrome)
 
-				event.preventDefault();
 				if ( viewer.hasStationLabels ) viewer.stationLabels = ! viewer.stationLabels;
 
 				break;
@@ -304,11 +302,13 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 			case 83: // '<alt>S' - South
 
 				viewer.svxControlMode = ! viewer.svxControlMode;
+
 				break;
 
 			case 88: // '<alt>X'
 
 				viewer.zoomToCursor = ! viewer.zoomToCursor;
+
 				break;
 
 			default:

@@ -588,7 +588,7 @@ function CaveViewer ( domID, configuration ) {
 
 				container.requestFullscreen();
 
-			} else if ( container.msfullscreenElement ) {
+			} else if ( document.msfullscreenElement === null) {
 
 				container.msRequestFullscreen();
 

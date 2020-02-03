@@ -437,6 +437,9 @@ function CaveViewer ( domID, configuration ) {
 	container.addEventListener( 'mouseover', function () { mouseOver = true; } );
 	container.addEventListener( 'mouseleave', function () { mouseOver = false; } );
 
+	container.addEventListener( 'fullscreenchange', fullscreenChange );
+	container.addEventListener( 'msfullscreenchange', fullscreenChange );
+
 	this.addEventListener( 'change', viewChanged );
 
 	function viewChanged( event ) {
@@ -460,9 +463,6 @@ function CaveViewer ( domID, configuration ) {
 	caveLoader = new CaveLoader( ctx, caveLoaded );
 
 	hud.getProgressDial( 0 ).watch( caveLoader );
-
-	// check if we are defaulting to full screen
-	if ( isFullscreen() ) setBrowserFullscreen( true );
 
 	viewState = new ViewState( this );
 
@@ -560,42 +560,53 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
-	function setFullscreen ( targetState ) {
+	function fullscreenChange () {
 
-		if ( isFullscreen() !== targetState ) {
+		if ( document.fullscreenElement || document.msfullscreenElement ) {
 
-			container.classList.toggle( 'toggle-fullscreen' );
+			container.classList.add( 'toggle-fullscreen' );
 
-			setBrowserFullscreen( targetState );
+		} else {
 
-			resize();
-
-			self.dispatchEvent( { type: 'change', name: 'fullscreen' } );
+			container.classList.remove( 'toggle-fullscreen' );
 
 		}
 
+		resize();
+		self.dispatchEvent( { type: 'change', name: 'fullscreen' } );
+
 	}
 
-	function setBrowserFullscreen ( targetState ) {
+	function setFullscreen ( targetState ) {
+
+		if ( isFullscreen() === targetState ) return;
 
 		if ( targetState ) {
 
-			if ( container.webkitRequestFullscreen ) {
-				container.webkitRequestFullscreen();
-			} else if ( container.mozRequestFullScreen ) {
-				container.mozRequestFullScreen();
-			} else if ( container.msRequestFullscreen ) {
+			container.classList.add( 'toggle-fullscreen' );
+
+			if ( document.fullscreenElement === null ) {
+
+				container.requestFullscreen();
+
+			} else if ( container.msfullscreenElement ) {
+
 				container.msRequestFullscreen();
+
 			}
 
 		} else {
 
-			if ( document.webkitExitFullscreen ) {
-				document.webkitExitFullscreen();
-			} else if ( document.mozCancelFullScreen ) {
-				document.mozCancelFullScreen();
-			} else if ( document.msExitFullscreen ) {
+			container.classList.remove( 'toggle-fullscreen' );
+
+			if ( document.fullscreenElement ) {
+
+				document.exitFullscreen();
+
+			} else if ( document.msfullscreenElement ) {
+
 				document.msExitFullscreen();
+
 			}
 
 		}

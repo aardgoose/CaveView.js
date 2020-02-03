@@ -29,7 +29,8 @@ const defaultView = {
 	traces: false,
 	HUD: true,
 	fog: false,
-	warnings: false
+	warnings: false,
+	fullscreen: false
 };
 
 const dynamicView = {

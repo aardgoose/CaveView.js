@@ -42,6 +42,8 @@ function CaveViewer ( domID, configuration ) {
 
 	const container = document.getElementById( domID );
 
+	this.container = container;
+
 	if ( ! container ) alert( 'No container DOM object [' + domID + '] available' );
 
 	const width = container.clientWidth;
@@ -51,6 +53,11 @@ function CaveViewer ( domID, configuration ) {
 	const ctx = { cfg: cfg, container: container };
 
 	this.ctx = ctx;
+
+	const materials = new Materials( this );
+
+	ctx.materials = materials;
+	ctx.glyphStringCache = new Map();
 
 	container.style.backgroundColor = cfg.themeValue( 'background' );
 
@@ -84,7 +91,7 @@ function CaveViewer ( domID, configuration ) {
 	controls.addEventListener( 'change', cameraMoved );
 	controls.addEventListener( 'end', onCameraMoveEnd );
 
-	const locationControls = new LocationControls( cameraManager );
+	const locationControls = new LocationControls( cameraManager, ctx );
 	locationControls.addEventListener( 'change', cameraMoved );
 	locationControls.addEventListener( 'end', onCameraMoveEnd );
 	locationControls.addEventListener( 'accuracy', onLocationAccuracyChange );
@@ -144,10 +151,6 @@ function CaveViewer ( domID, configuration ) {
 	window.addEventListener( 'resize', resize );
 
 	Object.defineProperties( this, {
-
-		'container': {
-			value: container
-		},
 
 		'mouseOver': {
 			get: function () { return mouseOver; }
@@ -428,11 +431,6 @@ function CaveViewer ( domID, configuration ) {
 	_enableLayer( FEATURE_ANNOTATIONS, 'annotations' );
 	_enableLayer( SURVEY_WARNINGS,     'warnings' );
 
-	const materials = new Materials( this );
-
-	ctx.materials = materials;
-	ctx.glyphStringCache = new Map();
-
 	container.addEventListener( 'mouseover', function () { mouseOver = true; } );
 	container.addEventListener( 'mouseleave', function () { mouseOver = false; } );
 
@@ -662,7 +660,7 @@ function CaveViewer ( domID, configuration ) {
 
 		terrain.setThroughMode( mode );
 
-		materials.setDistanceTransparency( mode === TERRAIN_BLEND ? 200 : 0 );
+		materials.distanceTransparency = mode === TERRAIN_BLEND ? 200 : 0;
 
 		setTerrainShadingMode( terrainShadingMode );
 
@@ -742,7 +740,7 @@ function CaveViewer ( domID, configuration ) {
 			// disable location controls
 			locationControls.disconnect();
 
-			terrain.setScale( 0.0 );
+			if ( terrain !== null ) terrain.setScale( 0.0 );
 
 			// restore previous settings
 			self.setView( savedView, null );

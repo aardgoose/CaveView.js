@@ -29,7 +29,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 	this.cameraManager = cameraManager;
 
-	this.domElement = domElement;
+	const element = domElement;
 
 	// Set to false to disable this control
 	this.enabled = true;
@@ -250,20 +250,18 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 	this.dispose = function () {
 
-		const el = scope.domElement;
+		element.removeEventListener( 'contextmenu', onContextMenu, false );
+		element.removeEventListener( 'mousedown', onMouseDown, false );
+		element.removeEventListener( 'wheel', onMouseWheel, false );
 
-		el.removeEventListener( 'contextmenu', onContextMenu, false );
-		el.removeEventListener( 'mousedown', onMouseDown, false );
-		el.removeEventListener( 'wheel', onMouseWheel, false );
-
-		el.removeEventListener( 'touchstart', onTouchStart, false );
-		el.removeEventListener( 'touchend', onTouchEnd, false );
-		el.removeEventListener( 'touchmove', onTouchMove, false );
+		element.removeEventListener( 'touchstart', onTouchStart, false );
+		element.removeEventListener( 'touchend', onTouchEnd, false );
+		element.removeEventListener( 'touchmove', onTouchMove, false );
 
 		document.removeEventListener( 'mousemove', onMouseMove, false );
 		document.removeEventListener( 'mouseup', onMouseUp, false );
 
-		el.removeEventListener( 'keydown', onKeyDown, false );
+		element.removeEventListener( 'keydown', onKeyDown, false );
 
 	};
 
@@ -419,7 +417,6 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 	// deltaX and deltaY are in pixels; right and down are positive
 	var pan = function ( deltaX, deltaY ) {
 
-		const element = scope.domElement;
 		const camera = cameraManager.activeCamera;
 
 		if ( camera.isPerspectiveCamera ) {
@@ -520,7 +517,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 	function rotateSvx() {
 
 		rotateStart.copy( svxStart );
-		rotateLeft( 2 * Math.PI * svxDelta.x * svxReverseSense / scope.domElement.clientWidth );
+		rotateLeft( 2 * Math.PI * svxDelta.x * svxReverseSense / element.clientWidth );
 		rotateStart.copy( svxEnd );
 
 		scope.update();
@@ -600,7 +597,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 		rotateDelta.subVectors( rotateEnd, rotateStart );
 
 		// rotating up and down along whole screen attempts to go 360, but limited to 180
-		rotateUp( 2 * Math.PI * rotateDelta.y * svxReverseSense / scope.domElement.clientHeight );
+		rotateUp( 2 * Math.PI * rotateDelta.y * svxReverseSense / element.clientHeight );
 
 		rotateStart.copy( rotateEnd );
 
@@ -613,8 +610,6 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 		rotateEnd.set( event.clientX, event.clientY );
 
 		rotateDelta.subVectors( rotateEnd, rotateStart );
-
-		const element = scope.domElement;
 
 		// rotating across whole screen goes 360 degrees around
 		rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientWidth );
@@ -866,8 +861,6 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 		rotateDelta.subVectors( rotateEnd, rotateStart );
 
-		const element = scope.domElement;
-
 		// rotating across whole screen goes 360 degrees around
 		rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientWidth );
 
@@ -988,7 +981,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 			handleMouseDownPan( event );
 
-			scope.domElement.style.cursor = 'all-scroll';
+			element.style.cursor = 'all-scroll';
 
 			state = STATE.PAN;
 
@@ -1045,7 +1038,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 		if ( scope.enabled === false ) return;
 
-		scope.domElement.style.cursor = 'default';
+		element.style.cursor = 'default';
 
 		document.removeEventListener( 'mousemove', onMouseMove, false );
 		document.removeEventListener( 'mouseup', onMouseUp, false );
@@ -1173,18 +1166,17 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 	}
 
 	//
-	const el = scope.domElement;
 
-	el.addEventListener( 'contextmenu', onContextMenu, false );
+	element.addEventListener( 'contextmenu', onContextMenu, false );
 
-	el.addEventListener( 'mousedown', onMouseDown, false );
-	el.addEventListener( 'wheel', onMouseWheel, false );
+	element.addEventListener( 'mousedown', onMouseDown, false );
+	element.addEventListener( 'wheel', onMouseWheel, false );
 
-	el.addEventListener( 'touchstart', onTouchStart, false );
-	el.addEventListener( 'touchend', onTouchEnd, false );
-	el.addEventListener( 'touchmove', onTouchMove, false );
+	element.addEventListener( 'touchstart', onTouchStart, false );
+	element.addEventListener( 'touchend', onTouchEnd, false );
+	element.addEventListener( 'touchmove', onTouchMove, false );
 
-	el.addEventListener( 'keydown', onKeyDown, false );
+	element.addEventListener( 'keydown', onKeyDown, false );
 
 	const cfg = viewer.ctx.cfg;
 

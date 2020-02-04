@@ -27,6 +27,7 @@ function Materials ( viewer ) {
 
 	const cache = new Map();
 	const ctx = viewer.ctx;
+	const self = this;
 
 	var cursorMaterials = [];
 	var perSurveyMaterials = {};
@@ -48,6 +49,14 @@ function Materials ( viewer ) {
 		writeable: true,
 		get: function () { return cursorHeight; },
 		set: updateCursors
+	} );
+
+	const distanceTransparency = this.commonUniforms.distanceTransparency;
+
+	Object.defineProperty( this, 'distanceTransparency', {
+		writeable: true,
+		get: function () { return distanceTransparency.value; },
+		set: function ( x ) { distanceTransparency.value = x; }
 	} );
 
 	function cacheMaterial ( name, material ) {
@@ -80,7 +89,7 @@ function Materials ( viewer ) {
 
 	function updateDatumShifts( event ) {
 
-		ctx.materials.commonDepthUniforms.datumShift.value = event.value;
+		self.commonDepthUniforms.datumShift.value = event.value;
 
 	}
 
@@ -294,7 +303,7 @@ function Materials ( viewer ) {
 
 			const material = perSurveyMaterials[ name ];
 
-			material.dispose( viewer );
+			material.dispose();
 			cache.delete( name );
 
 		}
@@ -309,13 +318,7 @@ function Materials ( viewer ) {
 
 	this.setFog = function ( enable ) {
 
-		ctx.materials.commonUniforms.fogEnabled.value = enable ? 1 : 0;
-
-	};
-
-	this.setDistanceTransparency = function ( distance ) {
-
-		ctx.materials.commonUniforms.distanceTransparency.value = distance;
+		self.commonUniforms.fogEnabled.value = enable ? 1 : 0;
 
 	};
 

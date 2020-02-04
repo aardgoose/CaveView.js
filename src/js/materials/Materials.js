@@ -313,7 +313,7 @@ function Materials ( viewer ) {
 
 	};
 
-	this.setDistanceTransparency - function ( distance ) {
+	this.setDistanceTransparency = function ( distance ) {
 
 		ctx.materials.commonUniforms.distanceTransparency.value = distance;
 

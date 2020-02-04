@@ -121,8 +121,8 @@ function Survey ( ctx, cave ) {
 			const lastScale = Math.pow( 2, ( zScale - 0.5 ) * 4 );
 			const newScale  = Math.pow( 2, ( scale - 0.5 ) * 4 );
 
-			this.applyMatrix( new Matrix4().makeScale( 1, 1, newScale / lastScale ) );
-			this.updateMatrix();
+			self.applyMatrix4( new Matrix4().makeScale( 1, 1, newScale / lastScale ) );
+			self.updateMatrix();
 
 			zScale = scale;
 

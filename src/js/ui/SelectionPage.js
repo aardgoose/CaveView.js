@@ -24,8 +24,6 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 
 	currentTop = surveyTree;
 
-	if ( ! viewer.surveyLoaded ) return;
-
 	this.addHeader( 'Selection' );
 
 	titleBar.id = 'ui-path';

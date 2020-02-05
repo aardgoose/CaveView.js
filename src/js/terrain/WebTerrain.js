@@ -40,6 +40,7 @@ function WebTerrain ( ctx, survey, onLoaded ) {
 	this.debug = true;
 	this.coverage = null;
 	this.TS = null;
+	this.maxTiles = ctx.cfg.value( 'maxTiles', 128 );
 
 	this.material = ctx.materials.getCursorMaterial();
 	this.canZoom = true;
@@ -468,6 +469,7 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 
+	const self = this;
 	const frustum = __frustum;
 	const camera = cameraManager.activeCamera;
 	const lastFrame = cameraManager.getLastFrame();
@@ -566,10 +568,8 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 
 	function _evictTiles() {
 
-		const TILE_MAX = 128; // FIXME: tune this value based on platform spec
-
 		const candidateCount = candidateEvictTiles.length;
-		const evictTarget = Tile.liveTiles - TILE_MAX;
+		const evictTarget = Tile.liveTiles - self.maxTiles;
 		const evictCount = Math.min( candidateCount, evictTarget );
 
 		if ( evictCount > 0 ) {

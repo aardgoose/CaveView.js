@@ -1693,6 +1693,7 @@ function CaveViewer ( domID, configuration ) {
 		return survey.surveyTree;
 
 	};
+
 }
 
 CaveViewer.prototype = Object.create( EventDispatcher.prototype );

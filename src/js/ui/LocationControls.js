@@ -243,13 +243,13 @@ var LocationControls = function ( cameraManager, ctx ) {
 
 		if ( touchDirection === 1 ) {
 
-			camera.zoom += deltaY;
+			camera.zoom = Math.max( camera.zoom + deltaY, 1 );
 			camera.updateProjectionMatrix();
 
 		} else {
 
-			materials.distanceTransparency -= deltaX;
-			console.log( 'dt', materials.distanceTransparency );
+			materials.distanceTransparency = Math.max( materials.distanceTransparency - deltaX, 0 );
+
 		}
 
 		lastTouch.copy( currentTouch );

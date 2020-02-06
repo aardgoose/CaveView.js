@@ -20,7 +20,7 @@ import { StationPopup } from './StationPopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/Cfg';
-import { WorkerPool } from '../core/WorkerPool';
+import { WorkerPoolCache } from '../core/WorkerPool';
 import { defaultView, dynamicView, ViewState } from './ViewState';
 
 // import { Annotations } from './Annotations';
@@ -50,14 +50,19 @@ function CaveViewer ( domID, configuration ) {
 	const height = container.clientHeight;
 
 	const cfg = new Cfg( configuration );
-	const ctx = { cfg: cfg, container: container };
+
+	const ctx = {
+		cfg: cfg,
+		container: container,
+		workerPools: new WorkerPoolCache ( cfg ),
+		glyphStringCache: new Map()
+	};
 
 	this.ctx = ctx;
 
 	const materials = new Materials( this );
 
 	ctx.materials = materials;
-	ctx.glyphStringCache = new Map();
 
 	container.style.backgroundColor = cfg.themeValue( 'background' );
 
@@ -78,7 +83,7 @@ function CaveViewer ( domID, configuration ) {
 	scene.fog = fog;
 	scene.name = 'CV.Viewer';
 
-	const cameraManager = new CameraManager( ctx, renderer, scene );
+	var cameraManager = new CameraManager( ctx, renderer, scene );
 
 	const raycaster = new Raycaster();
 
@@ -88,15 +93,15 @@ function CaveViewer ( domID, configuration ) {
 	// setup controllers
 	const controls = new OrbitControls( cameraManager, renderer.domElement, this );
 	controls.maxPolarAngle = cfg.themeAngle( 'maxPolarAngle' );
-	controls.addEventListener( 'change', cameraMoved );
+	controls.addEventListener( 'change', onCameraMoved );
 	controls.addEventListener( 'end', onCameraMoveEnd );
 
 	const locationControls = new LocationControls( cameraManager, ctx );
-	locationControls.addEventListener( 'change', cameraMoved );
+	locationControls.addEventListener( 'change', onCameraMoved );
 	locationControls.addEventListener( 'end', onCameraMoveEnd );
 	locationControls.addEventListener( 'accuracy', onLocationAccuracyChange );
 
-	const cameraMove = new CameraMove( controls, cameraMoved );
+	const cameraMove = new CameraMove( controls, onCameraMoved );
 
 	const formatters = {};
 
@@ -148,7 +153,7 @@ function CaveViewer ( domID, configuration ) {
 	var trackLocation = false;
 
 	// event handler
-	window.addEventListener( 'resize', resize );
+	window.addEventListener( 'resize', onResize );
 
 	Object.defineProperties( this, {
 
@@ -431,13 +436,25 @@ function CaveViewer ( domID, configuration ) {
 	_enableLayer( FEATURE_ANNOTATIONS, 'annotations' );
 	_enableLayer( SURVEY_WARNINGS,     'warnings' );
 
-	container.addEventListener( 'mouseover', function () { mouseOver = true; } );
-	container.addEventListener( 'mouseleave', function () { mouseOver = false; } );
+	container.addEventListener( 'mouseover', onMouseOver );
+	container.addEventListener( 'mouseleave', onMouseLeave );
 
-	container.addEventListener( 'fullscreenchange', fullscreenChange );
-	container.addEventListener( 'msfullscreenchange', fullscreenChange );
+	container.addEventListener( 'fullscreenchange', onFullscreenChange );
+	container.addEventListener( 'msfullscreenchange', onFullscreenChange );
 
 	this.addEventListener( 'change', viewChanged );
+
+	function onMouseOver () {
+
+		mouseOver = true;
+
+	}
+
+	function onMouseLeave () {
+
+		mouseOver = false;
+
+	}
 
 	function viewChanged( event ) {
 
@@ -557,7 +574,7 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
-	function fullscreenChange () {
+	function onFullscreenChange () {
 
 		if ( document.fullscreenElement || document.msfullscreenElement ) {
 
@@ -569,7 +586,7 @@ function CaveViewer ( domID, configuration ) {
 
 		}
 
-		resize();
+		onResize();
 		self.dispatchEvent( { type: 'change', name: 'fullscreen' } );
 
 	}
@@ -775,7 +792,7 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
-	function cameraMoved () {
+	function onCameraMoved () {
 
 		const camera = cameraManager.activeCamera;
 
@@ -1031,7 +1048,7 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
-	function resize () {
+	function onResize () {
 
 		// adjust the renderer to the new canvas size
 		renderer.setSize( container.clientWidth, container.clientHeight );
@@ -1055,7 +1072,7 @@ function CaveViewer ( domID, configuration ) {
 
 		// terminate all running workers (tile loading/wall building etc)
 
-		WorkerPool.terminateActive();
+		ctx.workerPools.terminateActive();
 
 		scene.remove( survey );
 
@@ -1071,7 +1088,7 @@ function CaveViewer ( domID, configuration ) {
 
 		// remove event listeners
 
-		container.removeEventListener( 'mousedown', mouseDown );
+		container.removeEventListener( 'mousedown', onMouseDown );
 
 		cameraManager.resetCameras();
 
@@ -1104,8 +1121,9 @@ function CaveViewer ( domID, configuration ) {
 
 		}
 
-		resize();
+		onResize();
 		loadSurvey( new Survey( ctx, cave ) );
+		caveLoader.reset();
 
 	}
 
@@ -1158,7 +1176,7 @@ function CaveViewer ( domID, configuration ) {
 
 		survey = newSurvey;
 
-		hud.getProgressDial( 1 ).watch( survey );
+//		hud.getProgressDial( 1 ).watch( survey );
 
 		stats = self.getLegStats( LEG_CAVE );
 
@@ -1178,7 +1196,7 @@ function CaveViewer ( domID, configuration ) {
 
 			if ( navigator.onLine ) {
 
-				terrain = new WebTerrain( ctx, survey, _tilesLoaded );
+				terrain = new WebTerrain( ctx, survey, tilesLoaded );
 
 				hud.getProgressDial( 0 ).watch( terrain );
 
@@ -1196,12 +1214,12 @@ function CaveViewer ( domID, configuration ) {
 
 		scene.matrixAutoUpdate = false;
 
-		container.addEventListener( 'mousedown', mouseDown, false );
+		container.addEventListener( 'mousedown', onMouseDown, false );
 
 		controls.enabled = true;
 
-		survey.getRoutes().addEventListener( 'changed', surveyChanged );
-		survey.addEventListener( 'changed', surveyChanged );
+		survey.getRoutes().addEventListener( 'changed', onSurveyChanged );
+		survey.addEventListener( 'changed', onSurveyChanged );
 
 		caveIsLoaded = true;
 
@@ -1209,35 +1227,36 @@ function CaveViewer ( domID, configuration ) {
 
 		setupView( syncTerrainLoading );
 
-		function _tilesLoaded ( errors ) {
-
-			if ( terrain.parent === null ) {
-
-				if ( errors > 0 ) {
-
-					console.log( 'errors loading terrain' );
-
-					terrain = null;
-
-					setupView( true );
-
-					return;
-
-				}
-
-				setupTerrain();
-
-				setupView( true );
-
-			}
-
-			renderView();
-
-		}
 
 	}
 
-	function surveyChanged ( /* event */ ) {
+	function tilesLoaded ( errors ) {
+
+		if ( terrain.parent === null ) {
+
+			if ( errors > 0 ) {
+
+				console.log( 'errors loading terrain' );
+
+				terrain = null;
+
+				setupView( true );
+
+				return;
+
+			}
+
+			setupTerrain();
+
+			setupView( true );
+
+		}
+
+		renderView();
+
+	}
+
+	function onSurveyChanged ( /* event */ ) {
 
 		setShadingMode( shadingMode );
 
@@ -1280,7 +1299,7 @@ function CaveViewer ( domID, configuration ) {
 
 	};
 
-	function mouseDown ( event ) {
+	function onMouseDown ( event ) {
 
 		const scale = __v.set( container.clientWidth / 2, container.clientHeight / 2, 0 );
 		const mouse = cameraManager.getMouse( event.clientX, event.clientY );
@@ -1691,6 +1710,36 @@ function CaveViewer ( domID, configuration ) {
 	this.getSurveyTree = function () {
 
 		return survey.surveyTree;
+
+	};
+
+	this.dispose = function () {
+
+		ctx.workerPools.dispose();
+		scene.remove( survey );
+		controls.dispose();
+		locationControls.dispose();
+		hud.dispose();
+
+		ctx.glyphStringCache = null;
+		ctx.cfg = null;
+		ctx.workerPools = null;
+		ctx.materials = null;
+		ctx.container = null;
+
+		window.removeEventListener( 'resize', onResize );
+
+		container.removeChild( renderer.domElement );
+
+		container.removeEventListener( 'mouseover', onMouseOver );
+		container.removeEventListener( 'mouseleave', onMouseLeave );
+		container.removeEventListener( 'mousedown', onMouseDown );
+
+		container.removeEventListener( 'fullscreenchange', onFullscreenChange );
+		container.removeEventListener( 'msfullscreenchange', onFullscreenChange );
+
+		renderer.clear();
+		renderer.dispose();
 
 	};
 

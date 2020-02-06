@@ -1,6 +1,5 @@
 import { CommonTerrain } from './CommonTerrain';
 import { Tile } from './Tile';
-import { WorkerPool } from '../core/WorkerPool';
 
 import { EPSG4326TileSet } from './EPSG4326TileSet';
 import { EPSG3857TileSet } from './EPSG3857TileSet';
@@ -79,7 +78,7 @@ WebTerrain.prototype.load = function () {
 
 	}
 
-	this.workerPool = new WorkerPool( this.ctx, this.TS.workerScript );
+	this.workerPool = this.ctx.workerPools.getPool( this.TS.workerScript );
 
 	return true;
 

@@ -29,7 +29,8 @@ function CaveViewUI ( viewer ) {
 	// make sure we get new language strings if slow loading
 	cfg.addEventListener( 'change', initUI );
 
-	new KeyboardControls( viewer, fileSelector, cfg.value( 'avenControls', true ) );
+	const keyboardControls = new KeyboardControls( viewer, fileSelector, cfg.value( 'avenControls', true ) );
+	var locationButton;
 
 	function selectFile( event ) {
 
@@ -66,11 +67,10 @@ function CaveViewUI ( viewer ) {
 		new InfoPage( frame, viewer, fileSelector );
 		new HelpPage( frame, viewer.svxControlMode );
 
-		LocationButton( viewer, container );
-
 		frame.setParent( container );
 
 		frame.addFullscreenButton( 'fullscreen', viewer, 'fullscreen' );
+		locationButton = new LocationButton( viewer, container );
 
 	}
 
@@ -98,6 +98,17 @@ function CaveViewUI ( viewer ) {
 
 		frame.clear();
 		viewer.clearView();
+
+	};
+
+	this.dispose = function () {
+
+		frame.clear();
+		viewer.clearView();
+		fileSelector.dispose();
+		locationButton.dispose();
+		keyboardControls.dispose();
+		viewer.dispose();
 
 	};
 

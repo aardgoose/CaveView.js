@@ -1,34 +1,26 @@
-function WorkerPool ( ctx, script ) {
+function WorkerPool ( script ) {
 
-	this.baseScript = script;
-	this.script = ctx.cfg.value( 'home', '' ) + 'js/workers/' + script;
-
-	if ( WorkerPool.workers[ script ] === undefined ) {
-
-		// no existing workers running
-		WorkerPool.workers[ script ] = [];
-
-	}
-
-	this.workers = WorkerPool.workers[ script ];
-
-	const cpuCount = window.navigator.hardwareConcurrency;
-
-	WorkerPool.maxActive = cpuCount === undefined ? 4 : cpuCount;
+	this.script = script;
+	this.workers = [];
+	this.activeWorkers = new Set();
 
 }
 
-WorkerPool.workers = {};
-WorkerPool.activeWorkers = new Set();
+const cpuCount = window.navigator.hardwareConcurrency;
+
+WorkerPool.maxActive = cpuCount === undefined ? 4 : cpuCount;
+
 WorkerPool.pendingWork = [];
+WorkerPool.activeWorkers = 0;
 
-WorkerPool.terminateActive = function () {
+WorkerPool.prototype.terminateActive = function () {
 
-	const activeWorkers = WorkerPool.activeWorkers;
+	const activeWorkers = this.activeWorkers;
 
 	activeWorkers.forEach( function ( worker ) { worker.terminate(); } );
-
 	activeWorkers.clear();
+
+	// FIXME clear all pending work for this pool
 
 };
 
@@ -46,7 +38,7 @@ WorkerPool.prototype.getWorker = function () {
 
 	}
 
-	WorkerPool.activeWorkers.add( worker );
+	this.activeWorkers.add( worker );
 
 	return worker;
 
@@ -54,7 +46,7 @@ WorkerPool.prototype.getWorker = function () {
 
 WorkerPool.prototype.putWorker = function ( worker ) {
 
-	WorkerPool.activeWorkers.delete( worker );
+	this.activeWorkers.delete( worker );
 
 	if ( this.workers.length < 4 ) {
 
@@ -66,9 +58,11 @@ WorkerPool.prototype.putWorker = function ( worker ) {
 
 	}
 
-	if ( WorkerPool.pendingWork.length > 0 ) {
+	const pendingWork = WorkerPool.pendingWork;
 
-		const pending = WorkerPool.pendingWork.shift();
+	if ( pendingWork.length > 0 ) {
+
+		const pending = pendingWork.shift();
 
 		// resubit to orginal pool
 
@@ -80,10 +74,11 @@ WorkerPool.prototype.putWorker = function ( worker ) {
 
 WorkerPool.prototype.runWorker = function ( message, callback ) {
 
+	WorkerPool.activeWorkers++;
+
 	const worker = this.getWorker();
 
 	worker.onmessage = callback;
-
 	worker.postMessage( message );
 
 	return worker;
@@ -92,7 +87,7 @@ WorkerPool.prototype.runWorker = function ( message, callback ) {
 
 WorkerPool.prototype.queueWork = function ( message, callback ) {
 
-	if ( WorkerPool.activeWorkers.size === WorkerPool.maxActive ) {
+	if ( WorkerPool.activeWorkers === WorkerPool.maxActive ) {
 
 		WorkerPool.pendingWork.push( { pool: this, message: message, callback: callback } );
 		return;
@@ -105,14 +100,58 @@ WorkerPool.prototype.queueWork = function ( message, callback ) {
 
 WorkerPool.prototype.dispose = function () {
 
-	for ( var i = 0; i < this.workers.length; i++ ) {
+	this.workers.forEach( function ( worker) {
 
-		this.workers[ i ].terminate();
+		worker.terminate();
 
-	}
+	} );
 
-	WorkerPool.workers[ this.baseScript ] = [];
+	this.workers = null;
+	this.activeWorkers = null;
 
 };
 
-export { WorkerPool };
+function WorkerPoolCache ( cfg ) {
+
+	const pools = new Map();
+
+	this.getPool = function ( scriptFile ) {
+
+		var script = cfg.value( 'home', '' ) + 'js/workers/' + scriptFile;
+
+		var pool = pools.get( script );
+
+		if ( pool === undefined ) {
+
+			// no existing pool
+			pool = new WorkerPool( script );
+			pools.set( script, pool );
+
+		}
+
+		return pool;
+
+	};
+
+	this.terminateActive = function () {
+
+		pools.forEach( function ( pool) { pool.terminateActive(); } );
+
+	};
+
+	this.dispose = function () {
+
+		pools.forEach( function ( pool ) {
+
+			pool.terminateActive();
+			pool.dispose();
+
+		} );
+
+		pools.clear();
+
+	};
+
+}
+
+export { WorkerPool, WorkerPoolCache };

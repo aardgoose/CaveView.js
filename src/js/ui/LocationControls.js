@@ -26,11 +26,10 @@ const changeEvent = { type: 'change' };
 const endEvent = { type: 'end' };
 const accuracyEvent = { type: 'accuracy', value: 1000 };
 
-var survey = null;
-
 var LocationControls = function ( cameraManager, ctx ) {
 
 	var scope = this;
+	var survey = null;
 
 	this.enabled = false;
 
@@ -318,9 +317,9 @@ var LocationControls = function ( cameraManager, ctx ) {
 		window.removeEventListener( 'orientationchange', onScreenOrientationChangeEvent, false );
 		window.removeEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
 
-		container.addEventListener( 'touchstart', onTouchStart, false );
-		container.addEventListener( 'touchend', onTouchEnd, false );
-		container.addEventListener( 'touchmove', onTouchMove, false );
+		container.removeEventListener( 'touchstart', onTouchStart, false );
+		container.removeEventListener( 'touchend', onTouchEnd, false );
+		container.removeEventListener( 'touchmove', onTouchMove, false );
 
 		navigator.geolocation.clearWatch( watch );
 

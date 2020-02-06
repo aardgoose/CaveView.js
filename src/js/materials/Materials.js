@@ -309,7 +309,7 @@ function Materials ( viewer ) {
 		}
 
 		perSurveyMaterials = {};
-		ctx.lyphStringCache = new Map();
+		ctx.glyphStringCache = new Map();
 		cursorHeight = 0;
 
 		survey = surveyIn;

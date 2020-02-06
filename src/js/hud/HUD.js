@@ -94,8 +94,8 @@ function HUD ( viewer, renderer ) {
 
 	controls = viewer.getControls();
 
-	new CompassControl( hudObject, viewer );
-	new AHIControl( hudObject, viewer );
+	const compassControl = new CompassControl( hudObject, viewer );
+	const ahiControl = new AHIControl( hudObject, viewer );
 
 	function i18n ( text ) {
 
@@ -400,6 +400,14 @@ function HUD ( viewer, renderer ) {
 		}
 
 	}
+
+	this.dispose = function () {
+
+		ahiControl.dispose();
+		compassControl.dispose();
+		if ( cursorControl ) cursorControl.dispose();
+
+	};
 
 }
 

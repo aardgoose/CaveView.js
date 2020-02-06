@@ -101,6 +101,12 @@ function AHIControl( hudObject, viewer ) {
 
 	}
 
+	this.dispose = function () {
+
+		container.removeChild( hr );
+
+	};
+
 }
 
 export { AHIControl };

@@ -19,8 +19,6 @@ function FileSelector ( container ) {
 		set: this.selectFile
 	} );
 
-	return this;
-
 	function _handleDragover ( event ) {
 
 		event.preventDefault();
@@ -50,6 +48,13 @@ function FileSelector ( container ) {
 		}
 
 	}
+
+	this.dispose = function () {
+
+		container.removeEventListener( 'drop', _handleDrop );
+		container.removeEventListener( 'dragover', _handleDragover );
+
+	};
 
 }
 

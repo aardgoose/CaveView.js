@@ -72,7 +72,7 @@ function Survey ( ctx, cave ) {
 
 	this.gradientName = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 
-	const survey = cave.getSurvey();
+	var survey = cave.getSurvey();
 
 	this.name = survey.title;
 	this.CRS = survey.sourceCRS;
@@ -110,6 +110,8 @@ function Survey ( ctx, cave ) {
 	this.addEventListener( 'removed', this.onRemoved );
 
 	var zScale = 0.5;
+
+	survey = null;
 
 	Object.defineProperty( this, 'zScale', {
 		writeable: true,
@@ -193,20 +195,13 @@ Survey.prototype.onRemoved = function ( /* event */ ) {
 
 	}
 
-	// needs explicit removal to call removed handlers atm
-	this.remove( this.stations );
-	this.remove( this.terrain );
-
 	this.traverse( _dispose );
 
+	while ( this.children.length > 0 ) { this.remove( this.children[ 0 ] ); }
 
 	return;
 
-	function _dispose ( object ) {
-
-		if ( object.geometry ) object.geometry.dispose();
-
-	}
+	function _dispose ( object ) { if ( object.geometry ) object.geometry.dispose(); }
 
 };
 

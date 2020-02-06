@@ -113,27 +113,29 @@ GlyphAtlas.prototype.getGlyph = function ( glyph ) {
 
 };
 
+function GlyphAtlasCache () {
 
-const atlasCache = {};
-const AtlasFactory = {};
+	const atlasCache = [];
 
-AtlasFactory.getAtlas = function ( glyphAtlasSpec ) {
+	this.getAtlas = function ( glyphAtlasSpec ) {
 
-	const key = JSON.stringify( glyphAtlasSpec );
+		const key = JSON.stringify( glyphAtlasSpec );
 
-	var atlas = atlasCache[ key ];
+		var atlas = atlasCache[ key ];
 
-	if ( atlas === undefined ) {
+		if ( atlas === undefined ) {
 
-		atlas = new GlyphAtlas( glyphAtlasSpec );
-		atlasCache[ key ] = atlas;
+			atlas = new GlyphAtlas( glyphAtlasSpec );
+			atlasCache[ key ] = atlas;
 
-	}
+		}
 
-	return atlas;
+		return atlas;
 
-};
+	};
 
-export { GlyphAtlas, AtlasFactory };
+}
+
+export { GlyphAtlasCache };
 
 // EOF

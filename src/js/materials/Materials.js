@@ -9,6 +9,7 @@ import { HeightMaterial } from './HeightMaterial';
 import { HypsometricMaterial } from './HypsometricMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
 import { ColourCache } from '../core/ColourCache';
+import { GlyphAtlasCache } from './GlyphAtlas';
 
 import {
 	LineBasicMaterial, MeshLambertMaterial, MeshBasicMaterial,
@@ -29,6 +30,7 @@ function Materials ( viewer ) {
 	const ctx = viewer.ctx;
 	const self = this;
 
+	var glyphAtlasCache = new GlyphAtlasCache();
 	var cursorMaterials = [];
 	var perSurveyMaterials = {};
 	var cursorHeight = 0;
@@ -258,13 +260,14 @@ function Materials ( viewer ) {
 
 	this.getGlyphMaterial = function ( glyphAtlasSpec, rotation ) {
 
+		const atlas = glyphAtlasCache.getAtlas( glyphAtlasSpec );
 		const name = JSON.stringify( glyphAtlasSpec ) + ':' + rotation.toString();
 
 		var material = cache.get( name );
 
 		if ( material === undefined ) {
 
-			material = cacheMaterial( name, new GlyphMaterial( ctx, glyphAtlasSpec, rotation, viewer ) );
+			material = cacheMaterial( name, new GlyphMaterial( ctx, atlas, rotation, viewer ) );
 
 		}
 

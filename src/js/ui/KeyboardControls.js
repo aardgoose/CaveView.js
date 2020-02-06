@@ -11,8 +11,6 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 	document.addEventListener( 'keydown', keyDown );
 
-	return this;
-
 	function keyDown ( event ) {
 
 		event.preventDefault();
@@ -447,8 +445,13 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 	}
 
-}
+	this.dispose = function () {
 
+		document.removeEventListener( 'keydown', keyDown );
+
+	};
+
+}
 // export public interface
 
 export { KeyboardControls };

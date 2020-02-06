@@ -29,6 +29,12 @@ function LocationButton ( viewer, container ) { // public method
 
 	container.appendChild( div );
 
+	this.dispose = function () {
+
+		container.removeChild( div );
+
+	};
+
 }
 
 export { LocationButton };

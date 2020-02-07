@@ -11,7 +11,7 @@ import { Object3D, Vector3 } from '../../Three';
 function buildCrossSections ( cave, survey ) {
 
 	const crossSectionGroups = cave.crossSections;
-	const mesh = survey.getFeature( FACE_WALLS, Walls );
+	const mesh = survey.addFeature( new Walls( survey.ctx ), FACE_WALLS, 'Walls' );
 
 	const indices = [];
 	const vertices = [];

@@ -1,18 +1,14 @@
-import {
-	BufferGeometry, Float32BufferAttribute,
-	FaceColors, Mesh,
-	MeshLambertMaterial
-} from '../../Three';
+import { BufferGeometry, Float32BufferAttribute, Mesh } from '../../Three';
 
-const unselectedMaterial = new MeshLambertMaterial( { color: 0x444444, vertexColors: FaceColors } );
 
-function Walls () {
+function Walls ( ctx ) {
 
 	const geometry = new BufferGeometry();
 
-	Mesh.call( this, geometry, unselectedMaterial );
+	Mesh.call( this, geometry, ctx.materials.getUnselectedWallMaterial() );
 
 	this.type = 'Walls';
+	this.ctx = ctx;
 
 	return this;
 
@@ -44,6 +40,7 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
 	const geometry = this.geometry;
 	const indexRuns = this.indexRuns;
+	const materials = this.ctx.materials;
 
 	geometry.clearGroups();
 
@@ -51,7 +48,7 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
 	if ( selectedRuns.size && indexRuns ) {
 
-		this.material = [ selectedMaterial, unselectedMaterial ];
+		this.material = [ selectedMaterial, materials.getUnselectedWallMaterial() ];
 
 		let indexRun = indexRuns[ 0 ];
 

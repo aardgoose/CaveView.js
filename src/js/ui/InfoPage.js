@@ -14,7 +14,7 @@ function InfoPage ( frame, viewer, fileSelector ) {
 
 	this.addText( 'file: ' + fileSelector.file );
 
-	const stats = viewer.getLegStats ( LEG_CAVE );
+	const stats = viewer.getLegStats( LEG_CAVE );
 
 	this.addLine( this.i18n( 'stats.legs' ) + ': ' + stats.legCount );
 	this.addLine( this.i18n( 'stats.totalLength' ) + ': ' + stats.legLength.toFixed( 2 ) + '\u202fm' );

@@ -4,7 +4,7 @@ function Marker( ctx, count ) {
 
 	const materials = ctx.materials;
 
-	Point.call( this, materials.getClusterMaterial( count ) );
+	Point.call( this, materials.getClusterMaterial( count ), ctx );
 
 	return this;
 

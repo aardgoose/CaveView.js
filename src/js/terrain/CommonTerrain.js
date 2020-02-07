@@ -1,11 +1,9 @@
-
 import {
 	FEATURE_TERRAIN,
 	SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS, SHADING_LOCATION,
 	TERRAIN_STENCIL
 } from '../core/constants';
 
-import { CommonTerrainMaterial } from '../materials/CommonTerrainMaterial';
 import { unpackRGBA } from '../core/unpackRGBA';
 import { Overlay } from './Overlay';
 import {
@@ -14,7 +12,6 @@ import {
 	WebGLRenderTarget, LinearFilter, NearestFilter, RGBAFormat
 } from '../Three';
 
-const overlays = {};
 var locationDefaultOverlay = null;
 
 // preallocated tmp objects
@@ -41,15 +38,19 @@ function CommonTerrain ( ctx ) {
 	this.screenAttribution = null;
 	this.terrainShadingModes = {};
 	this.throughMode = TERRAIN_STENCIL;
+	this.commonUniforms = ctx.materials.commonTerrainUniforms;
 	this.ctx = ctx;
 
 	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
 
 }
 
+
 CommonTerrain.addOverlay = function ( ctx, name, overlayProvider, locationDefault ) {
 
-	overlays[ name ] = new Overlay( ctx, overlayProvider );
+	if ( ctx.overlays === undefined ) ctx.overlays = {};
+
+	ctx.overlays[ name ] = new Overlay( ctx, overlayProvider );
 
 	if ( locationDefault ) locationDefaultOverlay = name;
 
@@ -80,6 +81,7 @@ CommonTerrain.prototype.commonRemoved = function () {
 
 CommonTerrain.prototype.checkTerrainShadingModes = function ( renderer ) {
 
+	const overlays = this.ctx.overlays;
 	const terrainShadingModes = {};
 
 	terrainShadingModes[ 'terrain.shading.height' ] = SHADING_RELIEF;
@@ -193,6 +195,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	const activeOverlay = this.activeOverlay;
 	const materials = this.ctx.materials;
+	const overlays = this.ctx.overlays;
 
 	var material;
 	var hideAttribution = true;
@@ -410,20 +413,20 @@ CommonTerrain.prototype.getHeight = function ( point ) {
 
 CommonTerrain.prototype.setScale = function ( scale ) {
 
-	CommonTerrainMaterial.uniforms.scale.value = scale;
+	this.commonUniforms.scale.value = scale;
 
 };
 
 CommonTerrain.prototype.setAccuracy = function ( accuracy ) {
 
-	CommonTerrainMaterial.uniforms.accuracy.value = accuracy;
-	CommonTerrainMaterial.uniforms.ringColor.value.g = 1 - ( accuracy / 1000 );
+	this.commonUniforms.accuracy.value = accuracy;
+	this.commonUniforms.ringColor.value.g = 1 - ( accuracy / 1000 );
 
 };
 
 CommonTerrain.prototype.setTarget = function ( target ) {
 
-	CommonTerrainMaterial.uniforms.target.value.copy( target );
+	this.commonUniforms.target.value.copy( target );
 
 };
 

@@ -10,7 +10,6 @@ import {
 } from '../core/constants';
 
 import { StationPosition } from '../core/StationPosition';
-import { ColourCache } from '../core/ColourCache';
 import { Box3Helper } from '../core/Box3';
 import { Entrances } from './Entrances';
 import { Stations } from './Stations';
@@ -479,6 +478,8 @@ Survey.prototype.addFeature = function ( obj, tag, name ) {
 	this.features.set( tag, obj );
 
 	this.addStatic( obj );
+
+	return obj;
 
 };
 
@@ -995,7 +996,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	case SHADING_SINGLE:
 
-		material = materials.getSurfaceMaterial( this.ctx.cfg.themeValue( 'shading.single' ) );
+		material = materials.getSurfaceMaterial();
 
 		break;
 
@@ -1157,14 +1158,16 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 Survey.prototype.setLegColourByMaterial = function ( mesh, material ) {
 
+	const colourCache = this.ctx.materials.colourCache;
+
 	material.needsUpdate = true;
 
 	mesh.setShading( this.selectedSectionIds, _colourSegment, material );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
-		ColourCache.white.toArray( colors, v1 * 3 );
-		ColourCache.white.toArray( colors, v2 * 3 );
+		colourCache.white.toArray( colors, v1 * 3 );
+		colourCache.white.toArray( colors, v2 * 3 );
 
 	}
 
@@ -1220,7 +1223,7 @@ Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
 Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 	const materials = this.ctx.materials;
-	const colours = ColourCache.getColors( this.gradientName );
+	const colours = materials.colourCache.getColors( this.gradientName );
 	const colourRange = colours.length - 1;
 	const stats = mesh.stats;
 	const legLengths = mesh.legLengths;
@@ -1244,7 +1247,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 	const cfg = this.ctx.cfg;
 	const materials = this.ctx.materials;
 
-	const colours = ColourCache.getColors( this.gradientName );
+	const colours = materials.colourCache.getColors( this.gradientName );
 	const unconnected = cfg.themeColor( 'shading.unconnected' );
 	const pathColor = cfg.themeColor( 'routes.active' );
 
@@ -1342,7 +1345,8 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
-	const colours = ColourCache.getColors( 'inclination' );
+	const colourCache = this.ctx.materials.colourCache;
+	const colours = colourCache.getColors( 'inclination' );
 	const materials = this.ctx.materials;
 
 	const colourRange = colours.length - 1;

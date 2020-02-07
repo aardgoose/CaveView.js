@@ -4,90 +4,92 @@ import { Color, DataTexture, RGBFormat, UnsignedByteType, LinearFilter } from '.
 
 // define colors to share THREE.color objects
 
-const caches = {
-	'colors': [],
-	'texture' : []
-};
+function ColourCache ( ) {
 
-function createTexture ( scale ) {
+	const caches = {
+		'colors': [],
+		'texture' : []
+	};
 
-	const l = scale.length;
-	const data = new Uint8Array( l * 3 );
+	function createTexture ( scale ) {
 
-	var offset = 0;
+		const l = scale.length;
+		const data = new Uint8Array( l * 3 );
 
-	for ( var i = l; i; ) {
+		var offset = 0;
 
-		const c = scale[ --i ];
+		for ( var i = l; i; ) {
 
-		data[ offset++ ] = c[ 0 ];
-		data[ offset++ ] = c[ 1 ];
-		data[ offset++ ] = c[ 2 ];
+			const c = scale[ --i ];
 
-	}
+			data[ offset++ ] = c[ 0 ];
+			data[ offset++ ] = c[ 1 ];
+			data[ offset++ ] = c[ 2 ];
 
-	const texture = new DataTexture( data, l, 1, RGBFormat, UnsignedByteType );
+		}
 
-	texture.minFilter = LinearFilter;
-	texture.magFilter = LinearFilter;
+		const texture = new DataTexture( data, l, 1, RGBFormat, UnsignedByteType );
 
-	texture.needsUpdate = true;
+		texture.minFilter = LinearFilter;
+		texture.magFilter = LinearFilter;
 
-	return texture;
+		texture.needsUpdate = true;
 
-}
-
-function createColors ( scale ) {
-
-	const cache = [];
-
-	for ( var i = 0, l = scale.length; i < l; i++ ) {
-
-		let c = scale[ i ];
-
-		cache[ i ] = new Color( c[ 0 ] / 255, c[ 1 ] / 255, c[ 2 ] / 255 );
+		return texture;
 
 	}
 
-	return cache;
+	function createColors ( scale ) {
 
-}
+		const cache = [];
 
-function getCacheEntry( cacheName, createFunc, name ) {
+		for ( var i = 0, l = scale.length; i < l; i++ ) {
 
-	const cache = caches[ cacheName ];
+			let c = scale[ i ];
 
-	var entry = cache[ name ];
+			cache[ i ] = new Color( c[ 0 ] / 255, c[ 1 ] / 255, c[ 2 ] / 255 );
 
-	if ( entry === undefined ) {
+		}
 
-		const scale = Colours[ name ];
-
-		if ( scale === undefined ) console.error( 'unknown colour scale requested ' + name );
-
-		entry = createFunc( scale );
-		cache[ name ] = entry;
+		return cache;
 
 	}
 
-	return entry;
+	function getCacheEntry( cacheName, createFunc, name ) {
+
+		const cache = caches[ cacheName ];
+
+		var entry = cache[ name ];
+
+		if ( entry === undefined ) {
+
+			const scale = Colours[ name ];
+
+			if ( scale === undefined ) console.error( 'unknown colour scale requested ' + name );
+
+			entry = createFunc( scale );
+			cache[ name ] = entry;
+
+		}
+
+		return entry;
+
+	}
+
+	this.getTexture = function ( name ) {
+
+		return getCacheEntry( 'texture', createTexture, name );
+
+	}
+
+	this.getColors = function ( name ) {
+
+		return getCacheEntry( 'colors', createColors, name );
+
+	};
+
+	this.white = new Color( 0xffffff );
 
 }
 
-function getTexture( name ) {
-
-	return getCacheEntry( 'texture', createTexture, name );
-
-}
-
-function getColors( name ) {
-
-	return getCacheEntry( 'colors', createColors, name );
-
-}
-
-export const ColourCache = {
-	getTexture: getTexture,
-	getColors: getColors,
-	white: new Color( 0xffffff )
-};
+export { ColourCache };

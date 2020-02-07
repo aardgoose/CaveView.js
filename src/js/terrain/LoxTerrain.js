@@ -7,7 +7,7 @@ import { MeshLambertMaterial, TextureLoader, Mesh, Box3 } from '../Three';
 
 function LoxTile( ctx, terrain, offsets ) {
 
-	Mesh.call( this, new LoxTerrainGeometry( terrain.dtm, offsets ), ctx.materials.getSurfaceMaterial( 0xff8888 ) );
+	Mesh.call( this, new LoxTerrainGeometry( terrain.dtm, offsets ), ctx.materials.getSurfaceMaterial() );
 
 	this.type = 'CV.LoxTile';
 	this.layers.set( FEATURE_TERRAIN );

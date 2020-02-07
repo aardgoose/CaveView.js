@@ -1,16 +1,8 @@
-import {
-	TextureLoader,
-	MeshLambertMaterial,
-	Box2, Vector2
-} from '../Three';
+import { TextureLoader, Box2, Vector2 } from '../Three';
 
 import {TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 import proj4 from 'proj4';
 import { TERRAIN_BLEND } from '../core/constants';
-
-const missingMaterial = new MeshLambertMaterial( { transparent: true, opacity: 0.5, color: 0xff8888 } );
-
-missingMaterial.setThroughMode = function () {};
 
 function Overlay ( ctx, overlayProvider ) {
 
@@ -97,6 +89,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 	const self = this;
 	const key = x + ':' + y + ':' + z;
 	const cfg = this.ctx.cfg;
+	const materials = this.ctx.materials;
 
 	const material = this.materialCache[ key ];
 	const overlayMaxZoom = this.provider.maxZoom;
@@ -139,7 +132,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 	if ( url === null || this.missing.has( url ) ) {
 
-		overlayLoaded( missingMaterial );
+		overlayLoaded( materials.getMissingMaterial() );
 
 		return;
 
@@ -181,7 +174,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 		self.missing.add( url );
 
-		overlayLoaded( self.active ? missingMaterial : null );
+		overlayLoaded( self.active ? materials.getMissingMaterial() : null );
 
 	}
 

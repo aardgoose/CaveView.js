@@ -1,4 +1,3 @@
-
 import { CursorMaterial } from './CursorMaterial';
 import { ClusterMaterial } from './ClusterMaterial';
 import { ContourMaterial } from './ContourMaterial';
@@ -10,19 +9,10 @@ import { HypsometricMaterial } from './HypsometricMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
 import { ColourCache } from '../core/ColourCache';
 import { GlyphAtlasCache } from './GlyphAtlas';
-
 import {
 	LineBasicMaterial, MeshLambertMaterial, MeshBasicMaterial,
-	NoColors, VertexColors, IncrementStencilOp
+	NoColors, VertexColors, IncrementStencilOp, Vector2, Color,
 } from '../Three';
-
-
-function setStencil ( material ) {
-
-	material.stencilWrite = true;
-	material.stencilZPass = IncrementStencilOp;
-
-}
 
 function Materials ( viewer ) {
 
@@ -36,6 +26,13 @@ function Materials ( viewer ) {
 	var cursorHeight = 0;
 	var survey;
 
+	const colourCache = new ColourCache();
+
+	this.colourCache = colourCache;
+
+	const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
+	const surfaceColour = ctx.cfg.themeValue( 'shading.single' );
+
 	this.commonUniforms = {
 		fogColor: { value: ctx.cfg.themeColor( 'background' ) },
 		fogDensity: { value: 0.0025 },
@@ -45,6 +42,13 @@ function Materials ( viewer ) {
 
 	this.commonDepthUniforms = {
 		datumShift: { value: 0.0 }
+	};
+
+	this.commonTerrainUniforms = {
+		scale: { value: 0.0 },
+		accuracy: { value: 0.0 },
+		target: { value: new Vector2() },
+		ringColor: { value: new Color( 0xff0000 ) }
 	};
 
 	Object.defineProperty( this, 'cursorHeight', {
@@ -61,23 +65,44 @@ function Materials ( viewer ) {
 		set: function ( x ) { distanceTransparency.value = x; }
 	} );
 
-	function cacheMaterial ( name, material ) {
+	function cacheMaterial ( name, material, stencil ) {
 
 		cache.set( name, material );
+
+		if ( stencil ) {
+
+			material.stencilWrite = true;
+			material.stencilZPass = IncrementStencilOp;
+
+		}
 
 		return material;
 
 	}
 
-	function cacheSurveyMaterial ( name, material ) {
+	function getCacheMaterial ( name, materialFunc, stencil ) {
 
-		cache.set( name, material );
+		var material = cache.get( 'name' );
+
+		if ( material === undefined ) {
+
+			material = cacheMaterial( name, materialFunc(), stencil );
+
+
+		}
+
+		return material;
+
+	}
+
+	function getSurveyCacheMaterial ( name, materialFunc, stencil ) {
+
+		const material = getCacheMaterial( name, materialFunc, stencil );
 		perSurveyMaterials[ name ] = material;
 
 		return material;
 
 	}
-
 
 	function updateCursors( newHeight ) {
 
@@ -97,34 +122,15 @@ function Materials ( viewer ) {
 
 	this.getHeightMaterial = function ( type ) {
 
-		const name = 'height' + type;
-
-		var material = cache.get( name );
-
-		if ( material === undefined ) {
-
-			material = cacheSurveyMaterial( name, new HeightMaterial( ctx, type, survey ) );
-			setStencil( material );
-
-		}
-
-		return material;
+		const func = function () { return new HeightMaterial( ctx, type, survey ); };
+		return getSurveyCacheMaterial( 'height' + type, func, true );
 
 	};
 
 	this.getHypsometricMaterial = function () {
 
-		const name = 'hypsometric';
-
-		var material = cache.get( name );
-
-		if ( material === undefined ) {
-
-			material = cacheSurveyMaterial( name, new HypsometricMaterial( ctx, survey ) );
-
-		}
-
-		return material;
+		const func = function () { return new HypsometricMaterial( ctx, survey ); };
+		return getSurveyCacheMaterial( 'hypsometric', func );
 
 	};
 
@@ -136,36 +142,17 @@ function Materials ( viewer ) {
 
 	this.getDepthMaterial = function ( type ) {
 
-		const name = 'depth' + type;
-
-		var material = cache.get( name );
-
-		if ( material === undefined ) {
-
-			material = cacheSurveyMaterial( name, new DepthMaterial( ctx, type, survey ) );
-			setStencil( material );
-
-		}
-
-		return material;
+		const func = function () { return new DepthMaterial( ctx, type, survey ); };
+		return getSurveyCacheMaterial( 'depth' + type, func, true );
 
 	};
 
 	this.getCursorMaterial = function ( type ) {
 
-		const name = 'cursor' + type;
-
-		var material = cache.get( name );
-
-		if ( material === undefined ) {
-
-			material = cacheSurveyMaterial( name, new CursorMaterial( ctx, type, survey ) );
-			setStencil( material );
-
-		}
+		const func = function () { return new CursorMaterial( ctx, type, survey ); };
+		const material = getSurveyCacheMaterial( 'cursor' + type, func, true );
 
 		// set active cursor material for updating
-
 		cursorMaterials[ type ] = material;
 
 		return material;
@@ -174,87 +161,64 @@ function Materials ( viewer ) {
 
 	this.getDepthCursorMaterial = function ( type ) {
 
-		const name = 'depthCursor' + type;
-
-		var material = cache.get( name );
-
-		if ( material === undefined ) {
-
-			material = cacheSurveyMaterial( name, new DepthCursorMaterial( ctx, type, survey ) );
-			setStencil( material );
-
-		}
+		const func = function () { return new DepthCursorMaterial( ctx, type, survey ); };
+		const material = getSurveyCacheMaterial( 'depthCursor' + type, func, true );
 
 		// set active cursor material for updating
-
 		cursorMaterials[ type ] = material;
 
 		return material;
 
 	};
 
-	this.getSurfaceMaterial = function ( color ) {
 
-		const name = 'surface' + color;
-		var material = cache.get( name );
+	this.getSurfaceMaterial = function  () {
 
-		if ( material === undefined ) {
-
-			material = cacheMaterial( name, new MeshLambertMaterial( { color: color, vertexColors: NoColors } ) );
-			setStencil( material );
-
-		}
-
-		return material;
+		const func = function () { return new MeshLambertMaterial( { color: surfaceColour, vertexColors: NoColors } ); };
+		return getCacheMaterial( 'surface', func, true );
 
 	};
 
+
 	this.getLineMaterial = function () {
 
-		var material = cache.get( 'line' );
+		const func = function () { return new LineBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ); };
+		return getCacheMaterial( 'line', func, true );
 
-		if ( material === undefined ) {
+	};
 
-			material = cacheMaterial( 'line', new LineBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
-			setStencil( material );
+	this.getMissingMaterial = function () {
 
-		}
+		const func = function () { return new MeshLambertMaterial( { transparent: true, opacity: 0.5, color: 0xff8888 } ); };
+		return getCacheMaterial( 'missing', func );
 
-		return material;
+	};
+
+	this.getUnselectedMaterial = function () {
+
+		const func = function () { return new LineBasicMaterial( { color: 0x444444, vertexColors: VertexColors } ); };
+		return getCacheMaterial( 'unselected', func );
+
+	};
+
+	this.getUnselectedWallMaterial = function () {
+
+		const func = function () { return new MeshLambertMaterial( { color: 0x444444, vertexColors: VertexColors } ); };
+		return getCacheMaterial( 'unselectedWall', func );
 
 	};
 
 	this.getScaleMaterial = function () {
 
-		const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
-
-		var material = cache.get( 'scale' );
-
-		if ( material === undefined ) {
-
-			material = cacheMaterial( 'scale', new MeshBasicMaterial(
-				{
-					color: 0xffffff,
-					map: ColourCache.getTexture( gradient )
-				} ) );
-
-		}
-
-		return material;
+		const func = function () { return new MeshBasicMaterial( { color: 0xffffff, map: colourCache.getTexture( gradient ) } ); };
+		return getCacheMaterial( 'scale', func );
 
 	};
 
 	this.getContourMaterial = function () {
 
-		var material = cache.get( 'contour' );
-
-		if ( material === undefined ) {
-
-			material = cacheSurveyMaterial( 'contour', new ContourMaterial( ctx, survey ) );
-
-		}
-
-		return material;
+		const func = function () { return new ContourMaterial( ctx, survey ); };
+		return getSurveyCacheMaterial( 'contour', func );
 
 	};
 
@@ -263,32 +227,16 @@ function Materials ( viewer ) {
 		const atlas = glyphAtlasCache.getAtlas( glyphAtlasSpec );
 		const name = JSON.stringify( glyphAtlasSpec ) + ':' + rotation.toString();
 
-		var material = cache.get( name );
+		const func = function () { return new GlyphMaterial( ctx, atlas, rotation, viewer ); };
 
-		if ( material === undefined ) {
-
-			material = cacheMaterial( name, new GlyphMaterial( ctx, atlas, rotation, viewer ) );
-
-		}
-
-		return material;
+		return getCacheMaterial( name, func );
 
 	};
 
 	this.getClusterMaterial = function ( count ) {
 
-		const name = 'cluster' + count;
-
-		var material = cache.get( name );
-
-		if ( material === undefined ) {
-
-			material = cacheMaterial( name, new ClusterMaterial( count ) );
-			setStencil( material );
-
-		}
-
-		return material;
+		const func = function () { return new ClusterMaterial( count ); };
+		return getCacheMaterial( 'cluster' + count, func, true );
 
 	};
 

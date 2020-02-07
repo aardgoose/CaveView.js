@@ -1,5 +1,3 @@
-import { ColourCache } from '../core/ColourCache';
-
 import { MeshLambertMaterial} from '../Three';
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 import { Shaders } from '../shaders/Shaders';
@@ -20,6 +18,7 @@ function HypsometricMaterial ( ctx, survey ) {
 
 	const cfg = ctx.cfg;
 	const terrain = survey.terrain;
+	const colourCache = ctx.materials.colourCache;
 
 	MeshLambertMaterial.call( this );
 
@@ -42,7 +41,7 @@ function HypsometricMaterial ( ctx, survey ) {
 			{
 				minZ:   { value: zMin },
 				scaleZ: { value: 1 / ( zMax - zMin ) },
-				cmap:   { value: ColourCache.getTexture( 'hypsometric' ) }
+				cmap:   { value: colourCache.getTexture( 'hypsometric' ) }
 			}
 		);
 

@@ -8,7 +8,7 @@ function buildScraps ( cave, survey ) {
 
 	if ( l === 0 ) return null;
 
-	const mesh = survey.getFeature( FACE_SCRAPS, Walls );
+	const mesh = survey.addFeature( new Walls( survey.ctx ), FACE_SCRAPS, 'Scraps' );
 
 	const indices = [];
 	const vertices = [];

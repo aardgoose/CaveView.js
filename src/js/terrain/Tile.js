@@ -48,7 +48,7 @@ function Tile ( ctx, x, y, zoom, tileSpec ) {
 	this.boundingBox = null;
 	this.worldBoundingBox = null;
 
-	Mesh.call( this, new BufferGeometry(), ctx.materials.getSurfaceMaterial( 0xff8888 ) );
+	Mesh.call( this, new BufferGeometry(), ctx.materials.getSurfaceMaterial() );
 
 	this.type = 'Tile';
 	this.isTile = false;

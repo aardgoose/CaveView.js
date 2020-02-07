@@ -1,4 +1,3 @@
-import { ColourCache } from '../core/ColourCache';
 import { GlyphString } from '../core/GlyphString';
 
 import {
@@ -19,7 +18,7 @@ function AngleScale ( hudObject, caption ) {
 
 	const geometry = new RingBufferGeometry( 1, 40, 36, 1, Math.PI, Math.PI );
 
-	const hues = ColourCache.getColors( 'inclination' );
+	const hues = materials.colourCache.getColors( 'inclination' );
 	const colors = [];
 
 	const vertices = geometry.getAttribute( 'position' );

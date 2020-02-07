@@ -1,17 +1,10 @@
-import {
-	BufferGeometry,
-	VertexColors, LineSegments,
-	LineBasicMaterial,
-	Float32BufferAttribute
-} from '../Three';
-
-const unselectedMaterial = new LineBasicMaterial( { color: 0x444444, vertexColors: VertexColors } );
+import { BufferGeometry, LineSegments, Float32BufferAttribute } from '../Three';
 
 function Legs ( ctx ) {
 
 	const geometry = new BufferGeometry();
 
-	LineSegments.call( this, geometry, unselectedMaterial );
+	LineSegments.call( this, geometry, ctx.materials.getUnselectedMaterial() );
 
 	this.type = 'Legs';
 	this.legLengths = [];

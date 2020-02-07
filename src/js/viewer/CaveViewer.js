@@ -66,7 +66,7 @@ function CaveViewer ( domID, configuration ) {
 
 	container.style.backgroundColor = cfg.themeValue( 'background' );
 
-	const renderer = new WebGLRenderer( { antialias: true, alpha: true });
+	var renderer = new WebGLRenderer( { antialias: true, alpha: true });
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setClearColor( cfg.themeValue( 'background' ) );
@@ -479,6 +479,10 @@ function CaveViewer ( domID, configuration ) {
 	hud.getProgressDial( 0 ).watch( caveLoader );
 
 	viewState = new ViewState( this );
+
+	this.renderView = renderView;
+
+	onResize();
 
 	function _enableLayer ( layerTag, name ) {
 
@@ -1176,7 +1180,7 @@ function CaveViewer ( domID, configuration ) {
 
 		survey = newSurvey;
 
-//		hud.getProgressDial( 1 ).watch( survey );
+		hud.getProgressDial( 1 ).watch( survey );
 
 		stats = self.getLegStats( LEG_CAVE );
 
@@ -1740,6 +1744,8 @@ function CaveViewer ( domID, configuration ) {
 
 		renderer.clear();
 		renderer.dispose();
+
+		renderer = null;
 
 	};
 

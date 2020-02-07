@@ -1,6 +1,4 @@
-
 import {
-	Vector2, Color,
 	EqualStencilFunc,
 	CustomBlending, NormalBlending, OneMinusDstAlphaFactor, DstAlphaFactor
 } from '../Three';
@@ -8,13 +6,6 @@ import {
 import { TERRAIN_BLEND, TERRAIN_STENCIL, TERRAIN_BASIC } from '../core/constants';
 
 function CommonTerrainMaterial () {}
-
-CommonTerrainMaterial.uniforms = {
-	scale: { value: 0.0 },
-	accuracy: { value: 0.0 },
-	target: { value: new Vector2() },
-	ringColor: { value: new Color( 0xff0000 ) }
-};
 
 CommonTerrainMaterial.prototype.setThroughMode = function ( mode ) {
 

@@ -1,7 +1,5 @@
 import { STATION_ENTRANCE, SHADING_SURVEY } from '../core/constants';
-
 import { Page } from './Page';
-import { SurveyColours } from '../core/SurveyColours';
 
 function SelectionPage ( frame, viewer, container, fileSelector ) {
 
@@ -70,8 +68,9 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 
 	function _displayPanel ( top ) {
 
-		const surveyColourMap = ( viewer.shadingMode === SHADING_SURVEY ) ? SurveyColours.getSurveyColourMap( viewer.section ) : null;
-		const cfg = self.frame.ctx.cfg;
+		const surveyColourMapper = viewer.ctx.surveyColourMapper;
+		const surveyColourMap = ( viewer.shadingMode === SHADING_SURVEY ) ? surveyColourMapper.getColourMap( viewer.section ) : null;
+		const cfg = viewer.ctx.cfg;
 
 		nodes = new WeakMap();
 

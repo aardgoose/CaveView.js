@@ -21,9 +21,9 @@ import { Legs } from './Legs';
 import { DyeTraces } from './DyeTraces';
 // import { Annotations } from './Annotations';
 import { SurveyMetadata } from './SurveyMetadata';
-import { SurveyColours } from '../core/SurveyColours';
 import { LoxTerrain } from '../terrain/LoxTerrain';
 import { buildWallsSync } from './walls/WallBuilders';
+import { SurveyColourMapper} from '../core/SurveyColourMapper';
 
 import { Matrix4, Vector3, Box3, Object3D, IncrementStencilOp } from '../Three';
 import proj4 from 'proj4';
@@ -67,9 +67,9 @@ function Survey ( ctx, cave ) {
 
 	const self = this;
 
-	SurveyColours.clearMap(); // clear cache of survey section to colour
-
 	this.gradientName = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
+
+	ctx.surveyColourMapper = new SurveyColourMapper( ctx );
 
 	var survey = cave.getSurvey();
 
@@ -1290,7 +1290,7 @@ Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
 	if ( selectedSection === 0 ) selectedSection = surveyTree;
 
-	const surveyToColourMap = SurveyColours.getSurveyColourMap( selectedSection );
+	const surveyToColourMap = this.ctx.surveyColourMapper.getColourMap( selectedSection );
 
 	if ( this.selectedSectionIds.size === 0 ) selectedSection.getSubtreeIds( this.selectedSectionIds );
 

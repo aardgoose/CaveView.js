@@ -493,9 +493,6 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 	var retry = false;
 	var i;
 
-	camera.updateMatrix(); // make sure camera's local matrix is updated
-	camera.updateMatrixWorld(); // make sure camera's world matrix is updated
-
 	frustum.setFromProjectionMatrix( __matrix4.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
 
 	// scan scene graph of terrain

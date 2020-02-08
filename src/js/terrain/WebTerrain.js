@@ -6,6 +6,7 @@ import { EPSG3857TileSet } from './EPSG3857TileSet';
 
 import { Frustum, Matrix4 } from '../Three';
 import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
+import { dataURL } from '../core/lib';
 
 const __frustum = new Frustum();
 const __matrix4 = new Matrix4();
@@ -41,8 +42,17 @@ function WebTerrain ( ctx, survey, onLoaded ) {
 	this.TS = null;
 	this.maxTiles = ctx.cfg.value( 'maxTiles', 128 );
 
+	// tile zoom properties
+	this.retile_timeout = 80;
+	this.retileScaler = 4;
+	this.lastActivityTime = 0;
+	this.timerId = null;
+
 	this.material = ctx.materials.getCursorMaterial();
 	this.canZoom = true;
+
+	this.watcher = this.scheduleRetile.bind( this );
+	this.updateFunc = WebTerrain.prototype.zoomCheck.bind( this );
 
 }
 
@@ -468,6 +478,9 @@ WebTerrain.prototype.setOpacity = function ( opacity ) {
 
 WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 
+	if ( performance.now() - this.lastActivityTime < this.retile_timeout ) return;
+	if ( this.tilesLoading > 0 ) return true;
+
 	const self = this;
 	const frustum = __frustum;
 	const camera = cameraManager.activeCamera;
@@ -479,8 +492,6 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 
 	var retry = false;
 	var i;
-
-	if ( this.tilesLoading > 0 ) return true;
 
 	camera.updateMatrix(); // make sure camera's local matrix is updated
 	camera.updateMatrixWorld(); // make sure camera's world matrix is updated
@@ -523,7 +534,14 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 
 	this.initProgress();
 
-	return retry;
+	if ( retry ) {
+
+		this.timerId = setTimeout( this.updateFunc, this.retile_timeout * this.retileScaler, cameraManager );
+		this.retileScaler *= 2;
+
+	}
+
+	return;
 
 	function _scanTiles( tile ) {
 
@@ -734,6 +752,31 @@ WebTerrain.prototype.fitSurface = function ( modelPoints, offsets ) {
 		console.log( 'Adjustmenting terrain height by:', self.datumShift, 'sd:',sd );
 
 	}
+
+};
+
+WebTerrain.prototype.scheduleRetile = function ( event) {
+
+	if ( ! this.visible ) return;
+
+	if ( this.timerId !== null ) clearTimeout( this.timerId );
+
+	this.retileScaler = 4;
+	this.lastActivityTime = performance.now();
+	this.timerId = setTimeout( this.updateFunc, this.retile_timeout, event.cameraManager );
+
+};
+
+
+WebTerrain.prototype.watch = function ( obj ) {
+
+	obj.addEventListener( 'moved', this.watcher );
+
+};
+
+WebTerrain.prototype.unwatch = function ( obj ) {
+
+	obj.removeEventListener( 'moved', this.watcher );
 
 };
 

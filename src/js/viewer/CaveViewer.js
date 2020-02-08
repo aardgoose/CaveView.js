@@ -3,7 +3,7 @@ import {
 	VERSION,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES, SURVEY_WARNINGS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, LABEL_STATION_COMMENT,
-	SHADING_SINGLE, SHADING_RELIEF, SHADING_PATH, SHADING_DISTANCE,
+	SHADING_PATH, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
 	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE, FEATURE_ANNOTATIONS, TERRAIN_BLEND
@@ -102,10 +102,9 @@ function CaveViewer ( domID, configuration ) {
 	locationControls.addEventListener( 'accuracy', onLocationAccuracyChange );
 
 	const cameraMove = new CameraMove( controls, onCameraMoved );
+	const moveEndEvent = { type: 'moved', cameraManager: cameraManager };
 
 	const formatters = {};
-
-	const RETILE_TIMEOUT = 80; // ms pause after last movement before attempting retiling
 
 	var caveIsLoaded = false;
 
@@ -118,21 +117,16 @@ function CaveViewer ( domID, configuration ) {
 	var survey = null;
 	var limits = null;
 	var stats = {};
-	var caveLoader;
 
-	var shadingMode = SHADING_SINGLE;
-	var surfaceShadingMode = SHADING_SINGLE;
-	var terrainShadingMode = SHADING_RELIEF;
+	var shadingMode;
+	var surfaceShadingMode;
+	var terrainShadingMode;
 
 	var useFog = false;
 
 	var selectedSection = null;
 
 	var renderRequired = true;
-
-	var lastActivityTime = 0;
-	var timerId = null;
-	var retileScaler = 1;
 
 	var popup = null;
 
@@ -474,7 +468,7 @@ function CaveViewer ( domID, configuration ) {
 
 	const hud = new HUD( this, renderer );
 
-	caveLoader = new CaveLoader( ctx, caveLoaded );
+	const caveLoader = new CaveLoader( ctx, caveLoaded );
 
 	hud.getProgressDial( 0 ).watch( caveLoader );
 
@@ -671,7 +665,7 @@ function CaveViewer ( domID, configuration ) {
 
 		renderView();
 
-		if ( terrain.isTiled ) updateTerrain();
+		if ( terrain.isTiled ) terrain.zoomCheck( cameraManager );
 
 	}
 
@@ -1075,8 +1069,13 @@ function CaveViewer ( domID, configuration ) {
 		hud.setVisibility( false );
 
 		// terminate all running workers (tile loading/wall building etc)
-
 		ctx.workerPools.terminateActive();
+
+		if ( terrain && terrain.isTiled ) {
+
+			terrain.unwatch( self );
+
+		}
 
 		scene.remove( survey );
 
@@ -1251,8 +1250,9 @@ function CaveViewer ( domID, configuration ) {
 			}
 
 			setupTerrain();
-
 			setupView( true );
+
+			terrain.watch( self );
 
 		}
 
@@ -1619,40 +1619,7 @@ function CaveViewer ( domID, configuration ) {
 
 	function onCameraMoveEnd () {
 
-		self.dispatchEvent( { type: 'moved' } );
-
-		if ( terrain && terrain.isTiled && self.terrain ) {
-
-			// schedule a timeout to load replace discarded tiles or higher res tiles
-
-			if ( timerId !== null ) {
-
-				clearTimeout( timerId );
-
-			}
-
-			retileScaler = 4;
-			lastActivityTime = performance.now();
-			timerId = setTimeout( updateTerrain, RETILE_TIMEOUT );
-
-		}
-
-	}
-
-	function updateTerrain () {
-
-		if ( performance.now() - lastActivityTime > RETILE_TIMEOUT ) {
-
-			if ( terrain && terrain.zoomCheck( cameraManager ) ) {
-
-				timerId = setTimeout( updateTerrain, RETILE_TIMEOUT * retileScaler );
-				retileScaler *= 2;
-
-			}
-
-		}
-
-		timerId = null;
+		self.dispatchEvent( moveEndEvent );
 
 	}
 

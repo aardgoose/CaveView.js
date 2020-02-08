@@ -293,6 +293,8 @@ CommonTerrain.prototype.setThroughMode = function ( mode ) {
 
 CommonTerrain.prototype.setVisibility = function ( mode ) {
 
+	this.visible = mode;
+
 	if ( mode ) {
 
 		this.showAttribution();

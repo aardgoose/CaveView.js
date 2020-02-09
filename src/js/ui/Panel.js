@@ -41,8 +41,10 @@ Panel.prototype.addDynamic = function ( element ) {
 
 Panel.prototype.setVisibility = function ( visible ) {
 
-	Page.setControlsVisibility( this.elements, visible );
-	Page.setControlsVisibility( this.dynamic, visible );
+	const frame = this.page.frame;
+
+	frame.setControlsVisibility( this.elements, visible );
+	frame.setControlsVisibility( this.dynamic, visible );
 
 	if ( visible && this.onShow !== null ) this.onShow();
 

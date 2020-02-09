@@ -368,7 +368,7 @@ CommonTerrain.prototype.computeBoundingBox = function () {
 
 	function _getBoundingBox( obj ) {
 
-		if ( obj.isTile ) bb.union( obj.geometry.boundingBox );
+		if ( obj.isTile && obj.isMesh) bb.union( obj.geometry.boundingBox );
 
 	}
 

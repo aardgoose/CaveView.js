@@ -70,10 +70,10 @@ function CaveViewer ( domID, configuration ) {
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setClearColor( cfg.themeValue( 'background' ) );
-	renderer.autoClear = false;
 	renderer.setClearAlpha( 0.0 );
 	renderer.setRenderTarget( null );
 	renderer.clear();
+	renderer.autoClear = false;
 
 	container.appendChild( renderer.domElement );
 

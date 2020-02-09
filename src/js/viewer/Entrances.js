@@ -39,13 +39,13 @@ function Entrances ( ctx, survey ) {
 
 	surveyTree.traverse( _addEntrance );
 
-	let l = vertices.length;
+	let bl = vertices.length * 3;
 
-	if ( l > 0 ) {
+	if ( bl > 0 ) {
 
-		const positions = new Float32BufferAttribute( l * 3, 3 );
-		const colors = new Float32BufferAttribute( l * 3, 3 );
-		colors.array.fill( 0.5 );
+		const positions = new Float32BufferAttribute( bl, 3 );
+		const colors = new Float32BufferAttribute( bl, 3 );
+		colors.array.fill( 1 );
 
 		positions.copyVector3sArray( vertices );
 		geometry.setAttribute( 'position', positions );

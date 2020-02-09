@@ -146,9 +146,8 @@ Entrances.prototype.intersectLabels = function ( mouse, camera, scale ) {
 Entrances.prototype.setHighlights = function ( nodeIdSet ) {
 
 	const color = this.markers.geometry.getAttribute( 'color');
-	const stations = this.stations;
 
-	stations.forEach( function ( node, i ) {
+	this.stations.forEach( function ( node, i ) {
 
 		if ( nodeIdSet.has( node.id ) ) {
 
@@ -166,11 +165,20 @@ Entrances.prototype.setHighlights = function ( nodeIdSet ) {
 
 };
 
-Entrances.prototype.clearHighlights = function () {
+Entrances.prototype.clearHighlights = function ( selectedSectionIds ) {
 
 	const color = this.markers.geometry.getAttribute( 'color');
 
-	color.array.fill( 1.0 );
+	if ( selectedSectionIds.length === 0 ) {
+
+		color.array.fill( 1.0 );
+
+	} else {
+
+		this.setHighlights( selectedSectionIds );
+
+	}
+
 	color.needsUpdate = true;
 
 };

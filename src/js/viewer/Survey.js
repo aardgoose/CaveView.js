@@ -758,7 +758,7 @@ Survey.prototype.highlightSelection = function ( node ) {
 		if ( box !== null ) box.visible = false;
 
 		this.stations.clearHighlight();
-		this.entrances.clearHighlights();
+		this.entrances.clearHighlights( this.selectedSectionIds );
 
 	} else {
 
@@ -783,6 +783,7 @@ Survey.prototype.selectSection = function ( node ) {
 	const surveyTree = this.surveyTree;
 
 	this.clearSelection();
+	this.entrances.clearHighlights( selectedSectionIds );
 
 	if ( node !== surveyTree ) {
 
@@ -792,6 +793,7 @@ Survey.prototype.selectSection = function ( node ) {
 			node.getSubtreeIds( selectedSectionIds );
 
 			this.stations.selectStations();
+			this.entrances.setHighlights( selectedSectionIds );
 
 		} else {
 

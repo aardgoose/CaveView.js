@@ -801,7 +801,7 @@ Survey.prototype.selectSection = function ( node ) {
 
 	} else {
 
-		this.stations.selectStations( this.selectedSectionIds );
+		this.stations.selectStations();
 
 	}
 

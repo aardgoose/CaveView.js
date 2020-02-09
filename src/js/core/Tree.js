@@ -251,6 +251,8 @@ Tree.prototype.getSubtreeIds = function ( idSet ) {
 
 	}
 
+	return idSet;
+
 };
 
 Tree.prototype.getIdByPath = function ( path ) {

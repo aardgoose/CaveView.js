@@ -758,12 +758,14 @@ Survey.prototype.highlightSelection = function ( node ) {
 		if ( box !== null ) box.visible = false;
 
 		this.stations.clearHighlight();
+		this.entrances.clearHighlights();
 
 	} else {
 
 		if ( node.p === undefined && node.boundingBox !== undefined ) {
 
 			this.highlightBox = this.boxSection( node, box, this.ctx.cfg.themeValue( 'box.highlight' ) );
+			this.entrances.setHighlights( node.getSubtreeIds( new Set() ) );
 
 		} else if ( node.p ) {
 

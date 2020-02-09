@@ -1,7 +1,7 @@
 
 import { ClusterMarkers } from './ClusterMarkers';
 import { STATION_ENTRANCE, FEATURE_ENTRANCES } from '../core/constants';
-import { Points, PointsMaterial, BufferGeometry, Float32BufferAttribute, TextureLoader } from '../Three';
+import { Points, PointsMaterial, BufferGeometry, Float32BufferAttribute, TextureLoader, VertexColors } from '../Three';
 
 function Entrances ( ctx, survey ) {
 
@@ -23,6 +23,7 @@ function Entrances ( ctx, survey ) {
 	material.transparent = true;
 	material.sizeAttenuation = false;
 	material.size = 10;
+	material.vertexColors = VertexColors;
 
 	const markers = new Points( geometry, material );
 
@@ -43,9 +44,12 @@ function Entrances ( ctx, survey ) {
 	if ( l > 0 ) {
 
 		const positions = new Float32BufferAttribute( l * 3, 3 );
+		const colors = new Float32BufferAttribute( l * 3, 3 );
+		colors.array.fill( 0.5 );
 
 		positions.copyVector3sArray( vertices );
 		geometry.setAttribute( 'position', positions );
+		geometry.setAttribute( 'color', colors );
 
 	} else {
 
@@ -136,6 +140,38 @@ Entrances.prototype.intersectLabels = function ( mouse, camera, scale ) {
 		return a.depth - b.depth;
 
 	}
+
+};
+
+Entrances.prototype.setHighlights = function ( nodeIdSet ) {
+
+	const color = this.markers.geometry.getAttribute( 'color');
+	const stations = this.stations;
+
+	stations.forEach( function ( node, i ) {
+
+		if ( nodeIdSet.has( node.id ) ) {
+
+			color.setXYZ( i, 1, 1, 1 );
+
+		} else {
+
+			color.setXYZ( i, 0.5, 0.5, 0.5 );
+
+		}
+
+	} );
+
+	color.needsUpdate = true;
+
+};
+
+Entrances.prototype.clearHighlights = function () {
+
+	const color = this.markers.geometry.getAttribute( 'color');
+
+	color.array.fill( 1.0 );
+	color.needsUpdate = true;
 
 };
 

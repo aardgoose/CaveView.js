@@ -1,7 +1,6 @@
-
 import {
 	FACE_SCRAPS, FACE_WALLS,
-	FEATURE_ENTRANCES, FEATURE_SELECTED_BOX, FEATURE_BOX, FEATURE_TRACES,
+	FEATURE_ENTRANCES, FEATURE_BOX, FEATURE_TRACES,
 	FEATURE_STATIONS, SURVEY_WARNINGS, STATION_ENTRANCE,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, LABEL_STATION_COMMENT,
 	MATERIAL_LINE, MATERIAL_SURFACE,
@@ -24,17 +23,19 @@ import { SurveyMetadata } from './SurveyMetadata';
 import { LoxTerrain } from '../terrain/LoxTerrain';
 import { buildWallsSync } from './walls/WallBuilders';
 import { SurveyColourMapper} from '../core/SurveyColourMapper';
+import { Selection } from './Selection';
 
-import { Matrix4, Vector3, Box3, Object3D, IncrementStencilOp } from '../Three';
+import { Matrix4, Vector3, Box3, Object3D } from '../Three';
 import proj4 from 'proj4';
+
+const __set = new Set();
+
+Selection.prototype = Object.create( Box3Helper.prototype );
 
 function Survey ( ctx, cave ) {
 
 	Object3D.call( this );
 
-	this.selectedSectionIds = new Set();
-	this.selectedSection = 0;
-	this.selectedBox = null;
 	this.highlightBox = null;
 	this.highlightPath = null;
 	this.lastMarkedStation = null;
@@ -43,8 +44,8 @@ function Survey ( ctx, cave ) {
 	this.surveyTree = null;
 	this.projection = null;
 	this.projectionWGS84 = null;
-	this.wireframe = null;
 	this.worldBoundingBox = null;
+	this.activeShadingMode = SHADING_HEIGHT;
 	this.ctx = ctx;
 
 	// objects targeted by raycasters and objects with variable LOD
@@ -208,7 +209,7 @@ Survey.prototype.loadWarnings = function () {
 
 	const surveyTree = this.surveyTree;
 	const messages = this.messages;
-	const selected = this.selectedSectionIds;
+	const selection = this.selection;
 
 	if ( messages.length > 0 ) {
 
@@ -218,7 +219,7 @@ Survey.prototype.loadWarnings = function () {
 
 			const node = surveyTree.getByPath( message.station );
 
-			if ( node !== undefined && ( selected.size === 0 || selected.has( node.id ) ) ) {
+			if ( node !== undefined && selection.contains( node.id ) ) {
 
 				errorMarkers.mark( node );
 				node.messageText = message.text;
@@ -286,15 +287,19 @@ Survey.prototype.loadCave = function ( cave ) {
 	const self = this;
 	const ctx = this.ctx;
 
-	this.surveyTree = cave.surveyTree;
+	const surveyTree = cave.surveyTree;
+
+	this.surveyTree = surveyTree;
 
 	_loadSegments( cave.lineSegments );
 
-	this.loadStations( cave.surveyTree );
+	this.loadStations( surveyTree );
 
 	_loadTerrain( cave );
 
-	this.computeBoundingBoxes( cave.surveyTree );
+	this.computeBoundingBoxes( surveyTree );
+
+	this.selection = new Selection( this );
 
 	this.pointTargets.push( this.stations );
 
@@ -449,7 +454,7 @@ Survey.prototype.update = function ( cameraManager, target, showClusterMarkers )
 	if ( entrances && cameraManager.testCameraLayer( FEATURE_ENTRANCES ) ) {
 
 		cameraManager.setCameraLayer( CLUSTER_MARKERS, showClusterMarkers );
-		entrances.cluster( camera, target, this.selectedSectionIds, showClusterMarkers );
+		entrances.cluster( camera, target, this.selection, showClusterMarkers );
 
 	} else {
 
@@ -505,7 +510,7 @@ Survey.prototype.hasFeature = function ( tag ) {
 
 Survey.prototype.loadStations = function ( surveyTree ) {
 
-	const stations = new Stations( this.ctx, this.selectedSectionIds );
+	const stations = new Stations( this.ctx, this.selection );
 
 	var commentCount = 0;
 
@@ -533,7 +538,7 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 	function _addStation ( node ) {
 
 		if ( node.comment !== undefined ) commentCount++;
-		if ( node.p === undefined ) return;
+		if ( ! node.isStation() ) return;
 
 		stations.addStation( node );
 
@@ -553,7 +558,7 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 
 		if ( parent && parent.boundingBox === undefined ) parent.boundingBox = new Box3();
 
-		if ( node.p !== undefined ) {
+		if ( node.isStation() ) {
 
 			parent.boundingBox.expandByPoint( node.p );
 
@@ -709,67 +714,33 @@ Survey.prototype.selectStation = function ( station ) {
 
 };
 
-Survey.prototype.clearSelection = function () {
-
-	this.selectedSection = this.surveyTree;
-	this.selectedSectionIds.clear();
-
-	this.stations.clearSelected();
-
-	const box = this.selectedBox;
-
-	if ( box !== null ) box.visible = false;
-
-};
-
-Survey.prototype.boxSection = function ( node, box, colour ) {
-
-	if ( box === null ) {
-
-		box = new Box3Helper( node.boundingBox, colour );
-
-		const material = box.material;
-
-		material.stencilWrite = true;
-		material.stencilZPass = IncrementStencilOp;
-
-		box.layers.set( FEATURE_SELECTED_BOX );
-
-		this.addStatic( box );
-		box.updateMatrixWorld( true );
-
-	} else {
-
-		box.visible = true;
-		box.update( node.boundingBox );
-
-	}
-
-	return box;
-
-};
-
 Survey.prototype.highlightSelection = function ( node ) {
 
-	const box = this.highlightBox;
+	if ( node.isStation() ) {
 
-	if ( node === this.surveyTree ) {
-
-		if ( box !== null ) box.visible = false;
-
-		this.stations.clearHighlight();
-		this.entrances.clearHighlights( this.selectedSectionIds );
+		this.stations.highlightStation( node );
 
 	} else {
 
-		if ( node.p === undefined && node.boundingBox !== undefined ) {
+		let box = this.highlightBox;
 
-			this.highlightBox = this.boxSection( node, box, this.ctx.cfg.themeValue( 'box.highlight' ) );
-			this.entrances.setHighlights( node.getSubtreeIds( new Set() ) );
+		if ( box === null ) {
 
-		} else if ( node.p ) {
+			box = new Selection( this, 0xff0000 );
+			this.highlightBox = box;
 
-			this.stations.highlightStation( node );
+		}
+
+		box.set( node );
+		this.stations.clearHighlight();
+
+		if ( node === this.surveyTree ) {
+
+			this.entrances.setSelection( this.selection );
+
+		} else {
+
+			this.entrances.setSelection( box );
 
 		}
 
@@ -779,35 +750,15 @@ Survey.prototype.highlightSelection = function ( node ) {
 
 Survey.prototype.selectSection = function ( node ) {
 
-	const selectedSectionIds = this.selectedSectionIds;
-	const surveyTree = this.surveyTree;
+	const selection = this.selection;
 
-	this.clearSelection();
-	this.entrances.clearHighlights( selectedSectionIds );
+	this.highlightSelection( this.surveyTree );
 
-	if ( node !== surveyTree ) {
+	selection.set( node );
 
-		if ( node.p === undefined && node.boundingBox !== undefined ) {
-
-			this.selectedBox = this.boxSection( node, this.selectedBox, this.ctx.cfg.themeValue( 'box.select' ) );
-			node.getSubtreeIds( selectedSectionIds );
-
-			this.stations.selectStations();
-			this.entrances.setHighlights( selectedSectionIds );
-
-		} else {
-
-			if ( node.p !== undefined ) this.stations.selectStation( node );
-
-		}
-
-	} else {
-
-		this.stations.selectStations();
-
-	}
-
-	this.selectedSection = node;
+	this.stations.selectStations( selection );
+	this.entrances.setSelection( selection );
+	this.setShadingMode( this.activeShadingMode );
 
 	return node;
 
@@ -851,10 +802,12 @@ Survey.prototype.getWorldBoundingBox = function () {
 
 Survey.prototype.cutSection = function ( node ) {
 
-	const selectedSectionIds = this.selectedSectionIds;
+	const selection = this.selection;
 	const self = this;
 
-	if ( selectedSectionIds.size === 0 ) return;
+	selection.set( node );
+
+	if ( selection.isEmpty() ) return;
 
 	// clear target lists
 
@@ -886,6 +839,7 @@ Survey.prototype.cutSection = function ( node ) {
 	} );
 
 	this.surveyTree = node;
+	this.selection.setRoot( node );
 
 	this.loadStations( node );
 
@@ -893,8 +847,7 @@ Survey.prototype.cutSection = function ( node ) {
 
 	// ordering is important here
 
-	this.clearSelection();
-	this.highlightSelection( this.surveyTree );
+	this.selectSection( node );
 
 	this.modelLimits = this.getBounds();
 	this.combinedLimits = this.modelLimits;
@@ -926,7 +879,7 @@ Survey.prototype.cutSection = function ( node ) {
 		case 'Legs':
 		case 'Walls':
 
-			if ( ! obj.cutRuns( self.selectedSectionIds ) ) cutList.push( obj );
+			if ( ! obj.cutRuns( selection ) ) cutList.push( obj );
 
 			break;
 
@@ -1040,11 +993,11 @@ Survey.prototype.setShadingMode = function ( mode ) {
 		this.setWallShading( this.features.get( FACE_WALLS  ), material );
 		this.setWallShading( this.features.get( FACE_SCRAPS ), material );
 
-		return true;
+		this.activeShadingMode = mode;
 
 	}
 
-	return false;
+	return this.activeShadingMode;
 
 };
 
@@ -1054,7 +1007,7 @@ Survey.prototype.setWallShading = function ( mesh, selectedMaterial ) {
 
 	if ( selectedMaterial ) {
 
-		mesh.setShading( this.selectedSectionIds, selectedMaterial );
+		mesh.setShading( this.selection, selectedMaterial );
 
 	} else {
 
@@ -1068,7 +1021,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	const mesh = this.features.get( legType );
 
-	if ( mesh === undefined ) return;
+	if ( mesh === undefined ) return false;
 
 	switch ( legShadingMode ) {
 
@@ -1166,7 +1119,7 @@ Survey.prototype.setLegColourByMaterial = function ( mesh, material ) {
 
 	material.needsUpdate = true;
 
-	mesh.setShading( this.selectedSectionIds, _colourSegment, material );
+	mesh.setShading( this.selection.getIds(), _colourSegment, material );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1213,7 +1166,7 @@ Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
 
 	const materials = this.ctx.materials;
 
-	mesh.setShading( this.selectedSectionIds, _colourSegment, materials.getLineMaterial() );
+	mesh.setShading( this.selection.getIds(), _colourSegment, materials.getLineMaterial() );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1232,7 +1185,7 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 	const stats = mesh.stats;
 	const legLengths = mesh.legLengths;
 
-	mesh.setShading( this.selectedSectionIds, _colourSegment, materials.getLineMaterial() );
+	mesh.setShading( this.selection.getIds(), _colourSegment, materials.getLineMaterial() );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1260,7 +1213,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 	const maxDistance = this.topology.maxDistance;
 	const path = this.highlightPath;
 
-	mesh.setShading( this.selectedSectionIds, _colourSegment, materials.getLineMaterial() );
+	mesh.setShading( this.selection.getIds(), _colourSegment, materials.getLineMaterial() );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1288,17 +1241,17 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
 	const materials = this.ctx.materials;
-	const surveyTree = this.surveyTree;
 
-	var selectedSection = this.selectedSection;
+	var node = this.selection.getNode();
 
-	if ( selectedSection === 0 ) selectedSection = surveyTree;
+	while ( node.children.length === 1 ) node = node.children[ 0 ];
 
-	const surveyToColourMap = this.ctx.surveyColourMapper.getColourMap( selectedSection );
+	__set.clear();
+	node.getSubtreeIds( __set );
 
-	if ( this.selectedSectionIds.size === 0 ) selectedSection.getSubtreeIds( this.selectedSectionIds );
+	const surveyToColourMap = this.ctx.surveyColourMapper.getColourMap( node );
 
-	mesh.setShading( this.selectedSectionIds, _colourSegment, materials.getLineMaterial() );
+	mesh.setShading( __set, _colourSegment, materials.getLineMaterial() );
 
 	function _colourSegment ( vertices, colors, v1, v2, survey ) {
 
@@ -1321,7 +1274,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 	const c2 = cfg.themeColor( 'routes.adjacent' );
 	const c3 = cfg.themeColor( 'routes.default' );
 
-	mesh.setShading( this.selectedSectionIds, _colourSegment, materials.getLineMaterial() );
+	mesh.setShading( this.selection.getIds(), _colourSegment, materials.getLineMaterial() );
 
 	function _colourSegment ( vertices, colors, v1, v2 /*, survey */ ) {
 
@@ -1359,7 +1312,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 	// pNormal = normal of reference plane in model space
 
-	mesh.setShading( this.selectedSectionIds, _colourSegment, materials.getLineMaterial() );
+	mesh.setShading( this.selection.getIds(), _colourSegment, materials.getLineMaterial() );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 

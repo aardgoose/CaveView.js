@@ -18,6 +18,8 @@ function Selection( survey, color ) {
 
 	this.layers.set( FEATURE_SELECTED_BOX );
 
+	survey.addStatic( this );
+
 	const selectedSectionIds = new Set();
 
 	this.setRoot = function ( rootNode ) {
@@ -40,7 +42,7 @@ function Selection( survey, color ) {
 			node.getSubtreeIds( selectedSectionIds );
 			this.visible = true;
 
-			if ( node.p === undefined && node.boundingBox !== undefined ) {
+			if ( ! node.isStation() && node.boundingBox !== undefined ) {
 
 				this.update( node.boundingBox );
 
@@ -85,6 +87,18 @@ function Selection( survey, color ) {
 	this.getName = function () {
 
 		return this.isEmpty() ? '' : selectedNode.getPath();
+
+	};
+
+	this.getNode = function () {
+
+		return selectedNode;
+
+	};
+
+	this.isStation = function () {
+
+		return selectedNode.isStation();
 
 	};
 

@@ -143,39 +143,31 @@ Entrances.prototype.intersectLabels = function ( mouse, camera, scale ) {
 
 };
 
-Entrances.prototype.setHighlights = function ( nodeIdSet ) {
+Entrances.prototype.setSelection = function ( selection ) {
 
 	const color = this.markers.geometry.getAttribute( 'color');
 
-	this.stations.forEach( function ( node, i ) {
-
-		if ( nodeIdSet.has( node.id ) ) {
-
-			color.setXYZ( i, 1, 1, 1 );
-
-		} else {
-
-			color.setXYZ( i, 0.5, 0.5, 0.5 );
-
-		}
-
-	} );
-
-	color.needsUpdate = true;
-
-};
-
-Entrances.prototype.clearHighlights = function ( selectedSectionIds ) {
-
-	const color = this.markers.geometry.getAttribute( 'color');
-
-	if ( selectedSectionIds.length === 0 ) {
+	if ( selection.isEmpty() ) {
 
 		color.array.fill( 1.0 );
 
 	} else {
 
-		this.setHighlights( selectedSectionIds );
+		const idSet = selection.getIds();
+
+		this.stations.forEach( function ( node, i ) {
+
+			if ( idSet.has( node.id ) ) {
+
+				color.setXYZ( i, 1, 1, 1 );
+
+			} else {
+
+				color.setXYZ( i, 0.5, 0.5, 0.5 );
+
+			}
+
+		} );
 
 	}
 

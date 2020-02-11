@@ -124,8 +124,6 @@ function CaveViewer ( domID, configuration ) {
 
 	var useFog = false;
 
-	var selectedSection = null;
-
 	var renderRequired = true;
 
 	var popup = null;
@@ -288,7 +286,7 @@ function CaveViewer ( domID, configuration ) {
 
 		'section': {
 			writeable: true,
-			get: function () { return selectedSection; },
+			get: function () { return survey.selection.getNode(); },
 			set: _stateSetter( selectSection, 'section' )
 		},
 
@@ -516,7 +514,7 @@ function CaveViewer ( domID, configuration ) {
 
 		clickCount = 0;
 		survey.markers.clear();
-		survey.clearSelection();
+		survey.selectSection( survey.surveyTree );
 
 		renderView();
 
@@ -879,7 +877,6 @@ function CaveViewer ( domID, configuration ) {
 	function setFog ( enable ) {
 
 		useFog = enable;
-
 		fog.density = useFog ? 0.0025 : 0;
 
 		renderView();
@@ -888,7 +885,7 @@ function CaveViewer ( domID, configuration ) {
 
 	function setShadingMode ( mode ) {
 
-		if ( survey.setShadingMode( mode ) ) shadingMode = mode;
+		shadingMode = survey.setShadingMode( mode );
 
 		if ( shadingMode === SHADING_DISTANCE ) {
 
@@ -908,7 +905,7 @@ function CaveViewer ( domID, configuration ) {
 
 	function setSurfaceShadingMode ( mode ) {
 
-		if ( survey.setLegShading( LEG_SURFACE, mode ) ) surfaceShadingMode = mode;
+		surfaceShadingMode = survey.setLegShading( LEG_SURFACE, mode );
 
 		renderView();
 
@@ -926,15 +923,16 @@ function CaveViewer ( domID, configuration ) {
 
 	};
 
-
 	function cutSection () {
 
-		if ( selectedSection === survey.surveyTree || selectedSection.p !== undefined ) return;
+		const selection = survey.selection;
+
+		if ( selection.isEmpty() || selection.isStation() ) return;
 
 		cameraMove.cancel();
 
 		survey.remove( terrain );
-		survey.cutSection( selectedSection );
+		survey.cutSection( selection.getNode() );
 
 		// grab a reference to prevent survey being destroyed in clearView()
 		const cutSurvey = survey;
@@ -960,17 +958,15 @@ function CaveViewer ( domID, configuration ) {
 
 	function selectSection ( node ) {
 
-		if ( node.p === undefined ) {
-
-			_selectSection( node );
-
-		} else {
+		if ( node.isStation() ) {
 
 			_selectStation( node );
 
-		}
+		} else {
 
-		selectedSection = node;
+			_selectSection( node );
+
+		}
 
 		renderView();
 
@@ -979,27 +975,11 @@ function CaveViewer ( domID, configuration ) {
 		function _selectSection ( node ) {
 
 			survey.selectSection( node );
+			cameraMove.prepare( survey.selection.getWorldBoundingBox() );
 
-			setShadingMode( shadingMode );
+			if ( survey.selection.isEmpty() ) cameraMove.start( renderRequired );
 
-			if ( node === survey.surveyTree ) {
-
-				cameraMove.prepare( survey.getWorldBoundingBox() );
-				cameraMove.start( renderRequired );
-
-				highlightSelection( node );
-
-				return;
-
-			} else {
-
-				if ( node.boundingBox === undefined ) return;
-
-				const boundingBox = node.boundingBox.clone();
-
-				cameraMove.prepare( boundingBox.applyMatrix4( survey.matrixWorld ) );
-
-			}
+			return;
 
 		}
 
@@ -1011,9 +991,7 @@ function CaveViewer ( domID, configuration ) {
 
 			} else {
 
-				survey.selectSection( node );
-
-				setShadingMode( shadingMode );
+				survey.selectStation( node );
 
 				cameraMove.preparePoint( survey.getWorldPosition( node.p.clone() ) );
 
@@ -1023,26 +1001,15 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
-
 	function getSelectedSectionName () {
 
-		if ( selectedSection === survey.surveyTree ) {
-
-			return '';
-
-		} else {
-
-			return selectedSection === undefined ? '' : selectedSection.getPath();
-
-		}
+		return survey.selection.getName();
 
 	}
 
 	function setSelectedSectionName ( name ) {
 
-		const node = survey.surveyTree.getByPath( name );
-
-		selectSection( node === undefined ? survey.surveyTree : node );
+		selectSection( survey.surveyTree.getByPath( name ) || survey.surveyTree );
 
 	}
 
@@ -1084,7 +1051,6 @@ function CaveViewer ( domID, configuration ) {
 		survey          = null;
 		terrain         = null;
 		limits          = null;
-		selectedSection = null;
 		mouseMode       = MOUSE_MODE_NORMAL;
 		mouseTargets    = [];
 		hasLocation     = false;
@@ -1225,8 +1191,6 @@ function CaveViewer ( domID, configuration ) {
 		survey.addEventListener( 'changed', onSurveyChanged );
 
 		caveIsLoaded = true;
-
-		selectedSection = survey.surveyTree;
 
 		setupView( syncTerrainLoading );
 
@@ -1399,12 +1363,18 @@ function CaveViewer ( domID, configuration ) {
 
 		function _setStationPOI( station ) {
 
+			if ( ! survey.selection.contains( station.id ) ) {
+
+				survey.selectSection( survey.surveyTree );
+
+			}
+
 			selectSection( station );
 
 			cameraMove.start( true );
 			event.stopPropagation();
 
-			container.addEventListener( 'mouseup', _mouseUpLeft );
+			container.addEventListener( 'mouseup', _mouseUpRight );
 
 		}
 
@@ -1431,8 +1401,12 @@ function CaveViewer ( domID, configuration ) {
 
 		function _mouseUpLeft () {
 
-			if ( ! trackLocation ) controls.enabled = true;
 			container.removeEventListener( 'mouseup', _mouseUpLeft );
+
+			popup.close();
+			popup = null;
+
+			renderView();
 
 		}
 
@@ -1446,7 +1420,7 @@ function CaveViewer ( domID, configuration ) {
 
 			survey.add( popup );
 
-			container.addEventListener( 'mouseup', _mouseUpRight );
+			container.addEventListener( 'mouseup', _mouseUpLeft );
 
 			renderView();
 
@@ -1474,10 +1448,7 @@ function CaveViewer ( domID, configuration ) {
 
 			container.removeEventListener( 'mouseup', _mouseUpRight );
 
-			popup.close();
-			popup = null;
-
-			survey.clearSelection();
+			if ( ! trackLocation ) controls.enabled = true;
 
 			renderView();
 

@@ -93,7 +93,7 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 
 };
 
-QuadTree.prototype.check = function ( cluster, target, angleFactor, selectedStationSet ) {
+QuadTree.prototype.check = function ( cluster, target, angleFactor, selection ) {
 
 	var subQuad, i;
 
@@ -151,8 +151,8 @@ QuadTree.prototype.check = function ( cluster, target, angleFactor, selectedStat
 
 			} else {
 
-				subQuad.showMarkers( selectedStationSet );
-				subQuad.check( cluster, target, angleFactor, selectedStationSet );
+				subQuad.showMarkers( selection );
+				subQuad.check( cluster, target, angleFactor, selection );
 
 			}
 
@@ -162,7 +162,7 @@ QuadTree.prototype.check = function ( cluster, target, angleFactor, selectedStat
 
 };
 
-QuadTree.prototype.showMarkers = function ( selectedStationSet ) {
+QuadTree.prototype.showMarkers = function ( selection ) {
 
 	// show the indiviual markers in this quad
 
@@ -172,7 +172,7 @@ QuadTree.prototype.showMarkers = function ( selectedStationSet ) {
 
 		const marker = markers[ i ];
 
-		marker.visible = ( selectedStationSet.size === 0 || selectedStationSet.has( marker.stationID ) );
+		marker.visible = selection.contains( marker.stationID );
 
 	}
 

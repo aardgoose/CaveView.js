@@ -36,7 +36,7 @@ Walls.prototype.addWalls = function ( vertices, indices, indexRuns ) {
 
 };
 
-Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
+Walls.prototype.setShading = function ( idSet, selectedMaterial ) {
 
 	const geometry = this.geometry;
 	const indexRuns = this.indexRuns;
@@ -46,7 +46,7 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
 	this.visible = true && this.ready;
 
-	if ( selectedRuns.size && indexRuns ) {
+	if ( idSet.length > 0 && indexRuns ) {
 
 		this.material = [ selectedMaterial, materials.getUnselectedWallMaterial() ];
 
@@ -56,7 +56,7 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 		let count = indexRun.count;
 
 		let currentMaterial;
-		let lastMaterial = selectedRuns.has( indexRun.survey ) ? 0 : 1;
+		let lastMaterial = idSet.has( indexRun.survey ) ? 0 : 1;
 
 		// merge adjacent runs with shared material.
 
@@ -64,7 +64,7 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
 			indexRun = indexRuns[ run ];
 
-			currentMaterial = selectedRuns.has( indexRun.survey ) ? 0 : 1;
+			currentMaterial = idSet.has( indexRun.survey ) ? 0 : 1;
 
 			if ( currentMaterial === lastMaterial && indexRun.start === start + count ) {
 
@@ -93,13 +93,14 @@ Walls.prototype.setShading = function ( selectedRuns, selectedMaterial ) {
 
 };
 
-Walls.prototype.cutRuns = function ( selectedRuns ) {
+Walls.prototype.cutRuns = function ( selection ) {
 
 	const geometry = this.geometry;
 
 	const vertices = geometry.getAttribute( 'position' );
 	const indices = geometry.index;
 
+	const idSet = selection.getIds();
 	const indexRuns = this.indexRuns;
 
 	const newIndices = [];
@@ -119,7 +120,7 @@ Walls.prototype.cutRuns = function ( selectedRuns ) {
 		const indexRun = indexRuns[ run ];
 		let i;
 
-		if ( selectedRuns.has( indexRun.survey ) ) {
+		if ( idSet.has( indexRun.survey ) ) {
 
 			const start = indexRun.start;
 			const count = indexRun.count;

@@ -19,7 +19,7 @@ function onUploadDropBuffer() {
 
 }
 
-function Stations ( ctx, sectionIdSet ) {
+function Stations ( ctx, selection ) {
 
 	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial( ctx ) );
 
@@ -41,7 +41,7 @@ function Stations ( ctx, sectionIdSet ) {
 
 	this.selected = null;
 	this.selectedSize = 0;
-	this.sectionIdSet = sectionIdSet;
+	this.selection = selection;
 	this.splaysVisible = false;
 
 	const point = new PointIndicator( ctx, 0xff0000 );
@@ -110,10 +110,8 @@ Stations.prototype.getStation = function ( vertex ) {
 Stations.prototype.getVisibleStation = function ( vertex ) {
 
 	const node = this.map.get( vertex );
-	const sectionIdSet = this.sectionIdSet;
 
-	if (
-		( sectionIdSet.size === 0 || sectionIdSet.has( node.id ) ) &&
+	if ( this.selection.contains( node.id ) &&
 		( node.p.connections > 0 || this.splaysVisible )
 	) return node;
 
@@ -189,13 +187,14 @@ Stations.prototype.selectStationByIndex = function ( index ) {
 
 };
 
-Stations.prototype.selectStations = function () {
+Stations.prototype.selectStations = function ( selection ) {
 
 	const stations = this.stations;
 	const l = stations.length;
 	const pSize = this.geometry.getAttribute( 'pSize' );
 	const splaySize = this.splaysVisible ? 6.0 : 0.0;
-	const sectionIdSet = this.sectionIdSet;
+	const idSet = selection.getIds();
+	const isEmpty = selection.isEmpty();
 
 	var i;
 
@@ -205,7 +204,7 @@ Stations.prototype.selectStations = function () {
 
 		let size = 8;
 
-		if ( sectionIdSet.size === 0 || sectionIdSet.has( node.id ) ) {
+		if ( isEmpty || idSet.has( node.id ) ) {
 
 			if ( node.type === STATION_ENTRANCE ) {
 

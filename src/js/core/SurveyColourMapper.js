@@ -58,7 +58,7 @@ function SurveyColourMapper ( ctx ) {
 		function _addMapping ( node ) {
 
 			// only add values for sections - not stations
-			if ( node.p === undefined ) map[ node.id ] = colour;
+			if ( ! node.isStation() ) map[ node.id ] = colour;
 
 		}
 

@@ -300,6 +300,12 @@ Tree.prototype.trim = function ( path ) {
 
 };
 
+Tree.prototype.isStation = function () {
+
+	return ( this.p !== undefined );
+
+};
+
 export { Tree };
 
 // EOF

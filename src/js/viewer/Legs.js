@@ -39,8 +39,9 @@ Legs.prototype.addLegs = function ( vertices, legRuns ) {
 
 };
 
-Legs.prototype.cutRuns = function ( selectedRuns ) {
+Legs.prototype.cutRuns = function ( selection ) {
 
+	const idSet = selection.getIds();
 	const legRuns = this.legRuns;
 
 	if ( ! legRuns ) return;
@@ -65,7 +66,7 @@ Legs.prototype.cutRuns = function ( selectedRuns ) {
 
 		let vp = 0;
 
-		if ( selectedRuns.has( survey ) ) {
+		if ( idSet.has( survey ) ) {
 
 			for ( var v = start; v < end; v++ ) {
 
@@ -136,7 +137,7 @@ Legs.prototype.computeStats = function () {
 
 };
 
-Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
+Legs.prototype.setShading = function ( idSet, colourSegment, material ) {
 
 	this.material = material;
 
@@ -150,7 +151,7 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 	const colorsAttribute = this.geometry.getAttribute( 'color' );
 	const colors = colorsAttribute.array;
 
-	if ( selectedRuns.size && legRuns ) {
+	if ( idSet.size > 0 && legRuns ) {
 
 		for ( run = 0, l = legRuns.length; run < l; run++ ) {
 
@@ -160,7 +161,7 @@ Legs.prototype.setShading = function ( selectedRuns, colourSegment, material ) {
 			const start  = legRun.start;
 			const end    = legRun.end;
 
-			if ( selectedRuns.has( survey ) ) {
+			if ( idSet.has( survey ) ) {
 
 				for ( v = start; v < end; v += 2 ) {
 

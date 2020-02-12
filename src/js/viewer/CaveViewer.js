@@ -296,6 +296,11 @@ function CaveViewer ( domID, configuration ) {
 			set: setSelectedSectionName
 		},
 
+		'popup': {
+			writeable: true,
+			set: setPopup
+		},
+
 		'highlight': {
 			writeable: true,
 			set: _stateSetter( highlightSelection, 'highlight' )
@@ -1246,6 +1251,36 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
+	function showPopup ( station ) {
+
+		if ( popup !== null ) return;
+
+		const depth = ( terrain ) ? station.p.z - terrain.getHeight( station.p ) : null;
+
+		popup = new StationPopup( ctx, station, survey, depth, formatters.station, ( shadingMode === SHADING_DISTANCE ), self.warnings );
+		survey.add( popup );
+
+	}
+
+	function closePopup () {
+
+		if ( popup === null ) return;
+
+		popup.close();
+		popup = null;
+
+	}
+
+	function setPopup ( station ) {
+
+		closePopup();
+
+		if ( station.isStation() ) showPopup( station );
+
+		renderView();
+
+	}
+
 	this.getStation = function ( mouse ) {
 
 		const threshold = raycaster.params.Points.threshold;
@@ -1402,28 +1437,17 @@ function CaveViewer ( domID, configuration ) {
 		function _mouseUpLeft () {
 
 			container.removeEventListener( 'mouseup', _mouseUpLeft );
-
-			popup.close();
-			popup = null;
-
+			closePopup();
 			renderView();
 
 		}
 
 		function _showStationPopup ( station ) {
 
-			const depth = ( terrain ) ? station.p.z - terrain.getHeight( station.p ) : null;
-
-			if ( popup !== null ) return;
-
-			popup = new StationPopup( ctx, station, survey, depth, formatters.station, ( shadingMode === SHADING_DISTANCE ), self.warnings );
-
-			survey.add( popup );
-
-			container.addEventListener( 'mouseup', _mouseUpLeft );
-
+			showPopup( station );
 			renderView();
 
+			container.addEventListener( 'mouseup', _mouseUpLeft );
 			cameraMove.preparePoint( survey.getWorldPosition( station.p.clone() ) );
 
 			return true;

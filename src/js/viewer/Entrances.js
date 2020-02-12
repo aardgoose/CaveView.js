@@ -147,6 +147,8 @@ Entrances.prototype.setSelection = function ( selection ) {
 
 	const color = this.markers.geometry.getAttribute( 'color');
 
+	if ( color === undefined ) return;
+
 	if ( selection.isEmpty() ) {
 
 		color.array.fill( 1.0 );

@@ -215,6 +215,7 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 	function _handleMouseleave ( /* event */ ) {
 
 		viewer.highlight = surveyTree;
+		viewer.popup = surveyTree;
 
 	}
 
@@ -229,6 +230,8 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 		if ( node !== currentHover ) {
 
 			viewer.highlight = ( viewer.section !== node ) ? node : surveyTree;
+			viewer.popup = node;
+
 			currentHover = node;
 
 		}

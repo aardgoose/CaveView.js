@@ -40,9 +40,9 @@ Box3Helper.prototype = Object.create( LineSegments.prototype );
 
 Box3Helper.prototype.update = function ( box3 ) {
 
-	this.box3 = box3;
+	if ( box3 === undefined || box3.isEmpty() ) return;
 
-	if ( box3.isEmpty() ) return;
+	this.box3 = box3;
 
 	const min = box3.min;
 	const max = box3.max;

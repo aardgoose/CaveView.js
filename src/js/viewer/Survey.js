@@ -45,7 +45,8 @@ function Survey ( ctx, cave ) {
 	this.projection = null;
 	this.projectionWGS84 = null;
 	this.worldBoundingBox = null;
-	this.activeShadingMode = SHADING_HEIGHT;
+	this.caveShading = SHADING_HEIGHT;
+	this.surfaceShading = SHADING_SINGLE;
 	this.ctx = ctx;
 
 	// objects targeted by raycasters and objects with variable LOD
@@ -291,6 +292,8 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.surveyTree = surveyTree;
 
+	this.selection = new Selection( this );
+
 	_loadSegments( cave.lineSegments );
 
 	this.loadStations( surveyTree );
@@ -298,8 +301,6 @@ Survey.prototype.loadCave = function ( cave ) {
 	_loadTerrain( cave );
 
 	this.computeBoundingBoxes( surveyTree );
-
-	this.selection = new Selection( this );
 
 	this.pointTargets.push( this.stations );
 
@@ -758,7 +759,7 @@ Survey.prototype.selectSection = function ( node ) {
 
 	this.stations.selectStations( selection );
 	this.entrances.setSelection( selection );
-	this.setShadingMode( this.activeShadingMode );
+	this.setShadingMode( this.caveShading );
 
 	return node;
 
@@ -995,11 +996,11 @@ Survey.prototype.setShadingMode = function ( mode ) {
 		this.setWallShading( this.features.get( FACE_WALLS  ), material );
 		this.setWallShading( this.features.get( FACE_SCRAPS ), material );
 
-		this.activeShadingMode = mode;
+		this.caveShading = mode;
 
 	}
 
-	return this.activeShadingMode;
+	return this.caveShading;
 
 };
 
@@ -1016,6 +1017,18 @@ Survey.prototype.setWallShading = function ( mesh, selectedMaterial ) {
 		mesh.visible = false;
 
 	}
+
+};
+
+Survey.prototype.setSurfaceShading = function ( mode ) {
+
+	if ( this.setLegShading( LEG_SURFACE, mode ) ) {
+
+		this.surfaceShading = mode;
+
+	}
+
+	return this.surfaceShading;
 
 };
 

@@ -118,8 +118,6 @@ function CaveViewer ( domID, configuration ) {
 	var limits = null;
 	var stats = {};
 
-	var shadingMode;
-	var surfaceShadingMode;
 	var terrainShadingMode;
 
 	var useFog = false;
@@ -220,7 +218,7 @@ function CaveViewer ( domID, configuration ) {
 
 		'shadingMode': {
 			writeable: true,
-			get: function () { return shadingMode; },
+			get: function () { return survey.caveShading; },
 			set: _stateSetter( setShadingMode, 'shadingMode' )
 		},
 
@@ -236,7 +234,7 @@ function CaveViewer ( domID, configuration ) {
 
 		'surfaceShading': {
 			writeable: true,
-			get: function () { return surfaceShadingMode; },
+			get: function () { return survey.surfaceShading; },
 			set: _stateSetter( setSurfaceShadingMode, 'surfaceShading' )
 		},
 
@@ -890,7 +888,7 @@ function CaveViewer ( domID, configuration ) {
 
 	function setShadingMode ( mode ) {
 
-		shadingMode = survey.setShadingMode( mode );
+		const shadingMode = survey.setShadingMode( mode );
 
 		if ( shadingMode === SHADING_DISTANCE ) {
 
@@ -910,7 +908,7 @@ function CaveViewer ( domID, configuration ) {
 
 	function setSurfaceShadingMode ( mode ) {
 
-		surfaceShadingMode = survey.setLegShading( LEG_SURFACE, mode );
+		survey.setSurfaceShading( mode );
 
 		renderView();
 
@@ -1231,7 +1229,7 @@ function CaveViewer ( domID, configuration ) {
 
 	function onSurveyChanged ( /* event */ ) {
 
-		setShadingMode( shadingMode );
+		setShadingMode( survey.caveShading );
 
 	}
 
@@ -1257,7 +1255,7 @@ function CaveViewer ( domID, configuration ) {
 
 		const depth = ( terrain ) ? station.p.z - terrain.getHeight( station.p ) : null;
 
-		popup = new StationPopup( ctx, station, survey, depth, formatters.station, ( shadingMode === SHADING_DISTANCE ), self.warnings );
+		popup = new StationPopup( ctx, station, survey, depth, formatters.station, ( survey.caveShading === SHADING_DISTANCE ), self.warnings );
 		survey.add( popup );
 
 	}
@@ -1437,6 +1435,7 @@ function CaveViewer ( domID, configuration ) {
 		function _mouseUpLeft () {
 
 			container.removeEventListener( 'mouseup', _mouseUpLeft );
+
 			closePopup();
 			renderView();
 
@@ -1456,9 +1455,7 @@ function CaveViewer ( domID, configuration ) {
 
 		function _selectSegment ( picked ) {
 
-			const routes = survey.getRoutes();
-
-			routes.toggleSegment( picked.index );
+			survey.getRoutes().toggleSegment( picked.index );
 
 			setShadingMode( SHADING_PATH );
 

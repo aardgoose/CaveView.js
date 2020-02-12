@@ -302,7 +302,7 @@ Stations.prototype.setSplaysVisibility = function ( visible ) {
 	const stations = this.stations;
 	const pSize = this.geometry.getAttribute( 'pSize' );
 	const l = stations.length;
-	const sectionIdSet = this.sectionIdSet;
+	const selection = this.selection;
 
 	var i;
 
@@ -310,7 +310,7 @@ Stations.prototype.setSplaysVisibility = function ( visible ) {
 
 		const node = stations[ i ];
 
-		if ( node.p.connections === 0 && ( splaySize == 0 || sectionIdSet.size === 0 || sectionIdSet.has( node.id ) ) ) {
+		if ( node.p.connections === 0 && ( splaySize == 0 || selection.contains( node.id ) ) ) {
 
 			pSize.setX( i, splaySize );
 

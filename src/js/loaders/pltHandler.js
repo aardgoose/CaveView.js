@@ -1,4 +1,3 @@
-
 import { LEG_CAVE, STATION_NORMAL } from '../core/constants';
 import { StationPosition } from '../core/StationPosition';
 

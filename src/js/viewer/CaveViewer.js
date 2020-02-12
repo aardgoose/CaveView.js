@@ -118,8 +118,6 @@ function CaveViewer ( domID, configuration ) {
 	var limits = null;
 	var stats = {};
 
-	var terrainShadingMode;
-
 	var useFog = false;
 
 	var renderRequired = true;
@@ -168,7 +166,7 @@ function CaveViewer ( domID, configuration ) {
 
 		'terrainShading': {
 			writeable: true,
-			get: function () { return terrainShadingMode; },
+			get: function () { return terrain.shadingMode; },
 			set: _stateSetter( setTerrainShadingMode, 'terrainShading')
 		},
 
@@ -662,7 +660,7 @@ function CaveViewer ( domID, configuration ) {
 
 		if ( survey.terrain === null ) return;
 
-		if ( terrain.setShadingMode( mode, renderView ) ) terrainShadingMode = mode;
+		terrain.setShadingMode( mode, renderView );
 
 		renderView();
 
@@ -678,7 +676,7 @@ function CaveViewer ( domID, configuration ) {
 
 		materials.distanceTransparency = mode === TERRAIN_BLEND ? 200 : 0;
 
-		setTerrainShadingMode( terrainShadingMode );
+		setTerrainShadingMode( terrain.shadingMode );
 
 	}
 

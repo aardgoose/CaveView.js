@@ -841,6 +841,8 @@ Survey.prototype.cutSection = function ( node ) {
 	this.surveyTree = node;
 	this.selection.setRoot( node );
 
+	if ( this.highlightBox ) this.highlightBox.setRoot( node );
+
 	this.loadStations( node );
 
 	this.pointTargets.push( this.stations );

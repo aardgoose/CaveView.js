@@ -152,8 +152,7 @@ ProgressDial.prototype.setVisibility = function ( visibility ) {
 
 ProgressDial.prototype.watch = function ( obj ) {
 
-	const self = this;
-	obj.addEventListener( 'progress', self.handleProgess.bind( self ) );
+	obj.addEventListener( 'progress', this.handleProgess.bind( this ) );
 
 };
 

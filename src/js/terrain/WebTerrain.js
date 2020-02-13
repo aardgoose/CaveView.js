@@ -103,11 +103,8 @@ WebTerrain.prototype.load = function () {
 		if ( self.hasCoverage() ) {
 
 			self.tileArea( self.limits );
-			return true;
 
 		}
-
-		return false;
 
 	}
 

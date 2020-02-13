@@ -389,8 +389,7 @@ function HUD ( viewer, renderer ) {
 
 			}
 
-			if ( isVisible !== scaleBar.visible ) scaleBar.visible = isVisible;
-
+			scaleBar.visible = isVisible;
 			scaleBar.setScale( camera.zoom );
 
 		} else {

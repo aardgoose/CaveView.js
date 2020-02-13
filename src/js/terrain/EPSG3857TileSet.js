@@ -69,13 +69,13 @@ EPSG3857TileSet.prototype.getCoverage = function ( limits, zoom ) {
 
 	const tileCount = Math.pow( 2, zoom - 1 ) / halfMapExtent; // tile count per metre
 
-	coverage.min_x = Math.floor( ( limits.min.x - W ) * tileCount );
-	coverage.max_x = Math.floor( ( limits.max.x - W ) * tileCount );
+	coverage.minX = Math.floor( ( limits.min.x - W ) * tileCount );
+	coverage.maxX = Math.floor( ( limits.max.x - W ) * tileCount );
 
-	coverage.max_y = Math.floor( ( N - limits.min.y ) * tileCount );
-	coverage.min_y = Math.floor( ( N - limits.max.y ) * tileCount );
+	coverage.maxY = Math.floor( ( N - limits.min.y ) * tileCount );
+	coverage.minY = Math.floor( ( N - limits.max.y ) * tileCount );
 
-	coverage.count = ( coverage.max_x - coverage.min_x + 1 ) * ( coverage.max_y - coverage.min_y + 1 );
+	coverage.count = ( coverage.maxX - coverage.minX + 1 ) * ( coverage.maxY - coverage.minY + 1 );
 
 	return coverage;
 

@@ -120,10 +120,10 @@ WebTerrain.prototype.hasCoverage = function () {
 		const coverage = TS.getCoverage( limits, tileSet.minZoom );
 
 		if (
-			coverage.min_x >= tileSet.minX &&
-			coverage.max_x <= tileSet.maxX &&
-			coverage.min_y >= tileSet.minY &&
-			coverage.max_y <= tileSet.maxY
+			coverage.minX >= tileSet.minX &&
+			coverage.maxX <= tileSet.maxX &&
+			coverage.minY >= tileSet.minY &&
+			coverage.maxY <= tileSet.maxY
 		) {
 
 			tileSet.directory = baseDirectory + tileSet.subdirectory;
@@ -287,9 +287,9 @@ WebTerrain.prototype.tileArea = function ( limits ) {
 	this.initialZoom = zoom;
 	this.coverage = coverage;
 
-	for ( var x = coverage.min_x; x < coverage.max_x + 1; x++ ) {
+	for ( var x = coverage.minX; x < coverage.maxX + 1; x++ ) {
 
-		for ( var y = coverage.min_y; y < coverage.max_y + 1; y++ ) {
+		for ( var y = coverage.minY; y < coverage.maxY + 1; y++ ) {
 
 			this.loadTile( x, y, zoom, this );
 
@@ -316,10 +316,10 @@ WebTerrain.prototype.tileSet = function () {
 
 	tileSet.minZoom = coverage.zoom;
 
-	tileSet.minX = coverage.min_x;
-	tileSet.maxX = coverage.max_x;
-	tileSet.minY = coverage.min_y;
-	tileSet.maxY = coverage.max_y;
+	tileSet.minX = coverage.minX;
+	tileSet.maxX = coverage.maxX;
+	tileSet.minY = coverage.minY;
+	tileSet.maxY = coverage.maxY;
 
 	return dataURL( tileSet );
 

@@ -111,13 +111,13 @@ EPSG4326TileSet.prototype.getCoverage = function ( limits, zoom ) {
 
 	const tileCount = Math.pow( 2, zoom ) / 180; // tile count per degree
 
-	coverage.min_x = Math.floor( ( min.x - W ) * tileCount );
-	coverage.max_x = Math.floor( ( max.x - W ) * tileCount );
+	coverage.minX = Math.floor( ( min.x - W ) * tileCount );
+	coverage.maxX = Math.floor( ( max.x - W ) * tileCount );
 
-	coverage.min_y = Math.floor( ( min.y - S ) * tileCount );
-	coverage.max_y = Math.floor( ( max.y - S ) * tileCount );
+	coverage.minY = Math.floor( ( min.y - S ) * tileCount );
+	coverage.maxY = Math.floor( ( max.y - S ) * tileCount );
 
-	coverage.count = ( coverage.max_x - coverage.min_x + 1 ) * ( coverage.max_y - coverage.min_y + 1 );
+	coverage.count = ( coverage.maxX - coverage.minX + 1 ) * ( coverage.maxY - coverage.minY + 1 );
 
 	return coverage;
 

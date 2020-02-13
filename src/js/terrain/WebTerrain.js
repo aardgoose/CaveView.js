@@ -57,18 +57,7 @@ function WebTerrain ( ctx, survey, onLoaded ) {
 	this.watcher = this.scheduleRetile.bind( this );
 	this.updateFunc = WebTerrain.prototype.zoomCheck.bind( this );
 
-}
-
-WebTerrain.prototype = Object.create( CommonTerrain.prototype );
-
-WebTerrain.prototype.isTiled = true;
-
-WebTerrain.prototype.load = function () {
-
-	// return indicates if coverage checking in progress
-
 	const self = this;
-	const ctx = this.ctx;
 
 	switch ( this.displayCRS ) {
 
@@ -87,13 +76,14 @@ WebTerrain.prototype.load = function () {
 
 	default:
 
-		return false;
+		onLoaded( this );
+		return;
 
 	}
 
 	this.workerPool = this.ctx.workerPools.getPool( this.TS.workerScript );
 
-	return true;
+	return;
 
 	function _tileSetReady () {
 
@@ -108,7 +98,11 @@ WebTerrain.prototype.load = function () {
 
 	}
 
-};
+}
+
+WebTerrain.prototype = Object.create( CommonTerrain.prototype );
+
+WebTerrain.prototype.isTiled = true;
 
 WebTerrain.prototype.hasCoverage = function () {
 
@@ -232,7 +226,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 			// signal error to caller
 			if ( self.tilesLoading === 0 && ! self.isLoaded ) {
 
-				self.onLoaded( false );
+				self.onLoaded( self );
 
 			}
 
@@ -266,7 +260,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 		if ( ! self.isLoaded ) {
 
 			self.isLoaded = true;
-			self.onLoaded( true );
+			self.onLoaded( self );
 
 		}
 

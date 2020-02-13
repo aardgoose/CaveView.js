@@ -710,21 +710,32 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
-	function setupTerrain () {
+	function setupTerrain ( newTerrain ) {
 
-		if ( ! terrain.isLoaded ) return;
+		if ( newTerrain.isLoaded ) {
 
-		survey.addStatic( terrain );
+			terrain = newTerrain;
 
-		terrain.setup( renderer, scene, survey );
+			survey.addStatic( terrain );
 
-		survey.setupTerrain( terrain );
+			terrain.setup( renderer, scene, survey );
 
-		materials.setTerrain( terrain );
+			survey.setupTerrain( terrain );
 
-		locationControls.hasLocation( survey, locationChecked );
+			materials.setTerrain( terrain );
 
-		renderView();
+			locationControls.hasLocation( survey, locationChecked );
+
+			if ( terrain.isTiled ) {
+
+				terrain.addEventListener( 'progress', onEnd );
+				terrain.watch( self );
+
+			}
+
+		}
+
+		setupView( true );
 
 	}
 
@@ -1139,8 +1150,6 @@ function CaveViewer ( domID, configuration ) {
 
 	function loadSurvey ( newSurvey ) {
 
-		var syncTerrainLoading = true;
-
 		// only render after first SetupView()
 		renderRequired = false;
 
@@ -1154,33 +1163,9 @@ function CaveViewer ( domID, configuration ) {
 
 		materials.flushCache( survey );
 
-		terrain = survey.terrain;
-
 		scene.addStatic( survey );
 
 		mouseTargets = survey.pointTargets;
-
-		// set if we have independant terrain maps
-
-		if ( terrain === null ) {
-
-			if ( navigator.onLine ) {
-
-				terrain = new WebTerrain( ctx, survey, terrainLoaded );
-
-				hud.getProgressDial( 0 ).watch( terrain );
-
-				syncTerrainLoading = ! terrain.load();
-
-				if ( syncTerrainLoading ) terrain = null;
-
-			}
-
-		} else {
-
-			setupTerrain();
-
-		}
 
 		scene.matrixAutoUpdate = false;
 
@@ -1193,27 +1178,26 @@ function CaveViewer ( domID, configuration ) {
 
 		caveIsLoaded = true;
 
-		setupView( syncTerrainLoading );
+		// have we got built in terrain
+		let terrain = survey.terrain;
 
-	}
+		if ( terrain !== null ) {
 
-	function terrainLoaded ( ok ) {
+			setupTerrain( terrain );
 
-		if ( ! ok) {
+		} else if ( navigator.onLine ) {
 
-			console.log( 'errors loading terrain' );
-			terrain = null;
+			terrain = new WebTerrain( ctx, survey, setupTerrain );
+
+			hud.getProgressDial( 0 ).watch( terrain );
+
+			setupView( false );
 
 		} else {
 
-			setupTerrain();
-			terrain.addEventListener( 'progress', onEnd );
-			terrain.watch( self );
+			setupView( true );
 
 		}
-
-		setupView( true );
-		renderView();
 
 	}
 

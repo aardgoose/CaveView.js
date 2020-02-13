@@ -229,10 +229,14 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 			tile.setFailed();
 
-			self.dispatchEvent( __endEvent );
-
 			// signal error to caller
-			if ( self.tilesLoading === 0 ) self.onLoaded( self.childErrors );
+			if ( self.tilesLoading === 0 && ! self.isLoaded ) {
+
+				self.onLoaded( false );
+
+			}
+
+			self.dispatchEvent( __endEvent );
 
 			return;
 
@@ -259,8 +263,12 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 		if ( self.tilesLoading === 0 ) self.dispatchEvent( __endEvent );
 
-		self.isLoaded = true;
-		self.onLoaded();
+		if ( ! self.isLoaded ) {
+
+			self.isLoaded = true;
+			self.onLoaded( true );
+
+		}
 
 	}
 

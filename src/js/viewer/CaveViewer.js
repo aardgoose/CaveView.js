@@ -1166,7 +1166,7 @@ function CaveViewer ( domID, configuration ) {
 
 			if ( navigator.onLine ) {
 
-				terrain = new WebTerrain( ctx, survey, tilesLoaded );
+				terrain = new WebTerrain( ctx, survey, terrainLoaded );
 
 				hud.getProgressDial( 0 ).watch( terrain );
 
@@ -1195,33 +1195,31 @@ function CaveViewer ( domID, configuration ) {
 
 		setupView( syncTerrainLoading );
 
-
 	}
 
-	function tilesLoaded ( errors ) {
+	function terrainLoaded ( ok ) {
 
-		if ( terrain.parent === null ) {
+		if ( ! ok) {
 
-			if ( errors > 0 ) {
+			console.log( 'errors loading terrain' );
+			terrain = null;
 
-				console.log( 'errors loading terrain' );
-
-				terrain = null;
-
-				setupView( true );
-
-				return;
-
-			}
+		} else {
 
 			setupTerrain();
-			setupView( true );
-
+			terrain.addEventListener( 'progress', onEnd );
 			terrain.watch( self );
 
 		}
 
+		setupView( true );
 		renderView();
+
+	}
+
+	function onEnd ( event ) {
+
+		if ( event.name === 'end' ) renderView();
 
 	}
 

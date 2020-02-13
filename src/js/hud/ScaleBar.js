@@ -11,7 +11,7 @@ import {
 function BarGeometry ( ctx, length, height, divisions ) {
 
 	BufferGeometry.call( this );
-console.log( 'x', ctx );
+
 	const cfg = ctx.cfg;
 
 	const c1 = cfg.themeColor( 'hud.scale.bar1' );

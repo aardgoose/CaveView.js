@@ -384,7 +384,7 @@ function HUD ( viewer, renderer ) {
 
 			if ( scaleBar === null ) {
 
-				scaleBar = new ScaleBar( hudObject, viewer.container, hScale, ( HudObject.stdWidth + HudObject.stdMargin ) * 4 );
+				scaleBar = new ScaleBar( hudObject, viewer.container, hScale, ( hudObject.stdWidth + hudObject.stdMargin ) * 4 );
 				scene.addStatic( scaleBar );
 
 			}

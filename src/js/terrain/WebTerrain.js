@@ -11,6 +11,9 @@ import { dataURL } from '../core/lib';
 const __frustum = new Frustum();
 const __matrix4 = new Matrix4();
 
+const __startEvent = { type: 'progress', name: 'start' };
+const __endEvent = { type: 'progress', name: 'end' };
+
 function WebTerrain ( ctx, survey, onLoaded ) {
 
 	CommonTerrain.call( this, ctx );
@@ -193,7 +196,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 	// get Tile instance.
 
-	const tile = existingTile ? existingTile : new Tile(this.ctx, x, y, z, tileSpec );
+	const tile = existingTile ? existingTile : new Tile( this.ctx, x, y, z, tileSpec );
 
 	tile.setPending( parentTile ); // tile load/reload pending
 
@@ -218,7 +221,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 		if ( self.dying ) {
 
-			self.dispatchEvent( { type: 'progress', name: 'end' } );
+			self.dispatchEvent( __endEvent );
 			return;
 
 		}
@@ -229,7 +232,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 			tile.setFailed();
 
-			self.dispatchEvent( { type: 'progress', name: 'end' } );
+			self.dispatchEvent( __endEvent );
 
 			// signal error to caller
 			if ( self.tilesLoading === 0 ) self.onLoaded( self.childErrors );
@@ -257,7 +260,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 	function _loaded () {
 
-		if ( self.tilesLoading === 0 ) self.dispatchEvent( { type: 'progress', name: 'end' } );
+		if ( self.tilesLoading === 0 ) self.dispatchEvent( __endEvent );
 
 		self.isLoaded = true;
 		self.onLoaded();
@@ -270,7 +273,7 @@ WebTerrain.prototype.initProgress = function () {
 
 	if ( this.tilesLoading > 0 ) {
 
-		this.dispatchEvent( { type: 'progress', name: 'start' } );
+		this.dispatchEvent( __startEvent );
 		this.maxTilesLoading = this.tilesLoading;
 
 	}

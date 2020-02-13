@@ -171,6 +171,12 @@ function Materials ( viewer ) {
 
 	};
 
+	this.getPlainMaterial = function  () {
+
+		const func = function () { return new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ); };
+		return getCacheMaterial( 'plain', func, true );
+
+	};
 
 	this.getSurfaceMaterial = function  () {
 

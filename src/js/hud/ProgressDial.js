@@ -1,11 +1,6 @@
 import { MutableGlyphString } from '../core/GlyphString';
 
-import {
-	RingBufferGeometry,
-	MeshBasicMaterial,
-	VertexColors,
-	Object3D, Mesh, Float32BufferAttribute,
-} from '../Three';
+import { RingBufferGeometry, Object3D, Mesh, Float32BufferAttribute } from '../Three';
 
 function ProgressDial ( hudObject, addText, ring, viewer ) {
 
@@ -40,7 +35,7 @@ function ProgressDial ( hudObject, addText, ring, viewer ) {
 	this.setColor = setColor;
 	this.viewer = viewer;
 
-	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
+	Mesh.call( this, geometry, materials.getPlainMaterial() );
 
 	this.name = 'CV.ProgressDial';
 

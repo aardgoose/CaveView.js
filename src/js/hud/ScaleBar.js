@@ -1,12 +1,6 @@
 import { MutableGlyphString } from '../core/GlyphString';
 
-import {
-	Float32BufferAttribute,
-	BufferGeometry,
-	MeshBasicMaterial,
-	VertexColors,
-	Group, Mesh
-} from '../Three';
+import { Float32BufferAttribute, BufferGeometry, Group, Mesh } from '../Three';
 
 function BarGeometry ( ctx, length, height, divisions ) {
 
@@ -179,7 +173,7 @@ ScaleBar.prototype.setScale = function ( scale ) {
 		bar.computeBoundingBox();
 
 		return {
-			mesh: new Mesh( bar, new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) ),
+			mesh: new Mesh( bar, ctx.materials.getPlainMaterial() ),
 			topRight: bar.boundingBox.max.x
 		};
 

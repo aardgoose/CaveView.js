@@ -63,7 +63,7 @@ function Survey ( ctx, cave ) {
 	this.terrain = null;
 	this.topology = null;
 	this.annotations = null;
-	this.inverseWorld = null;
+	this.inverseWorld = new Matrix4();
 
 	this.lightDirection = new Vector3( -1, -1, 2 ).normalize();
 
@@ -468,8 +468,6 @@ Survey.prototype.update = function ( cameraManager, target, showClusterMarkers )
 	if ( ( stationLabels && cameraManager.testCameraLayer( LABEL_STATION ) ) ||
 		stationLabels.commentCount > 0 && cameraManager.testCameraLayer( LABEL_STATION_COMMENT ) ) {
 
-		if ( this.inverseWorld === null ) this.inverseWorld = new Matrix4().getInverse( this.matrixWorld );
-
 		stationLabels.update( camera, target, this.inverseWorld );
 
 	}
@@ -605,6 +603,7 @@ Survey.prototype.setScale = function ( hScale, vScale ) {
 
 	this.updateMatrix();
 	this.updateMatrixWorld();
+	this.inverseWorld.getInverse( this.matrixWorld );
 
 };
 

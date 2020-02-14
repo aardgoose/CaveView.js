@@ -274,8 +274,6 @@ var LocationControls = function ( cameraManager, ctx ) {
 
 		function _currentPosition ( GPSPosition ) {
 
-			console.log( GPSPosition );
-
 			const coords = GPSPosition.coords;
 
 			location.set( coords.longitude, coords.latitude, 0 );

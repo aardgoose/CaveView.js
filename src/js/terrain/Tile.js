@@ -201,13 +201,9 @@ Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
 
 			if ( parent.isTile ) parent.setReplaced();
 
-			const siblings = parent.children;
+			parent.children.forEach( function ( sibling ) {
 
-			for ( var i = 0, l = siblings.length; i < l; i++ ) {
-
-				const sibling = siblings[ i ];
-
-				if ( sibling.replaced || sibling.evicted ) continue;
+				if ( sibling.replaced || sibling.evicted ) return;
 
 				if ( overlay === null ) {
 
@@ -222,7 +218,7 @@ Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
 
 				}
 
-			}
+			} );
 
 			if ( tilesWaiting === 0 ) renderCallback( parent.childErrors );
 

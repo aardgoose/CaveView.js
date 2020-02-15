@@ -292,7 +292,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.surveyTree = surveyTree;
 
-	this.selection = new Selection( this );
+	this.selection = new Selection( this, this.ctx.cfg.themeValue( 'box.select' ) );
 
 	_loadSegments( cave.lineSegments );
 
@@ -726,7 +726,7 @@ Survey.prototype.highlightSelection = function ( node ) {
 
 		if ( box === null ) {
 
-			box = new Selection( this, 0xff0000 );
+			box = new Selection( this,  this.ctx.cfg.themeValue( 'box.highlight' ) );
 			this.highlightBox = box;
 
 		}

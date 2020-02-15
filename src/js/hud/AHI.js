@@ -33,8 +33,9 @@ function AHI ( hudObject ) {
 	const globe = new Group();
 
 	const ring = hudObject.getCommonRing();
+	const ahiWidth = stdWidth * 0.75;
 
-	const sphere = new SphereBufferGeometry( stdWidth - 10, 31, 31 );
+	const sphere = new SphereBufferGeometry( ahiWidth, 31, 31 );
 	const bar    = new BufferGeometry();
 	const marks  = new BufferGeometry();
 
@@ -58,16 +59,19 @@ function AHI ( hudObject ) {
 	var vertices = [];
 
 	// view orientation line
-	vertices.push( 4 - stdWidth, 0, stdWidth );
-	vertices.push( stdWidth - 4, 0, stdWidth );
+
+	vertices.push( 4 - stdWidth, 0, ahiWidth );
+	vertices.push( stdWidth - 4, 0, ahiWidth );
 
 	const positions = new Float32BufferAttribute( vertices.length, 3 );
 
 	bar.setAttribute( 'position', positions.copyArray( vertices ) );
 
+	const markWidth = stdWidth / 10;
+
 	// pitch interval marks
-	const m1 = new Vector3(  4, 0, stdWidth - 10 );
-	const m2 = new Vector3( -4, 0, stdWidth - 10 );
+	const m1 = new Vector3(  markWidth, 0, ahiWidth + 1 );
+	const m2 = new Vector3( -markWidth, 0, ahiWidth + 1 );
 
 	vertices = [];
 
@@ -78,8 +82,8 @@ function AHI ( hudObject ) {
 
 		if ( i % 3 === 0 ) {
 
-			mn1.x =  7;
-			mn2.x = -7;
+			mn1.x *= 2;
+			mn2.x *= 2;
 
 		}
 

@@ -4,6 +4,7 @@ const defaultTheme = {
 	background: 'black',
 	sky: 0x106f8d,
 	maxPolarAngle: 180,
+	saturatedGradient: false,
 	lighting: {
 		azimuth: 315,
 		inclination: 45

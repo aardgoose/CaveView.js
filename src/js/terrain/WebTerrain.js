@@ -183,7 +183,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 	if ( this.log ) console.log( 'load: [ ', z +'/' + x + '/' + y, ']' );
 
-	++this.tilesLoading;
+	this.maxTilesLoading = Math.max( this.maxTilesLoading, ++this.tilesLoading );
 
 	// get Tile instance.
 
@@ -245,7 +245,6 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 			if ( overlay !== null && tile.zoom < overlay.getMinZoom() ) {
 
 				self.zoomTile( tile );
-				this.maxTilesLoading = Math.max( self.maxTilesLoading, self.tilesLoading );
 
 			}
 
@@ -273,7 +272,6 @@ WebTerrain.prototype.initProgress = function () {
 	if ( this.tilesLoading > 0 ) {
 
 		this.dispatchEvent( __startEvent );
-		this.maxTilesLoading = this.tilesLoading;
 
 	}
 

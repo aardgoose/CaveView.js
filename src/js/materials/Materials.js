@@ -30,7 +30,8 @@ function Materials ( viewer ) {
 
 	this.colourCache = colourCache;
 
-	const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
+	const gradientType = ctx.cfg.value( 'saturatedGradient', false ) || ctx.cfg.themeValue( 'saturatedGradient' );
+	const gradient = gradientType ? 'gradientHi' : 'gradientLow';
 	const surfaceColour = ctx.cfg.themeValue( 'shading.single' );
 
 	this.commonUniforms = {

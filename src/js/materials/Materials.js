@@ -10,7 +10,7 @@ import { GlyphMaterial } from './GlyphMaterial';
 import { ColourCache } from '../core/ColourCache';
 import { GlyphAtlasCache } from './GlyphAtlas';
 import {
-	LineBasicMaterial, MeshLambertMaterial, MeshBasicMaterial,
+	LineBasicMaterial, MeshLambertMaterial, MeshBasicMaterial, MeshPhongMaterial,
 	NoColors, VertexColors, IncrementStencilOp, Vector2, Color,
 } from '../Three';
 
@@ -168,6 +168,24 @@ function Materials ( viewer ) {
 		cursorMaterials[ type ] = material;
 
 		return material;
+
+	};
+
+	this.getBezelMaterial = function  () {
+
+		var func;
+
+		if ( ctx.cfg.themeValue( 'hud.bezelType' ) === 'flat' ) {
+
+			func = function () { return new MeshBasicMaterial( { color: ctx.cfg.themeValue( 'hud.bezel' ) } ); };
+
+		} else {
+
+			func = function () { return new MeshPhongMaterial( { color: ctx.cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ); };
+
+		}
+
+		return getCacheMaterial( 'bezel', func, true );
 
 	};
 

@@ -3,7 +3,7 @@ import { MutableGlyphString } from '../core/GlyphString';
 import {
 	Vector3, MathUtils,
 	RingBufferGeometry,
-	MeshBasicMaterial, MeshPhongMaterial, MeshLambertMaterial,
+	MeshBasicMaterial, MeshLambertMaterial,
 	VertexColors, BufferGeometry, Float32BufferAttribute,
 	Mesh, Group, Euler
 } from '../Three';
@@ -21,7 +21,7 @@ function Compass ( hudObject ) {
 
 	const cg1 = hudObject.getCommonRing();
 
-	const c1 = new Mesh( cg1, new MeshPhongMaterial( { color: cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ) );
+	const c1 = new Mesh( cg1, materials.getBezelMaterial() );
 
 	const cg2 = new RingBufferGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 	cg2.translate( 0, 0, 5 );

@@ -1,4 +1,4 @@
-import { TextureLoader, Box2, Vector2 } from '../Three';
+import { TextureLoader, Box2, Vector2, Color } from '../Three';
 
 import {TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 import proj4 from 'proj4';
@@ -17,7 +17,14 @@ function Overlay ( ctx, overlayProvider ) {
 
 	if ( attribution ) {
 
+		const c = new Color( ctx.cfg.themeValue( 'background' ) );
+		const hsl = { h: 0, s: 0, l: 0 };
+
+		c.getHSL( hsl );
+
 		attribution.classList.add( 'overlay-branding' );
+		attribution.style.color = hsl.l < 0.5 ? 'white' : 'black';
+
 		this.attribution = attribution;
 
 	}

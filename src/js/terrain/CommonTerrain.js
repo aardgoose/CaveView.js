@@ -318,7 +318,7 @@ CommonTerrain.prototype.showAttribution = function () {
 
 	if ( attribution !== null ) {
 
-		this.container.appendChild( attribution );
+		this.ctx.container.appendChild( attribution );
 
 	}
 

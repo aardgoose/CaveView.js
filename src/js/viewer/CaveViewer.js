@@ -716,13 +716,7 @@ function CaveViewer ( domID, configuration ) {
 
 			terrain = newTerrain;
 
-			survey.addStatic( terrain );
-
 			terrain.setup( renderer, scene, survey );
-
-			survey.setupTerrain( terrain );
-
-			materials.setTerrain( terrain );
 
 			locationControls.hasLocation( survey, locationChecked );
 

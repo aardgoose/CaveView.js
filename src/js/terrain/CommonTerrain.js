@@ -123,6 +123,8 @@ CommonTerrain.prototype.checkTerrainShadingModes = function ( renderer ) {
 
 CommonTerrain.prototype.setup = function ( renderer, scene, survey ) {
 
+	survey.addStatic( this );
+
 	const dim = 1024;
 	const materials = this.ctx.materials;
 
@@ -188,6 +190,9 @@ CommonTerrain.prototype.setup = function ( renderer, scene, survey ) {
 
 	renderer.setSize( container.clientWidth, container.clientHeight );
 	renderer.setPixelRatio( window.devicePixelRatio );
+
+	survey.setupTerrain( this );
+	materials.setTerrain( this );
 
 };
 

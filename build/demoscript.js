@@ -10,7 +10,7 @@ const demoScript = [
 		caption: 'Displays center lines ...',
 		delay: 7,
 		view: {
-			view: CV.VIEW_ELEVATION_S
+			view: CV2.VIEW_ELEVATION_S
 		},
 	},
 	{
@@ -40,28 +40,28 @@ const demoScript = [
 		caption: 'Supports multiple cave shading modes ...',
 		delay: 5,
 		view: {
-			shadingMode: CV.SHADING_SINGLE
+			shadingMode: CV2.SHADING_SINGLE
 		}
 	},
 	{
 		caption: 'by height ...',
 		delay: 5,
 		view: {
-			shadingMode: CV.SHADING_HEIGHT
+			shadingMode: CV2.SHADING_HEIGHT
 		}
 	},
 	{
 		caption: 'leg length ...',
 		delay: 5,
 		view: {
-			shadingMode: CV.SHADING_LENGTH
+			shadingMode: CV2.SHADING_LENGTH
 		}
 	},
 	{
 		caption: 'leg inclination ...',
 		delay: 5,
 		view: {
-			shadingMode : CV.SHADING_INCLINATION
+			shadingMode : CV2.SHADING_INCLINATION
 		}
 	},
 	{
@@ -70,23 +70,23 @@ const demoScript = [
 		view: {
 			sectionName: 'p8',
 			walls: false,
-			shadingMode: CV.SHADING_SURVEY
+			shadingMode: CV2.SHADING_SURVEY
 		}
 	},
 	{
 		caption: 'depth below surface ...',
 		delay: 5,
 		view: {
-			section: 0,
-			shadingMode: CV.SHADING_DEPTH
+			sectionByName: '',
+			shadingMode: CV2.SHADING_DEPTH
 		}
 	},
+	/*
 	{
 		caption: 'and selected paths',
 		delay: 3,
 		view: {
-			section: 0,
-			shadingMode: CV.SHADING_PATH
+			shadingMode: CV2.SHADING_PATH
 		},
 		route: 'demo'
 	},
@@ -95,13 +95,14 @@ const demoScript = [
 		delay: 3,
 		route: 'demo2'
 	},
+	*/
 	{
 		caption: 'Terrain',
 		delay: 3,
 		view: {
 			autoRotate: false,
-			shadingMode: CV.SHADING_HEIGHT,
-			view: CV.VIEW_PLAN
+			shadingMode: CV2.SHADING_HEIGHT,
+			view: CV2.VIEW_PLAN
 		}
 	},
 	{
@@ -110,7 +111,7 @@ const demoScript = [
 		view: {
 			terrainOpacity: 1,
 			terrain: true,
-			view: CV.VIEW_PLAN
+			view: CV2.VIEW_PLAN
 		}
 	},
 	{
@@ -119,8 +120,8 @@ const demoScript = [
 		view: {
 			autoRotate: false,
 			terrainOpacity: 0.5,
-			terrainShading: CV.SHADING_CONTOURS,
-			view: CV.VIEW_PLAN
+			terrainShading: CV2.SHADING_CONTOURS,
+			view: CV2.VIEW_PLAN
 		}
 	},
 	{
@@ -143,7 +144,7 @@ const demoScript = [
 		caption: 'On screen indicators',
 		delay: 5,
 		view: {
-			view: CV.VIEW_ELEVATION_S,
+			view: CV2.VIEW_ELEVATION_S,
 			terrain: false,
 			HUD: true
 		}
@@ -170,18 +171,7 @@ const demoScript = [
 			terrainOpacity: 1,
 			terrain: false
 		}
-	},/*
-	{
-		caption: 'Fullscreen mode ...',
-		delay: 3
 	},
-	{
-		caption: 'Fullscreen mode',
-		delay: 3,
-		view: {
-			fullscreen: true
-		}
-	}, */
 	{
 		caption: 'Focus on selected survey sections',
 		delay: 5,
@@ -198,8 +188,8 @@ const demoScript = [
 			box: false,
 			cut: true,
 			walls: true,
-			shadingMode: CV.SHADING_HEIGHT,
-			view: CV.VIEW_ELEVATION_S
+			shadingMode: CV2.SHADING_HEIGHT,
+			view: CV2.VIEW_ELEVATION_S
 		}
 	},
 	{
@@ -208,7 +198,7 @@ const demoScript = [
 		view: {
 			box: false,
 			walls: false,
-			shadingMode: CV.SHADING_HEIGHT,
+			shadingMode: CV2.SHADING_HEIGHT,
 			autoRotate: true,
 			autoRotateRate: 1.0,
 			stations: true
@@ -225,20 +215,20 @@ const demoScript = [
 		caption: 'Orthographic view',
 		delay: 5,
 		view: {
-			view: CV.VIEW_ELEVATION_N,
-			cameraType: CV.CAMERA_ORTHOGRAPHIC
+			view: CV2.VIEW_ELEVATION_N,
+			cameraType: CV2.CAMERA_ORTHOGRAPHIC
 		}
 	},
 	{
 		caption: 'mouse controls to rotate, pan and zoom ...',
 		delay: 5,
 		view: {
-			section: 0,
+			sectionByName: '',
 			entrances: false,
-			cameraType: CV.CAMERA_PERSPECTIVE,
+			cameraType: CV2.CAMERA_PERSPECTIVE,
 			box: false,
-			shadingMode: CV.SHADING_HEIGHT,
-			terrainShading: CV.SHADING_SHADED,
+			shadingMode: CV2.SHADING_HEIGHT,
+			terrainShading: CV2.SHADING_SHADED,
 			walls: true,
 			HUD: true,
 			autoRotate: false,
@@ -261,6 +251,7 @@ const demoScript = [
 	},
 	{
 		caption: '... have a go!',
+		endScript: true,
 		delay: 2
 	}
 ];

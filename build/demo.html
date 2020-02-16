@@ -52,7 +52,7 @@
 <body onload="onload();" >
 
 <script type="text/javascript" src="CaveView/lib/Detector.js"></script>
-<script type="text/javascript" src="CaveView/js/CaveView.js" ></script>
+<script type="text/javascript" src="CaveView/js/CaveView2.js" ></script>
 
 <script type="text/javascript" src="CaveView/lib/OSMProvider.js" ></script>
 <script type="text/javascript" src="demoscript.js" ></script>
@@ -60,9 +60,24 @@
 <script type="text/javascript" >
 "use strict";
 
+var viewer;
+var ui;
 var captionDiv;
 var index = 0;
 var routes;
+var firstRun = true;
+
+const defaultView = {
+	entrances: false,
+	cameraType: CV2.CAMERA_PERSPECTIVE,
+	box: true,
+	shadingMode: CV2.SHADING_HEIGHT,
+	terrain: true,
+	terrainShading: CV2.SHADING_SHADED,
+	walls: true,
+	HUD: true,
+	entrances: true
+};
 
 function runDemo() {
 
@@ -72,24 +87,45 @@ function runDemo() {
 
 	captionDiv.textContent = d.caption;
 
+	if ( d.endScript ) {
+
+		ui = new CV2.CaveViewUI( viewer );
+
+		ui.loadCaveList( [
+			"Castleton_Master_NoSurface.3d",
+			"all.3d",
+		] );
+
+		firstRun = false;
+
+		return;
+
+	}
+
 	var view = d.view;
 
-	if ( view ) CV.Viewer.setView( view );
+	if ( view ) viewer.setView( view );
 
 	if ( d.route ) routes.setRoute = d.route;
 
-	setTimeout( runDemo, d.delay * 1000 );
+	setTimeout( runDemo, d.delay * 1000 )
 
 }
 
 function viewComplete () {
 
-	if ( index ) return; // view complete called on cut operation.
+	if ( firstRun ) {
 
-	routes = CV.Viewer.routeNames;
-	console.log( routes);
+		if ( index ) return; // view complete called on cut operation.
+		routes = viewer.routeNames;
+		runDemo();
 
-	runDemo();
+	} else {
+
+		viewer.setView( defaultView );
+		captionDiv.textContent = '';
+
+	}
 
 }
 
@@ -102,12 +138,12 @@ function onload () {
 
 	}
 
-	CV.Viewer.init( 'scene', {
+	viewer = new CV2.CaveViewer( 'scene', {
 		home: 'CaveView/',
 		terrainDirectory: '/terrain/',
 		surveyDirectory: '/surveys/',
 		view: {
-			shadingMode: CV.SHADING_SINGLE,
+			shadingMode: CV2.SHADING_SINGLE,
 			entrances: false,
 			box: false,
 			HUD: false,
@@ -115,12 +151,11 @@ function onload () {
 		}
 	} );
 
-	CV.Viewer.addOverlay( 'OSM', new OSMProvider() );
+	viewer.addOverlay( 'OSM', new OSMProvider() );
+	viewer.addEventListener( 'newCave', viewComplete );
 
-	CV.Viewer.addEventListener( 'newCave', viewComplete );
-
-	CV.Viewer.clearView();
-	CV.Viewer.loadCave( 'P8_Master.3d' );
+	viewer.clearView();
+	viewer.loadCave( 'P8_Master.3d' );
 
 	captionDiv = document.getElementById( 'scene-caption' );
 

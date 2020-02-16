@@ -116,7 +116,6 @@ function onload () {
 	const ui1 = new CV2.CaveViewUI( viewer1 );
 	ui1.loadCaveList( caves );
 
-//	const ui2 = new CV2.CaveViewUI( viewer2 );
 	viewer2.loadCave( "all.3d" );
 
 	setTimeout( function () { viewer2.setPOI = true; }, 4000 );
@@ -129,7 +128,6 @@ function onload () {
 	document.getElementById( 'swinsto' ).addEventListener( 'click', function () {
 		showSelection( 'all.wks.swinsto' );
 	} );
-
 
 	document.getElementById( 'easegill' ).addEventListener( 'click', function () {
 		showSelection( 'all.easegill' );

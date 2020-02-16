@@ -1,4 +1,3 @@
-
 import { CylinderBufferGeometry } from '../Three';
 
 function onUploadDropBuffer() {
@@ -12,17 +11,20 @@ function HudObject ( ctx ) {
 
 	const cfg = ctx.cfg;
 	this.stdWidth = cfg.themeValue( 'hud.widgetSize' );
-	this.atlasSpec.color = cfg.themeColorCSS( 'hud.text' );
-	this.atlasSpec.font = cfg.themeValue( 'hud.font' );
+
+	this.atlasSpec = {
+		color: cfg.themeColorCSS( 'hud.text' ),
+		font: cfg.themeValue( 'hud.font' )
+	};
+
 	this.commonRing = null;
 	this.ctx = ctx;
+
 }
 
 Object.assign( HudObject.prototype, {
 
 	stdMargin: 5,
-
-	atlasSpec: {},
 
 	createHitRegion: function ( width, height, onEnter ) {
 

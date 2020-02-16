@@ -31,8 +31,6 @@ function Cfg ( envs ) {
 
 Cfg.prototype = Object.create( EventDispatcher.prototype );
 
-
-
 Cfg.prototype.setLanguage = function ( lang ) {
 
 	if ( lang === 'en' ) {

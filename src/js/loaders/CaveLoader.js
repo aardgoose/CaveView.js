@@ -121,13 +121,15 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 		loader.setResponseType( 'json' );
 
-		this.requests.push( loader.load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _metadataError ) );
+		const req = loader.load( replaceExtension( fileName, 'json' ), _metadataLoaded, undefined, _metadataError );
+		if ( req ) this.requests.push( req );
 
 	}
 
 	loader.setResponseType( this.handler.type );
 
-	this.requests.push( loader.load( fileName, _dataLoaded, _progress, _dataError ) );
+	const req = loader.load( fileName, _dataLoaded, _progress, _dataError );
+	if ( req ) this.requests.push( req );
 
 	return true;
 

@@ -1,6 +1,6 @@
-import json from 'rollup-plugin-json';
-import commonjs from 'rollup-plugin-commonjs';
-import nodeResolve from 'rollup-plugin-node-resolve';
+import json from '@rollup/plugin-json';
+import commonjs from '@rollup/plugin-commonjs';
+import nodeResolve from '@rollup/plugin-node-resolve';
 import less from 'rollup-plugin-less';
 
 function glsl () {
@@ -51,10 +51,10 @@ function glslThree() {
 }
 
 export default {
-	input: 'src/js/CV2.js',
+	input: 'src/js/CV.js',
 	output: {
-		name: 'CV2',
-		file: 'build/CaveView/js/CaveView2.js',
+		name: 'CV',
+		file: 'build/CaveView/js/CaveView.js',
 		format: 'umd'
 	},
 	plugins: [

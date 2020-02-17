@@ -118,30 +118,31 @@ function onload () {
 
 	viewer2.loadCave( "all.3d" );
 
-	setTimeout( function () { viewer2.setPOI = true; }, 4000 );
-
-
-	document.getElementById( 'all' ).addEventListener( 'click', function () {
-		showSelection( '' );
-	} );
-
-	document.getElementById( 'swinsto' ).addEventListener( 'click', function () {
-		showSelection( 'all.wks.swinsto' );
-	} );
-
-	document.getElementById( 'easegill' ).addEventListener( 'click', function () {
-		showSelection( 'all.easegill' );
-	} );
-
 	function showSelection ( selection ) {
 		viewer2.sectionByName = selection;
 		viewer2.setPOI = true;
 	}
 
+	viewer2.addEventListener( 'newCave', function () {
+
+		document.getElementById( 'all' ).addEventListener( 'click', function () {
+			showSelection( '' );
+		} );
+
+		document.getElementById( 'swinsto' ).addEventListener( 'click', function () {
+			showSelection( 'all.wks.swinsto' );
+		} );
+
+		document.getElementById( 'easegill' ).addEventListener( 'click', function () {
+			showSelection( 'all.easegill' );
+		} );
+
+	} );
+
 }
 
 </script>
-<h1>Demo 2 - multiple instances</h1>
+<h1>Demo 1 - multiple instances</h1>
 <div style="padding: 20px">
 	<div id="scene1" class="cv-container"></div>
 	<div id="scene2"></div>

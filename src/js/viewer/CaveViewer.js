@@ -981,6 +981,8 @@ function CaveViewer ( domID, configuration ) {
 		function _selectSection ( node ) {
 
 			survey.selectSection( node );
+
+			cameraMove.cancel();
 			cameraMove.prepare( survey.selection.getWorldBoundingBox() );
 
 			if ( survey.selection.isEmpty() ) cameraMove.start( renderRequired );

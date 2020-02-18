@@ -166,7 +166,7 @@ function CaveViewer ( domID, configuration ) {
 
 		'terrainShading': {
 			writeable: true,
-			get: function () { return terrain.shadingMode; },
+			get: function () { return terrain !== null ? terrain.shadingMode : null; },
 			set: _stateSetter( setTerrainShadingMode, 'terrainShading')
 		},
 
@@ -179,7 +179,7 @@ function CaveViewer ( domID, configuration ) {
 		},
 
 		'terrainAttributions': {
-			get: function () { return terrain.attributions; }
+			get: function () { return terrain !== null ? terrain.attributions : []; }
 		},
 
 		'terrainDirectionalLighting': {
@@ -190,12 +190,12 @@ function CaveViewer ( domID, configuration ) {
 
 		'terrainThrough': {
 			writeable: true,
-			get: function () { return terrain.throughMode; },
+			get: function () { return terrain !== null ? terrain.throughMode : null; },
 			set: _stateSetter( setTerrainThroughMode, 'terrainThrough' )
 		},
 
 		'terrainShadingModes': {
-			get: function () { return terrain.terrainShadingModes; }
+			get: function () { return terrain !== null ? terrain.terrainShadingModes : {}; }
 		},
 
 		'terrainTileSet': {

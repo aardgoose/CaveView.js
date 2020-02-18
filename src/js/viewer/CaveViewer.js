@@ -718,7 +718,11 @@ function CaveViewer ( domID, configuration ) {
 
 			terrain.setup( renderer, scene, survey );
 
-			locationControls.hasLocation( survey, locationChecked );
+			if ( cfg.value( 'useGPS', false ) ) {
+
+				locationControls.hasLocation( survey, locationChecked );
+
+			}
 
 			if ( terrain.isTiled ) {
 

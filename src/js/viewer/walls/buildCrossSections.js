@@ -1,8 +1,4 @@
-import {
-	FACE_WALLS,
-	WALL_DIAMOND, WALL_SQUARE, WALL_OVAL
-} from '../../core/constants';
-
+import { FACE_WALLS, WALL_DIAMOND, WALL_SQUARE, WALL_OVAL } from '../../core/constants';
 import { Walls } from './Walls';
 
 import { Object3D, Vector3 } from '../../Three';

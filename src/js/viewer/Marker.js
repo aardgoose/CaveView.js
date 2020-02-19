@@ -5,6 +5,7 @@ function Marker( ctx, count ) {
 	const materials = ctx.materials;
 
 	Point.call( this, materials.getClusterMaterial( count ), ctx );
+	this.renderOrder = 1;
 
 	return this;
 

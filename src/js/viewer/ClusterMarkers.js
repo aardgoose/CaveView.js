@@ -166,15 +166,11 @@ QuadTree.prototype.showMarkers = function ( selection ) {
 
 	// show the indiviual markers in this quad
 
-	const markers = this.markers;
-
-	for ( var i = 0, l = markers.length; i < l; i++ ) {
-
-		const marker = markers[ i ];
+	this.markers.forEach( function ( marker ) {
 
 		marker.visible = selection.contains( marker.stationID );
 
-	}
+	} );
 
 	if ( this.quadMarker !== null ) this.quadMarker.visible = false;
 
@@ -182,15 +178,13 @@ QuadTree.prototype.showMarkers = function ( selection ) {
 
 QuadTree.prototype.hideMarkers = function () {
 
-	const markers = this.markers;
-
 	// hide the indiviual markers in this quad
 
-	for ( var i = 0, l = markers.length; i < l; i++ ) {
+	this.markers.forEach( function ( marker ) {
 
-		markers[ i ].visible = false;
+		marker.visible = false;
 
-	}
+	} );
 
 	if ( this.quadMarker !== null ) this.quadMarker.visible = false;
 
@@ -342,9 +336,6 @@ ClusterMarkers.prototype.addMarker = function ( node, label ) {
 	marker.layers.set( FEATURE_ENTRANCES );
 	marker.position.copy( node.p );
 	marker.stationID = node.id;
-
-	//marker.onBeforeRender = StencilLib.featureOnBeforeRender;
-	//marker.onAfterRender = StencilLib.featureOnAfterRender;
 
 	this.labels.push( marker );
 	this.quadTree.addNode( marker, this.maxDepth );

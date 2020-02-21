@@ -2,8 +2,9 @@
 import { CommonTerrain } from './CommonTerrain';
 import { LoxTerrainGeometry } from './LoxTerrainGeometry';
 import { FEATURE_TERRAIN } from '../core/constants';
+import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 
-import { MeshLambertMaterial, TextureLoader, Mesh, Box3 } from '../Three';
+import { TextureLoader, Mesh, Box3 } from '../Three';
 
 function LoxTile( ctx, terrain, offsets ) {
 
@@ -57,13 +58,10 @@ LoxTile.prototype.loadOverlay = function ( overlayLoadedCallback ) {
 
 		};
 
-		self.overlayMaterial = new MeshLambertMaterial(
-			{
-				map: texture,
-				transparent: true,
-				opacity: self.opacity,
-			}
-		);
+		self.overlayMaterial = new TerrainOverlayMaterial( { opacity: self.opacity } );
+
+		self.overlayMaterial.map = texture;
+		self.overlayMaterial.setThroughMode( self.parent.throughMode );
 
 		bitmap.data = null;
 		bitmap.image = null;
@@ -140,11 +138,14 @@ LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
 
 	if ( this.overlayLoaded ) {
 
+		const self = this;
+
 		this.children.forEach( function ( tile ) {
 
 			if ( tile.overlayMaterial !== null ) {
 
 				tile.material = tile.overlayMaterial;
+				tile.material.setThroughMode( self.throughMode );
 
 			}
 

@@ -1,7 +1,6 @@
 import { GlyphString } from '../core/GlyphString';
 import { Mesh, Group } from '../Three';
 
-
 function Scale( hudObject, container, geometry, material ) {
 
 	const materials = hudObject.ctx.materials;
@@ -127,5 +126,3 @@ Scale.prototype.dispose = function () {
 };
 
 export { Scale };
-
-// EOF

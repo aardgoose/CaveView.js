@@ -182,5 +182,3 @@ ScaleBar.prototype.setScale = function ( scale ) {
 };
 
 export { ScaleBar };
-
-// EOF

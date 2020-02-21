@@ -175,5 +175,3 @@ ProgressDial.prototype.handleProgess = function ( event ) {
 };
 
 export { ProgressDial };
-
-// EOF

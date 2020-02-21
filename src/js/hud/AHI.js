@@ -161,5 +161,3 @@ AHI.prototype.set = function () {
 }();
 
 export { AHI };
-
-// EOF

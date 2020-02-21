@@ -1,4 +1,3 @@
-
 import { Scale } from './Scale';
 import { MutableGlyphString } from '../core/GlyphString';
 
@@ -79,5 +78,3 @@ CursorScale.prototype.setCursor = function ( scaledValue, displayValue ) {
 };
 
 export { CursorScale };
-
-// EOF

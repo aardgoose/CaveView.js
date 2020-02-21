@@ -1,4 +1,3 @@
-
 import {
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_DISTANCE
 } from '../core/constants';
@@ -15,11 +14,7 @@ import { ProgressDial } from './ProgressDial';
 import { ScaleBar } from './ScaleBar';
 import { HudObject } from './HudObject';
 
-import {
-	Scene, Group,
-	AmbientLight, DirectionalLight,
-	OrthographicCamera
-} from '../Three';
+import { Scene, Group, AmbientLight, DirectionalLight, OrthographicCamera } from '../Three';
 
 // THREE objects
 
@@ -411,5 +406,3 @@ function HUD ( viewer, renderer ) {
 }
 
 export { HUD };
-
-// EOF

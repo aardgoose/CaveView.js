@@ -1,11 +1,8 @@
 import { GlyphString } from '../core/GlyphString';
 
 import {
-	Vector3,
-	RingBufferGeometry, Float32BufferAttribute,
-	MeshBasicMaterial,
-	VertexColors,
-	Mesh
+	Vector3, RingBufferGeometry, Float32BufferAttribute,
+	MeshBasicMaterial, VertexColors, Mesh
 } from '../Three';
 
 function AngleScale ( hudObject, caption ) {
@@ -67,5 +64,3 @@ function AngleScale ( hudObject, caption ) {
 AngleScale.prototype = Object.create( Mesh.prototype );
 
 export { AngleScale };
-
-// EOF

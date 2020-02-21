@@ -161,5 +161,3 @@ Compass.prototype.set = function () {
 }();
 
 export { Compass };
-
-// EOF

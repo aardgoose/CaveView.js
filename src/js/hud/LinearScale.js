@@ -22,5 +22,3 @@ function LinearScale ( hudObject, container ) {
 LinearScale.prototype = Object.create( Scale.prototype );
 
 export { LinearScale };
-
-// EOF

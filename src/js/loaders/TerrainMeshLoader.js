@@ -53,5 +53,3 @@ TerrainMeshLoader.prototype.load = function () {
 };
 
 export { TerrainMeshLoader };
-
-// EOF

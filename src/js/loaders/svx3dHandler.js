@@ -1,5 +1,3 @@
-// Survex 3d file handler
-
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
 import { StationPosition } from '../core/StationPosition';
 import { Vector3 } from '../Three';
@@ -1132,5 +1130,3 @@ Svx3dHandler.prototype.getTerrainBitmap = function () {
 };
 
 export { Svx3dHandler };
-
-// EOF

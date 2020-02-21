@@ -269,5 +269,3 @@ Handler.prototype.getSurvey = function () {
 };
 
 export { Handler };
-
-// EOF

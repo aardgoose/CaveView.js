@@ -223,5 +223,3 @@ pltHandler.prototype.parse = function ( cave, dataStream, metadata /*, section *
 };
 
 export { pltHandler };
-
-// EOF

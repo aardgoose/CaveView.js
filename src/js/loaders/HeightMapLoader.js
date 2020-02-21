@@ -76,5 +76,3 @@ HeightMapLoader.prototype.load = function () {
 };
 
 export { HeightMapLoader };
-
-// EOF

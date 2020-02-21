@@ -1,4 +1,3 @@
-
 import { replaceExtension } from '../core/lib';
 import { Svx3dHandler } from './svx3dHandler';
 import { loxHandler } from './loxHandler';
@@ -272,5 +271,3 @@ CaveLoader.prototype.callHandler = function () {
 };
 
 export { CaveLoader };
-
-// EOF

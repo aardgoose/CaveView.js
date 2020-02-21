@@ -5,7 +5,6 @@ import { EPSG4326TileSet } from './EPSG4326TileSet';
 import { EPSG3857TileSet } from './EPSG3857TileSet';
 
 import { Frustum, Matrix4 } from '../Three';
-import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 import { dataURL } from '../core/lib';
 
 const __frustum = new Frustum();
@@ -240,7 +239,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 		self.dispatchEvent( { type: 'progress', name: 'set', progress: 100 * ( self.maxTilesLoading - self.tilesLoading ) / self.maxTilesLoading } );
 
-		if ( tile.setLoaded( overlay, self.opacity, _loaded ) ) {
+		if ( tile.setLoaded( overlay, _loaded ) ) {
 
 			if ( overlay !== null && tile.zoom < overlay.getMinZoom() ) {
 
@@ -381,7 +380,7 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 		} else {
 
-			tile.setOverlay( overlay, self.opacity, _overlayLoaded );
+			tile.setOverlay( overlay, _overlayLoaded );
 			self.overlaysLoading++;
 
 		}
@@ -432,9 +431,6 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 
 	this.activeOverlay = null;
 
-	// use for commmon material access for opacity
-
-	material.opacity = this.opacity;
 	material.needsUpdate = true;
 	material.fog = false;
 
@@ -452,29 +448,6 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 
 };
 
-WebTerrain.prototype.setOpacity = function ( opacity ) {
-
-	this.opacity = opacity;
-
-	if ( this.activeOverlay === null ) {
-
-		if ( this.material ) {
-
-			this.material.opacity = opacity;
-			this.material.needsUpdate = true;
-
-		}
-
-	} else {
-
-		TerrainOverlayMaterial.opacity = opacity;
-
-	}
-
-	return;
-
-
-};
 
 WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 

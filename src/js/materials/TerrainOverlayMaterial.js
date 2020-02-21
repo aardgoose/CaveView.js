@@ -3,12 +3,11 @@ import { MeshLambertMaterial } from '../Three';
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 import { Shaders } from '../shaders/Shaders';
 
-function TerrainOverlayMaterial ( ctx, parameters ) {
+function TerrainOverlayMaterial ( ctx ) {
 
-	MeshLambertMaterial.call( this, parameters );
+	MeshLambertMaterial.call( this );
 
 	this.transparent = true;
-	this.extensions = { derivatives: true };
 
 	this.onBeforeCompile = function ( shader ) {
 
@@ -29,15 +28,12 @@ function TerrainOverlayMaterial ( ctx, parameters ) {
 	};
 
 	Object.defineProperty( this, 'opacity', {
-		get: function () { return TerrainOverlayMaterial.opacity; },
-		set: function ( opacity ) { TerrainOverlayMaterial.opacity = opacity; }
+		get: function () { return ctx.materials.terrainOpacity; }
 	} );
 
 	return this;
 
 }
-
-TerrainOverlayMaterial.opacity = 0.5;
 
 TerrainOverlayMaterial.prototype = Object.create( MeshLambertMaterial.prototype );
 

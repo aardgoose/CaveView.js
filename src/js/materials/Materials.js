@@ -52,6 +52,8 @@ function Materials ( viewer ) {
 		ringColor: { value: new Color( 0xff0000 ) }
 	};
 
+	this.terrainOpacity = 0.5;
+
 	Object.defineProperty( this, 'cursorHeight', {
 		writeable: true,
 		get: function () { return cursorHeight; },

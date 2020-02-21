@@ -31,7 +31,6 @@ function HypsometricMaterial ( ctx, survey ) {
 	if ( zMax === undefined ) zMax = terrain.boundingBox.max.z;
 
 	this.transparent = true;
-	this.opacity = 0.5;
 
 	this.onBeforeCompile = function ( shader ) {
 
@@ -57,6 +56,10 @@ function HypsometricMaterial ( ctx, survey ) {
 		shader.fragmentShader = fragmentShader;
 
 	};
+
+	Object.defineProperty( this, 'opacity', {
+		get: function () { return ctx.materials.terrainOpacity; }
+	} );
 
 	return this;
 

@@ -59,13 +59,18 @@ CommonTerrain.addOverlay = function ( ctx, name, overlayProvider, locationDefaul
 CommonTerrain.prototype = Object.create( Group.prototype );
 
 CommonTerrain.prototype.shadingMode = SHADING_RELIEF;
-CommonTerrain.prototype.opacity = 0.5;
 
 CommonTerrain.prototype.removed = function () {};
 
 CommonTerrain.prototype.getOpacity = function () {
 
-	return this.opacity;
+	return this.ctx.materials.terrainOpacity;
+
+};
+
+CommonTerrain.prototype.setOpacity = function ( opacity ) {
+
+	this.ctx.materials.terrainOpacity = opacity;
 
 };
 

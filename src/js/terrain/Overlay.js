@@ -91,7 +91,7 @@ Overlay.prototype.hideAttribution = function () {
 
 };
 
-Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
+Overlay.prototype.getTile = function ( x, y, z, overlayLoaded ) {
 
 	const self = this;
 	const key = x + ':' + y + ':' + z;
@@ -159,13 +159,11 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 			return;
 
 		}
-
-		const material = new TerrainOverlayMaterial( self.ctx, { opacity: opacity } );
+		const material = new TerrainOverlayMaterial( self.ctx );
 
 		texture.anisotropy = cfg.value( 'anisotropy', 4 );
 
 		texture.repeat.setScalar( repeat );
-
 		texture.offset.set( xOffset, yOffset );
 
 		material.map = texture;

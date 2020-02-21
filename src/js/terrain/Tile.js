@@ -189,7 +189,7 @@ Tile.prototype.setFailed = function () {
 
 };
 
-Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
+Tile.prototype.setLoaded = function ( overlay, renderCallback ) {
 
 	const parent = this.parent;
 
@@ -213,7 +213,7 @@ Tile.prototype.setLoaded = function ( overlay, opacity, renderCallback ) {
 				} else {
 
 					// delay finalising until overlays loaded - avoids flash of raw surface
-					sibling.setOverlay( overlay, opacity, _completed );
+					sibling.setOverlay( overlay, _completed );
 					tilesWaiting++;
 
 				}
@@ -263,11 +263,11 @@ Tile.prototype.setThroughMode = function ( mode ) {
 
 };
 
-Tile.prototype.setOverlay = function ( overlay, opacity, imageLoadedCallback ) {
+Tile.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
 
 	const self = this;
 
-	overlay.getTile( this.x, this.y, this.zoom, opacity, _overlayLoaded );
+	overlay.getTile( this.x, this.y, this.zoom, _overlayLoaded );
 
 	return;
 

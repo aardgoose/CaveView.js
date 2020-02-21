@@ -54,6 +54,10 @@ function ContourMaterial ( ctx, survey ) {
 
 	};
 
+	Object.defineProperty( this, 'opacity', {
+		get: function () { return ctx.materials.terrainOpacity; }
+	} );
+
 	return this;
 
 }

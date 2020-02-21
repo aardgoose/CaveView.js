@@ -58,7 +58,7 @@ LoxTile.prototype.loadOverlay = function ( ctx, overlayLoadedCallback ) {
 
 		};
 
-		self.overlayMaterial = new TerrainOverlayMaterial( ctx, { opacity: self.opacity } );
+		self.overlayMaterial = new TerrainOverlayMaterial( ctx );
 
 		self.overlayMaterial.map = texture;
 		self.overlayMaterial.setThroughMode( self.parent.throughMode );
@@ -174,23 +174,6 @@ LoxTerrain.prototype.removed = function () {
 LoxTerrain.prototype.setMaterial = function ( material ) {
 
 	this.children.forEach( function ( tile ) { tile.material = material; } );
-
-};
-
-LoxTerrain.prototype.setOpacity = function ( opacity ) {
-
-	this.children.forEach( function ( tile ) {
-
-		const material = tile.material;
-
-		tile.opacity = opacity;
-
-		material.opacity = opacity;
-		material.needsUpdate = true;
-
-	} );
-
-	this.opacity = opacity;
 
 };
 

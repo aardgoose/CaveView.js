@@ -1,8 +1,3 @@
-
-/**
- * @author Angus Sawyer
- */
-
 import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { Float32BufferAttribute } from 'three/src/core/BufferAttribute';
 import { Vector3 } from 'three/src/math/Vector3';
@@ -585,7 +580,6 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 	}
 
 }
-
 
 TerrainMeshGeometry.prototype = Object.create( BufferGeometry.prototype );
 

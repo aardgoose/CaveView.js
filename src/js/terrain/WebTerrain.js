@@ -751,5 +751,3 @@ WebTerrain.prototype.unwatch = function ( obj ) {
 };
 
 export { WebTerrain };
-
-// EOF

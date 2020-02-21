@@ -162,7 +162,4 @@ EPSG4326TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
 
 };
 
-
 export { EPSG4326TileSet };
-
-// EOF

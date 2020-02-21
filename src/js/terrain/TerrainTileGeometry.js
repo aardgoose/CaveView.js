@@ -1,4 +1,3 @@
-
 /**
  * @author Angus Sawyer
  * @author mrdoob / http://mrdoob.com/

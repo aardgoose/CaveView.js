@@ -7,8 +7,7 @@ import {
 import { unpackRGBA } from '../core/unpackRGBA';
 import { Overlay } from './Overlay';
 import {
-	Group, OrthographicCamera,
-	Box3, Vector3,
+	Group, OrthographicCamera, Box3, Vector3,
 	WebGLRenderTarget, LinearFilter, NearestFilter, RGBAFormat
 } from '../Three';
 
@@ -44,7 +43,6 @@ function CommonTerrain ( ctx ) {
 	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
 
 }
-
 
 CommonTerrain.addOverlay = function ( ctx, name, overlayProvider, locationDefault ) {
 
@@ -468,5 +466,3 @@ CommonTerrain.prototype._fitSurface = function ( modelPoints /* , offsets */ ) {
 };
 
 export { CommonTerrain };
-
-// EOF

@@ -169,5 +169,3 @@ EPSG3857TileSet.prototype.findTile = function ( point ) {
 };
 
 export { EPSG3857TileSet };
-
-// EOF

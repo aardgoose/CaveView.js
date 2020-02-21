@@ -1,4 +1,3 @@
-
 import { CommonTerrain } from './CommonTerrain';
 import { LoxTerrainGeometry } from './LoxTerrainGeometry';
 import { FEATURE_TERRAIN } from '../core/constants';
@@ -180,5 +179,3 @@ LoxTerrain.prototype.setMaterial = function ( material ) {
 LoxTerrain.prototype.fitSurface = CommonTerrain.prototype._fitSurface;
 
 export { LoxTerrain };
-
-// EOF

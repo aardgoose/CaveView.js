@@ -70,5 +70,3 @@ Object.assign( HudObject.prototype, {
 } );
 
 export { HudObject };
-
-// EOF

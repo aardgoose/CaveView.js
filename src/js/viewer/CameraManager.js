@@ -258,7 +258,6 @@ function CameraManager ( ctx, renderer, scene ) {
 	};
 
 	Object.defineProperty( this, 'eyeSeparation', {
-		writeable: true,
 		get: function () { return eyeSeparation; },
 		set: function ( x ) {
 

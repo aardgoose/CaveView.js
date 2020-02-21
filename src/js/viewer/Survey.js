@@ -115,7 +115,6 @@ function Survey ( ctx, cave ) {
 	survey = null;
 
 	Object.defineProperty( this, 'zScale', {
-		writeable: true,
 		get: function () { return zScale; },
 		set: function ( scale ) {
 

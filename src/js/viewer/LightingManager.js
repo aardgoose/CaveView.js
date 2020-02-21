@@ -32,7 +32,6 @@ function LightingManager ( ctx, scene ) {
 	};
 
 	Object.defineProperty( this, 'directionalLighting', {
-		writeable: true,
 		get: function () { return directionalLight.visible; },
 		set: function ( on ) {
 

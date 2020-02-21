@@ -56,7 +56,6 @@ function Materials ( viewer ) {
 	this.terrainOpacity = 0.5;
 
 	Object.defineProperty( this, 'cursorHeight', {
-		writeable: true,
 		get: function () { return cursorHeight; },
 		set: updateCursors
 	} );
@@ -64,7 +63,6 @@ function Materials ( viewer ) {
 	const distanceTransparency = this.commonUniforms.distanceTransparency;
 
 	Object.defineProperty( this, 'distanceTransparency', {
-		writeable: true,
 		get: function () { return distanceTransparency.value; },
 		set: function ( x ) { distanceTransparency.value = x; }
 	} );

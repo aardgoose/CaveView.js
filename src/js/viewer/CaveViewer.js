@@ -149,7 +149,6 @@ function CaveViewer ( domID, configuration ) {
 		},
 
 		'reset': {
-			writeable: true,
 			set: function () { setupView( false ); }
 		},
 
@@ -158,13 +157,11 @@ function CaveViewer ( domID, configuration ) {
 		},
 
 		'terrain': {
-			writeable: true,
 			get: function () { return cameraManager.testCameraLayer( FEATURE_TERRAIN ); },
 			set: loadTerrain
 		},
 
 		'terrainShading': {
-			writeable: true,
 			get: function () { return terrain !== null ? terrain.shadingMode : null; },
 			set: _stateSetter( setTerrainShadingMode, 'terrainShading')
 		},
@@ -182,13 +179,11 @@ function CaveViewer ( domID, configuration ) {
 		},
 
 		'terrainDirectionalLighting': {
-			writeable: true,
 			get: function () { return lightingManager.directionalLighting; },
 			set: setTerrainLighting
 		},
 
 		'terrainThrough': {
-			writeable: true,
 			get: function () { return terrain !== null ? terrain.throughMode : null; },
 			set: _stateSetter( setTerrainThroughMode, 'terrainThrough' )
 		},
@@ -202,25 +197,21 @@ function CaveViewer ( domID, configuration ) {
 		},
 
 		'terrainDatumShift': {
-			writeable: true,
 			get: function () { return !! terrain.activeDatumShift; },
 			set: applyTerrainDatumShift
 		},
 
 		'terrainOpacity': {
-			writeable: true,
 			get: function () { return ( terrain !== null ) ? terrain.getOpacity() : 0; },
 			set: setTerrainOpacity
 		},
 
 		'shadingMode': {
-			writeable: true,
 			get: function () { return survey.caveShading; },
 			set: _stateSetter( setShadingMode, 'shadingMode' )
 		},
 
 		'route': {
-			writeable: true,
 			get: function () { return survey.getRoutes().setRoute; },
 			set: function ( x ) { survey.getRoutes().setRoute = x; }
 		},
@@ -230,31 +221,26 @@ function CaveViewer ( domID, configuration ) {
 		},
 
 		'surfaceShading': {
-			writeable: true,
 			get: function () { return survey.surfaceShading; },
 			set: _stateSetter( setSurfaceShadingMode, 'surfaceShading' )
 		},
 
 		'cameraType': {
-			writeable: true,
 			get: function () { return cameraManager.mode; },
 			set: _stateSetter( setCameraMode, 'cameraType' )
 		},
 
 		'eyeSeparation': {
-			writeable: true,
 			get: function () { return cameraManager.eyeSeparation; },
 			set: setEyeSeparation
 		},
 
 		'view': {
-			writeable: true,
 			get: function () { return VIEW_NONE; },
 			set: _stateSetter( setViewMode, 'view' )
 		},
 
 		'cursorHeight': {
-			writeable: true,
 			get: function () { return materials.cursorHeight; },
 			set: setCursorHeight
 		},
@@ -280,76 +266,63 @@ function CaveViewer ( domID, configuration ) {
 		},
 
 		'section': {
-			writeable: true,
 			get: function () { return survey.selection.getNode(); },
 			set: _stateSetter( selectSection, 'section' )
 		},
 
 		'sectionByName': {
-			writeable: true,
 			get: getSelectedSectionName,
 			set: setSelectedSectionName
 		},
 
 		'popup': {
-			writeable: true,
 			set: setPopup
 		},
 
 		'highlight': {
-			writeable: true,
 			set: _stateSetter( highlightSelection, 'highlight' )
 		},
 
 		'polarAngle': {
-			writeable: true,
 			get: function () { return controls.getPolarAngle(); },
 			set: function (x ) { cameraMove.setPolarAngle( x ); }
 		},
 
 		'azimuthAngle': {
-			writeable: true,
 			set: function ( x ) { cameraMove.setAzimuthAngle( x ); }
 		},
 
 		'editMode': {
-			writeable: true,
 			get: function () { return mouseMode; },
 			set: function ( x ) { setEditMode( x ); self.dispatchEvent( { type: 'change', name: 'editMode' } ); }
 		},
 
 		'setPOI': {
-			writeable: true,
 			//get: function () { return true; },
 			set: _stateSetter( setCameraPOI, 'setPOI' )
 		},
 
 		'HUD': {
-			writeable: true,
 			get: function () { return hud.getVisibility(); },
 			set: function ( x ) { hud.setVisibility( x ); }
 		},
 
 		'cut': {
-			writeable: true,
 			// get: function () { return true; },
 			set: cutSection
 		},
 
 		'zScale': {
-			writeable: true,
 			get: function () { return survey.zScale; },
 			set: setZScale
 		},
 
 		'autoRotate': {
-			writeable: true,
 			get: function () { return controls.autoRotate; },
 			set: function ( x ) { setAutoRotate( !! x ); }
 		},
 
 		'wheelTilt': {
-			writeable: true,
 			get: function () { return controls.wheelTilt; },
 			set: function ( x ) {
 				controls.wheelTilt = !! x;
@@ -358,7 +331,6 @@ function CaveViewer ( domID, configuration ) {
 		},
 
 		'svxControlMode': {
-			writeable: true,
 			get: function () { return controls.svxControlMode; },
 			set: function ( x ) {
 				controls.svxControlMode = !! x;
@@ -368,7 +340,6 @@ function CaveViewer ( domID, configuration ) {
 		},
 
 		'zoomToCursor': {
-			writeable: true,
 			get: function () { return controls.zoomToCursor; },
 			set: function ( x ) {
 				controls.zoomToCursor = !! x;
@@ -377,13 +348,11 @@ function CaveViewer ( domID, configuration ) {
 		},
 
 		'autoRotateSpeed': {
-			writeable: true,
 			get: function () { return controls.autoRotateSpeed / 11; },
 			set: setAutoRotateSpeed
 		},
 
 		'fullscreen': {
-			writeable: true,
 			get: isFullscreen,
 			set: setFullscreen
 		},
@@ -393,7 +362,6 @@ function CaveViewer ( domID, configuration ) {
 		},
 
 		'fog': {
-			writeable: true,
 			get: function () { return useFog; },
 			set: setFog
 		},
@@ -407,7 +375,6 @@ function CaveViewer ( domID, configuration ) {
 		},
 
 		'trackLocation': {
-			writeable: true,
 			get: function () { return trackLocation; },
 			set: setLocation
 		}
@@ -479,7 +446,6 @@ function CaveViewer ( domID, configuration ) {
 	function _enableLayer ( layerTag, name ) {
 
 		Object.defineProperty( self, name, {
-			writeable: true,
 			get: function () { return cameraManager.testCameraLayer( layerTag ); },
 			set: function ( x ) {
 				cameraManager.setCameraLayer( layerTag, x );

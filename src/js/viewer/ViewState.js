@@ -1,4 +1,3 @@
-
 import {
 	CAMERA_PERSPECTIVE,
 	SHADING_HEIGHT, SHADING_RELIEF, SHADING_LOCATION,
@@ -85,5 +84,3 @@ function ViewState ( viewer ) {
 }
 
 export { ViewState, defaultView, dynamicView };
-
-// EOF

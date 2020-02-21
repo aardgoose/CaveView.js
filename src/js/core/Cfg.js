@@ -1,4 +1,3 @@
-
 import { Color, FileLoader, EventDispatcher, MathUtils } from '../Three';
 import x18n from 'x18n';
 import lang_en from './defaultLanguage.json';
@@ -155,7 +154,4 @@ Cfg.prototype.themeColor = function ( name ) {
 
 };
 
-
 export { Cfg };
-
-// EOF

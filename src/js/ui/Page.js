@@ -514,5 +514,3 @@ Page.prototype.addLogo = function () {
 };
 
 export { Page };
-
-// EOF

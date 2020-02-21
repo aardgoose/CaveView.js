@@ -452,8 +452,5 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 	};
 
 }
-// export public interface
 
 export { KeyboardControls };
-
-// EOF

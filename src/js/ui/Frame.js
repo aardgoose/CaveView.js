@@ -1,5 +1,4 @@
 
-
 function Frame ( ctx ) {
 
 	this.ctx = ctx;
@@ -228,7 +227,4 @@ Frame.prototype.handleChange = function ( event ) {
 
 };
 
-
 export { Frame };
-
-// EOF

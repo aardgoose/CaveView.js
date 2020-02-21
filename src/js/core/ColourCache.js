@@ -1,4 +1,3 @@
-
 import { Colours } from './Colours';
 import { Color, DataTexture, RGBFormat, UnsignedByteType, LinearFilter } from '../Three';
 

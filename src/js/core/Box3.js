@@ -1,4 +1,3 @@
-
 /**
  * based on BoxHelper
  * @author mrdoob / http://mrdoob.com/

@@ -1,4 +1,3 @@
-
 import { Page } from './Page';
 
 function HelpPage ( frame, avenControls ) {
@@ -158,6 +157,3 @@ function HelpPage ( frame, avenControls ) {
 HelpPage.prototype = Object.create( Page.prototype );
 
 export { HelpPage };
-
-
-// EOF

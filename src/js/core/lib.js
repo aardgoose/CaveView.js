@@ -14,5 +14,3 @@ function dataURL( json ) {
 }
 
 export { replaceExtension, dataURL };
-
-// EOF

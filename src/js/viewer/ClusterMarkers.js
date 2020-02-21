@@ -1,4 +1,3 @@
-
 import { FEATURE_ENTRANCES, CLUSTER_MARKERS } from '../core/constants';
 import { GlyphString } from '../core/GlyphString';
 import { Marker } from './Marker';
@@ -365,5 +364,3 @@ ClusterMarkers.prototype.cluster = function ( camera, target, selectedStationSet
 };
 
 export { ClusterMarkers };
-
-// EOF

@@ -1,4 +1,3 @@
-
 import 'three/src/polyfills';
 import { HeightMapLoader } from '../loaders/HeightMapLoader';
 import { TerrainTileGeometry } from '../terrain/TerrainTileGeometry';
@@ -26,7 +25,6 @@ function onMessage ( event ) {
 	}
 
 }
-
 
 function dzzDecode( data, size ) {
 
@@ -207,5 +205,3 @@ function mapError () {
 	postMessage( { status: 'nomap' } );
 
 }
-
-// EOF

@@ -1,4 +1,3 @@
-
 import { replaceExtension } from '../core/lib';
 import { Panel } from './Panel';
 
@@ -46,9 +45,4 @@ function RoutePanel ( page, viewer, fileSelector ) {
 
 RoutePanel.prototype = Object.create( Panel.prototype );
 
-
-
 export { RoutePanel };
-
-
-// EOF

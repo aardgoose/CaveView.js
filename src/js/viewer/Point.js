@@ -1,6 +1,4 @@
-import {
-	Points, BufferGeometry, Float32BufferAttribute
-} from '../Three';
+import { Points, BufferGeometry, Float32BufferAttribute } from '../Three';
 
 function Point ( material, ctx ) {
 

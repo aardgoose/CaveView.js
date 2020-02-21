@@ -1,7 +1,4 @@
 
-import { Page } from './Page';
-
-
 function Panel ( page ) {
 
 	this.page = page;
@@ -51,5 +48,3 @@ Panel.prototype.setVisibility = function ( visible ) {
 };
 
 export { Panel };
-
-// EOF

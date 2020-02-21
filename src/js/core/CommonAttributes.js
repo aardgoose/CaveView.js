@@ -1,4 +1,3 @@
-
 import { Float32BufferAttribute, Uint16BufferAttribute } from '../Three';
 
 // attributes to construct unit square

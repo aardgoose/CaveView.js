@@ -115,5 +115,3 @@ function CaveViewUI ( viewer ) {
 }
 
 export { CaveViewUI };
-
-// EOF

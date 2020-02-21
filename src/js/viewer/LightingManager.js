@@ -1,9 +1,4 @@
-import {
-	Spherical, Vector3,
-	Object3D,
-	AmbientLight,
-	DirectionalLight
-} from '../Three';
+import { Spherical, Vector3, Object3D, AmbientLight, DirectionalLight } from '../Three';
 
 function LightingManager ( ctx, scene ) {
 
@@ -48,6 +43,5 @@ function LightingManager ( ctx, scene ) {
 	} );
 
 }
-
 
 export { LightingManager };

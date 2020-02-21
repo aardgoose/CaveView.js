@@ -1,4 +1,3 @@
-
 import { EventDispatcher } from '../Three';
 
 function FileSelector ( container ) {
@@ -115,6 +114,3 @@ FileSelector.prototype.reload = function () {
 };
 
 export { FileSelector};
-
-
-// EOF

@@ -1,6 +1,5 @@
 import { BufferGeometry, Float32BufferAttribute, Mesh } from '../../Three';
 
-
 function Walls ( ctx ) {
 
 	const geometry = new BufferGeometry();

@@ -1,8 +1,6 @@
 import {
-	InstancedBufferGeometry,
-	InstancedBufferAttribute,
-	Mesh, Vector3, Triangle,
-	Object3D
+	InstancedBufferGeometry, InstancedBufferAttribute,
+	Mesh, Vector3, Triangle, Object3D
 } from '../Three';
 
 import { CommonAttributes } from './CommonAttributes';
@@ -265,5 +263,3 @@ MutableGlyphString.prototype.replaceString = function ( newstring ) {
 };
 
 export { GlyphString, MutableGlyphString };
-
-// EOF

@@ -216,4 +216,3 @@ Topology.prototype.getShortestPath = function ( startStation ) {
 };
 
 export { Topology };
-

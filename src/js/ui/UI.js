@@ -1,4 +1,3 @@
-
 import { CaveViewUI } from './CaveViewUI';
 
 // export public interface
@@ -11,5 +10,3 @@ var UI = {
 };
 
 export { UI };
-
-// EOF

@@ -150,6 +150,3 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 SettingsPage.prototype = Object.create( Page.prototype );
 
 export { SettingsPage };
-
-
-// EOF

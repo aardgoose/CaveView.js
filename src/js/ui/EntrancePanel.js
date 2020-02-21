@@ -27,8 +27,4 @@ function EntrancePanel ( page, viewer ) {
 
 EntrancePanel.prototype = Object.create( Panel.prototype );
 
-
 export { EntrancePanel };
-
-
-// EOF

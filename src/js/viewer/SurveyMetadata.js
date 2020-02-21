@@ -1,4 +1,3 @@
-
 import { EventDispatcher } from '../Three';
 import { dataURL } from '../core/lib';
 

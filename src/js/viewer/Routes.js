@@ -1,4 +1,3 @@
-
 import { EventDispatcher } from '../Three';
 
 function Routes ( survey ) {
@@ -195,6 +194,5 @@ Routes.prototype.adjacentToRoute = function ( index ) {
 	return this.adjacentSegments.has( this.topology.vertexSegment( index ) );
 
 };
-
 
 export { Routes };

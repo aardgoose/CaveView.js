@@ -8,7 +8,4 @@ function buildWallsSync ( cave, survey ) {
 
 }
 
-
 export { buildWallsSync };
-
-// EOF

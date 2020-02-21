@@ -59,7 +59,4 @@ function buildScraps ( cave, survey ) {
 
 }
 
-
 export { buildScraps };
-
-// EOF

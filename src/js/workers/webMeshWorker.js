@@ -1,4 +1,3 @@
-
 import 'three/src/polyfills';
 import { TerrainMeshLoader } from '../loaders/TerrainMeshLoader';
 import { TerrainMeshGeometry } from '../terrain/TerrainMeshGeometry';
@@ -84,5 +83,3 @@ function mapError () {
 	postMessage( { status: 'nomap' } );
 
 }
-
-// EOF

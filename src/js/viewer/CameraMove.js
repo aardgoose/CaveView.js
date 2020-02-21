@@ -1,12 +1,4 @@
-
-import {
-	Object3D,
-	Vector3,
-	Quaternion,
-	Matrix4,
-	Euler,
-	MathUtils
-} from '../Three';
+import { Object3D, Vector3, Quaternion, Matrix4, Euler, MathUtils } from '../Three';
 
 import { CAMERA_OFFSET } from '../core/constants';
 
@@ -478,6 +470,5 @@ CameraMove.prototype.setAutoRotate = function ( state ) {
 	}
 
 };
-
 
 export { CameraMove };

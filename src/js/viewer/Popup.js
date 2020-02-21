@@ -1,13 +1,8 @@
-
 import { LEG_CAVE } from '../core/constants';
 import { PopupMaterial } from '../materials/PopupMaterial';
 import { CommonAttributes } from '../core/CommonAttributes';
 
-import {
-	CanvasTexture,
-	BufferGeometry,
-	Mesh
-} from '../Three';
+import { CanvasTexture, BufferGeometry, Mesh } from '../Three';
 
 function PopupGeometry () {
 

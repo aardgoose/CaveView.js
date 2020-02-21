@@ -14,7 +14,6 @@ const mode = {
 	'modes.trace': MOUSE_MODE_TRACE_EDIT
 };
 
-
 function EditPage ( frame, viewer, fileSelector ) {
 
 	Page.call( this, 'icon_route', 'edit', _onTop, _onLeave );
@@ -128,6 +127,3 @@ function EditPage ( frame, viewer, fileSelector ) {
 EditPage.prototype = Object.create( Page.prototype );
 
 export { EditPage };
-
-
-// EOF

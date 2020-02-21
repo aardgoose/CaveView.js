@@ -38,5 +38,3 @@ function LocationButton ( viewer, container ) { // public method
 }
 
 export { LocationButton };
-
-// EOF

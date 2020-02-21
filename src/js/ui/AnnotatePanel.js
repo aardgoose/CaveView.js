@@ -111,8 +111,4 @@ function AnnotatePanel ( page, viewer ) {
 
 AnnotatePanel.prototype = Object.create( Panel.prototype );
 
-
 export { AnnotatePanel };
-
-
-// EOF

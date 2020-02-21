@@ -1,4 +1,3 @@
-
 import {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_ANAGLYPH, CAMERA_STEREO,
 	LEG_CAVE, FEATURE_SELECTED_BOX, FEATURE_SURVEY, FEATURE_TERRAIN
@@ -8,8 +7,7 @@ import { AnaglyphEffect } from './AnaglyphEffect';
 import { StereoEffect } from './StereoEffect';
 
 import {
-	OrthographicCamera, PerspectiveCamera,
-	MathUtils,
+	OrthographicCamera, PerspectiveCamera, MathUtils,
 	MeshBasicMaterial, BackSide, Vector2
 } from '../Three';
 

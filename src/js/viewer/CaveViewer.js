@@ -1,4 +1,3 @@
-
 import {
 	VERSION,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES, SURVEY_WARNINGS,
@@ -1693,6 +1692,3 @@ function CaveViewer ( domID, configuration ) {
 CaveViewer.prototype = Object.create( EventDispatcher.prototype );
 
 export { CaveViewer };
-
-
-// EOF

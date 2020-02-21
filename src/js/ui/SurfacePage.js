@@ -90,6 +90,3 @@ function SurfacePage ( frame, viewer ) {
 SurfacePage.prototype = Object.create( Page.prototype );
 
 export { SurfacePage };
-
-
-// EOF

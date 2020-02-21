@@ -1,12 +1,6 @@
-import {
-	BufferGeometry,
-	Points,
-	Float32BufferAttribute,
-	Vector3
-} from '../Three';
+import { BufferGeometry, Points, Float32BufferAttribute, Vector3 } from '../Three';
 
 import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
-
 import { STATION_ENTRANCE } from '../core/constants';
 import { PointIndicator } from './PointIndicator';
 
@@ -321,6 +315,5 @@ Stations.prototype.setSplaysVisibility = function ( visible ) {
 	pSize.needsUpdate = true;
 
 };
-
 
 export { Stations };

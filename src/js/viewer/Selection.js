@@ -107,5 +107,3 @@ function Selection( survey, color ) {
 Selection.prototype = Object.create( Box3Helper.prototype );
 
 export { Selection };
-
-// EOF

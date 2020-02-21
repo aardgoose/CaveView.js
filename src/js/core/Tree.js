@@ -1,5 +1,4 @@
 
-
 function Tree( name, id, root, parent ) { // root parameter only used internally
 
 	if ( root === undefined ) {
@@ -307,5 +306,3 @@ Tree.prototype.isStation = function () {
 };
 
 export { Tree };
-
-// EOF

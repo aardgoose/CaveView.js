@@ -1347,5 +1347,3 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 };
 
 export { Survey };
-
-// EOF

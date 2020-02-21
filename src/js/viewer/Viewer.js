@@ -1,7 +1,4 @@
-
 import { CaveViewer } from './CaveViewer';
-
-// export public interface
 
 var viewer;
 
@@ -17,5 +14,3 @@ var Viewer = {
 };
 
 export { Viewer };
-
-// EOF

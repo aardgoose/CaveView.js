@@ -1,5 +1,4 @@
 import { VERSION, LEG_CAVE } from '../core/constants';
-
 import { Page } from './Page';
 
 function InfoPage ( frame, viewer, fileSelector ) {
@@ -35,6 +34,3 @@ function InfoPage ( frame, viewer, fileSelector ) {
 InfoPage.prototype = Object.create( Page.prototype );
 
 export { InfoPage };
-
-
-// EOF

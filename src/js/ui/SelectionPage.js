@@ -124,9 +124,7 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 			if ( connections === 0 && ! viewer.splays && child.type !== STATION_ENTRANCE ) return; // skip spays if not displayed
 
 			const li  = document.createElement( 'li' );
-
 			const text = ( child.comment === undefined ) ? child.name : child.name + ' ( ' + child.comment + ' )';
-
 			const txt = document.createTextNode( text );
 
 			var key;
@@ -241,7 +239,6 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 	function _handleSelectSurveyClick ( event ) {
 
 		const target = event.target;
-
 		const node = nodes.get( target );
 
 		switch ( target.tagName ) {
@@ -290,7 +287,6 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 	function _handleSelectSurveyDblClick ( event ) {
 
 		const target = event.target;
-
 		const node = nodes.get( target );
 
 		if ( ! target.classList.contains( 'section' ) ) return;
@@ -310,6 +306,3 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 SelectionPage.prototype = Object.create( Page.prototype );
 
 export { SelectionPage };
-
-
-// EOF

@@ -3,7 +3,6 @@ import { Walls } from './Walls';
 
 import { Object3D, Vector3 } from '../../Three';
 
-
 function buildCrossSections ( cave, survey ) {
 
 	const crossSectionGroups = cave.crossSections;
@@ -320,5 +319,3 @@ function buildCrossSections ( cave, survey ) {
 }
 
 export { buildCrossSections };
-
-// EOF

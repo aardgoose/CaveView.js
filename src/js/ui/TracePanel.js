@@ -1,4 +1,3 @@
-
 import { Panel } from './Panel';
 
 function TracePanel ( page, viewer ) {
@@ -76,5 +75,3 @@ function TracePanel ( page, viewer ) {
 TracePanel.prototype = Object.create( Panel.prototype );
 
 export { TracePanel };
-
-// EOF

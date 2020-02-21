@@ -67,5 +67,3 @@ ContourMaterial.prototype = Object.create( MeshLambertMaterial.prototype );
 Object.assign( ContourMaterial.prototype, CommonTerrainMaterial.prototype );
 
 export { ContourMaterial };
-
-// EOF

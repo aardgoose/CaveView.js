@@ -137,5 +137,3 @@ function GlyphAtlasCache () {
 }
 
 export { GlyphAtlasCache };
-
-// EOF

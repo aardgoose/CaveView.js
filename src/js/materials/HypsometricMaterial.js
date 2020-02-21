@@ -70,5 +70,3 @@ HypsometricMaterial.prototype = Object.create( MeshLambertMaterial.prototype );
 Object.assign( HypsometricMaterial.prototype, CommonTerrainMaterial.prototype );
 
 export { HypsometricMaterial };
-
-// EOF

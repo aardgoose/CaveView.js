@@ -1,4 +1,3 @@
-
 import { MeshLambertMaterial } from '../Three';
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 import { Shaders } from '../shaders/Shaders';
@@ -40,5 +39,3 @@ TerrainOverlayMaterial.prototype = Object.create( MeshLambertMaterial.prototype 
 Object.assign( TerrainOverlayMaterial.prototype, CommonTerrainMaterial.prototype );
 
 export { TerrainOverlayMaterial };
-
-// EOF

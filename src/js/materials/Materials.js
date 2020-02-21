@@ -303,5 +303,3 @@ function Materials ( viewer ) {
 }
 
 export { Materials };
-
-// EOF

@@ -1,4 +1,3 @@
-
 import { PointsMaterial, TextureLoader, VertexColors } from '../Three';
 
 function ExtendedPointsMaterial ( ctx ) {
@@ -33,5 +32,3 @@ function ExtendedPointsMaterial ( ctx ) {
 ExtendedPointsMaterial.prototype = Object.create( PointsMaterial.prototype );
 
 export { ExtendedPointsMaterial };
-
-// EOF

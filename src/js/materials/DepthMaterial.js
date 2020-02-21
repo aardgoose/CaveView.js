@@ -1,4 +1,3 @@
-
 import { Shaders } from '../shaders/Shaders';
 import { MATERIAL_LINE } from '../core/constants';
 
@@ -41,5 +40,3 @@ function DepthMaterial ( ctx, type, survey ) {
 DepthMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 export { DepthMaterial };
-
-// EOF

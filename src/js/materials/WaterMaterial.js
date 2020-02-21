@@ -1,4 +1,3 @@
-
 import { Shaders } from '../shaders/Shaders';
 import { ShaderMaterial, DoubleSide } from '../Three';
 
@@ -22,5 +21,3 @@ function WaterMaterial () {
 WaterMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 export { WaterMaterial };
-
-// EOF

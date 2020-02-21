@@ -38,4 +38,3 @@ CommonTerrainMaterial.prototype.setThroughMode = function ( mode ) {
 };
 
 export { CommonTerrainMaterial };
-// EOF

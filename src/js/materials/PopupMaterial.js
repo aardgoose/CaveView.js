@@ -1,4 +1,3 @@
-
 import { ShaderMaterial, Vector2 } from '../Three';
 import { Shaders } from '../shaders/Shaders';
 
@@ -43,5 +42,3 @@ function PopupMaterial ( container, popupImage, rotation, colour ) {
 PopupMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 export { PopupMaterial };
-
-// EOF

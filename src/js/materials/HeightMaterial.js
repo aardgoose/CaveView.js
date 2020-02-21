@@ -37,5 +37,3 @@ function HeightMaterial ( ctx, type, survey ) {
 HeightMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 export { HeightMaterial };
-
-// EOF

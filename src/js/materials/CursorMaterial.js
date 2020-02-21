@@ -50,5 +50,3 @@ CursorMaterial.prototype.getCursor = function () {
 };
 
 export { CursorMaterial };
-
-// EOF

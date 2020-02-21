@@ -1,4 +1,3 @@
-
 import { Shaders } from '../shaders/Shaders';
 import { MATERIAL_LINE } from '../core/constants';
 
@@ -63,5 +62,3 @@ DepthCursorMaterial.prototype.getCursor = function () {
 };
 
 export { DepthCursorMaterial };
-
-// EOF

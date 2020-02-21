@@ -1,4 +1,3 @@
-
 import { ShaderMaterial, Vector2 } from '../Three';
 import { Shaders } from '../shaders/Shaders';
 
@@ -58,7 +57,4 @@ GlyphMaterial.prototype.getAtlas = function () {
 
 };
 
-
 export { GlyphMaterial };
-
-// EOF

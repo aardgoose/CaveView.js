@@ -7,6 +7,7 @@ import { DepthMapMaterial } from './DepthMapMaterial';
 import { HeightMaterial } from './HeightMaterial';
 import { HypsometricMaterial } from './HypsometricMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
+import { MissingMaterial } from './MissingMaterial';
 import { ColourCache } from '../core/ColourCache';
 import { GlyphAtlasCache } from './GlyphAtlas';
 import {
@@ -216,7 +217,7 @@ function Materials ( viewer ) {
 
 	this.getMissingMaterial = function () {
 
-		const func = function () { return new MeshLambertMaterial( { transparent: true, opacity: 0.5, color: 0xff8888 } ); };
+		const func = function () { return new MissingMaterial( ctx, { transparent: true, opacity: 0.5, color: 0xff8888 } ); };
 		return getCacheMaterial( 'missing', func );
 
 	};

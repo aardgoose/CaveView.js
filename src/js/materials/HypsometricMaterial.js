@@ -37,7 +37,7 @@ function HypsometricMaterial ( ctx, survey ) {
 
 		Object.assign(
 			shader.uniforms,
-			CommonTerrainMaterial.uniforms,
+			ctx.materials.commonTerrainUniforms,
 			{
 				minZ:   { value: zMin },
 				scaleZ: { value: 1 / ( zMax - zMin ) },

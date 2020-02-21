@@ -160,7 +160,7 @@ Overlay.prototype.getTile = function ( x, y, z, opacity, overlayLoaded ) {
 
 		}
 
-		const material = new TerrainOverlayMaterial( { transparent: true, opacity: opacity, color: 0xffffff } );
+		const material = new TerrainOverlayMaterial( self.ctx, { opacity: opacity } );
 
 		texture.anisotropy = cfg.value( 'anisotropy', 4 );
 

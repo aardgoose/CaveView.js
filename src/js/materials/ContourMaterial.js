@@ -24,6 +24,7 @@ const fragment_color = [
 function ContourMaterial ( ctx, survey ) {
 
 	const cfg = ctx.cfg;
+	const materials = ctx.materials;
 
 	MeshLambertMaterial.call( this );
 
@@ -38,7 +39,7 @@ function ContourMaterial ( ctx, survey ) {
 			contourColor:    { value: cfg.themeColor( 'shading.contours.line' ) },
 			contourColor10:  { value: cfg.themeColor( 'shading.contours.line10' ) },
 			baseColor:       { value: cfg.themeColor( 'shading.contours.base' ) }
-		}, ctx.materials.commonDepthUniforms );
+		}, materials.commonDepthUniforms, materials.commonTerrainUniforms );
 
 		var vertexShader = shader.vertexShader
 			.replace( '#include <common>', '$&\nuniform float zOffset;\nuniform float datumShift;\nvarying float vPositionZ;\n' )

@@ -32,7 +32,7 @@ LoxTile.prototype = Object.create( Mesh.prototype );
 
 LoxTile.prototype.isTile = true;
 
-LoxTile.prototype.loadOverlay = function ( overlayLoadedCallback ) {
+LoxTile.prototype.loadOverlay = function ( ctx, overlayLoadedCallback ) {
 
 	if ( this.bitmap === null ) return;
 
@@ -58,7 +58,7 @@ LoxTile.prototype.loadOverlay = function ( overlayLoadedCallback ) {
 
 		};
 
-		self.overlayMaterial = new TerrainOverlayMaterial( { opacity: self.opacity } );
+		self.overlayMaterial = new TerrainOverlayMaterial( ctx, { opacity: self.opacity } );
 
 		self.overlayMaterial.map = texture;
 		self.overlayMaterial.setThroughMode( self.parent.throughMode );
@@ -136,9 +136,9 @@ LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
 
 	if ( ! this.hasOverlay ) return;
 
-	if ( this.overlayLoaded ) {
+	const self = this;
 
-		const self = this;
+	if ( this.overlayLoaded ) {
 
 		this.children.forEach( function ( tile ) {
 
@@ -157,7 +157,7 @@ LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
 
 	}
 
-	this.children.forEach( function ( tile ) { tile.loadOverlay( overlayLoadedCallback ); } );
+	this.children.forEach( function ( tile ) { tile.loadOverlay( self.ctx, overlayLoadedCallback ); } );
 
 	this.overlayLoaded = true;
 

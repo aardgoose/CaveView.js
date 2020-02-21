@@ -3,7 +3,7 @@ import { MeshLambertMaterial } from '../Three';
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 import { Shaders } from '../shaders/Shaders';
 
-function TerrainOverlayMaterial ( parameters ) {
+function TerrainOverlayMaterial ( ctx, parameters ) {
 
 	MeshLambertMaterial.call( this, parameters );
 
@@ -13,7 +13,7 @@ function TerrainOverlayMaterial ( parameters ) {
 	this.onBeforeCompile = function ( shader ) {
 
 		// some uniforms shared by all material instances
-		Object.assign( shader.uniforms, CommonTerrainMaterial.uniforms );
+		Object.assign( shader.uniforms, ctx.materials.commonTerrainUniforms );
 
 		var vertexShader = shader.vertexShader
 			.replace( '#include <common>', '$&\nvarying vec2 vPosition;\n' )

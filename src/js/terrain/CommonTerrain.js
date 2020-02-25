@@ -461,7 +461,7 @@ CommonTerrain.prototype._fitSurface = function ( modelPoints /* , offsets */ ) {
 	// simple average
 	this.datumShift = s1 / n;
 
-	console.log( 'Adjustmenting terrain height by:', this.datumShift, 'sd:',sd );
+	console.log( 'Adjustmenting terrain height by:', this.datumShift, 'sd:', sd );
 
 };
 

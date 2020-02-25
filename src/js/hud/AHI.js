@@ -45,16 +45,15 @@ function AHI ( hudObject ) {
 
 	const sphereColors = new Float32BufferAttribute( new Float32Array( sv * 3 ), 3 );
 
-	const colours = [];
 	var i;
 
 	for ( i = 0; i < sv; i++ ) {
 
-		colours.push( ( i < sv / 2 ) ? c1 : c2 );
+		( ( i < sv / 2 ) ? c1 : c2 ).toArray( sphereColors.array, i * 3 );
 
 	}
 
-	sphere.setAttribute( 'color', sphereColors.copyColorsArray( colours ) );
+	sphere.setAttribute( 'color', sphereColors );
 
 	var vertices = [];
 

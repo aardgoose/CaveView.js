@@ -15,24 +15,14 @@ function ProgressDial ( hudObject, addText, ring, viewer ) {
 	const segments = 50;
 	const geometry = new RingBufferGeometry( stdWidth * ( 0.9 - ring * 0.1 ), stdWidth * ( 1 - ring * 0.1 ) - gap, segments );
 
-	const colorCount = 2 * ( segments + 1);
-
-	const backgroundColor = cfg.themeColor( 'hud.progressBackground' );
-	const setColor = cfg.themeColor( 'hud.progress' );
-
-	const colorsSrc = [];
-
-	for ( var i = 0; i < colorCount; i++ ) colorsSrc.push( backgroundColor );
-
-	const colors = new Float32BufferAttribute( colorCount * 3, 3 );
+	const colors = new Float32BufferAttribute( ( segments + 1) * 6, 3 );
 
 	geometry.setAttribute( 'color', colors );
 
 	hudObject.dropBuffers( geometry );
 
-	this.colorsSrc = colorsSrc;
-	this.backgroundColor = backgroundColor;
-	this.setColor = setColor;
+	this.backgroundColor = cfg.themeColor( 'hud.progressBackground' );
+	this.setColor = cfg.themeColor( 'hud.progress' );
 	this.viewer = viewer;
 
 	Mesh.call( this, geometry, materials.getPlainMaterial() );
@@ -47,7 +37,7 @@ function ProgressDial ( hudObject, addText, ring, viewer ) {
 	this.visible = false;
 	this.isVisible = true;
 
-	this.color = cfg.themeValue( 'hud.progress' );
+	this.colorRange( 0 );
 
 	if ( addText ) {
 
@@ -73,22 +63,25 @@ function ProgressDial ( hudObject, addText, ring, viewer ) {
 
 ProgressDial.prototype = Object.create( Mesh.prototype );
 
-ProgressDial.prototype.colorRange = function ( range, color ) {
+ProgressDial.prototype.colorRange = function ( range ) {
 
 	const colors = this.geometry.getAttribute( 'color' );
-	const colorsSrc = this.colorsSrc;
+	const segmentMax = 50 - Math.round( range / 2 );
+	const cc = colors.count;
+	const c1 = this.setColor;
+	const c2 = this.backgroundColor;
 
-	const segmentMax = Math.round( range / 2 );
-	const end = colorsSrc.length - 1;
+	var i;
 
-	for ( var i = 0; i < segmentMax + 1; i++ ) {
+	for ( i = cc / 2; i >= 0; i-- ) {
 
-		colorsSrc[ end - i ] = color;
-		colorsSrc[ end - i - 50 ] = color;
+		const c =  i > segmentMax ? c1 : c2;
+
+		c.toArray( colors.array, i * 3 );
+		c.toArray( colors.array, ( i + 51 ) * 3 );
 
 	}
 
-	colors.copyColorsArray( colorsSrc );
 	colors.needsUpdate = true;
 
 };
@@ -102,7 +95,7 @@ ProgressDial.prototype.set = function ( progress ) {
 	const l = Math.floor( Math.min( 100, Math.round( progress ) ) / 2 ) * 2;
 	const pcent = this.pcent;
 
-	this.colorRange( l, this.setColor );
+	this.colorRange( l );
 
 	if ( pcent !== null ) {
 
@@ -119,7 +112,7 @@ ProgressDial.prototype.set = function ( progress ) {
 
 ProgressDial.prototype.start = function () {
 
-	this.colorRange( 100, this.backgroundColor );
+	this.colorRange( 0 );
 
 	this.progress = 0;
 	this.visible = true;

@@ -101,16 +101,16 @@ Legs.prototype.cutRuns = function ( selection ) {
 
 };
 
-
 Legs.prototype.computeStats = function () {
 
 	const stats = { maxLegLength: -Infinity, minLegLength: Infinity, legCount: 0, legLength: 0 };
 	const vertices = this.legVertices;
 	const l = vertices.length;
 
-	const legLengths = new Array( l / 2 );
+	const n = l / 2;
+	const legLengths = new Array( n );
 
-	var i;
+	var i, s1 = 0, s2 = 0;
 
 	for ( i = 0; i < l; i += 2 ) {
 
@@ -121,18 +121,20 @@ Legs.prototype.computeStats = function () {
 
 		legLengths[ i / 2 ] = legLength; // cache lengths to avoid recalc
 
-		stats.legLength = stats.legLength + legLength;
+		s1 += legLength;
+		s2 += legLength * legLength;
 
 		stats.maxLegLength = Math.max( stats.maxLegLength, legLength );
 		stats.minLegLength = Math.min( stats.minLegLength, legLength );
 
 	}
 
-	this.legLengths = legLengths;
-
+	stats.legLength = s1;
+	stats.legLengthSD = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
 	stats.legLengthRange = stats.maxLegLength - stats.minLegLength;
-	stats.legCount = l / 2;
+	stats.legCount = n;
 
+	this.legLengths = legLengths;
 	this.stats = stats;
 
 };

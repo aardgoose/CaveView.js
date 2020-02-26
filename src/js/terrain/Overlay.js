@@ -159,6 +159,7 @@ Overlay.prototype.getTile = function ( x, y, z, overlayLoaded ) {
 			return;
 
 		}
+
 		const material = new TerrainOverlayMaterial( self.ctx );
 
 		texture.anisotropy = cfg.value( 'anisotropy', 4 );

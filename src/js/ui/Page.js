@@ -162,18 +162,8 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 			const opt = document.createElement( 'option' );
 			const self = this;
 
-			const s = p.split( ' ' );
-
-			if ( s.length > 1 ) {
-
-				opt.text = s.reduce( function ( res, val) { return res + ' ' + self.i18n( val ); }, '' ).trim();
-
-			} else {
-
-				opt.text = self.i18n( p );
-
-			}
-
+			// translate each space delimited substring of ui text
+			opt.text = p.split( ' ' ).reduce( function ( res, val) { return res + ' ' + self.i18n( val ); }, '' ).trim();
 			opt.value = obj[ p ];
 
 			if ( opt.value == trgObj[ property ] ) opt.selected = true;

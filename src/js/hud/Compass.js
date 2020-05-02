@@ -4,7 +4,7 @@ import {
 	Vector3, MathUtils,
 	RingBufferGeometry,
 	MeshBasicMaterial, MeshLambertMaterial,
-	VertexColors, BufferGeometry, Float32BufferAttribute,
+	BufferGeometry, Float32BufferAttribute,
 	Mesh, Group, Euler
 } from '../Three';
 
@@ -63,7 +63,7 @@ function Compass ( hudObject ) {
 	function _makeRose() {
 
 		const geometry = new BufferGeometry();
-		const material = new MeshLambertMaterial( { vertexColors: VertexColors, flatShading: true } );
+		const material = new MeshLambertMaterial( { vertexColors: true, flatShading: true } );
 
 		const mesh = new Mesh( geometry, material );
 

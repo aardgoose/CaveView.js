@@ -1,6 +1,6 @@
 import { ClusterMarkers } from './ClusterMarkers';
 import { STATION_ENTRANCE, FEATURE_ENTRANCES } from '../core/constants';
-import { Points, PointsMaterial, BufferGeometry, Float32BufferAttribute, TextureLoader, VertexColors } from '../Three';
+import { Points, PointsMaterial, BufferGeometry, Float32BufferAttribute, TextureLoader } from '../Three';
 
 function Entrances ( ctx, survey ) {
 
@@ -22,7 +22,7 @@ function Entrances ( ctx, survey ) {
 	material.transparent = true;
 	material.sizeAttenuation = false;
 	material.size = 10;
-	material.vertexColors = VertexColors;
+	material.vertexColors = true;
 
 	const markers = new Points( geometry, material );
 

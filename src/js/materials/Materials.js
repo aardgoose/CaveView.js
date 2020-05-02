@@ -12,7 +12,7 @@ import { ColourCache } from '../core/ColourCache';
 import { GlyphAtlasCache } from './GlyphAtlas';
 import {
 	LineBasicMaterial, MeshLambertMaterial, MeshBasicMaterial, MeshPhongMaterial,
-	NoColors, VertexColors, IncrementStencilOp, Vector2, Color,
+	IncrementStencilOp, Vector2, Color,
 } from '../Three';
 
 function Materials ( viewer ) {
@@ -193,14 +193,14 @@ function Materials ( viewer ) {
 
 	this.getPlainMaterial = function  () {
 
-		const func = function () { return new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ); };
+		const func = function () { return new MeshBasicMaterial( { color: 0xffffff, vertexColors: true } ); };
 		return getCacheMaterial( 'plain', func, true );
 
 	};
 
 	this.getSurfaceMaterial = function  () {
 
-		const func = function () { return new MeshLambertMaterial( { color: surfaceColour, vertexColors: NoColors } ); };
+		const func = function () { return new MeshLambertMaterial( { color: surfaceColour, vertexColors: false } ); };
 		return getCacheMaterial( 'surface', func, true );
 
 	};
@@ -208,7 +208,7 @@ function Materials ( viewer ) {
 
 	this.getLineMaterial = function () {
 
-		const func = function () { return new LineBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ); };
+		const func = function () { return new LineBasicMaterial( { color: 0xffffff, vertexColors: true } ); };
 		return getCacheMaterial( 'line', func, true );
 
 	};
@@ -222,14 +222,14 @@ function Materials ( viewer ) {
 
 	this.getUnselectedMaterial = function () {
 
-		const func = function () { return new LineBasicMaterial( { color: 0x444444, vertexColors: VertexColors } ); };
+		const func = function () { return new LineBasicMaterial( { color: 0x444444, vertexColors: true } ); };
 		return getCacheMaterial( 'unselected', func );
 
 	};
 
 	this.getUnselectedWallMaterial = function () {
 
-		const func = function () { return new MeshLambertMaterial( { color: 0x444444, vertexColors: VertexColors } ); };
+		const func = function () { return new MeshLambertMaterial( { color: 0x444444, vertexColors: true} ); };
 		return getCacheMaterial( 'unselectedWall', func );
 
 	};

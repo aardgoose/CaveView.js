@@ -5,7 +5,6 @@ import {
 	BufferGeometry, SphereBufferGeometry,
 	LineBasicMaterial, MeshPhongMaterial,
 	Float32BufferAttribute,
-	VertexColors,
 	Object3D, Mesh, LineSegments, Group
 } from '../Three';
 
@@ -99,7 +98,7 @@ function AHI ( hudObject ) {
 	marks.setAttribute( 'position', markPositions.copyVector3sArray( vertices ) );
 
 	const mRing   = new Mesh( ring, materials.getBezelMaterial() );
-	const mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: VertexColors, specular: 0x666666, shininess: 20 } ) );
+	const mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: true, specular: 0x666666, shininess: 20 } ) );
 	const mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: cfg.themeValue( 'hud.ahi.bar' ) } ) );
 	const mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: cfg.themeValue( 'hud.ahi.marks' ) } ) );
 

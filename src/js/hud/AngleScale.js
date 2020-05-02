@@ -2,7 +2,7 @@ import { GlyphString } from '../core/GlyphString';
 
 import {
 	Vector3, RingBufferGeometry, Float32BufferAttribute,
-	MeshBasicMaterial, VertexColors, Mesh
+	MeshBasicMaterial, Mesh
 } from '../Three';
 
 function AngleScale ( hudObject, caption ) {
@@ -40,7 +40,7 @@ function AngleScale ( hudObject, caption ) {
 
 	hudObject.dropBuffers( geometry );
 
-	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: VertexColors } ) );
+	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: true } ) );
 
 	this.translateY( 3 * ( stdWidth + stdMargin ) + stdMargin + 30 );
 	this.translateX( - 40 - 5 );

@@ -1,4 +1,4 @@
-import { PointsMaterial, TextureLoader, VertexColors } from '../Three';
+import { PointsMaterial, TextureLoader } from '../Three';
 
 function ExtendedPointsMaterial ( ctx ) {
 
@@ -13,7 +13,7 @@ function ExtendedPointsMaterial ( ctx ) {
 
 	this.sizeAttenuation = false;
 	this.transparent = true; // to ensure points rendered over lines.
-	this.vertexColors = VertexColors;
+	this.vertexColors = true;
 
 	this.onBeforeCompile = function ( shader ) {
 

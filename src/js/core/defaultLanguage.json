@@ -209,5 +209,8 @@
 		"leg_length": "leg length",
 		"depth": "depth",
 		"inclination": "inclination"
+	},
+	"dnd": {
+		"splash_text": "Drag&nbsp;and&nbsp;drop a .3d or .lox model here to&nbsp;load"
 	}
 }

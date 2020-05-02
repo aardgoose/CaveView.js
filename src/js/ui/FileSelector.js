@@ -1,22 +1,57 @@
 import { EventDispatcher } from '../Three';
 
-function FileSelector ( container ) {
+function FileSelector ( container, ctx ) {
 
 	this.fileList = [];
 	this.fileCount = 0;
 	this.currentIndex = Infinity;
 	this.loadedFile = null;
 	this.isMultiple = false;
+	this.splash = null;
 
 	const self = this;
 
 	container.addEventListener( 'drop', _handleDrop );
+	container.addEventListener( 'dragenter', _handleDragenter );
 	container.addEventListener( 'dragover', _handleDragover );
+	container.addEventListener( 'dragleave', _handleDragleave );
 
 	Object.defineProperty( this, 'file', {
 		get: function () { return this.selectedFile; },
 		set: this.selectFile
 	} );
+
+	function _closeSpash () {
+
+		const splash = self.splash;
+
+		if ( splash !== null ) {
+
+			splash.parentNode.removeChild( splash );
+			self.splash = null;
+
+		}
+
+	}
+
+	function _handleDragenter ( event ) {
+
+		const splash = document.createElement( 'div' );
+
+		splash.innerHTML = ctx.cfg.i18n( 'dnd.splash_text' ) || 'dnd.splash_text';
+
+		splash.id = 'cv-splash';
+
+		container.appendChild( splash );
+
+		event.preventDefault();
+
+		self.splash = splash;
+
+		// sometimes a dragleave event doesn't get here.
+		setTimeout( _closeSpash, 10000 );
+
+	}
 
 	function _handleDragover ( event ) {
 
@@ -25,7 +60,17 @@ function FileSelector ( container ) {
 
 	}
 
+
+	function _handleDragleave ( event ) {
+
+		_closeSpash();
+		event.preventDefault();
+
+	}
+
 	function _handleDrop ( event ) {
+
+		_closeSpash();
 
 		const dt = event.dataTransfer;
 
@@ -52,6 +97,8 @@ function FileSelector ( container ) {
 
 		container.removeEventListener( 'drop', _handleDrop );
 		container.removeEventListener( 'dragover', _handleDragover );
+		container.removeEventListener( 'dragleave', _handleDragleave );
+		container.removeEventListener( 'dragenter', _handleDragenter );
 
 	};
 

@@ -16,7 +16,7 @@ function CaveViewUI ( viewer ) {
 	const frame = new Frame( ctx );
 	const cfg = ctx.cfg;
 
-	const fileSelector = new FileSelector( container, frame );
+	const fileSelector = new FileSelector( container, ctx );
 	fileSelector.addEventListener( 'selected', selectFile );
 
 	// target with css for fullscreen on small screen devices

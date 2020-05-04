@@ -36,6 +36,8 @@ function FileSelector ( container, ctx ) {
 
 	function _handleDragenter ( event ) {
 
+		if ( self.splash !== null ) return;
+
 		const splash = document.createElement( 'div' );
 
 		splash.innerHTML = ctx.cfg.i18n( 'dnd.splash_text' ) || 'dnd.splash_text';

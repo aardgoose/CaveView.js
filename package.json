@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c -w \" \"serve -l 8080 build \"",
     "dev-tile": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c rollup-webTileWorker.config.js -w \" \"serve -l 8080 build \"",
+    "dev-gtlf": "concurrently --names \"gtlfWorker,HTTP,CaveView\" -c \"bgBlue.bold,bgGreen.bold,bgRed.bold\" \"rollup -c rollup-gtlfWorker.config.js -w \" \"serve -l 8080 build \" \"rollup -c -w \"",
     "build-main": "rollup -c",
     "build-main-min": "npm run build-main && terser build/CaveView/js/CaveView2.js -cm --preamble \"// threejs.org/license\" > build/CaveView/js/CaveView2-min.js",
     "build-tw": "rollup -c rollup-webTileWorker.config.js",

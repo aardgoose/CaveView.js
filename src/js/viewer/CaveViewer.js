@@ -1628,6 +1628,12 @@ function CaveViewer ( domID, configuration ) {
 
 	};
 
+	this.getGLTFExport = function ( selection, callback ) {
+
+		survey.gltfExport( selection, callback );
+
+	};
+
 	this.getSurveyTree = function () {
 
 		return survey.surveyTree;

@@ -1,5 +1,6 @@
 import { VERSION, LEG_CAVE } from '../core/constants';
 import { Page } from './Page';
+import { replaceExtension } from '../core/lib';
 
 function InfoPage ( frame, viewer, fileSelector ) {
 
@@ -20,6 +21,38 @@ function InfoPage ( frame, viewer, fileSelector ) {
 	this.addLine( this.i18n( 'stats.minLength' ) + ': ' + stats.minLegLength.toFixed( 2 ) + '\u202fm' );
 	this.addLine( this.i18n( 'stats.maxLength' ) + ': ' + stats.maxLegLength.toFixed( 2 ) + '\u202fm' );
 
+	if ( this.canDownload() ) {
+
+		this.addHeader( 'gltf_export.header' );
+
+		const selection = {};
+
+		if ( viewer.hasWalls ) {
+
+			selection.walls = true;
+			this.addCheckbox( 'gltf_export.walls', selection, 'walls' );
+
+		}
+
+		if ( viewer.hasScraps ) {
+
+			selection.scraps = true;
+			this.addCheckbox( 'gltf_export.scraps', selection, 'scraps' );
+
+		}
+
+		selection.legs = false;
+
+		this.addCheckbox( 'gltf_export.legs', selection, 'legs' );
+
+		this.addButton( 'gltf_export.export', function () {
+
+			viewer.getGLTFExport( selection, handleExport );
+
+		} );
+
+	}
+
 	this.addHeader( 'CaveView v' + VERSION + '.' );
 
 	this.addLogo();
@@ -28,6 +61,15 @@ function InfoPage ( frame, viewer, fileSelector ) {
 	this.addText( 'For more information see: ' );
 	this.addLink( 'https://aardgoose.github.io/CaveView.js/', 'CaveView on GitHub' );
 	this.addText( '© Angus Sawyer, 2020' );
+
+	const self = this;
+
+	function handleExport ( gltfData ) {
+
+		const filename = replaceExtension( fileSelector.selectedFile, 'gltf');
+		self.download(  URL.createObjectURL( gltfData ), filename );
+
+	}
 
 }
 

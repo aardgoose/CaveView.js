@@ -139,8 +139,14 @@
 			"totalLength": "Total length",
 			"minLength": "Shortest leg",
 			"maxLength": "Longest leg"
+		},
+		"gltf_export": {
+			"header": "GLTF Export",
+			"walls": "include LRUD walls",
+			"scraps": "include scraps",
+			"legs": "include centre lines",
+			"export": "Download"
 		}
-
 	},
 	"help": {
 		"header_svx": "Help - key commands (survex)",

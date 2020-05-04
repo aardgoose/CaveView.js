@@ -492,6 +492,26 @@ Page.prototype.addDownloadButton = function ( title, urlProvider, fileName ) {
 
 };
 
+Page.prototype.canDownload = function () {
+
+	const a = document.createElement( 'a' );
+	return ( typeof a.download !== 'undefined' );
+
+};
+
+Page.prototype.download = function ( data, fileName ) {
+
+	const a = document.createElement( 'a' );
+
+	if ( typeof a.download === 'undefined' ) return null;
+
+	a.type = 'download';
+	a.download = fileName;
+	a.href = data;
+	a.click();
+
+};
+
 Page.prototype.addLogo = function () {
 
 	const img = document.createElement( 'div' );

@@ -4,9 +4,9 @@ import json from '@rollup/plugin-json';
 
 export default {
 	treeshake: true,
-	input: 'src/js/workers/gtlfWorker.js',
+	input: 'src/js/workers/gltfWorker.js',
 	output: {
-		file: 'build/CaveView/js/workers/gtlfWorker.js',
+		file: 'build/CaveView/js/workers/gltfWorker.js',
 		format: 'umd'
 	},
 	plugins: [

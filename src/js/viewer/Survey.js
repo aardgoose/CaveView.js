@@ -1378,7 +1378,7 @@ Survey.prototype.gltfExport = function ( selection, callback ) {
 
 	if ( items.length === 0 ) return;
 
-	const worker = new Worker( this.ctx.cfg.value( 'home', '' ) + 'js/workers/gtlfWorker.js' );
+	const worker = new Worker( this.ctx.cfg.value( 'home', '' ) + 'js/workers/gltfWorker.js' );
 
 	worker.addEventListener( 'message', function( event ) {
 

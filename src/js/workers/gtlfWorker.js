@@ -5,7 +5,7 @@ import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { MeshStandardMaterial } from 'three/src/materials/MeshStandardMaterial';
 import { Scene } from 'three/src/scenes/Scene';
 import { Float32BufferAttribute } from 'three/src/core/BufferAttribute';
-import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
+import { GLTFExporter } from '../core/GLTFExporter';
 import { Texture } from 'three/src/textures/Texture';
 import { LineSegments } from 'three/src/objects/LineSegments';
 
@@ -18,15 +18,11 @@ function onMessage ( event ) {
 	const items = event.data;
 	const scene = new Scene();
 
-	items.forEach( function ( item ) {
-		scene.add( getItem( item ) );
-	} );
+	items.forEach( function ( item ) { scene.add( getItem( item ) ); } );
 
 	const exporter = new GLTFExporter();
 
 	exporter.parse( scene, function ( result ) {
-
-		console.log( 'done' );
 
 		var output = JSON.stringify( result, null, 2 );
 
@@ -38,18 +34,16 @@ function onMessage ( event ) {
 
 function getItem( item ) {
 
-	console.log( item );
-
 	switch ( item.type ) {
 
-		case 'walls':
-			return getWalls( item );
+	case 'walls':
+		return getWalls( item );
 
-		case 'lines':
-			return getLines( item );
+	case 'lines':
+		return getLines( item );
 
-		default:
-			console.error( 'unknown item type', item.type, ' requested' );
+	default:
+		console.error( 'unknown item type', item.type, ' requested' );
 
 	}
 

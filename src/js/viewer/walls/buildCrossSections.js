@@ -6,6 +6,10 @@ import { Object3D, Vector3 } from '../../Three';
 function buildCrossSections ( cave, survey ) {
 
 	const crossSectionGroups = cave.crossSections;
+
+	// handle no LRUD sections
+	if ( crossSectionGroups.length === 0 ) return;
+
 	const mesh = survey.addFeature( new Walls( survey.ctx ), FACE_WALLS, 'Walls' );
 
 	const indices = [];

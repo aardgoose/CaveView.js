@@ -1347,9 +1347,8 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 Survey.prototype.gltfExport = function ( selection, callback ) {
 
-	console.log( 'selection', selection );
-
 	const items = [];
+
 	if ( selection.walls ) {
 
 		items.push( this.getMesh( FACE_WALLS ) );
@@ -1366,8 +1365,6 @@ Survey.prototype.gltfExport = function ( selection, callback ) {
 
 		var legs = this.getFeature( LEG_CAVE );
 
-		console.log( legs );
-
 		const geometry = legs.geometry;
 
 		items.push( {
@@ -1379,6 +1376,7 @@ Survey.prototype.gltfExport = function ( selection, callback ) {
 
 	}
 
+	if ( items.length === 0 ) return;
 
 	const worker = new Worker( this.ctx.cfg.value( 'home', '' ) + 'js/workers/gtlfWorker.js' );
 
@@ -1389,7 +1387,6 @@ Survey.prototype.gltfExport = function ( selection, callback ) {
 	} );
 
 	worker.postMessage( items );
-
 
 };
 

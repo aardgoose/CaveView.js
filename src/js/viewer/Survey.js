@@ -1345,4 +1345,66 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 };
 
+Survey.prototype.gltfExport = function ( selection, callback ) {
+
+	console.log( 'selection', selection );
+
+	const items = [];
+	if ( selection.walls ) {
+
+		items.push( this.getMesh( FACE_WALLS ) );
+
+	}
+
+	if ( selection.scraps ) {
+
+		items.push( this.getMesh( FACE_SCRAPS ) );
+
+	}
+
+	if ( selection.legs ) {
+
+		var legs = this.getFeature( LEG_CAVE );
+
+		console.log( legs );
+
+		const geometry = legs.geometry;
+
+		items.push( {
+			type: 'lines',
+			index: geometry.index,
+			position: geometry.getAttribute( 'position' ),
+			modelLimits: this.modelLimits
+		} );
+
+	}
+
+
+	const worker = new Worker( this.ctx.cfg.value( 'home', '' ) + 'js/workers/gtlfWorker.js' );
+
+	worker.addEventListener( 'message', function( event ) {
+
+		callback( new Blob( [ event.data.gltf ], { type: 'text/plain' } ) );
+
+	} );
+
+	worker.postMessage( items );
+
+
+};
+
+Survey.prototype.getMesh = function ( tag ) {
+
+	var mesh = this.getFeature( tag );
+	const geometry = mesh.geometry;
+
+	return {
+		type: 'walls',
+		index: geometry.index,
+		position: geometry.getAttribute( 'position' ),
+		modelLimits: this.modelLimits
+	};
+
+};
+
 export { Survey };

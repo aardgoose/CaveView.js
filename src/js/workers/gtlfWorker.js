@@ -7,6 +7,7 @@ import { Scene } from 'three/src/scenes/Scene';
 import { Float32BufferAttribute } from 'three/src/core/BufferAttribute';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 import { Texture } from 'three/src/textures/Texture';
+import { LineSegments } from 'three/src/objects/LineSegments';
 
 onmessage = onMessage;
 
@@ -14,20 +15,60 @@ const gradient = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAABCAYAAAC/
 
 function onMessage ( event ) {
 
-	const data = event.data;
+	const items = event.data;
+	const scene = new Scene();
+
+	items.forEach( function ( item ) {
+		scene.add( getItem( item ) );
+	} );
+
+	const exporter = new GLTFExporter();
+
+	exporter.parse( scene, function ( result ) {
+
+		console.log( 'done' );
+
+		var output = JSON.stringify( result, null, 2 );
+
+		postMessage( { status: 'ok', gltf: output } );
+
+	} );
+
+}
+
+function getItem( item ) {
+
+	console.log( item );
+
+	switch ( item.type ) {
+
+		case 'walls':
+			return getWalls( item );
+
+		case 'lines':
+			return getLines( item );
+
+		default:
+			console.error( 'unknown item type', item.type, ' requested' );
+
+	}
+
+}
+
+function getWalls( item ) {
 
 	const geometry = new BufferGeometry();
 
-	geometry.setIndex( data.index );
-	geometry.setAttribute( 'position', data.position );
+	geometry.setIndex( item.index );
+	geometry.setAttribute( 'position', item.position );
 
-	const vertices = data.position.array;
+	const vertices = item.position.array;
 	const vertexCount = vertices.length / 3;
 
 	const uvs = new Float32BufferAttribute( vertexCount * 2, 2 );
 	const uvBuffer = uvs.array;
 
-	const zz = data.modelLimits.max.z;
+	const zz = item.modelLimits.max.z;
 	const z2 = 2 * zz;
 
 	var i;
@@ -46,27 +87,46 @@ function onMessage ( event ) {
 
 	geometry.setAttribute( 'uv', uvs );
 
-	const material = new MeshStandardMaterial();
+	const material = new MeshStandardMaterial( { map: new Texture( gradient ) } );
 
-	material.map = new Texture( gradient );
+	return new Mesh( geometry, material );
 
-	console.log( gradient.substring( 0, 10 ) );
-	const walls = new Mesh( geometry, material );
+}
 
-	const scene = new Scene();
+function getLines( item ) {
 
-	scene.add( walls );
+	const geometry = new BufferGeometry();
 
-	const exporter = new GLTFExporter();
+	geometry.setIndex( item.index );
+	geometry.setAttribute( 'position', item.position );
 
-	exporter.parse( scene, function ( result ) {
+	const vertices = item.position.array;
+	const vertexCount = vertices.length / 3;
 
-		console.log( 'done' );
+	const uvs = new Float32BufferAttribute( vertexCount * 2, 2 );
+	const uvBuffer = uvs.array;
 
-		var output = JSON.stringify( result, null, 2 );
+	const zz = item.modelLimits.max.z;
+	const z2 = 2 * zz;
 
-		postMessage( { status: 'ok', gltf: output } );
+	var i;
 
-	} );
+	for ( i = 0; i < vertexCount; i++ ) {
+
+		let zOffset = i * 3 + 2; // ( offset of Z value )
+		let offset = i * 2;
+
+		let u = ( vertices[ zOffset ] + zz ) / z2;
+
+		uvBuffer[ offset ] = u;
+		uvBuffer[ offset + 1 ] = u;
+
+	}
+
+	geometry.setAttribute( 'uv', uvs );
+
+	const material = new MeshStandardMaterial( { map: new Texture( gradient ) } );
+
+	return new LineSegments( geometry, material );
 
 }

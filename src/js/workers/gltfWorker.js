@@ -89,35 +89,11 @@ function getWalls( item ) {
 
 function getLines( item ) {
 
+	console.log( item );
 	const geometry = new BufferGeometry();
 
 	geometry.setIndex( item.index );
 	geometry.setAttribute( 'position', item.position );
-
-	const vertices = item.position.array;
-	const vertexCount = vertices.length / 3;
-
-	const uvs = new Float32BufferAttribute( vertexCount * 2, 2 );
-	const uvBuffer = uvs.array;
-
-	const zz = item.modelLimits.max.z;
-	const z2 = 2 * zz;
-
-	var i;
-
-	for ( i = 0; i < vertexCount; i++ ) {
-
-		let zOffset = i * 3 + 2; // ( offset of Z value )
-		let offset = i * 2;
-
-		let u = ( vertices[ zOffset ] + zz ) / z2;
-
-		uvBuffer[ offset ] = u;
-		uvBuffer[ offset + 1 ] = u;
-
-	}
-
-	geometry.setAttribute( 'uv', uvs );
 
 	const material = new MeshStandardMaterial( { map: new Texture( gradient ) } );
 

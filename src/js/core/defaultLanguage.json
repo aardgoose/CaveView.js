@@ -145,6 +145,7 @@
 			"walls": "include LRUD walls",
 			"scraps": "include scraps",
 			"legs": "include centre lines",
+			"rotate_axes": "rotate axes",
 			"export": "Download"
 		}
 	},

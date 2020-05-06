@@ -11,36 +11,35 @@ import { LineSegments } from 'three/src/objects/LineSegments';
 
 onmessage = onMessage;
 
-const gradient = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAABCAYAAAC/iqxnAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TS0UqHewg4pChioMFURFHqWIRLJS2QqsOJpd+QZOGJMXFUXAtOPixWHVwcdbVwVUQBD9AnBydFF2kxP8lhRYxHhz34929x907QGhWmWr2TACqZhnpRFzM5VfF4CsCEBDGGAYlZurJzGIWnuPrHj6+3sV4lve5P0e/UjAZ4BOJ55huWMQbxDObls55nzjCypJCfE48btAFiR+5Lrv8xrnksMAzI0Y2PU8cIRZLXSx3MSsbKvE0cVRRNcoXci4rnLc4q9U6a9+TvzBU0FYyXKc5jASWkEQKImTUUUEVFmK0aqSYSNN+3MM/5PhT5JLJVQEjxwJqUCE5fvA/+N2tWZyadJNCcSDwYtsfI0BwF2g1bPv72LZbJ4D/GbjSOv5aE5j9JL3R0aJHQHgbuLjuaPIecLkDDD7pkiE5kp+mUCwC72f0TXlg4BboW3N7a+/j9AHIUlfLN8DBITBaoux1j3f3dvf275l2fz9g7nKgkqYRWgAAAHJJREFUCNcFwb0OAUEYhtHn3T8rQiWYRaLUumUXpCEa2ZWszYRSpZj5dpyjs7rUZRWXVPDMpzyWFaEu0CRHc9Aa1IzIfdHGkzV3andl5m4sVi2H8scJ44ixj7B9J3YfUfoAQ4TBoA/witAbeIMwAqCU+AMBRCgAPCz4IQAAAABJRU5ErkJggg==';
+const gradient = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAACCAYAAAA5Ht7JAAAAd0lEQVQY08XBzQ7BQBSA0e9Of1SElWCKxNLWK3sgG2IjKqlm0i6tLGZur8dwjpylscaVXCznlU15LEtilSOTDJmDrEHqEfEfZBNw9Z3KX5n5G4vVk0Px5YRyRNkn2PbGbhCKEKFL0Cm0Ed4JWoWgEEcAxAzHn/0AK3IoAmtWeUsAAAAASUVORK5CYII=';
 
 function onMessage ( event ) {
 
-	const items = event.data;
+	const data = event.data;
 	const scene = new Scene();
 
-	items.forEach( function ( item ) { scene.add( getItem( item ) ); } );
+	data.items.forEach( function ( item ) { scene.add( getItem( item, data.options ) ); } );
 
 	const exporter = new GLTFExporter();
 
 	exporter.parse( scene, function ( result ) {
 
 		var output = JSON.stringify( result, null, 2 );
-
 		postMessage( { status: 'ok', gltf: output } );
 
 	} );
 
 }
 
-function getItem( item ) {
+function getItem( item, options ) {
 
 	switch ( item.type ) {
 
 	case 'walls':
-		return getWalls( item );
+		return getWalls( item, options );
 
 	case 'lines':
-		return getLines( item );
+		return getLines( item, options );
 
 	default:
 		console.error( 'unknown item type', item.type, ' requested' );
@@ -49,7 +48,9 @@ function getItem( item ) {
 
 }
 
-function getWalls( item ) {
+function getWalls( item, options ) {
+
+	console.log( options );
 
 	const geometry = new BufferGeometry();
 
@@ -83,13 +84,18 @@ function getWalls( item ) {
 
 	const material = new MeshStandardMaterial( { map: new Texture( gradient ) } );
 
+	if ( options.rotate ) {
+
+		rotateAxes( vertices );
+
+	}
+
 	return new Mesh( geometry, material );
 
 }
 
-function getLines( item ) {
+function getLines( item, options ) {
 
-	console.log( item );
 	const geometry = new BufferGeometry();
 
 	geometry.setIndex( item.index );
@@ -97,6 +103,30 @@ function getLines( item ) {
 
 	const material = new MeshStandardMaterial( { map: new Texture( gradient ) } );
 
+	if ( options.rotate ) {
+
+		rotateAxes( item.position.array );
+
+	}
+
 	return new LineSegments( geometry, material );
+
+}
+
+function rotateAxes( vertices ) {
+
+	const vertexCount = vertices.length;
+	var i;
+
+	// rotate axes for z up.
+	for ( i = 0; i < vertexCount; i++ ) {
+
+		let v = i * 3;
+		let z = vertices[ v + 2 ];
+
+		vertices[ v + 2 ] = -vertices[ v + 1 ]; // z = -y
+		vertices[ v + 1 ] = z; // y = z
+
+	}
 
 }

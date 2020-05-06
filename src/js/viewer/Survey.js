@@ -1386,7 +1386,7 @@ Survey.prototype.gltfExport = function ( selection, callback ) {
 
 	} );
 
-	worker.postMessage( items );
+	worker.postMessage( { items: items, options: { rotate: selection.rotate } } );
 
 };
 

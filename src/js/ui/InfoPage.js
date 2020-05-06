@@ -25,7 +25,7 @@ function InfoPage ( frame, viewer, fileSelector ) {
 
 		this.addHeader( 'gltf_export.header' );
 
-		const selection = {};
+		const selection = { legs: false, walls: false, scraps: false, rotate: false };
 
 		if ( viewer.hasWalls ) {
 
@@ -41,9 +41,9 @@ function InfoPage ( frame, viewer, fileSelector ) {
 
 		}
 
-		selection.legs = false;
-
 		this.addCheckbox( 'gltf_export.legs', selection, 'legs' );
+
+		this.addCheckbox( 'gltf_export.rotate_axes', selection, 'rotate' );
 
 		this.addButton( 'gltf_export.export', function () {
 

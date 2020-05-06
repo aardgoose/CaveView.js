@@ -44,7 +44,7 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 	this.addListener( this.page, 'mouseover', _handleMouseover );
 	this.addListener( this.page, 'mouseleave', _handleMouseleave );
 
-	var redraw = container.clientHeight; // eslint-disable-line no-unused-vars
+	var redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
 
 	this.onChange = _onChange;
 

@@ -68,7 +68,6 @@ var routes;
 var firstRun = true;
 
 const defaultView = {
-	entrances: false,
 	cameraType: CV2.CAMERA_PERSPECTIVE,
 	box: true,
 	shadingMode: CV2.SHADING_HEIGHT,
@@ -108,7 +107,7 @@ function runDemo() {
 
 	if ( d.route ) routes.setRoute = d.route;
 
-	setTimeout( runDemo, d.delay * 1000 )
+	setTimeout( runDemo, d.delay * 1000 );
 
 }
 

@@ -215,7 +215,7 @@ function Materials ( viewer ) {
 
 	this.getMissingMaterial = function () {
 
-		const func = function () { return new MissingMaterial( ctx, { transparent: true, opacity: 0.5, color: 0xff8888 } ); };
+		const func = function () { return new MissingMaterial( ctx ); };
 		return getCacheMaterial( 'missing', func );
 
 	};

@@ -98,6 +98,7 @@ function CaveViewer ( domID, configuration ) {
 	var cameraManager = new CameraManager( ctx, renderer, scene );
 
 	const raycaster = new Raycaster();
+	raycaster.layers.enableAll();
 
 	// setup lighting
 	const lightingManager = new LightingManager( ctx, scene );
@@ -1264,8 +1265,8 @@ function CaveViewer ( domID, configuration ) {
 		const mouse = cameraManager.getMouse( event.clientX, event.clientY );
 
 		raycaster.setFromCamera( mouse, cameraManager.activeCamera );
-
 		const intersects = raycaster.intersectObjects( mouseTargets, false );
+		console.log( 'mouse down', intersects );
 
 		var entrance;
 

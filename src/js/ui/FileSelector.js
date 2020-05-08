@@ -8,6 +8,7 @@ function FileSelector ( container, ctx ) {
 	this.loadedFile = null;
 	this.isMultiple = false;
 	this.splash = null;
+	this.localFilename = null;
 
 	const self = this;
 
@@ -134,12 +135,14 @@ FileSelector.prototype.selectFile = function ( file, section ) {
 
 		if ( file.length === 1 ) {
 
-			this.selectedFile = file.name;
+			this.localFilename = file[ 0 ].name;
+			this.selectedFile = file[ 0 ];
 			this.isMultiple = false;
 
 		} else {
 
 			this.selectedFile = '[multiple]';
+			this.localFilename = 'multiple';
 			this.isMultiple = true;
 
 		}
@@ -147,6 +150,7 @@ FileSelector.prototype.selectFile = function ( file, section ) {
 	} else {
 
 		this.selectedFile = file;
+		this.localFilename = file;
 
 	}
 

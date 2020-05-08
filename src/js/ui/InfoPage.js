@@ -66,7 +66,7 @@ function InfoPage ( frame, viewer, fileSelector ) {
 
 	function handleExport ( gltfData ) {
 
-		const filename = replaceExtension( fileSelector.selectedFile, 'gltf');
+		const filename = replaceExtension( fileSelector.localFilename, 'gltf');
 		self.download(  URL.createObjectURL( gltfData ), filename );
 
 	}

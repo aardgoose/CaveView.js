@@ -414,6 +414,7 @@ function CaveViewer ( domID, configuration ) {
 
 	container.addEventListener( 'fullscreenchange', onFullscreenChange );
 	container.addEventListener( 'msfullscreenchange', onFullscreenChange );
+	container.addEventListener( 'webkitfullscreenchange', onFullscreenChange );
 
 	this.addEventListener( 'change', viewChanged );
 
@@ -552,7 +553,7 @@ function CaveViewer ( domID, configuration ) {
 
 	function onFullscreenChange () {
 
-		if ( document.fullscreenElement || document.msfullscreenElement ) {
+		if ( document.fullscreenElement || document.msFullscreenElement || document.webkitFullscreenElement ) {
 
 			container.classList.add( 'toggle-fullscreen' );
 
@@ -583,6 +584,10 @@ function CaveViewer ( domID, configuration ) {
 
 				container.msRequestFullscreen();
 
+			} else if ( document.webkitFullscreenElement === null) {
+
+				container.webkitRequestFullscreen();
+
 			}
 
 		} else {
@@ -593,9 +598,21 @@ function CaveViewer ( domID, configuration ) {
 
 				document.exitFullscreen();
 
-			} else if ( document.msfullscreenElement ) {
+			} else if ( document.msFullscreenElement ) {
 
 				document.msExitFullscreen();
+
+			} else if ( document.webkitFullscreenElement ) {
+
+				if ( document.webkitExitFullscreen ) {
+
+					document.webkitExitFullscreen();
+
+				} else if ( document.webkitCancelFullScreen ) {
+
+					document.webkitCancelFullScreen();
+
+				}
 
 			}
 
@@ -1266,7 +1283,6 @@ function CaveViewer ( domID, configuration ) {
 
 		raycaster.setFromCamera( mouse, cameraManager.activeCamera );
 		const intersects = raycaster.intersectObjects( mouseTargets, false );
-		console.log( 'mouse down', intersects );
 
 		var entrance;
 

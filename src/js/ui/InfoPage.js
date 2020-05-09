@@ -25,7 +25,8 @@ function InfoPage ( frame, viewer, fileSelector ) {
 
 		this.addHeader( 'gltf_export.header' );
 
-		const selection = { legs: false, walls: false, scraps: false, rotate: false };
+		const selection = { legs: false, walls: false, scraps: false  };
+		const options = { rotate: false, binary: false };
 
 		if ( viewer.hasWalls ) {
 
@@ -43,11 +44,12 @@ function InfoPage ( frame, viewer, fileSelector ) {
 
 		this.addCheckbox( 'gltf_export.legs', selection, 'legs' );
 
-		this.addCheckbox( 'gltf_export.rotate_axes', selection, 'rotate' );
+		this.addCheckbox( 'gltf_export.rotate_axes', options, 'rotate' );
+		//this.addCheckbox( 'gltf_export.binary_format', options, 'binary' );
 
 		this.addButton( 'gltf_export.export', function () {
 
-			viewer.getGLTFExport( selection, handleExport );
+			viewer.getGLTFExport( selection, options, handleExport );
 
 		} );
 
@@ -64,10 +66,11 @@ function InfoPage ( frame, viewer, fileSelector ) {
 
 	const self = this;
 
-	function handleExport ( gltfData ) {
+	function handleExport ( gltfData, binary ) {
 
-		const filename = replaceExtension( fileSelector.localFilename, 'gltf');
-		self.download(  URL.createObjectURL( gltfData ), filename );
+		var filename = replaceExtension( fileSelector.localFilename, ( binary ? 'glb' : 'gltf' ) );
+
+		self.download( URL.createObjectURL( gltfData ), filename );
 
 	}
 

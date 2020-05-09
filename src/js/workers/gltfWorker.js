@@ -16,18 +16,32 @@ const gradient = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAACCAYAAAA5
 function onMessage ( event ) {
 
 	const data = event.data;
+	const options = data.options;
+
 	const scene = new Scene();
 
-	data.items.forEach( function ( item ) { scene.add( getItem( item, data.options ) ); } );
+	data.items.forEach( function ( item ) { scene.add( getItem( item, options ) ); } );
 
 	const exporter = new GLTFExporter();
 
-	exporter.parse( scene, function ( result ) {
+	exporter.parse(
+		scene,
+		function ( result ) {
 
-		var output = JSON.stringify( result, null, 2 );
-		postMessage( { status: 'ok', gltf: output } );
+			if ( options.binary ) {
 
-	} );
+				postMessage( { status: 'ok', gltf: result }, [ result ] );
+
+			} else {
+
+				var output = JSON.stringify( result, null, 2 );
+				postMessage( { status: 'ok', gltf: output } );
+
+			}
+
+		},
+		{ binary: options.binary }
+	);
 
 }
 
@@ -49,8 +63,6 @@ function getItem( item, options ) {
 }
 
 function getWalls( item, options ) {
-
-	console.log( options );
 
 	const geometry = new BufferGeometry();
 
@@ -101,7 +113,7 @@ function getLines( item, options ) {
 	geometry.setIndex( item.index );
 	geometry.setAttribute( 'position', item.position );
 
-	const material = new MeshStandardMaterial( { map: new Texture( gradient ) } );
+	const material = new MeshStandardMaterial();
 
 	if ( options.rotate ) {
 

@@ -1645,9 +1645,9 @@ function CaveViewer ( domID, configuration ) {
 
 	};
 
-	this.getGLTFExport = function ( selection, callback ) {
+	this.getGLTFExport = function ( selection, options, callback ) {
 
-		survey.gltfExport( selection, callback );
+		survey.gltfExport( selection, options, callback );
 
 	};
 

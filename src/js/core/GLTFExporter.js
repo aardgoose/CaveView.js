@@ -782,21 +782,18 @@ GLTFExporter.prototype = {
 
 					if ( options.binary === true ) {
 
-						pending.push( new Promise( function ( resolve ) {
+						var b = atob( image.split( ',' )[ 1 ] );
+						var blob = new Blob( [ b ], { type: mimeType } );
 
-							canvas.toBlob( function ( blob ) {
+						pending.push(
 
-								processBufferViewImage( blob ).then( function ( bufferViewIndex ) {
+							processBufferViewImage( blob ).then( function ( bufferViewIndex ) {
 
-									gltfImage.bufferView = bufferViewIndex;
+								gltfImage.bufferView = bufferViewIndex;
 
-									resolve();
+							} )
 
-								} );
-
-							}, mimeType );
-
-						} ) );
+						);
 
 					} else {
 

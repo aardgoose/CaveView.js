@@ -1345,7 +1345,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 };
 
-Survey.prototype.gltfExport = function ( selection, callback ) {
+Survey.prototype.gltfExport = function ( selection, options, callback ) {
 
 	const items = [];
 
@@ -1382,11 +1382,23 @@ Survey.prototype.gltfExport = function ( selection, callback ) {
 
 	worker.addEventListener( 'message', function( event ) {
 
-		callback( new Blob( [ event.data.gltf ], { type: 'text/plain' } ) );
+		var mimeType;
+
+		if ( options.binary) {
+
+			mimeType = 'application/octet-stream';
+
+		} else {
+
+			mimeType = 'application/gltf+json';
+
+		}
+
+		callback( new Blob( [ event.data.gltf ], { type : mimeType } ), options.binary );
 
 	} );
 
-	worker.postMessage( { items: items, options: { rotate: selection.rotate } } );
+	worker.postMessage( { items: items, options: options } );
 
 };
 

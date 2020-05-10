@@ -629,9 +629,10 @@ function CaveViewer ( domID, configuration ) {
 
 	function setAutoRotate ( state ) {
 
-		cameraMove.setAutoRotate( state );
+		if ( state ) survey.toSVG();
+//		cameraMove.setAutoRotate( state );
 
-		self.dispatchEvent( { type: 'change', name: 'autoRotate' } );
+//		self.dispatchEvent( { type: 'change', name: 'autoRotate' } );
 
 	}
 

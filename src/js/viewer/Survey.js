@@ -1416,4 +1416,23 @@ Survey.prototype.getMesh = function ( tag ) {
 
 };
 
+Survey.prototype.toSVG = function () {
+
+	var legs = this.getFeature( LEG_CAVE );
+
+	const worker = new Worker( this.ctx.cfg.value( 'home', '' ) + 'js/workers/svgWorker.js' );
+
+	worker.addEventListener( 'message', function( event ) {
+
+		console.log( event );
+		const d = document.getElementById( 'scratch' );
+		d.innerHTML = event.data.svg;
+
+
+	} );
+
+	worker.postMessage( { legs: legs.legVertices, limits: this.modelLimits } );
+
+};
+
 export { Survey };

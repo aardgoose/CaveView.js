@@ -212,9 +212,6 @@ Page.prototype.addFileSelect = function ( title, obj, trgObj, property ) {
 	label.classList.add( 'cv-file-label' );
 
 	const input = document.createElement( 'input' );
-	const img = document.createElement( 'img' );
-
-	img.src = frame.ctx.cfg.value( 'home' ) + 'images/open.png';
 
 	input.id = id;
 	input.classList.add( 'cv-file' );
@@ -237,7 +234,6 @@ Page.prototype.addFileSelect = function ( title, obj, trgObj, property ) {
 
 	} );
 
-	label.appendChild( img );
 	label.appendChild( input );
 
 	return div;

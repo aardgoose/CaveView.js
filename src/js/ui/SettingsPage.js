@@ -82,9 +82,9 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 
 	cvw.appendChild( this.addRange( 'view.rotation_speed', viewer, 'autoRotateSpeed' ) );
 
-	cvw.appendChild( this.addHeader( 'shading.header' ) );
+	const sh = this.addCollapsingHeader( 'shading.header' );
 
-	cvw.appendChild( this.addSelect( 'shading.caption', legShadingModesActive, viewer, 'shadingMode' ) );
+	sh.appendChild( this.addSelect( 'shading.caption', legShadingModesActive, viewer, 'shadingMode' ) );
 
 	if ( routeNames.length !== 0 ) {
 

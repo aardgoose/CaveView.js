@@ -96,6 +96,65 @@ Page.prototype.addHeader = function ( text ) {
 
 };
 
+Page.prototype.addCollapsingHeader = function ( text ) {
+
+	const div = document.createElement( 'div' );
+
+	div.classList.add( 'header' );
+	div.textContent = this.i18n( text );
+	div.classList.add( 'header_full' );
+
+	this.page.appendChild( div );
+
+	const container = document.createElement( 'div' );
+
+	container.classList.add( 'container_full' );
+
+	this.page.appendChild( container );
+
+	div.addEventListener( 'click', function () {
+var redraw;
+
+		if ( div.classList.contains( 'header_collapsed' ) ) {
+
+			container.style.display = 'block';
+
+			container.addEventListener( 'transitionend', _onReveal );
+
+			redraw = container.clientHeight; // lgtm
+			container.classList.remove( 'container_collapsed' );
+
+		} else {
+
+			container.addEventListener( 'transitionend', _onCollapse );
+
+			container.classList.add( 'container_collapsed' );
+
+		}
+
+		function _onReveal () {
+
+			container.removeEventListener( 'transitionend', _onReveal );
+
+			div.classList.remove( 'header_collapsed' );
+
+		}
+
+		function _onCollapse () {
+
+			container.removeEventListener( 'transitionend', _onCollapse );
+
+			div.classList.add( 'header_collapsed' );
+			container.style.display = 'none';
+
+		}
+
+	} );
+
+	return container;
+
+};
+
 Page.prototype.addText = function ( text ) {
 
 	const p = this.addLine( text );

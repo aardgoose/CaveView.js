@@ -64,6 +64,14 @@
 			"svx_control_mode": "'Aven' controls",
 			"zoom_to_cursor": "Zoom to cursor",
 			"wheel_tilt": "Mouse wheel - tilt"
+		},
+		"gltf_export": {
+			"header": "glTF Export",
+			"walls": "include LRUD walls",
+			"scraps": "include scraps",
+			"legs": "include centre lines",
+			"rotate_axes": "rotate axes",
+			"export": "Download"
 		}
 	},
 	"surface": {
@@ -139,14 +147,6 @@
 			"totalLength": "Total length",
 			"minLength": "Shortest leg",
 			"maxLength": "Longest leg"
-		},
-		"gltf_export": {
-			"header": "GLTF Export",
-			"walls": "include LRUD walls",
-			"scraps": "include scraps",
-			"legs": "include centre lines",
-			"rotate_axes": "rotate axes",
-			"export": "Download"
 		}
 	},
 	"help": {

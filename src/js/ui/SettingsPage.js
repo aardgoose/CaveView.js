@@ -6,6 +6,7 @@ import {
 } from '../core/constants';
 
 import { Page } from './Page';
+import { replaceExtension } from '../core/lib';
 
 const legShadingModes = {
 	'shading.height':        SHADING_HEIGHT,
@@ -67,23 +68,23 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 
 	}
 
-	this.addHeader( 'view.header' );
+	const cvw = this.addCollapsingHeader( 'view.header' );
 
-	this.addSelect( 'view.camera.caption', cameraModes, viewer, 'cameraType' );
+	cvw.appendChild( this.addSelect( 'view.camera.caption', cameraModes, viewer, 'cameraType' ) );
 
 	//	controls.push( this.addRange( 'view.eye_separation', viewer, 'eyeSeparation' ) );
 
-	this.addSelect( 'view.viewpoints.caption', cameraViews, viewer, 'view' );
+	cvw.appendChild( this.addSelect( 'view.viewpoints.caption', cameraViews, viewer, 'view' ) );
 
-	this.addRange( 'view.vertical_scaling', viewer, 'zScale' );
+	cvw.appendChild( this.addRange( 'view.vertical_scaling', viewer, 'zScale' ) );
 
-	this.addCheckbox( 'view.autorotate', viewer, 'autoRotate' );
+	cvw.appendChild( this.addCheckbox( 'view.autorotate', viewer, 'autoRotate' ) );
 
-	this.addRange( 'view.rotation_speed', viewer, 'autoRotateSpeed' );
+	cvw.appendChild( this.addRange( 'view.rotation_speed', viewer, 'autoRotateSpeed' ) );
 
-	this.addHeader( 'shading.header' );
+	cvw.appendChild( this.addHeader( 'shading.header' ) );
 
-	this.addSelect( 'shading.caption', legShadingModesActive, viewer, 'shadingMode' );
+	cvw.appendChild( this.addSelect( 'shading.caption', legShadingModesActive, viewer, 'shadingMode' ) );
 
 	if ( routeNames.length !== 0 ) {
 
@@ -97,29 +98,65 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 
 	}
 
-	this.addHeader( 'visibility.header' );
+	const cv = this.addCollapsingHeader( 'visibility.header' );
 
-	if ( viewer.hasEntrances       ) this.addCheckbox( 'visibility.entrances', viewer, 'entrances' );
-	if ( viewer.hasStations        ) this.addCheckbox( 'visibility.stations', viewer, 'stations' );
-	if ( viewer.hasStationLabels   ) this.addCheckbox( 'visibility.labels', viewer, 'stationLabels' );
-	if ( viewer.hasStationComments ) this.addCheckbox( 'visibility.comments', viewer, 'stationComments' );
-	if ( viewer.hasSplays          ) this.addCheckbox( 'visibility.splays', viewer, 'splays' );
-	if ( viewer.hasWalls           ) this.addCheckbox( 'visibility.walls', viewer, 'walls' );
-	if ( viewer.hasScraps          ) this.addCheckbox( 'visibility.scraps', viewer, 'scraps' );
-	if ( viewer.hasTraces          ) this.addCheckbox( 'visibility.traces', viewer, 'traces' );
+	if ( viewer.hasEntrances       ) cv.appendChild( this.addCheckbox( 'visibility.entrances', viewer, 'entrances' ) );
+	if ( viewer.hasStations        ) cv.appendChild( this.addCheckbox( 'visibility.stations', viewer, 'stations' ) );
+	if ( viewer.hasStationLabels   ) cv.appendChild( this.addCheckbox( 'visibility.labels', viewer, 'stationLabels' ) );
+	if ( viewer.hasStationComments ) cv.appendChild( this.addCheckbox( 'visibility.comments', viewer, 'stationComments' ) );
+	if ( viewer.hasSplays          ) cv.appendChild( this.addCheckbox( 'visibility.splays', viewer, 'splays' ) );
+	if ( viewer.hasWalls           ) cv.appendChild( this.addCheckbox( 'visibility.walls', viewer, 'walls' ) );
+	if ( viewer.hasScraps          ) cv.appendChild( this.addCheckbox( 'visibility.scraps', viewer, 'scraps' ) );
+	if ( viewer.hasTraces          ) cv.appendChild( this.addCheckbox( 'visibility.traces', viewer, 'traces' ) );
 
-	this.addCheckbox( 'visibility.fog', viewer, 'fog' );
-	this.addCheckbox( 'visibility.hud', viewer, 'HUD' );
-	this.addCheckbox( 'visibility.box', viewer, 'box' );
+	cv.appendChild( this.addCheckbox( 'visibility.fog', viewer, 'fog' ) );
+	cv.appendChild( this.addCheckbox( 'visibility.hud', viewer, 'HUD' ) );
+	cv.appendChild( this.addCheckbox( 'visibility.box', viewer, 'box' ) );
 
-	if ( viewer.hasWarnings ) this.addCheckbox( 'visibility.warnings', viewer, 'warnings' );
+	if ( viewer.hasWarnings ) cv.appendChild( this.addCheckbox( 'visibility.warnings', viewer, 'warnings' ) );
 
-	this.addHeader( 'controls.header' );
+	const ch = this.addCollapsingHeader( 'controls.header' );
 
-	this.addCheckbox( 'controls.svx_control_mode', viewer, 'svxControlMode' );
-	this.addCheckbox( 'controls.zoom_to_cursor', viewer, 'zoomToCursor' );
+	ch.appendChild( this.addCheckbox( 'controls.svx_control_mode', viewer, 'svxControlMode' ) );
+	ch.appendChild( this.addCheckbox( 'controls.zoom_to_cursor', viewer, 'zoomToCursor' ) );
 
-	if ( viewer.svxControlMode ) this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' );
+	if ( viewer.svxControlMode ) ch.appendChild( this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' ) );
+
+	if ( this.canDownload() ) {
+
+		const eh = this.addCollapsingHeader( 'gltf_export.header' );
+
+		const selection = { legs: false, walls: false, scraps: false  };
+		const options = { rotate: false, binary: false };
+
+		if ( viewer.hasWalls ) {
+
+			selection.walls = true;
+			eh.appendChild( this.addCheckbox( 'gltf_export.walls', selection, 'walls' ) );
+
+		}
+
+		if ( viewer.hasScraps ) {
+
+			selection.scraps = true;
+			eh.appendChild( this.addCheckbox( 'gltf_export.scraps', selection, 'scraps' ) );
+
+		}
+
+		eh.appendChild( this.addCheckbox( 'gltf_export.legs', selection, 'legs' ) );
+
+		eh.appendChild( this.addCheckbox( 'gltf_export.rotate_axes', options, 'rotate' ) );
+		//eh.appendChild( this.addCheckbox( 'gltf_export.binary_format', options, 'binary' );
+
+		eh.appendChild( this.addButton( 'gltf_export.export', function () {
+
+			viewer.getGLTFExport( selection, options, handleExport );
+
+		} ) );
+
+	}
+
+	const self = this;
 
 	_onChange( { name: 'cameraType' } );
 	_onChange( { name: 'shadingMode' } );
@@ -142,6 +179,14 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 			frame.setControlsVisibility( controls, viewer.cameraType === CAMERA_ANAGLYPH || viewer.cameraType === CAMERA_STEREO );
 
 		}
+
+	}
+
+	function handleExport ( gltfData, binary ) {
+
+		var filename = replaceExtension( fileSelector.localFilename, ( binary ? 'glb' : 'gltf' ) );
+
+		self.download( URL.createObjectURL( gltfData ), filename );
 
 	}
 

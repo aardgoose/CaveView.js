@@ -46,6 +46,22 @@
 		div#credits p {
 			margin: 20px 0 0 0;
 		}
+		#cancel-demo {
+			position: absolute;
+			top: 4px;
+			right: 4px;
+			height: 48px;
+			padding: 4px;
+			width: min-content;
+			background-color: darkred;
+			color: white;
+			border: 2px solid red;
+			border-radius: 8px;
+			text-align: center;
+		}
+		#cancel-demo:hover {
+			background-color: red;
+		}
 
 </style>
 </head>
@@ -66,6 +82,7 @@ var captionDiv;
 var index = 0;
 var routes;
 var firstRun = true;
+var timeoutId;
 
 const defaultView = {
 	cameraType: CV2.CAMERA_PERSPECTIVE,
@@ -78,6 +95,19 @@ const defaultView = {
 	entrances: true
 };
 
+function endDemo() {
+
+	ui = new CV2.CaveViewUI( viewer );
+
+	ui.loadCaveList( [
+		"Castleton_Master_NoSurface.3d",
+		"all.3d",
+	] );
+
+	firstRun = false;
+
+}
+
 function runDemo() {
 
 	if ( index === demoScript.length ) return;
@@ -88,14 +118,7 @@ function runDemo() {
 
 	if ( d.endScript ) {
 
-		ui = new CV2.CaveViewUI( viewer );
-
-		ui.loadCaveList( [
-			"Castleton_Master_NoSurface.3d",
-			"all.3d",
-		] );
-
-		firstRun = false;
+		endDemo();
 
 		return;
 
@@ -107,7 +130,7 @@ function runDemo() {
 
 	if ( d.route ) routes.setRoute = d.route;
 
-	setTimeout( runDemo, d.delay * 1000 );
+	timeoutId = setTimeout( runDemo, d.delay * 1000 );
 
 }
 
@@ -127,6 +150,31 @@ function viewComplete () {
 	}
 
 }
+
+function addStopButton() {
+
+	const scene = document.getElementById( 'scene' );
+	const div = document.createElement( 'div' );
+
+	div.id = 'cancel-demo';
+	div.textContent = 'End Demo';
+
+	div.addEventListener( 'click', function () {
+
+		div.parentNode.removeChild( div );
+
+		// stop demo loop.
+		if ( timeoutId ) clearTimeout( timeoutId );
+
+		// load survey and UI
+		endDemo();
+
+	} );
+
+	scene.appendChild( div );
+
+}
+
 
 function onload () {
 
@@ -157,6 +205,8 @@ function onload () {
 	viewer.loadCave( 'P8_Master.3d' );
 
 	captionDiv = document.getElementById( 'scene-caption' );
+
+	addStopButton();
 
 }
 

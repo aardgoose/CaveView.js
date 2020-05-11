@@ -24,13 +24,23 @@ function Cfg ( envs ) {
 
 	}
 
+	if ( Cfg.home !== undefined ) this.environment.set( 'home', Cfg.home );
+
 	this.setLanguage( this.value( 'language', navigator.language.slice( 0, 2 ) ) );
+
+}
+
+if ( document.currentScript !== undefined ) {
+
+	Cfg.home = document.currentScript.src.match( /^(.*\/)js\// )[ 1 ];
 
 }
 
 Cfg.prototype = Object.create( EventDispatcher.prototype );
 
 Cfg.prototype.setLanguage = function ( lang ) {
+
+	console.log( 'home:', Cfg.home );
 
 	if ( lang === 'en' ) {
 
@@ -41,13 +51,16 @@ Cfg.prototype.setLanguage = function ( lang ) {
 		// attempt to register non-default language
 
 		console.log( 'loading language file for:', lang );
+
 		const loader = new FileLoader().setPath( this.value( 'home' ) + 'lib/' );
 
 		loader.load( 'lang-' + lang + '.json', _languageLoaded, null, _languageError );
 
 	}
 
-	x18n.on( [ 'lang:change' ], function () { this.dispatchEvent( { type: 'change', name: 'language' } ); } );
+	const self = this;
+
+	x18n.on( [ 'lang:change' ], function () { self.dispatchEvent( { type: 'change', name: 'language' } ); } );
 
 	return;
 

@@ -111,6 +111,10 @@ body {
   background-origin: content-box;
   background-repeat: no-repeat;
   padding: 1px;
+  filter: brightness(0.85);
+}
+.cv-tab-box .tab:hover {
+  filter: brightness(1);
 }
 .cv-tab-box .close {
   background-color: #222222;
@@ -167,6 +171,7 @@ body {
   border-right: 2px solid #1ab4e5;
   width: 41px;
   margin-left: -1px;
+  filter: brightness(1);
 }
 div.cv-gps-button {
   box-sizing: border-box;
@@ -184,6 +189,27 @@ div.cv-gps-button {
 .cv-gps-button.on {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='36px' height='36px'%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M20.94 11c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z'/%3E%3C/svg%3E");
   filter: brightness(1);
+}
+div.cv-frame {
+  scrollbar-color: black #ccc;
+  /* FF */
+}
+div.cv-frame::-webkit-scrollbar {
+  width: 16px;
+}
+div.cv-frame::-webkit-scrollbar-button:start {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='18px' height='18px'%3E%3Cpath d='M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
+}
+div.cv-frame::-webkit-scrollbar-button:end {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='18px' height='18px'%3E%3Cpath d='M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
+}
+.cv-frame::-webkit-scrollbar-track {
+  background: #ccc;
+}
+.cv-frame::-webkit-scrollbar-thumb {
+  background: black;
+  border: 2px solid #ccc;
+  border-radius: 2px;
 }
 @media (min-width: 768px) {
   /* default to normal size */

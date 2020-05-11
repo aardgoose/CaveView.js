@@ -20,7 +20,6 @@ function Entrances ( ctx, survey ) {
 	material.alphaTest = 0.8;
 	material.sizeAttenuation = false;
 	material.transparent = true;
-	material.sizeAttenuation = false;
 	material.size = 10;
 	material.vertexColors = true;
 

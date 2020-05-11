@@ -96,12 +96,6 @@
 				"overlay": "map overlay",
 				"contours": "contours"
 			},
-			"through": {
-				"caption": "Through",
-				"basic": "basic",
-				"stencil": "stencil",
-				"blend":"blend"
-			},
 			"overlay": {
 				"caption": "Overlay"
 			},

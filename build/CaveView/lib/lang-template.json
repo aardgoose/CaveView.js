@@ -9,7 +9,9 @@
 			"camera": {
 				"caption": "Camera type",
 				"orthographic": "Orthographic",
-				"perspective": "Perspective"
+				"perspective": "Perspective",
+				"anaglyph": "Anaglyph",
+				"stereo": "Stereo"
 			},
 			"viewpoints": {
 				"caption": "Viewpoint",
@@ -20,6 +22,7 @@
 				"elevation_e": "E Elevation",
 				"elevation_w": "W Elevation"
 			},
+			"eye_separation": "Eye Separation",
 			"vertical_scaling": "Vertical Scaling",
 			"autorotate": "Auto Rotate",
 			"rotation_speed": "Rotation Speed"
@@ -39,18 +42,36 @@
 			"distance": "distance",
 			"beck": "beck"
 		},
+		"selected_route": "Selected route",
+		"no_routes": "no routes defined",
 		"visibility": {
 			"header": "Visibility",
 			"entrances": "Entrances",
 			"stations": "Stations",
 			"labels": "Station Labels",
+			"comments": "Station Comments",
 			"walls": "Walls (LRUD)",
 			"scraps": "Scraps",
 			"splays": "Splay Legs",
 			"traces": "Dye Traces",
+			"warnings": "Warnings",
 			"box": "Bounding box",
 			"hud": "Indicators",
 			"fog": "Fog"
+		},
+		"controls": {
+			"header": "Controls",
+			"svx_control_mode": "'Aven' controls",
+			"zoom_to_cursor": "Zoom to cursor",
+			"wheel_tilt": "Mouse wheel - tilt"
+		},
+		"gltf_export": {
+			"header": "glTF Export",
+			"walls": "include LRUD walls",
+			"scraps": "include scraps",
+			"legs": "include centre lines",
+			"rotate_axes": "rotate axes",
+			"export": "Download"
 		}
 	},
 	"surface": {
@@ -79,18 +100,37 @@
 				"caption": "Overlay"
 			},
 			"opacity": "Opacity",
-			"datum_shift": "Vertical datum shift"
+			"datum_shift": "Vertical datum shift",
+			"lighting": "Directional Lighting",
+			"downloadTileSet": "download tile set spec"
 		}
 	},
-	"routes": {
-		"routes": {
+	"edit": {
+		"header": "Edit",
+		"mode": "edit mode",
+		"modes": {
+			"none": "- none -",
+			"route": "Routes",
+			"trace": "Traces",
+			"entrances": "Entrances",
+			"annotate": "Annotations"
+		},
+		"entrance": {
+			"header": "Entrances"
+		},
+		"annotate": {
+			"header": "Annotations"
+		},
+		"route": {
 			"header": "Routes",
-			"edit": "Edit routes",
 			"current": "Current route",
 			"save": "Save",
 			"new": "New route",
 			"add": "Add",
 			"download": "Download"
+		},
+		"trace": {
+			"header": "Traces"
 		}
 	},
 	"info": {
@@ -102,10 +142,10 @@
 			"minLength": "Shortest leg",
 			"maxLength": "Longest leg"
 		}
-
 	},
 	"help": {
-		"header": "Help - key commands",
+		"header_svx": "Help - key commands (survex)",
+		"header_native": "Help - key commands (native)",
 		"shading": {
 			"header": "Shading",
 			"height": "height",
@@ -142,7 +182,9 @@
 			"auto_rotate": "rotate continuosly",
 			"rotate_speed_up": "increase speed of rotation",
 			"rotate_speed_down": "decrease speed of rotation",
-			"reverse_rotation": "reverse direction of rotation"
+			"reverse_rotation": "reverse direction of rotation",
+			"zoom_to_cursor": "toggle zoom to cursor mode",
+			"control_mode":"toggle control mode"
 		},
 		"visibility": {
 			"header": "Visibility",
@@ -168,5 +210,8 @@
 		"leg_length": "leg length",
 		"depth": "depth",
 		"inclination": "inclination"
+	},
+	"dnd": {
+		"splash_text": "Drag&nbsp;and&nbsp;drop a .3d or .lox model here to&nbsp;load"
 	}
 }

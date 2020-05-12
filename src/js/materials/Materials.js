@@ -30,7 +30,7 @@ function Materials ( viewer ) {
 	var survey;
 
 	const colourCache = new ColourCache();
-	const textureCache = new TextureCache( ctx );
+	const textureCache = new TextureCache();
 
 	this.colourCache = colourCache;
 	this.textureCache = textureCache;

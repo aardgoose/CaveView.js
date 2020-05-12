@@ -1,6 +1,5 @@
 import { BufferGeometry, Points, Float32BufferAttribute, Vector3 } from '../Three';
 
-import { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 import { STATION_ENTRANCE } from '../core/constants';
 import { PointIndicator } from './PointIndicator';
 
@@ -15,7 +14,7 @@ function onUploadDropBuffer() {
 
 function Stations ( ctx, selection ) {
 
-	Points.call( this, new BufferGeometry, new ExtendedPointsMaterial( ctx ) );
+	Points.call( this, new BufferGeometry, ctx.materials.getExtendedPointsMaterial() );
 
 	this.type = 'CV.Stations';
 	this.map = new Map();

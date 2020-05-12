@@ -4,11 +4,13 @@ import { ContourMaterial } from './ContourMaterial';
 import { DepthMaterial } from './DepthMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMapMaterial } from './DepthMapMaterial';
+import { ExtendedPointsMaterial } from './ExtendedPointsMaterial';
+import { GlyphMaterial } from './GlyphMaterial';
 import { HeightMaterial } from './HeightMaterial';
 import { HypsometricMaterial } from './HypsometricMaterial';
-import { GlyphMaterial } from './GlyphMaterial';
 import { MissingMaterial } from './MissingMaterial';
 import { ColourCache } from '../core/ColourCache';
+import { TextureCache } from '../core/TextureCache';
 import { GlyphAtlasCache } from './GlyphAtlas';
 import {
 	LineBasicMaterial, MeshLambertMaterial, MeshBasicMaterial, MeshPhongMaterial,
@@ -28,8 +30,10 @@ function Materials ( viewer ) {
 	var survey;
 
 	const colourCache = new ColourCache();
+	const textureCache = new TextureCache();
 
 	this.colourCache = colourCache;
+	this.textureCache = textureCache;
 
 	const gradientType = ctx.cfg.value( 'saturatedGradient', false ) || ctx.cfg.themeValue( 'saturatedGradient' );
 	const gradient = gradientType ? 'gradientHi' : 'gradientLow';
@@ -213,6 +217,13 @@ function Materials ( viewer ) {
 
 	};
 
+	this.getExtendedPointsMaterial = function () {
+
+		const func = function () { return new ExtendedPointsMaterial( ctx ); };
+		return getCacheMaterial( 'extendedPoints', func, true );
+
+	};
+
 	this.getMissingMaterial = function () {
 
 		const func = function () { return new MissingMaterial( ctx ); };
@@ -236,7 +247,7 @@ function Materials ( viewer ) {
 
 	this.getScaleMaterial = function () {
 
-		const func = function () { return new MeshBasicMaterial( { color: 0xffffff, map: colourCache.getTexture( gradient ) } ); };
+		const func = function () { return new MeshBasicMaterial( { color: 0xffffff, map: textureCache.getTexture( gradient ) } ); };
 		return getCacheMaterial( 'scale', func );
 
 	};

@@ -18,7 +18,7 @@ function HypsometricMaterial ( ctx, survey ) {
 
 	const cfg = ctx.cfg;
 	const terrain = survey.terrain;
-	const colourCache = ctx.materials.colourCache;
+	const textureCache = ctx.materials.textureCache;
 
 	MeshLambertMaterial.call( this );
 
@@ -40,7 +40,7 @@ function HypsometricMaterial ( ctx, survey ) {
 			{
 				minZ:   { value: zMin },
 				scaleZ: { value: 1 / ( zMax - zMin ) },
-				cmap:   { value: colourCache.getTexture( 'hypsometric' ) }
+				cmap:   { value: textureCache.getTexture( 'hypsometric' ) }
 			}
 		);
 

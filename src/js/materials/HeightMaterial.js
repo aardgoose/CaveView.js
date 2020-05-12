@@ -10,7 +10,7 @@ function HeightMaterial ( ctx, type, survey ) {
 	const zMin = limits.min.z;
 	const zMax = limits.max.z;
 	const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
-	const colourCache = ctx.materials.colourCache;
+	const textureCache = ctx.materials.textureCache;
 
 	this.midRange = ( zMax + zMin ) / 2;
 
@@ -22,7 +22,7 @@ function HeightMaterial ( ctx, type, survey ) {
 			uLight: { value: survey.lightDirection },
 			minZ:   { value: zMin },
 			scaleZ: { value: 1 / ( zMax - zMin ) },
-			cmap:   { value: colourCache.getTexture( gradient ) },
+			cmap:   { value: textureCache.getTexture( gradient ) },
 		}, ctx.materials.commonUniforms ),
 		defines: {
 			USE_COLOR: true,

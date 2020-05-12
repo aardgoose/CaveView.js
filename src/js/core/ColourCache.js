@@ -1,42 +1,11 @@
 import { Colours } from './Colours';
-import { Color, DataTexture, RGBFormat, UnsignedByteType, LinearFilter } from '../Three';
+import { Color } from '../Three';
 
 // define colors to share THREE.color objects
 
 function ColourCache ( ) {
 
-	const caches = {
-		'colors': [],
-		'texture' : []
-	};
-
-	function createTexture ( scale ) {
-
-		const l = scale.length;
-		const data = new Uint8Array( l * 3 );
-
-		var offset = 0;
-
-		for ( var i = l; i; ) {
-
-			const c = scale[ --i ];
-
-			data[ offset++ ] = c[ 0 ];
-			data[ offset++ ] = c[ 1 ];
-			data[ offset++ ] = c[ 2 ];
-
-		}
-
-		const texture = new DataTexture( data, l, 1, RGBFormat, UnsignedByteType );
-
-		texture.minFilter = LinearFilter;
-		texture.magFilter = LinearFilter;
-
-		texture.needsUpdate = true;
-
-		return texture;
-
-	}
+	const cache = [];
 
 	function createColors ( scale ) {
 
@@ -54,9 +23,7 @@ function ColourCache ( ) {
 
 	}
 
-	function getCacheEntry( cacheName, createFunc, name ) {
-
-		const cache = caches[ cacheName ];
+	this.getColors = function ( name ) {
 
 		var entry = cache[ name ];
 
@@ -66,24 +33,12 @@ function ColourCache ( ) {
 
 			if ( scale === undefined ) console.error( 'unknown colour scale requested ' + name );
 
-			entry = createFunc( scale );
+			entry = createColors( scale );
 			cache[ name ] = entry;
 
 		}
 
 		return entry;
-
-	}
-
-	this.getTexture = function ( name ) {
-
-		return getCacheEntry( 'texture', createTexture, name );
-
-	}
-
-	this.getColors = function ( name ) {
-
-		return getCacheEntry( 'colors', createColors, name );
 
 	};
 

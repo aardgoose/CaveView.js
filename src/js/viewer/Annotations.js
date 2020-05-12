@@ -1,11 +1,11 @@
-import { Points, PointsMaterial, BufferGeometry, Float32BufferAttribute, TextureLoader } from '../Three';
+import { Points, PointsMaterial, BufferGeometry, Float32BufferAttribute } from '../Three';
 
 function Annotations ( ctx, survey ) {
 
 	const geometry = new BufferGeometry();
 	const material = new PointsMaterial();
 
-	material.map = new TextureLoader().load( ctx.cfg.value( 'home', '' ) + 'images/disc.png' );
+	material.map =ctx.materials.textureCache.getTexture( 'disc' );
 	material.opacity = 1.0;
 	material.alphaTest = 0.8;
 	material.sizeAttenuation = false;

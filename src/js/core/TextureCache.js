@@ -1,9 +1,9 @@
 import { Colours } from './Colours';
-import { DataTexture, RGBFormat, UnsignedByteType, LinearFilter } from '../Three';
+import { DataTexture, RGBFormat, UnsignedByteType, LinearFilter, TextureLoader } from '../Three';
 
 // define colors to share THREE.color objects
 
-function TextureCache ( ) {
+function TextureCache ( ctx ) {
 
 	const cache = [];
 
@@ -41,11 +41,20 @@ function TextureCache ( ) {
 
 		if ( entry === undefined ) {
 
-			const scale = Colours[ name ];
+			if ( name === 'disc' ) {
 
-			if ( scale === undefined ) console.error( 'unknown colour scale requested ' + name );
+				entry = new TextureLoader().load( ctx.cfg.value( 'home', '' ) + 'images/disc.png' );
 
-			entry = createTexture( scale );
+			} else {
+
+				const scale = Colours[ name ];
+
+				if ( scale === undefined ) console.error( 'unknown colour scale requested ' + name );
+
+				entry = createTexture( scale );
+
+			}
+
 			cache[ name ] = entry;
 
 		}

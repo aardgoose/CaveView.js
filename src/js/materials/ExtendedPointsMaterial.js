@@ -1,12 +1,13 @@
-import { PointsMaterial, TextureLoader } from '../Three';
+import { PointsMaterial } from '../Three';
 
 function ExtendedPointsMaterial ( ctx ) {
 
 	PointsMaterial.call( this );
 
 	const colourCache = ctx.materials.colourCache;
+	const textureCache = ctx.materials.textureCache;
 
-	this.map = new TextureLoader().load( ctx.cfg.value( 'home', '' ) + 'images/disc.png' );
+	this.map = textureCache.getTexture( 'disc' );
 	this.color = colourCache.white;
 	this.opacity = 1.0;
 	this.alphaTest = 0.8;

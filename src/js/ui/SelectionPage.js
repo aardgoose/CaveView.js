@@ -3,7 +3,7 @@ import { Page } from './Page';
 
 function SelectionPage ( frame, viewer, container, fileSelector ) {
 
-	Page.call( this, 'icon_explore', 'explore' );
+	Page.call( this, 'icon_explore', 'selection' );
 
 	frame.addPage( this );
 
@@ -22,7 +22,7 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 
 	currentTop = surveyTree;
 
-	this.addHeader( 'Selection' );
+	this.addHeader( 'header' );
 
 	titleBar.id = 'ui-path';
 	titleBar.classList.add( 'header' );

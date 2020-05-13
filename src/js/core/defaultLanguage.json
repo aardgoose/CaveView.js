@@ -105,6 +105,9 @@
 			"downloadTileSet": "download tile set spec"
 		}
 	},
+	"selection": {
+		"header" : "Selection"
+	},
 	"edit": {
 		"header": "Edit",
 		"mode": "edit mode",

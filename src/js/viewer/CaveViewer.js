@@ -45,6 +45,9 @@ function CaveViewer ( domID, configuration ) {
 
 	if ( ! container ) alert( 'No container DOM object [' + domID + '] available' );
 
+	// target with css for fullscreen on small screen devices
+	container.classList.add( 'cv-container' );
+
 	const width = container.clientWidth;
 	const height = container.clientHeight;
 

@@ -19,9 +19,6 @@ function CaveViewUI ( viewer ) {
 	const fileSelector = new FileSelector( container, ctx );
 	fileSelector.addEventListener( 'selected', selectFile );
 
-	// target with css for fullscreen on small screen devices
-	container.classList.add( 'cv-container' );
-
 	// event handlers
 	viewer.addEventListener( 'change', frame.handleChange.bind( frame ) );
 	viewer.addEventListener( 'newCave', initUI );

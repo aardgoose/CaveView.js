@@ -113,7 +113,8 @@ Page.prototype.addCollapsingHeader = function ( text ) {
 	this.page.appendChild( container );
 
 	div.addEventListener( 'click', function () {
-		var redraw;
+
+		var redraw; // eslint-disable-line no-unused-vars
 
 		if ( div.classList.contains( 'header_collapsed' ) ) {
 

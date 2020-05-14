@@ -65,6 +65,9 @@
 			"zoom_to_cursor": "Zoom to cursor",
 			"wheel_tilt": "Mouse wheel - tilt"
 		},
+		"ui": {
+			"selection_tree": "Use tree selection"
+		},
 		"gltf_export": {
 			"header": "glTF Export",
 			"walls": "include LRUD walls",

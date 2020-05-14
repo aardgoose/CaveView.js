@@ -95,6 +95,24 @@ Cfg.prototype.value = function ( item, defaultValue ) {
 
 };
 
+Cfg.prototype.setPropertyValue = function ( item, value ) {
+
+	Object.defineProperty( this, item, {
+
+		set: function ( value ) {
+
+			this.environment.set ( item, value );
+			this.dispatchEvent( { type: 'change', name: item } );
+
+		},
+		get: function () {
+			return this.environment.get( item ); }
+	} );
+
+	this.environment.set ( item, value );
+
+};
+
 Cfg.prototype.themeValue = function ( name ) {
 
 	const theme = this.environment.get( 'theme' );

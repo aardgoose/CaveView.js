@@ -119,6 +119,7 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 
 	ch.appendChild( this.addCheckbox( 'controls.svx_control_mode', viewer, 'svxControlMode' ) );
 	ch.appendChild( this.addCheckbox( 'controls.zoom_to_cursor', viewer, 'zoomToCursor' ) );
+	ch.appendChild( this.addCheckbox( 'ui.selection_tree', viewer.ctx.cfg, 'selectionTree' ) );
 
 	if ( viewer.svxControlMode ) ch.appendChild( this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' ) );
 

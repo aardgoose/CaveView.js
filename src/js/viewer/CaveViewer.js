@@ -1370,6 +1370,8 @@ function CaveViewer ( domID, configuration ) {
 
 			}
 
+			self.dispatchEvent( { type: 'select', node: station } );
+
 		}
 
 		function _setStationPOI( station ) {

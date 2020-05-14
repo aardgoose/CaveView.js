@@ -113,7 +113,7 @@ Page.prototype.addCollapsingHeader = function ( text ) {
 	this.page.appendChild( container );
 
 	div.addEventListener( 'click', function () {
-var redraw;
+		var redraw;
 
 		if ( div.classList.contains( 'header_collapsed' ) ) {
 

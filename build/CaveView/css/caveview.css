@@ -85,6 +85,12 @@ body {
   color: #1ab4e5;
   z-index: 110;
 }
+.cv-frame div.page div.descend-tree:before {
+  content: "\025ba";
+}
+.cv-frame div.page div.descend-tree.open:before {
+  content: "\025bc";
+}
 .cv-frame.onscreen {
   transform: none;
   transition: transform 0.25s ease-out;
@@ -576,4 +582,14 @@ div.cv-frame::-webkit-scrollbar-button:end {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.25s ease-out;
+}
+.cv-frame div.page ul.cv-tree {
+  height: auto;
+  width: auto;
+}
+.cv-frame ul.cv-tree li {
+  margin-left: 0;
+}
+.cv-frame li ul.cv-tree {
+  margin-left: 20px;
 }

@@ -3,7 +3,7 @@ import { Page } from './Page';
 
 function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
-	Page.call( this, 'icon_explore', 'selection', _handleOnTop );
+	Page.call( this, 'icon_explore', 'selection' );
 
 	frame.addPage( this );
 
@@ -123,6 +123,38 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 	};
 
+	this.displayPanelCommon = function ( top ) {
+
+		const children = top.children;
+		const self = this;
+
+		if ( ! top.sorted ) {
+
+			children.sort( _sortSurveys );
+			top.sorted = true;
+
+		}
+
+		const ul = document.createElement( 'ul' );
+		const surveyColourMapper = viewer.ctx.surveyColourMapper;
+		const surveyColourMap = ( viewer.shadingMode === SHADING_SURVEY ) ? surveyColourMapper.getColourMap( viewer.section ) : null;
+
+		top.forEachChild( function ( child ) { self.addLine( ul, child, surveyColourMap ); } );
+
+		this.currentTop = top;
+		this.lastSelected = null;
+		this.lastShadingMode = viewer.shadingMode;
+
+		return ul;
+
+		function _sortSurveys ( s1, s2 ) {
+
+			return self.stringCompare( s1.name, s2.name );
+
+		}
+
+	};
+
 	this.onChange = _onChange;
 
 	return;
@@ -224,15 +256,10 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 		}
 
 	}
+
 	function __handleLoadFull () {
 
 		fileSelector.reload();
-
-	}
-
-	function _handleOnTop () {
-
-		console.log( 'on top', self.selectionType );
 
 	}
 

@@ -1,15 +1,13 @@
-import { SHADING_SURVEY } from '../core/constants';
 import { SelectionCommonPage } from './SelectionCommonPage';
 
 function SelectionTreePage ( frame, viewer, container, fileSelector ) {
 
 	SelectionCommonPage.call( this, frame, viewer, container, fileSelector );
 
-	this.selectionType = 2;
-
 	const self = this;
+	const domTop = _displayPanel( this.currentTop );
 
-	this.appendChild( _displayPanel( this.currentTop ) );
+	this.appendChild( domTop );
 
 	var redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
 
@@ -45,39 +43,26 @@ function SelectionTreePage ( frame, viewer, container, fileSelector ) {
 
 	};
 
+	viewer.addEventListener( 'select', _selectNode );
+
 	return this;
+
+	function _selectNode ( event ) {
+
+		console.log( 'select', event );
+		// traverse DOM to find existing tree elements and add required
+		// until selected node is visible and can be highlighted
+
+		var top = domTop; // start from top of tree
+
+	}
 
 	function _displayPanel ( top ) {
 
-		const surveyColourMapper = viewer.ctx.surveyColourMapper;
-		const surveyColourMap = ( viewer.shadingMode === SHADING_SURVEY ) ? surveyColourMapper.getColourMap( viewer.section ) : null;
-
-		self.lastShadingMode = viewer.shadingMode;
-
-		const ul = document.createElement( 'ul' );
+		const ul = self.displayPanelCommon( top );
 		ul.classList.add( 'cv-tree' );
 
-		const children = top.children;
-
-		if ( ! top.sorted ) {
-
-			children.sort( _sortSurveys );
-			top.sorted = true;
-
-		}
-
-		top.forEachChild( function ( child ) { self.addLine( ul, child, surveyColourMap ); } );
-
-		self.currentTop = top;
-		self.lastSelected = null;
-
 		return ul;
-
-		function _sortSurveys ( s1, s2 ) {
-
-			return self.stringCompare( s1.name, s2.name );
-
-		}
 
 	}
 

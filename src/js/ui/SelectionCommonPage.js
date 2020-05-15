@@ -3,7 +3,7 @@ import { Page } from './Page';
 
 function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
-	Page.call( this, 'icon_explore', 'selection' );
+	Page.call( this, 'icon_explore', 'selection', _onTop, _onLeave );
 
 	frame.addPage( this );
 
@@ -15,6 +15,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 	this.lastShadingMode = viewer.shadingMode;
 	this.currentHover = null;
 	this.stringCompare = new Intl.Collator( 'en-GB', { numeric: true } ).compare;
+	this.isOntop = false;
 
 	const titleBar = document.createElement( 'div' );
 	const cfg = viewer.ctx.cfg;
@@ -260,6 +261,18 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 	function __handleLoadFull () {
 
 		fileSelector.reload();
+
+	}
+
+	function _onTop( ) {
+
+		self.isOntop = true;
+
+	}
+
+	function _onLeave( ) {
+
+		self.isOntop = false;
 
 	}
 

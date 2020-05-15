@@ -590,6 +590,14 @@ div.cv-frame::-webkit-scrollbar-button:end {
 .cv-frame ul.cv-tree li {
   margin-left: 0;
 }
+.cv-frame div.page ul.cv-tree ul {
+  padding-right: 0;
+}
 .cv-frame li ul.cv-tree {
-  margin-left: 20px;
+  margin-left: 10px;
+}
+li span {
+  display: inline-block;
+  width: 10px;
+  padding-right: 2px;
 }

@@ -1419,6 +1419,8 @@ function CaveViewer ( domID, configuration ) {
 			closePopup();
 			renderView();
 
+			self.dispatchEvent( { type: 'select', node: null } );
+
 		}
 
 		function _showStationPopup ( station ) {
@@ -1452,6 +1454,8 @@ function CaveViewer ( domID, configuration ) {
 			if ( ! trackLocation ) controls.enabled = true;
 
 			renderView();
+
+			self.dispatchEvent( { type: 'select', node: null } );
 
 		}
 

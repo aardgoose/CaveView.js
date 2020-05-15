@@ -95,7 +95,10 @@ Cfg.prototype.value = function ( item, defaultValue ) {
 
 };
 
-Cfg.prototype.setPropertyValue = function ( item, value ) {
+Cfg.prototype.setPropertyValue = function ( item, defaultValue ) {
+
+	// set to defined value or default
+	this.environment.set ( item, this.value( item, defaultValue ) );
 
 	Object.defineProperty( this, item, {
 
@@ -108,8 +111,6 @@ Cfg.prototype.setPropertyValue = function ( item, value ) {
 		get: function () {
 			return this.environment.get( item ); }
 	} );
-
-	this.environment.set ( item, value );
 
 };
 

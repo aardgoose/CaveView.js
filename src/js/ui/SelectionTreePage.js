@@ -155,7 +155,6 @@ function SelectionTreePage ( frame, viewer, container, fileSelector ) {
 
 		self.frame.frame.removeEventListener( 'scroll', _onScroll );
 
-		if ( hightlitElement === null ) return;
 		if ( lastHighlitScroll > performance.now() - 1000 ) {
 
 			setTimeout( _clearHighlight, 1000 );
@@ -169,6 +168,8 @@ function SelectionTreePage ( frame, viewer, container, fileSelector ) {
 	}
 
 	function _clearHighlight () {
+
+		if ( hightlitElement == null ) return;
 
 		hightlitElement.classList.remove( 'highlight' );
 		hightlitElement = null;

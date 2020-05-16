@@ -11,6 +11,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 	this.currentTop = this.surveyTree;
 
 	this.nodes = new WeakMap();
+	this.leafSections = new WeakSet();
 	this.lastSelected = null;
 	this.lastSection = 0;
 	this.lastShadingMode = viewer.shadingMode;
@@ -56,7 +57,13 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 		const connections = ( child.p === undefined ) ? null : child.p.connections;
 
-		if ( connections === 0 && ! viewer.splays && child.type !== STATION_ENTRANCE ) return; // skip spays if not displayed
+		// track which sections have stations as children
+
+		if ( connections !== null && !this.leafSections.has( ul) ) this.leafSections.add( ul );
+
+		// omit splays if now displaying
+
+		if ( connections === 0 && ! viewer.splays && child.type !== STATION_ENTRANCE ) return;
 
 		const li  = document.createElement( 'li' );
 		const text = ( child.comment === undefined ) ? child.name : child.name + ' ( ' + child.comment + ' )';
@@ -124,6 +131,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 		}
 
 		const ul = document.createElement( 'ul' );
+		ul.classList.add( 'cv-tree' );
 
 		top.forEachChild( function ( child ) { self.addLine( ul, child ); } );
 
@@ -140,6 +148,32 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 			return self.stringCompare( s1.name, s2.name );
 
 		}
+
+	};
+
+	this.reloadSections = function () {
+
+		const uls = this.page.getElementsByTagName( 'UL' );
+		const targetSections = [];
+		const self = this;
+		var i;
+
+		// find leaf sections that need reloading
+
+		for ( i = 0; i < uls.length; i++ ) {
+
+			const ul = uls[ i ];
+			if ( this.leafSections.has( ul ) ) targetSections.push( ul );
+
+		}
+
+		targetSections.forEach( function ( ul ) {
+
+			const node = self.nodes.get( ul.previousSibling ) || self.currentTop;
+
+			if ( node ) ul.replaceWith( self.displaySectionCommon( node ) );
+
+		});
 
 	};
 
@@ -241,7 +275,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 		if ( event.name === 'splays' ) {
 
-			self.handleRefresh();
+			self.reloadSections();
 			return;
 		}
 

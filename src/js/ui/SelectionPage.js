@@ -37,12 +37,6 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 
 	};
 
-	this.handleRefresh = function () {
-
-		this.replaceSlide( _displaySection( this.currentTop ), depth );
-
-	};
-
 	return this;
 
 	function _displaySection ( top ) {

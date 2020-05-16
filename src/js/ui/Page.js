@@ -43,6 +43,9 @@ Page.prototype.tabHandleClick = function ( event ) {
 	const tab = event.target;
 	const pages = this.frame.pages;
 
+	event.preventDefault();
+	event.stopPropagation();
+
 	tab.classList.add( 'toptab' );
 
 	this.frame.onScreen();

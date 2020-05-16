@@ -12,6 +12,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 	this.nodes = new WeakMap();
 	this.lastSelected = null;
+	this.lastSection = 0;
 	this.lastShadingMode = viewer.shadingMode;
 	this.currentHover = null;
 	this.stringCompare = new Intl.Collator( 'en-GB', { numeric: true } ).compare;
@@ -51,7 +52,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 	const self = this;
 	var redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
 
-	this.addLine = function ( ul, child, surveyColourMap ) {
+	this.addLine = function ( ul, child ) {
 
 		const connections = ( child.p === undefined ) ? null : child.p.connections;
 
@@ -69,21 +70,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 		if ( connections === null ) {
 
-			const id = child.id;
-
-			let colour;
-
-			if ( surveyColourMap !== null && surveyColourMap[ id ] !== undefined ) {
-
-				colour = surveyColourMap[ id ].getHexString();
-
-			} else {
-
-				colour = '444444';
-
-			}
-
-			key = _makeKey( '\u2588 ', '#' + colour );
+			key = _makeKey( '\u2588 ', '#444444' );
 
 			li.classList.add( 'section' );
 
@@ -137,13 +124,13 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 		}
 
 		const ul = document.createElement( 'ul' );
-		const surveyColourMapper = viewer.ctx.surveyColourMapper;
-		const surveyColourMap = ( viewer.shadingMode === SHADING_SURVEY ) ? surveyColourMapper.getColourMap( viewer.section ) : null;
 
-		top.forEachChild( function ( child ) { self.addLine( ul, child, surveyColourMap ); } );
+		top.forEachChild( function ( child ) { self.addLine( ul, child ); } );
+
+		_colourSections( ul );
 
 		this.currentTop = top;
-		this.lastSelected = null;
+//		this.lastSelected = null;
 		this.lastShadingMode = viewer.shadingMode;
 
 		return ul;
@@ -199,6 +186,9 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 	function _handleSelectSurveyClick ( event ) {
 
+		event.stopPropagation();
+		event.preventDefault();
+
 		const target = event.target;
 		const node = self.nodes.get( target );
 
@@ -233,6 +223,9 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 	function _handleSelectSurveyDblClick ( event ) {
 
+		event.stopPropagation();
+		event.preventDefault();
+
 		const target = event.target;
 		const node = self.nodes.get( target );
 
@@ -246,13 +239,61 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 		if ( ! viewer.surveyLoaded ) return;
 
+		if ( event.name === 'splays' ) {
+
+			self.handleRefresh();
+			return;
+		}
+
 		if (
-			( event.name === 'splays' ) ||
+			( self.lastSection !== viewer.section ) ||
 			( self.lastShadingMode === SHADING_SURVEY && viewer.shadingMode !== SHADING_SURVEY ) ||
 			( self.lastShadingMode !== SHADING_SURVEY && viewer.shadingMode === SHADING_SURVEY )
 		) {
 
-			self.handleRefresh();
+			_colourSections();
+
+			self.lastShadingMode = viewer.shadingMode;
+			self.lastSection = viewer.section;
+
+		}
+
+	}
+
+	function _colourSections( ul ) {
+
+		const root = ( ul === undefined ) ? self.page : ul;
+		const lis = root.getElementsByTagName( 'li' );
+
+		var i;
+
+		const surveyColourMapper = viewer.ctx.surveyColourMapper;
+		const surveyColourMap = ( viewer.shadingMode === SHADING_SURVEY ) ? surveyColourMapper.getColourMap( viewer.section ) : null;
+
+		for ( i = 0; i < lis.length; i++ ) {
+
+			const li = lis[ i ];
+			const node = self.nodes.get( lis[ i ] );
+
+			if ( node !== undefined && node.p === undefined ) {
+
+				const span = li.firstChild;
+				const id = node.id;
+				let colour;
+
+				if ( surveyColourMap !== null && surveyColourMap[ id ] !== undefined ) {
+
+					colour = '#' + surveyColourMap[ id ].getHexString();
+
+				} else {
+
+					colour = '#444444';
+
+				}
+
+				span.style.color = colour;
+
+			}
 
 		}
 

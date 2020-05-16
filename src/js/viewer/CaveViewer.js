@@ -1281,6 +1281,8 @@ function CaveViewer ( domID, configuration ) {
 
 	function onMouseDown ( event ) {
 
+		if ( event.target !== renderer.domElement ) return;
+
 		const scale = __v.set( container.clientWidth / 2, container.clientHeight / 2, 0 );
 		const mouse = cameraManager.getMouse( event.clientX, event.clientY );
 

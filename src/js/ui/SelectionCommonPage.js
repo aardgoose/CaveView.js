@@ -111,7 +111,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 	};
 
-	this.displayPanelCommon = function ( top ) {
+	this.displaySectionCommon = function ( top ) {
 
 		const children = top.children;
 		const self = this;
@@ -130,7 +130,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 		_colourSections( ul );
 
 		this.currentTop = top;
-//		this.lastSelected = null;
+		// this.lastSelected = null;
 		this.lastShadingMode = viewer.shadingMode;
 
 		return ul;

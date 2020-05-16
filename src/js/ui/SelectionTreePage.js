@@ -5,7 +5,7 @@ function SelectionTreePage ( frame, viewer, container, fileSelector ) {
 	SelectionCommonPage.call( this, frame, viewer, container, fileSelector );
 
 	const self = this;
-	const domTop = _displayPanel( this.currentTop );
+	const domTop = _displaySection( this.currentTop );
 
 	var hightlitElement = null;
 	var lastHighlitScroll = 0;
@@ -27,7 +27,7 @@ function SelectionTreePage ( frame, viewer, container, fileSelector ) {
 
 			} else {
 
-				const ul = _displayPanel( node );
+				const ul = _displaySection( node );
 				li.appendChild( ul );
 				target.classList.add( 'open' );
 
@@ -45,7 +45,7 @@ function SelectionTreePage ( frame, viewer, container, fileSelector ) {
 
 	this.handleRefresh = function () {
 		// FIXME
-		this.appendChild( _displayPanel( this.currentTop ) );
+		this.appendChild( _displaySection( this.currentTop ) );
 
 	};
 
@@ -129,9 +129,9 @@ function SelectionTreePage ( frame, viewer, container, fileSelector ) {
 
 	}
 
-	function _displayPanel ( top ) {
+	function _displaySection ( top ) {
 
-		const ul = self.displayPanelCommon( top );
+		const ul = self.displaySectionCommon( top );
 		ul.classList.add( 'cv-tree' );
 
 		return ul;

@@ -7,7 +7,7 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 	const self = this;
 	var depth = 0;
 
-	this.addSlide( _displayPanel( self.currentTop ), depth );
+	this.addSlide( _displaySection( self.currentTop ), depth );
 
 	var redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
 
@@ -15,7 +15,7 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 
 		if ( node !== undefined && node !== self.surveyTree ) {
 
-			self.replaceSlide( _displayPanel( node ), ++depth );
+			self.replaceSlide( _displaySection( node ), ++depth );
 
 		} else if ( target.id === 'ui-path' ) {
 
@@ -31,7 +31,7 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 
 			if ( self.currentTop === self.surveyTree ) return;
 
-			self.replaceSlide( _displayPanel( self.currentTop.parent ), --depth );
+			self.replaceSlide( _displaySection( self.currentTop.parent ), --depth );
 
 		}
 
@@ -39,13 +39,13 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 
 	this.handleRefresh = function () {
 
-		this.replaceSlide( _displayPanel( this.currentTop ), depth );
+		this.replaceSlide( _displaySection( this.currentTop ), depth );
 
 	};
 
 	return this;
 
-	function _displayPanel ( top ) {
+	function _displaySection ( top ) {
 
 		self.nodes = new WeakMap();
 
@@ -72,7 +72,7 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 
 		}
 
-		return self.displayPanelCommon( top );
+		return self.displaySectionCommon( top );
 
 	}
 

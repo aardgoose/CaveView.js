@@ -21,9 +21,6 @@ import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/Cfg';
 import { WorkerPoolCache } from '../core/WorkerPool';
 import { defaultView, dynamicView, ViewState } from './ViewState';
-
-// import { Annotations } from './Annotations';
-
 import { OrbitControls } from '../ui/OrbitControls';
 import { LocationControls } from '../ui/LocationControls';
 
@@ -1350,10 +1347,8 @@ function CaveViewer ( domID, configuration ) {
 
 			break;
 
-		case MOUSE_MODE_ANNOTATE:
-
-			selectAnnotation( visibleStation( intersects ) );
 		*/
+
 		}
 
 		function _selectStation ( station ) {
@@ -1361,6 +1356,12 @@ function CaveViewer ( domID, configuration ) {
 			if ( station === null ) return;
 
 			survey.selectStation( station );
+
+			const selectEvent = { type: 'select', node: station, handled: false };
+
+			self.dispatchEvent( selectEvent );
+
+			if ( selectEvent.handled ) return;
 
 			if ( event.button === MOUSE.LEFT ) {
 
@@ -1372,7 +1373,6 @@ function CaveViewer ( domID, configuration ) {
 
 			}
 
-			self.dispatchEvent( { type: 'select', node: station } );
 
 		}
 
@@ -1462,30 +1462,8 @@ function CaveViewer ( domID, configuration ) {
 		}
 
 	}
+
 	/*
-	function selectAnnotation ( station ) {
-
-		const annotations = survey.annotations;
-
-		if ( station === null ) return;
-
-		survey.selectStation( station );
-
-		self.dispatchEvent( {
-			type: 'selectedAnnotation',
-			annotationInfo: annotations.getStation( station ),
-			add: function _setAnnotation( annotation ) {
-
-				console.log( 'annotation handler: ', annotation );
-				annotations.setStation( station, annotation );
-				renderView();
-
-			}
-		} );
-
-		renderView();
-
-	}
 
 	function selectEntrance ( hit ) {
 
@@ -1498,7 +1476,9 @@ function CaveViewer ( domID, configuration ) {
 		} );
 
 	}
+
 	*/
+
 	function selectTrace ( hit ) {
 
 		const dyeTraces = survey.dyeTraces;

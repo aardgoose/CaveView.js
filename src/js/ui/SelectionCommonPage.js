@@ -42,8 +42,6 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 	this.titleBar = titleBar;
 	this.appendChild( titleBar );
 
-	this.addHeader( 'header' );
-
 	this.addListener( this.page, 'mouseover', _handleMouseover );
 	this.addListener( this.page, 'mouseleave', _handleMouseleave );
 

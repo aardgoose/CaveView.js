@@ -34,6 +34,9 @@ Object.assign( HudObject.prototype, {
 		div.style.height = height + 'px';
 		div.style.position = 'absolute';
 
+		div.setAttribute( 'draggable', 'false' );
+		div.addEventListener( 'dragstart', function ( e ) {e.preventDefault(); } );
+
 		div.addEventListener( 'mouseenter', onEnter );
 
 		return div;

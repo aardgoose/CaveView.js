@@ -13,11 +13,17 @@ Frame.prototype.reset = function () {
 	const frame = document.createElement( 'div' );
 	frame.classList.add( 'cv-frame' );
 
+	const frameHeader = document.createElement( 'div' );
+	frameHeader.classList.add( 'cv-frame-header' );
+	frameHeader.textContent = 'frame header';
+	frame.appendChild( frameHeader );
+
 	// create UI box to contain tabs - reorients for small screen widths
 	const tabBox = document.createElement( 'div' );
 	tabBox.classList.add( 'cv-tab-box' );
 
 	this.frame = frame;
+	this.header = frameHeader;
 	this.tabBox = tabBox;
 	this.pages = [];
 	this.listeners = [];
@@ -76,10 +82,11 @@ Frame.prototype.getSeq = function () {
 };
 
 
-Frame.prototype.onScreen = function () {
+Frame.prototype.onScreen = function ( title ) {
 
 	this.tabBox.classList.add( 'onscreen' );
 	this.frame.classList.add( 'onscreen' );
+	this.header.textContent = title;
 
 };
 

@@ -1,5 +1,6 @@
 {
 	"settings": {
+		"title": "Settings",
 		"survey": {
 			"header": "Survey",
 			"caption": "File"
@@ -78,6 +79,7 @@
 		}
 	},
 	"surface": {
+		"title": "Surface",
 		"surface": {
 			"header": "Surface Features",
 			"legs": "Surface Legs",
@@ -109,23 +111,20 @@
 		}
 	},
 	"selection": {
+		"title": "Selection",
 		"header" : "Selection"
 	},
 	"edit": {
-		"header": "Edit",
+		"title": "Edit",
 		"mode": "edit mode",
 		"modes": {
 			"none": "- none -",
 			"route": "Routes",
 			"trace": "Traces",
-			"entrances": "Entrances",
-			"annotate": "Annotations"
+			"entrances": "Entrances"
 		},
 		"entrance": {
 			"header": "Entrances"
-		},
-		"annotate": {
-			"header": "Annotations"
 		},
 		"route": {
 			"header": "Routes",
@@ -140,6 +139,7 @@
 		}
 	},
 	"info": {
+		"title": "Information",
 		"header": "Information",
 		"stats": {
 			"header": "Survey Stats",
@@ -150,8 +150,9 @@
 		}
 	},
 	"help": {
-		"header_svx": "Help - key commands (survex)",
-		"header_native": "Help - key commands (native)",
+		"title": "Help",
+		"header_svx": "Key commands (survex)",
+		"header_native": "Key commands (native)",
 		"shading": {
 			"header": "Shading",
 			"height": "height",

@@ -48,7 +48,7 @@ Page.prototype.tabHandleClick = function ( event ) {
 
 	tab.classList.add( 'toptab' );
 
-	this.frame.onScreen();
+	this.frame.onScreen( this.i18n( 'title' ) );
 
 	pages.forEach( function ( page ) {
 

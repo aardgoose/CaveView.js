@@ -1,12 +1,10 @@
-body {
-  font-family: 'Source Sans Pro Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
 .cv-container {
   position: relative;
   overflow: hidden;
   height: 600px;
   width: 1000px;
   touch-action: none;
+  font-family: 'Source Sans Pro Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 .cv-frame *,
 .cv-tab-box *,
@@ -31,12 +29,25 @@ body {
   font-size: 12px;
   border-right: 1px solid grey;
 }
+.cv-frame-header {
+  position: sticky;
+  top: 0px;
+  margin-left: 20px;
+  height: 40px;
+  width: 260px;
+  padding: 0;
+  color: white;
+  background-color: #222222;
+  font-size: 16px;
+  line-height: 39px;
+  z-index: 20;
+  border-bottom: 1px solid white;
+}
 .cv-frame div.page {
   position: absolute;
-  top: 0px;
+  top: 40px;
   bottom: 40px;
   left: 0px;
-  height: 100%;
   width: 280px;
   padding: 2px 4px 20px 20px;
   background-color: #222222;
@@ -63,6 +74,9 @@ body {
 .cv-frame div.page div#ui-path:hover,
 .cv-frame div.page div#ui-path span {
   color: #1ab4e5;
+}
+.cv-frame div.page ul li:hover li:not( :hover ):not( .selected ) {
+  color: white;
 }
 .cv-frame div.page div.slide {
   position: absolute;
@@ -123,10 +137,10 @@ body {
   filter: brightness(1);
 }
 .cv-tab-box .close {
-  background-color: #222222;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='36px' height='36px'%3E%3Cpath d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
-  border-left: none;
   display: none;
+  background: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='36px' height='36px'%3E%3Cpath d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
+  border: none;
 }
 .cv-tab-box.onscreen .close {
   display: block;
@@ -136,7 +150,7 @@ body {
 .cv-tab-box .fullscreen {
   display: none;
   border-left: none;
-  background-color: #222222;
+  background: transparent;
 }
 .cv-tab-box.onscreen .fullscreen {
   display: block;

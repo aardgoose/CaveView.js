@@ -5,7 +5,7 @@ import {
 	SHADING_PATH, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_TERRAIN, FEATURE_STATIONS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, MOUSE_MODE_ANNOTATE, FEATURE_ANNOTATIONS, TERRAIN_BLEND
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, TERRAIN_BLEND
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -406,7 +406,6 @@ function CaveViewer ( domID, configuration ) {
 	_enableLayer( LEG_SURFACE,       'surfaceLegs' );
 	_enableLayer( LABEL_STATION,     'stationLabels' );
 	_enableLayer( LABEL_STATION_COMMENT, 'stationComments' );
-	_enableLayer( FEATURE_ANNOTATIONS, 'annotations' );
 	_enableLayer( SURVEY_WARNINGS,     'warnings' );
 
 	container.addEventListener( 'mouseover', onMouseOver );
@@ -525,12 +524,6 @@ function CaveViewer ( domID, configuration ) {
 
 			mouseTargets = survey.entranceTargets;
 			raycaster.params.Points.threshold = 15;
-
-			break;
-
-		case MOUSE_MODE_ANNOTATE:
-
-			mouseTargets = survey.pointTargets;
 
 			break;
 

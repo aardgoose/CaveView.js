@@ -8,6 +8,9 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 	BufferGeometry.call( this );
 
 	this.type = 'TerrainMeshGeometry';
+	this.canZoom = true;
+
+	const self = this;
 
 	const clippedVertices = [];
 	const vertex3cache = [];
@@ -101,20 +104,34 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 
 	}
 
-	/*
+	// parse extention headers
 
-	const extentionId = dataView.getUint8( nextStart, true );
-	const extentionLength = dataView.getUint32( nextStart + 1, true );
+	while ( nextStart < meshData.byteLength ) {
 
-	*/
+		const extentionId = dataView.getUint8( nextStart, true );
+		const extentionLength = dataView.getUint32( nextStart + 1, true );
 
-	// read oct encoded normals
+		console.log( 'extention', extentionId , extentionLength );
 
-	const octNormals = new Uint8Array( meshData, nextStart + 5, vCount * 2 );
+		nextStart += 5;
 
-	for ( i = 0; i < vCount * 2; ) {
+		switch ( extentionId ) {
 
-		_decodeOct( ( octNormals[ i++ ] / 255 ) * 2 - 1, ( octNormals[ i++ ] / 255 ) * 2 - 1 );
+		case 1:
+			_decodeOctNormals();
+			break;
+
+		case 2:
+			// water map - ignored
+			break;
+
+		case 4:
+			_decodeMetadata();
+			break;
+
+		}
+
+		nextStart += extentionLength;
 
 	}
 
@@ -153,6 +170,31 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 		} );
 
 		return tArray;
+
+	}
+
+	function _decodeMetadata () {
+
+		const metatdataLength = dataView.getUint32( nextStart , true );
+
+		const rawMetadata = new Uint8Array( meshData, nextStart + 4, metatdataLength );
+		const decoder = new TextDecoder();
+
+		const metadata = JSON.parse( decoder.decode( rawMetadata ) );
+
+		if ( metadata.leaf ) self.canZoom = false;
+
+	}
+
+	function _decodeOctNormals () {
+
+		const octNormals = new Uint8Array( meshData, nextStart, vCount * 2 );
+
+		for ( i = 0; i < vCount * 2; ) {
+
+			_decodeOct( ( octNormals[ i++ ] / 255 ) * 2 - 1, ( octNormals[ i++ ] / 255 ) * 2 - 1 );
+
+		}
 
 	}
 

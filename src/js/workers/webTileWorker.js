@@ -196,7 +196,16 @@ function loadTile ( terrainData ) {
 
 	}
 
-	postMessage( { status: 'ok', index: indexBuffer, attributes: attributes, boundingBox: boundingBox }, transferable );
+	postMessage(
+		{
+			status: 'ok',
+			index: indexBuffer,
+			attributes: attributes,
+			boundingBox: boundingBox,
+			canZoom: true
+		},
+		transferable
+	);
 
 }
 

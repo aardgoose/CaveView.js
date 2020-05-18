@@ -30,7 +30,7 @@ TerrainMeshLoader.prototype.load = function () {
 	xhr.open( 'GET', this.tileFile );
 
 	xhr.responseType = 'arraybuffer';
-	xhr.setRequestHeader( 'Accept', 'application/vnd.quantized-mesh;extensions=octvertexnormals;q=0.9;access_token=' + this.accessToken );
+	xhr.setRequestHeader( 'Accept', 'application/vnd.quantized-mesh;extensions=octvertexnormals,metadata;q=0.9;access_token=' + this.accessToken );
 
 	xhr.send();
 

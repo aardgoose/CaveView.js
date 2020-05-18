@@ -74,7 +74,16 @@ function mapLoaded ( meshData ) {
 
 	}
 
-	postMessage( { status: 'ok', index: indexBuffer, attributes: attributes, boundingBox: boundingBox }, transferable );
+	postMessage(
+		{
+			status: 'ok',
+			index: indexBuffer,
+			attributes: attributes,
+			boundingBox: boundingBox,
+			canZoom: terrainTile.canZoom
+		},
+		transferable
+	);
 
 }
 

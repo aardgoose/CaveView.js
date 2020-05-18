@@ -45,7 +45,8 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 			default:
 
-				throw new Error( 'Unsupported projection' );
+				console.log( 'Unsupported projection:', sourceCRS );
+				sourceCRS = null;
 
 			}
 
@@ -61,7 +62,7 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 	// FIXME use NAD grid corrections OSTM15 etc ( UK Centric )
 	if ( sourceCRS !== null ) {
-
+console.log( 'here', sourceCRS );
 		this.sourceCRS = sourceCRS;
 
 		if ( displayCRS === 'ORIGINAL' ) {

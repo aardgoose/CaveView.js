@@ -111,8 +111,6 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 		const extentionId = dataView.getUint8( nextStart, true );
 		const extentionLength = dataView.getUint32( nextStart + 1, true );
 
-		console.log( 'extention', extentionId , extentionLength );
-
 		nextStart += 5;
 
 		switch ( extentionId ) {

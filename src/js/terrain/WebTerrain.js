@@ -93,6 +93,11 @@ function WebTerrain ( ctx, survey, onLoaded ) {
 
 			self.tileArea( self.limits );
 
+		} else {
+
+			console.log( 'no terrain found' );
+			onLoaded( self );
+
 		}
 
 	}
@@ -115,6 +120,8 @@ WebTerrain.prototype.hasCoverage = function () {
 	for ( var i = 0, l = tileSets.length; i < l; i++ ) {
 
 		const tileSet = tileSets[ i ];
+
+		if ( tileSet.valid === false ) continue;
 
 		const coverage = TS.getCoverage( limits, tileSet.minZoom );
 
@@ -149,7 +156,7 @@ WebTerrain.prototype.pickCoverage = function ( limits ) {
 
 	const tileSet = this.TS.tileSet;
 
-	var zoom = tileSet.overlayMaxZoom + 1;
+	var zoom = tileSet.initialZoom || tileSet.overlayMaxZoom + 1;
 	var coverage;
 
 	do {
@@ -236,6 +243,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 		}
 
 		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox, self.material );
+		tile.canZoom = tileData.canZoom;
 
 		self.dispatchEvent( { type: 'progress', name: 'set', progress: 100 * ( self.maxTilesLoading - self.tilesLoading ) / self.maxTilesLoading } );
 

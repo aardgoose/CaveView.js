@@ -26,6 +26,7 @@ function EPSG4326TileSet( ctx, tileSetReady, crs ) {
 		self.accessToken = endpoint.accessToken;
 		self.attributions = endpoint.attributions;
 
+		EPSG4326TileSet.defaultTileSet.valid = true;
 		tileSetReady();
 
 	}
@@ -33,6 +34,7 @@ function EPSG4326TileSet( ctx, tileSetReady, crs ) {
 	function _apiError ( ) {
 
 		console.warn( 'cesium api error' );
+		tileSetReady();
 
 	}
 
@@ -40,6 +42,7 @@ function EPSG4326TileSet( ctx, tileSetReady, crs ) {
 
 EPSG4326TileSet.defaultTileSet = {
 	title: 'Cesium',
+	initialZoom: 12,
 	overlayMaxZoom: 16,
 	maxZoom: 16,
 	minZoom: 10,
@@ -47,11 +50,12 @@ EPSG4326TileSet.defaultTileSet = {
 	subdirectory: null,
 	dtmScale: 64,
 	minX: 0,
-	maxX: 1023,
+	maxX: 2048,
 	minY: 0,
 	maxY: 1023,
 	attributions: [],
-	log: true
+	log: true,
+	valid: false
 };
 
 EPSG4326TileSet.prototype.workerScript = 'webMeshWorker.js';

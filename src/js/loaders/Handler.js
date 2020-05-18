@@ -58,11 +58,17 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 	const displayCRS = cfg.value( 'displayCRS', 'EPSG:3857' );
 
-	if ( sourceCRS === null ) sourceCRS = cfg.value( 'defaultCRS', null );
+	if ( sourceCRS === null ) {
+
+		sourceCRS = cfg.value( 'defaultCRS', null );
+
+		if ( sourceCRS !== null ) console.log( 'Using default projection.' );
+
+	}
 
 	// FIXME use NAD grid corrections OSTM15 etc ( UK Centric )
 	if ( sourceCRS !== null ) {
-console.log( 'here', sourceCRS );
+
 		this.sourceCRS = sourceCRS;
 
 		if ( displayCRS === 'ORIGINAL' ) {

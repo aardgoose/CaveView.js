@@ -254,9 +254,12 @@ div.cv-frame::-webkit-scrollbar-button:end {
   .cv-frame.onscreen {
     padding-top: 40px;
   }
+  .cv-frame div.cv-frame-header {
+    width: 95%;
+  }
   .cv-frame div.page {
     width: 95%;
-    top: 40px;
+    top: 80px;
   }
   .cv-frame div.page div.slide,
   .cv-frame div.slide ul {

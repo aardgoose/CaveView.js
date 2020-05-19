@@ -136,7 +136,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 	// init cmd handler table with error handler for unsupported records or invalid records
 
-	function _errorHandler ( e ) { throw new Error( 'unhandled command: ', e.toString( 16 ) ); }
+	function _errorHandler ( e ) { throw new Error( 'unhandled command: ' + e.toString( 16 ) + ' @ ' + pos.toString( 16 ) ); }
 
 	for ( i = 0; i < 256; i++ ) {
 
@@ -416,7 +416,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	// init cmd handler table with error handler for unsupported records or invalid records
 
-	function _errorHandler ( e ) { throw new Error( 'unhandled command: ', e.toString( 16 ) ); }
+	function _errorHandler ( e ) { throw new Error( 'unhandled command: ' + e.toString( 16 ) + ' @ ' + pos.toString( 16 ) ); }
 
 	for ( i = 0; i < 256; i++ ) {
 
@@ -514,7 +514,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	}
 
-	if ( version === 6 ) {
+	if ( version >= 4 && version <= 6 ) {
 
 		cmd[ 0x20 ] = cmd_DATE_V4;
 		cmd[ 0x21 ] = cmd_DATE2_V4;

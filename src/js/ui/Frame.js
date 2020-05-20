@@ -2,6 +2,7 @@
 function Frame ( ctx ) {
 
 	this.ctx = ctx;
+	this.openPageId = null;
 	this.reset();
 
 }
@@ -41,6 +42,7 @@ Frame.prototype.reset = function () {
 
 	function _closeFrame ( /* event */ ) {
 
+		self.openPageId = null;
 		self.tabBox.classList.remove( 'onscreen' );
 		self.frame.classList.remove( 'onscreen' );
 
@@ -70,6 +72,8 @@ Frame.prototype.addPage = function ( page ) {
 	this.frame.appendChild( pageDiv );
 
 	this.pages.push( { tab: tab, page: pageDiv, owner: page } );
+
+	if ( this.openPageId === page.id ) page.open();
 
 	return this;
 

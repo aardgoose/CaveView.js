@@ -53,6 +53,7 @@
   background-color: #222222;
   color: white;
   cursor: default;
+  display: none;
 }
 .cv-frame div.page ul {
   list-style-type: none;

@@ -17,6 +17,7 @@ function Page ( id, x18nPrefix, onTop, onLeave ) {
 	this.slide = undefined;
 	this.x18nPrefix = x18nPrefix + '.';
 	this.onChange = null;
+	this.id = id;
 
 }
 
@@ -40,15 +41,22 @@ Page.prototype.addListener = function ( obj, name, handler ) {
 
 Page.prototype.tabHandleClick = function ( event ) {
 
-	const tab = event.target;
-	const pages = this.frame.pages;
-
 	event.preventDefault();
 	event.stopPropagation();
+
+	this.open();
+
+};
+
+Page.prototype.open = function () {
+
+	const tab = this.tab;
+	const pages = this.frame.pages;
 
 	tab.classList.add( 'toptab' );
 
 	this.frame.onScreen( this.i18n( 'title' ) );
+	this.frame.openPageId = this.id;
 
 	pages.forEach( function ( page ) {
 

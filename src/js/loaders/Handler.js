@@ -61,7 +61,6 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 						} ).then(  text => {
 
-							console.log( 'proj', text );
 							this._setCRS( text );
 
 						} ).catch( function () { console.log( 'CRS lookup failed' ); } );

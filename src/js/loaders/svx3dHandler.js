@@ -22,55 +22,26 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) 
 	this.groups = [];
 	this.cave = cave;
 	this.stationMap = new Map();
+	this.dataStream = dataStream;
 
 	var pos = 0; // file position
 
 	// read file header
 
 	readLF(); // Survex 3D Image File
-	const version = readLF(); // 3d version
+	this.version = readLF(); // 3d version
 	const auxInfo = readNSLF();
 	readLF(); // Date
 
 	var sourceCRS = ( auxInfo[ 1 ] === undefined ) ? null : auxInfo[ 1 ]; // coordinate reference system ( proj4 format )
 
-	console.log( 'Survex .3d version ', version );
+	console.log( 'Survex .3d version ', this.version );
 
-	cave.setCRS( sourceCRS );
+	this.pos = pos;
 
-	switch ( version ) {
+	return cave.setCRS( sourceCRS ).then( this.parse2.bind( this ) );
 
-	case 'Bv0.01':
-
-		this.handleOld( dataStream, pos, 1 );
-
-		break;
-
-	case 'v3':
-	case 'v4':
-	case 'v5':
-	case 'v6':
-	case 'v7':
-	case 'v8':
-
-		this.handleVx( dataStream, pos, Number( version.charAt( 1 ) ), section );
-
-		break;
-
-	default:
-
-		throw new Error( 'unsupported .3d version ' + version );
-
-	}
-
-	// if pre selecting a section - trim returned surveyTree
-	if ( this.section !== null ) cave.surveyTree.trim( this.section.split( '.' ) );
-
-	cave.addStations( this.stationMap );
-
-	cave.addLineSegments( this.groups );
-
-	return;
+	//return this.parse2();
 
 	function readLF () { // read until Line feed
 
@@ -106,6 +77,48 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) 
 		return strings;
 
 	}
+
+};
+
+Svx3dHandler.prototype.parse2 = function () {
+	console.log( 'parse2' );
+	const cave = this.cave;
+
+	var pos = this.pos;
+
+	switch ( this.version ) {
+
+	case 'Bv0.01':
+
+		this.handleOld( this.dataStream, pos, 1 );
+
+		break;
+
+	case 'v3':
+	case 'v4':
+	case 'v5':
+	case 'v6':
+	case 'v7':
+	case 'v8':
+
+		this.handleVx( this.dataStream, pos, Number( this.version.charAt( 1 ) ), this.section );
+
+		break;
+
+	default:
+
+		throw new Error( 'unsupported .3d version ' + this.version );
+
+	}
+
+	// if pre selecting a section - trim returned surveyTree
+	if ( this.section !== null ) cave.surveyTree.trim( this.section.split( '.' ) );
+
+	cave.addStations( this.stationMap );
+
+	cave.addLineSegments( this.groups );
+
+	return cave;
 
 };
 

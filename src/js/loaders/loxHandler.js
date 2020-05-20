@@ -63,7 +63,7 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 	cave.addXsects( xSects );
 
-	return this;
+	return Promise.resolve( cave );
 
 	// .lox parsing functions
 

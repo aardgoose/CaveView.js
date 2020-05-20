@@ -259,14 +259,16 @@ CaveLoader.prototype.callHandler = function () {
 
 	if ( moreFiles ) this.loadFile( files.pop() );
 
-	handler.parse( this.models, data, metadata, section );
+	handler.parse( this.models, data, metadata, section ).then( models => {
 
-	if ( ! moreFiles ) {
+		if ( ! moreFiles ) {
 
-		this.callback( this.models );
-		this.dispatchEvent( { type: 'progress', name: 'end' } );
+			this.callback( models );
+			this.dispatchEvent( { type: 'progress', name: 'end' } );
 
-	}
+		}
+
+	} );
 
 };
 

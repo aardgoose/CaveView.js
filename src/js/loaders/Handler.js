@@ -35,7 +35,10 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 		if ( matches && matches.length === 2 ) {
 
-			switch ( matches[ 1 ] ) {
+			const init = matches[ 1 ];
+			var code;
+
+			switch ( init ) {
 
 			case 'epsg:27700' :
 
@@ -45,8 +48,30 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 			default:
 
-				console.log( 'Unsupported projection:', sourceCRS );
-				sourceCRS = null;
+				code = init.match( /epsg:([0-9]+)/ );
+
+				if ( code != null ) {
+
+					console.log( 'looking up CRS code EPSG:' + code [ 1 ] );
+
+					return fetch( 'https://epsg.io/' + code[ 1 ] + '.proj4' )
+						.then( response => {
+
+							return response.text();
+
+						} ).then(  text => {
+
+							console.log( 'proj', text );
+							this._setCRS( text );
+
+						} ).catch( function () { console.log( 'CRS lookup failed' ); } );
+
+				} else {
+
+					console.log( 'Unsupported projection:', sourceCRS );
+					sourceCRS = null;
+
+				}
 
 			}
 
@@ -54,8 +79,15 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 	}
 
-	const cfg = this.ctx.cfg;
+	this._setCRS( sourceCRS );
 
+	return Promise.resolve( null );
+
+};
+
+Handler.prototype._setCRS = function ( sourceCRS ) {
+
+	const cfg = this.ctx.cfg;
 	const displayCRS = cfg.value( 'displayCRS', 'EPSG:3857' );
 
 	if ( sourceCRS === null ) {

@@ -174,7 +174,7 @@ pltHandler.prototype.parse = function ( cave, dataStream, metadata /*, section *
 
 	cave.addXsects( xSects );
 
-	return this;
+	return Promise.resolve( cave );
 
 	function readCoords( parts ) {
 

@@ -688,19 +688,15 @@ div.cv-frame::-webkit-scrollbar-button:end {
 
 #cv-splash {
 	position: absolute;
-	width: 100px;
+	width: 100%;
 	top: 50%;
-	left: 50%;
-	padding: 16px 16px 16px 72px;
-	transform: translate( -50%, -50% );
 	color: white;
-	background: black;
+	background: transparent;
 	text-align: center;
-	border: 2px solid @highlight;
-	background-image: url( "../images/logo48.png" );
-	background-position: 16px 50%;
-	background-repeat: no-repeat;
-	border-radius: 3px;
+}
+
+.cv-splash canvas {
+	filter: grayscale( 50% ) blur( 1px );
 }
 
 .header_full {

@@ -25,6 +25,7 @@ function FileSelector ( container, ctx ) {
 	function _closeSpash () {
 
 		const splash = self.splash;
+		container.classList.remove( 'cv-splash' );
 
 		if ( splash !== null ) {
 
@@ -37,22 +38,19 @@ function FileSelector ( container, ctx ) {
 
 	function _handleDragenter ( event ) {
 
+		event.preventDefault();
+
 		if ( self.splash !== null ) return;
 
 		const splash = document.createElement( 'div' );
 
 		splash.innerHTML = ctx.cfg.i18n( 'dnd.splash_text' ) || 'dnd.splash_text';
-
 		splash.id = 'cv-splash';
 
 		container.appendChild( splash );
-
-		event.preventDefault();
+		container.classList.add( 'cv-splash' );
 
 		self.splash = splash;
-
-		// sometimes a dragleave event doesn't get here.
-		setTimeout( _closeSpash, 10000 );
 
 	}
 
@@ -66,8 +64,8 @@ function FileSelector ( container, ctx ) {
 
 	function _handleDragleave ( event ) {
 
-		_closeSpash();
 		event.preventDefault();
+		if ( event.relatedTarget === container.parentNode ) _closeSpash();
 
 	}
 

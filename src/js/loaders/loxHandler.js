@@ -1,3 +1,4 @@
+import '../core/polyfills';
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_ENTRANCE, STATION_NORMAL } from '../core/constants';
 import { Vector3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';

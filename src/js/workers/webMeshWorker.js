@@ -1,4 +1,3 @@
-import 'three/src/polyfills';
 import { TerrainMeshLoader } from '../loaders/TerrainMeshLoader';
 import { TerrainMeshGeometry } from '../terrain/TerrainMeshGeometry';
 import { Box2 } from 'three/src/math/Box2';

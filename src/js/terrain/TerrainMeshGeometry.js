@@ -1,3 +1,4 @@
+import '../core/polyfills';
 import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { Float32BufferAttribute } from 'three/src/core/BufferAttribute';
 import { Vector3 } from 'three/src/math/Vector3';

@@ -1,5 +1,12 @@
+var scope;
 
-if ( window.TextDecoder === undefined ) {
+if ( self ) {
+	scope = self;
+} else {
+	scope = window;
+}
+
+if ( scope.TextDecoder === undefined ) {
 
 	var TextDecoder = function () {};
 
@@ -20,6 +27,6 @@ if ( window.TextDecoder === undefined ) {
 
 	};
 
-	window.TextDecoder = TextDecoder;
+	scope.TextDecoder = TextDecoder;
 
 }

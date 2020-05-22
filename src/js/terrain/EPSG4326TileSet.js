@@ -1,4 +1,4 @@
-import { FileLoader, Box2 } from '../Three';
+import { FileLoader, Box2, Vector2 } from '../Three';
 import proj4 from 'proj4';
 
 function EPSG4326TileSet( ctx, tileSetReady, crs ) {
@@ -14,7 +14,6 @@ function EPSG4326TileSet( ctx, tileSetReady, crs ) {
 
 	const accessToken = ctx.cfg.value( 'cesiumAccessToken', 'no access token' );
 	const url = 'https://api.cesium.com/v1/assets/1/endpoint?access_token=' + accessToken;
-
 
 	new FileLoader().setResponseType( 'text' ).load( url, _getEndpoint, function () {}, _apiError );
 
@@ -44,7 +43,7 @@ EPSG4326TileSet.defaultTileSet = {
 	title: 'Cesium',
 	initialZoom: 12,
 	overlayMaxZoom: 16,
-	maxZoom: 16,
+	maxZoom: 17,
 	minZoom: 10,
 	divisions: 1,
 	subdirectory: null,
@@ -104,14 +103,11 @@ EPSG4326TileSet.prototype.getCoverage = function ( limits, zoom ) {
 
 	const transformedLimits = this.transformedLimits;
 
+	transformedLimits.expandByPoint( this.transform.forward( limits.min.clone() ) );
+	transformedLimits.expandByPoint( this.transform.forward( limits.max.clone() ) );
+
 	const min = transformedLimits.min;
 	const max = transformedLimits.max;
-
-	min.copy( limits.min );
-	max.copy( limits.max );
-
-	min.copy( this.transform.forward( min ) );
-	max.copy( this.transform.forward( max ) );
 
 	const tileCount = Math.pow( 2, zoom ) / 180; // tile count per degree
 
@@ -147,6 +143,10 @@ EPSG4326TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
 
 	if ( ! this.transformedLimits.intersectsBox( tileBox ) ) return null;
 
+	const clippedSize = new Vector2();
+
+	tileBox.clone().intersect( this.transformedLimits ).getSize( clippedSize );
+
 	return {
 		tileSet: this.tileSet,
 		divisions: 1,
@@ -160,7 +160,7 @@ EPSG4326TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
 		displayCRS: this.CRS,
 		url: this.url,
 		accessToken: this.accessToken,
-		clippedFraction: 1,
+		clippedFraction: clippedSize.x * clippedSize.y / tileSize * tileSize,
 		request: 'tile'
 	};
 

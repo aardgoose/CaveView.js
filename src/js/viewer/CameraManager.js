@@ -45,6 +45,8 @@ function CameraManager ( ctx, renderer, scene ) {
 	const basicRenderer = function () {
 
 		renderer.render( scene, self.activeCamera );
+		renderer.getContext().flush();
+
 		lastFrame = renderer.info.render.frame;
 
 	};
@@ -67,6 +69,8 @@ function CameraManager ( ctx, renderer, scene ) {
 		}
 
 		renderer.render( scene, camera );
+		renderer.getContext().flush();
+
 		lastFrame = renderer.info.render.frame;
 
 	};

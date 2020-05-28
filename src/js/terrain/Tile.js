@@ -155,6 +155,14 @@ Tile.prototype.setReplaced = function () {
 
 };
 
+Tile.prototype.setSkipped = function () {
+
+	this.parent.childrenLoading--;
+
+	this.evicted = false;
+	this.replaced = true;
+
+};
 
 Tile.prototype.setPending = function ( parentTile ) {
 

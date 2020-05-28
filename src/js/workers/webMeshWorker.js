@@ -31,7 +31,16 @@ function mapLoaded ( meshData ) {
 	const x = resolution * tileSpec.x - 180;
 	const y = resolution * tileSpec.y - 90;
 
-	var terrainTile = new TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, clip );
+	var terrainTile = new TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, clip, tileSpec.clippedFraction );
+
+	// we need to zoom if the tile doesnt contain enough vertices to give a reasonable surface
+
+	if ( terrainTile.mustZoom ) {
+
+		postMessage( { status: 'zoom' } );
+		return;
+
+	}
 
 	// avoid calculating bounding box in main thread.
 	// however it isn't preserved in json serialisation.

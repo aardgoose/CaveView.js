@@ -95,12 +95,42 @@ Tree.prototype.findById = function ( id ) {
 
 };
 
+/*
 Tree.prototype.getByPath = function ( path ) {
 
 	const pathArray = path.split( '.' );
 	const node = this.getByPathArray( pathArray );
 
 	return ( pathArray.length === 0 ) ? node: undefined;
+
+};
+*/
+
+Tree.prototype.getByPath = function ( path ) {
+
+	if (!path)
+		return undefined;
+
+	const pathArray = path.split( '.' );
+
+	let node = this.getByPathArray( pathArray );
+
+	let pathArrayPos = undefined;
+
+	if (pathArray.length !== 0)
+	{
+		const pathArrayEx = path.split( '.' );
+
+		if (pathArrayEx.length - 2 < 0)
+			return undefined;
+
+		var pathArrayMainPath = pathArrayEx.slice(0, pathArrayEx.length - 2);
+		var pathPosStation = pathArrayEx.slice(pathArrayEx.length - 2, pathArrayEx.length).join( '.' );
+
+		node = this.getByPathArray( pathArrayPos = pathArrayMainPath.concat(pathPosStation) );
+	}
+
+	return ( (pathArray.length === 0) || (pathArrayPos.length === 0) ) ? node: undefined;
 
 };
 

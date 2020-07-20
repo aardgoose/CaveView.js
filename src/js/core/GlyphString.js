@@ -49,7 +49,6 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 	InstancedBufferGeometry.call( this );
 
 	this.type = 'GlyphStringGeometry';
-	this.name = text;
 	this.width = 0;
 
 	this.setIndex( CommonAttributes.index );
@@ -57,53 +56,26 @@ function GlyphStringGeometry ( text, glyphAtlas ) {
 
 	const l = text.length;
 
-	const uvs = new Float32Array( l * 2 );
-	const widths = new Float32Array( l );
-	const offsets = new Float32Array( l );
-
 	this.glyphAtlas = glyphAtlas;
 
-	this.setStringAttributes( text, uvs, offsets, widths );
+	this.setAttribute( 'instanceUvs', new InstancedBufferAttribute( new Float32Array( l * 2 ), 2, false, 1 ) );
+	this.setAttribute( 'instanceOffsets', new InstancedBufferAttribute( new Float32Array( l ), 1, false, 1 ) );
+	this.setAttribute( 'instanceWidths', new InstancedBufferAttribute( new Float32Array( l ), 1, false, 1 ) );
 
-	this.setAttribute( 'instanceUvs', new InstancedBufferAttribute( uvs, 2, false, 1 ) );
-	this.setAttribute( 'instanceOffsets', new InstancedBufferAttribute( offsets, 1, false, 1 ) );
-	this.setAttribute( 'instanceWidths', new InstancedBufferAttribute( widths, 1, false, 1 ) );
+	this.setString( text );
 
 	this.computeBoundingSphere();
 
 }
 
-GlyphStringGeometry.prototype = Object.assign( Object.create( InstancedBufferGeometry.prototype ), {
+GlyphStringGeometry.prototype = Object.create( InstancedBufferGeometry.prototype );
 
-	constructor: GlyphStringGeometry
 
-} );
-
-GlyphStringGeometry.prototype.replaceString = function ( text ) {
-
-	const l = this.name.length;
-
-	const uvs = new Float32Array( l * 2 );
-	const widths = new Float32Array( l );
-	const offsets = new Float32Array( l );
-
-	this.setStringAttributes( text, uvs, offsets, widths );
+GlyphStringGeometry.prototype.setString = function ( text ) {
 
 	const instanceUvs = this.getAttribute( 'instanceUvs' );
 	const instanceOffsets = this.getAttribute( 'instanceOffsets' );
 	const instanceWidths = this.getAttribute( 'instanceWidths' );
-
-	instanceUvs.copyArray( uvs );
-	instanceOffsets.copyArray( offsets );
-	instanceWidths.copyArray( widths );
-
-	instanceUvs.needsUpdate = true;
-	instanceOffsets.needsUpdate = true;
-	instanceWidths.needsUpdate = true;
-
-};
-
-GlyphStringGeometry.prototype.setStringAttributes = function ( text, uvs, offsets, widths ) {
 
 	const l = text.length, glyphAtlas = this.glyphAtlas;
 
@@ -112,27 +84,35 @@ GlyphStringGeometry.prototype.setStringAttributes = function ( text, uvs, offset
 	for ( i = 0; i < l; i++ ) {
 
 		if ( text.charCodeAt( i ) === 0 ) continue; // skip null characters
-
 		const glyphData = glyphAtlas.getGlyph( text[ i ] );
 
-		uvs[ i * 2 ] = glyphData.column;
-		uvs[ i * 2 + 1 ] = glyphData.row;
-
-		widths[ i ] = glyphData.width;
-
-		offsets[ i ] = offset;
+		instanceUvs.setXY( i, glyphData.column, glyphData.row );
+		instanceWidths.setX( i, glyphData.width );
+		instanceOffsets.setX( i, offset );
 
 		offset += glyphData.width;
 
 	}
 
+	instanceUvs.needsUpdate = true;
+	instanceOffsets.needsUpdate = true;
+	instanceWidths.needsUpdate = true;
+
 	this.width = offset;
+	this.name = text;
+	this.instanceCount = l;
 
 };
 
 GlyphStringGeometry.prototype.dispose = function () {
 
 	if ( this.isCached ) return;
+
+	// delete shared attributes to prevent internal render state
+	// being lost on dispose() call.
+
+	this.deleteAttribute( 'position' );
+	this.setIndex( null );
 
 	InstancedBufferGeometry.prototype.dispose.call( this );
 
@@ -258,7 +238,7 @@ MutableGlyphString.prototype.replaceString = function ( newstring ) {
 
 	}
 
-	this.geometry.replaceString( newstring );
+	this.geometry.setString( newstring );
 
 };
 

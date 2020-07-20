@@ -65,20 +65,8 @@ function CaveViewer ( domID, configuration ) {
 
 	container.style.backgroundColor = cfg.themeValue( 'background' );
 
-	const canvas = document.createElement( 'canvas' );
-	const context = canvas.getContext( 'webgl2' );
+	var renderer = new WebGLRenderer( { antialias: true, alpha: true } );
 
-	const params = { antialias: true, alpha: true };
-
-	if ( context !== null ) {
-
-		console.log( 'WebGL2 enabled' );
-		params.canvas = canvas;
-		params.context = context;
-
-	}
-
-	var renderer = new WebGLRenderer( params );
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setClearColor( cfg.themeValue( 'background' ) );

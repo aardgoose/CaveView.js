@@ -15,8 +15,8 @@ function ClusterLegs ( survey ) {
 	// convert legs to unit length vectors from origin
 	for ( i = 0; i < l; i += 2 ) {
 
-		let leg = new Vector3().subVectors( vertices[ i ], vertices[ i + 1 ] );
-		let legLength = leg.length();
+		const leg = new Vector3().subVectors( vertices[ i ], vertices[ i + 1 ] );
+		const legLength = leg.length();
 
 		leg.normalize();
 
@@ -52,7 +52,7 @@ function clusterLegs( legs, epsilon, minPoints ) {
 
 	for ( i = 0; i < l; i++ ) {
 
-		let leg = legs[ i ];
+		const leg = legs[ i ];
 
 		if ( leg === undefined || leg.label !== undefined ) continue;
 
@@ -96,11 +96,11 @@ function clusterLegs( legs, epsilon, minPoints ) {
 
 	for ( i = 0; i < l; i++ ) {
 
-		let leg = legs[ i ];
+		const leg = legs[ i ];
 
 		if ( leg === undefined || leg.label === NOISE ) continue;
 
-		let cluster = clusters[ leg.label ];
+		const cluster = clusters[ leg.label ];
 
 		tmpVector.copy( leg.vector );
 		tmpVector.setLength( leg.length );

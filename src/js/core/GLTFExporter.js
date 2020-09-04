@@ -760,7 +760,7 @@ GLTFExporter.prototype = {
 
 			var cachedImages = cachedData.images.get( image );
 			var mimeType = format === RGBAFormat ? 'image/png' : 'image/jpeg';
-			var key = mimeType + ":flipY/" + flipY.toString();
+			var key = mimeType + ':flipY/' + flipY.toString();
 
 			if ( cachedImages[ key ] !== undefined ) {
 
@@ -1369,13 +1369,13 @@ GLTFExporter.prototype = {
 
 				}
 
-				for ( var i = 0; i < mesh.morphTargetInfluences.length; ++ i ) {
+				for ( i = 0; i < mesh.morphTargetInfluences.length; ++ i ) {
 
 					var target = {};
 
 					var warned = false;
 
-					for ( var attributeName in geometry.morphAttributes ) {
+					for ( attributeName in geometry.morphAttributes ) {
 
 						// glTF 2.0 morph supports only POSITION/NORMAL/TANGENT.
 						// Three.js doesn't support TANGENT yet.
@@ -1393,7 +1393,7 @@ GLTFExporter.prototype = {
 
 						}
 
-						var attribute = geometry.morphAttributes[ attributeName ][ i ];
+						const attribute = geometry.morphAttributes[ attributeName ][ i ];
 						var gltfAttributeName = attributeName.toUpperCase();
 
 						// Three.js morph attribute has absolute values while the one of glTF has relative values.
@@ -1458,7 +1458,9 @@ GLTFExporter.prototype = {
 			var materials = isMultiMaterial ? mesh.material : [ mesh.material ];
 			var groups = isMultiMaterial ? geometry.groups : [ { materialIndex: 0, start: undefined, count: undefined } ];
 
-			for ( var i = 0, il = groups.length; i < il; i ++ ) {
+			const il = groups.length;
+
+			for ( i = 0; i < il; i ++ ) {
 
 				var primitive = {
 					mode: mode,
@@ -1780,9 +1782,9 @@ GLTFExporter.prototype = {
 
 			if ( light.target
 					&& ( light.target.parent !== light
-					 || light.target.position.x !== 0
-					 || light.target.position.y !== 0
-					 || light.target.position.z !== - 1 ) ) {
+						|| light.target.position.x !== 0
+						|| light.target.position.y !== 0
+						|| light.target.position.z !== - 1 ) ) {
 
 				console.warn( 'THREE.GLTFExporter: Light direction may be lost. For best results, '
 					+ 'make light.target a child of the light with position 0,0,-1.' );
@@ -2039,13 +2041,13 @@ GLTFExporter.prototype = {
 
 			}
 
-			for ( var i = 0; i < skins.length; ++ i ) {
+			for ( i = 0; i < skins.length; ++ i ) {
 
 				processSkin( skins[ i ] );
 
 			}
 
-			for ( var i = 0; i < options.animations.length; ++ i ) {
+			for ( i = 0; i < options.animations.length; ++ i ) {
 
 				processAnimation( options.animations[ i ], input[ 0 ] );
 
@@ -2127,7 +2129,7 @@ GLTFExporter.prototype = {
 
 				if ( outputJSON.buffers && outputJSON.buffers.length > 0 ) {
 
-					var reader = new FileReader();
+					const reader = new FileReader();
 					reader.readAsDataURL( blob );
 					reader.onloadend = function () {
 
@@ -2206,7 +2208,7 @@ GLTFExporter.Utils = {
 
 		} else {
 
-			for ( var i = 0; i < track.times.length; i ++ ) {
+			for ( i = 0; i < track.times.length; i ++ ) {
 
 				if ( Math.abs( track.times[ i ] - time ) < tolerance ) return i;
 
@@ -2318,7 +2320,7 @@ GLTFExporter.Utils = {
 
 			// For every existing keyframe of the merged track, write a (possibly
 			// interpolated) value from the source track.
-			for ( var j = 0; j < mergedTrack.times.length; j ++ ) {
+			for ( j = 0; j < mergedTrack.times.length; j ++ ) {
 
 				mergedTrack.values[ j * targetCount + targetIndex ] = sourceInterpolant.evaluate( mergedTrack.times[ j ] );
 
@@ -2327,7 +2329,7 @@ GLTFExporter.Utils = {
 			// For every existing keyframe of the source track, write a (possibly
 			// new) keyframe to the merged track. Values from the previous loop may
 			// be written again, but keyframes are de-duplicated.
-			for ( var j = 0; j < sourceTrack.times.length; j ++ ) {
+			for ( j = 0; j < sourceTrack.times.length; j ++ ) {
 
 				var keyframeIndex = this.insertKeyframe( mergedTrack, sourceTrack.times[ j ] );
 				mergedTrack.values[ keyframeIndex * targetCount + targetIndex ] = sourceTrack.values[ j ];

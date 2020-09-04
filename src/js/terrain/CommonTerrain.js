@@ -456,7 +456,7 @@ CommonTerrain.prototype._fitSurface = function ( modelPoints /* , offsets */ ) {
 
 	} );
 
-	let sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
+	const sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
 
 	// simple average
 	this.datumShift = s1 / n;

@@ -89,8 +89,8 @@ function Compass ( hudObject ) {
 			const innerR = radius * 0.2;
 
 			var i;
-			let xlv = Math.PI / 4;
-			let xc = Math.PI / 2;
+			const xlv = Math.PI / 4;
+			const xc = Math.PI / 2;
 
 			for ( i = 0; i < 4; i++ ) {
 

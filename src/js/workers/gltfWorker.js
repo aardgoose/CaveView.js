@@ -82,10 +82,10 @@ function getWalls( item, options ) {
 
 	for ( i = 0; i < vertexCount; i++ ) {
 
-		let zOffset = i * 3 + 2; // ( offset of Z value )
-		let offset = i * 2;
+		const zOffset = i * 3 + 2; // ( offset of Z value )
+		const offset = i * 2;
 
-		let u = ( vertices[ zOffset ] + zz ) / z2;
+		const u = ( vertices[ zOffset ] + zz ) / z2;
 
 		uvBuffer[ offset ] = u;
 		uvBuffer[ offset + 1 ] = u;
@@ -133,8 +133,8 @@ function rotateAxes( vertices ) {
 	// rotate axes for z up.
 	for ( i = 0; i < vertexCount; i++ ) {
 
-		let v = i * 3;
-		let z = vertices[ v + 2 ];
+		const v = i * 3;
+		const z = vertices[ v + 2 ];
 
 		vertices[ v + 2 ] = -vertices[ v + 1 ]; // z = -y
 		vertices[ v + 1 ] = z; // y = z

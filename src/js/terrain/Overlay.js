@@ -201,7 +201,7 @@ Overlay.prototype.setInactive = function () {
 
 	for ( var name in materialCache ) {
 
-		let material = materialCache[ name ];
+		const material = materialCache[ name ];
 
 		material.map.dispose();
 		material.dispose();

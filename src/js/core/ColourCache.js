@@ -13,7 +13,7 @@ function ColourCache ( ) {
 
 		for ( var i = 0, l = scale.length; i < l; i++ ) {
 
-			let c = scale[ i ];
+			const c = scale[ i ];
 
 			cache[ i ] = new Color( c[ 0 ] / 255, c[ 1 ] / 255, c[ 2 ] / 255 );
 

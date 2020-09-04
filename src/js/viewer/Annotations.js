@@ -27,7 +27,7 @@ function Annotations ( ctx, survey ) {
 
 	const annotations = survey.metadata.annotations;
 
-	for ( let stationName in annotations ) {
+	for ( const stationName in annotations ) {
 
 		_addAnnotation( stationName );
 

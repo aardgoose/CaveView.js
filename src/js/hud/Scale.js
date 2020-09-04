@@ -57,7 +57,7 @@ Scale.prototype.setRange = function ( min, max, caption ) {
 
 		for ( i = this.children.length; i--; ) {
 
-			let obj = this.children[ i ];
+			const obj = this.children[ i ];
 
 			if ( obj.isRange ) this.remove( obj );
 

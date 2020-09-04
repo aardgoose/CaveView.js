@@ -71,7 +71,7 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
 		if ( station !== null ) {
 
-			let label = station.label;
+			const label = station.label;
 
 			let d2 = 40000;
 

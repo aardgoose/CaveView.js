@@ -137,8 +137,9 @@ Handler.prototype.addLineSegments = function ( groups ) {
 	for ( i = 0; i < l; i++ ) {
 
 		const g = groups[ i ];
+		const vMax = g.length - 1;
 
-		let v, vMax = g.length - 1;
+		let v;
 
 		for ( v = 0; v < vMax; v++ ) {
 

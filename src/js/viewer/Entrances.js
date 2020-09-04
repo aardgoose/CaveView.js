@@ -37,7 +37,7 @@ function Entrances ( ctx, survey ) {
 
 	surveyTree.traverse( _addEntrance );
 
-	let bl = vertices.length * 3;
+	const bl = vertices.length * 3;
 
 	if ( bl > 0 ) {
 

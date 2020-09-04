@@ -75,8 +75,8 @@ function AHI ( hudObject ) {
 
 	for ( i = 0; i < 12; i++ ) {
 
-		let mn1 = m1.clone();
-		let mn2 = m2.clone();
+		const mn1 = m1.clone();
+		const mn2 = m2.clone();
 
 		if ( i % 3 === 0 ) {
 

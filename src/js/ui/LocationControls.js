@@ -182,13 +182,13 @@ var LocationControls = function ( cameraManager, ctx ) {
 
 		if ( scope.enabled === false ) return;
 
-		let alpha = deviceOrientation.alpha ? MathUtils.degToRad( deviceOrientation.alpha ) + alphaOffset : 0; // Z
+		const alpha = deviceOrientation.alpha ? MathUtils.degToRad( deviceOrientation.alpha ) + alphaOffset : 0; // Z
 
-		let beta = deviceOrientation.beta ? MathUtils.degToRad( deviceOrientation.beta ) : 0; // X'
+		const beta = deviceOrientation.beta ? MathUtils.degToRad( deviceOrientation.beta ) : 0; // X'
 
-		let gamma = deviceOrientation.gamma ? MathUtils.degToRad( deviceOrientation.gamma ) : 0; // Y''
+		const gamma = deviceOrientation.gamma ? MathUtils.degToRad( deviceOrientation.gamma ) : 0; // Y''
 
-		let orient = screenOrientation ? MathUtils.degToRad( screenOrientation ) : 0; // O
+		const orient = screenOrientation ? MathUtils.degToRad( screenOrientation ) : 0; // O
 
 		getQuaternion( __quaternion1, alpha, beta, gamma, orient );
 

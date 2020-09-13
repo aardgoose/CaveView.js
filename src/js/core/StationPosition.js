@@ -3,9 +3,13 @@
 
 import { Vector3 } from '../Three.js';
 
-function StationPosition ( x, y, z ) {
+class StationPosition extends Vector3 {
 
-	Vector3.call( this, x, y, z );
+	constructor( x, y, z ) {
+
+		super( x, y, z );
+
+	}
 
 }
 

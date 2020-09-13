@@ -4,12 +4,13 @@ import { Float32BufferAttribute } from 'three/src/core/BufferAttribute';
 import { Vector3 } from 'three/src/math/Vector3';
 import { Quaternion } from 'three/src/math/Quaternion';
 
-function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, clip ) {
+function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, clip, clippedFraction ) {
 
 	BufferGeometry.call( this );
 
 	this.type = 'TerrainMeshGeometry';
 	this.canZoom = true;
+	this.mustZoom = false;
 
 	const self = this;
 
@@ -139,9 +140,31 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 
 	if ( clippedVertices.length !== 0 ) {
 
-		_clipEdges();
+		if ( clippedFraction < 0.00005 && this.canZoom ) {
 
-		_shrinkVertices();
+			//console.log( 'zoom 1' );
+			this.mustZoom = true;
+			return;
+
+		}
+
+		const cvCount = clippedVertices.reduce( ( acc, v ) => ( v ? ++acc : acc ), 0 );
+		const containedCount = vertices.length / 3 - cvCount;
+
+		//console.log( 'cc', containedCount, this.canZoom );
+
+		if ( containedCount ) {
+
+			_clipEdges();
+			_shrinkVertices();
+
+		} else if ( this.canZoom ) {
+
+			//console.log( 'zoom' );
+			this.mustZoom = true;
+			return;
+
+		}
 
 	}
 
@@ -155,6 +178,8 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 	this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
 	this.computeBoundingBox();
+
+	return;
 
 	function _decode( tArray ) {
 
@@ -453,7 +478,7 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 
 		if ( v !== undefined ) return v;
 
-		let offset = i * 3;
+		const offset = i * 3;
 
 		v = new Vector3( vertices[ offset ], vertices[ offset + 1 ], vertices[ offset + 2 ] );
 

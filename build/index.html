@@ -8,21 +8,7 @@
 	<link rel="manifest" href="/manifest.webmanifest" />
 	<meta name="Description" content="CaveView - 3d Cave model viewer">
 	<meta name="theme-color" content="#00FF00"/>
-	<link rel="apple-touch-icon" sizes="57x57" href="fav/apple-icon-57x57.png">
-	<link rel="apple-touch-icon" sizes="60x60" href="fav/apple-icon-60x60.png">
-	<link rel="apple-touch-icon" sizes="72x72" href="fav/apple-icon-72x72.png">
-	<link rel="apple-touch-icon" sizes="76x76" href="fav/apple-icon-76x76.png">
-	<link rel="apple-touch-icon" sizes="114x114" href="fav/apple-icon-114x114.png">
-	<link rel="apple-touch-icon" sizes="120x120" href="fav/apple-icon-120x120.png">
-	<link rel="apple-touch-icon" sizes="144x144" href="fav/apple-icon-144x144.png">
-	<link rel="apple-touch-icon" sizes="152x152" href="fav/apple-icon-152x152.png">
-	<link rel="apple-touch-icon" sizes="180x180" href="fav/apple-icon-180x180.png">
-	<link rel="icon" type="image/png" sizes="192x192"  href="fav/android-icon-192x192.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="fav/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="96x96" href="fav/favicon-96x96.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="fav/favicon-16x16.png">
-	<meta name="msapplication-TileColor" content="#ffffff">
-	<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+	<link rel="icon" type="image/svg+xml" href="CaveView/images/logo.svg">
 </head>
 <body onload="onload();" >
 
@@ -36,7 +22,10 @@
 <script type="text/javascript" src="CaveView/lib/WMTSProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/IGMEProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/GB-Formatters.js" ></script>
+<!--
 
+<script src="webgl-gl-error-check.js"></script>
+-->
 <script type="text/javascript" src="CaveView/js/CaveView2.js" ></script>
 
 <script type="text/javascript" >
@@ -48,15 +37,17 @@ function onload () {
 		surveyDirectory: "/surveys/",
 		home: "/CaveView/",
 		showEditPage: true,
-		loadMetadata: true,
+//		loadMetadata: true,
 		view: { walls: false, alpha: false, terrain: false },
 		saturatedGradient: true,
-//		displayCRS: 'ORIGINAL',
-		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZTk5MmVmZC1iZDU5LTQzMWQtOWY0Zi1mZDYxNDA1MTNjMjgiLCJpZCI6OTEwLCJpYXQiOjE1MjYzMjczMDh9.aJWNt5jc-dt64lR4q7zw0bdp0PARsvupmWjUYUrQVQs',
+		displayCRS: 'ORIGINAL',
+//		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZTk5MmVmZC1iZDU5LTQzMWQtOWY0Zi1mZDYxNDA1MTNjMjgiLCJpZCI6OTEwLCJpYXQiOjE1MjYzMjczMDh9.aJWNt5jc-dt64lR4q7zw0bdp0PARsvupmWjUYUrQVQs',
+		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyZWVlMDFjMC04MzNhLTQxYTAtYjlmNC1jOTY2ZDFkYmFkMmEiLCJpZCI6OTEwLCJhc3NldHMiOlsxXSwiaWF0IjoxNTI2ODkzMTk0fQ.KG6jYhnZ3T4sgZ14QZotBIiL4lfgHpy9NY6nSRSjz4o',
 //		language: "template",
 //		defaultCRS: "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs",
 //		defaultCRS: "+proj=utm +zone=30 +ellps=WGS84 +datum=WGS84 +units=m +no_defs",
-	} );
+//		defaultCRS: "+proj=tmerc +lat_0=0 +lon_0=15 +k=0.9999 +x_0=500000 +y_0=-5000000 +ellps=bessel +towgs84=577.326,90.129,463.919,5.137,1.474,5.297,2.4232 +units=m +no_defs"
+} );
 
 	viewer.addOverlay( 'Barmaster', new BarmasterProvider() );
 	viewer.addOverlay( 'OSM', new OSMProvider() );
@@ -72,6 +63,7 @@ function onload () {
 //	viewer.addFormatters( OSGBStationFormatter );
 
 var caves = [
+	"evklidova_piscal.3d",
 	"Castleton_Master_NoSurface.3d",
 	"all.3d",
 	"test/demo.plt",
@@ -93,60 +85,20 @@ var caves = [
 	"Cheddar.lox"
 ];
 
-
-/*
-	function LinkAnnotator () {
-
-		this.type = 'link';
-
-		this.parameters = [
-			{
-				name: 'url',
-				caption: 'URL',
-				valid: function _urlValidator ( value ) {
-					return true;
-				}
-			}
-		];
-
-	}
-
-	function ImageAnnotator () {
-
-		this.type = 'image';
-
-		this.parameters = [
-			{
-				name: 'file',
-				caption: 'Image Name',
-				valid: function _imageValidator ( value ) {
-					return true;
-				}
-			}
-		];
-
-	}
-*/
-	//	viewer.addAnnotator( new LinkAnnotator() );
-	//	viewer.addAnnotator( new ImageAnnotator() );
-
+	//viewer.addEventListener( 'select', function ( event ) { console.log( 'ev', event ); } );
+	viewer.addEventListener( 'entrance', function ( event ) {
+		console.log( event.node.getPath() );
+		event.handled = true;
+	} );
 
 	const ui = new CV2.CaveViewUI( viewer );
 	ui.loadCaveList( caves );
-	// setTimeout( CV.UI.clearView, 5000 );
-	//CV.UI.loadCaves( [ "ours.lox", "caylar.lox", "garrel.lox", "surface.lox" ] );
-
-	//	CV.UI.loadCaves( [ "Bradwell_Master_NoSurface.3d" ] );
-	//	CV.UI.loadCaves( [ "ours.lox", "caylar.lox" ] );
-	//	CV.UI.loadCaves( uk );
-	//	CV.UI.loadCave( "Giants_Oxlow_Maskhill_System.3d" );
-	//	CV.UI.loadCaves( [ "lathkill.3d", "Bradwell_Master_NoSurface.3d" , "Castleton_Master_NoSurface.3d" ] );
 
 }
 
 </script>
 <div style="padding: 20px">
-<div id="scene"></div>
+<div id="scene" ></div>
 </div>
 <div style="clear: both" id="scratch">.</div>
 <p>Mouse: left button down - rotate, right button down pan, mouse wheel - zoom</p>

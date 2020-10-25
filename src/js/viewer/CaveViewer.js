@@ -1275,7 +1275,19 @@ function CaveViewer ( domID, configuration ) {
 
 			if ( entrance !== null ) {
 
-				_selectStation( survey.surveyTree.findById( entrance.stationID ) );
+				const station = survey.surveyTree.findById( entrance.stationID );
+
+				const event = {
+					type: 'entrance',
+					node: station,
+					handled: false,
+				};
+
+				self.dispatchEvent( event );
+
+				if ( event.handled ) return;
+
+				_selectStation( station );
 				return;
 
 			}

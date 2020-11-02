@@ -1,8 +1,8 @@
-import { Popup } from './Popup.js';
+import { CanvasPopup } from './CanvasPopup';
 
 function StationPopup ( ctx, station, survey, depth, formatter, showDistance, warnings ) {
 
-	Popup.call( this, ctx );
+	CanvasPopup.call( this, ctx );
 
 	const position = survey.getGeographicalPosition( station.p );
 
@@ -83,6 +83,6 @@ function StationPopup ( ctx, station, survey, depth, formatter, showDistance, wa
 
 }
 
-StationPopup.prototype = Object.create( Popup.prototype );
+StationPopup.prototype = Object.create( CanvasPopup.prototype );
 
 export { StationPopup };

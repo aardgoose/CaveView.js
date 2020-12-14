@@ -37,10 +37,15 @@ Popup.prototype = Object.create( Mesh.prototype );
 Popup.prototype.close = function () {
 
 	if ( this.parent ) this.parent.remove( this );
-	if ( ! this.material ) return;
 
-	this.material.dispose();
-	this.material.texture.dispose();
+	const material = this.materal;
+
+	if ( ! material ) return;
+
+	material.dispose();
+
+	if ( material.texture) material.texture.dispose();
+
 
 };
 

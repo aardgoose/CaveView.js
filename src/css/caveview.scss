@@ -1,35 +1,35 @@
 
 
-@frame-width: 300px;
+$frame-width: 300px;
 
-@page-width: @frame-width - 20px;
-@page-rule: 1px solid grey;
+$page-width: $frame-width - 20px;
+$page-rule: 1px solid grey;
 
-@box-shadow: 1px 1px 8px 0px grey;
-@highlight: #1ab4e5;
-@foreground: white;
-@background: #222222;
-@offwhite: #dddddd;
+$box-shadow: 1px 1px 8px 0px grey;
+$highlight: #1ab4e5;
+$foreground: white;
+$background: #222222;
+$offwhite: #dddddd;
 
-@list-divider: #444444;
-@font-size: 12px;
+$list-divider: #444444;
+$font-size: 12px;
 
-@tab-size: 40px;
-@tab-inactive: #444444;
-@tab-border: 1px solid grey;
+$tab-size: 40px;
+$tab-inactive: #444444;
+$tab-border: 1px solid grey;
 
-@thumb-size: 16px;
-@thumb-radius: 15px;
-@thumb-border: 1px solid #00001E;
-@thumb-box-shadow: 0px 0px 0px #000031;
+$thumb-size: 16px;
+$thumb-radius: 15px;
+$thumb-border: 1px solid #00001E;
+$thumb-box-shadow: 0px 0px 0px #000031;
 
-@track-background: #eeeeee;
-@track-box-shadow: 0px 0px 0px #000000;
-@track-border: 0px solid #010101;
-@track-border-radius: 0px;
-@track-height: 4px;
+$track-background: #eeeeee;
+$track-box-shadow: 0px 0px 0px #000000;
+$track-border: 0px solid #010101;
+$track-border-radius: 0px;
+$track-height: 4px;
 
-@animation-speed: 0.25s;
+$animation-speed: 0.25s;
 
 .cv-container {
 	position: relative;
@@ -51,15 +51,15 @@
 	top: 0px;
 	left: 0px;
 	height: 100%;
-	width: @frame-width;
-	background-color: @background;
-	transform: translateX(-@frame-width);
-	transition: transform @animation-speed ease-in;
+	width: $frame-width;
+	background-color: $background;
+	transform: translateX(-$frame-width);
+	transition: transform $animation-speed ease-in;
 	z-index: 10;
 	overflow-y: auto;
 	overflow-x: hidden;
-	font-size: @font-size;
-	border-right: @tab-border;
+	font-size: $font-size;
+	border-right: $tab-border;
 }
 
 .cv-frame-header {
@@ -69,8 +69,8 @@
 	height: 40px;
 	width: 260px;
 	padding: 0;
-	color: @foreground;
-	background-color: @background;
+	color: $foreground;
+	background-color: $background;
 	font-size: 16px;
 	line-height: 39px;
 	z-index: 20;
@@ -82,10 +82,10 @@
 	top: 40px;
 	bottom: 40px;
 	left: 0px;
-	width: @page-width;
+	width: $page-width;
 	padding: 2px 4px 20px 20px;
-	background-color: @background;
-	color: @foreground;
+	background-color: $background;
+	color: $foreground;
 	cursor: default;
 	display: none;
 }
@@ -101,7 +101,7 @@
 .cv-frame div.page ul {
 	list-style-type: none;
 	height: 100%;
-	width: @page-width;
+	width: $page-width;
 	margin: 0;
 	padding: 0 4px 0 0;
 	cursor: default;
@@ -112,14 +112,14 @@
 .cv-frame div.page li {
 	position: relative;
 	margin-left: 20px;
-	border-bottom: 1px solid @list-divider;
+	border-bottom: 1px solid $list-divider;
 }
 
 .cv-frame div.page ul li.selected,
 .cv-frame div.page li:hover,
 .cv-frame div.page div#ui-path:hover,
 .cv-frame div.page div#ui-path span {
-	color: @highlight;
+	color: $highlight;
 }
 
 .cv-frame div.page ul li:hover li:not( :hover ):not( .selected ) {
@@ -132,12 +132,12 @@
 	bottom: 4px;
 	left: 0px;
 	max-height: 100%;
-	background-color: @background;
-	transition: transform @animation-speed ease-in;
+	background-color: $background;
+	transition: transform $animation-speed ease-in;
 }
 
 .cv-frame div.slide-out {
-	border-right: @page-rule;
+	border-right: $page-rule;
 	transform: translateX(-100%);
 }
 
@@ -146,7 +146,7 @@
 	top: 0px;
 	right: 0px;
 	margin: 0;
-	color: @highlight;
+	color: $highlight;
 	z-index: 110;
 }
 
@@ -160,30 +160,30 @@
 
 .cv-frame.onscreen {
 	transform: none;
-	transition: transform @animation-speed ease-out;
+	transition: transform $animation-speed ease-out;
 }
 
 .cv-tab-box {
 	position: absolute;
 	top: 0px;
-	width: @tab-size;
+	width: $tab-size;
 	z-index: 200;
 	transform: none;
-	transition: transform @animation-speed ease-in;
+	transition: transform $animation-speed ease-in;
 }
 
 .cv-tab-box.onscreen {
-	transform: translateX( @frame-width );
-	transition: transform @animation-speed ease-out;
+	transform: translateX( $frame-width );
+	transition: transform $animation-speed ease-out;
 }
 
 .cv-tab-box .tab {
 	float: left;
-	height: @tab-size;
-	width: @tab-size;
+	height: $tab-size;
+	width: $tab-size;
 	border-top: 1px solid black;
 	border-left: 1px solid black;
-	background-color: @tab-inactive;
+	background-color: $tab-inactive;
 	background-origin: content-box;
 	background-repeat: no-repeat;
 	padding: 1px;
@@ -255,12 +255,12 @@
 }
 
 .cv-tab-box.onscreen div.toptab {
-	background-color: @background;
-	border-top: @tab-border;
-	border-bottom: @tab-border;
+	background-color: $background;
+	border-top: $tab-border;
+	border-bottom: $tab-border;
 	border-left: none;
-	border-right: 2px solid @highlight;
-	width: @tab-size + 1;
+	border-right: 2px solid $highlight;
+	width: $tab-size + 1;
 	margin-left: -1px;
 	filter: brightness( 1.0 );
 }
@@ -269,8 +269,8 @@ div.cv-gps-button {
 	box-sizing: border-box;
 	position: absolute;
 	bottom: 0px;
-	height: @tab-size;
-	width: @tab-size;
+	height: $tab-size;
+	width: $tab-size;
 	border: 2px solid transparent;
 	background-color: none;;
 	background-origin: content-box;
@@ -337,7 +337,7 @@ div.cv-frame::-webkit-scrollbar-button:end {
 	}
 
 	.cv-frame.onscreen {
-		padding-top: @tab-size;
+		padding-top: $tab-size;
 	}
 
 	.cv-frame div.cv-frame-header {
@@ -346,7 +346,7 @@ div.cv-frame::-webkit-scrollbar-button:end {
 
 	.cv-frame div.page {
 		width: 95%;
-		top: @tab-size * 2;
+		top: $tab-size * 2;
 	}
 
 	.cv-frame div.page div.slide, .cv-frame div.slide ul {
@@ -356,13 +356,13 @@ div.cv-frame::-webkit-scrollbar-button:end {
 	.cv-tab-box {
 		left: 0px;
 		right: 0px;
-		height: @tab-size;
+		height: $tab-size;
 		width: auto;
 	}
 
 	.cv-tab-box.onscreen {
 		transform: none;
-		background-color: @tab-inactive;
+		background-color: $tab-inactive;
 		border-bottom: thin solid white;
 	}
 
@@ -374,7 +374,7 @@ div.cv-frame::-webkit-scrollbar-button:end {
 		position: static;
 		float: left;
 		margin: 0;
-		background-color: @tab-inactive;
+		background-color: $tab-inactive;
 	}
 
 	/* default to full screen */
@@ -393,17 +393,17 @@ div.cv-frame::-webkit-scrollbar-button:end {
 
 	.cv-tab-box.onscreen div.toptab {
 		border-left: none;
-		border-right: @tab-border;
-		border-top: 4px solid @highlight;
+		border-right: $tab-border;
+		border-top: 4px solid $highlight;
 		border-bottom: none;
 		z-index: 20;
 		margin-left: 0;
-		width: @tab-size;
+		width: $tab-size;
 	}
 
 	.cv-tab-box .close {
 		position: fixed;
-		background-color: @tab-inactive;
+		background-color: $tab-inactive;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='36px' height='36px'%3E%3Cpath d='M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
 		top: 0px;
 		right: 0px;
@@ -421,7 +421,7 @@ div.cv-frame::-webkit-scrollbar-button:end {
 	height: 40px;
 	margin: 0;
 	padding: 22px 0 1px 0;
-	border-bottom: @page-rule;
+	border-bottom: $page-rule;
 	border-bottom-color: white;
 	line-height: 16px;
 	font-weight: bold;
@@ -431,7 +431,7 @@ div.cv-frame::-webkit-scrollbar-button:end {
 	position: relative;
 	margin: 0;
 	padding: 0;
-	border-bottom: @page-rule;
+	border-bottom: $page-rule;
 }
 
 .cv-frame div.page label {
@@ -449,8 +449,8 @@ div.cv-frame::-webkit-scrollbar-button:end {
 	margin: 0 0 4px 0;
 	padding: 0;
 	border: none;
-	background-color: lighten( @background, 10% );
-	color: @foreground;
+	background-color: lighten( $background, 10% );
+	color: $foreground;
 	outline: none;
 }
 
@@ -467,10 +467,10 @@ div.cv-frame::-webkit-scrollbar-button:end {
 	margin: 16px 0 4px 0;
 	padding: 0;
 	border: none;
-	border-bottom: 4px solid darken( @highlight, 20% );
+	border-bottom: 4px solid darken( $highlight, 20% );
 	background-color: black;
-	color: @offwhite;
-	box-shadow: @box-shadow;
+	color: $offwhite;
+	box-shadow: $box-shadow;
 	outline: none;
 	text-decoration: none;
 	text-align: center;
@@ -478,16 +478,16 @@ div.cv-frame::-webkit-scrollbar-button:end {
 
 .cv-frame a.download:hover,
 .cv-frame div.page button:hover {
-	border-bottom-color: @highlight;
-	color: @foreground;
+	border-bottom-color: $highlight;
+	color: $foreground;
 }
 
 .cv-frame a.download:active,
 .cv-frame div.page button:active {
-	border-bottom-color: darken( @highlight, 20% );
+	border-bottom-color: darken( $highlight, 20% );
 	box-shadow: none;
-	box-shadow: inset @box-shadow;
-	color: @offwhite;
+	box-shadow: inset $box-shadow;
+	color: $offwhite;
 }
 
 .cv-frame div.page input[type="text"] {
@@ -524,24 +524,24 @@ div.cv-frame::-webkit-scrollbar-button:end {
 
 .cv-frame a, .cv-frame a:visited {
 	padding-left: 8px;
-	color: @foreground;
+	color: $foreground;
 	text-decoration: none;
 }
 
 .cv-frame a, .cv-frame a:hover {
-	color: @highlight;
+	color: $highlight;
 }
 
 .overlay-branding {
 	position: absolute;
 	right: 0;
 	top: 0;
-	color: @foreground;
+	color: $foreground;
 	margin: 4px;
 }
 
 .cv-frame input[type=checkbox]:checked + label {
-	color: @highlight;
+	color: $highlight;
 }
 
 .cv-frame div.page label.cv-range,
@@ -565,76 +565,76 @@ div.cv-frame::-webkit-scrollbar-button:end {
 	outline: none;
 }
 
-.track-size-mixin() {
-	height: @track-height;
+@mixin track-size() {
+	height: $track-height;
 	width: 100%;
 	cursor: pointer;
 }
 
-.track-mixin() {
-	box-shadow: @track-box-shadow;
-	background: @track-background;
-	border-radius: @track-border-radius;
-	border: @track-border;
+@mixin track() {
+	box-shadow: $track-box-shadow;
+	background: $track-background;
+	border-radius: $track-border-radius;
+	border: $track-border;
 }
 
-.thumb-mixin() {
-	height: @thumb-size;
-	width: @thumb-size;
-	border: @thumb-border;
-	border-radius: @thumb-radius;
-	background: @highlight;
-	box-shadow: @thumb-box-shadow;
+@mixin thumb() {
+	height: $thumb-size;
+	width: $thumb-size;
+	border: $thumb-border;
+	border-radius: $thumb-radius;
+	background: $highlight;
+	box-shadow: $thumb-box-shadow;
 	cursor: pointer;
 }
 
 .cv-frame input[type=range]::-webkit-slider-runnable-track {
-	.track-size-mixin();
-	.track-mixin();
+	@include track-size();
+	@include track();
 }
 
 .cv-frame input[type=range]::-webkit-slider-thumb {
-	.thumb-mixin();
+	@include thumb();
 	-webkit-appearance: none;
 	margin-top: -6px;
 }
 
 .cv-frame input[type=range]:focus::-webkit-slider-runnable-track {
-	background: @track-background;
+	background: $track-background;
 }
 
 .cv-frame input[type=range]::-moz-range-track {
-	.track-size-mixin();
-	.track-mixin();
+	@include track-size();
+	@include track();
 }
 
 .cv-frame input[type=range]::-moz-range-thumb {
-	.thumb-mixin();
+	@include thumb();
 }
 
 .cv-frame input[type=range]::-ms-track {
-	.track-size-mixin();
+	@include track-size();
 	background: transparent;
 	border-color: transparent;
 	color: transparent;
 }
 
 .cv-frame input[type=range]::-ms-fill-lower {
-	.track-mixin();
+	@include track();
 }
 
 .cv-frame input[type=range]::-ms-fill-upper {
-	.track-mixin();
+	@include track();
 }
 
 .cv-frame input[type=range]::-ms-thumb {
-	.thumb-mixin();
+	@include thumb();
 	margin-top: 1px;
 }
 
 .cv-frame input[type=range]:focus::-ms-fill-lower,
 .cv-frame input[type=range]:focus::-ms-fill-upper {
-	background: @track-background;
+	background: $track-background;
 }
 
 .cv-frame div.page label.cv-file-label {
@@ -649,7 +649,7 @@ div.cv-frame::-webkit-scrollbar-button:end {
 
 .cv-frame label.cv-file-label + select {
 	margin-top: 2px;
-	border-left: 2px solid @background;
+	border-left: 2px solid $background;
 }
 
 .cv-frame label.cv-file-label img {
@@ -663,12 +663,12 @@ div.cv-frame::-webkit-scrollbar-button:end {
 }
 
 .cv-frame label.cv-file-label:hover {
-	color: @highlight;
-	border-color: @highlight;
+	color: $highlight;
+	border-color: $highlight;
 }
 
 .cv-frame label.cv-file-label:hover img {
-	background-color: @highlight;
+	background-color: $highlight;
 }
 
 .cv-frame input[type=file] {
@@ -712,13 +712,13 @@ div.cv-frame::-webkit-scrollbar-button:end {
 .container_full {
 	max-height: 280px;
 	overflow: hidden;
-	transition: max-height @animation-speed ease-in;
+	transition: max-height $animation-speed ease-in;
 }
 
 .container_collapsed {
 	max-height: 0;
 	overflow: hidden;
-	transition: max-height @animation-speed ease-out;
+	transition: max-height $animation-speed ease-out;
 }
 
 .cv-frame div.page ul.cv-tree {

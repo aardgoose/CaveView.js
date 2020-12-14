@@ -1,7 +1,7 @@
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
-import less from 'rollup-plugin-less';
+import postcss from 'rollup-plugin-postcss';
 
 function glsl () {
 	return {
@@ -58,38 +58,19 @@ export default {
 		format: 'umd'
 	},
 	plugins: [
-		less( {
-			include: 'src/css/*.less',
-			output: 'build/CaveView/css/caveview.css'
+		postcss({
+			extract: 'build/CaveView/css/caveview.css'
 		}),
 		glsl(),
 		glslThree(),
 		json({
-			// All JSON files will be parsed by default,
-			// but you can also specifically include/exclude files
-			include: [ 'node_modules/**', 'src/js/**' ],
-			exclude: [ 'node_modules/foo/**', 'node_modules/bar/**' ],
-
+			exclude: [ 'node_modules/**', 'build/**', 'tools/**' ],
 			// for tree-shaking, properties will be declared as
 			// variables, using either `var` or `const`
 			preferConst: true, // Default: false
-
-			// specify indentation for the generated default export —
-			// defaults to '\t'
-			indent: '  '
 		}),
 		nodeResolve({}),
 		commonjs({
-			// non-CommonJS modules will be ignored, but you can also
-			// specifically include/exclude files
-			include: 'node_modules/**',  // Default: undefined
-
-			// search for files other than .js files (must already
-			// be transpiled by a previous plugin!)
-			extensions: [ '.js' ],  // Default: [ '.js' ]
-			// if true then uses of `global` won't be dealt with by this plugin
-			ignoreGlobal: false,  // Default: false
-			// if false then skip sourceMap generation for CommonJS modules
 			sourceMap: false,  // Default: true
 		})
 	]

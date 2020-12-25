@@ -602,7 +602,7 @@ Survey.prototype.setScale = function ( hScale, vScale ) {
 
 	this.updateMatrix();
 	this.updateMatrixWorld();
-	this.inverseWorld.getInverse( this.matrixWorld );
+	this.inverseWorld.copy( this.matrixWorld ).invert();
 
 };
 

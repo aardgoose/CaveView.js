@@ -1,4 +1,3 @@
-import { KeyframeTrack } from 'three';
 import { SHADING_SURVEY, STATION_ENTRANCE } from '../core/constants';
 import { Page } from './Page';
 

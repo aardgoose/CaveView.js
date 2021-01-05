@@ -1,3 +1,4 @@
+import { KeyframeTrack } from 'three';
 import { SHADING_SURVEY, STATION_ENTRANCE } from '../core/constants';
 import { Page } from './Page';
 
@@ -82,6 +83,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 		} else if ( child.type !== undefined && child.type === STATION_ENTRANCE ) {
 
 			key = _makeKey( '\u2229 ', cfg.themeColorCSS( 'stations.entrances.marker' ) );
+			key.classList.add( 'cv-entrance' );
 
 		} else if ( connections > 2 ) { // station at junction
 

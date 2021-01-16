@@ -10,3 +10,4 @@ tools/private/
 !build/surveys/README.txt
 build/overlays/
 npm-debug.log
+workspace.code-workspace

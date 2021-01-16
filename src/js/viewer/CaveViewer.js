@@ -16,6 +16,7 @@ import { CameraMove } from './CameraMove';
 import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
+import { ImagePopup } from './ImagePopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/Cfg';
@@ -1206,7 +1207,18 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
-	function showPopup ( station ) {
+	function showStationImagePopup ( station, imageUrl ) {
+
+		if ( popup !== null ) return;
+
+		popup = new ImagePopup( ctx, station, imageUrl, renderView );
+		survey.add( popup );
+
+		renderView();
+
+	}
+
+	function showStationPopup ( station ) {
 
 		if ( popup !== null ) return;
 
@@ -1214,6 +1226,8 @@ function CaveViewer ( domID, configuration ) {
 
 		popup = new StationPopup( ctx, station, survey, depth, formatters.station, ( survey.caveShading === SHADING_DISTANCE ), self.warnings );
 		survey.add( popup );
+
+		renderView();
 
 	}
 
@@ -1226,13 +1240,23 @@ function CaveViewer ( domID, configuration ) {
 
 	}
 
+	function mouseUpLeft () {
+
+		container.removeEventListener( 'mouseup', mouseUpLeft );
+
+		closePopup();
+		renderView();
+
+		self.dispatchEvent( { type: 'select', node: null } );
+
+	}
+
+
 	function setPopup ( station ) {
 
 		closePopup();
 
-		if ( station.isStation() ) showPopup( station );
-
-		renderView();
+		if ( station.isStation() ) showStationPopup( station );
 
 	}
 
@@ -1277,15 +1301,16 @@ function CaveViewer ( domID, configuration ) {
 
 				const station = survey.surveyTree.findById( entrance.stationID );
 
-				const event = {
+				const e = {
 					type: 'entrance',
 					node: station,
 					handled: false,
+					mouseEvent: event
 				};
 
-				self.dispatchEvent( event );
+				self.dispatchEvent( e );
 
-				if ( event.handled ) return;
+				if ( e.handled ) return;
 
 				_selectStation( station );
 				return;
@@ -1350,7 +1375,12 @@ function CaveViewer ( domID, configuration ) {
 
 			survey.selectStation( station );
 
-			const selectEvent = { type: 'select', node: station, handled: false };
+			const selectEvent = {
+				type: 'select',
+				node: station,
+				handled: false,
+				mouseEvent: event
+			};
 
 			self.dispatchEvent( selectEvent );
 
@@ -1407,23 +1437,11 @@ function CaveViewer ( domID, configuration ) {
 
 		}
 
-		function _mouseUpLeft () {
-
-			container.removeEventListener( 'mouseup', _mouseUpLeft );
-
-			closePopup();
-			renderView();
-
-			self.dispatchEvent( { type: 'select', node: null } );
-
-		}
-
 		function _showStationPopup ( station ) {
 
-			showPopup( station );
-			renderView();
+			showStationPopup( station );
 
-			container.addEventListener( 'mouseup', _mouseUpLeft );
+			container.addEventListener( 'mouseup', mouseUpLeft );
 			cameraMove.preparePoint( survey.getWorldPosition( station.p.clone() ) );
 
 			return true;
@@ -1638,6 +1656,13 @@ function CaveViewer ( domID, configuration ) {
 	this.getSurveyTree = function () {
 
 		return survey.surveyTree;
+
+	};
+
+	this.showImagePopup = function ( event, imageUrl ) {
+
+		showStationImagePopup( event.node, imageUrl );
+		container.addEventListener( 'mouseup', mouseUpLeft );
 
 	};
 

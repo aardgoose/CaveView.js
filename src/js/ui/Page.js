@@ -553,13 +553,13 @@ Page.prototype.addDownloadButton = function ( title, urlProvider, fileName ) {
 
 	function _setHref() {
 
-		a.href = urlProvider();
+		a.href = urlProvider( a );
 
 	}
 
 };
 
-Page.prototype.canDownload = function () {
+Page.canDownload = function () {
 
 	const a = document.createElement( 'a' );
 	return ( typeof a.download !== 'undefined' );

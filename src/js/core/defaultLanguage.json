@@ -212,6 +212,21 @@
 			"remove": "remove all except selected section"
 		}
 	},
+	"exports": {
+		"title": "Exports",
+		"gltf_export": {
+			"header": "glTF Export",
+			"walls": "include LRUD walls",
+			"scraps": "include scraps",
+			"legs": "include centre lines",
+			"rotate_axes": "rotate axes",
+			"export": "Download"
+		},
+		"png_export": {
+			"header": "Image (PNG) Export",
+			"export": "Snapshot"
+		}
+	},
 	"hud": {
 		"height": "height",
 		"leg_length": "leg length",

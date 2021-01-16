@@ -30,7 +30,9 @@ import {
 	Vector3, Euler, Quaternion,
 	Scene, Raycaster,
 	WebGLRenderer,
-	MOUSE, FogExp2
+	MOUSE, FogExp2,
+	WebGLRenderTarget,
+	LinearFilter, NearestFilter, RGBAFormat
 } from '../Three';
 
 function CaveViewer ( domID, configuration ) {
@@ -1663,6 +1665,82 @@ function CaveViewer ( domID, configuration ) {
 
 		showStationImagePopup( event.node, imageUrl );
 		container.addEventListener( 'mouseup', mouseUpLeft );
+
+	};
+
+	this.getSnapshot = function () {
+
+		const context = renderer.getContext();
+
+		const maxRenderbufferSize = context.getParameter( context.MAX_RENDERBUFFER_SIZE );
+
+		console.log( maxRenderbufferSize );
+
+		var width  = container.clientWidth;
+		var height = container.clientHeight;
+
+		var newWidth = maxRenderbufferSize / 2;
+		var newHeight = Math.round( height * newWidth / width );
+
+		console.log( 'w', width, 'h', height, 'nh', newWidth, 'nh', newHeight );
+
+		const renderTarget = new WebGLRenderTarget( newWidth, newHeight, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, stencilBuffer: true } );
+
+		renderTarget.texture.generateMipmaps = false;
+		renderTarget.texture.name = 'CV.snapshot';
+
+		renderer.setSize( newWidth, newHeight );
+		renderer.setPixelRatio( 1 );
+
+		renderer.setRenderTarget( renderTarget );
+
+		renderer.clear();
+
+		renderView();
+
+		const bSize = newWidth * newHeight * 4;
+		const buffer = new Uint8ClampedArray( bSize );
+
+		// restore renderer to normal render size and target
+		renderer.readRenderTargetPixels( renderTarget, 0, 0, newWidth, newHeight, buffer );
+
+		// invert image
+		const line = newWidth * 4;
+		const invertedBuffer = new Uint8ClampedArray( bSize );
+
+		for ( let i = 0; i < bSize; i += line ) {
+
+			const dst = bSize - i - line;
+
+			for ( let j = 0; j < line; j++ ) {
+
+				invertedBuffer[ dst + j ] = buffer[ i + j ];
+
+			}
+
+		}
+
+		const id = new ImageData( invertedBuffer, newWidth, newHeight );
+
+		var canvas = document.createElement( 'canvas' );
+
+		canvas.width = newWidth;
+		canvas.height = newHeight;
+
+		var ctx = canvas.getContext( '2d' );
+
+		ctx.putImageData( id, 0, 0 );
+
+		renderTarget.dispose();
+
+		renderer.setRenderTarget( null );
+
+		renderer.setSize( container.clientWidth, container.clientHeight );
+		renderer.setPixelRatio( window.devicePixelRatio );
+
+		renderView();
+
+		return canvas.toDataURL();
 
 	};
 

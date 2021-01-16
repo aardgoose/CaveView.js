@@ -9,6 +9,8 @@ import { EditPage } from './EditPage';
 import { LocationButton } from './LocationButton';
 import { KeyboardControls } from './KeyboardControls';
 import { FileSelector } from './FileSelector';
+import { Page } from './Page';
+import { ExportPage } from './ExportPage';
 
 function CaveViewUI ( viewer ) {
 
@@ -75,6 +77,12 @@ function CaveViewUI ( viewer ) {
 
 		new InfoPage( frame, viewer, fileSelector );
 		new HelpPage( frame, viewer.svxControlMode );
+
+		if ( Page.canDownload() ) {
+
+			new ExportPage( frame, viewer, fileSelector );
+
+		}
 
 		frame.setParent( container );
 

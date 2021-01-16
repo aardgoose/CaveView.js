@@ -78,7 +78,7 @@ function CaveViewUI ( viewer ) {
 		new InfoPage( frame, viewer, fileSelector );
 		new HelpPage( frame, viewer.svxControlMode );
 
-		if ( Page.canDownload() ) {
+		if ( cfg.value( 'showExportPage', false) && Page.canDownload() ) {
 
 			new ExportPage( frame, viewer, fileSelector );
 

@@ -6,7 +6,6 @@ import {
 } from '../core/constants';
 
 import { Page } from './Page';
-import { replaceExtension } from '../core/lib';
 
 const legShadingModes = {
 	'shading.height':        SHADING_HEIGHT,
@@ -123,42 +122,6 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 
 	if ( viewer.svxControlMode ) ch.appendChild( this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' ) );
 
-	if ( this.canDownload() ) {
-
-		const eh = this.addCollapsingHeader( 'gltf_export.header' );
-
-		const selection = { legs: false, walls: false, scraps: false  };
-		const options = { rotate: false, binary: false };
-
-		if ( viewer.hasWalls ) {
-
-			selection.walls = true;
-			eh.appendChild( this.addCheckbox( 'gltf_export.walls', selection, 'walls' ) );
-
-		}
-
-		if ( viewer.hasScraps ) {
-
-			selection.scraps = true;
-			eh.appendChild( this.addCheckbox( 'gltf_export.scraps', selection, 'scraps' ) );
-
-		}
-
-		eh.appendChild( this.addCheckbox( 'gltf_export.legs', selection, 'legs' ) );
-
-		eh.appendChild( this.addCheckbox( 'gltf_export.rotate_axes', options, 'rotate' ) );
-		//eh.appendChild( this.addCheckbox( 'gltf_export.binary_format', options, 'binary' );
-
-		eh.appendChild( this.addButton( 'gltf_export.export', function () {
-
-			viewer.getGLTFExport( selection, options, handleExport );
-
-		} ) );
-
-	}
-
-	const self = this;
-
 	_onChange( { name: 'cameraType' } );
 	_onChange( { name: 'shadingMode' } );
 
@@ -180,14 +143,6 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 			frame.setControlsVisibility( controls, viewer.cameraType === CAMERA_ANAGLYPH || viewer.cameraType === CAMERA_STEREO );
 
 		}
-
-	}
-
-	function handleExport ( gltfData, binary ) {
-
-		var filename = replaceExtension( fileSelector.localFilename, ( binary ? 'glb' : 'gltf' ) );
-
-		self.download( URL.createObjectURL( gltfData ), filename );
 
 	}
 

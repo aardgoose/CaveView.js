@@ -22,10 +22,6 @@
 <script type="text/javascript" src="CaveView/lib/WMTSProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/IGMEProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/GB-Formatters.js" ></script>
-<!--
-
-<script src="webgl-gl-error-check.js"></script>
--->
 <script type="text/javascript" src="CaveView/js/CaveView2.js" ></script>
 
 <script type="text/javascript" >
@@ -37,10 +33,11 @@ function onload () {
 		surveyDirectory: "/surveys/",
 		home: "/CaveView/",
 		showEditPage: true,
+		showExportPage: true,
 //		loadMetadata: true,
 		view: { walls: false, alpha: false, terrain: false },
 		saturatedGradient: true,
-		displayCRS: 'ORIGINAL',
+//		displayCRS: 'ORIGINAL',
 //		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZTk5MmVmZC1iZDU5LTQzMWQtOWY0Zi1mZDYxNDA1MTNjMjgiLCJpZCI6OTEwLCJpYXQiOjE1MjYzMjczMDh9.aJWNt5jc-dt64lR4q7zw0bdp0PARsvupmWjUYUrQVQs',
 		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyZWVlMDFjMC04MzNhLTQxYTAtYjlmNC1jOTY2ZDFkYmFkMmEiLCJpZCI6OTEwLCJhc3NldHMiOlsxXSwiaWF0IjoxNTI2ODkzMTk0fQ.KG6jYhnZ3T4sgZ14QZotBIiL4lfgHpy9NY6nSRSjz4o',
 //		language: "template",
@@ -85,7 +82,6 @@ var caves = [
 	"Cheddar.lox"
 ];
 
-	//viewer.addEventListener( 'select', function ( event ) { console.log( 'ev', event ); } );
 	viewer.addEventListener( 'entrance', function ( event ) {
 		console.log( event.node.getPath() );
 		event.handled = true;

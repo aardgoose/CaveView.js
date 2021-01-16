@@ -133,7 +133,6 @@ CommonTerrain.prototype.setup = function ( renderer, scene, survey ) {
 
 	// set camera frustrum to cover region/survey area
 	const container = this.ctx.container;
-	const originalRenderTarget = renderer.getRenderTarget();
 
 	var width  = container.clientWidth;
 	var height = container.clientHeight;
@@ -189,7 +188,7 @@ CommonTerrain.prototype.setup = function ( renderer, scene, survey ) {
 
 	// restore renderer to normal render size and target
 
-	renderer.setRenderTarget( originalRenderTarget );
+	renderer.setRenderTarget( null );
 
 	renderer.setSize( container.clientWidth, container.clientHeight );
 	renderer.setPixelRatio( window.devicePixelRatio );

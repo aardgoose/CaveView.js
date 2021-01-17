@@ -3,7 +3,7 @@ import { replaceExtension } from '../core/lib';
 
 function ExportPage ( frame, viewer, fileSelector ) {
 
-	Page.call( this, 'icon_settings', 'exports' );
+	Page.call( this, 'icon_export', 'exports' );
 
 	frame.addPage( this );
 

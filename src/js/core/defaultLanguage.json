@@ -224,7 +224,8 @@
 		},
 		"png_export": {
 			"header": "Image (PNG) Export",
-			"export": "Snapshot"
+			"export": "Snapshot",
+			"size": "Size (px)"
 		}
 	},
 	"hud": {

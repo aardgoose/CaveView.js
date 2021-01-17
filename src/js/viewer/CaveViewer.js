@@ -382,8 +382,13 @@ function CaveViewer ( domID, configuration ) {
 		'trackLocation': {
 			get: function () { return trackLocation; },
 			set: setLocation
+		},
+		'maxSnapshotSize': {
+			get: function () {
+				const context = renderer.getContext();
+				return context.getParameter( context.MAX_RENDERBUFFER_SIZE );
+			}
 		}
-
 	} );
 
 	_enableLayer( FEATURE_BOX,       'box' );
@@ -1668,18 +1673,18 @@ function CaveViewer ( domID, configuration ) {
 
 	};
 
-	this.getSnapshot = function () {
+	this.getSnapshot = function ( exportSize ) {
 
 		const context = renderer.getContext();
 
 		const maxRenderbufferSize = context.getParameter( context.MAX_RENDERBUFFER_SIZE );
 
-		console.log( maxRenderbufferSize );
+		console.log( maxRenderbufferSize, exportSize );
 
 		var width  = container.clientWidth;
 		var height = container.clientHeight;
 
-		var newWidth = maxRenderbufferSize / 2;
+		var newWidth = exportSize;
 		var newHeight = Math.round( height * newWidth / width );
 
 		console.log( 'w', width, 'h', height, 'nh', newWidth, 'nh', newHeight );

@@ -39,10 +39,21 @@ function ExportPage ( frame, viewer, fileSelector ) {
 
 	this.addHeader( 'png_export.header' );
 
+	const sizes = [];
+	let mss = viewer.maxSnapshotSize;
+
+	do { sizes.push( mss ); } while ( (mss /= 2) > 512 );
+
+	const pngParams = {
+		exportSize: sizes[ 0 ]
+	};
+
+	this.addSelect( 'png_export.size', sizes, pngParams, 'exportSize' );
+
 	this.addDownloadButton(
 		'png_export.export',
 		() => {
-			const url = viewer.getSnapshot();
+			const url = viewer.getSnapshot( pngParams.exportSize );
 			return url;
 		},
 		'snapshot.png'

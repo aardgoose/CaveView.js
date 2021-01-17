@@ -1675,19 +1675,11 @@ function CaveViewer ( domID, configuration ) {
 
 	this.getSnapshot = function ( exportSize ) {
 
-		const context = renderer.getContext();
-
-		const maxRenderbufferSize = context.getParameter( context.MAX_RENDERBUFFER_SIZE );
-
-		console.log( maxRenderbufferSize, exportSize );
-
 		var width  = container.clientWidth;
 		var height = container.clientHeight;
 
 		var newWidth = exportSize;
 		var newHeight = Math.round( height * newWidth / width );
-
-		console.log( 'w', width, 'h', height, 'nh', newWidth, 'nh', newHeight );
 
 		const renderTarget = new WebGLRenderTarget( newWidth, newHeight, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, stencilBuffer: true } );
 

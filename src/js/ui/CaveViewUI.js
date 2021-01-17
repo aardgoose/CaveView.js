@@ -75,14 +75,10 @@ function CaveViewUI ( viewer ) {
 
 		if ( cfg.value( 'showEditPage', false ) && ! fileSelector.isMultiple ) new EditPage( frame, viewer, fileSelector );
 
+		if ( cfg.value( 'showExportPage', false) && Page.canDownload() ) new ExportPage( frame, viewer, fileSelector );
+
 		new InfoPage( frame, viewer, fileSelector );
 		new HelpPage( frame, viewer.svxControlMode );
-
-		if ( cfg.value( 'showExportPage', false) && Page.canDownload() ) {
-
-			new ExportPage( frame, viewer, fileSelector );
-
-		}
 
 		frame.setParent( container );
 

@@ -63,7 +63,7 @@ Legs.prototype.addLegs = function ( vertices, legRuns ) {
 	legs2Material.resolution = new Vector2( ctx.container.clientWidth, ctx.container.clientHeight );
 
 	ctx.viewer.addEventListener( 'resized', ( e ) => {
-		console.log( e );
+
 		const lineScale = e.lineScale ? e.lineScale : 1;
 
 		legs2Material.resolution = new Vector2( e.width, e.height );

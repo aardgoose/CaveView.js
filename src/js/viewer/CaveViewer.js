@@ -73,8 +73,7 @@ function CaveViewer ( domID, configuration ) {
 
 	renderer.setSize( width, height );
 	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setClearColor( cfg.themeValue( 'background' ) );
-	renderer.setClearAlpha( 0.0 );
+	renderer.setClearColor( cfg.themeValue( 'background' ), 0.0 );
 	renderer.setRenderTarget( null );
 	renderer.clear();
 	renderer.autoClear = false;
@@ -1675,7 +1674,7 @@ function CaveViewer ( domID, configuration ) {
 
 	};
 
-	this.getSnapshot = function ( exportSize ) {
+	this.getSnapshot = function ( exportSize, backgroundColor, lineScale ) {
 
 		var width  = container.clientWidth;
 		var height = container.clientHeight;
@@ -1688,6 +1687,8 @@ function CaveViewer ( domID, configuration ) {
 		renderTarget.texture.generateMipmaps = false;
 		renderTarget.texture.name = 'CV.snapshot';
 
+		if ( backgroundColor !== 'transparent' ) renderer.setClearColor( backgroundColor, 1.0 );
+
 		renderer.setSize( newWidth, newHeight );
 		renderer.setPixelRatio( 1 );
 
@@ -1696,8 +1697,7 @@ function CaveViewer ( domID, configuration ) {
 		renderer.clear();
 
 		// reset camera and materials using renderer size/resolution
-
-		this.dispatchEvent( { type: 'resized', name: 'rtt', 'width': newWidth, 'height': newHeight } );
+		self.dispatchEvent( { type: 'resized', name: 'rts', 'width': newWidth, 'height': newHeight, lineScale: lineScale } );
 
 		renderView();
 
@@ -1737,6 +1737,7 @@ function CaveViewer ( domID, configuration ) {
 		renderTarget.dispose();
 
 		renderer.setRenderTarget( null );
+		renderer.setClearColor( cfg.themeValue( 'background' ), 0.0 );
 
 		renderer.setPixelRatio( window.devicePixelRatio );
 

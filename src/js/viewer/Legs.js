@@ -1,6 +1,114 @@
-import { BufferGeometry, LineSegments, Float32BufferAttribute } from '../Three';
+import { Vector2, BufferGeometry, LineSegments, Float32BufferAttribute, Group } from '../Three';
+
+import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
+import { LineMaterial } from '../core/LineMaterial';
+import { LineSegments2 } from '../core/LineSegments2';
 
 function Legs ( ctx ) {
+
+	Group.call( this );
+
+	const legs = new Legs1( ctx );
+
+	legs.layers = this.layers;
+
+	this.legs1 = legs;
+	this.legs2 = null;
+	this.ctx = ctx;
+
+	this.addStatic( legs );
+
+	Object.defineProperties( this, {
+
+		'legVertices': {
+			get: function () { return this.legs1.legVertices; }
+		},
+
+		'legLengths': {
+			get: function () { return this.legs1.legLengths; }
+		},
+
+		'stats': {
+			get: function () { return this.legs1.stats; }
+		},
+
+	} );
+
+	return this;
+
+}
+
+Legs.prototype = Object.create( Group.prototype );
+
+Legs.prototype.addLegs = function ( vertices, legRuns ) {
+
+	const legs1 = this.legs1;
+	const ctx = this.ctx;
+
+	legs1.addLegs( vertices, legRuns );
+
+	const legs2Geometry = new LineSegmentsGeometry();
+
+	legs2Geometry.setPositions( legs1.geometry.attributes.position.array );
+	legs2Geometry.setColors( legs1.geometry.attributes.color.array );
+
+	const legs2Material = new LineMaterial( {
+		color: 0xffffff,
+		vertexColors: true,
+		linewidth: 1
+	} );
+
+	const legs2 = new LineSegments2( legs2Geometry, legs2Material );
+
+	legs2Material.resolution = new Vector2( ctx.container.clientWidth, ctx.container.clientHeight );
+
+	ctx.viewer.addEventListener( 'resized', ( e ) => {
+		console.log( e );
+		const lineScale = e.lineScale ? e.lineScale : 1;
+
+		legs2Material.resolution = new Vector2( e.width, e.height );
+		legs2Material.linewidth = Math.max( 1, Math.floor( e.width / 1000 ) * lineScale );
+
+	} );
+
+	legs2.setShading = function () {};
+	legs2.scale.set( 1, 1, 1 );
+	legs2.layers = this.layers;
+
+	this.addStatic( legs2 );
+
+	this.legs2 = legs2;
+
+	legs1.visible = false;
+
+};
+
+Legs.prototype.cutRuns = function ( selection ) {
+
+	this.legs1.cutRuns( selection );
+
+};
+
+Legs.prototype.computeStats = function () {
+
+	this.legs1.computeStats();
+
+};
+
+Legs.prototype.setShading = function ( idSet, colourSegment, material ) {
+
+	this.legs1.setShading( idSet, colourSegment, material );
+
+	if ( this.legs2 !== null ) {
+console.log( 'update colors' );
+		this.legs2.geometry.getAttribute( 'instanceColorStart' ).needsUpdate = true;
+		this.legs2.geometry.getAttribute( 'instanceColorEnd' ).needsUpdate = true;
+
+	}
+
+};
+
+function Legs1 ( ctx ) {
 
 	const geometry = new BufferGeometry();
 
@@ -14,9 +122,9 @@ function Legs ( ctx ) {
 
 }
 
-Legs.prototype = Object.create( LineSegments.prototype );
+Legs1.prototype = Object.create( LineSegments.prototype );
 
-Legs.prototype.addLegs = function ( vertices, legRuns ) {
+Legs1.prototype.addLegs = function ( vertices, legRuns ) {
 
 	const geometry = this.geometry;
 
@@ -39,7 +147,7 @@ Legs.prototype.addLegs = function ( vertices, legRuns ) {
 
 };
 
-Legs.prototype.cutRuns = function ( selection ) {
+Legs1.prototype.cutRuns = function ( selection ) {
 
 	const idSet = selection.getIds();
 	const legRuns = this.legRuns;
@@ -101,7 +209,7 @@ Legs.prototype.cutRuns = function ( selection ) {
 
 };
 
-Legs.prototype.computeStats = function () {
+Legs1.prototype.computeStats = function () {
 
 	const stats = { maxLegLength: -Infinity, minLegLength: Infinity, legCount: 0, legLength: 0 };
 	const vertices = this.legVertices;
@@ -139,7 +247,7 @@ Legs.prototype.computeStats = function () {
 
 };
 
-Legs.prototype.setShading = function ( idSet, colourSegment, material ) {
+Legs1.prototype.setShading = function ( idSet, colourSegment, material ) {
 
 	this.material = material;
 
@@ -196,7 +304,6 @@ Legs.prototype.setShading = function ( idSet, colourSegment, material ) {
 
 	// update bufferGeometry
 	colorsAttribute.needsUpdate = true;
-
 
 };
 

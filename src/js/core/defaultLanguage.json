@@ -225,7 +225,9 @@
 		"png_export": {
 			"header": "Image (PNG) Export",
 			"export": "Snapshot",
-			"size": "Size (px)"
+			"size": "Size (px)",
+			"background_color": "Background colour",
+			"line_scale": "Line scale"
 		}
 	},
 	"hud": {

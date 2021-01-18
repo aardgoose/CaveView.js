@@ -52,6 +52,9 @@ function CameraManager ( ctx, renderer, scene ) {
 		boundingRect = container.getBoundingClientRect();
 
 		// adjust cameras to new aspect ratio etc.
+
+		orthographicCamera.zoom *= width / ( orthographicCamera.right - orthographicCamera.left );
+
 		orthographicCamera.left   = -width / 2;
 		orthographicCamera.right  =  width / 2;
 		orthographicCamera.top    =  height / 2;
@@ -69,7 +72,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		}
 
-	};
+	}
 
 	const basicRenderer = function () {
 

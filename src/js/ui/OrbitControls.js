@@ -113,6 +113,13 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 
 	};
 
+	this.scaleDolly = function ( scaleFactor ) {
+
+		scale *= scaleFactor;
+		this.update();
+
+	};
+
 	this.saveState = function () {
 
 		const camera = cameraManager.activeCamera;

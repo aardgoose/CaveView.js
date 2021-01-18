@@ -393,7 +393,7 @@ function CaveViewer ( domID, configuration ) {
 
 		'focalLength': {
 			get: function () { return cameraManager.focalLength; },
-			set: function ( x ) { cameraManager.focalLength = x; renderView(); }
+			set: setFocalLength
 		}
 	} );
 
@@ -786,6 +786,17 @@ function CaveViewer ( domID, configuration ) {
 		cameraManager.setCamera( mode, controls.target );
 
 		renderView();
+
+	}
+
+	function setFocalLength( f ) {
+
+		const fChange = f / cameraManager.focalLength;
+
+		cameraManager.focalLength = f;
+
+		// adjust camera position to maintain view
+		controls.scaleDolly( fChange );
 
 	}
 

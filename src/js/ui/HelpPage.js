@@ -85,6 +85,8 @@ function HelpPage ( frame, avenControls ) {
 
 	_addKey( '<alt>S', 'view.control_mode' );
 	_addKey( '<alt>X', 'view.zoom_to_cursor' );
+	_addKey( '(', 'view.decrease_focal_length' );
+	_addKey( ')', 'view.increase_focal_length' );
 
 	this.appendChild( dl );
 

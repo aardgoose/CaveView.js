@@ -422,6 +422,18 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 				break;
 
+			case '(':
+
+				viewer.focalLength = Math.max( 10, viewer.focalLength - 10 );
+
+				break;
+
+			case ')':
+
+				viewer.focalLength = Math.min( 300, viewer.focalLength + 10 );
+
+				break;
+
 			default:
 
 				handled = false;

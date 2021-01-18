@@ -267,20 +267,31 @@ function CameraManager ( ctx, renderer, scene ) {
 
 	};
 
-	Object.defineProperty( this, 'eyeSeparation', {
-		get: function () { return eyeSeparation; },
-		set: function ( x ) {
+	Object.defineProperties( this, {
 
-			// x varies from 0 to 1
-			// base separation = 0.064
-			eyeSeparation = x;
+		'eyeSeparation': {
+			get: function () { return eyeSeparation; },
+			set: function ( x ) {
 
-			if ( this.activeEffect !== null ) {
+				// x varies from 0 to 1
+				// base separation = 0.064
+				eyeSeparation = x;
 
-				this.activeEffect.setEyeSeparation( 0.064 + ( x - 0.5 ) * 0.06 );
+				if ( this.activeEffect !== null ) {
+
+					this.activeEffect.setEyeSeparation( 0.064 + ( x - 0.5 ) * 0.06 );
+
+				}
 
 			}
 
+		},
+
+		'focalLength': {
+			get: function () { return perspectiveCamera.getFocalLength(); },
+			set: function ( x ) {
+				perspectiveCamera.setFocalLength( x );
+			}
 		}
 
 	} );

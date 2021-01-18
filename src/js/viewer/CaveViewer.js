@@ -383,11 +383,17 @@ function CaveViewer ( domID, configuration ) {
 			get: function () { return trackLocation; },
 			set: setLocation
 		},
+
 		'maxSnapshotSize': {
 			get: function () {
 				const context = renderer.getContext();
 				return context.getParameter( context.MAX_RENDERBUFFER_SIZE );
 			}
+		},
+
+		'focalLength': {
+			get: function () { return cameraManager.focalLength; },
+			set: function ( x ) { cameraManager.focalLength = x; renderView(); }
 		}
 	} );
 

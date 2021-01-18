@@ -35,116 +35,117 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 		if ( event.ctrlKey ) {
 
-			switch ( event.keyCode ) {
+			switch ( event.key ) {
 
-			case 66: // '<ctrl>B'
+			case 'b':
 
 				viewer.box = ! viewer.box;
 
 				break;
 
-			case 69: // 'E' - mouse wheel tilt
+			case 'e':
 
 				viewer.wheelTilt = ! viewer.wheelTilt;
 
 				break;
 
-			case 70: // '<ctrl>F'
+			case 'f':
 
 				if ( viewer.hasSurfaceLegs ) viewer.surfaceLegs = ! viewer.surfaceLegs;
 
 				break;
 
-			case 76: // '<ctrl>L'
+			case 'l':
 
 				if ( viewer.hasLegs ) viewer.legs = ! viewer.legs;
 
 				break;
 
-			case 78: // '<ctrl>N' (not available in Chrome)
+			case 'n': // (not available in Chrome)
 
 				if ( viewer.hasStationLabels ) viewer.stationLabels = ! viewer.stationLabels;
 
 				break;
 
-			case 88: // '<ctrl>X'
+			case 'x':
 
 				viewer.stations = ! viewer.stations;
+
 				break;
 
 			}
 
 		} else {
 
-			switch ( event.keyCode ) {
+			switch ( event.key ) {
 
-			case 46: // '<delete>' reset view
+			case 'Delete': // '<delete>' reset view
 
 				viewer.reset = true;
 
 				break;
 
-			case 13:
+			case 'Enter':
 
 				viewer.autoRotate = true;
 
 				break;
 
-			case 32:
+			case ' ':
 
 				viewer.autoRotate = ! viewer.autoRotate;
 
 				break;
 
-			case 76: // 'L' - plan
+			case 'l': // elevation
 
 				viewer.polarAngle = Math.PI / 2;
 
 				break;
 
-			case 69: // 'E' - East
+			case 'e': // East
 
 				viewer.azimuthAngle = 3 * Math.PI / 2;
 
 				break;
 
-			case 78: // 'N' - North
+			case 'n': // North
 
 				viewer.azimuthAngle = 0;
 
 				break;
 
-			case 80: // 'P' - plan
+			case 'p': // plan
 
 				viewer.polarAngle = 0;
 
 				break;
 
-			case 82: // 'R' - reverse rotation direction
+			case 'r': // reverse rotation direction
 
 				viewer.autoRotateSpeed *= -1;
 
 				break;
 
-			case 83: // 'S' - South
+			case 's': // South
 
 				viewer.azimuthAngle = Math.PI;
 
 				break;
 
-			case 87: // 'W' - West
+			case 'w': // West
 
 				viewer.azimuthAngle = Math.PI / 2;
 
 				break;
 
-			case 88: // 'X' - decrease rotation speed
+			case 'x': // decrease rotation speed
 
 				viewer.autoRotateSpeed -= 0.1;
 
 				break;
 
-			case 90: // 'Z' - increase rotation speed
+			case 'z': // increase rotation speed
 
 				viewer.autoRotateSpeed += 0.1;
 
@@ -160,126 +161,114 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 		if ( event.ctrlKey ) return;
 
-		switch ( event.keyCode ) {
+		switch ( event.key ) {
 
-		case 67: // toggle scraps visibility - 'c'
+		case 'c': // toggle scraps visibility
 
 			if ( viewer.hasScraps ) viewer.scraps = ! viewer.scraps;
 
 			break;
 
-		case 68: // toggle dye traces visibility - 'd'
+		case 'd': // toggle dye traces visibility
 
 			if ( viewer.hasTraces ) viewer.traces = ! viewer.traces;
 
 			break;
 
-		case 70: // toggle full screen - 'f'
+		case 'f': // toggle full screen
 
 			viewer.fullscreen = ! viewer.fullscreen;
 
 			break;
 
-		case 74: // toggle entrance labels - 'j'
+		case 'j': // toggle entrance labels
 
 			if ( viewer.hasStationLabels ) viewer.stationLabels = ! viewer.stationLabels;
 
 			break;
 
-		case 76: // toggle entrance labels - 'l'
+		case 'l': // toggle entrance labels
 
 			if ( viewer.hasEntrances ) viewer.entrances = ! viewer.entrances;
 
 			break;
 
-		case 78: // load next cave in list - 'n'
+		case 'n': // load next cave in list
 
 			fileSelector.nextFile();
 
 			break;
 
-		case 79: // switch view to orthoganal - 'o'
+		case 'o': // switch view to orthoganal'
 
 			viewer.cameraType = CAMERA_ORTHOGRAPHIC;
 
 			break;
 
-		case 80: // switch view to perspective -'p'
+		case 'p': // switch view to perspective
 
 			viewer.cameraType = CAMERA_PERSPECTIVE;
 
 			break;
 
-		case 81: // switch view to perspective -'q'
+		case 'q': // switch view to perspective
 
 			if ( viewer.hasSplays ) viewer.splays = ! viewer.splays;
 
 			break;
 
-		case 82: // reset camera positions and settings to initial plan view -'r'
+		case 'r': // reset camera positions and settings to initial plan view
 
 			viewer.view = VIEW_PLAN;
 
 			break;
 
-		case 83: // surface leg visibility - 's'
+		case 's': // surface leg visibility
 
 			if ( viewer.hasSurfaceLegs ) viewer.surfaceLegs = ! viewer.surfaceLegs;
 
 			break;
 
-		case 84: // switch terrain on/off - 't'
+		case 't': // switch terrain on/off
 
 			if ( viewer.hasTerrain ) viewer.terrain = ! viewer.terrain;
 
 			break;
 
-		case 86: // cut selected survey section - 'v'
+		case 'v': // cut selected survey section
 
 			Page.clear();
 			viewer.cut = true;
 
 			break;
 
-		case 87: // switch walls on/off - 'w'
+		case 'w': // switch walls on/off
 
 			if ( viewer.hasWalls ) viewer.walls = ! viewer.walls;
 
 			break;
 
-		case 88: // look ast last POI - 'x'
+		case 'x': // look at last POI
 
 			viewer.setPOI = true; // actual value here is ignored.
 
 			break;
 
-		case 90: // show station markers - 'z'
+		case 'z': // show station markers
 
 			viewer.stations = ! viewer.stations;
 
 			break;
 
-		case 219: // '[' key
+		case ']':
 
 			viewer.cursorHeight++;
 
 			break;
 
-		case 221: // ']' key
+		case '[':
 
 			viewer.cursorHeight--;
-
-			break;
-
-		case 188: // decrease terrain opacity '<' key
-
-			if ( viewer.hasTerrain ) viewer.terrainOpacity = Math.max( viewer.terrainOpacity - 0.05, 0 );
-
-			break;
-
-		case 190: // increase terrain opacity '>' key
-
-			if ( viewer.hasTerrain ) viewer.terrainOpacity = Math.min( viewer.terrainOpacity + 0.05, 1 );
 
 			break;
 
@@ -295,15 +284,15 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 		if ( event.altKey ) {
 
-			switch ( event.keyCode ) {
+			switch ( event.key ) {
 
-			case 83: // '<alt>S' - South
+			case 's':
 
 				viewer.svxControlMode = ! viewer.svxControlMode;
 
 				break;
 
-			case 88: // '<alt>X'
+			case 'x':
 
 				viewer.zoomToCursor = ! viewer.zoomToCursor;
 
@@ -317,117 +306,117 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 		} else {
 
-			switch ( event.keyCode ) {
+			switch ( event.key ) {
 
-			case 48: // change colouring scheme to distance = '0'
+			case '0': // change colouring scheme to distance
 
 				viewer.shadingMode = SHADING_DISTANCE;
 
 				break;
 
-			case 49: // change colouring scheme to depth - '1'
+			case '1': // change colouring scheme to depth
 
 				viewer.shadingMode = SHADING_HEIGHT;
 
 				break;
 
-			case 50: // change colouring scheme to angle - '2'
+			case '2': // change colouring scheme to angle
 
 				viewer.shadingMode = SHADING_INCLINATION;
 
 				break;
 
-			case 51: // change colouring scheme to length - '3'
+			case '3': // change colouring scheme to length
 
 				viewer.shadingMode = SHADING_LENGTH;
 
 				break;
 
-			case 52: // change colouring scheme to height cursor - '4'
+			case '4': // change colouring scheme to height cursor
 
 				viewer.shadingMode = SHADING_CURSOR;
 
 				break;
 
-			case 53: // change colouring scheme to white - '5'
+			case '5': // change colouring scheme to white
 
 				viewer.shadingMode = SHADING_SINGLE;
 
 				break;
 
-			case 54: // change colouring scheme to per survey section - '6'
+			case '6': // change colouring scheme to per survey section
 
 				viewer.shadingMode = SHADING_SURVEY;
 
 				break;
 
-			case 55: // change colouring scheme to per survey section - '7'
+			case '7': // change colouring scheme to per survey section
 
 				viewer.shadingMode = SHADING_PATH;
 
 				break;
 
-			case 56: // change colouring scheme to per survey section - '8'
+			case '8': // change colouring scheme to per survey section
 
 				viewer.shadingMode = SHADING_DEPTH;
 
 				break;
 
-			case 57: // change colouring scheme to depth - '9'
+			case '9': // change colouring scheme to depth
 
 				viewer.shadingMode = SHADING_DEPTH_CURSOR;
 
 				break;
 
-			case 70: // toggle full screen - 'f'
+			case 'f': // toggle full screen
 
 				viewer.fullscreen = ! viewer.fullscreen;
 
 				break;
 
-			case 74: // toggle entrance labels - 'j'
+			case 'j': // toggle entrance labels
 
 				if ( viewer.hasStationLabels ) viewer.stationLabels = ! viewer.stationLabels;
 
 				break;
 
-			case 79: // switch view to orthoganal - 'o'
+			case 'o': // switch view to orthoganal
 
 				viewer.cameraType = CAMERA_ORTHOGRAPHIC;
 
 				break;
 
-			case 81: // switch view to perspective -'q'
+			case 'q': // switch view to perspective
 
 				if ( viewer.hasSplays ) viewer.splays = ! viewer.splays;
 
 				break;
 
-			case 84: // switch terrain on/off - 't'
+			case 't': // switch terrain on/off
 
 				if ( viewer.hasTerrain ) viewer.terrain = ! viewer.terrain;
 
 				break;
 
-			case 107: // increase cursor depth - '+' (keypad)
+			case '+': // increase cursor depth
 
 				viewer.cursorHeight++;
 
 				break;
 
-			case 109: // decrease cursor depth - '-' (keypad)
+			case '-': // decrease cursor depth
 
 				viewer.cursorHeight--;
 
 				break;
 
-			case 188: // decrease terrain opacity '<' key
+			case '<': // decrease terrain opacity
 
 				if ( viewer.hasTerrain ) viewer.terrainOpacity = Math.max( viewer.terrainOpacity - 0.05, 0 );
 
 				break;
 
-			case 190: // increase terrain opacity '>' key
+			case '>': // increase terrain opacity
 
 				if ( viewer.hasTerrain ) viewer.terrainOpacity = Math.min( viewer.terrainOpacity + 0.05, 1 );
 

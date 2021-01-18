@@ -24,7 +24,9 @@ export { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial';
 export { MeshLambertMaterial } from 'three/src/materials/MeshLambertMaterial';
 export { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
 export { LineBasicMaterial } from 'three/src/materials/LineBasicMaterial';
-
+export { UniformsLib } from 'three/src/renderers/shaders/UniformsLib.js';
+export { UniformsUtils } from 'three/src/renderers/shaders/UniformsUtils.js';
+export { ShaderLib } from 'three/src/renderers/shaders/ShaderLib.js';
 export { TextureLoader } from 'three/src/loaders/TextureLoader.js';
 export { ImageLoader } from 'three/src/loaders/ImageLoader.js';
 export { FileLoader } from 'three/src/loaders/FileLoader.js';
@@ -41,6 +43,8 @@ export { OrthographicCamera } from 'three/src/cameras/OrthographicCamera.js';
 export { InstancedBufferGeometry } from 'three/src/core/InstancedBufferGeometry.js';
 export { BufferGeometry } from 'three/src/core/BufferGeometry.js';
 export { InstancedBufferAttribute } from 'three/src/core/InstancedBufferAttribute.js';
+export { InstancedInterleavedBuffer } from 'three/src/core/InstancedInterleavedBuffer';
+export { InterleavedBufferAttribute } from 'three/src/core/InterleavedBufferAttribute';
 export * from 'three/src/core/BufferAttribute.js';
 export { Object3D } from 'three/src/core/Object3D.js';
 export { Raycaster } from 'three/src/core/Raycaster.js';
@@ -63,6 +67,7 @@ export { Vector3 } from 'three/src/math/Vector3.js';
 export { Vector2 } from 'three/src/math/Vector2.js';
 export { Quaternion } from 'three/src/math/Quaternion.js';
 export { Color } from 'three/src/math/Color.js';
+export { Line3 } from 'three/src/math/Line3.js';
 export * from 'three/src/constants.js';
 
 import { MathUtils } from 'three/src/math/MathUtils.js';

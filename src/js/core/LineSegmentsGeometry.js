@@ -6,8 +6,7 @@ import {
 	InterleavedBufferAttribute,
 	Sphere,
 	Vector3,
-	WireframeGeometry
-} from '../../../build/three.module.js';
+} from '../three';
 
 var LineSegmentsGeometry = function () {
 
@@ -113,52 +112,6 @@ LineSegmentsGeometry.prototype = Object.assign( Object.create( InstancedBufferGe
 
 	},
 
-	fromWireframeGeometry: function ( geometry ) {
-
-		this.setPositions( geometry.attributes.position.array );
-
-		return this;
-
-	},
-
-	fromEdgesGeometry: function ( geometry ) {
-
-		this.setPositions( geometry.attributes.position.array );
-
-		return this;
-
-	},
-
-	fromMesh: function ( mesh ) {
-
-		this.fromWireframeGeometry( new WireframeGeometry( mesh.geometry ) );
-
-		// set colors, maybe
-
-		return this;
-
-	},
-
-	fromLineSegments: function ( lineSegments ) {
-
-		var geometry = lineSegments.geometry;
-
-		if ( geometry.isGeometry ) {
-
-			this.setPositions( geometry.vertices );
-
-		} else if ( geometry.isBufferGeometry ) {
-
-			this.setPositions( geometry.attributes.position.array ); // assumes non-indexed
-
-		}
-
-		// set colors, maybe
-
-		return this;
-
-	},
-
 	computeBoundingBox: function () {
 
 		var box = new Box3();
@@ -240,12 +193,6 @@ LineSegmentsGeometry.prototype = Object.assign( Object.create( InstancedBufferGe
 		};
 
 	}(),
-
-	toJSON: function () {
-
-		// todo
-
-	},
 
 	applyMatrix: function ( matrix ) {
 

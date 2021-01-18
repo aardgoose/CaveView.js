@@ -42,6 +42,35 @@ function CameraManager ( ctx, renderer, scene ) {
 	var eyeSeparation = 0.5;
 	var lastFrame = 0;
 
+	ctx.viewer.addEventListener( 'resized', onResize );
+
+	function onResize ( e ) {
+
+		width = e.width;
+		height = e.height;
+
+		boundingRect = container.getBoundingClientRect();
+
+		// adjust cameras to new aspect ratio etc.
+		orthographicCamera.left   = -width / 2;
+		orthographicCamera.right  =  width / 2;
+		orthographicCamera.top    =  height / 2;
+		orthographicCamera.bottom = -height / 2;
+
+		orthographicCamera.updateProjectionMatrix();
+
+		perspectiveCamera.aspect = width / height;
+
+		perspectiveCamera.updateProjectionMatrix();
+
+		if ( self.activeEffect !== null ) {
+
+			self.activeEffect.setSize( width, height );
+
+		}
+
+	};
+
 	const basicRenderer = function () {
 
 		renderer.render( scene, self.activeCamera );
@@ -125,32 +154,6 @@ function CameraManager ( ctx, renderer, scene ) {
 	this.testCameraLayer = function ( layerTag ) {
 
 		return ( ( savedMask & 1 << layerTag ) > 0 );
-
-	};
-
-	this.resize = function () {
-
-		width = container.clientWidth;
-		height = container.clientHeight;
-		boundingRect = container.getBoundingClientRect();
-
-		// adjust cameras to new aspect ratio etc.
-		orthographicCamera.left   = -width / 2;
-		orthographicCamera.right  =  width / 2;
-		orthographicCamera.top    =  height / 2;
-		orthographicCamera.bottom = -height / 2;
-
-		orthographicCamera.updateProjectionMatrix();
-
-		perspectiveCamera.aspect = width / height;
-
-		perspectiveCamera.updateProjectionMatrix();
-
-		if ( this.activeEffect !== null ) {
-
-			this.activeEffect.setSize( width, height );
-
-		}
 
 	};
 

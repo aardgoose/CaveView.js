@@ -57,7 +57,8 @@ function CaveViewer ( domID, configuration ) {
 		cfg: cfg,
 		container: container,
 		workerPools: new WorkerPoolCache ( cfg ),
-		glyphStringCache: new Map()
+		glyphStringCache: new Map(),
+		viewer: this
 	};
 
 	this.ctx = ctx;
@@ -1013,11 +1014,12 @@ function CaveViewer ( domID, configuration ) {
 	function onResize () {
 
 		// adjust the renderer to the new canvas size
-		renderer.setSize( container.clientWidth, container.clientHeight );
+		const w = container.clientWidth;
+		const h = container.clientHeight;
 
-		cameraManager.resize();
+		renderer.setSize( w, h );
 
-		self.dispatchEvent( { type: 'resized', name: '-' } );
+		self.dispatchEvent( { type: 'resized', name: 'rts', 'width': w, 'height': h } );
 
 		renderView();
 
@@ -1693,6 +1695,10 @@ function CaveViewer ( domID, configuration ) {
 
 		renderer.clear();
 
+		// reset camera and materials using renderer size/resolution
+
+		this.dispatchEvent( { type: 'resized', name: 'rtt', 'width': newWidth, 'height': newHeight } );
+
 		renderView();
 
 		const bSize = newWidth * newHeight * 4;
@@ -1732,10 +1738,11 @@ function CaveViewer ( domID, configuration ) {
 
 		renderer.setRenderTarget( null );
 
-		renderer.setSize( container.clientWidth, container.clientHeight );
 		renderer.setPixelRatio( window.devicePixelRatio );
 
-		renderView();
+		// reset renderer etc to new sizes
+
+		onResize();
 
 		return canvas.toDataURL();
 

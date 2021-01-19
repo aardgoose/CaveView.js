@@ -36,7 +36,7 @@ function onload () {
 		showExportPage: true,
 //		loadMetadata: true,
 		view: { walls: false, alpha: false, terrain: false },
-		saturatedGradient: true,
+		saturatedGradient: false,
 //		displayCRS: 'ORIGINAL',
 //		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZTk5MmVmZC1iZDU5LTQzMWQtOWY0Zi1mZDYxNDA1MTNjMjgiLCJpZCI6OTEwLCJpYXQiOjE1MjYzMjczMDh9.aJWNt5jc-dt64lR4q7zw0bdp0PARsvupmWjUYUrQVQs',
 		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyZWVlMDFjMC04MzNhLTQxYTAtYjlmNC1jOTY2ZDFkYmFkMmEiLCJpZCI6OTEwLCJhc3NldHMiOlsxXSwiaWF0IjoxNTI2ODkzMTk0fQ.KG6jYhnZ3T4sgZ14QZotBIiL4lfgHpy9NY6nSRSjz4o',
@@ -60,10 +60,11 @@ function onload () {
 //	viewer.addFormatters( OSGBStationFormatter );
 
 var caves = [
+	"P8_Master.3d",
+	"test/demo.plt",
 	"evklidova_piscal.3d",
 	"Castleton_Master_NoSurface.3d",
 	"all.3d",
-	"test/demo.plt",
 	"andara.3d",
 	"ELSaguaro.lox",
 	"Fighiera-sin-2018.lox",
@@ -71,7 +72,6 @@ var caves = [
 	"demo.plt",
 	"Peak_Master_NoSurface.3d",
 	"garrel.lox",
-	"P8_Master.3d",
 	"MA-all.3d",
 	"titan.3d",
 	"Giants_Oxlow_Maskhill_System.3d",

@@ -17,7 +17,6 @@ import { Topology } from './Topology';
 import { Routes } from './Routes';
 import { Legs } from './Legs';
 import { DyeTraces } from './DyeTraces';
-// import { Annotations } from './Annotations';
 import { SurveyMetadata } from './SurveyMetadata';
 import { LoxTerrain } from '../terrain/LoxTerrain';
 import { buildWallsSync } from './walls/WallBuilders';

@@ -84,7 +84,7 @@ function Materials ( viewer ) {
 		}
 
 		return material;
-9
+
 	}
 
 	function getCacheMaterial ( name, materialFunc, stencil ) {

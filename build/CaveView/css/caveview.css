@@ -618,7 +618,7 @@ div.cv-frame::-webkit-scrollbar-button:end {
 .cv-frame li ul.cv-tree {
   margin-left: 10px;
 }
-li span {
+.cv-frame li span {
   display: inline-block;
   width: 10px;
   padding-right: 2px;

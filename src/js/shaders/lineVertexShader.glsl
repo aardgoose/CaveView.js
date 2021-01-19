@@ -25,7 +25,7 @@ varying vec2 vUv;
 
 #endif
 
-#ifdef CV_DEPTH
+#if defined( CV_DEPTH ) || defined( CV_DEPTH_CURSOR )
 
 	const float UnpackDownscale = 255. / 256.; // 0..1 -> fraction (excluding 1)
 
@@ -47,7 +47,7 @@ varying vec2 vUv;
 	uniform sampler2D depthMap;
 	uniform float datumShift;
 
-	varying float vDepth;
+	varying float height;
 
 #endif
 
@@ -186,7 +186,7 @@ void main() {
 
 	#endif
 
-	#ifdef CV_DEPTH
+	#if defined( CV_DEPTH ) || defined( CV_DEPTH_CURSOR )
 
 		vec3 realPosition = instanceStart + ( instanceEnd - instanceStart ) * position.y;
 
@@ -195,9 +195,14 @@ void main() {
 
 		terrainHeight = terrainHeight * rangeZ + modelMin.z + datumShift;
 
-		// depth below terrain for this vertex, scaled in 0.0 - 1.0 range
+		height = terrainHeight - realPosition.z;
 
-		vDepth = ( terrainHeight - position.z ) * depthScale;
+	#endif
+
+	#ifdef CV_DEPTH
+
+		// depth below terrain for this vertex, scaled in 0.0 - 1.0 range
+		height *= depthScale;
 
 	#endif
 

@@ -84,7 +84,7 @@ function Materials ( viewer ) {
 		}
 
 		return material;
-
+9
 	}
 
 	function getCacheMaterial ( name, materialFunc, stencil ) {
@@ -129,9 +129,9 @@ function Materials ( viewer ) {
 	this.getLine2Material = function ( mode = '' ) {
 
 		const func = function () { return new LineMaterial( ctx, survey, mode ); };
-		const material = getSurveyCacheMaterial( 'line2' + mode, func, true );
+		const material = getSurveyCacheMaterial( 'line2-' + mode, func, true );
 
-		if ( mode == 'cursor' ) {
+		if ( mode == 'cursor' || mode == 'depth-cursor' ) {
 
 			// set active cursor material for updating
 			cursorMaterials.add( material );

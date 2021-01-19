@@ -11,11 +11,11 @@ uniform float opacity;
 #ifdef CV_DEPTH
 
 	uniform sampler2D cmap;
-	varying float vDepth;
+	varying float height;
 
 #endif
 
-#ifdef CV_CURSOR
+#if defined( CV_CURSOR ) || defined( CV_DEPTH_CURSOR )
 
 	uniform float cursor;
 	uniform float cursorWidth;
@@ -78,11 +78,11 @@ void main() {
 
 	#ifdef CV_DEPTH
 
-		gl_FragColor = texture2D( cmap, vec2( vDepth, 1.0 ) ) * vec4( vColor, 1.0 );
+		gl_FragColor = texture2D( cmap, vec2( height, 1.0 ) ) * vec4( vColor, 1.0 );
 
 	#endif
 
-	#ifdef CV_CURSOR
+	#if defined( CV_CURSOR ) || defined( CV_DEPTH_CURSOR )
 
 		float delta = abs( height - cursor );
 		float ss = smoothstep( 0.0, cursorWidth, cursorWidth - delta );
@@ -99,7 +99,7 @@ void main() {
 
 	#endif
 
-	#if ! defined( CV_DEPTH ) && ! defined( CV_HEIGHT ) && ! defined( CV_CURSOR )
+	#ifdef CV_BASIC
 
 		gl_FragColor = vec4( diffuseColor.rgb, diffuseColor.a );
 

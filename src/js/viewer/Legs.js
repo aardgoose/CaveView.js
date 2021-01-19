@@ -167,39 +167,33 @@ Legs.prototype.setShading = function ( idSet, colourSegment, material ) {
 
 	this.legs1.material = material;
 
-	let legs2Material = null;
+	let mode = 'basic';
 
 	switch ( material.type ) {
 
 	case 'CV.HeightMaterial':
 
-		legs2Material = this.ctx.materials.getLine2Material( 'height' );
+		mode = 'height';
 		break;
 
 	case 'CV.DepthMaterial':
 
-		legs2Material = this.ctx.materials.getLine2Material( 'depth' );
+		mode = 'depth';
 		break;
 
 	case 'CV.DepthCursorMaterial':
 
-		console.log( 'Unimplemented', material.type  );
-		legs2Material = this.ctx.materials.getLine2Material( 'basic' );
+		mode = 'depth-cursor';
 		break;
 
 	case 'CV.CursorMaterial':
 
-		legs2Material = this.ctx.materials.getLine2Material( 'cursor' );
-		break;
-
-	default:
-
-		legs2Material = this.ctx.materials.getLine2Material( 'basic' );
+		mode = 'cursor';
 		break;
 
 	}
 
-	this.legs2.material = legs2Material;
+	this.legs2.material = this.ctx.materials.getLine2Material( mode );
 
 	const legRuns = this.legRuns;
 	const unselectedColor = this.ctx.cfg.themeColor( 'shading.unselected' );

@@ -86,17 +86,43 @@ var LineMaterial = function ( ctx, survey, mode = 'heigsht') {
 	case 'depth':
 
 		defines.CV_DEPTH = true;
-		customUniforms = {
-			modelMin:   { value: limits.min },
-			scaleX:     { value: 1 / range.x },
-			scaleY:     { value: 1 / range.y },
-			rangeZ:     { value: range.z },
-			depthScale: { value: 1 / ( surveyLimits.max.z - surveyLimits.min.z ) },
-			cmap:       { value: textureCache.getTexture( gradient ) },
-			depthMap:   { value: terrain.depthTexture },
-		};
-
+		customUniforms = Object.assign(
+			{
+				modelMin:   { value: limits.min },
+				scaleX:     { value: 1 / range.x },
+				scaleY:     { value: 1 / range.y },
+				rangeZ:     { value: range.z },
+				depthScale: { value: 1 / ( surveyLimits.max.z - surveyLimits.min.z ) },
+				cmap:       { value: textureCache.getTexture( gradient ) },
+				depthMap:   { value: terrain.depthTexture },
+			},
+			ctx.materials.commonDepthUniforms
+		);
 		break;
+
+	case 'depth-cursor':
+
+		this.max = surveyLimits.max.z - surveyLimits.min.z;
+
+		defines.CV_DEPTH_CURSOR = true;
+		customUniforms = Object.assign(
+			{
+				modelMin:    { value: limits.min },
+				scaleX:      { value: 1 / range.x },
+				scaleY:      { value: 1 / range.y },
+				rangeZ:      { value: range.z },
+				depthMap:    { value: terrain.depthTexture },
+				cursor:      { value: this.max / 2 },
+				cursorWidth: { value: 5.0 },
+				baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
+				cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
+			},
+			ctx.materials.commonDepthUniforms
+		);
+		break;
+
+	default:
+		defines.CV_BASIC = true;
 
 	}
 
@@ -296,7 +322,17 @@ LineMaterial.prototype.isLineMaterial = true;
 
 LineMaterial.prototype.setCursor = function ( value ) {
 
-	const newValue = Math.max( Math.min( value, this.halfRange ), -this.halfRange );
+	var newValue;
+
+	if ( this.max !== undefined ) {
+
+		newValue = Math.max( Math.min( value, this.max ), 0 ); // depthCursor
+
+	} else {
+
+		newValue = Math.max( Math.min( value, this.halfRange ), -this.halfRange );
+
+	}
 
 	this.uniforms.cursor.value = newValue;
 

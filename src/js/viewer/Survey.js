@@ -582,17 +582,6 @@ Survey.prototype.loadDyeTraces = function () {
 	this.dyeTraces = dyeTraces;
 
 };
-/*
-Survey.prototype.loadAnnotations = function () {
-
-	const annotations = new Annotations( this );
-
-	this.addFeature( annotations, FEATURE_ANNOTATIONS, 'CV.DyeTraces' );
-
-	this.annotations = annotations;
-
-};
-*/
 
 Survey.prototype.setScale = function ( hScale, vScale ) {
 

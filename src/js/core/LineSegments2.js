@@ -9,7 +9,7 @@ import {
 	Vector4
 } from '../three';
 import { LineSegmentsGeometry } from './LineSegmentsGeometry.js';
-import { LineMaterial } from './LineMaterial.js';
+import { LineMaterial } from '../materials/LineMaterial.js';
 
 var LineSegments2 = function ( geometry, material ) {
 

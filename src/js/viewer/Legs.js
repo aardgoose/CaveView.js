@@ -1,7 +1,7 @@
 import { Vector2, BufferGeometry, LineSegments, Float32BufferAttribute, Group, IncrementStencilOp } from '../Three';
 
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
-import { LineMaterial } from '../core/LineMaterial';
+import { LineMaterial } from '../materials/LineMaterial';
 import { LineSegments2 } from '../core/LineSegments2';
 
 function Legs ( ctx ) {

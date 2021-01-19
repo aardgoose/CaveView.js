@@ -1,7 +1,6 @@
 import { Vector2, BufferGeometry, LineSegments, Float32BufferAttribute, Group, IncrementStencilOp } from '../Three';
 
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
-import { LineMaterial } from '../materials/LineMaterial';
 import { LineSegments2 } from '../core/LineSegments2';
 
 function Legs ( ctx ) {
@@ -41,27 +40,7 @@ Legs.prototype.addLegs = function ( vertices, legRuns ) {
 	legs2Geometry.setPositions( legs1.geometry.attributes.position.array );
 	legs2Geometry.setColors( legs1.geometry.attributes.color.array );
 
-	const legs2Material = new LineMaterial( {
-		color: 0xffffff,
-		vertexColors: true,
-		linewidth: 1
-	} );
-
-	legs2Material.stencilWrite = true;
-	legs2Material.stencilZPass = IncrementStencilOp;
-
-	const legs2 = new LineSegments2( legs2Geometry, legs2Material );
-
-	legs2Material.resolution = new Vector2( ctx.container.clientWidth, ctx.container.clientHeight );
-
-	ctx.viewer.addEventListener( 'resized', ( e ) => {
-
-		const lineScale = e.lineScale ? e.lineScale : 1;
-
-		legs2Material.resolution = new Vector2( e.width, e.height );
-		legs2Material.linewidth = Math.max( 1, Math.floor( e.width / 1000 ) * lineScale );
-
-	} );
+	const legs2 = new LineSegments2( legs2Geometry, ctx.materials.getMissingMaterial() );
 
 	legs2.setShading = function () {};
 	legs2.scale.set( 1, 1, 1 );
@@ -187,6 +166,40 @@ Legs.prototype.cutRuns = function ( selection ) {
 Legs.prototype.setShading = function ( idSet, colourSegment, material ) {
 
 	this.legs1.material = material;
+
+	let legs2Material = null;
+
+	switch ( material.type ) {
+
+	case 'CV.HeightMaterial':
+
+		legs2Material = this.ctx.materials.getLine2Material( 'height' );
+		break;
+
+	case 'CV.DepthMaterial':
+
+		legs2Material = this.ctx.materials.getLine2Material( 'depth' );
+		break;
+
+	case 'CV.DepthCursorMaterial':
+
+		console.log( 'Unimplemented', material.type  );
+		legs2Material = this.ctx.materials.getLine2Material( 'basic' );
+		break;
+
+	case 'CV.CursorMaterial':
+
+		legs2Material = this.ctx.materials.getLine2Material( 'cursor' );
+		break;
+
+	default:
+
+		legs2Material = this.ctx.materials.getLine2Material( 'basic' );
+		break;
+
+	}
+
+	this.legs2.material = legs2Material;
 
 	const legRuns = this.legRuns;
 	const unselectedColor = this.ctx.cfg.themeColor( 'shading.unselected' );

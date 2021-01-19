@@ -9,6 +9,7 @@ import { GlyphMaterial } from './GlyphMaterial';
 import { HeightMaterial } from './HeightMaterial';
 import { HypsometricMaterial } from './HypsometricMaterial';
 import { MissingMaterial } from './MissingMaterial';
+import { LineMaterial } from './LineMaterial';
 import { ColourCache } from '../core/ColourCache';
 import { TextureCache } from '../core/TextureCache';
 import { GlyphAtlasCache } from './GlyphAtlas';
@@ -24,7 +25,7 @@ function Materials ( viewer ) {
 	const self = this;
 
 	var glyphAtlasCache = new GlyphAtlasCache();
-	var cursorMaterials = [];
+	var cursorMaterials = new Set();
 	var perSurveyMaterials = {};
 	var cursorHeight = 0;
 	var survey;
@@ -94,7 +95,6 @@ function Materials ( viewer ) {
 
 			material = cacheMaterial( name, materialFunc(), stencil );
 
-
 		}
 
 		return material;
@@ -125,6 +125,22 @@ function Materials ( viewer ) {
 		self.commonDepthUniforms.datumShift.value = event.value;
 
 	}
+
+	this.getLine2Material = function ( mode = '' ) {
+
+		const func = function () { return new LineMaterial( ctx, survey, mode ); };
+		const material = getSurveyCacheMaterial( 'line2' + mode, func, true );
+
+		if ( mode == 'cursor' ) {
+
+			// set active cursor material for updating
+			cursorMaterials.add( material );
+
+		}
+
+		return material;
+
+	};
 
 	this.getHeightMaterial = function ( type ) {
 
@@ -159,7 +175,7 @@ function Materials ( viewer ) {
 		const material = getSurveyCacheMaterial( 'cursor' + type, func, true );
 
 		// set active cursor material for updating
-		cursorMaterials[ type ] = material;
+		cursorMaterials.add( material );
 
 		return material;
 
@@ -171,7 +187,7 @@ function Materials ( viewer ) {
 		const material = getSurveyCacheMaterial( 'depthCursor' + type, func, true );
 
 		// set active cursor material for updating
-		cursorMaterials[ type ] = material;
+		cursorMaterials.add( material );
 
 		return material;
 
@@ -286,6 +302,8 @@ function Materials ( viewer ) {
 	this.flushCache = function ( surveyIn ) {
 
 		var name;
+
+		cursorMaterials.clear();
 
 		for ( name in perSurveyMaterials ) {
 

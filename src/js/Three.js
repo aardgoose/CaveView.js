@@ -26,7 +26,6 @@ export { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial';
 export { LineBasicMaterial } from 'three/src/materials/LineBasicMaterial';
 export { UniformsLib } from 'three/src/renderers/shaders/UniformsLib.js';
 export { UniformsUtils } from 'three/src/renderers/shaders/UniformsUtils.js';
-export { ShaderLib } from 'three/src/renderers/shaders/ShaderLib.js';
 export { TextureLoader } from 'three/src/loaders/TextureLoader.js';
 export { ImageLoader } from 'three/src/loaders/ImageLoader.js';
 export { FileLoader } from 'three/src/loaders/FileLoader.js';

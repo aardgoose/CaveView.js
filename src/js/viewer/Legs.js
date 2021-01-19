@@ -3,9 +3,6 @@ import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { LineSegments2 } from '../core/LineSegments2';
 import { MATERIAL_LINE } from '../core/constants';
 
-const LINES_THIN = 1;
-const LINES_FAT = 2;
-
 function Legs ( ctx ) {
 
 	Group.call( this );
@@ -16,7 +13,6 @@ function Legs ( ctx ) {
 	this.legLengths = [];
 	this.legVertices = [];
 	this.type = 'Legs';
-	this.type = LINES_FAT;
 	this.colors = [];
 
 	return this;
@@ -34,7 +30,7 @@ Legs.prototype.addLegs = function ( vertices, legRuns ) {
 
 	var legs = null;
 
-	if ( this.type == LINES_FAT ) {
+	if ( ctx.cfg.value( 'gl-lines', false ) ) {
 
 		legs = new ThinLegs( ctx );
 
@@ -43,6 +39,9 @@ Legs.prototype.addLegs = function ( vertices, legRuns ) {
 		legs = new FatLegs( ctx );
 
 	}
+
+	// these buffers have the same layout independant of the rendering material
+	// standard gl_LINES or fat lines.
 
 	const positions = new Float32BufferAttribute( vertices.length * 3, 3 );
 	const colors = new Float32BufferAttribute( vertices.length * 3, 3 );
@@ -265,7 +264,7 @@ ThinLegs.prototype.updateMaterial = function ( ctx, mode ) {
 		break;
 
 	case 'depth':
-		this.material = materials.getDepthMaterial( MATERIAL_LINE )
+		this.material = materials.getDepthMaterial( MATERIAL_LINE );
 		break;
 
 	case 'depth-cursor':
@@ -273,7 +272,7 @@ ThinLegs.prototype.updateMaterial = function ( ctx, mode ) {
 		break;
 
 	case 'cursor':
-		this.material = materials.getCursorMaterial( MATERIAL_LINE )
+		this.material = materials.getCursorMaterial( MATERIAL_LINE );
 		break;
 
 	case 'basic':
@@ -324,6 +323,6 @@ FatLegs.prototype.updateMaterial = function ( ctx, mode ) {
 	this.material = ctx.materials.getLine2Material( mode );
 	this.material.needsUpdate = true;
 
-}
+};
 
 export { Legs };

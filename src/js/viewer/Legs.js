@@ -1,6 +1,7 @@
 import { BufferGeometry, LineSegments, Float32BufferAttribute, Group } from '../Three';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { LineSegments2 } from '../core/LineSegments2';
+import { MATERIAL_LINE } from '../core/constants';
 
 const LINES_THIN = 1;
 const LINES_FAT = 2;
@@ -33,7 +34,7 @@ Legs.prototype.addLegs = function ( vertices, legRuns ) {
 
 	var legs = null;
 
-	if ( this.type == LINES_THIN ) {
+	if ( this.type == LINES_FAT ) {
 
 		legs = new ThinLegs( ctx );
 
@@ -163,35 +164,9 @@ Legs.prototype.cutRuns = function ( selection ) {
 
 };
 
-Legs.prototype.setShading = function ( idSet, colourSegment, material ) {
+Legs.prototype.setShading = function ( idSet, colourSegment, mode ) {
 
-	let mode = 'basic';
-
-	switch ( material.type ) {
-
-	case 'CV.HeightMaterial':
-
-		mode = 'height';
-		break;
-
-	case 'CV.DepthMaterial':
-
-		mode = 'depth';
-		break;
-
-	case 'CV.DepthCursorMaterial':
-
-		mode = 'depth-cursor';
-		break;
-
-	case 'CV.CursorMaterial':
-
-		mode = 'cursor';
-		break;
-
-	}
-
-	this.legs.material = this.ctx.materials.getLine2Material( mode );
+	this.legs.updateMaterial( this.ctx, mode );
 
 	const legRuns = this.legRuns;
 	const unselectedColor = this.ctx.cfg.themeColor( 'shading.unselected' );
@@ -279,6 +254,38 @@ ThinLegs.prototype.updateColors = function () {
 
 };
 
+ThinLegs.prototype.updateMaterial = function ( ctx, mode ) {
+
+	const materials = ctx.materials;
+
+	switch ( mode ) {
+
+	case 'height':
+		this.material = materials.getHeightMaterial( MATERIAL_LINE );
+		break;
+
+	case 'depth':
+		this.material = materials.getDepthMaterial( MATERIAL_LINE )
+		break;
+
+	case 'depth-cursor':
+		this.material = materials.getDepthCursorMaterial( MATERIAL_LINE );
+		break;
+
+	case 'cursor':
+		this.material = materials.getCursorMaterial( MATERIAL_LINE )
+		break;
+
+	case 'basic':
+		this.material = materials.getLineMaterial();
+		break;
+
+	}
+
+	this.material.needsUpdate = true;
+
+};
+
 function FatLegs ( ctx ) {
 
 	const geometry = new LineSegmentsGeometry();
@@ -311,5 +318,12 @@ FatLegs.prototype.updateColors = function () {
 	this.geometry.getAttribute( 'instanceColorEnd' ).needsUpdate = true;
 
 };
+
+FatLegs.prototype.updateMaterial = function ( ctx, mode ) {
+
+	this.material = ctx.materials.getLine2Material( mode );
+	this.material.needsUpdate = true;
+
+}
 
 export { Legs };

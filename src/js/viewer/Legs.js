@@ -1,7 +1,9 @@
-import { Vector2, BufferGeometry, LineSegments, Float32BufferAttribute, Group, IncrementStencilOp } from '../Three';
-
+import { BufferGeometry, LineSegments, Float32BufferAttribute, Group } from '../Three';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { LineSegments2 } from '../core/LineSegments2';
+
+const LINES_THIN = 1;
+const LINES_FAT = 2;
 
 function Legs ( ctx ) {
 
@@ -13,6 +15,8 @@ function Legs ( ctx ) {
 	this.legLengths = [];
 	this.legVertices = [];
 	this.type = 'Legs';
+	this.type = LINES_FAT;
+	this.colors = [];
 
 	return this;
 
@@ -27,32 +31,34 @@ Legs.prototype.addLegs = function ( vertices, legRuns ) {
 	this.legVertices = vertices;
 	this.legRuns = legRuns;
 
-	const legs1 = new Legs1( ctx );
+	var legs = null;
 
-	legs1.layers = this.layers;
-	legs1.addLegs( vertices, legRuns );
+	if ( this.type == LINES_THIN ) {
 
-	this.addStatic( legs1 );
-	this.legs1 = legs1;
+		legs = new ThinLegs( ctx );
 
-	const legs2Geometry = new LineSegmentsGeometry();
+	} else {
 
-	legs2Geometry.setPositions( legs1.geometry.attributes.position.array );
-	legs2Geometry.setColors( legs1.geometry.attributes.color.array );
+		legs = new FatLegs( ctx );
 
-	const legs2 = new LineSegments2( legs2Geometry, ctx.materials.getMissingMaterial() );
+	}
 
-	legs2.setShading = function () {};
-	legs2.scale.set( 1, 1, 1 );
-	legs2.layers = this.layers;
-	legs2.type = 'CV.Legs2';
+	const positions = new Float32BufferAttribute( vertices.length * 3, 3 );
+	const colors = new Float32BufferAttribute( vertices.length * 3, 3 );
 
-	this.addStatic( legs2 );
-	this.legs2 = legs2;
+	positions.copyVector3sArray( vertices );
+	colors.array.fill( 1.0 );
 
-	legs1.visible = false;
+	legs.addLegs( positions, colors );
+
+	legs.setShading = function () {};
+	legs.layers = this.layers;
 
 	this.computeStats();
+	this.addStatic( legs );
+
+	this.colors = colors;
+	this.legs = legs;
 
 	return this;
 
@@ -148,14 +154,8 @@ Legs.prototype.cutRuns = function ( selection ) {
 
 	if ( newVertices.length === 0 ) return false;
 
-	this.legs1.geometry.dispose();
-	this.remove( this.legs1 );
-
-	this.legs2.geometry.dispose();
-	this.remove( this.legs2 );
-
-	this.legs1 = null;
-	this.legs2 = null;
+	this.legs.geometry.dispose();
+	this.remove( this.legs );
 
 	this.addLegs( newVertices, newLegRuns );
 
@@ -164,8 +164,6 @@ Legs.prototype.cutRuns = function ( selection ) {
 };
 
 Legs.prototype.setShading = function ( idSet, colourSegment, material ) {
-
-	this.legs1.material = material;
 
 	let mode = 'basic';
 
@@ -193,7 +191,7 @@ Legs.prototype.setShading = function ( idSet, colourSegment, material ) {
 
 	}
 
-	this.legs2.material = this.ctx.materials.getLine2Material( mode );
+	this.legs.material = this.ctx.materials.getLine2Material( mode );
 
 	const legRuns = this.legRuns;
 	const unselectedColor = this.ctx.cfg.themeColor( 'shading.unselected' );
@@ -201,9 +199,7 @@ Legs.prototype.setShading = function ( idSet, colourSegment, material ) {
 	var l, run, v;
 
 	const vertices = this.legVertices;
-
-	const colorsAttribute = this.legs1.geometry.getAttribute( 'color' );
-	const colors = colorsAttribute.array;
+	const colors = this.colors.array;
 
 	if ( idSet.size > 0 && legRuns ) {
 
@@ -246,47 +242,73 @@ Legs.prototype.setShading = function ( idSet, colourSegment, material ) {
 
 	}
 
-	// update bufferGeometry
-	colorsAttribute.needsUpdate = true;
-
-	if ( this.legs2 !== null ) {
-
-		this.legs2.geometry.getAttribute( 'instanceColorStart' ).needsUpdate = true;
-		this.legs2.geometry.getAttribute( 'instanceColorEnd' ).needsUpdate = true;
-
-	}
+	this.legs.updateColors();
 
 };
 
-function Legs1 ( ctx ) {
+function ThinLegs ( ctx ) {
 
 	const geometry = new BufferGeometry();
 
 	LineSegments.call( this, geometry, ctx.materials.getUnselectedMaterial() );
 
-	this.type = 'CV.Legs1';
+	this.type = 'CV.ThinLegs';
 
 	return this;
 
 }
 
-Legs1.prototype = Object.create( LineSegments.prototype );
+ThinLegs.prototype = Object.create( LineSegments.prototype );
 
-Legs1.prototype.addLegs = function ( vertices ) {
+ThinLegs.prototype.addLegs = function ( positions, colors ) {
 
 	const geometry = this.geometry;
 
-	var positions = new Float32BufferAttribute( vertices.length * 3, 3 );
-	var colors = new Float32BufferAttribute( vertices.length * 3, 3 );
-
-	colors.array.fill( 1.0 );
-
-	geometry.setAttribute( 'position', positions.copyVector3sArray( vertices ) );
+	geometry.setAttribute( 'position', positions );
 	geometry.setAttribute( 'color', colors );
 
 	geometry.computeBoundingBox();
 
 	return this;
+
+};
+
+ThinLegs.prototype.updateColors = function () {
+
+	this.geometry.getAttribute( 'color' ).needsUpdate = true;
+
+};
+
+function FatLegs ( ctx ) {
+
+	const geometry = new LineSegmentsGeometry();
+
+	LineSegments2.call( this, geometry, ctx.materials.getUnselectedMaterial() );
+
+	this.type = 'CV.FatLegs';
+	this.scale.set( 1, 1, 1 );
+
+	return this;
+
+}
+
+FatLegs.prototype = Object.create( LineSegments2.prototype );
+
+FatLegs.prototype.addLegs = function ( positions, colors ) {
+
+	const geometry = this.geometry;
+
+	geometry.setPositions( positions.array );
+	geometry.setColors( colors.array );
+
+	return this;
+
+};
+
+FatLegs.prototype.updateColors = function () {
+
+	this.geometry.getAttribute( 'instanceColorStart' ).needsUpdate = true;
+	this.geometry.getAttribute( 'instanceColorEnd' ).needsUpdate = true;
 
 };
 

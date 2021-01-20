@@ -47,6 +47,12 @@ function SelectionTreePage ( frame, viewer, container, fileSelector ) {
 
 	viewer.addEventListener( 'select', _selectNode );
 
+	this._dispose = function () {
+
+		viewer.removeEventListener( 'select', _selectNode );
+
+	};
+
 	return this;
 
 	function _selectNode ( event ) {

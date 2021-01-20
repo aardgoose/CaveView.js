@@ -23,6 +23,8 @@ Frame.prototype.reset = function () {
 	const tabBox = document.createElement( 'div' );
 	tabBox.classList.add( 'cv-tab-box' );
 
+	if ( this.pages ) this.pages.forEach( function ( p ) { p.owner.dispose(); } );
+
 	this.frame = frame;
 	this.header = frameHeader;
 	this.tabBox = tabBox;

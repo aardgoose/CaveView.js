@@ -590,4 +590,8 @@ Page.prototype.addLogo = function () {
 
 };
 
+Page.prototype.dispose = function () {
+	if ( this._dispose ) this._dispose();
+};
+
 export { Page };

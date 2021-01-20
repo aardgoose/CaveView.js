@@ -1,5 +1,5 @@
 import {
-	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_ANAGLYPH, CAMERA_STEREO,
+	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_ANAGLYPH,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH,
 	SHADING_SINGLE, SHADING_SURVEY, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	/* SHADING_BECK, */ VIEW_NONE, VIEW_PLAN, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W
@@ -32,7 +32,6 @@ const cameraModes = {
 	'view.camera.orthographic': CAMERA_ORTHOGRAPHIC,
 	'view.camera.perspective':  CAMERA_PERSPECTIVE,
 	'view.camera.anaglyph':     CAMERA_ANAGLYPH
-//	'view.camera.stereo':       CAMERA_STEREO
 };
 
 function SettingsPage ( frame, viewer, fileSelector ) {
@@ -140,7 +139,7 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 		// change UI dynamicly to only display useful controls
 		if ( event.name === 'cameraType' ) {
 
-			frame.setControlsVisibility( controls, viewer.cameraType === CAMERA_ANAGLYPH || viewer.cameraType === CAMERA_STEREO );
+			frame.setControlsVisibility( controls, ( viewer.cameraType === CAMERA_ANAGLYPH ) );
 
 		}
 

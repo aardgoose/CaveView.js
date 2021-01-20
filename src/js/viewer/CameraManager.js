@@ -1,10 +1,9 @@
 import {
-	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_ANAGLYPH, CAMERA_STEREO,
+	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_ANAGLYPH,
 	LEG_CAVE, FEATURE_SELECTED_BOX, FEATURE_SURVEY, FEATURE_TERRAIN
 } from '../core/constants';
 
 import { AnaglyphEffect } from './AnaglyphEffect';
-import { StereoEffect } from './StereoEffect';
 
 import {
 	OrthographicCamera, PerspectiveCamera, MathUtils,
@@ -179,10 +178,9 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		switch ( mode ) {
 
-		case CAMERA_STEREO:
 		case CAMERA_ANAGLYPH:
 
-			activeEffect = ( mode === CAMERA_STEREO ) ? new StereoEffect( renderer ) : new AnaglyphEffect( renderer, width, height );
+			activeEffect = new AnaglyphEffect( renderer, width, height );
 
 			if ( activeCamera.isPerspective ) break;
 

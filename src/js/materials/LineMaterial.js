@@ -33,7 +33,7 @@ const uniforms = UniformsUtils.merge( [
 	}
 ] );
 
-var LineMaterial = function ( ctx, survey, mode = 'heigsht') {
+var LineMaterial = function ( ctx, survey, mode = 'height') {
 
 	const cfg = ctx.cfg;
 	const gradient = cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';

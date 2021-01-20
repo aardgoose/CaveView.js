@@ -298,7 +298,7 @@ function Materials ( viewer ) {
 
 	};
 
-	this.flushCache = function ( surveyIn ) {
+	this.flushCache = function () {
 
 		var name;
 

@@ -13,15 +13,15 @@ function Entrances ( ctx, survey ) {
 	const stations = [];
 
 	const geometry = new BufferGeometry();
-	const material = new PointsMaterial();
-
-	material.map = ctx.materials.textureCache.getTexture( 'disc' );
-	material.opacity = 1.0;
-	material.alphaTest = 0.8;
-	material.sizeAttenuation = false;
-	material.transparent = true;
-	material.size = 10;
-	material.vertexColors = true;
+	const material = new PointsMaterial( {
+		map: ctx.materials.textureCache.getTexture( 'disc' ),
+		opacity: 1.0,
+		alphaTest: 0.8,
+		sizeAttenuation: false,
+		transparent: true,
+		size: 10,
+		vertexColors: true
+	});
 
 	const markers = new Points( geometry, material );
 

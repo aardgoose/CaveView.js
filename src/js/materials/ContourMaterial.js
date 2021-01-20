@@ -21,8 +21,9 @@ const fragment_color = [
 	'diffuseColor = mix( finalColor, baseColorAlpha, c );'
 ].join( '\n' );
 
-function ContourMaterial ( ctx, survey ) {
+function ContourMaterial ( ctx ) {
 
+	const survey = ctx.survey;
 	const cfg = ctx.cfg;
 	const materials = ctx.materials;
 

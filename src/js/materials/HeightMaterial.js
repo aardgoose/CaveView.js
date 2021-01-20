@@ -3,8 +3,9 @@ import { Shaders } from '../shaders/Shaders';
 
 import { ShaderMaterial } from '../Three';
 
-function HeightMaterial ( ctx, type, survey ) {
+function HeightMaterial ( ctx, type ) {
 
+	const survey = ctx.survey;
 	const limits = survey.modelLimits;
 
 	const zMin = limits.min.z;

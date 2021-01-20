@@ -14,8 +14,9 @@ const fragment_color = [
 	Shaders.commonTerrainCodeColor
 ].join( '\n' );
 
-function HypsometricMaterial ( ctx, survey ) {
+function HypsometricMaterial ( ctx ) {
 
+	const survey = ctx.survey;
 	const cfg = ctx.cfg;
 	const terrain = survey.terrain;
 	const textureCache = ctx.materials.textureCache;

@@ -3,8 +3,9 @@ import { MATERIAL_LINE } from '../core/constants';
 
 import { ShaderMaterial } from '../Three';
 
-function CursorMaterial ( ctx, type, survey ) {
+function CursorMaterial ( ctx, type ) {
 
+	const survey = ctx.survey;
 	const cfg = ctx.cfg;
 	const limits = survey.modelLimits;
 

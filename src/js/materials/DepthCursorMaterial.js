@@ -3,8 +3,9 @@ import { MATERIAL_LINE } from '../core/constants';
 
 import { ShaderMaterial, Vector3 } from '../Three';
 
-function DepthCursorMaterial ( ctx, type, survey ) {
+function DepthCursorMaterial ( ctx, type ) {
 
+	const survey = ctx.survey;
 	const cfg = ctx.cfg;
 	const surveyLimits = survey.modelLimits;
 	const terrain = survey.terrain;

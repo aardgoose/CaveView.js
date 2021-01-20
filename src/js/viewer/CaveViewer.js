@@ -1164,7 +1164,7 @@ function CaveViewer ( domID, configuration ) {
 
 		setScale();
 
-		materials.flushCache( survey );
+		materials.flushCache();
 
 		scene.addStatic( survey );
 

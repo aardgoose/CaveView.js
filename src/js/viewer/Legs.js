@@ -7,8 +7,6 @@ function Legs ( ctx ) {
 
 	Group.call( this );
 
-	this.legs1 = null;
-	this.legs2 = null;
 	this.ctx = ctx;
 	this.legLengths = [];
 	this.legVertices = [];

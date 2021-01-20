@@ -128,7 +128,7 @@ function Materials ( viewer ) {
 
 	this.getLine2Material = function ( mode = '' ) {
 
-		const func = function () { return new LineMaterial( ctx, survey, mode ); };
+		const func = function () { return new LineMaterial( ctx, ctx.survey, mode ); };
 		const material = getSurveyCacheMaterial( 'line2-' + mode, func, true );
 
 		if ( mode == 'cursor' || mode == 'depth-cursor' ) {
@@ -144,14 +144,14 @@ function Materials ( viewer ) {
 
 	this.getHeightMaterial = function ( type ) {
 
-		const func = function () { return new HeightMaterial( ctx, type, survey ); };
+		const func = function () { return new HeightMaterial( ctx, type, ctx.survey ); };
 		return getSurveyCacheMaterial( 'height' + type, func, true );
 
 	};
 
 	this.getHypsometricMaterial = function () {
 
-		const func = function () { return new HypsometricMaterial( ctx, survey ); };
+		const func = function () { return new HypsometricMaterial( ctx, ctx.survey ); };
 		return getSurveyCacheMaterial( 'hypsometric', func );
 
 	};
@@ -164,14 +164,14 @@ function Materials ( viewer ) {
 
 	this.getDepthMaterial = function ( type ) {
 
-		const func = function () { return new DepthMaterial( ctx, type, survey ); };
+		const func = function () { return new DepthMaterial( ctx, type, ctx.survey ); };
 		return getSurveyCacheMaterial( 'depth' + type, func, true );
 
 	};
 
 	this.getCursorMaterial = function ( type ) {
 
-		const func = function () { return new CursorMaterial( ctx, type, survey ); };
+		const func = function () { return new CursorMaterial( ctx, type, ctx.survey ); };
 		const material = getSurveyCacheMaterial( 'cursor' + type, func, true );
 
 		// set active cursor material for updating
@@ -183,7 +183,7 @@ function Materials ( viewer ) {
 
 	this.getDepthCursorMaterial = function ( type ) {
 
-		const func = function () { return new DepthCursorMaterial( ctx, type, survey ); };
+		const func = function () { return new DepthCursorMaterial( ctx, type, ctx.survey ); };
 		const material = getSurveyCacheMaterial( 'depthCursor' + type, func, true );
 
 		// set active cursor material for updating
@@ -270,7 +270,7 @@ function Materials ( viewer ) {
 
 	this.getContourMaterial = function () {
 
-		const func = function () { return new ContourMaterial( ctx, survey ); };
+		const func = function () { return new ContourMaterial( ctx, ctx.survey ); };
 		return getSurveyCacheMaterial( 'contour', func );
 
 	};

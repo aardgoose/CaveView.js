@@ -1,15 +1,16 @@
 import { FEATURE_SELECTED_BOX } from '../core/constants';
-import { Box3Helper } from '../core/Box3';
+import { SurveyBox } from '../core/SurveyBox';
 
 import { Box3, IncrementStencilOp } from '../Three';
 
-function Selection( survey, color ) {
+function Selection( ctx, color ) {
 
+	const survey = ctx.survey;
 	const worldBoundingBox = new Box3();
 	var root = survey.surveyTree;
 	var selectedNode = root;
 
-	Box3Helper.call( this, root.boundingBox, color );
+	SurveyBox.call( this, ctx, root.boundingBox, color );
 
 	const material = this.material;
 
@@ -104,6 +105,6 @@ function Selection( survey, color ) {
 
 }
 
-Selection.prototype = Object.create( Box3Helper.prototype );
+Selection.prototype = Object.create( SurveyBox.prototype );
 
 export { Selection };

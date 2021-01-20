@@ -8,7 +8,6 @@ import {
 } from '../core/constants';
 
 import { StationPosition } from '../core/StationPosition';
-import { Box3Helper } from '../core/Box3';
 import { Entrances } from './Entrances';
 import { Stations } from './Stations';
 import { StationLabels } from './StationLabels';
@@ -22,13 +21,12 @@ import { LoxTerrain } from '../terrain/LoxTerrain';
 import { buildWallsSync } from './walls/WallBuilders';
 import { SurveyColourMapper} from '../core/SurveyColourMapper';
 import { Selection } from './Selection';
+import { SurveyBox } from '../core/SurveyBox';
 
 import { Matrix4, Vector3, Box3, Object3D } from '../Three';
 import proj4 from 'proj4';
 
 const __set = new Set();
-
-Selection.prototype = Object.create( Box3Helper.prototype );
 
 function Survey ( ctx, cave ) {
 
@@ -70,6 +68,7 @@ function Survey ( ctx, cave ) {
 	this.gradientName = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 
 	ctx.surveyColourMapper = new SurveyColourMapper( ctx );
+	ctx.survey = this;
 
 	var survey = cave.getSurvey();
 
@@ -289,7 +288,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.surveyTree = surveyTree;
 
-	this.selection = new Selection( this, this.ctx.cfg.themeValue( 'box.select' ) );
+	this.selection = new Selection( ctx, this.ctx.cfg.themeValue( 'box.select' ) );
 
 	_loadSegments( cave.lineSegments );
 
@@ -712,7 +711,7 @@ Survey.prototype.highlightSelection = function ( node ) {
 
 		if ( box === null ) {
 
-			box = new Selection( this,  this.ctx.cfg.themeValue( 'box.highlight' ) );
+			box = new Selection( this.ctx,  this.ctx.cfg.themeValue( 'box.highlight' ) );
 			this.highlightBox = box;
 
 		}
@@ -754,7 +753,7 @@ Survey.prototype.setFeatureBox = function () {
 
 	if ( this.featureBox === null ) {
 
-		const box = new Box3Helper( this.combinedLimits, this.ctx.cfg.themeValue( 'box.bounding' ) );
+		const box = new SurveyBox( this.ctx, this.combinedLimits, this.ctx.cfg.themeValue( 'box.bounding' ) );
 
 		box.layers.set( FEATURE_BOX );
 		box.name = 'survey-boundingbox';
@@ -774,11 +773,7 @@ Survey.prototype.getWorldBoundingBox = function () {
 
 	if ( this.worldBoundingBox === null ) {
 
-		const geometry = this.featureBox.geometry;
-
-		geometry.computeBoundingBox();
-
-		this.worldBoundingBox = geometry.boundingBox.clone().applyMatrix4( this.matrixWorld );
+		this.worldBoundingBox = this.featureBox.box3.clone().applyMatrix4( this.matrixWorld );
 
 	}
 
@@ -870,7 +865,7 @@ Survey.prototype.cutSection = function ( node ) {
 
 			break;
 
-		case 'Box3Helper':
+		case 'SurveyBox':
 		case 'CV.Stations':
 		case 'CV.StationLabels':
 		case 'CV.ClusterMarker':

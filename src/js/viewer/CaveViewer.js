@@ -48,9 +48,6 @@ function CaveViewer ( domID, configuration ) {
 	// target with css for fullscreen on small screen devices
 	container.classList.add( 'cv-container' );
 
-	const width = container.clientWidth;
-	const height = container.clientHeight;
-
 	const cfg = new Cfg( configuration );
 
 	const ctx = {
@@ -71,7 +68,7 @@ function CaveViewer ( domID, configuration ) {
 
 	var renderer = new WebGLRenderer( { antialias: true, alpha: true } );
 
-	renderer.setSize( width, height );
+	renderer.setSize( container.clientWidth, container.clientHeight );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setClearColor( cfg.themeValue( 'background' ), 0.0 );
 	renderer.setRenderTarget( null );

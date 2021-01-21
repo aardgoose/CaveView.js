@@ -14,24 +14,20 @@ function ExportPage ( frame, viewer, fileSelector ) {
 
 	do { sizes.push( mss ); } while ( (mss /= 2) > 512 );
 
-	const colors = [ 'black', 'white', 'transparent' ];
-
 	const scales = [ 1, 2, 3, 4, 5, 6 ];
 
 	const pngParams = {
 		exportSize: sizes[ 0 ],
-		backgroundColor: 'black',
 		lineScale: 1
 	};
 
-	this.addSelect( 'png_export.background_color', colors, pngParams, 'backgroundColor' );
 	this.addSelect( 'png_export.line_scale', scales, pngParams, 'lineScale' );
 	this.addSelect( 'png_export.size', sizes, pngParams, 'exportSize' );
 
 	this.addDownloadButton(
 		'png_export.export',
 		() => {
-			const url = viewer.getSnapshot( pngParams.exportSize, pngParams.backgroundColor, pngParams.lineScale );
+			const url = viewer.getSnapshot( pngParams.exportSize, pngParams.lineScale );
 			return url;
 		},
 		'snapshot.png'

@@ -8,7 +8,7 @@ function ClusterMaterial ( count ) {
 
 	const canvas = document.createElement( 'canvas' );
 
-	if ( ! canvas ) console.error( 'creating canvas for glyph atlas failed' );
+	if ( ! canvas ) console.error( 'creating canvas for cluster marker failed' );
 
 	canvas.width  = markerSize;
 	canvas.height = markerSize;

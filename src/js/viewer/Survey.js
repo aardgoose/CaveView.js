@@ -231,7 +231,22 @@ Survey.prototype.loadWarnings = function () {
 
 };
 
+Survey.prototype.refreshColors = function () {
+
+	this.loadEntrances();
+
+};
+
 Survey.prototype.loadEntrances = function () {
+
+	if ( this.hasFeature( FEATURE_ENTRANCES ) ) {
+
+		const f = this.getFeature( FEATURE_ENTRANCES );
+
+		this.removeFeature( f );
+		this.remove( f );
+
+	}
 
 	const entrances = new Entrances( this.ctx, this );
 

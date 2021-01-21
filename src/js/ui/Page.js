@@ -579,6 +579,50 @@ Page.prototype.download = function ( data, fileName ) {
 
 };
 
+Page.prototype.addColor = function ( title, name ) {
+
+	const frame = this.frame;
+	const label = document.createElement( 'label' );
+	const cb    = document.createElement( 'input' );
+	const div   = document.createElement( 'div' );
+	const cfg = frame.ctx.cfg;
+
+	const id = 'cv-' + frame.getSeq();
+
+	div.classList.add( 'control' );
+
+	cb.type = 'color';
+	cb.value = cfg.themeColorHex( name ),
+
+	cb.id = id;
+
+	label.textContent = this.i18n( title );
+	label.htmlFor = id;
+	label.classList.add( 'color' );
+
+	this.addListener( cb, 'change', _colorChanged );
+
+	frame.controls[ name ] = cb;
+
+	div.appendChild( cb );
+	div.appendChild( label );
+
+	this.page.appendChild( div );
+
+	return div;
+
+	function _colorChanged ( event ) {
+
+		frame.inHandler = true;
+
+		cfg.setThemeColorCSS( name, event.target.value );
+
+		frame.inHandler = false;
+
+	}
+
+};
+
 Page.prototype.addLogo = function () {
 
 	const img = document.createElement( 'div' );

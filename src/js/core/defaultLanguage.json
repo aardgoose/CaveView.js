@@ -46,6 +46,7 @@
 		"no_routes": "no routes defined",
 		"visibility": {
 			"header": "Visibility",
+			"legs": "Center lines",
 			"entrances": "Entrances",
 			"stations": "Stations",
 			"labels": "Station Labels",

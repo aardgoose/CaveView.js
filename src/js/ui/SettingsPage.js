@@ -98,6 +98,7 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 
 	const cv = this.addCollapsingHeader( 'visibility.header' );
 
+	if ( viewer.hasLegs            ) cv.appendChild( this.addCheckbox( 'visibility.legs', viewer, 'legs' ) );
 	if ( viewer.hasEntrances       ) cv.appendChild( this.addCheckbox( 'visibility.entrances', viewer, 'entrances' ) );
 	if ( viewer.hasStations        ) cv.appendChild( this.addCheckbox( 'visibility.stations', viewer, 'stations' ) );
 	if ( viewer.hasStationLabels   ) cv.appendChild( this.addCheckbox( 'visibility.labels', viewer, 'stationLabels' ) );

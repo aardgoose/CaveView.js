@@ -416,6 +416,21 @@ function CaveViewer ( domID, configuration ) {
 
 	this.addEventListener( 'change', viewChanged );
 
+	cfg.addEventListener( 'colors', ( e ) => {
+
+		if ( e.name == 'background' ) {
+
+			container.style.backgroundColor = cfg.themeColorCSS( 'background' );
+			renderer.setClearColor( cfg.themeColor( 'background' ), 1.0 );
+
+		}
+
+		survey.refreshColors();
+
+		renderView();
+
+	} );
+
 	function onMouseOver () {
 
 		mouseOver = true;
@@ -1688,7 +1703,7 @@ function CaveViewer ( domID, configuration ) {
 
 	};
 
-	this.getSnapshot = function ( exportSize, backgroundColor, lineScale ) {
+	this.getSnapshot = function ( exportSize, lineScale ) {
 
 		var width  = container.clientWidth;
 		var height = container.clientHeight;
@@ -1701,14 +1716,10 @@ function CaveViewer ( domID, configuration ) {
 		renderTarget.texture.generateMipmaps = false;
 		renderTarget.texture.name = 'CV.snapshot';
 
-		if ( backgroundColor !== 'transparent' ) renderer.setClearColor( backgroundColor, 1.0 );
-
 		renderer.setSize( newWidth, newHeight );
 		renderer.setPixelRatio( 1 );
 
 		renderer.setRenderTarget( renderTarget );
-
-		renderer.clear();
 
 		// reset camera and materials using renderer size/resolution
 		self.dispatchEvent( { type: 'resized', name: 'rts', 'width': newWidth, 'height': newHeight, lineScale: lineScale } );
@@ -1751,8 +1762,6 @@ function CaveViewer ( domID, configuration ) {
 		renderTarget.dispose();
 
 		renderer.setRenderTarget( null );
-		renderer.setClearColor( cfg.themeValue( 'background' ), 0.0 );
-
 		renderer.setPixelRatio( window.devicePixelRatio );
 
 		// reset renderer etc to new sizes

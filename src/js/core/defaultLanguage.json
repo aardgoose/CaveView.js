@@ -69,13 +69,12 @@
 		"ui": {
 			"selection_tree": "Use tree selection"
 		},
-		"gltf_export": {
-			"header": "glTF Export",
-			"walls": "include LRUD walls",
-			"scraps": "include scraps",
-			"legs": "include centre lines",
-			"rotate_axes": "rotate axes",
-			"export": "Download"
+		"colors": {
+			"header": "Colours",
+			"background": "background",
+			"entrance_text": "Entrance text",
+			"entrance_background": "entrance background",
+			"entrance_marker": "entrance marker"
 		}
 	},
 	"surface": {
@@ -228,7 +227,6 @@
 			"header": "Image (PNG) Export",
 			"export": "Snapshot",
 			"size": "Size (px)",
-			"background_color": "Background colour",
 			"line_scale": "Line scale"
 		}
 	},

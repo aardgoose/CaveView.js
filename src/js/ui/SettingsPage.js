@@ -120,6 +120,13 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 	ch.appendChild( this.addCheckbox( 'controls.zoom_to_cursor', viewer, 'zoomToCursor' ) );
 	ch.appendChild( this.addCheckbox( 'ui.selection_tree', viewer.ctx.cfg, 'selectionTree' ) );
 
+	const cc = this.addCollapsingHeader( 'colors.header' );
+
+	cc.appendChild( this.addColor( 'colors.background_color', 'background' ) );
+	cc.appendChild( this.addColor( 'colors.entrance_text', 'stations.entrances.text' ) );
+	cc.appendChild( this.addColor( 'colors.entrance_background', 'stations.entrances.background' ) );
+	cc.appendChild( this.addColor( 'colors.entrance_marker', 'stations.entrances.marker' ) );
+
 	if ( viewer.svxControlMode ) ch.appendChild( this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' ) );
 
 	_onChange( { name: 'cameraType' } );

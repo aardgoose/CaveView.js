@@ -1,6 +1,6 @@
 import { ClusterMarkers } from './ClusterMarkers';
 import { STATION_ENTRANCE, FEATURE_ENTRANCES } from '../core/constants';
-import { Points, PointsMaterial, BufferGeometry, Float32BufferAttribute } from '../Three';
+import { Points, PointsMaterial, BufferGeometry, Float32BufferAttribute, IncrementStencilOp } from '../Three';
 
 function Entrances ( ctx, survey ) {
 
@@ -13,15 +13,25 @@ function Entrances ( ctx, survey ) {
 	const stations = [];
 
 	const geometry = new BufferGeometry();
+
 	const material = new PointsMaterial( {
-		map: ctx.materials.textureCache.getTexture( 'disc' ),
+		map: ctx.materials.textureCache.getTexture( 'disc-outlined' ),
 		opacity: 1.0,
 		alphaTest: 0.8,
 		sizeAttenuation: false,
 		transparent: true,
-		size: 10,
+		size: Math.max( 10, Math.floor( ctx.container.clientWidth / 100 ) ),
 		vertexColors: true
 	});
+
+	material.stencilWrite = true;
+	material.stencilZPass = IncrementStencilOp;
+
+	ctx.viewer.addEventListener( 'resized', ( e ) => {
+
+		material.size = Math.max( 10, Math.floor( e.width / 100 ) );
+
+	} );
 
 	const markers = new Points( geometry, material );
 
@@ -143,7 +153,7 @@ Entrances.prototype.intersectLabels = function ( mouse, camera, scale ) {
 
 Entrances.prototype.setSelection = function ( selection ) {
 
-	const color = this.markers.geometry.getAttribute( 'color');
+	const color = this.markers.geometry.getAttribute( 'color' );
 
 	if ( color === undefined ) return;
 

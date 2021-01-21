@@ -71,10 +71,10 @@
 		},
 		"colors": {
 			"header": "Colours",
-			"background": "background",
+			"background_color": "Background",
 			"entrance_text": "Entrance text",
-			"entrance_background": "entrance background",
-			"entrance_marker": "entrance marker"
+			"entrance_background": "Entrance background",
+			"entrance_marker": "Entrance marker"
 		}
 	},
 	"surface": {

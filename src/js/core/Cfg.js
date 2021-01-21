@@ -114,6 +114,7 @@ Cfg.prototype.setPropertyValue = function ( item, defaultValue ) {
 
 };
 
+
 Cfg.prototype.themeValue = function ( name ) {
 
 	const theme = this.environment.get( 'theme' );
@@ -183,6 +184,19 @@ Cfg.prototype.themeColor = function ( name ) {
 	}
 
 	return color;
+
+};
+
+Cfg.prototype.themeColorHex = function ( name ) {
+
+	return '#' + this.themeColor( name ).getHexString();
+
+};
+
+Cfg.prototype.setThemeColorCSS = function ( name, color ) {
+
+	this.themeColors.set( name, new Color( color ) );
+	this.dispatchEvent( { type: 'colors', name: name } );
 
 };
 

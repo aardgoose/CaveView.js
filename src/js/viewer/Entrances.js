@@ -33,6 +33,8 @@ function Entrances ( ctx, survey ) {
 
 	} );
 
+	this.entranceColor = ctx.cfg.themeColor( 'stations.entrances.marker' );
+
 	const markers = new Points( geometry, material );
 
 	markers.layers.set( FEATURE_ENTRANCES );
@@ -47,15 +49,15 @@ function Entrances ( ctx, survey ) {
 
 	surveyTree.traverse( _addEntrance );
 
-	const bl = vertices.length * 3;
+	const l = vertices.length * 3;
 
-	if ( bl > 0 ) {
+	if ( l > 0 ) {
 
-		const positions = new Float32BufferAttribute( bl, 3 );
-		const colors = new Float32BufferAttribute( bl, 3 );
-		colors.array.fill( 1 );
+		const positions = new Float32BufferAttribute( l, 3 );
+		const colors = new Float32BufferAttribute( l, 3 );
 
 		positions.copyVector3sArray( vertices );
+
 		geometry.setAttribute( 'position', positions );
 		geometry.setAttribute( 'color', colors );
 
@@ -68,6 +70,9 @@ function Entrances ( ctx, survey ) {
 	this.markers = markers;
 	this.stations = stations;
 	this.metadata = survey.metadata;
+
+	// set default colors - needs to be after markers property is set
+	this.setSelection( null );
 
 	this.addStatic( markers );
 
@@ -153,13 +158,21 @@ Entrances.prototype.intersectLabels = function ( mouse, camera, scale ) {
 
 Entrances.prototype.setSelection = function ( selection ) {
 
-	const color = this.markers.geometry.getAttribute( 'color' );
+	const colors = this.markers.geometry.getAttribute( 'color' );
+	const color = this.entranceColor;
 
-	if ( color === undefined ) return;
+	if ( colors === undefined ) return;
 
-	if ( selection.isEmpty() ) {
+	if ( selection === null || selection.isEmpty() ) {
 
-		color.array.fill( 1.0 );
+		const array = colors.array;
+		const l = array.length;
+
+		for ( let i = 0; i < l; i += 3 ) {
+
+			color.toArray( array, i );
+
+		}
 
 	} else {
 
@@ -169,11 +182,11 @@ Entrances.prototype.setSelection = function ( selection ) {
 
 			if ( idSet.has( node.id ) ) {
 
-				color.setXYZ( i, 1, 1, 1 );
+				color.toArray( colors, i * 3 );
 
 			} else {
 
-				color.setXYZ( i, 0.5, 0.5, 0.5 );
+				colors.setXYZ( i, 0.5, 0.5, 0.5 );
 
 			}
 
@@ -181,7 +194,7 @@ Entrances.prototype.setSelection = function ( selection ) {
 
 	}
 
-	color.needsUpdate = true;
+	colors.needsUpdate = true;
 
 };
 

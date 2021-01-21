@@ -74,7 +74,8 @@
 			"background_color": "Background",
 			"entrance_text": "Entrance text",
 			"entrance_background": "Entrance background",
-			"entrance_marker": "Entrance marker"
+			"entrance_marker": "Entrance marker",
+			"bounding_box": "Bounding Box"
 		}
 	},
 	"surface": {

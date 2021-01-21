@@ -126,6 +126,7 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 	cc.appendChild( this.addColor( 'colors.entrance_text', 'stations.entrances.text' ) );
 	cc.appendChild( this.addColor( 'colors.entrance_background', 'stations.entrances.background' ) );
 	cc.appendChild( this.addColor( 'colors.entrance_marker', 'stations.entrances.marker' ) );
+	cc.appendChild( this.addColor( 'colors.bounding_box', 'box.bounding' ) );
 
 	if ( viewer.svxControlMode ) ch.appendChild( this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' ) );
 

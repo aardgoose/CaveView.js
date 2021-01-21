@@ -233,20 +233,33 @@ Survey.prototype.loadWarnings = function () {
 
 Survey.prototype.refreshColors = function () {
 
+	if ( this.hasFeature( FEATURE_ENTRANCES ) ) {
+
+		const fe = this.getFeature( FEATURE_ENTRANCES );
+
+		this.removeFeature( fe );
+		this.remove( fe );
+		this.entrances = null;
+
+	}
+
 	this.loadEntrances();
+
+	if ( this.featureBox ) {
+
+		const fb = this.getFeature( FEATURE_BOX );
+
+		this.removeFeature( fb );
+		this.remove( fb );
+		this.featureBox = null;
+
+	}
+
+	this.setFeatureBox();
 
 };
 
 Survey.prototype.loadEntrances = function () {
-
-	if ( this.hasFeature( FEATURE_ENTRANCES ) ) {
-
-		const f = this.getFeature( FEATURE_ENTRANCES );
-
-		this.removeFeature( f );
-		this.remove( f );
-
-	}
 
 	const entrances = new Entrances( this.ctx, this );
 
@@ -768,13 +781,10 @@ Survey.prototype.setFeatureBox = function () {
 
 	if ( this.featureBox === null ) {
 
-		const box = new SurveyBox( this.ctx, this.combinedLimits, this.ctx.cfg.themeValue( 'box.bounding' ) );
+		const box = new SurveyBox( this.ctx, this.combinedLimits, this.ctx.cfg.themeColorCSS( 'box.bounding' ) );
 
-		box.layers.set( FEATURE_BOX );
-		box.name = 'survey-boundingbox';
-
+		this.addFeature( box, FEATURE_BOX, 'survey-boundingbox' );
 		this.featureBox = box;
-		this.addStatic( box );
 
 	} else {
 

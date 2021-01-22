@@ -1,5 +1,5 @@
 import {
-	SHADING_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_SINGLE,
+	SHADING_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_SURFACE,
 	// TERRAIN_BLEND, TERRAIN_STENCIL, TERRAIN_BASIC
 } from '../core/constants';
 
@@ -9,7 +9,7 @@ const surfaceShadingModes = {
 	'surface.shading.height':        SHADING_HEIGHT,
 	'surface.shading.inclination':   SHADING_INCLINATION,
 	'surface.shading.height_cursor': SHADING_CURSOR,
-	'surface.shading.fixed':         SHADING_SINGLE
+	'surface.shading.fixed':         SHADING_SURFACE
 };
 
 /*

@@ -75,7 +75,9 @@
 			"entrance_text": "Entrance text",
 			"entrance_background": "Entrance background",
 			"entrance_marker": "Entrance marker",
-			"bounding_box": "Bounding Box"
+			"bounding_box": "Bounding box",
+			"legs_fixed": "Passage lines (fixed)",
+			"surface_fixed": "Surface lines (fixed)"
 		}
 	},
 	"surface": {

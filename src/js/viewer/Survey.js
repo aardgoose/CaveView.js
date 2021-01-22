@@ -4,7 +4,8 @@ import {
 	FEATURE_STATIONS, SURVEY_WARNINGS, STATION_ENTRANCE,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, LABEL_STATION_COMMENT, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
-	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE, CLUSTER_MARKERS,
+	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
+	SHADING_SURFACE, CLUSTER_MARKERS,
 } from '../core/constants';
 
 import { StationPosition } from '../core/StationPosition';
@@ -256,6 +257,9 @@ Survey.prototype.refreshColors = function () {
 	}
 
 	this.setFeatureBox();
+
+	this.setShadingMode( this.caveShading );
+	this.setSurfaceShading( this.surfaceShading );
 
 };
 
@@ -1077,6 +1081,12 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 	case SHADING_SINGLE:
 
 		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.single' ) );
+
+		break;
+
+	case SHADING_SURFACE:
+
+		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.surface' ) );
 
 		break;
 

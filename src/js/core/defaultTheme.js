@@ -62,6 +62,7 @@ const defaultTheme = {
 	},
 	shading: {
 		single: 'red',
+		surface: 'yellow',
 		cursor: 'yellow',
 		cursorBase: 'gray',
 		unselected: 'gray',

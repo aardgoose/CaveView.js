@@ -1719,8 +1719,8 @@ function CaveViewer ( domID, configuration ) {
 
 		renderer.setSize( newWidth, newHeight );
 		renderer.setPixelRatio( 1 );
-
 		renderer.setRenderTarget( renderTarget );
+		renderer.setClearAlpha( 1.0 );
 
 		// reset camera and materials using renderer size/resolution
 		self.dispatchEvent( { type: 'resized', name: 'rts', 'width': newWidth, 'height': newHeight, lineScale: lineScale } );
@@ -1764,6 +1764,7 @@ function CaveViewer ( domID, configuration ) {
 
 		renderer.setRenderTarget( null );
 		renderer.setPixelRatio( window.devicePixelRatio );
+		renderer.setClearAlpha( 0.0 );
 
 		// reset renderer etc to new sizes
 

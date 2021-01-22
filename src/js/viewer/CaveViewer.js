@@ -425,7 +425,7 @@ function CaveViewer ( domID, configuration ) {
 
 		}
 
-		survey.refreshColors();
+		if ( survey ) survey.refreshColors();
 
 		renderView();
 

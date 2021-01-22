@@ -64,20 +64,20 @@ function CaveViewer ( domID, configuration ) {
 
 	ctx.materials = materials;
 
-	container.style.backgroundColor = cfg.themeValue( 'background' );
+	container.style.backgroundColor = cfg.themeColorCSS( 'background' );
 
 	var renderer = new WebGLRenderer( { antialias: true, alpha: true } );
 
 	renderer.setSize( container.clientWidth, container.clientHeight );
 	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setClearColor( cfg.themeValue( 'background' ), 0.0 );
+	renderer.setClearColor( cfg.themeColor( 'background' ), 0.0 );
 	renderer.setRenderTarget( null );
 	renderer.clear();
 	renderer.autoClear = false;
 
 	container.appendChild( renderer.domElement );
 
-	const fog = new FogExp2( cfg.themeValue( 'background' ), 0.0025 );
+	const fog = new FogExp2( cfg.themeColorCSS( 'background' ), 0.0025 );
 
 	const scene = new Scene();
 	scene.fog = fog;

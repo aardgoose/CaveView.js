@@ -3,8 +3,6 @@ import { ShaderMaterial } from '../Three';
 
 function DepthMapMaterial ( terrain ) {
 
-	if ( terrain.boundingBox === undefined ) terrain.computeBoundingBox();
-
 	const boundingBox = terrain.boundingBox;
 
 	const minHeight = boundingBox.min.z;

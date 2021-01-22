@@ -121,16 +121,6 @@ LoxTerrain.prototype.isTiled = false;
 
 LoxTerrain.prototype.isLoaded = true;
 
-LoxTerrain.prototype.getBoundingBox = function () {
-
-	const box = new Box3();
-
-	this.children.forEach( function ( tile ) { box.union( tile.geometry.boundingBox ); } );
-
-	return box;
-
-};
-
 LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
 
 	if ( ! this.hasOverlay ) return;

@@ -126,6 +126,8 @@ CommonTerrain.prototype.checkTerrainShadingModes = function ( renderer ) {
 
 CommonTerrain.prototype.setup = function ( renderer, scene, survey ) {
 
+	this.computeBoundingBox();
+
 	survey.addStatic( this );
 
 	const dim = 1024;

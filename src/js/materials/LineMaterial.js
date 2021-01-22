@@ -53,8 +53,13 @@ var LineMaterial = function ( ctx, mode = 'height') {
 	if ( survey.terrain ) {
 
 		terrain = survey.terrain;
-		limits = terrain.boundingBox;
-		range = limits.getSize( new Vector3() );
+
+		if ( terrain.boundingBox ) {
+
+			limits = terrain.boundingBox;
+			range = limits.getSize( new Vector3() );
+
+		}
 
 	}
 

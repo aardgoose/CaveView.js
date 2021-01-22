@@ -278,6 +278,11 @@ Survey.prototype.setupTerrain = function ( terrain ) {
 
 	if ( terrain.isFlat ) return;
 
+	// expand limits with terrain
+	this.combinedLimits = new Box3().copy( terrain.boundingBox ).union( this.modelLimits );
+
+	this.setFeatureBox();
+
 	// find height difference between all entrance locations and terrain
 	// find average differences and use to alter height of terrain
 
@@ -337,7 +342,6 @@ Survey.prototype.loadCave = function ( cave ) {
 	this.metadata = metadata;
 
 	this.loadDyeTraces();
-	// this.loadAnnotations();
 
 	this.topology = new Topology( this.stations, this.getFeature( LEG_CAVE ) );
 
@@ -447,9 +451,6 @@ Survey.prototype.loadCave = function ( cave ) {
 
 		const terrain = new LoxTerrain( ctx, cave.terrains, self.offsets );
 
-		// expand limits with terrain
-
-		self.combinedLimits = new Box3().copy( terrain.getBoundingBox() ).union( self.modelLimits );
 
 		self.terrain = terrain;
 

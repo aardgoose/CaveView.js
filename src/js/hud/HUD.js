@@ -35,6 +35,10 @@ function HUD ( viewer, renderer ) {
 	var scaleBar    = null;
 	var cursorControl = null;
 
+	var ahi;
+	var compass;
+	var angleScale;
+
 	// viewer state
 
 	var controls;
@@ -54,7 +58,7 @@ function HUD ( viewer, renderer ) {
 
 	scene.addStatic( attitudeGroup );
 
-	const hudObject = new HudObject( viewer.ctx );
+	var hudObject = new HudObject( viewer.ctx );
 
 	const aLight = new AmbientLight( 0x888888 );
 	const dLight = new DirectionalLight( 0xFFFFFF );
@@ -70,13 +74,7 @@ function HUD ( viewer, renderer ) {
 
 	const progressDial = progressDials [ 0 ];
 
-	const ahi = new AHI( hudObject );
-	const compass = new Compass( hudObject );
-	const angleScale = new AngleScale( hudObject, i18n( 'inclination' ) );
-
-	attitudeGroup.addStatic( ahi );
-	attitudeGroup.addStatic( compass );
-	attitudeGroup.addStatic( angleScale );
+	newAttitudeGroup();
 
 	attitudeGroup.addStatic( progressDials[ 0 ] );
 	attitudeGroup.addStatic( progressDials[ 1 ] );
@@ -86,6 +84,7 @@ function HUD ( viewer, renderer ) {
 	viewer.addEventListener( 'resized', resize );
 
 	cfg.addEventListener( 'change', cfgChanged );
+	cfg.addEventListener( 'colors', cfgColorChanged );
 
 	controls = viewer.getControls();
 
@@ -188,6 +187,15 @@ function HUD ( viewer, renderer ) {
 
 	};
 
+	function cfgColorChanged ( /* event */ ) {
+
+		// refresh common config helper
+		hudObject = new HudObject( viewer.ctx );
+
+		newAttitudeGroup();
+		caveChanged();
+	}
+
 	function cfgChanged ( /* event */ ) {
 
 		// only change controls when a cave has been loaded already
@@ -203,6 +211,22 @@ function HUD ( viewer, renderer ) {
 		newScales();
 
 		viewChanged ( { type: 'change', name: 'shadingMode' } );
+
+	}
+
+	function newAttitudeGroup() {
+
+		if ( ahi ) attitudeGroup.remove( ahi );
+		if ( compass ) attitudeGroup.remove( compass );
+		if ( angleScale ) attitudeGroup.remove( angleScale );
+
+		ahi = new AHI( hudObject );
+		compass = new Compass( hudObject );
+		angleScale = new AngleScale( hudObject, i18n( 'inclination' ) );
+
+		attitudeGroup.addStatic( ahi );
+		attitudeGroup.addStatic( compass );
+		attitudeGroup.addStatic( angleScale );
 
 	}
 

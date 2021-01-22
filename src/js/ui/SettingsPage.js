@@ -129,6 +129,7 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 	cc.appendChild( this.addColor( 'colors.bounding_box', 'box.bounding' ) );
 	cc.appendChild( this.addColor( 'colors.legs_fixed', 'shading.single' ) );
 	cc.appendChild( this.addColor( 'colors.surface_fixed', 'shading.surface' ) );
+	cc.appendChild( this.addColor( 'colors.hud_text', 'hud.text' ) );
 
 	if ( viewer.svxControlMode ) ch.appendChild( this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' ) );
 

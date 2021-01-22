@@ -1,27 +1,14 @@
 {
   "name": "caveview",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "3D Cave Survey Viewer",
   "scripts": {
     "dev": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c -w \" \"serve -l 8080 build \"",
-    "dev-tile": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c rollup-webTileWorker.config.js -w \" \"serve -l 8080 build \"",
-    "dev-mesh": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c rollup-webMeshWorker.config.js -w \" \"serve -l 8080 build \"",
-    "dev-gltf": "concurrently --names \"gtlfWorker,HTTP,CaveView\" -c \"bgBlue.bold,bgGreen.bold,bgRed.bold\" \"rollup -c rollup-gltfWorker.config.js -w \" \"serve -l 8080 build \" \"rollup -c -w \"",
-    "build-main": "rollup -c",
-    "build-main-min": "npm run build-main && terser build/CaveView/js/CaveView2.js -cm --preamble \"// threejs.org/license\" > build/CaveView/js/CaveView2-min.js",
-    "build-tw": "rollup -c rollup-webTileWorker.config.js",
-    "build-tw-min": "npm run build-tw && terser build/CaveView/js/workers/webTileWorker.js -cm --preamble \"// threejs.org/license\" > build/CaveView/js/workers/webTileWorker-min.js",
-    "build-mw": "rollup -c rollup-webMeshWorker.config.js",
-    "build-mw-min": "npm run build-mw && terser build/CaveView/js/workers/webMeshWorker.js -cm --preamble \"// threejs.org/license\" > build/CaveView/js/workers/webMeshWorker-min.js",
-    "build-gltf": "rollup -c rollup-gltfWorker.config.js",
-    "build-gltf-min": "npm run build-gltf && terser build/CaveView/js/workers/gltfWorker.js -cm --preamble \"// threejs.org/license\" > build/CaveView/js/workers/gltfWorker-min.js",
+    "build": "rollup -c",
     "lint": "eslint src",
-    "build": "npm run build-main && npm run build-tw && npm run build-mw && npm run build-gltf",
-    "build-min": "npm run build-main-min && npm run build-tw-min && npm run build-mw-min && npm run build-gltf-min",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev-old": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c rollup-old.config.js -w \" \"http-server build -c-1 -p 8080\"",
-    "build-main-old": "rollup -c rollup-old.config.js",
-    "build-main-min-old": "npm run build-main-old && terser build/CaveView/js/CaveView.js -cm --preamble \"// threejs.org/license\" > build/CaveView/js/CaveView2-min.js"
+    "build-old": "rollup -c rollup-old.config.js"
   },
   "repository": {
     "type": "git",
@@ -49,15 +36,14 @@
     "@rollup/plugin-node-resolve": "^11.1.0",
     "@rollup/pluginutils": "^4.1.0",
     "concurrently": "^5.3.0",
-    "eslint": "^7.17.0",
+    "eslint": "^7.18.0",
     "postcss": "^8.2.4",
-    "proj4": "^2.6.3",
-    "rollup": "^2.36.1",
-    "rollup-plugin-postcss": "^4.0.0",
+    "proj4": "^2.7.0",
+    "rollup": "^2.38.0",
     "serve": "^11.3.2",
     "terser": "^5.5.0",
     "three": "^0.124.0",
-    "x18n": "^2.0.3"
-  },
-  "dependencies": {}
+    "x18n": "^2.0.3",
+    "rollup-plugin-terser": "^7.0.2"
+  }
 }

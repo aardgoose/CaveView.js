@@ -1,7 +1,7 @@
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
-import less from 'rollup-plugin-less';
+import { terser } from 'rollup-plugin-terser';
 
 function glsl () {
 	return {
@@ -50,48 +50,34 @@ function glslThree() {
 
 }
 
-export default {
-	input: 'src/js/CV.js',
-	output: {
-		name: 'CV',
-		file: 'build/CaveView/js/CaveView.js',
-		format: 'umd'
-	},
-	plugins: [
-		less( {
-			include: 'src/css/*.less',
-			output: 'build/CaveView/css/caveview.css'
-		}),
-		glsl(),
-		glslThree(),
-		json({
-			// All JSON files will be parsed by default,
-			// but you can also specifically include/exclude files
-			include: [ 'node_modules/**', 'src/js/**' ],
-			exclude: [ 'node_modules/foo/**', 'node_modules/bar/**' ],
-
-			// for tree-shaking, properties will be declared as
-			// variables, using either `var` or `const`
-			preferConst: true, // Default: false
-
-			// specify indentation for the generated default export —
-			// defaults to '\t'
-			indent: '  '
-		}),
-		nodeResolve({}),
-		commonjs({
-			// non-CommonJS modules will be ignored, but you can also
-			// specifically include/exclude files
-			include: 'node_modules/**',  // Default: undefined
-
-			// search for files other than .js files (must already
-			// be transpiled by a previous plugin!)
-			extensions: [ '.js' ],  // Default: [ '.js' ]
-			// if true then uses of `global` won't be dealt with by this plugin
-			ignoreGlobal: false,  // Default: false
-			// if false then skip sourceMap generation for CommonJS modules
-			sourceMap: false,  // Default: true
-		})
-	]
-};
+export default [
+	{
+		input: 'src/js/CV.js',
+		output: [
+			{
+				name: 'CV',
+				file: 'build/CaveView/js/CaveView.js',
+				format: 'umd'
+			},
+			{
+				name: 'CV',
+				file: 'build/CaveView/js/CaveView.min.js',
+				format: 'umd',
+				plugins: [ terser() ]
+			}
+		],
+		plugins: [
+			glsl(),
+			glslThree(),
+			json({
+				exclude: [ 'node_modules/**', 'build/**', 'tools/**' ],
+				preferConst: true, // Default: false
+			}),
+			nodeResolve({}),
+			commonjs({
+				sourceMap: false,  // Default: true
+			})
+		]
+	}
+];
 

@@ -100,6 +100,7 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 
 	if ( viewer.hasLegs            ) cv.appendChild( this.addCheckbox( 'visibility.legs', viewer, 'legs' ) );
 	if ( viewer.hasEntrances       ) cv.appendChild( this.addCheckbox( 'visibility.entrances', viewer, 'entrances' ) );
+	if ( viewer.hasEntrances       ) cv.appendChild( this.addCheckbox( 'visibility.entrance_dots', viewer, 'entrance_dots' ) );
 	if ( viewer.hasStations        ) cv.appendChild( this.addCheckbox( 'visibility.stations', viewer, 'stations' ) );
 	if ( viewer.hasStationLabels   ) cv.appendChild( this.addCheckbox( 'visibility.labels', viewer, 'stationLabels' ) );
 	if ( viewer.hasStationComments ) cv.appendChild( this.addCheckbox( 'visibility.comments', viewer, 'stationComments' ) );

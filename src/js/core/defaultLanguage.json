@@ -47,7 +47,8 @@
 		"visibility": {
 			"header": "Visibility",
 			"legs": "Center lines",
-			"entrances": "Entrances",
+			"entrances": "Entrance labels",
+			"entrance_dots": "Entrance dots",
 			"stations": "Stations",
 			"labels": "Station Labels",
 			"comments": "Station Comments",

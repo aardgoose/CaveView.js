@@ -1,5 +1,5 @@
 import { ClusterMarkers } from './ClusterMarkers';
-import { STATION_ENTRANCE, FEATURE_ENTRANCES } from '../core/constants';
+import { STATION_ENTRANCE, FEATURE_ENTRANCES, FEATURE_ENTRANCE_DOTS } from '../core/constants';
 import { Points, PointsMaterial, BufferGeometry, Float32BufferAttribute, IncrementStencilOp } from '../Three';
 
 function Entrances ( ctx, survey ) {
@@ -37,7 +37,7 @@ function Entrances ( ctx, survey ) {
 
 	const markers = new Points( geometry, material );
 
-	markers.layers.set( FEATURE_ENTRANCES );
+	markers.layers.set( FEATURE_ENTRANCE_DOTS );
 
 	// remove common elements from station names if no alternatives available
 

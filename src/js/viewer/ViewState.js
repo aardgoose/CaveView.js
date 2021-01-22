@@ -24,6 +24,7 @@ const defaultView = {
 	stations: false,
 	stationLabels: false,
 	entrances: true,
+	entrance_dots: true,
 	terrain: false,
 	traces: false,
 	HUD: true,

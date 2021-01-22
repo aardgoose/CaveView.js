@@ -177,8 +177,9 @@ Cfg.prototype.themeColor = function ( name ) {
 
 	if ( color === undefined ) {
 
-		color = new Color( this.themeValue( name ) );
+		var savedColorName = window.localStorage.getItem( 'cv-color:' + name );
 
+		color = new Color( savedColorName ? savedColorName : this.themeValue( name ) );
 		this.themeColors.set( name, color );
 
 	}
@@ -195,7 +196,12 @@ Cfg.prototype.themeColorHex = function ( name ) {
 
 Cfg.prototype.setThemeColorCSS = function ( name, color ) {
 
-	this.themeColors.set( name, new Color( color ) );
+	const ls = window.localStorage;
+	const c = new Color( color );
+
+	this.themeColors.set( name, c );
+	ls.setItem( 'cv-color:' + name, '#' + c.getHexString() );
+
 	this.dispatchEvent( { type: 'colors', name: name } );
 
 };

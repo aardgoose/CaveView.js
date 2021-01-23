@@ -598,6 +598,8 @@ Page.prototype.addColor = function ( title, name ) {
 
 	this.page.appendChild( div );
 
+	this.addListener( cfg, 'colors', e => { if (e.name === 'all' ) cb.value = cfg.themeColorHex( name ); } );
+
 	return div;
 
 	function _colorChanged ( event ) {

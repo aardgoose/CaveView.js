@@ -23,7 +23,7 @@ function InfoPage ( frame, viewer, fileSelector ) {
 	this.addHeader( 'CaveView v' + VERSION + '.' );
 
 	this.addLogo();
-	this.addText( 'A WebGL 3d cave viewer for Survex (.3d), Therion (.lox) and Compass .plt models.' );
+	this.addText( 'A WebGL 3d cave viewer for Survex (.3d), Therion (.lox) and Compass (.plt) models.' );
 
 	this.addText( 'For more information see: ' );
 	this.addLink( 'https://aardgoose.github.io/CaveView.js/', 'CaveView on GitHub' );

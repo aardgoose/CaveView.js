@@ -18,6 +18,7 @@ Walls.prototype.ready = true;
 Walls.prototype.type = 'Walls';
 Walls.prototype.flat = false;
 Walls.prototype.flatGeometry = null;
+Walls.prototype.indexedGeometry = null;
 
 Walls.prototype.addWalls = function ( vertices, indices, indexRuns ) {
 
@@ -96,7 +97,16 @@ Walls.prototype.setShading = function ( idSet, selectedMaterial ) {
 
 Walls.prototype.cutRuns = function ( selection ) {
 
-	// FIXME -  set to indexed mode and dispose of flat geometry.
+	const wasFlat = this.flat;
+
+	this.setFlat( false );
+
+	if ( this.flatGeometry ) {
+
+		this.flatGeometry.dispose();
+		this.flatGeometry = null;
+
+	}
 
 	const geometry = this.geometry;
 
@@ -175,6 +185,8 @@ Walls.prototype.cutRuns = function ( selection ) {
 	geometry.computeBoundingBox();
 
 	this.indexRuns = newIndexRuns;
+
+	this.setFlat( wasFlat );
 
 	return true;
 

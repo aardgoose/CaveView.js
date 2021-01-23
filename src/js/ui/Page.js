@@ -203,10 +203,21 @@ Page.prototype.addLink = function ( url, text ) {
 
 };
 
+Page.prototype.makeLabel = function ( title, labelClass, idFor = 'na' ) {
+
+	const label = document.createElement( 'label' );
+
+	label.textContent = this.i18n( title );
+	label.htmlFor = idFor;
+	label.classList.add( labelClass );
+
+	return label;
+
+};
+
 Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 	const div    = document.createElement( 'div' );
-	const label  = document.createElement( 'label' );
 	const select = document.createElement( 'select' );
 
 	div.classList.add( 'control' );
@@ -231,10 +242,9 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 		for ( var p in obj ) {
 
 			const opt = document.createElement( 'option' );
-			const self = this;
 
 			// translate each space delimited substring of ui text
-			opt.text = p.split( ' ' ).reduce( function ( res, val) { return res + ' ' + self.i18n( val ); }, '' ).trim();
+			opt.text = p.split( ' ' ).reduce( ( res, val ) => { return res + ' ' + this.i18n( val ); }, '' ).trim();
 			opt.value = obj[ p ];
 
 			if ( opt.value == trgObj[ property ] ) opt.selected = true;
@@ -249,12 +259,9 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 	this.addListener( select, 'change', function onChange ( event ) { frame.inHandler = true; trgObj[ property ] = event.target.value; frame.inHandler = false; } );
 
-	label.textContent = this.i18n( title );
-	label.classList.add( 'cv-select' );
-
 	frame.controls[ property ] = select;
 
-	div.appendChild( label );
+	div.appendChild( this.makeLabel( title, 'cv-select' ) );
 	div.appendChild( select );
 
 	if ( replace === undefined ) {
@@ -314,7 +321,6 @@ Page.prototype.addFileSelect = function ( title, obj, trgObj, property ) {
 Page.prototype.addCheckbox = function ( title, obj, property ) {
 
 	const frame = this.frame;
-	const label = document.createElement( 'label' );
 	const cb    = document.createElement( 'input' );
 	const div   = document.createElement( 'div' );
 
@@ -326,16 +332,12 @@ Page.prototype.addCheckbox = function ( title, obj, property ) {
 	cb.checked = obj[ property ];
 	cb.id = id;
 
-	label.textContent = this.i18n( title );
-	label.htmlFor = id;
-	label.classList.add( 'check' );
-
 	this.addListener( cb, 'change', _checkboxChanged );
 
 	frame.controls[ property ] = cb;
 
 	div.appendChild( cb );
-	div.appendChild( label );
+	div.appendChild( this.makeLabel( title, 'check', id ) );
 
 	this.page.appendChild( div );
 
@@ -357,7 +359,6 @@ Page.prototype.addRange = function ( title, obj, property ) {
 
 	const frame = this.frame;
 	const div = document.createElement( 'div' );
-	const label = document.createElement( 'label' );
 	const range = document.createElement( 'input' );
 
 	div.classList.add( 'control' );
@@ -373,12 +374,9 @@ Page.prototype.addRange = function ( title, obj, property ) {
 	this.addListener( range, 'input', _rangeChanged );
 	this.addListener( range, 'change', _rangeChanged ); // for IE11 support
 
-	label.textContent = this.i18n( title );
-	label.classList.add( 'cv-range' );
-
 	frame.controls[ property ] = range;
 
-	div.appendChild( label );
+	div.appendChild( this.makeLabel( title, 'cv-range' ) );
 	div.appendChild( range );
 
 	this.page.appendChild( div );
@@ -498,13 +496,9 @@ Page.prototype.addButton = function ( title, func ) {
 
 };
 
-Page.prototype.addTextBox = function ( labelText, placeholder, getResultGetter ) {
+Page.prototype.addTextBox = function ( title, placeholder, getResultGetter ) {
 
 	const div = document.createElement( 'div' );
-	const label = document.createElement( 'label' );
-
-	label.textContent = this.i18n( labelText );
-
 	const input = document.createElement( 'input' );
 
 	var value;
@@ -512,7 +506,7 @@ Page.prototype.addTextBox = function ( labelText, placeholder, getResultGetter )
 	input.type = 'text';
 	input.placeholder = placeholder;
 
-	div.appendChild( label );
+	div.appendChild( this.makeLabel( title, 'text' ) );
 	div.appendChild( input );
 
 	this.page.appendChild( div );
@@ -582,7 +576,6 @@ Page.prototype.download = function ( data, fileName ) {
 Page.prototype.addColor = function ( title, name ) {
 
 	const frame = this.frame;
-	const label = document.createElement( 'label' );
 	const cb    = document.createElement( 'input' );
 	const div   = document.createElement( 'div' );
 	const cfg = frame.ctx.cfg;
@@ -596,16 +589,12 @@ Page.prototype.addColor = function ( title, name ) {
 
 	cb.id = id;
 
-	label.textContent = this.i18n( title );
-	label.htmlFor = id;
-	label.classList.add( 'color' );
-
 	this.addListener( cb, 'change', _colorChanged );
 
 	frame.controls[ name ] = cb;
 
 	div.appendChild( cb );
-	div.appendChild( label );
+	div.appendChild( this.makeLabel( title, 'color', id ) );
 
 	this.page.appendChild( div );
 

@@ -3,17 +3,24 @@ import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 
+function glslStrip ( code ) {
+
+	return JSON.stringify(
+		code
+			.trim()
+			.replace( /[\r]/g, '' )
+			.replace( /[ \t]*\/\/.*\n/g, '' ) // remove //
+			.replace( /[ \t]*\/\*[\s\S]*?\*\//g, '' ) // remove /* */
+			.replace( /\n{2,}/g, '\n' ) // # \n+ to \n
+	);
+
+}
+
 function glsl () {
 	return {
 		transform ( code, id ) {
 			if ( !/\.glsl$/.test( id ) ) return;
-
-			return 'export default ' + JSON.stringify(
-				code
-					.replace( /[ \t]*\/\/.*\n/g, '' )
-					.replace( /[ \t]*\/\*[\s\S]*?\*\//g, '' )
-					.replace( /\n{2,}/g, '\n' )
-			) + ';';
+			return 'export default ' + glslStrip( code )  + ';';
 		}
 	};
 }
@@ -28,14 +35,7 @@ function glslThree() {
 
 			code = code.replace( /\/\* glsl \*\/\`((.*|\n|\r\n)*)\`/, function ( match, p1 ) {
 
-				return JSON.stringify(
-					p1
-						.trim()
-						.replace( /\r/g, '' )
-						.replace( /[ \t]*\/\/.*\n/g, '' ) // remove //
-						.replace( /[ \t]*\/\*[\s\S]*?\*\//g, '' ) // remove /* */
-						.replace( /\n{2,}/g, '\n' ) // # \n+ to \n
-				);
+				return glslStrip( p1 );
 
 			} );
 
@@ -69,15 +69,14 @@ export default [
 		plugins: [
 			glsl(),
 			glslThree(),
-			json({
+			json( {
 				exclude: [ 'node_modules/**', 'build/**', 'tools/**' ],
 				preferConst: true, // Default: false
-			}),
-			nodeResolve({}),
-			commonjs({
+			} ),
+			nodeResolve( {} ),
+			commonjs( {
 				sourceMap: false,  // Default: true
-			})
+			} )
 		]
 	}
 ];
-

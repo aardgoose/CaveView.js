@@ -292,6 +292,12 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 				break;
 
+			case 'f':
+
+				viewer.flatShading = ! viewer.flatShading;
+
+				break;
+
 			case 'x':
 
 				viewer.zoomToCursor = ! viewer.zoomToCursor;

@@ -213,6 +213,11 @@ function CaveViewer ( domID, configuration ) {
 			set: _stateSetter( setShadingMode, 'shadingMode' )
 		},
 
+		'flatShading': {
+			get: function () { return survey.wallsMode; },
+			set: function ( x ) { survey.setWallsMode( x ); renderView(); }
+		},
+
 		'route': {
 			get: function () { return survey.getRoutes().setRoute; },
 			set: function ( x ) { survey.getRoutes().setRoute = x; }

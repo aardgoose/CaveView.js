@@ -44,6 +44,7 @@ function Survey ( ctx, cave ) {
 	this.worldBoundingBox = null;
 	this.caveShading = SHADING_HEIGHT;
 	this.surfaceShading = SHADING_SINGLE;
+	this.wallsMode = false;
 	this.ctx = ctx;
 
 	// objects targeted by raycasters and objects with variable LOD
@@ -940,6 +941,14 @@ Survey.prototype.getBounds = function () {
 		}
 
 	}
+
+};
+
+Survey.prototype.setWallsMode = function ( mode ) {
+
+	this.getFeature( FACE_WALLS ).setFlat( mode );
+	// this.getFeature( FACE_SCRAPS ).setFlat( mode ); // FIXME
+	this.wallsMode = mode;
 
 };
 

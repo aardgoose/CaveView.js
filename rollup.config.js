@@ -71,14 +71,14 @@ export default [
 		plugins: [
 			glsl(),
 			glslThree(),
-			json({
+			json( {
 				exclude: [ 'node_modules/**', 'build/**', 'tools/**' ],
 				preferConst: true, // Default: false
-			}),
+			} ),
 			nodeResolve( {} ),
 			commonjs( {
 				sourceMap: false,  // Default: true
-			})
+			} )
 		]
 	}, {
 		input: 'src/js/workers/webTileWorker.js',

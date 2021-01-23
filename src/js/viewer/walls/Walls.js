@@ -6,7 +6,6 @@ function Walls ( ctx ) {
 
 	Mesh.call( this, geometry, ctx.materials.getUnselectedWallMaterial() );
 
-	this.type = 'Walls';
 	this.ctx = ctx;
 
 	return this;
@@ -16,6 +15,9 @@ function Walls ( ctx ) {
 Walls.prototype = Object.create( Mesh.prototype );
 
 Walls.prototype.ready = true;
+Walls.prototype.type = 'Walls';
+Walls.prototype.flat = false;
+Walls.prototype.flatGeometry = null;
 
 Walls.prototype.addWalls = function ( vertices, indices, indexRuns ) {
 
@@ -93,6 +95,8 @@ Walls.prototype.setShading = function ( idSet, selectedMaterial ) {
 };
 
 Walls.prototype.cutRuns = function ( selection ) {
+
+	// FIXME -  set to indexed mode and dispose of flat geometry.
 
 	const geometry = this.geometry;
 
@@ -173,6 +177,40 @@ Walls.prototype.cutRuns = function ( selection ) {
 	this.indexRuns = newIndexRuns;
 
 	return true;
+
+};
+
+Walls.prototype.setFlat = function ( flat ) {
+
+	if ( flat === this.flat ) return;
+
+
+	console.log( flat, this.flatGeometry );
+	const geometry = this.geometry;
+	var flatGeometry = this.flatGeometry;
+
+	if ( flat ) {
+
+		if ( flatGeometry === null ) {
+
+			flatGeometry = geometry.toNonIndexed();
+
+			flatGeometry.computeVertexNormals();
+			flatGeometry.computeBoundingBox();
+
+		}
+
+		this.indexedGeometry = geometry;
+		this.geometry = flatGeometry;
+
+	} else {
+
+		this.flatGeometry = geometry;
+		this.geometry = this.indexedGeometry;
+
+	}
+
+	this.flat = flat;
 
 };
 

@@ -417,14 +417,10 @@ function CaveViewer ( domID, configuration ) {
 
 	this.addEventListener( 'change', viewChanged );
 
-	cfg.addEventListener( 'colors', ( e ) => {
+	cfg.addEventListener( 'colors', () => {
 
-		if ( e.name == 'background' ) {
-
-			container.style.backgroundColor = cfg.themeColorCSS( 'background' );
-			renderer.setClearColor( cfg.themeColor( 'background' ), 1.0 );
-
-		}
+		container.style.backgroundColor = cfg.themeColorCSS( 'background' );
+		renderer.setClearColor( cfg.themeColor( 'background' ), 0.0 );
 
 		if ( survey ) survey.refreshColors();
 

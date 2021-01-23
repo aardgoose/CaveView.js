@@ -206,4 +206,13 @@ Cfg.prototype.setThemeColorCSS = function ( name, color ) {
 
 };
 
+Cfg.prototype.resetColors = function () {
+
+	this.themeColors.clear();
+	window.localStorage.clear();
+
+	this.dispatchEvent( { type: 'colors', name: 'all' } );
+
+};
+
 export { Cfg };

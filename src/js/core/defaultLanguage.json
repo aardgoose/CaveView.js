@@ -79,7 +79,8 @@
 			"bounding_box": "Bounding box",
 			"legs_fixed": "Passage lines (fixed)",
 			"surface_fixed": "Surface lines (fixed)",
-			"hud_text": "Scale text"
+			"hud_text": "Scale text",
+			"defaults": "Restore default colours"
 		}
 	},
 	"surface": {

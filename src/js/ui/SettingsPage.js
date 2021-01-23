@@ -42,6 +42,7 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 
 	const controls = [];
 	const routeControls = [];
+	const cfg = viewer.ctx.cfg;
 
 	const legShadingModesActive = Object.assign( {}, legShadingModes );
 
@@ -119,7 +120,7 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 
 	ch.appendChild( this.addCheckbox( 'controls.svx_control_mode', viewer, 'svxControlMode' ) );
 	ch.appendChild( this.addCheckbox( 'controls.zoom_to_cursor', viewer, 'zoomToCursor' ) );
-	ch.appendChild( this.addCheckbox( 'ui.selection_tree', viewer.ctx.cfg, 'selectionTree' ) );
+	ch.appendChild( this.addCheckbox( 'ui.selection_tree', cfg, 'selectionTree' ) );
 
 	const cc = this.addCollapsingHeader( 'colors.header' );
 
@@ -131,6 +132,7 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 	cc.appendChild( this.addColor( 'colors.legs_fixed', 'shading.single' ) );
 	cc.appendChild( this.addColor( 'colors.surface_fixed', 'shading.surface' ) );
 	cc.appendChild( this.addColor( 'colors.hud_text', 'hud.text' ) );
+	cc.appendChild( this.addButton( 'colors.defaults', cfg.resetColors.bind( cfg ) ) );
 
 	if ( viewer.svxControlMode ) ch.appendChild( this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' ) );
 

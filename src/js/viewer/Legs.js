@@ -10,7 +10,6 @@ function Legs ( ctx ) {
 	this.ctx = ctx;
 	this.legLengths = [];
 	this.legVertices = [];
-	this.type = 'Legs';
 	this.colors = [];
 
 	return this;
@@ -18,6 +17,8 @@ function Legs ( ctx ) {
 }
 
 Legs.prototype = Object.create( Group.prototype );
+
+Legs.prototype.type = 'Legs';
 
 Legs.prototype.addLegs = function ( vertices, legRuns ) {
 
@@ -224,13 +225,13 @@ function ThinLegs ( ctx ) {
 
 	LineSegments.call( this, geometry, ctx.materials.getUnselectedMaterial() );
 
-	this.type = 'CV.ThinLegs';
-
 	return this;
 
 }
 
 ThinLegs.prototype = Object.create( LineSegments.prototype );
+
+FatLegs.prototype.type = 'CV.FatLegs';
 
 ThinLegs.prototype.addLegs = function ( positions, colors ) {
 
@@ -289,7 +290,6 @@ function FatLegs ( ctx ) {
 
 	LineSegments2.call( this, geometry, ctx.materials.getUnselectedMaterial() );
 
-	this.type = 'CV.FatLegs';
 	this.scale.set( 1, 1, 1 );
 
 	return this;
@@ -297,6 +297,8 @@ function FatLegs ( ctx ) {
 }
 
 FatLegs.prototype = Object.create( LineSegments2.prototype );
+
+FatLegs.prototype.type = 'CV.FatLegs';
 
 FatLegs.prototype.addLegs = function ( positions, colors ) {
 

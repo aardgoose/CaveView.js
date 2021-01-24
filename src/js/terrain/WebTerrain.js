@@ -252,7 +252,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 		}
 
 		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox, self.material );
-		tile.canZoom = tileData.canZoom;
+		tile.canZoom = tileData.canZoom && tile.canZoom; // handle specific tile data (Cesium has leaf status tiles)
 
 		self.dispatchEvent( { type: 'progress', name: 'set', progress: 100 * ( self.maxTilesLoading - self.tilesLoading ) / self.maxTilesLoading } );
 

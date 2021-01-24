@@ -25,6 +25,7 @@ function HelpPage ( frame, avenControls ) {
 	_addKey( '8', 'shading.depth' );
 	_addKey( '9', 'shading.depth_cursor' );
 	_addKey( '0', 'shading.distance' );
+	_addKey( '<alt>f', 'shading.flat' );
 
 	if ( ! avenControls ) {
 

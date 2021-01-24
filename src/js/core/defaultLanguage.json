@@ -171,7 +171,8 @@
 			"depth_cursor": "depth cursor",
 			"cursor_up": "move cursor up",
 			"cursor_down": "move cursor down",
-			"distance": "distance"
+			"distance": "distance",
+			"flat": "Flat shading"
 		},
 		"view": {
 			"header": "View",

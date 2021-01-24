@@ -196,8 +196,6 @@ Walls.prototype.setFlat = function ( flat ) {
 
 	if ( flat === this.flat ) return;
 
-
-	console.log( flat, this.flatGeometry );
 	const geometry = this.geometry;
 	var flatGeometry = this.flatGeometry;
 

@@ -187,9 +187,9 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 	tileSpec.offsets = this.offsets,
 	tileSpec.flatZ = this.flatZ;
 
-	if ( this.log ) console.log( 'load: [ ', z +'/' + x + '/' + y, ']' );
-
 	this.maxTilesLoading = Math.max( this.maxTilesLoading, ++this.tilesLoading );
+
+	if ( this.log ) console.log( 'load: [ ', z +'/' + x + '/' + y, ']', this.tilesLoading );
 
 	// get Tile instance.
 
@@ -223,6 +223,15 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 		}
 
+		if ( tileData.status === 'zoom' ) {
+
+			tile.setSkipped();
+			self.zoomTile( tile );
+
+			return;
+
+		}
+
 		// error out early if we or other tiles have failed to load.
 
 		if ( tileData.status !== 'ok' || tile.parent.childErrors !== 0 ) {
@@ -249,7 +258,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 		if ( tile.setLoaded( overlay, _loaded ) ) {
 
-			if ( overlay !== null && tile.zoom < overlay.getMinZoom() ) {
+			if ( overlay !== null && tile.zoom < overlay.getMinZoom() && tile.canZoom ) {
 
 				self.zoomTile( tile );
 
@@ -261,6 +270,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 	function _loaded () {
 
+		if ( self.tilesLoading !== 0 ) return;
 		if ( self.tilesLoading === 0 ) self.dispatchEvent( __endEvent );
 
 		if ( ! self.isLoaded ) {
@@ -371,7 +381,7 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	this.activeOverlay = overlay;
 
-	let overlayMinZoom = overlay.getMinZoom();
+	const overlayMinZoom = overlay.getMinZoom();
 
 	this.traverse( _setTileOverlays );
 
@@ -572,7 +582,7 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 			candidateEvictTiles.sort( _sortByPressure );
 
 			let i;
-			let now = performance.now();
+			const now = performance.now();
 
 			for ( i = 0; i < evictCount; i++ ) {
 
@@ -722,7 +732,7 @@ WebTerrain.prototype.fitSurface = function ( modelPoints, offsets ) {
 
 		} );
 
-		let sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
+		const sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
 
 		// simple average
 		self.datumShift = s1 / n;

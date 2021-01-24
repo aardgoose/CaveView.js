@@ -1,5 +1,12 @@
 import { BufferGeometry, Float32BufferAttribute, Mesh } from '../../Three';
 
+function onUploadDropBuffer() {
+
+	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
+	this.array = null;
+
+}
+
 function Walls ( ctx ) {
 
 	const geometry = new BufferGeometry();
@@ -7,6 +14,7 @@ function Walls ( ctx ) {
 	Mesh.call( this, geometry, ctx.materials.getUnselectedWallMaterial() );
 
 	this.ctx = ctx;
+	this.type = 'Walls';
 
 	return this;
 
@@ -15,7 +23,6 @@ function Walls ( ctx ) {
 Walls.prototype = Object.create( Mesh.prototype );
 
 Walls.prototype.ready = true;
-Walls.prototype.type = 'Walls';
 Walls.prototype.flat = false;
 Walls.prototype.flatGeometry = null;
 Walls.prototype.indexedGeometry = null;
@@ -207,6 +214,11 @@ Walls.prototype.setFlat = function ( flat ) {
 
 			flatGeometry.computeVertexNormals();
 			flatGeometry.computeBoundingBox();
+
+			// we can drop these from the head, not required for other operations
+			const attributes = flatGeometry.attributes;
+
+			for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
 
 		}
 

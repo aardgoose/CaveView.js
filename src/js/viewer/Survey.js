@@ -870,6 +870,7 @@ Survey.prototype.cutSection = function ( node ) {
 	this.limits.min.add( this.offsets );
 	this.limits.max.add( this.offsets );
 
+	this.featureBox = null;
 	this.setFeatureBox();
 
 	this.worldBoundingBox = null;
@@ -896,7 +897,7 @@ Survey.prototype.cutSection = function ( node ) {
 
 			break;
 
-		case 'SurveyBox':
+		case 'CV.SurveyBox':
 		case 'CV.Stations':
 		case 'CV.StationLabels':
 		case 'CV.ClusterMarker':

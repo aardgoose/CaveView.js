@@ -42,8 +42,6 @@ function ColourCache ( ) {
 
 	};
 
-	this.white = new Color( 0xffffff );
-
 }
 
 export { ColourCache };

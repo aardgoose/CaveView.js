@@ -24,10 +24,11 @@ import { SurveyColourMapper} from '../core/SurveyColourMapper';
 import { Selection } from './Selection';
 import { SurveyBox } from '../core/SurveyBox';
 
-import { Matrix4, Vector3, Box3, Object3D } from '../Three';
+import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
 import proj4 from 'proj4';
 
 const __set = new Set();
+const white = new Color( 0xffffff );
 
 function Survey ( ctx, cave ) {
 
@@ -1159,15 +1160,12 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 Survey.prototype.setLegColourByMaterial = function ( mesh, mode) {
 
-	const colourCache = this.ctx.materials.colourCache;
-
 	mesh.setShading( this.selection.getIds(), _colourSegment, mode );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
-		colourCache.white.toArray( colors, v1 * 3 );
-		colourCache.white.toArray( colors, v2 * 3 );
-
+		white.toArray( colors, v1 * 3 );
+		white.toArray( colors, v2 * 3 );
 	}
 
 };

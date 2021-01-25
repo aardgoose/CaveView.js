@@ -80,9 +80,9 @@ function Entrances ( ctx, survey ) {
 
 	function _addEntrance( node ) {
 
-		var name;
+		if ( ! ( node.type & STATION_ENTRANCE ) ) return;
 
-		if ( node.type !== STATION_ENTRANCE ) return;
+		let name;
 
 		const entranceInfo = entrances[ node.getPath() ];
 

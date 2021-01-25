@@ -61,7 +61,6 @@ function Survey ( ctx, cave ) {
 	this.stations = null;
 	this.terrain = null;
 	this.topology = null;
-	this.annotations = null;
 	this.inverseWorld = new Matrix4();
 
 	this.lightDirection = new Vector3( -1, -1, 2 ).normalize();
@@ -311,7 +310,7 @@ Survey.prototype.setupTerrain = function ( terrain ) {
 	function _getSurfacePoints( node ) {
 
 		// FIXME to extend to surface points
-		if ( node.type !== STATION_ENTRANCE) return;
+		if ( ! ( node.type & STATION_ENTRANCE ) ) return;
 		points.push( node.p );
 
 	}

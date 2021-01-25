@@ -351,7 +351,7 @@ Tree.prototype.trim = function ( path ) {
 
 Tree.prototype.isStation = function () {
 
-	return ( this.p !== null );
+	return ( this.type !== 0  );
 
 };
 

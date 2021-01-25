@@ -68,7 +68,7 @@ Stations.prototype.addStation = function ( node ) {
 
 	var pointSize = 0.0;
 
-	if ( node.type === STATION_ENTRANCE ) {
+	if ( node.type & STATION_ENTRANCE ) {
 
 		this.colors.push( this.entranceColor );
 
@@ -199,7 +199,7 @@ Stations.prototype.selectStations = function ( selection ) {
 
 		if ( isEmpty || idSet.has( node.id ) ) {
 
-			if ( node.type === STATION_ENTRANCE ) {
+			if ( node.type & STATION_ENTRANCE ) {
 
 				size = 12;
 

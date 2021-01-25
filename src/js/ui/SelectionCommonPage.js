@@ -61,7 +61,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 		// omit splays if now displaying
 
-		if ( connections === 0 && ! viewer.splays && child.type !== STATION_ENTRANCE ) return;
+		if ( connections === 0 && ! viewer.splays && ! ( child.type & STATION_ENTRANCE ) ) return;
 
 		const li  = document.createElement( 'li' );
 		const text = ( child.comment === undefined ) ? child.name : child.name + ' ( ' + child.comment + ' )';

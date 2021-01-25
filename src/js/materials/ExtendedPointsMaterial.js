@@ -1,4 +1,3 @@
-import { Color } from 'three';
 import { PointsMaterial, Color } from '../Three';
 
 function ExtendedPointsMaterial ( ctx ) {

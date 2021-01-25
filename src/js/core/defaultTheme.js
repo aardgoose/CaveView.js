@@ -9,6 +9,7 @@ const defaultTheme = {
 		azimuth: 315,
 		inclination: 45
 	},
+	entrance_dot_size: 5,
 	hud: {
 		font: 'normal Arial, sans-serif',
 		text: 'white',

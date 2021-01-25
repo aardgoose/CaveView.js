@@ -14,13 +14,15 @@ function Entrances ( ctx, survey ) {
 
 	const geometry = new BufferGeometry();
 
+	const dotSize = ctx.cfg.themeValue( 'entrance_dot_size' );
+
 	const material = new PointsMaterial( {
 		map: ctx.materials.textureCache.getTexture( 'disc-outlined' ),
 		opacity: 1.0,
 		alphaTest: 0.8,
 		sizeAttenuation: false,
 		transparent: true,
-		size: Math.max( 10, Math.floor( ctx.container.clientWidth / 100 ) ),
+		size: Math.max( dotSize, Math.floor( dotSize * ctx.container.clientWidth / 1000 ) ),
 		vertexColors: true
 	} );
 
@@ -29,7 +31,7 @@ function Entrances ( ctx, survey ) {
 
 	ctx.viewer.addEventListener( 'resized', ( e ) => {
 
-		material.size = Math.max( 10, Math.floor( e.width / 100 ) );
+		material.size =  Math.max( dotSize, Math.floor( dotSize * e.width / 1000 ) );
 
 	} );
 

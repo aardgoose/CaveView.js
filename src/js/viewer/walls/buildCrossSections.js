@@ -1,4 +1,4 @@
-import { FACE_WALLS, WALL_DIAMOND, WALL_SQUARE, WALL_OVAL } from '../../core/constants';
+import { FACE_WALLS, WALL_DIAMOND, WALL_SQUARE, WALL_OVAL, STATION_XSECT } from '../../core/constants';
 import { Walls } from './Walls';
 
 import { Object3D, Vector3 } from '../../Three';
@@ -6,6 +6,7 @@ import { Object3D, Vector3 } from '../../Three';
 function buildCrossSections ( cave, survey ) {
 
 	const crossSectionGroups = cave.crossSections;
+	const stations = survey.stations;
 
 	// handle no LRUD sections
 	if ( crossSectionGroups.length === 0 ) return;
@@ -238,6 +239,9 @@ function buildCrossSections ( cave, survey ) {
 		const lrud    = crossSection.lrud;
 
 		var vertexCount;
+
+		const ttt = stations.getStation( station );
+		ttt.type = ttt.type & STATION_XSECT;
 
 		// cross product of leg + next leg vector and up AXIS to give direction of LR vector
 		cross.subVectors( crossSection.start, crossSection.end ).normalize();

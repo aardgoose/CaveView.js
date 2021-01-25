@@ -241,7 +241,7 @@ function buildCrossSections ( cave, survey ) {
 		var vertexCount;
 
 		const ttt = stations.getStation( station );
-		ttt.type = ttt.type & STATION_XSECT;
+		ttt.type = ttt.type | STATION_XSECT;
 
 		// cross product of leg + next leg vector and up AXIS to give direction of LR vector
 		cross.subVectors( crossSection.start, crossSection.end ).normalize();

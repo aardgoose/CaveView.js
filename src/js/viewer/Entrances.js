@@ -22,7 +22,7 @@ function Entrances ( ctx, survey ) {
 		transparent: true,
 		size: Math.max( 10, Math.floor( ctx.container.clientWidth / 100 ) ),
 		vertexColors: true
-	});
+	} );
 
 	material.stencilWrite = true;
 	material.stencilZPass = IncrementStencilOp;

@@ -26,7 +26,7 @@ function ClusterLegs ( survey ) {
 			vector: leg,
 			label: undefined,
 			length: legLength
-		});
+		} );
 
 	}
 
@@ -147,7 +147,7 @@ function paintClusters( clusters, survey, EPS ) {
 
 	var i, maxLength = 0;
 
-	clusters.sort( function ( a, b ) { return b.length - a.length; });
+	clusters.sort( function ( a, b ) { return b.length - a.length; } );
 
 	for ( i = 0; i < clusters.length; i++ ) {
 

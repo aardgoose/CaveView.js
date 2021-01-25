@@ -282,7 +282,7 @@ function OrbitControls ( cameraManager, domElement, viewer ) {
 		set: setControlMode,
 		get: function () { return svxControlMode; }
 
-	});
+	} );
 
 	//
 	// internals

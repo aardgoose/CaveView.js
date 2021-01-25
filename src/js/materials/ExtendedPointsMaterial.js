@@ -1,14 +1,14 @@
-import { PointsMaterial } from '../Three';
+import { Color } from 'three';
+import { PointsMaterial, Color } from '../Three';
 
 function ExtendedPointsMaterial ( ctx ) {
 
 	PointsMaterial.call( this );
 
-	const colourCache = ctx.materials.colourCache;
 	const textureCache = ctx.materials.textureCache;
 
 	this.map = textureCache.getTexture( 'disc' );
-	this.color = colourCache.white;
+	this.color = new Color( 0xffffff );
 	this.opacity = 1.0;
 	this.alphaTest = 0.8;
 

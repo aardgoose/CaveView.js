@@ -53,7 +53,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 	this.addLine = function ( ul, child ) {
 
-		const connections = ( child.p === undefined ) ? null : child.p.connections;
+		const connections = ( child.p === null ) ? null : child.p.connections;
 
 		// track which sections have stations as children
 
@@ -79,7 +79,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 			li.classList.add( 'section' );
 
-		} else if ( child.type !== undefined && child.type === STATION_ENTRANCE ) {
+		} else if ( child.type === STATION_ENTRANCE ) {
 
 			key = _makeKey( '\u2229 ', cfg.themeColorCSS( 'stations.entrances.marker' ) );
 			key.classList.add( 'cv-entrance' );
@@ -172,7 +172,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 			if ( node ) ul.replaceWith( self.displaySectionCommon( node ) );
 
-		});
+		} );
 
 	};
 
@@ -308,7 +308,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 			const li = lis[ i ];
 			const node = self.nodes.get( lis[ i ] );
 
-			if ( node !== undefined && node.p === undefined ) {
+			if ( node !== undefined && node.p === null ) {
 
 				const span = li.firstChild;
 				const id = node.id;

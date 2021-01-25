@@ -1,4 +1,3 @@
-
 function Tree( name, id, root, parent ) { // root parameter only used internally
 
 	if ( root === undefined ) {
@@ -21,10 +20,12 @@ function Tree( name, id, root, parent ) { // root parameter only used internally
 
 	this.name = name || '';
 	this.children = [];
+	this.type = 0;
 
 }
 
 Tree.prototype.sorted = false;
+Tree.prototype.p = null;
 
 Tree.prototype.traverse = function ( func ) {
 
@@ -72,6 +73,22 @@ Tree.prototype.addById = function ( name, id, properties ) {
 	const node = new Tree( name, id, root, this );
 
 	if ( properties !== undefined ) Object.assign( node, properties );
+
+	root.maxId = Math.max( root.maxId, id );
+
+	return node;
+
+};
+
+Tree.prototype.addLeafById = function ( name, id, type, coords, comments ) {
+
+	const root = this.root;
+	const node = new Tree( name, id, root, this );
+
+	node.type = type;
+	node.p = coords;
+
+	if ( comments ) node.comments =comments;
 
 	root.maxId = Math.max( root.maxId, id );
 
@@ -165,14 +182,15 @@ Tree.prototype.getByPathArray = function ( path ) {
 
 };
 
-Tree.prototype.addLeaf = function ( path, properties ) {
+Tree.prototype.addLeaf = function ( path, type, coords ) {
 
 	// short cut for flat surveys with little tree structure
 	if ( path.length === 1 ) {
 
 		const newNode = new Tree( path[ 0 ], null, this.root, this );
 
-		if ( properties !== undefined ) Object.assign( newNode, properties );
+		newNode.type = type;
+		newNode.p = coords;
 
 		return newNode;
 
@@ -196,7 +214,8 @@ Tree.prototype.addLeaf = function ( path, properties ) {
 
 		const newNode = new Tree( leaf.join( '.' ), null, this.root, node );
 
-		if ( properties !== undefined ) Object.assign( newNode, properties );
+		newNode.type = type;
+		newNode.p = coords;
 
 		return newNode;
 
@@ -220,7 +239,8 @@ Tree.prototype.addLeaf = function ( path, properties ) {
 
 	}
 
-	if ( properties !== undefined ) Object.assign( node, properties );
+	node.type = type;
+	node.p = coords;
 
 	return node;
 
@@ -331,7 +351,7 @@ Tree.prototype.trim = function ( path ) {
 
 Tree.prototype.isStation = function () {
 
-	return ( this.p !== undefined );
+	return ( this.p !== null );
 
 };
 

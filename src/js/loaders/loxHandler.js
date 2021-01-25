@@ -224,11 +224,9 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 		}
 
 		const name = ( namePtr.size === 0 ) ? '[' + m_id + ']' : readString( namePtr );
-		const obj = { p: coords, type: ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL };
+		const comment = ( commentPtr.size > 0 ) ? readString( commentPtr ) : null;
 
-		if ( commentPtr.size > 0 ) obj.comment = readString( commentPtr );
-
-		parentNode.addById( name, - ( m_id + idOffset ), obj );
+		parentNode.addLeafById( name, - ( m_id + idOffset ), ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL, coords, comment );
 
 	}
 

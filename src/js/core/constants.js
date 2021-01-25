@@ -80,8 +80,9 @@ export const SURFACE = 1;
 export const SPLAY   = 2;
 export const DIVING  = 3;
 
-export const STATION_NORMAL = 0;
-export const STATION_ENTRANCE = 1;
+export const STATION_NONE = 0;
+export const STATION_NORMAL = 1;
+export const STATION_ENTRANCE = 2;
 
 export const TERRAIN_BASIC   = 0;
 export const TERRAIN_STENCIL = 1;

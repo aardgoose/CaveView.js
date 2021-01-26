@@ -33,7 +33,7 @@ const uniforms = UniformsUtils.merge( [
 	}
 ] );
 
-var LineMaterial = function ( ctx, mode = 'height') {
+var LineMaterial = function ( ctx, mode = 'height' ) {
 
 	const survey = ctx.survey;
 	const cfg = ctx.cfg;

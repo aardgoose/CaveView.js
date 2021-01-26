@@ -1,6 +1,5 @@
 import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
 import { StationPosition } from '../core/StationPosition';
-import { Vector3 } from '../Three';
 
 function Svx3dHandler ( fileName ) {
 
@@ -415,7 +414,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	var lastPosition = new StationPosition();
 	var lastKey = null; // map key for last coordinates read
 
-	var lastXSectPosition = new Vector3(); // value to allow approach vector for xsect coord frame
+	var lastXSectPosition = null; // value to indicate missing approach vector for xsect coord frame
 	var i;
 	var labelChanged = false;
 	var inSection = ( section === null );
@@ -543,37 +542,18 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	}
 
+	// add last xSect group
 	if ( xSects.length > 1 ) {
 
 		xGroups.push( xSects );
 
 	}
 
-	// fake approach vector for initial leg in xSect sequence
-	// FIXME = only xsects from current file
-
 	const caveXgroups = cave.xGroups;
 
-	for ( i = 0; i < xGroups.length; i++ ) {
-
-		const group = xGroups[ i ];
-
-		if ( group.length < 2 ) continue;
-
-		const x1 = group[ 0 ];
-		const x2 = group[ 1 ];
-
-		// mirror vector from first to second leg
-		const start = x1.end;
-		const end = x2.end;
-
-		const newStart = new Vector3().copy( start ).multiplyScalar( 2 ).sub( end );
-
-		x1.start = newStart;
-
-		caveXgroups.push( group );
-
-	}
+	xGroups.forEach( group => {
+		if ( group.length > 1 ) caveXgroups.push( group );
+	} );
 
 	stationMap.forEach( function ( coords ) { limits.expandByPoint( coords ); } );
 
@@ -1034,7 +1014,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			if ( xSects.length > 0 ) xGroups.push( xSects );
 
-			lastXSectPosition = new Vector3();
+			lastXSectPosition = null;
 			xSects = [];
 			splayExpected = false;
 

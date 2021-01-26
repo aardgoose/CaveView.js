@@ -7,6 +7,7 @@ function buildCrossSections ( cave, survey ) {
 
 	const crossSectionGroups = cave.crossSections;
 	const stations = survey.stations;
+	const legs = survey.getLegs();
 
 	// handle no LRUD sections
 	if ( crossSectionGroups.length === 0 ) return;
@@ -47,6 +48,8 @@ function buildCrossSections ( cave, survey ) {
 		const m = crossSectionGroup.length;
 
 		if ( m < 2 ) continue;
+
+		// FIXME - find XSECT in other group?
 
 		// enter first station vertices
 		vertexCount = _getLRUD( crossSectionGroup[ 0 ], crossSectionGroup[ 1 ] );
@@ -240,8 +243,17 @@ function buildCrossSections ( cave, survey ) {
 
 		var vertexCount;
 
-		const ttt = stations.getStation( station );
-		ttt.type = ttt.type | STATION_XSECT;
+		if ( crossSection.start === null ) {
+
+			// no approach vector
+			_fixupStart( crossSection, nextSection );
+
+		}
+
+		// record which stations have associated LRUD coords
+		// const ttt = stations.getStation( station );
+		// ttt.type = ttt.type | STATION_XSECT;
+		// console.log( ttt );
 
 		// cross product of leg + next leg vector and up AXIS to give direction of LR vector
 		cross.subVectors( crossSection.start, crossSection.end ).normalize();
@@ -324,6 +336,42 @@ function buildCrossSections ( cave, survey ) {
 
 	}
 
+	function _fixupStart( crossSection, nextSection ) {
+
+		// no approach vector
+		const station = crossSection.end
+		const node = stations.getStation( station );
+
+		// do we have more than one connected station?
+
+		if ( node.legs.length > 1 ) {
+
+			// yes - use one of these for approach leg (maybe link up?)
+
+			const connectedPoints = [];
+
+			node.legs.forEach( li => {
+
+				// leg index points to first vertex of leg
+				const p = ( legs[ li ] !== station ) ? legs[ li ] : legs[ li + 1 ];
+				if ( p !== nextSection.end ) connectedPoints.push( p );
+
+			} );
+
+			crossSection.start = connectedPoints[ 0 ];
+			if ( connectedPoints.length === 0 ) crossSection.start = new Vector3();
+
+		} else {
+
+			// no - reverse next leg
+
+			crossSection.start = new Vector3()
+				.copy( nextSection.start )
+				.multiplyScalar( 2 ).sub( nextSection.end );
+
+		}
+
+	}
 }
 
 export { buildCrossSections };

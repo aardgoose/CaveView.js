@@ -75,7 +75,7 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 		const m_recCount = readUint();
 		const m_dataSize = readUint();
 
-		var doFunction;
+		let doFunction;
 
 		// offset of data region for out of line strings/images/scrap data.
 		dataStart = pos + m_recSize;
@@ -261,7 +261,7 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 		const m_from_r = readUint();
 		const m_to_r   = readUint();
 
-		var m_from, m_to, fromLRUD, toLRUD;
+		let m_from, m_to, fromLRUD, toLRUD;
 
 		if ( m_to_r > m_from_r ) {
 
@@ -287,7 +287,7 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 		if ( sectionId !== 0 && m_surveyId !== sectionId ) return;
 
-		var type = LEG_CAVE;
+		let type = LEG_CAVE;
 
 		if ( m_flags & 0x01 ) type = LEG_SURFACE;
 		if ( m_flags & 0x08 ) type = LEG_SPLAY;
@@ -364,8 +364,8 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 		const scrap = { vertices: [], faces: [], survey: m_surveyId + idOffset };
 
-		var lastFace;
-		var i, j;
+		let lastFace;
+		let i, j;
 
 		if ( sectionId !== 0 && m_surveyId !== sectionId ) return;
 
@@ -515,7 +515,7 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 		const b1 = imgData[ 0 ];
 		const b2 = imgData[ 1 ];
 
-		var type;
+		let type;
 
 		if ( b1 === 0xff && b2 === 0xd8 ) {
 

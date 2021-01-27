@@ -245,7 +245,7 @@ Stations.prototype.finalise = function () {
 
 Stations.prototype.resetDistances = function () {
 
-	this.stations.forEach( function _resetDistance( node ) { node.distance = Infinity; } );
+	this.stations.forEach( node => node.distance = Infinity );
 
 };
 

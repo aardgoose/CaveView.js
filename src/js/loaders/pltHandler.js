@@ -68,12 +68,10 @@ pltHandler.prototype.parse = function ( cave, dataStream, metadata /*, section *
 
 			if ( coords.connections === 0 ) {
 
-				const obj = { p: coords, type: STATION_NORMAL };
-
 				// parse comment
-				if ( parts[ 13 ] !== undefined ) obj.comment = parts.slice( 13 ).join( ' ' );
+				const comment = ( parts[ 13 ] === undefined ) ? null : parts.slice( 13 ).join( ' ' );
 
-				surveyTree.addLeaf( path, obj );
+				surveyTree.addLeaf( path, STATION_NORMAL, coords, comment );
 
 			}
 

@@ -82,7 +82,7 @@ Tree.prototype.addLeafById = function ( name, id, type, coords, comments ) {
 	node.type = type;
 	node.p = coords;
 
-	if ( comments ) node.comments =comments;
+	if ( comments ) node.comments = comments;
 
 	root.maxId = Math.max( root.maxId, id );
 
@@ -176,7 +176,7 @@ Tree.prototype.getByPathArray = function ( path ) {
 
 };
 
-Tree.prototype.addLeaf = function ( path, type, coords ) {
+Tree.prototype.addLeaf = function ( path, type, coords, comments ) {
 
 	// short cut for flat surveys with little tree structure
 	if ( path.length === 1 ) {
@@ -185,6 +185,7 @@ Tree.prototype.addLeaf = function ( path, type, coords ) {
 
 		newNode.type = type;
 		newNode.p = coords;
+		if ( comments ) newNode.comments = comments;
 
 		return newNode;
 
@@ -210,6 +211,7 @@ Tree.prototype.addLeaf = function ( path, type, coords ) {
 
 		newNode.type = type;
 		newNode.p = coords;
+		if ( comments ) newNode.comments = comments;
 
 		return newNode;
 
@@ -235,6 +237,7 @@ Tree.prototype.addLeaf = function ( path, type, coords ) {
 
 	node.type = type;
 	node.p = coords;
+	if ( comments ) node.comments = comments;
 
 	return node;
 

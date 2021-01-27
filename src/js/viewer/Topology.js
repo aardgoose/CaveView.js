@@ -165,9 +165,9 @@ Topology.prototype.getShortestPath = function ( startStation ) {
 	const path = new Set();
 
 	if (
-		this.zeroStation === null ||
+		zeroStation === null ||
 		startStation.distance === Infinity ||
-		this.zeroStation === startStation ||
+		zeroStation === startStation ||
 		startStation.distance === 0
 	) return path;
 

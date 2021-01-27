@@ -8,8 +8,10 @@ function buildCrossSections ( cave, survey ) {
 	const crossSectionGroups = cave.crossSections;
 	const stations = survey.stations;
 	const legs = survey.getLegs();
+	const ctx = survey.ctx;
 
 	const vSectMap = new Map();
+	const fixupXsects = ctx.cfg.value( 'fixup_xsects', true );
 
 	// map stations to XSECT
 	crossSectionGroups.forEach( group => {
@@ -21,7 +23,8 @@ function buildCrossSections ( cave, survey ) {
 	// handle no LRUD sections
 	if ( crossSectionGroups.length === 0 ) return;
 
-	const mesh = survey.addFeature( new Walls( survey.ctx ), FACE_WALLS, 'Walls' );
+	const warnings = [];
+	const mesh = survey.addFeature( new Walls( ctx ), FACE_WALLS, 'Walls' );
 
 	const indices = [];
 	const vertices = [];
@@ -54,18 +57,20 @@ function buildCrossSections ( cave, survey ) {
 	for ( i = 0; i < l; i++ ) {
 
 		const crossSectionGroup = crossSectionGroups[ i ];
-		const m = crossSectionGroup.length;
 
-		if ( m < 2 ) continue;
+		if ( crossSectionGroup.length < 2 ) continue;
 
 		if ( crossSectionGroup[ 0 ].start === null ) {
 
 			// no approach vector
-			_fixupStart( crossSectionGroup );
+			_fixupGroupStart( crossSectionGroup );
 
 		}
 
+		if ( fixupXsects ) _fixupGroupEnd( crossSectionGroup );
+
 		// enter first station vertices
+		const m = crossSectionGroup.length;
 
 		vertexCount = _getLRUD( crossSectionGroup[ 0 ], crossSectionGroup[ 1 ] );
 
@@ -230,6 +235,7 @@ function buildCrossSections ( cave, survey ) {
 	mesh.addWalls( vertices, indices, indexRuns );
 
 	survey.addFeature( mesh, FACE_WALLS, 'CV.Survey:faces:walls' );
+	survey.loadWarnings( warnings );
 
 	return;
 
@@ -258,17 +264,9 @@ function buildCrossSections ( cave, survey ) {
 
 		var vertexCount;
 
-		if ( crossSection.start === null ) {
-
-			// no approach vector
-			_fixupStart( crossSection, nextSection );
-
-		}
-
 		// record which stations have associated LRUD coords
-		// const ttt = stations.getStation( station );
-		// ttt.type = ttt.type | STATION_XSECT;
-		// console.log( ttt );
+		const ttt = stations.getStation( station );
+		ttt.type = ttt.type | STATION_XSECT;
 
 		// cross product of leg + next leg vector and up AXIS to give direction of LR vector
 		cross.subVectors( crossSection.start, crossSection.end ).normalize();
@@ -351,59 +349,103 @@ function buildCrossSections ( cave, survey ) {
 
 	}
 
-	function _fixupStart( group ) {
+	function _fixupGroupStart( group ) {
 
 		let crossSection = group[ 0 ];
 		let nextSection = group[ 1 ];
 
-		// no approach vector
-		const station = crossSection.end;
-		const node = stations.getStation( station );
+		if ( fixupXsects ) {
 
-		// do we have more than one connected station?
+			// fixup start of group - connect other passages if possible
+			// no approach vector
 
-		if ( node.legs.length > 1 ) {
+			// do we have more than one connected station?
+			const connectedPoint = _getConnectedPoint ( crossSection.end, nextSection.end );
 
-			// yes - use one of these for approach leg (maybe link up?)
+			if ( connectedPoint ) {
 
-			const connectedPoints = [];
+				crossSection.start = connectedPoint;
 
-			node.legs.forEach( li => {
+				const newXsect = vSectMap.get( connectedPoint );
 
-				// leg index points to first vertex of leg
-				const p = ( legs[ li ] !== station ) ? legs[ li ] : legs[ li + 1 ];
-				if ( p !== nextSection.end ) connectedPoints.push( p );
+				if ( newXsect ) {
 
-			} );
+					// we can add a new xsect to the start
+					nextSection = crossSection;
 
-			if ( connectedPoints.length == 0 ) {
-				crossSection.start = new Vector3();
-				return;
+					crossSection = {
+						start: null,
+						end: connectedPoint,
+						lrud: newXsect.lrud,
+						type: WALL_SQUARE
+					};
+
+					group.unshift( crossSection );
+
+					warnings.push( {
+						station: stations.getStation( nextSection.start ).getPath(),
+						text: 'xSects start extended'
+					} );
+
+				}
+
 			}
-
-			crossSection.start = connectedPoints[ 0 ];
-			const newXsect =  vSectMap.get( crossSection.start );
-
-			if ( newXsect === undefined ) return;
-
-			nextSection = crossSection;
-
-			crossSection = {
-				start: null,
-				end: nextSection.start,
-				lrud: newXsect.lrud,
-				type: WALL_SQUARE
-			};
-
-			group.unshift( crossSection );
 
 		}
 
+		// drop through here if no new xsect added or no connected points found
 		// reverse next leg for approach vector
 
 		crossSection.start = new Vector3()
 			.copy( nextSection.start )
 			.multiplyScalar( 2 ).sub( nextSection.end );
+
+	}
+
+	function _fixupGroupEnd( group ) {
+
+		const endSection = group[ group.length - 1 ];
+		const connectedPoint = _getConnectedPoint( endSection.end, endSection.start );
+
+		if ( ! connectedPoint ) return;
+
+		const newXsect = vSectMap.get( connectedPoint );
+
+		if ( newXsect === undefined ) return;
+
+		group.push( {
+			start: endSection.end,
+			end: connectedPoint,
+			lrud: newXsect.lrud,
+			type: WALL_SQUARE
+		} );
+
+		warnings.push( {
+			station: stations.getStation( endSection.end ).getPath(),
+			text: 'xSects end extended'
+		} );
+
+	}
+
+	function _getConnectedPoint ( vertex, excludeVertex ) {
+
+		const node = stations.getStation( vertex );
+
+		const nodeLegs = node.legs;
+
+		if ( nodeLegs.length === 0 ) return;
+
+		const connectedPoints = [];
+
+		nodeLegs.forEach( li => {
+
+			// leg index points to first vertex of leg
+			const p = ( legs[ li ] !== vertex ) ? legs[ li ] : legs[ li + 1 ];
+			if ( p !== excludeVertex ) connectedPoints.push( p );
+
+		} );
+
+		return connectedPoints[ 0 ];
 
 	}
 

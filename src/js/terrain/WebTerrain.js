@@ -715,7 +715,7 @@ WebTerrain.prototype.fitSurface = function ( modelPoints, offsets ) {
 	const self = this;
 
 	// adjust to geographical values
-	const points = modelPoints.map( point => { return point.clone().add( offsets); } );
+	const points = modelPoints.map( point => point.clone().add( offsets) );
 
 	this.getHeights( points, _heightsReturned );
 

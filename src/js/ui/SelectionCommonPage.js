@@ -124,7 +124,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 		if ( ! top.sorted ) {
 
-			children.sort( ( s1, s2 ) => { return this.stringCompare( s1.name, s2.name ); } );
+			children.sort( ( s1, s2 ) => this.stringCompare( s1.name, s2.name ) );
 
 			top.sorted = true;
 

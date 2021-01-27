@@ -215,11 +215,11 @@ Survey.prototype.loadWarnings = function ( messages ) {
 
 		if ( ! errorMarkers ) errorMarkers = new StationMarkers( this.ctx, 0xff00ff );
 
-		messages.forEach( function ( message ) {
+		messages.forEach( message => {
 
 			const node = surveyTree.getByPath( message.station );
 
-			if ( node !== undefined && selection.contains( node.id ) ) {
+			if ( node !== undefined && ( selection.isEmpty() || selection.contains( node.id ) ) ) {
 
 				errorMarkers.mark( node );
 				node.messageText = message.text;
@@ -524,11 +524,7 @@ Survey.prototype.removeFeature = function ( obj ) {
 
 	const features = this.features;
 
-	features.forEach( function ( value, key ) {
-
-		if ( value === obj ) features.delete( key );
-
-	} );
+	features.forEach( ( value, key ) => { if ( value === obj ) features.delete( key ); } );
 
 };
 
@@ -816,7 +812,6 @@ Survey.prototype.getWorldBoundingBox = function () {
 Survey.prototype.cutSection = function ( node ) {
 
 	const selection = this.selection;
-	const self = this;
 
 	selection.set( node );
 
@@ -836,7 +831,7 @@ Survey.prototype.cutSection = function ( node ) {
 
 	this.traverse( _cutObject );
 
-	cutList.forEach( function ( obj ) {
+	cutList.forEach( obj => {
 
 		const parent = obj.parent;
 
@@ -846,7 +841,7 @@ Survey.prototype.cutSection = function ( node ) {
 
 		if ( obj.geometry ) obj.geometry.dispose();
 
-		self.removeFeature( obj );
+		this.removeFeature( obj );
 
 	} );
 

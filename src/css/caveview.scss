@@ -716,7 +716,6 @@ div.cv-frame::-webkit-scrollbar-button:end {
 }
 
 .container_full {
-	max-height: 280px;
 	overflow: hidden;
 	transition: max-height $animation-speed ease-in;
 }

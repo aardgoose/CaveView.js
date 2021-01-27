@@ -292,7 +292,7 @@ function CaveViewer ( domID, configuration ) {
 
 		'polarAngle': {
 			get: function () { return controls.getPolarAngle(); },
-			set: function (x ) { cameraMove.setPolarAngle( x ); }
+			set: function ( x ) { cameraMove.setPolarAngle( x ); }
 		},
 
 		'azimuthAngle': {

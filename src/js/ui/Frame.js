@@ -23,7 +23,7 @@ Frame.prototype.reset = function () {
 	const tabBox = document.createElement( 'div' );
 	tabBox.classList.add( 'cv-tab-box' );
 
-	if ( this.pages ) this.pages.forEach( function ( p ) { p.owner.dispose(); } );
+	if ( this.pages ) this.pages.forEach( p => p.owner.dispose() );
 
 	this.frame = frame;
 	this.header = frameHeader;
@@ -107,7 +107,7 @@ Frame.prototype.setControlsVisibility = function ( list, visible ) {
 
 	const display = visible ? 'block' : 'none';
 
-	list.forEach( function ( element ) {
+	list.forEach( element => {
 
 		if ( element === null ) return;
 		element.style.display = display;
@@ -124,11 +124,7 @@ Frame.prototype.clear = function () {
 	if ( frame  !== null && frame.parentElement  !== null ) frame.parentElement.removeChild( frame );
 	if ( tabBox !== null && tabBox.parentElement !== null ) tabBox.parentElement.removeChild( tabBox );
 
-	this.listeners.forEach( function ( listener ) {
-
-		listener.obj.removeEventListener( listener.name, listener.handler );
-
-	} );
+	this.listeners.forEach( listener => listener.obj.removeEventListener( listener.name, listener.handler ) );
 
 	this.reset();
 
@@ -230,7 +226,7 @@ Frame.prototype.handleChange = function ( event ) {
 
 	}
 
-	this.pages.forEach( function ( p ) {
+	this.pages.forEach( p => {
 
 		const page = p.owner;
 

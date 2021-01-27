@@ -205,7 +205,7 @@ Tile.prototype.setLoaded = function ( overlay, renderCallback ) {
 
 			if ( parent.isTile ) parent.setReplaced();
 
-			parent.children.forEach( function ( sibling ) {
+			parent.children.forEach( sibling => {
 
 				if ( sibling.replaced || sibling.evicted ) return;
 

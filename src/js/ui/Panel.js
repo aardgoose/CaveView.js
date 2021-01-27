@@ -3,17 +3,11 @@ function Panel ( page ) {
 
 	this.page = page;
 	this.elements = [];
-
 	this.dynamic = [];
 
 	this.onShow = function () {
 
-		this.dynamic.forEach ( function _deleteDynamic( element ) {
-
-			element.parentElement.removeChild( element );
-
-		} );
-
+		this.dynamic.forEach ( element => element.parentElement.removeChild( element ) );
 		this.dynamic = [];
 
 	};

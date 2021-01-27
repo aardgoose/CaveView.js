@@ -49,6 +49,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 	this.addListener( this.page, 'dblclick', _handleSelectSurveyDblClick );
 
 	const self = this;
+
 	var redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
 
 	this.addLine = function ( ul, child ) {
@@ -120,11 +121,11 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 	this.displaySectionCommon = function ( top ) {
 
 		const children = top.children;
-		const self = this;
 
 		if ( ! top.sorted ) {
 
-			children.sort( _sortSurveys );
+			children.sort( ( s1, s2 ) => { return this.stringCompare( s1.name, s2.name ); } );
+
 			top.sorted = true;
 
 		}
@@ -132,7 +133,7 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 		const ul = document.createElement( 'ul' );
 		ul.classList.add( 'cv-tree' );
 
-		top.forEachChild( function ( child ) { self.addLine( ul, child ); } );
+		top.forEachChild( child => this.addLine( ul, child ) );
 
 		_colourSections( ul );
 
@@ -142,19 +143,13 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 		return ul;
 
-		function _sortSurveys ( s1, s2 ) {
-
-			return self.stringCompare( s1.name, s2.name );
-
-		}
-
 	};
 
 	this.reloadSections = function () {
 
 		const uls = this.page.getElementsByTagName( 'UL' );
 		const targetSections = [];
-		const self = this;
+
 		var i;
 
 		// find leaf sections that need reloading
@@ -166,11 +161,11 @@ function SelectionCommonPage ( frame, viewer, container, fileSelector ) {
 
 		}
 
-		targetSections.forEach( function ( ul ) {
+		targetSections.forEach( ul => {
 
-			const node = self.nodes.get( ul.previousSibling ) || self.currentTop;
+			const node = this.nodes.get( ul.previousSibling ) || this.currentTop;
 
-			if ( node ) ul.replaceWith( self.displaySectionCommon( node ) );
+			if ( node ) ul.replaceWith( this.displaySectionCommon( node ) );
 
 		} );
 

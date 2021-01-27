@@ -17,7 +17,7 @@ WorkerPool.prototype.terminateActive = function () {
 
 	const activeWorkers = this.activeWorkers;
 
-	activeWorkers.forEach( function ( worker ) { worker.terminate(); } );
+	activeWorkers.forEach( worker => worker.terminate() );
 	activeWorkers.clear();
 
 	// FIXME clear all pending work for this pool
@@ -100,11 +100,7 @@ WorkerPool.prototype.queueWork = function ( message, callback ) {
 
 WorkerPool.prototype.dispose = function () {
 
-	this.workers.forEach( function ( worker) {
-
-		worker.terminate();
-
-	} );
+	this.workers.forEach( worker => worker.terminate() );
 
 	this.workers = null;
 	this.activeWorkers = null;
@@ -135,13 +131,13 @@ function WorkerPoolCache ( cfg ) {
 
 	this.terminateActive = function () {
 
-		pools.forEach( function ( pool) { pool.terminateActive(); } );
+		pools.forEach( pool => pool.terminateActive() );
 
 	};
 
 	this.dispose = function () {
 
-		pools.forEach( function ( pool ) {
+		pools.forEach( pool => {
 
 			pool.terminateActive();
 			pool.dispose();

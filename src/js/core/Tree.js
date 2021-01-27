@@ -51,19 +51,13 @@ Tree.prototype.traverseDepthFirst = function ( func ) {
 
 	}
 
-	func ( this );
+	func( this );
 
 };
 
 Tree.prototype.forEachChild = function ( func ) {
 
-	const children = this.children;
-
-	for ( var i = 0; i < children.length; i++ ) {
-
-		func( children[ i ] );
-
-	}
+	this.children.forEach( child => func( child ) );
 
 };
 

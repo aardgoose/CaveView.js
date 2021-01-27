@@ -111,11 +111,7 @@ function Materials ( viewer ) {
 
 	function updateCursors( newHeight ) {
 
-		cursorMaterials.forEach( function ( material ) {
-
-			cursorHeight = material.setCursor( newHeight );
-
-		} );
+		cursorMaterials.forEach( material => cursorHeight = material.setCursor( newHeight ) );
 
 	}
 

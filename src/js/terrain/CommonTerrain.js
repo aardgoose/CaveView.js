@@ -448,7 +448,7 @@ CommonTerrain.prototype._fitSurface = function ( modelPoints /* , offsets */ ) {
 
 	var n = 0, s1 = 0, s2 = 0;
 
-	points.forEach( function ( point ) {
+	points.forEach( point => {
 
 		const v = self.getHeight( point );
 		s1 += v;

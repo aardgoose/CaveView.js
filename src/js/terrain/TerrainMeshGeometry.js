@@ -186,7 +186,7 @@ function TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, cl
 		// zig zag and delta decode
 		var value = 0;
 
-		tArray.forEach( function ( deltaValue, index, array ) {
+		tArray.forEach( ( deltaValue, index, array ) => {
 
 			value += ( deltaValue >> 1 ) ^ ( - ( deltaValue & 1 ) );
 			array[ index ] = value;

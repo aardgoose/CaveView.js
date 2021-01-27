@@ -50,7 +50,7 @@ function ViewState ( viewer ) {
 	const enumerableProperties = Object.keys( viewer );
 	const properties = [];
 
-	Object.getOwnPropertyNames( viewer ).forEach( function ( name ) {
+	Object.getOwnPropertyNames( viewer ).forEach( name => {
 
 		if ( enumerableProperties.includes( name ) ) return;
 
@@ -68,7 +68,7 @@ function ViewState ( viewer ) {
 
 		const savedState = {};
 
-		properties.forEach( function ( name ) {
+		properties.forEach( name => {
 
 			const value = viewer[ name ];
 

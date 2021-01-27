@@ -96,17 +96,15 @@ function LoxTerrain ( ctx, terrains, offsets ) {
 	this.overlayMaterial = null;
 	this.attributions = [];
 
-	const self = this;
-
 	var bitmapCount = 0;
 
-	terrains.forEach( function ( terrain ) {
+	terrains.forEach( terrain => {
 
 		const tile = new LoxTile( ctx, terrain, offsets );
 
 		if ( tile.bitmap !== null ) bitmapCount++;
 
-		self.add( tile );
+		this.add( tile );
 
 	} );
 
@@ -125,16 +123,14 @@ LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
 
 	if ( ! this.hasOverlay ) return;
 
-	const self = this;
-
 	if ( this.overlayLoaded ) {
 
-		this.children.forEach( function ( tile ) {
+		this.children.forEach( tile => {
 
 			if ( tile.overlayMaterial !== null ) {
 
 				tile.material = tile.overlayMaterial;
-				tile.material.setThroughMode( self.throughMode );
+				tile.material.setThroughMode( this.throughMode );
 
 			}
 
@@ -146,7 +142,7 @@ LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
 
 	}
 
-	this.children.forEach( function ( tile ) { tile.loadOverlay( self.ctx, overlayLoadedCallback ); } );
+	this.children.forEach( tile => tile.loadOverlay( this.ctx, overlayLoadedCallback ) );
 
 	this.overlayLoaded = true;
 
@@ -154,7 +150,7 @@ LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {
 
 LoxTerrain.prototype.removed = function () {
 
-	this.children.forEach( function ( tile ) { tile.removed(); } );
+	this.children.forEach( tile => tile.removed() );
 
 	this.commonRemoved();
 
@@ -162,7 +158,7 @@ LoxTerrain.prototype.removed = function () {
 
 LoxTerrain.prototype.setMaterial = function ( material ) {
 
-	this.children.forEach( function ( tile ) { tile.material = material; } );
+	this.children.forEach( tile => tile.material = material );
 
 };
 

@@ -691,7 +691,7 @@ WebTerrain.prototype.getHeights = function ( points, callback ) {
 
 		const resultPoints = event.data.points;
 
-		resultPoints.forEach( function ( point ) { results[ point.index ] = point; } );
+		resultPoints.forEach( point => results[ point.index ] = point );
 
 		if ( --requestCount === 0 ) {
 
@@ -715,7 +715,7 @@ WebTerrain.prototype.fitSurface = function ( modelPoints, offsets ) {
 	const self = this;
 
 	// adjust to geographical values
-	const points = modelPoints.map( function ( point ) { return point.clone().add( offsets); } );
+	const points = modelPoints.map( point => { return point.clone().add( offsets); } );
 
 	this.getHeights( points, _heightsReturned );
 
@@ -723,7 +723,7 @@ WebTerrain.prototype.fitSurface = function ( modelPoints, offsets ) {
 
 		var n = 0, s1 = 0, s2 = 0;
 
-		ret.forEach( function ( a ) {
+		ret.forEach( a => {
 
 			const v = points[ a.index ].z - a.z;
 			s1 += v;

@@ -58,7 +58,7 @@ Page.prototype.open = function () {
 	this.frame.onScreen( this.i18n( 'title' ) );
 	this.frame.openPageId = this.id;
 
-	pages.forEach( function ( page ) {
+	pages.forEach( page => {
 
 		const otherPage = page.page;
 		const otherTab = page.tab;
@@ -224,7 +224,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 	if ( obj instanceof Array ) {
 
-		obj.forEach( function ( element ) {
+		obj.forEach( element => {
 
 			const opt = document.createElement( 'option' );
 

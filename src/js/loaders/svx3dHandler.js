@@ -555,7 +555,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		if ( group.length > 1 ) caveXgroups.push( group );
 	} );
 
-	stationMap.forEach( function ( coords ) { limits.expandByPoint( coords ); } );
+	stationMap.forEach( coords => limits.expandByPoint( coords ) );
 
 	groups.push( legs );
 

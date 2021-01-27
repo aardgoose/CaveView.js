@@ -252,21 +252,20 @@ Stations.prototype.resetDistances = function () {
 Stations.prototype.getClosestVisibleStation = function ( camera, intersects ) {
 
 	const splaysVisible = this.splaysVisible;
-	const self = this;
 
 	var minD2 = Infinity;
 	var closestStation = null;
 
-	intersects.forEach( function _checkIntersects( intersect ) {
+	intersects.forEach( intersect => {
 
-		const station = self.getStationByIndex( intersect.index );
+		const station = this.getStationByIndex( intersect.index );
 
 		// don't select spays unless visible
 
 		if ( ! splaysVisible && station !== null && station.p.connections === 0 ) return;
 
 		// station in screen NDC
-		__v.copy( station.p ).applyMatrix4( self.matrixWorld ).project( camera );
+		__v.copy( station.p ).applyMatrix4( this.matrixWorld ).project( camera );
 
 		__v.sub( intersect.point.project( camera ) );
 

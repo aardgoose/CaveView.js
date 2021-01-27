@@ -264,11 +264,7 @@ Handler.prototype.getSurvey = function () {
 	const offsets = limits.getCenter( this.offsets );
 	const allStations = this.allStations;
 
-	allStations.forEach( function ( all ) {
-
-		all.forEach( function ( s ) { s.sub( offsets ); } );
-
-	} );
+	allStations.forEach( all => all.forEach( s => s.sub( offsets ) ) );
 
 	// convert scraps if present
 

@@ -33,7 +33,7 @@ CaveLoader.prototype.reset = function () {
 	this.handler = null;
 	this.section = null;
 
-	this.requests.forEach( function ( request ) { request.abort(); } );
+	this.requests.forEach( request => request.abort() );
 	this.requests = [];
 	this.models = new Handler( this.ctx );
 

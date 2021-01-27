@@ -35,7 +35,6 @@ function HeightMapLoader ( tileSpec, loadCallback, errorCallback ) {
 
 		clip.dtmOffset = 0;
 
-
 	}
 
 	this.tileFile = tileSet.directory + '/' + this.z + '/DTM-' + this.x + '-' + this.y + '.bin';
@@ -61,7 +60,7 @@ HeightMapLoader.prototype.load = function () {
 
 	function _loaded ( /* request */ ) {
 
-		if (xhr.status === 200) {
+		if ( xhr.status === 200 ) {
 
 			self.loadCallback( xhr.response );
 

@@ -46,6 +46,7 @@ function Survey ( ctx, cave ) {
 	this.caveShading = SHADING_HEIGHT;
 	this.surfaceShading = SHADING_SINGLE;
 	this.wallsMode = false;
+	this.hideMode = false;
 	this.ctx = ctx;
 
 	// objects targeted by raycasters and objects with variable LOD
@@ -80,7 +81,6 @@ function Survey ( ctx, cave ) {
 
 	this.limits = survey.limits;
 	this.offsets = survey.offsets;
-	this.messages = cave.messages;
 
 	const modelLimits = new Box3().copy( this.limits );
 
@@ -97,7 +97,7 @@ function Survey ( ctx, cave ) {
 
 	this.loadCave( survey );
 
-	this.loadWarnings();
+	this.loadWarnings( cave.messages );
 
 	this.legTargets = [ this.features.get( LEG_CAVE ) ];
 
@@ -204,15 +204,16 @@ Survey.prototype.onRemoved = function ( /* event */ ) {
 
 };
 
-Survey.prototype.loadWarnings = function () {
+Survey.prototype.loadWarnings = function ( messages ) {
 
 	const surveyTree = this.surveyTree;
-	const messages = this.messages;
 	const selection = this.selection;
 
 	if ( messages.length > 0 ) {
 
-		const errorMarkers = new StationMarkers( this.ctx, 0xff00ff );
+		let errorMarkers = this.getFeature( SURVEY_WARNINGS );
+
+		if ( ! errorMarkers ) errorMarkers = new StationMarkers( this.ctx, 0xff00ff );
 
 		messages.forEach( function ( message ) {
 
@@ -628,7 +629,7 @@ Survey.prototype.setScale = function ( hScale, vScale ) {
 
 Survey.prototype.getLegs = function () {
 
-	return this.getFeature( LEG_CAVE ).geometry.vertices;
+	return this.getFeature( LEG_CAVE ).legVertices;
 
 };
 
@@ -954,6 +955,16 @@ Survey.prototype.setWallsMode = function ( mode ) {
 	if ( scraps ) scraps.setFlat( mode );
 
 	this.wallsMode = mode;
+
+};
+
+Survey.prototype.setHideMode = function ( mode ) {
+
+	const legs = this.getFeature( LEG_CAVE );
+
+	if ( legs ) legs.hide( mode );
+
+	this.hideMode = mode;
 
 };
 

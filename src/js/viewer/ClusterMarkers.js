@@ -165,11 +165,7 @@ QuadTree.prototype.showMarkers = function ( selection ) {
 
 	// show the indiviual markers in this quad
 
-	this.markers.forEach( function ( marker ) {
-
-		marker.visible = selection.contains( marker.stationID );
-
-	} );
+	this.markers.forEach( marker => marker.visible = selection.contains( marker.stationID ) );
 
 	if ( this.quadMarker !== null ) this.quadMarker.visible = false;
 
@@ -179,11 +175,7 @@ QuadTree.prototype.hideMarkers = function () {
 
 	// hide the indiviual markers in this quad
 
-	this.markers.forEach( function ( marker ) {
-
-		marker.visible = false;
-
-	} );
+	this.markers.forEach( marker => marker.visible = false );
 
 	if ( this.quadMarker !== null ) this.quadMarker.visible = false;
 

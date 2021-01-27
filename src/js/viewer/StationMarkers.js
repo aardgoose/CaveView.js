@@ -49,31 +49,20 @@ StationMarkers.prototype.unmark = function ( node ) {
 
 StationMarkers.prototype.clear = function () {
 
-	const self = this;
-
-	this.markers.forEach( function ( marker ) {
-
-		self.remove( marker );
-
-	} );
-
+	this.markers.forEach( marker => this.remove( marker ) );
 	this.markers.clear();
 
 };
 
 StationMarkers.prototype.getStations = function () {
 
-	const list = [];
-
-	this.markers.forEach( function ( value, key ) { list.push( key ); } );
-
-	return list;
+	return this.markers.keys();
 
 };
 
 StationMarkers.prototype.setVisibility = function ( visible ) {
 
-	this.markers.forEach( function ( marker ) { marker.visible = visible; } );
+	this.markers.forEach( marker => marker.visible = visible );
 
 };
 

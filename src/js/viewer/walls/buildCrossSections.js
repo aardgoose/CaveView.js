@@ -383,7 +383,7 @@ function buildCrossSections ( cave, survey ) {
 					group.unshift( crossSection );
 
 					warnings.push( {
-						station: stations.getStation( nextSection.start ).getPath(),
+						station: stations.getStation( nextSection.start ),
 						text: 'xSects start extended'
 					} );
 
@@ -421,7 +421,7 @@ function buildCrossSections ( cave, survey ) {
 		} );
 
 		warnings.push( {
-			station: stations.getStation( endSection.end ).getPath(),
+			station: stations.getStation( endSection.end ),
 			text: 'xSects end extended'
 		} );
 

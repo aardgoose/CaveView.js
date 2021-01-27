@@ -904,9 +904,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		var path = label.split( '.' );
 
-		stations.set( label, coords );
-
-		surveyTree.addLeaf( path, ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL, coords );
+		stations.set(
+			label,
+			surveyTree.addLeaf( path, ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL, coords )
+		);
 
 		return true;
 
@@ -960,16 +961,12 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		if ( section !== null && ! label.startsWith( section ) ) return true;
 
-		const position = stations.get( label );
+		const node = stations.get( label );
 
-		if ( ! position ) return true;
+		if ( ! node ) return true;
 
-		const station = label.split( '.' );
-
-		// get survey path by removing last component of station name
-		station.pop();
-
-		const surveyId = surveyTree.getIdByPathArray( station );
+		const position = node.p;
+		const surveyId = node.parent.id;
 
 		xSects.push( { start: lastXSectPosition, end: position, lrud: lrud, survey: surveyId, type: WALL_SQUARE } );
 
@@ -986,7 +983,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		} else if ( position.connections === 1 && xSects.length > 1 && ! lastPosition.connections == 0 ) {
 
 			message = {
-				station: label,
+				station: node,
 				text: 'LRUD fault'
 			};
 

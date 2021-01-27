@@ -206,7 +206,6 @@ Survey.prototype.onRemoved = function ( /* event */ ) {
 
 Survey.prototype.loadWarnings = function ( messages ) {
 
-	const surveyTree = this.surveyTree;
 	const selection = this.selection;
 
 	if ( messages.length > 0 ) {
@@ -217,7 +216,7 @@ Survey.prototype.loadWarnings = function ( messages ) {
 
 		messages.forEach( message => {
 
-			const node = surveyTree.getByPath( message.station );
+			const node = message.station;
 
 			if ( node !== undefined && ( selection.isEmpty() || selection.contains( node.id ) ) ) {
 

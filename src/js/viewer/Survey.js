@@ -326,7 +326,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.surveyTree = surveyTree;
 
-	this.selection = new Selection( ctx, this.ctx.cfg.themeValue( 'box.select' ) );
+	this.selection = new Selection( ctx, ctx.cfg.themeValue( 'box.select' ) );
 
 	_loadSegments( cave.lineSegments );
 
@@ -436,7 +436,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			// old code to allow combined surveys
 			// const legObject = self.getFeature( tag, Legs );
-			const legObject = new Legs( self.ctx );
+			const legObject = new Legs( ctx );
 
 			legObject.addLegs( legs.vertices, legs.runs );
 
@@ -451,7 +451,6 @@ Survey.prototype.loadCave = function ( cave ) {
 		if ( cave.hasTerrain === false ) return;
 
 		const terrain = new LoxTerrain( ctx, cave.terrains, self.offsets );
-
 
 		self.terrain = terrain;
 
@@ -670,7 +669,7 @@ Survey.prototype.containsWGS84Position = function ( position ) {
 
 Survey.prototype.getModelSurfaceFromWGS84 = function ( position, callback ) {
 
-	const self = this;
+	const offsets = this.offsets;
 
 	position.copy( this.projectionWGS84.forward( position ) );
 
@@ -681,7 +680,7 @@ Survey.prototype.getModelSurfaceFromWGS84 = function ( position, callback ) {
 	function _handleResult ( points ) {
 
 		position.z = points[ 0 ].z;
-		position.sub( self.offsets );
+		position.sub( offsets );
 
 		callback();
 
@@ -1170,6 +1169,7 @@ Survey.prototype.setLegColourByMaterial = function ( mesh, mode) {
 
 		white.toArray( colors, v1 * 3 );
 		white.toArray( colors, v2 * 3 );
+
 	}
 
 };

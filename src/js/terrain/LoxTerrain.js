@@ -3,7 +3,7 @@ import { LoxTerrainGeometry } from './LoxTerrainGeometry';
 import { FEATURE_TERRAIN } from '../core/constants';
 import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 
-import { TextureLoader, Mesh, Box3 } from '../Three';
+import { TextureLoader, Mesh } from '../Three';
 
 function LoxTile( ctx, terrain, offsets ) {
 

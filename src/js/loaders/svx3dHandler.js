@@ -1047,7 +1047,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		} else {
 
-			if ( projection !== null) {
+			if ( projection !== null ) {
 
 				const projectedCoords = projection.forward( {
 					x: coords.x,

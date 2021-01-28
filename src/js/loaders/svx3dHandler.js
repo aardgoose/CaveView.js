@@ -1,4 +1,8 @@
-import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_NORMAL, STATION_ENTRANCE, WALL_SQUARE } from '../core/constants';
+import {
+	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
+	STATION_NORMAL, STATION_ENTRANCE, STATION_XSECT,
+	WALL_SQUARE
+} from '../core/constants';
 import { StationPosition } from '../core/StationPosition';
 
 function Svx3dHandler ( fileName ) {
@@ -969,6 +973,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		const surveyId = node.parent.id;
 
 		xSects.push( { start: lastXSectPosition, end: position, lrud: lrud, survey: surveyId, type: WALL_SQUARE } );
+
+		// record which stations have associated LRUD coords
+		node.type = node.type | STATION_XSECT;
 
 		// some XSECTS are not flagged as last in passage
 		// if a station has only one connection and is not the first in a set of XSECTS

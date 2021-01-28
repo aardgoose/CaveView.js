@@ -1,5 +1,8 @@
 import '../core/polyfills';
-import { LEG_CAVE, LEG_SPLAY, LEG_SURFACE, STATION_ENTRANCE, STATION_NORMAL } from '../core/constants';
+import {
+	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
+	STATION_ENTRANCE, STATION_NORMAL, STATION_XSECT
+ } from '../core/constants';
 import { Vector3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';
 
@@ -308,6 +311,11 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 		const surveyId = m_surveyId + idOffset;
 
 		if ( m_sectionType !== 0x00 && type === LEG_CAVE ) {
+
+			// record which stations have associated LRUD coords
+
+			const node = surveyTree.findById( - m_to - idOffset );
+			node.type = node.type | STATION_XSECT;
 
 			xSects.push( { m_from: m_from, m_to: m_to, start: from, end: to, fromLRUD: fromLRUD, lrud: toLRUD, survey: surveyId, type: m_sectionType } );
 

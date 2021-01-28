@@ -4,6 +4,7 @@ import {
 	InstancedBufferGeometry,
 	InstancedInterleavedBuffer,
 	InterleavedBufferAttribute,
+	InstancedBufferAttribute,
 	Sphere,
 	Vector3,
 } from '../three';
@@ -109,6 +110,32 @@ LineSegmentsGeometry.prototype = Object.assign( Object.create( InstancedBufferGe
 		this.setAttribute( 'instanceColorEnd', new InterleavedBufferAttribute( instanceColorBuffer, 3, 3 ) ); // rgb
 
 		return this;
+
+	},
+
+	setHide: function ( array ) {
+
+		var hiddenVertices;
+
+		if ( array instanceof Float32Array ) {
+
+			hiddenVertices = array;
+
+		} else if ( Array.isArray( array ) ) {
+
+			hiddenVertices = new Float32Array( array );
+
+		}
+
+		this.setAttribute( 'instanceHideVertex', new InstancedBufferAttribute( hiddenVertices, 1, false, 1 ) );
+
+		return this;
+
+	},
+
+	clearHide: function () {
+
+		this.deleteAttribute( 'instanceHideVertex' );
 
 	},
 

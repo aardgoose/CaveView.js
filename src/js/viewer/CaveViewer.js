@@ -213,6 +213,11 @@ function CaveViewer ( domID, configuration ) {
 			set: _stateSetter( setShadingMode, 'shadingMode' )
 		},
 
+		'hideMode': {
+			get: function () { return survey.hideMode; },
+			set: function ( x ) { survey.setHideMode( x ); renderView(); }
+		},
+
 		'flatShading': {
 			get: function () { return survey.wallsMode; },
 			set: function ( x ) { survey.setWallsMode( x ); renderView(); }

@@ -44,10 +44,13 @@ varying float vLineDistance;
 #include <clipping_planes_pars_fragment>
 
 varying vec2 vUv;
+varying float vHide;
 
 void main() {
 
 	#include <clipping_planes_fragment>
+
+	if ( vHide > 0.0 ) discard;
 
 	#ifdef USE_DASH
 

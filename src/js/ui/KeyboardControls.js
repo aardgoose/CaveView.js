@@ -300,6 +300,12 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 				break;
 
+			case 'h':
+
+				viewer.hideMode = ! viewer.hideMode;
+
+				break;
+
 			case 'x':
 
 				viewer.zoomToCursor = ! viewer.zoomToCursor;

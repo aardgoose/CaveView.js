@@ -14,7 +14,10 @@ attribute vec3 instanceEnd;
 attribute vec3 instanceColorStart;
 attribute vec3 instanceColorEnd;
 
+attribute float instanceHideVertex;
+
 varying vec2 vUv;
+varying float vHide;
 
 #ifdef CV_HEIGHT
 
@@ -205,6 +208,8 @@ void main() {
 		height *= depthScale;
 
 	#endif
+
+	vHide = instanceHideVertex;
 
 	gl_Position = clip;
 

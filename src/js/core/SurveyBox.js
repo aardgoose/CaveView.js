@@ -44,10 +44,10 @@ function SurveyBox( ctx, box3, color ) {
 	this.material.color = new Color( color );
 
 	if ( box3 ) this.update( box3 );
+	this.type = 'CV.SurveyBox';
 
 }
 
-SurveyBox.prototype.type = 'SurveyBox';
 
 SurveyBox.prototype = Object.create( LineSegments2.prototype );
 

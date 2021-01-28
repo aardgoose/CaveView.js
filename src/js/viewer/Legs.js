@@ -1,7 +1,7 @@
 import { BufferGeometry, LineSegments, Float32BufferAttribute, Group } from '../Three';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { LineSegments2 } from '../core/LineSegments2';
-import { MATERIAL_LINE } from '../core/constants';
+import { MATERIAL_LINE, STATION_XSECT } from '../core/constants';
 
 function Legs ( ctx ) {
 
@@ -161,9 +161,9 @@ Legs.prototype.cutRuns = function ( selection ) {
 
 };
 
-Legs.prototype.setShading = function ( idSet, colourSegment, mode ) {
+Legs.prototype.setShading = function ( idSet, colourSegment, mode, dashed ) {
 
-	this.legs.updateMaterial( this.ctx, mode );
+	this.legs.updateMaterial( this.ctx, mode, dashed );
 
 	const legRuns = this.legRuns;
 	const unselectedColor = this.ctx.cfg.themeColor( 'shading.unselected' );
@@ -218,6 +218,13 @@ Legs.prototype.setShading = function ( idSet, colourSegment, mode ) {
 
 };
 
+Legs.prototype.hide = function ( mode ) {
+
+	this.legs.hide( this, mode );
+
+};
+
+
 function ThinLegs ( ctx ) {
 
 	const geometry = new BufferGeometry();
@@ -250,7 +257,7 @@ ThinLegs.prototype.updateColors = function () {
 
 };
 
-ThinLegs.prototype.updateMaterial = function ( ctx, mode ) {
+ThinLegs.prototype.updateMaterial = function ( ctx, mode /*, dashed */ ) {
 
 	const materials = ctx.materials;
 
@@ -282,15 +289,75 @@ ThinLegs.prototype.updateMaterial = function ( ctx, mode ) {
 
 };
 
+ThinLegs.prototype.hide = function ( legs, mode ) {
+
+	const geometry = this.legs.geometry;
+
+	geometry.clearGroups();
+
+	if ( mode ) {
+
+		const stations = legs.ctx.survey.stations;
+		const vertices = legs.legVertices;
+
+		const sType1 = stations.getStation( vertices[ 0 ] ).type;
+		const sType2 = stations.getStation( vertices[ 0 ] ).type;
+
+		let inWalls = ( !! ( sType1 & STATION_XSECT ) && !! ( sType2 & STATION_XSECT ) );
+
+		const l = vertices.length;
+
+		let start = 0;
+		let count = 0;
+
+		for ( let i = 0; i < l; i = i + 2 ) {
+
+			const sType1 = stations.getStation( vertices[ i ] ).type;
+			const sType2 = stations.getStation( vertices[ i + 1 ] ).type;
+
+			const newInWalls = ( !! ( sType1 & STATION_XSECT ) && !! ( sType2 & STATION_XSECT ) );
+
+			if ( inWalls === newInWalls ) {
+
+				count += 2;
+
+			} else {
+
+				geometry.addGroup( start, count, ( inWalls ? 0 : 1 ) );
+
+				start = i;
+				count = 0;
+
+			}
+
+			inWalls = newInWalls;
+
+		}
+
+		geometry.addGroup( start, count + 2, inWalls ? 0 : 1 );
+
+		const hiddenMaterial = legs.ctx.materials.getMissingMaterial();
+		hiddenMaterial.visible = false;
+
+		this.material = [ hiddenMaterial, this.material  ];
+
+	} else {
+
+		this.material = this.material[ 1 ];
+
+	}
+
+};
+
 function FatLegs ( ctx ) {
 
 	const geometry = new LineSegmentsGeometry();
 
-	LineSegments2.call( this, geometry, ctx.materials.getUnselectedMaterial() );
+	LineSegments2.call( this, geometry, ctx.materials.getLine2Material( 'basic' ) );
 
+	this.material.color.set( 0x444444 );
 	this.scale.set( 1, 1, 1 );
 	this.type = 'CV.FatLegs';
-
 
 	return this;
 
@@ -305,6 +372,8 @@ FatLegs.prototype.addLegs = function ( positions, colors ) {
 	geometry.setPositions( positions.array );
 	geometry.setColors( colors.array );
 
+	this.computeLineDistances();
+
 	return this;
 
 };
@@ -316,10 +385,40 @@ FatLegs.prototype.updateColors = function () {
 
 };
 
-FatLegs.prototype.updateMaterial = function ( ctx, mode ) {
+FatLegs.prototype.updateMaterial = function ( ctx, mode, dashed ) {
 
-	this.material = ctx.materials.getLine2Material( mode );
+	this.material = ctx.materials.getLine2Material( mode, dashed );
 	this.material.needsUpdate = true;
+
+};
+
+FatLegs.prototype.hide = function ( legs, mode ) {
+
+	if ( mode ) {
+
+		const stations = legs.ctx.survey.stations;
+		const vertices = legs.legVertices;
+
+		const l = vertices.length;
+
+		const hide = [];
+
+		for ( let i = 0; i < l; i = i + 2 ) {
+
+			const sType1 = stations.getStation( vertices[ i ] ).type;
+			const sType2 = stations.getStation( vertices[ i + 1 ] ).type;
+
+			hide.push( sType1 & STATION_XSECT && sType2 & STATION_XSECT ? 1 : 0 );
+
+		}
+
+		this.geometry.setHide( hide );
+
+	} else {
+
+		this.geometry.clearHide();
+
+	}
 
 };
 

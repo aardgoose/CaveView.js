@@ -1049,7 +1049,7 @@ Survey.prototype.setWallShading = function ( mesh, selectedMaterial ) {
 
 Survey.prototype.setSurfaceShading = function ( mode ) {
 
-	if ( this.setLegShading( LEG_SURFACE, mode ) ) {
+	if ( this.setLegShading( LEG_SURFACE, mode, true ) ) {
 
 		this.surfaceShading = mode;
 
@@ -1059,7 +1059,7 @@ Survey.prototype.setSurfaceShading = function ( mode ) {
 
 };
 
-Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
+Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed ) {
 
 	const mesh = this.features.get( legType );
 
@@ -1069,7 +1069,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	case SHADING_HEIGHT:
 
-		this.setLegColourByMaterial( mesh, 'height' );
+		this.setLegColourByMaterial( mesh, 'height', dashed );
 
 		break;
 
@@ -1099,13 +1099,13 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	case SHADING_SINGLE:
 
-		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.single' ) );
+		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.single' ), dashed );
 
 		break;
 
 	case SHADING_SURFACE:
 
-		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.surface' ) );
+		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.surface' ), dashed );
 
 		break;
 
@@ -1131,7 +1131,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 	case SHADING_DEPTH:
 
-		this.setLegColourByMaterial( mesh, 'depth' );
+		this.setLegColourByMaterial( mesh, 'depth', dashed );
 
 		break;
 
@@ -1161,9 +1161,9 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode ) {
 
 };
 
-Survey.prototype.setLegColourByMaterial = function ( mesh, mode) {
+Survey.prototype.setLegColourByMaterial = function ( mesh, mode, dashed ) {
 
-	mesh.setShading( this.selection.getIds(), _colourSegment, mode );
+	mesh.setShading( this.selection.getIds(), _colourSegment, mode, dashed );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1174,9 +1174,9 @@ Survey.prototype.setLegColourByMaterial = function ( mesh, mode) {
 
 };
 
-Survey.prototype.setLegColourByColour = function ( mesh, colour ) {
+Survey.prototype.setLegColourByColour = function ( mesh, colour, dashed ) {
 
-	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic');
+	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', dashed );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 

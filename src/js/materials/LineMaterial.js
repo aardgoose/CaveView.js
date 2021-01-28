@@ -33,7 +33,7 @@ const uniforms = UniformsUtils.merge( [
 	}
 ] );
 
-var LineMaterial = function ( ctx, mode = 'height' ) {
+var LineMaterial = function ( ctx, mode = 'height', dashed ) {
 
 	const survey = ctx.survey;
 	const cfg = ctx.cfg;
@@ -131,6 +131,8 @@ var LineMaterial = function ( ctx, mode = 'height' ) {
 		defines.CV_BASIC = true;
 
 	}
+
+	if ( dashed ) defines.USE_DASH = true;
 
 	ShaderMaterial.call( this, {
 
@@ -305,8 +307,16 @@ var LineMaterial = function ( ctx, mode = 'height' ) {
 	this.setValues( {
 		color: 0xffffff,
 		vertexColors: true,
-		linewidth: 1
+		dashSize: 2,
+		gapSize: 2
 	} );
+
+	if ( dashed ) {
+
+		this.dashSize = 2;
+		this.gapSize = 2;
+
+	}
 
 	this.resolution = new Vector2( ctx.container.clientWidth, ctx.container.clientHeight );
 

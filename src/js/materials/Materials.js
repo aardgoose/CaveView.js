@@ -121,10 +121,10 @@ function Materials ( viewer ) {
 
 	}
 
-	this.getLine2Material = function ( mode = '' ) {
+	this.getLine2Material = function ( mode = '', dashed = false ) {
 
-		const func = function () { return new LineMaterial( ctx, mode ); };
-		const material = getSurveyCacheMaterial( 'line2-' + mode, func, true );
+		const func = function () { return new LineMaterial( ctx, mode, dashed ); };
+		const material = getSurveyCacheMaterial( 'line2-' + mode + dashed ? '-' : '', func, true );
 
 		if ( mode == 'cursor' || mode == 'depth-cursor' ) {
 

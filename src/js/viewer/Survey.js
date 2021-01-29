@@ -654,12 +654,12 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 	const offsets = this.offsets;
 	const projection = this.projection;
 
-	let newPosition;
+	let newPosition = { x: position.x + offsets.x, y: position.y + offsets.y };
 
 	// convert to original survey CRS
 
 	if ( projection !== null )
-		newPosition = projection.forward( { x: position.x + offsets.x, y: position.y + offsets.y } );
+		newPosition = projection.forward( newPosition );
 
 	newPosition.z = position.z + offsets.z;
 

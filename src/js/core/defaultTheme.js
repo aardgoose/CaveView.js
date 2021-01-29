@@ -85,6 +85,9 @@ const defaultTheme = {
 		text: 'white',
 		border: 'white',
 		background: 0x111111
+	},
+	grid: {
+		base: 'gray'
 	}
 };
 

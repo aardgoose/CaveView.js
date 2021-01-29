@@ -59,7 +59,8 @@
 			"warnings": "Warnings",
 			"box": "Bounding box",
 			"hud": "Indicators",
-			"fog": "Fog"
+			"fog": "Fog",
+			"grid": "Grid"
 		},
 		"controls": {
 			"header": "Controls",

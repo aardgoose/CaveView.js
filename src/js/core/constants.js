@@ -67,6 +67,7 @@ export const SURVEY_WARNINGS       = 14;
 export const LABEL_STATION_COMMENT = 15;
 export const CLUSTER_MARKERS       = 16;
 export const FEATURE_ENTRANCE_DOTS = 17;
+export const FEATURE_GRID          = 18;
 
 export const WALL_OVAL             = 1; // based on Therion .lox types
 export const WALL_SQUARE           = 2;

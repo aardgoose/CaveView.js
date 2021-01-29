@@ -1,6 +1,6 @@
 import {
 	VERSION,
-	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES, SURVEY_WARNINGS,
+	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES, FEATURE_GRID, SURVEY_WARNINGS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, LABEL_STATION_COMMENT,
 	SHADING_PATH, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_TERRAIN, FEATURE_STATIONS, FEATURE_ENTRANCE_DOTS,
@@ -409,6 +409,7 @@ function CaveViewer ( domID, configuration ) {
 	_enableLayer( FEATURE_ENTRANCE_DOTS, 'entrance_dots' );
 	_enableLayer( FEATURE_STATIONS,  'stations' );
 	_enableLayer( FEATURE_TRACES,    'traces' );
+	_enableLayer( FEATURE_GRID,      'grid' );
 	_enableLayer( FACE_SCRAPS,       'scraps' );
 	_enableLayer( FACE_WALLS,        'walls' );
 	_enableLayer( LEG_CAVE,          'legs' );

@@ -21,6 +21,7 @@ const defaultView = {
 	walls: false,
 	scraps: false,
 	splays: false,
+	grid: false,
 	stations: false,
 	stationLabels: false,
 	entrances: true,

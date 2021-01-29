@@ -113,6 +113,7 @@ function SettingsPage ( frame, viewer, fileSelector ) {
 	cv.appendChild( this.addCheckbox( 'visibility.fog', viewer, 'fog' ) );
 	cv.appendChild( this.addCheckbox( 'visibility.hud', viewer, 'HUD' ) );
 	cv.appendChild( this.addCheckbox( 'visibility.box', viewer, 'box' ) );
+	cv.appendChild( this.addCheckbox( 'visibility.grid', viewer, 'grid' ) );
 
 	if ( viewer.hasWarnings ) cv.appendChild( this.addCheckbox( 'visibility.warnings', viewer, 'warnings' ) );
 

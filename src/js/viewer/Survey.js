@@ -1,11 +1,11 @@
 import {
 	FACE_SCRAPS, FACE_WALLS,
-	FEATURE_ENTRANCES, FEATURE_BOX, FEATURE_TRACES,
+	FEATURE_ENTRANCES, FEATURE_BOX, FEATURE_TRACES, FEATURE_GRID,
 	FEATURE_STATIONS, SURVEY_WARNINGS, STATION_ENTRANCE,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, LABEL_STATION_COMMENT, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
-	SHADING_SURFACE, CLUSTER_MARKERS,
+	SHADING_SURFACE, CLUSTER_MARKERS
 } from '../core/constants';
 
 import { StationPosition } from '../core/StationPosition';
@@ -23,6 +23,7 @@ import { buildWallsSync } from './walls/WallBuilders';
 import { SurveyColourMapper} from '../core/SurveyColourMapper';
 import { Selection } from './Selection';
 import { SurveyBox } from '../core/SurveyBox';
+import { Grid } from './Grid';
 
 import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
 import proj4 from 'proj4';
@@ -106,6 +107,8 @@ function Survey ( ctx, cave ) {
 	this.setFeatureBox();
 
 	this.addStatic( this.markers );
+
+	this.addFeature( new Grid( ctx ), FEATURE_GRID, 'Grid' );
 
 	this.addEventListener( 'removed', this.onRemoved );
 
@@ -282,7 +285,14 @@ Survey.prototype.setupTerrain = function ( terrain ) {
 	// expand limits with terrain
 	this.combinedLimits = new Box3().copy( terrain.boundingBox ).union( this.modelLimits );
 
-	this.setFeatureBox();
+	const grid = this.getFeature( FEATURE_GRID );
+
+	this.removeFeature( grid );
+	this.remove( grid );
+
+	this.addFeature( new Grid( this.ctx ), FEATURE_GRID );
+
+	this.setFeatureBox(); // FIXME - why is terrain BB wrong?
 
 	// find height difference between all entrance locations and terrain
 	// find average differences and use to alter height of terrain
@@ -644,15 +654,16 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 	const offsets = this.offsets;
 	const projection = this.projection;
 
-	var originalPosition = { x: position.x + offsets.x, y: position.y + offsets.y, z: 0 };
+	let newPosition;
 
 	// convert to original survey CRS
 
-	if ( projection !== null ) originalPosition = projection.forward( originalPosition );
+	if ( projection !== null )
+		newPosition = projection.forward( { x: position.x + offsets.x, y: position.y + offsets.y } );
 
-	originalPosition.z = position.z + offsets.z;
+	newPosition.z = position.z + offsets.z;
 
-	return originalPosition;
+	return newPosition;
 
 };
 

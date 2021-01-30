@@ -1389,7 +1389,7 @@ Survey.prototype.gltfExport = function ( selection, options, callback ) {
 
 		var mimeType;
 
-		if ( options.binary) {
+		if ( options.binary ) {
 
 			mimeType = 'application/octet-stream';
 

@@ -443,14 +443,13 @@ CommonTerrain.prototype.setTarget = function ( target ) {
 
 CommonTerrain.prototype._fitSurface = function ( modelPoints /* , offsets */ ) {
 
-	const self = this;
 	const points = modelPoints;
 
 	var n = 0, s1 = 0, s2 = 0;
 
 	points.forEach( point => {
 
-		const v = self.getHeight( point );
+		const v = this.getHeight( point );
 		s1 += v;
 		s2 += v * v;
 		n++;

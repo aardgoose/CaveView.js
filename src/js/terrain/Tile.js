@@ -63,7 +63,11 @@ Tile.prototype.onBeforeRender = function ( renderer ) {
 
 };
 
-Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundingBox, material ) {
+Tile.prototype.createFromTileData = function ( tileData, material ) {
+
+	const attributes = tileData.attributes;
+	const index = tileData.index;
+	const boundingBox = tileData.boundingBox;
 
 	var attributeName;
 	var attribute;
@@ -91,9 +95,9 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 
 	// discard javascript attribute buffers after upload to GPU
 
-	attributes = bufferGeometry.attributes;
+	const gAttributes = bufferGeometry.attributes;
 
-	for ( var name in attributes ) attributes[ name ].onUpload( onUploadDropBuffer );
+	for ( var name in gAttributes ) gAttributes[ name ].onUpload( onUploadDropBuffer );
 
 	this.geometry.index.onUpload( onUploadDropBuffer );
 
@@ -102,22 +106,18 @@ Tile.prototype.createFromBufferAttributes = function ( index, attributes, boundi
 	this.material = material;
 	this.isTile = true;
 
-	return this;
+	// handle specific tile data (Cesium has leaf status tiles)
+	this.canZoom = tileData.canZoom && this.canZoom;
 
-};
-
-Tile.prototype.getWorldBoundingBox = function () {
-
-	// delay calculating this until the terrain is in the scene graph.
+	// this is safe, we are already in the scene graph from .setPending()
 	if ( this.worldBoundingBox === null ) {
 
 		this.updateWorldMatrix( true, false );
-
 		this.worldBoundingBox = this.boundingBox.clone().applyMatrix4( this.matrixWorld );
 
 	}
 
-	return this.worldBoundingBox;
+	return this;
 
 };
 
@@ -292,7 +292,7 @@ Tile.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
 
 Tile.prototype.computeProjectedArea = function ( camera ) {
 
-	const boundingBox = this.getWorldBoundingBox();
+	const boundingBox = this.worldBoundingBox;
 	const z = boundingBox.max.z;
 
 	__a.copy( boundingBox.min ).setZ( z );

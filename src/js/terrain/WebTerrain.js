@@ -153,23 +153,6 @@ WebTerrain.prototype.hasCoverage = function () {
 
 };
 
-WebTerrain.prototype.pickCoverage = function ( limits ) {
-
-	const tileSet = this.TS.tileSet;
-
-	var zoom = tileSet.initialZoom || tileSet.overlayMaxZoom + 1;
-	var coverage;
-
-	do {
-
-		coverage = this.TS.getCoverage( limits, --zoom );
-
-	} while ( coverage.count > 4 && zoom > tileSet.minZoom );
-
-	return coverage;
-
-};
-
 WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 	if ( existingTile === undefined ) {
@@ -246,8 +229,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 		}
 
-		tile.createFromBufferAttributes( tileData.index, tileData.attributes, tileData.boundingBox, self.material );
-		tile.canZoom = tileData.canZoom && tile.canZoom; // handle specific tile data (Cesium has leaf status tiles)
+		tile.createFromTileData( tileData, self.material );
 
 		self.dispatchEvent( { type: 'progress', name: 'set', progress: 100 * ( self.maxTilesLoading - self.tilesLoading ) / self.maxTilesLoading } );
 
@@ -291,8 +273,17 @@ WebTerrain.prototype.initProgress = function () {
 
 WebTerrain.prototype.tileArea = function ( limits ) {
 
-	const coverage = this.pickCoverage( limits );
-	const zoom = coverage.zoom;
+	const tileSet = this.TS.tileSet;
+
+	let zoom = tileSet.initialZoom || tileSet.overlayMaxZoom + 1;
+	let coverage;
+
+	do {
+
+		coverage = this.TS.getCoverage( limits, --zoom );
+
+	} while ( coverage.count > 4 && zoom > tileSet.minZoom );
+
 
 	this.initialZoom = zoom;
 	this.coverage = coverage;
@@ -418,21 +409,11 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 WebTerrain.prototype.removed = function () {
 
-	const self = this;
-
 	this.dying = true;
 
-	this.traverse( _disposeTileMesh );
+	this.traverse( obj => { if ( obj !== this ) obj.removed( obj ); } );
 
 	this.commonRemoved();
-
-	return;
-
-	function _disposeTileMesh ( obj ) {
-
-		if ( obj !== self ) obj.removed( obj );
-
-	}
 
 };
 
@@ -440,7 +421,7 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 
 	if ( this.tilesLoading > 0 ) return;
 
-	this.traverse( _setTileMeshMaterial );
+	this.traverse( obj => { if ( obj.isTile ) obj.setMaterial( material ); } );
 
 	this.activeOverlay = null;
 
@@ -448,16 +429,6 @@ WebTerrain.prototype.setMaterial = function ( material ) {
 	material.fog = false;
 
 	this.material = material;
-
-	return;
-
-	function _setTileMeshMaterial ( obj ) {
-
-		if ( ! obj.isTile ) return;
-
-		obj.setMaterial( material );
-
-	}
 
 };
 
@@ -542,7 +513,7 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 			tile.computeProjectedArea( camera );
 			if ( tile.area / 4 > 0.81 ) candidateTiles.push( tile );
 
-		} else if ( ! parent.isMesh && tile.evicted && frustum.intersectsBox( tile.getWorldBoundingBox() ) ) {
+		} else if ( ! parent.isMesh && tile.evicted && frustum.intersectsBox( tile.worldBoundingBox ) ) {
 
 			// this tile is not loaded, but has been previously
 
@@ -617,15 +588,7 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 
 			const xDiff = tileA.x - tileB.x;
 
-			if ( xDiff !== 0 ) {
-
-				return xDiff;
-
-			} else {
-
-				return tileA.y - tileB.y;
-
-			}
+			return ( xDiff !== 0 ) ? xDiff : tileA.y - tileB.y;
 
 		}
 
@@ -645,7 +608,7 @@ WebTerrain.prototype.getHeights = function ( points, callback ) {
 
 		const tileSpec = tileSet.findTile( point );
 		const key = tileSpec.x + ':' + tileSpec.y + ':' + tileSpec.z;
-
+		// index used to map point height results with starting points.
 		point.index = i;
 
 		if ( tileSpecs[ key ] === undefined ) {
@@ -667,7 +630,7 @@ WebTerrain.prototype.getHeights = function ( points, callback ) {
 
 	let requestCount = 0;
 
-	for ( var key in tileSpecs) {
+	for ( var key in tileSpecs ) {
 
 		this.workerPool.runWorker( tileSpecs[ key ], _mapLoaded );
 		requestCount++;
@@ -730,7 +693,7 @@ WebTerrain.prototype.fitSurface = function ( modelPoints, offsets ) {
 
 };
 
-WebTerrain.prototype.scheduleRetile = function ( event) {
+WebTerrain.prototype.scheduleRetile = function ( event ) {
 
 	if ( ! this.visible ) return;
 

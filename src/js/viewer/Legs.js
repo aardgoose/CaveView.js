@@ -355,7 +355,6 @@ function FatLegs ( ctx ) {
 
 	LineSegments2.call( this, geometry, ctx.materials.getLine2Material( 'basic' ) );
 
-	this.material.color.set( 0x444444 );
 	this.scale.set( 1, 1, 1 );
 	this.type = 'CV.FatLegs';
 

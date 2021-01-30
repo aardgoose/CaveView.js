@@ -444,8 +444,6 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			if ( legs.vertices.length === 0 ) return;
 
-			// old code to allow combined surveys
-			// const legObject = self.getFeature( tag, Legs );
 			const legObject = new Legs( ctx );
 
 			legObject.addLegs( legs.vertices, legs.runs );
@@ -470,18 +468,9 @@ Survey.prototype.loadCave = function ( cave ) {
 
 };
 
-Survey.prototype.getFeature = function ( tag, obj ) {
+Survey.prototype.getFeature = function ( tag ) {
 
-	var o = this.features.get( tag );
-
-	if ( o === undefined && obj ) {
-
-		o = new obj ();
-		o.layers.set( tag );
-
-	}
-
-	return o;
+	return this.features.get( tag );
 
 };
 
@@ -751,7 +740,7 @@ Survey.prototype.highlightSelection = function ( node ) {
 
 		if ( box === null ) {
 
-			box = new Selection( this.ctx,  this.ctx.cfg.themeValue( 'box.highlight' ) );
+			box = new Selection( this.ctx, this.ctx.cfg.themeValue( 'box.highlight' ) );
 			this.highlightBox = box;
 
 		}
@@ -1092,7 +1081,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed ) {
 
 	case SHADING_INCLINATION:
 
-		this.setLegColourByInclination( mesh, Object3D.DefaultUp );
+		this.setLegColourByInclination( mesh );
 
 		break;
 
@@ -1318,7 +1307,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 };
 
-Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
+Survey.prototype.setLegColourByInclination = function ( mesh ) {
 
 	const colourCache = this.ctx.materials.colourCache;
 	const colours = colourCache.getColors( 'inclination' );
@@ -1326,8 +1315,6 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 	const colourRange = colours.length - 1;
 	const hueFactor = colourRange * 2 / Math.PI;
 	const legNormal = new Vector3();
-
-	// pNormal = normal of reference plane in model space
 
 	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic' );
 
@@ -1338,7 +1325,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh, pNormal ) {
 
 		legNormal.subVectors( vertex1, vertex2 ).normalize();
 
-		const dotProduct = legNormal.dot( pNormal );
+		const dotProduct = legNormal.dot( Object3D.DefaultUp );
 
 		const hueIndex = Math.floor( hueFactor * Math.acos( Math.abs( dotProduct ) ) );
 		const colour = colours[ hueIndex ];

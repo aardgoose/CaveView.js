@@ -56,20 +56,19 @@ function WebTerrain ( ctx, survey, onLoaded ) {
 	this.watcher = this.scheduleRetile.bind( this );
 	this.updateFunc = WebTerrain.prototype.zoomCheck.bind( this );
 
-	const self = this;
+	let promise;
 
 	switch ( this.displayCRS ) {
 
 	case 'EPSG:3857':
 
-		this.TS = new EPSG3857TileSet( ctx, _tileSetReady );
-
+		promise = new EPSG3857TileSet( ctx );
 		break;
 
 	case 'EPSG:4326':
 	case 'ORIGINAL':
 
-		this.TS = new EPSG4326TileSet( ctx, _tileSetReady, this.surveyCRS );
+		promise = new EPSG4326TileSet( ctx, this.surveyCRS );
 
 		break;
 
@@ -80,27 +79,29 @@ function WebTerrain ( ctx, survey, onLoaded ) {
 
 	}
 
-	this.workerPool = this.ctx.workerPools.getPool( this.TS.workerScript );
+	promise.then( TS => {
 
-	return;
+		console.log( TS );
 
-	function _tileSetReady () {
+		this.workerPool = ctx.workerPools.getPool( TS.workerScript );
+		this.TS = TS;
+		this.tileSets = TS.getTileSets();
+		this.screenAttribution = TS.getScreenAttribution();
 
-		self.tileSets = self.TS.getTileSets();
-		self.screenAttribution = self.TS.getScreenAttribution();
+		if ( this.hasCoverage() ) {
 
-		if ( self.hasCoverage() ) {
-
-			self.tileArea( self.limits );
+			this.tileArea( this.limits );
 
 		} else {
 
 			console.log( 'no terrain found' );
-			onLoaded( self );
+			onLoaded( this );
 
 		}
 
-	}
+	} );
+
+	return;
 
 }
 
@@ -202,7 +203,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 	return;
 
 	function _mapLoaded ( event ) {
-
+console.log( event); 
 		const tileData = event.data;
 		const worker = event.currentTarget;
 		const overlay = self.activeOverlay;
@@ -712,16 +713,12 @@ WebTerrain.prototype.fitSurface = function ( modelPoints, offsets ) {
 
 	}
 
-	const self = this;
-
 	// adjust to geographical values
 	const points = modelPoints.map( point => point.clone().add( offsets) );
 
-	this.getHeights( points, _heightsReturned );
+	this.getHeights( points, ret => {
 
-	function _heightsReturned ( ret ) {
-
-		var n = 0, s1 = 0, s2 = 0;
+		let n = 0, s1 = 0, s2 = 0;
 
 		ret.forEach( a => {
 
@@ -735,11 +732,11 @@ WebTerrain.prototype.fitSurface = function ( modelPoints, offsets ) {
 		const sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
 
 		// simple average
-		self.datumShift = s1 / n;
+		this.datumShift = s1 / n;
 
-		console.log( 'Adjustmenting terrain height by:', self.datumShift, 'sd:',sd );
+		console.log( 'Adjustmenting terrain height by:', this.datumShift, 'sd:', sd );
 
-	}
+	} );
 
 };
 

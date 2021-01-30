@@ -4,12 +4,33 @@ const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
 var tileSets;
 
-function EPSG3857TileSet( ctx, tileSetReady ) {
+function EPSG3857TileSet( ctx ) {
 
-	new FileLoader().setResponseType( 'text' ).load( ctx.cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
+	return new Promise( resolve => {
 
-	return;
+		new FileLoader().setResponseType( 'text' ).load( ctx.cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
+		const self = this;
+		function _tileSetLoaded ( text ) {
 
+			tileSets = JSON.parse( text );
+			tileSets.push( EPSG3857TileSet.defaultTileSet );
+
+			resolve( self );
+
+		}
+
+		function _tileSetMissing ( ) {
+
+			tileSets = [ EPSG3857TileSet.defaultTileSet ];
+
+			resolve( self );
+
+		}
+
+	} );
+
+
+/*
 	function _tileSetLoaded ( text ) {
 
 		tileSets = JSON.parse( text );
@@ -26,7 +47,7 @@ function EPSG3857TileSet( ctx, tileSetReady ) {
 		tileSetReady();
 
 	}
-
+*/
 }
 
 EPSG3857TileSet.defaultTileSet = {

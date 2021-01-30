@@ -1,7 +1,7 @@
 import { FileLoader, Box2, Vector2 } from '../Three';
 import proj4 from 'proj4';
 
-function EPSG4326TileSet( ctx, tileSetReady, crs ) {
+function EPSG4326TileSet( ctx, crs ) {
 
 	this.CRS = crs;
 	this.transform = proj4( crs, 'EPSG:4326' );
@@ -10,32 +10,35 @@ function EPSG4326TileSet( ctx, tileSetReady, crs ) {
 
 	this.transformedLimits = null;
 
-	const self = this;
-
 	const accessToken = ctx.cfg.value( 'cesiumAccessToken', 'no access token' );
 	const url = 'https://api.cesium.com/v1/assets/1/endpoint?access_token=' + accessToken;
 
-	new FileLoader().setResponseType( 'text' ).load( url, _getEndpoint, function () {}, _apiError );
+	return new Promise( resolve => {
 
-	function _getEndpoint ( text ) {
+		const self = this;
+		new FileLoader().setResponseType( 'text' ).load( url, _getEndpoint, function () {}, _apiError );
 
-		const endpoint = JSON.parse( text );
+		function _getEndpoint ( text ) {
 
-		self.url = endpoint.url;
-		self.accessToken = endpoint.accessToken;
-		self.attributions = endpoint.attributions;
+			const endpoint = JSON.parse( text );
 
-		EPSG4326TileSet.defaultTileSet.valid = true;
-		tileSetReady();
+			self.url = endpoint.url;
+			self.accessToken = endpoint.accessToken;
+			self.attributions = endpoint.attributions;
 
-	}
+			EPSG4326TileSet.defaultTileSet.valid = true;
+			resolve( self );
 
-	function _apiError ( ) {
+		}
 
-		console.warn( 'cesium api error' );
-		tileSetReady();
+		function _apiError ( ) {
 
-	}
+			console.warn( 'cesium api error' );
+			resolve( self );
+
+		}
+
+	} );
 
 }
 

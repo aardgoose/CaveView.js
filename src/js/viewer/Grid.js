@@ -8,7 +8,6 @@ function Grid ( ctx ) {
 
 	LineSegments2.call( this, geometry, ctx.materials.getLine2Material( 'basivc' ) );
 
-	this.material.color.set( 0xffffff );
 	this.scale.set( 1, 1, 1 );
 	this.type = 'CV.Grid';
 

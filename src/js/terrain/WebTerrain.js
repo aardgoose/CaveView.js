@@ -202,15 +202,9 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 	return;
 
-	function _mapLoaded ( event ) {
-console.log( event); 
-		const tileData = event.data;
-		const worker = event.currentTarget;
+	function _mapLoaded ( tileData ) {
+
 		const overlay = self.activeOverlay;
-
-		// return worker to pool
-
-		self.workerPool.putWorker( worker );
 
 		--self.tilesLoading;
 
@@ -642,8 +636,6 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 WebTerrain.prototype.getHeights = function ( points, callback ) {
 
 	const tileSet = this.TS;
-	const self = this;
-
 	const tileSpecs = {};
 	const results = [];
 
@@ -684,13 +676,11 @@ WebTerrain.prototype.getHeights = function ( points, callback ) {
 
 	return;
 
-	function _mapLoaded ( event ) {
+	function _mapLoaded ( data ) {
 
 		// return worker to pool
 
-		self.workerPool.putWorker( event.currentTarget );
-
-		const resultPoints = event.data.points;
+		const resultPoints = data.points;
 
 		resultPoints.forEach( point => results[ point.index ] = point );
 

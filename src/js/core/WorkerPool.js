@@ -40,6 +40,8 @@ WorkerPool.prototype.getWorker = function () {
 
 	this.activeWorkers.add( worker );
 
+	worker.pool = this;
+
 	return worker;
 
 };
@@ -78,7 +80,13 @@ WorkerPool.prototype.runWorker = function ( message, callback ) {
 
 	const worker = this.getWorker();
 
-	worker.onmessage = callback;
+	worker.onmessage = e => {
+
+		worker.pool.putWorker( worker );
+		callback( e.data );
+
+	};
+
 	worker.postMessage( message );
 
 	return worker;

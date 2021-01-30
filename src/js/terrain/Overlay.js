@@ -29,7 +29,7 @@ function Overlay ( ctx, overlayProvider ) {
 
 	}
 
-	this.materialCache = {};
+	this.materialCache = new Map();
 	this.missing = new Set();
 
 	const coverage = overlayProvider.coverage;
@@ -98,7 +98,7 @@ Overlay.prototype.getTile = function ( x, y, z, overlayLoaded ) {
 	const cfg = this.ctx.cfg;
 	const materials = this.ctx.materials;
 
-	const material = this.materialCache[ key ];
+	const material = this.materialCache.get( key );
 	const overlayMaxZoom = this.provider.maxZoom;
 
 	var repeat = 1;
@@ -170,7 +170,7 @@ Overlay.prototype.getTile = function ( x, y, z, overlayLoaded ) {
 		material.map = texture;
 		material.needsUpdate = true;
 
-		self.materialCache[ key ] = material;
+		self.materialCache.set( key, material );
 
 		overlayLoaded( material );
 
@@ -196,19 +196,14 @@ Overlay.prototype.setActive = function () {
 Overlay.prototype.setInactive = function () {
 
 	// flush cache
-
-	const materialCache = this.materialCache;
-
-	for ( var name in materialCache ) {
-
-		const material = materialCache[ name ];
+	this.materialCache.forEach( material => {
 
 		material.map.dispose();
 		material.dispose();
 
-	}
+	} );
 
-	this.materialCache = {};
+	this.materialCache.clear();
 
 	this.hideAttribution();
 	this.active = false;

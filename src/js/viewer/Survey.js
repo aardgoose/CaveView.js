@@ -1399,6 +1399,7 @@ Survey.prototype.gltfExport = function ( selection, options, callback ) {
 
 		}
 
+		worker.terminate();
 		callback( new Blob( [ event.data.gltf ], { type : mimeType } ), options.binary );
 
 	} );

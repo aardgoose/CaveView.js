@@ -1385,7 +1385,7 @@ Survey.prototype.gltfExport = function ( selection, options, callback ) {
 
 	const worker = new Worker( this.ctx.cfg.value( 'home', '' ) + 'js/workers/gltfWorker.js' );
 
-	worker.addEventListener( 'message', function( event ) {
+	worker.addEventListener( 'message', function ( event ) {
 
 		var mimeType;
 

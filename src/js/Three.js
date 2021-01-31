@@ -75,6 +75,13 @@ MathUtils.generateUUID = function () { return null; };
 
 import { Object3D } from 'three/src/core/Object3D.js';
 
+Object3D.onUploadDropBuffer = function () {
+
+	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
+	this.array = null;
+
+};
+
 Object3D.DefaultUp.set( 0, 0, 1 );
 
 Object3D.prototype.addStatic = function ( obj ) {
@@ -83,5 +90,17 @@ Object3D.prototype.addStatic = function ( obj ) {
 	obj.updateMatrix();
 
 	this.add( obj );
+
+};
+
+Object3D.prototype.dropBuffers = function ( colors = true ) {
+
+	const geometry = this.geometry;
+	const attributes = geometry.attributes;
+
+	for ( var name in attributes )
+		if ( colors || name !== 'color' ) attributes[ name ].onUpload( Object3D.onUploadDropBuffer );
+
+	if ( geometry.index ) geometry.index.onUpload( Object3D.onUploadDropBuffer );
 
 };

@@ -3,7 +3,6 @@ import {
 } from '../Three';
 
 import { WaterMaterial } from '../materials/WaterMaterial';
-import { FEATURE_TRACES } from '../core/constants';
 
 function beforeRender ( renderer, scene, camera, geometry, material ) {
 
@@ -24,33 +23,23 @@ function DyeTraces ( survey ) {
 	this.stations = [];
 
 	this.onBeforeRender = beforeRender;
-	this.layers.set( FEATURE_TRACES );
 	this.visible = false;
 
 	const traces = survey.metadata.traces;
-	const l = traces.length;
 	const surveyTree = survey.surveyTree;
 
-	if ( l > 0 ) {
+	traces.forEach( trace => {
 
-		let i;
+		const startStation = surveyTree.getByPath( trace.start );
+		const endStation   = surveyTree.getByPath( trace.end );
 
-		for ( i = 0; i < l; i++ ) {
+		if ( endStation === undefined || startStation === undefined ) return;
 
-			const trace = traces[ i ];
+		this._addTrace( startStation, endStation );
 
-			const startStation = surveyTree.getByPath( trace.start );
-			const endStation   = surveyTree.getByPath( trace.end );
+	} );
 
-			if ( endStation === undefined || startStation === undefined ) continue;
-
-			this._addTrace( startStation, endStation );
-
-		}
-
-		this.finish();
-
-	}
+	this.finish();
 
 	return this;
 
@@ -164,7 +153,7 @@ DyeTraces.prototype.outlineTrace = function ( hit ) {
 	const selection = this.geometry.getAttribute( 'selection' );
 	const l = selection.count;
 
-	for( var i = 0; i < l; i++ ) {
+	for( let i = 0; i < l; i++ ) {
 
 		selection.setX( i, 0 );
 
@@ -191,7 +180,7 @@ DyeTraces.prototype.serialise = function () {
 	const stations = this.stations;
 	const traces = [];
 
-	for ( var i = 0, l = stations.length; i < l; i += 2 ) {
+	for ( let i = 0, l = stations.length; i < l; i += 2 ) {
 
 		traces.push( {
 			start: stations[ i ].getPath(),

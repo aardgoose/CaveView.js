@@ -143,7 +143,7 @@ LoxTerrainGeometry.prototype.setupUVs = function ( bitmap, image, offsets ) {
 
 	const uvs = [];
 
-	for ( var i = 0; i < vertices.length; i += 3 ) {
+	for ( let i = 0; i < vertices.length; i += 3 ) {
 
 		const x = vertices[ i ]     + offsets.x;
 		const y = vertices[ i + 1 ] + offsets.y;

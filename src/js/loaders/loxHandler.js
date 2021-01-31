@@ -2,7 +2,7 @@ import '../core/polyfills';
 import {
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
 	STATION_ENTRANCE, STATION_NORMAL, STATION_XSECT
- } from '../core/constants';
+} from '../core/constants';
 import { Vector3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';
 

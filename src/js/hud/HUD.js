@@ -275,7 +275,7 @@ function HUD ( viewer, renderer ) {
 
 		}
 
-		updateScaleBar( controls.object );
+		updateScaleBar( controls.cameraManager.activeCamera );
 
 		self.setVisibility( isVisible );
 
@@ -399,7 +399,7 @@ function HUD ( viewer, renderer ) {
 
 	function updateScaleBar ( camera ) {
 
-		if ( camera instanceof OrthographicCamera ) {
+		if ( camera.isOrthographicCamera ) {
 
 			if ( scaleBar === null ) {
 

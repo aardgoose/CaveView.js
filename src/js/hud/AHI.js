@@ -10,6 +10,7 @@ import {
 
 // preallocated tmp objects
 const __xAxis = new Vector3( 1, 0, 0 );
+const __direction = new Vector3();
 
 function AHI ( hudObject ) {
 
@@ -40,13 +41,9 @@ function AHI ( hudObject ) {
 
 	const sv = sphere.getAttribute( 'position' ).count;
 
-	hudObject.dropBuffers( sphere );
-
 	const sphereColors = new Float32BufferAttribute( new Float32Array( sv * 3 ), 3 );
 
-	var i;
-
-	for ( i = 0; i < sv; i++ ) {
+	for ( let i = 0; i < sv; i++ ) {
 
 		( ( i < sv / 2 ) ? c1 : c2 ).toArray( sphereColors.array, i * 3 );
 
@@ -73,7 +70,7 @@ function AHI ( hudObject ) {
 
 	vertices = [];
 
-	for ( i = 0; i < 12; i++ ) {
+	for ( let i = 0; i < 12; i++ ) {
 
 		const mn1 = m1.clone();
 		const mn2 = m2.clone();
@@ -88,8 +85,7 @@ function AHI ( hudObject ) {
 		mn1.applyAxisAngle( __xAxis, i * Math.PI / 6 );
 		mn2.applyAxisAngle( __xAxis, i * Math.PI / 6 );
 
-		vertices.push( mn1 );
-		vertices.push( mn2 );
+		vertices.push( mn1, mn2 );
 
 	}
 
@@ -105,6 +101,8 @@ function AHI ( hudObject ) {
 	mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 	mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );
 	mRing.rotateOnAxis( new Vector3( 0, 0, 1 ), Math.PI / 8 );
+
+	mSphere.dropBuffers();
 
 	globe.addStatic( mSphere );
 	globe.addStatic( mMarks );
@@ -137,25 +135,19 @@ function AHI ( hudObject ) {
 
 AHI.prototype = Object.create( Group.prototype );
 
-AHI.prototype.set = function () {
+AHI.prototype.set = function ( vCamera ) {
 
-	const __direction = new Vector3();
+	vCamera.getWorldDirection( __direction );
 
-	return function set ( vCamera ) {
+	const pitch = Math.PI / 2 - __direction.angleTo( Object3D.DefaultUp );
 
-		vCamera.getWorldDirection( __direction );
+	if ( pitch === this.lastPitch ) return;
 
-		const pitch = Math.PI / 2 - __direction.angleTo( Object3D.DefaultUp );
+	this.globe.rotateOnAxis( __xAxis, pitch - this.lastPitch );
+	this.lastPitch = pitch;
+	this.label.replaceString( String( Math.round( MathUtils.radToDeg( pitch ) ) + '\u00B0' ).padStart( 4, ' ' ) );
 
-		if ( pitch === this.lastPitch ) return;
+};
 
-		this.globe.rotateOnAxis( __xAxis, pitch - this.lastPitch );
-		this.lastPitch = pitch;
-
-		this.label.replaceString( String( Math.round( MathUtils.radToDeg( pitch ) ) + '\u00B0' ).padStart( 4, ' ' ) );
-
-	};
-
-}();
 
 export { AHI };

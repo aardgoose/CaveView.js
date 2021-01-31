@@ -26,9 +26,7 @@ function BarGeometry ( ctx, length, height, divisions ) {
 
 		const dWidth = length / divisions;
 
-		var i;
-
-		for ( i = 0; i < divisions; i++ ) {
+		for ( let i = 0; i < divisions; i++ ) {
 
 			const x1 = i * dWidth;
 			const x2 = x1 + dWidth;

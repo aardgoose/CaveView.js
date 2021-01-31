@@ -1,16 +1,9 @@
-import { BufferGeometry, Points, Float32BufferAttribute, Vector3 } from '../Three';
+import { BufferGeometry, Points, Float32BufferAttribute, Vector3, Object3D } from '../Three';
 
 import { STATION_ENTRANCE } from '../core/constants';
 import { PointIndicator } from './PointIndicator';
 
 const __v = new Vector3();
-
-function onUploadDropBuffer() {
-
-	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
-	this.array = null;
-
-}
 
 function Stations ( ctx, selection ) {
 
@@ -65,8 +58,7 @@ Stations.prototype.addStation = function ( node ) {
 
 	this.vertices.push( point );
 
-
-	var pointSize = 0.0;
+	let pointSize = 0.0;
 
 	if ( node.type & STATION_ENTRANCE ) {
 
@@ -173,7 +165,6 @@ Stations.prototype.selectStationByIndex = function ( index ) {
 	this.selectedSize = pSize.getX( index );
 
 	pSize.setX( index, this.selectedSize * 2 );
-
 	pSize.needsUpdate = true;
 
 	this.selected = index;
@@ -189,9 +180,7 @@ Stations.prototype.selectStations = function ( selection ) {
 	const idSet = selection.getIds();
 	const isEmpty = selection.isEmpty();
 
-	var i;
-
-	for ( i = 0; i < l; i++ ) {
+	for ( let i = 0; i < l; i++ ) {
 
 		const node = stations[ i ];
 
@@ -236,7 +225,7 @@ Stations.prototype.finalise = function () {
 	bufferGeometry.setAttribute( 'position', positions.copyVector3sArray( this.vertices ) );
 	bufferGeometry.setAttribute( 'color', colors.copyColorsArray( this.colors ) );
 
-	bufferGeometry.getAttribute( 'color' ).onUpload( onUploadDropBuffer );
+	bufferGeometry.getAttribute( 'color' ).onUpload( Object3D.onUploadDropBuffer );
 
 	this.pointSizes = null;
 	this.colors = null;
@@ -296,9 +285,7 @@ Stations.prototype.setSplaysVisibility = function ( visible ) {
 	const l = stations.length;
 	const selection = this.selection;
 
-	var i;
-
-	for ( i = 0; i < l; i++ ) {
+	for ( let i = 0; i < l; i++ ) {
 
 		const node = stations[ i ];
 

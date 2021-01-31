@@ -8,6 +8,10 @@ import {
 	Mesh, Group, Euler
 } from '../Three';
 
+const __direction = new Vector3();
+const __negativeZAxis = new Vector3( 0, 0, -1 );
+const __e = new Euler();
+
 function Compass ( hudObject ) {
 
 	const stdWidth  = hudObject.stdWidth;
@@ -26,9 +30,10 @@ function Compass ( hudObject ) {
 	const cg2 = new RingBufferGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 	cg2.translate( 0, 0, 5 );
 
-	hudObject.dropBuffers( cg2 );
-
 	const c2 = new Mesh( cg2, new MeshBasicMaterial( { color: cfg.themeValue( 'hud.compass.top1' ) } ) );
+
+	c1.dropBuffers();
+	c2.dropBuffers();
 
 	const rMesh = _makeRose();
 
@@ -88,11 +93,10 @@ function Compass ( hudObject ) {
 			const radius = stdWidth * 0.9;
 			const innerR = radius * 0.2;
 
-			var i;
 			const xlv = Math.PI / 4;
 			const xc = Math.PI / 2;
 
-			for ( i = 0; i < 4; i++ ) {
+			for ( let i = 0; i < 4; i++ ) {
 
 				const a = i * Math.PI / 2 + offset;
 
@@ -118,46 +122,37 @@ function Compass ( hudObject ) {
 
 Compass.prototype = Object.create( Group.prototype );
 
-Compass.prototype.set = function () {
+Compass.prototype.set = function ( vCamera ) {
 
-	const __direction = new Vector3();
-	const __negativeZAxis = new Vector3( 0, 0, -1 );
-	const __e = new Euler();
+	var a;
 
-	return function set ( vCamera ) {
+	vCamera.getWorldDirection( __direction );
 
-		var a;
+	if ( Math.abs( __direction.z ) < 0.999 ) {
 
-		vCamera.getWorldDirection( __direction );
+		a = Math.atan2( - __direction.x, __direction.y );
 
-		if ( Math.abs( __direction.z ) < 0.999 ) {
+	} else {
 
-			a = Math.atan2( - __direction.x, __direction.y );
+		__e.setFromQuaternion( vCamera.quaternion );
+		a = __e.z;
 
-		} else {
+	}
 
-			__e.setFromQuaternion( vCamera.quaternion );
-			a = __e.z;
+	if ( a === this.lastRotation ) return;
 
-		}
+	if ( a < 0 ) a = Math.PI * 2 + a;
 
-		if ( a === this.lastRotation ) return;
+	let degrees = Math.round( MathUtils.radToDeg( a ) );
 
-		if ( a < 0 ) a = Math.PI * 2 + a;
+	if ( degrees === 360 ) degrees = 0;
 
-		var degrees = Math.round( MathUtils.radToDeg( a ) );
+	const res = degrees.toString().padStart( 3, '0' ) + '\u00B0'; // unicode degree symbol
 
-		if ( degrees === 360 ) degrees = 0;
+	this.label.replaceString( res );
+	this.rotaryGroup.rotateOnAxis( __negativeZAxis, a - this.lastRotation );
+	this.lastRotation = a;
 
-		const res = degrees.toString().padStart( 3, '0' ) + '\u00B0'; // unicode degree symbol
-
-		this.label.replaceString( res );
-
-		this.rotaryGroup.rotateOnAxis( __negativeZAxis, a - this.lastRotation );
-
-		this.lastRotation = a;
-	};
-
-}();
+};
 
 export { Compass };

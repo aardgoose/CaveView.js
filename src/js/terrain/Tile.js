@@ -15,13 +15,6 @@ const __d = new Vector3();
 const __t1 = new Triangle( __a, __b, __c );
 const __t2 = new Triangle( __a, __c, __d );
 
-function onUploadDropBuffer() {
-
-	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
-	this.array = null;
-
-}
-
 function Tile ( ctx, x, y, zoom, tileSpec ) {
 
 	this.x = x;
@@ -94,12 +87,7 @@ Tile.prototype.createFromTileData = function ( tileData, material ) {
 	this.boundingBox = bufferGeometry.boundingBox;
 
 	// discard javascript attribute buffers after upload to GPU
-
-	const gAttributes = bufferGeometry.attributes;
-
-	for ( var name in gAttributes ) gAttributes[ name ].onUpload( onUploadDropBuffer );
-
-	this.geometry.index.onUpload( onUploadDropBuffer );
+	this.dropBuffers();
 
 	this.layers.set( FEATURE_TERRAIN );
 

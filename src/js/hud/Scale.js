@@ -53,9 +53,7 @@ Scale.prototype.setRange = function ( min, max, caption ) {
 
 	if ( min !== this.min || max !== this.max ) {
 
-		var i;
-
-		for ( i = this.children.length; i--; ) {
+		for ( let i = this.children.length; i--; ) {
 
 			const obj = this.children[ i ];
 
@@ -115,13 +113,7 @@ Scale.prototype.setCaption = function ( text ) {
 
 Scale.prototype.dispose = function () {
 
-	this.traverse( function _dispose ( obj ) {
-
-		const geometry = obj.geometry;
-
-		if ( geometry !== undefined ) geometry.dispose();
-
-	} );
+	this.traverse( obj => { if ( obj.geometry !== undefined ) obj.geometry.dispose(); } );
 
 };
 

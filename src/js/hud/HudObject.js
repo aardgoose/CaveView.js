@@ -1,12 +1,5 @@
 import { CylinderBufferGeometry } from '../Three';
 
-function onUploadDropBuffer() {
-
-	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
-	this.array = null;
-
-}
-
 function HudObject ( ctx ) {
 
 	const cfg = ctx.cfg;
@@ -43,16 +36,6 @@ Object.assign( HudObject.prototype, {
 
 	},
 
-	dropBuffers: function ( geometry ) {
-
-		geometry.getAttribute( 'position' ).onUpload( onUploadDropBuffer );
-		geometry.getAttribute( 'normal' ).onUpload( onUploadDropBuffer );
-		geometry.getAttribute( 'uv' ).onUpload( onUploadDropBuffer );
-
-		if ( geometry.index !== null ) geometry.index.onUpload( onUploadDropBuffer );
-
-	},
-
 	getCommonRing: function () {
 
 		var commonRing = this.commonRing;
@@ -62,7 +45,6 @@ Object.assign( HudObject.prototype, {
 			commonRing = new CylinderBufferGeometry( this.stdWidth * 0.90, this.stdWidth, 3, 32, 1, true );
 			commonRing.rotateX( Math.PI / 2 );
 
-			this.dropBuffers( commonRing );
 			this.commonRing = commonRing;
 		}
 

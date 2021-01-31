@@ -19,13 +19,13 @@ function ProgressDial ( hudObject, addText, ring, viewer ) {
 
 	geometry.setAttribute( 'color', colors );
 
-	hudObject.dropBuffers( geometry );
-
 	this.backgroundColor = cfg.themeColor( 'hud.progressBackground' );
 	this.setColor = cfg.themeColor( 'hud.progress' );
 	this.viewer = viewer;
 
 	Mesh.call( this, geometry, materials.getPlainMaterial() );
+
+	this.dropBuffers( false );
 
 	this.name = 'CV.ProgressDial';
 
@@ -71,9 +71,7 @@ ProgressDial.prototype.colorRange = function ( range ) {
 	const c1 = this.setColor;
 	const c2 = this.backgroundColor;
 
-	var i;
-
-	for ( i = cc / 2; i >= 0; i-- ) {
+	for ( let i = cc / 2; i >= 0; i-- ) {
 
 		const c =  i > segmentMax ? c1 : c2;
 

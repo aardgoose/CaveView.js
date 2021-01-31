@@ -24,9 +24,7 @@ function AngleScale ( hudObject, caption ) {
 
 	const v3 = new Vector3();
 
-	var i;
-
-	for ( i = 0; i < vertexCount; i++ ) {
+	for ( let i = 0; i < vertexCount; i++ ) {
 
 		v3.fromBufferAttribute( vertices, i ).normalize();
 
@@ -38,12 +36,12 @@ function AngleScale ( hudObject, caption ) {
 
 	geometry.setAttribute( 'color', ringColors.copyColorsArray( colors ) );
 
-	hudObject.dropBuffers( geometry );
-
 	Mesh.call( this, geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: true } ) );
 
 	this.translateY( 3 * ( stdWidth + stdMargin ) + stdMargin + 30 );
 	this.translateX( - 40 - 5 );
+
+	this.dropBuffers();
 
 	this.name = 'CV.AngleScale';
 

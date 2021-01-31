@@ -5,13 +5,6 @@ import {
 
 import { CommonAttributes } from './CommonAttributes';
 
-function onUploadDropBuffer() {
-
-	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
-	this.array = null;
-
-}
-
 function GlyphStringGeometryCache ( material ) {
 
 	this.material = material;
@@ -150,9 +143,9 @@ function GlyphString ( text, glyphMaterial, ctx ) {
 
 	if ( ! this.isMutableGlyphString ) {
 
-		geometry.getAttribute( 'instanceUvs' ).onUpload( onUploadDropBuffer );
-		geometry.getAttribute( 'instanceOffsets' ).onUpload( onUploadDropBuffer );
-		geometry.getAttribute( 'instanceWidths' ).onUpload( onUploadDropBuffer );
+		geometry.getAttribute( 'instanceUvs' ).onUpload( Object3D.onUploadDropBuffer );
+		geometry.getAttribute( 'instanceOffsets' ).onUpload( Object3D.onUploadDropBuffer );
+		geometry.getAttribute( 'instanceWidths' ).onUpload( Object3D.onUploadDropBuffer );
 
 	}
 

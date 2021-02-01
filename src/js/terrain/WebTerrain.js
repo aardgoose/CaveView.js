@@ -175,6 +175,13 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 	tileSpec.offsets = this.offsets,
 	tileSpec.flatZ = this.flatZ;
 
+	if ( this.tilesLoading === 0 ) {
+
+		this.dispatchEvent( __startEvent );
+		this.maxTilesLoading = 0;
+
+	}
+
 	this.maxTilesLoading = Math.max( this.maxTilesLoading, ++this.tilesLoading );
 
 	if ( this.log ) console.log( 'load: [ ', z +'/' + x + '/' + y, ']', this.tilesLoading );
@@ -265,16 +272,6 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 };
 
-WebTerrain.prototype.initProgress = function () {
-
-	if ( this.tilesLoading > 0 ) {
-
-		this.dispatchEvent( __startEvent );
-
-	}
-
-};
-
 WebTerrain.prototype.tileArea = function ( limits ) {
 
 	const tileSet = this.TS.tileSet;
@@ -301,10 +298,6 @@ WebTerrain.prototype.tileArea = function ( limits ) {
 		}
 
 	}
-
-	this.initProgress();
-
-	return;
 
 };
 
@@ -487,8 +480,6 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 		retry = true;
 
 	}
-
-	this.initProgress();
 
 	if ( retry ) {
 

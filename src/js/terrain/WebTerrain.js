@@ -13,6 +13,30 @@ const __matrix4 = new Matrix4();
 const __startEvent = { type: 'progress', name: 'start' };
 const __endEvent = { type: 'progress', name: 'end' };
 
+function __sortTilesByPressure( tileA, tileB ) {
+
+	const zoomDiff = tileB.zoom - tileA.zoom;
+
+	if ( zoomDiff !== 0 ) {
+
+		return zoomDiff;
+
+	}
+
+	const frameDiff = tileA.lastFrame - tileB.lastFrame;
+
+	if ( frameDiff !== 0 ) {
+
+		return frameDiff;
+
+	}
+
+	const xDiff = tileA.x - tileB.x;
+
+	return ( xDiff !== 0 ) ? xDiff : tileA.y - tileB.y;
+
+}
+
 function WebTerrain ( ctx, survey, onLoaded ) {
 
 	CommonTerrain.call( this, ctx );
@@ -242,7 +266,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 		self.dispatchEvent( { type: 'progress', name: 'set', progress: 100 * ( self.maxTilesLoading - self.tilesLoading ) / self.maxTilesLoading } );
 
-		tile.setLoaded( this.overlay, _loaded );
+		tile.setLoaded( self.activeOverlay, _loaded );
 
 	}
 
@@ -426,7 +450,6 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 	const resurrectTiles      = [];
 
 	var retry = false;
-	var i;
 
 	frustum.setFromProjectionMatrix( __matrix4.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
 
@@ -436,12 +459,43 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 
 	const resurrectCount = resurrectTiles.length;
 	const candidateCount = candidateTiles.length;
+	const candidateEvictionCount = candidateEvictTiles.length;
 
-	_evictTiles();
+	// evict offsreen tiles
+
+	let evictTarget = Tile.liveTiles - self.maxTiles;
+
+	if ( Math.min( candidateEvictionCount, evictTarget ) > 0 ) {
+
+		candidateEvictTiles.sort( __sortTilesByPressure );
+
+		const now = performance.now();
+		const l = candidateEvictTiles.length;
+
+		for ( let i = 0; i < l; i++ ) {
+
+			const tile = candidateEvictTiles[ i ];
+
+			if ( tile.evictionCount === 0 ) {
+
+				tile.evictionCount = now;
+
+			} else if ( now - tile.evictionCount > 1000 ) {
+
+				tile.evict();
+				if ( --evictTarget ) break;
+
+			}
+
+		}
+
+	}
 
 	if ( resurrectCount !== 0 ) {
 
-		for ( i = 0; i < resurrectCount; i++ ) {
+		// resurrect old tiles
+
+		for ( let i = 0; i < resurrectCount; i++ ) {
 
 			const tile = resurrectTiles[ i ];
 
@@ -454,7 +508,9 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 
 	} else if ( candidateCount !== 0 ) {
 
-		for ( i = 0; i < candidateCount; i++ ) {
+		// or zoom into area
+
+		for ( let i = 0; i < candidateCount; i++ ) {
 
 			this.zoomTile( candidateTiles[ i ] );
 
@@ -495,10 +551,12 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 
 			// flag subtiles to prevent premature resurrection
 			// and indicate replaced by superior
+
 			tile.traverse( function ( subtile ) {
 
+				if ( subtile === tile ) return; // ignore this tile
 				subtile.evicted = false;
-				if ( subtile !== tile ) subtile.replaced = true;
+				subtile.replaced = true;
 
 			} );
 
@@ -508,63 +566,6 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 
 			// off screen tile
 			if ( tile.isMesh && tile.lastFrame !== lastFrame ) candidateEvictTiles.push( tile );
-
-		}
-
-	}
-
-	function _evictTiles() {
-
-		const candidateCount = candidateEvictTiles.length;
-		const evictTarget = Tile.liveTiles - self.maxTiles;
-		const evictCount = Math.min( candidateCount, evictTarget );
-
-		if ( evictCount > 0 ) {
-
-			candidateEvictTiles.sort( _sortByPressure );
-
-			let i;
-			const now = performance.now();
-
-			for ( i = 0; i < evictCount; i++ ) {
-
-				const tile = candidateEvictTiles[ i ];
-
-				if ( tile.evictionCount === 0 ) {
-
-					tile.evictionCount = now;
-
-				} else if ( now - tile.evictionCount > 1000 ) {
-
-					tile.evict();
-
-				}
-
-			}
-
-		}
-
-		function _sortByPressure( tileA, tileB ) {
-
-			const zoomDiff = tileB.zoom - tileA.zoom;
-
-			if ( zoomDiff !== 0 ) {
-
-				return zoomDiff;
-
-			}
-
-			const frameDiff = tileA.lastFrame - tileB.lastFrame;
-
-			if ( frameDiff !== 0 ) {
-
-				return frameDiff;
-
-			}
-
-			const xDiff = tileA.x - tileB.x;
-
-			return ( xDiff !== 0 ) ? xDiff : tileA.y - tileB.y;
 
 		}
 

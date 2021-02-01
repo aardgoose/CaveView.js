@@ -130,6 +130,7 @@ Tile.prototype.evict = function () {
 	this.replaced = false;
 	this.evictionCount = 0;
 
+	this.children.forEach( tile => tile.evict() );
 	this.empty();
 
 };

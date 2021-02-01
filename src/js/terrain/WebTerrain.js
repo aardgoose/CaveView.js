@@ -244,19 +244,17 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 		self.dispatchEvent( { type: 'progress', name: 'set', progress: 100 * ( self.maxTilesLoading - self.tilesLoading ) / self.maxTilesLoading } );
 
-		if ( tile.setLoaded( overlay, _loaded ) ) {
-
-			if ( overlay !== null && tile.zoom < overlay.getMinZoom() && tile.canZoom ) {
-
-				self.zoomTile( tile );
-
-			}
-
-		}
+		tile.setLoaded( overlay, _loaded );
 
 	}
 
-	function _loaded () {
+	function _loaded ( canZoom ) {
+
+		if ( canZoom && self.activeOverlay !== null && tile.zoom < self.activeOverlay.getMinZoom() ) {
+
+			self.zoomTile( tile );
+
+		}
 
 		if ( self.tilesLoading !== 0 ) return;
 		if ( self.tilesLoading === 0 ) self.dispatchEvent( __endEvent );

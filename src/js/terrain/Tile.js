@@ -214,7 +214,8 @@ Tile.prototype.setLoaded = function ( overlay, renderCallback ) {
 							tile.isMesh = true;
 							Tile.liveTiles++;
 
-							if ( --tilesWaiting === 0 ) renderCallback();
+							if ( --tilesWaiting === 0 ) renderCallback( this.canZoom );
+							return;
 
 						} );
 
@@ -222,9 +223,9 @@ Tile.prototype.setLoaded = function ( overlay, renderCallback ) {
 
 			} );
 
-			if ( tilesWaiting === 0 ) renderCallback();
+			if ( tilesWaiting === 0 ) renderCallback( false ); // we have no overlay so don't encourage zooming
 
-			return true;
+			return;
 
 		} else {
 
@@ -234,7 +235,7 @@ Tile.prototype.setLoaded = function ( overlay, renderCallback ) {
 
 	}
 
-	return false;
+	renderCallback( false );
 
 };
 

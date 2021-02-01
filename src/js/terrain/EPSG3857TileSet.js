@@ -8,46 +8,33 @@ function EPSG3857TileSet( ctx ) {
 
 	return new Promise( resolve => {
 
-		new FileLoader().setResponseType( 'text' ).load( ctx.cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json', _tileSetLoaded, function () {}, _tileSetMissing );
-		const self = this;
-		function _tileSetLoaded ( text ) {
+		new FileLoader()
+			.setResponseType( 'text' )
+			.load(
+				ctx.cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json',
+				// success handler
+				text => {
 
-			tileSets = JSON.parse( text );
-			tileSets.push( EPSG3857TileSet.defaultTileSet );
+					tileSets = JSON.parse( text );
+					tileSets.push( EPSG3857TileSet.defaultTileSet );
 
-			resolve( self );
+					resolve( this );
 
-		}
+				},
+				// progress handler
+				function () {},
+				// error handler
+				() => {
 
-		function _tileSetMissing ( ) {
+					tileSets = [ EPSG3857TileSet.defaultTileSet ];
 
-			tileSets = [ EPSG3857TileSet.defaultTileSet ];
+					resolve( this );
 
-			resolve( self );
-
-		}
+				}
+			);
 
 	} );
 
-
-/*
-	function _tileSetLoaded ( text ) {
-
-		tileSets = JSON.parse( text );
-		tileSets.push( EPSG3857TileSet.defaultTileSet );
-
-		tileSetReady();
-
-	}
-
-	function _tileSetMissing ( ) {
-
-		tileSets = [ EPSG3857TileSet.defaultTileSet ];
-
-		tileSetReady();
-
-	}
-*/
 }
 
 EPSG3857TileSet.defaultTileSet = {

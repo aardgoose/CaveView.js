@@ -99,6 +99,10 @@ function WebTerrain ( ctx, survey, onLoaded ) {
 
 		}
 
+	} ).catch( () => {
+
+		console.log( 'error loading tile set' );
+
 	} );
 
 	return;

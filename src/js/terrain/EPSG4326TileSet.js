@@ -13,30 +13,28 @@ function EPSG4326TileSet( ctx, crs ) {
 	const accessToken = ctx.cfg.value( 'cesiumAccessToken', 'no access token' );
 	const url = 'https://api.cesium.com/v1/assets/1/endpoint?access_token=' + accessToken;
 
-	return new Promise( resolve => {
+	return new Promise( ( resolve, reject ) => {
 
-		const self = this;
-		new FileLoader().setResponseType( 'text' ).load( url, _getEndpoint, function () {}, _apiError );
+		new FileLoader().setResponseType( 'text' ).load(
+			url,
+			// success handler
+			text => {
 
-		function _getEndpoint ( text ) {
+				const endpoint = JSON.parse( text );
 
-			const endpoint = JSON.parse( text );
+				this.url = endpoint.url;
+				this.accessToken = endpoint.accessToken;
+				this.attributions = endpoint.attributions;
 
-			self.url = endpoint.url;
-			self.accessToken = endpoint.accessToken;
-			self.attributions = endpoint.attributions;
+				EPSG4326TileSet.defaultTileSet.valid = true;
+				resolve( this );
 
-			EPSG4326TileSet.defaultTileSet.valid = true;
-			resolve( self );
-
-		}
-
-		function _apiError ( ) {
-
-			console.warn( 'cesium api error' );
-			resolve( self );
-
-		}
+			},
+			// progress handler
+			function () {},
+			// error handler
+			() => { console.warn( 'cesium api error' ); reject( this ); }
+		);
 
 	} );
 

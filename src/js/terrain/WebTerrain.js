@@ -388,8 +388,12 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 		} else {
 
-			tile.setOverlay( overlay, _overlayLoaded );
 			self.overlaysLoading++;
+			tile
+				.setOverlay( overlay )
+				.then(
+					() => { if ( --self.overlaysLoading === 0 ) overlayLoadedCallback(); }
+				);
 
 		}
 
@@ -400,12 +404,6 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 		if ( ! tile.isTile || ! tile.isMesh ) return;
 
 		tile.setThroughMode( throughMode );
-
-	}
-
-	function _overlayLoaded () {
-
-		if ( --self.overlaysLoading === 0 ) overlayLoadedCallback();
 
 	}
 

@@ -91,7 +91,7 @@ Overlay.prototype.hideAttribution = function () {
 
 };
 
-Overlay.prototype.getTile = function ( x, y, z, overlayLoaded ) {
+Overlay.prototype.getTile = function ( x, y, z ) {
 
 	const self = this;
 	const key = x + ':' + y + ':' + z;
@@ -105,85 +105,89 @@ Overlay.prototype.getTile = function ( x, y, z, overlayLoaded ) {
 	var xOffset = 0;
 	var yOffset = 0;
 
-	if ( material !== undefined ) {
+	return new Promise( resolve => {
 
-		overlayLoaded( this.active ? material : null );
+		if ( material !== undefined ) {
 
-		return;
-
-	}
-
-	const zoomDelta = z - overlayMaxZoom;
-
-	if ( zoomDelta > 0 ) {
-
-		const scale = Math.pow( 2, zoomDelta );
-
-		repeat = 1 / scale;
-
-		// get image for lower zoom
-		const newX = Math.floor( x * repeat );
-		const newY = Math.floor( y * repeat );
-
-		xOffset = ( x - newX * scale ) / scale;
-		yOffset = 1 - ( y - newY * scale ) / scale;
-		yOffset -= repeat;
-
-		x = newX;
-		y = newY;
-		z = overlayMaxZoom;
-
-	}
-
-	const url = this.provider.getUrl( x, y, z );
-
-	if ( url === null || this.missing.has( url ) ) {
-
-		overlayLoaded( materials.getMissingMaterial() );
-
-		return;
-
-	}
-
-	new TextureLoader().setCrossOrigin( 'anonymous' ).load( url, _textureLoaded, undefined, _textureMissing );
-
-	return;
-
-	function _textureLoaded( texture ) {
-
-		if ( ! self.active ) {
-
-			texture.dispose();
-
-			overlayLoaded( null );
+			resolve( this.active ? material : null );
 			return;
 
 		}
 
-		const material = new TerrainOverlayMaterial( self.ctx );
+		const zoomDelta = z - overlayMaxZoom;
 
-		texture.anisotropy = cfg.value( 'anisotropy', 4 );
+		if ( zoomDelta > 0 ) {
 
-		texture.repeat.setScalar( repeat );
-		texture.offset.set( xOffset, yOffset );
+			const scale = Math.pow( 2, zoomDelta );
 
-		material.map = texture;
-		material.needsUpdate = true;
+			repeat = 1 / scale;
 
-		self.materialCache.set( key, material );
+			// get image for lower zoom
+			const newX = Math.floor( x * repeat );
+			const newY = Math.floor( y * repeat );
 
-		overlayLoaded( material );
+			xOffset = ( x - newX * scale ) / scale;
+			yOffset = 1 - ( y - newY * scale ) / scale;
+			yOffset -= repeat;
 
-	}
+			x = newX;
+			y = newY;
+			z = overlayMaxZoom;
 
-	function _textureMissing( /* texture */ ) {
+		}
 
-		self.missing.add( url );
+		const url = this.provider.getUrl( x, y, z );
 
-		overlayLoaded( self.active ? materials.getMissingMaterial() : null );
+		if ( url === null || this.missing.has( url ) ) {
 
-	}
+			resolve( materials.getMissingMaterial() );
+			return;
 
+		}
+
+		new TextureLoader()
+			.setCrossOrigin( 'anonymous' )
+			.load(
+				url,
+				// success handler
+				texture => {
+
+					if ( ! self.active ) {
+
+						texture.dispose();
+
+						resolve( null );
+						return;
+
+					}
+
+					const material = new TerrainOverlayMaterial( self.ctx );
+
+					texture.anisotropy = cfg.value( 'anisotropy', 4 );
+
+					texture.repeat.setScalar( repeat );
+					texture.offset.set( xOffset, yOffset );
+
+					material.map = texture;
+					material.needsUpdate = true;
+
+					self.materialCache.set( key, material );
+
+					resolve( material );
+
+				},
+
+				// progress handler
+				undefined,
+				// error handler
+				() => {
+
+					self.missing.add( url );
+					( self.active ? materials.getMissingMaterial() : null );
+
+				}
+			);
+	});
 };
 
 Overlay.prototype.setActive = function () {

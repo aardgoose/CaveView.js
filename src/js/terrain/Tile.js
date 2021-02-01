@@ -205,8 +205,18 @@ Tile.prototype.setLoaded = function ( overlay, renderCallback ) {
 				} else {
 
 					// delay finalising until overlays loaded - avoids flash of raw surface
-					sibling.setOverlay( overlay, _completed );
 					tilesWaiting++;
+
+					sibling
+						.setOverlay( overlay )
+						.then( tile => {
+
+							tile.isMesh = true;
+							Tile.liveTiles++;
+
+							if ( --tilesWaiting === 0 ) renderCallback( parent.childErrors );
+
+						} );
 
 				}
 
@@ -225,15 +235,6 @@ Tile.prototype.setLoaded = function ( overlay, renderCallback ) {
 	}
 
 	return false;
-
-	function _completed( tile ) {
-
-		tile.isMesh = true;
-		Tile.liveTiles++;
-
-		if ( --tilesWaiting === 0 ) renderCallback( parent.childErrors );
-
-	}
 
 };
 
@@ -255,26 +256,22 @@ Tile.prototype.setThroughMode = function ( mode ) {
 
 };
 
-Tile.prototype.setOverlay = function ( overlay, imageLoadedCallback ) {
+Tile.prototype.setOverlay = function ( overlay ) {
 
-	const self = this;
+	return overlay
+		.getTile( this.x, this.y, this.zoom )
+		.then( material => {
 
-	overlay.getTile( this.x, this.y, this.zoom, _overlayLoaded );
+			if ( material !== null ) {
 
-	return;
+				this.material = material;
+				material.setThroughMode( overlay.throughMode );
 
-	function _overlayLoaded ( material ) {
+			}
 
-		if ( material !== null ) {
+			return this;
 
-			self.material = material;
-			material.setThroughMode( overlay.throughMode );
-
-		}
-
-		imageLoadedCallback( self );
-
-	}
+		} );
 
 };
 

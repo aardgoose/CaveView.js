@@ -198,8 +198,6 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 	function _mapLoaded ( tileData ) {
 
-		const overlay = self.activeOverlay;
-
 		--self.tilesLoading;
 
 		// the survey/region in the viewer may have changed while the height maps are being loaded.
@@ -244,7 +242,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 
 		self.dispatchEvent( { type: 'progress', name: 'set', progress: 100 * ( self.maxTilesLoading - self.tilesLoading ) / self.maxTilesLoading } );
 
-		tile.setLoaded( overlay, _loaded );
+		tile.setLoaded( this.overlay, _loaded );
 
 	}
 
@@ -338,7 +336,6 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	if ( this.tilesLoading > 0 ) return;
 
-	const self = this;
 	const currentOverlay = this.activeOverlay;
 	const throughMode = overlay.throughMode;
 
@@ -346,7 +343,7 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 		if ( currentOverlay === overlay ) {
 
-			this.traverse( _setTileThroughMode );
+			this.traverse( tile => tile.setThroughMode( throughMode ) );
 
 			return;
 
@@ -364,39 +361,27 @@ WebTerrain.prototype.setOverlay = function ( overlay, overlayLoadedCallback ) {
 
 	const overlayMinZoom = overlay.getMinZoom();
 
-	this.traverse( _setTileOverlays );
-
-	return;
-
-	function _setTileOverlays ( tile ) {
+	this.traverse( tile => {
 
 		if ( ! tile.isTile || ! tile.isMesh ) return;
 
 		if ( tile.zoom < overlayMinZoom ) {
 
 			// no overlay for this zoom layer, zoom to next level
-			self.zoomTile( tile );
+			this.zoomTile( tile );
 
 		} else {
 
-			self.overlaysLoading++;
+			this.overlaysLoading++;
 			tile
 				.setOverlay( overlay )
 				.then(
-					() => { if ( --self.overlaysLoading === 0 ) overlayLoadedCallback(); }
+					() => { if ( --this.overlaysLoading === 0 ) overlayLoadedCallback(); }
 				);
 
 		}
 
-	}
-
-	function _setTileThroughMode ( tile ) {
-
-		if ( ! tile.isTile || ! tile.isMesh ) return;
-
-		tile.setThroughMode( throughMode );
-
-	}
+	} );
 
 };
 

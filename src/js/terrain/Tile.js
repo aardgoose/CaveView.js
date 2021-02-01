@@ -253,6 +253,8 @@ Tile.prototype.setMaterial = function ( material ) {
 
 Tile.prototype.setThroughMode = function ( mode ) {
 
+	if ( ! this.isTile || ! this.isMesh ) return;
+
 	this.material.setThroughMode( mode );
 
 };

@@ -22,7 +22,7 @@ function HeightMapLoader ( tileSpec ) {
 		const dtmOffsetY = ( divisions + 1 ) * ( divisions * ( tileSpec.y % scale ) ) / scale;
 
 		clip.dtmOffset = dtmOffsetY + dtmOffsetX;
-		clip.dtmWidth = tileSet.divisions + 1;
+		clip.dtmWidth = divisions + 1;
 
 	} else {
 

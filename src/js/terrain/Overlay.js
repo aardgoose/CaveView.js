@@ -93,7 +93,6 @@ Overlay.prototype.hideAttribution = function () {
 
 Overlay.prototype.getTile = function ( x, y, z ) {
 
-	const self = this;
 	const key = x + ':' + y + ':' + z;
 	const cfg = this.ctx.cfg;
 	const materials = this.ctx.materials;
@@ -152,7 +151,7 @@ Overlay.prototype.getTile = function ( x, y, z ) {
 				// success handler
 				texture => {
 
-					if ( ! self.active ) {
+					if ( ! this.active ) {
 
 						texture.dispose();
 
@@ -161,7 +160,7 @@ Overlay.prototype.getTile = function ( x, y, z ) {
 
 					}
 
-					const material = new TerrainOverlayMaterial( self.ctx );
+					const material = new TerrainOverlayMaterial( this.ctx );
 
 					texture.anisotropy = cfg.value( 'anisotropy', 4 );
 
@@ -171,7 +170,7 @@ Overlay.prototype.getTile = function ( x, y, z ) {
 					material.map = texture;
 					material.needsUpdate = true;
 
-					self.materialCache.set( key, material );
+					this.materialCache.set( key, material );
 
 					resolve( material );
 
@@ -182,8 +181,8 @@ Overlay.prototype.getTile = function ( x, y, z ) {
 				// error handler
 				() => {
 
-					self.missing.add( url );
-					( self.active ? materials.getMissingMaterial() : null );
+					this.missing.add( url );
+					( this.active ? materials.getMissingMaterial() : null );
 
 				}
 			);

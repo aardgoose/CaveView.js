@@ -12,7 +12,9 @@ function onMessage ( event ) {
 
 	tileSpec = event.data;
 
-	new TerrainMeshLoader( tileSpec, mapLoaded, mapError ).load();
+	new TerrainMeshLoader( tileSpec )
+		.then( data => mapLoaded( data ) )
+		.catch( () => postMessage( { status: 'nomap' } ) );
 
 }
 
@@ -92,11 +94,5 @@ function mapLoaded ( meshData ) {
 		},
 		transferable
 	);
-
-}
-
-function mapError () {
-
-	postMessage( { status: 'nomap' } );
 
 }

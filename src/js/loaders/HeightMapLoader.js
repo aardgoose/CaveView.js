@@ -1,21 +1,18 @@
 
-function HeightMapLoader ( tileSpec, loadCallback, errorCallback ) {
-
-	if ( ! loadCallback ) alert( 'No callback specified' );
+function HeightMapLoader ( tileSpec ) {
 
 	const tileSet = tileSpec.tileSet;
 	const clip = tileSpec.clip;
 
-	this.loadCallback  = loadCallback;
-	this.errorCallback = errorCallback;
+	let x, y, z;
 
 	if ( tileSpec.z > tileSet.maxZoom ) {
 
 		const scale = Math.pow( 2, tileSpec.z - tileSet.maxZoom );
 
-		this.x = Math.floor( tileSpec.x / scale );
-		this.y = Math.floor( tileSpec.y / scale );
-		this.z = tileSet.maxZoom;
+		x = Math.floor( tileSpec.x / scale );
+		y = Math.floor( tileSpec.y / scale );
+		z = tileSet.maxZoom;
 
 		// calculate offset in terrain cells of covering DTM tile for this smaller image tile.
 
@@ -29,49 +26,24 @@ function HeightMapLoader ( tileSpec, loadCallback, errorCallback ) {
 
 	} else {
 
-		this.x = tileSpec.x;
-		this.y = tileSpec.y;
-		this.z = tileSpec.z;
+		x = tileSpec.x;
+		y = tileSpec.y;
+		z = tileSpec.z;
 
 		clip.dtmOffset = 0;
 
 	}
 
-	this.tileFile = tileSet.directory + '/' + this.z + '/DTM-' + this.x + '-' + this.y + '.bin';
+	const tileFile = tileSet.directory + '/' + z + '/DTM-' + x + '-' + y + '.bin';
+
+	return fetch( tileFile )
+		.then( response => {
+			if ( ! response.ok ) throw TypeError;
+			return response.arrayBuffer();
+		} );
 
 }
 
 HeightMapLoader.prototype.constructor = HeightMapLoader;
-
-HeightMapLoader.prototype.load = function () {
-
-	const self = this;
-	const xhr = new XMLHttpRequest();
-
-	xhr.addEventListener( 'load', _loaded);
-	xhr.addEventListener( 'error', this.errorCallback );
-
-	xhr.open( 'GET', this.tileFile );
-	xhr.responseType = 'arraybuffer';
-
-	xhr.send();
-
-	return true;
-
-	function _loaded ( /* request */ ) {
-
-		if ( xhr.status === 200 ) {
-
-			self.loadCallback( xhr.response );
-
-		} else {
-
-			self.errorCallback( xhr.response );
-
-		}
-
-	}
-
-};
 
 export { HeightMapLoader };

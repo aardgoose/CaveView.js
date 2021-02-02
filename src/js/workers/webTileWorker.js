@@ -1,4 +1,3 @@
-import 'three/src/polyfills';
 import { HeightMapLoader } from '../loaders/HeightMapLoader';
 import { TerrainTileGeometry } from '../terrain/TerrainTileGeometry';
 import { FlatTileGeometry } from '../terrain/FlatTileGeometry';
@@ -20,7 +19,9 @@ function onMessage ( event ) {
 
 	} else {
 
-		new HeightMapLoader( tileSpec, mapLoaded, mapError ).load();
+		new HeightMapLoader( tileSpec )
+			.then( data => mapLoaded( data ) )
+			.catch( () => { postMessage( { status: 'nomap' } ); } );
 
 	}
 
@@ -94,7 +95,7 @@ function mapLoaded ( data ) {
 	default:
 
 		console.log( 'webTileWorker: unknown request type' );
-		mapError();
+		postMessage( { status: 'nomap' } );
 
 	}
 
@@ -206,11 +207,5 @@ function loadTile ( terrainData ) {
 		},
 		transferable
 	);
-
-}
-
-function mapError () {
-
-	postMessage( { status: 'nomap' } );
 
 }

@@ -282,25 +282,13 @@ ClusterMarkers.prototype.addHeightProvider = function ( func ) {
 
 	this.heightProvider = func;
 
-	this.traverse( function _setHeight( obj ) {
-
-		if ( obj.isMarker ) obj.adjustHeight( func );
-
-	} );
+	this.traverse( obj => { if ( obj.isMarker ) obj.adjustHeight( func ); } );
 
 };
 
 ClusterMarkers.prototype.onRemoved = function () {
 
-	this.traverse(
-
-		function _traverse ( obj ) {
-
-			if ( obj.type === 'GlyphString' ) { obj.geometry.dispose(); }
-
-		}
-
-	);
+	this.traverse( obj => { if ( obj.type === 'GlyphString' ) obj.geometry.dispose(); } );
 
 };
 

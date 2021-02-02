@@ -27,7 +27,7 @@ function InfoPage ( frame, viewer, fileSelector ) {
 
 	this.addText( 'For more information see: ' );
 	this.addLink( 'https://aardgoose.github.io/CaveView.js/', 'CaveView on GitHub' );
-	this.addText( '© Angus Sawyer, 2020' );
+	this.addText( '© Angus Sawyer, 2021' );
 
 }
 

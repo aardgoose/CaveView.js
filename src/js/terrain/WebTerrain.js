@@ -237,7 +237,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 		if ( tileData.status === 'zoom' ) {
 
 			tile.setSkipped();
-			self.zoomTile( tile );
+			self.zoomTile( tile, this.parent );
 
 			return;
 
@@ -343,16 +343,16 @@ WebTerrain.prototype.tileSet = function () {
 
 };
 
-WebTerrain.prototype.zoomTile = function ( tile ) {
+WebTerrain.prototype.zoomTile = function ( tile, parent = tile ) {
 
 	const zoom = tile.zoom + 1;
 	const x = tile.x * 2;
 	const y = tile.y * 2;
 
-	this.loadTile( x,     y,     zoom, tile );
-	this.loadTile( x + 1, y,     zoom, tile );
-	this.loadTile( x,     y + 1, zoom, tile );
-	this.loadTile( x + 1, y + 1, zoom, tile );
+	this.loadTile( x,     y,     zoom, parent );
+	this.loadTile( x + 1, y,     zoom, parent );
+	this.loadTile( x,     y + 1, zoom, parent );
+	this.loadTile( x + 1, y + 1, zoom, parent );
 
 };
 

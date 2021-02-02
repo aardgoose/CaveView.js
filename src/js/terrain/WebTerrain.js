@@ -237,7 +237,7 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 		if ( tileData.status === 'zoom' ) {
 
 			tile.setSkipped();
-			self.zoomTile( tile, this.parent );
+			self.zoomTile( tile, tile.parent );
 
 			return;
 

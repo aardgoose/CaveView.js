@@ -40,7 +40,7 @@ function CommonTerrain ( ctx ) {
 	this.commonUniforms = ctx.materials.commonTerrainUniforms;
 	this.ctx = ctx;
 
-	this.addEventListener( 'removed', function removeTerrain() { this.removed(); } );
+	this.addEventListener( 'removed', () => this.removed() );
 
 }
 

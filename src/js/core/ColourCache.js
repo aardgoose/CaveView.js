@@ -11,7 +11,7 @@ function ColourCache ( ) {
 
 		const cache = [];
 
-		for ( var i = 0, l = scale.length; i < l; i++ ) {
+		for ( let i = 0, l = scale.length; i < l; i++ ) {
 
 			const c = scale[ i ];
 

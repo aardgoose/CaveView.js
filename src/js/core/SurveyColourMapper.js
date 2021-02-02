@@ -43,7 +43,7 @@ function SurveyColourMapper ( ctx ) {
 
 		}
 
-		for ( var i = 0, l = children.length; i < l; i++ ) {
+		for ( let i = 0, l = children.length; i < l; i++ ) {
 
 			const node = children[ i ];
 

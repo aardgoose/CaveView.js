@@ -14,7 +14,7 @@ function TextureCache () {
 
 		var offset = 0;
 
-		for ( var i = l; i; ) {
+		for ( let i = l; i; ) {
 
 			const c = scale[ --i ];
 

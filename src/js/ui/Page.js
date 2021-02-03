@@ -304,7 +304,7 @@ Page.prototype.addFileSelect = function ( title, obj, trgObj, property ) {
 
 		if ( count > 0 ) {
 
-			for ( var i = 0; i < count; i++ ) files.push( input.files[ i ] );
+			for ( let i = 0; i < count; i++ ) files.push( input.files[ i ] );
 
 			trgObj[ property ] = files;
 
@@ -532,7 +532,7 @@ Page.prototype.addDownloadButton = function ( title, urlProvider, fileName ) {
 
 	if ( typeof a.download === 'undefined' ) return null;
 
-	this.addListener( a, 'click', _setHref );
+	this.addListener( a, 'click', () => { a.href = urlProvider( a ); } );
 
 	a.textContent = this.i18n( title );
 	a.type = 'download';
@@ -544,12 +544,6 @@ Page.prototype.addDownloadButton = function ( title, urlProvider, fileName ) {
 	this.page.appendChild( a );
 
 	return a;
-
-	function _setHref() {
-
-		a.href = urlProvider( a );
-
-	}
 
 };
 

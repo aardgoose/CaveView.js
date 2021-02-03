@@ -43,7 +43,7 @@ function SelectionPage ( frame, viewer, container, fileSelector ) {
 
 		self.nodes = new WeakMap();
 
-		var tmp;
+		let tmp;
 
 		while ( tmp = self.titleBar.firstChild ) self.titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
 

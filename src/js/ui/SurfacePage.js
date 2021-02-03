@@ -60,7 +60,7 @@ function SurfacePage ( frame, viewer ) {
 
 		const attributions = viewer.terrainAttributions;
 
-		for ( var i = 0; i < attributions.length; i++ ) {
+		for ( let i = 0; i < attributions.length; i++ ) {
 
 			this.addText( attributions[ i ] );
 

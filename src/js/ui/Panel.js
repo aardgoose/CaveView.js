@@ -7,7 +7,7 @@ function Panel ( page ) {
 
 	this.onShow = function () {
 
-		this.dynamic.forEach ( element => element.parentElement.removeChild( element ) );
+		this.dynamic.forEach( element => element.parentElement.removeChild( element ) );
 		this.dynamic = [];
 
 	};
@@ -24,7 +24,7 @@ Panel.prototype.add = function ( element ) {
 
 Panel.prototype.addDynamic = function ( element ) {
 
-	this.dynamic.push ( element );
+	this.dynamic.push( element );
 
 	return element;
 

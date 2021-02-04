@@ -1,15 +1,16 @@
 import { Scale } from './Scale';
 import { MutableGlyphString } from '../core/GlyphString';
+import { LineSegments2 } from '../core/LineSegments2';
+import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
+import { Line2Material } from '../materials/Line2Material';
 
-import {
-	PlaneBufferGeometry, Float32BufferAttribute, BufferGeometry,
-	MeshBasicMaterial, Line, LineBasicMaterial
-} from '../Three';
+import { PlaneBufferGeometry, MeshBasicMaterial } from '../Three';
 
 function CursorScale ( hudObject, container ) {
 
-	const cfg = hudObject.ctx.cfg;
-	const materials = hudObject.ctx.materials;
+	const ctx = hudObject.ctx;
+	const cfg = ctx.cfg;
+	const materials = ctx.materials;
 	const geometry = new PlaneBufferGeometry();
 
 	Scale.call( this, hudObject, container, geometry, new MeshBasicMaterial( { color: 0x676767 } ) );
@@ -23,18 +24,14 @@ function CursorScale ( hudObject, container ) {
 
 	// make cursor line
 
-	const cursorGeometry = new BufferGeometry();
+	const cursorGeometry = new LineSegmentsGeometry();
 
-	const vertices = [
+	cursorGeometry.setPositions( [
 		barWidth / 2, -barHeight / 2, 10,
 		-barWidth / 2, -barHeight / 2, 10
-	];
+	] );
 
-	const positions = new Float32BufferAttribute( vertices, 3 );
-
-	cursorGeometry.setAttribute( 'position', positions );
-
-	const cursor = new Line( cursorGeometry, new LineBasicMaterial( { color: cfg.themeColor( 'hud.cursor' ) } ) );
+	const cursor = new LineSegments2( cursorGeometry, new Line2Material( ctx, { color: cfg.themeColor( 'hud.cursor' ) } ) );
 
 	const atlasSpec = {
 		color: cfg.themeColorCSS( 'hud.cursor' ),

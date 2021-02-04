@@ -1,11 +1,14 @@
 import { MutableGlyphString } from '../core/GlyphString';
+import { LineSegments2 } from '../core/LineSegments2';
+import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
+import { Line2Material } from '../materials/Line2Material';
 
 import {
 	Vector3, MathUtils,
-	BufferGeometry, SphereBufferGeometry,
-	LineBasicMaterial, MeshPhongMaterial,
+	SphereBufferGeometry,
+	MeshPhongMaterial,
 	Float32BufferAttribute,
-	Object3D, Mesh, LineSegments, Group
+	Object3D, Mesh, Group
 } from '../Three';
 
 // preallocated tmp objects
@@ -17,8 +20,9 @@ function AHI ( hudObject ) {
 	const stdWidth  = hudObject.stdWidth;
 	const stdMargin = hudObject.stdMargin;
 
-	const cfg = hudObject.ctx.cfg;
-	const materials = hudObject.ctx.materials;
+	const ctx = hudObject.ctx;
+	const cfg = ctx.cfg;
+	const materials = ctx.materials;
 
 	const c1 = cfg.themeColor( 'hud.ahi.sky' );
 	const c2 = cfg.themeColor( 'hud.ahi.earth' );
@@ -36,8 +40,8 @@ function AHI ( hudObject ) {
 	const ahiWidth = stdWidth * 0.75;
 
 	const sphere = new SphereBufferGeometry( ahiWidth, 31, 31 );
-	const bar    = new BufferGeometry();
-	const marks  = new BufferGeometry();
+	const bar    = new LineSegmentsGeometry();
+	const marks  = new LineSegmentsGeometry();
 
 	const sv = sphere.getAttribute( 'position' ).count;
 
@@ -58,9 +62,7 @@ function AHI ( hudObject ) {
 	vertices.push( 4 - stdWidth, 0, ahiWidth );
 	vertices.push( stdWidth - 4, 0, ahiWidth );
 
-	const positions = new Float32BufferAttribute( vertices.length, 3 );
-
-	bar.setAttribute( 'position', positions.copyArray( vertices ) );
+	bar.setPositions( vertices );
 
 	const markWidth = stdWidth / 10;
 
@@ -85,18 +87,16 @@ function AHI ( hudObject ) {
 		mn1.applyAxisAngle( __xAxis, i * Math.PI / 6 );
 		mn2.applyAxisAngle( __xAxis, i * Math.PI / 6 );
 
-		vertices.push( mn1, mn2 );
+		vertices.push( mn1.x, mn1.y, mn1.z, mn2.x, mn2.y, mn2.z );
 
 	}
 
-	const markPositions = new Float32BufferAttribute( vertices.length * 3, 3 );
-
-	marks.setAttribute( 'position', markPositions.copyVector3sArray( vertices ) );
+	marks.setPositions( vertices );
 
 	const mRing   = new Mesh( ring, materials.getBezelMaterial() );
 	const mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: true, specular: 0x666666, shininess: 20 } ) );
-	const mBar    = new LineSegments( bar,   new LineBasicMaterial( { color: cfg.themeValue( 'hud.ahi.bar' ) } ) );
-	const mMarks  = new LineSegments( marks, new LineBasicMaterial( { color: cfg.themeValue( 'hud.ahi.marks' ) } ) );
+	const mBar    = new LineSegments2( bar,   new Line2Material( ctx, { color: cfg.themeValue( 'hud.ahi.bar' ) } ) );
+	const mMarks  = new LineSegments2( marks, new Line2Material( ctx, { color: cfg.themeValue( 'hud.ahi.marks' ) } ) );
 
 	mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 	mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );

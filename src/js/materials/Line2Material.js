@@ -20,11 +20,7 @@ const uniforms = UniformsUtils.merge( [
 	}
 ] );
 
-var Line2Material = function ( ctx, params ) {
-
-	const defines = {};
-
-	defines.CV_BASIC = true;
+var Line2Material = function ( ctx, params, defines = { CV_BASIC: true }, callerUniforms = {} ) {
 
 	ShaderMaterial.call( this, {
 
@@ -32,7 +28,8 @@ var Line2Material = function ( ctx, params ) {
 
 		uniforms: Object.assign(
 			UniformsUtils.clone( uniforms ),
-			ctx.materials.commonUniforms
+			ctx.materials.commonUniforms,
+			callerUniforms
 		),
 
 		vertexShader: Shaders.lineVertexShader,
@@ -208,6 +205,7 @@ var Line2Material = function ( ctx, params ) {
 };
 
 Line2Material.prototype = Object.create( ShaderMaterial.prototype );
+
 Line2Material.prototype.constructor = Line2Material;
 
 Line2Material.prototype.isLineMaterial = true;

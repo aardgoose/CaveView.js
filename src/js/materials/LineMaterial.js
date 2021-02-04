@@ -1,37 +1,7 @@
-import {
-	ShaderMaterial,
-	UniformsLib,
-	UniformsUtils,
-	Vector2, Vector3
-} from '../three';
-import { Shaders } from '../shaders/Shaders';
+import { Vector3 } from '../three';
+import { Line2Material } from './Line2Material';
 
-/**
- * parameters = {
- *  color: <hex>,
- *  linewidth: <float>,
- *  dashed: <boolean>,
- *  dashScale: <float>,
- *  dashSize: <float>,
- *  dashOffset: <float>,
- *  gapSize: <float>,
- *  resolution: <Vector2>, // to be set by renderer
- * }
- */
-
-const uniforms = UniformsUtils.merge( [
-	UniformsLib.common,
-	UniformsLib.fog,
-	{
-		linewidth: { value: 1 },
-		resolution: { value: new Vector2( 1, 1 ) },
-		dashScale: { value: 1 },
-		dashSize: { value: 1 },
-		dashOffset: { value: 0 },
-		gapSize: { value: 1 }, // todo FIX - maybe change to totalSize
-		opacity: { value: 1 }
-	}
-] );
+// subclass Line2Material to provide custom defines and uniforms
 
 var LineMaterial = function ( ctx, mode = 'height', dashed ) {
 
@@ -127,214 +97,27 @@ var LineMaterial = function ( ctx, mode = 'height', dashed ) {
 		);
 		break;
 
-	default:
-		defines.CV_BASIC = true;
-
 	}
 
 	if ( dashed ) defines.USE_DASH = true;
 
-	ShaderMaterial.call( this, {
-
-		type: 'LineMaterial',
-
-		uniforms: Object.assign(
-			UniformsUtils.clone( uniforms ),
-			customUniforms,
-			ctx.materials.commonUniforms
-		),
-
-		vertexShader: Shaders.lineVertexShader,
-		fragmentShader: Shaders.lineFragmentShader,
-
-		clipping: true, // required for clipping support
-		defines: defines
-	} );
-
-	this.dashed = false;
-
-	// for cursor material variant
-	this.halfRange = ( surveyLimits.max.z - surveyLimits.min.z ) / 2;
-
-	Object.defineProperties( this, {
-
-		color: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.diffuse.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.diffuse.value = value;
-
-			}
-
-		},
-
-		linewidth: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.linewidth.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.linewidth.value = value;
-
-			}
-
-		},
-
-		dashScale: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.dashScale.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.dashScale.value = value;
-
-			}
-
-		},
-
-		dashSize: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.dashSize.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.dashSize.value = value;
-
-			}
-
-		},
-
-		dashOffset: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.dashOffset.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.dashOffset.value = value;
-
-			}
-
-		},
-
-		gapSize: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.gapSize.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.gapSize.value = value;
-
-			}
-
-		},
-
-		opacity: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.opacity.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.opacity.value = value;
-
-			}
-
-		},
-
-		resolution: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.resolution.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.resolution.value.copy( value );
-
-			}
-
-		}
-
-	} );
-
-	this.setValues( {
+	const params = {
 		color: 0xffffff,
 		vertexColors: true,
 		dashSize: 2,
 		gapSize: 2
-	} );
+	};
 
-	if ( dashed ) {
+	Line2Material.call( this, ctx, params, defines, customUniforms );
 
-		this.dashSize = 2;
-		this.gapSize = 2;
-
-	}
-
-	this.resolution = new Vector2( ctx.container.clientWidth, ctx.container.clientHeight );
-
-	ctx.viewer.addEventListener( 'resized', ( e ) => {
-
-		const lineScale = e.lineScale ? e.lineScale : 1;
-
-		this.resolution = new Vector2( e.width, e.height );
-		this.linewidth = Math.max( 1, Math.floor( e.width / 1000 ) * lineScale );
-
-	} );
+	// for cursor material variant
+	this.halfRange = ( surveyLimits.max.z - surveyLimits.min.z ) / 2;
 
 };
 
-LineMaterial.prototype = Object.create( ShaderMaterial.prototype );
-LineMaterial.prototype.constructor = LineMaterial;
+LineMaterial.prototype = Object.create( Line2Material.prototype );
 
-LineMaterial.prototype.isLineMaterial = true;
+LineMaterial.prototype.constructor = LineMaterial;
 
 LineMaterial.prototype.setCursor = function ( value ) {
 

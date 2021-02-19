@@ -1,26 +1,25 @@
-import {
-	Vector3, BufferGeometry, Float32BufferAttribute, Object3D, Mesh
-} from '../Three';
-
-import { WaterMaterial } from '../materials/WaterMaterial';
+import { LineSegments2 } from '../core/LineSegments2';
+import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
+import { LineMaterial } from '../materials/LineMaterial';
 
 function beforeRender ( renderer, scene, camera, geometry, material ) {
 
-	material.uniforms.offset.value += 0.1;
+	material.dashOffset += 0.1;
 
 }
 
-function DyeTraces ( survey ) {
+function DyeTraces ( ctx ) {
 
-	const geometry = new BufferGeometry();
+	const geometry = new LineSegmentsGeometry();
+	const survey = ctx.survey;
 
-	Mesh.call( this, geometry, new WaterMaterial() );
+	LineSegments2.call( this, geometry, new LineMaterial( ctx, '', true ) );
 
 	this.metadata = survey.metadata;
 	this.vertices = [];
-	this.ends = [];
 	this.selected = [];
 	this.stations = [];
+
 
 	this.onBeforeRender = beforeRender;
 	this.visible = false;
@@ -45,41 +44,16 @@ function DyeTraces ( survey ) {
 
 }
 
-DyeTraces.prototype = Object.create( Mesh.prototype );
+DyeTraces.prototype = Object.create( LineSegments2.prototype );
 
 DyeTraces.prototype.finish = function () {
 
 	const geometry = this.geometry;
-	const vertices = this.vertices;
-	const selected = this.selected;
 
-	if ( vertices.length === 0 ) return;
+	if ( this.vertices.length === 0 ) return;
 
-	const ends = this.ends;
-
-	const traceCount = vertices.length;
-
-	const positions = new Float32BufferAttribute( traceCount * 3, 3 );
-	const selection = new Float32BufferAttribute( traceCount * 3, 3 );
-	const sinks = new Float32BufferAttribute( traceCount * 3, 3 );
-
-	positions.copyVector3sArray( vertices );
-	selection.copyArray( selected );
-	sinks.copyVector3sArray( ends );
-
-	if ( ! this.visible ) {
-
-		geometry.setAttribute( 'position', positions );
-		geometry.setAttribute( 'selection', selection );
-		geometry.setAttribute( 'sinks', sinks );
-
-	} else {
-
-		geometry.getAttribute( 'position' ).copy( positions ).needsUpdate = true;
-		geometry.getAttribute( 'selection' ).copy( selection ).needsUpdate = true;
-		geometry.getAttribute( 'sinks' ).copy( sinks ).needsUpdate = true;
-
-	}
+	geometry.setPositions( this.vertices );
+	geometry.setHide( this.selected );
 
 	this.visible = true;
 
@@ -105,12 +79,12 @@ DyeTraces.prototype.getTraceStations = function ( hit ) {
 DyeTraces.prototype.deleteTrace = function ( hit ) {
 
 	// remove from arrays
+	const offset = hit * 2;
 
-	this.stations.splice( hit * 2, 2 );
+	this.stations.splice( offset, 2 );
 
-	this.vertices.splice( hit * 3, 3 );
-	this.selected.splice( hit * 3, 3 );
-	this.ends.splice( hit * 3, 3 );
+	this.vertices.splice( offset, 2 );
+	this.selected.splice( offset, 2 );
 
 	// rebuild geometry without deleted trace
 
@@ -120,22 +94,13 @@ DyeTraces.prototype.deleteTrace = function ( hit ) {
 
 DyeTraces.prototype._addTrace = function ( startStation, endStation ) {
 
-	const vertices = this.vertices;
-	const selected = this.selected;
-	const ends = this.ends;
-
-	const end = new Vector3().copy( endStation.p );
-
-	const v = new Vector3().subVectors( endStation.p, startStation.p ).cross( Object3D.DefaultUp ).setLength( 2 );
-
-	const v1 = new Vector3().add( startStation.p ).add( v );
-	const v2 = new Vector3().add( startStation.p ).sub( v );
-
-	vertices.push( v1, v2, end );
-	ends.push( end, end, end );
-	selected.push( 0, 0, 0 );
+	this.vertices.push(
+		startStation.p.x, startStation.p.y, startStation.p.z,
+		endStation.p.x, endStation.p.y, endStation.p.z
+	);
 
 	this.stations.push( startStation, endStation );
+	this.selected.push( 1, 1 );
 
 };
 
@@ -150,26 +115,20 @@ DyeTraces.prototype.outlineTrace = function ( hit ) {
 
 	if ( ! this.visible ) return;
 
-	const selection = this.geometry.getAttribute( 'selection' );
-	const l = selection.count;
+	const selected = this.selected;
 
-	for( let i = 0; i < l; i++ ) {
-
-		selection.setX( i, 0 );
-
-	}
+	selected.fill( 0 );
 
 	if ( hit !== null ) {
 
-		let offset = hit * 3;
+		let offset = hit * 2;
 
-		selection.setX( offset++, 1 );
-		selection.setX( offset++, 1 );
-		selection.setX( offset++, 1 );
+		selected[ offset++ ] = 1;
+		selected[ offset ] = 1;
 
 	}
 
-	selection.needsUpdate = true;
+	this.geometry.setHide( selected );
 
 	return;
 

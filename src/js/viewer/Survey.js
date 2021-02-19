@@ -600,7 +600,7 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 
 Survey.prototype.loadDyeTraces = function () {
 
-	const dyeTraces = new DyeTraces( this );
+	const dyeTraces = new DyeTraces( this.ctx );
 
 	this.addFeature( dyeTraces, FEATURE_TRACES, 'CV.DyeTraces' );
 

@@ -56,7 +56,11 @@ StationMarkers.prototype.clear = function () {
 
 StationMarkers.prototype.getStations = function () {
 
-	return this.markers.keys();
+	const keys = [];
+
+	this.markers.forEach( ( v, k ) => keys.push( k) );
+
+	return keys;
 
 };
 

@@ -31,7 +31,8 @@ const defaultView = {
 	HUD: true,
 	fog: false,
 	warnings: false,
-	fullscreen: false
+	fullscreen: false,
+	zoomToCursor: true
 };
 
 const dynamicView = {

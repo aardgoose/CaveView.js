@@ -1,59 +1,59 @@
 import { PointsMaterial, CanvasTexture } from '../Three';
 
-function ClusterMaterial ( count ) {
+class ClusterMaterial extends PointsMaterial {
 
-	const markerSize = 64;
-	const fontSize = 40;
-	const halfSize = markerSize / 2;
+	constructor ( count ) {
 
-	const canvas = document.createElement( 'canvas' );
+		const markerSize = 64;
+		const fontSize = 40;
+		const halfSize = markerSize / 2;
 
-	if ( ! canvas ) console.error( 'creating canvas for cluster marker failed' );
+		const canvas = document.createElement( 'canvas' );
 
-	canvas.width  = markerSize;
-	canvas.height = markerSize;
+		if ( ! canvas ) console.error( 'creating canvas for cluster marker failed' );
 
-	const ctx = canvas.getContext( '2d' );
+		canvas.width  = markerSize;
+		canvas.height = markerSize;
 
-	if ( ! ctx ) console.error( 'cannot obtain 2D canvas' );
+		const ctx = canvas.getContext( '2d' );
 
-	// set transparent background
+		if ( ! ctx ) console.error( 'cannot obtain 2D canvas' );
 
-	ctx.fillStyle = 'rgba( 0, 0, 0, 0 )';
-	ctx.fillRect( 0, 0, markerSize, markerSize );
+		// set transparent background
 
-	ctx.textAlign = 'center';
-	ctx.font = 'bold ' + fontSize + 'px helvetica,sans-serif';
-	ctx.fillStyle = '#ffffff';
+		ctx.fillStyle = 'rgba( 0, 0, 0, 0 )';
+		ctx.fillRect( 0, 0, markerSize, markerSize );
 
-	const gradient = ctx.createRadialGradient( halfSize, halfSize, 30, halfSize, halfSize, 0 );
+		ctx.textAlign = 'center';
+		ctx.font = 'bold ' + fontSize + 'px helvetica,sans-serif';
+		ctx.fillStyle = '#ffffff';
 
-	gradient.addColorStop( 0.0, 'rgba( 255, 128, 0, 64 )' );
-	gradient.addColorStop( 0.3, 'rgba( 255, 200, 0, 255 )' );
-	gradient.addColorStop( 1.0, 'rgba( 255, 255, 0, 255 )' );
+		const gradient = ctx.createRadialGradient( halfSize, halfSize, 30, halfSize, halfSize, 0 );
 
-	ctx.fillStyle = gradient;
+		gradient.addColorStop( 0.0, 'rgba( 255, 128, 0, 64 )' );
+		gradient.addColorStop( 0.3, 'rgba( 255, 200, 0, 255 )' );
+		gradient.addColorStop( 1.0, 'rgba( 255, 255, 0, 255 )' );
 
-	ctx.beginPath();
-	ctx.arc( halfSize, halfSize, 30, 0, Math.PI * 2 );
-	ctx.fill();
+		ctx.fillStyle = gradient;
 
-	ctx.fillStyle = 'rgba( 0, 0, 0, 255 )';
+		ctx.beginPath();
+		ctx.arc( halfSize, halfSize, 30, 0, Math.PI * 2 );
+		ctx.fill();
 
-	ctx.fillText( count, halfSize, halfSize + 15 );
+		ctx.fillStyle = 'rgba( 0, 0, 0, 255 )';
 
-	const texture = new CanvasTexture( canvas );
+		ctx.fillText( count, halfSize, halfSize + 15 );
 
-	PointsMaterial.call( this, { map: texture, size: 32, depthTest: false, transparent: true, alphaTest: 0.8, sizeAttenuation: false } );
+		const texture = new CanvasTexture( canvas );
 
-	texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
+		super( { map: texture, size: 32, depthTest: false, transparent: true, alphaTest: 0.8, sizeAttenuation: false } );
 
-	this.name = 'ClusterMaterial';
+		texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
 
-	return this;
+		this.name = 'ClusterMaterial';
+
+	}
 
 }
-
-ClusterMaterial.prototype = Object.create( PointsMaterial.prototype );
 
 export { ClusterMaterial };

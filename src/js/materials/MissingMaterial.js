@@ -1,21 +1,21 @@
 import { MeshLambertMaterial} from '../Three';
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 
-function MissingMaterial ( ctx ) {
+class MissingMaterial extends MeshLambertMaterial {
 
-	MeshLambertMaterial.call( this, { color: 0xff8888} );
+	constructor ( ctx ) {
 
-	this.transparent = true;
+		super( { color: 0xff8888} );
 
-	Object.defineProperty( this, 'opacity', {
-		get: function () { return ctx.materials.terrainOpacity; }
-	} );
+		this.transparent = true;
 
-	return this;
+		Object.defineProperty( this, 'opacity', {
+			get: function () { return ctx.materials.terrainOpacity; }
+		} );
+
+	}
 
 }
-
-MissingMaterial.prototype = Object.create( MeshLambertMaterial.prototype );
 
 Object.assign( MissingMaterial.prototype, CommonTerrainMaterial.prototype );
 

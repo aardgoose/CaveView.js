@@ -12,105 +12,109 @@ const __direction = new Vector3();
 const __negativeZAxis = new Vector3( 0, 0, -1 );
 const __e = new Euler();
 
-function Compass ( hudObject ) {
+class Compass extends Group {
 
-	const stdWidth  = hudObject.stdWidth;
-	const stdMargin = hudObject.stdMargin;
-	const cfg = hudObject.ctx.cfg;
-	const materials = hudObject.ctx.materials;
+	constructor( hudObject ) {
 
-	Group.call( this );
+		const stdWidth  = hudObject.stdWidth;
+		const stdMargin = hudObject.stdMargin;
+		const cfg = hudObject.ctx.cfg;
+		const materials = hudObject.ctx.materials;
 
-	this.name = 'CV.Compass';
+		super();
 
-	const cg1 = hudObject.getCommonRing();
+		this.name = 'CV.Compass';
 
-	const c1 = new Mesh( cg1, materials.getBezelMaterial() );
+		const cg1 = hudObject.getCommonRing();
 
-	const cg2 = new RingBufferGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
-	cg2.translate( 0, 0, 5 );
+		const c1 = new Mesh( cg1, materials.getBezelMaterial() );
 
-	const c2 = new Mesh( cg2, new MeshBasicMaterial( { color: cfg.themeValue( 'hud.compass.top1' ) } ) );
+		const cg2 = new RingBufferGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
+		cg2.translate( 0, 0, 5 );
 
-	c1.dropBuffers();
-	c2.dropBuffers();
+		const c2 = new Mesh( cg2, new MeshBasicMaterial( { color: cfg.themeValue( 'hud.compass.top1' ) } ) );
 
-	const rMesh = _makeRose();
+		c1.dropBuffers();
+		c2.dropBuffers();
 
-	const rotaryGroup = new Group();
+		const rMesh = _makeRose();
 
-	rotaryGroup.addStatic( c1 );
-	rotaryGroup.addStatic( c2 );
-	rotaryGroup.addStatic( rMesh );
+		const rotaryGroup = new Group();
 
-	this.add( rotaryGroup );
-	this.rotaryGroup = rotaryGroup;
+		rotaryGroup.addStatic( c1 );
+		rotaryGroup.addStatic( c2 );
+		rotaryGroup.addStatic( rMesh );
 
-	const offset = stdWidth + stdMargin;
+		this.add( rotaryGroup );
+		this.rotaryGroup = rotaryGroup;
 
-	this.translateX( -offset );
-	this.translateY(  offset );
+		const offset = stdWidth + stdMargin;
 
-	this.lastRotation = 0;
+		this.translateX( -offset );
+		this.translateY(  offset );
 
-	const material = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
-	const label = new MutableGlyphString( '000\u00B0', material );
+		this.lastRotation = 0;
 
-	label.translateX( - label.getWidth() / 2 );
-	label.translateY( stdWidth + 5 );
+		const material = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
+		const label = new MutableGlyphString( '000\u00B0', material );
 
-	this.addStatic( label );
+		label.translateX( - label.getWidth() / 2 );
+		label.translateY( stdWidth + 5 );
 
-	this.label = label;
+		this.addStatic( label );
 
-	return this;
+		this.label = label;
 
-	function _makeRose() {
+		return;
 
-		const geometry = new BufferGeometry();
-		const material = new MeshLambertMaterial( { vertexColors: true, flatShading: true } );
+		function _makeRose() {
 
-		const mesh = new Mesh( geometry, material );
+			const geometry = new BufferGeometry();
+			const material = new MeshLambertMaterial( { vertexColors: true } );
 
-		const vertices = [];
-		const colours = [];
+			const mesh = new Mesh( geometry, material );
 
-		_makeRose2( cfg.themeColor( 'hud.compass.bottom1' ),cfg.themeColor( 'hud.compass.bottom2' ), Math.PI / 4 );
-		_makeRose2( cfg.themeColor( 'hud.compass.top1' ), cfg.themeColor( 'hud.compass.top2' ), 0 );
+			const vertices = [];
+			const colours = [];
 
-		const positions = new Float32BufferAttribute( vertices.length, 3 );
-		const colors = new Float32BufferAttribute( vertices.length * 3, 3 );
+			_makeRose2( cfg.themeColor( 'hud.compass.bottom1' ),cfg.themeColor( 'hud.compass.bottom2' ), Math.PI / 4 );
+			_makeRose2( cfg.themeColor( 'hud.compass.top1' ), cfg.themeColor( 'hud.compass.top2' ), 0 );
 
-		geometry.setAttribute( 'position', positions.copyArray( vertices ) );
-		geometry.setAttribute( 'color', colors.copyColorsArray( colours ) );
+			const positions = new Float32BufferAttribute( vertices.length, 3 );
+			const colors = new Float32BufferAttribute( vertices.length * 3, 3 );
 
-		geometry.computeVertexNormals();
+			geometry.setAttribute( 'position', positions.copyArray( vertices ) );
+			geometry.setAttribute( 'color', colors.copyColorsArray( colours ) );
 
-		return mesh;
+			geometry.computeVertexNormals();
 
-		function _makeRose2( color1, color2, offset ) {
+			return mesh;
 
-			const radius = stdWidth * 0.9;
-			const innerR = radius * 0.2;
+			function _makeRose2( color1, color2, offset ) {
 
-			const xlv = Math.PI / 4;
-			const xc = Math.PI / 2;
+				const radius = stdWidth * 0.9;
+				const innerR = radius * 0.2;
 
-			for ( let i = 0; i < 4; i++ ) {
+				const xlv = Math.PI / 4;
+				const xc = Math.PI / 2;
 
-				const a = i * Math.PI / 2 + offset;
+				for ( let i = 0; i < 4; i++ ) {
 
-				vertices.push( Math.sin( a )* radius, Math.cos( a ) * radius, 0 );
-				vertices.push( 0, 0, 2 );
-				vertices.push( Math.sin( a + xlv ) * innerR, Math.cos( a + xlv ) * innerR, 0 );
+					const a = i * Math.PI / 2 + offset;
 
-				colours.push( color1, color1, color1 );
+					vertices.push( Math.sin( a )* radius, Math.cos( a ) * radius, 0 );
+					vertices.push( 0, 0, 2 );
+					vertices.push( Math.sin( a + xlv ) * innerR, Math.cos( a + xlv ) * innerR, 0 );
 
-				vertices.push( Math.sin( a + xlv ) * innerR, Math.cos( a + xlv ) * innerR, 0 );
-				vertices.push( 0, 0, 2 );
-				vertices.push( Math.sin( a + xc )* radius, Math.cos( a + xc ) * radius, 0 );
+					colours.push( color1, color1, color1 );
 
-				colours.push( color2, color2, color2 );
+					vertices.push( Math.sin( a + xlv ) * innerR, Math.cos( a + xlv ) * innerR, 0 );
+					vertices.push( 0, 0, 2 );
+					vertices.push( Math.sin( a + xc )* radius, Math.cos( a + xc ) * radius, 0 );
+
+					colours.push( color2, color2, color2 );
+
+				}
 
 			}
 
@@ -119,8 +123,6 @@ function Compass ( hudObject ) {
 	}
 
 }
-
-Compass.prototype = Object.create( Group.prototype );
 
 Compass.prototype.set = function ( vCamera ) {
 

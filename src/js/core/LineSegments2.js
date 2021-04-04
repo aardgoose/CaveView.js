@@ -11,7 +11,7 @@ import {
 import { LineSegmentsGeometry } from './LineSegmentsGeometry.js';
 import { LineMaterial } from '../materials/LineMaterial.js';
 
-var LineSegments2 = function ( geometry, material ) {
+function LineSegments2 ( geometry, material ) {
 
 	if ( geometry === undefined ) geometry = new LineSegmentsGeometry();
 	if ( material === undefined ) material = new LineMaterial( { color: Math.random() * 0xffffff } );
@@ -20,7 +20,7 @@ var LineSegments2 = function ( geometry, material ) {
 
 	this.type = 'LineSegments2';
 
-};
+}
 
 LineSegments2.prototype = Object.assign( Object.create( Mesh.prototype ), {
 

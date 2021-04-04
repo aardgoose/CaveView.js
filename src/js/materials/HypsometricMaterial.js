@@ -14,59 +14,59 @@ const fragment_color = [
 	Shaders.commonTerrainCodeColor
 ].join( '\n' );
 
-function HypsometricMaterial ( ctx ) {
+class HypsometricMaterial extends MeshLambertMaterial {
 
-	const survey = ctx.survey;
-	const cfg = ctx.cfg;
-	const terrain = survey.terrain;
-	const textureCache = ctx.materials.textureCache;
+	constructor ( ctx ) {
 
-	MeshLambertMaterial.call( this );
+		const survey = ctx.survey;
+		const cfg = ctx.cfg;
+		const terrain = survey.terrain;
+		const textureCache = ctx.materials.textureCache;
 
-	var zMin = cfg.themeValue( 'shading.hypsometric.min' );
-	var zMax = cfg.themeValue( 'shading.hypsometric.max' );
+		super();
 
-	if ( terrain.boundBox === undefined ) terrain.computeBoundingBox();
+		var zMin = cfg.themeValue( 'shading.hypsometric.min' );
+		var zMax = cfg.themeValue( 'shading.hypsometric.max' );
 
-	if ( zMin === undefined ) zMin = terrain.boundingBox.min.z;
-	if ( zMax === undefined ) zMax = terrain.boundingBox.max.z;
+		if ( terrain.boundBox === undefined ) terrain.computeBoundingBox();
 
-	this.transparent = true;
+		if ( zMin === undefined ) zMin = terrain.boundingBox.min.z;
+		if ( zMax === undefined ) zMax = terrain.boundingBox.max.z;
 
-	this.onBeforeCompile = function ( shader ) {
+		this.transparent = true;
 
-		Object.assign(
-			shader.uniforms,
-			ctx.materials.commonTerrainUniforms,
-			{
-				minZ:   { value: zMin },
-				scaleZ: { value: 1 / ( zMax - zMin ) },
-				cmap:   { value: textureCache.getTexture( 'hypsometric' ) }
-			}
-		);
+		this.onBeforeCompile = function ( shader ) {
 
-		var vertexShader = shader.vertexShader
-			.replace( '#include <common>', '\nuniform float minZ;\nuniform float scaleZ;\nvarying float zMap;\nvarying vec2 vPosition;\n$&' )
-			.replace( 'include <begin_vertex>', '$&\nvPosition = vec2( position.x, position.y );\nzMap = saturate( ( position.z - minZ ) * scaleZ );' );
+			Object.assign(
+				shader.uniforms,
+				ctx.materials.commonTerrainUniforms,
+				{
+					minZ:   { value: zMin },
+					scaleZ: { value: 1 / ( zMax - zMin ) },
+					cmap:   { value: textureCache.getTexture( 'hypsometric' ) }
+				}
+			);
 
-		var fragmentShader = shader.fragmentShader
-			.replace( '#include <common>', '$&\n' + fragment_pars + '\n' )
-			.replace( '#include <color_fragment>', fragment_color );
+			var vertexShader = shader.vertexShader
+				.replace( '#include <common>', '\nuniform float minZ;\nuniform float scaleZ;\nvarying float zMap;\nvarying vec2 vPosition;\n$&' )
+				.replace( 'include <begin_vertex>', '$&\nvPosition = vec2( position.x, position.y );\nzMap = saturate( ( position.z - minZ ) * scaleZ );' );
 
-		shader.vertexShader = vertexShader;
-		shader.fragmentShader = fragmentShader;
+			var fragmentShader = shader.fragmentShader
+				.replace( '#include <common>', '$&\n' + fragment_pars + '\n' )
+				.replace( '#include <color_fragment>', fragment_color );
 
-	};
+			shader.vertexShader = vertexShader;
+			shader.fragmentShader = fragmentShader;
 
-	Object.defineProperty( this, 'opacity', {
-		get: function () { return ctx.materials.terrainOpacity; }
-	} );
+		};
 
-	return this;
+		Object.defineProperty( this, 'opacity', {
+			get: function () { return ctx.materials.terrainOpacity; }
+		} );
+
+	}
 
 }
-
-HypsometricMaterial.prototype = Object.create( MeshLambertMaterial.prototype );
 
 Object.assign( HypsometricMaterial.prototype, CommonTerrainMaterial.prototype );
 

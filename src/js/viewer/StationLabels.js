@@ -5,36 +5,38 @@ import { GlyphString } from '../core/GlyphString';
 
 const _tmpVector3 = new Vector3();
 
-function StationLabels ( ctx, stations, commentCount ) {
+class StationLabels extends Group {
 
-	Group.call( this );
+	constructor ( ctx, stations, commentCount ) {
 
-	this.type = 'CV.StationLabels';
-	this.stations = stations;
-	this.commentCount = commentCount;
-	this.ctx = ctx;
+		super();
 
-	const cfg = ctx.cfg;
-	const materials = ctx.materials;
+		this.type = 'CV.StationLabels';
+		this.stations = stations;
+		this.commentCount = commentCount;
+		this.ctx = ctx;
 
-	const atlasSpecDefault = {
-		color: cfg.themeColorCSS( 'stations.default.text' ),
-		font: cfg.themeValue( 'stations.font' )
-	};
+		const cfg = ctx.cfg;
+		const materials = ctx.materials;
 
-	this.defaultLabelMaterial = materials.getGlyphMaterial( atlasSpecDefault, 0 );
-	this.splayLabelMaterial = materials.getGlyphMaterial( atlasSpecDefault, 0 );
+		const atlasSpecDefault = {
+			color: cfg.themeColorCSS( 'stations.default.text' ),
+			font: cfg.themeValue( 'stations.font' )
+		};
 
-	const atlasSpecJunction = {
-		color: cfg.themeColorCSS( 'stations.junctions.text' ),
-		font: cfg.themeValue( 'stations.font' )
-	};
+		this.defaultLabelMaterial = materials.getGlyphMaterial( atlasSpecDefault, 0 );
+		this.splayLabelMaterial = materials.getGlyphMaterial( atlasSpecDefault, 0 );
 
-	this.junctionLabelMaterial = materials.getGlyphMaterial( atlasSpecJunction, 0 );
+		const atlasSpecJunction = {
+			color: cfg.themeColorCSS( 'stations.junctions.text' ),
+			font: cfg.themeValue( 'stations.font' )
+		};
+
+		this.junctionLabelMaterial = materials.getGlyphMaterial( atlasSpecJunction, 0 );
+
+	}
 
 }
-
-StationLabels.prototype = Object.create ( Group.prototype );
 
 StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 

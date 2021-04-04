@@ -37,103 +37,105 @@ function __sortTilesByPressure( tileA, tileB ) {
 
 }
 
-function WebTerrain ( ctx, survey, onLoaded ) {
+class WebTerrain extends CommonTerrain {
 
-	CommonTerrain.call( this, ctx );
+	constructor ( ctx, survey, onLoaded ) {
 
-	this.name = 'WebTerrain';
-	this.type = 'CV.WebTerrain';
-	this.attributions = [];
-	this.log = false;
-	this.ctx = ctx;
+		super( ctx );
 
-	this.displayCRS = survey.displayCRS;
-	this.surveyCRS = survey.CRS;
-	this.limits = survey.limits;
-	this.flatZ = survey.modelLimits.max.z;
-	this.offsets = survey.offsets;
+		this.name = 'WebTerrain';
+		this.type = 'CV.WebTerrain';
+		this.attributions = [];
+		this.log = false;
+		this.ctx = ctx;
 
-	this.onLoaded        = onLoaded;
-	this.childrenLoading = 0;
-	this.childErrors     = 0;
-	this.isLoaded        = false;
-	this.material        = null;
-	this.initialZoom     = null;
-	this.dying = false;
-	this.tilesLoading = 0;
-	this.maxTilesLoading = 0;
-	this.overlaysLoading = 0;
-	this.debug = true;
-	this.coverage = null;
-	this.TS = null;
-	this.maxTiles = ctx.cfg.value( 'maxTiles', 128 );
+		this.displayCRS = survey.displayCRS;
+		this.surveyCRS = survey.CRS;
+		this.limits = survey.limits;
+		this.flatZ = survey.modelLimits.max.z;
+		this.offsets = survey.offsets;
 
-	// tile zoom properties
-	this.retile_timeout = 80;
-	this.retileScaler = 4;
-	this.lastActivityTime = 0;
-	this.timerId = null;
+		this.onLoaded        = onLoaded;
+		this.childrenLoading = 0;
+		this.childErrors     = 0;
+		this.isLoaded        = false;
+		this.material        = null;
+		this.initialZoom     = null;
+		this.dying = false;
+		this.tilesLoading = 0;
+		this.maxTilesLoading = 0;
+		this.overlaysLoading = 0;
+		this.debug = true;
+		this.coverage = null;
+		this.TS = null;
+		this.maxTiles = ctx.cfg.value( 'maxTiles', 128 );
 
-	this.material = ctx.materials.getCursorMaterial();
-	this.canZoom = true;
+		// tile zoom properties
+		this.retile_timeout = 80;
+		this.retileScaler = 4;
+		this.lastActivityTime = 0;
+		this.timerId = null;
 
-	this.watcher = this.scheduleRetile.bind( this );
-	this.updateFunc = WebTerrain.prototype.zoomCheck.bind( this );
+		this.material = ctx.materials.getCursorMaterial();
+		this.canZoom = true;
 
-	let promise;
+		this.watcher = this.scheduleRetile.bind( this );
+		this.updateFunc = WebTerrain.prototype.zoomCheck.bind( this );
 
-	switch ( this.displayCRS ) {
+		let promise;
 
-	case 'EPSG:3857':
+		switch ( this.displayCRS ) {
 
-		promise = new EPSG3857TileSet( ctx );
-		break;
+		case 'EPSG:3857':
 
-	case 'EPSG:4326':
-	case 'ORIGINAL':
+			promise = new EPSG3857TileSet( ctx );
+			break;
 
-		promise = new EPSG4326TileSet( ctx, this.surveyCRS );
+		case 'EPSG:4326':
+		case 'ORIGINAL':
 
-		break;
+			promise = new EPSG4326TileSet( ctx, this.surveyCRS );
 
-	default:
+			break;
 
-		onLoaded( this );
+		default:
+
+			onLoaded( this );
+			return;
+
+		}
+
+		promise.then( TS => {
+
+			console.log( TS );
+
+			this.workerPool = ctx.workerPools.getPool( TS.workerScript );
+			this.TS = TS;
+			this.tileSets = TS.getTileSets();
+			this.screenAttribution = TS.getScreenAttribution();
+
+			if ( this.hasCoverage() ) {
+
+				this.tileArea( this.limits );
+
+			} else {
+
+				console.log( 'no terrain found' );
+				onLoaded( this );
+
+			}
+
+		} ).catch( () => {
+
+			console.log( 'error loading tile set' );
+
+		} );
+
 		return;
 
 	}
 
-	promise.then( TS => {
-
-		console.log( TS );
-
-		this.workerPool = ctx.workerPools.getPool( TS.workerScript );
-		this.TS = TS;
-		this.tileSets = TS.getTileSets();
-		this.screenAttribution = TS.getScreenAttribution();
-
-		if ( this.hasCoverage() ) {
-
-			this.tileArea( this.limits );
-
-		} else {
-
-			console.log( 'no terrain found' );
-			onLoaded( this );
-
-		}
-
-	} ).catch( () => {
-
-		console.log( 'error loading tile set' );
-
-	} );
-
-	return;
-
 }
-
-WebTerrain.prototype = Object.create( CommonTerrain.prototype );
 
 WebTerrain.prototype.isTiled = true;
 

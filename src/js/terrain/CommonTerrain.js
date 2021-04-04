@@ -20,27 +20,31 @@ const __adjust = new Vector3();
 
 const __result = new Uint8Array( 4 );
 
-function CommonTerrain ( ctx ) {
+class CommonTerrain extends Group {
 
-	Group.call( this );
+	constructor ( ctx ) {
 
-	this.hasOverlay = false;
-	this.activeOverlay = null;
-	this.depthTexture = null;
-	this.renderer = null;
-	this.renderTarget = null;
-	this.datumShift = 0;
-	this.activeDatumShift = 0;
-	this.terrainBase = null;
-	this.terrainRange = null;
-	this.isFlat = false;
-	this.screenAttribution = null;
-	this.terrainShadingModes = {};
-	this.throughMode = TERRAIN_STENCIL;
-	this.commonUniforms = ctx.materials.commonTerrainUniforms;
-	this.ctx = ctx;
+		super();
 
-	this.addEventListener( 'removed', () => this.removed() );
+		this.hasOverlay = false;
+		this.activeOverlay = null;
+		this.depthTexture = null;
+		this.renderer = null;
+		this.renderTarget = null;
+		this.datumShift = 0;
+		this.activeDatumShift = 0;
+		this.terrainBase = null;
+		this.terrainRange = null;
+		this.isFlat = false;
+		this.screenAttribution = null;
+		this.terrainShadingModes = {};
+		this.throughMode = TERRAIN_STENCIL;
+		this.commonUniforms = ctx.materials.commonTerrainUniforms;
+		this.ctx = ctx;
+
+		this.addEventListener( 'removed', () => this.removed() );
+
+	}
 
 }
 
@@ -53,8 +57,6 @@ CommonTerrain.addOverlay = function ( ctx, name, overlayProvider, locationDefaul
 	if ( locationDefault ) locationDefaultOverlay = name;
 
 };
-
-CommonTerrain.prototype = Object.create( Group.prototype );
 
 CommonTerrain.prototype.shadingMode = SHADING_RELIEF;
 

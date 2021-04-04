@@ -1,19 +1,19 @@
 import { Group } from '../Three';
 import { PointIndicator } from './PointIndicator';
 
-function StationMarkers ( ctx, color ) {
+class StationMarkers extends Group {
 
-	Group.call( this );
+	constructor ( ctx, color ) {
 
-	this.markers = new Map();
-	this.markerColor = color;
-	this.ctx = ctx;
+		super();
 
-	return this;
+		this.markers = new Map();
+		this.markerColor = color;
+		this.ctx = ctx;
+
+	}
 
 }
-
-StationMarkers.prototype = Object.create( Group.prototype );
 
 StationMarkers.prototype.mark = function ( node ) {
 

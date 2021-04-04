@@ -1,34 +1,36 @@
 import { PointsMaterial, Color } from '../Three';
 
-function ExtendedPointsMaterial ( ctx ) {
+class ExtendedPointsMaterial extends PointsMaterial {
 
-	PointsMaterial.call( this );
+	constructor ( ctx ) {
 
-	const textureCache = ctx.materials.textureCache;
+		super();
 
-	this.map = textureCache.getTexture( 'disc' );
-	this.color = new Color( 0xffffff );
-	this.opacity = 1.0;
-	this.alphaTest = 0.8;
+		const textureCache = ctx.materials.textureCache;
 
-	this.sizeAttenuation = false;
-	this.transparent = true; // to ensure points rendered over lines.
-	this.vertexColors = true;
+		this.map = textureCache.getTexture( 'disc' );
+		this.color = new Color( 0xffffff );
+		this.opacity = 1.0;
+		this.alphaTest = 0.8;
 
-	this.onBeforeCompile = function ( shader ) {
+		this.sizeAttenuation = false;
+		this.transparent = true; // to ensure points rendered over lines.
+		this.vertexColors = true;
 
-		var vertexShader = shader.vertexShader
-			.replace( '#include <common>', '\nattribute float pSize;\n\n$&' )
-			.replace( '\tgl_PointSize = size;', '\tgl_PointSize = pSize;' );
+		this.onBeforeCompile = function ( shader ) {
 
-		shader.vertexShader = vertexShader;
+			var vertexShader = shader.vertexShader
+				.replace( '#include <common>', '\nattribute float pSize;\n\n$&' )
+				.replace( '\tgl_PointSize = size;', '\tgl_PointSize = pSize;' );
 
-	};
+			shader.vertexShader = vertexShader;
 
-	return this;
+		};
+
+		return this;
+
+	}
 
 }
-
-ExtendedPointsMaterial.prototype = Object.create( PointsMaterial.prototype );
 
 export { ExtendedPointsMaterial };

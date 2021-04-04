@@ -2,23 +2,23 @@ import { Scale } from './Scale';
 
 import { PlaneBufferGeometry } from '../Three';
 
-function LinearScale ( hudObject, container ) {
+class LinearScale extends Scale {
 
-	const materials = hudObject.ctx.materials;
-	const geometry = new PlaneBufferGeometry();
-	const material = materials.getScaleMaterial();
+	constructor ( hudObject, container ) {
 
-	Scale.call( this, hudObject, container, geometry, material );
+		const materials = hudObject.ctx.materials;
+		const geometry = new PlaneBufferGeometry();
+		const material = materials.getScaleMaterial();
 
-	this.name = 'CV.LinearScale';
+		super( hudObject, container, geometry, material );
 
-	geometry.rotateZ( - Math.PI / 2 ); // rotate to use default UV values
-	geometry.scale( this.barWidth, this.barHeight, 1 );
+		this.name = 'CV.LinearScale';
 
-	return this;
+		geometry.rotateZ( - Math.PI / 2 ); // rotate to use default UV values
+		geometry.scale( this.barWidth, this.barHeight, 1 );
+
+	}
 
 }
-
-LinearScale.prototype = Object.create( Scale.prototype );
 
 export { LinearScale };

@@ -88,35 +88,36 @@ LoxTile.prototype.removed = function () {
 
 };
 
-function LoxTerrain ( ctx, terrains, offsets ) {
+class LoxTerrain extends CommonTerrain {
 
-	CommonTerrain.call( this, ctx );
+	constructor ( ctx, terrains, offsets ) {
 
-	this.type = 'CV.Terrain';
-	this.overlayMaterial = null;
-	this.attributions = [];
+		super( ctx );
 
-	var bitmapCount = 0;
+		this.type = 'CV.Terrain';
+		this.overlayMaterial = null;
+		this.attributions = [];
 
-	terrains.forEach( terrain => {
+		var bitmapCount = 0;
 
-		const tile = new LoxTile( ctx, terrain, offsets );
+		terrains.forEach( terrain => {
 
-		if ( tile.bitmap !== null ) bitmapCount++;
+			const tile = new LoxTile( ctx, terrain, offsets );
 
-		this.add( tile );
+			if ( tile.bitmap !== null ) bitmapCount++;
 
-	} );
+			this.add( tile );
 
-	this.overlayLoaded = false;
-	this.hasOverlay = ( bitmapCount > 0 ) ? true : false;
+		} );
+
+		this.overlayLoaded = false;
+		this.hasOverlay = ( bitmapCount > 0 ) ? true : false;
+
+	}
 
 }
 
-LoxTerrain.prototype = Object.create( CommonTerrain.prototype );
-
 LoxTerrain.prototype.isTiled = false;
-
 LoxTerrain.prototype.isLoaded = true;
 
 LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback ) {

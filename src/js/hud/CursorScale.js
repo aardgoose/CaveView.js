@@ -6,56 +6,56 @@ import { Line2Material } from '../materials/Line2Material';
 
 import { PlaneBufferGeometry, MeshBasicMaterial } from '../Three';
 
-function CursorScale ( hudObject, container ) {
+class CursorScale extends Scale {
 
-	const ctx = hudObject.ctx;
-	const cfg = ctx.cfg;
-	const materials = ctx.materials;
-	const geometry = new PlaneBufferGeometry();
+	constructor ( hudObject, container ) {
 
-	Scale.call( this, hudObject, container, geometry, new MeshBasicMaterial( { color: 0x676767 } ) );
+		const ctx = hudObject.ctx;
+		const cfg = ctx.cfg;
+		const materials = ctx.materials;
+		const geometry = new PlaneBufferGeometry();
 
-	this.name = 'CV.CursorScale';
+		super( hudObject, container, geometry, new MeshBasicMaterial( { color: 0x676767 } ) );
 
-	const barWidth = this.barWidth;
-	const barHeight = this.barHeight;
+		this.name = 'CV.CursorScale';
 
-	geometry.scale( barWidth, barHeight, 1 );
+		const barWidth = this.barWidth;
+		const barHeight = this.barHeight;
 
-	// make cursor line
+		geometry.scale( barWidth, barHeight, 1 );
 
-	const cursorGeometry = new LineSegmentsGeometry();
+		// make cursor line
 
-	cursorGeometry.setPositions( [
-		barWidth / 2, -barHeight / 2, 10,
-		-barWidth / 2, -barHeight / 2, 10
-	] );
+		const cursorGeometry = new LineSegmentsGeometry();
 
-	const cursor = new LineSegments2( cursorGeometry, new Line2Material( ctx, { color: cfg.themeColor( 'hud.cursor' ) } ) );
+		cursorGeometry.setPositions( [
+			barWidth / 2, -barHeight / 2, 10,
+			-barWidth / 2, -barHeight / 2, 10
+		] );
 
-	const atlasSpec = {
-		color: cfg.themeColorCSS( 'hud.cursor' ),
-		background: '#444444',
-		font: 'bold helvetica,sans-serif'
-	};
+		const cursor = new LineSegments2( cursorGeometry, new Line2Material( ctx, { color: cfg.themeColor( 'hud.cursor' ) } ) );
 
-	const material = materials.getGlyphMaterial( atlasSpec, 0 );
+		const atlasSpec = {
+			color: cfg.themeColorCSS( 'hud.cursor' ),
+			background: '#444444',
+			font: 'bold helvetica,sans-serif'
+		};
 
-	const cursorLabel = new MutableGlyphString( '      ', material );
+		const material = materials.getGlyphMaterial( atlasSpec, 0 );
 
-	cursorLabel.translateY( - barHeight / 2 - cursorLabel.getHeight() / 2 );
+		const cursorLabel = new MutableGlyphString( '      ', material );
 
-	this.addStatic( cursor );
-	cursor.addStatic( cursorLabel );
+		cursorLabel.translateY( - barHeight / 2 - cursorLabel.getHeight() / 2 );
 
-	this.cursor = cursor;
-	this.cursorLabel = cursorLabel;
+		this.addStatic( cursor );
+		cursor.addStatic( cursorLabel );
 
-	return this;
+		this.cursor = cursor;
+		this.cursorLabel = cursorLabel;
+
+	}
 
 }
-
-CursorScale.prototype = Object.create( Scale.prototype );
 
 CursorScale.prototype.setCursor = function ( scaledValue, displayValue ) {
 

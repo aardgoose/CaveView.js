@@ -3,7 +3,7 @@ import { Line2Material } from './Line2Material';
 
 // subclass Line2Material to provide custom defines and uniforms
 
-var LineMaterial = function ( ctx, mode = 'height', dashed ) {
+function LineMaterial ( ctx, mode = 'height', dashed ) {
 
 	const survey = ctx.survey;
 	const cfg = ctx.cfg;
@@ -97,6 +97,10 @@ var LineMaterial = function ( ctx, mode = 'height', dashed ) {
 		);
 		break;
 
+	default:
+
+		defines.CV_BASIC = true;
+
 	}
 
 	if ( dashed ) defines.USE_DASH = true;
@@ -113,7 +117,7 @@ var LineMaterial = function ( ctx, mode = 'height', dashed ) {
 	// for cursor material variant
 	this.halfRange = ( surveyLimits.max.z - surveyLimits.min.z ) / 2;
 
-};
+}
 
 LineMaterial.prototype = Object.create( Line2Material.prototype );
 

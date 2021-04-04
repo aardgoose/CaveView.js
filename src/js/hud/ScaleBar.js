@@ -53,39 +53,39 @@ function BarGeometry ( ctx, length, height, divisions ) {
 
 BarGeometry.prototype = Object.create( BufferGeometry.prototype );
 
-function ScaleBar ( hudObject, container, hScale, rightMargin ) {
+class ScaleBar extends Group {
 
-	const leftMargin = 10;
-	const materials = hudObject.ctx.materials;
+	constructor ( hudObject, container, hScale, rightMargin ) {
 
-	Group.call( this );
+		const leftMargin = 10;
+		const materials = hudObject.ctx.materials;
 
-	this.name = 'CV.ScaleBar';
+		super();
 
-	this.hScale        = hScale;
-	this.scaleBars     = [];
-	this.currentLength = 0;
-	this.wScale = container.clientHeight / container.clientWidth;
-	this.hudObject = hudObject;
+		this.name = 'CV.ScaleBar';
 
-	this.position.set( -container.clientWidth / 2 + 45, -container.clientHeight / 2 + leftMargin, 0 );
-	this.scaleMax = container.clientWidth - ( 40 + leftMargin + rightMargin );
+		this.hScale        = hScale;
+		this.scaleBars     = [];
+		this.currentLength = 0;
+		this.wScale = container.clientHeight / container.clientWidth;
+		this.hudObject = hudObject;
 
-	const material = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
-	const label = new MutableGlyphString( '--------', material );
+		this.position.set( -container.clientWidth / 2 + 45, -container.clientHeight / 2 + leftMargin, 0 );
+		this.scaleMax = container.clientWidth - ( 40 + leftMargin + rightMargin );
 
-	label.translateX( 0 );
-	label.translateY( 10 );
+		const material = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
+		const label = new MutableGlyphString( '--------', material );
 
-	this.add( label );
+		label.translateX( 0 );
+		label.translateY( 10 );
 
-	this.label = label;
+		this.add( label );
 
-	return this;
+		this.label = label;
+
+	}
 
 }
-
-ScaleBar.prototype = Object.create( Group.prototype );
 
 ScaleBar.prototype.setScale = function ( scale ) {
 

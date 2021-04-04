@@ -9,7 +9,7 @@ import {
 	Vector3,
 } from '../three';
 
-var LineSegmentsGeometry = function () {
+function LineSegmentsGeometry () {
 
 	InstancedBufferGeometry.call( this );
 
@@ -23,7 +23,7 @@ var LineSegmentsGeometry = function () {
 	this.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
 	this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
-};
+}
 
 LineSegmentsGeometry.prototype = Object.assign( Object.create( InstancedBufferGeometry.prototype ), {
 

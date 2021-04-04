@@ -1,48 +1,50 @@
 import { GlyphString } from '../core/GlyphString';
 import { Mesh, Group } from '../Three';
 
-function Scale( hudObject, container, geometry, material ) {
+class Scale extends Group {
 
-	const materials = hudObject.ctx.materials;
-	const width  = container.clientWidth;
-	const height = container.clientHeight;
+	constructor ( hudObject, container, geometry, material ) {
 
-	const stdWidth  = hudObject.stdWidth;
-	const stdMargin = hudObject.stdMargin;
+		const materials = hudObject.ctx.materials;
+		const width  = container.clientWidth;
+		const height = container.clientHeight;
 
-	const barOffset = 3 * ( stdWidth + stdMargin );
+		const stdWidth  = hudObject.stdWidth;
+		const stdMargin = hudObject.stdMargin;
 
-	const barHeight = ( height - barOffset ) / 2;
-	const barWidth  = stdWidth / 2;
+		const barOffset = 3 * ( stdWidth + stdMargin );
 
-	this.ctx = hudObject.ctx;
-	this.barHeight = barHeight;
-	this.barWidth = barWidth;
-	this.barOffset = barOffset;
+		const barHeight = ( height - barOffset ) / 2;
+		const barWidth  = stdWidth / 2;
 
-	this.offsetX = -barWidth / 2 - 5;
-	this.offsetY = barHeight / 2;
+		super();
 
-	Group.call( this );
+		this.ctx = hudObject.ctx;
+		this.barHeight = barHeight;
+		this.barWidth = barWidth;
+		this.barOffset = barOffset;
 
-	// position on left side of container
-	this.translateX(  width / 2  - barWidth / 2  - stdMargin );
-	this.translateY( -height / 2 + barHeight / 2 + barOffset );
+		this.offsetX = -barWidth / 2 - 5;
+		this.offsetY = barHeight / 2;
 
-	this.scaleBar = new Mesh( geometry, material );
-	this.scaleBar.name = 'scale bar';
+		// position on left side of container
+		this.translateX(  width / 2  - barWidth / 2  - stdMargin );
+		this.translateY( -height / 2 + barHeight / 2 + barOffset );
 
-	this.textMaterial = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
+		this.scaleBar = new Mesh( geometry, material );
+		this.scaleBar.name = 'scale bar';
 
-	this.add( this.scaleBar );
+		this.textMaterial = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 
-	this.min = null;
-	this.max = null;
-	this.caption = null;
+		this.add( this.scaleBar );
+
+		this.min = null;
+		this.max = null;
+		this.caption = null;
+
+	}
 
 }
-
-Scale.prototype = Object.create( Group.prototype );
 
 Scale.prototype.setRange = function ( min, max, caption ) {
 

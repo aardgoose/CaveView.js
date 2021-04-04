@@ -3,21 +3,21 @@ import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { LineSegments2 } from '../core/LineSegments2';
 import { MATERIAL_LINE, STATION_XSECT } from '../core/constants';
 
-function Legs ( ctx ) {
+class Legs extends Group {
 
-	Group.call( this );
+	constructor ( ctx ) {
 
-	this.ctx = ctx;
-	this.legLengths = [];
-	this.legVertices = [];
-	this.colors = [];
-	this.type = 'Legs';
+		super();
 
-	return this;
+		this.ctx = ctx;
+		this.legLengths = [];
+		this.legVertices = [];
+		this.colors = [];
+		this.type = 'Legs';
+
+	}
 
 }
-
-Legs.prototype = Object.create( Group.prototype );
 
 Legs.prototype.addLegs = function ( vertices, legRuns ) {
 

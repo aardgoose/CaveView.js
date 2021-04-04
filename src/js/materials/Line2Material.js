@@ -20,7 +20,7 @@ const uniforms = UniformsUtils.merge( [
 	}
 ] );
 
-var Line2Material = function ( ctx, params, defines = { CV_BASIC: true }, callerUniforms = {} ) {
+function Line2Material ( ctx, params, defines = { CV_BASIC: true }, callerUniforms = {} ) {
 
 	ShaderMaterial.call( this, {
 
@@ -202,7 +202,7 @@ var Line2Material = function ( ctx, params, defines = { CV_BASIC: true }, caller
 
 	} );
 
-};
+}
 
 Line2Material.prototype = Object.create( ShaderMaterial.prototype );
 

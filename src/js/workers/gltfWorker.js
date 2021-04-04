@@ -1,5 +1,3 @@
-import 'three/src/polyfills';
-
 import { Mesh } from 'three/src/objects/Mesh';
 import { BufferGeometry } from 'three/src/core/BufferGeometry';
 import { MeshStandardMaterial } from 'three/src/materials/MeshStandardMaterial';

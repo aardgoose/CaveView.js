@@ -1,16 +1,20 @@
 
-function Panel ( page ) {
+class Panel {
 
-	this.page = page;
-	this.elements = [];
-	this.dynamic = [];
+	constructor ( page ) {
 
-	this.onShow = function () {
-
-		this.dynamic.forEach( element => element.parentElement.removeChild( element ) );
+		this.page = page;
+		this.elements = [];
 		this.dynamic = [];
 
-	};
+		this.onShow = function () {
+
+			this.dynamic.forEach( element => element.parentElement.removeChild( element ) );
+			this.dynamic = [];
+
+		};
+
+	}
 
 }
 

@@ -1,77 +1,79 @@
 import { Panel } from './Panel';
 
-function TracePanel ( page, viewer ) {
+class TracePanel extends Panel {
 
-	Panel.call( this, page );
+	constructor ( page, viewer ) {
 
-	const self = this;
+		super( page );
 
-	page.addListener( viewer, 'selectedTrace', _onSelect );
+		const self = this;
 
-	this.add( page.addHeader( 'trace.header' ) );
+		page.addListener( viewer, 'selectedTrace', _onSelect );
 
-	var line1 = this.add( page.addLine( 'Start:' ) );
-	var line2 = this.add( page.addLine( 'End:' ) );
+		this.add( page.addHeader( 'trace.header' ) );
 
-	function _initPanel () {
+		var line1 = this.add( page.addLine( 'Start:' ) );
+		var line2 = this.add( page.addLine( 'End:' ) );
 
-		self.onShow();
-		line1.textContent = 'Start:';
-		line2.textContent = 'End:';
+		function _initPanel () {
 
-	}
-
-	function _onSelect ( event ) {
-
-		if ( event.add !== undefined ) {
-
-			_showStations( event );
-
-		} else if ( event.delete !== undefined ) {
-
-			_showTrace ( event );
+			self.onShow();
+			line1.textContent = 'Start:';
+			line2.textContent = 'End:';
 
 		}
 
-	}
+		function _onSelect ( event ) {
 
-	function _showTrace ( event ) {
+			if ( event.add !== undefined ) {
 
-		const traceInfo = event.trace;
+				_showStations( event );
 
-		_initPanel();
+			} else if ( event.delete !== undefined ) {
 
-		line1.textContent = 'Start: ' + traceInfo.start;
-		line2.textContent = 'End: ' + traceInfo.end;
+				_showTrace ( event );
 
-		self.addDynamic( page.addButton( 'trace.delete', function() {
-			event.delete();
+			}
+
+		}
+
+		function _showTrace ( event ) {
+
+			const traceInfo = event.trace;
+
 			_initPanel();
-		} ) );
 
-	}
+			line1.textContent = 'Start: ' + traceInfo.start;
+			line2.textContent = 'End: ' + traceInfo.end;
 
-	function _showStations ( event ) {
-
-		_initPanel();
-
-		if ( event.start !== undefined ) line1.textContent = 'Start: ' + event.start;
-
-		if ( event.end !== undefined ) {
-
-			line2.textContent = 'End: ' + event.end;
-
-			self.addDynamic( page.addButton( 'trace.add', function() {
-				event.add();
+			self.addDynamic( page.addButton( 'trace.delete', function() {
+				event.delete();
 				_initPanel();
 			} ) );
+
+		}
+
+		function _showStations ( event ) {
+
+			_initPanel();
+
+			if ( event.start !== undefined ) line1.textContent = 'Start: ' + event.start;
+
+			if ( event.end !== undefined ) {
+
+				line2.textContent = 'End: ' + event.end;
+
+				self.addDynamic( page.addButton( 'trace.add', function() {
+					event.add();
+					_initPanel();
+				} ) );
+
+			}
 
 		}
 
 	}
 
 }
-
-TracePanel.prototype = Object.create( Panel.prototype );
 
 export { TracePanel };

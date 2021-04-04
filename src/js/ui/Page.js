@@ -1,27 +1,29 @@
 
-function Page ( id, x18nPrefix, onTop, onLeave ) {
+class Page {
 
-	const tab  = document.createElement( 'div' );
-	const page = document.createElement( 'div' );
+	constructor ( id, x18nPrefix, onTop, onLeave ) {
 
-	page.classList.add( 'page' );
+		const tab  = document.createElement( 'div' );
+		const page = document.createElement( 'div' );
 
-	tab.classList.add( id );
-	tab.classList.add( 'tab' );
+		page.classList.add( 'page' );
 
-	this.page = page;
-	this.tab = tab;
-	this.onTop = onTop;
-	this.frame = null;
-	this.onLeave = onLeave;
-	this.slide = undefined;
-	this.x18nPrefix = x18nPrefix + '.';
-	this.onChange = null;
-	this.id = id;
+		tab.classList.add( id );
+		tab.classList.add( 'tab' );
+
+		this.page = page;
+		this.tab = tab;
+		this.onTop = onTop;
+		this.frame = null;
+		this.onLeave = onLeave;
+		this.slide = undefined;
+		this.x18nPrefix = x18nPrefix + '.';
+		this.onChange = null;
+		this.id = id;
+
+	}
 
 }
-
-Page.prototype.constructor = Page;
 
 Page.prototype.i18n = function ( text ) {
 

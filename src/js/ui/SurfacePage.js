@@ -20,73 +20,75 @@ const terrainThroughModes = {
 };
 */
 
-function SurfacePage ( frame, viewer ) {
+class SurfacePage extends Page {
 
-	const controls = [];
+	constructor ( frame, viewer ) {
 
-	Page.call( this, 'icon_terrain', 'surface' );
+		const controls = [];
 
-	frame.addPage ( this );
+		super( 'icon_terrain', 'surface' );
 
-	this.addHeader( 'surface.header' );
+		frame.addPage ( this );
 
-	if ( viewer.hasSurfaceLegs ) {
+		this.addHeader( 'surface.header' );
 
-		this.addCheckbox( 'surface.legs', viewer, 'surfaceLegs' );
-		this.addSelect( 'surface.shading.caption', surfaceShadingModes, viewer, 'surfaceShading' );
+		if ( viewer.hasSurfaceLegs ) {
 
-	}
-
-	if ( viewer.hasTerrain ) {
-
-		this.addHeader( 'terrain.header' );
-
-		this.addCheckbox( 'terrain.terrain', viewer, 'terrain' );
-
-		controls.push( this.addSelect( 'terrain.shading.caption', viewer.terrainShadingModes, viewer, 'terrainShading' ) );
-
-		// controls.push( this.addSelect( 'terrain.through.caption', terrainThroughModes, viewer, 'terrainThrough' ) );
-
-		controls.push( this.addRange( 'terrain.opacity', viewer, 'terrainOpacity' ) );
-
-		controls.push( this.addCheckbox( 'terrain.datum_shift', viewer, 'terrainDatumShift' ) );
-		controls.push( this.addCheckbox( 'terrain.lighting', viewer, 'terrainDirectionalLighting' ) );
-
-		if ( ! viewer.hasRealTerrain ) {
-
-			controls.push( this.addDownloadButton( 'terrain.downloadTileSet', viewer.terrainTileSet, 'tileSetEntry.json' ) );
+			this.addCheckbox( 'surface.legs', viewer, 'surfaceLegs' );
+			this.addSelect( 'surface.shading.caption', surfaceShadingModes, viewer, 'surfaceShading' );
 
 		}
 
-		const attributions = viewer.terrainAttributions;
+		if ( viewer.hasTerrain ) {
 
-		for ( let i = 0; i < attributions.length; i++ ) {
+			this.addHeader( 'terrain.header' );
 
-			this.addText( attributions[ i ] );
+			this.addCheckbox( 'terrain.terrain', viewer, 'terrain' );
+
+			controls.push( this.addSelect( 'terrain.shading.caption', viewer.terrainShadingModes, viewer, 'terrainShading' ) );
+
+			// controls.push( this.addSelect( 'terrain.through.caption', terrainThroughModes, viewer, 'terrainThrough' ) );
+
+			controls.push( this.addRange( 'terrain.opacity', viewer, 'terrainOpacity' ) );
+
+			controls.push( this.addCheckbox( 'terrain.datum_shift', viewer, 'terrainDatumShift' ) );
+			controls.push( this.addCheckbox( 'terrain.lighting', viewer, 'terrainDirectionalLighting' ) );
+
+			if ( ! viewer.hasRealTerrain ) {
+
+				controls.push( this.addDownloadButton( 'terrain.downloadTileSet', viewer.terrainTileSet, 'tileSetEntry.json' ) );
+
+			}
+
+			const attributions = viewer.terrainAttributions;
+
+			for ( let i = 0; i < attributions.length; i++ ) {
+
+				this.addText( attributions[ i ] );
+
+			}
 
 		}
 
-	}
+		_onChange( { name: 'terrain' } );
 
-	_onChange( { name: 'terrain' } );
+		this.onChange = _onChange;
 
-	this.onChange = _onChange;
+		return this;
 
-	return this;
+		function _onChange ( event ) {
 
-	function _onChange ( event ) {
+			// change UI dynamicly to only display useful controls
+			if ( event.name === 'terrain' ) {
 
-		// change UI dynamicly to only display useful controls
-		if ( event.name === 'terrain' ) {
+				frame.setControlsVisibility( controls, viewer.terrain );
 
-			frame.setControlsVisibility( controls, viewer.terrain );
+			}
 
 		}
 
 	}
 
 }
-
-SurfacePage.prototype = Object.create( Page.prototype );
 
 export { SurfacePage };

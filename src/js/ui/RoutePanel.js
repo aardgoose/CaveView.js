@@ -1,48 +1,50 @@
 import { replaceExtension } from '../core/lib';
 import { Panel } from './Panel';
 
-function RoutePanel ( page, viewer, fileSelector ) {
+class RoutePanel extends Panel {
 
-	Panel.call( this, page );
+	constructor ( page, viewer, fileSelector ) {
 
-	const self = this;
-	const metadata = viewer.getMetadata();
-	const routeNames = viewer.routeNames;
+		super( page );
 
-	this.add( page.addHeader( 'route.header' ) );
+		const self = this;
+		const metadata = viewer.getMetadata();
+		const routeNames = viewer.routeNames;
 
-	var routeSelector = page.addSelect( 'route.current', routeNames, viewer, 'route' );
-	var getNewRouteName;
+		this.add( page.addHeader( 'route.header' ) );
 
-	this.add( routeSelector );
+		var routeSelector = page.addSelect( 'route.current', routeNames, viewer, 'route' );
+		var getNewRouteName;
 
-	this.add( page.addButton( 'route.save', _saveRoute ) );
+		this.add( routeSelector );
 
-	this.add( page.addTextBox( 'route.new', '---', function ( getter ) { getNewRouteName = getter; } ) );
+		this.add( page.addButton( 'route.save', _saveRoute ) );
 
-	this.add( page.addButton( 'route.add', _newRoute ) );
+		this.add( page.addTextBox( 'route.new', '---', function ( getter ) { getNewRouteName = getter; } ) );
 
-	this.add( page.addDownloadButton( 'route.download', metadata.getURL, replaceExtension( fileSelector.file, 'json' ) ) );
+		this.add( page.addButton( 'route.add', _newRoute ) );
 
-	function _newRoute () {
+		this.add( page.addDownloadButton( 'route.download', metadata.getURL, replaceExtension( fileSelector.file, 'json' ) ) );
 
-		console.log( getNewRouteName );
-		//routes.addRoute( getNewRouteName() );
+		function _newRoute () {
 
-		// update selector
+			console.log( getNewRouteName );
+			//routes.addRoute( getNewRouteName() );
 
-		routeSelector = self.addSelect( 'Current Route', viewer.routeNames, viewer, 'route', routeSelector );
+			// update selector
 
-	}
+			routeSelector = self.addSelect( 'Current Route', viewer.routeNames, viewer, 'route', routeSelector );
 
-	function _saveRoute () {
+		}
 
-		//routes.saveCurrent();
+		function _saveRoute () {
+
+			//routes.saveCurrent();
+
+		}
 
 	}
 
 }
-
-RoutePanel.prototype = Object.create( Panel.prototype );
 
 export { RoutePanel };

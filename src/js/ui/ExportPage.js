@@ -1,83 +1,84 @@
 import { Page } from './Page';
 import { replaceExtension } from '../core/lib';
 
-function ExportPage ( frame, viewer, fileSelector ) {
+class ExportPage extends Page {
 
-	Page.call( this, 'icon_export', 'exports' );
+	constructor ( frame, viewer, fileSelector ) {
 
-	frame.addPage( this );
+		super( 'icon_export', 'exports' );
 
-	this.addHeader( 'png_export.header' );
+		frame.addPage( this );
 
-	const sizes = [];
-	let mss = viewer.maxSnapshotSize;
+		this.addHeader( 'png_export.header' );
 
-	do { sizes.push( mss ); } while ( (mss /= 2) > 512 );
+		const sizes = [];
+		let mss = viewer.maxSnapshotSize;
 
-	const scales = [ 1, 2, 3, 4, 5, 6 ];
+		do { sizes.push( mss ); } while ( (mss /= 2) > 512 );
 
-	const pngParams = {
-		exportSize: sizes[ 0 ],
-		lineScale: 1
-	};
+		const scales = [ 1, 2, 3, 4, 5, 6 ];
 
-	this.addSelect( 'png_export.line_scale', scales, pngParams, 'lineScale' );
-	this.addSelect( 'png_export.size', sizes, pngParams, 'exportSize' );
+		const pngParams = {
+			exportSize: sizes[ 0 ],
+			lineScale: 1
+		};
 
-	this.addDownloadButton(
-		'png_export.export',
-		() => {
-			const url = viewer.getSnapshot( pngParams.exportSize, pngParams.lineScale );
-			return url;
-		},
-		'snapshot.png'
-	);
+		this.addSelect( 'png_export.line_scale', scales, pngParams, 'lineScale' );
+		this.addSelect( 'png_export.size', sizes, pngParams, 'exportSize' );
 
-	this.addHeader( 'gltf_export.header' );
+		this.addDownloadButton(
+			'png_export.export',
+			() => {
+				const url = viewer.getSnapshot( pngParams.exportSize, pngParams.lineScale );
+				return url;
+			},
+			'snapshot.png'
+		);
 
-	const selection = { legs: false, walls: false, scraps: false  };
-	const options = { rotate: false, binary: false };
+		this.addHeader( 'gltf_export.header' );
 
-	if ( viewer.hasWalls ) {
+		const selection = { legs: false, walls: false, scraps: false  };
+		const options = { rotate: false, binary: false };
 
-		selection.walls = true;
-		this.addCheckbox( 'gltf_export.walls', selection, 'walls' );
+		if ( viewer.hasWalls ) {
 
-	}
+			selection.walls = true;
+			this.addCheckbox( 'gltf_export.walls', selection, 'walls' );
 
-	if ( viewer.hasScraps ) {
+		}
 
-		selection.scraps = true;
-		this.addCheckbox( 'gltf_export.scraps', selection, 'scraps' );
+		if ( viewer.hasScraps ) {
 
-	}
+			selection.scraps = true;
+			this.addCheckbox( 'gltf_export.scraps', selection, 'scraps' );
 
-	this.addCheckbox( 'gltf_export.legs', selection, 'legs' );
+		}
 
-	this.addCheckbox( 'gltf_export.rotate_axes', options, 'rotate' );
-	// this.addCheckbox( 'gltf_export.binary_format', options, 'binary' );
+		this.addCheckbox( 'gltf_export.legs', selection, 'legs' );
 
-	this.addButton( 'gltf_export.export', function () {
+		this.addCheckbox( 'gltf_export.rotate_axes', options, 'rotate' );
+		// this.addCheckbox( 'gltf_export.binary_format', options, 'binary' );
 
-		viewer.getGLTFExport( selection, options, handleExport );
+		this.addButton( 'gltf_export.export', function () {
 
-	} );
+			viewer.getGLTFExport( selection, options, handleExport );
 
-	const self = this;
+		} );
 
-	return this;
+		const self = this;
 
+		return;
 
-	function handleExport ( gltfData, binary ) {
+		function handleExport ( gltfData, binary ) {
 
-		var filename = replaceExtension( fileSelector.localFilename, ( binary ? 'glb' : 'gltf' ) );
+			var filename = replaceExtension( fileSelector.localFilename, ( binary ? 'glb' : 'gltf' ) );
 
-		self.download( URL.createObjectURL( gltfData ), filename );
+			self.download( URL.createObjectURL( gltfData ), filename );
+
+		}
 
 	}
 
 }
-
-ExportPage.prototype = Object.create( Page.prototype );
 
 export { ExportPage };

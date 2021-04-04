@@ -1,30 +1,32 @@
 import { Panel } from './Panel';
 
-function EntrancePanel ( page, viewer ) {
+class EntrancePanel extends Panel  {
 
-	Panel.call( this, page );
+	constructor ( page, viewer ) {
 
-	const self = this;
+		super( page );
 
-	this.add( page.addHeader( 'entrance.header' ) );
+		const self = this;
 
-	page.addListener( viewer, 'selectedEntrance', _onSelect );
+		this.add( page.addHeader( 'entrance.header' ) );
 
-	return this;
+		page.addListener( viewer, 'selectedEntrance', _onSelect );
 
-	function _onSelect ( event ) {
+		return this;
 
-		self.onShow();
-		if ( event.entrance === undefined ) return;
+		function _onSelect ( event ) {
 
-		self.addDynamic( page.addLine( event.entrance.name ) );
-		self.addDynamic( page.addLine( event.entrance.info.name ) );
+			self.onShow();
+			if ( event.entrance === undefined ) return;
 
+			self.addDynamic( page.addLine( event.entrance.name ) );
+			self.addDynamic( page.addLine( event.entrance.info.name ) );
+
+
+		}
 
 	}
 
 }
-
-EntrancePanel.prototype = Object.create( Panel.prototype );
 
 export { EntrancePanel };

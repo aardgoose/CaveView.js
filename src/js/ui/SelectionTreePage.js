@@ -1,181 +1,183 @@
 import { SelectionCommonPage } from './SelectionCommonPage';
 
-function SelectionTreePage ( frame, viewer, container, fileSelector ) {
+class SelectionTreePage extends SelectionCommonPage {
 
-	SelectionCommonPage.call( this, frame, viewer, container, fileSelector );
+	constructor ( frame, viewer, container, fileSelector ) {
 
-	const self = this;
-	const domTop = self.displaySectionCommon( this.currentTop );
+		super( frame, viewer, container, fileSelector );
 
-	var hightlitElement = null;
-	var lastHighlitScroll = 0;
+		const self = this;
+		const domTop = self.displaySectionCommon( this.currentTop );
 
-	this.appendChild( domTop );
+		var hightlitElement = null;
+		var lastHighlitScroll = 0;
 
-	var redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
+		this.appendChild( domTop );
 
-	this.handleNext = function ( target, node ) {
+		var redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
 
-		if ( node !== undefined && node !== self.surveyTree ) {
+		this.handleNext = function ( target, node ) {
 
-			const li = target.parentNode;
+			if ( node !== undefined && node !== self.surveyTree ) {
 
-			if ( target.classList.contains( 'open' ) ) {
+				const li = target.parentNode;
 
-				li.removeChild( li.lastElementChild );
-				target.classList.remove( 'open' );
+				if ( target.classList.contains( 'open' ) ) {
 
-			} else {
+					li.removeChild( li.lastElementChild );
+					target.classList.remove( 'open' );
 
-				const ul = self.displaySectionCommon( node );
-				li.appendChild( ul );
-				target.classList.add( 'open' );
+				} else {
 
-				return ul;
+					const ul = self.displaySectionCommon( node );
+					li.appendChild( ul );
+					target.classList.add( 'open' );
 
-			}
-
-		} else if ( target.id === 'ui-path' ) {
-
-			viewer.section = self.currentTop;
-
-		}
-
-	};
-
-	this.handleBack = function () {};
-
-	viewer.addEventListener( 'select', _selectNode );
-
-	this._dispose = function () {
-
-		viewer.removeEventListener( 'select', _selectNode );
-
-	};
-
-	return this;
-
-	function _selectNode ( event ) {
-
-		if ( ! self.isOntop) return;
-
-		// traverse DOM to find existing tree elements and add required
-		// until selected node is visible and can be highlighted
-
-		const selectedNode = event.node;
-
-		if ( selectedNode === null  ) {
-
-			_clearHighlitElement();
-			return;
-
-		}
-
-		// get list of tree nodes from selectedNode to root - 1
-
-		const path = [];
-		var node = selectedNode;
-
-		do {
-			path.push( node );
-			node = node.parent;
-		} while ( node.id !== 0 );
-
-		// search dom tree for list Element <LI> mapped to selected node
-
-		var topElement = domTop; // start from top of dom tree
-		var children = topElement.childNodes;
-
-		node = path.pop();
-
-		while ( node !== undefined ) {
-
-			let i = 0;
-			let listElement;
-
-			// find matching child
-			for ( i = 0; i < children.length; i++ ) {
-
-				listElement = children[ i ];
-				if ( self.nodes.get( listElement ) == node ) break;
-
-			}
-
-			if ( i == children.length ) break;
-
-			if ( node === selectedNode ) {
-
-				_setHighlight( listElement );
-				break;
-
-			} else {
-
-				let nextTopElement = listElement.lastElementChild;
-
-				// expand tree if not already visible
-				if ( nextTopElement.tagName === 'DIV' ) {
-
-					nextTopElement = self.handleNext( nextTopElement, node );
+					return ul;
 
 				}
 
-				node = path.pop();
-				children = nextTopElement.childNodes;
-				topElement = nextTopElement;
+			} else if ( target.id === 'ui-path' ) {
+
+				viewer.section = self.currentTop;
+
+			}
+
+		};
+
+		this.handleBack = function () {};
+
+		viewer.addEventListener( 'select', _selectNode );
+
+		this._dispose = function () {
+
+			viewer.removeEventListener( 'select', _selectNode );
+
+		};
+
+		return;
+
+		function _selectNode ( event ) {
+
+			if ( ! self.isOntop) return;
+
+			// traverse DOM to find existing tree elements and add required
+			// until selected node is visible and can be highlighted
+
+			const selectedNode = event.node;
+
+			if ( selectedNode === null  ) {
+
+				_clearHighlitElement();
+				return;
+
+			}
+
+			// get list of tree nodes from selectedNode to root - 1
+
+			const path = [];
+			var node = selectedNode;
+
+			do {
+				path.push( node );
+				node = node.parent;
+			} while ( node.id !== 0 );
+
+			// search dom tree for list Element <LI> mapped to selected node
+
+			var topElement = domTop; // start from top of dom tree
+			var children = topElement.childNodes;
+
+			node = path.pop();
+
+			while ( node !== undefined ) {
+
+				let i = 0;
+				let listElement;
+
+				// find matching child
+				for ( i = 0; i < children.length; i++ ) {
+
+					listElement = children[ i ];
+					if ( self.nodes.get( listElement ) == node ) break;
+
+				}
+
+				if ( i == children.length ) break;
+
+				if ( node === selectedNode ) {
+
+					_setHighlight( listElement );
+					break;
+
+				} else {
+
+					let nextTopElement = listElement.lastElementChild;
+
+					// expand tree if not already visible
+					if ( nextTopElement.tagName === 'DIV' ) {
+
+						nextTopElement = self.handleNext( nextTopElement, node );
+
+					}
+
+					node = path.pop();
+					children = nextTopElement.childNodes;
+					topElement = nextTopElement;
+
+				}
 
 			}
 
 		}
 
-	}
+		function _setHighlight( element ) {
 
-	function _setHighlight( element ) {
+			lastHighlitScroll = 0;
+			self.frame.frame.addEventListener( 'scroll', _onScroll );
 
-		lastHighlitScroll = 0;
-		self.frame.frame.addEventListener( 'scroll', _onScroll );
+			element.classList.add( 'highlight' );
+			element.scrollIntoView( { behavior: 'smooth', block: 'center' } );
 
-		element.classList.add( 'highlight' );
-		element.scrollIntoView( { behavior: 'smooth', block: 'center' } );
-
-		if ( hightlitElement !== null ) _clearHighlight();
-		hightlitElement = element;
-
-	}
-
-	function _clearHighlitElement () {
-
-		self.frame.frame.removeEventListener( 'scroll', _onScroll );
-
-		if ( lastHighlitScroll > performance.now() - 1000 ) {
-
-			setTimeout( _clearHighlight, 1000 );
-
-		} else {
-
-			_clearHighlight();
+			if ( hightlitElement !== null ) _clearHighlight();
+			hightlitElement = element;
 
 		}
 
-	}
+		function _clearHighlitElement () {
 
-	function _clearHighlight () {
+			self.frame.frame.removeEventListener( 'scroll', _onScroll );
 
-		if ( hightlitElement == null ) return;
+			if ( lastHighlitScroll > performance.now() - 1000 ) {
 
-		hightlitElement.classList.remove( 'highlight' );
-		hightlitElement = null;
-		lastHighlitScroll = 0;
+				setTimeout( _clearHighlight, 1000 );
 
-	}
+			} else {
 
-	function _onScroll( event ) {
+				_clearHighlight();
 
-		lastHighlitScroll = event.timeStamp;
+			}
+
+		}
+
+		function _clearHighlight () {
+
+			if ( hightlitElement == null ) return;
+
+			hightlitElement.classList.remove( 'highlight' );
+			hightlitElement = null;
+			lastHighlitScroll = 0;
+
+		}
+
+		function _onScroll( event ) {
+
+			lastHighlitScroll = event.timeStamp;
+
+		}
 
 	}
 
 }
-
-SelectionTreePage.prototype = Object.create( SelectionCommonPage.prototype );
 
 export { SelectionTreePage };

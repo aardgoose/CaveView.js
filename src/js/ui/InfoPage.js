@@ -1,36 +1,38 @@
 import { VERSION, LEG_CAVE } from '../core/constants';
 import { Page } from './Page';
 
-function InfoPage ( frame, viewer, fileSelector ) {
+class InfoPage extends Page {
 
-	Page.call( this, 'icon_info', 'info' );
+	constructor ( frame, viewer, fileSelector ) {
 
-	frame.addPage( this );
+		super( 'icon_info', 'info' );
 
-	this.addHeader( 'header' );
+		frame.addPage( this );
 
-	this.addHeader( 'stats.header' );
+		this.addHeader( 'header' );
 
-	this.addText( 'file: ' + fileSelector.file );
+		this.addHeader( 'stats.header' );
 
-	const stats = viewer.getLegStats( LEG_CAVE );
+		this.addText( 'file: ' + fileSelector.file );
 
-	this.addLine( this.i18n( 'stats.legs' ) + ': ' + stats.legCount );
-	this.addLine( this.i18n( 'stats.totalLength' ) + ': ' + stats.legLength.toFixed( 2 ) + '\u202fm' );
-	this.addLine( this.i18n( 'stats.minLength' ) + ': ' + stats.minLegLength.toFixed( 2 ) + '\u202fm' );
-	this.addLine( this.i18n( 'stats.maxLength' ) + ': ' + stats.maxLegLength.toFixed( 2 ) + '\u202fm' );
+		const stats = viewer.getLegStats( LEG_CAVE );
 
-	this.addHeader( 'CaveView v' + VERSION + '.' );
+		this.addLine( this.i18n( 'stats.legs' ) + ': ' + stats.legCount );
+		this.addLine( this.i18n( 'stats.totalLength' ) + ': ' + stats.legLength.toFixed( 2 ) + '\u202fm' );
+		this.addLine( this.i18n( 'stats.minLength' ) + ': ' + stats.minLegLength.toFixed( 2 ) + '\u202fm' );
+		this.addLine( this.i18n( 'stats.maxLength' ) + ': ' + stats.maxLegLength.toFixed( 2 ) + '\u202fm' );
 
-	this.addLogo();
-	this.addText( 'A WebGL 3d cave viewer for Survex (.3d), Therion (.lox) and Compass (.plt) models.' );
+		this.addHeader( 'CaveView v' + VERSION + '.' );
 
-	this.addText( 'For more information see: ' );
-	this.addLink( 'https://aardgoose.github.io/CaveView.js/', 'CaveView on GitHub' );
-	this.addText( '© Angus Sawyer, 2021' );
+		this.addLogo();
+		this.addText( 'A WebGL 3d cave viewer for Survex (.3d), Therion (.lox) and Compass (.plt) models.' );
+
+		this.addText( 'For more information see: ' );
+		this.addLink( 'https://aardgoose.github.io/CaveView.js/', 'CaveView on GitHub' );
+		this.addText( '© Angus Sawyer, 2021' );
+
+	}
 
 }
-
-InfoPage.prototype = Object.create( Page.prototype );
 
 export { InfoPage };

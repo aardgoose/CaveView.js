@@ -1,77 +1,79 @@
 import { SelectionCommonPage } from './SelectionCommonPage';
 
-function SelectionPage ( frame, viewer, container, fileSelector ) {
+class SelectionPage extends SelectionCommonPage {
 
-	SelectionCommonPage.call( this, frame, viewer, container, fileSelector );
+	constructor ( frame, viewer, container, fileSelector ) {
 
-	const self = this;
-	var depth = 0;
+		super( frame, viewer, container, fileSelector );
 
-	this.addSlide( _displaySection( self.currentTop ), depth );
+		const self = this;
+		var depth = 0;
 
-	var redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
+		this.addSlide( _displaySection( self.currentTop ), depth );
 
-	this.handleNext = function ( target, node ) {
+		var redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
 
-		if ( node !== undefined && node !== self.surveyTree ) {
+		this.handleNext = function ( target, node ) {
 
-			self.replaceSlide( _displaySection( node ), ++depth );
+			if ( node !== undefined && node !== self.surveyTree ) {
 
-		} else if ( target.id === 'ui-path' ) {
+				self.replaceSlide( _displaySection( node ), ++depth );
 
-			viewer.section = self.currentTop;
+			} else if ( target.id === 'ui-path' ) {
+
+				viewer.section = self.currentTop;
+
+			}
+
+		};
+
+		this.handleBack = function ( target ) {
+
+			if ( target.id === 'surveyBack' ) {
+
+				if ( self.currentTop === self.surveyTree ) return;
+
+				self.replaceSlide( _displaySection( self.currentTop.parent ), --depth );
+
+			}
+
+		};
+
+		return this;
+
+		function _displaySection ( top ) {
+
+			self.nodes = new WeakMap();
+
+			let tmp;
+
+			while ( tmp = self.titleBar.firstChild ) self.titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
+
+			if ( top === self.surveyTree ) {
+
+				self.titleBar.textContent = ( top.name === '' ) ? '[model]' : top.name;
+				self.nodes.set( self.titleBar, top );
+
+			} else {
+
+				const span = document.createElement( 'span' );
+
+				span.id ='surveyBack';
+				span.textContent = ' \u25C4';
+
+				self.nodes.set( span, top );
+
+				self.titleBar.appendChild( span );
+				self.titleBar.appendChild( document.createTextNode( ' ' + top.name ) );
+
+			}
+
+			return self.displaySectionCommon( top );
 
 		}
-
-	};
-
-	this.handleBack = function ( target ) {
-
-		if ( target.id === 'surveyBack' ) {
-
-			if ( self.currentTop === self.surveyTree ) return;
-
-			self.replaceSlide( _displaySection( self.currentTop.parent ), --depth );
-
-		}
-
-	};
-
-	return this;
-
-	function _displaySection ( top ) {
-
-		self.nodes = new WeakMap();
-
-		let tmp;
-
-		while ( tmp = self.titleBar.firstChild ) self.titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
-
-		if ( top === self.surveyTree ) {
-
-			self.titleBar.textContent = ( top.name === '' ) ? '[model]' : top.name;
-			self.nodes.set( self.titleBar, top );
-
-		} else {
-
-			const span = document.createElement( 'span' );
-
-			span.id ='surveyBack';
-			span.textContent = ' \u25C4';
-
-			self.nodes.set( span, top );
-
-			self.titleBar.appendChild( span );
-			self.titleBar.appendChild( document.createTextNode( ' ' + top.name ) );
-
-		}
-
-		return self.displaySectionCommon( top );
 
 	}
 
 }
-
-SelectionPage.prototype = Object.create( SelectionCommonPage.prototype );
 
 export { SelectionPage };

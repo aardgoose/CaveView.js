@@ -12,103 +12,105 @@ const mode = {
 	'modes.trace': MOUSE_MODE_TRACE_EDIT
 };
 
-function EditPage ( frame, viewer, fileSelector ) {
+class EditPage extends Page {
 
-	Page.call( this, 'icon_route', 'edit', _onTop, _onLeave );
+	constructor ( frame, viewer, fileSelector ) {
 
-	frame.addPage( this );
+		super( 'icon_route', 'edit', _onTop, _onLeave );
 
-	const self = this;
-	const intro = [];
+		frame.addPage( this );
 
-	var initialState;
+		const self = this;
+		const intro = [];
 
-	var routePanel = null;
-	var tracePanel = null;
-	// var entrancePanel = null;
+		var initialState;
 
-	this.addSelect( 'mode', mode, viewer, 'editMode' );
+		var routePanel = null;
+		var tracePanel = null;
+		// var entrancePanel = null;
 
-	intro.push( this.addText( this.i18n( 'intro' ) ) );
+		this.addSelect( 'mode', mode, viewer, 'editMode' );
 
-	this.onChange = _onChange;
+		intro.push( this.addText( this.i18n( 'intro' ) ) );
 
-	return this;
+		this.onChange = _onChange;
 
-	function _onChange ( event ) {
+		return;
 
-		// change UI dynamicly to only display appropriate controls
-		if ( event.name === 'editMode' ) {
+		function _onChange ( event ) {
 
-			const newState = Object.assign( {}, initialState );
+			// change UI dynamicly to only display appropriate controls
+			if ( event.name === 'editMode' ) {
 
-			switch ( viewer.editMode ) {
+				const newState = Object.assign( {}, initialState );
 
-			case MOUSE_MODE_TRACE_EDIT:
+				switch ( viewer.editMode ) {
 
-				if ( tracePanel === null ) tracePanel = new TracePanel( self, viewer );
+				case MOUSE_MODE_TRACE_EDIT:
 
-				newState.traces = true;
+					if ( tracePanel === null ) tracePanel = new TracePanel( self, viewer );
 
-				break;
+					newState.traces = true;
 
-			case MOUSE_MODE_ROUTE_EDIT:
+					break;
 
-				if ( routePanel === null ) routePanel = new RoutePanel( self, viewer, fileSelector );
+				case MOUSE_MODE_ROUTE_EDIT:
 
-				newState.shadingMode = SHADING_PATH;
+					if ( routePanel === null ) routePanel = new RoutePanel( self, viewer, fileSelector );
 
-				break;
-			/*
-			case MOUSE_MODE_ENTRANCES:
+					newState.shadingMode = SHADING_PATH;
 
-				if ( entrancePanel === null ) entrancePanel = new EntrancePanel( self, viewer );
+					break;
+				/*
+				case MOUSE_MODE_ENTRANCES:
 
-				newState.entrances = true;
+					if ( entrancePanel === null ) entrancePanel = new EntrancePanel( self, viewer );
 
-				break;
+					newState.entrances = true;
 
-			*/
+					break;
+
+				*/
+
+				}
+
+				viewer.setView( newState );
+
+				frame.setControlsVisibility( intro, viewer.editMode === MOUSE_MODE_NORMAL );
+
+				// if ( entrancePanel !== null ) entrancePanel.setVisibility( viewer.editMode === MOUSE_MODE_ENTRANCES );
+				if ( routePanel !== null ) routePanel.setVisibility( viewer.editMode === MOUSE_MODE_ROUTE_EDIT );
+				if ( tracePanel !== null ) tracePanel.setVisibility( viewer.editMode === MOUSE_MODE_TRACE_EDIT );
 
 			}
 
-			viewer.setView( newState );
+		}
 
-			frame.setControlsVisibility( intro, viewer.editMode === MOUSE_MODE_NORMAL );
+		function _onTop () {
 
-			// if ( entrancePanel !== null ) entrancePanel.setVisibility( viewer.editMode === MOUSE_MODE_ENTRANCES );
-			if ( routePanel !== null ) routePanel.setVisibility( viewer.editMode === MOUSE_MODE_ROUTE_EDIT );
-			if ( tracePanel !== null ) tracePanel.setVisibility( viewer.editMode === MOUSE_MODE_TRACE_EDIT );
+			// save initial view settings
+
+			initialState = {
+				shadingMode: viewer.shadingMode,
+				// entrances: viewer.entrances,
+				stations: viewer.stations,
+				traces: viewer.traces
+			};
+
+			_onChange( { type: 'change', name: 'editMode' } );
+
+		}
+
+		function _onLeave () {
+
+			// restore inital view settings
+
+			viewer.setView( initialState );
 
 		}
 
 	}
 
-	function _onTop () {
-
-		// save initial view settings
-
-		initialState = {
-			shadingMode: viewer.shadingMode,
-			// entrances: viewer.entrances,
-			stations: viewer.stations,
-			traces: viewer.traces
-		};
-
-		_onChange( { type: 'change', name: 'editMode' } );
-
-	}
-
-	function _onLeave () {
-
-		// restore inital view settings
-
-		viewer.setView( initialState );
-
-	}
-
 }
-
-EditPage.prototype = Object.create( Page.prototype );
 
 export { EditPage };

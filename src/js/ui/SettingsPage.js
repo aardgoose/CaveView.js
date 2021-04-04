@@ -34,135 +34,137 @@ const cameraModes = {
 	'view.camera.anaglyph':     CAMERA_ANAGLYPH
 };
 
-function SettingsPage ( frame, viewer, fileSelector ) {
+class SettingsPage extends Page {
 
-	Page.call( this, 'icon_settings', 'settings' );
+	constructor ( frame, viewer, fileSelector ) {
 
-	frame.addPage( this );
+		super( 'icon_settings', 'settings' );
 
-	const controls = [];
-	const routeControls = [];
-	const cfg = viewer.ctx.cfg;
+		frame.addPage( this );
 
-	const legShadingModesActive = Object.assign( {}, legShadingModes );
+		const controls = [];
+		const routeControls = [];
+		const cfg = viewer.ctx.cfg;
 
-	const routeNames = viewer.routeNames;
+		const legShadingModesActive = Object.assign( {}, legShadingModes );
 
-	if ( viewer.hasRealTerrain ) {
+		const routeNames = viewer.routeNames;
 
-		legShadingModesActive[ 'shading.depth' ] = SHADING_DEPTH;
-		legShadingModesActive[ 'shading.depth_cursor' ] = SHADING_DEPTH_CURSOR;
+		if ( viewer.hasRealTerrain ) {
 
-	}
-
-	this.addHeader( 'survey.header' );
-
-	if ( fileSelector.fileCount > 1 ) {
-
-		this.addFileSelect( 'survey.caption', fileSelector.fileList, fileSelector, 'file' );
-
-	} else {
-
-		this.addLine( fileSelector.selectedFile );
-
-	}
-
-	const cvw = this.addCollapsingHeader( 'view.header' );
-
-	cvw.appendChild( this.addSelect( 'view.camera.caption', cameraModes, viewer, 'cameraType' ) );
-
-	//	controls.push( this.addRange( 'view.eye_separation', viewer, 'eyeSeparation' ) );
-
-	cvw.appendChild( this.addSelect( 'view.viewpoints.caption', cameraViews, viewer, 'view' ) );
-
-	cvw.appendChild( this.addRange( 'view.vertical_scaling', viewer, 'zScale' ) );
-
-	cvw.appendChild( this.addCheckbox( 'view.autorotate', viewer, 'autoRotate' ) );
-
-	cvw.appendChild( this.addRange( 'view.rotation_speed', viewer, 'autoRotateSpeed' ) );
-
-	const sh = this.addCollapsingHeader( 'shading.header' );
-
-	sh.appendChild( this.addSelect( 'shading.caption', legShadingModesActive, viewer, 'shadingMode' ) );
-
-	if ( routeNames.length !== 0 ) {
-
-		if ( ! viewer.route ) viewer.route = routeNames[ 0 ];
-
-		routeControls.push( this.addSelect( 'selected_route', routeNames, viewer, 'route' ) );
-
-	} else {
-
-		routeControls.push( this.addText( this.i18n( 'no_routes') ) );
-
-	}
-
-	const cv = this.addCollapsingHeader( 'visibility.header' );
-
-	if ( viewer.hasLegs            ) cv.appendChild( this.addCheckbox( 'visibility.legs', viewer, 'legs' ) );
-	if ( viewer.hasEntrances       ) cv.appendChild( this.addCheckbox( 'visibility.entrances', viewer, 'entrances' ) );
-	if ( viewer.hasEntrances       ) cv.appendChild( this.addCheckbox( 'visibility.entrance_dots', viewer, 'entrance_dots' ) );
-	if ( viewer.hasStations        ) cv.appendChild( this.addCheckbox( 'visibility.stations', viewer, 'stations' ) );
-	if ( viewer.hasStationLabels   ) cv.appendChild( this.addCheckbox( 'visibility.labels', viewer, 'stationLabels' ) );
-	if ( viewer.hasStationComments ) cv.appendChild( this.addCheckbox( 'visibility.comments', viewer, 'stationComments' ) );
-	if ( viewer.hasSplays          ) cv.appendChild( this.addCheckbox( 'visibility.splays', viewer, 'splays' ) );
-	if ( viewer.hasWalls           ) cv.appendChild( this.addCheckbox( 'visibility.walls', viewer, 'walls' ) );
-	if ( viewer.hasScraps          ) cv.appendChild( this.addCheckbox( 'visibility.scraps', viewer, 'scraps' ) );
-	if ( viewer.hasTraces          ) cv.appendChild( this.addCheckbox( 'visibility.traces', viewer, 'traces' ) );
-
-	cv.appendChild( this.addCheckbox( 'visibility.fog', viewer, 'fog' ) );
-	cv.appendChild( this.addCheckbox( 'visibility.hud', viewer, 'HUD' ) );
-	cv.appendChild( this.addCheckbox( 'visibility.box', viewer, 'box' ) );
-	cv.appendChild( this.addCheckbox( 'visibility.grid', viewer, 'grid' ) );
-
-	if ( viewer.hasWarnings ) cv.appendChild( this.addCheckbox( 'visibility.warnings', viewer, 'warnings' ) );
-
-	const ch = this.addCollapsingHeader( 'controls.header' );
-
-	ch.appendChild( this.addCheckbox( 'controls.svx_control_mode', viewer, 'svxControlMode' ) );
-	ch.appendChild( this.addCheckbox( 'controls.zoom_to_cursor', viewer, 'zoomToCursor' ) );
-	ch.appendChild( this.addCheckbox( 'ui.selection_tree', cfg, 'selectionTree' ) );
-
-	const cc = this.addCollapsingHeader( 'colors.header' );
-
-	cc.appendChild( this.addColor( 'colors.background_color', 'background' ) );
-	cc.appendChild( this.addColor( 'colors.entrance_text', 'stations.entrances.text' ) );
-	cc.appendChild( this.addColor( 'colors.entrance_background', 'stations.entrances.background' ) );
-	cc.appendChild( this.addColor( 'colors.entrance_marker', 'stations.entrances.marker' ) );
-	cc.appendChild( this.addColor( 'colors.bounding_box', 'box.bounding' ) );
-	cc.appendChild( this.addColor( 'colors.legs_fixed', 'shading.single' ) );
-	cc.appendChild( this.addColor( 'colors.surface_fixed', 'shading.surface' ) );
-	cc.appendChild( this.addColor( 'colors.hud_text', 'hud.text' ) );
-	cc.appendChild( this.addButton( 'colors.defaults', cfg.resetColors.bind( cfg ) ) );
-
-	if ( viewer.svxControlMode ) ch.appendChild( this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' ) );
-
-	_onChange( { name: 'cameraType' } );
-	_onChange( { name: 'shadingMode' } );
-
-	this.onChange = _onChange;
-
-	return this;
-
-	function _onChange ( event ) {
-
-		if ( event.name === 'shadingMode' ) {
-
-			frame.setControlsVisibility( routeControls, ( viewer.shadingMode === SHADING_PATH ) );
+			legShadingModesActive[ 'shading.depth' ] = SHADING_DEPTH;
+			legShadingModesActive[ 'shading.depth_cursor' ] = SHADING_DEPTH_CURSOR;
 
 		}
 
-		// change UI dynamicly to only display useful controls
-		if ( event.name === 'cameraType' ) {
+		this.addHeader( 'survey.header' );
 
-			frame.setControlsVisibility( controls, ( viewer.cameraType === CAMERA_ANAGLYPH ) );
+		if ( fileSelector.fileCount > 1 ) {
+
+			this.addFileSelect( 'survey.caption', fileSelector.fileList, fileSelector, 'file' );
+
+		} else {
+
+			this.addLine( fileSelector.selectedFile );
+
+		}
+
+		const cvw = this.addCollapsingHeader( 'view.header' );
+
+		cvw.appendChild( this.addSelect( 'view.camera.caption', cameraModes, viewer, 'cameraType' ) );
+
+		//	controls.push( this.addRange( 'view.eye_separation', viewer, 'eyeSeparation' ) );
+
+		cvw.appendChild( this.addSelect( 'view.viewpoints.caption', cameraViews, viewer, 'view' ) );
+
+		cvw.appendChild( this.addRange( 'view.vertical_scaling', viewer, 'zScale' ) );
+
+		cvw.appendChild( this.addCheckbox( 'view.autorotate', viewer, 'autoRotate' ) );
+
+		cvw.appendChild( this.addRange( 'view.rotation_speed', viewer, 'autoRotateSpeed' ) );
+
+		const sh = this.addCollapsingHeader( 'shading.header' );
+
+		sh.appendChild( this.addSelect( 'shading.caption', legShadingModesActive, viewer, 'shadingMode' ) );
+
+		if ( routeNames.length !== 0 ) {
+
+			if ( ! viewer.route ) viewer.route = routeNames[ 0 ];
+
+			routeControls.push( this.addSelect( 'selected_route', routeNames, viewer, 'route' ) );
+
+		} else {
+
+			routeControls.push( this.addText( this.i18n( 'no_routes') ) );
+
+		}
+
+		const cv = this.addCollapsingHeader( 'visibility.header' );
+
+		if ( viewer.hasLegs            ) cv.appendChild( this.addCheckbox( 'visibility.legs', viewer, 'legs' ) );
+		if ( viewer.hasEntrances       ) cv.appendChild( this.addCheckbox( 'visibility.entrances', viewer, 'entrances' ) );
+		if ( viewer.hasEntrances       ) cv.appendChild( this.addCheckbox( 'visibility.entrance_dots', viewer, 'entrance_dots' ) );
+		if ( viewer.hasStations        ) cv.appendChild( this.addCheckbox( 'visibility.stations', viewer, 'stations' ) );
+		if ( viewer.hasStationLabels   ) cv.appendChild( this.addCheckbox( 'visibility.labels', viewer, 'stationLabels' ) );
+		if ( viewer.hasStationComments ) cv.appendChild( this.addCheckbox( 'visibility.comments', viewer, 'stationComments' ) );
+		if ( viewer.hasSplays          ) cv.appendChild( this.addCheckbox( 'visibility.splays', viewer, 'splays' ) );
+		if ( viewer.hasWalls           ) cv.appendChild( this.addCheckbox( 'visibility.walls', viewer, 'walls' ) );
+		if ( viewer.hasScraps          ) cv.appendChild( this.addCheckbox( 'visibility.scraps', viewer, 'scraps' ) );
+		if ( viewer.hasTraces          ) cv.appendChild( this.addCheckbox( 'visibility.traces', viewer, 'traces' ) );
+
+		cv.appendChild( this.addCheckbox( 'visibility.fog', viewer, 'fog' ) );
+		cv.appendChild( this.addCheckbox( 'visibility.hud', viewer, 'HUD' ) );
+		cv.appendChild( this.addCheckbox( 'visibility.box', viewer, 'box' ) );
+		cv.appendChild( this.addCheckbox( 'visibility.grid', viewer, 'grid' ) );
+
+		if ( viewer.hasWarnings ) cv.appendChild( this.addCheckbox( 'visibility.warnings', viewer, 'warnings' ) );
+
+		const ch = this.addCollapsingHeader( 'controls.header' );
+
+		ch.appendChild( this.addCheckbox( 'controls.svx_control_mode', viewer, 'svxControlMode' ) );
+		ch.appendChild( this.addCheckbox( 'controls.zoom_to_cursor', viewer, 'zoomToCursor' ) );
+		ch.appendChild( this.addCheckbox( 'ui.selection_tree', cfg, 'selectionTree' ) );
+
+		const cc = this.addCollapsingHeader( 'colors.header' );
+
+		cc.appendChild( this.addColor( 'colors.background_color', 'background' ) );
+		cc.appendChild( this.addColor( 'colors.entrance_text', 'stations.entrances.text' ) );
+		cc.appendChild( this.addColor( 'colors.entrance_background', 'stations.entrances.background' ) );
+		cc.appendChild( this.addColor( 'colors.entrance_marker', 'stations.entrances.marker' ) );
+		cc.appendChild( this.addColor( 'colors.bounding_box', 'box.bounding' ) );
+		cc.appendChild( this.addColor( 'colors.legs_fixed', 'shading.single' ) );
+		cc.appendChild( this.addColor( 'colors.surface_fixed', 'shading.surface' ) );
+		cc.appendChild( this.addColor( 'colors.hud_text', 'hud.text' ) );
+		cc.appendChild( this.addButton( 'colors.defaults', cfg.resetColors.bind( cfg ) ) );
+
+		if ( viewer.svxControlMode ) ch.appendChild( this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' ) );
+
+		_onChange( { name: 'cameraType' } );
+		_onChange( { name: 'shadingMode' } );
+
+		this.onChange = _onChange;
+
+		return this;
+
+		function _onChange ( event ) {
+
+			if ( event.name === 'shadingMode' ) {
+
+				frame.setControlsVisibility( routeControls, ( viewer.shadingMode === SHADING_PATH ) );
+
+			}
+
+			// change UI dynamicly to only display useful controls
+			if ( event.name === 'cameraType' ) {
+
+				frame.setControlsVisibility( controls, ( viewer.cameraType === CAMERA_ANAGLYPH ) );
+
+			}
 
 		}
 
 	}
 
 }
-
-SettingsPage.prototype = Object.create( Page.prototype );
 
 export { SettingsPage };

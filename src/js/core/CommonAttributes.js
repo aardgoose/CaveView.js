@@ -11,7 +11,6 @@ const positionAttribute = new Float32BufferAttribute( [
 	1, 0, 0
 ], 3 );
 
-
 const CommonAttributes = {
 	index: indexAttribute,
 	position: positionAttribute

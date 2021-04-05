@@ -224,19 +224,16 @@ Legs.prototype.hide = function ( mode ) {
 
 };
 
+class ThinLegs extends LineSegments {
 
-function ThinLegs ( ctx ) {
+	constructor ( ctx ) {
 
-	const geometry = new BufferGeometry();
+		super( new BufferGeometry(), ctx.materials.getUnselectedMaterial() );
+		this.type = 'CV.ThinLegs';
 
-	LineSegments.call( this, geometry, ctx.materials.getUnselectedMaterial() );
-	this.type = 'CV.ThinLegs';
-
-	return this;
+	}
 
 }
-
-ThinLegs.prototype = Object.create( LineSegments.prototype );
 
 ThinLegs.prototype.addLegs = function ( positions, colors ) {
 
@@ -349,20 +346,20 @@ ThinLegs.prototype.hide = function ( legs, mode ) {
 
 };
 
-function FatLegs ( ctx ) {
+class FatLegs extends LineSegments2 {
 
-	const geometry = new LineSegmentsGeometry();
+	constructor ( ctx ) {
 
-	LineSegments2.call( this, geometry, ctx.materials.getLine2Material( 'basic' ) );
+		const geometry = new LineSegmentsGeometry();
 
-	this.scale.set( 1, 1, 1 );
-	this.type = 'CV.FatLegs';
+		super( geometry, ctx.materials.getLine2Material( 'basic' ) );
 
-	return this;
+		this.scale.set( 1, 1, 1 );
+		this.type = 'CV.FatLegs';
+
+	}
 
 }
-
-FatLegs.prototype = Object.create( LineSegments2.prototype );
 
 FatLegs.prototype.addLegs = function ( positions, colors ) {
 

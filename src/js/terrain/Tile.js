@@ -15,40 +15,40 @@ const __d = new Vector3();
 const __t1 = new Triangle( __a, __b, __c );
 const __t2 = new Triangle( __a, __c, __d );
 
-function Tile ( ctx, x, y, zoom, tileSpec ) {
+class Tile extends Mesh {
 
-	this.x = x;
-	this.y = y;
+	constructor ( ctx, x, y, zoom, tileSpec ) {
 
-	this.zoom    = zoom;
-	this.tileSet = tileSpec.tileSet;
-	this.clip    = tileSpec.clip;
-	this.clippedFraction = tileSpec.clippedFraction;
+		super( new BufferGeometry(), ctx.materials.getSurfaceMaterial() );
 
-	this.canZoom  = ( zoom < tileSpec.tileSet.overlayMaxZoom );
-	this.evicted  = false;
-	this.replaced = false;
-	this.evictionCount = 0;
-	this.lastFrame = 0;
-	this.childrenLoading = 0;
-	this.childErrors = 0;
-	this.area = 0;
+		this.x = x;
+		this.y = y;
 
-	this.boundingBox = null;
-	this.worldBoundingBox = null;
+		this.zoom    = zoom;
+		this.tileSet = tileSpec.tileSet;
+		this.clip    = tileSpec.clip;
+		this.clippedFraction = tileSpec.clippedFraction;
 
-	Mesh.call( this, new BufferGeometry(), ctx.materials.getSurfaceMaterial() );
+		this.canZoom  = ( zoom < tileSpec.tileSet.overlayMaxZoom );
+		this.evicted  = false;
+		this.replaced = false;
+		this.evictionCount = 0;
+		this.lastFrame = 0;
+		this.childrenLoading = 0;
+		this.childErrors = 0;
+		this.area = 0;
 
-	this.type = 'Tile';
-	this.isTile = false;
+		this.boundingBox = null;
+		this.worldBoundingBox = null;
 
-	return this;
+		this.type = 'Tile';
+		this.isTile = false;
+
+	}
 
 }
 
 Tile.liveTiles = 0;
-
-Tile.prototype = Object.create( Mesh.prototype );
 
 Tile.prototype.onBeforeRender = function ( renderer ) {
 

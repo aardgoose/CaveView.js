@@ -7,72 +7,76 @@ import  { ExtendedPointsMaterial } from '../materials/ExtendedPointsMaterial';
 
 import { ColourCache } from '../core/ColourCache';
 
-function DirectionGlobe ( survey ) {
+class DirectionGlobe extends Points {
 
-	const geometry = new Geometry();
-	const bufferGeometry = new BufferGeometry();
+	constructor ( survey ) {
 
-	Points.call( this, bufferGeometry, new ExtendedPointsMaterial() );
+		const geometry = new Geometry();
+		const bufferGeometry = new BufferGeometry();
 
-	this.type = 'DirectionGlobe';
+		super( bufferGeometry, new ExtendedPointsMaterial() );
 
-	const self = this;
+		this.type = 'DirectionGlobe';
 
-	this.sphere = new Mesh( new SphereBufferGeometry( 39.9, 20, 20 ), new MeshBasicMaterial( { color: 0x000000 } ) );
+		const self = this;
 
-	this.add(  this.sphere );
+		this.sphere = new Mesh( new SphereBufferGeometry( 39.9, 20, 20 ), new MeshBasicMaterial( { color: 0x000000 } ) );
 
-	const stats = survey.getStats();
-	const vertices = survey.getLegs();
-	const l = vertices.length;
+		this.add(  this.sphere );
 
-	const colours = ColourCache.gradient;
-	const bias = colours.length - 1;
+		const stats = survey.getStats();
+		const vertices = survey.getLegs();
+		const l = vertices.length;
 
-	const pSize = [];
+		const colours = ColourCache.gradient;
+		const bias = colours.length - 1;
 
-	var i;
+		const pSize = [];
 
-	for ( i = 0; i < l; i += 2 ) {
+		var i;
 
-		const legVector = new Vector3().subVectors( vertices[ i ], vertices[ i + 1 ] );
+		for ( i = 0; i < l; i += 2 ) {
 
-		const rLength = ( legVector.length() - stats.minLegLength ) / stats.legLengthRange;
+			const legVector = new Vector3().subVectors( vertices[ i ], vertices[ i + 1 ] );
 
-		const c = Math.max( 0, 2 * ( 1 + Math.log(  rLength * 10 ) * Math.LOG10E ) );
+			const rLength = ( legVector.length() - stats.minLegLength ) / stats.legLengthRange;
 
-		pSize.push( c );
-		pSize.push( c );
+			const c = Math.max( 0, 2 * ( 1 + Math.log(  rLength * 10 ) * Math.LOG10E ) );
 
-		const color = colours[ Math.max( 0, Math.floor( bias * ( 1 + Math.log(  rLength * 10 ) * Math.LOG10E ) / 2 ) ) ];
+			pSize.push( c );
+			pSize.push( c );
 
-		legVector.setLength( 41 - rLength  );
+			const color = colours[ Math.max( 0, Math.floor( bias * ( 1 + Math.log(  rLength * 10 ) * Math.LOG10E ) / 2 ) ) ];
 
-		geometry.vertices.push( legVector.clone().negate() );
-		geometry.vertices.push( legVector );
+			legVector.setLength( 41 - rLength  );
 
-		geometry.colors.push( color );
-		geometry.colors.push( color );
+			geometry.vertices.push( legVector.clone().negate() );
+			geometry.vertices.push( legVector );
 
-	}
+			geometry.colors.push( color );
+			geometry.colors.push( color );
 
-	const positions = new Float32BufferAttribute( geometry.vertices.length * 3, 3 );
-	const colors = new Float32BufferAttribute( geometry.colors.length * 3, 3 );
+		}
 
-	bufferGeometry.setAttribute( 'pSize', new Float32BufferAttribute( pSize, 1 ) );
-	bufferGeometry.setAttribute( 'position', positions.copyVector3sArray( geometry.vertices ) );
-	bufferGeometry.setAttribute( 'color', colors.copyColorsArray( geometry.colors ) );
+		const positions = new Float32BufferAttribute( geometry.vertices.length * 3, 3 );
+		const colors = new Float32BufferAttribute( geometry.colors.length * 3, 3 );
 
-	survey.addEventListener( 'removed', _onSurveyRemoved );
+		bufferGeometry.setAttribute( 'pSize', new Float32BufferAttribute( pSize, 1 ) );
+		bufferGeometry.setAttribute( 'position', positions.copyVector3sArray( geometry.vertices ) );
+		bufferGeometry.setAttribute( 'color', colors.copyColorsArray( geometry.colors ) );
 
-	function _onSurveyRemoved( event ) {
+		survey.addEventListener( 'removed', _onSurveyRemoved );
 
-		const survey = event.target;
+		function _onSurveyRemoved( event ) {
 
-		survey.removeEventListener( 'removed', _onSurveyRemoved );
+			const survey = event.target;
 
-		self.geometry.dispose();
-		self.sphere.geometry.dispose();
+			survey.removeEventListener( 'removed', _onSurveyRemoved );
+
+			self.geometry.dispose();
+			self.sphere.geometry.dispose();
+
+		}
 
 	}
 

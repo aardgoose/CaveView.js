@@ -2,118 +2,120 @@ import { ClusterMarkers } from './ClusterMarkers';
 import { STATION_ENTRANCE, FEATURE_ENTRANCE_DOTS } from '../core/constants';
 import { Points, PointsMaterial, BufferGeometry, Float32BufferAttribute, IncrementStencilOp } from '../Three';
 
-function Entrances ( ctx, survey ) {
+class Entrances extends ClusterMarkers {
 
-	ClusterMarkers.call( this, ctx, survey.modelLimits, 4 );
+	constructor ( ctx, survey ) {
 
-	const self = this;
-	const surveyTree = survey.surveyTree;
-	const entrances = survey.metadata.entrances;
-	const vertices = [];
-	const stations = [];
+		super( ctx, survey.modelLimits, 4 );
 
-	const geometry = new BufferGeometry();
+		const self = this;
+		const surveyTree = survey.surveyTree;
+		const entrances = survey.metadata.entrances;
+		const vertices = [];
+		const stations = [];
 
-	const dotSize = ctx.cfg.themeValue( 'entrance_dot_size' );
+		const geometry = new BufferGeometry();
 
-	const material = new PointsMaterial( {
-		map: ctx.materials.textureCache.getTexture( 'disc-outlined' ),
-		opacity: 1.0,
-		alphaTest: 0.8,
-		sizeAttenuation: false,
-		transparent: true,
-		size: Math.max( dotSize, Math.floor( dotSize * ctx.container.clientWidth / 1000 ) ),
-		vertexColors: true
-	} );
+		const dotSize = ctx.cfg.themeValue( 'entrance_dot_size' );
 
-	material.stencilWrite = true;
-	material.stencilZPass = IncrementStencilOp;
+		const material = new PointsMaterial( {
+			map: ctx.materials.textureCache.getTexture( 'disc-outlined' ),
+			opacity: 1.0,
+			alphaTest: 0.8,
+			sizeAttenuation: false,
+			transparent: true,
+			size: Math.max( dotSize, Math.floor( dotSize * ctx.container.clientWidth / 1000 ) ),
+			vertexColors: true
+		} );
 
-	ctx.viewer.addEventListener( 'resized', ( e ) => {
+		material.stencilWrite = true;
+		material.stencilZPass = IncrementStencilOp;
 
-		material.size =  Math.max( dotSize, Math.floor( dotSize * e.width / 1000 ) );
+		ctx.viewer.addEventListener( 'resized', ( e ) => {
 
-	} );
+			material.size =  Math.max( dotSize, Math.floor( dotSize * e.width / 1000 ) );
 
-	this.entranceColor = ctx.cfg.themeColor( 'stations.entrances.marker' );
+		} );
 
-	const markers = new Points( geometry, material );
+		this.entranceColor = ctx.cfg.themeColor( 'stations.entrances.marker' );
 
-	markers.layers.set( FEATURE_ENTRANCE_DOTS );
+		const markers = new Points( geometry, material );
 
-	// remove common elements from station names if no alternatives available
+		markers.layers.set( FEATURE_ENTRANCE_DOTS );
 
-	var endNode = surveyTree;
+		// remove common elements from station names if no alternatives available
 
-	while ( endNode.children.length === 1 ) endNode = endNode.children [ 0 ];
+		var endNode = surveyTree;
 
-	// find entrances and add Markers
+		while ( endNode.children.length === 1 ) endNode = endNode.children [ 0 ];
 
-	surveyTree.traverse( _addEntrance );
+		// find entrances and add Markers
 
-	const l = vertices.length * 3;
+		surveyTree.traverse( _addEntrance );
 
-	if ( l > 0 ) {
+		const l = vertices.length * 3;
 
-		const positions = new Float32BufferAttribute( l, 3 );
-		const colors = new Float32BufferAttribute( l, 3 );
+		if ( l > 0 ) {
 
-		positions.copyVector3sArray( vertices );
+			const positions = new Float32BufferAttribute( l, 3 );
+			const colors = new Float32BufferAttribute( l, 3 );
 
-		geometry.setAttribute( 'position', positions );
-		geometry.setAttribute( 'color', colors );
+			positions.copyVector3sArray( vertices );
 
-	} else {
-
-		this.visible = false;
-
-	}
-
-	this.markers = markers;
-	this.stations = stations;
-	this.metadata = survey.metadata;
-
-	// set default colors - needs to be after markers property is set
-	this.setSelection( null );
-
-	this.addStatic( markers );
-
-	return this;
-
-	function _addEntrance( node ) {
-
-		if ( ! ( node.type & STATION_ENTRANCE ) ) return;
-
-		let name;
-
-		const entranceInfo = entrances[ node.getPath() ];
-
-		if ( entranceInfo !== undefined && entranceInfo.name !== undefined ) {
-
-			name = entranceInfo.name;
-
-		} else if ( node.comment !== undefined ) {
-
-			name = node.comment;
+			geometry.setAttribute( 'position', positions );
+			geometry.setAttribute( 'color', colors );
 
 		} else {
 
-			name = node.getPath( endNode );
+			this.visible = false;
 
 		}
 
-		vertices.push( node.p );
-		stations.push( node );
+		this.markers = markers;
+		this.stations = stations;
+		this.metadata = survey.metadata;
 
-		if ( name === '-skip' ) return;
+		// set default colors - needs to be after markers property is set
+		this.setSelection( null );
 
-		self.addMarker( node, ' ' + name + ' ' );
+		this.addStatic( markers );
+
+		return this;
+
+		function _addEntrance( node ) {
+
+			if ( ! ( node.type & STATION_ENTRANCE ) ) return;
+
+			let name;
+
+			const entranceInfo = entrances[ node.getPath() ];
+
+			if ( entranceInfo !== undefined && entranceInfo.name !== undefined ) {
+
+				name = entranceInfo.name;
+
+			} else if ( node.comment !== undefined ) {
+
+				name = node.comment;
+
+			} else {
+
+				name = node.getPath( endNode );
+
+			}
+
+			vertices.push( node.p );
+			stations.push( node );
+
+			if ( name === '-skip' ) return;
+
+			self.addMarker( node, ' ' + name + ' ' );
+
+		}
 
 	}
 
 }
-
-Entrances.prototype = Object.create( ClusterMarkers.prototype );
 
 Entrances.prototype.getStation = function ( index ) {
 

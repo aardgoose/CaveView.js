@@ -1,19 +1,19 @@
 import { BufferGeometry, Float32BufferAttribute, Mesh } from '../../Three';
 
-function Walls ( ctx ) {
+class Walls extends Mesh {
 
-	const geometry = new BufferGeometry();
+	constructor ( ctx ) {
 
-	Mesh.call( this, geometry, ctx.materials.getUnselectedWallMaterial() );
+		const geometry = new BufferGeometry();
 
-	this.ctx = ctx;
-	this.type = 'Walls';
+		super( geometry, ctx.materials.getUnselectedWallMaterial() );
 
-	return this;
+		this.ctx = ctx;
+		this.type = 'Walls';
+
+	}
 
 }
-
-Walls.prototype = Object.create( Mesh.prototype );
 
 Walls.prototype.ready = true;
 Walls.prototype.flat = false;

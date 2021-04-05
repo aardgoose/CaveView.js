@@ -2,50 +2,51 @@ import { Vector3, Float32BufferAttribute, Color } from '../Three';
 import { LineSegments2 } from './LineSegments2';
 import { LineSegmentsGeometry } from './LineSegmentsGeometry';
 
-function SurveyBox( ctx, box3, color = 0xffff00 ) {
+class SurveyBox extends LineSegments2 {
 
-	const v0 = new Vector3(  0.5,  0.5,  0.5 );
-	const v1 = new Vector3( -0.5,  0.5,  0.5 );
-	const v2 = new Vector3( -0.5, -0.5,  0.5 );
-	const v3 = new Vector3(  0.5, -0.5,  0.5 );
-	const v4 = new Vector3(  0.5,  0.5, -0.5 );
-	const v5 = new Vector3( -0.5,  0.5, -0.5 );
-	const v6 = new Vector3( -0.5, -0.5, -0.5 );
-	const v7 = new Vector3(  0.5, -0.5, -0.5 );
+	constructor ( ctx, box3, color = 0xffff00 ) {
 
-	const vertices = [
-		v0, v1,
-		v1, v2,
-		v2, v3,
-		v3, v0,
-		v4, v5,
-		v5, v6,
-		v6, v7,
-		v7, v4,
-		v0, v4,
-		v1, v5,
-		v2, v6,
-		v3, v7
-	];
+		const v0 = new Vector3(  0.5,  0.5,  0.5 );
+		const v1 = new Vector3( -0.5,  0.5,  0.5 );
+		const v2 = new Vector3( -0.5, -0.5,  0.5 );
+		const v3 = new Vector3(  0.5, -0.5,  0.5 );
+		const v4 = new Vector3(  0.5,  0.5, -0.5 );
+		const v5 = new Vector3( -0.5,  0.5, -0.5 );
+		const v6 = new Vector3( -0.5, -0.5, -0.5 );
+		const v7 = new Vector3(  0.5, -0.5, -0.5 );
 
-	const positions = new Float32BufferAttribute( vertices.length * 3, 3 );
-	const geometry = new LineSegmentsGeometry();
+		const vertices = [
+			v0, v1,
+			v1, v2,
+			v2, v3,
+			v3, v0,
+			v4, v5,
+			v5, v6,
+			v6, v7,
+			v7, v4,
+			v0, v4,
+			v1, v5,
+			v2, v6,
+			v3, v7
+		];
 
-	positions.copyVector3sArray( vertices );
-	geometry.setPositions( positions.array );
+		const positions = new Float32BufferAttribute( vertices.length * 3, 3 );
+		const geometry = new LineSegmentsGeometry();
 
-	LineSegments2.call( this, geometry, ctx.materials.getLine2Material( 'basic' ) );
+		positions.copyVector3sArray( vertices );
+		geometry.setPositions( positions.array );
 
-	this.material.vertexColors = false;
-	this.material.color = new Color( color );
+		super( geometry, ctx.materials.getLine2Material( 'basic' ) );
 
-	if ( box3 ) this.update( box3 );
-	this.type = 'CV.SurveyBox';
+		this.material.vertexColors = false;
+		this.material.color = new Color( color );
+
+		if ( box3 ) this.update( box3 );
+		this.type = 'CV.SurveyBox';
+
+	}
 
 }
-
-
-SurveyBox.prototype = Object.create( LineSegments2.prototype );
 
 SurveyBox.prototype.update = function ( box3 ) {
 

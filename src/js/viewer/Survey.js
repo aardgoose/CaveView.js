@@ -31,158 +31,160 @@ import proj4 from 'proj4';
 const __set = new Set();
 const white = new Color( 0xffffff );
 
-function Survey ( ctx, cave ) {
+class Survey extends Object3D {
 
-	Object3D.call( this );
+	constructor ( ctx, cave ) {
 
-	this.highlightBox = null;
-	this.highlightPath = null;
-	this.lastMarkedStation = null;
-	this.markers = new StationMarkers( ctx, 0x00ff00 );
-	this.featureBox = null;
-	this.surveyTree = null;
-	this.projection = null;
-	this.projectionWGS84 = null;
-	this.worldBoundingBox = null;
-	this.caveShading = SHADING_HEIGHT;
-	this.surfaceShading = SHADING_SINGLE;
-	this.wallsMode = false;
-	this.hideMode = false;
-	this.ctx = ctx;
+		super();
 
-	// objects targeted by raycasters and objects with variable LOD
+		this.highlightBox = null;
+		this.highlightPath = null;
+		this.lastMarkedStation = null;
+		this.markers = new StationMarkers( ctx, 0x00ff00 );
+		this.featureBox = null;
+		this.surveyTree = null;
+		this.projection = null;
+		this.projectionWGS84 = null;
+		this.worldBoundingBox = null;
+		this.caveShading = SHADING_HEIGHT;
+		this.surfaceShading = SHADING_SINGLE;
+		this.wallsMode = false;
+		this.hideMode = false;
+		this.ctx = ctx;
 
-	this.pointTargets = [];
-	this.legTargets = [];
-	this.entranceTargets = [];
+		// objects targeted by raycasters and objects with variable LOD
 
-	this.type = 'CV.Survey';
-	this.cutInProgress = false;
-	this.features = new Map();
-	this.routes = null;
-	this.stations = null;
-	this.terrain = null;
-	this.topology = null;
-	this.inverseWorld = new Matrix4();
+		this.pointTargets = [];
+		this.legTargets = [];
+		this.entranceTargets = [];
 
-	this.lightDirection = new Vector3( -1, -1, 2 ).normalize();
+		this.type = 'CV.Survey';
+		this.cutInProgress = false;
+		this.features = new Map();
+		this.routes = null;
+		this.stations = null;
+		this.terrain = null;
+		this.topology = null;
+		this.inverseWorld = new Matrix4();
 
-	const self = this;
+		this.lightDirection = new Vector3( -1, -1, 2 ).normalize();
 
-	this.gradientName = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
+		const self = this;
 
-	ctx.surveyColourMapper = new SurveyColourMapper( ctx );
-	ctx.survey = this;
+		this.gradientName = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 
-	var survey = cave.getSurvey();
+		ctx.surveyColourMapper = new SurveyColourMapper( ctx );
+		ctx.survey = this;
 
-	this.name = survey.title;
-	this.CRS = survey.sourceCRS;
-	this.displayCRS = survey.displayCRS;
+		var survey = cave.getSurvey();
 
-	this.limits = survey.limits;
-	this.offsets = survey.offsets;
+		this.name = survey.title;
+		this.CRS = survey.sourceCRS;
+		this.displayCRS = survey.displayCRS;
 
-	const modelLimits = new Box3().copy( this.limits );
+		this.limits = survey.limits;
+		this.offsets = survey.offsets;
 
-	modelLimits.min.sub( this.offsets );
-	modelLimits.max.sub( this.offsets );
+		const modelLimits = new Box3().copy( this.limits );
 
-	this.modelLimits = modelLimits;
-	this.combinedLimits = modelLimits;
+		modelLimits.min.sub( this.offsets );
+		modelLimits.max.sub( this.offsets );
 
-	// this needs to be defined before loading the leg data to
-	// allow correct leg lengths to be calculated
+		this.modelLimits = modelLimits;
+		this.combinedLimits = modelLimits;
 
-	_setProjectionScale();
+		// this needs to be defined before loading the leg data to
+		// allow correct leg lengths to be calculated
 
-	this.loadCave( survey );
+		_setProjectionScale();
 
-	this.loadWarnings( cave.messages );
+		this.loadCave( survey );
 
-	this.legTargets = [ this.features.get( LEG_CAVE ) ];
+		this.loadWarnings( cave.messages );
 
-	this.loadEntrances();
+		this.legTargets = [ this.features.get( LEG_CAVE ) ];
 
-	this.setFeatureBox();
+		this.loadEntrances();
 
-	this.addStatic( this.markers );
+		this.setFeatureBox();
 
-	this.addFeature( new Grid( ctx ), FEATURE_GRID, 'Grid' );
+		this.addStatic( this.markers );
 
-	this.addEventListener( 'removed', this.onRemoved );
+		this.addFeature( new Grid( ctx ), FEATURE_GRID, 'Grid' );
 
-	var zScale = 0.5;
+		this.addEventListener( 'removed', this.onRemoved );
 
-	survey = null;
+		var zScale = 0.5;
 
-	Object.defineProperty( this, 'zScale', {
-		get: function () { return zScale; },
-		set: function ( scale ) {
+		survey = null;
 
-			// scale - in range 0 - 1
+		Object.defineProperty( this, 'zScale', {
+			get: function () { return zScale; },
+			set: function ( scale ) {
 
-			const lastScale = Math.pow( 2, ( zScale - 0.5 ) * 4 );
-			const newScale  = Math.pow( 2, ( scale - 0.5 ) * 4 );
+				// scale - in range 0 - 1
 
-			self.applyMatrix4( new Matrix4().makeScale( 1, 1, newScale / lastScale ) );
-			self.updateMatrix();
+				const lastScale = Math.pow( 2, ( zScale - 0.5 ) * 4 );
+				const newScale  = Math.pow( 2, ( scale - 0.5 ) * 4 );
 
-			zScale = scale;
+				self.applyMatrix4( new Matrix4().makeScale( 1, 1, newScale / lastScale ) );
+				self.updateMatrix();
 
-		}
-	} );
+				zScale = scale;
 
-	return;
+			}
+		} );
 
-	function _setProjectionScale () {
+		return;
 
-		// calculate scaling distortion if we have required CRS definitions
-		const displayCRS = survey.displayCRS;
+		function _setProjectionScale () {
 
-		if ( survey.sourceCRS === null || displayCRS === null || displayCRS === 'ORIGINAL' ) {
+			// calculate scaling distortion if we have required CRS definitions
+			const displayCRS = survey.displayCRS;
 
-			self.scaleFactor = 1;
+			if ( survey.sourceCRS === null || displayCRS === null || displayCRS === 'ORIGINAL' ) {
 
-			if ( survey.sourceCRS !== null ) {
+				self.scaleFactor = 1;
 
-				self.projectionWGS84 = proj4( 'WGS84', survey.sourceCRS );
+				if ( survey.sourceCRS !== null ) {
+
+					self.projectionWGS84 = proj4( 'WGS84', survey.sourceCRS );
+
+				}
+
+				return;
 
 			}
 
-			return;
+			const limits = self.limits;
+
+			const p1 = limits.min.clone();
+			const p2 = limits.max.clone();
+
+			p1.z = 0;
+			p2.z = 0;
+
+			const l1 = p1.distanceTo( p2 );
+
+			const transform = proj4( displayCRS, survey.sourceCRS );
+
+			p1.copy( transform.forward( p1 ) );
+			p2.copy( transform.forward( p2 ) );
+
+			self.projection = transform;
+
+			const l2 = p1.distanceTo( p2 );
+
+			self.scaleFactor = l1 / l2;
+			StationPosition.scaleFactor = 1 / self.scaleFactor;
+
+			self.projectionWGS84 = proj4( 'WGS84', survey.displayCRS );
 
 		}
-
-		const limits = self.limits;
-
-		const p1 = limits.min.clone();
-		const p2 = limits.max.clone();
-
-		p1.z = 0;
-		p2.z = 0;
-
-		const l1 = p1.distanceTo( p2 );
-
-		const transform = proj4( displayCRS, survey.sourceCRS );
-
-		p1.copy( transform.forward( p1 ) );
-		p2.copy( transform.forward( p2 ) );
-
-		self.projection = transform;
-
-		const l2 = p1.distanceTo( p2 );
-
-		self.scaleFactor = l1 / l2;
-		StationPosition.scaleFactor = 1 / self.scaleFactor;
-
-		self.projectionWGS84 = proj4( 'WGS84', survey.displayCRS );
 
 	}
 
 }
-
-Survey.prototype = Object.create( Object3D.prototype );
 
 Survey.prototype.onRemoved = function ( /* event */ ) {
 

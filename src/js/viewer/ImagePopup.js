@@ -2,33 +2,33 @@ import { PopupMaterial } from '../materials/PopupMaterial';
 import { Popup } from './Popup';
 import { TextureLoader } from '../Three';
 
-function ImagePopup( ctx, station, imageUrl, callback ) {
+class ImagePopup extends Popup {
 
-	Popup.call( this, ctx );
+	constructor ( ctx, station, imageUrl, callback ) {
 
-	this.type = 'ImagePopup';
+		super( ctx );
 
-	const texture = new TextureLoader().load( imageUrl, _textureLoaded );
+		this.type = 'ImagePopup';
 
-	texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
+		const texture = new TextureLoader().load( imageUrl, _textureLoaded );
 
-	this.position.copy( station.p );
+		texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
 
-	const self = this;
+		this.position.copy( station.p );
 
-	return this;
+		const self = this;
 
-	function _textureLoaded( texture ) {
+		function _textureLoaded( texture ) {
 
-		self.material = new PopupMaterial( self.ctx.container, texture, 0 );
-		self.material.needsUpdate = true;
+			self.material = new PopupMaterial( self.ctx.container, texture, 0 );
+			self.material.needsUpdate = true;
 
-		callback();
+			callback();
+
+		}
 
 	}
 
 }
-
-ImagePopup.prototype = Object.create( Popup.prototype );
 
 export { ImagePopup };

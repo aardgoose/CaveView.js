@@ -254,29 +254,29 @@ QuadTree.prototype.projectedArea = function ( cluster ) {
 
 };
 
-function ClusterMarkers ( ctx, limits, maxDepth ) {
+class ClusterMarkers extends Object3D {
 
-	Object3D.call( this );
+	constructor ( ctx, limits, maxDepth ) {
 
-	const min = limits.min;
-	const max = limits.max;
+		super();
 
-	this.maxDepth = maxDepth;
+		const min = limits.min;
+		const max = limits.max;
 
-	this.type = 'CV.ClusterMarker';
+		this.maxDepth = maxDepth;
 
-	this.quadTree = new QuadTree( ctx, min.x, max.x, min.y, max.y );
-	this.heightProvider = null;
-	this.labels = [];
-	this.ctx = ctx;
+		this.type = 'CV.ClusterMarker';
 
-	this.addEventListener( 'removed', this.onRemoved );
+		this.quadTree = new QuadTree( ctx, min.x, max.x, min.y, max.y );
+		this.heightProvider = null;
+		this.labels = [];
+		this.ctx = ctx;
 
-	return this;
+		this.addEventListener( 'removed', this.onRemoved );
+
+	}
 
 }
-
-ClusterMarkers.prototype = Object.create( Object3D.prototype );
 
 ClusterMarkers.prototype.addHeightProvider = function ( func ) {
 

@@ -8,43 +8,43 @@ function beforeRender ( renderer, scene, camera, geometry, material ) {
 
 }
 
-function DyeTraces ( ctx ) {
+class DyeTraces extends LineSegments2 {
 
-	const geometry = new LineSegmentsGeometry();
-	const survey = ctx.survey;
+	constructor ( ctx ) {
 
-	LineSegments2.call( this, geometry, new LineMaterial( ctx, '', true ) );
+		const geometry = new LineSegmentsGeometry();
+		const survey = ctx.survey;
 
-	this.metadata = survey.metadata;
-	this.vertices = [];
-	this.selected = [];
-	this.stations = [];
+		super( geometry, new LineMaterial( ctx, '', true ) );
+
+		this.metadata = survey.metadata;
+		this.vertices = [];
+		this.selected = [];
+		this.stations = [];
 
 
-	this.onBeforeRender = beforeRender;
-	this.visible = false;
+		this.onBeforeRender = beforeRender;
+		this.visible = false;
 
-	const traces = survey.metadata.traces;
-	const surveyTree = survey.surveyTree;
+		const traces = survey.metadata.traces;
+		const surveyTree = survey.surveyTree;
 
-	traces.forEach( trace => {
+		traces.forEach( trace => {
 
-		const startStation = surveyTree.getByPath( trace.start );
-		const endStation   = surveyTree.getByPath( trace.end );
+			const startStation = surveyTree.getByPath( trace.start );
+			const endStation   = surveyTree.getByPath( trace.end );
 
-		if ( endStation === undefined || startStation === undefined ) return;
+			if ( endStation === undefined || startStation === undefined ) return;
 
-		this._addTrace( startStation, endStation );
+			this._addTrace( startStation, endStation );
 
-	} );
+		} );
 
-	this.finish();
+		this.finish();
 
-	return this;
+	}
 
 }
-
-DyeTraces.prototype = Object.create( LineSegments2.prototype );
 
 DyeTraces.prototype.finish = function () {
 

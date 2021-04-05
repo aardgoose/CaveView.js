@@ -1,88 +1,90 @@
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { LineSegments2 } from '../core/LineSegments2';
 
-function Grid ( ctx ) {
+class Grid extends LineSegments2 {
 
-	const geometry = new LineSegmentsGeometry();
-	const survey = ctx.survey;
+	constructor ( ctx ) {
 
-	LineSegments2.call( this, geometry, ctx.materials.getLine2Material( 'basivc' ) );
+		const geometry = new LineSegmentsGeometry();
+		const survey = ctx.survey;
 
-	this.scale.set( 1, 1, 1 );
-	this.type = 'CV.Grid';
+		super( geometry, ctx.materials.getLine2Material( 'basivc' ) );
 
-	const box = ctx.survey.combinedLimits;
+		this.scale.set( 1, 1, 1 );
+		this.type = 'CV.Grid';
 
-	const a = box.min.clone(); a.y = box.max.y;
-	const b = box.max.clone();
-	const c = box.min.clone(); c.x = box.max.x;
-	const d = box.min.clone();
+		const box = ctx.survey.combinedLimits;
 
-	/*
-		Convert to original model CRS
+		const a = box.min.clone(); a.y = box.max.y;
+		const b = box.max.clone();
+		const c = box.min.clone(); c.x = box.max.x;
+		const d = box.min.clone();
 
-		A-B
-		| |
-		D-C
+		/*
+			Convert to original model CRS
 
-	*/
+			A-B
+			| |
+			D-C
 
-	const A = survey.getGeographicalPosition( a );
-	const B = survey.getGeographicalPosition( b );
-	const C = survey.getGeographicalPosition( c );
-	const D = survey.getGeographicalPosition( d );
+		*/
 
-	// approximate tranform as rotation and scale for small areas.
+		const A = survey.getGeographicalPosition( a );
+		const B = survey.getGeographicalPosition( b );
+		const C = survey.getGeographicalPosition( c );
+		const D = survey.getGeographicalPosition( d );
 
-	const xRange = Math.min( C.x - D.x, B.x - A.x );
-	const yRange = Math.min( A.y - D.y, B.y - C.y );
+		// approximate tranform as rotation and scale for small areas.
 
-	const r = Math.log10( Math.max( xRange, yRange ) );
-	const interval = Math.pow( 10, Math.round( r ) - 1 );
+		const xRange = Math.min( C.x - D.x, B.x - A.x );
+		const yRange = Math.min( A.y - D.y, B.y - C.y );
 
-	const xScale = ( C.x - D.x ) / ( c.x - d.x );
-	const yScale = ( A.y - D.y ) / ( a.y - d.y );
+		const r = Math.log10( Math.max( xRange, yRange ) );
+		const interval = Math.pow( 10, Math.round( r ) - 1 );
 
-	const theta = Math.atan2( C.y - D.y, C.x - D.x );
-	const cos = Math.cos( theta );
+		const xScale = ( C.x - D.x ) / ( c.x - d.x );
+		const yScale = ( A.y - D.y ) / ( a.y - d.y );
 
-	const xOffset = ( interval - ( D.x % interval ) ) * cos / xScale;
-	const yOffset = ( interval - ( D.y % interval ) ) * cos / yScale;
+		const theta = Math.atan2( C.y - D.y, C.x - D.x );
+		const cos = Math.cos( theta );
 
-	const deltaX = interval * cos / xScale;
-	const deltaY = interval * cos / yScale;
+		const xOffset = ( interval - ( D.x % interval ) ) * cos / xScale;
+		const yOffset = ( interval - ( D.y % interval ) ) * cos / yScale;
 
-	// assume linear relationship between grids for simplicity
-	const hGrad = ( c.x - d.x) * ( C.y - D.y ) / ( C.x - D.x );
-	const vGrad = ( a.y - d.y) * ( A.x - D.x ) / ( A.y - D.y );
+		const deltaX = interval * cos / xScale;
+		const deltaY = interval * cos / yScale;
 
-	const z = box.min.z;
-	let i;
+		// assume linear relationship between grids for simplicity
+		const hGrad = ( c.x - d.x) * ( C.y - D.y ) / ( C.x - D.x );
+		const vGrad = ( a.y - d.y) * ( A.x - D.x ) / ( A.y - D.y );
 
-	const baseColor = ctx.cfg.themeColor( 'grid.base' );
+		const z = box.min.z;
+		let i;
 
-	const colors = [];
-	const vertices = [];
+		const baseColor = ctx.cfg.themeColor( 'grid.base' );
 
-	for ( i = d.x + xOffset; i < c.x; i += deltaX ) {
+		const colors = [];
+		const vertices = [];
 
-		vertices.push( i, d.y, z, i - vGrad, a.y, z );
-		colors.push( baseColor.r, baseColor.g, baseColor.b, baseColor.r, baseColor.g, baseColor.b );
+		for ( i = d.x + xOffset; i < c.x; i += deltaX ) {
+
+			vertices.push( i, d.y, z, i - vGrad, a.y, z );
+			colors.push( baseColor.r, baseColor.g, baseColor.b, baseColor.r, baseColor.g, baseColor.b );
+
+		}
+
+		for ( i = d.y + yOffset; i < a.y; i += deltaY ) {
+
+			vertices.push( d.x,  i, z, c.x , i - hGrad, z );
+			colors.push( baseColor.r, baseColor.g, baseColor.b, baseColor.r, baseColor.g, baseColor.b );
+
+		}
+
+		geometry.setPositions( vertices );
+		geometry.setColors( colors );
 
 	}
-
-	for ( i = d.y + yOffset; i < a.y; i += deltaY ) {
-
-		vertices.push( d.x,  i, z, c.x , i - hGrad, z );
-		colors.push( baseColor.r, baseColor.g, baseColor.b, baseColor.r, baseColor.g, baseColor.b );
-
-	}
-
-	geometry.setPositions( vertices );
-	geometry.setColors( colors );
 
 }
-
-Grid.prototype = Object.create( LineSegments2.prototype );
 
 export { Grid };

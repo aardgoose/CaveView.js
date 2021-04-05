@@ -17,22 +17,22 @@ PopupGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 var commonGeometry = null;
 
-function Popup( ctx ) {
+class Popup extends Mesh {
 
-	if ( commonGeometry === null ) commonGeometry = new PopupGeometry();
+	constructor ( ctx ) {
 
-	Mesh.call( this, commonGeometry );
+		if ( commonGeometry === null ) commonGeometry = new PopupGeometry();
 
-	this.layers.set( LEG_CAVE );
-	this.type = 'Popup';
-	this.renderOrder = Infinity;
-	this.ctx = ctx;
+		super( commonGeometry );
 
-	return this;
+		this.layers.set( LEG_CAVE );
+		this.type = 'Popup';
+		this.renderOrder = Infinity;
+		this.ctx = ctx;
+
+	}
 
 }
-
-Popup.prototype = Object.create( Mesh.prototype );
 
 Popup.prototype.close = function () {
 

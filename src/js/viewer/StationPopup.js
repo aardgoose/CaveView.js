@@ -1,88 +1,88 @@
 import { CanvasPopup } from './CanvasPopup';
 
-function StationPopup ( ctx, station, survey, depth, formatter, showDistance, warnings ) {
+class StationPopup extends CanvasPopup {
 
-	CanvasPopup.call( this, ctx );
+	constructor ( ctx, station, survey, depth, formatter, showDistance, warnings ) {
 
-	const position = survey.getGeographicalPosition( station.p );
+		super( ctx );
 
-	var name = station.getPath();
-	var long = false;
-	var tmp;
-	var lines = null;
+		const position = survey.getGeographicalPosition( station.p );
 
-	// reduce name length if too long
+		var name = station.getPath();
+		var long = false;
+		var tmp;
+		var lines = null;
 
-	while ( name.length > 20 ) {
+		// reduce name length if too long
 
-		tmp = name.split( '.' );
-		tmp.shift();
+		while ( name.length > 20 ) {
 
-		name = tmp.join( '.' );
-		long = true;
+			tmp = name.split( '.' );
+			tmp.shift();
 
-	}
-
-	var distance;
-
-	if ( showDistance ) {
-
-		distance = station.distance !== Infinity ? Math.round( station.distance ) : 'unconnected';
-
-	} else {
-
-		distance = null;
-
-	}
-
-	if ( long ) name = '...' + name;
-
-	this.addLine( name );
-
-	if ( warnings && station.messageText !== undefined ) {
-
-		this.addLine( station.messageText );
-
-	} else {
-
-		if ( formatter !== undefined ) {
-
-			lines = formatter( survey.CRS, position, depth, distance );
+			name = tmp.join( '.' );
+			long = true;
 
 		}
 
-		if ( lines !== null ) {
+		var distance;
 
-			for ( let i = 0; i < lines.length; i++ ) {
+		if ( showDistance ) {
 
-				this.addLine( lines[ i ] );
-
-			}
+			distance = station.distance !== Infinity ? Math.round( station.distance ) : 'unconnected';
 
 		} else {
 
-			this.addLine( 'x: ' + Math.round( position.x ) + ' m, y: ' + Math.round( position.y ) + ' m' ).addLine( 'z: ' + Math.round( position.z ) + ' m' );
+			distance = null;
 
-			if ( depth !== null ) this.addLine( 'depth from surface: ' + Math.round( depth ) + ' m' );
+		}
 
-			if ( showDistance ) {
+		if ( long ) name = '...' + name;
 
-				this.addLine( 'distance: ' + distance + '\u202fm' );
+		this.addLine( name );
+
+		if ( warnings && station.messageText !== undefined ) {
+
+			this.addLine( station.messageText );
+
+		} else {
+
+			if ( formatter !== undefined ) {
+
+				lines = formatter( survey.CRS, position, depth, distance );
+
+			}
+
+			if ( lines !== null ) {
+
+				for ( let i = 0; i < lines.length; i++ ) {
+
+					this.addLine( lines[ i ] );
+
+				}
+
+			} else {
+
+				this.addLine( 'x: ' + Math.round( position.x ) + ' m, y: ' + Math.round( position.y ) + ' m' ).addLine( 'z: ' + Math.round( position.z ) + ' m' );
+
+				if ( depth !== null ) this.addLine( 'depth from surface: ' + Math.round( depth ) + ' m' );
+
+				if ( showDistance ) {
+
+					this.addLine( 'distance: ' + distance + '\u202fm' );
+
+				}
 
 			}
 
 		}
 
+		this.finish();
+
+		this.position.copy( station.p );
+
 	}
 
-	this.finish();
-
-	this.position.copy( station.p );
-
-	return this;
-
 }
-
-StationPopup.prototype = Object.create( CanvasPopup.prototype );
 
 export { StationPopup };

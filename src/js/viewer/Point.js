@@ -1,23 +1,23 @@
 import { Points, BufferGeometry, Float32BufferAttribute } from '../Three';
 
-function Point ( material, ctx ) {
+class Point extends Points {
 
-	const materials = ctx.materials;
+	constructor ( material, ctx ) {
 
-	if ( materials.pointGeometry === undefined ) {
+		const materials = ctx.materials;
 
-		materials.pointGeometry = new BufferGeometry().setAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0 ], 3 ) );
+		if ( materials.pointGeometry === undefined ) {
+
+			materials.pointGeometry = new BufferGeometry().setAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0 ], 3 ) );
+
+		}
+
+		super( materials.pointGeometry, material );
+
+		this.type = 'Point';
 
 	}
 
-	Points.call( this, materials.pointGeometry, material );
-
-	this.type = 'Point';
-
-	return this;
-
 }
-
-Point.prototype = Object.create( Points.prototype );
 
 export { Point };

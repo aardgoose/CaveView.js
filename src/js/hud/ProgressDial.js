@@ -2,66 +2,67 @@ import { MutableGlyphString } from '../core/GlyphString';
 
 import { RingBufferGeometry, Object3D, Mesh, Float32BufferAttribute } from '../Three';
 
-function ProgressDial ( hudObject, addText, ring, viewer ) {
+class ProgressDial extends Mesh {
 
-	const cfg = hudObject.ctx.cfg;
-	const materials = hudObject.ctx.materials;
-	const stdWidth  = hudObject.stdWidth;
-	const stdMargin = hudObject.stdMargin;
+	constructor ( hudObject, addText, ring, viewer ) {
 
-	const offset = stdWidth + stdMargin;
+		const cfg = hudObject.ctx.cfg;
+		const materials = hudObject.ctx.materials;
+		const stdWidth  = hudObject.stdWidth;
+		const stdMargin = hudObject.stdMargin;
 
-	const gap = ring === 0 ? 0 : 1;
-	const segments = 50;
-	const geometry = new RingBufferGeometry( stdWidth * ( 0.9 - ring * 0.1 ), stdWidth * ( 1 - ring * 0.1 ) - gap, segments );
+		const offset = stdWidth + stdMargin;
 
-	const colors = new Float32BufferAttribute( ( segments + 1) * 6, 3 );
+		const gap = ring === 0 ? 0 : 1;
+		const segments = 50;
+		const geometry = new RingBufferGeometry( stdWidth * ( 0.9 - ring * 0.1 ), stdWidth * ( 1 - ring * 0.1 ) - gap, segments );
 
-	geometry.setAttribute( 'color', colors );
+		const colors = new Float32BufferAttribute( ( segments + 1) * 6, 3 );
 
-	this.backgroundColor = cfg.themeColor( 'hud.progressBackground' );
-	this.setColor = cfg.themeColor( 'hud.progress' );
-	this.viewer = viewer;
+		geometry.setAttribute( 'color', colors );
 
-	Mesh.call( this, geometry, materials.getPlainMaterial() );
+		super( geometry, materials.getPlainMaterial() );
 
-	this.dropBuffers( false );
+		this.backgroundColor = cfg.themeColor( 'hud.progressBackground' );
+		this.setColor = cfg.themeColor( 'hud.progress' );
+		this.viewer = viewer;
 
-	this.name = 'CV.ProgressDial';
 
-	this.translateX( -offset * 5 );
-	this.translateY(  offset );
+		this.dropBuffers( false );
 
-	this.rotateOnAxis( Object3D.DefaultUp, Math.PI / 2 );
+		this.name = 'CV.ProgressDial';
 
-	this.visible = false;
-	this.isVisible = true;
+		this.translateX( -offset * 5 );
+		this.translateY(  offset );
 
-	this.colorRange( 0 );
+		this.rotateOnAxis( Object3D.DefaultUp, Math.PI / 2 );
 
-	if ( addText ) {
+		this.visible = false;
+		this.isVisible = true;
 
-		var glyphMaterial = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
+		this.colorRange( 0 );
 
-		const pcent = new MutableGlyphString( '----', glyphMaterial );
+		if ( addText ) {
 
-		pcent.translateY( pcent.getWidth() / 2 );
-		pcent.translateX( -10 );
+			var glyphMaterial = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 
-		this.add( pcent );
-		this.pcent = pcent;
+			const pcent = new MutableGlyphString( '----', glyphMaterial );
 
-	} else {
+			pcent.translateY( pcent.getWidth() / 2 );
+			pcent.translateX( -10 );
 
-		this.pcent = null;
+			this.add( pcent );
+			this.pcent = pcent;
+
+		} else {
+
+			this.pcent = null;
+
+		}
 
 	}
 
-	return this;
-
 }
-
-ProgressDial.prototype = Object.create( Mesh.prototype );
 
 ProgressDial.prototype.colorRange = function ( range ) {
 

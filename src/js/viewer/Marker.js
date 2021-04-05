@@ -1,17 +1,17 @@
 import { Point } from './Point';
 
-function Marker( ctx, count ) {
+class Marker extends Point {
 
-	const materials = ctx.materials;
+	constructor ( ctx, count ) {
 
-	Point.call( this, materials.getClusterMaterial( count ), ctx );
-	this.renderOrder = 1;
+		const materials = ctx.materials;
 
-	return this;
+		super( materials.getClusterMaterial( count ), ctx );
+		this.renderOrder = 1;
+
+	}
 
 }
-
-Marker.prototype = Object.create( Point.prototype );
 
 Marker.prototype.isMarker = true;
 

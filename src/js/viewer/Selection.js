@@ -3,108 +3,110 @@ import { SurveyBox } from '../core/SurveyBox';
 
 import { Box3, IncrementStencilOp } from '../Three';
 
-function Selection( ctx, color ) {
+class Selection extends SurveyBox {
 
-	const survey = ctx.survey;
-	const worldBoundingBox = new Box3();
-	var root = survey.surveyTree;
-	var selectedNode = root;
+	constructor ( ctx, color ) {
 
-	SurveyBox.call( this, ctx, root.boundingBox, color );
+		const survey = ctx.survey;
+		const worldBoundingBox = new Box3();
+		var root = survey.surveyTree;
+		var selectedNode = root;
 
-	const material = this.material;
+		super( ctx, root.boundingBox, color );
 
-	material.stencilWrite = true;
-	material.stencilZPass = IncrementStencilOp;
+		const material = this.material;
 
-	this.layers.set( FEATURE_SELECTED_BOX );
+		material.stencilWrite = true;
+		material.stencilZPass = IncrementStencilOp;
 
-	survey.addStatic( this );
+		this.layers.set( FEATURE_SELECTED_BOX );
 
-	const selectedSectionIds = new Set();
+		survey.addStatic( this );
 
-	this.setRoot = function ( rootNode ) {
+		const selectedSectionIds = new Set();
 
-		root = rootNode;
+		this.setRoot = function ( rootNode ) {
 
-	};
+			root = rootNode;
 
-	this.set = function ( node ) {
+		};
 
-		selectedNode = node;
-		selectedSectionIds.clear();
+		this.set = function ( node ) {
 
-		if ( selectedNode === root ) {
+			selectedNode = node;
+			selectedSectionIds.clear();
 
-			this.visible = false;
+			if ( selectedNode === root ) {
 
-		} else {
+				this.visible = false;
 
-			node.getSubtreeIds( selectedSectionIds );
-			this.visible = true;
+			} else {
 
-			if ( ! node.isStation() && node.boundingBox !== undefined ) {
+				node.getSubtreeIds( selectedSectionIds );
+				this.visible = true;
 
-				this.update( node.boundingBox );
+				if ( ! node.isStation() && node.boundingBox !== undefined ) {
+
+					this.update( node.boundingBox );
+
+				}
 
 			}
 
-		}
+		};
 
-	};
+		this.getIds = function () {
 
-	this.getIds = function () {
+			return selectedSectionIds;
 
-		return selectedSectionIds;
+		};
 
-	};
+		this.isEmpty = function () {
 
-	this.isEmpty = function () {
+			return ( selectedNode === root );
 
-		return ( selectedNode === root );
+		};
 
-	};
+		this.contains = function ( id ) {
 
-	this.contains = function ( id ) {
+			return ( selectedNode === root || selectedSectionIds.has( id ) );
 
-		return ( selectedNode === root || selectedSectionIds.has( id ) );
+		};
 
-	};
+		this.getWorldBoundingBox = function () {
 
-	this.getWorldBoundingBox = function () {
+			if ( this.isEmpty() ) {
 
-		if ( this.isEmpty() ) {
+				return survey.getWorldBoundingBox();
 
-			return survey.getWorldBoundingBox();
+			} else {
 
-		} else {
+				return worldBoundingBox.copy( selectedNode.boundingBox ).applyMatrix4( survey.matrixWorld );
 
-			return worldBoundingBox.copy( selectedNode.boundingBox ).applyMatrix4( survey.matrixWorld );
+			}
 
-		}
+		};
 
-	};
+		this.getName = function () {
 
-	this.getName = function () {
+			return this.isEmpty() ? '' : selectedNode.getPath();
 
-		return this.isEmpty() ? '' : selectedNode.getPath();
+		};
 
-	};
+		this.getNode = function () {
 
-	this.getNode = function () {
+			return selectedNode;
 
-		return selectedNode;
+		};
 
-	};
+		this.isStation = function () {
 
-	this.isStation = function () {
+			return selectedNode.isStation();
 
-		return selectedNode.isStation();
+		};
 
-	};
+	}
 
 }
-
-Selection.prototype = Object.create( SurveyBox.prototype );
 
 export { Selection };

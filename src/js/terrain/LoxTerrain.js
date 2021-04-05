@@ -5,29 +5,31 @@ import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 
 import { TextureLoader, Mesh } from '../Three';
 
-function LoxTile( ctx, terrain, offsets ) {
+class LoxTile extends Mesh {
 
-	Mesh.call( this, new LoxTerrainGeometry( terrain.dtm, offsets ), ctx.materials.getSurfaceMaterial() );
+	constructor ( ctx, terrain, offsets ) {
 
-	this.type = 'CV.LoxTile';
-	this.layers.set( FEATURE_TERRAIN );
-	this.overlayMaterial = null;
-	this.ctx = ctx;
+		super( new LoxTerrainGeometry( terrain.dtm, offsets ), ctx.materials.getSurfaceMaterial() );
 
-	if ( terrain.bitmap === undefined ) {
+		this.type = 'CV.LoxTile';
+		this.layers.set( FEATURE_TERRAIN );
+		this.overlayMaterial = null;
+		this.ctx = ctx;
 
-		this.bitmap = null;
+		if ( terrain.bitmap === undefined ) {
 
-	} else {
+			this.bitmap = null;
 
-		this.bitmap = terrain.bitmap;
-		this.offsets = offsets;
+		} else {
+
+			this.bitmap = terrain.bitmap;
+			this.offsets = offsets;
+
+		}
 
 	}
 
 }
-
-LoxTile.prototype = Object.create( Mesh.prototype );
 
 LoxTile.prototype.isTile = true;
 

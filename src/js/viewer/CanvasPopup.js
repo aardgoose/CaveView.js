@@ -2,19 +2,20 @@ import { PopupMaterial } from '../materials/PopupMaterial';
 import { Popup } from './Popup';
 import { CanvasTexture } from '../Three';
 
+class CanvasPopup extends Popup {
 
-function CanvasPopup( ctx ) {
+	constructor ( ctx ) {
 
-	Popup.call( this, ctx );
+		super( ctx );
 
-	this.lines = [];
-	this.type = 'CanvasPopup';
+		this.lines = [];
+		this.type = 'CanvasPopup';
 
-	return this;
+		return this;
+
+	}
 
 }
-
-CanvasPopup.prototype = Object.create( Popup.prototype );
 
 CanvasPopup.prototype.addLine = function ( line ) {
 

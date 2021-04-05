@@ -12,15 +12,6 @@ function GlyphStringGeometryCache ( material ) {
 
 }
 
-const __v0 = new Vector3();
-const __v1 = new Vector3();
-const __v2 = new Vector3();
-const __v3 = new Vector3();
-const __v4 = new Vector3();
-
-const __triangle1 = new Triangle();
-const __triangle2 = new Triangle();
-
 GlyphStringGeometryCache.prototype.getGeometry = function ( text ) {
 
 	var entry = this.cache[ text ];
@@ -37,32 +28,42 @@ GlyphStringGeometryCache.prototype.getGeometry = function ( text ) {
 
 };
 
-function GlyphStringGeometry ( text, glyphAtlas ) {
+const __v0 = new Vector3();
+const __v1 = new Vector3();
+const __v2 = new Vector3();
+const __v3 = new Vector3();
+const __v4 = new Vector3();
 
-	InstancedBufferGeometry.call( this );
+const __triangle1 = new Triangle();
+const __triangle2 = new Triangle();
 
-	this.type = 'GlyphStringGeometry';
-	this.width = 0;
+class GlyphStringGeometry extends InstancedBufferGeometry {
 
-	this.setIndex( CommonAttributes.index );
-	this.setAttribute( 'position', CommonAttributes.position );
+	constructor ( text, glyphAtlas ) {
 
-	const l = text.length;
+		super();
 
-	this.glyphAtlas = glyphAtlas;
+		this.type = 'GlyphStringGeometry';
+		this.width = 0;
 
-	this.setAttribute( 'instanceUvs', new InstancedBufferAttribute( new Float32Array( l * 2 ), 2, false, 1 ) );
-	this.setAttribute( 'instanceOffsets', new InstancedBufferAttribute( new Float32Array( l ), 1, false, 1 ) );
-	this.setAttribute( 'instanceWidths', new InstancedBufferAttribute( new Float32Array( l ), 1, false, 1 ) );
+		this.setIndex( CommonAttributes.index );
+		this.setAttribute( 'position', CommonAttributes.position );
 
-	this.setString( text );
+		const l = text.length;
 
-	this.computeBoundingSphere();
+		this.glyphAtlas = glyphAtlas;
+
+		this.setAttribute( 'instanceUvs', new InstancedBufferAttribute( new Float32Array( l * 2 ), 2, false, 1 ) );
+		this.setAttribute( 'instanceOffsets', new InstancedBufferAttribute( new Float32Array( l ), 1, false, 1 ) );
+		this.setAttribute( 'instanceWidths', new InstancedBufferAttribute( new Float32Array( l ), 1, false, 1 ) );
+
+		this.setString( text );
+
+		this.computeBoundingSphere();
+
+	}
 
 }
-
-GlyphStringGeometry.prototype = Object.create( InstancedBufferGeometry.prototype );
-
 
 GlyphStringGeometry.prototype.setString = function ( text ) {
 
@@ -111,63 +112,31 @@ GlyphStringGeometry.prototype.dispose = function () {
 
 };
 
-function GlyphString ( text, glyphMaterial, ctx ) {
 
-	var geometry;
+class GlyphStringBase extends Mesh {
 
-	if ( this.isMutableGlyphString ) {
+	constructor ( text, glyphMaterial, geometry ) {
 
-		geometry = new GlyphStringGeometry( text, glyphMaterial.getAtlas() );
-
-	} else {
-
-		const glyphStringCache = ctx.glyphStringCache;
-
-		let cache = glyphStringCache.get( glyphMaterial );
-
-		if ( cache === undefined ) {
-
-			// create material cache
-			cache = new GlyphStringGeometryCache( glyphMaterial );
-			glyphStringCache.set( glyphMaterial, cache );
-
-		}
-
-		geometry = cache.getGeometry( text );
-
-	}
-
-	Mesh.call( this, geometry, glyphMaterial );
-
-	this.name = text;
-
-	if ( ! this.isMutableGlyphString ) {
-
-		geometry.getAttribute( 'instanceUvs' ).onUpload( Object3D.onUploadDropBuffer );
-		geometry.getAttribute( 'instanceOffsets' ).onUpload( Object3D.onUploadDropBuffer );
-		geometry.getAttribute( 'instanceWidths' ).onUpload( Object3D.onUploadDropBuffer );
+		super( geometry, glyphMaterial );
+		this.name = text;
 
 	}
 
 }
 
-GlyphString.prototype = Object.create( Mesh.prototype );
-
-GlyphString.prototype.isGlyphString = true;
-
-GlyphString.prototype.getWidth = function () {
+GlyphStringBase.prototype.getWidth = function () {
 
 	return this.geometry.width * this.material.scaleFactor;
 
 };
 
-GlyphString.prototype.getHeight = function () {
+GlyphStringBase.prototype.getHeight = function () {
 
 	return this.material.scaleFactor;
 
 };
 
-GlyphString.prototype.intersects = function ( position, camera, scale ) {
+GlyphStringBase.prototype.intersects = function ( position, camera, scale ) {
 
 	if ( ! this.visible ) return false;
 
@@ -212,27 +181,57 @@ GlyphString.prototype.intersects = function ( position, camera, scale ) {
 
 };
 
-function MutableGlyphString ( text, material ) {
+class GlyphString extends GlyphStringBase {
 
-	GlyphString.call( this, text, material );
+	constructor ( text, glyphMaterial, ctx ) {
 
-}
+		var geometry;
 
-MutableGlyphString.prototype = Object.create( GlyphString.prototype );
+		const glyphStringCache = ctx.glyphStringCache;
 
-MutableGlyphString.prototype.isMutableGlyphString = true;
+		let cache = glyphStringCache.get( glyphMaterial );
 
-MutableGlyphString.prototype.replaceString = function ( newstring ) {
+		if ( cache === undefined ) {
 
-	if ( newstring.length !== this.name.length ) {
+			// create material cache
+			cache = new GlyphStringGeometryCache( glyphMaterial );
+			glyphStringCache.set( glyphMaterial, cache );
 
-		console.warn( 'new string has invalid length', newstring, this.name.length, newstring.length );
-		return;
+		}
+
+		geometry = cache.getGeometry( text );
+
+		super( text, glyphMaterial, geometry );
+
+		geometry.getAttribute( 'instanceUvs' ).onUpload( Object3D.onUploadDropBuffer );
+		geometry.getAttribute( 'instanceOffsets' ).onUpload( Object3D.onUploadDropBuffer );
+		geometry.getAttribute( 'instanceWidths' ).onUpload( Object3D.onUploadDropBuffer );
 
 	}
 
-	this.geometry.setString( newstring );
+}
 
-};
+class MutableGlyphString extends GlyphStringBase {
+
+	constructor ( text, glyphMaterial ) {
+
+		super( text, glyphMaterial, new GlyphStringGeometry( text, glyphMaterial.getAtlas() ) );
+
+	}
+
+	replaceString ( newstring ) {
+
+		if ( newstring.length !== this.name.length ) {
+
+			console.warn( 'new string has invalid length', newstring, this.name.length, newstring.length );
+			return;
+
+		}
+
+		this.geometry.setString( newstring );
+
+	}
+
+}
 
 export { GlyphString, MutableGlyphString };

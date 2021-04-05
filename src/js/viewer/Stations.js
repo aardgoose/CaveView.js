@@ -5,41 +5,42 @@ import { PointIndicator } from './PointIndicator';
 
 const __v = new Vector3();
 
-function Stations ( ctx, selection ) {
+class Stations extends Points {
 
-	Points.call( this, new BufferGeometry, ctx.materials.getExtendedPointsMaterial() );
+	constructor ( ctx, selection ) {
 
-	this.type = 'CV.Stations';
-	this.map = new Map();
-	this.stationCount = 0;
+		super( new BufferGeometry, ctx.materials.getExtendedPointsMaterial() );
 
-	const cfg = ctx.cfg;
+		this.type = 'CV.Stations';
+		this.map = new Map();
+		this.stationCount = 0;
 
-	this.baseColor     = cfg.themeColor( 'stations.default.marker' );
-	this.junctionColor = cfg.themeColor( 'stations.junctions.marker' );
-	this.entranceColor = cfg.themeColor( 'stations.entrances.marker' );
+		const cfg = ctx.cfg;
 
-	this.pointSizes = [];
-	this.vertices   = [];
-	this.colors     = [];
+		this.baseColor     = cfg.themeColor( 'stations.default.marker' );
+		this.junctionColor = cfg.themeColor( 'stations.junctions.marker' );
+		this.entranceColor = cfg.themeColor( 'stations.entrances.marker' );
 
-	this.stations = [];
+		this.pointSizes = [];
+		this.vertices   = [];
+		this.colors     = [];
 
-	this.selected = null;
-	this.selectedSize = 0;
-	this.selection = selection;
-	this.splaysVisible = false;
+		this.stations = [];
 
-	const point = new PointIndicator( ctx, 0xff0000 );
+		this.selected = null;
+		this.selectedSize = 0;
+		this.selection = selection;
+		this.splaysVisible = false;
 
-	point.visible = false;
+		const point = new PointIndicator( ctx, 0xff0000 );
 
-	this.addStatic( point );
-	this.highlightPoint = point;
+		point.visible = false;
+
+		this.addStatic( point );
+		this.highlightPoint = point;
+	}
 
 }
-
-Stations.prototype = Object.create ( Points.prototype );
 
 Stations.prototype.addStation = function ( node ) {
 

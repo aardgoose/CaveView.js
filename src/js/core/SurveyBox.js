@@ -4,8 +4,6 @@ import { LineSegmentsGeometry } from './LineSegmentsGeometry';
 
 function SurveyBox( ctx, box3, color = 0xffff00 ) {
 
-	this.box3 = box3;
-
 	const v0 = new Vector3(  0.5,  0.5,  0.5 );
 	const v1 = new Vector3( -0.5,  0.5,  0.5 );
 	const v2 = new Vector3( -0.5, -0.5,  0.5 );
@@ -55,7 +53,6 @@ SurveyBox.prototype.update = function ( box3 ) {
 	box3.getCenter( this.position );
 	this.updateMatrix();
 
-	this.box3 = box3;
 	this.geometry.computeBoundingSphere();
 
 };

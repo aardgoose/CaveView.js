@@ -793,15 +793,11 @@ Survey.prototype.setFeatureBox = function () {
 
 	}
 
+	this.worldBoundingBox = this.combinedLimits.clone().applyMatrix4( this.matrixWorld );
+
 };
 
 Survey.prototype.getWorldBoundingBox = function () {
-
-	if ( this.worldBoundingBox === null ) {
-
-		this.worldBoundingBox = this.featureBox.box3.clone().applyMatrix4( this.matrixWorld );
-
-	}
 
 	return this.worldBoundingBox;
 

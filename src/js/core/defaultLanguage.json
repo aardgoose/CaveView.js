@@ -123,6 +123,7 @@
 	"edit": {
 		"title": "Edit",
 		"mode": "edit mode",
+		"intro": "select edit mode",
 		"modes": {
 			"none": "- none -",
 			"route": "Routes",
@@ -141,12 +142,18 @@
 			"download": "Download"
 		},
 		"trace": {
-			"header": "Traces"
+			"header": "Traces",
+			"start": "Start",
+			"end": "End"
 		}
 	},
 	"info": {
 		"title": "Information",
 		"header": "Information",
+		"file": "file",
+		"more": "For more information see",
+		"summary": "A WebGL 3d cave viewer for Survex (.3d), Therion (.lox) and Compass (.plt) models.",
+		"github": "CaveView on GitHub",
 		"stats": {
 			"header": "Survey Stats",
 			"legs": "Leg count",

@@ -8,18 +8,21 @@ class TracePanel extends Panel {
 
 		const self = this;
 
+		const start = page.i18n( 'trace.start' ) + ':';
+		const end = page.i18n( 'trace.end' ) + ':';
+
 		page.addListener( viewer, 'selectedTrace', _onSelect );
 
 		this.add( page.addHeader( 'trace.header' ) );
 
-		var line1 = this.add( page.addLine( 'Start:' ) );
-		var line2 = this.add( page.addLine( 'End:' ) );
+		var line1 = this.add( page.addLine( start ) );
+		var line2 = this.add( page.addLine( end ) );
 
 		function _initPanel () {
 
 			self.onShow();
-			line1.textContent = 'Start:';
-			line2.textContent = 'End:';
+			line1.textContent = start;
+			line2.textContent = end;
 
 		}
 
@@ -43,8 +46,8 @@ class TracePanel extends Panel {
 
 			_initPanel();
 
-			line1.textContent = 'Start: ' + traceInfo.start;
-			line2.textContent = 'End: ' + traceInfo.end;
+			line1.textContent = start + ' ' + traceInfo.start;
+			line2.textContent = end + ' ' + traceInfo.end;
 
 			self.addDynamic( page.addButton( 'trace.delete', function() {
 				event.delete();
@@ -57,11 +60,11 @@ class TracePanel extends Panel {
 
 			_initPanel();
 
-			if ( event.start !== undefined ) line1.textContent = 'Start: ' + event.start;
+			if ( event.start !== undefined ) line1.textContent = start + ' ' + event.start;
 
 			if ( event.end !== undefined ) {
 
-				line2.textContent = 'End: ' + event.end;
+				line2.textContent = end + ' ' + event.end;
 
 				self.addDynamic( page.addButton( 'trace.add', function() {
 					event.add();

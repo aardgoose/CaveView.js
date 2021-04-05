@@ -13,7 +13,7 @@ class InfoPage extends Page {
 
 		this.addHeader( 'stats.header' );
 
-		this.addText( 'file: ' + fileSelector.file );
+		this.addText( this.i18n( 'file' ) + ': ' + fileSelector.file );
 
 		const stats = viewer.getLegStats( LEG_CAVE );
 
@@ -25,10 +25,10 @@ class InfoPage extends Page {
 		this.addHeader( 'CaveView v' + VERSION + '.' );
 
 		this.addLogo();
-		this.addText( 'A WebGL 3d cave viewer for Survex (.3d), Therion (.lox) and Compass (.plt) models.' );
+		this.addText( this.i18n( 'summary' ) );
 
-		this.addText( 'For more information see: ' );
-		this.addLink( 'https://aardgoose.github.io/CaveView.js/', 'CaveView on GitHub' );
+		this.addText( this.i18n( 'more' ) + ': ' );
+		this.addLink( 'https://aardgoose.github.io/CaveView.js/', this.i18n( 'github' ) );
 		this.addText( '© Angus Sawyer, 2021' );
 
 	}

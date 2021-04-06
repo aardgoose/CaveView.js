@@ -3,7 +3,7 @@ import { Color } from '../Three';
 
 // define colors to share THREE.color objects
 
-function ColourCache ( ) {
+function ColourCache () {
 
 	const cache = [];
 

@@ -20,193 +20,193 @@ const uniforms = UniformsUtils.merge( [
 	}
 ] );
 
-function Line2Material ( ctx, params, defines = { CV_BASIC: true }, callerUniforms = {} ) {
+class Line2Material extends ShaderMaterial {
 
-	ShaderMaterial.call( this, {
+	constructor ( ctx, params, defines = { CV_BASIC: true }, callerUniforms = {} ) {
 
-		type: 'LineMaterial',
+		super( {
 
-		uniforms: Object.assign(
-			UniformsUtils.clone( uniforms ),
-			ctx.materials.commonUniforms,
-			callerUniforms
-		),
+			type: 'LineMaterial',
 
-		vertexShader: Shaders.lineVertexShader,
-		fragmentShader: Shaders.lineFragmentShader,
+			uniforms: Object.assign(
+				UniformsUtils.clone( uniforms ),
+				ctx.materials.commonUniforms,
+				callerUniforms
+			),
 
-		clipping: true, // required for clipping support
-		defines: defines
-	} );
+			vertexShader: Shaders.lineVertexShader,
+			fragmentShader: Shaders.lineFragmentShader,
 
-	this.dashed = false;
+			clipping: true, // required for clipping support
+			defines: defines
+		} );
 
-	Object.defineProperties( this, {
+		this.dashed = false;
 
-		color: {
+		Object.defineProperties( this, {
 
-			enumerable: true,
+			color: {
 
-			get: function () {
+				enumerable: true,
 
-				return this.uniforms.diffuse.value;
+				get: function () {
 
-			},
+					return this.uniforms.diffuse.value;
 
-			set: function ( value ) {
+				},
 
-				this.uniforms.diffuse.value = value;
+				set: function ( value ) {
 
-			}
+					this.uniforms.diffuse.value = value;
 
-		},
-
-		linewidth: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.linewidth.value;
+				}
 
 			},
 
-			set: function ( value ) {
+			linewidth: {
 
-				this.uniforms.linewidth.value = value;
+				enumerable: true,
 
-			}
+				get: function () {
 
-		},
+					return this.uniforms.linewidth.value;
 
-		dashScale: {
+				},
 
-			enumerable: true,
+				set: function ( value ) {
 
-			get: function () {
+					this.uniforms.linewidth.value = value;
 
-				return this.uniforms.dashScale.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.dashScale.value = value;
-
-			}
-
-		},
-
-		dashSize: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.dashSize.value;
+				}
 
 			},
 
-			set: function ( value ) {
+			dashScale: {
 
-				this.uniforms.dashSize.value = value;
+				enumerable: true,
 
-			}
+				get: function () {
 
-		},
+					return this.uniforms.dashScale.value;
 
-		dashOffset: {
+				},
 
-			enumerable: true,
+				set: function ( value ) {
 
-			get: function () {
+					this.uniforms.dashScale.value = value;
 
-				return this.uniforms.dashOffset.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.dashOffset.value = value;
-
-			}
-
-		},
-
-		gapSize: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.gapSize.value;
+				}
 
 			},
 
-			set: function ( value ) {
+			dashSize: {
 
-				this.uniforms.gapSize.value = value;
+				enumerable: true,
 
-			}
+				get: function () {
 
-		},
+					return this.uniforms.dashSize.value;
 
-		opacity: {
+				},
 
-			enumerable: true,
+				set: function ( value ) {
 
-			get: function () {
+					this.uniforms.dashSize.value = value;
 
-				return this.uniforms.opacity.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.opacity.value = value;
-
-			}
-
-		},
-
-		resolution: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.resolution.value;
+				}
 
 			},
 
-			set: function ( value ) {
+			dashOffset: {
 
-				this.uniforms.resolution.value.copy( value );
+				enumerable: true,
+
+				get: function () {
+
+					return this.uniforms.dashOffset.value;
+
+				},
+
+				set: function ( value ) {
+
+					this.uniforms.dashOffset.value = value;
+
+				}
+
+			},
+
+			gapSize: {
+
+				enumerable: true,
+
+				get: function () {
+
+					return this.uniforms.gapSize.value;
+
+				},
+
+				set: function ( value ) {
+
+					this.uniforms.gapSize.value = value;
+
+				}
+
+			},
+
+			opacity: {
+
+				enumerable: true,
+
+				get: function () {
+
+					return this.uniforms.opacity.value;
+
+				},
+
+				set: function ( value ) {
+
+					this.uniforms.opacity.value = value;
+
+				}
+
+			},
+
+			resolution: {
+
+				enumerable: true,
+
+				get: function () {
+
+					return this.uniforms.resolution.value;
+
+				},
+
+				set: function ( value ) {
+
+					this.uniforms.resolution.value.copy( value );
+
+				}
 
 			}
 
-		}
+		} );
 
-	} );
+		this.setValues( params );
 
-	this.setValues( params );
+		this.resolution = new Vector2( ctx.container.clientWidth, ctx.container.clientHeight );
 
-	this.resolution = new Vector2( ctx.container.clientWidth, ctx.container.clientHeight );
+		ctx.viewer.addEventListener( 'resized', ( e ) => {
 
-	ctx.viewer.addEventListener( 'resized', ( e ) => {
+			const lineScale = e.lineScale ? e.lineScale : 1;
 
-		const lineScale = e.lineScale ? e.lineScale : 1;
+			this.resolution = new Vector2( e.width, e.height );
+			this.linewidth = Math.max( 1, Math.floor( e.width / 1000 ) * lineScale );
 
-		this.resolution = new Vector2( e.width, e.height );
-		this.linewidth = Math.max( 1, Math.floor( e.width / 1000 ) * lineScale );
+		} );
 
-	} );
+	}
 
 }
-
-Line2Material.prototype = Object.create( ShaderMaterial.prototype );
-
-Line2Material.prototype.constructor = Line2Material;
 
 Line2Material.prototype.isLineMaterial = true;
 

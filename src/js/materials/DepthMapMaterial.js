@@ -1,28 +1,28 @@
 import { Shaders } from '../shaders/Shaders';
 import { ShaderMaterial } from '../Three';
 
-function DepthMapMaterial ( terrain ) {
+class DepthMapMaterial extends ShaderMaterial {
 
-	const boundingBox = terrain.boundingBox;
+	constructor ( terrain ) {
 
-	const minHeight = boundingBox.min.z;
-	const maxHeight = boundingBox.max.z;
+		const boundingBox = terrain.boundingBox;
 
-	ShaderMaterial.call( this, {
-		vertexShader: Shaders.depthMapVertexShader,
-		fragmentShader: Shaders.depthMapFragmentShader,
-		type: 'CV.DepthMapMaterial',
-		depthWrite: false,
-		uniforms: {
-			minZ:   { value: minHeight },
-			scaleZ: { value: 1 / ( maxHeight - minHeight ) }
-		}
-	} );
+		const minHeight = boundingBox.min.z;
+		const maxHeight = boundingBox.max.z;
 
-	return this;
+		super( {
+			vertexShader: Shaders.depthMapVertexShader,
+			fragmentShader: Shaders.depthMapFragmentShader,
+			type: 'CV.DepthMapMaterial',
+			depthWrite: false,
+			uniforms: {
+				minZ:   { value: minHeight },
+				scaleZ: { value: 1 / ( maxHeight - minHeight ) }
+			}
+		} );
+
+	}
 
 }
-
-DepthMapMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 export { DepthMapMaterial };

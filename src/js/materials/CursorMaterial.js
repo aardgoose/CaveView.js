@@ -3,36 +3,36 @@ import { MATERIAL_LINE } from '../core/constants';
 
 import { ShaderMaterial } from '../Three';
 
-function CursorMaterial ( ctx, type ) {
+class CursorMaterial extends ShaderMaterial {
 
-	const survey = ctx.survey;
-	const cfg = ctx.cfg;
-	const limits = survey.modelLimits;
+	constructor ( ctx, type ) {
 
-	ShaderMaterial.call( this, {
-		vertexShader: Shaders.cursorVertexShader,
-		fragmentShader: Shaders.cursorFragmentShader,
-		type: 'CV.CursorMaterial',
-		uniforms: Object.assign( {
-			uLight:      { value: survey.lightDirection },
-			cursor:      { value: 0 },
-			cursorWidth: { value: 5.0 },
-			baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
-			cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
-		}, ctx.materials.commonUniforms ),
-		defines: {
-			USE_COLOR: true,
-			SURFACE: ( type !== MATERIAL_LINE )
-		}
-	} );
+		const survey = ctx.survey;
+		const cfg = ctx.cfg;
+		const limits = survey.modelLimits;
 
-	this.halfRange = ( limits.max.z - limits.min.z ) / 2;
+		super( {
+			vertexShader: Shaders.cursorVertexShader,
+			fragmentShader: Shaders.cursorFragmentShader,
+			type: 'CV.CursorMaterial',
+			uniforms: Object.assign( {
+				uLight:      { value: survey.lightDirection },
+				cursor:      { value: 0 },
+				cursorWidth: { value: 5.0 },
+				baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
+				cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
+			}, ctx.materials.commonUniforms ),
+			defines: {
+				USE_COLOR: true,
+				SURFACE: ( type !== MATERIAL_LINE )
+			}
+		} );
 
-	return this;
+		this.halfRange = ( limits.max.z - limits.min.z ) / 2;
+
+	}
 
 }
-
-CursorMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 CursorMaterial.prototype.setCursor = function ( value ) {
 

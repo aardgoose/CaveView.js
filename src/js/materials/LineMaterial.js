@@ -3,125 +3,128 @@ import { Line2Material } from './Line2Material';
 
 // subclass Line2Material to provide custom defines and uniforms
 
-function LineMaterial ( ctx, mode = 'height', dashed ) {
+class LineMaterial extends Line2Material {
 
-	const survey = ctx.survey;
-	const cfg = ctx.cfg;
-	const gradient = cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
-	const textureCache = ctx.materials.textureCache;
-	const surveyLimits = survey.modelLimits;
+	constructor ( ctx, mode = 'height', dashed ) {
 
-	const zMax = surveyLimits.max.z;
-	const zMin = surveyLimits.min.z;
+		const survey = ctx.survey;
+		const cfg = ctx.cfg;
+		const gradient = cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
+		const textureCache = ctx.materials.textureCache;
+		const surveyLimits = survey.modelLimits;
 
-	const defines = {};
+		const zMax = surveyLimits.max.z;
+		const zMin = surveyLimits.min.z;
 
-	let terrain = null;
-	let limits = null;
-	let range = null;
+		const defines = {};
 
-	if ( survey.terrain ) {
+		let terrain = null;
+		let limits = null;
+		let range = null;
+		let max = null;
 
-		terrain = survey.terrain;
+		if ( survey.terrain ) {
 
-		if ( terrain.boundingBox ) {
+			terrain = survey.terrain;
 
-			limits = terrain.boundingBox;
-			range = limits.getSize( new Vector3() );
+			if ( terrain.boundingBox ) {
+
+				limits = terrain.boundingBox;
+				range = limits.getSize( new Vector3() );
+
+			}
 
 		}
 
-	}
+		let customUniforms = {};
 
-	let customUniforms = {};
+		switch ( mode ) {
 
-	switch ( mode ) {
+		case 'height':
 
-	case 'height':
+			defines.CV_HEIGHT = true;
+			customUniforms = {
+				minZ:   { value: zMin },
+				scaleZ: { value: 1 / ( zMax - zMin ) },
+				cmap:   { value: textureCache.getTexture( gradient ) },
+			};
 
-		defines.CV_HEIGHT = true;
-		customUniforms = {
-			minZ:   { value: zMin },
-			scaleZ: { value: 1 / ( zMax - zMin ) },
-			cmap:   { value: textureCache.getTexture( gradient ) },
-		};
+			break;
 
-		break;
+		case 'cursor':
 
-	case 'cursor':
-
-		defines.CV_CURSOR = true;
-		customUniforms = {
-			cursor:      { value: 0 },
-			cursorWidth: { value: 5.0 },
-			baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
-			cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
-		};
-		break;
-
-	case 'depth':
-
-		defines.CV_DEPTH = true;
-		customUniforms = Object.assign(
-			{
-				modelMin:   { value: limits.min },
-				scaleX:     { value: 1 / range.x },
-				scaleY:     { value: 1 / range.y },
-				rangeZ:     { value: range.z },
-				depthScale: { value: 1 / ( surveyLimits.max.z - surveyLimits.min.z ) },
-				cmap:       { value: textureCache.getTexture( gradient ) },
-				depthMap:   { value: terrain.depthTexture },
-			},
-			ctx.materials.commonDepthUniforms
-		);
-		break;
-
-	case 'depth-cursor':
-
-		this.max = surveyLimits.max.z - surveyLimits.min.z;
-
-		defines.CV_DEPTH_CURSOR = true;
-		customUniforms = Object.assign(
-			{
-				modelMin:    { value: limits.min },
-				scaleX:      { value: 1 / range.x },
-				scaleY:      { value: 1 / range.y },
-				rangeZ:      { value: range.z },
-				depthMap:    { value: terrain.depthTexture },
-				cursor:      { value: this.max / 2 },
+			defines.CV_CURSOR = true;
+			customUniforms = {
+				cursor:      { value: 0 },
 				cursorWidth: { value: 5.0 },
 				baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
 				cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
-			},
-			ctx.materials.commonDepthUniforms
-		);
-		break;
+			};
+			break;
 
-	default:
+		case 'depth':
 
-		defines.CV_BASIC = true;
+			defines.CV_DEPTH = true;
+			customUniforms = Object.assign(
+				{
+					modelMin:   { value: limits.min },
+					scaleX:     { value: 1 / range.x },
+					scaleY:     { value: 1 / range.y },
+					rangeZ:     { value: range.z },
+					depthScale: { value: 1 / ( surveyLimits.max.z - surveyLimits.min.z ) },
+					cmap:       { value: textureCache.getTexture( gradient ) },
+					depthMap:   { value: terrain.depthTexture },
+				},
+				ctx.materials.commonDepthUniforms
+			);
+			break;
+
+		case 'depth-cursor':
+
+			max = surveyLimits.max.z - surveyLimits.min.z;
+
+			defines.CV_DEPTH_CURSOR = true;
+			customUniforms = Object.assign(
+				{
+					modelMin:    { value: limits.min },
+					scaleX:      { value: 1 / range.x },
+					scaleY:      { value: 1 / range.y },
+					rangeZ:      { value: range.z },
+					depthMap:    { value: terrain.depthTexture },
+					cursor:      { value: max / 2 },
+					cursorWidth: { value: 5.0 },
+					baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
+					cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
+				},
+				ctx.materials.commonDepthUniforms
+			);
+
+			break;
+
+		default:
+
+			defines.CV_BASIC = true;
+
+		}
+
+		if ( dashed ) defines.USE_DASH = true;
+
+		const params = {
+			color: 0xffffff,
+			vertexColors: true,
+			dashSize: 2,
+			gapSize: 2
+		};
+
+		super( ctx, params, defines, customUniforms );
+
+		// for cursor material variant
+		this.halfRange = ( surveyLimits.max.z - surveyLimits.min.z ) / 2;
+		this.max = max;
 
 	}
 
-	if ( dashed ) defines.USE_DASH = true;
-
-	const params = {
-		color: 0xffffff,
-		vertexColors: true,
-		dashSize: 2,
-		gapSize: 2
-	};
-
-	Line2Material.call( this, ctx, params, defines, customUniforms );
-
-	// for cursor material variant
-	this.halfRange = ( surveyLimits.max.z - surveyLimits.min.z ) / 2;
-
 }
-
-LineMaterial.prototype = Object.create( Line2Material.prototype );
-
-LineMaterial.prototype.constructor = LineMaterial;
 
 LineMaterial.prototype.setCursor = function ( value ) {
 

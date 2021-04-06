@@ -63,6 +63,20 @@ class GlyphStringGeometry extends InstancedBufferGeometry {
 
 	}
 
+	dispose () {
+
+		if ( this.isCached ) return;
+
+		// delete shared attributes to prevent internal render state
+		// being lost on dispose() call.
+
+		this.deleteAttribute( 'position' );
+		this.setIndex( null );
+
+		super.dispose();
+
+	}
+
 }
 
 GlyphStringGeometry.prototype.setString = function ( text ) {
@@ -97,21 +111,6 @@ GlyphStringGeometry.prototype.setString = function ( text ) {
 	this.instanceCount = l;
 
 };
-
-GlyphStringGeometry.prototype.dispose = function () {
-
-	if ( this.isCached ) return;
-
-	// delete shared attributes to prevent internal render state
-	// being lost on dispose() call.
-
-	this.deleteAttribute( 'position' );
-	this.setIndex( null );
-
-	InstancedBufferGeometry.prototype.dispose.call( this );
-
-};
-
 
 class GlyphStringBase extends Mesh {
 

@@ -3,38 +3,37 @@ import { Shaders } from '../shaders/Shaders';
 
 import { ShaderMaterial } from '../Three';
 
-function HeightMaterial ( ctx, type ) {
+class HeightMaterial extends ShaderMaterial {
 
-	const survey = ctx.survey;
-	const limits = survey.modelLimits;
+	constructor ( ctx, type ) {
 
-	const zMin = limits.min.z;
-	const zMax = limits.max.z;
-	const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
-	const textureCache = ctx.materials.textureCache;
+		const survey = ctx.survey;
+		const limits = survey.modelLimits;
 
-	this.midRange = ( zMax + zMin ) / 2;
+		const zMin = limits.min.z;
+		const zMax = limits.max.z;
+		const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
+		const textureCache = ctx.materials.textureCache;
 
-	ShaderMaterial.call( this, {
-		vertexShader: Shaders.heightVertexShader,
-		fragmentShader: Shaders.heightFragmentShader,
-		type: 'CV.HeightMaterial',
-		uniforms: Object.assign( {
-			uLight: { value: survey.lightDirection },
-			minZ:   { value: zMin },
-			scaleZ: { value: 1 / ( zMax - zMin ) },
-			cmap:   { value: textureCache.getTexture( gradient ) },
-		}, ctx.materials.commonUniforms ),
-		defines: {
-			USE_COLOR: true,
-			SURFACE: ( type !== MATERIAL_LINE )
-		}
-	} );
+		super( {
+			vertexShader: Shaders.heightVertexShader,
+			fragmentShader: Shaders.heightFragmentShader,
+			type: 'CV.HeightMaterial',
+			uniforms: Object.assign( {
+				uLight: { value: survey.lightDirection },
+				minZ:   { value: zMin },
+				scaleZ: { value: 1 / ( zMax - zMin ) },
+				cmap:   { value: textureCache.getTexture( gradient ) },
+			}, ctx.materials.commonUniforms ),
+			defines: {
+				USE_COLOR: true,
+				SURFACE: ( type !== MATERIAL_LINE )
+			}
+		} );
 
-	return this;
+		this.midRange = ( zMax + zMin ) / 2;
+	}
 
 }
-
-HeightMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 export { HeightMaterial };

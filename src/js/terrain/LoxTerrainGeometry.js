@@ -8,117 +8,119 @@
 
 import { BufferGeometry, Float32BufferAttribute, Vector3, Box3 } from '../Three';
 
-function LoxTerrainGeometry( dtm, offsets ) {
+class LoxTerrainGeometry extends BufferGeometry {
 
-	BufferGeometry.call( this );
+	constructor ( dtm, offsets ) {
 
-	this.type = 'LoxTerrainGeometry';
+		super();
 
-	const heightData = dtm.data;
+		this.type = 'LoxTerrainGeometry';
 
-	const lines = dtm.lines;
-	const samples = dtm.samples;
-	const calib = dtm.calib;
+		const heightData = dtm.data;
 
-	// buffers
+		const lines = dtm.lines;
+		const samples = dtm.samples;
+		const calib = dtm.calib;
 
-	const indices = [];
-	const vertices = [];
+		// buffers
 
-	// 2 x 2 scale & rotate callibration matrix
+		const indices = [];
+		const vertices = [];
 
-	const xx = calib.xx;
-	const xy = calib.xy;
-	const yx = calib.yx;
-	const yy = calib.yy;
+		// 2 x 2 scale & rotate callibration matrix
 
-	// offsets from dtm -> survey -> model
+		const xx = calib.xx;
+		const xy = calib.xy;
+		const yx = calib.yx;
+		const yy = calib.yy;
 
-	const xOffset = calib.xOrigin - offsets.x;
-	const yOffset = calib.yOrigin - offsets.y;
-	const zOffset = - offsets.z;
+		// offsets from dtm -> survey -> model
 
-	const lx = samples - 1;
-	const ly = lines - 1;
+		const xOffset = calib.xOrigin - offsets.x;
+		const yOffset = calib.yOrigin - offsets.y;
+		const zOffset = - offsets.z;
 
-	var ix, iy;
+		const lx = samples - 1;
+		const ly = lines - 1;
 
-	var minZ = Infinity;
-	var maxZ = -Infinity;
+		var ix, iy;
 
-	// setup vertices from height data (corrected by rotation matrix)
-	// y coordinates inverted in .lox datm data
+		var minZ = Infinity;
+		var maxZ = -Infinity;
 
-	for ( iy = 0; iy < lines; iy++ ) {
+		// setup vertices from height data (corrected by rotation matrix)
+		// y coordinates inverted in .lox datm data
 
-		const dstOffset = ( lines - 1 - iy ) * samples;
+		for ( iy = 0; iy < lines; iy++ ) {
 
-		for ( ix = 0; ix < samples; ix++ ) {
+			const dstOffset = ( lines - 1 - iy ) * samples;
 
-			const x = ix * xx + ( ly - iy ) * xy + xOffset;
-			const y = ix * yx + ( ly - iy ) * yy + yOffset;
+			for ( ix = 0; ix < samples; ix++ ) {
 
-			const z = heightData[ dstOffset + ix ] + zOffset;
+				const x = ix * xx + ( ly - iy ) * xy + xOffset;
+				const y = ix * yx + ( ly - iy ) * yy + yOffset;
 
-			vertices.push( x, y, z );
+				const z = heightData[ dstOffset + ix ] + zOffset;
 
-			if ( z < minZ ) minZ = z;
-			if ( z > maxZ ) maxZ = z;
+				vertices.push( x, y, z );
 
-		}
-
-	}
-
-	const maxX = lx * xx + ly * xy + xOffset;
-	const maxY = lx * yx + ly * yy + yOffset;
-
-	this.boundingBox = new Box3( new Vector3( xOffset, yOffset, minZ ), new Vector3( maxX, maxY, maxZ ) );
-
-	// indices
-
-	for ( iy = 0; iy < ly; iy ++ ) {
-
-		for ( ix = 0; ix < lx; ix ++ ) {
-
-			const a = ix + samples * iy;
-			const b = ix + samples * ( iy + 1 );
-			const c = ( ix + 1 ) + samples * ( iy + 1 );
-			const d = ( ix + 1 ) + samples * iy;
-
-			// faces - render each quad such that the shared diagonal edge has the minimum length - gives a smother terrain surface
-			// diagonals b - d, a - c
-
-			const d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] ); // diff in Z values between diagonal vertices
-			const d2 = Math.abs( vertices[ b * 3 + 2 ] - vertices[ c * 3 + 2 ] ); // diff in Z values between diagonal vertices
-
-			if ( d1 < d2 ) {
-
-				indices.push( a, b, d );
-				indices.push( b, c, d );
-
-			} else {
-
-				indices.push( a, b, c );
-				indices.push( c, d, a );
+				if ( z < minZ ) minZ = z;
+				if ( z > maxZ ) maxZ = z;
 
 			}
 
 		}
 
+		const maxX = lx * xx + ly * xy + xOffset;
+		const maxY = lx * yx + ly * yy + yOffset;
+
+		this.boundingBox = new Box3( new Vector3( xOffset, yOffset, minZ ), new Vector3( maxX, maxY, maxZ ) );
+
+		// indices
+
+		for ( iy = 0; iy < ly; iy ++ ) {
+
+			for ( ix = 0; ix < lx; ix ++ ) {
+
+				const a = ix + samples * iy;
+				const b = ix + samples * ( iy + 1 );
+				const c = ( ix + 1 ) + samples * ( iy + 1 );
+				const d = ( ix + 1 ) + samples * iy;
+
+				// faces - render each quad such that the shared diagonal edge has the minimum length - gives a smother terrain surface
+				// diagonals b - d, a - c
+
+				const d1 = Math.abs( vertices[ a * 3 + 2 ] - vertices[ d * 3 + 2 ] ); // diff in Z values between diagonal vertices
+				const d2 = Math.abs( vertices[ b * 3 + 2 ] - vertices[ c * 3 + 2 ] ); // diff in Z values between diagonal vertices
+
+				if ( d1 < d2 ) {
+
+					indices.push( a, b, d );
+					indices.push( b, c, d );
+
+				} else {
+
+					indices.push( a, b, c );
+					indices.push( c, d, a );
+
+				}
+
+			}
+
+		}
+
+		// build geometry
+
+		this.setIndex( indices );
+		this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+
+		// calibration data from terrain and local survey -> model - offsets
+
+		this.computeVertexNormals();
+
 	}
 
-	// build geometry
-
-	this.setIndex( indices );
-	this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-
-	// calibration data from terrain and local survey -> model - offsets
-
-	this.computeVertexNormals();
-
 }
-
-LoxTerrainGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 LoxTerrainGeometry.prototype.setupUVs = function ( bitmap, image, offsets ) {
 

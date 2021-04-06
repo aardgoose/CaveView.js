@@ -3,48 +3,49 @@ import { MATERIAL_LINE } from '../core/constants';
 
 import { ShaderMaterial, Vector3 } from '../Three';
 
-function DepthCursorMaterial ( ctx, type ) {
+class DepthCursorMaterial extends ShaderMaterial {
 
-	const survey = ctx.survey;
-	const cfg = ctx.cfg;
-	const surveyLimits = survey.modelLimits;
-	const terrain = survey.terrain;
+	constructor( ctx, type ) {
 
-	const limits = terrain.boundingBox;
-	const range = limits.getSize( new Vector3() );
+		const survey = ctx.survey;
+		const cfg = ctx.cfg;
+		const surveyLimits = survey.modelLimits;
+		const terrain = survey.terrain;
 
-	// max range of depth values
-	this.max = surveyLimits.max.z - surveyLimits.min.z;
+		const limits = terrain.boundingBox;
+		const range = limits.getSize( new Vector3() );
 
-	ShaderMaterial.call( this, {
-		vertexShader: Shaders.depthCursorVertexShader,
-		fragmentShader: Shaders.depthCursorFragmentShader,
-		type: 'CV.DepthCursorMaterial',
-		uniforms: Object.assign( {
-			uLight:      { value: survey.lightDirection },
-			modelMin:    { value: limits.min },
-			scaleX:      { value: 1 / range.x },
-			scaleY:      { value: 1 / range.y },
-			rangeZ:      { value: range.z },
-			depthMap:    { value: terrain.depthTexture },
-			cursor:      { value: this.max / 2 },
-			cursorWidth: { value: 5.0 },
-			baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
-			cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
-		}, ctx.materials.commonUniforms, ctx.materials.commonDepthUniforms ),
-		defines: {
-			USE_COLOR: true,
-			SURFACE: ( type !== MATERIAL_LINE )
-		}
-	} );
+		// max range of depth values
+		const max = surveyLimits.max.z - surveyLimits.min.z;
 
-	//	Object.assign( this.uniforms, ctx.materials.commonDepthUniforms ); FIXME?
+		super( {
+			vertexShader: Shaders.depthCursorVertexShader,
+			fragmentShader: Shaders.depthCursorFragmentShader,
+			type: 'CV.DepthCursorMaterial',
+			uniforms: Object.assign( {
+				uLight:      { value: survey.lightDirection },
+				modelMin:    { value: limits.min },
+				scaleX:      { value: 1 / range.x },
+				scaleY:      { value: 1 / range.y },
+				rangeZ:      { value: range.z },
+				depthMap:    { value: terrain.depthTexture },
+				cursor:      { value: max / 2 },
+				cursorWidth: { value: 5.0 },
+				baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
+				cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
+			}, ctx.materials.commonUniforms, ctx.materials.commonDepthUniforms ),
+			defines: {
+				USE_COLOR: true,
+				SURFACE: ( type !== MATERIAL_LINE )
+			}
+		} );
 
-	return this;
+		this.max = max;
+		//	Object.assign( this.uniforms, ctx.materials.commonDepthUniforms ); FIXME?
+
+	}
 
 }
-
-DepthCursorMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 DepthCursorMaterial.prototype.setCursor = function ( value ) {
 

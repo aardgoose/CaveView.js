@@ -2,18 +2,20 @@ import { LEG_CAVE } from '../core/constants';
 import { CommonAttributes } from '../core/CommonAttributes';
 import { BufferGeometry, Mesh } from '../Three';
 
-function PopupGeometry () {
+class PopupGeometry extends BufferGeometry {
 
-	BufferGeometry.call( this );
+	constructor () {
 
-	this.type = 'PopupGeometry';
+		super();
 
-	this.setIndex( CommonAttributes.index );
-	this.setAttribute( 'position', CommonAttributes.position );
+		this.type = 'PopupGeometry';
+
+		this.setIndex( CommonAttributes.index );
+		this.setAttribute( 'position', CommonAttributes.position );
+
+	}
 
 }
-
-PopupGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 var commonGeometry = null;
 

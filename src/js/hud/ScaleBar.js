@@ -2,56 +2,57 @@ import { MutableGlyphString } from '../core/GlyphString';
 
 import { Float32BufferAttribute, BufferGeometry, Group, Mesh } from '../Three';
 
-function BarGeometry ( ctx, length, height, divisions ) {
+class BarGeometry extends BufferGeometry {
 
-	BufferGeometry.call( this );
+	constructor ( ctx, length, height, divisions ) {
 
-	const cfg = ctx.cfg;
+		super();
 
-	const c1 = cfg.themeColor( 'hud.scale.bar1' );
-	const c2 = cfg.themeColor( 'hud.scale.bar2' );
+		const cfg = ctx.cfg;
 
-	const vertices = [];
-	const colors = [];
+		const c1 = cfg.themeColor( 'hud.scale.bar1' );
+		const c2 = cfg.themeColor( 'hud.scale.bar2' );
 
-	_makeBar( divisions * 10, 0 );
-	_makeBar( divisions, height + 1 );
+		const vertices = [];
+		const colors = [];
 
-	const colorBuffer = new Float32BufferAttribute( colors.length * 3, 3 );
+		_makeBar( divisions * 10, 0 );
+		_makeBar( divisions, height + 1 );
 
-	this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-	this.setAttribute( 'color', colorBuffer.copyColorsArray( colors ) );
+		const colorBuffer = new Float32BufferAttribute( colors.length * 3, 3 );
 
-	function _makeBar( divisions, offset ) {
+		this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+		this.setAttribute( 'color', colorBuffer.copyColorsArray( colors ) );
 
-		const dWidth = length / divisions;
+		function _makeBar( divisions, offset ) {
 
-		for ( let i = 0; i < divisions; i++ ) {
+			const dWidth = length / divisions;
 
-			const x1 = i * dWidth;
-			const x2 = x1 + dWidth;
-			const y1 = offset;
-			const y2 = y1 + height;
+			for ( let i = 0; i < divisions; i++ ) {
 
-			vertices.push(
-				x1, y1, 0,
-				x2, y2, 0,
-				x1, y2, 0,
-				x2, y2, 0,
-				x1, y1, 0,
-				x2, y1, 0
-			);
+				const x1 = i * dWidth;
+				const x2 = x1 + dWidth;
+				const y1 = offset;
+				const y2 = y1 + height;
 
-			const c = ( i % 2 ) ? c1 : c2;
-			colors.push( c, c, c, c, c, c );
+				vertices.push(
+					x1, y1, 0,
+					x2, y2, 0,
+					x1, y2, 0,
+					x2, y2, 0,
+					x1, y1, 0,
+					x2, y1, 0
+				);
+
+				const c = ( i % 2 ) ? c1 : c2;
+				colors.push( c, c, c, c, c, c );
+
+			}
 
 		}
-
 	}
 
 }
-
-BarGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 class ScaleBar extends Group {
 

@@ -11,43 +11,45 @@ import { Float32BufferAttribute } from 'three/src/core/BufferAttribute';
 import { Vector3 } from 'three/src/math/Vector3';
 import { Box3 } from 'three/src/math/Box3';
 
-function FlatTileGeometry( width, height, clip, offsets, flatZ ) {
+class FlatTileGeometry extends BufferGeometry {
 
-	BufferGeometry.call( this );
+	constructor ( width, height, clip, offsets, flatZ ) {
 
-	this.type = 'FlatTileGeometry';
+		super();
 
-	// buffers
+		this.type = 'FlatTileGeometry';
 
-	const vertices = [];
-	const uvs = [];
+		// buffers
 
-	// generate vertices and uvs
+		const vertices = [];
+		const uvs = [];
 
-	vertices.push( offsets.x,         offsets.y - height, flatZ );
-	vertices.push( offsets.x,         offsets.y, flatZ );
-	vertices.push( offsets.x + width, offsets.y, flatZ );
-	vertices.push( offsets.x + width, offsets.y - height, flatZ );
+		// generate vertices and uvs
 
-	uvs.push( clip.left / clip.terrainWidth,          clip.bottom / clip.terrainHeight );
-	uvs.push( clip.left / clip.terrainWidth,          1 - ( clip.top / clip.terrainHeight ) );
-	uvs.push( 1 - ( clip.right / clip.terrainWidth ), 1 - ( clip.top / clip.terrainHeight ) );
-	uvs.push( 1 - ( clip.right / clip.terrainWidth ), clip.bottom / clip.terrainHeight );
+		vertices.push( offsets.x,         offsets.y - height, flatZ );
+		vertices.push( offsets.x,         offsets.y, flatZ );
+		vertices.push( offsets.x + width, offsets.y, flatZ );
+		vertices.push( offsets.x + width, offsets.y - height, flatZ );
 
-	// avoid overhead of computeBoundingBox since we know x & y min and max values;
+		uvs.push( clip.left / clip.terrainWidth,          clip.bottom / clip.terrainHeight );
+		uvs.push( clip.left / clip.terrainWidth,          1 - ( clip.top / clip.terrainHeight ) );
+		uvs.push( 1 - ( clip.right / clip.terrainWidth ), 1 - ( clip.top / clip.terrainHeight ) );
+		uvs.push( 1 - ( clip.right / clip.terrainWidth ), clip.bottom / clip.terrainHeight );
 
-	this.boundingBox = new Box3().set( new Vector3( offsets.x, offsets.y - height, 0 ), new Vector3( offsets.x + width, offsets.y, 0 ) );
+		// avoid overhead of computeBoundingBox since we know x & y min and max values;
 
-	// build geometry
+		this.boundingBox = new Box3().set( new Vector3( offsets.x, offsets.y - height, 0 ), new Vector3( offsets.x + width, offsets.y, 0 ) );
 
-	this.setIndex( [ 0, 2, 1, 0, 3, 2 ] );
-	this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-	this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+		// build geometry
 
-	this.computeVertexNormals();
+		this.setIndex( [ 0, 2, 1, 0, 3, 2 ] );
+		this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+		this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+
+		this.computeVertexNormals();
+
+	}
 
 }
-
-FlatTileGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 export { FlatTileGeometry };

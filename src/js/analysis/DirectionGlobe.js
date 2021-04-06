@@ -82,8 +82,4 @@ class DirectionGlobe extends Points {
 
 }
 
-DirectionGlobe.prototype = Object.create( Points.prototype );
-
-DirectionGlobe.prototype.constructor = DirectionGlobe;
-
 export { DirectionGlobe };

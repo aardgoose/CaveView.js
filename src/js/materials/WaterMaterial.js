@@ -1,23 +1,23 @@
 import { Shaders } from '../shaders/Shaders';
 import { ShaderMaterial, DoubleSide } from '../Three';
 
-function WaterMaterial () {
+class WaterMaterial extends ShaderMaterial {
 
-	ShaderMaterial.call( this, {
-		vertexShader: Shaders.waterVertexShader,
-		fragmentShader: Shaders.waterFragmentShader,
-		depthWrite: false,
-		type: 'CV.WaterMaterial',
-		uniforms: {
-			offset: { value: 0 }
-		},
-		side: DoubleSide
-	} );
+	constructor () {
 
-	return this;
+		super( {
+			vertexShader: Shaders.waterVertexShader,
+			fragmentShader: Shaders.waterFragmentShader,
+			depthWrite: false,
+			type: 'CV.WaterMaterial',
+			uniforms: {
+				offset: { value: 0 }
+			},
+			side: DoubleSide
+		} );
+
+	}
 
 }
-
-WaterMaterial.prototype = Object.create( ShaderMaterial.prototype );
 
 export { WaterMaterial };

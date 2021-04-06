@@ -182,7 +182,7 @@ Overlay.prototype.getTile = function ( x, y, z ) {
 				() => {
 
 					this.missing.add( url );
-					( this.active ? materials.getMissingMaterial() : null );
+					resolve( this.active ? materials.getMissingMaterial() : null );
 
 				}
 			);

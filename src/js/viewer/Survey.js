@@ -282,10 +282,11 @@ Survey.prototype.loadEntrances = function () {
 
 Survey.prototype.setupTerrain = function ( terrain ) {
 
-	if ( terrain.isFlat ) return;
-
 	// expand limits with terrain
 	this.combinedLimits = new Box3().copy( terrain.boundingBox ).union( this.modelLimits );
+	this.setFeatureBox();
+
+	if ( terrain.isFlat ) return;
 
 	const grid = this.getFeature( FEATURE_GRID );
 
@@ -293,8 +294,6 @@ Survey.prototype.setupTerrain = function ( terrain ) {
 	this.remove( grid );
 
 	this.addFeature( new Grid( this.ctx ), FEATURE_GRID );
-
-	this.setFeatureBox(); // FIXME - why is terrain BB wrong?
 
 	// find height difference between all entrance locations and terrain
 	// find average differences and use to alter height of terrain
@@ -614,11 +613,10 @@ Survey.prototype.setScale = function ( hScale, vScale ) {
 
 	this.scale.set( hScale, hScale, vScale );
 
-	this.position.copy( this.combinedLimits.getCenter( new Vector3() ).multiply( this.scale ).negate() );
-
 	this.updateMatrix();
 	this.updateMatrixWorld();
 	this.inverseWorld.copy( this.matrixWorld ).invert();
+	this.worldBoundingBox = this.combinedLimits.clone().applyMatrix4( this.matrixWorld );
 
 };
 

@@ -28,8 +28,6 @@ class LineSegments2 extends Mesh {
 
 Object.assign( LineSegments2.prototype, {
 
-	constructor: LineSegments2,
-
 	isLineSegments2: true,
 
 	computeLineDistances: ( function () { // for backwards-compatability, but could be a method of LineSegmentsGeometry...

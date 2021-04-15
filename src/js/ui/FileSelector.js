@@ -1,111 +1,115 @@
 import { EventDispatcher } from '../Three';
 
-function FileSelector ( container, ctx ) {
+class FileSelector extends EventDispatcher {
 
-	this.fileList = [];
-	this.fileCount = 0;
-	this.currentIndex = Infinity;
-	this.loadedFile = null;
-	this.isMultiple = false;
-	this.splash = null;
-	this.localFilename = null;
+	constructor ( container, ctx ) {
 
-	const self = this;
+		super();
 
-	container.addEventListener( 'drop', _handleDrop );
-	container.addEventListener( 'dragenter', _handleDragenter );
-	container.addEventListener( 'dragover', _handleDragover );
-	container.addEventListener( 'dragleave', _handleDragleave );
+		this.fileList = [];
+		this.fileCount = 0;
+		this.currentIndex = Infinity;
+		this.loadedFile = null;
+		this.isMultiple = false;
+		this.splash = null;
+		this.localFilename = null;
 
-	Object.defineProperty( this, 'file', {
-		get: function () { return this.selectedFile; },
-		set: this.selectFile
-	} );
+		const self = this;
 
-	function _closeSpash () {
+		container.addEventListener( 'drop', _handleDrop );
+		container.addEventListener( 'dragenter', _handleDragenter );
+		container.addEventListener( 'dragover', _handleDragover );
+		container.addEventListener( 'dragleave', _handleDragleave );
 
-		const splash = self.splash;
-		container.classList.remove( 'cv-splash' );
+		Object.defineProperty( this, 'file', {
+			get: function () { return this.selectedFile; },
+			set: this.selectFile
+		} );
 
-		if ( splash !== null ) {
+		function _closeSpash () {
 
-			splash.parentNode.removeChild( splash );
-			self.splash = null;
+			const splash = self.splash;
+			container.classList.remove( 'cv-splash' );
 
-		}
+			if ( splash !== null ) {
 
-	}
-
-	function _handleDragenter ( event ) {
-
-		event.preventDefault();
-
-		if ( self.splash !== null ) return;
-
-		const splash = document.createElement( 'div' );
-
-		splash.innerHTML = ctx.cfg.i18n( 'dnd.splash_text' ) || 'dnd.splash_text';
-		splash.id = 'cv-splash';
-
-		container.appendChild( splash );
-		container.classList.add( 'cv-splash' );
-
-		self.splash = splash;
-
-	}
-
-	function _handleDragover ( event ) {
-
-		event.preventDefault();
-		event.dataTransfer.dropEffect = 'copy';
-
-	}
-
-
-	function _handleDragleave ( event ) {
-
-		event.preventDefault();
-		if ( event.relatedTarget === container.parentNode ) _closeSpash();
-
-	}
-
-	function _handleDrop ( event ) {
-
-		_closeSpash();
-
-		const dt = event.dataTransfer;
-
-		event.preventDefault();
-
-		const count = dt.files.length;
-		const files = [];
-
-		if ( count > 0 ) {
-
-			for( var i = 0; i < count; i++ ) {
-
-				files.push( dt.files[ i ] );
+				splash.parentNode.removeChild( splash );
+				self.splash = null;
 
 			}
 
-			self.selectFile( files, null );
+		}
+
+		function _handleDragenter ( event ) {
+
+			event.preventDefault();
+
+			if ( self.splash !== null ) return;
+
+			const splash = document.createElement( 'div' );
+
+			splash.innerHTML = ctx.cfg.i18n( 'dnd.splash_text' ) || 'dnd.splash_text';
+			splash.id = 'cv-splash';
+
+			container.appendChild( splash );
+			container.classList.add( 'cv-splash' );
+
+			self.splash = splash;
 
 		}
 
+		function _handleDragover ( event ) {
+
+			event.preventDefault();
+			event.dataTransfer.dropEffect = 'copy';
+
+		}
+
+
+		function _handleDragleave ( event ) {
+
+			event.preventDefault();
+			if ( event.relatedTarget === container.parentNode ) _closeSpash();
+
+		}
+
+		function _handleDrop ( event ) {
+
+			_closeSpash();
+
+			const dt = event.dataTransfer;
+
+			event.preventDefault();
+
+			const count = dt.files.length;
+			const files = [];
+
+			if ( count > 0 ) {
+
+				for( var i = 0; i < count; i++ ) {
+
+					files.push( dt.files[ i ] );
+
+				}
+
+				self.selectFile( files, null );
+
+			}
+
+		}
+
+		this.dispose = function () {
+
+			container.removeEventListener( 'drop', _handleDrop );
+			container.removeEventListener( 'dragover', _handleDragover );
+			container.removeEventListener( 'dragleave', _handleDragleave );
+			container.removeEventListener( 'dragenter', _handleDragenter );
+
+		};
+
 	}
 
-	this.dispose = function () {
-
-		container.removeEventListener( 'drop', _handleDrop );
-		container.removeEventListener( 'dragover', _handleDragover );
-		container.removeEventListener( 'dragleave', _handleDragleave );
-		container.removeEventListener( 'dragenter', _handleDragenter );
-
-	};
-
 }
-
-FileSelector.prototype = Object.create( EventDispatcher.prototype );
 
 FileSelector.prototype.addList = function ( list ) {
 

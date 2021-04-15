@@ -1,46 +1,50 @@
 import { EventDispatcher } from '../Three';
 
-function Routes ( survey ) {
+class Routes extends EventDispatcher {
 
-	// determine segments between junctions and entrances/passage ends and create mapping array.
+	constructor ( survey ) {
 
-	this.metadata = survey.metadata;
-	this.topology = survey.topology;
-	this.surveyTree = survey.surveyTree;
+		super();
 
-	this.routes = new Map();
-	this.routeNames = [];
+		// determine segments between junctions and entrances/passage ends and create mapping array.
 
-	this.currentRoute = new Set();
-	this.currentRouteName = null;
-	this.adjacentSegments = new Set();
+		this.metadata = survey.metadata;
+		this.topology = survey.topology;
+		this.surveyTree = survey.surveyTree;
 
-	Object.defineProperty( this, 'setRoute', {
-		set: function ( x ) { this.loadRoute( x ); },
-		get: function () { return this.currentRouteName; }
-	} );
+		this.routes = new Map();
+		this.routeNames = [];
 
-	const routes = this.metadata.getRoutes();
-	const routeNames = this.routeNames;
+		this.currentRoute = new Set();
+		this.currentRouteName = null;
+		this.adjacentSegments = new Set();
 
-	var routeName;
+		Object.defineProperty( this, 'setRoute', {
+			set: function ( x ) { this.loadRoute( x ); },
+			get: function () { return this.currentRouteName; }
+		} );
 
-	for ( routeName in routes ) {
+		const routes = this.metadata.getRoutes();
+		const routeNames = this.routeNames;
 
-		const route = routes[ routeName ];
+		var routeName;
 
-		routeNames.push( routeName );
-		this.routes.set( routeName, route.segments );
+		for ( routeName in routes ) {
+
+			const route = routes[ routeName ];
+
+			routeNames.push( routeName );
+			this.routes.set( routeName, route.segments );
+
+		}
+
+		routeNames.sort();
+
+		this.dispatchEvent( { type: 'changed', name: 'download' } );
 
 	}
 
-	routeNames.sort();
-
-	this.dispatchEvent( { type: 'changed', name: 'download' } );
-
 }
-
-Object.assign( Routes.prototype, EventDispatcher.prototype );
 
 Routes.prototype.addRoute = function ( routeName ) {
 

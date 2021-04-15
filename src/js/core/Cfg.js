@@ -8,25 +8,31 @@ import { defaultTheme } from './defaultTheme';
 x18n.register( 'en', lang_en );
 x18n.set( 'en' );
 
-function Cfg ( envs ) {
+class Cfg extends EventDispatcher {
 
-	this.environment = new Map();
-	this.themeColors = new Map();
-	this.i18n = x18n.t;
+	constructor ( envs ) {
 
-	if ( envs === undefined ) return;
+		super();
 
-	var pName;
+		this.environment = new Map();
+		this.themeColors = new Map();
+		this.i18n = x18n.t;
 
-	for ( pName in envs ) {
+		if ( envs === undefined ) return;
 
-		this.environment.set ( pName , envs[ pName ] );
+		var pName;
+
+		for ( pName in envs ) {
+
+			this.environment.set ( pName , envs[ pName ] );
+
+		}
+
+		if ( Cfg.home !== undefined ) this.environment.set( 'home', Cfg.home );
+
+		this.setLanguage( this.value( 'language', navigator.language.slice( 0, 2 ) ) );
 
 	}
-
-	if ( Cfg.home !== undefined ) this.environment.set( 'home', Cfg.home );
-
-	this.setLanguage( this.value( 'language', navigator.language.slice( 0, 2 ) ) );
 
 }
 
@@ -35,8 +41,6 @@ if ( document.currentScript !== undefined ) {
 	Cfg.home = document.currentScript.src.match( /^(.*\/)js\// )[ 1 ];
 
 }
-
-Cfg.prototype = Object.create( EventDispatcher.prototype );
 
 Cfg.prototype.setLanguage = function ( lang ) {
 

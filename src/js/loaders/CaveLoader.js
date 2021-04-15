@@ -5,27 +5,29 @@ import { pltHandler } from './pltHandler';
 import { FileLoader, EventDispatcher } from '../Three';
 import { Handler } from './Handler';
 
-function CaveLoader ( ctx, callback ) {
+class CaveLoader extends EventDispatcher {
 
-	if ( ! callback ) {
+	constructor ( ctx, callback ) {
 
-		alert( 'No callback specified' );
+		super();
+
+		if ( ! callback ) {
+
+			alert( 'No callback specified' );
+
+		}
+
+		this.callback = callback;
+		this.dataResponse = null;
+		this.metadataResponse = null;
+		this.requests = [];
+		this.ctx = ctx;
+
+		this.reset();
 
 	}
 
-	this.callback = callback;
-	this.dataResponse = null;
-	this.metadataResponse = null;
-	this.requests = [];
-	this.ctx = ctx;
-
-	this.reset();
-
 }
-
-CaveLoader.prototype = Object.create( EventDispatcher.prototype );
-
-CaveLoader.prototype.constructor = CaveLoader;
 
 CaveLoader.prototype.reset = function () {
 

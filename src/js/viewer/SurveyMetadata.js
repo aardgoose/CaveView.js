@@ -1,56 +1,58 @@
 import { EventDispatcher } from '../Three';
 import { dataURL } from '../core/lib';
 
-function SurveyMetadata( name, metadata ) {
+class SurveyMetadata extends EventDispatcher {
 
-	this.name = name;
+	constructor ( name, metadata ) {
 
-	var routes = {};
-	var traces = [];
-	var entrances = {};
+		super();
 
-	if ( metadata !== null ) {
+		this.name = name;
 
-		if ( metadata.routes ) routes = metadata.routes;
-		if ( metadata.traces ) traces = metadata.traces;
-		if ( metadata.entrances ) entrances = metadata.entrances;
+		var routes = {};
+		var traces = [];
+		var entrances = {};
 
-	}
+		if ( metadata !== null ) {
 
-	var localMetadata = window.localStorage.getItem( name );
-
-	if ( localMetadata !== null ) {
-
-		localMetadata = JSON.parse( localMetadata );
-
-		const localRoutes = localMetadata.routes;
-
-		// add local routes to any routes in metadata (if any)
-		var routeName;
-
-		for ( routeName in localRoutes ) {
-
-			const route = localRoutes[ routeName ];
-			route.local = true;
-
-			routes[ routeName ] = route;
+			if ( metadata.routes ) routes = metadata.routes;
+			if ( metadata.traces ) traces = metadata.traces;
+			if ( metadata.entrances ) entrances = metadata.entrances;
 
 		}
 
-		if ( localMetadata.traces !== undefined ) traces = localMetadata.traces; // FIXME - merge with preexisting
-		if ( localMetadata.entrances !== undefined ) entrances = localMetadata.entrances;
+		var localMetadata = window.localStorage.getItem( name );
+
+		if ( localMetadata !== null ) {
+
+			localMetadata = JSON.parse( localMetadata );
+
+			const localRoutes = localMetadata.routes;
+
+			// add local routes to any routes in metadata (if any)
+			var routeName;
+
+			for ( routeName in localRoutes ) {
+
+				const route = localRoutes[ routeName ];
+				route.local = true;
+
+				routes[ routeName ] = route;
+
+			}
+
+			if ( localMetadata.traces !== undefined ) traces = localMetadata.traces; // FIXME - merge with preexisting
+			if ( localMetadata.entrances !== undefined ) entrances = localMetadata.entrances;
+
+		}
+
+		this.routes = routes;
+		this.traces = traces;
+		this.entrances = entrances;
 
 	}
 
-	this.routes = routes;
-	this.traces = traces;
-	this.entrances = entrances;
-
 }
-
-
-SurveyMetadata.prototype = Object.create( EventDispatcher.prototype );
-
 
 SurveyMetadata.prototype.getRoutes = function () {
 

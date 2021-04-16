@@ -1,0 +1,257 @@
+﻿{
+	"settings": {
+		"title": "Nastavitve",
+		"survey": {
+			"header": "Načrt",
+			"caption": "Datoteka"
+		},
+		"view": {
+			"header": "Pogled",
+			"camera": {
+				"caption": "Tip kamere",
+				"orthographic": "ortografska",
+				"perspective": "perspektivna",
+				"anaglyph": "anaglif"
+			},
+			"viewpoints": {
+				"caption": "Gledišče",
+				"none": "<izberi gledišče>",
+				"plan": "tloris",
+				"elevation_n": "profil s severa",
+				"elevation_s": "profil z juga",
+				"elevation_e": "profil z vzhoda",
+				"elevation_w": "profil z zahoda"
+			},
+			"eye_separation": "Ločeni očesi",
+			"vertical_scaling": "Navpična prilagoditev",
+			"autorotate": "Samodejno vrtenje",
+			"rotation_speed": "Hitrost vrtenja"
+		},
+		"shading": {
+			"header": "Senčenje",
+			"caption": "Vizure pod površjem",
+			"height": "po višini",
+			"length": "po dolžini vizur",
+			"inclination": "po naklonu vizur",
+			"height_cursor": "kazalec višine",
+			"fixed": "enolična",
+			"survey": "načrt",
+			"route": "pot",
+			"depth": "globina",
+			"depth_cursor": "kazalec globine",
+			"distance": "razdalja",
+			"beck": "beck"
+		},
+		"selected_route": "Izbrana pot",
+		"no_routes": "pot ni določena",
+		"visibility": {
+			"header": "Vidnost",
+			"legs": "Linije poligona",
+			"entrances": "Oznake vhodov",
+			"entrance_dots": "Točke vhodov",
+			"stations": "Merilne točke",
+			"labels": "Oznake merilnih točk",
+			"comments": "Opombe merilnih točk",
+			"walls": "Stene (LDGD)",
+			"scraps": "Delni načrti",
+			"splays": "Stranske meritve",
+			"traces": "Sledi barvanja",
+			"warnings": "Opozorila",
+			"box": "Škatlasi okvir",
+			"hud": "Kazalniki",
+			"fog": "Megla",
+			"grid": "Mreža"
+		},
+		"controls": {
+			"header": "Kontrolniki",
+			"svx_control_mode": "Kontrole 'Aven'",
+			"zoom_to_cursor": "Povečava na kurzorju",
+			"wheel_tilt": "Miškino kolesce - nagibanje"
+		},
+		"ui": {
+			"selection_tree": "Uporabi izbiro drevesa"
+		},
+		"colors": {
+			"header": "Barve",
+			"background_color": "Ozadje",
+			"entrance_text": "Oznaka vhoda",
+			"entrance_background": "Ozadje vhoda",
+			"entrance_marker": "Marker vhoda",
+			"bounding_box": "Škatlasi okvir",
+			"legs_fixed": "Linije prehodov (fiksne)",
+			"surface_fixed": "Površinske linije (fiksne)",
+			"hud_text": "Tekst skale",
+			"defaults": "Obnovi privzete barve"
+		}
+	},
+	"surface": {
+		"title": "Površje",
+		"surface": {
+			"header": "Značilnosti na površju",
+			"legs": "Vizure na površju",
+			"shading": {
+				"caption": "Senčenje",
+				"height": "po višini",
+				"inclination": "po naklonu",
+				"height_cursor": "kazalec višine",
+				"fixed": "enolična"
+			}
+		},
+		"terrain": {
+			"header": "Teren",
+			"terrain": "Teren viden",
+			"shading": {
+				"caption": "Senčenje",
+				"relief": "reliefno senčenje",
+				"height": "po višini",
+				"overlay": "prekrivni zemljevid",
+				"contours": "izohipse"
+			},
+			"overlay": {
+				"caption": "Prekrivanje"
+			},
+			"opacity": "Prosojnost",
+			"datum_shift": "Navpični premik po datumu",
+			"lighting": "Usmerjena razsvetljava",
+			"downloadTileSet": "Prenos skupine ploščic"
+		}
+	},
+	"selection": {
+		"title": "Izbira",
+		"header": "Izbira"
+	},
+	"edit": {
+		"title": "Urejanje",
+		"mode": "Način urejanja",
+		"intro": "Izberi način urejanja",
+		"modes": {
+			"none": "- nič -",
+			"route": "poti",
+			"trace": "sledi",
+			"entrances": "vhodi"
+		},
+		"entrance": {
+			"header": "Vhodi"
+		},
+		"route": {
+			"header": "Poti",
+			"current": "Trenutna pot",
+			"save": "Shrani",
+			"new": "Nova pot",
+			"add": "Dodaj",
+			"download": "Prenesi"
+		},
+		"trace": {
+			"header": "Sledi",
+"start": "Začetek",
+"end": "Konec"
+		}
+	},
+	"info": {
+		"title": "Informacije",
+		"header": "Informacije",
+		"file": "Datoteka",
+		"more": "Za več informacij glej",
+		"summary": "WebGL gledalec 3d jamskih načrtov za Survex (.3d), Therion (.lox) in Compass (.plt) modele.",
+		"github": "CaveView na GitHub-u",
+		"stats": {
+			"header": "Statistika načrta",
+			"legs": "Število vizur",
+			"totalLength": "Skupna dolžina",
+			"minLength": "Najkrajša vizura",
+			"maxLength": "Najdaljša vizura"
+		}
+	},
+	"help": {
+		"title": "Pomoč",
+		"header_svx": "Ukazi na tipkovnici (survex)",
+		"header_native": "Ukazi na tipkovnici (izvorni)",
+		"shading": {
+			"header": "Senčenje",
+			"height": "višina",
+			"inclination": "naklon vizure",
+			"length": "dolžina vizure",
+			"height_cursor": "kazalec višine",
+			"single": "enobarvno",
+			"survey": "odsek načrta",
+			"route": "pot",
+			"depth": "globina pod površino",
+			"depth_cursor": "kazalec globine",
+			"cursor_up": "premakni kazalec gor",
+			"cursor_down": "premakni kazalec dol",
+			"distance": "razdalja",
+			"flat": "plosko senčenje"
+		},
+		"view": {
+			"header": "Pogled",
+			"full_screen": "preklop na celozaslonski način",
+			"orthogonal": "ortogonalni pogled",
+			"perspective": "pogled v perspektivi",
+			"reset": "ponastavi na začetni pogled",
+			"center": "središče na izbrani funkciji",
+			"next": "naslednja jama",
+			"plan": "tloris",
+			"elevation": "profil",
+			"north": "proti severu",
+			"east": "proti vzhodu",
+			"south": "proti jugu",
+			"west": "proti zahodu",
+			"rotate_clockwise": "zavrti v smeri urinega kazalca",
+			"rotate_anticlockwise": "zavrti v nasprotni smeri urinega kazalca",
+			"zoom_in": "povečaj",
+			"zoom_out": "pomanjšaj",
+			"auto_rotate": "vrti neprekinjeno",
+			"rotate_speed_up": "povečaj hitrost vrtenja",
+			"rotate_speed_down": "zmanjšaj hitrost vrtenja",
+			"reverse_rotation": "obrni smer vrtenja",
+			"zoom_to_cursor": "preklop povečave v način kurzorja",
+			"control_mode": "preklop načina upravljanja",
+			"decrease_focal_length": "zmanjšaj goriščno razdaljo",
+			"increase_focal_length": "povečaj goriščno razdaljo"
+		},
+		"visibility": {
+			"header": "Vidnost",
+			"scraps": "delni načrti da/ne [samo lox]",
+			"station_labels": "oznake merilnih točk da/ne",
+			"entrance_labels": "oznake vhodov da/ne",
+			"splays": "stranske meritve da/ne",
+			"survey": "vizure pod površjem da/ne",
+			"surface": "vizure na površju da/ne",
+			"terrain": "teren da/ne",
+			"walls": "LDGD stene da/ne",
+			"stations": "merilne točke da/ne",
+			"opacity_down": "zmanjšaj prosojnost terena",
+			"opacity_up": "povečaj prosojnost terena"
+		},
+		"selection": {
+			"header": "Izbira",
+			"remove": "Odstrani vse razen izbranega dela"
+		}
+	},
+	"exports": {
+		"title": "Izvozi",
+		"gltf_export": {
+			"header": "glTF izvoz",
+			"walls": "Vključi LDGD stene",
+			"scraps": "Vključi delne načrte",
+			"legs": "Vključi sredinske črte",
+			"rotate_axes": "Vrtenje osi",
+			"export": "Prenesi"
+		},
+		"png_export": {
+			"header": "Izvoz slike (PNG)",
+			"export": "Posnetek",
+			"size": "Velikost (px)",
+			"line_scale": "Debelina črte"
+		}
+	},
+	"hud": {
+		"height": "višina",
+		"leg_length": "dolžina vizure",
+		"depth": "globina",
+		"inclination": "naklon"
+	},
+	"dnd": {
+		"splash_text": "Povleci&nbsp;in&nbsp;spusti sem model .3d ali .lox, da&nbsp;ga&nbsp;naložiš"
+	}
+}

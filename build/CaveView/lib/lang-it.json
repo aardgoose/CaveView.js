@@ -1,0 +1,257 @@
+﻿{
+	"settings": {
+		"title": "Impostazioni",
+		"survey": {
+			"header": "Rilievo",
+			"caption": "File"
+		},
+		"view": {
+			"header": "Visualizzazione",
+			"camera": {
+				"caption": "Tipo camera",
+				"orthographic": "ortografica",
+				"perspective": "prospettiva",
+				"anaglyph": "anaglifo"
+			},
+			"viewpoints": {
+				"caption": "Punto di vista",
+				"none": "<seleziona punto di vista>",
+				"plan": "pianta",
+				"elevation_n": "sezione da Nord",
+				"elevation_s": "sezione da Sud",
+				"elevation_e": "sezione da Est",
+				"elevation_w": "sezione da Ovest"
+			},
+			"eye_separation": "Separazione degli occhi",
+			"vertical_scaling": "Scala verticale",
+			"autorotate": "Auto rotazione",
+			"rotation_speed": "Velocità di rotazione"
+		},
+		"shading": {
+			"header": "Ombreggiatura",
+			"caption": "Battute sotterranee",
+			"height": "per altezza",
+			"length": "per lunghezza battuta",
+			"inclination": "per inclinazione battuta",
+			"height_cursor": "cursore di altezza",
+			"fixed": "fissa",
+			"survey": "rilievo",
+			"route": "percorso",
+			"depth": "profondità",
+			"depth_cursor": "cursore di profondità",
+			"distance": "distanza",
+			"beck": "beck"
+		},
+		"selected_route": "Percorso selezionato",
+		"no_routes": "nessun percorso definito",
+		"visibility": {
+			"header": "Visibilità",
+			"legs": "Linee di poligono",
+			"entrances": "Etichette ingressi",
+			"entrance_dots": "Punti ingressi",
+			"stations": "Capisaldi",
+			"labels": "Nomi capisaldi",
+			"comments": "Commenti capisaldi",
+			"walls": "Pareti (LRUD)",
+			"scraps": "Scraps",
+			"splays": "Battute splay",
+			"traces": "Tracce colorazione",
+			"warnings": "Avvertenze",
+			"box": "Bounding box",
+			"hud": "Controlli",
+			"fog": "Nebbia",
+			"grid": "Griglia"
+		},
+		"controls": {
+			"header": "Controlli",
+			"svx_control_mode": "Controlli 'Aven'",
+			"zoom_to_cursor": "Zoom sul cursore",
+			"wheel_tilt": "Rotellina del mouse - inclinazione"
+		},
+		"ui": {
+			"selection_tree": "Usa la selezione ad albero"
+		},
+		"colors": {
+			"header": "Colori",
+			"background_color": "Sfondo",
+			"entrance_text": "Etichetta dell'ingresso",
+			"entrance_background": "Sfondo dell'ingresso",
+			"entrance_marker": "Marcatore dell'ingresso",
+			"bounding_box": "Bounding box",
+			"legs_fixed": "Linee di passaggio (fissa)",
+			"surface_fixed": "Linee di superficie (fisse)",
+			"hud_text": "Testo della scala",
+			"defaults": "Ripristinare i colori predefiniti"
+		}
+	},
+	"surface": {
+		"title": "Superficie",
+		"surface": {
+			"header": "Caratteristiche in superficie",
+			"legs": "Battute esterne",
+			"shading": {
+				"caption": "Ombreggiatura",
+				"height": "per altezza",
+				"inclination": "per inclinazione",
+				"height_cursor": "cursore di altezza",
+				"fixed": "fissa"
+			}
+		},
+		"terrain": {
+			"header": "Terreno",
+			"terrain": "Terreno visibile",
+			"shading": {
+				"caption": "Ombreggiatura",
+				"relief": "ombreggiatura in rilievo",
+				"height": "per altezza",
+				"overlay": "mappa in sovrapposizione",
+				"contours": "curve di livello"
+			},
+			"overlay": {
+				"caption": "Sovrapposizione"
+			},
+			"opacity": "Opacità",
+			"datum_shift": "Spostamento verticale da datum",
+			"lighting": "Illuminazione direzionale",
+			"downloadTileSet": "Scarica spec. set di tasselli"
+		}
+	},
+	"selection": {
+		"title": "Selezione",
+		"header": "Selezione"
+	},
+	"edit": {
+		"title": "Modifica",
+		"mode": "Modalità di modifica",
+		"intro": "Seleziona la modalità di modifica",
+		"modes": {
+			"none": "- nessuno -",
+			"route": "percorsi",
+			"trace": "tracce",
+			"entrances": "ingressi"
+		},
+		"entrance": {
+			"header": "Ingressi"
+		},
+		"route": {
+			"header": "Percorsi",
+			"current": "Percorso attuale",
+			"save": "Salva",
+			"new": "Nuovo percorso",
+			"add": "Inserisci",
+			"download": "Scarica"
+		},
+		"trace": {
+			"header": "Tracce",
+"start": "Inizio",
+"end": "Fine"
+		}
+	},
+	"info": {
+		"title": "Informazioni",
+		"header": "Informazioni",
+		"file": "File",
+		"more": "Per ulteriori informazioni, vedi",
+		"summary": "Un visualizzatore WebGL di rilievi grotte 3d per modelli Survex (.3d), Therion (.lox) e Compass (.plt).",
+		"github": "CaveView su GitHub",
+		"stats": {
+			"header": "Statistiche del rilievo",
+			"legs": "Conteggio delle battute",
+			"totalLength": "Lunghezza totale",
+			"minLength": "La battuta più corta",
+			"maxLength": "La battuta più lunga"
+		}
+	},
+	"help": {
+		"title": "Aiuto",
+		"header_svx": "Comandi da tastiera (survex)",
+		"header_native": "Comandi da tastiera (nativi)",
+		"shading": {
+			"header": "Ombreggiatura",
+			"height": "altezza",
+			"inclination": "inclinazione delle battute",
+			"length": "lunghezza delle battute",
+			"height_cursor": "corsore di altezza",
+			"single": "colore unico",
+			"survey": "sezione rilievo",
+			"route": "percorso",
+			"depth": "profondità sotto la superficie",
+			"depth_cursor": "cursore di profondità",
+			"cursor_up": "sposta il cursore in alto",
+			"cursor_down": "sposta il cursore in basso",
+			"distance": "distanza",
+			"flat": "ombreggiatura piatta"
+		},
+		"view": {
+			"header": "Vista",
+			"full_screen": "passare a schermo intero",
+			"orthogonal": "vista ortogonale",
+			"perspective": "vista in prospettiva",
+			"reset": "ripristina la visualizzazione iniziale",
+			"center": "centrare sulla caratteristica selezionata",
+			"next": "prossima grotta",
+			"plan": "pianta",
+			"elevation": "sezione",
+			"north": "rivolto a nord",
+			"east": "rivolto a est",
+			"south": "rivolto a sud",
+			"west": "rivolto a ovest",
+			"rotate_clockwise": "rotazione in senso orario",
+			"rotate_anticlockwise": "rotazione in senso antiorario",
+			"zoom_in": "ingrandire",
+			"zoom_out": "rimpicciolire",
+			"auto_rotate": "rotazione continua",
+			"rotate_speed_up": "aumentare la velocità di rotazione",
+			"rotate_speed_down": "diminuire la velocità di rotazione",
+			"reverse_rotation": "senso di rotazione inverso",
+			"zoom_to_cursor": "attiva lo zoom in modalità cursore",
+			"control_mode": "attiva la modalità di controllo",
+			"decrease_focal_length": "diminuire la lunghezza focale",
+			"increase_focal_length": "aumentare la lunghezza focale"
+		},
+		"visibility": {
+			"header": "Visibilità",
+			"scraps": "scraps on/off [solo lox]",
+			"station_labels": "etichette dei capisaldi on/off",
+			"entrance_labels": "etichette degli ingressi on/off",
+			"splays": "battute splay on/off",
+			"survey": "battute sotterranee on/off",
+			"surface": "battute di superfice on/off",
+			"terrain": "terreno on/off",
+			"walls": "pareti LRUD on/off",
+			"stations": "marcatori di caposaldo on/off",
+			"opacity_down": "diminuire l'opacità del terreno",
+			"opacity_up": "aumentare l'opacità del terreno"
+		},
+		"selection": {
+			"header": "Selezione",
+			"remove": "rimuove tutto tranne la sezione selezionata"
+		}
+	},
+	"exports": {
+		"title": "Esportazioni",
+		"gltf_export": {
+			"header": "Esportazione glTF",
+			"walls": "Includere le pareti LRUD",
+			"scraps": "Includere gli scraps",
+			"legs": "Includere le linee centrali",
+			"rotate_axes": "Rotazione degli assi",
+			"export": "Scarica"
+		},
+		"png_export": {
+			"header": "Esportazione immage (PNG)",
+			"export": "Istantanea",
+			"size": "Dimensione (px)",
+			"line_scale": "Spessore della linea"
+		}
+	},
+	"hud": {
+		"height": "altezza",
+		"leg_length": "lunghezza battuta",
+		"depth": "profondità",
+		"inclination": "inclinazione"
+	},
+	"dnd": {
+		"splash_text": "Trascina&nbsp;qui un modello .3d o .lox per&nbsp;caricarlo"
+	}
+}

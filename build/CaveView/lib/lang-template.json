@@ -213,7 +213,7 @@
 			"header": "Visibility",
 			"scraps": "scraps on/off [lox only]",
 			"station_labels": "station labels on/off",
-			"entrance_labels": "entrancel abels on/off",
+			"entrance_labels": "entrance labels on/off",
 			"splays": "splay legs on/off",
 			"survey": "underground legs on/off",
 			"surface": "surface legs on/off",

@@ -1,6 +1,6 @@
 import '../core/polyfills';
 import {
-	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
+	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LEG_DUPLICATE,
 	STATION_ENTRANCE, STATION_NORMAL, STATION_XSECT
 } from '../core/constants';
 import { Vector3 } from '../Three';
@@ -292,8 +292,36 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 		let type = LEG_CAVE;
 
+		/*
+		.lox shot flags
+		LXFILE_SHOT_FLAG_SURFACE = 1,
+		LXFILE_SHOT_FLAG_DUPLICATE = 2,
+		LXFILE_SHOT_FLAG_NOT_VISIBLE = 4,
+		LXFILE_SHOT_FLAG_NOT_LRUD = 8,
+		LXFILE_SHOT_FLAG_SPLAY = 16,
+		*/
+
 		if ( m_flags & 0x01 ) type = LEG_SURFACE;
-		if ( m_flags & 0x08 ) type = LEG_SPLAY;
+
+		if ( m_flags & 0x02 ) {
+
+			type = LEG_DUPLICATE;
+
+		} else {
+
+			// Fixme - needs mre work
+			if ( m_flags & 0x08 ) {
+				type = LEG_SPLAY;
+			}
+
+			/*
+			if ( m_flags & 0x16 ) {
+				console.log( 'lox: splay true' );
+				type = LEG_SPLAY;
+			}
+			*/
+
+		}
 
 		const from = stations[ m_from ];
 		const to   = stations[ m_to ];

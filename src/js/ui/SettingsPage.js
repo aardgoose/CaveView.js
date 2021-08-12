@@ -110,6 +110,7 @@ class SettingsPage extends Page {
 		if ( viewer.hasSplays          ) cv.appendChild( this.addCheckbox( 'visibility.splays', viewer, 'splays' ) );
 		if ( viewer.hasWalls           ) cv.appendChild( this.addCheckbox( 'visibility.walls', viewer, 'walls' ) );
 		if ( viewer.hasScraps          ) cv.appendChild( this.addCheckbox( 'visibility.scraps', viewer, 'scraps' ) );
+		if ( viewer.hasDuplicateLegs   ) cv.appendChild( this.addCheckbox( 'visibility.duplicates', viewer, 'duplicateLegs' ) );
 		if ( viewer.hasTraces          ) cv.appendChild( this.addCheckbox( 'visibility.traces', viewer, 'traces' ) );
 
 		cv.appendChild( this.addCheckbox( 'visibility.fog', viewer, 'fog' ) );

@@ -55,6 +55,7 @@
 			"walls": "Walls (LRUD)",
 			"scraps": "Scraps",
 			"splays": "Splay Legs",
+			"duplicates": "Duplicate Legs",
 			"traces": "Dye Traces",
 			"warnings": "Warnings",
 			"box": "Bounding box",

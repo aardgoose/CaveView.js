@@ -2,7 +2,8 @@ import {
 	FACE_SCRAPS, FACE_WALLS,
 	FEATURE_ENTRANCES, FEATURE_BOX, FEATURE_TRACES, FEATURE_GRID,
 	FEATURE_STATIONS, SURVEY_WARNINGS, STATION_ENTRANCE,
-	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LABEL_STATION, LABEL_STATION_COMMENT, MATERIAL_SURFACE,
+	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LEG_DUPLICATE,
+	LABEL_STATION, LABEL_STATION_COMMENT, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	SHADING_SURFACE, CLUSTER_MARKERS
@@ -371,6 +372,7 @@ Survey.prototype.loadCave = function ( cave ) {
 		typeLegs[ LEG_CAVE    ] = { vertices: [], runs: [] };
 		typeLegs[ LEG_SURFACE ] = { vertices: [], runs: [] };
 		typeLegs[ LEG_SPLAY   ] = { vertices: [], runs: [] };
+		typeLegs[ LEG_DUPLICATE ] = { vertices: [], runs: [] };
 
 		var legs, run, i;
 		var currentType;
@@ -436,6 +438,7 @@ Survey.prototype.loadCave = function ( cave ) {
 		_addModelSegments( LEG_CAVE, 'CV.Survey:cave:cave' );
 		_addModelSegments( LEG_SURFACE, 'CV.Survey:surface:surface' );
 		_addModelSegments( LEG_SPLAY, 'CV.Survey:cave:splay' );
+		_addModelSegments( LEG_DUPLICATE, 'CV.Survey:cave:duplicate' );
 
 		return;
 

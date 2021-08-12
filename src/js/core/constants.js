@@ -68,18 +68,11 @@ export const LABEL_STATION_COMMENT = 15;
 export const CLUSTER_MARKERS       = 16;
 export const FEATURE_ENTRANCE_DOTS = 17;
 export const FEATURE_GRID          = 18;
+export const LEG_DUPLICATE         = 19;
 
 export const WALL_OVAL             = 1; // based on Therion .lox types
 export const WALL_SQUARE           = 2;
 export const WALL_DIAMOND          = 3;
-
-
-// flags in legs exported by Cave models
-
-export const NORMAL  = 0;
-export const SURFACE = 1;
-export const SPLAY   = 2;
-export const DIVING  = 3;
 
 // bit mask
 export const STATION_NORMAL = 1;

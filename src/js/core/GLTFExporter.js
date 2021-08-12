@@ -24,7 +24,7 @@ import {ClampToEdgeWrapping,
 import { PropertyBinding } from 'three/src/animation/PropertyBinding';
 import { Scene } from 'three/src/scenes/Scene';
 import { Vector3 } from 'three/src/math/Vector3';
-import { MathUtils } from 'three/src/math/MathUtils';
+import * as MathUtils from 'three/src/math/MathUtils';
 
 //------------------------------------------------------------------------------
 // Constants

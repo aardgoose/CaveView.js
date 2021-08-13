@@ -1,5 +1,5 @@
 import {
-	LEG_CAVE, LEG_SPLAY, LEG_SURFACE,
+	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LEG_DUPLICATE,
 	STATION_NORMAL, STATION_ENTRANCE, STATION_XSECT,
 	WALL_SQUARE
 } from '../core/constants';
@@ -809,7 +809,17 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			if ( thisPosition === lastPosition ) return true;
 
-			if ( flags & 0x01 ) {
+			if ( ( flags & 0x07 ) == 0 ) {
+
+				// reference count underground legs ignoring splay and surface legs
+				// used for topology reconstruction
+
+				lastPosition.connections++;
+				thisPosition.connections++;
+
+				legs.push( { coords: thisPosition, type: LEG_CAVE, survey: sectionId } );
+
+			} else if ( flags & 0x01 ) {
 
 				legs.push( { coords: thisPosition, type: LEG_SURFACE, survey: sectionId } );
 
@@ -820,15 +830,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 				thisPosition.splays = -1;
 
-			} else {
+			} else if ( flags & 0x02 ) {
 
-				// reference count underground legs ignoring splay and surface legs
-				// used for topology reconstruction
-
-				lastPosition.connections++;
-				thisPosition.connections++;
-
-				legs.push( { coords: thisPosition, type: LEG_CAVE, survey: sectionId } );
+				legs.push( { coords: thisPosition, type: LEG_DUPLICATE, survey: sectionId } );
 
 			}
 

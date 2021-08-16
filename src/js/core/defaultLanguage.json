@@ -161,7 +161,10 @@
 			"legs": "Leg count",
 			"totalLength": "Total length",
 			"minLength": "Shortest leg",
-			"maxLength": "Longest leg"
+			"maxLength": "Longest leg",
+			"splayCount": "Splay leg count",
+			"surfaceCount": "Surface leg count",
+			"duplicateCount": "Duplicate leg count"
 		}
 	},
 	"help": {

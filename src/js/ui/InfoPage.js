@@ -1,4 +1,4 @@
-import { VERSION, LEG_CAVE } from '../core/constants';
+import { VERSION, LEG_CAVE, LEG_SPLAY, LEG_DUPLICATE, LEG_SURFACE } from '../core/constants';
 import { Page } from './Page';
 
 class InfoPage extends Page {
@@ -17,10 +17,41 @@ class InfoPage extends Page {
 
 		const stats = viewer.getLegStats( LEG_CAVE );
 
+		this.addBlankLine();
+
 		this.addLine( this.i18n( 'stats.legs' ) + ': ' + stats.legCount );
 		this.addLine( this.i18n( 'stats.totalLength' ) + ': ' + stats.legLength.toFixed( 2 ) + '\u202fm' );
 		this.addLine( this.i18n( 'stats.minLength' ) + ': ' + stats.minLegLength.toFixed( 2 ) + '\u202fm' );
 		this.addLine( this.i18n( 'stats.maxLength' ) + ': ' + stats.maxLegLength.toFixed( 2 ) + '\u202fm' );
+
+		if ( viewer.hasSplays || viewer.hasDuplicateLegs || viewer.hasSurfaceLegs ) {
+
+			this.addBlankLine();
+			this.addLine( 'Other legs' );
+			this.addBlankLine();
+
+		}
+
+		if ( viewer.hasSplays ) {
+
+			const splayStats = viewer.getLegStats( LEG_SPLAY );
+			this.addLine( this.i18n( 'stats.splayCount' ) + ': ' + splayStats.legCount );
+
+		}
+
+		if ( viewer.hasDuplicateLegs ) {
+
+			const duplicateStats = viewer.getLegStats( LEG_DUPLICATE );
+			this.addLine( this.i18n( 'stats.duplicateCount' ) + ': ' + duplicateStats.legCount );
+
+		}
+
+		if ( viewer.hasSurfaceLegs ) {
+
+			const surfaceStats = viewer.getLegStats( LEG_SURFACE );
+			this.addLine( this.i18n( 'stats.surfaceCount' ) + ': ' + surfaceStats.legCount );
+
+		}
 
 		this.addHeader( 'CaveView v' + VERSION + '.' );
 

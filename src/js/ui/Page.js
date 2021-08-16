@@ -191,6 +191,18 @@ Page.prototype.addLine = function ( text ) {
 
 };
 
+Page.prototype.addBlankLine = function () {
+
+	const b = document.createElement( 'br' );
+
+//	p.textContent = text;
+
+	this.page.appendChild( b );
+
+	return b;
+
+};
+
 Page.prototype.addLink = function ( url, text ) {
 
 	const a = document.createElement( 'a' );

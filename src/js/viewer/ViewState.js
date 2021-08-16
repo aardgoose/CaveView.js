@@ -1,7 +1,7 @@
 import {
 	CAMERA_PERSPECTIVE,
 	SHADING_HEIGHT, SHADING_RELIEF, SHADING_LOCATION,
-	VIEW_PLAN, MOUSE_MODE_NORMAL, TERRAIN_BLEND
+	VIEW_PLAN, MOUSE_MODE_NORMAL, TERRAIN_BLEND, SHADING_DUPLICATE
 } from '../core/constants';
 
 const defaultView = {
@@ -13,6 +13,7 @@ const defaultView = {
 	editMode: MOUSE_MODE_NORMAL,
 	shadingMode: SHADING_HEIGHT,
 	surfaceShading: SHADING_HEIGHT,
+	duplicateShading: SHADING_DUPLICATE,
 	terrainShading: SHADING_RELIEF,
 	terrainDirectionalLighting: true,
 	terrainOpacity: 0.5,

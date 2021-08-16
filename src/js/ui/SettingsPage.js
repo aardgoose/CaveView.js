@@ -135,6 +135,7 @@ class SettingsPage extends Page {
 		cc.appendChild( this.addColor( 'colors.bounding_box', 'box.bounding' ) );
 		cc.appendChild( this.addColor( 'colors.legs_fixed', 'shading.single' ) );
 		cc.appendChild( this.addColor( 'colors.surface_fixed', 'shading.surface' ) );
+		cc.appendChild( this.addColor( 'colors.duplicate_fixed', 'shading.duplicate' ) );
 		cc.appendChild( this.addColor( 'colors.hud_text', 'hud.text' ) );
 		cc.appendChild( this.addButton( 'colors.defaults', cfg.resetColors.bind( cfg ) ) );
 

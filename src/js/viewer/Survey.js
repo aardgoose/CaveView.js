@@ -6,7 +6,7 @@ import {
 	LABEL_STATION, LABEL_STATION_COMMENT, MATERIAL_SURFACE,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
-	SHADING_SURFACE, CLUSTER_MARKERS
+	SHADING_SURFACE, CLUSTER_MARKERS, SHADING_DUPLICATE
 } from '../core/constants';
 
 import { StationPosition } from '../core/StationPosition';
@@ -49,6 +49,7 @@ class Survey extends Object3D {
 		this.worldBoundingBox = null;
 		this.caveShading = SHADING_HEIGHT;
 		this.surfaceShading = SHADING_SINGLE;
+		this.duplicateShading = SHADING_DUPLICATE;
 		this.wallsMode = false;
 		this.hideMode = false;
 		this.ctx = ctx;
@@ -267,6 +268,7 @@ Survey.prototype.refreshColors = function () {
 
 	this.setShadingMode( this.caveShading );
 	this.setSurfaceShading( this.surfaceShading );
+	this.setDuplicateShading( this.duplicateShading );
 
 };
 
@@ -1058,6 +1060,18 @@ Survey.prototype.setSurfaceShading = function ( mode ) {
 
 };
 
+Survey.prototype.setDuplicateShading = function ( mode ) {
+
+	if ( this.setLegShading( LEG_DUPLICATE, mode, true ) ) {
+
+		this.duplicateShading = mode;
+
+	}
+
+	return this.duplicateShading;
+
+};
+
 Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed ) {
 
 	const mesh = this.features.get( legType );
@@ -1105,6 +1119,12 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed ) {
 	case SHADING_SURFACE:
 
 		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.surface' ), dashed );
+
+		break;
+
+	case SHADING_DUPLICATE:
+
+		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.duplicate' ), dashed );
 
 		break;
 

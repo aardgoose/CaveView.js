@@ -241,6 +241,11 @@ class CaveViewer extends EventDispatcher {
 				set: _stateSetter( setSurfaceShadingMode, 'surfaceShading' )
 			},
 
+			'duplicateShading': {
+				get: function () { return survey.duplicateShading; },
+				set: _stateSetter( setDuplicateShadingMode, 'duplicateShading' )
+			},
+
 			'cameraType': {
 				get: function () { return cameraManager.mode; },
 				set: _stateSetter( setCameraMode, 'cameraType' )
@@ -943,6 +948,14 @@ class CaveViewer extends EventDispatcher {
 		function setSurfaceShadingMode ( mode ) {
 
 			survey.setSurfaceShading( mode );
+
+			renderView();
+
+		}
+
+		function setDuplicateShadingMode ( mode ) {
+
+			survey.setDuplicateShading( mode );
 
 			renderView();
 

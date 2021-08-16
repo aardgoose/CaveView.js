@@ -47,6 +47,7 @@ export const SHADING_BECK         = 14;
 export const SHADING_CONTOURS     = 15;
 export const SHADING_LOCATION     = 16;
 export const SHADING_SURFACE      = 17;
+export const SHADING_DUPLICATE    = 18;
 
 // layer tags for scene objects
 

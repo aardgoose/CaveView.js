@@ -819,16 +819,16 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 				legs.push( { coords: thisPosition, type: LEG_CAVE, survey: sectionId } );
 
-			} else if ( flags & 0x01 ) {
-
-				legs.push( { coords: thisPosition, type: LEG_SURFACE, survey: sectionId } );
-
 			} else if ( flags & 0x04 ) {
 
 				lastPosition.splays++;
 				legs.push( { coords: thisPosition, type: LEG_SPLAY, survey: sectionId } );
 
 				thisPosition.splays = -1;
+
+			} else if ( flags & 0x01 ) {
+
+				legs.push( { coords: thisPosition, type: LEG_SURFACE, survey: sectionId } );
 
 			} else if ( flags & 0x02 ) {
 

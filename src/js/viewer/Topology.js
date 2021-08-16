@@ -150,7 +150,6 @@ Topology.prototype.shortestPathSearch = function ( station ) {
 
 	}
 
-	// console.log( 'max:', maxDistance );
 	this.zeroStation = station;
 	this.maxDistance = maxDistance;
 

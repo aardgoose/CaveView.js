@@ -290,8 +290,6 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 		if ( sectionId !== 0 && m_surveyId !== sectionId ) return;
 
-		let type = LEG_CAVE;
-
 		/*
 		.lox shot flags
 		LXFILE_SHOT_FLAG_SURFACE = 1,
@@ -301,25 +299,28 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 		LXFILE_SHOT_FLAG_SPLAY = 16,
 		*/
 
-		if ( m_flags & 0x01 ) type = LEG_SURFACE;
+		let type;
 
-		if ( m_flags & 0x02 ) {
+		if ( m_flags == 0 ) {
+
+			type = LEG_CAVE;
+
+		} else if ( m_flags & 0x08 || m_flags & 0x16 ) {
+
+			type = LEG_SPLAY;
+
+		} else if ( m_flags & 0x01 ) {
+
+			type = LEG_SURFACE;
+
+		} else if ( m_flags & 0x02 ) {
 
 			type = LEG_DUPLICATE;
 
 		} else {
 
-			// Fixme - needs mre work
-			if ( m_flags & 0x08 ) {
-				type = LEG_SPLAY;
-			}
-
-			/*
-			if ( m_flags & 0x16 ) {
-				console.log( 'lox: splay true' );
-				type = LEG_SPLAY;
-			}
-			*/
+			console.log( 'unexpected flags' + m_flags );
+			return;
 
 		}
 

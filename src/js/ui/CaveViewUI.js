@@ -33,7 +33,7 @@ function CaveViewUI ( viewer ) {
 	cfg.addEventListener( 'change', initUI );
 
 	const keyboardControls = new KeyboardControls( viewer, fileSelector, cfg.value( 'avenControls', true ) );
-	var locationButton;
+	let locationButton;
 
 	function selectFile( event ) {
 

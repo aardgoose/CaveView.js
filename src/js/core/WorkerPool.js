@@ -26,7 +26,7 @@ WorkerPool.prototype.terminateActive = function () {
 
 WorkerPool.prototype.getWorker = function () {
 
-	var worker;
+	let worker;
 
 	if ( this.workers.length === 0 ) {
 
@@ -121,9 +121,9 @@ function WorkerPoolCache ( cfg ) {
 
 	this.getPool = function ( scriptFile ) {
 
-		var script = cfg.value( 'home', '' ) + 'js/workers/' + scriptFile;
+		const script = cfg.value( 'home', '' ) + 'js/workers/' + scriptFile;
 
-		var pool = pools.get( script );
+		let pool = pools.get( script );
 
 		if ( pool === undefined ) {
 

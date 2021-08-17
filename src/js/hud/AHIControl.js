@@ -6,9 +6,10 @@ function AHIControl( hudObject, viewer ) {
 
 	const hr = hudObject.createHitRegion( hudObject.stdWidth * 2, hudObject.stdWidth * 2, handleEnter );
 	const ballSize = hudObject.stdWidth - 10;
-	var dragging = false;
-	var centerY;
-	var lastAngle;
+
+	let dragging = false;
+	let centerY;
+	let lastAngle;
 
 	hr.style.right = hudObject.stdMargin * 3 + hudObject.stdWidth * 2 + 'px';
 	hr.style.bottom = hudObject.stdMargin + 'px';

@@ -47,7 +47,7 @@ function GlyphAtlas ( glyphAtlasSpec ) {
 
 	this.ctx = ctx;
 
-	for ( var i = 0; i < glyphCount; i++ ) {
+	for ( let i = 0; i < glyphCount; i++ ) {
 
 		this.addGlyphToCanvas( glyphs.charAt( i ), i );
 
@@ -92,7 +92,7 @@ GlyphAtlas.prototype.getTexture = function () {
 
 GlyphAtlas.prototype.getGlyph = function ( glyph ) {
 
-	var glyphData = this.map[ glyph ];
+	let glyphData = this.map[ glyph ];
 
 	if ( glyphData === undefined ) {
 
@@ -121,7 +121,7 @@ function GlyphAtlasCache () {
 
 		const key = JSON.stringify( glyphAtlasSpec );
 
-		var atlas = atlasCache[ key ];
+		let atlas = atlasCache[ key ];
 
 		if ( atlas === undefined ) {
 

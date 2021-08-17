@@ -25,8 +25,8 @@ class HypsometricMaterial extends MeshLambertMaterial {
 
 		super();
 
-		var zMin = cfg.themeValue( 'shading.hypsometric.min' );
-		var zMax = cfg.themeValue( 'shading.hypsometric.max' );
+		let zMin = cfg.themeValue( 'shading.hypsometric.min' );
+		let zMax = cfg.themeValue( 'shading.hypsometric.max' );
 
 		if ( terrain.boundBox === undefined ) terrain.computeBoundingBox();
 
@@ -47,11 +47,11 @@ class HypsometricMaterial extends MeshLambertMaterial {
 				}
 			);
 
-			var vertexShader = shader.vertexShader
+			const vertexShader = shader.vertexShader
 				.replace( '#include <common>', '\nuniform float minZ;\nuniform float scaleZ;\nvarying float zMap;\nvarying vec2 vPosition;\n$&' )
 				.replace( 'include <begin_vertex>', '$&\nvPosition = vec2( position.x, position.y );\nzMap = saturate( ( position.z - minZ ) * scaleZ );' );
 
-			var fragmentShader = shader.fragmentShader
+			const fragmentShader = shader.fragmentShader
 				.replace( '#include <common>', '$&\n' + fragment_pars + '\n' )
 				.replace( '#include <color_fragment>', fragment_color );
 

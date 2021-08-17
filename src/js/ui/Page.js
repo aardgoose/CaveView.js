@@ -127,7 +127,7 @@ Page.prototype.addCollapsingHeader = function ( text ) {
 
 	div.addEventListener( 'click', function () {
 
-		var redraw; // eslint-disable-line no-unused-vars
+		let redraw; // eslint-disable-line no-unused-vars
 
 		if ( div.classList.contains( 'header_collapsed' ) ) {
 
@@ -253,7 +253,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 	} else {
 
-		for ( var p in obj ) {
+		for ( let p in obj ) {
 
 			const opt = document.createElement( 'option' );
 
@@ -432,9 +432,9 @@ Page.prototype.replaceSlide = function ( domElement, depth ) {
 	const newSlide = document.createElement( 'div' );
 	const page = this.page;
 
-	var oldSlide = this.slide;
+	let oldSlide = this.slide;
 
-	var redraw; // eslint-disable-line no-unused-vars
+	let redraw; // eslint-disable-line no-unused-vars
 
 	newSlide.classList.add( 'slide' );
 	newSlide.style.zIndex = 200 - depth;
@@ -515,7 +515,7 @@ Page.prototype.addTextBox = function ( title, placeholder, getResultGetter ) {
 	const div = document.createElement( 'div' );
 	const input = document.createElement( 'input' );
 
-	var value;
+	let value;
 
 	input.type = 'text';
 	input.placeholder = placeholder;

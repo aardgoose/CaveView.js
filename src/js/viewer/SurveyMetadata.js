@@ -9,9 +9,9 @@ class SurveyMetadata extends EventDispatcher {
 
 		this.name = name;
 
-		var routes = {};
-		var traces = [];
-		var entrances = {};
+		let routes = {};
+		let traces = [];
+		let entrances = {};
 
 		if ( metadata !== null ) {
 
@@ -21,7 +21,7 @@ class SurveyMetadata extends EventDispatcher {
 
 		}
 
-		var localMetadata = window.localStorage.getItem( name );
+		let localMetadata = window.localStorage.getItem( name );
 
 		if ( localMetadata !== null ) {
 
@@ -30,9 +30,8 @@ class SurveyMetadata extends EventDispatcher {
 			const localRoutes = localMetadata.routes;
 
 			// add local routes to any routes in metadata (if any)
-			var routeName;
 
-			for ( routeName in localRoutes ) {
+			for ( const routeName in localRoutes ) {
 
 				const route = localRoutes[ routeName ];
 				route.local = true;

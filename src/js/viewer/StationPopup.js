@@ -8,10 +8,10 @@ class StationPopup extends CanvasPopup {
 
 		const position = survey.getGeographicalPosition( station.p );
 
-		var name = station.getPath();
-		var long = false;
-		var tmp;
-		var lines = null;
+		let name = station.getPath();
+		let long = false;
+		let tmp;
+		let lines = null;
 
 		// reduce name length if too long
 
@@ -25,7 +25,7 @@ class StationPopup extends CanvasPopup {
 
 		}
 
-		var distance;
+		let distance;
 
 		if ( showDistance ) {
 

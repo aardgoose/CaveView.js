@@ -32,8 +32,8 @@ class LocationControls extends EventDispatcher {
 
 		super();
 
-		var scope = this;
-		var survey = null;
+		const scope = this;
+		let survey = null;
 
 		this.enabled = false;
 
@@ -47,16 +47,16 @@ class LocationControls extends EventDispatcher {
 		const lastTouch = new Vector2();
 		const currentTouch = new Vector2();
 
-		var touchDirection = 0;
+		let touchDirection = 0;
 
 		const container = ctx.container;
 		const materials = ctx.materials;
 
-		var deviceOrientation = { alpha: 0, beta: 0, gamma: 0 };
-		var screenOrientation = null;
+		let deviceOrientation = { alpha: 0, beta: 0, gamma: 0 };
+		let screenOrientation = null;
 
-		var watch = null;
-		var gettingHeight = false;
+		let watch = null;
+		let gettingHeight = false;
 
 		this.location = location;
 
@@ -154,7 +154,7 @@ class LocationControls extends EventDispatcher {
 
 		function selectCameraType ( angle ) {
 
-			var cameraType = cameraManager.mode;
+			let cameraType = cameraManager.mode;
 
 			// apply hysteresis
 
@@ -303,7 +303,7 @@ class LocationControls extends EventDispatcher {
 			container.addEventListener( 'touchend', onTouchEnd, false );
 			container.addEventListener( 'touchmove', onTouchMove, false );
 
-			var geolocation = navigator.geolocation;
+			const geolocation = navigator.geolocation;
 
 			geolocation.getCurrentPosition( onPositionChangeEvent );
 			watch = geolocation.watchPosition( onPositionChangeEvent );

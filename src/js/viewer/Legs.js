@@ -26,7 +26,7 @@ Legs.prototype.addLegs = function ( vertices, legRuns ) {
 	this.legVertices = vertices;
 	this.legRuns = legRuns;
 
-	var legs = null;
+	let legs = null;
 
 	if ( ctx.cfg.value( 'gl-lines', false ) ) {
 
@@ -71,9 +71,9 @@ Legs.prototype.computeStats = function () {
 	const n = l / 2;
 	const legLengths = new Array( n );
 
-	var i, s1 = 0, s2 = 0;
+	let s1 = 0, s2 = 0;
 
-	for ( i = 0; i < l; i += 2 ) {
+	for ( let i = 0; i < l; i += 2 ) {
 
 		const vertex1 = vertices[ i ];
 		const vertex2 = vertices[ i + 1 ];
@@ -116,9 +116,7 @@ Legs.prototype.cutRuns = function ( selection ) {
 
 	const l = legRuns.length;
 
-	var run;
-
-	for ( run = 0; run < l; run++ ) {
+	for ( let run = 0; run < l; run++ ) {
 
 		const legRun = legRuns[ run ];
 
@@ -130,7 +128,7 @@ Legs.prototype.cutRuns = function ( selection ) {
 
 		if ( idSet.has( survey ) ) {
 
-			for ( var v = start; v < end; v++ ) {
+			for ( let v = start; v < end; v++ ) {
 
 				newVertices.push( vertices[ v ] );
 
@@ -168,14 +166,12 @@ Legs.prototype.setShading = function ( idSet, colourSegment, mode, dashed ) {
 	const legRuns = this.legRuns;
 	const unselectedColor = this.ctx.cfg.themeColor( 'shading.unselected' );
 
-	var l, run, v;
-
 	const vertices = this.legVertices;
 	const colors = this.colors.array;
 
 	if ( idSet.size > 0 && legRuns ) {
 
-		for ( run = 0, l = legRuns.length; run < l; run++ ) {
+		for ( let run = 0, l = legRuns.length; run < l; run++ ) {
 
 			const legRun = legRuns[ run ];
 
@@ -185,7 +181,7 @@ Legs.prototype.setShading = function ( idSet, colourSegment, mode, dashed ) {
 
 			if ( idSet.has( survey ) ) {
 
-				for ( v = start; v < end; v += 2 ) {
+				for ( let v = start; v < end; v += 2 ) {
 
 					colourSegment( vertices, colors, v, v + 1, survey );
 
@@ -193,7 +189,7 @@ Legs.prototype.setShading = function ( idSet, colourSegment, mode, dashed ) {
 
 			} else {
 
-				for ( v = start; v < end; v += 2 ) {
+				for ( let v = start; v < end; v += 2 ) {
 
 					unselectedColor.toArray( colors, v * 3 );
 					unselectedColor.toArray( colors, ( v + 1 ) * 3 );
@@ -206,7 +202,7 @@ Legs.prototype.setShading = function ( idSet, colourSegment, mode, dashed ) {
 
 	} else {
 
-		for ( v = 0, l = vertices.length; v < l; v += 2 ) {
+		for ( let v = 0, l = vertices.length; v < l; v += 2 ) {
 
 			colourSegment( vertices, colors, v, v + 1, null );
 

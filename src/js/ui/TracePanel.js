@@ -15,8 +15,8 @@ class TracePanel extends Panel {
 
 		this.add( page.addHeader( 'trace.header' ) );
 
-		var line1 = this.add( page.addLine( start ) );
-		var line2 = this.add( page.addLine( end ) );
+		const line1 = this.add( page.addLine( start ) );
+		const line2 = this.add( page.addLine( end ) );
 
 		function _initPanel () {
 

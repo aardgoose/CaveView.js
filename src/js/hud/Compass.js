@@ -126,7 +126,7 @@ class Compass extends Group {
 
 Compass.prototype.set = function ( vCamera ) {
 
-	var a;
+	let a;
 
 	vCamera.getWorldDirection( __direction );
 

@@ -36,7 +36,7 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 		if ( matches && matches.length === 2 ) {
 
 			const init = matches[ 1 ];
-			var code;
+			let code;
 
 			switch ( init ) {
 
@@ -132,16 +132,12 @@ Handler.prototype.addLineSegments = function ( groups ) {
 	const lineSegments = this.lineSegments;
 	const l = groups.length;
 
-	var i;
-
-	for ( i = 0; i < l; i++ ) {
+	for ( let i = 0; i < l; i++ ) {
 
 		const g = groups[ i ];
 		const vMax = g.length - 1;
 
-		let v;
-
-		for ( v = 0; v < vMax; v++ ) {
+		for ( let v = 0; v < vMax; v++ ) {
 
 			// create vertex pairs for each line segment.
 			// all vertices except first and last are duplicated.
@@ -164,11 +160,11 @@ Handler.prototype.addXsects = function ( xSects ) {
 	const xGroups = [];
 	const ends = [];
 
-	var lastTo, xGroup, i;
+	let lastTo, xGroup;
 
 	xSects.sort( function ( a, b ) { return a.m_from - b.m_from; } );
 
-	for ( i = 0; i < xSects.length; i++ ) {
+	for ( let i = 0; i < xSects.length; i++ ) {
 
 		const xSect = xSects[ i ];
 
@@ -185,7 +181,7 @@ Handler.prototype.addXsects = function ( xSects ) {
 
 	}
 
-	for ( i = 0; i < xGroups.length; i++ ) {
+	for ( let i = 0; i < xGroups.length; i++ ) {
 
 		const group = xGroups[ i ];
 
@@ -211,7 +207,7 @@ Handler.prototype.addXsects = function ( xSects ) {
 
 	}
 
-	for ( i = 0; i < xGroups.length; i++ ) {
+	for ( let i = 0; i < xGroups.length; i++ ) {
 
 		const group = xGroups[ i ];
 
@@ -270,15 +266,13 @@ Handler.prototype.getSurvey = function () {
 
 	const scraps = this.scraps;
 
-	var i, j;
-
 	// covert scraps coordinates
 
-	for ( i = 0; i < scraps.length; i++ ) {
+	for ( let i = 0; i < scraps.length; i++ ) {
 
 		const vertices = scraps[ i ].vertices;
 
-		for ( j = 0; j < vertices.length; j++ ) {
+		for ( let j = 0; j < vertices.length; j++ ) {
 
 			vertices[ j ].sub( offsets );
 

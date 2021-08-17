@@ -62,7 +62,7 @@ Walls.prototype.setShading = function ( idSet, selectedMaterial ) {
 
 		// merge adjacent runs with shared material.
 
-		for ( var run = 1, l = indexRuns.length; run < l; run++ ) {
+		for ( let run = 1, l = indexRuns.length; run < l; run++ ) {
 
 			indexRun = indexRuns[ run ];
 
@@ -126,12 +126,11 @@ Walls.prototype.cutRuns = function ( selection ) {
 
 	const l = indexRuns.length;
 
-	var run, newVertexIndex = 0, fp = 0;
+	let run, newVertexIndex = 0, fp = 0;
 
 	for ( run = 0; run < l; run++ ) {
 
 		const indexRun = indexRuns[ run ];
-		let i;
 
 		if ( idSet.has( indexRun.survey ) ) {
 
@@ -143,7 +142,7 @@ Walls.prototype.cutRuns = function ( selection ) {
 			const itemSize = vertices.itemSize;
 			const oldVertices = vertices.array;
 
-			for ( i = start; i < end; i++ ) {
+			for ( let i = start; i < end; i++ ) {
 
 				const index = indices.getX( i );
 
@@ -197,7 +196,7 @@ Walls.prototype.setFlat = function ( flat ) {
 	if ( flat === this.flat ) return;
 
 	const geometry = this.geometry;
-	var flatGeometry = this.flatGeometry;
+	let flatGeometry = this.flatGeometry;
 
 	if ( flat ) {
 

@@ -41,19 +41,19 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 	// assumes little endian data ATM - FIXME
 
-	var source = dataStream;
+	let source = dataStream;
 
 	const l = source.byteLength;
 	const idOffset = modelOffset;
 	const stations = [];
 
-	var pos = 0; // file position
-	var dataStart;
-	var f = new DataView( source, 0 );
+	let pos = 0; // file position
+	let dataStart;
+	const f = new DataView( source, 0 );
 
-	var sectionId = 0;
-	var lastParentId;
-	var parentNode;
+	let sectionId = 0;
+	let lastParentId;
+	let parentNode;
 
 	// read file and parse chunk by chunk
 
@@ -127,7 +127,7 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 		}
 
-		for ( var i = 0; i < m_recCount; i++ ) doFunction();
+		for ( let i = 0; i < m_recCount; i++ ) doFunction();
 
 		pos += m_dataSize;
 

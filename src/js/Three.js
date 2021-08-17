@@ -94,7 +94,7 @@ Object3D.prototype.dropBuffers = function ( colors = true ) {
 	const geometry = this.geometry;
 	const attributes = geometry.attributes;
 
-	for ( var name in attributes )
+	for ( const name in attributes )
 		if ( colors || name !== 'color' ) attributes[ name ].onUpload( Object3D.onUploadDropBuffer );
 
 	if ( geometry.index ) geometry.index.onUpload( Object3D.onUploadDropBuffer );

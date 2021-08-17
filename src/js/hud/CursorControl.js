@@ -6,8 +6,8 @@ function CursorControl( hudObject, viewer, cursorScale ) {
 
 	const hr = hudObject.createHitRegion( cursorScale.barWidth, cursorScale.barHeight, handleEnter );
 
-	var dragging = false;
-	var barTop;
+	let dragging = false;
+	let barTop;
 
 	hr.style.right = hudObject.stdMargin + 'px';
 	hr.style.bottom = cursorScale.barOffset + 'px';

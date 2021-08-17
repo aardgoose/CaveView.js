@@ -99,9 +99,7 @@ CommonTerrain.prototype.checkTerrainShadingModes = function ( renderer ) {
 
 	if ( this.isTiled ) {
 
-		var name;
-
-		for ( name in overlays ) {
+		for ( const name in overlays ) {
 
 			const overlay = overlays[ name ];
 
@@ -138,8 +136,8 @@ CommonTerrain.prototype.setup = function ( renderer, scene, survey ) {
 	// set camera frustrum to cover region/survey area
 	const container = this.ctx.container;
 
-	var width  = container.clientWidth;
-	var height = container.clientHeight;
+	let width  = container.clientWidth;
+	let height = container.clientHeight;
 
 	const range = survey.combinedLimits.getSize( __vector3 );
 
@@ -208,9 +206,9 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 	const materials = this.ctx.materials;
 	const overlays = this.ctx.overlays;
 
-	var material;
-	var hideAttribution = true;
-	var overlay = null;
+	let material;
+	let hideAttribution = true;
+	let overlay = null;
 
 	switch ( mode ) {
 
@@ -447,7 +445,7 @@ CommonTerrain.prototype._fitSurface = function ( modelPoints /* , offsets */ ) {
 
 	const points = modelPoints;
 
-	var n = 0, s1 = 0, s2 = 0;
+	let n = 0, s1 = 0, s2 = 0;
 
 	points.forEach( point => {
 

@@ -24,10 +24,10 @@ function Materials ( viewer ) {
 	const ctx = viewer.ctx;
 	const self = this;
 
-	var glyphAtlasCache = new GlyphAtlasCache();
-	var cursorMaterials = new Set();
-	var perSurveyMaterials = {};
-	var cursorHeight = 0;
+	const glyphAtlasCache = new GlyphAtlasCache();
+	const cursorMaterials = new Set();
+	let perSurveyMaterials = {};
+	let cursorHeight = 0;
 
 	const colourCache = new ColourCache();
 	const textureCache = new TextureCache();
@@ -88,7 +88,7 @@ function Materials ( viewer ) {
 
 	function getCacheMaterial ( name, materialFunc, stencil ) {
 
-		var material = cache.get( 'name' );
+		let material = cache.get( 'name' );
 
 		if ( material === undefined ) {
 
@@ -190,7 +190,7 @@ function Materials ( viewer ) {
 
 	this.getBezelMaterial = function  () {
 
-		var func;
+		let func;
 
 		if ( ctx.cfg.themeValue( 'hud.bezelType' ) === 'flat' ) {
 
@@ -296,11 +296,9 @@ function Materials ( viewer ) {
 
 	this.flushCache = function () {
 
-		var name;
-
 		cursorMaterials.clear();
 
-		for ( name in perSurveyMaterials ) {
+		for ( const name in perSurveyMaterials ) {
 
 			const material = perSurveyMaterials[ name ];
 

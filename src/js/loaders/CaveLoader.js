@@ -114,7 +114,7 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	const taskCount = loadMetadata ? 2 : 1;
 
-	var doneCount = 0;
+	let doneCount = 0;
 
 	const loader = new FileLoader().setPath( prefix );
 

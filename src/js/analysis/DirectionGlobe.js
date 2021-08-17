@@ -33,9 +33,7 @@ class DirectionGlobe extends Points {
 
 		const pSize = [];
 
-		var i;
-
-		for ( i = 0; i < l; i += 2 ) {
+		for ( let i = 0; i < l; i += 2 ) {
 
 			const legVector = new Vector3().subVectors( vertices[ i ], vertices[ i + 1 ] );
 

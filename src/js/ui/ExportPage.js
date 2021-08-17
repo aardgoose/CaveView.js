@@ -71,7 +71,7 @@ class ExportPage extends Page {
 
 		function handleExport ( gltfData, binary ) {
 
-			var filename = replaceExtension( fileSelector.localFilename, ( binary ? 'glb' : 'gltf' ) );
+			const filename = replaceExtension( fileSelector.localFilename, ( binary ? 'glb' : 'gltf' ) );
 
 			self.download( URL.createObjectURL( gltfData ), filename );
 

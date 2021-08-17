@@ -9,7 +9,7 @@ class HelpPage extends Page {
 		frame.addPage( this );
 		const self = this;
 
-		var dl;
+		let dl;
 
 		this.addHeader( avenControls ? 'header_svx' : 'header_native' );
 

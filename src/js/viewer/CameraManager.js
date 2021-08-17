@@ -14,9 +14,10 @@ function CameraManager ( ctx, renderer, scene ) {
 
 	const container = ctx.container;
 
-	var width = container.clientWidth;
-	var height = container.clientHeight;
-	var boundingRect = container.getBoundingClientRect();
+	const width = container.clientWidth;
+	const height = container.clientHeight;
+
+	let boundingRect = container.getBoundingClientRect();
 
 	const orthographicCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
 	const perspectiveCamera = new PerspectiveCamera( ctx.cfg.themeValue( 'fieldOfView' ) , width / height, 1, 16000 );
@@ -37,16 +38,16 @@ function CameraManager ( ctx, renderer, scene ) {
 	const backMaterial = new MeshBasicMaterial( { side: BackSide, colorWrite: false } );
 	const backMask = 1 << FEATURE_SURVEY | 1 << FEATURE_TERRAIN;
 
-	var savedMask;
-	var eyeSeparation = 0.5;
-	var lastFrame = 0;
+	let savedMask;
+	let eyeSeparation = 0.5;
+	let lastFrame = 0;
 
 	ctx.viewer.addEventListener( 'resized', onResize );
 
 	function onResize ( e ) {
 
-		width = e.width;
-		height = e.height;
+		const width = e.width;
+		const height = e.height;
 
 		boundingRect = container.getBoundingClientRect();
 
@@ -163,8 +164,8 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		if ( this.mode === mode ) return;
 
-		var offsetLength;
-		var activeCamera = this.activeCamera;
+		let offsetLength;
+		let activeCamera = this.activeCamera;
 
 		const offset = activeCamera.position.clone().sub( target );
 
@@ -174,7 +175,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		}
 
-		var activeEffect = null;
+		let activeEffect = null;
 
 		switch ( mode ) {
 

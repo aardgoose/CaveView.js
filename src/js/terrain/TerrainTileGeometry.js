@@ -35,10 +35,8 @@ class TerrainTileGeometry extends BufferGeometry {
 		const uvs = [];
 
 
-		var minZ = Infinity;
-		var maxZ = -Infinity;
-
-		var ix, iy;
+		let minZ = Infinity;
+		let maxZ = -Infinity;
 
 		// generate vertices and uvs
 
@@ -54,12 +52,12 @@ class TerrainTileGeometry extends BufferGeometry {
 		const zOffset = offsets.z;
 		const xOffset = offsets.x;
 
-		var zIndex;
+		let zIndex;
 
-		var x;
-		var y = offsets.y;
+		let x;
+		let y = offsets.y;
 
-		for ( iy = clip.top; iy < iyMax; iy++ ) {
+		for ( let iy = clip.top; iy < iyMax; iy++ ) {
 
 			x = xOffset;
 
@@ -67,7 +65,7 @@ class TerrainTileGeometry extends BufferGeometry {
 
 			zIndex = iy * clip.dtmWidth + clip.left + clip.dtmOffset;
 
-			for ( ix = clip.left; ix < ixMax; ix++ ) {
+			for ( let ix = clip.left; ix < ixMax; ix++ ) {
 
 				const z = terrainData[ zIndex++ ] / scale - zOffset; // scale and convert to origin centered coords
 
@@ -93,9 +91,9 @@ class TerrainTileGeometry extends BufferGeometry {
 
 		// indices
 
-		for ( iy = 0; iy < gridY; iy ++ ) {
+		for ( let iy = 0; iy < gridY; iy ++ ) {
 
-			for ( ix = 0; ix < gridX; ix ++ ) {
+			for ( let ix = 0; ix < gridX; ix ++ ) {
 
 				const a = ix + gridX1 * iy;
 				const b = ix + gridX1 * ( iy + 1 );

@@ -23,11 +23,11 @@ class EditPage extends Page {
 		const self = this;
 		const intro = [];
 
-		var initialState;
+		let initialState;
 
-		var routePanel = null;
-		var tracePanel = null;
-		// var entrancePanel = null;
+		let routePanel = null;
+		let tracePanel = null;
+		// let entrancePanel = null;
 
 		this.addSelect( 'mode', mode, viewer, 'editMode' );
 

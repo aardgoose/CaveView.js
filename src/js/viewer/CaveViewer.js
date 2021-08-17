@@ -70,7 +70,7 @@ class CaveViewer extends EventDispatcher {
 
 		container.style.backgroundColor = cfg.themeColorCSS( 'background' );
 
-		var renderer = new WebGLRenderer( { antialias: true, alpha: true } );
+		let renderer = new WebGLRenderer( { antialias: true, alpha: true } );
 
 		renderer.setSize( container.clientWidth, container.clientHeight );
 		renderer.setPixelRatio( window.devicePixelRatio );
@@ -87,7 +87,7 @@ class CaveViewer extends EventDispatcher {
 		scene.fog = fog;
 		scene.name = 'CV.Viewer';
 
-		var cameraManager = new CameraManager( ctx, renderer, scene );
+		const cameraManager = new CameraManager( ctx, renderer, scene );
 
 		const raycaster = new Raycaster();
 		raycaster.layers.enableAll();
@@ -111,25 +111,25 @@ class CaveViewer extends EventDispatcher {
 
 		const formatters = {};
 
-		var caveIsLoaded = false;
+		let caveIsLoaded = false;
 
-		var lastMouseMode = MOUSE_MODE_NORMAL;
-		var mouseMode = MOUSE_MODE_NORMAL;
-		var mouseTargets = [];
-		var clickCount = 0;
+		let lastMouseMode = MOUSE_MODE_NORMAL;
+		let mouseMode = MOUSE_MODE_NORMAL;
+		let mouseTargets = [];
+		let clickCount = 0;
 
-		var terrain = null;
-		var survey = null;
-		var limits = null;
-		var stats = {};
+		let terrain = null;
+		let survey = null;
+		let limits = null;
+		let stats = {};
 
-		var useFog = false;
+		let useFog = false;
 
-		var renderRequired = true;
+		let renderRequired = true;
 
-		var popup = null;
+		let popup = null;
 
-		var clipped = false;
+		let clipped = false;
 
 		// preallocated tmp objects
 
@@ -138,12 +138,11 @@ class CaveViewer extends EventDispatcher {
 		const __v = new Vector3();
 		const self = this;
 
-		var viewState;
-		var savedView = null;
-		var mouseOver = false;
+		let savedView = null;
+		let mouseOver = false;
 
-		var hasLocation = false;
-		var trackLocation = false;
+		let hasLocation = false;
+		let trackLocation = false;
 
 		// event handler
 		window.addEventListener( 'resize', onResize );
@@ -483,7 +482,7 @@ class CaveViewer extends EventDispatcher {
 
 		hud.getProgressDial( 0 ).watch( caveLoader );
 
-		viewState = new ViewState( this );
+		const viewState = new ViewState( this );
 
 		this.renderView = renderView;
 
@@ -1354,11 +1353,9 @@ class CaveViewer extends EventDispatcher {
 			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
 			const intersects = raycaster.intersectObjects( mouseTargets, false );
 
-			var entrance;
-
 			if ( mouseMode === MOUSE_MODE_NORMAL && self.entrances ) {
 
-				entrance = survey.entrances.intersectLabels( mouse, cameraManager.activeCamera, scale );
+				const entrance = survey.entrances.intersectLabels( mouse, cameraManager.activeCamera, scale );
 
 				if ( entrance !== null ) {
 
@@ -1595,7 +1592,7 @@ class CaveViewer extends EventDispatcher {
 
 			const list = markers.getStations();
 
-			var start, end;
+			let start, end;
 
 			if ( list[ 0 ] !== undefined ) start = list[ 0 ].getPath();
 			if ( list[ 1 ] !== undefined ) end = list[ 1 ].getPath();
@@ -1673,7 +1670,7 @@ class CaveViewer extends EventDispatcher {
 
 			const range = survey.combinedLimits.getSize( __v );
 
-			var hScale = Math.min( width / range.x, height / range.y );
+			let hScale = Math.min( width / range.x, height / range.y );
 
 			if ( hScale === Infinity ) hScale = 1;
 
@@ -1731,11 +1728,11 @@ class CaveViewer extends EventDispatcher {
 
 		this.getSnapshot = function ( exportSize, lineScale ) {
 
-			var width  = container.clientWidth;
-			var height = container.clientHeight;
+			const width  = container.clientWidth;
+			const height = container.clientHeight;
 
-			var newWidth = exportSize;
-			var newHeight = Math.round( height * newWidth / width );
+			const newWidth = exportSize;
+			const newHeight = Math.round( height * newWidth / width );
 
 			const renderTarget = new WebGLRenderTarget( newWidth, newHeight, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, stencilBuffer: true } );
 
@@ -1776,12 +1773,12 @@ class CaveViewer extends EventDispatcher {
 
 			const id = new ImageData( invertedBuffer, newWidth, newHeight );
 
-			var canvas = document.createElement( 'canvas' );
+			const canvas = document.createElement( 'canvas' );
 
 			canvas.width = newWidth;
 			canvas.height = newHeight;
 
-			var ctx = canvas.getContext( '2d' );
+			const ctx = canvas.getContext( '2d' );
 
 			ctx.putImageData( id, 0, 0 );
 

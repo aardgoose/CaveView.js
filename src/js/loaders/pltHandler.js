@@ -31,16 +31,16 @@ pltHandler.prototype.parse = function ( cave, dataStream, metadata /*, section *
 	const lines = dataStream.split( /[\n\r]+/ );
 	const l = lines.length;
 
-	var path = [];
-	var segments = [];
-	var stationName;
-	var surveyName;
-	var surveyId = 0;
-	var lastStationIndex = -1;
-	var section = 'root';
-	var lrud, i, stationIndex, coords;
+	let path = [];
+	let segments = [];
+	let stationName;
+	let surveyName;
+	let surveyId = 0;
+	let lastStationIndex = -1;
+	let section = 'root';
+	let lrud, stationIndex, coords;
 
-	for ( i = 0; i < l; i++ ) {
+	for ( let i = 0; i < l; i++ ) {
 
 		const parts = lines[ i ].split( /\s+/ );
 
@@ -100,7 +100,7 @@ pltHandler.prototype.parse = function ( cave, dataStream, metadata /*, section *
 						r: r * ftom
 					};
 
-					var from = ( lastStationIndex !== -1 ) ? stations[ lastStationIndex ] : null;
+					const from = ( lastStationIndex !== -1 ) ? stations[ lastStationIndex ] : null;
 
 					xSects.push( { m_from: lastStationIndex, m_to: stationIndex, start: from, end: coords, lrud: lrud, survey: surveyId, type: 2  } );
 
@@ -179,7 +179,7 @@ pltHandler.prototype.parse = function ( cave, dataStream, metadata /*, section *
 		const lastKey = parts[ 1 ] + ':' + parts[ 2 ] + ':' + parts[ 3 ];
 		const cachedCoords = stationMap.get( lastKey );
 
-		var coords;
+		let coords;
 
 		if ( cachedCoords !== undefined ) {
 

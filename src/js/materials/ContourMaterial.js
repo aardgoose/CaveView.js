@@ -44,11 +44,11 @@ class ContourMaterial extends MeshLambertMaterial {
 				baseColor:       { value: cfg.themeColor( 'shading.contours.base' ) }
 			}, materials.commonDepthUniforms, materials.commonTerrainUniforms );
 
-			var vertexShader = shader.vertexShader
+			const vertexShader = shader.vertexShader
 				.replace( '#include <common>', '$&\nuniform float zOffset;\nuniform float datumShift;\nvarying float vPositionZ;\n' )
 				.replace( 'include <begin_vertex>', '$&\nvPositionZ = position.z + zOffset + datumShift;\n' );
 
-			var fragmentShader = shader.fragmentShader
+			const fragmentShader = shader.fragmentShader
 				.replace( '#include <common>', '$&\n' + fragment_pars + '\n' )
 				.replace( '#include <color_fragment>', fragment_color );
 

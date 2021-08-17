@@ -76,7 +76,7 @@ EPSG4326TileSet.prototype.getScreenAttribution = function () {
 
 	div.classList.add( 'overlay-branding' );
 
-	for ( var i = 0; i < attributions.length; i++ ) {
+	for ( let i = 0; i < attributions.length; i++ ) {
 
 		const attribution = attributions[ i ];
 

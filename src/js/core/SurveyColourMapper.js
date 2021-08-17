@@ -1,8 +1,8 @@
 
 function SurveyColourMapper ( ctx ) {
 
-	var map = [];
-	var selectedSection = 0;
+	let map = [];
+	let selectedSection = 0;
 
 	this.getColour = function ( surveyId ) {
 
@@ -27,13 +27,12 @@ function SurveyColourMapper ( ctx ) {
 		// create mapping of survey id to colour
 		// map each child id _and_ all its lower level survey ids to the same colour
 
-		var subTree = selectedSection;
-
-		var colour = this.getColour( selectedSection.id );
+		let subTree = selectedSection;
+		let colour = this.getColour( selectedSection.id );
 
 		_addMapping( subTree );
 
-		var children = subTree.children;
+		let children = subTree.children;
 
 		while ( children.length === 1 ) {
 

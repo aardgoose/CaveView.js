@@ -100,7 +100,7 @@ class LoxTerrain extends CommonTerrain {
 		this.overlayMaterial = null;
 		this.attributions = [];
 
-		var bitmapCount = 0;
+		let bitmapCount = 0;
 
 		terrains.forEach( terrain => {
 

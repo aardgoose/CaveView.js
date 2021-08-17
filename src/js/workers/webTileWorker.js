@@ -35,12 +35,12 @@ function dzzDecode( data, size ) {
 	// handle empty files.
 	if ( buffer.length === 4 ) return target;
 
-	var last = 0, i, outPos = 0;
+	let last = 0, outPos = 0;
 
-	for ( i = 0; i < buffer.length; i++ ) {
+	for ( let i = 0; i < buffer.length; i++ ) {
 
-		var z = 0, shift = 0;
-		var b = buffer[ i ];
+		let z = 0, shift = 0;
+		let b = buffer[ i ];
 
 		while ( b & 0x80 ) {
 
@@ -52,7 +52,7 @@ function dzzDecode( data, size ) {
 
 		z |= b << shift;
 
-		var v = ( z & 1 ) ? ( z >> 1 ) ^ -1 : ( z >> 1 );
+		const v = ( z & 1 ) ? ( z >> 1 ) ^ -1 : ( z >> 1 );
 
 		last += v;
 		target[ outPos++ ] = last;
@@ -65,9 +65,9 @@ function dzzDecode( data, size ) {
 
 function mapLoaded ( data ) {
 
-	var tileSet = tileSpec.tileSet;
+	const tileSet = tileSpec.tileSet;
 
-	var terrainData;
+	let terrainData;
 
 	if ( tileSet.encoding === 'dzz' ) {
 
@@ -108,9 +108,7 @@ function getHeight ( terrainData ) {
 
 	const pointCount = offsets.length;
 
-	var i;
-
-	for ( i = 0; i < pointCount; i++ ) {
+	for ( let i = 0; i < pointCount; i++ ) {
 
 		points[ i ].z = terrainData[ offsets[ i ] ] / tileSpec.tileSet.dtmScale;
 
@@ -145,7 +143,7 @@ function loadTile ( terrainData ) {
 	offsets.x = resolution * ( tileSpec.x * divisions + clip.left ) - halfMapExtent - offsets.x;
 	offsets.y = halfMapExtent - resolution * ( tileSpec.y * divisions + clip.top ) - offsets.y;
 
-	var terrainTile;
+	let terrainTile;
 
 	if ( tileSet.isFlat ) {
 
@@ -186,7 +184,7 @@ function loadTile ( terrainData ) {
 
 	const srcAttributes = terrainTile.attributes;
 
-	for ( var attributeName in srcAttributes ) {
+	for ( const attributeName in srcAttributes ) {
 
 		const attribute = srcAttributes[ attributeName ];
 		const arrayBuffer = attribute.array.buffer;

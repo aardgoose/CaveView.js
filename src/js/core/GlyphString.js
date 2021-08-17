@@ -14,7 +14,7 @@ function GlyphStringGeometryCache ( material ) {
 
 GlyphStringGeometryCache.prototype.getGeometry = function ( text ) {
 
-	var entry = this.cache[ text ];
+	let entry = this.cache[ text ];
 
 	if ( entry === undefined ) {
 
@@ -87,9 +87,9 @@ GlyphStringGeometry.prototype.setString = function ( text ) {
 
 	const l = text.length, glyphAtlas = this.glyphAtlas;
 
-	var i, offset = 0;
+	let offset = 0;
 
-	for ( i = 0; i < l; i++ ) {
+	for ( let i = 0; i < l; i++ ) {
 
 		if ( text.charCodeAt( i ) === 0 ) continue; // skip null characters
 		const glyphData = glyphAtlas.getGlyph( text[ i ] );
@@ -184,8 +184,6 @@ class GlyphString extends GlyphStringBase {
 
 	constructor ( text, glyphMaterial, ctx ) {
 
-		var geometry;
-
 		const glyphStringCache = ctx.glyphStringCache;
 
 		let cache = glyphStringCache.get( glyphMaterial );
@@ -198,7 +196,7 @@ class GlyphString extends GlyphStringBase {
 
 		}
 
-		geometry = cache.getGeometry( text );
+		const geometry = cache.getGeometry( text );
 
 		super( text, glyphMaterial, geometry );
 

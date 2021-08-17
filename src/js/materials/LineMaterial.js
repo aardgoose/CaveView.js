@@ -128,7 +128,7 @@ class LineMaterial extends Line2Material {
 
 LineMaterial.prototype.setCursor = function ( value ) {
 
-	var newValue;
+	let newValue;
 
 	if ( this.max !== undefined ) {
 

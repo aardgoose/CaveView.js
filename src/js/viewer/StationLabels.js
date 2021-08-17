@@ -65,7 +65,7 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 	const showComment = ( ( camera.layers.mask & 1 << LABEL_STATION_COMMENT ) !== 0 );
 	const commentRatio = l / this.commentCount;
 
-	for ( var i = 0; i < l; i++ ) {
+	for ( let i = 0; i < l; i++ ) {
 
 		const position = points[ i ];
 
@@ -125,7 +125,7 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
 StationLabels.prototype.addLabel = function ( station, name ) {
 
-	var material;
+	let material;
 
 	const position = station.p;
 	const connections = position.connections;

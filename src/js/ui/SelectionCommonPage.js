@@ -52,7 +52,7 @@ class SelectionCommonPage extends Page {
 
 		const self = this;
 
-		var redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
+		let redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
 
 		this.addLine = function ( ul, child ) {
 
@@ -70,7 +70,7 @@ class SelectionCommonPage extends Page {
 			const text = ( child.comment === undefined ) ? child.name : child.name + ' ( ' + child.comment + ' )';
 			const txt = document.createTextNode( text );
 
-			var key;
+			let key;
 
 			self.nodes.set( li, child );
 
@@ -152,11 +152,9 @@ class SelectionCommonPage extends Page {
 			const uls = this.page.getElementsByTagName( 'UL' );
 			const targetSections = [];
 
-			var i;
-
 			// find leaf sections that need reloading
 
-			for ( i = 0; i < uls.length; i++ ) {
+			for ( let i = 0; i < uls.length; i++ ) {
 
 				const ul = uls[ i ];
 				if ( this.leafSections.has( ul ) ) targetSections.push( ul );
@@ -295,12 +293,10 @@ class SelectionCommonPage extends Page {
 			const root = ( ul === undefined ) ? self.page : ul;
 			const lis = root.getElementsByTagName( 'li' );
 
-			var i;
-
 			const surveyColourMapper = viewer.ctx.surveyColourMapper;
 			const surveyColourMap = ( viewer.shadingMode === SHADING_SURVEY ) ? surveyColourMapper.getColourMap( viewer.section ) : null;
 
-			for ( i = 0; i < lis.length; i++ ) {
+			for ( let i = 0; i < lis.length; i++ ) {
 
 				const li = lis[ i ];
 				const node = self.nodes.get( lis[ i ] );

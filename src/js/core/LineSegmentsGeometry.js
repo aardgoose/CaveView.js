@@ -17,9 +17,9 @@ class LineSegmentsGeometry extends InstancedBufferGeometry {
 
 		this.type = 'LineSegmentsGeometry';
 
-		var positions = [ - 1, 2, 0, 1, 2, 0, - 1, 1, 0, 1, 1, 0, - 1, 0, 0, 1, 0, 0, - 1, - 1, 0, 1, - 1, 0 ];
-		var uvs = [ - 1, 2, 1, 2, - 1, 1, 1, 1, - 1, - 1, 1, - 1, - 1, - 2, 1, - 2 ];
-		var index = [ 0, 2, 1, 2, 3, 1, 2, 4, 3, 4, 5, 3, 4, 6, 5, 6, 7, 5 ];
+		const positions = [ - 1, 2, 0, 1, 2, 0, - 1, 1, 0, 1, 1, 0, - 1, 0, 0, 1, 0, 0, - 1, - 1, 0, 1, - 1, 0 ];
+		const uvs = [ - 1, 2, 1, 2, - 1, 1, 1, 1, - 1, - 1, 1, - 1, - 1, - 2, 1, - 2 ];
+		const index = [ 0, 2, 1, 2, 3, 1, 2, 4, 3, 4, 5, 3, 4, 6, 5, 6, 7, 5 ];
 
 		this.setIndex( index );
 		this.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
@@ -35,8 +35,8 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 	applyMatrix4: function ( matrix ) {
 
-		var start = this.attributes.instanceStart;
-		var end = this.attributes.instanceEnd;
+		const start = this.attributes.instanceStart;
+		const end = this.attributes.instanceEnd;
 
 		if ( start !== undefined ) {
 
@@ -66,7 +66,7 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 	setPositions: function ( array ) {
 
-		var lineSegments;
+		let lineSegments;
 
 		if ( array instanceof Float32Array ) {
 
@@ -78,7 +78,7 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 		}
 
-		var instanceBuffer = new InstancedInterleavedBuffer( lineSegments, 6, 1 ); // xyz, xyz
+		const instanceBuffer = new InstancedInterleavedBuffer( lineSegments, 6, 1 ); // xyz, xyz
 
 		this.setAttribute( 'instanceStart', new InterleavedBufferAttribute( instanceBuffer, 3, 0 ) ); // xyz
 		this.setAttribute( 'instanceEnd', new InterleavedBufferAttribute( instanceBuffer, 3, 3 ) ); // xyz
@@ -94,7 +94,7 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 	setColors: function ( array ) {
 
-		var colors;
+		let colors;
 
 		if ( array instanceof Float32Array ) {
 
@@ -106,7 +106,7 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 		}
 
-		var instanceColorBuffer = new InstancedInterleavedBuffer( colors, 6, 1 ); // rgb, rgb
+		const instanceColorBuffer = new InstancedInterleavedBuffer( colors, 6, 1 ); // rgb, rgb
 
 		this.setAttribute( 'instanceColorStart', new InterleavedBufferAttribute( instanceColorBuffer, 3, 0 ) ); // rgb
 		this.setAttribute( 'instanceColorEnd', new InterleavedBufferAttribute( instanceColorBuffer, 3, 3 ) ); // rgb
@@ -117,7 +117,7 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 	setHide: function ( array ) {
 
-		var hiddenVertices;
+		let hiddenVertices;
 
 		if ( array instanceof Float32Array ) {
 
@@ -143,7 +143,7 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 	computeBoundingBox: function () {
 
-		var box = new Box3();
+		const box = new Box3();
 
 		return function computeBoundingBox() {
 
@@ -153,8 +153,8 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 			}
 
-			var start = this.attributes.instanceStart;
-			var end = this.attributes.instanceEnd;
+			const start = this.attributes.instanceStart;
+			const end = this.attributes.instanceEnd;
 
 			if ( start !== undefined && end !== undefined ) {
 
@@ -172,7 +172,7 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 	computeBoundingSphere: function () {
 
-		var vector = new Vector3();
+		const vector = new Vector3();
 
 		return function computeBoundingSphere() {
 
@@ -188,18 +188,18 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 			}
 
-			var start = this.attributes.instanceStart;
-			var end = this.attributes.instanceEnd;
+			const start = this.attributes.instanceStart;
+			const end = this.attributes.instanceEnd;
 
 			if ( start !== undefined && end !== undefined ) {
 
-				var center = this.boundingSphere.center;
+				const center = this.boundingSphere.center;
 
 				this.boundingBox.getCenter( center );
 
-				var maxRadiusSq = 0;
+				let maxRadiusSq = 0;
 
-				for ( var i = 0, il = start.count; i < il; i ++ ) {
+				for ( let i = 0, il = start.count; i < il; i ++ ) {
 
 					vector.fromBufferAttribute( start, i );
 					maxRadiusSq = Math.max( maxRadiusSq, center.distanceToSquared( vector ) );

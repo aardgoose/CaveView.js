@@ -15,11 +15,11 @@ class TerrainOverlayMaterial extends MeshLambertMaterial {
 			// some uniforms shared by all material instances
 			Object.assign( shader.uniforms, ctx.materials.commonTerrainUniforms );
 
-			var vertexShader = shader.vertexShader
+			const vertexShader = shader.vertexShader
 				.replace( '#include <common>', '$&\nvarying vec2 vPosition;\n' )
 				.replace( 'include <begin_vertex>', '$&\nvPosition = vec2( position.x, position.y );\n' );
 
-			var fragmentShader = shader.fragmentShader
+			const fragmentShader = shader.fragmentShader
 				.replace( '#include <common>', '$&\n' + Shaders.commonTerrainCodePars + '\n' )
 				.replace( '#include <color_fragment>', Shaders.commonTerrainCodeColor );
 

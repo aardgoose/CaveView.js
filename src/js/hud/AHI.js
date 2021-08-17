@@ -57,7 +57,7 @@ class AHI extends Group {
 
 		sphere.setAttribute( 'color', sphereColors );
 
-		var vertices = [];
+		let vertices = [];
 
 		// view orientation line
 

@@ -64,9 +64,7 @@ CanvasPopup.prototype.finish = function () {
 	ctx.font = fontSize + 'px ' + 'normal helvetica,sans-serif';
 	ctx.fillStyle = cfg.themeColorCSS( 'popup.text' );
 
-	var i;
-
-	for ( i = 0; i < lineCount; i++ ) {
+	for ( let i = 0; i < lineCount; i++ ) {
 
 		ctx.fillText( lines[ i ], 10 , cellSize * ( i + 1 ) - 6 );
 

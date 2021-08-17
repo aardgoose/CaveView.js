@@ -28,22 +28,21 @@ function HUD ( viewer, renderer ) {
 	const hHeight = container.clientHeight / 2;
 	const hWidth  = container.clientWidth / 2;
 
-	var hScale = 0;
+	let hScale = 0;
 
-	var linearScale = null;
-	var cursorScale = null;
-	var scaleBar    = null;
-	var cursorControl = null;
+	let linearScale = null;
+	let cursorScale = null;
+	let scaleBar    = null;
+	let cursorControl = null;
 
-	var ahi;
-	var compass;
-	var angleScale;
+	let ahi;
+	let compass;
+	let angleScale;
 
 	// viewer state
 
-	var controls;
-	var isVisible = true;
-	var caveLoaded = false;
+	let isVisible = true;
+	let caveLoaded = false;
 
 	// create GL scene and camera for overlay
 	const camera = new OrthographicCamera( -hWidth, hWidth, hHeight, -hHeight, 1, 1000 );
@@ -58,7 +57,7 @@ function HUD ( viewer, renderer ) {
 
 	scene.addStatic( attitudeGroup );
 
-	var hudObject = new HudObject( viewer.ctx );
+	let hudObject = new HudObject( viewer.ctx );
 
 	const aLight = new AmbientLight( 0x888888 );
 	const dLight = new DirectionalLight( 0xFFFFFF );
@@ -86,7 +85,7 @@ function HUD ( viewer, renderer ) {
 	cfg.addEventListener( 'change', cfgChanged );
 	cfg.addEventListener( 'colors', cfgColorChanged );
 
-	controls = viewer.getControls();
+	const controls = viewer.getControls();
 
 	const compassControl = new CompassControl( hudObject, viewer );
 	const ahiControl = new AHIControl( hudObject, viewer );
@@ -287,9 +286,9 @@ function HUD ( viewer, renderer ) {
 
 		// hide all - and only make required elements visible
 
-		var useAngleScale = false;
-		var useLinearScale = false;
-		var useCursorScale = false;
+		let useAngleScale = false;
+		let useLinearScale = false;
+		let useCursorScale = false;
 
 		switch ( viewer.shadingMode ) {
 
@@ -376,8 +375,8 @@ function HUD ( viewer, renderer ) {
 		const cursorHeight = viewer.cursorHeight;
 		const range = viewer.maxHeight - viewer.minHeight;
 
-		var scaledHeight = 0;
-		var realHeight = 0;
+		let scaledHeight = 0;
+		let realHeight = 0;
 
 		if ( viewer.shadingMode === SHADING_CURSOR ) {
 

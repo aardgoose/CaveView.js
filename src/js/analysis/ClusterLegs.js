@@ -10,10 +10,8 @@ function ClusterLegs ( survey ) {
 	const l = vertices.length;
 	const legs = [];
 
-	var i;
-
 	// convert legs to unit length vectors from origin
-	for ( i = 0; i < l; i += 2 ) {
+	for ( let i = 0; i < l; i += 2 ) {
 
 		const leg = new Vector3().subVectors( vertices[ i ], vertices[ i + 1 ] );
 		const legLength = leg.length();
@@ -45,12 +43,11 @@ function clusterLegs( legs, epsilon, minPoints ) {
 	const tmpVector = new Vector3();
 	const clusters = [];
 
-	var i;
-	var clusterIndex = 0;
+	let clusterIndex = 0;
 
 	legs.sort( function ( a, b ) { return b.legLength - a.legLength; } );
 
-	for ( i = 0; i < l; i++ ) {
+	for ( let i = 0; i < l; i++ ) {
 
 		const leg = legs[ i ];
 
@@ -69,7 +66,7 @@ function clusterLegs( legs, epsilon, minPoints ) {
 
 		neighbours.forEach( function ( e ) {
 
-			var leg = legs[ e ];
+			const leg = legs[ e ];
 			if ( leg.label === NOISE ) leg.label = clusterIndex;
 			if ( leg.label !== undefined ) return;
 
@@ -83,7 +80,7 @@ function clusterLegs( legs, epsilon, minPoints ) {
 
 	console.log( 'leg count:', legs.length, 'cluster count:', clusterIndex );
 
-	for ( i = 0; i < clusterIndex; i++ ) {
+	for ( let i = 0; i < clusterIndex; i++ ) {
 
 		clusters[ i ] = {
 			vector: new Vector3(),
@@ -94,7 +91,7 @@ function clusterLegs( legs, epsilon, minPoints ) {
 
 	}
 
-	for ( i = 0; i < l; i++ ) {
+	for ( let i = 0; i < l; i++ ) {
 
 		const leg = legs[ i ];
 
@@ -117,12 +114,9 @@ function clusterLegs( legs, epsilon, minPoints ) {
 
 		const neighbours = new Set();
 		const l = legs.length;
-
-		var i;
-
 		const v1 = legs[ p ].vector;
 
-		for ( i = 0; i < l; i++ ) {
+		for ( let i = 0; i < l; i++ ) {
 
 			if ( i === p || legs[ i ] === undefined ) continue;
 
@@ -145,11 +139,11 @@ function paintClusters( clusters, survey, EPS ) {
 
 	const q = new Quaternion();
 
-	var i, maxLength = 0;
+	let maxLength = 0;
 
 	clusters.sort( function ( a, b ) { return b.length - a.length; } );
 
-	for ( i = 0; i < clusters.length; i++ ) {
+	for ( let i = 0; i < clusters.length; i++ ) {
 
 		const cluster = clusters[ i ];
 
@@ -173,7 +167,7 @@ function paintClusters( clusters, survey, EPS ) {
 
 	// depict clusters as scaled cones coloured based on 1st 3 directions
 
-	for ( i = 0; i < clusters.length; i++ ) {
+	for ( let i = 0; i < clusters.length; i++ ) {
 
 		const cluster = clusters[ i ];
 		const vector = cluster.vector;
@@ -205,10 +199,10 @@ function paintClusters( clusters, survey, EPS ) {
 
 	function _findMostDistant( vector ) {
 
-		var i, mostDistant;
-		var minD = 1;
+		let mostDistant;
+		let minD = 1;
 
-		for ( i = 0; i < clusters.length; i++ ) {
+		for ( let i = 0; i < clusters.length; i++ ) {
 
 			const d = Math.abs( vector.dot( clusters[ i ].vector ) );
 

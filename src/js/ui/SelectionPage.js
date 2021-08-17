@@ -7,11 +7,11 @@ class SelectionPage extends SelectionCommonPage {
 		super( frame, viewer, container, fileSelector );
 
 		const self = this;
-		var depth = 0;
+		let depth = 0;
 
 		this.addSlide( _displaySection( self.currentTop ), depth );
 
-		var redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
+		let redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
 
 		this.handleNext = function ( target, node ) {
 

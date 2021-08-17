@@ -100,9 +100,9 @@ Overlay.prototype.getTile = function ( x, y, z ) {
 	const material = this.materialCache.get( key );
 	const overlayMaxZoom = this.provider.maxZoom;
 
-	var repeat = 1;
-	var xOffset = 0;
-	var yOffset = 0;
+	let repeat = 1;
+	let xOffset = 0;
+	let yOffset = 0;
 
 	return new Promise( resolve => {
 

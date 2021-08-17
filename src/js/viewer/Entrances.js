@@ -45,7 +45,7 @@ class Entrances extends ClusterMarkers {
 
 		// remove common elements from station names if no alternatives available
 
-		var endNode = surveyTree;
+		let endNode = surveyTree;
 
 		while ( endNode.children.length === 1 ) endNode = endNode.children [ 0 ];
 

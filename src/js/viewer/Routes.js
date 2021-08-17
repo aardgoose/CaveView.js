@@ -27,7 +27,7 @@ class Routes extends EventDispatcher {
 		const routes = this.metadata.getRoutes();
 		const routeNames = this.routeNames;
 
-		var routeName;
+		let routeName;
 
 		for ( routeName in routes ) {
 
@@ -72,8 +72,6 @@ Routes.prototype.loadRoute = function ( routeName ) {
 	const segmentMap = this.topology.segmentMap;
 	const routeSegments = this.routes.get( routeName );
 
-	var i;
-
 	if ( ! routeSegments ) {
 
 		alert( 'route ' + routeName + ' does not exist' );
@@ -83,7 +81,7 @@ Routes.prototype.loadRoute = function ( routeName ) {
 
 	currentRoute.clear();
 
-	for ( i = 0; i < routeSegments.length; i++ ) {
+	for ( let i = 0; i < routeSegments.length; i++ ) {
 
 		const segment = routeSegments[ i ];
 

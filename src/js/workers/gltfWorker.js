@@ -32,7 +32,7 @@ function onMessage ( event ) {
 
 			} else {
 
-				var output = JSON.stringify( result, null, 2 );
+				const output = JSON.stringify( result, null, 2 );
 				postMessage( { status: 'ok', gltf: output } );
 
 			}
@@ -76,9 +76,7 @@ function getWalls( item, options ) {
 	const zz = item.modelLimits.max.z;
 	const z2 = 2 * zz;
 
-	var i;
-
-	for ( i = 0; i < vertexCount; i++ ) {
+	for ( let i = 0; i < vertexCount; i++ ) {
 
 		const zOffset = i * 3 + 2; // ( offset of Z value )
 		const offset = i * 2;
@@ -126,10 +124,9 @@ function getLines( item, options ) {
 function rotateAxes( vertices ) {
 
 	const vertexCount = vertices.length;
-	var i;
 
 	// rotate axes for z up.
-	for ( i = 0; i < vertexCount; i++ ) {
+	for ( let i = 0; i < vertexCount; i++ ) {
 
 		const v = i * 3;
 		const z = vertices[ v + 2 ];

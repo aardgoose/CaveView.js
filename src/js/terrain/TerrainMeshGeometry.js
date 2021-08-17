@@ -46,18 +46,16 @@ class TerrainMeshGeometry extends BufferGeometry {
 
 		// buffers
 
-		var indices = [];
-		var vertices = [];
-		var uvs = [];
-		var normals = [];
+		let indices = [];
+		let vertices = [];
+		let uvs = [];
+		let normals = [];
 
-
-		var i;
-		var v3 = new Vector3(); // tmp for normal decoding
+		const v3 = new Vector3(); // tmp for normal decoding
 
 		// generate vertices and uvs
 
-		for ( i = 0; i < vCount; i++ ) {
+		for ( let i = 0; i < vCount; i++ ) {
 
 			const u = uArray[ i ] / 32767;
 			const v = vArray[ i ] / 32767;
@@ -74,15 +72,15 @@ class TerrainMeshGeometry extends BufferGeometry {
 
 		const indexDataOffset = 88 + 4 + vCount * 6; // need to fix alignment
 
-		var indexElementSize = vCount > 65536 ? 4: 2;
+		const indexElementSize = vCount > 65536 ? 4: 2;
 
 		const triangleCount = dataView.getUint32( indexDataOffset, true );
 
 		const iArray = new Uint16Array( meshData, indexDataOffset + 4, triangleCount * 3 );
 
-		var highest = 0;
+		let highest = 0;
 
-		for ( i = 0; i < iArray.length; i++ ) {
+		for ( let i = 0; i < iArray.length; i++ ) {
 
 			const code = iArray[ i ];
 
@@ -96,11 +94,11 @@ class TerrainMeshGeometry extends BufferGeometry {
 
 		}
 
-		var nextStart = indexDataOffset + 4 + ( triangleCount * 3 * indexElementSize );
+		let nextStart = indexDataOffset + 4 + ( triangleCount * 3 * indexElementSize );
 
 		// skip edge vertex descriptors
 
-		for ( i = 0; i < 4; i++ ) {
+		for ( let i = 0; i < 4; i++ ) {
 
 			const edgeVertexCount = dataView.getInt32( nextStart, true );
 
@@ -137,8 +135,8 @@ class TerrainMeshGeometry extends BufferGeometry {
 
 		}
 
-		var newIndices = [];
-		var clipSides = 0;
+		const newIndices = [];
+		let clipSides = 0;
 
 		if ( clippedVertices.length !== 0 ) {
 
@@ -186,7 +184,7 @@ class TerrainMeshGeometry extends BufferGeometry {
 		function _decode( tArray ) {
 
 			// zig zag and delta decode
-			var value = 0;
+			let value = 0;
 
 			tArray.forEach( ( deltaValue, index, array ) => {
 
@@ -216,7 +214,7 @@ class TerrainMeshGeometry extends BufferGeometry {
 
 			const octNormals = new Uint8Array( meshData, nextStart, vCount * 2 );
 
-			for ( i = 0; i < vCount * 2; ) {
+			for ( let i = 0; i < vCount * 2; ) {
 
 				_decodeOct( ( octNormals[ i++ ] / 255 ) * 2 - 1, ( octNormals[ i++ ] / 255 ) * 2 - 1 );
 
@@ -267,13 +265,11 @@ class TerrainMeshGeometry extends BufferGeometry {
 
 			const mapping = [];
 
-			var i;
-
-			for ( i = 0; i < oldIndices.length; i++ ) {
+			for ( let i = 0; i < oldIndices.length; i++ ) {
 
 				const oldIndex = oldIndices[ i ];
 
-				var newIndex = mapping[ oldIndex ];
+				let newIndex = mapping[ oldIndex ];
 
 				if ( newIndex === undefined ) {
 
@@ -310,7 +306,7 @@ class TerrainMeshGeometry extends BufferGeometry {
 			clip.min.sub( offsets );
 			clip.max.sub( offsets );
 
-			for ( i = 0; i < indices.length; ) {
+			for ( let i = 0; i < indices.length; ) {
 
 				const i1 = indices[ i++ ];
 				const i2 = indices[ i++ ];
@@ -370,7 +366,7 @@ class TerrainMeshGeometry extends BufferGeometry {
 			const v2 = _getVertex( i2 );
 			const v3 = _getVertex( i3 );
 
-			var p1, p2, p3;
+			let p1, p2, p3;
 
 			// p1 - outside point
 
@@ -433,7 +429,7 @@ class TerrainMeshGeometry extends BufferGeometry {
 			const v2 = _getVertex( i2 );
 			const v3 = _getVertex( i3 );
 
-			var p1, p2, p3;
+			let p1, p2, p3;
 
 			// p1 - inside point
 
@@ -476,7 +472,7 @@ class TerrainMeshGeometry extends BufferGeometry {
 
 		function _getVertex ( i ) {
 
-			var v = vertex3cache[ i ];
+			let v = vertex3cache[ i ];
 
 			if ( v !== undefined ) return v;
 
@@ -502,8 +498,8 @@ class TerrainMeshGeometry extends BufferGeometry {
 			const a = ( v1.y - v2.y ) / ( v1.x - v2.x );
 			const b = v1.y - a * v1.x;
 
-			var nx, ny, nz;
-			var side = 0;
+			let nx, ny;
+			let side = 0;
 
 			if ( v1.x < clip.min.x ) {
 
@@ -560,9 +556,9 @@ class TerrainMeshGeometry extends BufferGeometry {
 
 			const vFraction = dNew / dOriginal;
 
-			nz = v2.z + ( v1.z - v2.z ) * vFraction;
+			const nz = v2.z + ( v1.z - v2.z ) * vFraction;
 
-			var newIndex = vertices.length / 3;
+			const newIndex = vertices.length / 3;
 
 			vertices.push( nx, ny, nz );
 			normals.push( 0, 0, 1 ); // FIXME correct normals (lerp)
@@ -591,7 +587,7 @@ class TerrainMeshGeometry extends BufferGeometry {
 
 		function _getCorner() {
 
-			var x, y, u, v;
+			let x, y, u, v;
 
 			// clipSides is a bit mask representing area sides intersected by edges
 

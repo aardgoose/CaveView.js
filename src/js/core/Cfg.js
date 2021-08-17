@@ -20,9 +20,7 @@ class Cfg extends EventDispatcher {
 
 		if ( envs === undefined ) return;
 
-		var pName;
-
-		for ( pName in envs ) {
+		for ( const pName in envs ) {
 
 			this.environment.set ( pName , envs[ pName ] );
 
@@ -122,9 +120,9 @@ Cfg.prototype.setPropertyValue = function ( item, defaultValue ) {
 Cfg.prototype.themeValue = function ( name ) {
 
 	const theme = this.environment.get( 'theme' );
-
 	const parts = name.split( '.' );
-	var value;
+
+	let value;
 
 	if ( theme !== undefined ) {
 
@@ -151,13 +149,11 @@ Cfg.prototype.themeAngle = function ( name ) {
 
 Cfg.prototype.treeValue = function ( theme, parts ) {
 
-	var i;
-	var top = theme;
-	var part;
+	let top = theme;
 
-	for ( i = 0; i < parts.length; i++ ) {
+	for ( let i = 0; i < parts.length; i++ ) {
 
-		part = parts[ i ];
+		const part = parts[ i ];
 
 		if ( top[ part ] === undefined ) return undefined;
 
@@ -177,11 +173,11 @@ Cfg.prototype.themeColorCSS = function ( name ) {
 
 Cfg.prototype.themeColor = function ( name ) {
 
-	var color = this.themeColors.get( name );
+	let color = this.themeColors.get( name );
 
 	if ( color === undefined ) {
 
-		var savedColorName = window.localStorage.getItem( 'cv-color:' + name );
+		const savedColorName = window.localStorage.getItem( 'cv-color:' + name );
 
 		color = new Color( savedColorName ? savedColorName : this.themeValue( name ) );
 		this.themeColors.set( name, color );

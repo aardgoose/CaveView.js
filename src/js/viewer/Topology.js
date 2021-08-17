@@ -21,10 +21,10 @@ function Topology ( stations, legsObject ) {
 	const segmentToInfo = this.segmentToInfo;
 	const l = legs.length;
 
-	var station;
-	var newSegment = true;
-	var segment = 0;
-	var segmentInfo;
+	let station;
+	let newSegment = true;
+	let segment = 0;
+	let segmentInfo;
 
 	for ( let i = 0; i < l; i = i + 2 ) {
 
@@ -108,7 +108,7 @@ Topology.prototype.shortestPathSearch = function ( station ) {
 
 	stations.resetDistances();
 
-	var maxDistance = 0;
+	let maxDistance = 0;
 
 	station.distance = 0;
 
@@ -171,8 +171,8 @@ Topology.prototype.getShortestPath = function ( startStation ) {
 	const legsObject = this.legsObject;
 	const legs = legsObject.legVertices;
 
-	var nextStation = startStation;
-	var testNext = true;
+	let nextStation = startStation;
+	let testNext = true;
 
 	// for each station find station with shortest distance to zeroStation
 

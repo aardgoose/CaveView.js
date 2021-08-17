@@ -86,7 +86,7 @@ class FileSelector extends EventDispatcher {
 
 			if ( count > 0 ) {
 
-				for( var i = 0; i < count; i++ ) {
+				for ( let i = 0; i < count; i++ ) {
 
 					files.push( dt.files[ i ] );
 

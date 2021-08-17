@@ -32,10 +32,10 @@ CameraMove.fitBox = function ( camera, box, viewAxis ) {
 
 	const size = box.getSize( __v1 );
 
-	var elevation = CAMERA_OFFSET;
-	var zoom = 1;
+	let elevation = CAMERA_OFFSET;
+	let zoom = 1;
 
-	var dX, dY, dZ;
+	let dX, dY, dZ;
 
 	if ( viewAxis === undefined || viewAxis.z !== 0 ) {
 
@@ -411,8 +411,8 @@ CameraMove.prototype.setAzimuthAngle = function ( targetAngle ) {
 
 	if ( this.running || controls.autoRotate ) return this;
 
-	var delta = ( controls.getAzimuthalAngle() - targetAngle );
-	var deltaSize = Math.abs( delta );
+	let delta = ( controls.getAzimuthalAngle() - targetAngle );
+	const deltaSize = Math.abs( delta );
 
 	if ( deltaSize > Math.PI ) delta = 2 * Math.PI - deltaSize;
 

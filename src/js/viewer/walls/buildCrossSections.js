@@ -35,26 +35,25 @@ function buildCrossSections ( cave, survey ) {
 	const indexRuns = [];
 	const upAxis = Object3D.DefaultUp;
 
-	var currentSurvey;
+	let currentSurvey;
 
-	var v = 0;
+	let v = 0;
 
-	var lastEnd = 0;
-	var l1, r1, u1, d1, l2, r2, u2, d2;
-	var ul1, ur1, dl1, dr1, ul2, ur2, dl2, dr2;
-	var i, j;
+	let lastEnd = 0;
+	let l1, r1, u1, d1, l2, r2, u2, d2;
+	let ul1, ur1, dl1, dr1, ul2, ur2, dl2, dr2;
 
 	const cross = new Vector3();
 	const lastCross = new Vector3();
 	const nextCross = new Vector3();
 
-	var run = null;
+	let run = null;
 
-	var vertexCount; // number of vertices per section
+	let vertexCount; // number of vertices per section
 
 	if ( l === 0 ) return;
 
-	for ( i = 0; i < l; i++ ) {
+	for ( let i = 0; i < l; i++ ) {
 
 		const crossSectionGroup = crossSectionGroups[ i ];
 
@@ -74,7 +73,7 @@ function buildCrossSections ( cave, survey ) {
 
 		vertexCount = _getLRUD( crossSectionGroup[ 0 ], crossSectionGroup[ 1 ] );
 
-		for ( j = 1; j < m; j++ ) {
+		for ( let j = 1; j < m; j++ ) {
 
 			const xSect = crossSectionGroup[ j ];
 			const survey = xSect.survey;
@@ -262,7 +261,7 @@ function buildCrossSections ( cave, survey ) {
 		const station = crossSection.end;
 		const lrud    = crossSection.lrud;
 
-		var vertexCount;
+		let vertexCount;
 
 		// cross product of leg + next leg vector and up AXIS to give direction of LR vector
 		cross.subVectors( crossSection.start, crossSection.end ).normalize();
@@ -278,7 +277,7 @@ function buildCrossSections ( cave, survey ) {
 
 		cross.cross( upAxis );
 
-		var L, R, U, D, UL, UR, DL, DR;
+		let U, D, UL, UR, DL, DR;
 
 		if ( vertical && ( lrud.u + lrud.d < 5 ) ) {
 
@@ -295,8 +294,8 @@ function buildCrossSections ( cave, survey ) {
 
 		}
 
-		L = cross.clone().setLength(  lrud.l ).add( station );
-		R = cross.clone().setLength( -lrud.r ).add( station );
+		const L = cross.clone().setLength(  lrud.l ).add( station );
+		const R = cross.clone().setLength( -lrud.r ).add( station );
 
 		lastCross.copy( cross );
 

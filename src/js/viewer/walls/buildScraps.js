@@ -15,10 +15,10 @@ function buildScraps ( cave, survey ) {
 
 	const indexRuns = [];
 
-	var vertexOffset = 0;
-	var i, lastEnd = 0;
+	let vertexOffset = 0;
+	let lastEnd = 0;
 
-	for ( i = 0; i < l; i++ ) {
+	for ( let i = 0; i < l; i++ ) {
 
 		_loadScrap( scrapList[ i ] );
 
@@ -32,7 +32,7 @@ function buildScraps ( cave, survey ) {
 
 	function _loadScrap ( scrap ) {
 
-		var i, l;
+		let i, l;
 
 		for ( i = 0, l = scrap.vertices.length; i < l; i++ ) {
 

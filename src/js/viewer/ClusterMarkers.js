@@ -51,12 +51,12 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 
 	this.count++;
 
-	var index = 0;
+	let index = 0;
 
 	if ( position.x > xMid ) index += 1;
 	if ( position.y > yMid ) index += 2;
 
-	var subQuad = this.nodes[ index ];
+	let subQuad = this.nodes[ index ];
 
 	if ( subQuad === undefined ) {
 
@@ -94,11 +94,9 @@ QuadTree.prototype.addNode = function ( marker, depth ) {
 
 QuadTree.prototype.check = function ( cluster, target, angleFactor, selection ) {
 
-	var subQuad, i;
+	for ( let i = 0; i < 4; i++ ) {
 
-	for ( i = 0; i < 4; i++ ) {
-
-		subQuad = this.nodes[ i ];
+		const subQuad = this.nodes[ i ];
 
 		if ( subQuad !== undefined ) {
 
@@ -183,15 +181,13 @@ QuadTree.prototype.hideMarkers = function () {
 
 QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
-	var i;
-
 	// hide the indiviual markers in this quad
 
 	this.hideMarkers();
 
 	// hide quadMarkers for contained quads
 
-	for ( i = 0; i < 4; i++ ) {
+	for ( let i = 0; i < 4; i++ ) {
 
 		const subQuad = this.nodes[ i ];
 
@@ -225,11 +221,9 @@ QuadTree.prototype.clusterMarkers = function ( cluster ) {
 
 QuadTree.prototype.hideQuadMarkers = function () {
 
-	var i;
-
 	if ( this.quadMarker ) this.quadMarker.visible = false;
 
-	for ( i = 0; i < 4; i++ ) {
+	for ( let i = 0; i < 4; i++ ) {
 
 		const subQuad = this.nodes[ i ];
 

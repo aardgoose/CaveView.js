@@ -19,7 +19,7 @@ class ExtendedPointsMaterial extends PointsMaterial {
 
 		this.onBeforeCompile = function ( shader ) {
 
-			var vertexShader = shader.vertexShader
+			const vertexShader = shader.vertexShader
 				.replace( '#include <common>', '\nattribute float pSize;\n\n$&' )
 				.replace( '\tgl_PointSize = size;', '\tgl_PointSize = pSize;' );
 

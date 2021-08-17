@@ -43,19 +43,17 @@ class LoxTerrainGeometry extends BufferGeometry {
 		const lx = samples - 1;
 		const ly = lines - 1;
 
-		var ix, iy;
-
-		var minZ = Infinity;
-		var maxZ = -Infinity;
+		let minZ = Infinity;
+		let maxZ = -Infinity;
 
 		// setup vertices from height data (corrected by rotation matrix)
 		// y coordinates inverted in .lox datm data
 
-		for ( iy = 0; iy < lines; iy++ ) {
+		for ( let iy = 0; iy < lines; iy++ ) {
 
 			const dstOffset = ( lines - 1 - iy ) * samples;
 
-			for ( ix = 0; ix < samples; ix++ ) {
+			for ( let ix = 0; ix < samples; ix++ ) {
 
 				const x = ix * xx + ( ly - iy ) * xy + xOffset;
 				const y = ix * yx + ( ly - iy ) * yy + yOffset;
@@ -78,9 +76,9 @@ class LoxTerrainGeometry extends BufferGeometry {
 
 		// indices
 
-		for ( iy = 0; iy < ly; iy ++ ) {
+		for ( let iy = 0; iy < ly; iy ++ ) {
 
-			for ( ix = 0; ix < lx; ix ++ ) {
+			for ( let ix = 0; ix < lx; ix ++ ) {
 
 				const a = ix + samples * iy;
 				const b = ix + samples * ( iy + 1 );

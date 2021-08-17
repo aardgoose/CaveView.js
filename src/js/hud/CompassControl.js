@@ -8,8 +8,8 @@ function CompassControl( hudObject, viewer ) {
 	const point = new Vector2();
 	const center = new Vector2();
 
-	var dragging = false;
-	var startAngle = 0;
+	let dragging = false;
+	let startAngle = 0;
 
 	const hr = hudObject.createHitRegion( hudObject.stdWidth * 2, hudObject.stdWidth * 2, handleEnter );
 

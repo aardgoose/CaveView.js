@@ -32,18 +32,18 @@ Object.assign( LineSegments2.prototype, {
 
 	computeLineDistances: ( function () { // for backwards-compatability, but could be a method of LineSegmentsGeometry...
 
-		var start = new Vector3();
-		var end = new Vector3();
+		const start = new Vector3();
+		const end = new Vector3();
 
 		return function computeLineDistances() {
 
-			var geometry = this.geometry;
+			const geometry = this.geometry;
 
-			var instanceStart = geometry.attributes.instanceStart;
-			var instanceEnd = geometry.attributes.instanceEnd;
-			var lineDistances = new Float32Array( 2 * instanceStart.data.count );
+			const instanceStart = geometry.attributes.instanceStart;
+			const instanceEnd = geometry.attributes.instanceEnd;
+			const lineDistances = new Float32Array( 2 * instanceStart.data.count );
 
-			for ( var i = 0, j = 0, l = instanceStart.data.count; i < l; i ++, j += 2 ) {
+			for ( let i = 0, j = 0, l = instanceStart.data.count; i < l; i ++, j += 2 ) {
 
 				start.fromBufferAttribute( instanceStart, i );
 				end.fromBufferAttribute( instanceEnd, i );
@@ -53,7 +53,7 @@ Object.assign( LineSegments2.prototype, {
 
 			}
 
-			var instanceDistanceBuffer = new InstancedInterleavedBuffer( lineDistances, 2, 1 ); // d0, d1
+			const instanceDistanceBuffer = new InstancedInterleavedBuffer( lineDistances, 2, 1 ); // d0, d1
 
 			geometry.setAttribute( 'instanceDistanceStart', new InterleavedBufferAttribute( instanceDistanceBuffer, 1, 0 ) ); // d0
 			geometry.setAttribute( 'instanceDistanceEnd', new InterleavedBufferAttribute( instanceDistanceBuffer, 1, 1 ) ); // d1
@@ -66,14 +66,14 @@ Object.assign( LineSegments2.prototype, {
 
 	raycast: ( function () {
 
-		var start = new Vector4();
-		var end = new Vector4();
+		const start = new Vector4();
+		const end = new Vector4();
 
-		var ssOrigin = new Vector4();
-		var ssOrigin3 = new Vector3();
-		var mvMatrix = new Matrix4();
-		var line = new Line3();
-		var closestPoint = new Vector3();
+		const ssOrigin = new Vector4();
+		const ssOrigin3 = new Vector3();
+		const mvMatrix = new Matrix4();
+		const line = new Line3();
+		const closestPoint = new Vector3();
 
 		return function raycast( raycaster, intersects ) {
 
@@ -83,19 +83,19 @@ Object.assign( LineSegments2.prototype, {
 
 			}
 
-			var threshold = ( raycaster.params.Line2 !== undefined ) ? raycaster.params.Line2.threshold || 0 : 0;
+			const threshold = ( raycaster.params.Line2 !== undefined ) ? raycaster.params.Line2.threshold || 0 : 0;
 
-			var ray = raycaster.ray;
-			var camera = raycaster.camera;
-			var projectionMatrix = camera.projectionMatrix;
+			const ray = raycaster.ray;
+			const camera = raycaster.camera;
+			const projectionMatrix = camera.projectionMatrix;
 
-			var geometry = this.geometry;
-			var material = this.material;
-			var resolution = material.resolution;
-			var lineWidth = material.linewidth + threshold;
+			const geometry = this.geometry;
+			const material = this.material;
+			const resolution = material.resolution;
+			const lineWidth = material.linewidth + threshold;
 
-			var instanceStart = geometry.attributes.instanceStart;
-			var instanceEnd = geometry.attributes.instanceEnd;
+			const instanceStart = geometry.attributes.instanceStart;
+			const instanceEnd = geometry.attributes.instanceEnd;
 
 			// pick a point 1 unit out along the ray to avoid the ray origin
 			// sitting at the camera origin which will cause "w" to be 0 when
@@ -115,10 +115,10 @@ Object.assign( LineSegments2.prototype, {
 
 			ssOrigin3.copy( ssOrigin );
 
-			var matrixWorld = this.matrixWorld;
+			const matrixWorld = this.matrixWorld;
 			mvMatrix.multiplyMatrices( camera.matrixWorldInverse, matrixWorld );
 
-			for ( var i = 0, l = instanceStart.count; i < l; i ++ ) {
+			for ( let i = 0, l = instanceStart.count; i < l; i ++ ) {
 
 				start.fromBufferAttribute( instanceStart, i );
 				end.fromBufferAttribute( instanceEnd, i );
@@ -139,8 +139,8 @@ Object.assign( LineSegments2.prototype, {
 				end.multiplyScalar( 1 / end.w );
 
 				// skip the segment if it's outside the camera near and far planes
-				var isBehindCameraNear = start.z < - 1 && end.z < - 1;
-				var isPastCameraFar = start.z > 1 && end.z > 1;
+				const isBehindCameraNear = start.z < - 1 && end.z < - 1;
+				const isPastCameraFar = start.z > 1 && end.z > 1;
 				if ( isBehindCameraNear || isPastCameraFar ) {
 
 					continue;
@@ -162,14 +162,14 @@ Object.assign( LineSegments2.prototype, {
 				line.end.z = 0;
 
 				// get closest point on ray to segment
-				var param = line.closestPointToPointParameter( ssOrigin3, true );
+				const param = line.closestPointToPointParameter( ssOrigin3, true );
 				line.at( param, closestPoint );
 
 				// check if the intersection point is within clip space
-				var zPos = MathUtils.lerp( start.z, end.z, param );
-				var isInClipSpace = zPos >= - 1 && zPos <= 1;
+				const zPos = MathUtils.lerp( start.z, end.z, param );
+				const isInClipSpace = zPos >= - 1 && zPos <= 1;
 
-				var isInside = ssOrigin3.distanceTo( closestPoint ) < lineWidth * 0.5;
+				const isInside = ssOrigin3.distanceTo( closestPoint ) < lineWidth * 0.5;
 
 				if ( isInClipSpace && isInside ) {
 
@@ -179,8 +179,8 @@ Object.assign( LineSegments2.prototype, {
 					line.start.applyMatrix4( matrixWorld );
 					line.end.applyMatrix4( matrixWorld );
 
-					var pointOnLine = new Vector3();
-					var point = new Vector3();
+					const pointOnLine = new Vector3();
+					const point = new Vector3();
 
 					ray.distanceSqToSegment( line.start, line.end, point, pointOnLine );
 

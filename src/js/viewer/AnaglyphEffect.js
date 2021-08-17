@@ -38,26 +38,26 @@ function AnaglyphEffect ( renderer, width, height ) {
 
 	] );
 
-	var _camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
+	const _camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
 
-	var _scene = new Scene();
+	const _scene = new Scene();
 
-	var _stereo = new StereoCamera();
+	const _stereo = new StereoCamera();
 
 	_stereo.cameraL.layers.mask = 0xFFFFFFFF;
 	_stereo.cameraR.layers.mask = 0xFFFFFFFF;
 
-	var _params = { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat };
+	const _params = { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat };
 
 	if ( width === undefined ) width = 512;
 	if ( height === undefined ) height = 512;
 
-	var pixelRatio = renderer.getPixelRatio();
+	const pixelRatio = renderer.getPixelRatio();
 
-	var _renderTargetL = new WebGLRenderTarget( width * pixelRatio, height * pixelRatio, _params );
-	var _renderTargetR = new WebGLRenderTarget( width * pixelRatio, height * pixelRatio, _params );
+	const _renderTargetL = new WebGLRenderTarget( width * pixelRatio, height * pixelRatio, _params );
+	const _renderTargetR = new WebGLRenderTarget( width * pixelRatio, height * pixelRatio, _params );
 
-	var _material = new ShaderMaterial( {
+	const _material = new ShaderMaterial( {
 
 		uniforms: {
 
@@ -74,7 +74,7 @@ function AnaglyphEffect ( renderer, width, height ) {
 
 	} );
 
-	var _mesh = new Mesh( new PlaneBufferGeometry( 2, 2 ), _material );
+	const _mesh = new Mesh( new PlaneBufferGeometry( 2, 2 ), _material );
 	_scene.add( _mesh );
 
 	this.setLayers = function ( mask ) {
@@ -88,7 +88,7 @@ function AnaglyphEffect ( renderer, width, height ) {
 
 		renderer.setSize( width, height );
 
-		var pixelRatio = renderer.getPixelRatio();
+		const pixelRatio = renderer.getPixelRatio();
 
 		_renderTargetL.setSize( width * pixelRatio, height * pixelRatio );
 		_renderTargetR.setSize( width * pixelRatio, height * pixelRatio );

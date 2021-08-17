@@ -13,8 +13,8 @@ class RoutePanel extends Panel {
 
 		this.add( page.addHeader( 'route.header' ) );
 
-		var routeSelector = page.addSelect( 'route.current', routeNames, viewer, 'route' );
-		var getNewRouteName;
+		let routeSelector = page.addSelect( 'route.current', routeNames, viewer, 'route' );
+		let getNewRouteName;
 
 		this.add( routeSelector );
 

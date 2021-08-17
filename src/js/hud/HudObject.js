@@ -38,7 +38,7 @@ Object.assign( HudObject.prototype, {
 
 	getCommonRing: function () {
 
-		var commonRing = this.commonRing;
+		let commonRing = this.commonRing;
 
 		if ( commonRing === null ) {
 

@@ -17,7 +17,7 @@ class PopupGeometry extends BufferGeometry {
 
 }
 
-var commonGeometry = null;
+let commonGeometry = null;
 
 class Popup extends Mesh {
 

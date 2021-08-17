@@ -33,7 +33,7 @@ Tree.prototype.traverse = function ( func ) {
 
 	func ( this );
 
-	for ( var i = 0; i < children.length; i++ ) {
+	for ( let i = 0; i < children.length; i++ ) {
 
 		children[ i ].traverse( func );
 
@@ -45,7 +45,7 @@ Tree.prototype.traverseDepthFirst = function ( func ) {
 
 	const children = this.children;
 
-	for ( var i = 0; i < children.length; i++ ) {
+	for ( let i = 0; i < children.length; i++ ) {
 
 		children[ i ].traverseDepthFirst( func );
 
@@ -94,7 +94,7 @@ Tree.prototype.findById = function ( id ) {
 
 	if ( this.id == id ) return this;
 
-	for ( var i = 0, l = this.children.length; i < l; i++ ) {
+	for ( let i = 0, l = this.children.length; i < l; i++ ) {
 
 		const found = this.children[ i ].findById( id );
 
@@ -119,42 +119,41 @@ Tree.prototype.getByPath = function ( path ) {
 
 Tree.prototype.getByPath = function ( path ) {
 
-	if (!path)
+	if ( ! path )
 		return undefined;
 
 	const pathArray = path.split( '.' );
 
 	let node = this.getByPathArray( pathArray );
-
 	let pathArrayPos = undefined;
 
-	if (pathArray.length !== 0)
+	if ( pathArray.length !== 0 )
 	{
 		const pathArrayEx = path.split( '.' );
 
-		if (pathArrayEx.length - 2 < 0)
+		if ( pathArrayEx.length - 2 < 0 )
 			return undefined;
 
-		var pathArrayMainPath = pathArrayEx.slice(0, pathArrayEx.length - 2);
-		var pathPosStation = pathArrayEx.slice(pathArrayEx.length - 2, pathArrayEx.length).join( '.' );
+		const pathArrayMainPath = pathArrayEx.slice( 0, pathArrayEx.length - 2 );
+		const pathPosStation = pathArrayEx.slice( pathArrayEx.length - 2, pathArrayEx.length ).join( '.' );
 
-		node = this.getByPathArray( pathArrayPos = pathArrayMainPath.concat(pathPosStation) );
+		node = this.getByPathArray( pathArrayPos = pathArrayMainPath.concat( pathPosStation ) );
 	}
 
-	return ( (pathArray.length === 0) || (pathArrayPos.length === 0) ) ? node: undefined;
+	return ( ( pathArray.length === 0 ) || ( pathArrayPos.length === 0 ) ) ? node: undefined;
 
 };
 
 Tree.prototype.getByPathArray = function ( path ) {
 
-	var node = this.root;
-	var search = true;
+	let node = this.root;
+	let search = true;
 
 	while ( search && path.length > 0 ) {
 
 		search = false;
 
-		for ( var i = 0, l = node.children.length; i < l; i++ ) {
+		for ( let i = 0, l = node.children.length; i < l; i++ ) {
 
 			const child = node.children[ i ];
 
@@ -193,8 +192,8 @@ Tree.prototype.addLeaf = function ( path, type, coords, comments ) {
 
 	// find part of path that exists already using cache
 
-	var node;
-	var leaf = [];
+	const leaf = [];
+	let node;
 
 	while ( node === undefined && path.length > 1 ) {
 
@@ -230,7 +229,6 @@ Tree.prototype.addLeaf = function ( path, type, coords, comments ) {
 	while ( path.length > 0 ) {
 
 		const newNode = new Tree( path.shift(), null, this.root, node );
-
 		node = newNode;
 
 	}
@@ -246,9 +244,9 @@ Tree.prototype.addLeaf = function ( path, type, coords, comments ) {
 Tree.prototype.addPath = function ( path ) {
 
 	// find part of path that exists already
-	var pathArray = path.split( '.' );
+	const pathArray = path.split( '.' );
 
-	var node = this.getByPathArray( pathArray );
+	let node = this.getByPathArray( pathArray );
 
 	if ( pathArray.length === 0 ) return node;
 
@@ -259,7 +257,6 @@ Tree.prototype.addPath = function ( path ) {
 		const newNode = new Tree( pathArray.shift(), null, this.root, node );
 
 		this.root.pathCache[ newNode.getPath() ] = newNode;
-
 		node = newNode;
 
 	}
@@ -272,7 +269,7 @@ Tree.prototype.getPath = function ( endNode ) {
 
 	const path = [];
 
-	var node = this;
+	let node = this;
 
 	if ( endNode === undefined ) endNode = this.root;
 
@@ -328,11 +325,11 @@ Tree.prototype.trim = function ( path ) {
 	const prefix = path.shift();
 	const children = this.children;
 
-	var child;
+	let child;
 
 	if ( prefix === undefined ) return;
 
-	for ( var i = 0; i < children.length; i++ ) {
+	for ( let i = 0; i < children.length; i++ ) {
 
 		child = children[ i ];
 

@@ -78,7 +78,7 @@ class Survey extends Object3D {
 		ctx.surveyColourMapper = new SurveyColourMapper( ctx );
 		ctx.survey = this;
 
-		var survey = cave.getSurvey();
+		let survey = cave.getSurvey();
 
 		this.name = survey.title;
 		this.CRS = survey.sourceCRS;
@@ -116,7 +116,7 @@ class Survey extends Object3D {
 
 		this.addEventListener( 'removed', this.onRemoved );
 
-		var zScale = 0.5;
+		let zScale = 0.5;
 
 		survey = null;
 
@@ -376,13 +376,13 @@ Survey.prototype.loadCave = function ( cave ) {
 		typeLegs[ LEG_SPLAY   ] = { vertices: [], runs: [] };
 		typeLegs[ LEG_DUPLICATE ] = { vertices: [], runs: [] };
 
-		var legs, run, i;
-		var currentType;
-		var currentSurvey;
+		let legs, run;
+		let currentType;
+		let currentSurvey;
 
 		if ( l === 0 ) return null;
 
-		for ( i = 0; i < l; i++ ) {
+		for ( let i = 0; i < l; i++ ) {
 
 			const leg = srcSegments[ i ];
 
@@ -541,7 +541,7 @@ Survey.prototype.loadStations = function ( surveyTree ) {
 
 	const stations = new Stations( this.ctx, this.selection );
 
-	var commentCount = 0;
+	let commentCount = 0;
 
 	surveyTree.traverse( _addStation );
 
@@ -966,7 +966,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	const materials = this.ctx.materials;
 
-	var material;
+	let material;
 
 	switch ( mode ) {
 
@@ -1269,7 +1269,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 
 Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
-	var node = this.selection.getNode();
+	let node = this.selection.getNode();
 
 	while ( node.children.length === 1 ) node = node.children[ 0 ];
 
@@ -1304,7 +1304,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 	function _colourSegment ( vertices, colors, v1, v2 /*, survey */ ) {
 
-		var colour;
+		let colour;
 
 		if ( routes.inCurrentRoute( v1 ) ) {
 
@@ -1374,7 +1374,7 @@ Survey.prototype.gltfExport = function ( selection, options, callback ) {
 
 	if ( selection.legs ) {
 
-		var legs = this.getFeature( LEG_CAVE );
+		const legs = this.getFeature( LEG_CAVE );
 
 		const geometry = legs.geometry;
 
@@ -1393,7 +1393,7 @@ Survey.prototype.gltfExport = function ( selection, options, callback ) {
 
 	worker.addEventListener( 'message', function ( event ) {
 
-		var mimeType;
+		let mimeType;
 
 		if ( options.binary ) {
 
@@ -1416,7 +1416,7 @@ Survey.prototype.gltfExport = function ( selection, options, callback ) {
 
 Survey.prototype.getMesh = function ( tag ) {
 
-	var mesh = this.getFeature( tag );
+	const mesh = this.getFeature( tag );
 	const geometry = mesh.geometry;
 
 	return {

@@ -280,7 +280,7 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 		if ( event.ctrlKey ) return false;
 
-		var handled = true;
+		let handled = true;
 
 		if ( event.altKey ) {
 

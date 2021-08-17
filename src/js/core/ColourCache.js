@@ -25,7 +25,7 @@ function ColourCache () {
 
 	this.getColors = function ( name ) {
 
-		var entry = cache[ name ];
+		let entry = cache[ name ];
 
 		if ( entry === undefined ) {
 

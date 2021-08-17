@@ -33,7 +33,7 @@ function mapLoaded ( meshData ) {
 	const x = resolution * tileSpec.x - 180;
 	const y = resolution * tileSpec.y - 90;
 
-	var terrainTile = new TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, clip, tileSpec.clippedFraction );
+	const terrainTile = new TerrainMeshGeometry( x, y, resolution, meshData, offsets, transform, clip, tileSpec.clippedFraction );
 
 	// we need to zoom if the tile doesnt contain enough vertices to give a reasonable surface
 
@@ -73,7 +73,7 @@ function mapLoaded ( meshData ) {
 
 	const srcAttributes = terrainTile.attributes;
 
-	for ( var attributeName in srcAttributes ) {
+	for ( const attributeName in srcAttributes ) {
 
 		const attribute = srcAttributes[ attributeName ];
 		const arrayBuffer = attribute.array.buffer;

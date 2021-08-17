@@ -61,10 +61,10 @@ Tile.prototype.createFromTileData = function ( tileData, material ) {
 	const attributes = tileData.attributes;
 	const index = tileData.index;
 	const boundingBox = tileData.boundingBox;
+	const bufferGeometry = this.geometry;
 
-	var attributeName;
-	var attribute;
-	var bufferGeometry = this.geometry;
+	let attributeName;
+	let attribute;
 
 	// assemble BufferGeometry from binary buffer objects transfered from worker
 
@@ -186,7 +186,7 @@ Tile.prototype.setLoaded = function ( overlay, renderCallback ) {
 
 	const parent = this.parent;
 
-	var tilesWaiting = 0;
+	let tilesWaiting = 0;
 
 	if ( --parent.childrenLoading === 0 ) { // this tile and all siblings loaded
 

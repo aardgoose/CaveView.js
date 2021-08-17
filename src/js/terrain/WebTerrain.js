@@ -148,7 +148,7 @@ WebTerrain.prototype.hasCoverage = function () {
 	const tileSets = this.tileSets;
 	const TS = this.TS;
 
-	for ( var i = 0, l = tileSets.length; i < l; i++ ) {
+	for ( let i = 0, l = tileSets.length; i < l; i++ ) {
 
 		const tileSet = tileSets[ i ];
 
@@ -311,9 +311,9 @@ WebTerrain.prototype.tileArea = function ( limits ) {
 	this.initialZoom = zoom;
 	this.coverage = coverage;
 
-	for ( var x = coverage.minX; x < coverage.maxX + 1; x++ ) {
+	for ( let x = coverage.minX; x < coverage.maxX + 1; x++ ) {
 
-		for ( var y = coverage.minY; y < coverage.maxY + 1; y++ ) {
+		for ( let y = coverage.minY; y < coverage.maxY + 1; y++ ) {
 
 			this.loadTile( x, y, zoom, this );
 
@@ -451,7 +451,7 @@ WebTerrain.prototype.zoomCheck = function ( cameraManager ) {
 	const candidateEvictTiles = [];
 	const resurrectTiles      = [];
 
-	var retry = false;
+	let retry = false;
 
 	frustum.setFromProjectionMatrix( __matrix4.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
 
@@ -609,7 +609,7 @@ WebTerrain.prototype.getHeights = function ( points, callback ) {
 
 	let requestCount = 0;
 
-	for ( var key in tileSpecs ) {
+	for ( const key in tileSpecs ) {
 
 		this.workerPool.runWorker( tileSpecs[ key ], _mapLoaded );
 		requestCount++;

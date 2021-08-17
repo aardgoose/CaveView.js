@@ -12,7 +12,7 @@ function TextureCache () {
 		const l = scale.length;
 		const data = new Uint8Array( l * 3 );
 
-		var offset = 0;
+		let offset = 0;
 
 		for ( let i = l; i; ) {
 
@@ -37,7 +37,7 @@ function TextureCache () {
 
 	this.getTexture = function ( name ) {
 
-		var entry = cache[ name ];
+		let entry = cache[ name ];
 
 		if ( entry === undefined ) {
 

@@ -91,7 +91,7 @@ Scale.prototype.setRange = function ( min, max, caption ) {
 
 Scale.prototype.setCaption = function ( text ) {
 
-	var caption = this.caption;
+	let caption = this.caption;
 
 	if ( caption !== null ) {
 

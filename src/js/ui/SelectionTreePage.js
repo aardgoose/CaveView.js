@@ -9,12 +9,12 @@ class SelectionTreePage extends SelectionCommonPage {
 		const self = this;
 		const domTop = self.displaySectionCommon( this.currentTop );
 
-		var hightlitElement = null;
-		var lastHighlitScroll = 0;
+		let hightlitElement = null;
+		let lastHighlitScroll = 0;
 
 		this.appendChild( domTop );
 
-		var redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
+		let redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
 
 		this.handleNext = function ( target, node ) {
 
@@ -76,7 +76,7 @@ class SelectionTreePage extends SelectionCommonPage {
 			// get list of tree nodes from selectedNode to root - 1
 
 			const path = [];
-			var node = selectedNode;
+			let node = selectedNode;
 
 			do {
 				path.push( node );
@@ -85,8 +85,8 @@ class SelectionTreePage extends SelectionCommonPage {
 
 			// search dom tree for list Element <LI> mapped to selected node
 
-			var topElement = domTop; // start from top of dom tree
-			var children = topElement.childNodes;
+			let topElement = domTop; // start from top of dom tree
+			let children = topElement.childNodes;
 
 			node = path.pop();
 

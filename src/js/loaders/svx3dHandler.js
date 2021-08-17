@@ -27,7 +27,7 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) 
 	this.stationMap = new Map();
 	this.dataStream = dataStream;
 
-	var pos = 0; // file position
+	let pos = 0; // file position
 
 	// read file header
 
@@ -36,7 +36,7 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) 
 	const auxInfo = readNSLF();
 	readLF(); // Date
 
-	var sourceCRS = ( auxInfo[ 1 ] === undefined ) ? null : auxInfo[ 1 ]; // coordinate reference system ( proj4 format )
+	const sourceCRS = ( auxInfo[ 1 ] === undefined ) ? null : auxInfo[ 1 ]; // coordinate reference system ( proj4 format )
 
 	console.log( 'Survex .3d version ', this.version );
 
@@ -57,8 +57,8 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) 
 		const bytes = new Uint8Array( dataStream, 0 );
 		const strings = [];
 
-		var lfString = [];
-		var b;
+		let lfString = [];
+		let b;
 
 		do {
 
@@ -86,8 +86,7 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) 
 Svx3dHandler.prototype.parse2 = function () {
 
 	const cave = this.cave;
-
-	var pos = this.pos;
+	const pos = this.pos;
 
 	switch ( this.version ) {
 
@@ -143,18 +142,17 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 	const data       = new Uint8Array( source, 0 );
 	const dataLength = data.length;
 
-	var label     = '';
-	var sectionId = 0;
-	var legs      = [];
+	let label     = '';
+	const sectionId = 0;
+	let legs      = [];
 
-	var lastPosition = new StationPosition(); // value to allow approach vector for xsect coord frame
-	var i, j, li, lj;
+	let lastPosition = new StationPosition(); // value to allow approach vector for xsect coord frame
 
 	// init cmd handler table with error handler for unsupported records or invalid records
 
 	function _errorHandler ( e ) { throw new Error( 'unhandled command: ' + e.toString( 16 ) + ' @ ' + pos.toString( 16 ) ); }
 
-	for ( i = 0; i < 256; i++ ) {
+	for ( let i = 0; i < 256; i++ ) {
 
 		cmd[ i ] = _errorHandler;
 
@@ -174,13 +172,13 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 	cmd[ 0x06 ] = cmd_LABEL_V2;
 	cmd[ 0x07 ] = cmd_LABEL_V3;
 
-	for ( i = 0x40; i < 0x80; i++ ) {
+	for ( let i = 0x40; i < 0x80; i++ ) {
 
 		cmd[ i ] = cmd_LABEL_V4;
 
 	}
 
-	for ( i = 0x80; i < 0x100; i++ ) {
+	for ( let i = 0x80; i < 0x100; i++ ) {
 
 		cmd[ i ] = cmd_LINE_V2;
 
@@ -218,11 +216,11 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 	// assign survey ids to all leg vertices by looking up tree node for coords
 
-	for ( i = 0, li = groups.length; i < li; i++ ) {
+	for ( let i = 0, li = groups.length; i < li; i++ ) {
 
 		const group = groups[ i ];
 
-		for ( j = 0, lj = group.length; j < lj; j++ ) {
+		for ( let j = 0, lj = group.length; j < lj; j++ ) {
 
 			const leg = group[ j ];
 			const coords = leg.coords;
@@ -254,7 +252,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		const db = [];
 
-		var nextByte = data[ pos++ ];
+		let nextByte = data[ pos++ ];
 
 		while ( nextByte !== 10 ) {
 
@@ -267,7 +265,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		label = String.fromCharCode.apply( null, db );
 
-		var node = surveyTree.addLeaf( label.split( '.' ), { p: lastPosition, type: STATION_NORMAL } );
+		const node = surveyTree.addLeaf( label.split( '.' ), { p: lastPosition, type: STATION_NORMAL } );
 
 		// track coords to sectionId to allow survey ID's to be added to leg vertices
 		stations.set( lastPosition, node );
@@ -347,7 +345,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		const l = new DataView( source, pos );
 
-		var coords = new StationPosition(
+		let coords = new StationPosition(
 			l.getInt32( 0, true ) / 100,
 			l.getInt32( 4, true ) / 100,
 			l.getInt32( 8, true ) / 100
@@ -409,32 +407,31 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	const dataView   = new DataView( source, 0 );
 	const dataLength = data.length;
 
-	var legs      = [];
-	var label     = '';
-	var xSects    = [];
-	var sectionId = 0;
+	let legs      = [];
+	let label     = '';
+	let xSects    = [];
+	let sectionId = 0;
 
-	var move = false;
-	var lastPosition = new StationPosition();
-	var lastKey = null; // map key for last coordinates read
+	let move = false;
+	let lastPosition = new StationPosition();
+	let lastKey = null; // map key for last coordinates read
 
-	var lastXSectPosition = null; // value to indicate missing approach vector for xsect coord frame
-	var i;
-	var labelChanged = false;
-	var inSection = ( section === null );
-	var splayExpected = false; // xsect expected to end on a splay
+	let lastXSectPosition = null; // value to indicate missing approach vector for xsect coord frame
+	let labelChanged = false;
+	let inSection = ( section === null );
+	let splayExpected = false; // xsect expected to end on a splay
 
-	var message;
+	let message;
 
 	// functions
 
-	var readLabel;
+	let readLabel;
 
 	// init cmd handler table with error handler for unsupported records or invalid records
 
 	function _errorHandler ( e ) { throw new Error( 'unhandled command: ' + e.toString( 16 ) + ' @ ' + pos.toString( 16 ) ); }
 
-	for ( i = 0; i < 256; i++ ) {
+	for ( let i = 0; i < 256; i++ ) {
 
 		cmd[ i ] = _errorHandler;
 
@@ -463,13 +460,13 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		cmd[ 0x32 ] = cmd_XSECT32;
 		cmd[ 0x33 ] = cmd_XSECT32;
 
-		for ( i = 0x40; i < 0x80; i++ ) {
+		for ( let i = 0x40; i < 0x80; i++ ) {
 
 			cmd[ i ] = cmd_LINE;
 
 		}
 
-		for ( i = 0x80; i < 0x100; i++ ) {
+		for ( let i = 0x80; i < 0x100; i++ ) {
 
 			cmd[ i ] = cmd_LABEL;
 
@@ -486,7 +483,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		// dispatch table for v7 format
 
-		for ( i = 0x01; i < 0x0f; i++ ) {
+		for ( let i = 0x01; i < 0x0f; i++ ) {
 
 			cmd[ i ] = cmd_TRIM_PLUS;
 
@@ -494,7 +491,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		cmd[ 0x0f ] = cmd_MOVE;
 
-		for ( i = 0x10; i < 0x20; i++ ) {
+		for ( let i = 0x10; i < 0x20; i++ ) {
 
 			cmd[ i ] = cmd_TRIM;
 
@@ -513,13 +510,13 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		cmd[ 0x32 ] = cmd_XSECT32;
 		cmd[ 0x33 ] = cmd_XSECT32;
 
-		for ( i = 0x40; i < 0x80; i++ ) {
+		for ( let i = 0x40; i < 0x80; i++ ) {
 
 			cmd[ i ] = cmd_LABEL;
 
 		}
 
-		for ( i = 0x80; i < 0xc0; i++ ) {
+		for ( let i = 0x80; i < 0xc0; i++ ) {
 
 			cmd[ i ] = cmd_LINE;
 
@@ -568,7 +565,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	function readLabelV7 () {
 		// find length of label and read label = v3 - v7 .3d format
 
-		var len = 0;
+		let len = 0;
 
 		switch ( data[ pos ] ) {
 
@@ -608,9 +605,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		if ( flags & 0x20 ) return false; // no label change
 
-		var b = data[ pos++ ];
-		var add = 0;
-		var del = 0;
+		let b = data[ pos++ ];
+		let add = 0;
+		let del = 0;
 
 		if ( b !== 0 ) {
 
@@ -878,14 +875,14 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		/*
 
-		var l = new DataView( source, pos );
+		const l = new DataView( source, pos );
 
-		var legs = l.getInt32( 0, true );
-		var length = l.getInt32( 4, true );
+		const legs = l.getInt32( 0, true );
+		const length = l.getInt32( 4, true );
 
-		var E = l.getInt32( 8, true );
-		var H = l.getInt32( 12, true );
-		var V = l.getInt32( 16, true );
+		const E = l.getInt32( 8, true );
+		const H = l.getInt32( 12, true );
+		const V = l.getInt32( 16, true );
 
 		*/
 
@@ -909,8 +906,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		}
 
 		const coords = readCoordinates();
-
-		var path = label.split( '.' );
+		const path = label.split( '.' );
 
 		stations.set(
 			label,
@@ -985,7 +981,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 		// if a station has only one connection and is not the first in a set of XSECTS
 		// it is at the end of a run of legs. Add a break to remove flyback artifacts
 
-		var endRun = false;
+		let endRun = false;
 
 		if ( flags ) {
 
@@ -1042,7 +1038,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		lastKey = String.fromCharCode.apply( null, data.subarray( pos, pos + 12 ) );
 
-		var coords = new StationPosition(
+		let coords = new StationPosition(
 			l.getInt32( 0, true ) / 100,
 			l.getInt32( 4, true ) / 100,
 			l.getInt32( 8, true ) / 100
@@ -1094,11 +1090,11 @@ Svx3dHandler.prototype.getLineSegments = function () {
 	const lineSegments = [];
 	const groups = this.groups;
 
-	for ( var i = 0, l = groups.length; i < l; i++ ) {
+	for ( let i = 0, l = groups.length; i < l; i++ ) {
 
 		const g = groups[ i ];
 
-		for ( var v = 0, vMax = g.length - 1; v < vMax; v++ ) {
+		for ( let v = 0, vMax = g.length - 1; v < vMax; v++ ) {
 
 			// create vertex pairs for each line segment.
 			// all vertices except first and last are duplicated.

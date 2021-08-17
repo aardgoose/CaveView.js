@@ -154,21 +154,21 @@ class OrbitControls extends EventDispatcher {
 		// this method is exposed, but perhaps it would be better if we can make it private...
 		this.update = function () {
 
-			var offset = new Vector3();
+			const offset = new Vector3();
 			const up = cameraManager.activeCamera.up;
 
 			// so camera.up is the orbit axis
-			var quat = new Quaternion().setFromUnitVectors( up, new Vector3( 0, 1, 0 ) );
-			var quatInverse = quat.clone().invert();
+			const quat = new Quaternion().setFromUnitVectors( up, new Vector3( 0, 1, 0 ) );
+			const quatInverse = quat.clone().invert();
 
-			var lastPosition = new Vector3();
-			var lastQuaternion = new Quaternion();
+			const lastPosition = new Vector3();
+			const lastQuaternion = new Quaternion();
 
 			return function update() {
 
-				var camera = cameraManager.activeCamera;
-				var target = scope.target;
-				var position = camera.position;
+				const camera = cameraManager.activeCamera;
+				const target = scope.target;
+				const position = camera.position;
 
 				offset.copy( position ).sub( target );
 
@@ -195,7 +195,7 @@ class OrbitControls extends EventDispatcher {
 
 				spherical.makeSafe();
 
-				var prevRadius = Math.max( spherical.radius, EPS );
+				const prevRadius = Math.max( spherical.radius, EPS );
 				spherical.radius *= scale;
 
 				// restrict radius to be between desired limits
@@ -292,34 +292,34 @@ class OrbitControls extends EventDispatcher {
 		// internals
 		//
 
-		var scope = this;
+		const scope = this;
 
-		var changeEvent = { type: 'change' };
-		var startEvent = { type: 'start' };
-		var endEvent = { type: 'end' };
+		const changeEvent = { type: 'change' };
+		const startEvent = { type: 'start' };
+		const endEvent = { type: 'end' };
 
 		const LEFT_BUTTON = 1;
 		const RIGHT_BUTTON = 2;
 		const MIDDLE_BUTTON = 4;
 		const EMULATED_MIDDLE_BUTTON = 3;
 
-		var buttons = 0;
-		var lastButtonDownTime = 0;
+		let buttons = 0;
+		let lastButtonDownTime = 0;
 
 		const STATE = { NONE: - 1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY_PAN: 4 };
 
-		var state = STATE.NONE;
+		let state = STATE.NONE;
 
-		var EPS = 0.000001;
+		const EPS = 0.000001;
 
 		// current position in spherical coordinates
 		const spherical = new Spherical();
 		const sphericalDelta = new Spherical();
 
-		var scale = 1;
-		var panOffset = new Vector3();
-		var zoomChanged = false;
-		var zoomFactor = 1;
+		let scale = 1;
+		const panOffset = new Vector3();
+		let zoomChanged = false;
+		let zoomFactor = 1;
 
 		const rotateStart = new Vector2();
 		const rotateEnd = new Vector2();
@@ -336,24 +336,24 @@ class OrbitControls extends EventDispatcher {
 		const mouse3D = new Vector3();
 		const mouseStart = new Vector3();
 
-		var firstWheelMove = true;
+		let firstWheelMove = true;
 
-		var svxStart = new Vector2();
-		var svxEnd = new Vector2();
-		var svxDelta = new Vector2();
+		const svxStart = new Vector2();
+		const svxEnd = new Vector2();
+		const svxDelta = new Vector2();
 
-		var modeLock = MODE_LOCK_UNLOCKED;
-		var lastMoveTime = 0;
-		var svxReverseSense = -1;
+		let modeLock = MODE_LOCK_UNLOCKED;
+		let lastMoveTime = 0;
+		let svxReverseSense = -1;
 
-		var svxControlMode  = false;
+		let svxControlMode  = false;
 
 		// mode specific handlers
 
-		var handleMouseDownLeft;
-		var handleMouseDownMiddle;
-		var handleMouseMoveLeft;
-		var handleMouseMoveMiddle;
+		let handleMouseDownLeft;
+		let handleMouseDownMiddle;
+		let handleMouseMoveLeft;
+		let handleMouseMoveMiddle;
 
 
 		function setControlMode ( svxMode ) {
@@ -402,7 +402,7 @@ class OrbitControls extends EventDispatcher {
 
 		}
 
-		var panLeft = function ( distance, objectMatrix ) {
+		const panLeft = function ( distance, objectMatrix ) {
 
 			distance *= svxReverseSense;
 
@@ -414,7 +414,7 @@ class OrbitControls extends EventDispatcher {
 		};
 
 
-		var panUp = function ( distance, objectMatrix ) {
+		const panUp = function ( distance, objectMatrix ) {
 
 			distance *= svxReverseSense;
 
@@ -426,7 +426,7 @@ class OrbitControls extends EventDispatcher {
 		};
 
 		// deltaX and deltaY are in pixels; right and down are positive
-		var pan = function ( deltaX, deltaY ) {
+		const pan = function ( deltaX, deltaY ) {
 
 			const camera = cameraManager.activeCamera;
 
@@ -435,7 +435,7 @@ class OrbitControls extends EventDispatcher {
 				// perspective
 				__v.copy( camera.position ).sub( scope.target );
 
-				var targetDistance = __v.length();
+				let targetDistance = __v.length();
 
 				// half of the fov is center to top of screen
 				targetDistance *= Math.tan( ( camera.fov / 2 ) * Math.PI / 180.0 );
@@ -674,7 +674,7 @@ class OrbitControls extends EventDispatcher {
 
 		}
 
-		var updateMouse3D = function () {
+		const updateMouse3D = function () {
 
 			const v = new Vector3();
 			const v1 = new Vector3();
@@ -684,7 +684,7 @@ class OrbitControls extends EventDispatcher {
 				const camera = cameraManager.activeCamera;
 				const up = camera.up;
 
-				var distance;
+				let distance;
 
 				// get mouse in ndc
 				const mouse = cameraManager.getMouse( x, y );
@@ -853,7 +853,7 @@ class OrbitControls extends EventDispatcher {
 			const dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
 			const dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
 
-			var distance = Math.sqrt( dx * dx + dy * dy );
+			const distance = Math.sqrt( dx * dx + dy * dy );
 
 			dollyStart.set( 0, distance );
 
@@ -889,7 +889,7 @@ class OrbitControls extends EventDispatcher {
 			const dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
 			const dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
 
-			var distance = Math.sqrt( dx * dx + dy * dy );
+			const distance = Math.sqrt( dx * dx + dy * dy );
 
 			dollyEnd.set( 0, distance );
 
@@ -921,7 +921,7 @@ class OrbitControls extends EventDispatcher {
 			// add to current buttons depressed set
 			// allows emulation of 3rd button in absence of event.buttons
 
-			var newButtons = 0;
+			let newButtons = 0;
 
 			switch ( button ) {
 
@@ -942,7 +942,7 @@ class OrbitControls extends EventDispatcher {
 
 			}
 
-			var now = performance.now();
+			const now = performance.now();
 
 			if ( now - lastButtonDownTime < 100 ) {
 

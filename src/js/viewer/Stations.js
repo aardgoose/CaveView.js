@@ -243,8 +243,8 @@ Stations.prototype.getClosestVisibleStation = function ( camera, intersects ) {
 
 	const splaysVisible = this.splaysVisible;
 
-	var minD2 = Infinity;
-	var closestStation = null;
+	let minD2 = Infinity;
+	let closestStation = null;
 
 	intersects.forEach( intersect => {
 

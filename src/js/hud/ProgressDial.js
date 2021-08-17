@@ -44,7 +44,7 @@ class ProgressDial extends Mesh {
 
 		if ( addText ) {
 
-			var glyphMaterial = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
+			const glyphMaterial = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
 
 			const pcent = new MutableGlyphString( '----', glyphMaterial );
 
@@ -98,7 +98,7 @@ ProgressDial.prototype.set = function ( progress ) {
 
 	if ( pcent !== null ) {
 
-		var pcentValue = Math.round( progress ) + '%';
+		const pcentValue = Math.round( progress ) + '%';
 
 		pcent.replaceString( pcentValue.padStart( 4, ' ' ) );
 		pcent.translateY( pcent.getWidth() / 2 - pcent.position.y );

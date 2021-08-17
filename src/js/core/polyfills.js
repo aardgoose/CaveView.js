@@ -14,9 +14,9 @@ if ( scope.TextDecoder === undefined ) {
 
 		const l = bytes.length;
 
-		var encoded = '';
+		let encoded = '';
 
-		for ( var i = 0; i < l; i++ ) {
+		for ( let i = 0; i < l; i++ ) {
 
 			encoded += '%' + bytes[ i ].toString( 16 );
 

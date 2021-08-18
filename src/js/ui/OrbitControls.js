@@ -261,16 +261,11 @@ class OrbitControls extends EventDispatcher {
 
 		this.dispose = function () {
 
-			element.removeEventListener( 'contextmenu', onContextMenu, false );
-			element.removeEventListener( 'mousedown', onMouseDown, false );
-			element.removeEventListener( 'wheel', onMouseWheel, false );
+			element.removeEventListener( 'contextmenu', onContextMenu );
 
-			element.removeEventListener( 'touchstart', onTouchStart, false );
-			element.removeEventListener( 'touchend', onTouchEnd, false );
-			element.removeEventListener( 'touchmove', onTouchMove, false );
-
-			document.removeEventListener( 'mousemove', onMouseMove, false );
-			document.removeEventListener( 'mouseup', onMouseUp, false );
+			element.removeEventListener( 'pointerdown', onPointerDown );
+			element.removeEventListener( 'pointercancel', onPointerCancel );
+			element.removeEventListener( 'wheel', onMouseWheel );
 
 			element.removeEventListener( 'keydown', onKeyDown, false );
 
@@ -332,6 +327,9 @@ class OrbitControls extends EventDispatcher {
 		const dollyStart = new Vector2();
 		const dollyEnd = new Vector2();
 		const dollyDelta = new Vector2();
+
+		const pointers = [];
+		const pointerPositions = {};
 
 		const mouse3D = new Vector3();
 		const mouseStart = new Vector3();
@@ -842,23 +840,23 @@ class OrbitControls extends EventDispatcher {
 
 		}
 
-		function handleTouchStartRotate( event ) {
+		function handleTouchStartRotate() {
 
-			rotateStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+			rotateStart.set( pointers[ 0 ].pageX, pointers[ 0 ].pageY );
 
 		}
 
-		function handleTouchStartDollyPan( event ) {
+		function handleTouchStartDollyPan() {
 
-			const dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-			const dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+			const dx = pointers[ 0 ].pageX - pointers[ 1 ].pageX;
+			const dy = pointers[ 0 ].pageY - pointers[ 1 ].pageY;
 
 			const distance = Math.sqrt( dx * dx + dy * dy );
 
 			dollyStart.set( 0, distance );
 
-			const x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
-			const y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
+			const x = 0.5 * ( pointers[ 0 ].pageX + pointers[ 1 ].pageX );
+			const y = 0.5 * ( pointers[ 0 ].pageY + pointers[ 1 ].pageY );
 
 			updateMouse3D( x, y );
 
@@ -866,9 +864,9 @@ class OrbitControls extends EventDispatcher {
 
 		}
 
-		function handleTouchMoveRotate( event ) {
+		function handleTouchMoveRotate() {
 
-			rotateEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+			rotateEnd.set( pointers[ 0 ].pageX, pointers[ 0 ].pageY );
 
 			rotateDelta.subVectors( rotateEnd, rotateStart );
 
@@ -884,10 +882,10 @@ class OrbitControls extends EventDispatcher {
 
 		}
 
-		function handleTouchMoveDollyPan( event ) {
+		function handleTouchMoveDollyPan() {
 
-			const dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-			const dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+			const dx = pointers[ 0 ].pageX - pointers[ 1 ].pageX;
+			const dy = pointers[ 0 ].pageY - pointers[ 1 ].pageY;
 
 			const distance = Math.sqrt( dx * dx + dy * dy );
 
@@ -899,8 +897,8 @@ class OrbitControls extends EventDispatcher {
 
 			dollyStart.copy( dollyEnd );
 
-			const x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
-			const y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
+			const x = 0.5 * ( pointers[ 0 ].pageX + pointers[ 1 ].pageX );
+			const y = 0.5 * ( pointers[ 0 ].pageY + pointers[ 1 ].pageY );
 
 			updateMouse3D( x, y );
 
@@ -962,10 +960,88 @@ class OrbitControls extends EventDispatcher {
 		// event handlers - FSM: listen for events and reset state
 		//
 
-		function onMouseDown( event ) {
+		function onPointerDown( event ) {
 
 			if ( scope.enabled === false ) return;
+
 			event.preventDefault();
+
+			if ( pointers.length === 0 ) {
+
+				element.setPointerCapture( event.pointerId );
+				element.addEventListener( 'pointermove', onPointerMove );
+				element.addEventListener( 'pointerup', onPointerUp );
+
+			} //
+
+
+			addPointer( event );
+
+			if ( event.pointerType === 'touch' ) {
+
+				onTouchStart( event );
+
+			} else {
+
+				onMouseDown( event );
+
+			}
+
+		}
+
+		function onPointerMove( event ) {
+
+			if ( scope.enabled === false ) return;
+
+			event.preventDefault();
+
+			if ( event.pointerType === 'touch' ) {
+
+				onTouchMove( event );
+
+			} else {
+
+				onMouseMove( event );
+
+			}
+
+		}
+
+		function onPointerUp( event ) {
+
+			if ( scope.enabled === false ) return;
+
+			event.preventDefault();
+
+			if ( event.pointerType === 'touch' ) {
+
+				onTouchEnd();
+
+			} else {
+
+				onMouseUp();
+
+			}
+
+			removePointer( event );
+
+			if ( pointers.length === 0 ) {
+
+				element.releasePointerCapture( event.pointerId );
+				element.removeEventListener( 'pointermove', onPointerMove );
+				element.removeEventListener( 'pointerup', onPointerUp );
+
+			}
+
+		}
+
+		function onPointerCancel( event ) {
+
+			removePointer( event );
+
+		}
+
+		function onMouseDown( event ) {
 
 			setButtons( event.button );
 
@@ -1002,9 +1078,6 @@ class OrbitControls extends EventDispatcher {
 
 			if ( state !== STATE.NONE ) {
 
-				document.addEventListener( 'mousemove', onMouseMove, false );
-				document.addEventListener( 'mouseup', onMouseUp, false );
-
 				scope.dispatchEvent( startEvent );
 
 			}
@@ -1014,10 +1087,6 @@ class OrbitControls extends EventDispatcher {
 		}
 
 		function onMouseMove( event ) {
-
-			if ( scope.enabled === false ) return;
-
-			event.preventDefault();
 
 			switch ( state ) {
 
@@ -1045,14 +1114,9 @@ class OrbitControls extends EventDispatcher {
 
 		}
 
-		function onMouseUp( /* event */ ) {
-
-			if ( scope.enabled === false ) return;
+		function onMouseUp() {
 
 			element.style.cursor = 'default';
-
-			document.removeEventListener( 'mousemove', onMouseMove, false );
-			document.removeEventListener( 'mouseup', onMouseUp, false );
 
 			scope.dispatchEvent( endEvent );
 
@@ -1089,15 +1153,13 @@ class OrbitControls extends EventDispatcher {
 
 		function onTouchStart( event ) {
 
-			if ( scope.enabled === false ) return;
+			trackPointer( event );
 
-			event.preventDefault();
-
-			switch ( event.touches.length ) {
+			switch ( pointers.length ) {
 
 			case 1:	// one-fingered touch: rotate
 
-				handleTouchStartRotate( event );
+				handleTouchStartRotate();
 
 				state = STATE.TOUCH_ROTATE;
 
@@ -1105,7 +1167,7 @@ class OrbitControls extends EventDispatcher {
 
 			case 2:	// two-fingered touch: dolly-pan
 
-				handleTouchStartDollyPan( event );
+				handleTouchStartDollyPan();
 
 				state = STATE.TOUCH_DOLLY_PAN;
 
@@ -1127,18 +1189,17 @@ class OrbitControls extends EventDispatcher {
 
 		function onTouchMove( event ) {
 
-			if ( scope.enabled === false ) return;
-
-			event.preventDefault();
 			event.stopPropagation();
 
-			switch ( event.touches.length ) {
+			trackPointer( event );
+
+			switch ( pointers.length ) {
 
 			case 1: // one-fingered touch: rotate
 
 				if ( state !== STATE.TOUCH_ROTATE ) return; // is this needed?
 
-				handleTouchMoveRotate( event );
+				handleTouchMoveRotate();
 
 				break;
 
@@ -1146,7 +1207,7 @@ class OrbitControls extends EventDispatcher {
 
 				if ( state !== STATE.TOUCH_DOLLY_PAN ) return; // is this needed?
 
-				handleTouchMoveDollyPan( event );
+				handleTouchMoveDollyPan();
 
 				break;
 
@@ -1158,9 +1219,7 @@ class OrbitControls extends EventDispatcher {
 
 		}
 
-		function onTouchEnd( /* event */ ) {
-
-			if ( scope.enabled === false ) return;
+		function onTouchEnd() {
 
 			scope.dispatchEvent( endEvent );
 
@@ -1176,18 +1235,58 @@ class OrbitControls extends EventDispatcher {
 
 		}
 
-		//
+		function addPointer( event ) {
 
-		element.addEventListener( 'contextmenu', onContextMenu, false );
+			pointers.push( event );
 
-		element.addEventListener( 'mousedown', onMouseDown, false );
-		element.addEventListener( 'wheel', onMouseWheel, false );
+		}
 
-		element.addEventListener( 'touchstart', onTouchStart, false );
-		element.addEventListener( 'touchend', onTouchEnd, false );
-		element.addEventListener( 'touchmove', onTouchMove, false );
+		function removePointer( event ) {
 
-		element.addEventListener( 'keydown', onKeyDown, false );
+			delete pointerPositions[ event.pointerId ];
+
+			for ( let i = 0; i < pointers.length; i ++ ) {
+
+				if ( pointers[ i ].pointerId == event.pointerId ) {
+
+					pointers.splice( i, 1 );
+					return;
+
+				}
+
+			}
+
+		}
+
+		function trackPointer( event ) {
+
+			let position = pointerPositions[ event.pointerId ];
+
+			if ( position === undefined ) {
+
+				position = new Vector2();
+				pointerPositions[ event.pointerId ] = position;
+
+			}
+
+			position.set( event.pageX, event.pageY );
+
+		}
+
+		function getSecondPointerPosition ( event ) {
+
+			const pointer = event.pointerId === pointers[ 0 ].pointerId ? pointers[ 1 ] : pointers[ 0 ];
+			return pointerPositions[ pointer.pointerId ];
+
+		}
+
+		element.addEventListener( 'contextmenu', onContextMenu );
+
+		element.addEventListener( 'pointerdown', onPointerDown );
+		element.addEventListener( 'pointercancel', onPointerCancel );
+		element.addEventListener( 'wheel', onMouseWheel );
+
+		element.addEventListener( 'keydown', onKeyDown );
 
 		const cfg = viewer.ctx.cfg;
 

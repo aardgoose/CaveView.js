@@ -23,10 +23,10 @@ function CursorControl( hudObject, viewer, cursorScale ) {
 
 		const target = event.currentTarget;
 
-		target.addEventListener( 'mouseleave', handleLeave );
-		target.addEventListener( 'mousemove',  handleMouseMove );
-		target.addEventListener( 'mousedown',  handleMouseDown );
-		target.addEventListener( 'mouseup',    handleMouseUp );
+		target.addEventListener( 'pointerleave', handleLeave );
+		target.addEventListener( 'pointermove',  handleMouseMove );
+		target.addEventListener( 'pointerdown',  handleMouseDown );
+		target.addEventListener( 'pointerup',    handleMouseUp );
 
 		// update center position (accounts for resizes)
 		const bc = container.getBoundingClientRect();
@@ -60,10 +60,10 @@ function CursorControl( hudObject, viewer, cursorScale ) {
 
 		const target = event.currentTarget;
 
-		target.removeEventListener( 'mouseleave', handleLeave );
-		target.removeEventListener( 'mousemove',  handleMouseMove );
-		target.removeEventListener( 'mousedown',  handleMouseDown );
-		target.removeEventListener( 'mouseup',    handleMouseUp );
+		target.removeEventListener( 'pointerleave', handleLeave );
+		target.removeEventListener( 'pointermove',  handleMouseMove );
+		target.removeEventListener( 'pointerdown',  handleMouseDown );
+		target.removeEventListener( 'pointerup',    handleMouseUp );
 
 		hr.style.cursor = 'default';
 		dragging = false;

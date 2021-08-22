@@ -752,7 +752,7 @@ class CaveViewer extends EventDispatcher {
 				}
 
 			}
-
+			setScale();
 			setupView( true );
 
 		}

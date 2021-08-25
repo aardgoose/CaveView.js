@@ -2,13 +2,25 @@ import { MeshLambertMaterial} from '../Three';
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 import { Shaders } from '../shaders/Shaders';
 
-const fragment_pars = [
+const vertexPars = [
+	'uniform float minZ;',
+	'uniform float scaleZ;',
+	'varying float zMap;',
+	'varying vec2 vPosition;'
+].join( '\n' );
+
+const vertexMain = [
+	'vPosition = vec2( position.x, position.y );',
+	'zMap = saturate( ( position.z - minZ ) * scaleZ );'
+].join( '\n' );
+
+const fragmentPars = [
 	'uniform sampler2D cmap;',
 	'varying float zMap;',
 	Shaders.commonTerrainCodePars
 ].join( '\n' );
 
-const fragment_color = [
+const fragmentColor = [
 	'diffuseColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) );',
 	'diffuseColor.a = opacity;',
 	Shaders.commonTerrainCodeColor
@@ -47,16 +59,7 @@ class HypsometricMaterial extends MeshLambertMaterial {
 				}
 			);
 
-			const vertexShader = shader.vertexShader
-				.replace( '#include <common>', '\nuniform float minZ;\nuniform float scaleZ;\nvarying float zMap;\nvarying vec2 vPosition;\n$&' )
-				.replace( 'include <begin_vertex>', '$&\nvPosition = vec2( position.x, position.y );\nzMap = saturate( ( position.z - minZ ) * scaleZ );' );
-
-			const fragmentShader = shader.fragmentShader
-				.replace( '#include <common>', '$&\n' + fragment_pars + '\n' )
-				.replace( '#include <color_fragment>', fragment_color );
-
-			shader.vertexShader = vertexShader;
-			shader.fragmentShader = fragmentShader;
+			this.editShader( shader, vertexPars, vertexMain, fragmentPars, fragmentColor );
 
 		};
 

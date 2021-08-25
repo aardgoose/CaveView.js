@@ -1,7 +1,17 @@
 import { MeshLambertMaterial } from '../Three';
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 
-const fragment_pars = [
+const vertexPars = [
+	'uniform float zOffset;',
+	'uniform float datumShift;',
+	'varying float vPositionZ;'
+].join( '\n' );
+
+const vertexMain = [
+	'vPositionZ = position.z + zOffset + datumShift;'
+].join( '\n' );
+
+const fragmentPars = [
 	'uniform vec3 contourColor;',
 	'uniform vec3 contourColor10;',
 	'uniform float contourInterval;',
@@ -9,7 +19,7 @@ const fragment_pars = [
 	'varying float vPositionZ;',
 ].join( '\n' );
 
-const fragment_color = [
+const fragmentColor = [
 	'float f = fract( vPositionZ / contourInterval );',
 	'if ( f > 0.5 ) f = 1.0 - f;',
 	'float f10 = fract( vPositionZ / ( contourInterval * 10.0 ) );',
@@ -44,16 +54,7 @@ class ContourMaterial extends MeshLambertMaterial {
 				baseColor:       { value: cfg.themeColor( 'shading.contours.base' ) }
 			}, materials.commonDepthUniforms, materials.commonTerrainUniforms );
 
-			const vertexShader = shader.vertexShader
-				.replace( '#include <common>', '$&\nuniform float zOffset;\nuniform float datumShift;\nvarying float vPositionZ;\n' )
-				.replace( 'include <begin_vertex>', '$&\nvPositionZ = position.z + zOffset + datumShift;\n' );
-
-			const fragmentShader = shader.fragmentShader
-				.replace( '#include <common>', '$&\n' + fragment_pars + '\n' )
-				.replace( '#include <color_fragment>', fragment_color );
-
-			shader.vertexShader = vertexShader;
-			shader.fragmentShader = fragmentShader;
+			this.editShader( shader, vertexPars, vertexMain, fragmentPars, fragmentColor );
 
 		};
 

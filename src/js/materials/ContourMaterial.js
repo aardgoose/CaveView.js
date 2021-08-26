@@ -1,4 +1,3 @@
-import { MeshLambertMaterial } from '../Three';
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 
 const vertexPars = [
@@ -31,7 +30,7 @@ const fragmentColor = [
 	'diffuseColor = mix( finalColor, baseColorAlpha, c );'
 ].join( '\n' );
 
-class ContourMaterial extends MeshLambertMaterial {
+class ContourMaterial extends CommonTerrainMaterial {
 
 	constructor ( ctx ) {
 
@@ -65,7 +64,5 @@ class ContourMaterial extends MeshLambertMaterial {
 	}
 
 }
-
-Object.assign( ContourMaterial.prototype, CommonTerrainMaterial.prototype );
 
 export { ContourMaterial };

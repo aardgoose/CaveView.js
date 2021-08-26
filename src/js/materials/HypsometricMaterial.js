@@ -1,4 +1,3 @@
-import { MeshLambertMaterial} from '../Three';
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 import { Shaders } from '../shaders/Shaders';
 
@@ -26,7 +25,7 @@ const fragmentColor = [
 	Shaders.commonTerrainCodeColor
 ].join( '\n' );
 
-class HypsometricMaterial extends MeshLambertMaterial {
+class HypsometricMaterial extends CommonTerrainMaterial {
 
 	constructor ( ctx ) {
 
@@ -70,7 +69,5 @@ class HypsometricMaterial extends MeshLambertMaterial {
 	}
 
 }
-
-Object.assign( HypsometricMaterial.prototype, CommonTerrainMaterial.prototype );
 
 export { HypsometricMaterial };

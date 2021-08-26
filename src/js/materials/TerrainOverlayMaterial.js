@@ -1,8 +1,7 @@
-import { MeshLambertMaterial } from '../Three';
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 import { Shaders } from '../shaders/Shaders';
 
-class TerrainOverlayMaterial extends MeshLambertMaterial {
+class TerrainOverlayMaterial extends CommonTerrainMaterial {
 
 	constructor ( ctx ) {
 
@@ -30,7 +29,5 @@ class TerrainOverlayMaterial extends MeshLambertMaterial {
 	}
 
 }
-
-Object.assign( TerrainOverlayMaterial.prototype, CommonTerrainMaterial.prototype );
 
 export { TerrainOverlayMaterial };

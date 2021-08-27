@@ -97,7 +97,7 @@ Topology.prototype.vertexSegment = function ( index ) {
 
 };
 
-Topology.prototype.shortestPathSearch = function ( station ) {
+Topology.prototype.shortestPathSearch = function ( station, legCallback = function () {} ) {
 
 	// queue of stations searched.
 	const queue = [ station ];
@@ -143,6 +143,7 @@ Topology.prototype.shortestPathSearch = function ( station ) {
 				queue.push( nextStation );
 
 				// console.log( 'new next', nextStation.distance, queue.length );
+				legCallback( v1, v2, nextLength );
 
 			}
 

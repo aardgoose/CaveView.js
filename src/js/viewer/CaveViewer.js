@@ -1363,7 +1363,25 @@ class CaveViewer extends EventDispatcher {
 
 					const e = {
 						type: 'entrance',
-						node: station,
+						coordinates: survey.getGeographicalPosition( station.p ),
+						name: station.getPath(),
+						getLegs: function ( legCallback ) {
+							survey.topology.shortestPathSearch( station, ( v1, v2, l ) => {
+								legCallback( {
+									v1Coordinates: survey.getGeographicalPosition( v1 ),
+									v2Coordinates: survey.getGeographicalPosition( v2 ),
+									length: l
+								} );
+							} );
+						},
+						getStations: function ( stationCallback ) {
+							survey.topology.shortestPathSearch( station, ( v1, v2 ) => {
+								stationCallback( {
+									name: survey.stations.getStation( v2 ).getPath(),
+									coordinates: survey.getGeographicalPosition( v2 )
+								} );
+							} );
+						},
 						handled: false,
 						mouseEvent: event
 					};

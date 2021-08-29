@@ -189,10 +189,9 @@ Legs.prototype.setShading = function ( idSet, colourSegment, mode, dashed, filte
 
 			} else {
 
-				for ( let v = start; v < end; v += 2 ) {
+				for ( let v = start; v < end; v++ ) {
 
 					unselectedColor.toArray( colors, v * 3 );
-					unselectedColor.toArray( colors, ( v + 1 ) * 3 );
 
 				}
 

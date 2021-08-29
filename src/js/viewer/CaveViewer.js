@@ -1393,8 +1393,6 @@ class CaveViewer extends EventDispatcher {
 
 					self.dispatchEvent( e );
 
-					if ( e.handled ) return;
-
 					if ( e.filterConnected ) {
 
 						filterConnected = true;
@@ -1404,7 +1402,9 @@ class CaveViewer extends EventDispatcher {
 
 						filterConnected = false;
 
-					} else {
+					}
+
+					if ( ! e.handled ) {
 
 						_selectStation( station );
 

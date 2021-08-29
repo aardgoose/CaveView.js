@@ -962,7 +962,7 @@ Survey.prototype.setHideMode = function ( mode ) {
 
 };
 
-Survey.prototype.setShadingMode = function ( mode ) {
+Survey.prototype.setShadingMode = function ( mode, filterConnected ) {
 
 	const materials = this.ctx.materials;
 
@@ -1019,7 +1019,7 @@ Survey.prototype.setShadingMode = function ( mode ) {
 
 	this.markers.setVisibility( ( mode === SHADING_DISTANCE ) );
 
-	if ( this.setLegShading( LEG_CAVE, mode ) ) {
+	if ( this.setLegShading( LEG_CAVE, mode, false, filterConnected ) ) {
 
 		this.setWallShading( this.features.get( FACE_WALLS  ), material );
 		this.setWallShading( this.features.get( FACE_SCRAPS ), material );
@@ -1072,7 +1072,7 @@ Survey.prototype.setDuplicateShading = function ( mode ) {
 
 };
 
-Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed ) {
+Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed, filterConnected ) {
 
 	const mesh = this.features.get( legType );
 
@@ -1082,55 +1082,55 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed ) {
 
 	case SHADING_HEIGHT:
 
-		this.setLegColourByMaterial( mesh, 'height', dashed );
+		this.setLegColourByMaterial( mesh, 'height', dashed, filterConnected );
 
 		break;
 
 	case SHADING_LENGTH:
 
-		this.setLegColourByLength( mesh );
+		this.setLegColourByLength( mesh, filterConnected );
 
 		break;
 
 	case SHADING_INCLINATION:
 
-		this.setLegColourByInclination( mesh );
+		this.setLegColourByInclination( mesh, filterConnected );
 
 		break;
 
 	case SHADING_CURSOR:
 
-		this.setLegColourByMaterial( mesh, 'cursor' );
+		this.setLegColourByMaterial( mesh, 'cursor', filterConnected );
 
 		break;
 
 	case SHADING_DEPTH_CURSOR:
 
-		this.setLegColourByMaterial( mesh, 'depth-cursor' );
+		this.setLegColourByMaterial( mesh, 'depth-cursor', filterConnected );
 
 		break;
 
 	case SHADING_SINGLE:
 
-		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.single' ), dashed );
+		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.single' ), dashed, filterConnected );
 
 		break;
 
 	case SHADING_SURFACE:
 
-		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.surface' ), dashed );
+		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.surface' ), dashed, filterConnected );
 
 		break;
 
 	case SHADING_DUPLICATE:
 
-		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.duplicate' ), dashed );
+		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.duplicate' ), dashed, filterConnected );
 
 		break;
 
 	case SHADING_SURVEY:
 
-		this.setLegColourBySurvey( mesh );
+		this.setLegColourBySurvey( mesh, filterConnected );
 
 		break;
 
@@ -1150,7 +1150,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed ) {
 
 	case SHADING_DEPTH:
 
-		this.setLegColourByMaterial( mesh, 'depth', dashed );
+		this.setLegColourByMaterial( mesh, 'depth', dashed, filterConnected );
 
 		break;
 
@@ -1180,9 +1180,9 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed ) {
 
 };
 
-Survey.prototype.setLegColourByMaterial = function ( mesh, mode, dashed ) {
+Survey.prototype.setLegColourByMaterial = function ( mesh, mode, dashed, filterConnected ) {
 
-	mesh.setShading( this.selection.getIds(), _colourSegment, mode, dashed );
+	mesh.setShading( this.selection.getIds(), _colourSegment, mode, dashed, filterConnected );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1193,9 +1193,9 @@ Survey.prototype.setLegColourByMaterial = function ( mesh, mode, dashed ) {
 
 };
 
-Survey.prototype.setLegColourByColour = function ( mesh, colour, dashed ) {
+Survey.prototype.setLegColourByColour = function ( mesh, colour, dashed, filterConnected ) {
 
-	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', dashed );
+	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', dashed, filterConnected );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1206,7 +1206,7 @@ Survey.prototype.setLegColourByColour = function ( mesh, colour, dashed ) {
 
 };
 
-Survey.prototype.setLegColourByLength = function ( mesh ) {
+Survey.prototype.setLegColourByLength = function ( mesh, filterConnected ) {
 
 	const materials = this.ctx.materials;
 	const colours = materials.colourCache.getColors( this.gradientName );
@@ -1214,7 +1214,7 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 	const stats = mesh.stats;
 	const legLengths = mesh.legLengths;
 
-	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic' );
+	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', false, filterConnected );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1228,7 +1228,7 @@ Survey.prototype.setLegColourByLength = function ( mesh ) {
 
 };
 
-Survey.prototype.setLegColourByDistance = function ( mesh ) {
+Survey.prototype.setLegColourByDistance = function ( mesh, filterConnected ) {
 
 	const cfg = this.ctx.cfg;
 	const materials = this.ctx.materials;
@@ -1242,7 +1242,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 	const maxDistance = this.topology.maxDistance;
 	const path = this.highlightPath;
 
-	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic' );
+	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', false, filterConnected );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1259,7 +1259,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 	function _setDistanceColour( vertices, vertexIndex ) {
 
 		const vertex = vertices[ vertexIndex ];
-		const distance = stations.getStation( vertex ).distance;
+		const distance = vertex.shortestPath;
 
 		return ( distance === Infinity ) ? unconnected : colours[ Math.floor( colourRange * distance / maxDistance ) ];
 
@@ -1267,7 +1267,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh ) {
 
 };
 
-Survey.prototype.setLegColourBySurvey = function ( mesh ) {
+Survey.prototype.setLegColourBySurvey = function ( mesh, filterConnected ) {
 
 	let node = this.selection.getNode();
 
@@ -1278,7 +1278,7 @@ Survey.prototype.setLegColourBySurvey = function ( mesh ) {
 
 	const surveyToColourMap = this.ctx.surveyColourMapper.getColourMap( node );
 
-	mesh.setShading( __set, _colourSegment, 'basic' );
+	mesh.setShading( __set, _colourSegment, 'basic', false, filterConnected );
 
 	function _colourSegment ( vertices, colors, v1, v2, survey ) {
 
@@ -1326,7 +1326,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 
 };
 
-Survey.prototype.setLegColourByInclination = function ( mesh ) {
+Survey.prototype.setLegColourByInclination = function ( mesh, filterConnected ) {
 
 	const colourCache = this.ctx.materials.colourCache;
 	const colours = colourCache.getColors( 'inclination' );
@@ -1335,7 +1335,7 @@ Survey.prototype.setLegColourByInclination = function ( mesh ) {
 	const hueFactor = colourRange * 2 / Math.PI;
 	const legNormal = new Vector3();
 
-	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic' );
+	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', false, filterConnected );
 
 	function _colourSegment ( vertices, colors, v1, v2 ) {
 

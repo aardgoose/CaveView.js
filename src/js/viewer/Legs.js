@@ -159,7 +159,7 @@ Legs.prototype.cutRuns = function ( selection ) {
 
 };
 
-Legs.prototype.setShading = function ( idSet, colourSegment, mode, dashed ) {
+Legs.prototype.setShading = function ( idSet, colourSegment, mode, dashed, filterConnected ) {
 
 	this.legs.updateMaterial( this.ctx, mode, dashed );
 
@@ -202,9 +202,20 @@ Legs.prototype.setShading = function ( idSet, colourSegment, mode, dashed ) {
 
 	} else {
 
-		for ( let v = 0, l = vertices.length; v < l; v += 2 ) {
+		for ( let v1 = 0, l = vertices.length; v1 < l; v1 += 2 ) {
 
-			colourSegment( vertices, colors, v, v + 1, null );
+			const v2 = v1 + 1;
+
+			if ( filterConnected && ( vertices[ v1 ].shortestPath == Infinity || vertices[ v2 ].shortestPath == Infinity ) ) {
+
+				unselectedColor.toArray( colors, v1 * 3 );
+				unselectedColor.toArray( colors, v2 * 3 );
+
+			} else {
+
+				colourSegment( vertices, colors, v1, v2, null );
+
+			}
 
 		}
 

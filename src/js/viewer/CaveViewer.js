@@ -116,6 +116,7 @@ class CaveViewer extends EventDispatcher {
 		let lastMouseMode = MOUSE_MODE_NORMAL;
 		let mouseMode = MOUSE_MODE_NORMAL;
 		let mouseTargets = [];
+		let filterConnected = false;
 		let clickCount = 0;
 
 		let terrain = null;
@@ -926,7 +927,7 @@ class CaveViewer extends EventDispatcher {
 
 		function setShadingMode ( mode ) {
 
-			const shadingMode = survey.setShadingMode( mode );
+			const shadingMode = survey.setShadingMode( mode, filterConnected );
 
 			if ( shadingMode === SHADING_DISTANCE ) {
 
@@ -1114,6 +1115,8 @@ class CaveViewer extends EventDispatcher {
 			cameraManager.resetCameras();
 
 			controls.reset();
+
+			this.dispatchEvent( { type: 'clear' } );
 
 		};
 
@@ -1353,7 +1356,7 @@ class CaveViewer extends EventDispatcher {
 			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
 			const intersects = raycaster.intersectObjects( mouseTargets, false );
 
-			if ( mouseMode === MOUSE_MODE_NORMAL && self.entrances ) {
+			if ( self.entrances ) {
 
 				const entrance = survey.entrances.intersectLabels( mouse, cameraManager.activeCamera, scale );
 
@@ -1364,6 +1367,7 @@ class CaveViewer extends EventDispatcher {
 					const e = {
 						type: 'entrance',
 						coordinates: survey.getGeographicalPosition( station.p ),
+						displayName: entrance.name,
 						name: station.getPath(),
 						getLegs: function ( legCallback ) {
 							survey.topology.shortestPathSearch( station, ( v1, v2, l ) => {
@@ -1382,6 +1386,7 @@ class CaveViewer extends EventDispatcher {
 								} );
 							} );
 						},
+						filterConnected: true,
 						handled: false,
 						mouseEvent: event
 					};
@@ -1390,7 +1395,21 @@ class CaveViewer extends EventDispatcher {
 
 					if ( e.handled ) return;
 
-					_selectStation( station );
+					if ( e.filterConnected ) {
+
+						filterConnected = true;
+
+						setShadingMode( survey.caveShading );
+						renderView();
+
+						filterConnected = false;
+
+					} else {
+
+						_selectStation( station );
+
+					}
+
 					return;
 
 				}

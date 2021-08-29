@@ -110,13 +110,16 @@ Topology.prototype.shortestPathSearch = function ( station, legCallback = functi
 
 	let maxDistance = 0;
 
-	station.distance = 0;
+	station.p.shortestPath = 0;
 
 	while ( queue.length > 0 ) {
 
 		const station = queue.shift();
-		const currentDistance = station.distance;
 		const stationLegs = station.legs;
+
+		if ( ! stationLegs ) continue;
+
+		const currentDistance = station.p.shortestPath;
 
 		// console.log( 'station:', station.getPath(), currentDistance );
 
@@ -137,13 +140,12 @@ Topology.prototype.shortestPathSearch = function ( station, legCallback = functi
 			// label stations with distance of shortest path
 			// add to search list
 
-			if ( nextStation.distance > currentDistance + nextLength ) {
+			if ( nextVertex.shortestPath > currentDistance + nextLength ) {
 
-				nextStation.distance = currentDistance + nextLength;
+				if ( nextVertex.shortestPath == Infinity ) legCallback( v1, v2, nextLength );
+
+				nextVertex.shortestPath = currentDistance + nextLength;
 				queue.push( nextStation );
-
-				// console.log( 'new next', nextStation.distance, queue.length );
-				legCallback( v1, v2, nextLength );
 
 			}
 
@@ -163,9 +165,9 @@ Topology.prototype.getShortestPath = function ( startStation ) {
 
 	if (
 		zeroStation === null ||
-		startStation.distance === Infinity ||
+		startStation.p.shortestPath === Infinity ||
 		zeroStation === startStation ||
-		startStation.distance === 0
+		startStation.p.shortestPath === 0
 	) return path;
 
 	const stations = this.stations;
@@ -189,10 +191,12 @@ Topology.prototype.getShortestPath = function ( startStation ) {
 			const v1 = legs[ leg ];
 			const v2 = legs[ leg + 1 ];
 
-			const nextVertex = ( v1 !== nextStation.p ) ? v1 : v2;
-			const testStation = stations.getStation( nextVertex );
+			const thisVertex = nextStation.p;
 
-			if ( testStation.distance < nextStation.distance ) {
+			const testVertex = ( v1 !== thisVertex) ? v1 : v2;
+			const testStation = stations.getStation( testVertex );
+
+			if ( testVertex.shortestPath < thisVertex.shortestPath ) {
 
 				nextStation = testStation;
 				path.add( leg );

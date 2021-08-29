@@ -17,6 +17,7 @@ StationPosition.scaleFactor = 1;
 
 StationPosition.prototype.connections = 0;
 StationPosition.prototype.splays = 0;
+StationPosition.prototype.shortestPath = Infinity;
 
 StationPosition.prototype.correctedDistanceTo = function ( v ) {
 

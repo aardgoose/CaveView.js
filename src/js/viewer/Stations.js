@@ -83,7 +83,6 @@ Stations.prototype.addStation = function ( node ) {
 	node.stationVertexIndex = this.stationCount++;
 	node.linkedSegments = [];
 	node.legs = [];
-	node.distance = Infinity;
 
 };
 
@@ -235,7 +234,7 @@ Stations.prototype.finalise = function () {
 
 Stations.prototype.resetDistances = function () {
 
-	this.stations.forEach( node => node.distance = Infinity );
+	this.stations.forEach( node => { if ( node.p ) node.p.shortestPath = Infinity; } );
 
 };
 

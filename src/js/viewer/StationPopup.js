@@ -29,7 +29,7 @@ class StationPopup extends CanvasPopup {
 
 		if ( showDistance ) {
 
-			distance = station.distance !== Infinity ? Math.round( station.distance ) : 'unconnected';
+			distance = station.p.shortestPath !== Infinity ? Math.round( station.p.shortestPath ) : 'unconnected';
 
 		} else {
 

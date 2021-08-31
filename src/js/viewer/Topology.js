@@ -142,7 +142,7 @@ Topology.prototype.shortestPathSearch = function ( station, legCallback = functi
 
 			if ( nextVertex.shortestPath > currentDistance + nextLength ) {
 
-				if ( nextVertex.shortestPath == Infinity ) legCallback( v1, v2, nextLength );
+				if ( nextVertex.shortestPath == Infinity ) legCallback( station, nextStation, nextLength );
 
 				nextVertex.shortestPath = currentDistance + nextLength;
 				queue.push( nextStation );

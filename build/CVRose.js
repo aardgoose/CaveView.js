@@ -61,10 +61,10 @@ class RoseChart {
 			}
 		};
 
-		event.station.forEachConnectedLeg( legInfo => {
+		event.station.forEachConnectedLeg( leg => {
 
-			const v1 = legInfo.v1;
-			const v2 = legInfo.v2;
+			const v1 = leg.v1;
+			const v2 = leg.v2;
 
 			const v1Coordinates = v1.coordinates();
 			const v2Coordinates = v2.coordinates();
@@ -84,9 +84,8 @@ class RoseChart {
 
 		const dataset = config.data.datasets[0];
 
-		dataset.data = sections.concat( sections );
-
-		config.data.datasets[0].backgroundColor = this.colours.slice( 0, sectorCount );
+		dataset.data = sections.concat( sections ); // duplicate for symetrical rose
+		dataset.backgroundColor = this.colours.slice( 0, sectorCount );
 
 		const canvas = document.createElement( 'canvas' );
 

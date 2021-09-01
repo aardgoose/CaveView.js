@@ -6,7 +6,7 @@ import {
 	SHADING_PATH, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_TERRAIN, FEATURE_STATIONS, FEATURE_ENTRANCE_DOTS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, TERRAIN_BLEND
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, TERRAIN_BLEND, STATION_ENTRANCE
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -1346,6 +1346,58 @@ class CaveViewer extends EventDispatcher {
 
 		};
 
+		class Station {
+
+			constructor ( station ) {
+
+				this.station = station;
+
+			}
+
+			coordinates () {
+
+				return survey.getGeographicalPosition( this.station.p );
+
+			}
+
+			id() {
+
+				return this.station.id;
+
+			}
+
+			isEntrance() {
+
+				return this.station.type & STATION_ENTRANCE == STATION_ENTRANCE;
+
+			}
+
+			name() {
+
+				return this.station.getPath();
+
+			}
+
+			adjacentStationIds() {
+
+				return survey.topology.getAdjacentStations( this.station ).slice();
+
+			}
+
+			connectedLegs( callback ) {
+
+				survey.topology.shortestPathSearch( this.station, ( s1, s2, l ) => {
+					callback( {
+						v1: new Station( s1 ),
+						v2: new Station( s2 ),
+						length: l
+					} );
+				} );
+
+			}
+
+		}
+
 		function onMouseDown ( event ) {
 
 			if ( event.target !== renderer.domElement ) return;
@@ -1366,32 +1418,16 @@ class CaveViewer extends EventDispatcher {
 
 					const e = {
 						type: 'entrance',
-						coordinates: survey.getGeographicalPosition( station.p ),
 						displayName: entrance.name,
-						name: station.getPath(),
-						id: station.id,
-						getLegs: function ( legCallback ) {
-							survey.topology.shortestPathSearch( station, ( s1, s2, l ) => {
-								legCallback( {
-									v1: { coordinates: survey.getGeographicalPosition( s1.p ), id: s1.id },
-									v2: { coordinates: survey.getGeographicalPosition( s2.p ), id: s2.id },
-									length: l
-								} );
-							} );
-						},
+						station: new Station( station ),
 						getStations: function ( stationCallback ) {
-							stationCallback( {
-								name: station.getPath(),
-								id: station.id,
-								coordinates: survey.getGeographicalPosition( station.p )
-							} );
+
+							stationCallback( new Station( station ) );
+
 							survey.topology.shortestPathSearch( station, ( s1, s2 ) => {
-								stationCallback( {
-									name: s2.getPath(),
-									id: s2.id,
-									coordinates: survey.getGeographicalPosition( s2.p )
-								} );
+								stationCallback( new Station( s2 ) );
 							} );
+
 						},
 						filterConnected: true,
 						handled: false,

@@ -648,16 +648,14 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 	const offsets = this.offsets;
 	const projection = this.projection;
 
-	let newPosition = { x: position.x + offsets.x, y: position.y + offsets.y };
+	let p = { x: position.x + offsets.x, y: position.y + offsets.y };
 
 	// convert to original survey CRS
 
 	if ( projection !== null )
-		newPosition = projection.forward( newPosition );
+		p = projection.forward( p );
 
-	newPosition.z = position.z + offsets.z;
-
-	return newPosition;
+	return new Vector3( p.x, p.y, position.z + offsets.z );
 
 };
 
@@ -1237,7 +1235,6 @@ Survey.prototype.setLegColourByDistance = function ( mesh, filterConnected ) {
 	const unconnected = cfg.themeColor( 'shading.unconnected' );
 	const pathColor = cfg.themeColor( 'routes.active' );
 
-	const stations = this.stations;
 	const colourRange = colours.length - 1;
 	const maxDistance = this.topology.maxDistance;
 	const path = this.highlightPath;

@@ -213,4 +213,25 @@ Topology.prototype.getShortestPath = function ( startStation ) {
 
 };
 
+Topology.prototype.getAdjacentStations = function ( station ) {
+
+	const legs = this.legsObject.legVertices;
+	const adjacentLegs = station.legs;
+	const thisVertex = station.p;
+	const ids = [];
+
+	adjacentLegs.forEach( l => {
+
+		const v1 = legs[ l ];
+		const v2 = legs[ l + 1 ];
+
+		const nextVertex = ( v1 !== thisVertex) ? v1 : v2;
+		ids.push( this.stations.getStation( nextVertex ).id );
+
+	} );
+
+	return ids;
+
+};
+
 export { Topology };

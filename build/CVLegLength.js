@@ -48,15 +48,15 @@ class LegLengthChart {
 					title: {
 						text: this.sumLength ? 'Total length by leg length ' : 'Leg count by leg length',
 						display: true,
-						color: 'white'
+						color: 'black'
 					}
 				}
 			}
 		};
 
-		event.getLegs( ( legInfo ) => {
+		event.station.forEachConnectedLeg( leg => {
 
-			const bucket = Math.floor( legInfo.length );
+			const bucket = Math.floor( leg.length );
 
 			if ( sections[ bucket ] == undefined ) {
 
@@ -65,7 +65,7 @@ class LegLengthChart {
 
 			}
 
-			sections[ bucket ] += this.sumLength ? legInfo.length : 1;
+			sections[ bucket ] += this.sumLength ? leg.length : 1;
 
 
 		} );

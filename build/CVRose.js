@@ -54,26 +54,29 @@ class RoseChart {
 					},
 					title: {
 						text: 'Total Leg Length by Direction',
-						color: 'white',
+						color: 'black',
 						display: true
 					}
 				}
 			}
 		};
 
-		event.getLegs( ( legInfo ) => {
+		event.station.forEachConnectedLeg( legInfo => {
 
 			const v1 = legInfo.v1;
 			const v2 = legInfo.v2;
 
-			const dX = v1.coordinates.x - v2.coordinates.x;
-			const dY = ( v1.coordinates.y - v2.coordinates.y) * Math.sign( dX );
+			const v1Coordinates = v1.coordinates();
+			const v2Coordinates = v2.coordinates();
+
+			const dX = v1Coordinates.x - v2Coordinates.x;
+			const dY = ( v1Coordinates.y - v2Coordinates.y ) * Math.sign( dX );
 
 			const l = Math.hypot( dX, dY );
 
 			if ( l == 0 ) return;
 
-			const a = 180 * Math.acos( dY / Math.hypot( dX, dY ) ) / Math.PI;
+			const a = 180 * Math.acos( dY / l ) / Math.PI;
 
 			sections[ Math.floor( a / this.sectorSize ) % sectorCount ] += l;
 

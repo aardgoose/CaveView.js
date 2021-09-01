@@ -6,7 +6,7 @@ import {
 	SHADING_PATH, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_TERRAIN, FEATURE_STATIONS, FEATURE_ENTRANCE_DOTS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, TERRAIN_BLEND, STATION_ENTRANCE
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, TERRAIN_BLEND
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -17,6 +17,7 @@ import { CameraMove } from './CameraMove';
 import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
+import { Station } from './Station';
 import { ImagePopup } from './ImagePopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { CommonTerrain } from '../terrain/CommonTerrain';
@@ -1346,58 +1347,6 @@ class CaveViewer extends EventDispatcher {
 
 		};
 
-		class Station {
-
-			constructor ( station ) {
-
-				this.station = station;
-
-			}
-
-			coordinates () {
-
-				return survey.getGeographicalPosition( this.station.p );
-
-			}
-
-			id() {
-
-				return this.station.id;
-
-			}
-
-			isEntrance() {
-
-				return this.station.type & STATION_ENTRANCE == STATION_ENTRANCE;
-
-			}
-
-			name() {
-
-				return this.station.getPath();
-
-			}
-
-			adjacentStationIds() {
-
-				return survey.topology.getAdjacentStations( this.station ).slice();
-
-			}
-
-			connectedLegs( callback ) {
-
-				survey.topology.shortestPathSearch( this.station, ( s1, s2, l ) => {
-					callback( {
-						v1: new Station( s1 ),
-						v2: new Station( s2 ),
-						length: l
-					} );
-				} );
-
-			}
-
-		}
-
 		function onMouseDown ( event ) {
 
 			if ( event.target !== renderer.domElement ) return;
@@ -1419,16 +1368,7 @@ class CaveViewer extends EventDispatcher {
 					const e = {
 						type: 'entrance',
 						displayName: entrance.name,
-						station: new Station( station ),
-						getStations: function ( stationCallback ) {
-
-							stationCallback( new Station( station ) );
-
-							survey.topology.shortestPathSearch( station, ( s1, s2 ) => {
-								stationCallback( new Station( s2 ) );
-							} );
-
-						},
+						station: new Station( survey, station ),
 						filterConnected: true,
 						handled: false,
 						mouseEvent: event
@@ -1498,14 +1438,6 @@ class CaveViewer extends EventDispatcher {
 				}
 
 				break;
-			/*
-			case MOUSE_MODE_ENTRANCES:
-
-				selectEntrance( intersects[ 0 ] );
-
-				break;
-
-			*/
 
 			}
 
@@ -1517,7 +1449,7 @@ class CaveViewer extends EventDispatcher {
 
 				const selectEvent = {
 					type: 'select',
-					node: station,
+					node: new Station( survey, station) ,
 					handled: false,
 					mouseEvent: event
 				};
@@ -1613,22 +1545,6 @@ class CaveViewer extends EventDispatcher {
 			}
 
 		}
-
-		/*
-
-		function selectEntrance ( hit ) {
-
-			const entrances = survey.entrances;
-			const info = entrances.getStation( hit.index );
-
-			self.dispatchEvent( {
-				type: 'selectedEntrance',
-				entrance: info
-			} );
-
-		}
-
-		*/
 
 		function selectTrace ( hit ) {
 

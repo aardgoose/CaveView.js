@@ -162,7 +162,7 @@ class SelectionTreePage extends SelectionCommonPage {
 
 		function _clearHighlight () {
 
-			if ( hightlitElement == null ) return;
+			if ( hightlitElement === null ) return;
 
 			hightlitElement.classList.remove( 'highlight' );
 			hightlitElement = null;

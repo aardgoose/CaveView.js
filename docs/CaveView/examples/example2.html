@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>demo 3d cave viewer</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+	<meta name="Description" content="CaveView - 3d Cave model viewer">
+</head>
+<body onload="onload();" >
+
+<style>
+
+	* {
+		box-sizing: border-box;
+	}
+
+	#scene1, #scene2 {
+		position: relative;
+		border: 2px solid black;
+		width: 600px;
+		height: 600px;
+		float: left;
+	}
+
+</style>
+
+<script type="text/javascript" src="CaveView/lib/BingProvider.js" ></script>
+<script type="text/javascript" src="CaveView/js/CaveView2.js" ></script>
+
+<script type="text/javascript" >
+
+function onload () {
+
+	const theme2 = {
+		shading: {
+				single: "black"
+			},
+			background: "white",
+			hud: {
+				progress: "red",
+				progressBackground: "lightgrey",
+				widgetSize: 20,
+				text: "black",
+				bezelType: "flat",
+				scale: {
+					bar1: "black",
+					bar2: "yellow"
+				},
+			},
+			box: {
+				bounding: "black",
+				select: "red"
+			}
+
+	};
+
+	const viewer1 = new CV2.CaveViewer( "scene1", {
+		terrainDirectory: "terrain/",
+		surveyDirectory: "surveys/",
+		home: "CaveView/",
+		theme: { saturatedGradient: true}
+	} );
+
+	viewer1.addOverlay( 'Bing Aerial',  new BingProvider( 'Aerial', '<<BING API KEY>>' ) );
+	viewer1.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey', '<<BING API KEY>>' ) );
+
+	const viewer2 = new CV2.CaveViewer( "scene2", {
+		terrainDirectory: "/terrain/",
+		surveyDirectory: "/surveys/",
+		home: "/CaveView/",
+		saturatedGradient: false,
+		view: {
+			shadingMode: CV2.SHADING_SINGLE,
+			cameraType: CV2.CAMERA_ORTHOGRAPHIC,
+			terrain: true,
+			terrainShading: "Bing OS",
+			terrainOpacity: 0.7,
+			shading: CV2.SHADING_SINGLE
+		},
+		theme: theme2
+	} );
+
+	viewer2.addOverlay( 'Bing Aerial',  new BingProvider( 'Aerial', '<<BING API KEY>>' ) );
+	viewer2.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey', '<<BING API KEY>>' ) );
+
+	const ui1 = new CV2.CaveViewUI( viewer1 );
+	ui1.loadCaveList( caves );
+
+	viewer2.loadCave( '<<SURVEY FILENAME>>' );
+
+}
+
+</script>
+<h1>Example 2</h1>
+<div style="padding: 20px">
+	<div id="scene1" class="cv-container"></div>
+	<div id="scene2"></div>
+</div>
+
+<div style="clear: both" id="scratch">.</div>
+<p>Mouse: left button down - rotate, right button down pan, mouse wheel - zoom</p>
+</body>
+</html>

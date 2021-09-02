@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>demo 3d cave viewer</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+	<meta name="Description" content="CaveView - 3d Cave model viewer">
+	<meta name="theme-color" content="#00FF00"/>
+	<link rel="icon" type="image/png" sizes="32x32" href="fav/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="fav/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="fav/favicon-16x16.png">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+</head>
+<body onload="onload();" >
+<style>
+	* {
+		box-sizing: border-box;
+	}
+	#scene1, #scene2 {
+		position: relative;
+		border: 5px solid white;
+		width: 600px;
+		height: 600px;
+		float: left;
+	}
+
+</style>
+
+<script type="text/javascript" src="/CaveView.js/CaveView/js/CaveView2.js" ></script>
+
+<script type="text/javascript" >
+
+function onload () {
+
+	const viewer1 = new CV2.CaveViewer( "scene1", {
+		terrainDirectory: "/CaveView.js/terrain/",
+		surveyDirectory: "/CaveView.js/surveys/",
+		home: "/CaveView.js/CaveView/",
+		displayCRS: 'ORIGINAL',
+		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZTk5MmVmZC1iZDU5LTQzMWQtOWY0Zi1mZDYxNDA1MTNjMjgiLCJpZCI6OTEwLCJpYXQiOjE1MjYzMjczMDh9.aJWNt5jc-dt64lR4q7zw0bdp0PARsvupmWjUYUrQVQs',
+		view: { terrain: true },
+	} );
+
+	const viewer2 = new CV2.CaveViewer( "scene2", {
+		terrainDirectory: "/CaveView.js/terrain/",
+		surveyDirectory: "/CaveView.js/surveys/",
+		home: "/CaveView.js/CaveView/",
+		view: { terrain: true },
+	} );
+
+	const ui1 = new CV2.CaveViewUI( viewer1 );
+	const ui2 = new CV2.CaveViewUI( viewer2 );
+
+	ui1.loadCave( "all.3d" );
+	ui2.loadCave( "all.3d" );
+
+}
+
+</script>
+<h1>Demo 2 - terrain: Cesium & DTM</h1>
+<div style="padding: 20px">
+	<div id="scene1"></div>
+	<div id="scene2"></div>
+</div>
+
+<div style="clear: both" id="scratch">.</div>
+<p>Contains Ordnance Survey data &copy; Crown copyright and database right 2015.</p>
+<p>Contains DTM data &copy; Environment Agency copyright and/or database right 2015.</p>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>CaveView theme</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<link type="text/css" href="doc.css" rel="stylesheet"/>
+</head>
+<body>
+<h1>Cave View - Theme Object</h1>
+<p>All colour values are hex RGB values.</p>
+<pre>
+const defaultTheme = {
+	background: 0x000000, // background colour to model
+	lighting: { // position of lighting for terrain (polar coordinates)
+		azimuth: 225,
+		inclination: 45
+	},
+	saturatedGradient: false, // more saturated colours in gradients for several shading modes (true)
+
+	hud: {
+		progress: 0x00ff00, // progress dial
+		bezelType: "flat", // use flat shading for bezel
+		bezel: 0x888888, // bezel colour for compass and artificial horizon (AHI)
+		scale: {
+			bar1: 0xffffff,
+			bar2: 0xff0000,
+		},
+		compass: {
+			top1: 0xb03a14, // colours for cardinal directions
+			top2: 0x1ab4e5,
+			bottom1: 0x581d0a, // colours for secondary directions
+			bottom2: 0x0c536a
+		},
+		ahi: { // artifical horizon instrument 
+			sky: 0x106f8d,
+			earth: 0x802100,
+			bar: 0xffff00,
+			marks: 0xffffff
+		},
+	},
+	box: { // bounding boxes for model or sub section of model
+		bounding: 0xffffff, // entire model
+		select: 0x0000ff, // selected sub section of model
+		highlight: 0xff0000 // highlit sub section of model
+	},
+	routes: {
+		active: 0xffff00,
+		adjacent: 0xff0000,
+		default: 0x888888
+	},
+	stations: { // station markers
+		entrances: {
+			text: 0xffffff,
+			marker: 0xffffff
+		},
+		junctions: {
+			text: 0xffff00,
+			marker: 0xffff00
+		},
+		default: {
+			text: 0xffffff,
+			marker: 0xff0000
+		}
+	},
+
+	shading: {
+		single: 0xffffff // colour of legs displayed with a single colour
+		cursor: 0xffff00, // highlight colour for depth/height cursor shading
+		cursorBase: 0x888888,
+		unselected: 0x444444,
+		unconnected: 0x888888, // legs not connected in distance shading mode
+		contours: {
+			line: 0x444444, // colour for minor contours ( interval spacing )
+			line10: 0x888888, // colour for major contours ( 10 * interval )
+			interval: 10 // contour line vertical interval (m)
+		}
+
+	},
+	popup: { // popup survey station details
+		text: 0xffffff,
+		border: 0xffffff,
+		background: 0x222222
+	}
+};
+</pre>
+</body>
+</html>

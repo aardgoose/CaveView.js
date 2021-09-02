@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>CaveView reference</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<link type="text/css" href="doc.css" rel="stylesheet"/>
+</head>
+<body>
+<h1>Cave View - Reference - v2 API</h1>
+<p>The following objects and methods are stable. Any other functions may change without warning.</p>
+<p>The v2 API allows muliple independent viewers to be created and destroyed dynamically at run time.</p>
+<h2>CaveView Object</h2>
+
+<h3>Constructor</h3>
+
+<h4>CV2.CaveViewer( &lt;id&gt;, &lt;configuration Object&gt; )</h4>
+<p>Initialise CaveView with no user interface other than mouse controls - a blank screen is displayed.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>id</dt><dd><span>string</span>The id property of the HTML element where the model will be displayed.</dd>
+	<dt>configuration Object</dt><dd><span>Object</span>An Javascript object defined below.</dd>
+</dl>
+
+<h3>Methods</h3>
+
+<h4>addOverlay( &lt;id&gt;, &lt;overlay provider&gt; )</h4>
+<h5>Parameters</h5>
+
+<h4>loadCave( &lt;filename&gt;, &lt;section&gt; )</h4>
+<p>Load a single model.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>filename</dt><dd><span>string</span>The filename of the model to be loaded from the survey directory (specified by the configuration object).</dd>
+	<dt>section</dt><dd><span>string</span>The section name of the survey to be displayed (optional).</dd>
+</dl>
+
+<h4>loadCaves( &lt;array&gt; )</h4>
+<p>Display multiple models together. All files must be of the same type and CRS.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>array</dt><dd><span>Array</span>an array of filenames of models to be displayed.</dd>
+</dl>
+
+<h4>dispose()</h4>
+<p>Free used memory including GPU and Javascript heap allocations.</p>
+
+<h2>CaveViewUI Object</h2>
+
+<h3>Contructor</h3>
+
+<h4>CV2.CaveViewUI( &lt;viewer&gt; )</h4>
+<p>Create a new viewer - a blank screen is displayed.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>viewer</dt><dd><span>Object</span>A CaveViewer object.</dd>
+</dl>
+
+<h3>Methods</h3>
+
+<h4>loadCave( &lt;filename&gt;, &lt;section&gt; )</h4>
+<p>Load a single model.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>filename</dt><dd><span>string</span>The filename of the model to be loaded from the survey directory (specified by the configuration object).</dd>
+	<dt>section</dt><dd><span>string</span>The section name of the survey to be displayed (optional).</dd>
+</dl>
+
+<h4>loadCaveList( &lt;array&gt; )</h4>
+<p>The user interface displays a list of models to display, the first model is by default.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>array</dt><dd><span>Array</span>an array of filenames of models to be displayed. The first file specified will be displayed initially.</dd>
+</dl>
+
+<h4>loadCaves( &lt;array&gt; )</h4>
+<p>Display multiple models together. All files must be of the same type and CRS.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>array</dt><dd><span>Array</span>an array of filenames of models to be displayed.</dd>
+</dl>
+
+<h4>.clearView()</h4>
+<p>Clear the view.</p>
+
+<h4>dispose()</h4>
+<p>Free used memory including GPU and Javascript heap allocations.</p>
+<h2>API Objects</h2>
+<h4>configuration Object</h4>
+
+<p>The configuration object defines the location of the resources required to display models and the initial view.</p>
+<h5>Properties</h5>
+<dl>
+	<dt>avenControls</dt>
+	<dd><span>boolean</span>Use Aven style mouse and keyboard controls (true) or original mode  <span>default: true</span>. (optional).</dd>
+	<dt>cesiumAccessToken</dt>
+	<dd><span>string</span>Cesium access token required to use Cesium terrain mesh tiles </dd>
+	<dt>home</dt>
+	<dd><span>string</span> The path to the installtion of the CaveView package.</dd>
+	<dt>language</dt>
+	<dd><span>string</span> The suffix of a UI translation file to load (CaveView/lib/lang-<i>language</i>.json).</dd>
+	<dt>loadMetadata</dt>
+	<dd><span>boolean</span>Attempt to load optional JSON metadata file  <span>default: false</span>. (optional).</dd>
+	<dt>showEditPage</dt>
+	<dd><span>boolean</span>Display the metadata edit page  <span>default: false]</span>. (optional).</dd>
+	<dt>surveyDirectory</dt>
+	<dd><span>string</span>The path of the directory containing the survey model(s) to be displayed.</dd>
+	<dt>terrainDirectory</dt>
+	<dd><span>string</span>The path of the directory containing terrain tiles (optional).</dd>
+	<dt>theme</dt>
+	<dd><span>Object</span>An object, that allows the display colour scheme to be changed. <a href="theme.html" >See annotated default setttings here</a>.</dd>
+	<dt>useGPS</dt>
+	<dd><span>boolean</span>Experimental feature to provide an AR style view  <span>default: false</span>. (optional).</dd>
+	<dt>view</dt>
+	<dd><span>Object</span>An object, the properties of which determine the view settings applied to all models when loaded (optional).</dd>
+</dl>
+
+<h4>view Object</h4>
+<h5>Properties</h5>
+<dl>
+	<dt>autoRotate</dt>
+	<dd><span>boolean</span>auto rotation of model <span>default: false</span></dd>
+	<dt>box</dt>
+	<dd><span>boolean</span>visibility of model bounding box <span>default: true</span></dd>
+	<dt>cameraType</dt>
+	<dd><span>enummeration</span>The projection type for the display:
+		<dl>
+			<dt>CV2.CAMERA_ORTHOGRAPHIC</dt><dd>Orthographic projection of model.</dd>
+			<dt>CV2.CAMERA_PERSPECTIVE</dt><dd>Perspective projection of model.</dd>
+			<dt>CV2.CAMERA_ANAGLYPH</dt><dd>Anaglyph (red/cyan) display of model.</dd>
+		</dl>
+	</dd>
+	<dt>entrances</dt>
+	<dd><span>boolean</span>visibility of entrance names <span>default: true</span></dd>
+	<dt>HUD</dt>
+	<dd><span>boolean</span>visibility of head up display (HUD) indicatiors <span>default: true</span></dd>
+	<dt>scraps</dt>
+	<dd><span>boolean</span>visibility of scrap modeled passages (.lox models only) <span>default: false</span></dd>
+	<dt>shadingMode</dt>
+	<dd><span>enummeration</span>shading of underground model components:
+		<dl>
+			<dt>CV2.SHADING_HEIGHT</dt><dd>shading by height above dataum</dd>
+			<dt>CV2.SHADING_INCLINATION</dt><dd>shading by leg inclination</dd>
+			<dt>CV2.SHADING_LENGTH</dt><dd>shading by leg length</dd>
+			<dt>CV2.SHADING_SURVEY</dt><dd>shading by section of survey</dd>
+			<dt>CV2.SHADING_SINGLE</dt><dd>all components shown as white</dd>
+			<dt>CV2.SHADING_DEPTH</dt><dd>shading by depth below surface (requires terrain)</dd>
+		</dl>
+	</dd>
+	<dt>splays</dt>
+	<dd><span>boolean</span>visibility of splay legs <span>default: false</span></dd>
+	<dt>stations</dt>
+	<dd><span>boolean</span>visibility of station markers <span>default: false</span></dd>
+	<dt>stationLabels</dt>
+	<dd><span>boolean</span>visibility of station names <span>default: false</span></dd>
+	<dt>surface</dt>
+	<dd><span>boolean</span>visibility of surface legs <span>default: false</span></dd>
+	<dt>terrain</dt>
+	<dd><span>boolean</span>visibility of terrain (if available) <span>default: false</span></dd>
+	<dt>terrainOpacity</dt>
+	<dd><span>float</span>The opacity of the terrain between 0 (fully transparent) and 1 (opaque) <span>default: 0.5</span></dd>
+	<dt>terrainShading</dt>
+	<dd><span>enummeration</span> or <span>string</span>shading appplied to the terrain surface:
+		<dl>
+			<dt>CV2.SHADING_RELIEF</dt><dd>Hypsometric shading (default).</dd>
+			<dt>CV2.SHADING_CONTOURS</dt><dd>The terrain is contoured in 10m intervals (interval and colours are themable).</dd>
+			<dt>CV2.SHADING_OVERLAY</dt><dd>Overlay provided in a .lox model*.</dd>
+			<dt>overlay name</dt><dd>string identifying an overlay by name (Survex only).</dd>
+		</dl>
+		<p>*Therion .lox models may contain an overlay image. If a external terrain is provided for a Survex .3d model, image tiles from a 'slippy map' tile server may be used.</p>
+	</dd>
+	<dt>terrainDirectionalLighting</dt>
+	<dd><span>boolean</span>Apply directional lighting <span>default: true</span></dd>
+	<dt>view</dt>
+	<dd><span>enummeration</span>the initial viewpoint:
+		<dl>
+			<dt>CV2.VIEW_PLAN</dt><dd>A plan view of the complete model. The default view.</dd>
+			<dt>CV2.VIEW_ELEVATION_N</dt><dd>An elevation view from the North*.</dd>
+			<dt>CV2.VIEW_ELEVATION_S</dt><dd>An elevation from the South*.</dd>
+			<dt>CV2.VIEW_ELEVATION_E</dt><dd>An elevation from the East*.</dd>
+			<dt>CV2.VIEW_ELEVATION_W</dt><dd>An elevation from the West*.</dd>
+		</dl>
+		<p>* Assuming the positive y axis is North and the positive x axis is East.</p>
+	</dd>
+	<dt>walls</dt>
+	<dd><span>boolean</span>visibility of basic cross section messurement (LRUD) based passage walls <span>default: false</span></dd>
+</dl>
+
+</body>
+</html>

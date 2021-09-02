@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>demo 3d cave viewer</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+	<meta name="Description" content="CaveView - 3d Cave model viewer">
+</head>
+<body onload="onload();" >
+
+<style>
+
+	* {
+		box-sizing: border-box;
+	}
+
+	#scene {
+		position: relative;
+		width: 600px;
+		height: 600px;
+	}
+
+</style>
+
+<script type="text/javascript" src="CaveView/js/CaveView2.js" ></script>
+
+<script type="text/javascript" >
+
+function onload () {
+
+	const viewer = new CV2.CaveViewer( "scene", {
+		terrainDirectory: "terrain/",
+		surveyDirectory: "surveys/",
+		home: "CaveView/",
+		displayCRS: 'ORIGINAL',
+		cesiumAccessToken: '<<CESIUM ACCESS TOKEN>>',
+		view: { terrain: true },
+	} );
+
+	const ui = new CV2.CaveViewUI( viewer );
+
+	ui.loadCave( "<<SURVEY FILENAME>>" );
+
+}
+
+</script>
+<h1>Example 3</h1>
+<div style="padding: 20px">
+	<div id="scene"></div>
+</div>
+
+<div style="clear: both" id="scratch">.</div>
+</body>
+</html>

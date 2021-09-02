@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>demo 3d cave viewer</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+	<meta name="Description" content="CaveView - 3d Cave model viewer">
+	<meta name="theme-color" content="#00FF00"/>
+	<link rel="icon" type="image/png" sizes="32x32" href="fav/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="fav/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="fav/favicon-16x16.png">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="ms-icon-144x144.png">
+</head>
+<body onload="onload();" >
+<style>
+	* {
+		box-sizing: border-box;
+	}
+	#scene1, #scene2 {
+		position: relative;
+		border: 2px solid black;
+		width: 600px;
+		height: 600px;
+		float: left;
+	}
+
+</style>
+<script type="text/javascript" src="https://nls.tileserver.com/api.js"></script>
+
+<script type="text/javascript" src="/CaveView.js/CaveView/lib/BingProvider.js" ></script>
+<script type="text/javascript" src="/CaveView.js/CaveView/lib/GB-Formatters.js" ></script>
+
+<script type="text/javascript" src="/CaveView.js/CaveView/js/CaveView2.js" ></script>
+
+<script type="text/javascript" >
+
+function onload () {
+
+	const theme2 = {
+		shading: {
+				single: "black"
+			},
+			background: "white",
+			hud: {
+				progress: "red",
+				progressBackground: "lightgrey",
+				widgetSize: 20,
+				text: "black",
+				bezelType: "flat",
+				scale: {
+					bar1: "black",
+					bar2: "yellow"
+				},
+			},
+			box: {
+				bounding: "black",
+				select: "red"
+			}
+
+	};
+
+	const viewer1 = new CV2.CaveViewer( "scene1", {
+		terrainDirectory: "/CaveView.js/terrain//",
+		surveyDirectory: "/CaveView.js/surveys/",
+		home: "/CaveView.js/CaveView/",
+		view: { terrain: true },
+		theme: { saturatedGradient: true }
+	} );
+
+	viewer1.addOverlay( 'Bing Aerial',  new BingProvider( 'Aerial', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
+	viewer1.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
+
+	const viewer2 = new CV2.CaveViewer( "scene2", {
+		terrainDirectory: "/CaveView.js/terrain/",
+		surveyDirectory: "/CaveView.js/surveys/",
+		home: "/CaveView.js/CaveView/",
+		saturatedGradient: false,
+		view: {
+			shadingMode: CV2.SHADING_SINGLE,
+			cameraType: CV2.CAMERA_ORTHOGRAPHIC,
+			terrain: true,
+			terrainShading: "Bing OS",
+			terrainOpacity: 0.7,
+			shading: CV2.SHADING_SINGLE
+		},
+		theme: theme2
+	} );
+
+	viewer2.addOverlay( 'Bing Aerial',  new BingProvider( 'Aerial', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
+	viewer2.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
+
+	var caves = [
+		"Peak_Master_NoSurface.3d",
+		"all.3d",
+	];
+
+	const ui1 = new CV2.CaveViewUI( viewer1 );
+	ui1.loadCaveList( caves );
+
+	viewer2.loadCave( "all.3d" );
+
+	function showSelection ( selection ) {
+		viewer2.sectionByName = selection;
+		viewer2.setPOI = true;
+	}
+
+	viewer2.addEventListener( 'newCave', function () {
+
+		document.getElementById( 'all' ).addEventListener( 'click', function () {
+			showSelection( '' );
+		} );
+
+		document.getElementById( 'swinsto' ).addEventListener( 'click', function () {
+			showSelection( 'all.wks.swinsto' );
+		} );
+
+		document.getElementById( 'easegill' ).addEventListener( 'click', function () {
+			showSelection( 'all.easegill' );
+		} );
+
+	} );
+
+}
+
+</script>
+<h1>Demo 1 - multiple instances</h1>
+<div style="padding: 20px">
+	<div id="scene1" class="cv-container"></div>
+	<div id="scene2"></div>
+</div>
+
+<button id="all" >all</button>
+<button id="swinsto" >Swinsto</button>
+<button id="easegill" >Easegill</button>
+
+<div style="clear: both" id="scratch">.</div>
+<p>Mouse: left button down - rotate, right button down pan, mouse wheel - zoom</p>
+<p>The Cheddar Survey "Therion" 3D file by University of Bristol Spelaeological Society is released under a
+<a rel="license" title="Creative Commons Attribution-Non-Commercial-Share Alike 2.0 UK: England &amp; Wales License" href="https://creativecommons.org/licenses/by-nc-sa/2.0/uk/">Creative Commons</a> license.
+<br>
+<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/2.0/uk/"><img alt="Creative Commons License" src="https://i.creativecommons.org/l/by-nc-sa/2.0/uk/88x31.png"></a>
+</p>
+<p>Contains Ordnance Survey data &copy; Crown copyright and database right 2015.</p>
+<p>Contains DTM data &copy; Environment Agency copyright and/or database right 2015.</p>
+</body>
+</html>

@@ -458,6 +458,10 @@ div.cv-frame::-webkit-scrollbar-button:end {
 	outline: none;
 }
 
+.cv-frame div.page select:focus {
+	background-color: #000;
+}
+
 .cv-frame div.page select:empty {
 	background-color: #888888;
 	display: none;

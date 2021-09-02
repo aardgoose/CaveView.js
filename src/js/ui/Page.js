@@ -261,7 +261,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 			opt.text = p.split( ' ' ).reduce( ( res, val ) => { return res + ' ' + this.i18n( val ); }, '' ).trim();
 			opt.value = obj[ p ];
 
-			if ( opt.value == trgObj[ property ] ) opt.selected = true;
+			if ( opt.value === trgObj[ property ] ) opt.selected = true;
 
 			select.add( opt, null );
 
@@ -525,7 +525,7 @@ Page.prototype.addTextBox = function ( title, placeholder, getResultGetter ) {
 
 	this.page.appendChild( div );
 
-	this.addListener( input, 'change', function ( e ) { value = e.target.value; return true; } ) ;
+	this.addListener( input, 'change', function ( e ) { value = e.target.value; return true; } );
 
 	getResultGetter( _result );
 

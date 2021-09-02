@@ -23,7 +23,7 @@ class Station {
 
 	isEntrance() {
 
-		return this.station.type & STATION_ENTRANCE == STATION_ENTRANCE;
+		return this.station.type & STATION_ENTRANCE === STATION_ENTRANCE;
 
 	}
 

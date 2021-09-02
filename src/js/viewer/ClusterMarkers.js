@@ -138,7 +138,7 @@ QuadTree.prototype.check = function ( cluster, target, angleFactor, selection ) 
 
 			const depthRatio = ( d2Target - dCluster ) / d2Target;
 
-			//console.log( area, 'dr', Math.round( depthRatio * 100 )/100, 'af', Math.round( angleFactor * 100 ) / 100 , '++', Math.round( depthRatio * angleFactor * 100 * 20 ) / 100);
+			//console.log( area, 'dr', Math.round( depthRatio * 100 )/100, 'af', Math.round( angleFactor * 100 ) / 100, '++', Math.round( depthRatio * angleFactor * 100 * 20 ) / 100);
 
 			// cluster markers compensated for angle to the horizontal and distance from camera plane
 

@@ -114,6 +114,8 @@ class CaveViewer extends EventDispatcher {
 
 		let caveIsLoaded = false;
 
+		const mouseUpEvent = { type: 'select', node: null };
+
 		let lastMouseMode = MOUSE_MODE_NORMAL;
 		let mouseMode = MOUSE_MODE_NORMAL;
 		let mouseTargets = [];
@@ -1126,7 +1128,7 @@ class CaveViewer extends EventDispatcher {
 			caveLoader.reset();
 			caveLoader.loadFile( file, section );
 
-			clipped = ( section !== undefined && section != '' );
+			clipped = ( section !== undefined && section !== '' );
 
 		};
 
@@ -1313,7 +1315,7 @@ class CaveViewer extends EventDispatcher {
 			closePopup();
 			renderView();
 
-			self.dispatchEvent( { type: 'select', node: null } );
+			self.dispatchEvent( mouseUpEvent );
 
 		}
 
@@ -1323,6 +1325,21 @@ class CaveViewer extends EventDispatcher {
 			closePopup();
 
 			if ( station.isStation() ) showStationPopup( station );
+
+		}
+
+		function filterConnectedLegs ( event ) {
+
+			if ( event.filterConnected ) {
+
+				filterConnected = true;
+
+				setShadingMode( survey.caveShading );
+				renderView();
+
+				filterConnected = false;
+
+			}
 
 		}
 
@@ -1376,16 +1393,7 @@ class CaveViewer extends EventDispatcher {
 
 					self.dispatchEvent( e );
 
-					if ( e.filterConnected ) {
-
-						filterConnected = true;
-
-						setShadingMode( survey.caveShading );
-						renderView();
-
-						filterConnected = false;
-
-					}
+					filterConnectedLegs( event );
 
 					if ( ! e.handled ) {
 
@@ -1449,12 +1457,15 @@ class CaveViewer extends EventDispatcher {
 
 				const selectEvent = {
 					type: 'select',
-					node: new Station( survey, station) ,
+					node: new Station( survey, station),
 					handled: false,
-					mouseEvent: event
+					mouseEvent: event,
+					filterConnected: false
 				};
 
 				self.dispatchEvent( selectEvent );
+
+				filterConnectedLegs( selectEvent );
 
 				if ( selectEvent.handled ) return;
 
@@ -1540,7 +1551,7 @@ class CaveViewer extends EventDispatcher {
 
 				renderView();
 
-				self.dispatchEvent( { type: 'select', node: null } );
+				self.dispatchEvent( mouseUpEvent );
 
 			}
 

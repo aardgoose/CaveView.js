@@ -99,11 +99,11 @@ class SelectionTreePage extends SelectionCommonPage {
 				for ( i = 0; i < children.length; i++ ) {
 
 					listElement = children[ i ];
-					if ( self.nodes.get( listElement ) == node ) break;
+					if ( self.nodes.get( listElement ) === node ) break;
 
 				}
 
-				if ( i == children.length ) break;
+				if ( i === children.length ) break;
 
 				if ( node === selectedNode ) {
 

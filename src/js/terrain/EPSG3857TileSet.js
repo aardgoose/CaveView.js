@@ -110,7 +110,7 @@ EPSG3857TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
 	const tileMaxY = halfMapExtent - tileWidth * y;
 	const tileMinY = tileMaxY - tileWidth;
 
-	const divisions = ( tileSet.divisions ) * scale ;
+	const divisions = ( tileSet.divisions ) * scale;
 	const resolution = tileWidth / divisions;
 
 	// trim excess off sides of tile where overlapping with region

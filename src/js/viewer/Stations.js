@@ -198,7 +198,7 @@ Stations.prototype.selectStations = function ( selection ) {
 
 			}
 
-			pSize.setX( i , size );
+			pSize.setX( i, size );
 
 		} else {
 
@@ -289,7 +289,7 @@ Stations.prototype.setSplaysVisibility = function ( visible ) {
 
 		const node = stations[ i ];
 
-		if ( node.p.connections === 0 && ( splaySize == 0 || selection.contains( node.id ) ) ) {
+		if ( node.p.connections === 0 && ( splaySize === 0 || selection.contains( node.id ) ) ) {
 
 			pSize.setX( i, splaySize );
 

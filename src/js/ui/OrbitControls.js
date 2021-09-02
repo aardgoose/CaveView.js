@@ -689,13 +689,13 @@ class OrbitControls extends EventDispatcher {
 				// get mouse in ndc
 				const mouse = cameraManager.getMouse( x, y );
 
-				if ( firstWheelMove || mouseStart.x != mouse.x || mouseStart.y != mouse.y ) {
+				if ( firstWheelMove || mouseStart.x !== mouse.x || mouseStart.y !== mouse.y ) {
 
 					const station = viewer.getStation( mouse );
 
 					if ( station !== null ) station.project( camera );
 
-					mouseStart.set( mouse.x, mouse.y, station == null ? 0.5 : station.z );
+					mouseStart.set( mouse.x, mouse.y, station === null ? 0.5 : station.z );
 					firstWheelMove = false;
 
 				}

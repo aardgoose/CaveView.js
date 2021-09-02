@@ -20,7 +20,7 @@ function CameraManager ( ctx, renderer, scene ) {
 	let boundingRect = container.getBoundingClientRect();
 
 	const orthographicCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
-	const perspectiveCamera = new PerspectiveCamera( ctx.cfg.themeValue( 'fieldOfView' ) , width / height, 1, 16000 );
+	const perspectiveCamera = new PerspectiveCamera( ctx.cfg.themeValue( 'fieldOfView' ), width / height, 1, 16000 );
 
 	const mouse = new Vector2();
 

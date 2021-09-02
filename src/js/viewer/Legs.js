@@ -205,7 +205,7 @@ Legs.prototype.setShading = function ( idSet, colourSegment, mode, dashed, filte
 
 			const v2 = v1 + 1;
 
-			if ( filterConnected && ( vertices[ v1 ].shortestPath == Infinity || vertices[ v2 ].shortestPath == Infinity ) ) {
+			if ( filterConnected && ( vertices[ v1 ].shortestPath === Infinity || vertices[ v2 ].shortestPath === Infinity ) ) {
 
 				unselectedColor.toArray( colors, v1 * 3 );
 				unselectedColor.toArray( colors, v2 * 3 );

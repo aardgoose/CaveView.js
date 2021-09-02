@@ -66,7 +66,7 @@ CanvasPopup.prototype.finish = function () {
 
 	for ( let i = 0; i < lineCount; i++ ) {
 
-		ctx.fillText( lines[ i ], 10 , cellSize * ( i + 1 ) - 6 );
+		ctx.fillText( lines[ i ], 10, cellSize * ( i + 1 ) - 6 );
 
 	}
 

@@ -3,7 +3,7 @@ function LocationButton ( viewer, container ) { // public method
 
 	const oldButtons = container.getElementsByClassName( 'cv-gps-button' ); //FIXME Id can be duplicated
 
-	if ( oldButtons.length != 0 ) container.removeChild( oldButtons[ 0 ] );
+	if ( oldButtons.length !== 0 ) container.removeChild( oldButtons[ 0 ] );
 
 	if ( ! viewer.hasLocation ) return;
 

@@ -126,7 +126,7 @@ function Materials ( viewer ) {
 		const func = function () { return new LineMaterial( ctx, mode, dashed ); };
 		const material = getSurveyCacheMaterial( 'line2-' + mode + dashed ? '-' : '', func, true );
 
-		if ( mode == 'cursor' || mode == 'depth-cursor' ) {
+		if ( mode === 'cursor' || mode === 'depth-cursor' ) {
 
 			// set active cursor material for updating
 			cursorMaterials.add( material );

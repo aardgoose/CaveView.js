@@ -187,7 +187,7 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 		}
 
-		if ( m_parent != m_id ) {
+		if ( m_parent !== m_id ) {
 
 			const node = parentNode.addById( readString( namePtr ), m_id + idOffset );
 
@@ -301,7 +301,7 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 		let type;
 
-		if ( m_flags == 0 ) {
+		if ( m_flags === 0 ) {
 
 			type = LEG_CAVE;
 
@@ -438,7 +438,7 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 				for ( j = 0; j < 3; j++ ) { // this case triggers more often than those below.
 
-					if ( face[ j ] == lastFace[ ( j + 2 ) % 3 ] && face[ ( j + 1 ) % 3 ] == lastFace[ ( j + 3 ) % 3 ] ) {
+					if ( face[ j ] === lastFace[ ( j + 2 ) % 3 ] && face[ ( j + 1 ) % 3 ] === lastFace[ ( j + 3 ) % 3 ] ) {
 
 						face.reverse();
 						break fix_direction;
@@ -449,7 +449,7 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 				for ( j = 0; j < 3; j++ ) {
 
-					if ( face[ j ] == lastFace[ j ] && face[ ( j + 1 ) % 3 ] == lastFace[ ( j + 1 ) % 3 ] ) {
+					if ( face[ j ] === lastFace[ j ] && face[ ( j + 1 ) % 3 ] === lastFace[ ( j + 1 ) % 3 ] ) {
 
 						face.reverse();
 						break fix_direction;
@@ -460,7 +460,7 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 				for ( j = 0; j < 3; j++ ) {
 
-					if ( face[ j ] == lastFace[ ( j + 1 ) % 3 ] && face[ ( j + 1 ) % 3 ] == lastFace[ ( j + 2 ) % 3 ] ) {
+					if ( face[ j ] === lastFace[ ( j + 1 ) % 3 ] && face[ ( j + 1 ) % 3 ] === lastFace[ ( j + 2 ) % 3 ] ) {
 
 						face.reverse();
 						break fix_direction;

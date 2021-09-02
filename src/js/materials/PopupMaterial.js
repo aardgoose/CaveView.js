@@ -7,7 +7,7 @@ class PopupMaterial extends ShaderMaterial {
 
 		const cos = Math.cos( rotation );
 		const sin = Math.sin( rotation );
-		const pixelRatio = window.devicePixelRatio || 1 ;
+		const pixelRatio = window.devicePixelRatio || 1;
 		const canvas = popupImage.image;
 		const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
 		const scale = new Vector2( canvas.width * pixelRatio / container.clientWidth, canvas.height * pixelRatio / container.clientHeight );

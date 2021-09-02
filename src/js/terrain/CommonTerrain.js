@@ -441,7 +441,7 @@ CommonTerrain.prototype.setTarget = function ( target ) {
 
 };
 
-CommonTerrain.prototype._fitSurface = function ( modelPoints /* , offsets */ ) {
+CommonTerrain.prototype._fitSurface = function ( modelPoints /*, offsets */ ) {
 
 	const points = modelPoints;
 

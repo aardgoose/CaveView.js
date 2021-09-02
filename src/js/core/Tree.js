@@ -92,7 +92,7 @@ Tree.prototype.addLeafById = function ( name, id, type, coords, comments ) {
 
 Tree.prototype.findById = function ( id ) {
 
-	if ( this.id == id ) return this;
+	if ( this.id === id ) return this;
 
 	for ( let i = 0, l = this.children.length; i < l; i++ ) {
 

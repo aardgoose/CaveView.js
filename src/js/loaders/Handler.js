@@ -50,7 +50,7 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 				code = init.match( /epsg:([0-9]+)/ );
 
-				if ( code != null ) {
+				if ( code !== null ) {
 
 					console.log( 'looking up CRS code EPSG:' + code [ 1 ] );
 

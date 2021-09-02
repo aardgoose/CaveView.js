@@ -75,7 +75,7 @@ class Grid extends LineSegments2 {
 
 		for ( i = d.y + yOffset; i < a.y; i += deltaY ) {
 
-			vertices.push( d.x,  i, z, c.x , i - hGrad, z );
+			vertices.push( d.x,  i, z, c.x, i - hGrad, z );
 			colors.push( baseColor.r, baseColor.g, baseColor.b, baseColor.r, baseColor.g, baseColor.b );
 
 		}

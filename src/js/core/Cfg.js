@@ -22,7 +22,7 @@ class Cfg extends EventDispatcher {
 
 		for ( const pName in envs ) {
 
-			this.environment.set ( pName , envs[ pName ] );
+			this.environment.set ( pName, envs[ pName ] );
 
 		}
 

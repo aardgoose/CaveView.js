@@ -23,7 +23,7 @@ function CaveViewUI ( viewer ) {
 	fileSelector.addEventListener( 'selected', selectFile );
 
 	// add active property for runtime selection mode
-	cfg.setPropertyValue( 'selectionTree', true ) ;
+	cfg.setPropertyValue( 'selectionTree', true );
 
 	// event handlers
 	viewer.addEventListener( 'change', frame.handleChange.bind( frame ) );

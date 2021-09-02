@@ -75,7 +75,7 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) 
 
 			}
 
-		} while ( b != 0x0a );
+		} while ( b !== 0x0a );
 
 		return strings;
 
@@ -806,7 +806,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			if ( thisPosition === lastPosition ) return true;
 
-			if ( ( flags & 0x07 ) == 0 ) {
+			if ( ( flags & 0x07 ) === 0 ) {
 
 				// reference count underground legs ignoring splay and surface legs
 				// used for topology reconstruction
@@ -987,7 +987,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			endRun = true;
 
-		} else if ( position.connections === 1 && xSects.length > 1 && ! lastPosition.connections == 0 ) {
+		} else if ( position.connections === 1 && xSects.length > 1 && ! lastPosition.connections === 0 ) {
 
 			message = {
 				station: node,

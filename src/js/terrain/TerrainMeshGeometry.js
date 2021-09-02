@@ -199,7 +199,7 @@ class TerrainMeshGeometry extends BufferGeometry {
 
 		function _decodeMetadata () {
 
-			const metatdataLength = dataView.getUint32( nextStart , true );
+			const metatdataLength = dataView.getUint32( nextStart, true );
 
 			const rawMetadata = new Uint8Array( meshData, nextStart + 4, metatdataLength );
 			const decoder = new TextDecoder();

@@ -56,7 +56,8 @@ class LegLengthChart {
 
 		event.station.forEachConnectedLeg( leg => {
 
-			const bucket = Math.floor( leg.length );
+			const l = leg.length();
+			const bucket = Math.floor( l );
 
 			if ( sections[ bucket ] == undefined ) {
 
@@ -65,7 +66,7 @@ class LegLengthChart {
 
 			}
 
-			sections[ bucket ] += this.sumLength ? leg.length : 1;
+			sections[ bucket ] += this.sumLength ? l : 1;
 
 
 		} );

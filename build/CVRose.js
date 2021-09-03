@@ -63,8 +63,8 @@ class RoseChart {
 
 		event.station.forEachConnectedLeg( leg => {
 
-			const v1 = leg.v1;
-			const v2 = leg.v2;
+			const v1 = leg.start();
+			const v2 = leg.end();
 
 			const v1Coordinates = v1.coordinates();
 			const v2Coordinates = v2.coordinates();

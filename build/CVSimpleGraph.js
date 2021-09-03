@@ -12,7 +12,7 @@ class SimpleGraph {
 
 		this.close();
 
-		const nodes = [];
+		let nodes = [];
 		const elements = [];
 		const stations = [];
 
@@ -23,34 +23,23 @@ class SimpleGraph {
 
 		event.station.forEachConnectedLeg( l => {
 
-			const v2 = l.v2;
+			const v2 = l.end();
 			const v2Id = v2.id();
 
 			stations[ v2Id ] = v2;
+
 			nodes[ v2Id ] = v2.adjacentStationIds();
 
 		} );
 
 		// simplyfy network by merging linear sequences of legs
 
-		nodes.forEach( ( n, i ) => {
-
-			if ( n.length == 2 ) {
-
-				const prev = n[ 0 ];
-				const next = n[ 1 ];
-
-				// edit out nodes with exactly two connections
-				nodes[ prev ] = nodes[ prev ].map( e => e == i ? next : e );
-				nodes[ next ] = nodes[ next ].map( e => e == i ? prev : e );
-
-				n.length = 0;
-
-			}
-
-		} );
+		mergeLegs( nodes );
 
 		let id = 0;
+
+		// prune single leg side passages
+		nodes = pruneLegs( nodes );
 
 		// set up data for graphing
 
@@ -134,17 +123,47 @@ class SimpleGraph {
 					style: {
 						'background-color': 'red'
 					}
+				},
+				{
+					selector: 'node[[degree = 0]]',
+					style: {
+						'display': 'none'
+					}
 				}
 			],
 
 			layout: {
-				name: 'cose',
-				idealEdgeLength: function ( edge ) { return edge.data( 'length' ); }
+				name: 'preset',
+//				name: 'cose',
+//				idealEdgeLength: function ( edge ) { return edge.data( 'length' ); }
 			}
 
 		} );
 
 		this.cy.on( 'tap', 'node', e => console.log( e.target.data( 'name' ) ) );
+
+		function mergeLegs( nodes ) {
+
+			// simplyfy network by merging linear sequences of legs
+
+			nodes.forEach( ( n, i ) => {
+
+				if ( n.length == 2 ) {
+
+					const prev = n[ 0 ];
+					const next = n[ 1 ];
+
+					// edit out nodes with exactly two connections
+					nodes[ prev ] = nodes[ prev ].map( e => e == i ? next : e );
+					nodes[ next ] = nodes[ next ].map( e => e == i ? prev : e );
+
+					n.length = 0;
+
+				}
+
+			} );
+
+		}
 
 		function addStation( id ) {
 
@@ -167,6 +186,28 @@ class SimpleGraph {
 		function distance( s1, s2 ) {
 
 			return s1.coordinates().distanceTo( s2.coordinates() );
+
+		}
+
+		function pruneLegs( nodes ) {
+
+			return nodes.map( n => {
+
+				const iConnections = n.length;
+
+				if ( iConnections == 0 ) return n;
+
+				return n.filter( j => {
+
+					const jConnections = nodes[ j ].length;
+
+					return (
+						! ( iConnections == 1 && jConnections == 3 ) &&
+						! ( jConnections == 1 && iConnections == 3 ) );
+
+				} );
+
+			} );
 
 		}
 

@@ -17,7 +17,7 @@ import { CameraMove } from './CameraMove';
 import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
-import { Station } from './Station';
+import { Station } from '../public/Station';
 import { ImagePopup } from './ImagePopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { CommonTerrain } from '../terrain/CommonTerrain';
@@ -1393,7 +1393,7 @@ class CaveViewer extends EventDispatcher {
 
 					self.dispatchEvent( e );
 
-					filterConnectedLegs( event );
+					filterConnectedLegs( e );
 
 					if ( ! e.handled ) {
 

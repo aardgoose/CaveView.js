@@ -62,7 +62,7 @@ function onload () {
 	};
 
 	const viewer1 = new CV2.CaveViewer( "scene1", {
-		terrainDirectory: "terrain//",
+		terrainDirectory: "/CaveView.js/terrain/",
 		surveyDirectory: "surveys/",
 		home: "CaveView/",
 		view: { terrain: true },
@@ -73,7 +73,7 @@ function onload () {
 	viewer1.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
 
 	const viewer2 = new CV2.CaveViewer( "scene2", {
-		terrainDirectory: "terrain/",
+		terrainDirectory: "/CaveView.js/terrain/",
 		surveyDirectory: "surveys/",
 		home: "CaveView/",
 		saturatedGradient: false,

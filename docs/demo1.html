@@ -29,10 +29,10 @@
 </style>
 <script type="text/javascript" src="https://nls.tileserver.com/api.js"></script>
 
-<script type="text/javascript" src="/CaveView.js/CaveView/lib/BingProvider.js" ></script>
-<script type="text/javascript" src="/CaveView.js/CaveView/lib/GB-Formatters.js" ></script>
+<script type="text/javascript" src="CaveView/lib/BingProvider.js" ></script>
+<script type="text/javascript" src="CaveView/lib/GB-Formatters.js" ></script>
 
-<script type="text/javascript" src="/CaveView.js/CaveView/js/CaveView2.js" ></script>
+<script type="text/javascript" src="CaveView/js/CaveView2.js" ></script>
 
 <script type="text/javascript" >
 
@@ -62,9 +62,9 @@ function onload () {
 	};
 
 	const viewer1 = new CV2.CaveViewer( "scene1", {
-		terrainDirectory: "/CaveView.js/terrain//",
-		surveyDirectory: "/CaveView.js/surveys/",
-		home: "/CaveView.js/CaveView/",
+		terrainDirectory: "terrain//",
+		surveyDirectory: "surveys/",
+		home: "CaveView/",
 		view: { terrain: true },
 		theme: { saturatedGradient: true }
 	} );
@@ -73,9 +73,9 @@ function onload () {
 	viewer1.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
 
 	const viewer2 = new CV2.CaveViewer( "scene2", {
-		terrainDirectory: "/CaveView.js/terrain/",
-		surveyDirectory: "/CaveView.js/surveys/",
-		home: "/CaveView.js/CaveView/",
+		terrainDirectory: "terrain/",
+		surveyDirectory: "surveys/",
+		home: "CaveView/",
 		saturatedGradient: false,
 		view: {
 			shadingMode: CV2.SHADING_SINGLE,

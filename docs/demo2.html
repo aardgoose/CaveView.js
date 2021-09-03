@@ -28,25 +28,25 @@
 
 </style>
 
-<script type="text/javascript" src="/CaveView.js/CaveView/js/CaveView2.js" ></script>
+<script type="text/javascript" src="CaveView/js/CaveView2.js" ></script>
 
 <script type="text/javascript" >
 
 function onload () {
 
 	const viewer1 = new CV2.CaveViewer( "scene1", {
-		terrainDirectory: "/CaveView.js/terrain/",
-		surveyDirectory: "/CaveView.js/surveys/",
-		home: "/CaveView.js/CaveView/",
+		terrainDirectory: "terrain/",
+		surveyDirectory: "surveys/",
+		home: "CaveView/",
 		displayCRS: 'ORIGINAL',
 		cesiumAccessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZTk5MmVmZC1iZDU5LTQzMWQtOWY0Zi1mZDYxNDA1MTNjMjgiLCJpZCI6OTEwLCJpYXQiOjE1MjYzMjczMDh9.aJWNt5jc-dt64lR4q7zw0bdp0PARsvupmWjUYUrQVQs',
 		view: { terrain: true },
 	} );
 
 	const viewer2 = new CV2.CaveViewer( "scene2", {
-		terrainDirectory: "/CaveView.js/terrain/",
-		surveyDirectory: "/CaveView.js/surveys/",
-		home: "/CaveView.js/CaveView/",
+		terrainDirectory: "terrain/",
+		surveyDirectory: "surveys/",
+		home: "CaveView/",
 		view: { terrain: true },
 	} );
 

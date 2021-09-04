@@ -3,472 +3,432 @@ import { Object3D, Vector3, Quaternion, Matrix4, Euler, MathUtils } from '../Thr
 import { CAMERA_OFFSET } from '../core/constants';
 
 const __v1 = new Vector3();
+const __v2 = new Vector3();
+const __v3 = new Vector3();
 const __m4 = new Matrix4();
 const __e = new Euler();
 
-function CameraMove ( controls, renderFunction ) {
+class CameraMove {
 
-	this.controls = controls;
-	this.renderFunction = renderFunction;
+	constructor ( controls, renderFunction ) {
 
-	this.endCameraPosition = new Vector3();
-	this.endPOI = new Vector3();
-	this.endZoom = 1;
-	this.endQuaternion = new Quaternion();
+		const endCameraPosition = new Vector3();
+		const endPOI = new Vector3();
+		const endQuaternion = new Quaternion();
 
-	this.frameCount = 0;
-	this.skipNext = false;
-	this.rotation = 0;
-	this.delta = 0;
-	this.running = false;
-	this.animationFunction = null;
-	this.rafID = 0;
+		let endZoom = 1;
+		let frameCount = 0;
+		let skipNext = false;
+		let rotation = 0;
+		let delta = 0;
+		let running = false;
+		let animationFunction = null;
+		let rafID = 0;
 
-	this.doAnimate = this.animate.bind( this );
+		//this.doAnimate = this.animate.bind( this );
 
-}
+		function getCardinalAxis ( targetAxis ) {
 
-CameraMove.fitBox = function ( camera, box, viewAxis ) {
+			const camera = controls.cameraManager.activeCamera;
 
-	const size = box.getSize( __v1 );
+			camera.getWorldDirection( __v1 );
 
-	let elevation = CAMERA_OFFSET;
-	let zoom = 1;
+			const x = Math.abs( __v1.x );
+			const y = Math.abs( __v1.y );
+			const z = Math.abs( __v1.z );
 
-	let dX, dY, dZ;
+			if ( x > y && x > z ) {
 
-	if ( viewAxis === undefined || viewAxis.z !== 0 ) {
+				targetAxis.set( Math.sign( __v1.x ), 0, 0 );
 
-		dX = size.x;
-		dY = size.y;
-		dZ = size.z;
+			} else if ( y > z ) {
 
-	} else if ( viewAxis.x !== 0 ) {
+				targetAxis.set( 0, Math.sign( __v1.y ), 0 );
 
-		dX = size.y;
-		dY = size.z;
-		dZ = size.x;
+			} else {
 
-	} else {
+				targetAxis.set( 0, 0, Math.sign( __v1.z ) );
 
-		dX = size.x;
-		dY = size.z;
-		dZ = size.y;
+			}
 
-	}
+		}
 
-	if ( camera.isPerspectiveCamera ) {
+		function prepareRotation ( endCamera, orientation ) {
 
-		const tan2 = 2 * Math.tan( MathUtils.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
+			const camera = controls.cameraManager.activeCamera;
 
-		const e1 = dY / tan2;
-		const e2 = ( 1 / camera.aspect ) * dX / tan2;
+			__v1.copy( endCamera ).sub( endPOI ).normalize();
 
-		elevation = Math.max( e1, e2 ) * 1.1 + dZ / 2;
+			const zDot = __v1.dot( Object3D.DefaultUp );
 
-		if ( elevation === 0 ) elevation = 100;
+			if ( Math.abs( zDot ) > 0.99999 && orientation !== undefined ) {
 
-	} else {
+				// apply correction if looking verticaly to set to required cardinal direction for 'up'
+				endCamera.add( orientation.multiplyScalar( 0.02 * __v1.z ) );
 
-		const hRatio = ( camera.right - camera.left ) / dX;
-		const vRatio = ( camera.top - camera.bottom ) / dY;
+			}
 
-		zoom = Math.min( hRatio, vRatio ) * 1 / 1.1;
+			// calculate end state rotation of camera
 
-	}
+			__m4.lookAt( endCamera, endPOI, Object3D.DefaultUp );
 
-	return { zoom: zoom, elevation: elevation };
+			endQuaternion.setFromRotationMatrix( __m4 ).normalize();
 
-};
+			// rotation to nearest degree
+			rotation = Math.round( 2 * Math.acos( Math.abs( MathUtils.clamp( endQuaternion.dot( camera.quaternion ), - 1, 1 ) ) ) * MathUtils.RAD2DEG );
 
-CameraMove.prototype.getCardinalAxis = function ( targetAxis ) {
+		}
 
-	const camera = this.controls.cameraManager.activeCamera;
+		this.prepare = function ( endBox, requiredTargetAxis ) {
 
-	camera.getWorldDirection( __v1 );
+			if ( running ) return this;
 
-	const x = Math.abs( __v1.x );
-	const y = Math.abs( __v1.y );
-	const z = Math.abs( __v1.z );
+			const targetAxis = __v2;
+			const orientation = __v3;
 
-	if ( x > y && x > z ) {
+			const camera = controls.cameraManager.activeCamera;
+			const cameraStart = camera.position;
 
-		targetAxis.set( Math.sign( __v1.x ), 0, 0 );
+			skipNext = false;
 
-	} else if ( y > z ) {
+			// move camera to cardinal axis closest to current camera direction
+			// or axis provided by caller
 
-		targetAxis.set( 0, Math.sign( __v1.y ), 0 );
+			if ( requiredTargetAxis === undefined ) {
 
-	} else {
+				getCardinalAxis( targetAxis );
 
-		targetAxis.set( 0, 0, Math.sign( __v1.z ) );
+				if ( targetAxis.z !== 0 ) {
 
-	}
+					// set orientation from current orientation, snapping to cardinals
+					__e.setFromQuaternion( camera.quaternion );
 
-};
+					const direction = Math.round( 2 * ( __e.z + Math.PI ) / Math.PI );
 
-CameraMove.prototype.prepareRotation = function ( endCamera, orientation ) {
+					switch ( direction ) {
 
-	const camera = this.controls.cameraManager.activeCamera;
+					case 0:
+					case 4:
 
-	__v1.copy( endCamera ).sub( this.endPOI ).normalize();
+						orientation.set( 0, 1, 0 ); // S
+						break;
 
-	const zDot = __v1.dot( Object3D.DefaultUp );
+					case 1:
 
-	if ( Math.abs( zDot ) > 0.99999 && orientation !== undefined ) {
+						orientation.set( -1, 0, 0 ); // E
+						break;
 
-		// apply correction if looking verticaly to set to required cardinal direction for 'up'
-		endCamera.add( orientation.multiplyScalar( 0.02 * __v1.z ) );
+					case 2:
 
-	}
+						orientation.set( 0, -1, 0 ); // N
+						break;
 
-	// calculate end state rotation of camera
+					case 3:
 
-	__m4.lookAt( endCamera, this.endPOI, Object3D.DefaultUp );
+						orientation.set( 1, 0, 0 ); // W
+						break;
 
-	this.endQuaternion.setFromRotationMatrix( __m4 ).normalize();
+					default:
 
-	// rotation to nearest degree
-	this.rotation = Math.round( 2 * Math.acos( Math.abs( MathUtils.clamp( this.endQuaternion.dot( camera.quaternion ), - 1, 1 ) ) ) * MathUtils.RAD2DEG );
+						orientation.set( 0, -1, 0 ); // up = N when looking vertically
 
-};
+					}
 
-CameraMove.prototype.prepare = function () {
+				}
 
-	const targetAxis = new Vector3();
-	const orientation = new Vector3();
+			} else {
 
-	return function prepare ( endBox, requiredTargetAxis ) {
+				targetAxis.copy( requiredTargetAxis );
+				orientation.set( 0, -1, 0 ); // up = N when looking vertically
 
-		if ( this.running ) return this;
+			}
 
-		const camera = this.controls.cameraManager.activeCamera;
-		const endPOI = this.endPOI;
-		const cameraStart = camera.position;
-		const endCameraPosition = this.endCameraPosition;
+			const fit = fitBox( camera, endBox, targetAxis );
 
-		this.skipNext = false;
+			endBox.getCenter( endPOI );
+			endZoom = fit.zoom;
 
-		// move camera to cardinal axis closest to current camera direction
-		// or axis provided by caller
+			endCameraPosition.copy( endPOI ).add( targetAxis.negate().multiplyScalar( fit.elevation ) );
 
-		if ( requiredTargetAxis === undefined ) {
+			// skip move if extremely small
 
-			this.getCardinalAxis( targetAxis );
+			const cameraOffset = cameraStart.distanceTo( endCameraPosition );
 
-			if ( targetAxis.z !== 0 ) {
+			// calculate end state rotation of camera
 
-				// set orientation from current orientation, snapping to cardinals
-				__e.setFromQuaternion( camera.quaternion );
+			prepareRotation( endCameraPosition, orientation );
 
-				const direction = Math.round( 2 * ( __e.z + Math.PI ) / Math.PI );
+			if ( cameraOffset < 0.1 * endCameraPosition.z ) {
 
-				switch ( direction ) {
+				// simple rotation of camera, minimal camera position change
 
-				case 0:
-				case 4:
+				skipNext = ( rotation === 0 );
 
-					orientation.set( 0, 1, 0 ); // S
-					break;
+			} else {
 
-				case 1:
+				rotation = 0;
 
-					orientation.set( -1, 0, 0 ); // E
-					break;
+			}
 
-				case 2:
+			animationFunction = animateMove;
 
-					orientation.set( 0, -1, 0 ); // N
-					break;
+			return this;
 
-				case 3:
+		};
 
-					orientation.set( 1, 0, 0 ); // W
-					break;
+		this.preparePoint = function ( endPOIIn ) {
 
-				default:
+			if ( running ) return this;
 
-					orientation.set( 0, -1, 0 ); // up = N when looking vertically
+			const camera = controls.cameraManager.activeCamera;
+
+			// calculate end state rotation of camera
+			endPOI.copy( endPOIIn );
+			endCameraPosition.copy( camera.position );
+
+			prepareRotation( camera.position );
+
+			// minimal camera rotation or no change of POI
+			skipNext = ( rotation === 0 );
+
+			animationFunction = animateMove;
+
+			return this;
+
+		};
+
+		this.start = function ( timed ) {
+
+			if ( running || skipNext ) return;
+
+			if ( timed ) {
+
+				frameCount = ( rotation > 0 ) ? Math.max( 1, Math.round( rotation / 2 ) ) : 30;
+
+			} else {
+
+				frameCount = 1;
+
+			}
+
+			controls.enabled = false;
+
+			running = true;
+
+			animate();
+
+		};
+
+		this.cancel = function () {
+
+			if ( rafID !== 0 ) window.cancelAnimationFrame( rafID );
+
+			if ( ! running ) return;
+
+			frameCount = 1;
+			running = false;
+			rafID = 0;
+
+			animate();
+
+			controls.enabled = true;
+			controls.autoRotate = false;
+
+		};
+
+		function animate () {
+
+			if ( controls.autoRotate ) {
+
+				controls.update();
+
+			} else if ( animationFunction ) {
+
+				animationFunction();
+
+				if ( --frameCount === 0 ) {
+
+					animationFunction = null;
+					endAnimation();
 
 				}
 
 			}
 
-		} else {
-
-			targetAxis.copy( requiredTargetAxis );
-			orientation.set( 0, -1, 0 ); // up = N when looking vertically
+			if ( running ) rafID = window.requestAnimationFrame( animate );
 
 		}
 
-		const fit = CameraMove.fitBox( camera, endBox, targetAxis );
+		function endAnimation () {
 
-		endBox.getCenter( endPOI );
+			const camera = controls.cameraManager.activeCamera;
 
-		this.endZoom = fit.zoom;
+			controls.target.copy( endPOI );
 
-		endCameraPosition.copy( endPOI ).add( targetAxis.negate().multiplyScalar( fit.elevation ) );
+			if ( rotation > 0 ) camera.position.copy( endCameraPosition );
 
-		// skip move if extremely small
+			running = false;
+			rotation = 0;
+			rafID = 0;
 
-		const cameraOffset = cameraStart.distanceTo( endCameraPosition );
+			controls.update();
+			controls.enabled = true;
 
-		// calculate end state rotation of camera
-
-		this.prepareRotation( endCameraPosition, orientation );
-
-		if ( cameraOffset < 0.1 * endCameraPosition.z ) {
-
-			// simple rotation of camera, minimal camera position change
-
-			this.skipNext = ( this.rotation === 0 );
-
-		} else {
-
-			this.rotation = 0;
+			controls.end();
 
 		}
 
-		this.animationFunction = this.animateMove;
+		function animateMove () {
 
-		return this;
+			// update camera position
 
-	};
+			const camera = controls.cameraManager.activeCamera;
+			const target = controls.target;
+			const dt = 1 - ( frameCount - 1 ) / frameCount;
 
-}();
+			if ( ! rotation ) {
 
-CameraMove.prototype.preparePoint = function ( endPOI ) {
+				camera.position.lerp( endCameraPosition, dt);
+				camera.zoom = camera.zoom + ( endZoom - camera.zoom ) * dt;
 
-	if ( this.running ) return this;
+				if ( camera.isOrthographicCamera ) camera.updateProjectionMatrix();
 
-	const camera = this.controls.cameraManager.activeCamera;
+				camera.lookAt( target.lerp( endPOI, dt ) );
 
-	// calculate end state rotation of camera
-	this.endPOI.copy( endPOI );
-	this.endCameraPosition.copy( camera.position );
+			}
 
-	this.prepareRotation( camera.position );
+			camera.quaternion.slerp( endQuaternion, dt );
 
-	// minimal camera rotation or no change of POI
-	this.skipNext = ( this.rotation === 0 );
+			renderFunction();
 
-	this.animationFunction = this.animateMove;
+		}
 
-	return this;
+		function setAngleCommon ( deltaIn ) {
 
-};
+			frameCount = Math.max( 1, Math.round( Math.abs( deltaIn ) * 90 / Math.PI ) );
+			delta = deltaIn / frameCount;
+			running = true;
 
-CameraMove.prototype.prepareSimpleMove = function ( endCameraPosition ) {
+			animate();
 
-	if ( this.running ) return this;
+		}
 
-	this.endCameraPosition.copy( endCameraPosition );
+		function animateAzimuthMove () {
 
-	this.animationFunction = this.animateSimpleMove;
-	this.skipNext = false;
+			controls.rotateLeft( delta );
 
-	return this;
+		}
 
-};
+		this.setAzimuthAngle = function ( targetAngle ) {
 
-CameraMove.prototype.start = function ( timed ) {
+			if ( running || controls.autoRotate ) return this;
 
-	if ( this.running || this.skipNext ) return;
+			let delta = ( controls.getAzimuthalAngle() - targetAngle );
+			const deltaSize = Math.abs( delta );
 
-	const controls = this.controls;
+			if ( deltaSize > Math.PI ) delta = 2 * Math.PI - deltaSize;
 
-	if ( timed ) {
+			animationFunction = animateAzimuthMove;
+			setAngleCommon( delta );
 
-		this.frameCount = ( this.rotation > 0 ) ? Math.max( 1, Math.round( this.rotation / 2 ) ) : 30;
+		};
 
-	} else {
+		function animatePolarMove () {
 
-		this.frameCount = 1;
+			controls.rotateUp( delta );
 
-	}
+		}
 
-	controls.enabled = false;
+		this.setPolarAngle = function ( targetAngle ) {
 
-	this.running = true;
+			if ( running ) return this;
 
-	this.animate();
+			animationFunction = animatePolarMove;
 
-};
+			setAngleCommon( controls.getPolarAngle() - targetAngle );
 
-CameraMove.prototype.cancel = function () {
+		};
 
-	if ( this.rafID !== 0 ) window.cancelAnimationFrame( this.rafID );
+		this.setAutoRotate = function ( state ) {
 
-	if ( ! this.running ) return;
+			if ( state ) {
 
-	this.frameCount = 1;
-	this.running = false;
-	this.rafID = 0;
+				if ( running ) return;
 
-	this.animate();
+				controls.autoRotate = true;
 
-	this.controls.enabled = true;
-	this.controls.autoRotate = false;
+				running = true;
+				animationFunction = false;
 
-};
+				animate();
 
-CameraMove.prototype.animate = function () {
+			} else {
 
-	const controls = this.controls;
+				if ( controls.autoRotate ) running = false;
 
-	if ( controls.autoRotate ) {
+				controls.autoRotate = false;
+				controls.enabled = true;
+				rafID = 0;
 
-		controls.update();
+			}
 
-	} else if ( this.animationFunction ) {
+		};
 
-		this.animationFunction();
+		function fitBox ( camera, box, viewAxis ) {
 
-		if ( --this.frameCount === 0 ) {
+			const size = box.getSize( __v1 );
 
-			this.animationFunction = null;
-			this.endAnimation();
+			let elevation = CAMERA_OFFSET;
+			let zoom = 1;
+
+			let dX, dY, dZ;
+
+			if ( viewAxis === undefined || viewAxis.z !== 0 ) {
+
+				dX = size.x;
+				dY = size.y;
+				dZ = size.z;
+
+			} else if ( viewAxis.x !== 0 ) {
+
+				dX = size.y;
+				dY = size.z;
+				dZ = size.x;
+
+			} else {
+
+				dX = size.x;
+				dY = size.z;
+				dZ = size.y;
+
+			}
+
+			if ( camera.isPerspectiveCamera ) {
+
+				const tan2 = 2 * Math.tan( MathUtils.DEG2RAD * 0.5 * camera.getEffectiveFOV() );
+
+				const e1 = dY / tan2;
+				const e2 = ( 1 / camera.aspect ) * dX / tan2;
+
+				elevation = Math.max( e1, e2 ) * 1.1 + dZ / 2;
+
+				if ( elevation === 0 ) elevation = 100;
+
+			} else {
+
+				const hRatio = ( camera.right - camera.left ) / dX;
+				const vRatio = ( camera.top - camera.bottom ) / dY;
+
+				zoom = Math.min( hRatio, vRatio ) * 1 / 1.1;
+
+			}
+
+			return { zoom: zoom, elevation: elevation };
 
 		}
 
 	}
 
-	if ( this.running ) this.rafID = window.requestAnimationFrame( this.doAnimate );
-
-};
-
-CameraMove.prototype.endAnimation = function () {
-
-	const controls = this.controls;
-	const camera = controls.cameraManager.activeCamera;
-
-	controls.target.copy( this.endPOI );
-
-	if ( this.rotation > 0 ) camera.position.copy( this.endCameraPosition );
-
-	this.running = false;
-	this.rotation = 0;
-	this.rafID = 0;
-
-	controls.update();
-	controls.enabled = true;
-
-	controls.end();
-
-};
-
-CameraMove.prototype.animateMove = function () {
-
-	// update camera position
-
-	const camera = this.controls.cameraManager.activeCamera;
-	const target = this.controls.target;
-	const dt = 1 - ( this.frameCount - 1 ) / this.frameCount;
-
-	if ( ! this.rotation ) {
-
-		camera.position.lerp( this.endCameraPosition, dt);
-		camera.zoom = camera.zoom + ( this.endZoom - camera.zoom ) * dt;
-
-		if ( camera.isOrthographicCamera ) camera.updateProjectionMatrix();
-
-		camera.lookAt( target.lerp( this.endPOI, dt ) );
-
-	}
-
-	camera.quaternion.slerp( this.endQuaternion, dt );
-
-	this.renderFunction();
-
-};
-
-CameraMove.prototype.animateSimpleMove = function () {
-
-	// update camera position
-
-	const camera = this.controls.cameraManager.activeCamera;
-	const dt = 1 - ( this.frameCount - 1 ) / this.frameCount;
-
-	camera.position.lerp( this.endCameraPosition, dt);
-
-	this.renderFunction();
-
-};
-
-CameraMove.prototype.setAngleCommon = function ( delta ) {
-
-	this.frameCount = Math.max( 1, Math.round( Math.abs( delta ) * 90 / Math.PI ) );
-	this.delta = delta / this.frameCount;
-	this.running = true;
-
-	this.animate();
-
-};
-
-CameraMove.prototype.setAzimuthAngle = function ( targetAngle ) {
-
-	const controls = this.controls;
-
-	if ( this.running || controls.autoRotate ) return this;
-
-	let delta = ( controls.getAzimuthalAngle() - targetAngle );
-	const deltaSize = Math.abs( delta );
-
-	if ( deltaSize > Math.PI ) delta = 2 * Math.PI - deltaSize;
-
-	this.animationFunction = this.animateAzimuthMove;
-
-	this.setAngleCommon( delta );
-
-};
-
-CameraMove.prototype.animateAzimuthMove = function () {
-
-	this.controls.rotateLeft( this.delta );
-
-};
-
-CameraMove.prototype.setPolarAngle = function ( targetAngle ) {
-
-	if ( this.running ) return this;
-
-	this.animationFunction = this.animatePolarMove;
-
-	this.setAngleCommon( this.controls.getPolarAngle() - targetAngle );
-
-};
-
-CameraMove.prototype.animatePolarMove = function () {
-
-	this.controls.rotateUp( this.delta );
-
-};
-
-CameraMove.prototype.setAutoRotate = function ( state ) {
-
-	const controls = this.controls;
-
-	if ( state ) {
-
-		if ( this.running ) return;
-
-		controls.autoRotate = true;
-
-		this.running = true;
-		this.animationFunction = false;
-
-		this.animate();
-
-	} else {
-
-		if ( controls.autoRotate ) this.running = false;
-
-		controls.autoRotate = false;
-		controls.enabled = true;
-		this.rafID = 0;
-
-	}
-
-};
+}
 
 export { CameraMove };

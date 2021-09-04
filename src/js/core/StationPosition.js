@@ -11,6 +11,20 @@ class StationPosition extends Vector3 {
 
 	}
 
+	correctedDistanceTo ( v ) {
+
+		return Math.sqrt( this.correctedDistanceToSquared( v ) );
+
+	}
+
+	correctedDistanceToSquared ( v ) {
+
+		const dx = this.x - v.x, dy = this.y - v.y, dz = ( this.z - v.z ) * StationPosition.scaleFactor;
+
+		return dx * dx + dy * dy + dz * dz;
+
+	}
+
 }
 
 StationPosition.scaleFactor = 1;
@@ -18,19 +32,5 @@ StationPosition.scaleFactor = 1;
 StationPosition.prototype.connections = 0;
 StationPosition.prototype.splays = 0;
 StationPosition.prototype.shortestPath = Infinity;
-
-StationPosition.prototype.correctedDistanceTo = function ( v ) {
-
-	return Math.sqrt( this.correctedDistanceToSquared( v ) );
-
-};
-
-StationPosition.prototype.correctedDistanceToSquared = function ( v ) {
-
-	const dx = this.x - v.x, dy = this.y - v.y, dz = ( this.z - v.z ) * StationPosition.scaleFactor;
-
-	return dx * dx + dy * dy + dz * dz;
-
-};
 
 export { StationPosition };

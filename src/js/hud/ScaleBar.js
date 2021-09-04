@@ -86,98 +86,98 @@ class ScaleBar extends Group {
 
 	}
 
+	setScale ( scale ) {
+
+		const scaleBars = this.scaleBars;
+		const self = this;
+		const ctx = this.hudObject.ctx;
+
+		const maxVisible = this.scaleMax / ( scale * this.hScale );
+
+		let exponent = Math.ceil( Math.log( maxVisible ) / Math.LN10 ) - 1;
+
+		const rMax   = Math.pow( 10, exponent );
+		const maxInc = maxVisible / rMax;
+
+		let legendText;
+		let length = 0;
+
+		if ( maxInc < 2 ) {
+
+			length = 10;
+			exponent = exponent - 1;
+
+		} else if ( maxInc < 5 ) {
+
+			length = 2;
+
+		} else {
+
+			length = 5;
+
+		}
+
+		if ( exponent >= 3 ) {
+
+			legendText = length * Math.pow( 10, exponent - 3) + '\u202fkm';
+
+		} else {
+
+			legendText = length * Math.pow( 10, exponent ) + '\u202fm';
+
+		}
+
+		scale = scale * Math.pow( 10, exponent );
+
+		if ( this.currentLength !== length ) {
+
+			if ( ! scaleBars[ length ] ) {
+
+				const bar = _makeScaleBar( length );
+
+				scaleBars[ length ] = bar;
+				this.add( bar.mesh );
+
+			}
+
+			if ( this.currentLength > 0 ) {
+
+				scaleBars[ this.currentLength ].mesh.visible = false;
+
+			}
+
+			scaleBars[ length ].mesh.visible = this.visible;
+			this.currentLength = length;
+
+		}
+
+		scaleBars[ length ].mesh.scale.x = scale;
+
+		const label = this.label;
+
+		label.replaceString( legendText.padStart( 8, ' ' ) );
+
+		const w = label.getWidth();
+
+		label.translateX( scale * scaleBars[ length ].topRight - label.position.x - w );
+
+		return this;
+
+		function _makeScaleBar ( length ) {
+
+			const bar = new BarGeometry( ctx, length * self.hScale, 4, length );
+
+			bar.computeBoundingBox();
+
+			return {
+				mesh: new Mesh( bar, ctx.materials.getPlainMaterial() ),
+				topRight: bar.boundingBox.max.x
+			};
+
+		}
+
+	}
+
 }
-
-ScaleBar.prototype.setScale = function ( scale ) {
-
-	const scaleBars = this.scaleBars;
-	const self = this;
-	const ctx = this.hudObject.ctx;
-
-	const maxVisible = this.scaleMax / ( scale * this.hScale );
-
-	let exponent = Math.ceil( Math.log( maxVisible ) / Math.LN10 ) - 1;
-
-	const rMax   = Math.pow( 10, exponent );
-	const maxInc = maxVisible / rMax;
-
-	let legendText;
-	let length = 0;
-
-	if ( maxInc < 2 ) {
-
-		length = 10;
-		exponent = exponent - 1;
-
-	} else if ( maxInc < 5 ) {
-
-		length = 2;
-
-	} else {
-
-		length = 5;
-
-	}
-
-	if ( exponent >= 3 ) {
-
-		legendText = length * Math.pow( 10, exponent - 3) + '\u202fkm';
-
-	} else {
-
-		legendText = length * Math.pow( 10, exponent ) + '\u202fm';
-
-	}
-
-	scale = scale * Math.pow( 10, exponent );
-
-	if ( this.currentLength !== length ) {
-
-		if ( ! scaleBars[ length ] ) {
-
-			const bar = _makeScaleBar( length );
-
-			scaleBars[ length ] = bar;
-			this.add( bar.mesh );
-
-		}
-
-		if ( this.currentLength > 0 ) {
-
-			scaleBars[ this.currentLength ].mesh.visible = false;
-
-		}
-
-		scaleBars[ length ].mesh.visible = this.visible;
-		this.currentLength = length;
-
-	}
-
-	scaleBars[ length ].mesh.scale.x = scale;
-
-	const label = this.label;
-
-	label.replaceString( legendText.padStart( 8, ' ' ) );
-
-	const w = label.getWidth();
-
-	label.translateX( scale * scaleBars[ length ].topRight - label.position.x - w );
-
-	return this;
-
-	function _makeScaleBar ( length ) {
-
-		const bar = new BarGeometry( ctx, length * self.hScale, 4, length );
-
-		bar.computeBoundingBox();
-
-		return {
-			mesh: new Mesh( bar, ctx.materials.getPlainMaterial() ),
-			topRight: bar.boundingBox.max.x
-		};
-
-	}
-
-};
 
 export { ScaleBar };

@@ -11,14 +11,14 @@ class Marker extends Point {
 
 	}
 
+	adjustHeight ( func ) {
+
+		this.position.setZ( func( this.position ) + 10 );
+
+	}
+
 }
 
 Marker.prototype.isMarker = true;
-
-Marker.prototype.adjustHeight = function ( func ) {
-
-	this.position.setZ( func( this.position ) + 10 );
-
-};
 
 export { Marker };

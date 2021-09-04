@@ -46,22 +46,22 @@ class SurveyBox extends LineSegments2 {
 
 	}
 
+	update ( box3 ) {
+
+		box3.getSize( this.scale );
+		box3.getCenter( this.position );
+		this.updateMatrix();
+
+		this.geometry.computeBoundingSphere();
+
+	}
+
+	removed () {
+
+		if ( this.geometry ) this.geometry.dispose();
+
+	}
+
 }
-
-SurveyBox.prototype.update = function ( box3 ) {
-
-	box3.getSize( this.scale );
-	box3.getCenter( this.position );
-	this.updateMatrix();
-
-	this.geometry.computeBoundingSphere();
-
-};
-
-SurveyBox.prototype.removed = function () {
-
-	if ( this.geometry ) this.geometry.dispose();
-
-};
 
 export { SurveyBox };

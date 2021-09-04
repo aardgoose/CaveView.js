@@ -55,23 +55,23 @@ class CursorScale extends Scale {
 
 	}
 
+	setCursor ( scaledValue, displayValue ) {
+
+		const cursor = this.cursor;
+		const cursorLabel = this.cursorLabel;
+
+		cursor.position.setY( this.barHeight * scaledValue );
+		cursor.updateMatrix();
+
+		cursorLabel.replaceString( String( displayValue + '\u202fm' ).padStart( 6, ' ') );
+		cursorLabel.position.setX( this.offsetX - cursorLabel.getWidth() );
+
+		cursorLabel.updateMatrix();
+
+		return this;
+
+	}
+
 }
-
-CursorScale.prototype.setCursor = function ( scaledValue, displayValue ) {
-
-	const cursor = this.cursor;
-	const cursorLabel = this.cursorLabel;
-
-	cursor.position.setY( this.barHeight * scaledValue );
-	cursor.updateMatrix();
-
-	cursorLabel.replaceString( String( displayValue + '\u202fm' ).padStart( 6, ' ') );
-	cursorLabel.position.setX( this.offsetX - cursorLabel.getWidth() );
-
-	cursorLabel.updateMatrix();
-
-	return this;
-
-};
 
 export { CursorScale };

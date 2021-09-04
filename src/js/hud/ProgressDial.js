@@ -62,108 +62,108 @@ class ProgressDial extends Mesh {
 
 	}
 
+	colorRange ( range ) {
+
+		const colors = this.geometry.getAttribute( 'color' );
+		const segmentMax = 50 - Math.round( range / 2 );
+		const cc = colors.count;
+		const c1 = this.setColor;
+		const c2 = this.backgroundColor;
+
+		for ( let i = cc / 2; i >= 0; i-- ) {
+
+			const c =  i > segmentMax ? c1 : c2;
+
+			c.toArray( colors.array, i * 3 );
+			c.toArray( colors.array, ( i + 51 ) * 3 );
+
+		}
+
+		colors.needsUpdate = true;
+
+	}
+
+	set ( progress ) {
+
+		if ( progress === this.progress ) return;
+
+		this.progress = progress;
+
+		const l = Math.floor( Math.min( 100, Math.round( progress ) ) / 2 ) * 2;
+		const pcent = this.pcent;
+
+		this.colorRange( l );
+
+		if ( pcent !== null ) {
+
+			const pcentValue = Math.round( progress ) + '%';
+
+			pcent.replaceString( pcentValue.padStart( 4, ' ' ) );
+			pcent.translateY( pcent.getWidth() / 2 - pcent.position.y );
+
+		}
+
+		this.viewer.renderView();
+
+	}
+
+	start () {
+
+		this.colorRange( 0 );
+
+		this.progress = 0;
+		this.visible = true;
+
+		if ( this.pcent !== null ) this.pcent.replaceString( '  0%' );
+
+		this.viewer.renderView();
+
+	}
+
+	end () {
+
+		const self = this;
+
+		setTimeout( function endProgress () { self.visible = false; self.viewer.renderView(); }, 500 );
+
+	}
+
+	setVisibility ( visibility ) {
+
+		this.isVisible = visibility;
+		this.visible = ( this.visible && visibility );
+
+	}
+
+	watch ( obj ) {
+
+		obj.addEventListener( 'progress', this.handleProgess.bind( this ) );
+
+	}
+
+	handleProgess ( event ) {
+
+		switch ( event.name ) {
+
+		case 'start':
+
+			this.start();
+			break;
+
+		case 'set':
+
+			this.set( event.progress );
+			break;
+
+		case 'end':
+
+			this.end();
+			break;
+
+		}
+
+	}
+
 }
-
-ProgressDial.prototype.colorRange = function ( range ) {
-
-	const colors = this.geometry.getAttribute( 'color' );
-	const segmentMax = 50 - Math.round( range / 2 );
-	const cc = colors.count;
-	const c1 = this.setColor;
-	const c2 = this.backgroundColor;
-
-	for ( let i = cc / 2; i >= 0; i-- ) {
-
-		const c =  i > segmentMax ? c1 : c2;
-
-		c.toArray( colors.array, i * 3 );
-		c.toArray( colors.array, ( i + 51 ) * 3 );
-
-	}
-
-	colors.needsUpdate = true;
-
-};
-
-ProgressDial.prototype.set = function ( progress ) {
-
-	if ( progress === this.progress ) return;
-
-	this.progress = progress;
-
-	const l = Math.floor( Math.min( 100, Math.round( progress ) ) / 2 ) * 2;
-	const pcent = this.pcent;
-
-	this.colorRange( l );
-
-	if ( pcent !== null ) {
-
-		const pcentValue = Math.round( progress ) + '%';
-
-		pcent.replaceString( pcentValue.padStart( 4, ' ' ) );
-		pcent.translateY( pcent.getWidth() / 2 - pcent.position.y );
-
-	}
-
-	this.viewer.renderView();
-
-};
-
-ProgressDial.prototype.start = function () {
-
-	this.colorRange( 0 );
-
-	this.progress = 0;
-	this.visible = true;
-
-	if ( this.pcent !== null ) this.pcent.replaceString( '  0%' );
-
-	this.viewer.renderView();
-
-};
-
-ProgressDial.prototype.end = function () {
-
-	const self = this;
-
-	setTimeout( function endProgress () { self.visible = false; self.viewer.renderView(); }, 500 );
-
-};
-
-ProgressDial.prototype.setVisibility = function ( visibility ) {
-
-	this.isVisible = visibility;
-	this.visible = ( this.visible && visibility );
-
-};
-
-ProgressDial.prototype.watch = function ( obj ) {
-
-	obj.addEventListener( 'progress', this.handleProgess.bind( this ) );
-
-};
-
-ProgressDial.prototype.handleProgess = function ( event ) {
-
-	switch ( event.name ) {
-
-	case 'start':
-
-		this.start();
-		break;
-
-	case 'set':
-
-		this.set( event.progress );
-		break;
-
-	case 'end':
-
-		this.end();
-		break;
-
-	}
-
-};
 
 export { ProgressDial };

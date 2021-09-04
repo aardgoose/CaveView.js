@@ -77,40 +77,41 @@ class GlyphStringGeometry extends InstancedBufferGeometry {
 
 	}
 
-}
+	setString ( text ) {
 
-GlyphStringGeometry.prototype.setString = function ( text ) {
+		const instanceUvs = this.getAttribute( 'instanceUvs' );
+		const instanceOffsets = this.getAttribute( 'instanceOffsets' );
+		const instanceWidths = this.getAttribute( 'instanceWidths' );
 
-	const instanceUvs = this.getAttribute( 'instanceUvs' );
-	const instanceOffsets = this.getAttribute( 'instanceOffsets' );
-	const instanceWidths = this.getAttribute( 'instanceWidths' );
+		const l = text.length, glyphAtlas = this.glyphAtlas;
 
-	const l = text.length, glyphAtlas = this.glyphAtlas;
+		let offset = 0;
 
-	let offset = 0;
+		for ( let i = 0; i < l; i++ ) {
 
-	for ( let i = 0; i < l; i++ ) {
+			if ( text.charCodeAt( i ) === 0 ) continue; // skip null characters
+			const glyphData = glyphAtlas.getGlyph( text[ i ] );
 
-		if ( text.charCodeAt( i ) === 0 ) continue; // skip null characters
-		const glyphData = glyphAtlas.getGlyph( text[ i ] );
+			instanceUvs.setXY( i, glyphData.column, glyphData.row );
+			instanceWidths.setX( i, glyphData.width );
+			instanceOffsets.setX( i, offset );
 
-		instanceUvs.setXY( i, glyphData.column, glyphData.row );
-		instanceWidths.setX( i, glyphData.width );
-		instanceOffsets.setX( i, offset );
+			offset += glyphData.width;
 
-		offset += glyphData.width;
+		}
+
+		instanceUvs.needsUpdate = true;
+		instanceOffsets.needsUpdate = true;
+		instanceWidths.needsUpdate = true;
+
+		this.width = offset;
+		this.name = text;
+		this.instanceCount = l;
 
 	}
 
-	instanceUvs.needsUpdate = true;
-	instanceOffsets.needsUpdate = true;
-	instanceWidths.needsUpdate = true;
+}
 
-	this.width = offset;
-	this.name = text;
-	this.instanceCount = l;
-
-};
 
 class GlyphStringBase extends Mesh {
 
@@ -121,64 +122,64 @@ class GlyphStringBase extends Mesh {
 
 	}
 
+	getWidth () {
+
+		return this.geometry.width * this.material.scaleFactor;
+
+	}
+
+	getHeight () {
+
+		return this.material.scaleFactor;
+
+	}
+
+	intersects ( position, camera, scale ) {
+
+		if ( ! this.visible ) return false;
+
+		const width = this.getWidth() / scale.x;
+		const height = this.getHeight() / scale.y;
+		const rotation = this.material.rotation;
+
+		// mouse position in NDC
+		__v0.set( position.x, position.y, 0 );
+
+		// label bottom left in NDC
+		__v1.setFromMatrixPosition( this.modelViewMatrix );
+		__v1.applyMatrix4( camera.projectionMatrix );
+
+		this.depth = __v1.z;
+
+		__v1.z = 0;
+
+		if ( isNaN( __v1.x ) ) return;
+
+		// remaining vertices of label
+		__v2.set( width, 0, 0 ).applyAxisAngle( Object3D.DefaultUp, rotation );
+		__v3.set( width, height, 0 ).applyAxisAngle( Object3D.DefaultUp, rotation );
+		__v4.set( 0, height, 0 ).applyAxisAngle( Object3D.DefaultUp, rotation );
+
+		// adjust for aspect ratio
+		__v2.y *= scale.x / scale.y;
+		__v3.y *= scale.x / scale.y;
+		__v4.y *= scale.x / scale.y;
+
+		__v2.add( __v1 );
+		__v3.add( __v1 );
+		__v4.add( __v1 );
+
+		__triangle1.set( __v1, __v2, __v3 );
+		__triangle2.set( __v1, __v3, __v4 );
+
+		return (
+			( __triangle1.containsPoint( __v0 ) ) ||
+			( __triangle2.containsPoint( __v0 ) )
+		);
+
+	}
+
 }
-
-GlyphStringBase.prototype.getWidth = function () {
-
-	return this.geometry.width * this.material.scaleFactor;
-
-};
-
-GlyphStringBase.prototype.getHeight = function () {
-
-	return this.material.scaleFactor;
-
-};
-
-GlyphStringBase.prototype.intersects = function ( position, camera, scale ) {
-
-	if ( ! this.visible ) return false;
-
-	const width = this.getWidth() / scale.x;
-	const height = this.getHeight() / scale.y;
-	const rotation = this.material.rotation;
-
-	// mouse position in NDC
-	__v0.set( position.x, position.y, 0 );
-
-	// label bottom left in NDC
-	__v1.setFromMatrixPosition( this.modelViewMatrix );
-	__v1.applyMatrix4( camera.projectionMatrix );
-
-	this.depth = __v1.z;
-
-	__v1.z = 0;
-
-	if ( isNaN( __v1.x ) ) return;
-
-	// remaining vertices of label
-	__v2.set( width, 0, 0 ).applyAxisAngle( Object3D.DefaultUp, rotation );
-	__v3.set( width, height, 0 ).applyAxisAngle( Object3D.DefaultUp, rotation );
-	__v4.set( 0, height, 0 ).applyAxisAngle( Object3D.DefaultUp, rotation );
-
-	// adjust for aspect ratio
-	__v2.y *= scale.x / scale.y;
-	__v3.y *= scale.x / scale.y;
-	__v4.y *= scale.x / scale.y;
-
-	__v2.add( __v1 );
-	__v3.add( __v1 );
-	__v4.add( __v1 );
-
-	__triangle1.set( __v1, __v2, __v3 );
-	__triangle2.set( __v1, __v3, __v4 );
-
-	return (
-		( __triangle1.containsPoint( __v0 ) ) ||
-		( __triangle2.containsPoint( __v0 ) )
-	);
-
-};
 
 class GlyphString extends GlyphStringBase {
 

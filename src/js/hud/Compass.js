@@ -122,39 +122,39 @@ class Compass extends Group {
 
 	}
 
-}
+	set ( vCamera ) {
 
-Compass.prototype.set = function ( vCamera ) {
+		let a;
 
-	let a;
+		vCamera.getWorldDirection( __direction );
 
-	vCamera.getWorldDirection( __direction );
+		if ( Math.abs( __direction.z ) < 0.999 ) {
 
-	if ( Math.abs( __direction.z ) < 0.999 ) {
+			a = Math.atan2( - __direction.x, __direction.y );
 
-		a = Math.atan2( - __direction.x, __direction.y );
+		} else {
 
-	} else {
+			__e.setFromQuaternion( vCamera.quaternion );
+			a = __e.z;
 
-		__e.setFromQuaternion( vCamera.quaternion );
-		a = __e.z;
+		}
+
+		if ( a === this.lastRotation ) return;
+
+		if ( a < 0 ) a = Math.PI * 2 + a;
+
+		let degrees = Math.round( MathUtils.radToDeg( a ) );
+
+		if ( degrees === 360 ) degrees = 0;
+
+		const res = degrees.toString().padStart( 3, '0' ) + '\u00B0'; // unicode degree symbol
+
+		this.label.replaceString( res );
+		this.rotaryGroup.rotateOnAxis( __negativeZAxis, a - this.lastRotation );
+		this.lastRotation = a;
 
 	}
 
-	if ( a === this.lastRotation ) return;
-
-	if ( a < 0 ) a = Math.PI * 2 + a;
-
-	let degrees = Math.round( MathUtils.radToDeg( a ) );
-
-	if ( degrees === 360 ) degrees = 0;
-
-	const res = degrees.toString().padStart( 3, '0' ) + '\u00B0'; // unicode degree symbol
-
-	this.label.replaceString( res );
-	this.rotaryGroup.rotateOnAxis( __negativeZAxis, a - this.lastRotation );
-	this.lastRotation = a;
-
-};
+}
 
 export { Compass };

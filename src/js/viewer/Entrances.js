@@ -115,91 +115,91 @@ class Entrances extends ClusterMarkers {
 
 	}
 
-}
+	getStation ( index ) {
 
-Entrances.prototype.getStation = function ( index ) {
+		const station = this.stations[ index ];
+		const stationName = station.getPath();
 
-	const station = this.stations[ index ];
-	const stationName = station.getPath();
-
-	return {
-		station: station,
-		name: stationName,
-		info: this.metadata.entrances[ stationName ]
-	};
-
-};
-
-Entrances.prototype.setStation = function ( station, info ) {
-
-	const metadata = this.metadata;
-
-	metadata.entrances[ station.getPath() ] = info;
-
-	metadata.saveLocal();
-
-};
-
-Entrances.prototype.intersectLabels = function ( mouse, camera, scale ) {
-
-	const labels = this.labels.filter( _filter ).sort( _sort );
-
-	return ( labels.length === 0 ) ? null : labels[ 0 ];
-
-	function _filter ( label ) {
-
-		return label.intersects( mouse, camera, scale );
+		return {
+			station: station,
+			name: stationName,
+			info: this.metadata.entrances[ stationName ]
+		};
 
 	}
 
-	function _sort ( a, b ) {
+	setStation ( station, info ) {
 
-		return a.depth - b.depth;
+		const metadata = this.metadata;
+
+		metadata.entrances[ station.getPath() ] = info;
+
+		metadata.saveLocal();
 
 	}
 
-};
+	intersectLabels ( mouse, camera, scale ) {
 
-Entrances.prototype.setSelection = function ( selection ) {
+		const labels = this.labels.filter( _filter ).sort( _sort );
 
-	const colors = this.markers.geometry.getAttribute( 'color' );
-	const color = this.entranceColor;
+		return ( labels.length === 0 ) ? null : labels[ 0 ];
 
-	if ( colors === undefined ) return;
+		function _filter ( label ) {
 
-	if ( selection === null || selection.isEmpty() ) {
-
-		const array = colors.array;
-		const l = array.length;
-
-		for ( let i = 0; i < l; i += 3 ) {
-
-			color.toArray( array, i );
+			return label.intersects( mouse, camera, scale );
 
 		}
 
-	} else {
+		function _sort ( a, b ) {
 
-		const idSet = selection.getIds();
+			return a.depth - b.depth;
 
-		this.stations.forEach( function ( node, i ) {
-
-			if ( idSet.has( node.id ) ) {
-
-				color.toArray( colors, i * 3 );
-
-			} else {
-
-				colors.setXYZ( i, 0.5, 0.5, 0.5 );
-
-			}
-
-		} );
+		}
 
 	}
 
-	colors.needsUpdate = true;
+	setSelection ( selection ) {
 
-};
+		const colors = this.markers.geometry.getAttribute( 'color' );
+		const color = this.entranceColor;
+
+		if ( colors === undefined ) return;
+
+		if ( selection === null || selection.isEmpty() ) {
+
+			const array = colors.array;
+			const l = array.length;
+
+			for ( let i = 0; i < l; i += 3 ) {
+
+				color.toArray( array, i );
+
+			}
+
+		} else {
+
+			const idSet = selection.getIds();
+
+			this.stations.forEach( function ( node, i ) {
+
+				if ( idSet.has( node.id ) ) {
+
+					color.toArray( colors, i * 3 );
+
+				} else {
+
+					colors.setXYZ( i, 0.5, 0.5, 0.5 );
+
+				}
+
+			} );
+
+		}
+
+		colors.needsUpdate = true;
+
+	}
+
+}
 
 export { Entrances };

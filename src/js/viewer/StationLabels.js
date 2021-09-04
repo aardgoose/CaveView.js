@@ -36,84 +36,84 @@ class StationLabels extends Group {
 
 	}
 
-}
+	update ( camera, target, inverseWorld ) {
 
-StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
+		const cameraPosition = _tmpVector3.copy( camera.position );
 
-	const cameraPosition = _tmpVector3.copy( camera.position );
+		if ( camera.isOrthographicCamera ) {
 
-	if ( camera.isOrthographicCamera ) {
+			// if orthographic, calculate 'virtual' camera position
 
-		// if orthographic, calculate 'virtual' camera position
+			cameraPosition.sub( target ); // now vector from target
 
-		cameraPosition.sub( target ); // now vector from target
+			cameraPosition.setLength( CAMERA_OFFSET / camera.zoom ); // scale for zoom factor
+			cameraPosition.add( target ); // relocate in world space
 
-		cameraPosition.setLength( CAMERA_OFFSET / camera.zoom ); // scale for zoom factor
-		cameraPosition.add( target ); // relocate in world space
+		}
 
-	}
+		// transform camera position into model coordinate system
 
-	// transform camera position into model coordinate system
+		cameraPosition.applyMatrix4( inverseWorld );
 
-	cameraPosition.applyMatrix4( inverseWorld );
+		const stations = this.stations;
+		const points = stations.vertices;
+		const l = points.length;
 
-	const stations = this.stations;
-	const points = stations.vertices;
-	const l = points.length;
+		const showName = ( ( camera.layers.mask & 1 << LABEL_STATION ) !== 0 );
+		const showComment = ( ( camera.layers.mask & 1 << LABEL_STATION_COMMENT ) !== 0 );
+		const commentRatio = l / this.commentCount;
 
-	const showName = ( ( camera.layers.mask & 1 << LABEL_STATION ) !== 0 );
-	const showComment = ( ( camera.layers.mask & 1 << LABEL_STATION_COMMENT ) !== 0 );
-	const commentRatio = l / this.commentCount;
+		for ( let i = 0; i < l; i++ ) {
 
-	for ( let i = 0; i < l; i++ ) {
+			const position = points[ i ];
 
-		const position = points[ i ];
+			const station = stations.getVisibleStation( position );
 
-		const station = stations.getVisibleStation( position );
+			if ( station !== null ) {
 
-		if ( station !== null ) {
+				const label = station.label;
 
-			const label = station.label;
+				let d2 = 40000;
 
-			let d2 = 40000;
+				if ( position.connections === 0 ) {
 
-			if ( position.connections === 0 ) {
+					d2 = 250;
 
-				d2 = 250;
+				} else if ( position.connections < 3 ) {
 
-			} else if ( position.connections < 3 ) {
-
-				d2 = 5000;
-
-			}
-
-			// eager display of comments scaled by density of comments in survey
-			if ( showComment && station.comment !== undefined ) d2 *= commentRatio;
-
-			// show labels for network vertices at greater distance than intermediate stations
-			const visible = ( position.distanceToSquared( cameraPosition ) < d2 );
-
-			let name = '';
-
-			if ( showName ) name += station.name;
-			if ( showName && showComment && station.comment !== undefined ) name += ' ';
-			if ( showComment && station.comment !== undefined ) name += station.comment;
-
-			if ( ! label || label.name !== name ) {
-
-				// remove label with the wrong text
-				if ( label !== undefined ) {
-
-					this.remove( label );
-					station.label = null;
+					d2 = 5000;
 
 				}
 
-				if ( visible ) this.addLabel( station, name );
+				// eager display of comments scaled by density of comments in survey
+				if ( showComment && station.comment !== undefined ) d2 *= commentRatio;
 
-			} else {
+				// show labels for network vertices at greater distance than intermediate stations
+				const visible = ( position.distanceToSquared( cameraPosition ) < d2 );
 
-				label.visible = visible;
+				let name = '';
+
+				if ( showName ) name += station.name;
+				if ( showName && showComment && station.comment !== undefined ) name += ' ';
+				if ( showComment && station.comment !== undefined ) name += station.comment;
+
+				if ( ! label || label.name !== name ) {
+
+					// remove label with the wrong text
+					if ( label !== undefined ) {
+
+						this.remove( label );
+						station.label = null;
+
+					}
+
+					if ( visible ) this.addLabel( station, name );
+
+				} else {
+
+					label.visible = visible;
+
+				}
 
 			}
 
@@ -121,38 +121,38 @@ StationLabels.prototype.update = function ( camera, target, inverseWorld ) {
 
 	}
 
-};
+	addLabel ( station, name ) {
 
-StationLabels.prototype.addLabel = function ( station, name ) {
+		let material;
 
-	let material;
+		const position = station.p;
+		const connections = position.connections;
 
-	const position = station.p;
-	const connections = position.connections;
+		if ( connections === 0 ) {
 
-	if ( connections === 0 ) {
+			material = this.splayLabelMaterial;
 
-		material = this.splayLabelMaterial;
+		} else if ( connections < 3 ) {
 
-	} else if ( connections < 3 ) {
+			material = this.defaultLabelMaterial;
 
-		material = this.defaultLabelMaterial;
+		} else {
 
-	} else {
+			material = this.junctionLabelMaterial;
 
-		material = this.junctionLabelMaterial;
+		}
+
+		const label = new GlyphString( name, material, this.ctx );
+
+		label.layers.mask = this.layers.mask;
+		label.position.copy( position );
+
+		station.label = label;
+
+		this.addStatic( label );
 
 	}
 
-	const label = new GlyphString( name, material, this.ctx );
-
-	label.layers.mask = this.layers.mask;
-	label.position.copy( position );
-
-	station.label = label;
-
-	this.addStatic( label );
-
-};
+}
 
 export { StationLabels };

@@ -44,79 +44,79 @@ class Scale extends Group {
 
 	}
 
-}
+	setRange ( min, max, caption ) {
 
-Scale.prototype.setRange = function ( min, max, caption ) {
+		const offsetX = this.offsetX;
+		const offsetY = this.offsetY;
 
-	const offsetX = this.offsetX;
-	const offsetY = this.offsetY;
+		const material = this.textMaterial;
 
-	const material = this.textMaterial;
+		if ( min !== this.min || max !== this.max ) {
 
-	if ( min !== this.min || max !== this.max ) {
+			for ( let i = this.children.length; i--; ) {
 
-		for ( let i = this.children.length; i--; ) {
+				const obj = this.children[ i ];
 
-			const obj = this.children[ i ];
+				if ( obj.isRange ) this.remove( obj );
 
-			if ( obj.isRange ) this.remove( obj );
+			}
+
+			const topLabel = new GlyphString( Math.round( max ) + '\u202fm', material, this.ctx );
+			const bottomLabel = new GlyphString( Math.round( min ) + '\u202fm', material, this.ctx );
+
+			topLabel.translateX( offsetX - topLabel.getWidth() );
+			bottomLabel.translateX( offsetX - bottomLabel.getWidth() );
+
+			topLabel.translateY( offsetY - topLabel.getHeight() );
+			bottomLabel.translateY( -offsetY );
+
+			topLabel.isRange = true;
+			bottomLabel.isRange = true;
+
+			this.addStatic( topLabel );
+			this.addStatic( bottomLabel );
+
+			this.min = min;
+			this.max = max;
 
 		}
 
-		const topLabel = new GlyphString( Math.round( max ) + '\u202fm', material, this.ctx );
-		const bottomLabel = new GlyphString( Math.round( min ) + '\u202fm', material, this.ctx );
+		this.setCaption( caption );
 
-		topLabel.translateX( offsetX - topLabel.getWidth() );
-		bottomLabel.translateX( offsetX - bottomLabel.getWidth() );
-
-		topLabel.translateY( offsetY - topLabel.getHeight() );
-		bottomLabel.translateY( -offsetY );
-
-		topLabel.isRange = true;
-		bottomLabel.isRange = true;
-
-		this.addStatic( topLabel );
-		this.addStatic( bottomLabel );
-
-		this.min = min;
-		this.max = max;
+		return this;
 
 	}
 
-	this.setCaption( caption );
+	setCaption ( text ) {
 
-	return this;
+		let caption = this.caption;
 
-};
+		if ( caption !== null ) {
 
-Scale.prototype.setCaption = function ( text ) {
+			// already have correct caption
+			if ( caption.name === text ) return this;
 
-	let caption = this.caption;
+			this.remove( caption );
 
-	if ( caption !== null ) {
+		}
 
-		// already have correct caption
-		if ( caption.name === text ) return this;
+		caption = new GlyphString( text, this.textMaterial, this.ctx );
+		caption.translateX( this.barWidth / 2 - caption.getWidth() );
+		caption.translateY( this.offsetY + this.barWidth / 2 );
 
-		this.remove( caption );
+		this.addStatic( caption );
+		this.caption = caption;
+
+		return this;
 
 	}
 
-	caption = new GlyphString( text, this.textMaterial, this.ctx );
-	caption.translateX( this.barWidth / 2 - caption.getWidth() );
-	caption.translateY( this.offsetY + this.barWidth / 2 );
+	dispose () {
 
-	this.addStatic( caption );
-	this.caption = caption;
+		this.traverse( obj => { if ( obj.geometry !== undefined ) obj.geometry.dispose(); } );
 
-	return this;
+	}
 
-};
-
-Scale.prototype.dispose = function () {
-
-	this.traverse( obj => { if ( obj.geometry !== undefined ) obj.geometry.dispose(); } );
-
-};
+}
 
 export { Scale };

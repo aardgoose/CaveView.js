@@ -135,21 +135,20 @@ class AHI extends Group {
 
 	}
 
+	set ( vCamera ) {
+
+		vCamera.getWorldDirection( __direction );
+
+		const pitch = Math.PI / 2 - __direction.angleTo( Object3D.DefaultUp );
+
+		if ( pitch === this.lastPitch ) return;
+
+		this.globe.rotateOnAxis( __xAxis, pitch - this.lastPitch );
+		this.lastPitch = pitch;
+		this.label.replaceString( String( Math.round( MathUtils.radToDeg( pitch ) ) + '\u00B0' ).padStart( 4, ' ' ) );
+
+	}
+
 }
-
-AHI.prototype.set = function ( vCamera ) {
-
-	vCamera.getWorldDirection( __direction );
-
-	const pitch = Math.PI / 2 - __direction.angleTo( Object3D.DefaultUp );
-
-	if ( pitch === this.lastPitch ) return;
-
-	this.globe.rotateOnAxis( __xAxis, pitch - this.lastPitch );
-	this.lastPitch = pitch;
-	this.label.replaceString( String( Math.round( MathUtils.radToDeg( pitch ) ) + '\u00B0' ).padStart( 4, ' ' ) );
-
-};
-
 
 export { AHI };

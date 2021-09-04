@@ -34,21 +34,21 @@ class Popup extends Mesh {
 
 	}
 
+	close () {
+
+		if ( this.parent ) this.parent.remove( this );
+
+		const material = this.materal;
+
+		if ( ! material ) return;
+
+		material.dispose();
+
+		if ( material.texture) material.texture.dispose();
+
+
+	}
+
 }
-
-Popup.prototype.close = function () {
-
-	if ( this.parent ) this.parent.remove( this );
-
-	const material = this.materal;
-
-	if ( ! material ) return;
-
-	material.dispose();
-
-	if ( material.texture) material.texture.dispose();
-
-
-};
 
 export { Popup };

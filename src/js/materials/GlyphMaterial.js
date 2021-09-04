@@ -49,12 +49,12 @@ class GlyphMaterial extends ShaderMaterial {
 
 	}
 
+	getAtlas () {
+
+		return this.atlas;
+
+	}
+
 }
-
-GlyphMaterial.prototype.getAtlas = function () {
-
-	return this.atlas;
-
-};
 
 export { GlyphMaterial };

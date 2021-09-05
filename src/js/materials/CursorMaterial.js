@@ -32,22 +32,22 @@ class CursorMaterial extends ShaderMaterial {
 
 	}
 
+	setCursor ( value ) {
+
+		const newValue = Math.max( Math.min( value, this.halfRange ), -this.halfRange );
+
+		this.uniforms.cursor.value = newValue;
+
+		return newValue; // return value clamped to material range
+
+	}
+
+	getCursor () {
+
+		return this.uniforms.cursor.value;
+
+	}
+
 }
-
-CursorMaterial.prototype.setCursor = function ( value ) {
-
-	const newValue = Math.max( Math.min( value, this.halfRange ), -this.halfRange );
-
-	this.uniforms.cursor.value = newValue;
-
-	return newValue; // return value clamped to material range
-
-};
-
-CursorMaterial.prototype.getCursor = function () {
-
-	return this.uniforms.cursor.value;
-
-};
 
 export { CursorMaterial };

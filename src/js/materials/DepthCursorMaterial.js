@@ -45,22 +45,22 @@ class DepthCursorMaterial extends ShaderMaterial {
 
 	}
 
+	setCursor ( value ) {
+
+		const newValue = Math.max( Math.min( value, this.max ), 0 );
+
+		this.uniforms.cursor.value = newValue;
+
+		return newValue; // return value clamped to material range
+
+	}
+
+	getCursor () {
+
+		return this.uniforms.cursor.value;
+
+	}
+
 }
-
-DepthCursorMaterial.prototype.setCursor = function ( value ) {
-
-	const newValue = Math.max( Math.min( value, this.max ), 0 );
-
-	this.uniforms.cursor.value = newValue;
-
-	return newValue; // return value clamped to material range
-
-};
-
-DepthCursorMaterial.prototype.getCursor = function () {
-
-	return this.uniforms.cursor.value;
-
-};
 
 export { DepthCursorMaterial };

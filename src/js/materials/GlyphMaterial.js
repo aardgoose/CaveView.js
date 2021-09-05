@@ -40,7 +40,6 @@ class GlyphMaterial extends ShaderMaterial {
 
 		const self = this;
 
-
 		function _resize() {
 
 			self.uniforms.scale.value.set( realPixels / container.clientWidth, realPixels / container.clientHeight );

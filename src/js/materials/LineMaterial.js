@@ -124,32 +124,32 @@ class LineMaterial extends Line2Material {
 
 	}
 
-}
+	setCursor ( value ) {
 
-LineMaterial.prototype.setCursor = function ( value ) {
+		let newValue;
 
-	let newValue;
+		if ( this.max !== null ) {
 
-	if ( this.max !== undefined ) {
+			newValue = Math.max( Math.min( value, this.max ), 0 ); // depthCursor
 
-		newValue = Math.max( Math.min( value, this.max ), 0 ); // depthCursor
+		} else {
 
-	} else {
+			newValue = Math.max( Math.min( value, this.halfRange ), -this.halfRange );
 
-		newValue = Math.max( Math.min( value, this.halfRange ), -this.halfRange );
+		}
+
+		this.uniforms.cursor.value = newValue;
+
+		return newValue; // return value clamped to material range
 
 	}
 
-	this.uniforms.cursor.value = newValue;
+	getCursor () {
 
-	return newValue; // return value clamped to material range
+		return this.uniforms.cursor.value;
 
-};
+	}
 
-LineMaterial.prototype.getCursor = function () {
-
-	return this.uniforms.cursor.value;
-
-};
+}
 
 export { LineMaterial };

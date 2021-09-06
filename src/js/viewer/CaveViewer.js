@@ -1398,7 +1398,7 @@ class CaveViewer extends EventDispatcher {
 						type: 'entrance',
 						displayName: entrance.name,
 						station: new Station( survey, station ),
-						filterConnected: true,
+						filterConnected: false,
 						handled: false,
 						mouseEvent: event
 					};
@@ -1412,6 +1412,7 @@ class CaveViewer extends EventDispatcher {
 						_selectStation( station );
 
 					}
+
 
 					return;
 

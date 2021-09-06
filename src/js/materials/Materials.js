@@ -26,8 +26,10 @@ function Materials ( viewer ) {
 
 	const glyphAtlasCache = new GlyphAtlasCache();
 	const cursorMaterials = new Set();
+	const lineMaterials = new Set();
 	let perSurveyMaterials = {};
 	let cursorHeight = 0;
+	let linewidth = 1;
 
 	const colourCache = new ColourCache();
 	const textureCache = new TextureCache();
@@ -62,6 +64,11 @@ function Materials ( viewer ) {
 	Object.defineProperty( this, 'cursorHeight', {
 		get: function () { return cursorHeight; },
 		set: updateCursors
+	} );
+
+	Object.defineProperty( this, 'linewidth', {
+		get: function () { console.log( 'ww' + linewidth); return linewidth; },
+		set: updateLinewidth
 	} );
 
 	const distanceTransparency = this.commonUniforms.distanceTransparency;
@@ -115,6 +122,12 @@ function Materials ( viewer ) {
 
 	}
 
+	function updateLinewidth( width ) {
+
+		lineMaterials.forEach( material => { material.linewidth = width; linewidth = width; } );
+
+	}
+
 	function updateDatumShifts( event ) {
 
 		self.commonDepthUniforms.datumShift.value = event.value;
@@ -132,6 +145,9 @@ function Materials ( viewer ) {
 			cursorMaterials.add( material );
 
 		}
+
+		lineMaterials.add( material );
+		material.linewidth = linewidth;
 
 		return material;
 
@@ -297,6 +313,7 @@ function Materials ( viewer ) {
 	this.flushCache = function () {
 
 		cursorMaterials.clear();
+		lineMaterials.clear();
 
 		for ( const name in perSurveyMaterials ) {
 

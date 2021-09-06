@@ -24,6 +24,7 @@
 			},
 			"eye_separation": "Eye Separation",
 			"vertical_scaling": "Vertical Scaling",
+			"linewidth": "Line width",
 			"autorotate": "Auto Rotate",
 			"rotation_speed": "Rotation Speed"
 		},

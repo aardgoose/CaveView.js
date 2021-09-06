@@ -20,7 +20,8 @@ WorkerPool.prototype.terminateActive = function () {
 	activeWorkers.forEach( worker => worker.terminate() );
 	activeWorkers.clear();
 
-	// FIXME clear all pending work for this pool
+	// remove any pending work for this pool
+	WorkerPool.pendingWork = WorkerPool.pendingWork.filter( p => p.pool != this );
 
 };
 
@@ -66,7 +67,7 @@ WorkerPool.prototype.putWorker = function ( worker ) {
 
 		const pending = pendingWork.shift();
 
-		// resubit to orginal pool
+		// resubmit to orginal pool
 
 		pending.pool.queueWork( pending.message, pending.callback );
 
@@ -115,46 +116,50 @@ WorkerPool.prototype.dispose = function () {
 
 };
 
-function WorkerPoolCache ( cfg ) {
+class WorkerPoolCache {
 
-	const pools = new Map();
+	constructor ( cfg ) {
 
-	this.getPool = function ( scriptFile ) {
+		const pools = new Map();
 
-		const script = cfg.value( 'home', '' ) + 'js/workers/' + scriptFile;
+		this.getPool = function ( scriptFile ) {
 
-		let pool = pools.get( script );
+			const script = cfg.value( 'home', '' ) + 'js/workers/' + scriptFile;
 
-		if ( pool === undefined ) {
+			let pool = pools.get( script );
 
-			// no existing pool
-			pool = new WorkerPool( script );
-			pools.set( script, pool );
+			if ( pool === undefined ) {
 
-		}
+				// no existing pool
+				pool = new WorkerPool( script );
+				pools.set( script, pool );
 
-		return pool;
+			}
 
-	};
+			return pool;
 
-	this.terminateActive = function () {
+		};
 
-		pools.forEach( pool => pool.terminateActive() );
+		this.terminateActive = function () {
 
-	};
+			pools.forEach( pool => pool.terminateActive() );
 
-	this.dispose = function () {
+		};
 
-		pools.forEach( pool => {
+		this.dispose = function () {
 
-			pool.terminateActive();
-			pool.dispose();
+			pools.forEach( pool => {
 
-		} );
+				pool.terminateActive();
+				pool.dispose();
 
-		pools.clear();
+			} );
 
-	};
+			pools.clear();
+
+		};
+
+	}
 
 }
 

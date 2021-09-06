@@ -40,7 +40,6 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 	const utf8Decoder = new TextDecoder( 'utf-8' );
 
 	// assumes little endian data ATM - FIXME
-
 	let source = dataStream;
 
 	const l = source.byteLength;
@@ -56,6 +55,10 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 	let parentNode;
 
 	// read file and parse chunk by chunk
+	const __coords = {
+		x: 0.0,
+		y: 0.0
+	};
 
 	while ( pos < l ) readChunkHdr();
 
@@ -243,10 +246,10 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 
 		if ( projection !== null ) {
 
-			const projectedCoords = projection.forward( {
-				x: coords.x,
-				y: coords.y
-			} );
+			__coords.x = coords.x;
+			__coords.y = coords.y;
+
+			const projectedCoords = projection.forward( __coords );
 
 			coords.x = projectedCoords.x;
 			coords.y = projectedCoords.y;
@@ -351,7 +354,6 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 		}
 
 		// omit zero length legs
-
 		if ( from.equals( to ) ) return;
 
 		if ( type === LEG_CAVE ) {

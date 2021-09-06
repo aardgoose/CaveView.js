@@ -5,6 +5,8 @@ import { pltHandler } from './pltHandler';
 import { FileLoader, EventDispatcher } from '../Three';
 import { Handler } from './Handler';
 
+const setProgressEvent = { type: 'progress', name: 'set', progress: 0 };
+
 class CaveLoader extends EventDispatcher {
 
 	constructor ( ctx, callback ) {
@@ -97,6 +99,13 @@ CaveLoader.prototype.loadFiles = function ( files ) {
 
 };
 
+CaveLoader.prototype.progress = function ( v ) {
+
+	setProgressEvent.progress = v;
+	this.dispatchEvent( setProgressEvent );
+
+};
+
 CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	const cfg = this.ctx.cfg;
@@ -152,7 +161,7 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 	function _progress ( event ) {
 
-		if ( event.total > 0 ) self.dispatchEvent( { type: 'progress', name: 'set', progress: Math.round( 100 * event.loaded / event.total ) } );
+		if ( event.total > 0 ) self.progress( Math.round( 75 * event.loaded / event.total ) );
 
 	}
 
@@ -227,7 +236,7 @@ CaveLoader.prototype.loadLocalFile = function ( file, section ) {
 
 	function _progress ( e ) {
 
-		if ( e.total > 0 ) self.dispatchEvent( { type: 'progress', name: 'set', progress: Math.round( 100 * e.loaded / e.total ) } );
+		if ( e.total > 0 ) self.progress( Math.round( 75 * e.loaded / e.total ) );
 
 	}
 
@@ -261,7 +270,9 @@ CaveLoader.prototype.callHandler = function () {
 
 	if ( moreFiles ) this.loadFile( files.pop() );
 
-	handler.parse( this.models, data, metadata, section ).then( models => {
+	const progress = this.progress.bind( this );
+
+	handler.parse( this.models, data, metadata, section, progress ).then( models => {
 
 		if ( ! moreFiles ) {
 

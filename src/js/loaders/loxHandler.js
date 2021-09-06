@@ -18,7 +18,7 @@ loxHandler.prototype.constructor = loxHandler;
 
 loxHandler.prototype.type = 'arraybuffer';
 
-loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
+loxHandler.prototype.parse = function ( cave, dataStream, metadata, section, progress ) {
 
 	modelOffset += 100000;
 
@@ -131,6 +131,8 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
 		}
 
 		for ( let i = 0; i < m_recCount; i++ ) doFunction();
+
+		progress( Math.round( 25 * pos / l ) + 75 );
 
 		pos += m_dataSize;
 

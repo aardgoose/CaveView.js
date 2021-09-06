@@ -17,11 +17,12 @@ Svx3dHandler.prototype.constructor = Svx3dHandler;
 
 Svx3dHandler.prototype.type = 'arraybuffer';
 
-Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) {
+Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section, progress ) {
 
 	cave.metadata = metadata;
 
 	this.section = section;
+	this.progress = progress;
 	this.groups = [];
 	this.cave = cave;
 	this.stationMap = new Map();
@@ -42,7 +43,7 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section ) 
 
 	this.pos = pos;
 
-	return cave.setCRS( sourceCRS ).then( this.parse2.bind( this ) );
+	return cave.setCRS( sourceCRS ).then( () => this.parse2() );
 
 	//return this.parse2();
 
@@ -537,7 +538,17 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	// common record iterator
 	// loop though data, handling record types as required.
 
+	const batch = Math.round( dataLength / 10 );
+	let c = 0;
+
 	while ( pos < dataLength ) {
+
+		if ( c++ == batch ) {
+
+			c = 0;
+			this.progress( Math.round( 25 * pos / dataLength ) + 75 );
+
+		}
 
 		if ( ! cmd[ data[ pos ] ]( data[ pos++ ] ) ) break;
 

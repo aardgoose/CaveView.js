@@ -26,6 +26,7 @@ function onload () {
 
 	let mode = 'rose';
 	let graph = null;
+	let lastEvent = null;
 
 	const radio = document.getElementById( 'radio' );
 
@@ -33,6 +34,10 @@ function onload () {
 
 		mode = e.target.value;
 		if ( graph ) graph.close();
+
+		if ( lastEvent ) {
+			onEntrance( lastEvent );
+		}
 
 	} );
 
@@ -50,9 +55,7 @@ function onload () {
 		"OFDCPT.3d",
 	];
 
-	viewer.addEventListener( 'entrance', function ( event ) {
-
-		if ( graph ) graph.close();
+	function onEntrance ( event ) {
 
 		switch ( mode ) {
 
@@ -71,7 +74,6 @@ function onload () {
 				graph = new SimpleGraph( 'graph' );
 				break;
 
-
 			default:
 
 				console.error( 'unexpected graph type' );
@@ -81,12 +83,22 @@ function onload () {
 
 		graph.show( event );
 
+	}
+
+	viewer.addEventListener( 'entrance', function ( event ) {
+
+		if ( graph ) graph.close();
+
+		onEntrance( event );
+
+		lastEvent = event;
 		event.handled = true;
 		event.filterConnected = true;
 
 	} );
 
 	viewer.addEventListener( 'clear', function ( event ) {
+		lastEvent = null;
 		if ( graph ) graph.close();
 	} );
 

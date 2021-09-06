@@ -3,44 +3,32 @@ import { Color } from '../Three';
 
 // define colors to share THREE.color objects
 
-function ColourCache () {
+class ColourCache {
 
-	const cache = [];
-
-	function createColors ( scale ) {
+	constructor () {
 
 		const cache = [];
 
-		for ( let i = 0, l = scale.length; i < l; i++ ) {
+		this.getColors = function ( name ) {
 
-			const c = scale[ i ];
+			let entry = cache[ name ];
 
-			cache[ i ] = new Color( c[ 0 ] / 255, c[ 1 ] / 255, c[ 2 ] / 255 );
+			if ( entry === undefined ) {
 
-		}
+				const scale = Colours[ name ];
 
-		return cache;
+				if ( scale === undefined ) console.error( 'unknown colour scale requested ' + name );
+
+				entry = scale.map( c => new Color( c[ 0 ] / 255, c[ 1 ] / 255, c[ 2 ] / 255 ) );
+				cache[ name ] = entry;
+
+			}
+
+			return entry;
+
+		};
 
 	}
-
-	this.getColors = function ( name ) {
-
-		let entry = cache[ name ];
-
-		if ( entry === undefined ) {
-
-			const scale = Colours[ name ];
-
-			if ( scale === undefined ) console.error( 'unknown colour scale requested ' + name );
-
-			entry = createColors( scale );
-			cache[ name ] = entry;
-
-		}
-
-		return entry;
-
-	};
 
 }
 

@@ -3,69 +3,59 @@ import { DataTexture, RGBFormat, UnsignedByteType, LinearFilter, TextureLoader }
 
 // define colors to share THREE.color objects
 
-function TextureCache () {
+class TextureCache {
 
-	const cache = [];
+	constructor () {
 
-	function createTexture ( scale ) {
+		const cache = [];
 
-		const l = scale.length;
-		const data = new Uint8Array( l * 3 );
+		function createTexture ( scale ) {
 
-		let offset = 0;
+			const data = Uint8Array.from( scale.flat() );
+			const texture = new DataTexture( data, scale.length, 1, RGBFormat, UnsignedByteType );
 
-		for ( let i = l; i; ) {
+			texture.minFilter = LinearFilter;
+			texture.magFilter = LinearFilter;
 
-			const c = scale[ --i ];
+			texture.needsUpdate = true;
 
-			data[ offset++ ] = c[ 0 ];
-			data[ offset++ ] = c[ 1 ];
-			data[ offset++ ] = c[ 2 ];
+			return texture;
 
 		}
 
-		const texture = new DataTexture( data, l, 1, RGBFormat, UnsignedByteType );
+		this.getTexture = function ( name ) {
 
-		texture.minFilter = LinearFilter;
-		texture.magFilter = LinearFilter;
+			let entry = cache[ name ];
 
-		texture.needsUpdate = true;
+			if ( entry === undefined ) {
 
-		return texture;
+				if ( name === 'disc' ) {
 
-	}
+					entry = new TextureLoader().load( "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg id='a' width='32mm' height='32mm' version='1.1' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' %3E%3Ccircle id='d' cx='16' cy='16' r='14' color='%23000000' fill='%23fff' fill-rule='evenodd' stroke-width='0'/%3E%3C/svg%3E%0A" );
 
-	this.getTexture = function ( name ) {
+				} else if ( name === 'disc-outlined' ) {
 
-		let entry = cache[ name ];
+					entry = new TextureLoader().load( "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg id='a' width='32mm' height='32mm' version='1.1' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' %3E%3Ccircle id='d' cx='16' cy='16' r='14' color='%23000000' fill='%23fff' fill-rule='evenodd' stroke-width='1' stroke='%23000'/%3E%3C/svg%3E%0A" );
 
-		if ( entry === undefined ) {
+				} else {
 
-			if ( name === 'disc' ) {
+					const scale = Colours[ name ];
 
-				entry = new TextureLoader().load( "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg id='a' width='32mm' height='32mm' version='1.1' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' %3E%3Ccircle id='d' cx='16' cy='16' r='14' color='%23000000' fill='%23fff' fill-rule='evenodd' stroke-width='0'/%3E%3C/svg%3E%0A" );
+					if ( scale === undefined ) console.error( 'unknown colour scale requested ' + name );
 
-			} else if ( name === 'disc-outlined' ) {
+					entry = createTexture( scale );
 
-				entry = new TextureLoader().load( "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg id='a' width='32mm' height='32mm' version='1.1' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' %3E%3Ccircle id='d' cx='16' cy='16' r='14' color='%23000000' fill='%23fff' fill-rule='evenodd' stroke-width='1' stroke='%23000'/%3E%3C/svg%3E%0A" );
+				}
 
-			} else {
-
-				const scale = Colours[ name ];
-
-				if ( scale === undefined ) console.error( 'unknown colour scale requested ' + name );
-
-				entry = createTexture( scale );
+				cache[ name ] = entry;
 
 			}
 
-			cache[ name ] = entry;
+			return entry;
 
-		}
+		};
 
-		return entry;
-
-	};
+	}
 
 }
 

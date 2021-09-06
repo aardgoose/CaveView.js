@@ -16,33 +16,33 @@ class Panel {
 
 	}
 
+	add ( element ) {
+
+		this.elements.push( element );
+
+		return element;
+
+	}
+
+	addDynamic ( element ) {
+
+		this.dynamic.push( element );
+
+		return element;
+
+	}
+
+	setVisibility ( visible ) {
+
+		const frame = this.page.frame;
+
+		frame.setControlsVisibility( this.elements, visible );
+		frame.setControlsVisibility( this.dynamic, visible );
+
+		if ( visible && this.onShow !== null ) this.onShow();
+
+	}
+
 }
-
-Panel.prototype.add = function ( element ) {
-
-	this.elements.push( element );
-
-	return element;
-
-};
-
-Panel.prototype.addDynamic = function ( element ) {
-
-	this.dynamic.push( element );
-
-	return element;
-
-};
-
-Panel.prototype.setVisibility = function ( visible ) {
-
-	const frame = this.page.frame;
-
-	frame.setControlsVisibility( this.elements, visible );
-	frame.setControlsVisibility( this.dynamic, visible );
-
-	if ( visible && this.onShow !== null ) this.onShow();
-
-};
 
 export { Panel };

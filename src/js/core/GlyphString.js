@@ -5,28 +5,33 @@ import {
 
 import { CommonAttributes } from './CommonAttributes';
 
-function GlyphStringGeometryCache ( material ) {
+class GlyphStringGeometryCache {
 
-	this.material = material;
-	this.cache = {};
+	constructor ( material ) {
 
-}
-
-GlyphStringGeometryCache.prototype.getGeometry = function ( text ) {
-
-	let entry = this.cache[ text ];
-
-	if ( entry === undefined ) {
-
-		entry = new GlyphStringGeometry( text, this.material.getAtlas() );
-		this.cache[ text ] = entry;
-		entry.isCached = true;
+		this.material = material;
+		this.cache = {};
 
 	}
 
-	return entry;
+	getGeometry ( text ) {
 
-};
+		let entry = this.cache[ text ];
+
+		if ( entry === undefined ) {
+
+			entry = new GlyphStringGeometry( text, this.material.getAtlas() );
+			this.cache[ text ] = entry;
+			entry.isCached = true;
+
+		}
+
+		return entry;
+
+	}
+
+}
+
 
 const __v0 = new Vector3();
 const __v1 = new Vector3();

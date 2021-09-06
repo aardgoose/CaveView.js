@@ -61,14 +61,13 @@ Tree.prototype.forEachChild = function ( func ) {
 
 };
 
-Tree.prototype.addById = function ( name, id, properties ) {
+Tree.prototype.addById = function ( name, id ) {
 
 	const root = this.root;
 	const node = new Tree( name, id, root, this );
 
-	if ( properties !== undefined ) Object.assign( node, properties );
-
 	root.maxId = Math.max( root.maxId, id );
+	this.root.idCache[ id ] = node;
 
 	return node;
 
@@ -86,6 +85,7 @@ Tree.prototype.addLeafById = function ( name, id, type, coords, comments ) {
 
 	root.maxId = Math.max( root.maxId, id );
 	this.root.idCache[ id ] = node;
+
 	return node;
 
 };

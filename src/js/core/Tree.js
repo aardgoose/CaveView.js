@@ -7,7 +7,7 @@ function Tree( name, id, root, parent ) { // root parameter only used internally
 		this.root = this;
 		this.parent = null;
 		this.pathCache = [];
-
+		this.idCache = [];
 	} else {
 
 		this.root = root;
@@ -85,7 +85,7 @@ Tree.prototype.addLeafById = function ( name, id, type, coords, comments ) {
 	if ( comments ) node.comments = comments;
 
 	root.maxId = Math.max( root.maxId, id );
-
+	this.root.idCache[ id ] = node;
 	return node;
 
 };
@@ -93,6 +93,9 @@ Tree.prototype.addLeafById = function ( name, id, type, coords, comments ) {
 Tree.prototype.findById = function ( id ) {
 
 	if ( this.id === id ) return this;
+
+	const node = this.root.idCache[ id ];
+	if ( node !== undefined ) return node;
 
 	for ( let i = 0, l = this.children.length; i < l; i++ ) {
 

@@ -36,7 +36,7 @@ class SurveyBox extends LineSegments2 {
 		positions.copyVector3sArray( vertices );
 		geometry.setPositions( positions.array );
 
-		super( geometry, ctx.materials.getLine2Material( 'basic' ) );
+		super( geometry, ctx.materials.getLine2Material() );
 
 		this.material.vertexColors = false;
 		this.material.color = new Color( color );

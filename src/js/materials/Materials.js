@@ -9,7 +9,8 @@ import { GlyphMaterial } from './GlyphMaterial';
 import { HeightMaterial } from './HeightMaterial';
 import { HypsometricMaterial } from './HypsometricMaterial';
 import { MissingMaterial } from './MissingMaterial';
-import { LineMaterial } from './LineMaterial';
+import { SurveyLineMaterial } from './SurveyLineMaterial';
+import { Line2Material } from './Line2Material';
 import { ColourCache } from '../core/ColourCache';
 import { TextureCache } from '../core/TextureCache';
 import { GlyphAtlasCache } from './GlyphAtlas';
@@ -134,10 +135,19 @@ function Materials ( viewer ) {
 
 	}
 
-	this.getLine2Material = function ( mode = '', dashed = false ) {
+	this.getLine2Material = function ( dashed = false ) {
 
-		const func = function () { return new LineMaterial( ctx, mode, dashed ); };
-		const material = getSurveyCacheMaterial( 'line2-' + mode + dashed ? '-' : '', func, true );
+		const func = function () { return new Line2Material( ctx, dashed ); };
+		const material = getCacheMaterial( 'line2' + dashed ? '-' : '', func, true );
+
+		return material;
+
+	};
+
+	this.getSurveyLineMaterial = function ( mode = '', dashed = false ) {
+
+		const func = function () { return new SurveyLineMaterial( ctx, mode, dashed ); };
+		const material = getSurveyCacheMaterial( 'survey-line-' + mode + dashed ? '-' : '', func, true );
 
 		if ( mode === 'cursor' || mode === 'depth-cursor' ) {
 

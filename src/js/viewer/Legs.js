@@ -358,7 +358,7 @@ class FatLegs extends LineSegments2 {
 
 		const geometry = new LineSegmentsGeometry();
 
-		super( geometry, ctx.materials.getLine2Material( 'basic' ) );
+		super( geometry, ctx.materials.getSurveyLineMaterial( 'basic' ) );
 
 		this.scale.set( 1, 1, 1 );
 		this.type = 'CV.FatLegs';
@@ -389,7 +389,7 @@ FatLegs.prototype.updateColors = function () {
 
 FatLegs.prototype.updateMaterial = function ( ctx, mode, dashed ) {
 
-	this.material = ctx.materials.getLine2Material( mode, dashed );
+	this.material = ctx.materials.getSurveyLineMaterial( mode, dashed );
 	this.material.needsUpdate = true;
 
 };

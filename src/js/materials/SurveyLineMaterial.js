@@ -3,7 +3,7 @@ import { Line2Material } from './Line2Material';
 
 // subclass Line2Material to provide custom defines and uniforms
 
-class LineMaterial extends Line2Material {
+class SurveyLineMaterial extends Line2Material {
 
 	constructor ( ctx, mode = 'height', dashed ) {
 
@@ -152,4 +152,4 @@ class LineMaterial extends Line2Material {
 
 }
 
-export { LineMaterial };
+export { SurveyLineMaterial };

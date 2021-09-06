@@ -14,6 +14,7 @@ const defaultView = {
 	shadingMode: SHADING_HEIGHT,
 	surfaceShading: SHADING_HEIGHT,
 	duplicateShading: SHADING_DUPLICATE,
+	linewidth: 0,
 	terrainShading: SHADING_RELIEF,
 	terrainDirectionalLighting: true,
 	terrainOpacity: 0.5,

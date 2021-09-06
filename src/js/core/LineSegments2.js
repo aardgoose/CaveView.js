@@ -9,14 +9,14 @@ import {
 	Vector4
 } from '../three';
 import { LineSegmentsGeometry } from './LineSegmentsGeometry.js';
-import { LineMaterial } from '../materials/LineMaterial.js';
+import { Line2Material } from '../materials/Line2Material.js';
 
 class LineSegments2 extends Mesh {
 
 	constructor ( geometry, material ) {
 
 		if ( geometry === undefined ) geometry = new LineSegmentsGeometry();
-		if ( material === undefined ) material = new LineMaterial( { color: Math.random() * 0xffffff } );
+		if ( material === undefined ) material = new Line2Material( { color: Math.random() * 0xffffff } );
 
 		super( geometry, material );
 

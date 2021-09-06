@@ -8,7 +8,7 @@ class Grid extends LineSegments2 {
 		const geometry = new LineSegmentsGeometry();
 		const survey = ctx.survey;
 
-		super( geometry, ctx.materials.getLine2Material( 'basivc' ) );
+		super( geometry, ctx.materials.getLine2Material() );
 
 		this.scale.set( 1, 1, 1 );
 		this.type = 'CV.Grid';

@@ -59,7 +59,7 @@ Handler.prototype.setCRS = function ( sourceCRS ) {
 
 							return response.text();
 
-						} ).then(  text => {
+						} ).then( text => {
 
 							this._setCRS( text );
 

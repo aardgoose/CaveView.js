@@ -220,7 +220,7 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 
 	case SHADING_OVERLAY:
 
-		this.setOverlay( renderCallback, materials.getContourMaterial() );
+		this.setOverlay( renderCallback );
 		hideAttribution = false;
 
 		break;

@@ -33,7 +33,7 @@ class LoxTile extends Mesh {
 
 LoxTile.prototype.isTile = true;
 
-LoxTile.prototype.loadOverlay = function ( ctx, overlayLoadedCallback, material ) {
+LoxTile.prototype.loadOverlay = function ( ctx, overlayLoadedCallback ) {
 
 	if ( this.bitmap === null ) return;
 
@@ -67,11 +67,7 @@ LoxTile.prototype.loadOverlay = function ( ctx, overlayLoadedCallback, material 
 		bitmap.data = null;
 		bitmap.image = null;
 
-		self.material = [ self.overlayMaterial, material ];
-//		self.material = [ self.overlayMaterial ];
-
-		self.geometry.addGroup( 0, Infinity, 0 );
-		self.geometry.addGroup( 0, Infinity, 1 );
+		self.material = self.overlayMaterial;
 
 		overlayLoadedCallback();
 

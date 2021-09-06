@@ -68,7 +68,7 @@ function Materials ( viewer ) {
 	} );
 
 	Object.defineProperty( this, 'linewidth', {
-		get: function () { console.log( 'ww' + linewidth); return linewidth; },
+		get: function () { return linewidth; },
 		set: updateLinewidth
 	} );
 

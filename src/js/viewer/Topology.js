@@ -1,4 +1,3 @@
-
 class Topology {
 
 	constructor ( stations, legsObject ) {
@@ -143,7 +142,7 @@ class Topology {
 
 				if ( nextVertex.shortestPath > currentDistance + nextLength ) {
 
-					if ( nextVertex.shortestPath === Infinity ) legCallback( station, nextStation, nextLength );
+					if ( nextVertex.shortestPath === Infinity ) legCallback( station, nextStation );
 
 					nextVertex.shortestPath = currentDistance + nextLength;
 					queue.push( nextStation );
@@ -234,6 +233,17 @@ class Topology {
 		} );
 
 		return ids;
+
+	}
+
+	getLegStations ( vertexIndex ) {
+
+		const legs = this.legsObject.legVertices;
+
+		const start = this.stations.getStation( legs[ vertexIndex ] );
+		const end = this.stations.getStation( legs[ vertexIndex + 1 ] );
+
+		return { start: start, end: end };
 
 	}
 

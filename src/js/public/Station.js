@@ -57,8 +57,8 @@ class Station {
 
 		const survey = this.survey;
 
-		survey.topology.shortestPathSearch( this.station, ( s1, s2, l ) =>
-			callback( new Leg( new Station( survey, s1 ), new Station( survey, s2 ), l ) )
+		survey.topology.shortestPathSearch( this.station, ( s1, s2 ) =>
+			callback( new Leg( new Station( survey, s1 ), new Station( survey, s2 ) ) )
 		);
 
 	}

@@ -1,13 +1,11 @@
 class Leg {
 
-	constructor ( s1, s2, length ) {
+	constructor ( s1, s2 ) {
 
 		const s1Start = ( s1.shortestPathDistance() < s2.shortestPathDistance() );
 
 		this.startStation = s1Start ? s1 : s2;
 		this.endStation = s1Start ? s2 : s1;
-
-		this.legLength = length;
 
 	}
 
@@ -24,7 +22,10 @@ class Leg {
 
 	length () {
 
-		return this.legLength;
+		const start = this.startStation.coordinates();
+		const end = this.startStation.coordinates();
+
+		return start.distanceTo( end );
 
 	}
 

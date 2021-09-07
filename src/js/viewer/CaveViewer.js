@@ -143,6 +143,7 @@ class CaveViewer extends EventDispatcher {
 		const __v = new Vector3();
 		const self = this;
 
+		let mouseUpFunction = null;
 		let savedView = null;
 		let mouseOver = false;
 
@@ -1312,6 +1313,14 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
+		function setPopup ( station ) {
+
+			closePopup();
+
+			if ( station.isStation() ) showStationPopup( station );
+
+		}
+
 		function closePopup () {
 
 			if ( popup === null ) return;
@@ -1321,23 +1330,15 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		function mouseUpLeft () {
+		function mouseUp () {
 
-			container.removeEventListener( 'mouseup', mouseUpLeft );
+			container.removeEventListener( 'mouseup', mouseUp );
 
-			closePopup();
+			if ( mouseUpFunction ) mouseUpFunction();
+
 			renderView();
 
 			self.dispatchEvent( mouseUpEvent );
-
-		}
-
-
-		function setPopup ( station ) {
-
-			closePopup();
-
-			if ( station.isStation() ) showStationPopup( station );
 
 		}
 
@@ -1395,27 +1396,20 @@ class CaveViewer extends EventDispatcher {
 				};
 
 				_setHighlight();
+				renderView();
+
+				mouseUpFunction = _setHighlight;
 
 				self.dispatchEvent( e );
 
 				legIndex = null;
-				container.addEventListener( 'mouseup', _mouseUp );
-
-			}
-
-			function _mouseUp () {
-
-				container.removeEventListener( 'mouseup', _mouseUp );
-				_setHighlight();
 
 			}
 
 			function _setHighlight () {
 
 				survey.topology.legsObject.setHighlightLeg( legIndex );
-
 				setShadingMode( survey.caveShading );
-				renderView();
 
 			}
 
@@ -1427,6 +1421,8 @@ class CaveViewer extends EventDispatcher {
 
 			const scale = __v.set( container.clientWidth / 2, container.clientHeight / 2, 0 );
 			const mouse = cameraManager.getMouse( event.clientX, event.clientY );
+
+			container.addEventListener( 'mouseup', mouseUp );
 
 			if ( self.entrances ) {
 
@@ -1542,7 +1538,6 @@ class CaveViewer extends EventDispatcher {
 
 				}
 
-
 			}
 
 			function _setStationPOI( station ) {
@@ -1558,7 +1553,7 @@ class CaveViewer extends EventDispatcher {
 				cameraMove.start( true );
 				event.stopPropagation();
 
-				container.addEventListener( 'mouseup', _mouseUpRight );
+				mouseUpFunction = _mouseUpRight;
 
 			}
 
@@ -1586,8 +1581,8 @@ class CaveViewer extends EventDispatcher {
 			function _showStationPopup ( station ) {
 
 				showStationPopup( station );
+				mouseUpFunction = closePopup;
 
-				container.addEventListener( 'mouseup', mouseUpLeft );
 				cameraMove.preparePoint( survey.getWorldPosition( station.p.clone() ) );
 
 				return true;
@@ -1606,15 +1601,9 @@ class CaveViewer extends EventDispatcher {
 
 			}
 
-			function _mouseUpRight ( /* event */ ) {
-
-				container.removeEventListener( 'mouseup', _mouseUpRight );
+			function _mouseUpRight () {
 
 				if ( ! trackLocation ) controls.enabled = true;
-
-				renderView();
-
-				self.dispatchEvent( mouseUpEvent );
 
 			}
 
@@ -1792,7 +1781,7 @@ class CaveViewer extends EventDispatcher {
 		this.showImagePopup = function ( event, imageUrl ) {
 
 			showStationImagePopup( event.node, imageUrl );
-			container.addEventListener( 'mouseup', mouseUpLeft );
+			mouseUpFunction = closePopup;
 
 		};
 

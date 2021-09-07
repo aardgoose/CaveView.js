@@ -411,6 +411,7 @@ div.cv-frame::-webkit-scrollbar-button:end {
 }
 .cv-frame div.page input[type="color"] {
   float: right;
+  height: 20px;
 }
 .cv-frame dt {
   clear: both;

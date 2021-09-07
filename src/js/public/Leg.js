@@ -23,7 +23,7 @@ class Leg {
 	length () {
 
 		const start = this.startStation.coordinates();
-		const end = this.startStation.coordinates();
+		const end = this.endStation.coordinates();
 
 		return start.distanceTo( end );
 

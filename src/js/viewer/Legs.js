@@ -14,6 +14,7 @@ class Legs extends Group {
 		this.legVertices = [];
 		this.colors = [];
 		this.type = 'Legs';
+		this.highlightLeg = null;
 
 	}
 
@@ -159,6 +160,12 @@ Legs.prototype.cutRuns = function ( selection ) {
 
 };
 
+Legs.prototype.setHighlightLeg = function( l ) {
+
+	this.highlightLeg = l;
+
+};
+
 Legs.prototype.setShading = function ( idSet, colourSegment, mode, dashed, filterConnected ) {
 
 	this.legs.updateMaterial( this.ctx, mode, dashed );
@@ -168,6 +175,7 @@ Legs.prototype.setShading = function ( idSet, colourSegment, mode, dashed, filte
 
 	const vertices = this.legVertices;
 	const colors = this.colors.array;
+	const highlightLeg = this.highlightLeg === null ? null : this.highlightLeg * 2;
 
 	if ( idSet.size > 0 && legRuns ) {
 
@@ -200,12 +208,15 @@ Legs.prototype.setShading = function ( idSet, colourSegment, mode, dashed, filte
 		}
 
 	} else {
-
+console.log( highlightLeg );
 		for ( let v1 = 0, l = vertices.length; v1 < l; v1 += 2 ) {
 
 			const v2 = v1 + 1;
 
-			if ( filterConnected && ( vertices[ v1 ].shortestPath === Infinity || vertices[ v2 ].shortestPath === Infinity ) ) {
+			if (
+				( highlightLeg !== null && v1 !== highlightLeg ) ||
+				( filterConnected && ( vertices[ v1 ].shortestPath === Infinity || vertices[ v2 ].shortestPath === Infinity ) )
+			) {
 
 				unselectedColor.toArray( colors, v1 * 3 );
 				unselectedColor.toArray( colors, v2 * 3 );

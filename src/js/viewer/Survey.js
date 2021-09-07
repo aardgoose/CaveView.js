@@ -104,7 +104,7 @@ class Survey extends Object3D {
 
 		this.loadWarnings( cave.messages );
 
-		this.legTargets = [ this.features.get( LEG_CAVE ) ];
+		this.legTargets = [ this.features.get( LEG_CAVE ).legs ];
 
 		this.loadEntrances();
 

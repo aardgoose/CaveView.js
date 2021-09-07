@@ -1,9 +1,6 @@
 
 export const VERSION = '2.3.0-test';
 
-export const MATERIAL_LINE       = 1;
-export const MATERIAL_SURFACE    = 2;
-
 export const CAMERA_NONE         = 0;
 export const CAMERA_ORTHOGRAPHIC = 1;
 export const CAMERA_PERSPECTIVE  = 2;

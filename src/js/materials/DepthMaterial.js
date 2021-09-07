@@ -1,11 +1,9 @@
 import { Shaders } from '../shaders/Shaders';
-import { MATERIAL_LINE } from '../core/constants';
-
 import { ShaderMaterial, Vector3 } from '../Three';
 
 class DepthMaterial extends ShaderMaterial {
 
-	constructor ( ctx, type ) {
+	constructor ( ctx ) {
 
 		const survey = ctx.survey;
 		const surveyLimits = survey.modelLimits;
@@ -31,8 +29,7 @@ class DepthMaterial extends ShaderMaterial {
 				depthMap:   { value: terrain.depthTexture },
 			}, ctx.materials.commonUniforms, ctx.materials.commonDepthUniforms ),
 			defines: {
-				USE_COLOR: true,
-				SURFACE: ( type !== MATERIAL_LINE )
+				USE_COLOR: true
 			}
 		} );
 

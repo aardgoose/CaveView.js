@@ -163,10 +163,10 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getHeightMaterial = function ( type ) {
+	this.getHeightMaterial = function () {
 
-		const func = function () { return new HeightMaterial( ctx, type ); };
-		return getSurveyCacheMaterial( 'height' + type, func, true );
+		const func = function () { return new HeightMaterial( ctx ); };
+		return getSurveyCacheMaterial( 'height', func, true );
 
 	};
 
@@ -183,17 +183,17 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getDepthMaterial = function ( type ) {
+	this.getDepthMaterial = function () {
 
-		const func = function () { return new DepthMaterial( ctx, type ); };
-		return getSurveyCacheMaterial( 'depth' + type, func, true );
+		const func = function () { return new DepthMaterial( ctx ); };
+		return getSurveyCacheMaterial( 'depth', func, true );
 
 	};
 
-	this.getCursorMaterial = function ( type ) {
+	this.getCursorMaterial = function () {
 
-		const func = function () { return new CursorMaterial( ctx, type ); };
-		const material = getSurveyCacheMaterial( 'cursor' + type, func, true );
+		const func = function () { return new CursorMaterial( ctx ); };
+		const material = getSurveyCacheMaterial( 'cursor', func, true );
 
 		// set active cursor material for updating
 		cursorMaterials.add( material );
@@ -202,10 +202,10 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getDepthCursorMaterial = function ( type ) {
+	this.getDepthCursorMaterial = function () {
 
-		const func = function () { return new DepthCursorMaterial( ctx, type ); };
-		const material = getSurveyCacheMaterial( 'depthCursor' + type, func, true );
+		const func = function () { return new DepthCursorMaterial( ctx ); };
+		const material = getSurveyCacheMaterial( 'depthCursor', func, true );
 
 		// set active cursor material for updating
 		cursorMaterials.add( material );

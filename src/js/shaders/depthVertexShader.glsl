@@ -27,19 +27,11 @@ varying float fogDepth;
 
 void main() {
 
-#ifdef SURFACE
-
 	vec3 sNormal = normalMatrix * normal;
 
 	float dotNL = dot( normalize( sNormal ), uLight );
 
 	vColor = saturate( dotNL ) * color + vec3( 0.3, 0.3, 0.3 );
-
-#else
-
-	vColor = color;
-
-#endif
 
 	// get terrain height in model space
 

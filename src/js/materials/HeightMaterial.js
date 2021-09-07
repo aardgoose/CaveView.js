@@ -1,11 +1,9 @@
-import { MATERIAL_LINE } from '../core/constants';
 import { Shaders } from '../shaders/Shaders';
-
 import { ShaderMaterial } from '../Three';
 
 class HeightMaterial extends ShaderMaterial {
 
-	constructor ( ctx, type ) {
+	constructor ( ctx ) {
 
 		const survey = ctx.survey;
 		const limits = survey.modelLimits;
@@ -26,8 +24,7 @@ class HeightMaterial extends ShaderMaterial {
 				cmap:   { value: textureCache.getTexture( gradient ) },
 			}, ctx.materials.commonUniforms ),
 			defines: {
-				USE_COLOR: true,
-				SURFACE: ( type !== MATERIAL_LINE )
+				USE_COLOR: true
 			}
 		} );
 

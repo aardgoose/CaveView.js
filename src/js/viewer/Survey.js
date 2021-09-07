@@ -3,7 +3,7 @@ import {
 	FEATURE_ENTRANCES, FEATURE_BOX, FEATURE_TRACES, FEATURE_GRID,
 	FEATURE_STATIONS, SURVEY_WARNINGS, STATION_ENTRANCE,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LEG_DUPLICATE,
-	LABEL_STATION, LABEL_STATION_COMMENT, MATERIAL_SURFACE,
+	LABEL_STATION, LABEL_STATION_COMMENT,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
 	SHADING_SURFACE, CLUSTER_MARKERS, SHADING_DUPLICATE
@@ -57,7 +57,7 @@ class Survey extends Object3D {
 		// objects targeted by raycasters and objects with variable LOD
 
 		this.pointTargets = [];
-		this.legTargets = [];
+		this.legsTarget = null;
 		this.entranceTargets = [];
 
 		this.type = 'CV.Survey';
@@ -104,7 +104,7 @@ class Survey extends Object3D {
 
 		this.loadWarnings( cave.messages );
 
-		this.legTargets = [ this.features.get( LEG_CAVE ).legs ];
+		this.legsTarget = this.features.get( LEG_CAVE );
 
 		this.loadEntrances();
 
@@ -970,13 +970,13 @@ Survey.prototype.setShadingMode = function ( mode, filterConnected ) {
 
 	case SHADING_HEIGHT:
 
-		material = materials.getHeightMaterial( MATERIAL_SURFACE );
+		material = materials.getHeightMaterial();
 
 		break;
 
 	case SHADING_CURSOR:
 
-		material = materials.getCursorMaterial( MATERIAL_SURFACE );
+		material = materials.getCursorMaterial();
 
 		break;
 
@@ -990,7 +990,7 @@ Survey.prototype.setShadingMode = function ( mode, filterConnected ) {
 
 		if ( this.terrain === null ) return false;
 
-		material = materials.getDepthMaterial( MATERIAL_SURFACE );
+		material = materials.getDepthMaterial();
 
 		if ( ! material ) return false;
 
@@ -1000,7 +1000,7 @@ Survey.prototype.setShadingMode = function ( mode, filterConnected ) {
 
 		if ( this.terrain === null ) return false;
 
-		material = materials.getDepthCursorMaterial( MATERIAL_SURFACE );
+		material = materials.getDepthCursorMaterial();
 
 		if ( ! material ) return false;
 

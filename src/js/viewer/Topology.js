@@ -236,17 +236,6 @@ class Topology {
 
 	}
 
-	getLegStations ( vertexIndex ) {
-
-		const legs = this.legsObject.legVertices;
-
-		const start = this.stations.getStation( legs[ vertexIndex ] );
-		const end = this.stations.getStation( legs[ vertexIndex + 1 ] );
-
-		return { start: start, end: end };
-
-	}
-
 }
 
 export { Topology };

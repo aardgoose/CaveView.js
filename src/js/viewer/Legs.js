@@ -249,6 +249,18 @@ class Legs extends LineSegments2 {
 
 	}
 
+	getLegStations ( vertexIndex ) {
+
+		const stations = this.ctx.survey.stations;
+		const vertices = this.legVertices;
+
+		const start = stations.getStation( vertices[ vertexIndex ] );
+		const end = stations.getStation( vertices[ vertexIndex + 1 ] );
+
+		return { start: start, end: end };
+
+	}
+
 }
 
 export { Legs };

@@ -1380,13 +1380,15 @@ class CaveViewer extends EventDispatcher {
 
 		function checkLegIntersects( event ) {
 
-			const legIntersects = raycaster.intersectObject( survey.legsTarget, false );
+			const legs = survey.legsTarget;
+
+			const legIntersects = raycaster.intersectObject( legs, false );
 			let legIndex = null;
 
 			if  ( legIntersects.length > 0 ) {
 
 				legIndex = legIntersects[ 0 ].faceIndex;
-				const leg = survey.topology.getLegStations( legIndex );
+				const leg = legs.getLegStations( legIndex );
 
 				const e = {
 					type: 'leg',

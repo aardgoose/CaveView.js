@@ -243,7 +243,7 @@ class LineSegments2 extends Mesh {
 
 			const zPos = MathUtils.lerp( _start4.z, _end4.z, param );
 			const isInClipSpace = zPos >= - 1 && zPos <= 1;
-			const isInside = _ssOrigin3.distanceTo( _closestPoint ) < lineWidth * 0.5;
+			const isInside = _ssOrigin3.distanceTo( _closestPoint ) < lineWidth * 4.5;
 
 			if ( isInClipSpace && isInside ) {
 

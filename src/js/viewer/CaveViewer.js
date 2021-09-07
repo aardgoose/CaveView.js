@@ -36,6 +36,7 @@ import {
 	WebGLRenderTarget,
 	LinearFilter, NearestFilter, RGBAFormat
 } from '../Three';
+import { Leg } from '../public/Leg';
 
 class CaveViewer extends EventDispatcher {
 
@@ -1376,15 +1377,56 @@ class CaveViewer extends EventDispatcher {
 
 		};
 
+		function checkLegIntersects( event ) {
+
+			const legIntersects = raycaster.intersectObjects( survey.legTargets, false );
+			let legIndex = null;
+
+			if  ( legIntersects.length > 0 ) {
+
+				legIndex = legIntersects[ 0 ].faceIndex;
+				const leg = survey.topology.getLegStations( legIndex );
+
+				const e = {
+					type: 'leg',
+					leg: new Leg( new Station( survey, leg.start ), new Station( survey, leg.start ) ),
+					handled: false,
+					mouseEvent: event
+				};
+
+				_setHighlight();
+
+				self.dispatchEvent( e );
+
+				legIndex = null;
+				container.addEventListener( 'mouseup', _mouseUp );
+
+			}
+
+			function _mouseUp () {
+
+				container.removeEventListener( 'mouseup', _mouseUp );
+				_setHighlight();
+
+			}
+
+			function _setHighlight () {
+
+				survey.topology.legsObject.setHighlightLeg( legIndex );
+
+				setShadingMode( survey.caveShading );
+				renderView();
+
+			}
+
+		}
+
 		function onMouseDown ( event ) {
 
 			if ( event.target !== renderer.domElement ) return;
 
 			const scale = __v.set( container.clientWidth / 2, container.clientHeight / 2, 0 );
 			const mouse = cameraManager.getMouse( event.clientX, event.clientY );
-
-			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
-			const intersects = raycaster.intersectObjects( mouseTargets, false );
 
 			if ( self.entrances ) {
 
@@ -1413,14 +1455,22 @@ class CaveViewer extends EventDispatcher {
 
 					}
 
-
 					return;
 
 				}
 
 			}
 
-			if ( intersects.length < 1 ) return;
+			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
+
+			const intersects = raycaster.intersectObjects( mouseTargets, false );
+
+			if ( intersects.length === 0 ) {
+
+				checkLegIntersects( event );
+				return;
+
+			}
 
 			switch ( mouseMode ) {
 
@@ -1469,7 +1519,7 @@ class CaveViewer extends EventDispatcher {
 				survey.selectStation( station );
 
 				const selectEvent = {
-					type: 'select',
+					type: 'station',
 					node: new Station( survey, station),
 					handled: false,
 					mouseEvent: event,

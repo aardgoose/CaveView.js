@@ -28,7 +28,6 @@ import { Grid } from './Grid';
 
 import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
 import proj4 from 'proj4';
-import { Float32BufferAttribute } from 'three';
 
 const __set = new Set();
 const white = new Color( 0xffffff );
@@ -58,7 +57,6 @@ class Survey extends Object3D {
 		// objects targeted by raycasters and objects with variable LOD
 
 		this.pointTargets = [];
-		this.legsTarget = null;
 		this.entranceTargets = [];
 
 		this.type = 'CV.Survey';
@@ -104,8 +102,6 @@ class Survey extends Object3D {
 		this.loadCave( survey );
 
 		this.loadWarnings( cave.messages );
-
-		this.legsTarget = this.features.get( LEG_CAVE );
 
 		this.loadEntrances();
 
@@ -818,7 +814,6 @@ Survey.prototype.cutSection = function ( node ) {
 	// clear target lists
 
 	this.pointTargets = [];
-	this.legTargets   = [];
 	this.entranceTargets = [];
 
 	this.terrain = null;
@@ -838,7 +833,6 @@ Survey.prototype.cutSection = function ( node ) {
 		// dispose of all geometry of this object and descendants
 
 		if ( obj.geometry ) obj.geometry.dispose();
-
 		this.removeFeature( obj );
 
 	} );
@@ -866,6 +860,7 @@ Survey.prototype.cutSection = function ( node ) {
 
 	this.featureBox = null;
 	this.setFeatureBox();
+	this.addFeature( new Grid( this.ctx ), FEATURE_GRID );
 
 	this.worldBoundingBox = null;
 
@@ -874,7 +869,8 @@ Survey.prototype.cutSection = function ( node ) {
 	// this.loadWarnings();
 	// this.loadDyeTraces();
 
-	this.topology = new Topology( this.stations, this.getFeature( LEG_CAVE ) );
+	const legs = this.getFeature( LEG_CAVE );
+	this.topology = new Topology( this.stations, legs );
 
 	this.cutInProgress = true;
 
@@ -895,6 +891,7 @@ Survey.prototype.cutSection = function ( node ) {
 		case 'CV.Stations':
 		case 'CV.StationLabels':
 		case 'CV.ClusterMarker':
+		case 'CV.Grid':
 
 			cutList.push( obj );
 

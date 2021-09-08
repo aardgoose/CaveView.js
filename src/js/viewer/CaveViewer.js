@@ -26,6 +26,7 @@ import { WorkerPoolCache } from '../core/WorkerPool';
 import { defaultView, dynamicView, ViewState } from './ViewState';
 import { OrbitControls } from '../ui/OrbitControls';
 import { LocationControls } from '../ui/LocationControls';
+import { ExportGltf } from './ExportGltf';
 
 import {
 	EventDispatcher,
@@ -1770,7 +1771,7 @@ class CaveViewer extends EventDispatcher {
 
 		this.getGLTFExport = function ( selection, options, callback ) {
 
-			survey.gltfExport( selection, options, callback );
+			new ExportGltf( ctx, survey, selection, options, callback );
 
 		};
 

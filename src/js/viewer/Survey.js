@@ -28,6 +28,7 @@ import { Grid } from './Grid';
 
 import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
 import proj4 from 'proj4';
+import { Float32BufferAttribute } from 'three';
 
 const __set = new Set();
 const white = new Color( 0xffffff );
@@ -1350,78 +1351,6 @@ Survey.prototype.setLegColourByInclination = function ( mesh, filterConnected ) 
 		colour.toArray( colors, v2 * 3 );
 
 	}
-
-};
-
-Survey.prototype.gltfExport = function ( selection, options, callback ) {
-
-	const items = [];
-
-	if ( selection.walls ) {
-
-		items.push( this.getMesh( FACE_WALLS ) );
-
-	}
-
-	if ( selection.scraps ) {
-
-		items.push( this.getMesh( FACE_SCRAPS ) );
-
-	}
-
-	if ( selection.legs ) {
-
-		const legs = this.getFeature( LEG_CAVE );
-
-		const geometry = legs.geometry;
-
-		items.push( {
-			type: 'lines',
-			index: geometry.index,
-			position: geometry.getAttribute( 'position' ),
-			modelLimits: this.modelLimits
-		} );
-
-	}
-
-	if ( items.length === 0 ) return;
-
-	const worker = new Worker( this.ctx.cfg.value( 'home', '' ) + 'js/workers/gltfWorker.js' );
-
-	worker.addEventListener( 'message', function ( event ) {
-
-		let mimeType;
-
-		if ( options.binary ) {
-
-			mimeType = 'application/octet-stream';
-
-		} else {
-
-			mimeType = 'application/gltf+json';
-
-		}
-
-		worker.terminate();
-		callback( new Blob( [ event.data.gltf ], { type : mimeType } ), options.binary );
-
-	} );
-
-	worker.postMessage( { items: items, options: options } );
-
-};
-
-Survey.prototype.getMesh = function ( tag ) {
-
-	const mesh = this.getFeature( tag );
-	const geometry = mesh.geometry;
-
-	return {
-		type: 'walls',
-		index: geometry.index,
-		position: geometry.getAttribute( 'position' ),
-		modelLimits: this.modelLimits
-	};
 
 };
 

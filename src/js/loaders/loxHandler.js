@@ -410,31 +410,37 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section, pro
 
 		if ( sectionId !== 0 && m_surveyId !== sectionId ) return;
 
+		const vDV = new DataView( source, dataStart + pointsPtr.position );
+
 		for ( i = 0; i < m_numPoints; i++ ) {
 
-			const offset = dataStart + pointsPtr.position + i * 24; // 24 = 3 * sizeof( double )
-			const f = new DataView( source, offset );
+			const offset = i * 24; // 24 = 3 * sizeof( double )
 
 			scrap.vertices.push( new Vector3(
-				f.getFloat64( 0,  true ),
-				f.getFloat64( 8,  true ),
-				f.getFloat64( 16, true )
+				vDV.getFloat64( offset,      true ),
+				vDV.getFloat64( offset + 8,  true ),
+				vDV.getFloat64( offset + 16, true )
 			) );
 
 		}
 
 		// read faces from out of line data area
+		const fDV = new DataView( source, dataStart + facesPtr.position );
 
 		for ( i = 0; i < m_num3Angles; i++ ) {
 
-			const offset = dataStart + facesPtr.position + i * 12; // 12 = 3 * sizeof( uint32 )
-			const f = new DataView( source, offset );
+			const offset = i * 12; // 12 = 3 * sizeof( uint32 )
 
 			const face = [
-				f.getUint32( 0, true ),
-				f.getUint32( 4, true ),
-				f.getUint32( 8, true )
+				fDV.getUint32( offset,     true ),
+				fDV.getUint32( offset + 4, true ),
+				fDV.getUint32( offset + 8, true )
 			];
+
+			if ( face[ 0 ] == face[ 1 ] || face[ 0 ] == face[ 2 ] || face[ 1 ] == face[ 2 ] ) {
+				// some .lox files contain degenerate triangles
+				continue;
+			}
 
 			// check for face winding order == orientation
 

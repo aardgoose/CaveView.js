@@ -12,7 +12,6 @@ class Entrances extends ClusterMarkers {
 		const surveyTree = survey.surveyTree;
 		const entrances = survey.metadata.entrances;
 		const vertices = [];
-		const stations = [];
 
 		const geometry = new BufferGeometry();
 
@@ -72,7 +71,7 @@ class Entrances extends ClusterMarkers {
 		}
 
 		this.markers = markers;
-		this.stations = stations;
+		this.vertices = vertices;
 		this.metadata = survey.metadata;
 
 		// set default colors - needs to be after markers property is set
@@ -105,7 +104,6 @@ class Entrances extends ClusterMarkers {
 			}
 
 			vertices.push( node );
-			stations.push( node );
 
 			if ( name === '-skip' ) return;
 
@@ -117,7 +115,7 @@ class Entrances extends ClusterMarkers {
 
 	getStation ( index ) {
 
-		const station = this.stations[ index ];
+		const station = this.vertices[ index ];
 		const stationName = station.getPath();
 
 		return {
@@ -180,7 +178,7 @@ class Entrances extends ClusterMarkers {
 
 			const idSet = selection.getIds();
 
-			this.stations.forEach( function ( node, i ) {
+			this.vertices.forEach( function ( node, i ) {
 
 				if ( idSet.has( node.id ) ) {
 

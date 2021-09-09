@@ -266,7 +266,7 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 		label = String.fromCharCode.apply( null, db );
 
-		const node = surveyTree.addLeaf( label.split( '.' ), { p: lastPosition, type: STATION_NORMAL } );
+		const node = surveyTree.addLeaf( label.split( '.' ), STATION_NORMAL, lastPosition );
 
 		// track coords to sectionId to allow survey ID's to be added to leg vertices
 		stations.set( lastPosition, node );

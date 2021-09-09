@@ -24,14 +24,14 @@ class Station {
 
 	coordinates () {
 
-		return this.survey.getGeographicalPosition( this.station.p );
+		return this.survey.getGeographicalPosition( this.station );
 
 	}
 
 
 	connectionCount() {
 
-		return this.station.p.connections;
+		return this.station.connections;
 
 	}
 
@@ -49,7 +49,7 @@ class Station {
 
 	shortestPathDistance() {
 
-		return this.station.p.shortestPath;
+		return this.station.shortestPath;
 
 	}
 

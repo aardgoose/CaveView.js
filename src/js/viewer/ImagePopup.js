@@ -14,7 +14,7 @@ class ImagePopup extends Popup {
 
 		texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
 
-		this.position.copy( station.p );
+		this.position.copy( station );
 
 		const self = this;
 

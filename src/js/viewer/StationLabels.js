@@ -123,10 +123,9 @@ class StationLabels extends Group {
 
 	addLabel ( station, name ) {
 
-		let material;
+		const connections = station.connections;
 
-		const position = station.p;
-		const connections = position.connections;
+		let material;
 
 		if ( connections === 0 ) {
 
@@ -145,7 +144,7 @@ class StationLabels extends Group {
 		const label = new GlyphString( name, material, this.ctx );
 
 		label.layers.mask = this.layers.mask;
-		label.position.copy( position );
+		label.position.copy( station );
 
 		station.label = label;
 

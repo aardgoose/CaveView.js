@@ -1,3 +1,5 @@
+import { Box3 } from '../Three';
+
 function Tree( name, id, root, parent ) { // root parameter only used internally
 
 	if ( root === undefined ) {
@@ -17,7 +19,7 @@ function Tree( name, id, root, parent ) { // root parameter only used internally
 		parent.children.push( this );
 
 	}
-
+	this.boundingBox = new Box3();
 	this.name = name || '';
 	this.children = [];
 	this.type = 0;
@@ -25,13 +27,14 @@ function Tree( name, id, root, parent ) { // root parameter only used internally
 }
 
 Tree.prototype.sorted = false;
-Tree.prototype.p = null;
 
 Tree.prototype.traverse = function ( func ) {
 
-	const children = this.children;
-
 	func ( this );
+
+	if ( this.children === undefined ) return;
+
+	const children = this.children;
 
 	for ( let i = 0; i < children.length; i++ ) {
 
@@ -73,20 +76,21 @@ Tree.prototype.addById = function ( name, id ) {
 
 };
 
-Tree.prototype.addLeafById = function ( name, id, type, coords, comments ) {
+Tree.prototype.addLeafById = function ( name, id, type, leafNode, comments ) {
 
 	const root = this.root;
-	const node = new Tree( name, id, root, this );
 
-	node.type = type;
-	node.p = coords;
+	leafNode.type = type;
+	leafNode.name = name;
+	leafNode.parent = this;
+	this.children.push( leafNode );
 
-	if ( comments ) node.comments = comments;
+	if ( comments ) leafNode.comments = comments;
 
 	root.maxId = Math.max( root.maxId, id );
-	this.root.idCache[ id ] = node;
+	this.root.idCache[ id ] = leafNode;
 
-	return node;
+	return leafNode;
 
 };
 
@@ -178,18 +182,27 @@ Tree.prototype.getByPathArray = function ( path ) {
 
 };
 
-Tree.prototype.addLeaf = function ( path, type, coords, comments ) {
+Tree.prototype.addLeaf = function ( path, type, leafNode, comments ) {
+
+	const root = this.root;
+
+	// common for all paths
+
+	leafNode.root = root;
+	leafNode.id = ++root.maxId;
+	leafNode.type = type;
+
+	if ( comments ) leafNode.comments = comments;
 
 	// short cut for flat surveys with little tree structure
 	if ( path.length === 1 ) {
 
-		const newNode = new Tree( path[ 0 ], null, this.root, this );
+		leafNode.name = path[ 0 ];
+		leafNode.parent = this;
 
-		newNode.type = type;
-		newNode.p = coords;
-		if ( comments ) newNode.comments = comments;
+		this.children.push( leafNode );
 
-		return newNode;
+		return leafNode;
 
 	}
 
@@ -209,13 +222,11 @@ Tree.prototype.addLeaf = function ( path, type, coords, comments ) {
 
 	if ( node !== undefined) {
 
-		const newNode = new Tree( leaf.join( '.' ), null, this.root, node );
+		leafNode.name = leaf.join( '.' );
+		leafNode.parent = node;
+		node.children.push( leafNode );
 
-		newNode.type = type;
-		newNode.p = coords;
-		if ( comments ) newNode.comments = comments;
-
-		return newNode;
+		return leafNode;
 
 	}
 
@@ -229,18 +240,17 @@ Tree.prototype.addLeaf = function ( path, type, coords, comments ) {
 
 	// add remainder of path to node
 
-	while ( path.length > 0 ) {
+	while ( path.length > 1 ) {
 
-		const newNode = new Tree( path.shift(), null, this.root, node );
-		node = newNode;
+		const node = new Tree( path.shift(), null, this.root, node );
 
 	}
 
-	node.type = type;
-	node.p = coords;
-	if ( comments ) node.comments = comments;
+	leafNode.name = path.shift();
+	leafNode.parent = node;
+	node.children.push( node );
 
-	return node;
+	return leafNode;
 
 };
 

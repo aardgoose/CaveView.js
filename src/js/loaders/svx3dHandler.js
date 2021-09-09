@@ -407,6 +407,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	const data       = new Uint8Array( source, 0 );
 	const dataView   = new DataView( source, 0 );
 	const dataLength = data.length;
+	const __coords = { x: 0.0, y: 0.0 };
 
 	let legs      = [];
 	let label     = '';
@@ -980,10 +981,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		if ( ! node ) return true;
 
-		const position = node.p;
 		const surveyId = node.parent.id;
 
-		xSects.push( { start: lastXSectPosition, end: position, lrud: lrud, survey: surveyId, type: WALL_SQUARE } );
+		xSects.push( { start: lastXSectPosition, end: node, lrud: lrud, survey: surveyId, type: WALL_SQUARE } );
 
 		// record which stations have associated LRUD coords
 		node.type = node.type | STATION_XSECT;
@@ -998,14 +998,14 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			endRun = true;
 
-		} else if ( position.connections === 1 && xSects.length > 1 && ! lastPosition.connections === 0 ) {
+		} else if ( node.connections === 1 && xSects.length > 1 && ! lastPosition.connections === 0 ) {
 
 			message = {
 				station: node,
 				text: 'LRUD fault'
 			};
 
-			if ( position.splays === 0 ) {
+			if ( node.splays === 0 ) {
 
 				endRun = true;
 				messages.push( message );
@@ -1017,7 +1017,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			}
 
-		} else if ( splayExpected && position.connections !== 0 ) {
+		} else if ( splayExpected && node.connections !== 0 ) {
 
 			messages.push( message );
 
@@ -1035,7 +1035,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		} else {
 
-			lastXSectPosition = position;
+			lastXSectPosition = node;
 
 		}
 
@@ -1067,10 +1067,10 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			if ( projection !== null ) {
 
-				const projectedCoords = projection.forward( {
-					x: coords.x,
-					y: coords.y
-				} );
+				__coords.x = coords.x;
+				__coords.y = coords.y;
+
+				const projectedCoords = projection.forward( __coords );
 
 				coords.x = projectedCoords.x;
 				coords.y = projectedCoords.y;

@@ -1063,7 +1063,7 @@ class CaveViewer extends EventDispatcher {
 
 					survey.selectStation( node );
 
-					cameraMove.preparePoint( survey.getWorldPosition( node.p.clone() ) );
+					cameraMove.preparePoint( survey.getWorldPosition( node.clone() ) );
 
 				}
 
@@ -1305,7 +1305,7 @@ class CaveViewer extends EventDispatcher {
 
 			if ( popup !== null ) return;
 
-			const depth = ( terrain ) ? station.p.z - terrain.getHeight( station.p ) : null;
+			const depth = ( terrain ) ? station.z - terrain.getHeight( station ) : null;
 
 			popup = new StationPopup( ctx, station, survey, depth, formatters.station, ( survey.caveShading === SHADING_DISTANCE ), self.warnings );
 			survey.add( popup );
@@ -1375,7 +1375,7 @@ class CaveViewer extends EventDispatcher {
 
 			if ( station === null ) return null;
 
-			return survey.getWorldPosition( station.p.clone() );
+			return survey.getWorldPosition( station.clone() );
 
 		};
 
@@ -1586,7 +1586,7 @@ class CaveViewer extends EventDispatcher {
 				showStationPopup( station );
 				mouseUpFunction = closePopup;
 
-				cameraMove.preparePoint( survey.getWorldPosition( station.p.clone() ) );
+				cameraMove.preparePoint( survey.getWorldPosition( station.clone() ) );
 
 				return true;
 

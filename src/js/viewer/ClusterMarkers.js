@@ -307,7 +307,7 @@ ClusterMarkers.prototype.addMarker = function ( node, label ) {
 	const marker = new GlyphString( label, material, this.ctx );
 
 	marker.layers.set( FEATURE_ENTRANCES );
-	marker.position.copy( node.p );
+	marker.position.copy( node );
 	marker.stationID = node.id;
 
 	this.labels.push( marker );

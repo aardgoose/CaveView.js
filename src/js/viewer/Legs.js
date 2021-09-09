@@ -223,17 +223,14 @@ class Legs extends LineSegments2 {
 
 		if ( mode ) {
 
-			const stations = this.ctx.survey.stations;
 			const vertices = this.legVertices;
-
 			const l = vertices.length;
-
 			const hide = [];
 
 			for ( let i = 0; i < l; i = i + 2 ) {
 
-				const sType1 = stations.getStation( vertices[ i ] ).type;
-				const sType2 = stations.getStation( vertices[ i + 1 ] ).type;
+				const sType1 = vertices[ i ].type;
+				const sType2 = vertices[ i + 1 ].type;
 
 				hide.push( sType1 & STATION_XSECT && sType2 & STATION_XSECT ? 1 : 0 );
 
@@ -251,11 +248,10 @@ class Legs extends LineSegments2 {
 
 	getLegStations ( vertexIndex ) {
 
-		const stations = this.ctx.survey.stations;
 		const vertices = this.legVertices;
 
-		const start = stations.getStation( vertices[ vertexIndex ] );
-		const end = stations.getStation( vertices[ vertexIndex + 1 ] );
+		const start = vertices[ vertexIndex ];
+		const end = vertices[ vertexIndex + 1 ];
 
 		return { start: start, end: end };
 

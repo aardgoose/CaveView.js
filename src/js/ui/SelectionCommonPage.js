@@ -56,7 +56,7 @@ class SelectionCommonPage extends Page {
 
 		this.addLine = function ( ul, child ) {
 
-			const connections = ( child.p === null ) ? null : child.p.connections;
+			const connections = ( child === null ) ? null : child.connections;
 
 			// track which sections have stations as children
 
@@ -301,7 +301,7 @@ class SelectionCommonPage extends Page {
 				const li = lis[ i ];
 				const node = self.nodes.get( lis[ i ] );
 
-				if ( node !== undefined && node.p === null ) {
+				if ( node !== undefined && ! node.isStation() ) {
 
 					const span = li.firstChild;
 					const id = node.id;

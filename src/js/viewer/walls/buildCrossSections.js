@@ -378,7 +378,7 @@ function buildCrossSections ( cave, survey ) {
 					group.unshift( crossSection );
 
 					warnings.push( {
-						station: stations.getStation( nextSection.start ),
+						station: nextSection.start,
 						text: 'xSects start extended'
 					} );
 
@@ -416,7 +416,7 @@ function buildCrossSections ( cave, survey ) {
 		} );
 
 		warnings.push( {
-			station: stations.getStation( endSection.end ),
+			station: endSection.end,
 			text: 'xSects end extended'
 		} );
 
@@ -424,9 +424,7 @@ function buildCrossSections ( cave, survey ) {
 
 	function _getConnectedPoint ( vertex, excludeVertex ) {
 
-		const node = stations.getStation( vertex );
-
-		const nodeLegs = node.legs;
+		const nodeLegs = vertex.legs;
 
 		if ( nodeLegs.length === 0 ) return;
 

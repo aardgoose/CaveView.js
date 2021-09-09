@@ -322,7 +322,7 @@ Survey.prototype.setupTerrain = function ( terrain ) {
 
 		// FIXME to extend to surface points
 		if ( ! ( node.type & STATION_ENTRANCE ) ) return;
-		points.push( node.p );
+		points.push( node );
 
 	}
 
@@ -582,15 +582,13 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 
 		const parent = node.parent;
 
-		if ( parent && parent.boundingBox === undefined ) parent.boundingBox = new Box3();
-
 		if ( node.isStation() ) {
 
-			parent.boundingBox.expandByPoint( node.p );
+			parent.boundingBox.expandByPoint( node );
 
 		} else if ( parent ) {
 
-			if ( node.children.length === 0 || ( node.boundingBox !== undefined && node.boundingBox.isEmpty() ) ) return;
+			if ( node.children.length === 0 || node.boundingBox.isEmpty() ) return;
 
 			parent.boundingBox.expandByPoint( node.boundingBox.min );
 			parent.boundingBox.expandByPoint( node.boundingBox.max );

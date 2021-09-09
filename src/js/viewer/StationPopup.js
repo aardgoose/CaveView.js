@@ -6,7 +6,7 @@ class StationPopup extends CanvasPopup {
 
 		super( ctx );
 
-		const position = survey.getGeographicalPosition( station.p );
+		const position = survey.getGeographicalPosition( station );
 
 		let name = station.getPath();
 		let long = false;
@@ -29,7 +29,7 @@ class StationPopup extends CanvasPopup {
 
 		if ( showDistance ) {
 
-			distance = station.p.shortestPath !== Infinity ? Math.round( station.p.shortestPath ) : 'unconnected';
+			distance = station.shortestPath !== Infinity ? Math.round( station.shortestPath ) : 'unconnected';
 
 		} else {
 
@@ -79,7 +79,7 @@ class StationPopup extends CanvasPopup {
 
 		this.finish();
 
-		this.position.copy( station.p );
+		this.position.copy( station );
 
 	}
 

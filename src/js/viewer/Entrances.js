@@ -104,7 +104,7 @@ class Entrances extends ClusterMarkers {
 
 			}
 
-			vertices.push( node.p );
+			vertices.push( node );
 			stations.push( node );
 
 			if ( name === '-skip' ) return;

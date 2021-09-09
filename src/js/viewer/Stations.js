@@ -12,7 +12,7 @@ class Stations extends Points {
 		super( new BufferGeometry, ctx.materials.getExtendedPointsMaterial() );
 
 		this.type = 'CV.Stations';
-		this.map = new Map();
+		this.seen = new Set();
 		this.stationCount = 0;
 
 		const cfg = ctx.cfg;
@@ -42,20 +42,18 @@ class Stations extends Points {
 
 	addStation ( node ) {
 
-		const point = node.p;
+		const seen = this.seen.has( node );
 
-		const seen = this.map.get( point );
-
-		if ( seen !== undefined ) {
+		if ( seen !== false ) {
 
 			// console.log( 'duplicate', node.getPath(), seen.getPath() );
 			return;
 
 		}
 
-		const connections = point.connections;
+		const connections = node.connections;
 
-		this.vertices.push( point );
+		this.vertices.push( node );
 
 		let pointSize = 0.0;
 
@@ -75,7 +73,7 @@ class Stations extends Points {
 
 		this.pointSizes.push( pointSize );
 
-		this.map.set( point, node );
+		this.seen.add( node );
 		this.stations.push( node );
 
 		node.stationVertexIndex = this.stationCount++;
@@ -86,16 +84,14 @@ class Stations extends Points {
 
 	getStation ( vertex ) {
 
-		return this.map.get( vertex );
+		return vertex;
 
 	}
 
-	getVisibleStation ( vertex ) {
-
-		const node = this.map.get( vertex );
+	getVisibleStation ( node ) {
 
 		if ( this.selection.contains( node.id ) &&
-			( node.p.connections > 0 || this.splaysVisible )
+			( node.connections > 0 || this.splaysVisible )
 		) return node;
 
 		if ( node.label !== undefined ) node.label.visible = false;
@@ -129,7 +125,7 @@ class Stations extends Points {
 
 		const highlightPoint = this.highlightPoint;
 
-		highlightPoint.position.copy( node.p );
+		highlightPoint.position.copy( node );
 		highlightPoint.updateMatrix();
 
 		highlightPoint.visible = true;
@@ -190,7 +186,7 @@ class Stations extends Points {
 
 					size = 12;
 
-				} else if ( node.p.connections === 0 ) {
+				} else if ( node.connections === 0 ) {
 
 					size = splaySize;
 
@@ -232,7 +228,7 @@ class Stations extends Points {
 
 	resetDistances () {
 
-		this.stations.forEach( node => { if ( node.p ) node.p.shortestPath = Infinity; } );
+		this.stations.forEach( node => { if ( node ) node.shortestPath = Infinity; } );
 
 	}
 
@@ -249,10 +245,10 @@ class Stations extends Points {
 
 			// don't select spays unless visible
 
-			if ( ! splaysVisible && station !== null && station.p.connections === 0 ) return;
+			if ( ! splaysVisible && station !== null && station.connections === 0 ) return;
 
 			// station in screen NDC
-			__v.copy( station.p ).applyMatrix4( this.matrixWorld ).project( camera );
+			__v.copy( station ).applyMatrix4( this.matrixWorld ).project( camera );
 
 			__v.sub( intersect.point.project( camera ) );
 
@@ -287,7 +283,7 @@ class Stations extends Points {
 
 			const node = stations[ i ];
 
-			if ( node.p.connections === 0 && ( splaySize === 0 || selection.contains( node.id ) ) ) {
+			if ( node.connections === 0 && ( splaySize === 0 || selection.contains( node.id ) ) ) {
 
 				pSize.setX( i, splaySize );
 

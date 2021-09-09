@@ -34,7 +34,7 @@ class Topology {
 
 			vertexPairToSegment.push( segment );
 
-			station = stations.getStation( v1 );
+			station = v1;
 
 			if ( station !== undefined ) {
 
@@ -57,10 +57,11 @@ class Topology {
 
 			}
 
-			station = stations.getStation( v2 );
+			station = v2;
+
 			if ( station !== undefined ) station.legs.push( i );
 
-			if ( station && ( v2.connections > 2 || ( i + 2 < l && ! v2.equals( legs[ i + 2 ] ) ) ) ) {
+			if ( station && ( station.connections > 2 || ( i + 2 < l && ! station.equals( legs[ i + 2 ] ) ) ) ) {
 
 				// we have found a junction or a passage end
 				segmentInfo.endStation = station;
@@ -110,7 +111,7 @@ class Topology {
 
 		let maxDistance = 0;
 
-		station.p.shortestPath = 0;
+		station.shortestPath = 0;
 
 		while ( queue.length > 0 ) {
 
@@ -119,7 +120,7 @@ class Topology {
 
 			if ( ! stationLegs ) continue;
 
-			const currentDistance = station.p.shortestPath;
+			const currentDistance = station.shortestPath;
 
 			// console.log( 'station:', station.getPath(), currentDistance );
 
@@ -133,18 +134,17 @@ class Topology {
 				const v1 = legs[ leg ];
 				const v2 = legs[ leg + 1 ];
 
-				const nextVertex = ( v1 !== station.p ) ? v1 : v2;
-				const nextStation = stations.getStation( nextVertex );
+				const nextStation = ( v1 !== station ) ? v1 : v2;
 				const nextLength = legsObject.legLengths[ leg / 2 ];
 
 				// label stations with distance of shortest path
 				// add to search list
 
-				if ( nextVertex.shortestPath > currentDistance + nextLength ) {
+				if ( nextStation.shortestPath > currentDistance + nextLength ) {
 
-					if ( nextVertex.shortestPath === Infinity ) legCallback( station, nextStation );
+					if ( nextStation.shortestPath === Infinity ) legCallback( station, nextStation );
 
-					nextVertex.shortestPath = currentDistance + nextLength;
+					nextStation.shortestPath = currentDistance + nextLength;
 					queue.push( nextStation );
 
 				}
@@ -165,12 +165,11 @@ class Topology {
 
 		if (
 			zeroStation === null ||
-			startStation.p.shortestPath === Infinity ||
+			startStation.shortestPath === Infinity ||
 			zeroStation === startStation ||
-			startStation.p.shortestPath === 0
+			startStation.shortestPath === 0
 		) return path;
 
-		const stations = this.stations;
 		const legsObject = this.legsObject;
 		const legs = legsObject.legVertices;
 
@@ -191,12 +190,9 @@ class Topology {
 				const v1 = legs[ leg ];
 				const v2 = legs[ leg + 1 ];
 
-				const thisVertex = nextStation.p;
+				const testStation = ( v1 !== nextStation ) ? v1 : v2;
 
-				const testVertex = ( v1 !== thisVertex) ? v1 : v2;
-				const testStation = stations.getStation( testVertex );
-
-				if ( testVertex.shortestPath < thisVertex.shortestPath ) {
+				if ( testStation.shortestPath < nextStation.shortestPath ) {
 
 					nextStation = testStation;
 					path.add( leg );
@@ -217,7 +213,7 @@ class Topology {
 
 		const legs = this.legsObject.legVertices;
 		const adjacentLegs = station.legs;
-		const thisVertex = station.p;
+		const thisVertex = station;
 		const ids = [];
 
 		if ( ! adjacentLegs ) return ids;
@@ -228,7 +224,7 @@ class Topology {
 			const v2 = legs[ l + 1 ];
 
 			const nextVertex = ( v1 !== thisVertex) ? v1 : v2;
-			ids.push( this.stations.getStation( nextVertex ).id );
+			ids.push( nextVertex.id );
 
 		} );
 

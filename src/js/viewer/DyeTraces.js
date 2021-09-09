@@ -95,8 +95,8 @@ DyeTraces.prototype.deleteTrace = function ( hit ) {
 DyeTraces.prototype._addTrace = function ( startStation, endStation ) {
 
 	this.vertices.push(
-		startStation.p.x, startStation.p.y, startStation.p.z,
-		endStation.p.x, endStation.p.y, endStation.p.z
+		startStation.x, startStation.y, startStation.z,
+		endStation.x, endStation.y, endStation.z
 	);
 
 	this.stations.push( startStation, endStation );

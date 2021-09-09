@@ -107,8 +107,6 @@ class WebTerrain extends CommonTerrain {
 
 		promise.then( TS => {
 
-			console.log( TS );
-
 			this.workerPool = ctx.workerPools.getPool( TS.workerScript );
 			this.TS = TS;
 			this.tileSets = TS.getTileSets();

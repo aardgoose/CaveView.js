@@ -14,6 +14,8 @@ import { Line2Material } from './Line2Material';
 import { ColourCache } from '../core/ColourCache';
 import { TextureCache } from '../core/TextureCache';
 import { GlyphAtlasCache } from './GlyphAtlas';
+import { EntrancePointMaterial } from './EntrancePointMaterial';
+
 import {
 	LineBasicMaterial, MeshLambertMaterial, MeshBasicMaterial, MeshPhongMaterial,
 	IncrementStencilOp, Vector2, Color,
@@ -96,7 +98,7 @@ function Materials ( viewer ) {
 
 	function getCacheMaterial ( name, materialFunc, stencil ) {
 
-		let material = cache.get( 'name' );
+		let material = cache.get( name );
 
 		if ( material === undefined ) {
 
@@ -138,7 +140,7 @@ function Materials ( viewer ) {
 	this.getLine2Material = function ( dashed = false ) {
 
 		const func = function () { return new Line2Material( ctx, dashed ); };
-		const material = getCacheMaterial( 'line2' + dashed ? '-' : '', func, true );
+		const material = getCacheMaterial( 'line2' + ( dashed ? '-dashed' : '' ), func, true );
 
 		return material;
 
@@ -147,7 +149,7 @@ function Materials ( viewer ) {
 	this.getSurveyLineMaterial = function ( mode = '', dashed = false ) {
 
 		const func = function () { return new SurveyLineMaterial( ctx, mode, dashed ); };
-		const material = getSurveyCacheMaterial( 'survey-line-' + mode + dashed ? '-' : '', func, true );
+		const material = getSurveyCacheMaterial( 'survey-line-' + mode + ( dashed ? '-dashed' : '' ), func, true );
 
 		if ( mode === 'cursor' || mode === 'depth-cursor' ) {
 
@@ -246,6 +248,12 @@ function Materials ( viewer ) {
 
 	};
 
+	this.getEntrancePointMaterial = function  () {
+
+		const func = function () { return new EntrancePointMaterial( ctx ); };
+		return getCacheMaterial( 'entrqnce', func, true );
+
+	};
 
 	this.getLineMaterial = function () {
 

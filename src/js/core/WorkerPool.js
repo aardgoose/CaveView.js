@@ -23,6 +23,10 @@ WorkerPool.prototype.terminateActive = function () {
 	// remove any pending work for this pool
 	WorkerPool.pendingWork = WorkerPool.pendingWork.filter( p => p.pool != this );
 
+	// remove all the saved workers onmessage handlers to remove references to callbacks
+	// which may enclose objects and prevent GC
+	this.workers.forEach( w => { w.onmessage = null; } );
+
 };
 
 WorkerPool.prototype.getWorker = function () {

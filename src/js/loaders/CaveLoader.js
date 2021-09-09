@@ -147,6 +147,8 @@ CaveLoader.prototype.loadURL = function ( fileName, section ) {
 
 		self.dataResponse = result;
 
+		self.progress( 75 );
+
 		if ( ++doneCount === taskCount ) self.callHandler();
 
 	}
@@ -228,6 +230,8 @@ CaveLoader.prototype.loadLocalFile = function ( file, section ) {
 
 		self.dataResponse = fLoader.result;
 		self.callHandler();
+
+		self.progress( 75 );
 
 		fLoader.removeEventListener( 'load', _loaded );
 		fLoader.removeEventListener( 'progress', _progress );

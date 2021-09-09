@@ -40,9 +40,7 @@ class Stations extends Points {
 
 	addStation ( node ) {
 
-		const seen = this.seen.has( node );
-
-		if ( seen !== false ) {
+		if ( this.seen.has( node ) ) {
 
 			// console.log( 'duplicate', node.getPath(), seen.getPath() );
 			return;
@@ -76,12 +74,6 @@ class Stations extends Points {
 		node.stationVertexIndex = this.stationCount++;
 		node.linkedSegments = [];
 		node.legs = [];
-
-	}
-
-	getStation ( vertex ) {
-
-		return vertex;
 
 	}
 

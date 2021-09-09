@@ -1,6 +1,6 @@
 import { ClusterMarkers } from './ClusterMarkers';
 import { STATION_ENTRANCE, FEATURE_ENTRANCE_DOTS } from '../core/constants';
-import { Points, PointsMaterial, BufferGeometry, Float32BufferAttribute, IncrementStencilOp } from '../Three';
+import { Points, BufferGeometry, Float32BufferAttribute } from '../Three';
 
 class Entrances extends ClusterMarkers {
 
@@ -15,26 +15,7 @@ class Entrances extends ClusterMarkers {
 
 		const geometry = new BufferGeometry();
 
-		const dotSize = ctx.cfg.themeValue( 'entrance_dot_size' );
-
-		const material = new PointsMaterial( {
-			map: ctx.materials.textureCache.getTexture( 'disc-outlined' ),
-			opacity: 1.0,
-			alphaTest: 0.8,
-			sizeAttenuation: false,
-			transparent: true,
-			size: Math.max( dotSize, Math.floor( dotSize * ctx.container.clientWidth / 1000 ) ),
-			vertexColors: true
-		} );
-
-		material.stencilWrite = true;
-		material.stencilZPass = IncrementStencilOp;
-
-		ctx.viewer.addEventListener( 'resized', ( e ) => {
-
-			material.size =  Math.max( dotSize, Math.floor( dotSize * e.width / 1000 ) );
-
-		} );
+		const material = ctx.materials.getEntrancePointMaterial();
 
 		this.entranceColor = ctx.cfg.themeColor( 'stations.entrances.marker' );
 

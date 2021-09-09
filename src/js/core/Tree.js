@@ -76,6 +76,102 @@ Tree.prototype.addById = function ( name, id ) {
 
 };
 
+Tree.prototype.addPath = function ( path ) {
+
+	// find part of path that exists already
+	const pathArray = path.split( '.' );
+
+	let node = this.getByPathArray( pathArray );
+
+	if ( pathArray.length === 0 ) return node;
+
+	// add remainder of path to node
+
+	while ( pathArray.length > 0 ) {
+
+		const newNode = new Tree( pathArray.shift(), null, this.root, node );
+
+		this.root.pathCache[ newNode.getPath() ] = newNode;
+		node = newNode;
+
+	}
+
+	return node;
+
+};
+
+Tree.prototype.addLeaf = function ( path, type, leafNode, comments ) {
+
+	const root = this.root;
+
+	// common for all paths
+
+	leafNode.root = root;
+	leafNode.id = ++root.maxId;
+	leafNode.type = type;
+
+	if ( comments ) leafNode.comments = comments;
+
+	// short cut for flat surveys with little tree structure
+	if ( path.length === 1 ) {
+
+		leafNode.name = path[ 0 ];
+		leafNode.parent = this;
+
+		this.children.push( leafNode );
+
+		return leafNode;
+
+	}
+
+	// find part of path that exists already using cache
+
+	const leaf = [];
+	let node;
+
+	while ( node === undefined && path.length > 1 ) {
+
+		leaf.unshift( path.pop() );
+		node = this.root.pathCache[ path.join( '.' ) ];
+
+	}
+
+	// we have a valid path - attach the leaf here
+
+	if ( node !== undefined) {
+
+		leafNode.name = leaf.join( '.' );
+		leafNode.parent = node;
+		node.children.push( leafNode );
+
+		return leafNode;
+
+	}
+
+	// fallback in case path not created
+
+	path = path.concat( leaf );
+
+	node = this.getByPathArray( path );
+
+	if ( path.length === 0 ) return node;
+
+	// add remainder of path to node
+
+	while ( path.length > 1 ) {
+
+		const node = new Tree( path.shift(), null, this.root, node );
+
+	}
+
+	leafNode.name = path.shift();
+	leafNode.parent = node;
+	node.children.push( node );
+
+	return leafNode;
+
+};
+
 Tree.prototype.addLeafById = function ( name, id, type, leafNode, comments ) {
 
 	const root = this.root;
@@ -83,6 +179,7 @@ Tree.prototype.addLeafById = function ( name, id, type, leafNode, comments ) {
 	leafNode.type = type;
 	leafNode.name = name;
 	leafNode.parent = this;
+
 	this.children.push( leafNode );
 
 	if ( comments ) leafNode.comments = comments;
@@ -182,102 +279,6 @@ Tree.prototype.getByPathArray = function ( path ) {
 
 };
 
-Tree.prototype.addLeaf = function ( path, type, leafNode, comments ) {
-
-	const root = this.root;
-
-	// common for all paths
-
-	leafNode.root = root;
-	leafNode.id = ++root.maxId;
-	leafNode.type = type;
-
-	if ( comments ) leafNode.comments = comments;
-
-	// short cut for flat surveys with little tree structure
-	if ( path.length === 1 ) {
-
-		leafNode.name = path[ 0 ];
-		leafNode.parent = this;
-
-		this.children.push( leafNode );
-
-		return leafNode;
-
-	}
-
-	// find part of path that exists already using cache
-
-	const leaf = [];
-	let node;
-
-	while ( node === undefined && path.length > 1 ) {
-
-		leaf.unshift( path.pop() );
-		node = this.root.pathCache[ path.join( '.' ) ];
-
-	}
-
-	// we have a valid path - attach the leaf here
-
-	if ( node !== undefined) {
-
-		leafNode.name = leaf.join( '.' );
-		leafNode.parent = node;
-		node.children.push( leafNode );
-
-		return leafNode;
-
-	}
-
-	// fallback in case path not created
-
-	path = path.concat( leaf );
-
-	node = this.getByPathArray( path );
-
-	if ( path.length === 0 ) return node;
-
-	// add remainder of path to node
-
-	while ( path.length > 1 ) {
-
-		const node = new Tree( path.shift(), null, this.root, node );
-
-	}
-
-	leafNode.name = path.shift();
-	leafNode.parent = node;
-	node.children.push( node );
-
-	return leafNode;
-
-};
-
-Tree.prototype.addPath = function ( path ) {
-
-	// find part of path that exists already
-	const pathArray = path.split( '.' );
-
-	let node = this.getByPathArray( pathArray );
-
-	if ( pathArray.length === 0 ) return node;
-
-	// add remainder of path to node
-
-	while ( pathArray.length > 0 ) {
-
-		const newNode = new Tree( pathArray.shift(), null, this.root, node );
-
-		this.root.pathCache[ newNode.getPath() ] = newNode;
-		node = newNode;
-
-	}
-
-	return node;
-
-};
-
 Tree.prototype.getPath = function ( endNode ) {
 
 	const path = [];
@@ -313,12 +314,7 @@ Tree.prototype.getSubtreeIds = function ( idSet ) {
 
 Tree.prototype.getIdByPath = function ( path ) {
 
-	return this.getIdByPathArray( path.split( '.' ) );
-
-};
-
-Tree.prototype.getIdByPathArray = function ( array ) {
-
+	const array = path.split( '.' );
 	const node = this.getByPathArray( array );
 
 	if ( array.length === 0 ) {

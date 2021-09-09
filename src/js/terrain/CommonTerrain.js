@@ -190,10 +190,7 @@ CommonTerrain.prototype.setup = function ( renderer, scene, survey ) {
 
 	// restore renderer to normal render size and target
 
-	renderer.setRenderTarget( null );
-
-	renderer.setSize( container.clientWidth, container.clientHeight );
-	renderer.setPixelRatio( window.devicePixelRatio );
+	this.ctx.viewer.resetRenderer();
 
 	survey.setupTerrain( this );
 	materials.setTerrain( this );

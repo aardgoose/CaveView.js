@@ -33,11 +33,10 @@ import {
 	Vector3, Euler, Quaternion,
 	Scene, Raycaster,
 	WebGLRenderer,
-	MOUSE, FogExp2,
-	WebGLRenderTarget,
-	LinearFilter, NearestFilter, RGBAFormat
+	MOUSE, FogExp2
 } from '../Three';
 import { Leg } from '../public/Leg';
+import { Snapshot } from './Snapshot';
 
 class CaveViewer extends EventDispatcher {
 
@@ -75,10 +74,8 @@ class CaveViewer extends EventDispatcher {
 
 		let renderer = new WebGLRenderer( { antialias: true, alpha: true } );
 
-		renderer.setSize( container.clientWidth, container.clientHeight );
-		renderer.setPixelRatio( window.devicePixelRatio );
-		renderer.setClearColor( cfg.themeColor( 'background' ), 0.0 );
-		renderer.setRenderTarget( null );
+		resetRenderer();
+
 		renderer.clear();
 		renderer.autoClear = false;
 
@@ -527,6 +524,16 @@ class CaveViewer extends EventDispatcher {
 				self.dispatchEvent( { type: 'change', name: name } );
 
 			};
+
+		}
+
+		function resetRenderer () {
+
+			renderer.setSize( container.clientWidth, container.clientHeight );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setClearColor( cfg.themeColor( 'background' ), 0.0 );
+			renderer.setClearAlpha( 0.0 );
+			renderer.setRenderTarget( null );
 
 		}
 
@@ -1706,7 +1713,9 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
+		this.resetRenderer = resetRenderer;
 		this.renderView = renderView;
+		this.resize = onResize;
 
 		function onCameraMoveEnd () {
 
@@ -1790,71 +1799,7 @@ class CaveViewer extends EventDispatcher {
 
 		this.getSnapshot = function ( exportSize, lineScale ) {
 
-			const width  = container.clientWidth;
-			const height = container.clientHeight;
-
-			const newWidth = exportSize;
-			const newHeight = Math.round( height * newWidth / width );
-
-			const renderTarget = new WebGLRenderTarget( newWidth, newHeight, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, stencilBuffer: true } );
-
-			renderTarget.texture.generateMipmaps = false;
-			renderTarget.texture.name = 'CV.snapshot';
-
-			renderer.setSize( newWidth, newHeight );
-			renderer.setPixelRatio( 1 );
-			renderer.setRenderTarget( renderTarget );
-			renderer.setClearAlpha( 1.0 );
-
-			// reset camera and materials using renderer size/resolution
-			self.dispatchEvent( { type: 'resized', name: 'rts', 'width': newWidth, 'height': newHeight, lineScale: lineScale } );
-
-			renderView();
-
-			const bSize = newWidth * newHeight * 4;
-			const buffer = new Uint8ClampedArray( bSize );
-
-			// restore renderer to normal render size and target
-			renderer.readRenderTargetPixels( renderTarget, 0, 0, newWidth, newHeight, buffer );
-
-			// invert image
-			const line = newWidth * 4;
-			const invertedBuffer = new Uint8ClampedArray( bSize );
-
-			for ( let i = 0; i < bSize; i += line ) {
-
-				const dst = bSize - i - line;
-
-				for ( let j = 0; j < line; j++ ) {
-
-					invertedBuffer[ dst + j ] = buffer[ i + j ];
-
-				}
-
-			}
-
-			const id = new ImageData( invertedBuffer, newWidth, newHeight );
-
-			const canvas = document.createElement( 'canvas' );
-
-			canvas.width = newWidth;
-			canvas.height = newHeight;
-
-			const ctx = canvas.getContext( '2d' );
-
-			ctx.putImageData( id, 0, 0 );
-
-			renderTarget.dispose();
-
-			renderer.setRenderTarget( null );
-			renderer.setPixelRatio( window.devicePixelRatio );
-			renderer.setClearAlpha( 0.0 );
-
-			// reset renderer etc to new sizes
-
-			onResize();
-
-			return canvas.toDataURL();
+			return new Snapshot( ctx, renderer ).getSnapshot( exportSize, lineScale );
 
 		};
 

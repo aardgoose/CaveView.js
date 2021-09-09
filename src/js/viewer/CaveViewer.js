@@ -596,7 +596,7 @@ class CaveViewer extends EventDispatcher {
 
 		function onFullscreenChange () {
 
-			if ( document.fullscreenElement || document.msFullscreenElement || document.webkitFullscreenElement ) {
+			if ( document.fullscreenElement || document.webkitFullscreenElement ) {
 
 				container.classList.add( 'toggle-fullscreen' );
 
@@ -623,10 +623,6 @@ class CaveViewer extends EventDispatcher {
 
 					container.requestFullscreen();
 
-				} else if ( document.msfullscreenElement === null) {
-
-					container.msRequestFullscreen();
-
 				} else if ( document.webkitFullscreenElement === null) {
 
 					container.webkitRequestFullscreen();
@@ -640,10 +636,6 @@ class CaveViewer extends EventDispatcher {
 				if ( document.fullscreenElement ) {
 
 					document.exitFullscreen();
-
-				} else if ( document.msFullscreenElement ) {
-
-					document.msExitFullscreen();
 
 				} else if ( document.webkitFullscreenElement ) {
 

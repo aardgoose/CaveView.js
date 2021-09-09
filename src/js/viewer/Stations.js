@@ -25,8 +25,6 @@ class Stations extends Points {
 		this.vertices   = [];
 		this.colors     = [];
 
-		this.stations = [];
-
 		this.selected = null;
 		this.selectedSize = 0;
 		this.selection = selection;
@@ -74,7 +72,6 @@ class Stations extends Points {
 		this.pointSizes.push( pointSize );
 
 		this.seen.add( node );
-		this.stations.push( node );
 
 		node.stationVertexIndex = this.stationCount++;
 		node.linkedSegments = [];
@@ -102,7 +99,7 @@ class Stations extends Points {
 
 	getStationByIndex ( index ) {
 
-		return this.stations[ index ];
+		return this.vertices[ index ];
 
 	}
 
@@ -167,8 +164,8 @@ class Stations extends Points {
 
 	selectStations ( selection ) {
 
-		const stations = this.stations;
-		const l = stations.length;
+		const vertices = this.vertices;
+		const l = vertices.length;
 		const pSize = this.geometry.getAttribute( 'pSize' );
 		const splaySize = this.splaysVisible ? 6.0 : 0.0;
 		const idSet = selection.getIds();
@@ -176,7 +173,7 @@ class Stations extends Points {
 
 		for ( let i = 0; i < l; i++ ) {
 
-			const node = stations[ i ];
+			const node = vertices[ i ];
 
 			let size = 8;
 
@@ -228,7 +225,7 @@ class Stations extends Points {
 
 	resetDistances () {
 
-		this.stations.forEach( node => { if ( node ) node.shortestPath = Infinity; } );
+		this.vertices.forEach( node => { if ( node ) node.shortestPath = Infinity; } );
 
 	}
 
@@ -274,14 +271,14 @@ class Stations extends Points {
 		this.splaysVisible = visible;
 		const splaySize = visible ? 6.0 : 0.0;
 
-		const stations = this.stations;
+		const vertices = this.vertices;
 		const pSize = this.geometry.getAttribute( 'pSize' );
-		const l = stations.length;
+		const l = vertices.length;
 		const selection = this.selection;
 
 		for ( let i = 0; i < l; i++ ) {
 
-			const node = stations[ i ];
+			const node = vertices[ i ];
 
 			if ( node.connections === 0 && ( splaySize === 0 || selection.contains( node.id ) ) ) {
 

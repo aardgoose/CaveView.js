@@ -178,6 +178,7 @@ Tree.prototype.addLeafById = function ( name, id, type, leafNode, comments ) {
 
 	leafNode.type = type;
 	leafNode.name = name;
+	leafNode.id = id;
 	leafNode.parent = this;
 
 	this.children.push( leafNode );

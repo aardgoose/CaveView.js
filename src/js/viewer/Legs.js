@@ -48,7 +48,6 @@ class Legs extends LineSegments2 {
 
 	computeStats () {
 
-		const stats = { maxLegLength: -Infinity, minLegLength: Infinity, legCount: 0, legLength: 0 };
 		const vertices = this.legVertices;
 		const l = vertices.length;
 
@@ -56,6 +55,8 @@ class Legs extends LineSegments2 {
 		const legLengths = new Array( n );
 
 		let s1 = 0, s2 = 0;
+		let min = Infinity;
+		let max = -Infinity;
 
 		for ( let i = 0; i < l; i += 2 ) {
 
@@ -69,15 +70,19 @@ class Legs extends LineSegments2 {
 			s1 += legLength;
 			s2 += legLength * legLength;
 
-			stats.maxLegLength = Math.max( stats.maxLegLength, legLength );
-			stats.minLegLength = Math.min( stats.minLegLength, legLength );
+			max = Math.max( max, legLength );
+			min = Math.min( min, legLength );
 
 		}
 
-		stats.legLength = s1;
-		stats.legLengthSD = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
-		stats.legLengthRange = stats.maxLegLength - stats.minLegLength;
-		stats.legCount = n;
+		const stats = {
+			minLegLength: min,
+			maxLegLength: max,
+			legLength: s1,
+			legLengthSD: Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) ),
+			legLengthRange: max - min,
+			legCount: n
+		};
 
 		this.legLengths = legLengths;
 		this.stats = stats;

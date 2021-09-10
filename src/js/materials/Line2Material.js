@@ -211,7 +211,7 @@ class Line2Material extends ShaderMaterial {
 
 	dispose () {
 
-		this.ctx.viewer.removeEventListener( 'resize', this.onResize );
+		this.ctx.viewer.removeEventListener( 'resized', this.onResize );
 		super.dispose();
 
 	}

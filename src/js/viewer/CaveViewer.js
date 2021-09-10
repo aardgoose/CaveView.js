@@ -23,9 +23,8 @@ import { WebTerrain } from '../terrain/WebTerrain';
 import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/Cfg';
 import { WorkerPoolCache } from '../core/WorkerPool';
-import { defaultView, dynamicView, ViewState } from './ViewState';
+import { defaultView, ViewState } from './ViewState';
 import { OrbitControls } from '../ui/OrbitControls';
-import { LocationControls } from '../ui/LocationControls';
 import { ExportGltf } from './ExportGltf';
 
 import {
@@ -101,11 +100,6 @@ class CaveViewer extends EventDispatcher {
 		controls.addEventListener( 'change', onCameraMoved );
 		controls.addEventListener( 'end', onCameraMoveEnd );
 
-		const locationControls = new LocationControls( cameraManager, ctx );
-		locationControls.addEventListener( 'change', onCameraMoved );
-		locationControls.addEventListener( 'end', onCameraMoveEnd );
-		locationControls.addEventListener( 'accuracy', onLocationAccuracyChange );
-
 		const cameraMove = new CameraMove( controls, onCameraMoved );
 		const moveEndEvent = { type: 'moved', cameraManager: cameraManager };
 
@@ -144,9 +138,6 @@ class CaveViewer extends EventDispatcher {
 		let mouseUpFunction = null;
 		let savedView = null;
 		let mouseOver = false;
-
-		let hasLocation = false;
-		let trackLocation = false;
 
 		// event handler
 		window.addEventListener( 'resize', onResize );
@@ -397,15 +388,6 @@ class CaveViewer extends EventDispatcher {
 
 			'isClipped': {
 				get: function () { return clipped; }
-			},
-
-			'hasLocation': {
-				get: function () { return hasLocation; }
-			},
-
-			'trackLocation': {
-				get: function () { return trackLocation; },
-				set: setLocation
 			},
 
 			'maxSnapshotSize': {
@@ -756,12 +738,6 @@ class CaveViewer extends EventDispatcher {
 
 				terrain.setup( renderer, scene, survey );
 
-				if ( cfg.value( 'useGPS', false ) ) {
-
-					locationControls.hasLocation( survey, locationChecked );
-
-				}
-
 				if ( terrain.isTiled ) {
 
 					terrain.addEventListener( 'progress', onEnd );
@@ -772,59 +748,6 @@ class CaveViewer extends EventDispatcher {
 			}
 			setScale();
 			setupView( true );
-
-		}
-
-		function locationChecked () {
-
-			hasLocation = true;
-			self.dispatchEvent( { type: 'newCave', name: 'newCave' } );
-
-		}
-
-		function setLocation ( x ) {
-
-			if ( x ) {
-
-				savedView = viewState.saveState();
-
-				controls.saveState();
-
-				locationControls.connect();
-
-				self.setView( dynamicView, null );
-				cameraMove.cancel();
-
-
-			} else {
-
-				// disable location controls
-				locationControls.disconnect();
-
-				if ( terrain !== null ) terrain.setScale( 0.0 );
-
-				// restore previous settings
-				self.setView( savedView, null );
-
-				// setting the saved view may attempt to reset this.view
-				cameraMove.cancel();
-
-				controls.reset();
-
-				savedView = null;
-
-			}
-
-			controls.enabled = ! x;
-			trackLocation = x;
-
-			renderView();
-
-		}
-
-		function onLocationAccuracyChange ( event ) {
-
-			terrain.setAccuracy( event.value );
 
 		}
 
@@ -854,21 +777,6 @@ class CaveViewer extends EventDispatcher {
 			__rotation.setFromQuaternion( camera.getWorldQuaternion( __q ) );
 
 			lightingManager.setRotation( __rotation );
-
-			if ( trackLocation && terrain !== null ) {
-
-				if ( camera.isOrthographicCamera ) {
-
-					terrain.setScale( camera.zoom * survey.scale.z );
-					terrain.setTarget( locationControls.location );
-
-				} else {
-
-					terrain.setScale( 0.0 );
-
-				}
-
-			}
 
 			renderView();
 
@@ -978,9 +886,9 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		this.addOverlay = function ( name, overlayProvider, locationDefault ) {
+		this.addOverlay = function ( name, overlayProvider ) {
 
-			CommonTerrain.addOverlay( ctx, name, overlayProvider, locationDefault );
+			CommonTerrain.addOverlay( ctx, name, overlayProvider );
 
 		};
 
@@ -1123,7 +1031,6 @@ class CaveViewer extends EventDispatcher {
 			limits          = null;
 			mouseMode       = MOUSE_MODE_NORMAL;
 			mouseTargets    = [];
-			hasLocation     = false;
 
 			// remove event listeners
 
@@ -1605,8 +1512,6 @@ class CaveViewer extends EventDispatcher {
 
 			function _mouseUpRight () {
 
-				if ( ! trackLocation ) controls.enabled = true;
-
 			}
 
 		}
@@ -1691,7 +1596,7 @@ class CaveViewer extends EventDispatcher {
 
 			if ( caveIsLoaded ) {
 
-				survey.update( cameraManager, controls.target, ! trackLocation );
+				survey.update( cameraManager, controls.target );
 
 				if ( useFog ) materials.setFog( true );
 
@@ -1800,7 +1705,6 @@ class CaveViewer extends EventDispatcher {
 			ctx.workerPools.dispose();
 			scene.remove( survey );
 			controls.dispose();
-			locationControls.dispose();
 			hud.dispose();
 
 			ctx.glyphStringCache = null;

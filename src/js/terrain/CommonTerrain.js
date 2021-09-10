@@ -1,6 +1,6 @@
 import {
 	FEATURE_TERRAIN,
-	SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS, SHADING_LOCATION,
+	SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS,
 	TERRAIN_STENCIL
 } from '../core/constants';
 
@@ -10,8 +10,6 @@ import {
 	Group, OrthographicCamera, Box3, Vector3,
 	WebGLRenderTarget, LinearFilter, NearestFilter, RGBAFormat
 } from '../Three';
-
-var locationDefaultOverlay = null;
 
 // preallocated tmp objects
 
@@ -48,13 +46,11 @@ class CommonTerrain extends Group {
 
 }
 
-CommonTerrain.addOverlay = function ( ctx, name, overlayProvider, locationDefault ) {
+CommonTerrain.addOverlay = function ( ctx, name, overlayProvider ) {
 
 	if ( ctx.overlays === undefined ) ctx.overlays = {};
 
 	ctx.overlays[ name ] = new Overlay( ctx, overlayProvider );
-
-	if ( locationDefault ) locationDefaultOverlay = name;
 
 };
 
@@ -227,18 +223,6 @@ CommonTerrain.prototype.setShadingMode = function ( mode, renderCallback ) {
 		material = materials.getContourMaterial();
 
 		break;
-
-	case SHADING_LOCATION:
-
-		if ( locationDefaultOverlay === null ) {
-
-			material = materials.getHypsometricMaterial();
-			mode = SHADING_RELIEF;
-			break;
-
-		}
-
-		mode = locationDefaultOverlay; // es-lint( no-fallthrough )
 
 	default:
 

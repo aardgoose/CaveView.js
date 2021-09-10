@@ -1,6 +1,6 @@
 import {
 	CAMERA_PERSPECTIVE,
-	SHADING_HEIGHT, SHADING_RELIEF, SHADING_LOCATION,
+	SHADING_HEIGHT, SHADING_RELIEF,
 	VIEW_PLAN, MOUSE_MODE_NORMAL, TERRAIN_BLEND, SHADING_DUPLICATE
 } from '../core/constants';
 
@@ -35,18 +35,6 @@ const defaultView = {
 	warnings: false,
 	fullscreen: false,
 	zoomToCursor: true
-};
-
-const dynamicView = {
-	autoRotate: false,
-	walls: true,
-	scraps: true,
-	box: false,
-	terrain: true,
-	terrainOpacity: 1,
-	terrainDatumShift: true,
-	terrainThrough: TERRAIN_BLEND,
-	terrainShading: SHADING_LOCATION
 };
 
 function ViewState ( viewer ) {
@@ -88,4 +76,4 @@ function ViewState ( viewer ) {
 
 }
 
-export { ViewState, defaultView, dynamicView };
+export { ViewState, defaultView };

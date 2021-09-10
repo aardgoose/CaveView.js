@@ -6,7 +6,6 @@ import { SelectionTreePage } from './SelectionTreePage';
 import { SettingsPage } from './SettingsPage';
 import { SurfacePage } from './SurfacePage';
 import { EditPage } from './EditPage';
-import { LocationButton } from './LocationButton';
 import { KeyboardControls } from './KeyboardControls';
 import { FileSelector } from './FileSelector';
 import { Page } from './Page';
@@ -33,7 +32,6 @@ function CaveViewUI ( viewer ) {
 	cfg.addEventListener( 'change', initUI );
 
 	const keyboardControls = new KeyboardControls( viewer, fileSelector, cfg.value( 'avenControls', true ) );
-	let locationButton;
 
 	function selectFile( event ) {
 
@@ -83,7 +81,6 @@ function CaveViewUI ( viewer ) {
 		frame.setParent( container );
 
 		frame.addFullscreenButton( 'fullscreen', viewer, 'fullscreen' );
-		locationButton = new LocationButton( viewer, container );
 
 	}
 
@@ -119,7 +116,6 @@ function CaveViewUI ( viewer ) {
 		frame.clear();
 		viewer.clearView();
 		fileSelector.dispose();
-		locationButton.dispose();
 		keyboardControls.dispose();
 		viewer.dispose();
 

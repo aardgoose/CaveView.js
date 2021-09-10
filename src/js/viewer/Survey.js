@@ -477,7 +477,7 @@ Survey.prototype.getFeature = function ( tag ) {
 
 };
 
-Survey.prototype.update = function ( cameraManager, target, showClusterMarkers ) {
+Survey.prototype.update = function ( cameraManager, target  ) {
 
 	const camera = cameraManager.activeCamera;
 
@@ -485,8 +485,8 @@ Survey.prototype.update = function ( cameraManager, target, showClusterMarkers )
 
 	if ( entrances && cameraManager.testCameraLayer( FEATURE_ENTRANCES ) ) {
 
-		cameraManager.setCameraLayer( CLUSTER_MARKERS, showClusterMarkers );
-		entrances.cluster( camera, target, this.selection, showClusterMarkers );
+		cameraManager.setCameraLayer( CLUSTER_MARKERS, true );
+		entrances.cluster( camera, target, this.selection );
 
 	} else {
 

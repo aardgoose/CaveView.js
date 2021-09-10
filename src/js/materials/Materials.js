@@ -137,10 +137,10 @@ function Materials ( viewer ) {
 
 	}
 
-	this.getLine2Material = function ( dashed = false ) {
+	this.getLine2Material = function ( params = { color: 'green' } ) {
 
-		const func = function () { return new Line2Material( ctx, dashed ); };
-		const material = getCacheMaterial( 'line2' + ( dashed ? '-dashed' : '' ), func, true );
+		const func = function () { return new Line2Material( ctx, params ); };
+		const material = getCacheMaterial( 'line2' + JSON.stringify( params ), func, true );
 
 		return material;
 

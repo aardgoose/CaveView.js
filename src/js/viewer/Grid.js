@@ -7,8 +7,9 @@ class Grid extends LineSegments2 {
 
 		const geometry = new LineSegmentsGeometry();
 		const survey = ctx.survey;
+		const baseColor = ctx.cfg.themeColor( 'grid.base' );
 
-		super( geometry, ctx.materials.getLine2Material() );
+		super( geometry, ctx.materials.getLine2Material( { color: baseColor } ) );
 
 		this.scale.set( 1, 1, 1 );
 		this.type = 'CV.Grid';
@@ -61,27 +62,21 @@ class Grid extends LineSegments2 {
 		const z = box.min.z;
 		let i;
 
-		const baseColor = ctx.cfg.themeColor( 'grid.base' );
-
-		const colors = [];
 		const vertices = [];
 
 		for ( i = d.x + xOffset; i < c.x; i += deltaX ) {
 
 			vertices.push( i, d.y, z, i - vGrad, a.y, z );
-			colors.push( baseColor.r, baseColor.g, baseColor.b, baseColor.r, baseColor.g, baseColor.b );
 
 		}
 
 		for ( i = d.y + yOffset; i < a.y; i += deltaY ) {
 
 			vertices.push( d.x,  i, z, c.x, i - hGrad, z );
-			colors.push( baseColor.r, baseColor.g, baseColor.b, baseColor.r, baseColor.g, baseColor.b );
 
 		}
 
 		geometry.setPositions( vertices );
-		geometry.setColors( colors );
 
 	}
 

@@ -1511,6 +1511,8 @@ class CaveViewer extends EventDispatcher {
 
 			function _mouseUpRight () {
 
+				controls.enabled = true;
+
 			}
 
 		}

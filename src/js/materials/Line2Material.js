@@ -42,6 +42,7 @@ class Line2Material extends ShaderMaterial {
 		} );
 
 		this.dashed = false;
+		this.ctx = ctx;
 
 		Object.defineProperties( this, {
 
@@ -191,18 +192,27 @@ class Line2Material extends ShaderMaterial {
 
 		} );
 
-		this.setValues( params );
-
-		this.resolution = new Vector2( ctx.container.clientWidth, ctx.container.clientHeight );
-
-		ctx.viewer.addEventListener( 'resized', ( e ) => {
+		this.onResize = ( e ) => {
 
 			const lineScale = e.lineScale ? e.lineScale : 1;
 
 			this.resolution = new Vector2( e.width, e.height );
 			this.linewidth = Math.max( 1, Math.floor( e.width / 1000 ) * lineScale );
 
-		} );
+		};
+
+		this.setValues( params );
+
+		this.resolution = new Vector2( ctx.container.clientWidth, ctx.container.clientHeight );
+
+		ctx.viewer.addEventListener( 'resized', this.onResize );
+
+	}
+
+	dispose () {
+
+		this.ctx.viewer.removeEventListener( 'resize', this.onResize );
+		super.dispose();
 
 	}
 

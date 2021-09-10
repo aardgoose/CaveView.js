@@ -423,7 +423,6 @@ class CaveViewer extends EventDispatcher {
 		container.addEventListener( 'mouseleave', onMouseLeave );
 
 		container.addEventListener( 'fullscreenchange', onFullscreenChange );
-		container.addEventListener( 'msfullscreenchange', onFullscreenChange );
 		container.addEventListener( 'webkitfullscreenchange', onFullscreenChange );
 
 		this.addEventListener( 'change', viewChanged );
@@ -1722,7 +1721,7 @@ class CaveViewer extends EventDispatcher {
 			container.removeEventListener( 'mousedown', onMouseDown );
 
 			container.removeEventListener( 'fullscreenchange', onFullscreenChange );
-			container.removeEventListener( 'msfullscreenchange', onFullscreenChange );
+			container.removeEventListener( 'webkitfullscreenchange', onFullscreenChange );
 
 			renderer.clear();
 			renderer.dispose();

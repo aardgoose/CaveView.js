@@ -253,7 +253,7 @@ Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
 
 	} else {
 
-		for ( let p in obj ) {
+		for ( const p in obj ) {
 
 			const opt = document.createElement( 'option' );
 

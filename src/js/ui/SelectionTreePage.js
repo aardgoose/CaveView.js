@@ -47,13 +47,7 @@ class SelectionTreePage extends SelectionCommonPage {
 
 		this.handleBack = function () {};
 
-		viewer.addEventListener( 'select', _selectNode );
-
-		this._dispose = function () {
-
-			viewer.removeEventListener( 'select', _selectNode );
-
-		};
+		this.addListener( viewer, 'station', _selectNode );
 
 		return;
 
@@ -64,7 +58,7 @@ class SelectionTreePage extends SelectionCommonPage {
 			// traverse DOM to find existing tree elements and add required
 			// until selected node is visible and can be highlighted
 
-			const selectedNode = event.node;
+			const selectedNode = event.node.station;
 
 			if ( selectedNode === null  ) {
 

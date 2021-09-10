@@ -17,8 +17,6 @@ function CameraManager ( ctx, renderer, scene ) {
 	const width = container.clientWidth;
 	const height = container.clientHeight;
 
-	let boundingRect = container.getBoundingClientRect();
-
 	const orthographicCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 1, 4000 );
 	const perspectiveCamera = new PerspectiveCamera( ctx.cfg.themeValue( 'fieldOfView' ), width / height, 1, 16000 );
 
@@ -48,8 +46,6 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		const width = e.width;
 		const height = e.height;
-
-		boundingRect = container.getBoundingClientRect();
 
 		// adjust cameras to new aspect ratio etc.
 
@@ -256,6 +252,8 @@ function CameraManager ( ctx, renderer, scene ) {
 	};
 
 	this.getMouse = function ( x, y ) {
+
+		const boundingRect = container.getBoundingClientRect();
 
 		mouse.set(
 			( ( x - boundingRect.left ) / container.clientWidth ) * 2 - 1,

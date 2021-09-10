@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>createImageBitmap: crop recursively</title>
+<style>canvas{ border: 1px solid; }</style>
+<body>
+<script>
+test( getPatternCanvas(200,200) );
+
+async function test( source_canvas ) {
+	const cont = document.createElement("div");
+  document.body.append(cont);
+  cont.append( "source-canvas", br(), source_canvas, br())
+
+  // crop the original canvas
+	const cropped_img = await createImageBitmap(source_canvas, 75, 75, 50, 50);
+	appendImageBitmap(cropped_img, "cropped ImageBitmap", cont);
+  // crop the resulting ImageBitmap
+  const re_cropped_img = await createImageBitmap(cropped_img, 80, 80, -20, -20 );
+	appendImageBitmap(re_cropped_img, "re-cropped ImageBitmap", cont);
+  const re_cropped_img2 = await createImageBitmap(cropped_img, 20, 20, 10, 10 );
+	appendImageBitmap(re_cropped_img2, "re-cropped ImageBitmap", cont);
+}
+
+function getContext(w,h) {
+	const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+	return canvas.getContext("2d");
+}
+function getPatternCanvas(w, h) {
+	const ctx = getContext(w,h);
+  ctx.fillStyle = "red";
+  ctx.fillRect(0,0,w/2,h/2);
+  ctx.fillStyle = "green";
+  ctx.fillRect(w/2,0,w/2,h/2);
+  ctx.fillStyle = "blue";
+  ctx.fillRect(0,h/2,w/2,h/2);
+  ctx.fillStyle = "black";
+  ctx.fillRect(w/2,h/2,w/2,h/2);
+	return ctx.canvas;
+}
+function appendImageBitmap(img, name, cont) {
+	const ctx = getContext(img.width, img.height);
+  ctx.drawImage(img,0,0);
+	cont.append(name, br(), ctx.canvas, br());
+	console.log( img );
+}
+function br() {
+	return document.createElement("br");
+}
+</script>
+</body>
+</html>

@@ -102,6 +102,12 @@ function onload () {
 		if ( graph ) graph.close();
 	} );
 
+	viewer.addEventListener( 'leg', function ( event ) {
+		console.log( event.leg );
+		event.handled = true;
+	} );
+
+
 	const ui = new CV2.CaveViewUI( viewer );
 	ui.loadCaveList( caves );
 

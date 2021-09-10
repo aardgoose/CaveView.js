@@ -85,7 +85,7 @@ class SimpleGraph {
 
 		console.log( 'starting graph plot' );
 
-		this.cy = cytoscape( {
+		const cy = cytoscape( {
 
 			container: document.getElementById( this.id ),
 
@@ -105,15 +105,33 @@ class SimpleGraph {
 				{
 					selector: 'edge',
 					style: {
-						'width': 1,
-						'line-color': '#444444',
-						'mid-target-arrow-color': '#00ff00',
-						'mid-target-arrow-shape': 'triangle',
-						'curve-style': 'straight'
+						'width': 3,
+						'line-color': '#000000',
+						//	'mid-target-arrow-color': '#00ff00',
+						//	'mid-target-arrow-shape': 'triangle',
+						'curve-style': 'haystack'
 					}
 				},
 				{
-					selector: 'node[?entrance]',
+					selector: 'edge[cluster = 0]',
+					style: {
+						'line-color': '#880088',
+					}
+				},
+				{
+					selector: 'edge[cluster = 1]',
+					style: {
+						'line-color': '#008800',
+					}
+				},
+				{
+					selector: 'edge[cluster = 2]',
+					style: {
+						'line-color': '#008888',
+					}
+				},
+				{
+					selector: 'node[entrance = "y"]',
 					style: {
 						'background-color': 'green'
 					}
@@ -134,13 +152,28 @@ class SimpleGraph {
 
 			layout: {
 				name: 'preset',
-//				name: 'cose',
-//				idealEdgeLength: function ( edge ) { return edge.data( 'length' ); }
+				// name: 'cose',
+				// idealEdgeLength: function ( edge ) { return edge.data( 'length' ); }
 			}
 
 		} );
 
-		this.cy.on( 'tap', 'node', e => console.log( e.target.data( 'name' ) ) );
+		const clusters = cy.nodes().kMeans( { attributes: [ ( function ( n ) { return n.data( 'height' ); } ) ], k: 3 } );
+
+		console.log( clusters );
+
+		clusters.forEach( ( eles, i ) => { eles.data( 'cluster', i ); console.log( 'cc' + i ); } );
+
+		cy.elements( 'edge' ).forEach( e => e.data( 'cluster', Math.min( e.source().data( 'cluster' ), e.target().data( 'cluster' ) ) ) );
+
+		cy.nodes( '[cluster = 0]' ).shift( 'y', 5 );
+		cy.nodes( '[cluster = 2]' ).shift( 'y', -5 );
+
+		console.log( cy.json() );
+
+		cy.on( 'tap', 'node', e => console.log( e.target.data( 'name' ) ) );
+
+		this.cy = cy;
 
 		function mergeLegs( nodes ) {
 
@@ -170,11 +203,16 @@ class SimpleGraph {
 			const station = stations[ id ];
 			const p =  station.coordinates();
 
+			p.x = Math.floor( p.x / 50 ) * 50;
+			p.y = Math.floor( p.y / 50 ) * 50;
+			p.z = Math.floor( p.z / 50 ) * 50;
+
 			elements.push( {
 				data: {
 					id: 'a' + id,
 					name: station.name(),
-					'entrance': station.isEntrance()
+					'entrance': station.isEntrance() ? 'y' : 'n',
+					'height': p.z
 				},
 				position: { x: p.x, y: -p.y }
 			} );
@@ -185,7 +223,8 @@ class SimpleGraph {
 
 		function distance( s1, s2 ) {
 
-			return s1.coordinates().distanceTo( s2.coordinates() );
+			return ( s1.coordinates().z + s2.coordinates().z ) / 2;
+//			return s1.coordinates().distanceTo( s2.coordinates() );
 
 		}
 

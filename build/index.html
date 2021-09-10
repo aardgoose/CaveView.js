@@ -55,37 +55,32 @@ function onload () {
 	viewer.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
 	viewer.addOverlay( 'Spanish IGN mapping', new WMTSProvider( true ) );
 	viewer.addOverlay( 'Spanish IGN aerial photography', new WMTSProvider( false ) );
-//	viewer.addOverlay( 'IGME', new IGMEProvider() );
 
 //	viewer.addFormatters( OSGBStationFormatter );
 
-var caves = [
-	"Castleton_Master_NoSurface.3d",
-	"P8_Master.3d",
-	"MA-all.3d",
-	"test/demo.plt",
-	"evklidova_piscal.3d",
-	"all.3d",
-	"andara.3d",
-	"ELSaguaro.lox",
-	"Fighiera-sin-2018.lox",
-	"20181128_Wmap_3D_Apuane.lox",
-	"demo.plt",
-	"Peak_Master_NoSurface.3d",
-	"garrel.lox",
-	"titan.3d",
-	"Giants_Oxlow_Maskhill_System.3d",
-	"Lathkill.3d",
-	"OFDCPT.3d",
-	"BlueWater.lox",
-	"Castleton_Master.3d",
-	"Cheddar.lox"
-];
-
-	viewer.addEventListener( 'entrance', function ( event ) {
-		console.log( event.node.getPath() );
-		event.handled = true;
-	} );
+	var caves = [
+		"P8_Master.3d",
+		"titan.3d",
+		"Castleton_Master_NoSurface.3d",
+		"all.3d",
+		"TopoElefanteCutted.lox",
+		"MA-all.3d",
+		"test/demo.plt",
+		"evklidova_piscal.3d",
+		"andara.3d",
+		"ELSaguaro.lox",
+		"Fighiera-sin-2018.lox",
+		"20181128_Wmap_3D_Apuane.lox",
+		"demo.plt",
+		"Peak_Master_NoSurface.3d",
+		"garrel.lox",
+		"Giants_Oxlow_Maskhill_System.3d",
+		"Lathkill.3d",
+		"OFDCPT.3d",
+		"BlueWater.lox",
+		"Castleton_Master.3d",
+		"Cheddar.lox"
+	];
 
 	const ui = new CV2.CaveViewUI( viewer );
 	ui.loadCaveList( caves );

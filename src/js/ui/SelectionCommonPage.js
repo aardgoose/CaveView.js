@@ -60,7 +60,7 @@ class SelectionCommonPage extends Page {
 
 			// track which sections have stations as children
 
-			if ( connections !== null && !this.leafSections.has( ul) ) this.leafSections.add( ul );
+			if ( connections !== null && ! this.leafSections.has( ul) ) this.leafSections.add( ul );
 
 			// omit splays if now displaying
 
@@ -76,7 +76,7 @@ class SelectionCommonPage extends Page {
 
 			if ( viewer.section === child ) li.classList.add( 'selected' );
 
-			if ( connections === null ) {
+			if ( child.type === 0 ) {
 
 				key = _makeKey( '\u2588 ', '#444444' );
 

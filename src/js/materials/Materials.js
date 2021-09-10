@@ -255,13 +255,6 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getLineMaterial = function () {
-
-		const func = function () { return new LineBasicMaterial( { color: 0xffffff, vertexColors: true } ); };
-		return getCacheMaterial( 'line', func, true );
-
-	};
-
 	this.getExtendedPointsMaterial = function () {
 
 		const func = function () { return new ExtendedPointsMaterial( ctx ); };

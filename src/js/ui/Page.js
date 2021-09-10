@@ -125,7 +125,7 @@ Page.prototype.addCollapsingHeader = function ( text ) {
 
 	this.page.appendChild( container );
 
-	div.addEventListener( 'click', function () {
+	this.addListener( div, 'click', () => {
 
 		let redraw; // eslint-disable-line no-unused-vars
 
@@ -133,14 +133,14 @@ Page.prototype.addCollapsingHeader = function ( text ) {
 
 			container.style.display = 'block';
 
-			container.addEventListener( 'transitionend', _onReveal );
+			this.addListener( container, 'transitionend', _onReveal );
 
 			redraw = container.clientHeight; // lgtm
 			container.classList.remove( 'container_collapsed' );
 
 		} else {
 
-			container.addEventListener( 'transitionend', _onCollapse );
+			this.addListener( container, 'transitionend', _onCollapse );
 
 			container.classList.add( 'container_collapsed' );
 
@@ -386,7 +386,6 @@ Page.prototype.addRange = function ( title, obj, property ) {
 	range.value = obj[ property ];
 
 	this.addListener( range, 'input', _rangeChanged );
-	this.addListener( range, 'change', _rangeChanged ); // for IE11 support
 
 	frame.controls[ property ] = range;
 

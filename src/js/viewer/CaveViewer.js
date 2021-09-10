@@ -1300,15 +1300,20 @@ class CaveViewer extends EventDispatcher {
 					type: 'leg',
 					leg: new Leg( new Station( survey, leg.start ), new Station( survey, leg.start ) ),
 					handled: false,
+					highlight: false,
 					mouseEvent: event
 				};
 
-				_setHighlight();
-				renderView();
-
-				mouseUpFunction = _setHighlight;
-
 				self.dispatchEvent( e );
+
+				if ( e.highlight ) {
+
+					mouseUpFunction = _setHighlight;
+
+					_setHighlight();
+					renderView();
+
+				}
 
 				legIndex = null;
 

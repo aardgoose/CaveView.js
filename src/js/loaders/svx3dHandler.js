@@ -907,9 +907,17 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	function cmd_LABEL ( c ) {
 
 		const flags = c & 0x7f;
+		/*
+		0x01	Station is on leg above ground
+		0x02	Station is on an underground leg (both may be true at an entrance)
+		0x04	Station is marked as an entrance (with *entrance)
+		0x08	Station is exported (i.e. may be used as a connection point to other surveys)
+		0x10	Station is a fixed point (control point)
+		0x20	Station is anonymous
+		0x40	Station is on the passage wall
+		*/
 
 		readLabel( 0 );
-
 		if ( ( ! ( flags & 0x0E ) || flags & 0x20 ) || ! inSection ) { // skip surface only stations
 
 			pos += 12; //skip coordinates
@@ -922,7 +930,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 		stations.set(
 			label,
-			surveyTree.addLeaf( path, ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL, coords )
+			surveyTree.addLeaf( path, ( ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL ), coords )
 		);
 
 		return true;

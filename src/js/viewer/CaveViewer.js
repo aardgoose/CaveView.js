@@ -1466,7 +1466,7 @@ class CaveViewer extends EventDispatcher {
 				cameraMove.start( true );
 				event.stopPropagation();
 
-				mouseUpFunction = _mouseUpRight;
+				mouseUpFunction = null;
 
 			}
 
@@ -1511,12 +1511,6 @@ class CaveViewer extends EventDispatcher {
 				renderView();
 
 				return true;
-
-			}
-
-			function _mouseUpRight () {
-
-				controls.enabled = true;
 
 			}
 

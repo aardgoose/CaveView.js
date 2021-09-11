@@ -29,9 +29,17 @@ class SelectionCommonPage extends Page {
 
 		if ( viewer.isClipped ) {
 
+			const span = document.createElement( 'span' );
+			span.textContent = '\u25c0 ';
+
 			this.addListener( titleBar, 'click', __handleLoadFull );
+
 			titleBar.classList.add( 'reload' );
-			titleBar.textContent = this.currentTop.name;
+
+			const txt = document.createTextNode( this.currentTop.name );
+
+			titleBar.appendChild( span );
+			titleBar.appendChild( txt );
 
 		} else {
 

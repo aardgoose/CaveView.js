@@ -149,6 +149,9 @@ $animation-speed: 0.25s;
 	color: $highlight;
 	z-index: 110;
 }
+.cv-frame div.page span.back {
+	color: $highlight;
+}
 
 .cv-frame div.page div.descend-tree:before {
 	content: "\025ba";

@@ -90,7 +90,7 @@ class SelectionCommonPage extends Page {
 
 				li.classList.add( 'section' );
 
-			} else if ( child.type === STATION_ENTRANCE ) {
+			} else if ( child.type & STATION_ENTRANCE ) {
 
 				key = _makeKey( '\u2229 ', cfg.themeColorCSS( 'stations.entrances.marker' ) );
 				key.classList.add( 'cv-entrance' );

@@ -314,7 +314,7 @@ class CaveViewer extends EventDispatcher {
 
 			'editMode': {
 				get: function () { return mouseMode; },
-				set: function ( x ) { setEditMode( x ); self.dispatchEvent( { type: 'change', name: 'editMode' } ); }
+				set: _stateSetter( setEditMode, 'editMode' )
 			},
 
 			'setPOI': {
@@ -1332,18 +1332,19 @@ class CaveViewer extends EventDispatcher {
 
 			if ( event.target !== renderer.domElement ) return;
 
-			const scale = __v.set( container.clientWidth / 2, container.clientHeight / 2, 0 );
 			const mouse = cameraManager.getMouse( event.clientX, event.clientY );
+
+			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
 
 			container.addEventListener( 'mouseup', mouseUp );
 
 			if ( self.entrances ) {
 
-				const entrance = survey.entrances.intersectLabels( mouse, cameraManager.activeCamera, scale );
+				const entrance = raycaster.intersectObjects( survey.entrances.labels, false );
 
-				if ( entrance !== null ) {
+				if ( entrance.length !== 0 ) {
 
-					const station = survey.surveyTree.findById( entrance.stationID );
+					const station = survey.surveyTree.findById( entrance[ 0 ].object.stationID );
 
 					const e = {
 						type: 'entrance',
@@ -1369,8 +1370,6 @@ class CaveViewer extends EventDispatcher {
 				}
 
 			}
-
-			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
 
 			const intersects = raycaster.intersectObjects( mouseTargets, false );
 

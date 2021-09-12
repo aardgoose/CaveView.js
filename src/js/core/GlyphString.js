@@ -1,9 +1,18 @@
 import {
 	InstancedBufferGeometry, InstancedBufferAttribute,
-	Mesh, Vector3, Triangle, Object3D
+	Mesh, Vector3, Vector4, Matrix3, Box2, Object3D
 } from '../Three';
 
 import { CommonAttributes } from './CommonAttributes';
+
+// temporary objects for raycasting
+
+const _ssOrigin = new Vector4();
+const mouse = new Vector3();
+const labelEnd = new Vector3();
+const labelOrigin = new Vector3();
+
+const labelBox = new Box2();
 
 class GlyphStringGeometryCache {
 
@@ -32,15 +41,6 @@ class GlyphStringGeometryCache {
 
 }
 
-
-const __v0 = new Vector3();
-const __v1 = new Vector3();
-const __v2 = new Vector3();
-const __v3 = new Vector3();
-const __v4 = new Vector3();
-
-const __triangle1 = new Triangle();
-const __triangle2 = new Triangle();
 
 class GlyphStringGeometry extends InstancedBufferGeometry {
 
@@ -123,7 +123,31 @@ class GlyphStringBase extends Mesh {
 	constructor ( text, glyphMaterial, geometry ) {
 
 		super( geometry, glyphMaterial );
+
 		this.name = text;
+
+		this.box = new Box2();
+
+		this.box.min.x = 0;
+		this.box.min.y = 0;
+
+		this.setBox();
+
+		const a = this.material.rotation;
+
+		this.setRotationMatrix = new Matrix3().set(
+			Math.cos( a ),	-Math.sin( a ),	0,
+			Math.sin( a ), 	Math.cos( a ),	0,
+			0,				0,				0
+		);
+
+	}
+
+
+	setBox () {
+
+		this.box.max.x = this.getWidth();
+		this.box.max.y = this.getHeight();
 
 	}
 
@@ -139,48 +163,70 @@ class GlyphStringBase extends Mesh {
 
 	}
 
-	intersects ( position, camera, scale ) {
+	getOffset () {
 
-		if ( ! this.visible ) return false;
+		// FIXME - cache this value
+		labelEnd.set( this.getWidth(), this.getHeight(), 0 );
+		this.material.rotateVector( labelEnd );
 
-		const width = this.getWidth() / scale.x;
-		const height = this.getHeight() / scale.y;
-		const rotation = this.material.rotation;
+		return labelEnd;
 
-		// mouse position in NDC
-		__v0.set( position.x, position.y, 0 );
+	}
 
-		// label bottom left in NDC
-		__v1.setFromMatrixPosition( this.modelViewMatrix );
-		__v1.applyMatrix4( camera.projectionMatrix );
 
-		this.depth = __v1.z;
+	raycast ( raycaster, intersects ) {
 
-		__v1.z = 0;
+		if ( ! this.visible ) return intersects;
 
-		if ( isNaN( __v1.x ) ) return;
+		const ray = raycaster.ray;
+		const camera = raycaster.camera;
+		const glyphMaterial = this.material;
+		const scale = glyphMaterial.toScreenSpace;
 
-		// remaining vertices of label
-		__v2.set( width, 0, 0 ).applyAxisAngle( Object3D.DefaultUp, rotation );
-		__v3.set( width, height, 0 ).applyAxisAngle( Object3D.DefaultUp, rotation );
-		__v4.set( 0, height, 0 ).applyAxisAngle( Object3D.DefaultUp, rotation );
 
-		// adjust for aspect ratio
-		__v2.y *= scale.x / scale.y;
-		__v3.y *= scale.x / scale.y;
-		__v4.y *= scale.x / scale.y;
+		ray.at( 1, _ssOrigin );
 
-		__v2.add( __v1 );
-		__v3.add( __v1 );
-		__v4.add( __v1 );
+		// ndc space [ - 1.0, 1.0 ]
 
-		__triangle1.set( __v1, __v2, __v3 );
-		__triangle2.set( __v1, __v3, __v4 );
+		_ssOrigin.w = 1;
 
-		return (
-			( __triangle1.containsPoint( __v0 ) ) ||
-			( __triangle2.containsPoint( __v0 ) )
-		);
+		_ssOrigin.applyMatrix4( camera.matrixWorldInverse );
+		_ssOrigin.applyMatrix4( camera.projectionMatrix );
+		_ssOrigin.multiplyScalar( 1 / _ssOrigin.w );
+
+		// screen space
+
+		mouse.copy( _ssOrigin );
+
+		mouse.multiply( scale );
+
+		this.getWorldPosition( labelOrigin );
+
+		labelOrigin.project( camera );
+		labelOrigin.multiply( scale );
+
+		const labelEnd = this.getOffset();
+
+		labelEnd.add( labelOrigin );
+
+		glyphMaterial.rotateVector( mouse );
+		glyphMaterial.rotateVector( labelEnd );
+		glyphMaterial.rotateVector( labelOrigin );
+
+		//console.log( 'm', Math.round( mouse.x ), Math.round( mouse.y ) );
+		//console.log( 'o', Math.round( labelOrigin.x ), Math.round( labelOrigin.y ) );
+		//console.log( 'e', Math.round( labelEnd.x ), Math.round( labelEnd.y ) );
+
+		labelBox.setFromPoints( [ labelOrigin, labelEnd ] );
+
+		if ( labelBox.containsPoint( mouse ) ) {
+
+			intersects.push( { object: this } );
+
+		}
+		// this.depth = __v1.z;
+
+		return intersects;
 
 	}
 
@@ -232,6 +278,7 @@ class MutableGlyphString extends GlyphStringBase {
 		}
 
 		this.geometry.setString( newstring );
+		this.setBox();
 
 	}
 

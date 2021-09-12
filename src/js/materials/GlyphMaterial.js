@@ -1,5 +1,6 @@
 import { ShaderMaterial, Vector2 } from '../Three';
 import { Shaders } from '../shaders/Shaders';
+import { Vector3 } from 'three';
 
 class GlyphMaterial extends ShaderMaterial {
 
@@ -9,11 +10,15 @@ class GlyphMaterial extends ShaderMaterial {
 		const container = viewer.container;
 		const realPixels = glyphAtlas.cellSize;
 
-		const cos = Math.cos( rotation );
-		const sin = Math.sin( rotation );
+		const cos = Math.cos( -rotation );
+		const sin = Math.sin( -rotation );
+
+		const cosR = Math.cos( rotation );
+		const sinR = Math.sin( rotation );
+
 		const scale = new Vector2( realPixels / container.clientWidth, realPixels / container.clientHeight );
 
-		const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
+		const rotationMatrix = new Float32Array( [ cos, -sin, sin, cos ] );
 
 		super( {
 			vertexShader: Shaders.glyphVertexShader,
@@ -34,7 +39,8 @@ class GlyphMaterial extends ShaderMaterial {
 
 		this.type = 'CV.GlyphMaterial';
 		this.atlas = glyphAtlas;
-		this.scaleFactor = 1 / glyphAtlas.cellScale;
+		this.scaleFactor = glyphAtlas.cellSize / 2;
+		this.toScreenSpace = new Vector3( container.clientWidth/ 2, container.clientHeight / 2, 1 );
 
 		viewer.addEventListener( 'resized', _resize );
 
@@ -43,8 +49,19 @@ class GlyphMaterial extends ShaderMaterial {
 		function _resize() {
 
 			self.uniforms.scale.value.set( realPixels / container.clientWidth, realPixels / container.clientHeight );
+			self.toScreenSpace.set( container.clientWidth/ 2, container.clientHeight / 2, 1 );
 
 		}
+
+		this.rotateVector = function ( v ) {
+
+			const x = v.x;
+			const y = v.y;
+
+			v.x = cosR * x - sinR * y;
+			v.y = sinR * x + cosR * y;
+
+		};
 
 	}
 

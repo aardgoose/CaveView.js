@@ -1,6 +1,7 @@
+import { Vector2 } from 'three';
 import {
 	InstancedBufferGeometry, InstancedBufferAttribute,
-	Mesh, Vector3, Vector4, Matrix3, Box2, Object3D
+	Mesh, Vector3, Vector4, Box2, Object3D
 } from '../Three';
 
 import { CommonAttributes } from './CommonAttributes';
@@ -8,11 +9,12 @@ import { CommonAttributes } from './CommonAttributes';
 // temporary objects for raycasting
 
 const _ssOrigin = new Vector4();
-const mouse = new Vector3();
-const labelEnd = new Vector3();
-const labelOrigin = new Vector3();
+const _mouse = new Vector3();
+const _labelEnd = new Vector3();
+const _labelOrigin = new Vector3();
+const _ssLabelOrigin = new Vector3();
 
-const labelBox = new Box2();
+const _labelBox = new Box2();
 
 class GlyphStringGeometryCache {
 
@@ -126,20 +128,9 @@ class GlyphStringBase extends Mesh {
 
 		this.name = text;
 
-		this.box = new Box2();
+		this.labelOffset = new Vector2();
 
-		this.box.min.x = 0;
-		this.box.min.y = 0;
-
-		this.setBox();
-
-		const a = this.material.rotation;
-
-		this.setRotationMatrix = new Matrix3().set(
-			Math.cos( a ),	-Math.sin( a ),	0,
-			Math.sin( a ), 	Math.cos( a ),	0,
-			0,				0,				0
-		);
+		this.updateLabelOffset();
 
 	}
 
@@ -163,16 +154,37 @@ class GlyphStringBase extends Mesh {
 
 	}
 
-	getOffset () {
+	updateLabelOffset () {
 
-		// FIXME - cache this value
-		labelEnd.set( this.getWidth(), this.getHeight(), 0 );
-		this.material.rotateVector( labelEnd );
+		this.labelOffset.set( this.getWidth(), this.getHeight(), 0 );
 
-		return labelEnd;
+		this.material.rotateVector( this.labelOffset );
+		this.material.rotateVector( this.labelOffset );
 
 	}
 
+	updateLabelBox ( camera ) {
+
+		const glyphMaterial = this.material;
+		const scale = glyphMaterial.toScreenSpace;
+
+		// get box origin in screen space
+		this.getWorldPosition( _ssLabelOrigin );
+
+		_labelOrigin.copy( _ssLabelOrigin );
+		_labelOrigin.project( camera );
+		_labelOrigin.multiply( scale );
+
+		// rotate into alignment with text rotation
+		glyphMaterial.rotateVector( _labelOrigin );
+
+		// find other corner = origin + offset (maintained in coords aligned with rotation)
+		_labelEnd.copy( _labelOrigin );
+		_labelEnd.add( this.labelOffset );
+
+		_labelBox.setFromPoints( [ _labelOrigin, _labelEnd ] );
+
+	}
 
 	raycast ( raycaster, intersects ) {
 
@@ -182,7 +194,6 @@ class GlyphStringBase extends Mesh {
 		const camera = raycaster.camera;
 		const glyphMaterial = this.material;
 		const scale = glyphMaterial.toScreenSpace;
-
 
 		ray.at( 1, _ssOrigin );
 
@@ -195,36 +206,24 @@ class GlyphStringBase extends Mesh {
 		_ssOrigin.multiplyScalar( 1 / _ssOrigin.w );
 
 		// screen space
+		_mouse.copy( _ssOrigin );
+		_mouse.multiply( scale );
 
-		mouse.copy( _ssOrigin );
+		// rotated screen space
+		glyphMaterial.rotateVector( _mouse );
 
-		mouse.multiply( scale );
-
-		this.getWorldPosition( labelOrigin );
-
-		labelOrigin.project( camera );
-		labelOrigin.multiply( scale );
-
-		const labelEnd = this.getOffset();
-
-		labelEnd.add( labelOrigin );
-
-		glyphMaterial.rotateVector( mouse );
-		glyphMaterial.rotateVector( labelEnd );
-		glyphMaterial.rotateVector( labelOrigin );
+		// FIXME - we don't check for objects outside of view
+		this.updateLabelBox( camera );
 
 		//console.log( 'm', Math.round( mouse.x ), Math.round( mouse.y ) );
 		//console.log( 'o', Math.round( labelOrigin.x ), Math.round( labelOrigin.y ) );
 		//console.log( 'e', Math.round( labelEnd.x ), Math.round( labelEnd.y ) );
 
-		labelBox.setFromPoints( [ labelOrigin, labelEnd ] );
+		if ( _labelBox.containsPoint( _mouse ) ) {
 
-		if ( labelBox.containsPoint( mouse ) ) {
-
-			intersects.push( { object: this } );
+			intersects.push( { object: this, distance: raycaster.ray.origin.distanceTo( _ssLabelOrigin ) } );
 
 		}
-		// this.depth = __v1.z;
 
 		return intersects;
 
@@ -278,7 +277,7 @@ class MutableGlyphString extends GlyphStringBase {
 		}
 
 		this.geometry.setString( newstring );
-		this.setBox();
+		this.updateLabelOffset();
 
 	}
 

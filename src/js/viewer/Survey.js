@@ -486,7 +486,7 @@ Survey.prototype.update = function ( cameraManager, target  ) {
 	if ( entrances && cameraManager.testCameraLayer( FEATURE_ENTRANCES ) ) {
 
 		cameraManager.setCameraLayer( CLUSTER_MARKERS, true );
-		entrances.cluster( camera, target, this.selection );
+		entrances.cluster( cameraManager, target, this.selection );
 
 	} else {
 

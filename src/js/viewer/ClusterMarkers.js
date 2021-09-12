@@ -319,7 +319,7 @@ ClusterMarkers.prototype.addMarker = function ( node, label ) {
 
 };
 
-ClusterMarkers.prototype.cluster = function ( camera, target, selectedStationSet ) {
+ClusterMarkers.prototype.cluster = function ( cameraManager, target, selectedStationSet ) {
 
 	// determine which labels are too close together to be usefully displayed as separate objects.
 
@@ -327,11 +327,18 @@ ClusterMarkers.prototype.cluster = function ( camera, target, selectedStationSet
 
 	if ( this.children.length < 2 ) return;
 
-	this.camera = camera;
+	this.camera = cameraManager.activeCamera;
 
 	const angle = this.camera.getWorldDirection( __v ).dot( Object3D.DefaultUp );
 
 	this.quadTree.check( this, target, Math.max( 0.05, 1 - Math.cos( angle ) ), selectedStationSet );
+
+	// sort by depth and update label boxes
+	this.labels.sort( ( a, b ) => { return b.getDepth( cameraManager ) - a.getDepth( cameraManager ); } );
+
+	// traverse from back to front and use label boxes to detect overlapping labels and
+	// set visible = false on the rear most
+	this.labels.forEach( ( l, i, labels ) => l.checkOcclusion( labels, i ) );
 
 	return;
 

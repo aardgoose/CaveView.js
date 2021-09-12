@@ -1,7 +1,6 @@
-import { Vector2 } from 'three';
 import {
-	InstancedBufferGeometry, InstancedBufferAttribute,
-	Mesh, Vector3, Vector4, Box2, Object3D
+	InstancedBufferGeometry, InstancedInterleavedBuffer, InterleavedBufferAttribute,
+	Mesh, Vector2, Vector3, Vector4, Box2, Object3D
 } from '../Three';
 
 import { CommonAttributes } from './CommonAttributes';
@@ -11,10 +10,7 @@ import { CommonAttributes } from './CommonAttributes';
 const _ssOrigin = new Vector4();
 const _mouse = new Vector3();
 const _labelEnd = new Vector3();
-const _labelOrigin = new Vector3();
 const _ssLabelOrigin = new Vector3();
-
-const _labelBox = new Box2();
 
 class GlyphStringGeometryCache {
 
@@ -56,13 +52,16 @@ class GlyphStringGeometry extends InstancedBufferGeometry {
 		this.setIndex( CommonAttributes.index );
 		this.setAttribute( 'position', CommonAttributes.position );
 
-		const l = text.length;
-
 		this.glyphAtlas = glyphAtlas;
 
-		this.setAttribute( 'instanceUvs', new InstancedBufferAttribute( new Float32Array( l * 2 ), 2, false, 1 ) );
-		this.setAttribute( 'instanceOffsets', new InstancedBufferAttribute( new Float32Array( l ), 1, false, 1 ) );
-		this.setAttribute( 'instanceWidths', new InstancedBufferAttribute( new Float32Array( l ), 1, false, 1 ) );
+		const buffer = new Float32Array( text.length * 4 );
+		const instanceBuffer = new InstancedInterleavedBuffer( buffer, 4, 1 ); // uv, offset, widths
+
+		this.instanceBuffer = instanceBuffer;
+
+		this.setAttribute( 'instanceUvs', new InterleavedBufferAttribute( instanceBuffer, 2, 0 ) );
+		this.setAttribute( 'instanceOffsets', new InterleavedBufferAttribute( instanceBuffer, 1, 2 ) );
+		this.setAttribute( 'instanceWidths', new InterleavedBufferAttribute( instanceBuffer, 1, 3 ) );
 
 		this.setString( text );
 
@@ -128,17 +127,12 @@ class GlyphStringBase extends Mesh {
 
 		this.name = text;
 
+		this.labelOrigin = new Vector3();
 		this.labelOffset = new Vector2();
+		this.labelBox = new Box2();
+		this.lastFrame = 0;
 
 		this.updateLabelOffset();
-
-	}
-
-
-	setBox () {
-
-		this.box.max.x = this.getWidth();
-		this.box.max.y = this.getHeight();
 
 	}
 
@@ -167,22 +161,60 @@ class GlyphStringBase extends Mesh {
 
 		const glyphMaterial = this.material;
 		const scale = glyphMaterial.toScreenSpace;
+		const labelOrigin = this.labelOrigin;
 
 		// get box origin in screen space
 		this.getWorldPosition( _ssLabelOrigin );
 
-		_labelOrigin.copy( _ssLabelOrigin );
-		_labelOrigin.project( camera );
-		_labelOrigin.multiply( scale );
+		labelOrigin.copy( _ssLabelOrigin );
+		labelOrigin.project( camera );
+		labelOrigin.multiply( scale );
 
 		// rotate into alignment with text rotation
-		glyphMaterial.rotateVector( _labelOrigin );
+		glyphMaterial.rotateVector( labelOrigin );
 
 		// find other corner = origin + offset (maintained in coords aligned with rotation)
-		_labelEnd.copy( _labelOrigin );
+		_labelEnd.copy( labelOrigin );
 		_labelEnd.add( this.labelOffset );
 
-		_labelBox.setFromPoints( [ _labelOrigin, _labelEnd ] );
+		this.labelBox.setFromPoints( [labelOrigin, _labelEnd ] );
+
+	}
+
+	getDepth( cameraManager ) {
+
+		if ( this.lastFrame < cameraManager.getLastFrame() ) {
+
+			this.updateLabelBox( cameraManager.activeCamera );
+			this.lastFrame = cameraManager.getLastFrame();
+
+		}
+
+		// label origin in screen space
+		return this.labelOrigin.z;
+
+	}
+
+	checkOcclusion ( labels, currentIndex ) {
+
+		if ( ! this.visible ) return;
+
+		const l = labels.length;
+
+		for ( let i = currentIndex  + 1; i < l; i++ ) {
+
+			const nextLabel = labels[ i ];
+
+			if ( ! nextLabel.visible ) continue;
+
+			if ( this.labelBox.intersectsBox( nextLabel.labelBox ) ) {
+
+				this.visible = false;
+				return;
+
+			}
+
+		}
 
 	}
 
@@ -219,7 +251,7 @@ class GlyphStringBase extends Mesh {
 		//console.log( 'o', Math.round( labelOrigin.x ), Math.round( labelOrigin.y ) );
 		//console.log( 'e', Math.round( labelEnd.x ), Math.round( labelEnd.y ) );
 
-		if ( _labelBox.containsPoint( _mouse ) ) {
+		if ( this.labelBox.containsPoint( _mouse ) ) {
 
 			intersects.push( { object: this, distance: raycaster.ray.origin.distanceTo( _ssLabelOrigin ) } );
 
@@ -251,9 +283,7 @@ class GlyphString extends GlyphStringBase {
 
 		super( text, glyphMaterial, geometry );
 
-		geometry.getAttribute( 'instanceUvs' ).onUpload( Object3D.onUploadDropBuffer );
-		geometry.getAttribute( 'instanceOffsets' ).onUpload( Object3D.onUploadDropBuffer );
-		geometry.getAttribute( 'instanceWidths' ).onUpload( Object3D.onUploadDropBuffer );
+		geometry.instanceBuffer.onUpload( Object3D.onUploadDropBuffer );
 
 	}
 

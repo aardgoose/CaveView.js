@@ -42,7 +42,7 @@
     "rollup": "^2.56.3",
     "rollup-plugin-terser": "^7.0.2",
     "serve": "^12.0.1",
-    "terser": "^5.7.2",
+    "terser": "^5.8.0",
     "three": "^0.132.0",
     "x18n": "^2.0.3"
   }

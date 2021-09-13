@@ -50,7 +50,8 @@ const defaultTheme = {
 		entrances: {
 			text: 'white',
 			background: 'darkred',
-			marker: 'white'
+			marker: 'white',
+			angle: 45,
 		},
 		junctions: {
 			text: 'yellow',

@@ -1,4 +1,7 @@
-import { BufferGeometry, Points, Vector3, InterleavedBuffer, InterleavedBufferAttribute } from '../Three';
+import {
+	BufferGeometry, Points, Vector3, Float32BufferAttribute,
+	InterleavedBuffer, InterleavedBufferAttribute
+} from '../Three';
 
 import { STATION_ENTRANCE } from '../core/constants';
 import { PointIndicator } from './PointIndicator';
@@ -21,6 +24,7 @@ class Stations extends Points {
 		this.entranceColor = cfg.themeColor( 'stations.entrances.marker' );
 
 		this.vertices = [];
+		this.pointSizes = [];
 		this.instanceData = [];
 
 		this.selected = null;
@@ -64,7 +68,7 @@ class Stations extends Points {
 		node.toArray( instanceData, offset );
 		color.toArray( instanceData, offset + 3 );
 
-		instanceData.push( pointSize );
+		this.pointSizes.push( pointSize );
 
 		node.stationVertexIndex = this.stationCount++;
 		node.linkedSegments = [];
@@ -197,11 +201,13 @@ class Stations extends Points {
 		const bufferGeometry = this.geometry;
 
 		const buffer = new Float32Array( this.instanceData );
-		const instanceBuffer = new InterleavedBuffer( buffer, 7 ); // position, color, pSize
+		const instanceBuffer = new InterleavedBuffer( buffer, 6 ); // position, color, pSize
 
 		bufferGeometry.setAttribute( 'position', new InterleavedBufferAttribute( instanceBuffer, 3, 0 ) );
 		bufferGeometry.setAttribute( 'color', new InterleavedBufferAttribute( instanceBuffer, 3, 3 ) );
-		bufferGeometry.setAttribute( 'pSize', new InterleavedBufferAttribute( instanceBuffer, 1, 6 ) );
+
+		// non-interleaved to avoid excess data uploads to GPU
+		bufferGeometry.setAttribute( 'pSize', new Float32BufferAttribute( this.pointSizes, 1 ) );
 
 		this.instanceData = null;
 

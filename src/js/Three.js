@@ -43,6 +43,7 @@ export { InstancedBufferGeometry } from 'three/src/core/InstancedBufferGeometry.
 export { BufferGeometry } from 'three/src/core/BufferGeometry.js';
 export { InstancedBufferAttribute } from 'three/src/core/InstancedBufferAttribute.js';
 export { InstancedInterleavedBuffer } from 'three/src/core/InstancedInterleavedBuffer';
+export { InterleavedBuffer } from 'three/src/core/InterleavedBuffer';
 export { InterleavedBufferAttribute } from 'three/src/core/InterleavedBufferAttribute';
 export * from 'three/src/core/BufferAttribute.js';
 export { Object3D } from 'three/src/core/Object3D.js';

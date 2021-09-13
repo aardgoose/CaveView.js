@@ -1,4 +1,4 @@
-import { BufferGeometry, Points, Float32BufferAttribute, Vector3, Object3D } from '../Three';
+import { BufferGeometry, Points, Vector3, InterleavedBuffer, InterleavedBufferAttribute } from '../Three';
 
 import { STATION_ENTRANCE } from '../core/constants';
 import { PointIndicator } from './PointIndicator';
@@ -12,7 +12,6 @@ class Stations extends Points {
 		super( new BufferGeometry, ctx.materials.getExtendedPointsMaterial() );
 
 		this.type = 'CV.Stations';
-		this.seen = new Set();
 		this.stationCount = 0;
 
 		const cfg = ctx.cfg;
@@ -21,9 +20,8 @@ class Stations extends Points {
 		this.junctionColor = cfg.themeColor( 'stations.junctions.marker' );
 		this.entranceColor = cfg.themeColor( 'stations.entrances.marker' );
 
-		this.pointSizes = [];
-		this.vertices   = [];
-		this.colors     = [];
+		this.vertices = [];
+		this.instanceData = [];
 
 		this.selected = null;
 		this.selectedSize = 0;
@@ -40,36 +38,33 @@ class Stations extends Points {
 
 	addStation ( node ) {
 
-		if ( this.seen.has( node ) ) {
+		if ( node.legs !== undefined ) return; // duplicated entry
 
-			// console.log( 'duplicate', node.getPath(), seen.getPath() );
-			return;
-
-		}
-
-		const connections = node.connections;
-
-		this.vertices.push( node );
+		const instanceData = this.instanceData;
+		const offset = instanceData.length;
 
 		let pointSize = 0.0;
+		let color;
 
 		if ( node.type & STATION_ENTRANCE ) {
 
-			this.colors.push( this.entranceColor );
-
+			color = this.entranceColor;
 			pointSize = 12.0;
 
 		} else {
 
-			this.colors.push( connections > 2 ? this.junctionColor : this.baseColor );
-
+			color = node.connections > 2 ? this.junctionColor : this.baseColor;
 			pointSize = 8.0;
 
 		}
 
-		this.pointSizes.push( pointSize );
 
-		this.seen.add( node );
+		this.vertices.push( node );
+
+		node.toArray( instanceData, offset );
+		color.toArray( instanceData, offset + 3 );
+
+		instanceData.push( pointSize );
 
 		node.stationVertexIndex = this.stationCount++;
 		node.linkedSegments = [];
@@ -201,17 +196,14 @@ class Stations extends Points {
 
 		const bufferGeometry = this.geometry;
 
-		const positions = new Float32BufferAttribute(this.vertices.length * 3, 3 );
-		const colors = new Float32BufferAttribute( this.colors.length * 3, 3 );
+		const buffer = new Float32Array( this.instanceData );
+		const instanceBuffer = new InterleavedBuffer( buffer, 7 ); // position, color, pSize
 
-		bufferGeometry.setAttribute( 'pSize', new Float32BufferAttribute( this.pointSizes, 1 ) );
-		bufferGeometry.setAttribute( 'position', positions.copyVector3sArray( this.vertices ) );
-		bufferGeometry.setAttribute( 'color', colors.copyColorsArray( this.colors ) );
+		bufferGeometry.setAttribute( 'position', new InterleavedBufferAttribute( instanceBuffer, 3, 0 ) );
+		bufferGeometry.setAttribute( 'color', new InterleavedBufferAttribute( instanceBuffer, 3, 3 ) );
+		bufferGeometry.setAttribute( 'pSize', new InterleavedBufferAttribute( instanceBuffer, 1, 6 ) );
 
-		bufferGeometry.getAttribute( 'color' ).onUpload( Object3D.onUploadDropBuffer );
-
-		this.pointSizes = null;
-		this.colors = null;
+		this.instanceData = null;
 
 	}
 

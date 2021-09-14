@@ -9,6 +9,9 @@ import {
 	Vector3,
 } from '../three';
 
+const _box = new Box3();
+const _vector = new Vector3();
+
 class LineSegmentsGeometry extends InstancedBufferGeometry {
 
 	constructor () {
@@ -143,85 +146,74 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 	computeBoundingBox: function () {
 
-		const box = new Box3();
+		if ( this.boundingBox === null ) {
 
-		return function computeBoundingBox() {
+			this.boundingBox = new Box3();
 
-			if ( this.boundingBox === null ) {
+		}
 
-				this.boundingBox = new Box3();
+		const start = this.attributes.instanceStart;
+		const end = this.attributes.instanceEnd;
 
-			}
+		if ( start !== undefined && end !== undefined ) {
 
-			const start = this.attributes.instanceStart;
-			const end = this.attributes.instanceEnd;
+			this.boundingBox.setFromBufferAttribute( start );
 
-			if ( start !== undefined && end !== undefined ) {
+			_box.setFromBufferAttribute( end );
 
-				this.boundingBox.setFromBufferAttribute( start );
+			this.boundingBox.union( _box );
 
-				box.setFromBufferAttribute( end );
+		}
 
-				this.boundingBox.union( box );
 
-			}
-
-		};
-
-	}(),
+	},
 
 	computeBoundingSphere: function () {
 
-		const vector = new Vector3();
+		if ( this.boundingSphere === null ) {
 
-		return function computeBoundingSphere() {
+			this.boundingSphere = new Sphere();
 
-			if ( this.boundingSphere === null ) {
+		}
 
-				this.boundingSphere = new Sphere();
+		if ( this.boundingBox === null ) {
 
-			}
+			this.computeBoundingBox();
 
-			if ( this.boundingBox === null ) {
+		}
 
-				this.computeBoundingBox();
+		const start = this.attributes.instanceStart;
+		const end = this.attributes.instanceEnd;
 
-			}
+		if ( start !== undefined && end !== undefined ) {
 
-			const start = this.attributes.instanceStart;
-			const end = this.attributes.instanceEnd;
+			const center = this.boundingSphere.center;
 
-			if ( start !== undefined && end !== undefined ) {
+			this.boundingBox.getCenter( center );
 
-				const center = this.boundingSphere.center;
+			let maxRadiusSq = 0;
 
-				this.boundingBox.getCenter( center );
+			for ( let i = 0, il = start.count; i < il; i ++ ) {
 
-				let maxRadiusSq = 0;
+				_vector.fromBufferAttribute( start, i );
+				maxRadiusSq = Math.max( maxRadiusSq, center.distanceToSquared( _vector ) );
 
-				for ( let i = 0, il = start.count; i < il; i ++ ) {
-
-					vector.fromBufferAttribute( start, i );
-					maxRadiusSq = Math.max( maxRadiusSq, center.distanceToSquared( vector ) );
-
-					vector.fromBufferAttribute( end, i );
-					maxRadiusSq = Math.max( maxRadiusSq, center.distanceToSquared( vector ) );
-
-				}
-
-				this.boundingSphere.radius = Math.sqrt( maxRadiusSq );
-
-				if ( isNaN( this.boundingSphere.radius ) ) {
-
-					console.error( 'THREE.LineSegmentsGeometry.computeBoundingSphere(): Computed radius is NaN. The instanced position data is likely to have NaN values.', this );
-
-				}
+				_vector.fromBufferAttribute( end, i );
+				maxRadiusSq = Math.max( maxRadiusSq, center.distanceToSquared( _vector ) );
 
 			}
 
-		};
+			this.boundingSphere.radius = Math.sqrt( maxRadiusSq );
 
-	}(),
+			if ( isNaN( this.boundingSphere.radius ) ) {
+
+				console.error( 'THREE.LineSegmentsGeometry.computeBoundingSphere(): Computed radius is NaN. The instanced position data is likely to have NaN values.', this );
+
+			}
+
+		}
+
+	},
 
 } );
 

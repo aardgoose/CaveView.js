@@ -1,49 +1,51 @@
 
-function HeightMapLoader ( tileSpec ) {
+class HeightMapLoader {
 
-	const tileSet = tileSpec.tileSet;
-	const clip = tileSpec.clip;
+	constructor ( tileSpec ) {
 
-	let x, y, z;
+		const tileSet = tileSpec.tileSet;
+		const clip = tileSpec.clip;
 
-	if ( tileSpec.z > tileSet.maxZoom ) {
+		let x, y, z;
 
-		const scale = Math.pow( 2, tileSpec.z - tileSet.maxZoom );
+		if ( tileSpec.z > tileSet.maxZoom ) {
 
-		x = Math.floor( tileSpec.x / scale );
-		y = Math.floor( tileSpec.y / scale );
-		z = tileSet.maxZoom;
+			const scale = Math.pow( 2, tileSpec.z - tileSet.maxZoom );
 
-		// calculate offset in terrain cells of covering DTM tile for this smaller image tile.
+			x = Math.floor( tileSpec.x / scale );
+			y = Math.floor( tileSpec.y / scale );
+			z = tileSet.maxZoom;
 
-		const divisions = tileSet.divisions;
+			// calculate offset in terrain cells of covering DTM tile for this smaller image tile.
 
-		const dtmOffsetX = ( divisions * ( tileSpec.x % scale ) ) / scale;
-		const dtmOffsetY = ( divisions + 1 ) * ( divisions * ( tileSpec.y % scale ) ) / scale;
+			const divisions = tileSet.divisions;
 
-		clip.dtmOffset = dtmOffsetY + dtmOffsetX;
-		clip.dtmWidth = divisions + 1;
+			const dtmOffsetX = ( divisions * ( tileSpec.x % scale ) ) / scale;
+			const dtmOffsetY = ( divisions + 1 ) * ( divisions * ( tileSpec.y % scale ) ) / scale;
 
-	} else {
+			clip.dtmOffset = dtmOffsetY + dtmOffsetX;
+			clip.dtmWidth = divisions + 1;
 
-		x = tileSpec.x;
-		y = tileSpec.y;
-		z = tileSpec.z;
+		} else {
 
-		clip.dtmOffset = 0;
+			x = tileSpec.x;
+			y = tileSpec.y;
+			z = tileSpec.z;
+
+			clip.dtmOffset = 0;
+
+		}
+
+		const tileFile = tileSet.directory + '/' + z + '/DTM-' + x + '-' + y + '.bin';
+
+		return fetch( tileFile )
+			.then( response => {
+				if ( ! response.ok ) throw TypeError;
+				return response.arrayBuffer();
+			} );
 
 	}
 
-	const tileFile = tileSet.directory + '/' + z + '/DTM-' + x + '-' + y + '.bin';
-
-	return fetch( tileFile )
-		.then( response => {
-			if ( ! response.ok ) throw TypeError;
-			return response.arrayBuffer();
-		} );
-
 }
-
-HeightMapLoader.prototype.constructor = HeightMapLoader;
 
 export { HeightMapLoader };

@@ -95,7 +95,6 @@ class WebTerrain extends CommonTerrain {
 		case 'ORIGINAL':
 
 			promise = new EPSG4326TileSet( ctx, this.surveyCRS );
-
 			break;
 
 		default:
@@ -279,7 +278,8 @@ WebTerrain.prototype.loadTile = function ( x, y, z, parentTile, existingTile ) {
 		}
 
 		if ( self.tilesLoading !== 0 ) return;
-		if ( self.tilesLoading === 0 ) self.dispatchEvent( __endEvent );
+
+		self.dispatchEvent( __endEvent );
 
 		if ( ! self.isLoaded ) {
 

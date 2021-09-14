@@ -29,66 +29,67 @@ class LoxTile extends Mesh {
 
 	}
 
+	loadOverlay ( ctx, overlayLoadedCallback ) {
+
+		if ( this.bitmap === null ) return;
+
+		const texture = new TextureLoader().load( this.bitmap.image, _overlayLoaded );
+		const self = this;
+
+		texture.anisotropy = this.ctx.cfg.value( 'anisotropy', 4 );
+
+		return;
+
+		function _overlayLoaded () {
+
+			const bitmap = self.bitmap;
+
+			self.geometry.setupUVs( bitmap, texture.image, self.offsets );
+
+			texture.onUpdate = function ( texture ) {
+
+				// release info
+
+				URL.revokeObjectURL( texture.image.src );
+				texture.image = null;
+
+			};
+
+			self.overlayMaterial = new TerrainOverlayMaterial( ctx );
+
+			self.overlayMaterial.map = texture;
+			self.overlayMaterial.setThroughMode( self.parent.throughMode );
+
+			bitmap.data = null;
+			bitmap.image = null;
+
+			self.material = self.overlayMaterial;
+
+			overlayLoadedCallback();
+
+		}
+
+	}
+
+	removed () {
+
+		const material = this.overlayMaterial;
+
+		if ( material !== null ) {
+
+			material.map.dispose();
+			material.dispose();
+
+		}
+
+		this.geometry.dispose();
+
+	}
+
 }
 
 LoxTile.prototype.isTile = true;
 
-LoxTile.prototype.loadOverlay = function ( ctx, overlayLoadedCallback ) {
-
-	if ( this.bitmap === null ) return;
-
-	const texture = new TextureLoader().load( this.bitmap.image, _overlayLoaded );
-	const self = this;
-
-	texture.anisotropy = this.ctx.cfg.value( 'anisotropy', 4 );
-
-	return;
-
-	function _overlayLoaded () {
-
-		const bitmap = self.bitmap;
-
-		self.geometry.setupUVs( bitmap, texture.image, self.offsets );
-
-		texture.onUpdate = function ( texture ) {
-
-			// release info
-
-			URL.revokeObjectURL( texture.image.src );
-			texture.image = null;
-
-		};
-
-		self.overlayMaterial = new TerrainOverlayMaterial( ctx );
-
-		self.overlayMaterial.map = texture;
-		self.overlayMaterial.setThroughMode( self.parent.throughMode );
-
-		bitmap.data = null;
-		bitmap.image = null;
-
-		self.material = self.overlayMaterial;
-
-		overlayLoadedCallback();
-
-	}
-
-};
-
-LoxTile.prototype.removed = function () {
-
-	const material = this.overlayMaterial;
-
-	if ( material !== null ) {
-
-		material.map.dispose();
-		material.dispose();
-
-	}
-
-	this.geometry.dispose();
-
-};
 
 class LoxTerrain extends CommonTerrain {
 
@@ -117,55 +118,60 @@ class LoxTerrain extends CommonTerrain {
 
 	}
 
+	setOverlay ( overlayLoadedCallback, material ) {
+
+		if ( ! this.hasOverlay ) return;
+
+		if ( this.overlayLoaded ) {
+
+			this.children.forEach( tile => {
+
+				if ( tile.overlayMaterial !== null ) {
+
+					console.log( 'dd' );
+					tile.material = [ tile.overlayMaterial, material ];
+					// tile.material.setThroughMode( this.throughMode );
+
+				}
+
+			} );
+
+			overlayLoadedCallback();
+
+			return;
+
+		}
+
+		this.children.forEach( tile => tile.loadOverlay( this.ctx, overlayLoadedCallback, material ) );
+
+		this.overlayLoaded = true;
+
+	}
+
+	removed () {
+
+		this.children.forEach( tile => tile.removed() );
+
+		this.commonRemoved();
+
+	}
+
+	setMaterial ( material ) {
+
+		this.children.forEach( tile => tile.material = material );
+
+	}
+
+	fitSurface ( modelPoints, offsets ) {
+
+		super._fitSurface( modelPoints, offsets );
+
+	}
+
 }
 
 LoxTerrain.prototype.isTiled = false;
 LoxTerrain.prototype.isLoaded = true;
 
-LoxTerrain.prototype.setOverlay = function ( overlayLoadedCallback, material ) {
-
-	if ( ! this.hasOverlay ) return;
-
-	if ( this.overlayLoaded ) {
-
-		this.children.forEach( tile => {
-
-			if ( tile.overlayMaterial !== null ) {
-
-				console.log( 'dd' );
-				tile.material = [ tile.overlayMaterial, material ];
-//				tile.material.setThroughMode( this.throughMode );
-
-			}
-
-		} );
-
-		overlayLoadedCallback();
-
-		return;
-
-	}
-
-	this.children.forEach( tile => tile.loadOverlay( this.ctx, overlayLoadedCallback, material ) );
-
-	this.overlayLoaded = true;
-
-};
-
-LoxTerrain.prototype.removed = function () {
-
-	this.children.forEach( tile => tile.removed() );
-
-	this.commonRemoved();
-
-};
-
-LoxTerrain.prototype.setMaterial = function ( material ) {
-
-	this.children.forEach( tile => tile.material = material );
-
-};
-
-LoxTerrain.prototype.fitSurface = CommonTerrain.prototype._fitSurface;
 
 export { LoxTerrain };

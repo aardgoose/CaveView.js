@@ -16,17 +16,12 @@ class StationPosition extends Vector3 {
 
 	}
 
+
 	correctedDistanceTo ( v ) {
-
-		return Math.sqrt( this.correctedDistanceToSquared( v ) );
-
-	}
-
-	correctedDistanceToSquared ( v ) {
 
 		const dx = this.x - v.x, dy = this.y - v.y, dz = ( this.z - v.z ) * StationPosition.scaleFactor;
 
-		return dx * dx + dy * dy + dz * dz;
+		return Math.hypot( dx, dy, dz );
 
 	}
 

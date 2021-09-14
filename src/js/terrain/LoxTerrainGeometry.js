@@ -118,53 +118,53 @@ class LoxTerrainGeometry extends BufferGeometry {
 
 	}
 
+	setupUVs ( bitmap, image, offsets ) {
+
+		const calib = bitmap.calib;
+		const det = calib.xx * calib.yy - calib.xy * calib.yx;
+
+		if ( det === 0 ) return false;
+
+		// rotation matrix of bitmap over CRS
+		const xx =   calib.yy / det;
+		const xy = - calib.xy / det;
+		const yx = - calib.yx / det;
+		const yy =   calib.xx / det;
+
+		const vertices = this.getAttribute( 'position' ).array;
+
+		const width  = image.naturalWidth;
+		const height = image.naturalHeight;
+
+		const xOffset = - ( xx * calib.xOrigin + xy * calib.yOrigin );
+		const yOffset = - ( yx * calib.xOrigin + yy * calib.yOrigin );
+
+		const uvs = [];
+
+		for ( let i = 0; i < vertices.length; i += 3 ) {
+
+			const x = vertices[ i ]     + offsets.x;
+			const y = vertices[ i + 1 ] + offsets.y;
+
+			const u = ( x * xx + y * xy + xOffset ) / width;
+			const v = ( x * yx + y * yy + yOffset ) / height;
+
+			uvs.push( u, v );
+
+		}
+
+		const uvAttribute = this.getAttribute( 'uv' );
+
+		if ( uvAttribute !== undefined ) {
+
+			console.alert( 'replacing attribute uv' );
+
+		}
+
+		this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+
+	}
+
 }
-
-LoxTerrainGeometry.prototype.setupUVs = function ( bitmap, image, offsets ) {
-
-	const calib = bitmap.calib;
-	const det = calib.xx * calib.yy - calib.xy * calib.yx;
-
-	if ( det === 0 ) return false;
-
-	// rotation matrix of bitmap over CRS
-	const xx =   calib.yy / det;
-	const xy = - calib.xy / det;
-	const yx = - calib.yx / det;
-	const yy =   calib.xx / det;
-
-	const vertices = this.getAttribute( 'position' ).array;
-
-	const width  = image.naturalWidth;
-	const height = image.naturalHeight;
-
-	const xOffset = - ( xx * calib.xOrigin + xy * calib.yOrigin );
-	const yOffset = - ( yx * calib.xOrigin + yy * calib.yOrigin );
-
-	const uvs = [];
-
-	for ( let i = 0; i < vertices.length; i += 3 ) {
-
-		const x = vertices[ i ]     + offsets.x;
-		const y = vertices[ i + 1 ] + offsets.y;
-
-		const u = ( x * xx + y * xy + xOffset ) / width;
-		const v = ( x * yx + y * yy + yOffset ) / height;
-
-		uvs.push( u, v );
-
-	}
-
-	const uvAttribute = this.getAttribute( 'uv' );
-
-	if ( uvAttribute !== undefined ) {
-
-		console.alert( 'replacing attribute uv' );
-
-	}
-
-	this.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
-
-};
 
 export { LoxTerrainGeometry };

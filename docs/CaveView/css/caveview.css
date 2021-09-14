@@ -403,6 +403,14 @@ div.cv-frame::-webkit-scrollbar-button:end {
   border-bottom: 1px solid grey;
 }
 
+.cv-frame div.page div.control.color {
+  height: 36px;
+}
+
+.cv-frame div.page input[type=color] {
+  float: right;
+}
+
 .cv-frame div.page label {
   display: block;
   height: 24px;

@@ -513,10 +513,15 @@ div.cv-frame::-webkit-scrollbar-button:end {
 	right: 0px;
 	bottom: 4px;
 }
+
 .cv-frame div.page input[type="color"] {
 	float: right;
-	height: 20px;
 }
+
+.cv-frame div.page div.control.color {
+	height: 36px;
+}
+
 .cv-frame dt {
 	clear: both;
 	float: left;
@@ -624,31 +629,6 @@ div.cv-frame::-webkit-scrollbar-button:end {
 
 .cv-frame input[type=range]::-moz-range-thumb {
 	@include thumb();
-}
-
-.cv-frame input[type=range]::-ms-track {
-	@include track-size();
-	background: transparent;
-	border-color: transparent;
-	color: transparent;
-}
-
-.cv-frame input[type=range]::-ms-fill-lower {
-	@include track();
-}
-
-.cv-frame input[type=range]::-ms-fill-upper {
-	@include track();
-}
-
-.cv-frame input[type=range]::-ms-thumb {
-	@include thumb();
-	margin-top: 1px;
-}
-
-.cv-frame input[type=range]:focus::-ms-fill-lower,
-.cv-frame input[type=range]:focus::-ms-fill-upper {
-	background: $track-background;
 }
 
 .cv-frame div.page label.cv-file-label {

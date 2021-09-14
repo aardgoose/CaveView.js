@@ -1270,30 +1270,26 @@ class CaveViewer extends EventDispatcher {
 			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
 			raycaster.params.Points.threshold = 20;
 
-			const intersects = raycaster.intersectObjects( survey.pointTargets, false );
+			const hit = raycaster.intersectObject( survey.stations, false )[ 0 ];
 
 			raycaster.params.Points.threshold = threshold;
 
-			if ( intersects.length < 1 ) return null;
-
-			const station = visibleStation( intersects );
-
-			if ( station === null ) return null;
-
-			return survey.getWorldPosition( station.clone() );
+			return ( hit !== undefined && hit.station && hit.distance !== Infinity ) ?
+				survey.getWorldPosition( hit.station.clone() ) : null;
 
 		};
 
 		function checkLegIntersects( event ) {
 
 			const legs = survey.features.get( LEG_CAVE );
+			const legIntersect = raycaster.intersectObject( legs, false )[ 0 ];
 
-			const legIntersects = raycaster.intersectObject( legs, false );
 			let legIndex = null;
 
-			if  ( legIntersects.length > 0 ) {
+			if  ( legIntersect ) {
 
-				legIndex = legIntersects[ 0 ].faceIndex;
+				legIndex = legIntersect.faceIndex;
+
 				const leg = legs.getLegStations( legIndex );
 
 				const e = {
@@ -1340,11 +1336,11 @@ class CaveViewer extends EventDispatcher {
 
 			if ( self.entrances ) {
 
-				const entrance = raycaster.intersectObjects( survey.entrances.labels, false );
+				const entrance = raycaster.intersectObjects( survey.entrances.labels, false )[ 0 ];
 
-				if ( entrance.length !== 0 ) {
+				if ( entrance !== undefined ) {
 
-					const station = survey.surveyTree.findById( entrance[ 0 ].object.stationID );
+					const station = survey.surveyTree.findById( entrance.object.stationID );
 
 					const e = {
 						type: 'entrance',
@@ -1371,32 +1367,34 @@ class CaveViewer extends EventDispatcher {
 
 			}
 
-			const intersects = raycaster.intersectObjects( mouseTargets, false );
+			const hit = raycaster.intersectObjects( mouseTargets, false )[ 0 ];
 
-			if ( intersects.length === 0 ) {
+			if ( hit === undefined ) {
 
 				checkLegIntersects( event );
 				return;
 
 			}
 
+			if ( hit.station && hit.distance === Infinity ) return false;
+
 			switch ( mouseMode ) {
 
 			case MOUSE_MODE_NORMAL:
 
-				_selectStation( visibleStation( intersects ) );
+				_selectStation( hit.station );
 
 				break;
 
 			case MOUSE_MODE_ROUTE_EDIT:
 
-				_selectSegment( intersects[ 0 ] );
+				_selectSegment( hit );
 
 				break;
 
 			case MOUSE_MODE_DISTANCE:
 
-				_selectDistance( visibleStation( intersects ) );
+				_selectDistance( hit.station );
 
 				break;
 
@@ -1404,13 +1402,13 @@ class CaveViewer extends EventDispatcher {
 
 				if ( event.button === MOUSE.LEFT ) {
 
-					if ( intersects[ 0 ].object.type === 'Mesh' ) {
+					if ( hit.station ) {
 
-						selectTrace( intersects[ 0 ] );
+						selectTraceStation( hit.station );
 
 					} else {
 
-						selectTraceStation( visibleStation( intersects ) );
+						selectTrace( hit );
 
 					}
 
@@ -1421,8 +1419,6 @@ class CaveViewer extends EventDispatcher {
 			}
 
 			function _selectStation ( station ) {
-
-				if ( station === null ) return;
 
 				survey.selectStation( station );
 
@@ -1470,8 +1466,6 @@ class CaveViewer extends EventDispatcher {
 			}
 
 			function _selectDistance ( station ) {
-
-				if ( station === null ) return;
 
 				if ( event.button === MOUSE.LEFT ) {
 
@@ -1539,8 +1533,6 @@ class CaveViewer extends EventDispatcher {
 
 		function selectTraceStation ( station ) {
 
-			if ( station === null ) return;
-
 			const dyeTraces = survey.dyeTraces;
 			const markers = survey.markers;
 
@@ -1578,12 +1570,6 @@ class CaveViewer extends EventDispatcher {
 			} );
 
 			renderView();
-
-		}
-
-		function visibleStation ( intersects ) {
-
-			return survey.stations.getClosestVisibleStation( cameraManager.activeCamera, intersects );
 
 		}
 

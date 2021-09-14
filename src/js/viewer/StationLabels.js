@@ -65,55 +65,51 @@ class StationLabels extends Group {
 
 		for ( let i = 0; i < l; i++ ) {
 
-			const position = points[ i ];
+			const station = points[ i ];
 
-			const station = stations.getVisibleStation( position );
+			if ( ! stations.isStationVisible( station ) ) continue;
 
-			if ( station !== null ) {
+			const label = station.label;
 
-				const label = station.label;
+			let d2 = 40000;
 
-				let d2 = 40000;
+			if ( station.connections === 0 ) {
 
-				if ( position.connections === 0 ) {
+				d2 = 250;
 
-					d2 = 250;
+			} else if ( station.connections < 3 ) {
 
-				} else if ( position.connections < 3 ) {
+				d2 = 5000;
 
-					d2 = 5000;
+			}
 
-				}
+			// eager display of comments scaled by density of comments in survey
+			if ( showComment && station.comment !== undefined ) d2 *= commentRatio;
 
-				// eager display of comments scaled by density of comments in survey
-				if ( showComment && station.comment !== undefined ) d2 *= commentRatio;
+			// show labels for network vertices at greater distance than intermediate stations
+			const visible = ( station.distanceToSquared( cameraPosition ) < d2 );
 
-				// show labels for network vertices at greater distance than intermediate stations
-				const visible = ( position.distanceToSquared( cameraPosition ) < d2 );
+			let name = '';
 
-				let name = '';
+			if ( showName ) name += station.name;
+			if ( showName && showComment && station.comment !== undefined ) name += ' ';
+			if ( showComment && station.comment !== undefined ) name += station.comment;
 
-				if ( showName ) name += station.name;
-				if ( showName && showComment && station.comment !== undefined ) name += ' ';
-				if ( showComment && station.comment !== undefined ) name += station.comment;
+			if ( ! label || label.name !== name ) {
 
-				if ( ! label || label.name !== name ) {
+				// remove label with the wrong text
+				if ( label !== undefined ) {
 
-					// remove label with the wrong text
-					if ( label !== undefined ) {
-
-						this.remove( label );
-						station.label = null;
-
-					}
-
-					if ( visible ) this.addLabel( station, name );
-
-				} else {
-
-					label.visible = visible;
+					this.remove( label );
+					station.label = null;
 
 				}
+
+				if ( visible ) this.addLabel( station, name );
+
+			} else {
+
+				label.visible = visible;
 
 			}
 

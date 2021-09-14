@@ -1274,8 +1274,7 @@ class CaveViewer extends EventDispatcher {
 
 			raycaster.params.Points.threshold = threshold;
 
-			return ( hit !== undefined && hit.station && hit.distance !== Infinity ) ?
-				survey.getWorldPosition( hit.station.clone() ) : null;
+			return ( hit !== undefined ) ? survey.getWorldPosition( hit.station.clone() ) : null;
 
 		};
 
@@ -1375,8 +1374,6 @@ class CaveViewer extends EventDispatcher {
 				return;
 
 			}
-
-			if ( hit.station && hit.distance === Infinity ) return false;
 
 			switch ( mouseMode ) {
 

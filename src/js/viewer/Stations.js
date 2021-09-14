@@ -1,12 +1,16 @@
 import {
 	BufferGeometry, Points, Vector3, Float32BufferAttribute,
-	InterleavedBuffer, InterleavedBufferAttribute
+	InterleavedBuffer, InterleavedBufferAttribute, Sphere, Matrix4, Vector4
 } from '../Three';
 
 import { STATION_ENTRANCE } from '../core/constants';
 import { PointIndicator } from './PointIndicator';
 
-const __v = new Vector3();
+const _sphere = new Sphere();
+const _position = new Vector4();
+const _ssOrigin = new Vector4();
+const _mouse = new Vector3();
+const _mvMatrix = new Matrix4();
 
 class Stations extends Points {
 
@@ -16,6 +20,7 @@ class Stations extends Points {
 
 		this.type = 'CV.Stations';
 		this.stationCount = 0;
+		this.ctx = ctx;
 
 		const cfg = ctx.cfg;
 
@@ -31,6 +36,7 @@ class Stations extends Points {
 		this.selectedSize = 0;
 		this.selection = selection;
 		this.splaysVisible = false;
+		this.ssThresholdSq = Math.pow( cfg.value( 'stationSelectionDistance', 12 ), 2 );
 
 		const point = new PointIndicator( ctx, 0xff0000 );
 
@@ -40,46 +46,85 @@ class Stations extends Points {
 		this.highlightPoint = point;
 	}
 
-	raycast ( raycaster, intersects ) {
+	raycast( raycaster, intersects ) {
 
-		// augument three.js raycasting
+		// screen space raycasing for stations
 
-		super.raycast( raycaster, intersects );
+		if ( ! this.visible ) return intersects;
 
+		const geometry = this.geometry;
+		const matrixWorld = this.matrixWorld;
+		const threshold = raycaster.params.Points.threshold;
+		const drawRange = geometry.drawRange;
+
+		// Checking boundingSphere distance to ray
+
+		if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();
+
+		_sphere.copy( geometry.boundingSphere );
+		_sphere.applyMatrix4( matrixWorld );
+		_sphere.radius += threshold;
+
+		if ( raycaster.ray.intersectsSphere( _sphere ) === false ) return;
+
+		const vertices = this.vertices;
+
+		const ray = raycaster.ray;
 		const camera = raycaster.camera;
+		const projectionMatrix = camera.projectionMatrix;
 		const skipSplays = ! this.splaysVisible;
+		const near = - camera.near;
 
-		// resassign distances - Raycaster sorts before returning array
-		intersects.forEach( intersect => {
+		ray.at( 1, _ssOrigin );
 
-			if ( intersect.object !== this ) return;
+		// ndc space [ - 1.0, 1.0 ]
+		const container = this.ctx.container;
 
-			const station = this.vertices[ intersect.index ];
+		const scale = new Vector3( container.clientWidth / 2, container.clientHeight / 2, 1 );
 
-			// station in screen NDC
-			__v.copy( station ).applyMatrix4( this.matrixWorld ).project( camera );
+		_ssOrigin.w = 1;
 
-			// FIXME shoyld this be ray point
-			__v.sub( intersect.point.project( camera ) );
+		_ssOrigin.applyMatrix4( camera.matrixWorldInverse );
+		_ssOrigin.applyMatrix4( camera.projectionMatrix );
+		_ssOrigin.multiplyScalar( 1 / _ssOrigin.w );
 
-			let distance;
+		// screen space
+		_mouse.copy( _ssOrigin );
+		_mouse.multiply( scale );
 
-			if ( skipSplays && station.connections === 0 ) {
+		_mvMatrix.multiplyMatrices( camera.matrixWorldInverse, matrixWorld );
 
-				distance = Infinity;
+		const ssThresholdSq = this.ssThresholdSq;
+		const start = Math.max( 0, drawRange.start );
+		const end = Math.min( vertices.length, ( drawRange.start + drawRange.count ) );
 
-			} else {
+		for ( let i = start, l = end; i < l; i ++ ) {
 
-				distance  = __v.x * __v.x + __v.y * __v.y;
+			const station = vertices[ i ];
+
+			// skip splay end stations if not visible
+			if ( skipSplays && station.connections === 0 ) continue;
+
+			_position.copy( station );
+			_position.w = 1;
+
+			_position.applyMatrix4( _mvMatrix );
+
+			if ( _position.z > near ) {
+
+				continue;
 
 			}
 
-			intersect.distance = distance;
-			intersect.station = station;
+			_position.applyMatrix4( projectionMatrix );
+			_position.multiplyScalar( 1 / _position.w );
 
-		} );
+			_position.x *= scale.x;
+			_position.y *= scale.y;
 
-		return intersects;
+			testPoint( _position, station, i, ssThresholdSq, intersects, this );
+
+		}
 
 	}
 
@@ -119,7 +164,7 @@ class Stations extends Points {
 
 	}
 
-	getVisibleStation ( node ) {
+	isStationVisible ( node ) {
 
 		if ( this.selection.contains( node.id ) &&
 			( node.connections > 0 || this.splaysVisible )
@@ -244,7 +289,7 @@ class Stations extends Points {
 		const bufferGeometry = this.geometry;
 
 		const buffer = new Float32Array( this.instanceData );
-		const instanceBuffer = new InterleavedBuffer( buffer, 6 ); // position, color, pSize
+		const instanceBuffer = new InterleavedBuffer( buffer, 6 ); // position, color
 
 		bufferGeometry.setAttribute( 'position', new InterleavedBufferAttribute( instanceBuffer, 3, 0 ) );
 		bufferGeometry.setAttribute( 'color', new InterleavedBufferAttribute( instanceBuffer, 3, 3 ) );
@@ -285,6 +330,28 @@ class Stations extends Points {
 		}
 
 		pSize.needsUpdate = true;
+	}
+
+}
+
+function testPoint( point, station, index, localThresholdSq, intersects, object ) {
+
+	const dX = point.x - _mouse.x;
+	const dY = point.y - _mouse.y;
+
+	const distanceSq = dX * dX + dY * dY;
+
+	if ( distanceSq < localThresholdSq ) {
+
+		intersects.push( {
+			distance: Math.sqrt( distanceSq ),
+			point: point,
+			index: index,
+			station: station,
+			face: null,
+			object: object
+		} );
+
 	}
 
 }

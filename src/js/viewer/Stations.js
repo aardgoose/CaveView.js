@@ -40,6 +40,49 @@ class Stations extends Points {
 		this.highlightPoint = point;
 	}
 
+	raycast ( raycaster, intersects ) {
+
+		// augument three.js raycasting
+
+		super.raycast( raycaster, intersects );
+
+		const camera = raycaster.camera;
+		const skipSplays = ! this.splaysVisible;
+
+		// resassign distances - Raycaster sorts before returning array
+		intersects.forEach( intersect => {
+
+			if ( intersect.object !== this ) return;
+
+			const station = this.vertices[ intersect.index ];
+
+			// station in screen NDC
+			__v.copy( station ).applyMatrix4( this.matrixWorld ).project( camera );
+
+			// FIXME shoyld this be ray point
+			__v.sub( intersect.point.project( camera ) );
+
+			let distance;
+
+			if ( skipSplays && station.connections === 0 ) {
+
+				distance = Infinity;
+
+			} else {
+
+				distance  = __v.x * __v.x + __v.y * __v.y;
+
+			}
+
+			intersect.distance = distance;
+			intersect.station = station;
+
+		} );
+
+		return intersects;
+
+	}
+
 	addStation ( node ) {
 
 		if ( node.legs !== undefined ) return; // duplicated entry
@@ -216,43 +259,6 @@ class Stations extends Points {
 	resetDistances () {
 
 		this.vertices.forEach( node => { if ( node ) node.shortestPath = Infinity; } );
-
-	}
-
-	getClosestVisibleStation ( camera, intersects ) {
-
-		const splaysVisible = this.splaysVisible;
-
-		let minD2 = Infinity;
-		let closestStation = null;
-
-		intersects.forEach( intersect => {
-
-			const station = this.getStationByIndex( intersect.index );
-
-			// don't select spays unless visible
-
-			if ( ! splaysVisible && station !== null && station.connections === 0 ) return;
-
-			// station in screen NDC
-			__v.copy( station ).applyMatrix4( this.matrixWorld ).project( camera );
-
-			__v.sub( intersect.point.project( camera ) );
-
-			const d2 = __v.x * __v.x + __v.y * __v.y;
-
-			// choose closest of potential matches in screen x/y space
-
-			if ( d2 < minD2 ) {
-
-				minD2 = d2;
-				closestStation = station;
-
-			}
-
-		} );
-
-		return closestStation;
 
 	}
 

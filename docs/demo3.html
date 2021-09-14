@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>demo 3d cave viewer</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+	<link rel="manifest" href="manifest.webmanifest" />
+	<meta name="Description" content="CaveView - 3d Cave model viewer">
+	<meta name="theme-color" content="#00FF00"/>
+	<link rel="icon" type="image/svg+xml" href="CaveView/images/logo.svg">
+</head>
+<body onload="onload();" >
+
+<script type="text/javascript" src="CaveView/js/CaveView2.js" ></script>
+<script type="text/javascript" src="demoscripts/chart.min.js" ></script>
+<script type="text/javascript" src="demoscripts/CVRose.js" ></script>
+<script type="text/javascript" src="demoscripts/CVLegLength.js" ></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.19.1/cytoscape.min.js" integrity="sha512-REr7ZKldLo2Lx6UiQ6autPWZR+j4u1/7ElYsrcwFe3ZmT/TKXCF/vXqNP/d2BQ78k0tapdZFccpFkku9bwrS3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript" src="CVSimpleGraph.js" ></script>
+
+<script type="text/javascript" >
+
+function onload () {
+
+	let mode = 'rose';
+	let graph = null;
+	let lastEvent = null;
+
+	const radio = document.getElementById( 'radio' );
+
+	radio.addEventListener( 'input', e => {
+
+		mode = e.target.value;
+		if ( graph ) graph.close();
+
+		if ( lastEvent ) {
+			onEntrance( lastEvent );
+		}
+
+	} );
+
+	const viewer = new CV2.CaveViewer( "scene", {
+		terrainDirectory: "/CaveView.js/terrain/",
+		surveyDirectory: "surveys/",
+		home: "CaveView/",
+		view: { walls: false, alpha: false, terrain: false },
+		saturatedGradient: true,
+	} );
+
+	var caves = [
+		"P8_Master.3d",
+		"Peak_Master_NoSurface.3d",
+		"OFDCPT.3d",
+	];
+
+	function onEntrance ( event ) {
+
+		switch ( mode ) {
+
+			case 'rose':
+
+				graph = new RoseChart( 'graph' );
+				break;
+
+			case 'bar':
+
+				graph = new LegLengthChart( 'graph' );
+				break;
+
+			case 'network':
+
+				graph = new SimpleGraph( 'graph' );
+				break;
+
+			default:
+
+				console.error( 'unexpected graph type' );
+				return;
+
+		}
+
+		graph.show( event );
+
+	}
+
+	viewer.addEventListener( 'entrance', function ( event ) {
+
+		if ( graph ) graph.close();
+
+		onEntrance( event );
+
+		lastEvent = event;
+		event.handled = true;
+		event.filterConnected = true;
+
+	} );
+
+	viewer.addEventListener( 'clear', function ( event ) {
+		lastEvent = null;
+		if ( graph ) graph.close();
+	} );
+
+	viewer.addEventListener( 'leg', function ( event ) {
+		event.handled = true;
+	} );
+
+
+	const ui = new CV2.CaveViewUI( viewer );
+	ui.loadCaveList( caves );
+
+}
+
+</script>
+<h1>Demo 3 - Using entrance event data</h1>
+<div style="padding: 20px; display: flex">
+	<div id="scene" style="width: auto; flex-basis: 50%;"></div>
+	<div style="padding: 10px; width: auto; flex-basis: 50%;">
+		<h2>Graph Selection</h2>
+		<div id="radio">
+			<div>
+				<input type="radio" id="g1" name="graph" value="rose" checked>
+				<label for="g1">Rose Graph of leg direction</label>
+			</div>
+
+			<div>
+				<input type="radio" id="g2" name="graph" value="bar">
+				<label for="g2">Bar graph of leg length distribution</label>
+			</div>
+
+			<div>
+				<input type="radio" id="g3" name="graph" value="network">
+				<label for="g3">Simplified network topology</label>
+			</div>
+			<p>Select a graph type <b>&uArr;</b> and then select the entrance label <b>&lArr;</b>.</p>
+			<div id="graph" style="height: 400px; width: 400px; border: darkgray solid 1px;"></div>
+		</div>
+	</div>
+</div>
+<p>Contains DTM data &copy; Environment Agency copyright and/or database right 2015.</p>
+</body>
+</html>

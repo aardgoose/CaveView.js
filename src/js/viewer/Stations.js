@@ -166,13 +166,9 @@ class Stations extends Points {
 
 	isStationVisible ( node ) {
 
-		if ( this.selection.contains( node.id ) &&
+		return ( this.selection.contains( node.id ) &&
 			( node.connections > 0 || this.splaysVisible )
-		) return node;
-
-		if ( node.label !== undefined ) node.label.visible = false;
-
-		return null;
+		);
 
 	}
 

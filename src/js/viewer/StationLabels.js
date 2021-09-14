@@ -66,10 +66,14 @@ class StationLabels extends Group {
 		for ( let i = 0; i < l; i++ ) {
 
 			const station = points[ i ];
-
-			if ( ! stations.isStationVisible( station ) ) continue;
-
 			const label = station.label;
+
+			if ( ! stations.isStationVisible( station ) ) {
+
+				if ( label ) label.visible = false;
+				continue;
+
+			}
 
 			let d2 = 40000;
 

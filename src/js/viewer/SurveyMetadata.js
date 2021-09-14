@@ -51,47 +51,47 @@ class SurveyMetadata extends EventDispatcher {
 
 	}
 
+	getRoutes () {
+
+		return this.routes;
+
+	}
+
+	saveRoute ( routeName, route ) {
+
+		this.routes[ routeName ] = route;
+
+		this.saveLocal();
+		this.dispatchEvent( { name: 'change', type: 'routes' } );
+
+	}
+
+	saveLocal () {
+
+		const localMetadata = {
+			routes: this.routes,
+			traces: this.traces,
+			entrances: this.entrances
+		};
+
+		window.localStorage.setItem( this.name, JSON.stringify( localMetadata ) );
+
+	}
+
+	getURL () {
+
+		// dump of json top window for cut and paste capture
+
+		return dataURL( {
+			name: 'test',
+			version: 1.0,
+			routes: this.routes,
+			traces: this.traces,
+			entrances: this.entrances
+		} );
+
+	}
+
 }
-
-SurveyMetadata.prototype.getRoutes = function () {
-
-	return this.routes;
-
-};
-
-SurveyMetadata.prototype.saveRoute = function ( routeName, route ) {
-
-	this.routes[ routeName ] = route;
-
-	this.saveLocal();
-	this.dispatchEvent( { name: 'change', type: 'routes' } );
-
-};
-
-SurveyMetadata.prototype.saveLocal = function () {
-
-	const localMetadata = {
-		routes: this.routes,
-		traces: this.traces,
-		entrances: this.entrances
-	};
-
-	window.localStorage.setItem( this.name, JSON.stringify( localMetadata ) );
-
-};
-
-SurveyMetadata.prototype.getURL = function () {
-
-	// dump of json top window for cut and paste capture
-
-	return dataURL( {
-		name: 'test',
-		version: 1.0,
-		routes: this.routes,
-		traces: this.traces,
-		entrances: this.entrances
-	} );
-
-};
 
 export { SurveyMetadata };

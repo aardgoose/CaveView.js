@@ -44,112 +44,112 @@ class DyeTraces extends LineSegments2 {
 
 	}
 
+	finish () {
+
+		const geometry = this.geometry;
+
+		if ( this.vertices.length === 0 ) return;
+
+		geometry.setPositions( this.vertices );
+		geometry.setHide( this.selected );
+
+		this.visible = true;
+
+		// save to browser local storage
+		this.metadata.traces = this.serialise();
+		this.metadata.saveLocal();
+
+		return this;
+
+	}
+
+	getTraceStations ( hit ) {
+
+		const stations = this.stations;
+
+		return {
+			start: stations[ hit * 2 ].getPath(),
+			end: stations [ hit * 2 + 1 ].getPath()
+		};
+
+	}
+
+	deleteTrace ( hit ) {
+
+		// remove from arrays
+		const offset = hit * 2;
+
+		this.stations.splice( offset, 2 );
+
+		this.vertices.splice( offset, 2 );
+		this.selected.splice( offset, 2 );
+
+		// rebuild geometry without deleted trace
+
+		this.finish();
+
+	}
+
+	_addTrace ( startStation, endStation ) {
+
+		this.vertices.push(
+			startStation.x, startStation.y, startStation.z,
+			endStation.x, endStation.y, endStation.z
+		);
+
+		this.stations.push( startStation, endStation );
+		this.selected.push( 1, 1 );
+
+	}
+
+	addTrace ( startStation, endStation ) {
+
+		this._addTrace( startStation, endStation );
+		this.finish();
+
+	}
+
+	outlineTrace ( hit ) {
+
+		if ( ! this.visible ) return;
+
+		const selected = this.selected;
+
+		selected.fill( 0 );
+
+		if ( hit !== null ) {
+
+			let offset = hit * 2;
+
+			selected[ offset++ ] = 1;
+			selected[ offset ] = 1;
+
+		}
+
+		this.geometry.setHide( selected );
+
+		return;
+
+	}
+
+	serialise () {
+
+		const stations = this.stations;
+		const traces = [];
+
+		for ( let i = 0, l = stations.length; i < l; i += 2 ) {
+
+			traces.push( {
+				start: stations[ i ].getPath(),
+				end: stations[ i + 1 ].getPath()
+			} );
+
+		}
+
+		return traces;
+
+	}
+
 }
-
-DyeTraces.prototype.finish = function () {
-
-	const geometry = this.geometry;
-
-	if ( this.vertices.length === 0 ) return;
-
-	geometry.setPositions( this.vertices );
-	geometry.setHide( this.selected );
-
-	this.visible = true;
-
-	// save to browser local storage
-	this.metadata.traces = this.serialise();
-	this.metadata.saveLocal();
-
-	return this;
-
-};
-
-DyeTraces.prototype.getTraceStations = function ( hit ) {
-
-	const stations = this.stations;
-
-	return {
-		start: stations[ hit * 2 ].getPath(),
-		end: stations [ hit * 2 + 1 ].getPath()
-	};
-
-};
-
-DyeTraces.prototype.deleteTrace = function ( hit ) {
-
-	// remove from arrays
-	const offset = hit * 2;
-
-	this.stations.splice( offset, 2 );
-
-	this.vertices.splice( offset, 2 );
-	this.selected.splice( offset, 2 );
-
-	// rebuild geometry without deleted trace
-
-	this.finish();
-
-};
-
-DyeTraces.prototype._addTrace = function ( startStation, endStation ) {
-
-	this.vertices.push(
-		startStation.x, startStation.y, startStation.z,
-		endStation.x, endStation.y, endStation.z
-	);
-
-	this.stations.push( startStation, endStation );
-	this.selected.push( 1, 1 );
-
-};
-
-DyeTraces.prototype.addTrace = function ( startStation, endStation ) {
-
-	this._addTrace( startStation, endStation );
-	this.finish();
-
-};
-
-DyeTraces.prototype.outlineTrace = function ( hit ) {
-
-	if ( ! this.visible ) return;
-
-	const selected = this.selected;
-
-	selected.fill( 0 );
-
-	if ( hit !== null ) {
-
-		let offset = hit * 2;
-
-		selected[ offset++ ] = 1;
-		selected[ offset ] = 1;
-
-	}
-
-	this.geometry.setHide( selected );
-
-	return;
-
-};
-
-DyeTraces.prototype.serialise = function () {
-
-	const stations = this.stations;
-	const traces = [];
-
-	for ( let i = 0, l = stations.length; i < l; i += 2 ) {
-
-		traces.push( {
-			start: stations[ i ].getPath(),
-			end: stations[ i + 1 ].getPath()
-		} );
-
-	}
-
-	return traces;
-
-};
 
 export { DyeTraces };

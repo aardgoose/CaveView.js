@@ -37,7 +37,6 @@ class SurveyBox extends LineSegments2 {
 		geometry.setPositions( positions.array );
 
 		super( geometry, ctx.materials.getLine2Material( { color: color } ) );
-		//		this.material.vertexColors = false;
 
 		if ( box3 ) this.update( box3 );
 		this.type = 'CV.SurveyBox';

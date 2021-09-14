@@ -590,6 +590,7 @@ Page.prototype.addColor = function ( title, name ) {
 	const id = 'cv-' + frame.getSeq();
 
 	div.classList.add( 'control' );
+	div.classList.add( 'color' );
 
 	cb.type = 'color';
 	cb.value = cfg.themeColorHex( name ),

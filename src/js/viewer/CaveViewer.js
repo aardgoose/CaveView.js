@@ -745,6 +745,7 @@ class CaveViewer extends EventDispatcher {
 				}
 
 			}
+
 			setScale();
 			setupView( true );
 
@@ -954,8 +955,6 @@ class CaveViewer extends EventDispatcher {
 				cameraMove.prepare( survey.selection.getWorldBoundingBox() );
 
 				if ( survey.selection.isEmpty() ) cameraMove.start( renderRequired );
-
-				return;
 
 			}
 
@@ -1488,8 +1487,6 @@ class CaveViewer extends EventDispatcher {
 
 				cameraMove.preparePoint( survey.getWorldPosition( station.clone() ) );
 
-				return true;
-
 			}
 
 			function _selectSegment ( picked ) {
@@ -1499,8 +1496,6 @@ class CaveViewer extends EventDispatcher {
 				setShadingMode( SHADING_PATH );
 
 				renderView();
-
-				return true;
 
 			}
 
@@ -1642,12 +1637,6 @@ class CaveViewer extends EventDispatcher {
 				minLegLength: 0,
 				maxLegLength: 0
 			};
-
-		};
-
-		this.getControls = function () {
-
-			return controls;
 
 		};
 

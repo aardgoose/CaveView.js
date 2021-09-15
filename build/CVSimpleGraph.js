@@ -95,7 +95,7 @@ class SimpleGraph {
 				{
 					selector: 'node',
 					style: {
-						'background-color': 'blue',
+						'background-color': 'red',
 						'color': 'black',
 						'width': 8,
 						'height': 8
@@ -105,7 +105,7 @@ class SimpleGraph {
 				{
 					selector: 'edge',
 					style: {
-						'width': 3,
+						'width': 4,
 						'line-color': '#000000',
 						//	'mid-target-arrow-color': '#00ff00',
 						//	'mid-target-arrow-shape': 'triangle',
@@ -115,19 +115,19 @@ class SimpleGraph {
 				{
 					selector: 'edge[cluster = 0]',
 					style: {
-						'line-color': '#880088',
+						'line-color': 'mediumblue',
 					}
 				},
 				{
 					selector: 'edge[cluster = 1]',
 					style: {
-						'line-color': '#008800',
+						'line-color': 'darkgreen',
 					}
 				},
 				{
 					selector: 'edge[cluster = 2]',
 					style: {
-						'line-color': '#008888',
+						'line-color': 'magenta',
 					}
 				},
 				{
@@ -166,8 +166,8 @@ class SimpleGraph {
 
 		cy.elements( 'edge' ).forEach( e => e.data( 'cluster', Math.min( e.source().data( 'cluster' ), e.target().data( 'cluster' ) ) ) );
 
-		cy.nodes( '[cluster = 0]' ).shift( 'y', 5 );
-		cy.nodes( '[cluster = 2]' ).shift( 'y', -5 );
+		cy.nodes( '[cluster = 0]' ).shift( 'y', 10 );
+		cy.nodes( '[cluster = 2]' ).shift( 'y', -10 );
 
 		console.log( cy.json() );
 

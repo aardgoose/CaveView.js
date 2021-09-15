@@ -199,9 +199,10 @@ class SimpleGraph {
 			const station = stations[ id ];
 			const p =  station.coordinates();
 
-			p.x = Math.floor( p.x / 50 ) * 50;
-			p.y = Math.floor( p.y / 50 ) * 50;
-			p.z = Math.floor( p.z / 50 ) * 50;
+			// quantise coordinates
+			p.x = Math.round( p.x / 50 ) * 50;
+			p.y = Math.round( p.y / 50 ) * 50;
+			p.z = Math.round( p.z / 50 ) * 50;
 
 			elements.push( {
 				data: {

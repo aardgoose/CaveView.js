@@ -1,4 +1,4 @@
-import { Float32BufferAttribute } from '../Three';
+import { Float32BufferAttribute, Color } from '../Three';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { LineSegments2 } from '../core/LineSegments2';
 import { STATION_XSECT } from '../core/constants';
@@ -12,6 +12,7 @@ class Legs extends LineSegments2 {
 		super( geometry, ctx.materials.getSurveyLineMaterial( 'basic' ) );
 
 		this.ctx = ctx;
+		this.colourCache = ctx.materials.colourCache;
 		this.legLengths = [];
 		this.legVertices = [];
 		this.colors = [];
@@ -259,6 +260,19 @@ class Legs extends LineSegments2 {
 		const end = vertices[ vertexIndex + 1 ];
 
 		return { start: start, end: end };
+
+	}
+
+	setLegColor( leg, color1, color2 = null ) {
+
+		const c1 = this.colourCache.getColour( color1 );
+		const c2 = ( ! color2 ) ? c1: this.colourCache.getColour( color2 );
+
+		const colours = this.colors.array;
+
+		leg *= 3;
+		c1.toArray( colours, leg );
+		c2.toArray( colours, leg + 3 );
 
 	}
 

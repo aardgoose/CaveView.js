@@ -142,7 +142,7 @@ class Topology {
 
 				if ( nextStation.shortestPath > currentDistance + nextLength ) {
 
-					if ( nextStation.shortestPath === Infinity ) legCallback( station, nextStation );
+					if ( nextStation.shortestPath === Infinity ) legCallback( leg, station, nextStation );
 
 					nextStation.shortestPath = currentDistance + nextLength;
 					queue.push( nextStation );

@@ -6,7 +6,7 @@ function SurveyColourMapper ( ctx ) {
 
 	this.getColour = function ( surveyId ) {
 
-		const surveyColours = ctx.materials.colourCache.getColors( 'survey' );
+		const surveyColours = ctx.materials.colourCache.getColorSet( 'survey' );
 
 		return surveyColours[ surveyId % surveyColours.length ];
 

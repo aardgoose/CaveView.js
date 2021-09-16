@@ -17,7 +17,7 @@ class AngleScale extends Mesh {
 
 		const geometry = new RingBufferGeometry( 1, 40, 36, 1, Math.PI, Math.PI );
 
-		const hues = materials.colourCache.getColors( 'inclination' );
+		const hues = materials.colourCache.getColorSet( 'inclination' );
 		const colors = [];
 
 		const vertices = geometry.getAttribute( 'position' );

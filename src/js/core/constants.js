@@ -43,6 +43,7 @@ export const SHADING_DISTANCE     = 13;
 export const SHADING_CONTOURS     = 15;
 export const SHADING_SURFACE      = 17;
 export const SHADING_DUPLICATE    = 18;
+export const SHADING_CUSTOM       = 19;
 
 // layer tags for scene objects
 

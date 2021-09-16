@@ -1292,7 +1292,7 @@ class CaveViewer extends EventDispatcher {
 
 				const e = {
 					type: 'leg',
-					leg: new Leg( new Station( survey, leg.start ), new Station( survey, leg.start ) ),
+					leg: new Leg( legs, leg, new Station( survey, leg.start ), new Station( survey, leg.start ) ),
 					handled: false,
 					highlight: false,
 					mouseEvent: event

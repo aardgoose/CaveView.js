@@ -1,4 +1,4 @@
-import { STATION_ENTRANCE } from '../core/constants';
+import { STATION_ENTRANCE, LEG_CAVE } from '../core/constants';
 import { Leg } from './Leg';
 
 class Station {
@@ -56,9 +56,10 @@ class Station {
 	forEachConnectedLeg( callback ) {
 
 		const survey = this.survey;
+		const legs = survey.features.get( LEG_CAVE );
 
-		survey.topology.shortestPathSearch( this.station, ( s1, s2 ) =>
-			callback( new Leg( new Station( survey, s1 ), new Station( survey, s2 ) ) )
+		survey.topology.shortestPathSearch( this.station, ( leg, s1, s2 ) =>
+			callback( new Leg( legs, leg, new Station( survey, s1 ), new Station( survey, s2 ) ) )
 		);
 
 	}

@@ -6,7 +6,7 @@ import {
 	LABEL_STATION, LABEL_STATION_COMMENT,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
-	SHADING_SURFACE, CLUSTER_MARKERS, SHADING_DUPLICATE
+	SHADING_SURFACE, CLUSTER_MARKERS, SHADING_DUPLICATE, SHADING_CUSTOM
 } from '../core/constants';
 
 import { StationPosition } from '../core/StationPosition';
@@ -1122,6 +1122,12 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed, fil
 
 		break;
 
+	case SHADING_CUSTOM:
+
+		this.setLegCustomColor( mesh, dashed, filterConnected );
+
+		break;
+
 	case SHADING_SURVEY:
 
 		this.setLegColourBySurvey( mesh, filterConnected );
@@ -1200,10 +1206,18 @@ Survey.prototype.setLegColourByColour = function ( mesh, colour, dashed, filterC
 
 };
 
+Survey.prototype.setLegCustomColor = function ( mesh, dashed, filterConnected ) {
+
+	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', dashed, filterConnected );
+
+	function _colourSegment() {}
+
+};
+
 Survey.prototype.setLegColourByLength = function ( mesh, filterConnected ) {
 
 	const materials = this.ctx.materials;
-	const colours = materials.colourCache.getColors( this.gradientName );
+	const colours = materials.colourCache.getColorSet( this.gradientName );
 	const colourRange = colours.length - 1;
 	const stats = mesh.stats;
 	const legLengths = mesh.legLengths;
@@ -1227,7 +1241,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh, filterConnected ) {
 	const cfg = this.ctx.cfg;
 	const materials = this.ctx.materials;
 
-	const colours = materials.colourCache.getColors( this.gradientName );
+	const colours = materials.colourCache.getColorSet( this.gradientName );
 	const unconnected = cfg.themeColor( 'shading.unconnected' );
 	const pathColor = cfg.themeColor( 'routes.active' );
 
@@ -1322,7 +1336,7 @@ Survey.prototype.setLegColourByPath = function ( mesh ) {
 Survey.prototype.setLegColourByInclination = function ( mesh, filterConnected ) {
 
 	const colourCache = this.ctx.materials.colourCache;
-	const colours = colourCache.getColors( 'inclination' );
+	const colours = colourCache.getColorSet( 'inclination' );
 
 	const colourRange = colours.length - 1;
 	const hueFactor = colourRange * 2 / Math.PI;

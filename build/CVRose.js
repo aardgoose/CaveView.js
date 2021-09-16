@@ -15,7 +15,7 @@ class RoseChart {
 		this.container = container;
 		this.canvas = null;
 		this.chart = null;
-		this.colours = options.colours ?? [ 'red' ];
+		this.colours = options.colours ?? [ 'red', 'blue', 'orange', 'lime', 'gray', 'magenta' ];
 		this.sectorSize = options.sectorSize ?? 30;
 
 	}
@@ -70,15 +70,17 @@ class RoseChart {
 			const v2Coordinates = v2.coordinates();
 
 			const dX = v1Coordinates.x - v2Coordinates.x;
-			const dY = ( v1Coordinates.y - v2Coordinates.y ) * Math.sign( dX );
-
+			const dY = v1Coordinates.y - v2Coordinates.y;
 			const l = Math.hypot( dX, dY );
 
 			if ( l == 0 ) return;
 
-			const a = 180 * Math.acos( dY / l ) / Math.PI;
+			const a = 180 * Math.acos( ( dY / l ) * Math.sign( dX ) ) / Math.PI;
 
-			sections[ Math.floor( a / this.sectorSize ) % sectorCount ] += l;
+			const sector = Math.floor( a / this.sectorSize ) % sectorCount;
+
+			leg.color( this.colours[ sector ] );
+			sections[ sector ] += l;
 
 		} );
 

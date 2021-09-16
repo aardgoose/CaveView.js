@@ -23,618 +23,616 @@ class Page {
 
 	}
 
-}
+	i18n ( text ) {
 
-Page.prototype.i18n = function ( text ) {
+		const cfg = this.frame.ctx.cfg;
+		const tr = cfg.i18n( this.x18nPrefix + text );
 
-	const cfg = this.frame.ctx.cfg;
-	const tr = cfg.i18n( this.x18nPrefix + text );
+		return ( tr === undefined ) ? text : tr;
 
-	return ( tr === undefined ) ? text : tr;
+	}
 
-};
+	addListener ( obj, name, handler ) {
 
-Page.prototype.addListener = function ( obj, name, handler ) {
+		this.frame.addListener( obj, name, handler );
+		// redirect to frame method - allows later rework to page specific destruction
 
-	this.frame.addListener( obj, name, handler );
-	// redirect to frame method - allows later rework to page specific destruction
+	}
 
-};
+	tabHandleClick ( event ) {
 
-Page.prototype.tabHandleClick = function ( event ) {
+		event.preventDefault();
+		event.stopPropagation();
 
-	event.preventDefault();
-	event.stopPropagation();
+		this.open();
 
-	this.open();
+	}
 
-};
+	open () {
 
-Page.prototype.open = function () {
+		const tab = this.tab;
+		const pages = this.frame.pages;
 
-	const tab = this.tab;
-	const pages = this.frame.pages;
+		tab.classList.add( 'toptab' );
 
-	tab.classList.add( 'toptab' );
+		this.frame.onScreen( this.i18n( 'title' ) );
+		this.frame.openPageId = this.id;
 
-	this.frame.onScreen( this.i18n( 'title' ) );
-	this.frame.openPageId = this.id;
+		pages.forEach( page => {
 
-	pages.forEach( page => {
+			const otherPage = page.page;
+			const otherTab = page.tab;
+			const owner = page.owner;
 
-		const otherPage = page.page;
-		const otherTab = page.tab;
-		const owner = page.owner;
+			if ( otherTab === tab ) {
 
-		if ( otherTab === tab ) {
+				otherPage.style.display = 'block';
 
-			otherPage.style.display = 'block';
+			} else {
+
+				otherPage.style.display = 'none';
+
+				if ( otherTab.classList.contains( 'toptab' ) ) {
+
+					otherTab.classList.remove( 'toptab' );
+
+					if ( owner.onLeave !== undefined ) owner.onLeave();
+
+				}
+
+			}
+
+		} );
+
+	}
+
+	appendChild ( domElement ) {
+
+		this.page.appendChild( domElement );
+
+		return domElement;
+
+	}
+
+	addHeader ( text ) {
+
+		const div = document.createElement( 'div' );
+
+		div.classList.add( 'header' );
+		div.textContent = this.i18n( text );
+
+		this.page.appendChild( div );
+
+		return div;
+
+	}
+
+	addCollapsingHeader ( text ) {
+
+		const div = document.createElement( 'div' );
+
+		div.classList.add( 'header' );
+		div.textContent = this.i18n( text );
+		div.classList.add( 'header_full' );
+
+		this.page.appendChild( div );
+
+		const container = document.createElement( 'div' );
+
+		container.classList.add( 'container_full' );
+
+		this.page.appendChild( container );
+
+		this.addListener( div, 'click', () => {
+
+			let redraw; // eslint-disable-line no-unused-vars
+
+			if ( div.classList.contains( 'header_collapsed' ) ) {
+
+				container.style.display = 'block';
+
+				this.addListener( container, 'transitionend', _onReveal );
+
+				redraw = container.clientHeight; // lgtm
+				container.classList.remove( 'container_collapsed' );
+
+			} else {
+
+				this.addListener( container, 'transitionend', _onCollapse );
+
+				container.classList.add( 'container_collapsed' );
+
+			}
+
+			function _onReveal () {
+
+				container.removeEventListener( 'transitionend', _onReveal );
+
+				div.classList.remove( 'header_collapsed' );
+
+			}
+
+			function _onCollapse () {
+
+				container.removeEventListener( 'transitionend', _onCollapse );
+
+				div.classList.add( 'header_collapsed' );
+				container.style.display = 'none';
+
+			}
+
+		} );
+
+		return container;
+
+	}
+
+	addText ( text ) {
+
+		const p = this.addLine( text );
+
+		p.classList.add( 'spaced' );
+
+		return p;
+
+	}
+
+	addLine ( text ) {
+
+		const p = document.createElement( 'p' );
+
+		p.textContent = text;
+
+		this.page.appendChild( p );
+
+		return p;
+
+	}
+
+	addBlankLine () {
+
+		const b = document.createElement( 'br' );
+
+		this.page.appendChild( b );
+
+		return b;
+
+	}
+
+	addLink ( url, text ) {
+
+		const a = document.createElement( 'a' );
+
+		a.href = url;
+		a.textContent = text;
+		a.target = '_blank';
+
+		this.page.appendChild( a );
+
+		return a;
+
+	}
+
+	makeLabel ( title, labelClass, idFor = 'na' ) {
+
+		const label = document.createElement( 'label' );
+
+		label.textContent = this.i18n( title );
+		label.htmlFor = idFor;
+		label.classList.add( labelClass );
+
+		return label;
+
+	}
+
+	addSelect ( title, obj, trgObj, property, replace ) {
+
+		const div    = document.createElement( 'div' );
+		const select = document.createElement( 'select' );
+
+		div.classList.add( 'control' );
+
+		if ( obj instanceof Array ) {
+
+			obj.forEach( element => {
+
+				const opt = document.createElement( 'option' );
+
+				opt.value = element;
+				opt.text = element;
+
+				if ( opt.text === trgObj[ property ] ) opt.selected = true;
+
+				select.add( opt, null );
+
+			} );
 
 		} else {
 
-			otherPage.style.display = 'none';
+			for ( const p in obj ) {
 
-			if ( otherTab.classList.contains( 'toptab' ) ) {
+				const opt = document.createElement( 'option' );
 
-				otherTab.classList.remove( 'toptab' );
+				// translate each space delimited substring of ui text
+				opt.text = p.split( ' ' ).reduce( ( res, val ) => { return res + ' ' + this.i18n( val ); }, '' ).trim();
+				opt.value = obj[ p ];
 
-				if ( owner.onLeave !== undefined ) owner.onLeave();
+				if ( opt.value === trgObj[ property ] ) opt.selected = true;
+
+				select.add( opt, null );
 
 			}
 
 		}
 
-	} );
+		const frame = this.frame;
 
-};
+		this.addListener( select, 'change', function onChange ( event ) { frame.inHandler = true; trgObj[ property ] = event.target.value; frame.inHandler = false; } );
 
-Page.prototype.appendChild = function ( domElement ) {
+		frame.controls[ property ] = select;
 
-	this.page.appendChild( domElement );
+		div.appendChild( this.makeLabel( title, 'cv-select' ) );
+		div.appendChild( select );
 
-	return domElement;
+		if ( replace === undefined ) {
 
-};
-
-Page.prototype.addHeader = function ( text ) {
-
-	const div = document.createElement( 'div' );
-
-	div.classList.add( 'header' );
-	div.textContent = this.i18n( text );
-
-	this.page.appendChild( div );
-
-	return div;
-
-};
-
-Page.prototype.addCollapsingHeader = function ( text ) {
-
-	const div = document.createElement( 'div' );
-
-	div.classList.add( 'header' );
-	div.textContent = this.i18n( text );
-	div.classList.add( 'header_full' );
-
-	this.page.appendChild( div );
-
-	const container = document.createElement( 'div' );
-
-	container.classList.add( 'container_full' );
-
-	this.page.appendChild( container );
-
-	this.addListener( div, 'click', () => {
-
-		let redraw; // eslint-disable-line no-unused-vars
-
-		if ( div.classList.contains( 'header_collapsed' ) ) {
-
-			container.style.display = 'block';
-
-			this.addListener( container, 'transitionend', _onReveal );
-
-			redraw = container.clientHeight; // lgtm
-			container.classList.remove( 'container_collapsed' );
+			this.page.appendChild( div );
 
 		} else {
 
-			this.addListener( container, 'transitionend', _onCollapse );
-
-			container.classList.add( 'container_collapsed' );
+			this.page.replaceChild( div, replace );
 
 		}
 
-		function _onReveal () {
+		return div;
 
-			container.removeEventListener( 'transitionend', _onReveal );
+	}
 
-			div.classList.remove( 'header_collapsed' );
+	addFileSelect ( title, obj, trgObj, property ) {
 
-		}
+		const frame = this.frame;
+		const div = this.addSelect( title, obj, trgObj, property );
 
-		function _onCollapse () {
+		const label = div.firstChild;
+		const id = 'cv-' + frame.getSeq();
 
-			container.removeEventListener( 'transitionend', _onCollapse );
+		label.for = id;
+		label.classList.add( 'cv-file-label' );
 
-			div.classList.add( 'header_collapsed' );
-			container.style.display = 'none';
+		const input = document.createElement( 'input' );
 
-		}
+		input.id = id;
+		input.classList.add( 'cv-file' );
+		input.type = 'file';
+		input.accept = '.svx,.lox,.plt';
+		input.multiple = true;
 
-	} );
+		this.addListener( input, 'change', function _handleFileChange () {
 
-	return container;
+			const count = input.files.length;
+			const files = [];
 
-};
+			if ( count > 0 ) {
 
-Page.prototype.addText = function ( text ) {
+				for ( let i = 0; i < count; i++ ) files.push( input.files[ i ] );
 
-	const p = this.addLine( text );
+				trgObj[ property ] = files;
 
-	p.classList.add( 'spaced' );
-
-	return p;
-
-};
-
-Page.prototype.addLine = function ( text ) {
-
-	const p = document.createElement( 'p' );
-
-	p.textContent = text;
-
-	this.page.appendChild( p );
-
-	return p;
-
-};
-
-Page.prototype.addBlankLine = function () {
-
-	const b = document.createElement( 'br' );
-
-//	p.textContent = text;
-
-	this.page.appendChild( b );
-
-	return b;
-
-};
-
-Page.prototype.addLink = function ( url, text ) {
-
-	const a = document.createElement( 'a' );
-
-	a.href = url;
-	a.textContent = text;
-	a.target = '_blank';
-
-	this.page.appendChild( a );
-
-	return a;
-
-};
-
-Page.prototype.makeLabel = function ( title, labelClass, idFor = 'na' ) {
-
-	const label = document.createElement( 'label' );
-
-	label.textContent = this.i18n( title );
-	label.htmlFor = idFor;
-	label.classList.add( labelClass );
-
-	return label;
-
-};
-
-Page.prototype.addSelect = function ( title, obj, trgObj, property, replace ) {
-
-	const div    = document.createElement( 'div' );
-	const select = document.createElement( 'select' );
-
-	div.classList.add( 'control' );
-
-	if ( obj instanceof Array ) {
-
-		obj.forEach( element => {
-
-			const opt = document.createElement( 'option' );
-
-			opt.value = element;
-			opt.text = element;
-
-			if ( opt.text === trgObj[ property ] ) opt.selected = true;
-
-			select.add( opt, null );
+			}
 
 		} );
 
-	} else {
+		label.appendChild( input );
 
-		for ( const p in obj ) {
-
-			const opt = document.createElement( 'option' );
-
-			// translate each space delimited substring of ui text
-			opt.text = p.split( ' ' ).reduce( ( res, val ) => { return res + ' ' + this.i18n( val ); }, '' ).trim();
-			opt.value = obj[ p ];
-
-			if ( opt.value === trgObj[ property ] ) opt.selected = true;
-
-			select.add( opt, null );
-
-		}
+		return div;
 
 	}
 
-	const frame = this.frame;
+	addCheckbox ( title, obj, property ) {
 
-	this.addListener( select, 'change', function onChange ( event ) { frame.inHandler = true; trgObj[ property ] = event.target.value; frame.inHandler = false; } );
+		const frame = this.frame;
+		const cb    = document.createElement( 'input' );
+		const div   = document.createElement( 'div' );
 
-	frame.controls[ property ] = select;
+		const id = 'cv-' + frame.getSeq();
 
-	div.appendChild( this.makeLabel( title, 'cv-select' ) );
-	div.appendChild( select );
+		div.classList.add( 'control' );
 
-	if ( replace === undefined ) {
+		cb.type = 'checkbox';
+		cb.checked = obj[ property ];
+		cb.id = id;
+
+		this.addListener( cb, 'change', _checkboxChanged );
+
+		frame.controls[ property ] = cb;
+
+		div.appendChild( cb );
+		div.appendChild( this.makeLabel( title, 'check', id ) );
 
 		this.page.appendChild( div );
 
-	} else {
+		return div;
 
-		this.page.replaceChild( div, replace );
+		function _checkboxChanged ( event ) {
 
-	}
+			frame.inHandler = true;
 
-	return div;
+			obj[ property ] = event.target.checked;
 
-};
-
-Page.prototype.addFileSelect = function ( title, obj, trgObj, property ) {
-
-	const frame = this.frame;
-	const div = this.addSelect( title, obj, trgObj, property );
-
-	const label = div.firstChild;
-	const id = 'cv-' + frame.getSeq();
-
-	label.for = id;
-	label.classList.add( 'cv-file-label' );
-
-	const input = document.createElement( 'input' );
-
-	input.id = id;
-	input.classList.add( 'cv-file' );
-	input.type = 'file';
-	input.accept = '.svx,.lox,.plt';
-	input.multiple = true;
-
-	this.addListener( input, 'change', function _handleFileChange () {
-
-		const count = input.files.length;
-		const files = [];
-
-		if ( count > 0 ) {
-
-			for ( let i = 0; i < count; i++ ) files.push( input.files[ i ] );
-
-			trgObj[ property ] = files;
+			frame.inHandler = false;
 
 		}
 
-	} );
+	}
 
-	label.appendChild( input );
+	addRange ( title, obj, property ) {
 
-	return div;
+		const frame = this.frame;
+		const div = document.createElement( 'div' );
+		const range = document.createElement( 'input' );
 
-};
+		div.classList.add( 'control' );
 
-Page.prototype.addCheckbox = function ( title, obj, property ) {
+		range.type = 'range';
 
-	const frame = this.frame;
-	const cb    = document.createElement( 'input' );
-	const div   = document.createElement( 'div' );
+		range.min = 0;
+		range.max = 1;
 
-	const id = 'cv-' + frame.getSeq();
+		range.step = 0.05;
+		range.value = obj[ property ];
 
-	div.classList.add( 'control' );
+		this.addListener( range, 'input', _rangeChanged );
 
-	cb.type = 'checkbox';
-	cb.checked = obj[ property ];
-	cb.id = id;
+		frame.controls[ property ] = range;
 
-	this.addListener( cb, 'change', _checkboxChanged );
+		div.appendChild( this.makeLabel( title, 'cv-range' ) );
+		div.appendChild( range );
 
-	frame.controls[ property ] = cb;
+		this.page.appendChild( div );
 
-	div.appendChild( cb );
-	div.appendChild( this.makeLabel( title, 'check', id ) );
+		return div;
 
-	this.page.appendChild( div );
+		function _rangeChanged ( event ) {
 
-	return div;
+			frame.inHandler = true;
 
-	function _checkboxChanged ( event ) {
+			obj[ property ] = event.target.value;
 
-		frame.inHandler = true;
+			frame.inHandler = false;
 
-		obj[ property ] = event.target.checked;
-
-		frame.inHandler = false;
+		}
 
 	}
 
-};
+	addSlide ( domElement, depth ) {
 
-Page.prototype.addRange = function ( title, obj, property ) {
+		const slide = document.createElement( 'div' );
 
-	const frame = this.frame;
-	const div = document.createElement( 'div' );
-	const range = document.createElement( 'input' );
+		slide.classList.add( 'slide' );
+		slide.style.zIndex = 200 - depth;
 
-	div.classList.add( 'control' );
+		slide.appendChild( domElement );
 
-	range.type = 'range';
+		this.page.appendChild( slide );
 
-	range.min = 0;
-	range.max = 1;
+		this.slide = slide;
+		this.slideDepth = depth;
 
-	range.step = 0.05;
-	range.value = obj[ property ];
-
-	this.addListener( range, 'input', _rangeChanged );
-
-	frame.controls[ property ] = range;
-
-	div.appendChild( this.makeLabel( title, 'cv-range' ) );
-	div.appendChild( range );
-
-	this.page.appendChild( div );
-
-	return div;
-
-	function _rangeChanged ( event ) {
-
-		frame.inHandler = true;
-
-		obj[ property ] = event.target.value;
-
-		frame.inHandler = false;
+		return slide;
 
 	}
 
-};
+	replaceSlide ( domElement, depth ) {
 
-Page.prototype.addSlide = function ( domElement, depth ) {
+		const newSlide = document.createElement( 'div' );
+		const page = this.page;
 
-	const slide = document.createElement( 'div' );
+		let oldSlide = this.slide;
 
-	slide.classList.add( 'slide' );
-	slide.style.zIndex = 200 - depth;
+		let redraw; // eslint-disable-line no-unused-vars
 
-	slide.appendChild( domElement );
+		newSlide.classList.add( 'slide' );
+		newSlide.style.zIndex = 200 - depth;
 
-	this.page.appendChild( slide );
+		if ( depth < this.slideDepth ) {
 
-	this.slide = slide;
-	this.slideDepth = depth;
+			newSlide.classList.add( 'slide-out' );
 
-	return slide;
+		}
 
-};
+		newSlide.appendChild( domElement );
 
-Page.prototype.replaceSlide = function ( domElement, depth ) {
+		page.appendChild( newSlide );
 
-	const newSlide = document.createElement( 'div' );
-	const page = this.page;
+		if ( depth > this.slideDepth ) {
 
-	let oldSlide = this.slide;
+			oldSlide.addEventListener( 'transitionend', afterSlideOut );
+			oldSlide.classList.add( 'slide-out' );
 
-	let redraw; // eslint-disable-line no-unused-vars
+			redraw = oldSlide.clientHeight; // lgtm
 
-	newSlide.classList.add( 'slide' );
-	newSlide.style.zIndex = 200 - depth;
+		} else if ( depth < this.slideDepth ) {
 
-	if ( depth < this.slideDepth ) {
+			newSlide.addEventListener( 'transitionend', afterSlideIn );
 
-		newSlide.classList.add( 'slide-out' );
+			redraw = newSlide.clientHeight; // lgtm
 
-	}
+			newSlide.classList.remove( 'slide-out' );
 
-	newSlide.appendChild( domElement );
+		} else {
 
-	page.appendChild( newSlide );
+			page.removeChild( oldSlide );
 
-	if ( depth > this.slideDepth ) {
+		}
 
-		oldSlide.addEventListener( 'transitionend', afterSlideOut );
-		oldSlide.classList.add( 'slide-out' );
+		this.slide = newSlide;
+		this.slideDepth = depth;
 
-		redraw = oldSlide.clientHeight; // lgtm
+		return newSlide;
 
-	} else if ( depth < this.slideDepth ) {
+		function afterSlideOut () {
 
-		newSlide.addEventListener( 'transitionend', afterSlideIn );
+			oldSlide.removeEventListener( 'transitionend', afterSlideOut );
+			page.removeChild( oldSlide );
 
-		redraw = newSlide.clientHeight; // lgtm
+			oldSlide = null;
 
-		newSlide.classList.remove( 'slide-out' );
+		}
 
-	} else {
+		function afterSlideIn () {
 
-		page.removeChild( oldSlide );
+			page.removeChild( oldSlide );
+			newSlide.removeEventListener( 'transitionend', afterSlideIn );
 
-	}
+			oldSlide = null;
 
-	this.slide = newSlide;
-	this.slideDepth = depth;
-
-	return newSlide;
-
-	function afterSlideOut () {
-
-		oldSlide.removeEventListener( 'transitionend', afterSlideOut );
-		page.removeChild( oldSlide );
-
-		oldSlide = null;
+		}
 
 	}
 
-	function afterSlideIn () {
+	addButton ( title, func ) {
 
-		page.removeChild( oldSlide );
-		newSlide.removeEventListener( 'transitionend', afterSlideIn );
+		const button = document.createElement( 'button' );
 
-		oldSlide = null;
+		button.type = 'button';
+		button.textContent = this.i18n( title );
 
-	}
+		this.addListener( button, 'click', func );
 
-};
+		this.page.appendChild( button );
 
-Page.prototype.addButton = function ( title, func ) {
-
-	const button = document.createElement( 'button' );
-
-	button.type = 'button';
-	button.textContent = this.i18n( title );
-
-	this.addListener( button, 'click', func );
-
-	this.page.appendChild( button );
-
-	return button;
-
-};
-
-Page.prototype.addTextBox = function ( title, placeholder, getResultGetter ) {
-
-	const div = document.createElement( 'div' );
-	const input = document.createElement( 'input' );
-
-	let value;
-
-	input.type = 'text';
-	input.placeholder = placeholder;
-
-	div.appendChild( this.makeLabel( title, 'text' ) );
-	div.appendChild( input );
-
-	this.page.appendChild( div );
-
-	this.addListener( input, 'change', function ( e ) { value = e.target.value; return true; } );
-
-	getResultGetter( _result );
-
-	return div;
-
-	function _result() {
-
-		input.value = '';
-		return value;
+		return button;
 
 	}
 
-};
+	addTextBox ( title, placeholder, getResultGetter ) {
 
-Page.prototype.addDownloadButton = function ( title, urlProvider, fileName ) {
+		const div = document.createElement( 'div' );
+		const input = document.createElement( 'input' );
 
-	const a = document.createElement( 'a' );
+		let value;
 
-	if ( typeof a.download === 'undefined' ) return null;
+		input.type = 'text';
+		input.placeholder = placeholder;
 
-	this.addListener( a, 'click', () => { a.href = urlProvider( a ); } );
+		div.appendChild( this.makeLabel( title, 'text' ) );
+		div.appendChild( input );
 
-	a.textContent = this.i18n( title );
-	a.type = 'download';
-	a.download = fileName;
-	a.href = 'javascript:void();';
+		this.page.appendChild( div );
 
-	a.classList.add( 'download' );
+		this.addListener( input, 'change', function ( e ) { value = e.target.value; return true; } );
 
-	this.page.appendChild( a );
+		getResultGetter( _result );
 
-	return a;
+		return div;
 
-};
+		function _result() {
 
-Page.canDownload = function () {
+			input.value = '';
+			return value;
 
-	const a = document.createElement( 'a' );
-	return ( typeof a.download !== 'undefined' );
-
-};
-
-Page.prototype.download = function ( data, fileName ) {
-
-	const a = document.createElement( 'a' );
-
-	if ( typeof a.download === 'undefined' ) return null;
-
-	a.type = 'download';
-	a.download = fileName;
-	a.href = data;
-	a.click();
-
-};
-
-Page.prototype.addColor = function ( title, name ) {
-
-	const frame = this.frame;
-	const cb    = document.createElement( 'input' );
-	const div   = document.createElement( 'div' );
-	const cfg = frame.ctx.cfg;
-
-	const id = 'cv-' + frame.getSeq();
-
-	div.classList.add( 'control' );
-	div.classList.add( 'color' );
-
-	cb.type = 'color';
-	cb.value = cfg.themeColorHex( name ),
-
-	cb.id = id;
-
-	this.addListener( cb, 'change', _colorChanged );
-
-	frame.controls[ name ] = cb;
-
-	div.appendChild( cb );
-	div.appendChild( this.makeLabel( title, 'color', id ) );
-
-	this.page.appendChild( div );
-
-	this.addListener( cfg, 'colors', e => { if (e.name === 'all' ) cb.value = cfg.themeColorHex( name ); } );
-
-	return div;
-
-	function _colorChanged ( event ) {
-
-		frame.inHandler = true;
-
-		cfg.setThemeColorCSS( name, event.target.value );
-
-		frame.inHandler = false;
+		}
 
 	}
 
-};
+	addDownloadButton ( title, urlProvider, fileName ) {
 
-Page.prototype.addLogo = function () {
+		const a = document.createElement( 'a' );
 
-	const img = document.createElement( 'div' );
+		if ( typeof a.download === 'undefined' ) return null;
 
-	img.classList.add( 'logo' );
-	img.title = 'logo';
+		this.addListener( a, 'click', () => { a.href = urlProvider( a ); } );
 
-	this.appendChild( img );
+		a.textContent = this.i18n( title );
+		a.type = 'download';
+		a.download = fileName;
+		a.href = 'javascript:void();';
 
-};
+		a.classList.add( 'download' );
 
-Page.prototype.dispose = function () {
-	if ( this._dispose ) this._dispose();
-};
+		this.page.appendChild( a );
+
+		return a;
+
+	}
+
+	static canDownload () {
+
+		const a = document.createElement( 'a' );
+		return ( typeof a.download !== 'undefined' );
+
+	}
+
+	download ( data, fileName ) {
+
+		const a = document.createElement( 'a' );
+
+		if ( typeof a.download === 'undefined' ) return null;
+
+		a.type = 'download';
+		a.download = fileName;
+		a.href = data;
+		a.click();
+
+	}
+
+	addColor ( title, name ) {
+
+		const frame = this.frame;
+		const cb    = document.createElement( 'input' );
+		const div   = document.createElement( 'div' );
+		const cfg = frame.ctx.cfg;
+
+		const id = 'cv-' + frame.getSeq();
+
+		div.classList.add( 'control' );
+		div.classList.add( 'color' );
+
+		cb.type = 'color';
+		cb.value = cfg.themeColorHex( name ),
+
+		cb.id = id;
+
+		this.addListener( cb, 'change', _colorChanged );
+
+		frame.controls[ name ] = cb;
+
+		div.appendChild( cb );
+		div.appendChild( this.makeLabel( title, 'color', id ) );
+
+		this.page.appendChild( div );
+
+		this.addListener( cfg, 'colors', e => { if (e.name === 'all' ) cb.value = cfg.themeColorHex( name ); } );
+
+		return div;
+
+		function _colorChanged ( event ) {
+
+			frame.inHandler = true;
+
+			cfg.setThemeColorCSS( name, event.target.value );
+
+			frame.inHandler = false;
+
+		}
+
+	}
+
+	addLogo () {
+
+		const img = document.createElement( 'div' );
+
+		img.classList.add( 'logo' );
+		img.title = 'logo';
+
+		this.appendChild( img );
+
+	}
+
+	dispose () {
+		if ( this._dispose ) this._dispose();
+	}
+
+}
 
 export { Page };

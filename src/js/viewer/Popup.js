@@ -17,15 +17,15 @@ class PopupGeometry extends BufferGeometry {
 
 }
 
-let commonGeometry = null;
-
 class Popup extends Mesh {
+
+	static commonGeometry = null;
 
 	constructor ( ctx ) {
 
-		if ( commonGeometry === null ) commonGeometry = new PopupGeometry();
+		if ( Popup.commonGeometry === null ) Popup.commonGeometry = new PopupGeometry();
 
-		super( commonGeometry );
+		super( Popup.commonGeometry );
 
 		this.layers.set( LEG_CAVE );
 		this.type = 'Popup';

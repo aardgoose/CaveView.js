@@ -2,6 +2,8 @@ import { Point } from './Point';
 
 class Marker extends Point {
 
+	isMarker = true;
+
 	constructor ( ctx, count ) {
 
 		const materials = ctx.materials;
@@ -18,7 +20,5 @@ class Marker extends Point {
 	}
 
 }
-
-Marker.prototype.isMarker = true;
 
 export { Marker };

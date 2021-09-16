@@ -256,6 +256,8 @@ class Legs extends LineSegments2 {
 
 		const vertices = this.legVertices;
 
+		vertexIndex *= 2;
+
 		const start = vertices[ vertexIndex ];
 		const end = vertices[ vertexIndex + 1 ];
 

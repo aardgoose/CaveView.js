@@ -39,7 +39,6 @@ class GlyphStringGeometryCache {
 
 }
 
-
 class GlyphStringGeometry extends InstancedBufferGeometry {
 
 	constructor ( text, glyphAtlas ) {

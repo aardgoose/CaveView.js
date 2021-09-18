@@ -100,6 +100,7 @@ class Topology {
 
 	shortestPathSearch ( station, legCallback = function () {} ) {
 
+		const legsSeen = [];
 		// queue of stations searched.
 		const queue = [ station ];
 
@@ -137,12 +138,17 @@ class Topology {
 				const nextStation = ( v1 !== station ) ? v1 : v2;
 				const nextLength = legsObject.legLengths[ leg / 2 ];
 
+				if ( ! legsSeen[ leg ] ) {
+
+					legCallback( leg, station, nextStation );
+					legsSeen[ leg ] = true;
+
+				}
+
 				// label stations with distance of shortest path
 				// add to search list
 
 				if ( nextStation.shortestPath > currentDistance + nextLength ) {
-
-					if ( nextStation.shortestPath === Infinity ) legCallback( leg, station, nextStation );
 
 					nextStation.shortestPath = currentDistance + nextLength;
 					queue.push( nextStation );
@@ -223,7 +229,8 @@ class Topology {
 			const v1 = legs[ l ];
 			const v2 = legs[ l + 1 ];
 
-			const nextVertex = ( v1 !== thisVertex) ? v1 : v2;
+			const nextVertex = ( v1 !== thisVertex ) ? v1 : v2;
+
 			ids.push( nextVertex.id );
 
 		} );

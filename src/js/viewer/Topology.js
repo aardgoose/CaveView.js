@@ -98,7 +98,7 @@ class Topology {
 
 	}
 
-	shortestPathSearch ( station, legCallback = function () {} ) {
+	shortestPathSearch ( station, legCallback = null ) {
 
 		const legsSeen = [];
 		// queue of stations searched.
@@ -123,8 +123,6 @@ class Topology {
 
 			const currentDistance = station.shortestPath;
 
-			// console.log( 'station:', station.getPath(), currentDistance );
-
 			maxDistance = Math.max( maxDistance, currentDistance );
 
 			// find stations connected to this station
@@ -133,12 +131,11 @@ class Topology {
 				const leg = stationLegs[ i ];
 
 				const v1 = legs[ leg ];
-				const v2 = legs[ leg + 1 ];
 
-				const nextStation = ( v1 !== station ) ? v1 : v2;
+				const nextStation = ( v1 === station ) ? legs[ leg + 1 ] : v1;
 				const nextLength = legsObject.legLengths[ leg / 2 ];
 
-				if ( ! legsSeen[ leg ] ) {
+				if ( legCallback !== null && ! legsSeen[ leg ] ) {
 
 					legCallback( leg, station, nextStation );
 					legsSeen[ leg ] = true;
@@ -172,7 +169,7 @@ class Topology {
 		if (
 			zeroStation === null ||
 			startStation.shortestPath === Infinity ||
-			zeroStation === startStation ||
+			startStation === zeroStation ||
 			startStation.shortestPath === 0
 		) return path;
 
@@ -192,11 +189,9 @@ class Topology {
 			for ( let i = 0; i < l; i++ ) {
 
 				const leg = stationLegs[ i ];
-
 				const v1 = legs[ leg ];
-				const v2 = legs[ leg + 1 ];
 
-				const testStation = ( v1 !== nextStation ) ? v1 : v2;
+				const testStation = ( v1 === nextStation ) ? legs[ leg + 1 ] : v1;
 
 				if ( testStation.shortestPath < nextStation.shortestPath ) {
 
@@ -227,9 +222,7 @@ class Topology {
 		adjacentLegs.forEach( l => {
 
 			const v1 = legs[ l ];
-			const v2 = legs[ l + 1 ];
-
-			const nextVertex = ( v1 !== thisVertex ) ? v1 : v2;
+			const nextVertex = ( v1 === thisVertex ) ? legs[ l + 1 ] : v1;
 
 			ids.push( nextVertex.id );
 

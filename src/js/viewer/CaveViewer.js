@@ -26,16 +26,12 @@ import { WorkerPoolCache } from '../core/WorkerPool';
 import { defaultView, ViewState } from './ViewState';
 import { OrbitControls } from '../ui/OrbitControls';
 import { ExportGltf } from './ExportGltf';
-
-import {
-	EventDispatcher,
-	Vector3, Euler, Quaternion,
-	Scene, Raycaster,
-	WebGLRenderer,
-	MOUSE, FogExp2
-} from '../Three';
 import { Leg } from '../public/Leg';
 import { Snapshot } from './Snapshot';
+
+import {
+	EventDispatcher, Vector3, Scene, Raycaster, WebGLRenderer, MOUSE, FogExp2
+} from '../Three';
 
 class CaveViewer extends EventDispatcher {
 
@@ -130,8 +126,6 @@ class CaveViewer extends EventDispatcher {
 
 		// preallocated tmp objects
 
-		const __rotation = new Euler();
-		const __q = new Quaternion();
 		const __v = new Vector3();
 		const self = this;
 
@@ -772,11 +766,7 @@ class CaveViewer extends EventDispatcher {
 
 		function onCameraMoved () {
 
-			const camera = cameraManager.activeCamera;
-
-			__rotation.setFromQuaternion( camera.getWorldQuaternion( __q ) );
-
-			lightingManager.setRotation( __rotation );
+			lightingManager.setRotation( cameraManager.getRotation() );
 
 			renderView();
 

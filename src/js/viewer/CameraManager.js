@@ -7,8 +7,11 @@ import { AnaglyphEffect } from './AnaglyphEffect';
 
 import {
 	OrthographicCamera, PerspectiveCamera, MathUtils,
-	MeshBasicMaterial, BackSide, Vector2
+	MeshBasicMaterial, BackSide, Vector2, Euler, Quaternion,
 } from '../Three';
+
+const __rotation = new Euler();
+const __q = new Quaternion();
 
 function CameraManager ( ctx, renderer, scene ) {
 
@@ -261,6 +264,12 @@ function CameraManager ( ctx, renderer, scene ) {
 		);
 
 		return mouse;
+
+	};
+
+	this.getRotation = function () {
+
+		return __rotation.setFromQuaternion( this.activeCamera.getWorldQuaternion( __q ) );
 
 	};
 

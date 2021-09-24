@@ -33,16 +33,16 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^19.0.2",
     "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.0.4",
+    "@rollup/plugin-node-resolve": "^13.0.5",
     "@rollup/pluginutils": "^4.1.1",
     "concurrently": "^6.2.1",
-    "eslint": "^7.32.0",
-    "postcss": "^8.3.6",
+    "eslint": "^7.0.0",
+    "postcss": "^8.3.7",
     "proj4": "^2.7.5",
-    "rollup": "^2.56.3",
+    "rollup": "^2.57.0",
     "rollup-plugin-terser": "^7.0.2",
     "serve": "^12.0.1",
-    "terser": "^5.8.0",
+    "terser": "^5.9.0",
     "three": "^0.132.0",
     "x18n": "^2.0.3"
   }

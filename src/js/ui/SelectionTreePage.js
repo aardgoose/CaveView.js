@@ -79,8 +79,8 @@ class SelectionTreePage extends SelectionCommonPage {
 
 			// search dom tree for list Element <LI> mapped to selected node
 
-			let topElement = domTop; // start from top of dom tree
-			let children = topElement.childNodes;
+			// start from top of dom tree
+			let children = domTop.childNodes;
 
 			node = path.pop();
 
@@ -117,7 +117,6 @@ class SelectionTreePage extends SelectionCommonPage {
 
 					node = path.pop();
 					children = nextTopElement.childNodes;
-					topElement = nextTopElement;
 
 				}
 

@@ -1,4 +1,4 @@
-import { Float32BufferAttribute, Color } from '../Three';
+import { Float32BufferAttribute } from '../Three';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { LineSegments2 } from '../core/LineSegments2';
 import { STATION_XSECT } from '../core/constants';
@@ -230,15 +230,16 @@ class Legs extends LineSegments2 {
 		if ( mode ) {
 
 			const vertices = this.legVertices;
-			const l = vertices.length;
-			const hide = [];
+			const legCount = vertices.length / 2;
 
-			for ( let i = 0; i < l; i = i + 2 ) {
+			const hide = new Float32Array( legCount );
 
-				const sType1 = vertices[ i ].type;
-				const sType2 = vertices[ i + 1 ].type;
+			for ( let i = 0; i < legCount; i++ ) {
 
-				hide.push( sType1 & STATION_XSECT && sType2 & STATION_XSECT ? 1 : 0 );
+				const sType1 = vertices[ i * 2 ].type;
+				const sType2 = vertices[ i * 2 + 1 ].type;
+
+				hide[ i ] = sType1 & STATION_XSECT && sType2 & STATION_XSECT ? 1 : 0;
 
 			}
 
@@ -275,6 +276,9 @@ class Legs extends LineSegments2 {
 		leg *= 3;
 		c1.toArray( colours, leg );
 		c2.toArray( colours, leg + 3 );
+
+		this.geometry.getAttribute( 'instanceColorStart' ).needsUpdate = true;
+		this.geometry.getAttribute( 'instanceColorEnd' ).needsUpdate = true;
 
 	}
 

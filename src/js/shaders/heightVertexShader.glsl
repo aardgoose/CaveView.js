@@ -1,5 +1,7 @@
 #define saturate(a) clamp( a, 0.0, 1.0 )
 
+#include <fog_pars_vertex>
+
 uniform sampler2D cmap;
 
 uniform float minZ;
@@ -8,7 +10,6 @@ uniform vec3 uLight;
 
 varying vec3 vColor;
 varying float zMap;
-varying float fogDepth;
 varying vec3 vMvPosition;
 
 void main() {
@@ -25,8 +26,8 @@ void main() {
 
 	vMvPosition = mvPosition.xyz;
 
-	fogDepth = -mvPosition.z;
-
 	gl_Position = projectionMatrix * mvPosition;
+
+	#include <fog_vertex>
 
 }

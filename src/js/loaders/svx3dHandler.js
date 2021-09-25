@@ -1006,7 +1006,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 			endRun = true;
 
-		} else if ( node.connections === 1 && xSects.length > 1 && ! lastPosition.connections === 0 ) {
+		} else if ( node.connections === 1 && xSects.length > 1 && ! ( lastPosition.connections === 0 ) ) {
 
 			message = {
 				station: node,

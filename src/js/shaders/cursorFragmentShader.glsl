@@ -1,4 +1,4 @@
-#include <fog_pars_vertex>
+#include <fog_pars_fragment>
 
 uniform float cursor;
 uniform float cursorWidth;
@@ -24,6 +24,6 @@ void main() {
 
 	}
 
-	#include <fog_vertex>
+	#include <fog_fragment>
 
 }

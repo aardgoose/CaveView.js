@@ -1,4 +1,4 @@
-#include <fog_pars_vertex>
+#include <fog_pars_fragment>
 
 uniform sampler2D cmap;
 uniform float distanceTransparency;
@@ -17,6 +17,6 @@ void main() {
 
 	}
 
-	#include <fog_vertex>
+	#include <fog_fragment>
 
 }

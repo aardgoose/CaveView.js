@@ -1,4 +1,4 @@
-#include <fog_pars_vertex>
+#include <fog_pars_fragment>
 
 uniform sampler2D cmap;
 
@@ -9,6 +9,6 @@ void main() {
 
 	gl_FragColor = texture2D( cmap, vec2( vDepth, 1.0 ) ) * vec4( vColor, 1.0 );
 
-	#include <fog_vertex>
+	#include <fog_fragment>
 
 }

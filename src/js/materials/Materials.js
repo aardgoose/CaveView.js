@@ -31,6 +31,7 @@ function Materials ( viewer ) {
 	const cursorMaterials = new Set();
 	const lineMaterials = new Set();
 	let perSurveyMaterials = {};
+
 	let cursorHeight = 0;
 	let linewidth = 1;
 
@@ -47,7 +48,6 @@ function Materials ( viewer ) {
 	this.commonUniforms = {
 		fogColor: { value: ctx.cfg.themeColor( 'background' ) },
 		fogDensity: { value: 0.0025 },
-		fogEnabled: { value: 0 },
 		distanceTransparency: { value: 0.0 }
 	};
 
@@ -251,7 +251,7 @@ function Materials ( viewer ) {
 	this.getEntrancePointMaterial = function  () {
 
 		const func = function () { return new EntrancePointMaterial( ctx ); };
-		return getCacheMaterial( 'entrqnce', func, true );
+		return getCacheMaterial( 'entrance', func, true );
 
 	};
 
@@ -343,7 +343,14 @@ function Materials ( viewer ) {
 
 	this.setFog = function ( enable ) {
 
-		self.commonUniforms.fogEnabled.value = enable ? 1 : 0;
+		for ( const name in perSurveyMaterials ) {
+
+			const material = perSurveyMaterials[ name ];
+
+			material.fog = enable;
+			material.needsUpdate = true;
+
+		}
 
 	};
 

@@ -6,7 +6,6 @@ import { Object3D, Vector3 } from '../../Three';
 function buildCrossSections ( cave, survey ) {
 
 	const crossSectionGroups = cave.crossSections;
-	const stations = survey.stations;
 	const legs = survey.getLegs();
 	const ctx = survey.ctx;
 

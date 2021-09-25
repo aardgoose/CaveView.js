@@ -9,6 +9,8 @@ float unpackRGBAToFloat( const in vec4 v ) {
 	return dot( v, UnpackFactors );
 }
 
+#include <fog_pars_vertex>
+
 uniform vec3 modelMin;
 
 uniform float scaleX;
@@ -21,7 +23,6 @@ uniform vec3 uLight;
 
 varying vec3 vColor;
 varying float vDepth;
-varying float fogDepth;
 
 void main() {
 
@@ -39,8 +40,8 @@ void main() {
 
 	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 
-	fogDepth = -mvPosition.z;
-
 	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+	#include <fog_vertex>
 
 }

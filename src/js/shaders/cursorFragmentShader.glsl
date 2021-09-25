@@ -1,6 +1,4 @@
-#define saturate(a) clamp( a, 0.0, 1.0 )
-#define whiteCompliment(a) ( 1.0 - saturate( a ) )
-#define LOG2 1.442695
+#include <fog_pars_vertex>
 
 uniform float cursor;
 uniform float cursorWidth;
@@ -8,14 +6,8 @@ uniform float cursorWidth;
 uniform vec3 baseColor;
 uniform vec3 cursorColor;
 
-uniform vec3 fogColor;
-uniform int fogEnabled;
-uniform float fogDensity;
-
 varying float height;
 varying vec3 vColor;
-varying float fogDepth;
-
 
 void main() {
 
@@ -32,12 +24,6 @@ void main() {
 
 	}
 
-	if ( fogEnabled != 0 ) {
-
-		float fogFactor = whiteCompliment( exp2( - fogDensity * fogDensity * fogDepth * fogDepth * LOG2 ) );
-
-		gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
-
-	}
+	#include <fog_vertex>
 
 }

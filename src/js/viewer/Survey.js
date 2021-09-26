@@ -244,7 +244,6 @@ Survey.prototype.refreshColors = function () {
 		const fe = this.getFeature( FEATURE_ENTRANCES );
 
 		this.removeFeature( fe );
-		this.remove( fe );
 		this.entrances = null;
 
 	}
@@ -256,7 +255,6 @@ Survey.prototype.refreshColors = function () {
 		const fb = this.getFeature( FEATURE_BOX );
 
 		this.removeFeature( fb );
-		this.remove( fb );
 		this.featureBox = null;
 
 	}
@@ -291,7 +289,6 @@ Survey.prototype.setupTerrain = function ( terrain ) {
 	const grid = this.getFeature( FEATURE_GRID );
 
 	this.removeFeature( grid );
-	this.remove( grid );
 
 	this.addFeature( new Grid( this.ctx ), FEATURE_GRID );
 
@@ -520,11 +517,12 @@ Survey.prototype.addFeature = function ( obj, tag, name ) {
 
 Survey.prototype.removeFeature = function ( obj ) {
 
-	this.layers.mask &= ~ obj.layers.mask;
-
 	const features = this.features;
 
 	features.forEach( ( value, key ) => { if ( value === obj ) features.delete( key ); } );
+
+	this.layers.mask &= ~ obj.layers.mask;
+	obj.removeFromParent();
 
 };
 
@@ -823,8 +821,6 @@ Survey.prototype.cutSection = function ( node ) {
 	this.traverse( _cutObject );
 
 	cutList.forEach( obj => {
-
-		obj.removeFromParent();
 
 		// dispose of all geometry of this object and descendants
 

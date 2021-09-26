@@ -29,9 +29,6 @@ import waterFragmentShader from './waterFragmentShader.glsl';
 import lineVertexShader from './lineVertexShader.glsl';
 import lineFragmentShader from './lineFragmentShader.glsl';
 
-import commonTerrainCodeColor from './commonTerrainCodeColor.glsl';
-import commonTerrainCodePars from './commonTerrainCodePars.glsl';
-
 export const Shaders = {
 	anaglyphVertexShader:	anaglyphVertexShader,
 	anaglyphFragmentShader:	anaglyphFragmentShader,
@@ -52,9 +49,7 @@ export const Shaders = {
 	waterVertexShader:		waterVertexShader,
 	waterFragmentShader:	waterFragmentShader,
 	lineVertexShader:		lineVertexShader,
-	lineFragmentShader:		lineFragmentShader,
-	commonTerrainCodeColor: commonTerrainCodeColor,
-	commonTerrainCodePars: commonTerrainCodePars
+	lineFragmentShader:		lineFragmentShader
 };
 
 // EOF

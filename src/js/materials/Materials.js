@@ -18,7 +18,7 @@ import { EntrancePointMaterial } from './EntrancePointMaterial';
 
 import {
 	LineBasicMaterial, MeshLambertMaterial, MeshBasicMaterial, MeshPhongMaterial,
-	IncrementStencilOp, Vector2, Color,
+	IncrementStencilOp,
 } from '../Three';
 
 function Materials ( viewer ) {
@@ -53,13 +53,6 @@ function Materials ( viewer ) {
 
 	this.commonDepthUniforms = {
 		datumShift: { value: 0.0 }
-	};
-
-	this.commonTerrainUniforms = {
-		scale: { value: 0.0 },
-		accuracy: { value: 0.0 },
-		target: { value: new Vector2() },
-		ringColor: { value: new Color( 0xff0000 ) }
 	};
 
 	this.terrainOpacity = 0.5;

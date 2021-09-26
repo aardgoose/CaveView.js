@@ -1,4 +1,5 @@
 
+#include <fog_pars_vertex>
 
 // glyph shader, each instance represents one glyph.
 
@@ -11,7 +12,6 @@ attribute float instanceOffsets;
 attribute float instanceWidths;
 
 varying vec2 vUv;
-varying float fogDepth;
 
 void main() {
 
@@ -45,8 +45,8 @@ void main() {
 
 	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 
-	fogDepth = -mvPosition.z;
-
 	gl_Position = vec4( newPosition, 0.0, 0.0 ) + offset;
+
+	#include <fog_vertex>
 
 }

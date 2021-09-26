@@ -824,9 +824,7 @@ Survey.prototype.cutSection = function ( node ) {
 
 	cutList.forEach( obj => {
 
-		const parent = obj.parent;
-
-		if ( parent ) parent.remove( obj );
+		obj.removeFromParent();
 
 		// dispose of all geometry of this object and descendants
 

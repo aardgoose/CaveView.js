@@ -36,7 +36,7 @@ class Popup extends Mesh {
 
 	close () {
 
-		if ( this.parent ) this.parent.remove( this );
+		this.removeFromParent();
 
 		const material = this.materal;
 

@@ -1612,7 +1612,7 @@ class CaveViewer extends EventDispatcher {
 
 			const legs = survey.getFeature( type );
 
-			return ( legs !== undefined ) ? survey.getFeature( type ).stats : {
+			return ( legs !== undefined ) ? legs.stats : {
 				legs: 0,
 				legLength: 0,
 				minLegLength: 0,

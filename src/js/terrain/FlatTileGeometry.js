@@ -38,7 +38,7 @@ class FlatTileGeometry extends BufferGeometry {
 
 		// avoid overhead of computeBoundingBox since we know x & y min and max values;
 
-		this.boundingBox = new Box3().set( new Vector3( offsets.x, offsets.y - height, 0 ), new Vector3( offsets.x + width, offsets.y, 0 ) );
+		this.boundingBox = new Box3( new Vector3( offsets.x, offsets.y - height, 0 ), new Vector3( offsets.x + width, offsets.y, 0 ) );
 
 		// build geometry
 

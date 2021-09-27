@@ -86,7 +86,7 @@ class Survey extends Object3D {
 		this.limits = survey.limits;
 		this.offsets = survey.offsets;
 
-		const modelLimits = new Box3().copy( this.limits );
+		const modelLimits = this.limits.clone();
 
 		modelLimits.min.sub( this.offsets );
 		modelLimits.max.sub( this.offsets );
@@ -269,7 +269,7 @@ Survey.prototype.loadEntrances = function () {
 Survey.prototype.setupTerrain = function ( terrain ) {
 
 	// expand limits with terrain
-	this.combinedLimits = new Box3().copy( terrain.boundingBox ).union( this.modelLimits );
+	this.combinedLimits = terrain.boundingBox.clone().union( this.modelLimits );
 	this.setFeatureBox();
 
 	if ( terrain.isFlat ) return;
@@ -833,10 +833,7 @@ Survey.prototype.cutSection = function ( node ) {
 	this.modelLimits = this.getBounds();
 	this.combinedLimits = this.modelLimits;
 
-	this.limits.copy( this.modelLimits );
-
-	this.limits.min.add( this.offsets );
-	this.limits.max.add( this.offsets );
+	this.limits.copy( this.modelLimits ).translate( this.offsets );
 
 	this.featureBox = null;
 	this.setFeatureBox();
@@ -891,9 +888,6 @@ Survey.prototype.getBounds = function () {
 
 	const box = new Box3();
 
-	const min = box.min;
-	const max = box.max;
-
 	this.traverse( _addObjectBounds );
 
 	return box;
@@ -907,8 +901,7 @@ Survey.prototype.getBounds = function () {
 
 		if ( geometry && geometry.boundingBox ) {
 
-			min.min( geometry.boundingBox.min );
-			max.max( geometry.boundingBox.max );
+			box.union( geometry.boundingBox );
 
 		}
 

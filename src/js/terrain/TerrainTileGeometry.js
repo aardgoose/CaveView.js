@@ -87,7 +87,7 @@ class TerrainTileGeometry extends BufferGeometry {
 
 		// avoid overhead of computeBoundingBox since we know x & y min and max values;
 
-		this.boundingBox = new Box3().set( new Vector3( offsets.x, offsets.y - height, minZ ), new Vector3( offsets.x + width, offsets.y, maxZ ) );
+		this.boundingBox = new Box3( new Vector3( offsets.x, offsets.y - height, minZ ), new Vector3( offsets.x + width, offsets.y, maxZ ) );
 
 		// indices
 

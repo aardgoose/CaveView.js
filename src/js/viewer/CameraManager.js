@@ -291,8 +291,8 @@ function CameraManager ( ctx, renderer, scene ) {
 		},
 
 		'focalLength': {
-			get: perspectiveCamera.getFocalLength,
-			set: perspectiveCamera.setFocalLength
+			get: function () { return perspectiveCamera.getFocalLength(); },
+			set: function ( x ) { perspectiveCamera.setFocalLength( x ); }
 		}
 
 	} );

@@ -299,7 +299,7 @@ class Stations extends Points {
 
 	resetDistances () {
 
-		this.vertices.forEach( node => { if ( node ) node.shortestPath = Infinity; } );
+		this.vertices.forEach( node => node.shortestPath = Infinity );
 
 	}
 

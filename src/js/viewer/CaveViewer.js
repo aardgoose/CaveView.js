@@ -113,7 +113,6 @@ class CaveViewer extends EventDispatcher {
 
 		let terrain = null;
 		let survey = null;
-		let limits = null;
 		let stats = {};
 
 		let useFog = false;
@@ -264,11 +263,11 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'maxHeight': {
-				get: function () { return ( limits === null ) ? 0 : limits.max.z; }
+				get: function () { return ( survey === null ) ? 0 : survey.limits.max.z; }
 			},
 
 			'minHeight': {
-				get: function () { return ( limits === null ) ? 0 : limits.min.z; }
+				get: function () { return ( survey === null ) ? 0 : survey.limits.min.z; }
 			},
 
 			'maxLegLength': {
@@ -1016,7 +1015,6 @@ class CaveViewer extends EventDispatcher {
 
 			survey          = null;
 			terrain         = null;
-			limits          = null;
 			mouseMode       = MOUSE_MODE_NORMAL;
 			mouseTargets    = [];
 
@@ -1600,9 +1598,6 @@ class CaveViewer extends EventDispatcher {
 
 			// scaling to compensate distortion introduced by projection ( x and y coords only ) - approx only
 			const scaleFactor = survey.scaleFactor;
-
-			limits = survey.limits;
-
 			const range = survey.combinedLimits.getSize( __v );
 
 			let hScale = Math.min( width / range.x, height / range.y );

@@ -1593,18 +1593,14 @@ class CaveViewer extends EventDispatcher {
 
 		function setScale () {
 
-			const width  = container.clientWidth;
-			const height = container.clientHeight;
-
-			// scaling to compensate distortion introduced by projection ( x and y coords only ) - approx only
-			const scaleFactor = survey.scaleFactor;
 			const range = survey.combinedLimits.getSize( __v );
 
-			let hScale = Math.min( width / range.x, height / range.y );
+			let hScale = Math.min( container.clientWidth / range.x, container.clientHeight / range.y );
 
 			if ( hScale === Infinity ) hScale = 1;
 
-			const vScale = hScale * scaleFactor;
+			// scaling to compensate distortion introduced by projection ( x and y coords only ) - approx only
+			const vScale = hScale * survey.scaleFactor;
 
 			survey.setScale( hScale, vScale );
 

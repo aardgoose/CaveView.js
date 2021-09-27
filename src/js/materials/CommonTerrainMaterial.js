@@ -8,12 +8,6 @@ import { TERRAIN_BLEND, TERRAIN_STENCIL, TERRAIN_BASIC } from '../core/constants
 
 class CommonTerrainMaterial extends MeshLambertMaterial {
 
-	constructor () {
-
-		super();
-
-	}
-
 	editShader ( shader, vertexPars, vertexMain, fragmentPars, fragmentColor ) {
 
 		const vertexShader = shader.vertexShader

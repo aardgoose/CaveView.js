@@ -56,6 +56,7 @@ class CaveViewer extends EventDispatcher {
 			container: container,
 			workerPools: new WorkerPoolCache ( cfg ),
 			glyphStringCache: new Map(),
+			materials: null,
 			viewer: this
 		};
 

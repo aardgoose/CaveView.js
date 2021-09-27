@@ -72,9 +72,7 @@ class CanvasPopup extends Popup {
 
 		texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
 
-		const material = new PopupMaterial( container, texture, 0 );
-
-		this.material = material;
+		this.material = new PopupMaterial( container, texture, 0 );
 		this.material.needsUpdate = true;
 
 		return this;

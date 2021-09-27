@@ -10,14 +10,13 @@ class StationPopup extends CanvasPopup {
 
 		let name = station.getPath();
 		let long = false;
-		let tmp;
 		let lines = null;
 
 		// reduce name length if too long
 
 		while ( name.length > 20 ) {
 
-			tmp = name.split( '.' );
+			const tmp = name.split( '.' );
 			tmp.shift();
 
 			name = tmp.join( '.' );

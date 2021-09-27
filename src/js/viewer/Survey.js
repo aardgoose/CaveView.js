@@ -239,25 +239,13 @@ Survey.prototype.loadWarnings = function ( messages ) {
 
 Survey.prototype.refreshColors = function () {
 
-	if ( this.hasFeature( FEATURE_ENTRANCES ) ) {
-
-		const fe = this.getFeature( FEATURE_ENTRANCES );
-
-		this.removeFeature( fe );
-		this.entrances = null;
-
-	}
+	this.removeFeature( this.entrances );
+	this.entrances = null;
 
 	this.loadEntrances();
 
-	if ( this.featureBox ) {
-
-		const fb = this.getFeature( FEATURE_BOX );
-
-		this.removeFeature( fb );
-		this.featureBox = null;
-
-	}
+	this.removeFeature( this.featureBox );
+	this.featureBox = null;
 
 	this.setFeatureBox();
 
@@ -286,9 +274,7 @@ Survey.prototype.setupTerrain = function ( terrain ) {
 
 	if ( terrain.isFlat ) return;
 
-	const grid = this.getFeature( FEATURE_GRID );
-
-	this.removeFeature( grid );
+	this.removeFeature( this.getFeature( FEATURE_GRID ) );
 
 	this.addFeature( new Grid( this.ctx ), FEATURE_GRID );
 
@@ -516,6 +502,8 @@ Survey.prototype.addFeature = function ( obj, tag, name ) {
 };
 
 Survey.prototype.removeFeature = function ( obj ) {
+
+	if ( obj === null ) return;
 
 	const features = this.features;
 

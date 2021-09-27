@@ -9,11 +9,8 @@ class Snapshot {
 			const container = ctx.container;
 			const viewer = ctx.viewer;
 
-			const width  = container.clientWidth;
-			const height = container.clientHeight;
-
 			const newWidth = exportSize;
-			const newHeight = Math.round( height * newWidth / width );
+			const newHeight = Math.round( container.clientHeight * newWidth / container.clientWidth );
 
 			const renderTarget = new WebGLRenderTarget( newWidth, newHeight, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, stencilBuffer: true } );
 

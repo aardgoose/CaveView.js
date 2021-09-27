@@ -392,25 +392,6 @@ class CommonTerrain extends Group {
 
 	}
 
-	setScale ( scale ) {
-
-		this.commonUniforms.scale.value = scale;
-
-	}
-
-	setAccuracy ( accuracy ) {
-
-		this.commonUniforms.accuracy.value = accuracy;
-		this.commonUniforms.ringColor.value.g = 1 - ( accuracy / 1000 );
-
-	}
-
-	setTarget ( target ) {
-
-		this.commonUniforms.target.value.copy( target );
-
-	}
-
 	_fitSurface ( modelPoints /*, offsets */ ) {
 
 		const points = modelPoints;

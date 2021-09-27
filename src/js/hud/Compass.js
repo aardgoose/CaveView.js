@@ -77,7 +77,7 @@ class Compass extends Group {
 			const vertices = [];
 			const colours = [];
 
-			_makeRose2( cfg.themeColor( 'hud.compass.bottom1' ),cfg.themeColor( 'hud.compass.bottom2' ), Math.PI / 4 );
+			_makeRose2( cfg.themeColor( 'hud.compass.bottom1' ), cfg.themeColor( 'hud.compass.bottom2' ), Math.PI / 4 );
 			_makeRose2( cfg.themeColor( 'hud.compass.top1' ), cfg.themeColor( 'hud.compass.top2' ), 0 );
 
 			const positions = new Float32BufferAttribute( vertices.length, 3 );
@@ -102,7 +102,7 @@ class Compass extends Group {
 
 					const a = i * Math.PI / 2 + offset;
 
-					vertices.push( Math.sin( a )* radius, Math.cos( a ) * radius, 0 );
+					vertices.push( Math.sin( a ) * radius, Math.cos( a ) * radius, 0 );
 					vertices.push( 0, 0, 2 );
 					vertices.push( Math.sin( a + xlv ) * innerR, Math.cos( a + xlv ) * innerR, 0 );
 
@@ -110,7 +110,7 @@ class Compass extends Group {
 
 					vertices.push( Math.sin( a + xlv ) * innerR, Math.cos( a + xlv ) * innerR, 0 );
 					vertices.push( 0, 0, 2 );
-					vertices.push( Math.sin( a + xc )* radius, Math.cos( a + xc ) * radius, 0 );
+					vertices.push( Math.sin( a + xc ) * radius, Math.cos( a + xc ) * radius, 0 );
 
 					colours.push( color2, color2, color2 );
 

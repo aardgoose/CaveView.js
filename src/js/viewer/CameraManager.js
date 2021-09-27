@@ -42,6 +42,7 @@ function CameraManager ( ctx, renderer, scene ) {
 	let savedMask;
 	let eyeSeparation = 0.5;
 	let lastFrame = 0;
+	let activeEffect = null;
 
 	ctx.viewer.addEventListener( 'resized', onResize );
 
@@ -65,9 +66,9 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		perspectiveCamera.updateProjectionMatrix();
 
-		if ( self.activeEffect !== null ) {
+		if ( activeEffect !== null ) {
 
-			self.activeEffect.setSize( width, height );
+			activeEffect.setSize( width, height );
 
 		}
 
@@ -109,8 +110,6 @@ function CameraManager ( ctx, renderer, scene ) {
 	this.maskedTerrain = true;
 	this.activeRenderer = maskedRenderer;
 
-	this.activeEffect = null;
-
 	function initCamera ( camera ) {
 
 		camera.zoom = 1;
@@ -145,9 +144,9 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		savedMask = this.activeCamera.layers.mask;
 
-		if ( this.activeEffect !== null ) {
+		if ( activeEffect !== null ) {
 
-			this.activeEffect.setLayers( savedMask );
+			activeEffect.setLayers( savedMask );
 
 		}
 
@@ -168,13 +167,12 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		const offset = activeCamera.position.clone().sub( target );
 
-		if ( this.activeEffect !== null ) {
+		if ( activeEffect !== null ) {
 
-			this.activeEffect.dispose();
+			activeEffect.dispose();
+			activeEffect = null;
 
 		}
-
-		let activeEffect = null;
 
 		switch ( mode ) {
 
@@ -217,7 +215,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 			this.activeRenderer = function () {
 
-				activeEffect.render( scene, self.activeCamera );
+				activeEffect.render( scene, activeCamera );
 
 			};
 
@@ -243,7 +241,6 @@ function CameraManager ( ctx, renderer, scene ) {
 		activeCamera.lookAt( target );
 
 		this.activeCamera = activeCamera;
-		this.activeEffect = activeEffect;
 		this.mode = mode;
 
 	};
@@ -283,9 +280,9 @@ function CameraManager ( ctx, renderer, scene ) {
 				// base separation = 0.064
 				eyeSeparation = x;
 
-				if ( this.activeEffect !== null ) {
+				if ( activeEffect !== null ) {
 
-					this.activeEffect.setEyeSeparation( 0.064 + ( x - 0.5 ) * 0.06 );
+					activeEffect.setEyeSeparation( 0.064 + ( x - 0.5 ) * 0.06 );
 
 				}
 
@@ -294,10 +291,8 @@ function CameraManager ( ctx, renderer, scene ) {
 		},
 
 		'focalLength': {
-			get: function () { return perspectiveCamera.getFocalLength(); },
-			set: function ( x ) {
-				perspectiveCamera.setFocalLength( x );
-			}
+			get: perspectiveCamera.getFocalLength,
+			set: perspectiveCamera.setFocalLength
 		}
 
 	} );

@@ -46,262 +46,262 @@ class Tile extends Mesh {
 
 	}
 
-}
+	onBeforeRender ( renderer ) {
 
-Tile.liveTiles = 0;
-
-Tile.prototype.onBeforeRender = function ( renderer ) {
-
-	this.lastFrame = renderer.info.render.frame;
-
-};
-
-Tile.prototype.createFromTileData = function ( tileData, material ) {
-
-	const attributes = tileData.attributes;
-	const index = tileData.index;
-	const boundingBox = tileData.boundingBox;
-	const bufferGeometry = this.geometry;
-
-	let attributeName;
-	let attribute;
-
-	// assemble BufferGeometry from binary buffer objects transfered from worker
-
-	for ( attributeName in attributes ) {
-
-		attribute = attributes[ attributeName ];
-		bufferGeometry.setAttribute( attributeName, new Float32BufferAttribute( attribute.array, attribute.itemSize ) );
+		this.lastFrame = renderer.info.render.frame;
 
 	}
 
-	bufferGeometry.setIndex( new Uint16BufferAttribute( index, 1 ) );
+	createFromTileData ( tileData, material ) {
 
-	// use precalculated bounding box rather than recalculating it here.
+		const attributes = tileData.attributes;
+		const index = tileData.index;
+		const boundingBox = tileData.boundingBox;
+		const bufferGeometry = this.geometry;
 
-	bufferGeometry.boundingBox = new Box3(
-		new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ),
-		new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
-	);
+		let attributeName;
+		let attribute;
 
-	this.boundingBox = bufferGeometry.boundingBox;
+		// assemble BufferGeometry from binary buffer objects transfered from worker
 
-	// discard javascript attribute buffers after upload to GPU
-	this.dropBuffers();
+		for ( attributeName in attributes ) {
 
-	this.layers.set( FEATURE_TERRAIN );
-
-	this.material = material;
-	this.isTile = true;
-
-	// handle specific tile data (Cesium has leaf status tiles)
-	this.canZoom = tileData.canZoom && this.canZoom;
-
-	// this is safe, we are already in the scene graph from .setPending()
-	if ( this.worldBoundingBox === null ) {
-
-		this.updateWorldMatrix( true, false );
-		this.worldBoundingBox = this.boundingBox.clone().applyMatrix4( this.matrixWorld );
-
-	}
-
-	return this;
-
-};
-
-Tile.prototype.empty = function () {
-
-	this.isMesh = false;
-
-	if ( this.geometry ) {
-
-		this.geometry.dispose();
-		this.geometry = new BufferGeometry();
-
-	}
-
-	--Tile.liveTiles;
-
-};
-
-Tile.prototype.evict = function () {
-
-	this.evicted = true;
-	this.replaced = false;
-	this.evictionCount = 0;
-
-	this.children.forEach( tile => tile.evict() );
-	this.empty();
-
-};
-
-Tile.prototype.setReplaced = function () {
-
-	this.evicted = false;
-	this.replaced = true;
-
-	this.empty();
-
-};
-
-Tile.prototype.setSkipped = function () {
-
-	this.parent.childrenLoading--;
-
-	this.evicted = false;
-	this.replaced = true;
-
-};
-
-Tile.prototype.setPending = function ( parentTile ) {
-
-	if ( parentTile && this.parent === null ) {
-
-		parentTile.addStatic( this );
-
-	}
-
-	this.parent.childrenLoading++;
-
-	this.isMesh = false;
-	this.evicted = false;
-	this.replaced = false;
-	this.evictionCount = 0;
-
-};
-
-Tile.prototype.setFailed = function () {
-
-	const parent = this.parent;
-
-	parent.childErrors++;
-	parent.childrenLoading--;
-	parent.canZoom = false;
-
-	parent.remove( this );
-
-};
-
-Tile.prototype.setLoaded = function ( overlay, renderCallback ) {
-
-	const parent = this.parent;
-
-	let tilesWaiting = 0;
-
-	if ( --parent.childrenLoading === 0 ) { // this tile and all siblings loaded
-
-		if ( parent.childErrors === 0 ) { // all loaded without error
-
-			if ( parent.isTile ) parent.setReplaced();
-
-			parent.children.forEach( sibling => {
-
-				if ( sibling.replaced || sibling.evicted ) return;
-
-				if ( overlay === null ) {
-
-					sibling.isMesh = true;
-					Tile.liveTiles++;
-
-				} else {
-
-					// delay finalising until overlays loaded - avoids flash of raw surface
-					tilesWaiting++;
-
-					sibling
-						.setOverlay( overlay )
-						.then( tile => {
-
-							tile.isMesh = true;
-							Tile.liveTiles++;
-
-							if ( --tilesWaiting === 0 ) renderCallback( this.canZoom );
-							return;
-
-						} );
-
-				}
-
-			} );
-
-			if ( tilesWaiting === 0 ) renderCallback( false ); // we have no overlay so don't encourage zooming
-
-			return;
-
-		} else {
-
-			parent.remove( this );
+			attribute = attributes[ attributeName ];
+			bufferGeometry.setAttribute( attributeName, new Float32BufferAttribute( attribute.array, attribute.itemSize ) );
 
 		}
 
+		bufferGeometry.setIndex( new Uint16BufferAttribute( index, 1 ) );
+
+		// use precalculated bounding box rather than recalculating it here.
+
+		bufferGeometry.boundingBox = new Box3(
+			new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ),
+			new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
+		);
+
+		this.boundingBox = bufferGeometry.boundingBox;
+
+		// discard javascript attribute buffers after upload to GPU
+		this.dropBuffers();
+
+		this.layers.set( FEATURE_TERRAIN );
+
+		this.material = material;
+		this.isTile = true;
+
+		// handle specific tile data (Cesium has leaf status tiles)
+		this.canZoom = tileData.canZoom && this.canZoom;
+
+		// this is safe, we are already in the scene graph from .setPending()
+		if ( this.worldBoundingBox === null ) {
+
+			this.updateWorldMatrix( true, false );
+			this.worldBoundingBox = this.boundingBox.clone().applyMatrix4( this.matrixWorld );
+
+		}
+
+		return this;
+
 	}
 
-	renderCallback( false );
+	empty () {
 
-};
+		this.isMesh = false;
 
-Tile.prototype.removed = function () {
+		if ( this.geometry ) {
 
-	if ( this.geometry ) this.geometry.dispose();
+			this.geometry.dispose();
+			this.geometry = new BufferGeometry();
 
-};
+		}
 
-Tile.prototype.setMaterial = function ( material ) {
+		--Tile.liveTiles;
 
-	this.material = material;
+	}
 
-};
+	evict () {
 
-Tile.prototype.setThroughMode = function ( mode ) {
+		this.evicted = true;
+		this.replaced = false;
+		this.evictionCount = 0;
 
-	if ( ! this.isTile || ! this.isMesh ) return;
+		this.children.forEach( tile => tile.evict() );
+		this.empty();
 
-	this.material.setThroughMode( mode );
+	}
 
-};
+	setReplaced () {
 
-Tile.prototype.setOverlay = function ( overlay ) {
+		this.evicted = false;
+		this.replaced = true;
 
-	return overlay
-		.getTile( this.x, this.y, this.zoom )
-		.then( material => {
+		this.empty();
 
-			if ( material !== null ) {
+	}
 
-				this.material = material;
-				material.setThroughMode( overlay.throughMode );
+	setSkipped () {
+
+		this.parent.childrenLoading--;
+
+		this.evicted = false;
+		this.replaced = true;
+
+	}
+
+	setPending ( parentTile ) {
+
+		if ( parentTile && this.parent === null ) {
+
+			parentTile.addStatic( this );
+
+		}
+
+		this.parent.childrenLoading++;
+
+		this.isMesh = false;
+		this.evicted = false;
+		this.replaced = false;
+		this.evictionCount = 0;
+
+	}
+
+	setFailed () {
+
+		const parent = this.parent;
+
+		parent.childErrors++;
+		parent.childrenLoading--;
+		parent.canZoom = false;
+
+		parent.remove( this );
+
+	}
+
+	setLoaded ( overlay, renderCallback ) {
+
+		const parent = this.parent;
+
+		let tilesWaiting = 0;
+
+		if ( --parent.childrenLoading === 0 ) { // this tile and all siblings loaded
+
+			if ( parent.childErrors === 0 ) { // all loaded without error
+
+				if ( parent.isTile ) parent.setReplaced();
+
+				parent.children.forEach( sibling => {
+
+					if ( sibling.replaced || sibling.evicted ) return;
+
+					if ( overlay === null ) {
+
+						sibling.isMesh = true;
+						Tile.liveTiles++;
+
+					} else {
+
+						// delay finalising until overlays loaded - avoids flash of raw surface
+						tilesWaiting++;
+
+						sibling
+							.setOverlay( overlay )
+							.then( tile => {
+
+								tile.isMesh = true;
+								Tile.liveTiles++;
+
+								if ( --tilesWaiting === 0 ) renderCallback( this.canZoom );
+								return;
+
+							} );
+
+					}
+
+				} );
+
+				if ( tilesWaiting === 0 ) renderCallback( false ); // we have no overlay so don't encourage zooming
+
+				return;
+
+			} else {
+
+				parent.remove( this );
 
 			}
 
-			return this;
+		}
 
-		} );
+		renderCallback( false );
 
-};
+	}
 
-Tile.prototype.computeProjectedArea = function ( camera ) {
+	removed () {
 
-	const boundingBox = this.worldBoundingBox;
-	const z = boundingBox.max.z;
+		if ( this.geometry ) this.geometry.dispose();
 
-	__a.copy( boundingBox.min ).setZ( z );
-	__c.copy( boundingBox.max );
+	}
 
-	__b.set( __a.x, __c.y, z );
-	__d.set( __c.x, __a.y, z );
+	setMaterial ( material ) {
 
-	// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
-	// .clampScalar( -1, 1 );
+		this.material = material;
 
-	__a.project( camera );
-	__b.project( camera );
-	__c.project( camera );
-	__d.project( camera );
+	}
 
-	this.area = ( __t1.getArea() + __t2.getArea() ) / this.clippedFraction;
+	setThroughMode ( mode ) {
 
-	return this;
+		if ( ! this.isTile || ! this.isMesh ) return;
 
-};
+		this.material.setThroughMode( mode );
+
+	}
+
+	setOverlay ( overlay ) {
+
+		return overlay
+			.getTile( this.x, this.y, this.zoom )
+			.then( material => {
+
+				if ( material !== null ) {
+
+					this.material = material;
+					material.setThroughMode( overlay.throughMode );
+
+				}
+
+				return this;
+
+			} );
+
+	}
+
+	computeProjectedArea ( camera ) {
+
+		const boundingBox = this.worldBoundingBox;
+		const z = boundingBox.max.z;
+
+		__a.copy( boundingBox.min ).setZ( z );
+		__c.copy( boundingBox.max );
+
+		__b.set( __a.x, __c.y, z );
+		__d.set( __c.x, __a.y, z );
+
+		// clamping reduces accuracy of area but stops offscreen area contributing to zoom pressure
+		// .clampScalar( -1, 1 );
+
+		__a.project( camera );
+		__b.project( camera );
+		__c.project( camera );
+		__d.project( camera );
+
+		this.area = ( __t1.getArea() + __t2.getArea() ) / this.clippedFraction;
+
+		return this;
+
+	}
+
+}
+
+Tile.liveTiles = 0;
 
 export { Tile };

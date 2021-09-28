@@ -111,7 +111,6 @@ class GlyphStringGeometry extends InstancedBufferGeometry {
 
 		this.width = offset;
 		this.name = text;
-		this.instanceCount = l;
 
 	}
 

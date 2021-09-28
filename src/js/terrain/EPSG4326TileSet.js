@@ -1,42 +1,152 @@
 import { FileLoader, Box2, Vector2 } from '../Three';
 import proj4 from 'proj4';
 
-function EPSG4326TileSet( ctx, crs ) {
+class EPSG4326TileSet {
 
-	this.CRS = crs;
-	this.transform = proj4( crs, 'EPSG:4326' );
+	constructor ( ctx, crs ) {
 
-	// survey limits
+		this.CRS = crs;
+		this.transform = proj4( crs, 'EPSG:4326' );
 
-	this.transformedLimits = null;
+		// survey limits
 
-	const accessToken = ctx.cfg.value( 'cesiumAccessToken', 'no access token' );
-	const url = 'https://api.cesium.com/v1/assets/1/endpoint?access_token=' + accessToken;
+		this.transformedLimits = null;
 
-	return new Promise( ( resolve, reject ) => {
+		const accessToken = ctx.cfg.value( 'cesiumAccessToken', 'no access token' );
+		const url = 'https://api.cesium.com/v1/assets/1/endpoint?access_token=' + accessToken;
 
-		new FileLoader().setResponseType( 'text' ).load(
-			url,
-			// success handler
-			text => {
+		return new Promise( ( resolve, reject ) => {
 
-				const endpoint = JSON.parse( text );
+			new FileLoader().setResponseType( 'text' ).load(
+				url,
+				// success handler
+				text => {
 
-				this.url = endpoint.url;
-				this.accessToken = endpoint.accessToken;
-				this.attributions = endpoint.attributions;
+					const endpoint = JSON.parse( text );
 
-				EPSG4326TileSet.defaultTileSet.valid = true;
-				resolve( this );
+					this.url = endpoint.url;
+					this.accessToken = endpoint.accessToken;
+					this.attributions = endpoint.attributions;
 
-			},
-			// progress handler
-			function () {},
-			// error handler
-			() => { console.warn( 'cesium api error' ); reject( this ); }
-		);
+					EPSG4326TileSet.defaultTileSet.valid = true;
+					resolve( this );
 
-	} );
+				},
+				// progress handler
+				function () {},
+				// error handler
+				() => { console.warn( 'cesium api error' ); reject( this ); }
+			);
+
+		} );
+
+	}
+
+	getTileSets () {
+
+		return [ EPSG4326TileSet.defaultTileSet ];
+
+	}
+
+	getScreenAttribution () {
+
+		const attributions = this.attributions;
+
+		if ( attributions.length === 0 ) return null;
+
+		const div = document.createElement( 'div' );
+
+		div.classList.add( 'overlay-branding' );
+
+		for ( let i = 0; i < attributions.length; i++ ) {
+
+			const attribution = attributions[ i ];
+
+			div.innerHTML = attribution.html;
+			break;
+
+		}
+
+		return div;
+
+	}
+
+	getCoverage ( limits, zoom ) {
+
+		const coverage = { zoom: zoom };
+
+		const S = - 90;
+		const W = - 180;
+
+		if ( this.transformedLimits === null ) {
+
+			this.transformedLimits = new Box2();
+
+		}
+
+		const transformedLimits = this.transformedLimits;
+
+		transformedLimits.expandByPoint( this.transform.forward( limits.min.clone() ) );
+		transformedLimits.expandByPoint( this.transform.forward( limits.max.clone() ) );
+
+		const min = transformedLimits.min;
+		const max = transformedLimits.max;
+
+		const tileCount = Math.pow( 2, zoom ) / 180; // tile count per degree
+
+		coverage.minX = Math.floor( ( min.x - W ) * tileCount );
+		coverage.maxX = Math.floor( ( max.x - W ) * tileCount );
+
+		coverage.minY = Math.floor( ( min.y - S ) * tileCount );
+		coverage.maxY = Math.floor( ( max.y - S ) * tileCount );
+
+		coverage.count = ( coverage.maxX - coverage.minX + 1 ) * ( coverage.maxY - coverage.minY + 1 );
+
+		return coverage;
+
+	}
+
+	getTileSpec ( x, y, z, limits ) {
+
+		const tileBox = new Box2();
+
+		const S = - 90;
+		const W = - 180;
+
+		// ensure tile is within survey limits
+
+		const tileSize = 180 / Math.pow( 2, z ); // tileSize
+
+		tileBox.min.x = W + x * tileSize;
+		tileBox.min.y = S + y * tileSize;
+
+		tileBox.max.x = W + ( x + 1) * tileSize;
+		tileBox.max.y = S + ( y + 1 ) * tileSize;
+
+		if ( ! this.transformedLimits.intersectsBox( tileBox ) ) return null;
+
+		const clippedSize = new Vector2();
+
+		tileBox.clone().intersect( this.transformedLimits ).getSize( clippedSize );
+
+		return {
+			tileSet: this.tileSet,
+			divisions: 1,
+			resolution: tileSize,
+			x: x,
+			y: y,
+			z: z,
+			clip: limits,
+			offsets: null,
+			flatZ: null,
+			displayCRS: this.CRS,
+			url: this.url,
+			accessToken: this.accessToken,
+			clippedFraction: clippedSize.x * clippedSize.y / tileSize * tileSize,
+			request: 'tile'
+		};
+
+	}
 
 }
 
@@ -59,112 +169,5 @@ EPSG4326TileSet.defaultTileSet = {
 };
 
 EPSG4326TileSet.prototype.workerScript = 'webMeshWorker.js';
-
-EPSG4326TileSet.prototype.getTileSets = function () {
-
-	return [ EPSG4326TileSet.defaultTileSet ];
-
-};
-
-EPSG4326TileSet.prototype.getScreenAttribution = function () {
-
-	const attributions = this.attributions;
-
-	if ( attributions.length === 0 ) return null;
-
-	const div = document.createElement( 'div' );
-
-	div.classList.add( 'overlay-branding' );
-
-	for ( let i = 0; i < attributions.length; i++ ) {
-
-		const attribution = attributions[ i ];
-
-		div.innerHTML = attribution.html;
-		break;
-
-	}
-
-	return div;
-
-};
-
-EPSG4326TileSet.prototype.getCoverage = function ( limits, zoom ) {
-
-	const coverage = { zoom: zoom };
-
-	const S = - 90;
-	const W = - 180;
-
-	if ( this.transformedLimits === null ) {
-
-		this.transformedLimits = new Box2();
-
-	}
-
-	const transformedLimits = this.transformedLimits;
-
-	transformedLimits.expandByPoint( this.transform.forward( limits.min.clone() ) );
-	transformedLimits.expandByPoint( this.transform.forward( limits.max.clone() ) );
-
-	const min = transformedLimits.min;
-	const max = transformedLimits.max;
-
-	const tileCount = Math.pow( 2, zoom ) / 180; // tile count per degree
-
-	coverage.minX = Math.floor( ( min.x - W ) * tileCount );
-	coverage.maxX = Math.floor( ( max.x - W ) * tileCount );
-
-	coverage.minY = Math.floor( ( min.y - S ) * tileCount );
-	coverage.maxY = Math.floor( ( max.y - S ) * tileCount );
-
-	coverage.count = ( coverage.maxX - coverage.minX + 1 ) * ( coverage.maxY - coverage.minY + 1 );
-
-	return coverage;
-
-};
-
-
-EPSG4326TileSet.prototype.getTileSpec = function ( x, y, z, limits ) {
-
-	const tileBox = new Box2();
-
-	const S = - 90;
-	const W = - 180;
-
-	// ensure tile is within survey limits
-
-	const tileSize = 180 / Math.pow( 2, z ); // tileSize
-
-	tileBox.min.x = W + x * tileSize;
-	tileBox.min.y = S + y * tileSize;
-
-	tileBox.max.x = W + ( x + 1) * tileSize;
-	tileBox.max.y = S + ( y + 1 ) * tileSize;
-
-	if ( ! this.transformedLimits.intersectsBox( tileBox ) ) return null;
-
-	const clippedSize = new Vector2();
-
-	tileBox.clone().intersect( this.transformedLimits ).getSize( clippedSize );
-
-	return {
-		tileSet: this.tileSet,
-		divisions: 1,
-		resolution: tileSize,
-		x: x,
-		y: y,
-		z: z,
-		clip: limits,
-		offsets: null,
-		flatZ: null,
-		displayCRS: this.CRS,
-		url: this.url,
-		accessToken: this.accessToken,
-		clippedFraction: clippedSize.x * clippedSize.y / tileSize * tileSize,
-		request: 'tile'
-	};
-
-};
 
 export { EPSG4326TileSet };

@@ -245,10 +245,6 @@ class GlyphStringBase extends Mesh {
 		// FIXME - we don't check for objects outside of view
 		this.updateLabelBox( camera );
 
-		//console.log( 'm', Math.round( mouse.x ), Math.round( mouse.y ) );
-		//console.log( 'o', Math.round( labelOrigin.x ), Math.round( labelOrigin.y ) );
-		//console.log( 'e', Math.round( labelEnd.x ), Math.round( labelEnd.y ) );
-
 		if ( this.labelBox.containsPoint( _mouse ) ) {
 
 			intersects.push( { object: this, distance: raycaster.ray.origin.distanceTo( _ssLabelOrigin ) } );

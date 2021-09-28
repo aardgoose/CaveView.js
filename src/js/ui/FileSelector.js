@@ -109,63 +109,63 @@ class FileSelector extends EventDispatcher {
 
 	}
 
-}
+	addList ( list ) {
 
-FileSelector.prototype.addList = function ( list ) {
-
-	this.fileList = list;
-	this.fileCount = list.length;
-
-};
-
-FileSelector.prototype.nextFile = function () {
-
-	const fileList = this.fileList;
-
-	//cycle through caves in list provided
-	if ( this.fileCount === 0 ) return false;
-
-	if ( ++this.currentIndex >= this.fileCount ) this.currentIndex = 0;
-
-	this.selectFile( fileList[ this.currentIndex ] );
-
-};
-
-FileSelector.prototype.selectFile = function ( file, section ) {
-
-	if ( Array.isArray( file ) ) {
-
-		if ( file.length === 1 ) {
-
-			this.localFilename = file[ 0 ].name;
-			this.selectedFile = file[ 0 ];
-			this.isMultiple = false;
-
-		} else {
-
-			this.selectedFile = '[multiple]';
-			this.localFilename = 'multiple';
-			this.isMultiple = true;
-
-		}
-
-	} else {
-
-		this.selectedFile = file;
-		this.localFilename = file;
+		this.fileList = list;
+		this.fileCount = list.length;
 
 	}
 
-	this.loadedFile = file;
+	nextFile () {
 
-	this.dispatchEvent( { type: 'selected', file: file, section: section } );
+		const fileList = this.fileList;
 
-};
+		//cycle through caves in list provided
+		if ( this.fileCount === 0 ) return false;
 
-FileSelector.prototype.reload = function () {
+		if ( ++this.currentIndex >= this.fileCount ) this.currentIndex = 0;
 
-	this.selectFile( this.loadedFile );
+		this.selectFile( fileList[ this.currentIndex ] );
 
-};
+	}
+
+	selectFile ( file, section ) {
+
+		if ( Array.isArray( file ) ) {
+
+			if ( file.length === 1 ) {
+
+				this.localFilename = file[ 0 ].name;
+				this.selectedFile = file[ 0 ];
+				this.isMultiple = false;
+
+			} else {
+
+				this.selectedFile = '[multiple]';
+				this.localFilename = 'multiple';
+				this.isMultiple = true;
+
+			}
+
+		} else {
+
+			this.selectedFile = file;
+			this.localFilename = file;
+
+		}
+
+		this.loadedFile = file;
+
+		this.dispatchEvent( { type: 'selected', file: file, section: section } );
+
+	}
+
+	reload () {
+
+		this.selectFile( this.loadedFile );
+
+	}
+
+}
 
 export { FileSelector};

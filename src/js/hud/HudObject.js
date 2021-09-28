@@ -28,7 +28,7 @@ Object.assign( HudObject.prototype, {
 		div.style.position = 'absolute';
 
 		div.setAttribute( 'draggable', 'false' );
-		div.addEventListener( 'dragstart', function ( e ) {e.preventDefault(); } );
+		div.addEventListener( 'dragstart', e => e.preventDefault() );
 
 		div.addEventListener( 'mouseenter', onEnter );
 

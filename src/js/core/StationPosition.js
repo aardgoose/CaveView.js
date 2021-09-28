@@ -16,7 +16,6 @@ class StationPosition extends Vector3 {
 
 	}
 
-
 	correctedDistanceTo ( v ) {
 
 		const dx = this.x - v.x, dy = this.y - v.y, dz = ( this.z - v.z ) * StationPosition.scaleFactor;

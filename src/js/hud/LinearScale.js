@@ -8,9 +8,8 @@ class LinearScale extends Scale {
 
 		const materials = hudObject.ctx.materials;
 		const geometry = new PlaneBufferGeometry();
-		const material = materials.getScaleMaterial();
 
-		super( hudObject, container, geometry, material );
+		super( hudObject, container, geometry, materials.getScaleMaterial() );
 
 		this.name = 'CV.LinearScale';
 

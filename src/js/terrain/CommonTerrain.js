@@ -347,7 +347,7 @@ class CommonTerrain extends Group {
 
 		function _getBoundingBox( obj ) {
 
-			if ( obj.isTile && obj.isMesh) bb.union( obj.geometry.boundingBox );
+			if ( obj.isTile && obj.isMesh ) bb.union( obj.geometry.boundingBox );
 
 		}
 

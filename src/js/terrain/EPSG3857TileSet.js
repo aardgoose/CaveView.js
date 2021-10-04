@@ -1,41 +1,45 @@
-import { FileLoader } from '../Three';
-
 const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
 var tileSets;
 
 class EPSG3857TileSet {
 
+	static workerScript = 'webTileWorker.js';
+	static defaultTileSet = {
+		isFlat: true,
+		title: 'flat',
+		overlayMaxZoom: 18,
+		maxZoom: 16,
+		minZoom: 10,
+		divisions: 128,
+		subdirectory: null,
+		dtmScale: 64,
+		minX: 0,
+		maxX: 1023,
+		minY: 0,
+		maxY: 1023,
+		attributions: [],
+		log: true
+	};
+
 	constructor ( ctx ) {
 
-		return new Promise( resolve => {
+		tileSets = [ EPSG3857TileSet.defaultTileSet ];
 
-			new FileLoader()
-				.setResponseType( 'text' )
-				.load(
-					ctx.cfg.value( 'terrainDirectory', '' ) + '/' + 'tileSets.json',
-					// success handler
-					text => {
+		return fetch( ctx.cfg.value('terrainDirectory', '') + '/' + 'tileSets.json' )
+			.then( response => {
+				return response.ok ? response.json() : [];
+			} ).then( ts => {
+				tileSets = ts.concat( tileSets );
+				return this;
+			}, () => { return this; } );
 
-						tileSets = JSON.parse( text );
-						tileSets.push( EPSG3857TileSet.defaultTileSet );
+	}
 
-						resolve( this );
+	workerScript () {
 
-					},
-					// progress handler
-					function () {},
-					// error handler
-					() => {
+		return EPSG3857TileSet.workerScript;
 
-						tileSets = [ EPSG3857TileSet.defaultTileSet ];
-
-						resolve( this );
-
-					}
-				);
-
-		} );
 	}
 
 	getTileSets () {
@@ -54,16 +58,16 @@ class EPSG3857TileSet {
 
 		const coverage = { zoom: zoom };
 
-		const N =  halfMapExtent;
+		const N = halfMapExtent;
 		const W = -halfMapExtent;
 
 		const tileCount = Math.pow( 2, zoom - 1 ) / halfMapExtent; // tile count per metre
 
-		coverage.minX = Math.floor( ( limits.min.x - W ) * tileCount );
-		coverage.maxX = Math.floor( ( limits.max.x - W ) * tileCount );
+		coverage.minX = Math.floor( ( limits.min.x - W ) * tileCount);
+		coverage.maxX = Math.floor( ( limits.max.x - W ) * tileCount);
 
-		coverage.maxY = Math.floor( ( N - limits.min.y ) * tileCount );
-		coverage.minY = Math.floor( ( N - limits.max.y ) * tileCount );
+		coverage.maxY = Math.floor( ( N - limits.min.y ) * tileCount);
+		coverage.minY = Math.floor( ( N - limits.max.y ) * tileCount);
 
 		coverage.count = ( coverage.maxX - coverage.minX + 1 ) * ( coverage.maxY - coverage.minY + 1 );
 
@@ -80,7 +84,7 @@ class EPSG3857TileSet {
 
 		if ( scale !== 1 && this.activeOverlay === null ) return null;
 
-		if ( this.log ) console.log( 'load: [ ', z +'/' + x + '/' + y, ']' );
+		if ( this.log ) console.log('load: [ ', z + '/' + x + '/' + y, ']');
 
 		const tileWidth = halfMapExtent / Math.pow( 2, z - 1 );
 
@@ -97,17 +101,17 @@ class EPSG3857TileSet {
 
 		// trim excess off sides of tile where overlapping with region
 
-		if ( tileMaxY > limits.max.y ) clip.top = Math.floor( ( tileMaxY - limits.max.y ) / resolution );
+		if ( tileMaxY > limits.max.y ) clip.top = Math.floor( ( tileMaxY - limits.max.y ) / resolution);
 
-		if ( tileMinY < limits.min.y ) clip.bottom = Math.floor( ( limits.min.y - tileMinY ) / resolution );
+		if ( tileMinY < limits.min.y ) clip.bottom = Math.floor( ( limits.min.y - tileMinY ) / resolution);
 
-		if ( tileMinX < limits.min.x ) clip.left = Math.floor( ( limits.min.x - tileMinX ) / resolution );
+		if ( tileMinX < limits.min.x ) clip.left = Math.floor( ( limits.min.x - tileMinX ) / resolution);
 
-		if ( tileMaxX > limits.max.x ) clip.right = Math.floor( ( tileMaxX - limits.max.x ) / resolution );
+		if ( tileMaxX > limits.max.x ) clip.right = Math.floor( ( tileMaxX - limits.max.x ) / resolution);
 
 		if ( clip.top >= divisions || clip.bottom >= divisions || clip.left >= divisions || clip.right >= divisions ) return null;
 
-		const clippedFraction = ( divisions - clip.top - clip.bottom ) * (divisions - clip.left - clip.right ) / ( divisions * divisions );
+		const clippedFraction = ( divisions - clip.top - clip.bottom ) * ( divisions - clip.left - clip.right ) / (divisions * divisions );
 
 		return {
 			tileSet: tileSet,
@@ -159,24 +163,5 @@ class EPSG3857TileSet {
 	}
 
 }
-
-EPSG3857TileSet.defaultTileSet = {
-	isFlat: true,
-	title: 'flat',
-	overlayMaxZoom: 18,
-	maxZoom: 16,
-	minZoom: 10,
-	divisions: 128,
-	subdirectory: null,
-	dtmScale: 64,
-	minX: 0,
-	maxX: 1023,
-	minY: 0,
-	maxY: 1023,
-	attributions: [],
-	log: true
-};
-
-EPSG3857TileSet.prototype.workerScript = 'webTileWorker.js';
 
 export { EPSG3857TileSet };

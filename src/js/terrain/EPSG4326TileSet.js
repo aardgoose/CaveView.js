@@ -3,6 +3,25 @@ import proj4 from 'proj4';
 
 class EPSG4326TileSet {
 
+	static workerScript = 'webMeshWorker.js';
+	static defaultTileSet = {
+		title: 'Cesium',
+		initialZoom: 12,
+		overlayMaxZoom: 16,
+		maxZoom: 17,
+		minZoom: 10,
+		divisions: 1,
+		subdirectory: null,
+		dtmScale: 64,
+		minX: 0,
+		maxX: 2048,
+		minY: 0,
+		maxY: 1023,
+		attributions: [],
+		log: true,
+		valid: false
+	};
+
 	constructor ( ctx, crs ) {
 
 		this.CRS = crs;
@@ -39,6 +58,12 @@ class EPSG4326TileSet {
 			);
 
 		} );
+
+	}
+
+	workerScript () {
+
+		return EPSG4326TileSet.workerScript;
 
 	}
 
@@ -149,25 +174,5 @@ class EPSG4326TileSet {
 	}
 
 }
-
-EPSG4326TileSet.defaultTileSet = {
-	title: 'Cesium',
-	initialZoom: 12,
-	overlayMaxZoom: 16,
-	maxZoom: 17,
-	minZoom: 10,
-	divisions: 1,
-	subdirectory: null,
-	dtmScale: 64,
-	minX: 0,
-	maxX: 2048,
-	minY: 0,
-	maxY: 1023,
-	attributions: [],
-	log: true,
-	valid: false
-};
-
-EPSG4326TileSet.prototype.workerScript = 'webMeshWorker.js';
 
 export { EPSG4326TileSet };

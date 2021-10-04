@@ -1,4 +1,3 @@
-import '../core/polyfills';
 import {
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LEG_DUPLICATE,
 	STATION_ENTRANCE, STATION_NORMAL, STATION_XSECT
@@ -35,8 +34,6 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section, pro
 	const terrain = {};
 
 	const skipTerrain = ( projection !== null );
-
-	// polyfilled for IE11, or otherwise not available.
 	const utf8Decoder = new TextDecoder( 'utf-8' );
 
 	// assumes little endian data ATM - FIXME

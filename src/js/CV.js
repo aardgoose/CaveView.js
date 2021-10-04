@@ -1,4 +1,3 @@
-// import './core/polyfills';
 //import '../css/caveview.scss';
 
 export * from './core/constants';

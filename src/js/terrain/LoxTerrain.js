@@ -118,7 +118,7 @@ class LoxTerrain extends CommonTerrain {
 
 	}
 
-	setOverlay ( overlayLoadedCallback, material ) {
+	setOverlay ( overlayLoadedCallback ) {
 
 		if ( ! this.hasOverlay ) return;
 
@@ -128,8 +128,7 @@ class LoxTerrain extends CommonTerrain {
 
 				if ( tile.overlayMaterial !== null ) {
 
-					console.log( 'dd' );
-					tile.material = [ tile.overlayMaterial, material ];
+					tile.material = tile.overlayMaterial;
 					// tile.material.setThroughMode( this.throughMode );
 
 				}
@@ -142,7 +141,7 @@ class LoxTerrain extends CommonTerrain {
 
 		}
 
-		this.children.forEach( tile => tile.loadOverlay( this.ctx, overlayLoadedCallback, material ) );
+		this.children.forEach( tile => tile.loadOverlay( this.ctx, overlayLoadedCallback ) );
 
 		this.overlayLoaded = true;
 
@@ -172,6 +171,5 @@ class LoxTerrain extends CommonTerrain {
 
 LoxTerrain.prototype.isTiled = false;
 LoxTerrain.prototype.isLoaded = true;
-
 
 export { LoxTerrain };

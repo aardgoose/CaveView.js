@@ -29,6 +29,7 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section, p
 	this.dataStream = dataStream;
 
 	let pos = 0; // file position
+	const decoder = new TextDecoder();
 
 	// read file header
 
@@ -45,8 +46,6 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section, p
 
 	return cave.setCRS( sourceCRS ).then( () => this.parse2() );
 
-	//return this.parse2();
-
 	function readLF () { // read until Line feed
 
 		return readNSLF()[ 0 ];
@@ -58,8 +57,8 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section, p
 		const bytes = new Uint8Array( dataStream, 0 );
 		const strings = [];
 
-		let lfString = [];
 		let b;
+		let start = pos;
 
 		do {
 
@@ -67,12 +66,8 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section, p
 
 			if ( b === 0x0a || b === 0 ) {
 
-				strings.push( String.fromCharCode.apply( null, lfString ).trim() );
-				lfString = [];
-
-			} else {
-
-				lfString.push( b );
+				strings.push( decoder.decode( bytes.subarray( start, pos ) ).trim() );
+				start = pos;
 
 			}
 
@@ -93,7 +88,7 @@ Svx3dHandler.prototype.parse2 = function () {
 
 	case 'Bv0.01':
 
-		this.handleOld( this.dataStream, pos, 1 );
+		this.handleOld( 1 );
 
 		break;
 
@@ -104,7 +99,7 @@ Svx3dHandler.prototype.parse2 = function () {
 	case 'v7':
 	case 'v8':
 
-		this.handleVx( this.dataStream, pos, Number( this.version.charAt( 1 ) ), this.section );
+		this.handleVx( Number( this.version.charAt( 1 ) ), this.section );
 
 		break;
 
@@ -125,10 +120,10 @@ Svx3dHandler.prototype.parse2 = function () {
 
 };
 
-Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
+Svx3dHandler.prototype.handleOld = function ( version ) {
 
 	const cave       = this.cave;
-
+	const source     = this.dataStream;
 	const surveyTree = cave.surveyTree;
 	const projection = cave.projection;
 	const limits     = cave.limits;
@@ -136,7 +131,10 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 	const groups     = this.groups;
 	const stationMap = this.stationMap;
 
-	const cmd      = [];
+	// init cmd handler table with error handler for unsupported records
+	// or invalid records
+	const cmd = Array( 256 ).fill( cmd_UNKNOWN );
+
 	const stations = new Map();
 
 	const dataView   = new DataView( source, 0 );
@@ -146,18 +144,11 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 	let label     = '';
 	const sectionId = 0;
 	let legs      = [];
+	let pos = this.pos;
 
 	let lastPosition = new StationPosition(); // value to allow approach vector for xsect coord frame
 
-	// init cmd handler table with error handler for unsupported records or invalid records
-
-	function _errorHandler ( e ) { throw new Error( 'unhandled command: ' + e.toString( 16 ) + ' @ ' + pos.toString( 16 ) ); }
-
-	for ( let i = 0; i < 256; i++ ) {
-
-		cmd[ i ] = _errorHandler;
-
-	}
+	function cmd_UNKNOWN ( e ) { throw new Error( 'unhandled command: ' + e.toString( 16 ) + ' @ ' + pos.toString( 16 ) ); }
 
 	cmd[ 0x00 ] = cmd_STOP;
 	cmd[   -1 ] = cmd_STOP;
@@ -387,9 +378,10 @@ Svx3dHandler.prototype.handleOld = function ( source, pos, version ) {
 
 };
 
-Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
+Svx3dHandler.prototype.handleVx = function ( version, section ) {
 
 	const cave       = this.cave;
+	const source     = this.dataStream;
 
 	const surveyTree = cave.surveyTree;
 	const messages   = cave.messages;
@@ -400,7 +392,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	const xGroups    = [];
 	const stationMap = this.stationMap;
 
-	const cmd = [];
+	// init cmd handler table with error handler for unsupported records
+	// or invalid records
+	const cmd = Array( 256 ).fill( cmd_UNKNOWN );
 
 	const stations = new Map();
 
@@ -409,6 +403,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 	const dataLength = data.length;
 	const __coords = { x: 0.0, y: 0.0 };
 
+	let pos = this.pos;
 	let legs      = [];
 	let label     = '';
 	let xSects    = [];
@@ -429,15 +424,7 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 
 	let readLabel;
 
-	// init cmd handler table with error handler for unsupported records or invalid records
-
-	function _errorHandler ( e ) { throw new Error( 'unhandled command: ' + e.toString( 16 ) + ' @ ' + pos.toString( 16 ) ); }
-
-	for ( let i = 0; i < 256; i++ ) {
-
-		cmd[ i ] = _errorHandler;
-
-	}
+	function cmd_UNKNOWN ( e ) { throw new Error( 'unhandled command: ' + e.toString( 16 ) + ' @ ' + pos.toString( 16 ) ); }
 
 	if ( version === 8 ) {
 		// v8 dispatch table start
@@ -973,9 +960,9 @@ Svx3dHandler.prototype.handleVx = function ( source, pos, version, section ) {
 			flags,
 			{
 				l: l.getInt32( 0, true ) / 100,
-				r: l.getInt32( 0, true ) / 100,
-				u: l.getInt32( 0, true ) / 100,
-				d: l.getInt32( 0, true ) / 100
+				r: l.getInt32( 4, true ) / 100,
+				u: l.getInt32( 8, true ) / 100,
+				d: l.getInt32( 12, true ) / 100
 			}
 		);
 

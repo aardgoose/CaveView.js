@@ -328,6 +328,12 @@ class Stations extends Points {
 		pSize.needsUpdate = true;
 	}
 
+	forEach ( callback ) {
+
+		this.vertices.forEach( station => callback( station ) );
+
+	}
+
 }
 
 function testPoint( point, station, index, localThresholdSq, intersects, object ) {

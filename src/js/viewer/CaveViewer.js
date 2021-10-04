@@ -1653,6 +1653,12 @@ class CaveViewer extends EventDispatcher {
 
 		};
 
+		this.forEachStation = function ( callback ) {
+
+			survey.stations.forEach( station => callback( new Station( survey, station ) ) );
+
+		};
+
 		this.dispose = function () {
 
 			ctx.workerPools.dispose();

@@ -17,7 +17,9 @@ loxHandler.prototype.constructor = loxHandler;
 
 loxHandler.prototype.type = 'arraybuffer';
 
-loxHandler.prototype.parse = function ( cave, dataStream, metadata, section, progress ) {
+loxHandler.prototype.parse = function ( cave, source, metadata, section, progress ) {
+
+	// assumes little endian data ATM - FIXME
 
 	modelOffset += 100000;
 
@@ -35,9 +37,6 @@ loxHandler.prototype.parse = function ( cave, dataStream, metadata, section, pro
 
 	const skipTerrain = ( projection !== null );
 	const utf8Decoder = new TextDecoder( 'utf-8' );
-
-	// assumes little endian data ATM - FIXME
-	let source = dataStream;
 
 	const l = source.byteLength;
 	const idOffset = modelOffset;

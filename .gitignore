@@ -11,3 +11,4 @@ tools/private/
 build/overlays/
 npm-debug.log
 workspace.code-workspace
+build/test/*

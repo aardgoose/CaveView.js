@@ -6,7 +6,7 @@ import {
 	LABEL_STATION, LABEL_STATION_COMMENT,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
-	SHADING_SURFACE, CLUSTER_MARKERS, SHADING_DUPLICATE, SHADING_CUSTOM
+	SHADING_SURFACE, CLUSTER_MARKERS, SHADING_DUPLICATE, SHADING_CUSTOM, SHADING_Z
 } from '../core/constants';
 
 import { StationPosition } from '../core/StationPosition';
@@ -1052,67 +1052,61 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed, fil
 	case SHADING_HEIGHT:
 
 		this.setLegColourByMaterial( mesh, 'height', dashed, filterConnected );
-
 		break;
 
 	case SHADING_LENGTH:
 
 		this.setLegColourByLength( mesh, filterConnected );
-
 		break;
 
 	case SHADING_INCLINATION:
 
 		this.setLegColourByInclination( mesh, filterConnected );
-
 		break;
 
 	case SHADING_CURSOR:
 
 		this.setLegColourByMaterial( mesh, 'cursor', filterConnected );
+		break;
 
+	case SHADING_Z:
+
+		this.setLegColourByMaterial( mesh, 'z', filterConnected );
 		break;
 
 	case SHADING_DEPTH_CURSOR:
 
 		this.setLegColourByMaterial( mesh, 'depth-cursor', filterConnected );
-
 		break;
 
 	case SHADING_SINGLE:
 
 		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.single' ), dashed, filterConnected );
-
 		break;
 
 	case SHADING_SURFACE:
 
 		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.surface' ), dashed, filterConnected );
-
 		break;
 
 	case SHADING_DUPLICATE:
 
 		this.setLegColourByColour( mesh, this.ctx.cfg.themeColor( 'shading.duplicate' ), dashed, filterConnected );
-
 		break;
 
 	case SHADING_CUSTOM:
 
 		this.setLegCustomColor( mesh, dashed, filterConnected );
-
 		break;
 
 	case SHADING_SURVEY:
 
 		this.setLegColourBySurvey( mesh, filterConnected );
-
 		break;
 
 	case SHADING_PATH:
 
 		this.setLegColourByPath( mesh );
-
 		break;
 
 	case SHADING_OVERLAY:
@@ -1126,7 +1120,6 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed, fil
 	case SHADING_DEPTH:
 
 		this.setLegColourByMaterial( mesh, 'depth', dashed, filterConnected );
-
 		break;
 
 	case SHADING_DISTANCE:

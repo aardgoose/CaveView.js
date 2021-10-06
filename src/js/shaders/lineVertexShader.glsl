@@ -60,6 +60,12 @@ varying float vHide;
 
 #endif
 
+#ifdef CV_Z
+
+	varying float vFadeDepth;
+
+#endif
+
 #ifdef USE_DASH
 
 	uniform float dashScale;
@@ -218,5 +224,12 @@ void main() {
 	#include <logdepthbuf_vertex>
 	#include <clipping_planes_vertex>
 	#include <fog_vertex>
+
+	#ifdef CV_Z
+		// FIXME add POI
+		vec4 o = projectionMatrix * modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
+		vFadeDepth = 0.5 - clip.z / clip.w + o.z / clip.w;
+
+	#endif
 
 }

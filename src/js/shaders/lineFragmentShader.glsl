@@ -35,6 +35,12 @@ uniform float opacity;
 
 #endif
 
+#ifdef CV_Z
+
+	varying float vFadeDepth;
+
+#endif
+
 varying float vLineDistance;
 
 #include <common>
@@ -105,6 +111,12 @@ void main() {
 	#ifdef CV_BASIC
 
 		gl_FragColor = vec4( diffuseColor.rgb, diffuseColor.a );
+
+	#endif
+
+	#ifdef CV_Z
+
+		gl_FragColor = vec4( vFadeDepth, 0.0, 1.0 - vFadeDepth, diffuseColor.a );
 
 	#endif
 

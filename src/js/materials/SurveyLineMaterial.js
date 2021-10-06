@@ -48,7 +48,6 @@ class SurveyLineMaterial extends Line2Material {
 				scaleZ: { value: 1 / ( zMax - zMin ) },
 				cmap:   { value: textureCache.getTexture( gradient ) },
 			};
-
 			break;
 
 		case 'cursor':
@@ -98,7 +97,11 @@ class SurveyLineMaterial extends Line2Material {
 				},
 				ctx.materials.commonDepthUniforms
 			);
+			break;
 
+		case 'z':
+
+			defines.CV_Z = true;
 			break;
 
 		default:

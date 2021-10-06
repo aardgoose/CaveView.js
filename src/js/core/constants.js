@@ -1,5 +1,5 @@
 
-export const VERSION = '2.3.0';
+export const VERSION = '2.3.1';
 
 export const CAMERA_NONE         = 0;
 export const CAMERA_ORTHOGRAPHIC = 1;
@@ -44,6 +44,7 @@ export const SHADING_CONTOURS     = 15;
 export const SHADING_SURFACE      = 17;
 export const SHADING_DUPLICATE    = 18;
 export const SHADING_CUSTOM       = 19;
+export const SHADING_Z            = 20;
 
 // layer tags for scene objects
 

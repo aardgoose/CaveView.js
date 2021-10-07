@@ -228,7 +228,7 @@ void main() {
 	#ifdef CV_Z
 		// FIXME add POI
 		vec4 o = projectionMatrix * modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
-		vFadeDepth = 0.5 - clip.z / clip.w + o.z / clip.w;
+		vFadeDepth = o.z / clip.w - 0.5;
 
 	#endif
 

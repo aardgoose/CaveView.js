@@ -40,16 +40,13 @@ const defaultView = {
 
 function ViewState ( viewer ) {
 
-	const enumerableProperties = Object.keys( viewer );
 	const properties = [];
 
-	Object.getOwnPropertyNames( viewer ).forEach( name => {
-
-		if ( enumerableProperties.includes( name ) ) return;
+	Object.keys( viewer ).forEach( name => {
 
 		const pDesc = Object.getOwnPropertyDescriptor( viewer, name );
 
-		if ( pDesc.set !==undefined && pDesc.get !== undefined ) {
+		if ( pDesc.set !== undefined && pDesc.get !== undefined ) {
 
 			properties.push( name );
 

@@ -188,6 +188,21 @@ class Line2Material extends ShaderMaterial {
 
 				}
 
+			},
+
+			scaleLinewidth: {
+
+				enumerable: true,
+
+				get: function () { return this.defined.CV_SCALEWIDTH; },
+
+				set: function ( value ) {
+
+					this.defines.CV_SCALEWIDTH = value;
+					this.needsUpdate = true;
+
+				}
+
 			}
 
 		} );

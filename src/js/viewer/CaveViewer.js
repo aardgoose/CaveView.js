@@ -259,6 +259,11 @@ class CaveViewer extends EventDispatcher {
 				set: setLinewidth
 			},
 
+			'scaleLinewidth': {
+				get: function () { return materials.scaleLinewidth; },
+				set: setScaleLinewidth
+			},
+
 			'maxDistance': {
 				get: function () { return survey.getMaxDistance(); }
 			},
@@ -657,7 +662,6 @@ class CaveViewer extends EventDispatcher {
 
 			materials.cursorHeight = x;
 			self.dispatchEvent( { type: 'cursorChange', name: 'cursorHeight' } );
-
 			renderView();
 
 		}
@@ -665,6 +669,13 @@ class CaveViewer extends EventDispatcher {
 		function setLinewidth ( x ) {
 
 			materials.linewidth = x * 10 + 1;
+			renderView();
+
+		}
+
+		function setScaleLinewidth ( x ) {
+
+			materials.scaleLinewidth = !! x;
 			renderView();
 
 		}

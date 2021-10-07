@@ -30,10 +30,13 @@ function Materials ( viewer ) {
 	const glyphAtlasCache = new GlyphAtlasCache();
 	const cursorMaterials = new Set();
 	const lineMaterials = new Set();
+	const surveyLineMaterials = new Set();
+
 	let perSurveyMaterials = {};
 
 	let cursorHeight = 0;
 	let linewidth = 1;
+	let scaleLinewidth = false;
 
 	const colourCache = new ColourCache();
 	const textureCache = new TextureCache();
@@ -65,6 +68,11 @@ function Materials ( viewer ) {
 	Object.defineProperty( this, 'linewidth', {
 		get: function () { return linewidth; },
 		set: updateLinewidth
+	} );
+
+	Object.defineProperty( this, 'scaleLinewidth', {
+		get: function () { return scaleLinewidth; },
+		set: updateScaleLinewidth
 	} );
 
 	const distanceTransparency = this.commonUniforms.distanceTransparency;
@@ -120,7 +128,15 @@ function Materials ( viewer ) {
 
 	function updateLinewidth( width ) {
 
-		lineMaterials.forEach( material => { material.linewidth = width; linewidth = width; } );
+		lineMaterials.forEach( material => material.linewidth = width );
+		linewidth = width;
+
+	}
+
+	function updateScaleLinewidth( mode ) {
+
+		surveyLineMaterials.forEach( material => material.scaleLinewidth = mode );
+		scaleLinewidth = mode;
 
 	}
 
@@ -152,6 +168,7 @@ function Materials ( viewer ) {
 		}
 
 		lineMaterials.add( material );
+		surveyLineMaterials.add( material );
 		material.linewidth = linewidth;
 
 		return material;
@@ -318,6 +335,7 @@ function Materials ( viewer ) {
 
 		cursorMaterials.clear();
 		lineMaterials.clear();
+		surveyLineMaterials.clear();
 
 		for ( const name in perSurveyMaterials ) {
 

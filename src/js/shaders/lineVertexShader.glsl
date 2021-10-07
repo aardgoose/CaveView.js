@@ -60,7 +60,7 @@ varying float vHide;
 
 #endif
 
-#ifdef CV_Z
+#if defined( CV_Z ) || defined ( CV_SCALEWIDTH )
 
 	varying float vFadeDepth;
 
@@ -172,11 +172,35 @@ void main() {
 	// adjust for linewidth
 	offset *= linewidth;
 
-	// adjust for clip-space to screen-space conversion // maybe resolution should be based on viewport ...
-	offset /= resolution.y;
-
 	// select end
 	vec4 clip = ( position.y < 0.5 ) ? clipStart : clipEnd;
+
+	#if defined( CV_Z ) || defined ( CV_SCALEWIDTH )
+
+		// FIXME add POI
+		// FIXME clamp for v near lines
+		vec4 o = projectionMatrix * modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
+
+		vFadeDepth = o.z / clip.z - 0.5;
+
+		if ( ! perspective ) {
+
+			vFadeDepth = 1.0 - vFadeDepth;
+
+		}
+
+		clamp( vFadeDepth, 0.0, 1.0 );
+
+		#ifdef CV_SCALEWIDTH
+
+			offset *= max( vFadeDepth, 1.0 / linewidth );// clamp for distant lines
+
+		#endif
+
+	#endif
+
+	// adjust for clip-space to screen-space conversion // maybe resolution should be based on viewport ...
+	offset /= resolution.y;
 
 	// back to clip space
 	offset *= clip.w;
@@ -224,12 +248,5 @@ void main() {
 	#include <logdepthbuf_vertex>
 	#include <clipping_planes_vertex>
 	#include <fog_vertex>
-
-	#ifdef CV_Z
-		// FIXME add POI
-		vec4 o = projectionMatrix * modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
-		vFadeDepth = o.z / clip.w - 0.5;
-
-	#endif
 
 }

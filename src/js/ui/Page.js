@@ -241,7 +241,7 @@ class Page {
 				opt.value = element;
 				opt.text = element;
 
-				if ( opt.text === trgObj[ property ] ) opt.selected = true;
+				if ( opt.value === trgObj[ property ] ) opt.selected = true;
 
 				select.add( opt, null );
 
@@ -257,7 +257,7 @@ class Page {
 				opt.text = p.split( ' ' ).reduce( ( res, val ) => { return res + ' ' + this.i18n( val ); }, '' ).trim();
 				opt.value = obj[ p ];
 
-				if ( opt.value === trgObj[ property ] ) opt.selected = true;
+				if ( opt.value == trgObj[ property ] ) opt.selected = true;
 
 				select.add( opt, null );
 

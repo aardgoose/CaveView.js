@@ -411,7 +411,8 @@ function buildCrossSections ( cave, survey ) {
 			start: endSection.end,
 			end: connectedPoint,
 			lrud: newXsect.lrud,
-			type: WALL_SQUARE
+			survey: newXsect.survey,
+			type: newXsect.type
 		} );
 
 		warnings.push( {
@@ -425,7 +426,7 @@ function buildCrossSections ( cave, survey ) {
 
 		const nodeLegs = vertex.legs;
 
-		if ( nodeLegs.length === 0 ) return;
+		if ( nodeLegs.length === 0 ) return false;
 
 		const connectedPoints = [];
 

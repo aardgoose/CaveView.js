@@ -16,6 +16,7 @@
 <script type="text/javascript" src="chart.min.js" ></script>
 <script type="text/javascript" src="CVRose.js" ></script>
 <script type="text/javascript" src="CVLegLength.js" ></script>
+<script type="text/javascript" src="CVReveal.js" ></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.19.1/cytoscape.min.js" integrity="sha512-REr7ZKldLo2Lx6UiQ6autPWZR+j4u1/7ElYsrcwFe3ZmT/TKXCF/vXqNP/d2BQ78k0tapdZFccpFkku9bwrS3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript" src="CVSimpleGraph.js" ></script>
@@ -50,9 +51,9 @@ function onload () {
 	} );
 
 	var caves = [
+		"OFDCPT.3d",
 		"P8_Master.3d",
 		"Peak_Master_NoSurface.3d",
-		"OFDCPT.3d",
 	];
 
 	function onEntrance ( event ) {
@@ -75,6 +76,11 @@ function onload () {
 				graph = new SimpleGraph( 'graph' );
 				break;
 
+			case 'reveal':
+
+				graph = new Reveal( viewer );
+				break;
+
 			default:
 
 				console.error( 'unexpected graph type' );
@@ -86,6 +92,64 @@ function onload () {
 
 	}
 
+	test( getPatternCanvas(8000,8000) );
+
+async function test( source_canvas ) {
+	const cont = document.createElement("div");
+	document.body.append(cont);
+	cont.append( "source-canvas", br(), source_canvas, br());
+
+	// crop the original canvas
+	const cropped_img = await createImageBitmap(source_canvas );
+	appendImageBitmap(cropped_img, "cropped ImageBitmap", cont);
+	// crop the resulting ImageBitmap
+	createImageBitmap(cropped_img, { fred: 99, dresizeWidth: 50, resizeHeight: 20, resizeQuality: 'high' } )
+		.then( ib => {
+			appendImageBitmap( ib, "re-cropped ImageBitmap", cont);
+
+			const canvas = document.createElement('canvas');
+			canvas.width = ib.width;
+			canvas.height = ib.height;
+
+			const ctx = canvas.getContext('bitmaprenderer');
+
+			if (ctx) {
+				console.log( 'hh' );
+				ctx.transferFromImageBitmap(ib);
+				canvas.toBlob( res => console.log( res ) );
+
+			}
+
+		} );
+
+}
+
+function getContext(w,h) {
+	const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+	return canvas.getContext("2d");
+}
+function getPatternCanvas(w, h) {
+	const ctx = getContext(w,h);
+  ctx.fillStyle = "red";
+  ctx.fillRect(0,0,w/2,h/2);
+  ctx.fillStyle = "green";
+  ctx.fillRect(w/2,0,w/2,h/2);
+  ctx.fillStyle = "blue";
+  ctx.fillRect(0,h/2,w/2,h/2);
+  ctx.fillStyle = "black";
+  ctx.fillRect(w/2,h/2,w/2,h/2);
+	return ctx.canvas;
+}
+function appendImageBitmap(img, name, cont) {
+	const ctx = getContext(img.width, img.height);
+  ctx.drawImage(img,0,0);
+	cont.append(name, br(), ctx.canvas, br());
+}
+function br() {
+	return document.createElement("br");
+}
 	viewer.addEventListener( 'entrance', function ( event ) {
 
 		if ( graph ) graph.close();
@@ -134,6 +198,11 @@ function onload () {
 			<div>
 				<input type="radio" id="g3" name="graph" value="network">
 				<label for="g3">Simplified network topology</label>
+			</div>
+
+			<div>
+				<input type="radio" id="g4" name="graph" value="reveal">
+				<label for="g4">Reveal</label>
 			</div>
 			<p>Select a graph type <b>&uArr;</b> and then select the entrance label <b>&lArr;</b>.</p>
 			<div id="graph" style="height: 400px; width: 400px; border: darkgray solid 1px;"></div>

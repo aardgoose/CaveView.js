@@ -71,7 +71,8 @@ class RoseChart {
 
 			const dX = v1Coordinates.x - v2Coordinates.x;
 			const dY = v1Coordinates.y - v2Coordinates.y;
-			const l = Math.hypot( dX, dY );
+
+			const l = Math.hypot( Math.abs( dX ), Math.abs( dY ) );
 
 			if ( l == 0 ) return;
 
@@ -86,7 +87,7 @@ class RoseChart {
 
 		const dataset = config.data.datasets[0];
 
-		dataset.data = sections.concat( sections ); // duplicate for symetrical rose
+		dataset.data = sections.concat( sections ); // duplicate for symmetrical rose
 		dataset.backgroundColor = this.colours.slice( 0, sectorCount );
 
 		const canvas = document.createElement( 'canvas' );

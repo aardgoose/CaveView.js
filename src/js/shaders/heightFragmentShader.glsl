@@ -1,10 +1,10 @@
 #include <fog_pars_fragment>
+#include <wall_fragment_pars>
 
 uniform sampler2D cmap;
 uniform float distanceTransparency;
 
 varying float zMap;
-varying vec3 vColor;
 varying vec3 vMvPosition;
 
 void main() {

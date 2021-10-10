@@ -1,18 +1,13 @@
 #define saturate(a) clamp( a, 0.0, 1.0 )
+
 #include <fog_pars_vertex>
+#include <wall_vertex_pars>
 
-uniform vec3 uLight;
-
-varying vec3 vColor;
 varying float height;
 
 void main() {
 
-	vec3 sNormal = normalMatrix * normal;
-
-	float dotNL = dot( normalize( sNormal ), uLight );
-
-	vColor = saturate( dotNL ) * color + vec3( 0.3, 0.3, 0.3 );
+	#include <wall_vertex>
 
 	height = position.z;
 

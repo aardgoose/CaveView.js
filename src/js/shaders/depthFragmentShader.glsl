@@ -1,9 +1,9 @@
 #include <fog_pars_fragment>
+#include <wall_fragment_pars>
 
 uniform sampler2D cmap;
-
 varying float vDepth;
-varying vec3 vColor;
+
 
 void main() {
 

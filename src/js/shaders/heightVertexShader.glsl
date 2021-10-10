@@ -6,19 +6,15 @@ uniform sampler2D cmap;
 
 uniform float minZ;
 uniform float scaleZ;
-uniform vec3 uLight;
 
-varying vec3 vColor;
+#include <wall_vertex_pars>
+
 varying float zMap;
 varying vec3 vMvPosition;
 
 void main() {
 
-	vec3 sNormal = normalMatrix * normal;
-
-	float dotNL = dot( normalize( sNormal ), uLight );
-
-	vColor = saturate( dotNL ) * color + vec3( 0.3, 0.3, 0.3 );
+	#include <wall_vertex>
 
 	zMap = ( position.z - minZ ) * scaleZ;
 

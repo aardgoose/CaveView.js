@@ -1,3 +1,4 @@
+import { ShaderChunk } from '../Three';
 
 import anaglyphVertexShader from './anaglyphVertexShader.glsl';
 import anaglyphFragmentShader from './anaglyphFragmentShader.glsl';
@@ -29,6 +30,36 @@ import waterFragmentShader from './waterFragmentShader.glsl';
 import lineVertexShader from './lineVertexShader.glsl';
 import lineFragmentShader from './lineFragmentShader.glsl';
 
+import zVertexShader from './zVertexShader.glsl';
+import zFragmentShader from './zFragmentShader.glsl';
+
+// shader chunks to be included
+
+import wall_vertex from './chunks/wall_vertex.glsl';
+import wall_vertex_pars from './chunks/wall_vertex_pars.glsl';
+import wall_fragment_pars from './chunks/wall_fragment_pars.glsl';
+
+import depth_vertex_pars from './chunks/depth_vertex_pars.glsl';
+import depth_vertex from './chunks/depth_vertex.glsl';
+
+import cursor_fragment from './chunks/cursor_fragment.glsl';
+import cursor_fragment_pars from './chunks/cursor_fragment_pars.glsl';
+
+Object.assign( ShaderChunk, {
+	// common wall shader code
+	wall_vertex: wall_vertex,
+	wall_vertex_pars: wall_vertex_pars,
+	wall_fragment_pars: wall_fragment_pars,
+
+	// common depth below surface shader code
+	depth_vertex_pars: depth_vertex_pars,
+	depth_vertex: depth_vertex,
+
+	// common cursor shader code
+	cursor_fragment: cursor_fragment,
+	cursor_fragment_pars: cursor_fragment_pars
+} );
+
 export const Shaders = {
 	anaglyphVertexShader:	anaglyphVertexShader,
 	anaglyphFragmentShader:	anaglyphFragmentShader,
@@ -49,7 +80,9 @@ export const Shaders = {
 	waterVertexShader:		waterVertexShader,
 	waterFragmentShader:	waterFragmentShader,
 	lineVertexShader:		lineVertexShader,
-	lineFragmentShader:		lineFragmentShader
+	lineFragmentShader:		lineFragmentShader,
+	zVertexShader:			zVertexShader,
+	zFragmentShader:		zFragmentShader
 };
 
 // EOF

@@ -17,11 +17,7 @@ uniform float opacity;
 
 #if defined( CV_CURSOR ) || defined( CV_DEPTH_CURSOR )
 
-	uniform float cursor;
-	uniform float cursorWidth;
-
-	uniform vec3 baseColor;
-	uniform vec3 cursorColor;
+	#include <cursor_fragment_pars>
 
 	varying float height;
 
@@ -46,8 +42,6 @@ varying float vLineDistance;
 #include <common>
 #include <color_pars_fragment>
 #include <fog_pars_fragment>
-#include <logdepthbuf_pars_fragment>
-#include <clipping_planes_pars_fragment>
 
 varying vec2 vUv;
 varying float vHide;
@@ -93,18 +87,7 @@ void main() {
 
 	#if defined( CV_CURSOR ) || defined( CV_DEPTH_CURSOR )
 
-		float delta = abs( height - cursor );
-		float ss = smoothstep( 0.0, cursorWidth, cursorWidth - delta );
-
-		if ( delta < cursorWidth * 0.05 ) {
-
-			gl_FragColor = vec4( vColor, 1.0 );
-
-		} else {
-
-			gl_FragColor = vec4( mix( baseColor, cursorColor, ss ), 1.0 ) * vec4( vColor, 1.0 );
-
-		}
+		#include <cursor_fragment>
 
 	#endif
 

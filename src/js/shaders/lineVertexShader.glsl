@@ -1,9 +1,6 @@
-
 #include <common>
 #include <color_pars_vertex>
 #include <fog_pars_vertex>
-#include <logdepthbuf_pars_vertex>
-#include <clipping_planes_pars_vertex>
 
 uniform float linewidth;
 uniform vec2 resolution;
@@ -30,33 +27,16 @@ varying float vHide;
 
 #if defined( CV_DEPTH ) || defined( CV_DEPTH_CURSOR )
 
-	const float UnpackDownscale = 255. / 256.; // 0..1 -> fraction (excluding 1)
-
-	const vec3 PackFactors = vec3( 256. * 256. * 256., 256. * 256., 256. );
-	const vec4 UnpackFactors = UnpackDownscale / vec4( PackFactors, 1. );
-
-	float unpackRGBAToFloat( const in vec4 v ) {
-		return dot( v, UnpackFactors );
-	}
-
-	uniform vec3 modelMin;
-
-	uniform float scaleX;
-	uniform float scaleY;
-	uniform float rangeZ;
+	#include <depth_vertex_pars>
 
 	uniform float depthScale;
-
-	uniform sampler2D depthMap;
-	uniform float datumShift;
-
 	varying float height;
 
 #endif
 
-#ifdef CV_CURSOR
+#if defined( CV_CURSOR ) || defined( CV_DEPTH_CURSOR )
 
-	varying float height;
+	varying float vCursor;
 
 #endif
 
@@ -207,7 +187,7 @@ void main() {
 
 	#ifdef CV_CURSOR
 
-		height = instanceStart.z + ( instanceEnd.z - instanceStart.z) * position.y;
+		vCursor = instanceStart.z + ( instanceEnd.z - instanceStart.z) * position.y;
 
 	#endif
 
@@ -219,14 +199,16 @@ void main() {
 
 	#if defined( CV_DEPTH ) || defined( CV_DEPTH_CURSOR )
 
+		#include <depth_vertex>
+
 		vec3 realPosition = instanceStart + ( instanceEnd - instanceStart ) * position.y;
-
-		vec2 terrainCoords = vec2( ( realPosition.x - modelMin.x ) * scaleX, ( realPosition.y - modelMin.y ) * scaleY );
-		float terrainHeight = unpackRGBAToFloat( texture2D( depthMap, terrainCoords ) );
-
-		terrainHeight = terrainHeight * rangeZ + modelMin.z + datumShift;
-
 		height = terrainHeight - realPosition.z;
+
+	#endif
+
+	#ifdef CV_DEPTH_CURSOR
+
+		vCursor = height;
 
 	#endif
 
@@ -243,8 +225,6 @@ void main() {
 
 	vec4 mvPosition = ( position.y < 0.5 ) ? start : end; // this is an approximation
 
-	#include <logdepthbuf_vertex>
-	#include <clipping_planes_vertex>
 	#include <fog_vertex>
 
 }

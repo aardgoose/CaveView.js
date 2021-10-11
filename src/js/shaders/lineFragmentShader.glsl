@@ -62,7 +62,7 @@ void main() {
 
 		if ( vUv.y < - 1.0 || vUv.y > 1.0 ) discard; // discard endcaps
 		if ( mod( vLineDistance + dashOffset, dashSize + gapSize ) > dashSize ) discard; // todo - FIX
-
+ 
 	#endif
 
 	if ( abs( vUv.y ) > 1.0 ) {

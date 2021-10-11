@@ -181,15 +181,13 @@ void main() {
 		// FIXME clamp for v near lines
 		vec4 o = projectionMatrix * modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
 
-		vFadeDepth = o.z / clip.z - 0.5;
+		vFadeDepth = ( 2.0 - clamp( clip.z, 0.0, 2.0 * o.z ) / o.z ) / 2.0;
 
 		if ( ! perspective ) {
 
 			vFadeDepth = 1.0 - vFadeDepth;
 
 		}
-
-		clamp( vFadeDepth, 0.0, 1.0 );
 
 		#ifdef CV_SCALEWIDTH
 

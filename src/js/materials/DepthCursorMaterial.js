@@ -1,12 +1,11 @@
 import { Shaders } from '../shaders/Shaders';
-import { ShaderMaterial, Vector3 } from '../Three';
+import { ShaderMaterial, Vector3, cloneUniforms } from '../Three';
 
 class DepthCursorMaterial extends ShaderMaterial {
 
 	constructor( ctx ) {
 
 		const survey = ctx.survey;
-		const cfg = ctx.cfg;
 		const surveyLimits = survey.modelLimits;
 		const terrain = survey.terrain;
 
@@ -26,19 +25,16 @@ class DepthCursorMaterial extends ShaderMaterial {
 				scaleX:      { value: 1 / range.x },
 				scaleY:      { value: 1 / range.y },
 				rangeZ:      { value: range.z },
-				depthMap:    { value: terrain.depthTexture },
-				cursor:      { value: max / 2 },
-				cursorWidth: { value: 5.0 },
-				baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
-				cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
-			}, ctx.materials.commonUniforms, ctx.materials.commonDepthUniforms ),
+				depthMap:    { value: terrain.depthTexture }
+			}, cloneUniforms( ctx.materials.cursorUniforms ),
+			ctx.materials.commonUniforms, ctx.materials.commonDepthUniforms ),
 			defines: {
 				USE_COLOR: true
 			}
 		} );
 
 		this.max = max;
-		//	Object.assign( this.uniforms, ctx.materials.commonDepthUniforms ); FIXME?
+		this.uniforms.cursor.value = max;
 
 	}
 

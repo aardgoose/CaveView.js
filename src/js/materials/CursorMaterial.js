@@ -1,12 +1,11 @@
 import { Shaders } from '../shaders/Shaders';
-import { ShaderMaterial } from '../Three';
+import { ShaderMaterial, cloneUniforms } from '../Three';
 
 class CursorMaterial extends ShaderMaterial {
 
 	constructor ( ctx ) {
 
 		const survey = ctx.survey;
-		const cfg = ctx.cfg;
 		const limits = survey.modelLimits;
 
 		super( {
@@ -14,19 +13,16 @@ class CursorMaterial extends ShaderMaterial {
 			fragmentShader: Shaders.cursorFragmentShader,
 			type: 'CV.CursorMaterial',
 			uniforms: Object.assign( {
-				uLight:      { value: survey.lightDirection },
-				cursor:      { value: 0 },
-				cursorWidth: { value: 5.0 },
-				baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
-				cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
-			}, ctx.materials.commonUniforms ),
+				uLight:      { value: survey.lightDirection }
+			}, cloneUniforms( ctx.materials.cursorUniforms ),
+			ctx.materials.commonUniforms ),
 			defines: {
 				USE_COLOR: true
 			}
 		} );
 
 		this.halfRange = ( limits.max.z - limits.min.z ) / 2;
-
+		this.uniforms.cursor.value = 0;
 	}
 
 	setCursor ( value ) {

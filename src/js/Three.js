@@ -1,6 +1,7 @@
 export { WebGLRenderTarget } from 'three/src/renderers/WebGLRenderTarget.js';
 export { WebGLRenderer } from 'three/src/renderers/WebGLRenderer.js';
 export { ShaderChunk } from 'three/src/renderers/shaders/ShaderChunk.js';
+export { cloneUniforms } from 'three/src/renderers/shaders/UniformsUtils.js';
 export { FogExp2 } from 'three/src/scenes/FogExp2.js';
 export { Scene } from 'three/src/scenes/Scene.js';
 export { Mesh } from 'three/src/objects/Mesh.js';

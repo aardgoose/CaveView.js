@@ -1,4 +1,4 @@
-import { Vector3 } from '../three';
+import { Vector3, cloneUniforms } from '../three';
 import { Line2Material } from './Line2Material';
 
 // subclass Line2Material to provide custom defines and uniforms
@@ -53,12 +53,8 @@ class SurveyLineMaterial extends Line2Material {
 		case 'cursor':
 
 			defines.CV_CURSOR = true;
-			customUniforms = {
-				cursor:      { value: 0 },
-				cursorWidth: { value: 5.0 },
-				baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
-				cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
-			};
+			customUniforms = cloneUniforms( ctx.materials.cursorUniforms );
+			customUniforms.cursor.value = max;
 			break;
 
 		case 'depth':
@@ -89,14 +85,12 @@ class SurveyLineMaterial extends Line2Material {
 					scaleX:      { value: 1 / range.x },
 					scaleY:      { value: 1 / range.y },
 					rangeZ:      { value: range.z },
-					depthMap:    { value: terrain.depthTexture },
-					cursor:      { value: max / 2 },
-					cursorWidth: { value: 5.0 },
-					baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
-					cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
+					depthMap:    { value: terrain.depthTexture }
 				},
+				cloneUniforms( ctx.materials.cursorUniforms ),
 				ctx.materials.commonDepthUniforms
 			);
+			customUniforms.cursor.value = max / 2;
 			break;
 
 		case 'z':

@@ -7,6 +7,7 @@ import { DepthMapMaterial } from './DepthMapMaterial';
 import { ExtendedPointsMaterial } from './ExtendedPointsMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
 import { HeightMaterial } from './HeightMaterial';
+import { ZMaterial } from './ZMaterial';
 import { HypsometricMaterial } from './HypsometricMaterial';
 import { MissingMaterial } from './MissingMaterial';
 import { SurveyLineMaterial } from './SurveyLineMaterial';
@@ -44,18 +45,27 @@ function Materials ( viewer ) {
 	this.colourCache = colourCache;
 	this.textureCache = textureCache;
 
-	const gradientType = ctx.cfg.value( 'saturatedGradient', false ) || ctx.cfg.themeValue( 'saturatedGradient' );
+	const cfg = ctx.cfg;
+
+	const gradientType = cfg.value( 'saturatedGradient', false ) || cfg.themeValue( 'saturatedGradient' );
 	const gradient = gradientType ? 'gradientHi' : 'gradientLow';
-	const surfaceColour = ctx.cfg.themeValue( 'shading.single' );
+	const surfaceColour = cfg.themeValue( 'shading.single' );
 
 	this.commonUniforms = {
-		fogColor: { value: ctx.cfg.themeColor( 'background' ) },
+		fogColor: { value: cfg.themeColor( 'background' ) },
 		fogDensity: { value: 0.0025 },
 		distanceTransparency: { value: 0.0 }
 	};
 
 	this.commonDepthUniforms = {
 		datumShift: { value: 0.0 }
+	};
+
+	this.cursorUniforms = {
+		cursor:      { value: 0 },
+		cursorWidth: { value: 5.0 },
+		baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
+		cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
 	};
 
 	this.terrainOpacity = 0.5;
@@ -179,6 +189,13 @@ function Materials ( viewer ) {
 
 		const func = function () { return new HeightMaterial( ctx ); };
 		return getSurveyCacheMaterial( 'height', func, true );
+
+	};
+
+	this.getZMaterial = function () {
+
+		const func = function () { return new ZMaterial( ctx ); };
+		return getSurveyCacheMaterial( 'z', func, true );
 
 	};
 

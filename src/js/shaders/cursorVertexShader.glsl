@@ -3,13 +3,13 @@
 #include <fog_pars_vertex>
 #include <wall_vertex_pars>
 
-varying float height;
+varying float vCursor;
 
 void main() {
 
 	#include <wall_vertex>
 
-	height = position.z;
+	vCursor = position.z;
 
 	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 

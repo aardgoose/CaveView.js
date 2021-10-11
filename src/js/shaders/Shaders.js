@@ -13,7 +13,7 @@ import depthVertexShader from './depthVertexShader.glsl';
 import depthFragmentShader from './depthFragmentShader.glsl';
 
 import depthCursorVertexShader from './depthCursorVertexShader.glsl';
-import depthCursorFragmentShader from './depthCursorFragmentShader.glsl';
+import depthCursorFragmentShader from './cursorFragmentShader.glsl';
 
 import glyphVertexShader from './glyphVertexShader.glsl';
 import glyphFragmentShader from './glyphFragmentShader.glsl';

@@ -1,13 +1,9 @@
-#define saturate(a) clamp( a, 0.0, 1.0 )
-
 #include <fog_pars_vertex>
+#include <wall_vertex_pars>
 
 uniform sampler2D cmap;
-
 uniform float minZ;
 uniform float scaleZ;
-
-#include <wall_vertex_pars>
 
 varying float zMap;
 varying vec3 vMvPosition;

@@ -1,5 +1,3 @@
-#define saturate(a) clamp( a, 0.0, 1.0 )
-
 #include <fog_pars_vertex>
 #include <wall_vertex_pars>
 

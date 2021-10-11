@@ -1,5 +1,3 @@
-#define saturate(a) clamp( a, 0.0, 1.0 )
-
 const float UnpackDownscale = 255. / 256.; // 0..1 -> fraction (excluding 1)
 
 const vec3 PackFactors = vec3( 256. * 256. * 256., 256. * 256., 256. );

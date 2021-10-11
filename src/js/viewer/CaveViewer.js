@@ -256,12 +256,12 @@ class CaveViewer extends EventDispatcher {
 
 			'linewidth': {
 				get: function () { return ( materials.linewidth - 1 ) / 10; },
-				set: setLinewidth
+				set: _stateSetter( setLinewidth, 'linewidth' )
 			},
 
 			'scaleLinewidth': {
 				get: function () { return materials.scaleLinewidth; },
-				set: setScaleLinewidth
+				set: _stateSetter( setScaleLinewidth, 'scaleLinewidth' )
 			},
 
 			'maxDistance': {

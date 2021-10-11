@@ -1,5 +1,3 @@
-
-
 // popup shader
 
 uniform mat2 rotate;

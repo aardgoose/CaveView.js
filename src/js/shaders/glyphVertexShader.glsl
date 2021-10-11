@@ -1,4 +1,3 @@
-
 #include <fog_pars_vertex>
 
 // glyph shader, each instance represents one glyph.

@@ -3,6 +3,7 @@ import {
 	SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS,
 	TERRAIN_STENCIL
 } from '../core/constants';
+import { DepthMapMaterial } from '../materials/DepthMapMaterial';
 
 import { unpackRGBA } from '../core/unpackRGBA';
 import { Overlay } from './Overlay';
@@ -116,7 +117,6 @@ class CommonTerrain extends Group {
 		survey.addStatic( this );
 
 		const dim = 1024;
-		const materials = this.ctx.materials;
 
 		// set camera frustrum to cover region/survey area
 		const container = this.ctx.container;
@@ -157,7 +157,7 @@ class CommonTerrain extends Group {
 
 		renderer.setRenderTarget( renderTarget );
 
-		scene.overrideMaterial = materials.getDepthMapMaterial( this );
+		scene.overrideMaterial = new DepthMapMaterial( this );
 
 		renderer.render( scene, rtCamera );
 
@@ -178,7 +178,7 @@ class CommonTerrain extends Group {
 		this.ctx.viewer.resetRenderer();
 
 		survey.setupTerrain( this );
-		materials.setTerrain( this );
+		this.ctx.materials.setTerrain( this );
 
 	}
 

@@ -3,7 +3,6 @@ import { ClusterMaterial } from './ClusterMaterial';
 import { ContourMaterial } from './ContourMaterial';
 import { DepthMaterial } from './DepthMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
-import { DepthMapMaterial } from './DepthMapMaterial';
 import { ExtendedPointsMaterial } from './ExtendedPointsMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
 import { HeightMaterial } from './HeightMaterial';
@@ -26,6 +25,7 @@ function Materials ( viewer ) {
 
 	const cache = new Map();
 	const ctx = viewer.ctx;
+	const cfg = ctx.cfg;
 	const self = this;
 
 	const glyphAtlasCache = new GlyphAtlasCache();
@@ -44,8 +44,6 @@ function Materials ( viewer ) {
 
 	this.colourCache = colourCache;
 	this.textureCache = textureCache;
-
-	const cfg = ctx.cfg;
 
 	const gradientType = cfg.value( 'saturatedGradient', false ) || cfg.themeValue( 'saturatedGradient' );
 	const gradient = gradientType ? 'gradientHi' : 'gradientLow';
@@ -70,26 +68,29 @@ function Materials ( viewer ) {
 
 	this.terrainOpacity = 0.5;
 
-	Object.defineProperty( this, 'cursorHeight', {
-		get: function () { return cursorHeight; },
-		set: updateCursors
-	} );
-
-	Object.defineProperty( this, 'linewidth', {
-		get: function () { return linewidth; },
-		set: updateLinewidth
-	} );
-
-	Object.defineProperty( this, 'scaleLinewidth', {
-		get: function () { return scaleLinewidth; },
-		set: updateScaleLinewidth
-	} );
-
 	const distanceTransparency = this.commonUniforms.distanceTransparency;
 
-	Object.defineProperty( this, 'distanceTransparency', {
-		get: function () { return distanceTransparency.value; },
-		set: function ( x ) { distanceTransparency.value = x; }
+	Object.defineProperties( this, {
+
+		'cursorHeight': {
+			get: function () { return cursorHeight; },
+			set: updateCursors
+		},
+
+		'linewidth': {
+			get: function () { return linewidth; },
+			set: updateLinewidth
+		},
+
+		'scaleLinewidth': {
+			get: function () { return scaleLinewidth; },
+			set: updateScaleLinewidth
+		},
+
+		'distanceTransparency': {
+			get: function () { return distanceTransparency.value; },
+			set: function ( x ) { distanceTransparency.value = x; }
+		}
 	} );
 
 	function cacheMaterial ( name, material, stencil ) {
@@ -158,7 +159,7 @@ function Materials ( viewer ) {
 
 	this.getLine2Material = function ( params = { color: 'green' } ) {
 
-		const func = function () { return new Line2Material( ctx, params ); };
+		const func = () => new Line2Material( ctx, params );
 		const material = getCacheMaterial( 'line2' + JSON.stringify( params ), func, true );
 
 		return material;
@@ -167,7 +168,7 @@ function Materials ( viewer ) {
 
 	this.getSurveyLineMaterial = function ( mode = '', dashed = false ) {
 
-		const func = function () { return new SurveyLineMaterial( ctx, mode, dashed ); };
+		const func = () => new SurveyLineMaterial( ctx, mode, dashed );
 		const material = getSurveyCacheMaterial( 'survey-line-' + mode + ( dashed ? '-dashed' : '' ), func, true );
 
 		if ( mode === 'cursor' || mode === 'depth-cursor' ) {
@@ -187,41 +188,35 @@ function Materials ( viewer ) {
 
 	this.getHeightMaterial = function () {
 
-		const func = function () { return new HeightMaterial( ctx ); };
+		const func = () => new HeightMaterial( ctx );
 		return getSurveyCacheMaterial( 'height', func, true );
 
 	};
 
 	this.getZMaterial = function () {
 
-		const func = function () { return new ZMaterial( ctx ); };
+		const func = () => new ZMaterial( ctx );
 		return getSurveyCacheMaterial( 'z', func, true );
 
 	};
 
 	this.getHypsometricMaterial = function () {
 
-		const func = function () { return new HypsometricMaterial( ctx ); };
+		const func = () => new HypsometricMaterial( ctx );
 		return getSurveyCacheMaterial( 'hypsometric', func );
-
-	};
-
-	this.getDepthMapMaterial = function ( terrain ) {
-
-		return new DepthMapMaterial( terrain );
 
 	};
 
 	this.getDepthMaterial = function () {
 
-		const func = function () { return new DepthMaterial( ctx ); };
+		const func = () => new DepthMaterial( ctx );
 		return getSurveyCacheMaterial( 'depth', func, true );
 
 	};
 
 	this.getCursorMaterial = function () {
 
-		const func = function () { return new CursorMaterial( ctx ); };
+		const func = () => new CursorMaterial( ctx );
 		const material = getSurveyCacheMaterial( 'cursor', func, true );
 
 		// set active cursor material for updating
@@ -233,7 +228,7 @@ function Materials ( viewer ) {
 
 	this.getDepthCursorMaterial = function () {
 
-		const func = function () { return new DepthCursorMaterial( ctx ); };
+		const func = () => new DepthCursorMaterial( ctx );
 		const material = getSurveyCacheMaterial( 'depthCursor', func, true );
 
 		// set active cursor material for updating
@@ -247,13 +242,13 @@ function Materials ( viewer ) {
 
 		let func;
 
-		if ( ctx.cfg.themeValue( 'hud.bezelType' ) === 'flat' ) {
+		if ( cfg.themeValue( 'hud.bezelType' ) === 'flat' ) {
 
-			func = function () { return new MeshBasicMaterial( { color: ctx.cfg.themeValue( 'hud.bezel' ) } ); };
+			func = () => new MeshBasicMaterial( { color: cfg.themeValue( 'hud.bezel' ) } );
 
 		} else {
 
-			func = function () { return new MeshPhongMaterial( { color: ctx.cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } ); };
+			func = () => new MeshPhongMaterial( { color: cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } );
 
 		}
 
@@ -263,63 +258,63 @@ function Materials ( viewer ) {
 
 	this.getPlainMaterial = function  () {
 
-		const func = function () { return new MeshBasicMaterial( { color: 0xffffff, vertexColors: true } ); };
+		const func = () => new MeshBasicMaterial( { color: 0xffffff, vertexColors: true } );
 		return getCacheMaterial( 'plain', func, true );
 
 	};
 
 	this.getSurfaceMaterial = function  () {
 
-		const func = function () { return new MeshLambertMaterial( { color: surfaceColour, vertexColors: false } ); };
+		const func = () => new MeshLambertMaterial( { color: surfaceColour, vertexColors: false } );
 		return getCacheMaterial( 'surface', func, true );
 
 	};
 
 	this.getEntrancePointMaterial = function  () {
 
-		const func = function () { return new EntrancePointMaterial( ctx ); };
+		const func = () => new EntrancePointMaterial( ctx );
 		return getCacheMaterial( 'entrance', func, true );
 
 	};
 
 	this.getExtendedPointsMaterial = function () {
 
-		const func = function () { return new ExtendedPointsMaterial( ctx ); };
+		const func = () => new ExtendedPointsMaterial( ctx );
 		return getCacheMaterial( 'extendedPoints', func, true );
 
 	};
 
 	this.getMissingMaterial = function () {
 
-		const func = function () { return new MissingMaterial( ctx ); };
+		const func = () => new MissingMaterial( ctx );
 		return getCacheMaterial( 'missing', func );
 
 	};
 
 	this.getUnselectedMaterial = function () {
 
-		const func = function () { return new LineBasicMaterial( { color: 0x444444, vertexColors: true } ); };
+		const func = () => new LineBasicMaterial( { color: 0x444444, vertexColors: true } );
 		return getCacheMaterial( 'unselected', func );
 
 	};
 
 	this.getUnselectedWallMaterial = function () {
 
-		const func = function () { return new MeshLambertMaterial( { color: 0x444444, vertexColors: true} ); };
+		const func = () => new MeshLambertMaterial( { color: 0x444444, vertexColors: true} );
 		return getCacheMaterial( 'unselectedWall', func );
 
 	};
 
 	this.getScaleMaterial = function () {
 
-		const func = function () { return new MeshBasicMaterial( { color: 0xffffff, map: textureCache.getTexture( gradient ) } ); };
+		const func = () => new MeshBasicMaterial( { color: 0xffffff, map: textureCache.getTexture( gradient ) } );
 		return getCacheMaterial( 'scale', func );
 
 	};
 
 	this.getContourMaterial = function () {
 
-		const func = function () { return new ContourMaterial( ctx ); };
+		const func = () => new ContourMaterial( ctx );
 		return getSurveyCacheMaterial( 'contour', func );
 
 	};
@@ -329,7 +324,7 @@ function Materials ( viewer ) {
 		const atlas = glyphAtlasCache.getAtlas( glyphAtlasSpec );
 		const name = JSON.stringify( glyphAtlasSpec ) + ':' + rotation.toString();
 
-		const func = function () { return new GlyphMaterial( ctx, atlas, rotation, viewer ); };
+		const func = () => new GlyphMaterial( ctx, atlas, rotation, viewer );
 
 		return getCacheMaterial( name, func );
 
@@ -337,7 +332,7 @@ function Materials ( viewer ) {
 
 	this.getClusterMaterial = function ( count ) {
 
-		const func = function () { return new ClusterMaterial( count ); };
+		const func = () => new ClusterMaterial( count );
 		return getCacheMaterial( 'cluster' + count, func, true );
 
 	};

@@ -376,10 +376,6 @@ class CaveViewer extends EventDispatcher {
 				set: setFullscreen
 			},
 
-			'hasContours': {
-				get: function () { return ! ( renderer.extensions.get( 'OES_standard_derivatives' ) === null ); }
-			},
-
 			'fog': {
 				get: function () { return useFog; },
 				set: setFog

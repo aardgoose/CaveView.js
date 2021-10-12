@@ -7,6 +7,7 @@ class CursorMaterial extends ShaderMaterial {
 
 		const survey = ctx.survey;
 		const limits = survey.modelLimits;
+		const uniforms = ctx.materials.uniforms;
 
 		super( {
 			vertexShader: Shaders.cursorVertexShader,
@@ -14,8 +15,8 @@ class CursorMaterial extends ShaderMaterial {
 			type: 'CV.CursorMaterial',
 			uniforms: Object.assign( {
 				uLight:      { value: survey.lightDirection }
-			}, cloneUniforms( ctx.materials.cursorUniforms ),
-			ctx.materials.commonUniforms ),
+			}, cloneUniforms( uniforms.cursor ),
+			uniforms.common ),
 			defines: {
 				USE_COLOR: true
 			}

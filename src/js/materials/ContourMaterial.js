@@ -51,7 +51,7 @@ class ContourMaterial extends CommonTerrainMaterial {
 				contourColor:    { value: cfg.themeColor( 'shading.contours.line' ) },
 				contourColor10:  { value: cfg.themeColor( 'shading.contours.line10' ) },
 				baseColor:       { value: cfg.themeColor( 'shading.contours.base' ) }
-			}, materials.commonDepthUniforms );
+			}, materials.uniforms.commonDepth );
 
 			this.editShader( shader, vertexPars, vertexMain, fragmentPars, fragmentColor );
 

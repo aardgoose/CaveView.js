@@ -12,6 +12,7 @@ class HeightMaterial extends ShaderMaterial {
 		const zMax = limits.max.z;
 		const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 		const textureCache = ctx.materials.textureCache;
+		const uniforms = ctx.materials.uniforms;
 
 		super( {
 			vertexShader: Shaders.heightVertexShader,
@@ -22,7 +23,7 @@ class HeightMaterial extends ShaderMaterial {
 				minZ:   { value: zMin },
 				scaleZ: { value: 1 / ( zMax - zMin ) },
 				cmap:   { value: textureCache.getTexture( gradient ) },
-			}, ctx.materials.commonUniforms ),
+			}, uniforms.common ),
 			defines: {
 				USE_COLOR: true
 			}

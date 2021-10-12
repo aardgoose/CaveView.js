@@ -12,6 +12,7 @@ class DepthMaterial extends ShaderMaterial {
 		const range = limits.getSize( new Vector3() );
 		const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 		const textureCache = ctx.materials.textureCache;
+		const uniforms = ctx.materials.uniforms;
 
 		super( {
 			vertexShader: Shaders.depthVertexShader,
@@ -27,7 +28,7 @@ class DepthMaterial extends ShaderMaterial {
 				depthScale: { value: 1 / ( surveyLimits.max.z - surveyLimits.min.z ) },
 				cmap:       { value: textureCache.getTexture( gradient ) },
 				depthMap:   { value: terrain.depthTexture },
-			}, ctx.materials.commonUniforms, ctx.materials.commonDepthUniforms ),
+			}, uniforms.common, uniforms.commonDepth ),
 			defines: {
 				USE_COLOR: true
 			}

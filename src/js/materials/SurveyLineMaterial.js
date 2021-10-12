@@ -12,6 +12,7 @@ class SurveyLineMaterial extends Line2Material {
 		const gradient = cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 		const textureCache = ctx.materials.textureCache;
 		const surveyLimits = survey.modelLimits;
+		const uniforms = ctx.materials.uniforms;
 
 		const zMax = surveyLimits.max.z;
 		const zMin = surveyLimits.min.z;
@@ -53,7 +54,7 @@ class SurveyLineMaterial extends Line2Material {
 		case 'cursor':
 
 			defines.CV_CURSOR = true;
-			customUniforms = cloneUniforms( ctx.materials.cursorUniforms );
+			customUniforms = cloneUniforms( uniforms.cursor );
 			customUniforms.cursor.value = max;
 			break;
 
@@ -70,7 +71,7 @@ class SurveyLineMaterial extends Line2Material {
 					cmap:       { value: textureCache.getTexture( gradient ) },
 					depthMap:   { value: terrain.depthTexture },
 				},
-				ctx.materials.commonDepthUniforms
+				uniforms.commonDepth
 			);
 			break;
 
@@ -87,8 +88,8 @@ class SurveyLineMaterial extends Line2Material {
 					rangeZ:      { value: range.z },
 					depthMap:    { value: terrain.depthTexture }
 				},
-				cloneUniforms( ctx.materials.cursorUniforms ),
-				ctx.materials.commonDepthUniforms
+				cloneUniforms( uniforms.cursor ),
+				uniforms.commonDepth
 			);
 			customUniforms.cursor.value = max / 2;
 			break;

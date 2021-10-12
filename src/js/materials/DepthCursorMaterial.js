@@ -14,6 +14,7 @@ class DepthCursorMaterial extends ShaderMaterial {
 
 		// max range of depth values
 		const max = surveyLimits.max.z - surveyLimits.min.z;
+		const uniforms = ctx.materials.uniforms;
 
 		super( {
 			vertexShader: Shaders.depthCursorVertexShader,
@@ -26,8 +27,8 @@ class DepthCursorMaterial extends ShaderMaterial {
 				scaleY:      { value: 1 / range.y },
 				rangeZ:      { value: range.z },
 				depthMap:    { value: terrain.depthTexture }
-			}, cloneUniforms( ctx.materials.cursorUniforms ),
-			ctx.materials.commonUniforms, ctx.materials.commonDepthUniforms ),
+			}, cloneUniforms( uniforms.cursor ),
+			uniforms.common, uniforms.commonDepth ),
 			defines: {
 				USE_COLOR: true
 			}

@@ -26,7 +26,6 @@ function Materials ( viewer ) {
 	const cache = new Map();
 	const ctx = viewer.ctx;
 	const cfg = ctx.cfg;
-	const self = this;
 
 	const glyphAtlasCache = new GlyphAtlasCache();
 	const cursorMaterials = new Set();
@@ -49,47 +48,59 @@ function Materials ( viewer ) {
 	const gradient = gradientType ? 'gradientHi' : 'gradientLow';
 	const surfaceColour = cfg.themeValue( 'shading.single' );
 
-	this.commonUniforms = {
-		fogColor: { value: cfg.themeColor( 'background' ) },
-		fogDensity: { value: 0.0025 },
-		distanceTransparency: { value: 0.0 }
-	};
+	this.uniforms = {
+		common: {
+			fogColor: { value: cfg.themeColor( 'background' ) },
+			fogDensity: { value: 0.0025 },
+			distanceTransparency: { value: 0.0 }
+		},
 
-	this.commonDepthUniforms = {
-		datumShift: { value: 0.0 }
-	};
+		commonDepth: {
+			datumShift: { value: 0.0 }
+		},
 
-	this.cursorUniforms = {
-		cursor:      { value: 0 },
-		cursorWidth: { value: 5.0 },
-		baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
-		cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
+		cursor: {
+			cursor:      { value: 0 },
+			cursorWidth: { value: 5.0 },
+			baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
+			cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
+		}
 	};
 
 	this.terrainOpacity = 0.5;
 
-	const distanceTransparency = this.commonUniforms.distanceTransparency;
+	const distanceTransparency = this.uniforms.common.distanceTransparency;
 
 	Object.defineProperties( this, {
 
 		'cursorHeight': {
-			get: function () { return cursorHeight; },
-			set: updateCursors
+			get() { return cursorHeight; },
+			set( newHeight ) {
+				cursorMaterials.forEach(
+					material => cursorHeight = material.setCursor( newHeight )
+				);
+			}
 		},
 
 		'linewidth': {
-			get: function () { return linewidth; },
-			set: updateLinewidth
+			get() { return linewidth; },
+			set( width ) {
+				lineMaterials.forEach( material => material.linewidth = width );
+				linewidth = width;
+			}
 		},
 
 		'scaleLinewidth': {
-			get: function () { return scaleLinewidth; },
-			set: updateScaleLinewidth
+			get() { return scaleLinewidth; },
+			set( mode ) {
+				surveyLineMaterials.forEach( material => material.scaleLinewidth = mode );
+				scaleLinewidth = mode;
+			}
 		},
 
 		'distanceTransparency': {
-			get: function () { return distanceTransparency.value; },
-			set: function ( x ) { distanceTransparency.value = x; }
+			get() { return distanceTransparency.value; },
+			set( x ) { distanceTransparency.value = x; }
 		}
 	} );
 
@@ -128,32 +139,6 @@ function Materials ( viewer ) {
 		perSurveyMaterials[ name ] = material;
 
 		return material;
-
-	}
-
-	function updateCursors( newHeight ) {
-
-		cursorMaterials.forEach( material => cursorHeight = material.setCursor( newHeight ) );
-
-	}
-
-	function updateLinewidth( width ) {
-
-		lineMaterials.forEach( material => material.linewidth = width );
-		linewidth = width;
-
-	}
-
-	function updateScaleLinewidth( mode ) {
-
-		surveyLineMaterials.forEach( material => material.scaleLinewidth = mode );
-		scaleLinewidth = mode;
-
-	}
-
-	function updateDatumShifts( event ) {
-
-		self.commonDepthUniforms.datumShift.value = event.value;
 
 	}
 
@@ -338,6 +323,12 @@ function Materials ( viewer ) {
 	};
 
 	this.setTerrain = function ( terrain ) {
+
+		const updateDatumShifts = event => {
+
+			this.uniforms.commonDepth.datumShift.value = event.value;
+
+		};
 
 		terrain.addEventListener( 'datumShiftChange', updateDatumShifts );
 

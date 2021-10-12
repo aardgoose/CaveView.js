@@ -30,7 +30,7 @@ class Line2Material extends ShaderMaterial {
 
 			uniforms: Object.assign(
 				UniformsUtils.clone( uniforms ),
-				ctx.materials.commonUniforms,
+				ctx.materials.uniforms.common,
 				callerUniforms
 			),
 

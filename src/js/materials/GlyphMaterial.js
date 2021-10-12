@@ -5,6 +5,7 @@ class GlyphMaterial extends ShaderMaterial {
 
 	constructor ( ctx, glyphAtlas, rotation, viewer ) {
 
+		const uniforms = ctx.materials.uniforms;
 		const cellScale = glyphAtlas.cellScale;
 		const container = viewer.container;
 		const realPixels = glyphAtlas.cellSize;
@@ -28,7 +29,7 @@ class GlyphMaterial extends ShaderMaterial {
 				atlas: { value: glyphAtlas.getTexture() },
 				rotate: { value: rotationMatrix },
 				scale: { value: scale }
-			}, ctx.materials.commonUniforms ),
+			}, uniforms.common ),
 		} );
 
 		this.rotation = rotation;

@@ -15,6 +15,7 @@ class CameraMove {
 		const endCameraPosition = new Vector3();
 		const endPOI = new Vector3();
 		const endQuaternion = new Quaternion();
+		const cameraManager = controls.cameraManager;
 
 		let endZoom = 1;
 		let frameCount = 0;
@@ -25,13 +26,9 @@ class CameraMove {
 		let animationFunction = null;
 		let rafID = 0;
 
-		//this.doAnimate = this.animate.bind( this );
-
 		function getCardinalAxis ( targetAxis ) {
 
-			const camera = controls.cameraManager.activeCamera;
-
-			camera.getWorldDirection( __v1 );
+			cameraManager.activeCamera.getWorldDirection( __v1 );
 
 			const x = Math.abs( __v1.x );
 			const y = Math.abs( __v1.y );
@@ -55,7 +52,7 @@ class CameraMove {
 
 		function prepareRotation ( endCamera, orientation ) {
 
-			const camera = controls.cameraManager.activeCamera;
+			const camera = cameraManager.activeCamera;
 
 			__v1.copy( endCamera ).sub( endPOI ).normalize();
 
@@ -86,7 +83,7 @@ class CameraMove {
 			const targetAxis = __v2;
 			const orientation = __v3;
 
-			const camera = controls.cameraManager.activeCamera;
+			const camera = cameraManager.activeCamera;
 			const cameraStart = camera.position;
 
 			skipNext = false;
@@ -180,7 +177,7 @@ class CameraMove {
 
 			if ( running ) return this;
 
-			const camera = controls.cameraManager.activeCamera;
+			const camera = cameraManager.activeCamera;
 
 			// calculate end state rotation of camera
 			endPOI.copy( endPOIIn );
@@ -261,11 +258,9 @@ class CameraMove {
 
 		function endAnimation () {
 
-			const camera = controls.cameraManager.activeCamera;
-
 			controls.target.copy( endPOI );
 
-			if ( rotation > 0 ) camera.position.copy( endCameraPosition );
+			if ( rotation > 0 ) cameraManager.activeCamera.position.copy( endCameraPosition );
 
 			running = false;
 			rotation = 0;
@@ -282,7 +277,7 @@ class CameraMove {
 
 			// update camera position
 
-			const camera = controls.cameraManager.activeCamera;
+			const camera = cameraManager.activeCamera;
 			const target = controls.target;
 			const dt = 1 - ( frameCount - 1 ) / frameCount;
 

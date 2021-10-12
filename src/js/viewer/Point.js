@@ -2,6 +2,8 @@ import { Points, BufferGeometry, Float32BufferAttribute } from '../Three';
 
 class Point extends Points {
 
+	type = 'Point';
+
 	constructor ( material, ctx ) {
 
 		const materials = ctx.materials;
@@ -13,8 +15,6 @@ class Point extends Points {
 		}
 
 		super( materials.pointGeometry, material );
-
-		this.type = 'Point';
 
 	}
 

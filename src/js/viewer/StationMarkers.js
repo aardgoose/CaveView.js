@@ -54,11 +54,7 @@ class StationMarkers extends Group {
 
 	getStations () {
 
-		const keys = [];
-
-		this.markers.forEach( ( v, k ) => keys.push( k) );
-
-		return keys;
+		return this.markers.keys();
 
 	}
 

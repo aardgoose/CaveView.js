@@ -4,11 +4,11 @@ import { BufferGeometry, Mesh } from '../Three';
 
 class PopupGeometry extends BufferGeometry {
 
+	type = 'PopupGeometery';
+
 	constructor () {
 
 		super();
-
-		this.type = 'PopupGeometry';
 
 		this.setIndex( CommonAttributes.index );
 		this.setAttribute( 'position', CommonAttributes.position );
@@ -21,6 +21,8 @@ class Popup extends Mesh {
 
 	static commonGeometry = null;
 
+	type = 'Popup';
+
 	constructor ( ctx ) {
 
 		if ( Popup.commonGeometry === null ) Popup.commonGeometry = new PopupGeometry();
@@ -28,7 +30,6 @@ class Popup extends Mesh {
 		super( Popup.commonGeometry );
 
 		this.layers.set( LEG_CAVE );
-		this.type = 'Popup';
 		this.renderOrder = Infinity;
 		this.ctx = ctx;
 

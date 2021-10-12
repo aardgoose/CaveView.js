@@ -60,13 +60,11 @@ class SurfacePage extends Page {
 
 			}
 
-			const attributions = viewer.terrainAttributions;
+			viewer.terrainAttributions.forEach( attribution => {
 
-			for ( let i = 0; i < attributions.length; i++ ) {
+				this.addText( attribution );
 
-				this.addText( attributions[ i ] );
-
-			}
+			} );
 
 		}
 

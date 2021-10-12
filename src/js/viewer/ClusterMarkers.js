@@ -144,7 +144,7 @@ class QuadTree {
 
 				// cluster markers compensated for angle to the horizontal and distance from camera plane
 
-				if ( area < 10 * depthRatio * ( angleFactor) ) { // FIXME calibrate by screen size ???
+				if ( area < 10 * depthRatio * angleFactor ) { // FIXME calibrate by screen size ???
 
 					subQuad.clusterMarkers( cluster );
 
@@ -336,7 +336,7 @@ class ClusterMarkers extends Object3D {
 		this.quadTree.check( this, target, Math.max( 0.05, 1 - Math.cos( angle ) ), selectedStationSet );
 
 		// sort by depth and update label boxes
-		this.labels.sort( ( a, b ) => { return b.getDepth( cameraManager ) - a.getDepth( cameraManager ); } );
+		this.labels.sort( ( a, b ) => b.getDepth( cameraManager ) - a.getDepth( cameraManager ) );
 
 		// traverse from back to front and use label boxes to detect overlapping labels and
 		// set visible = false on the rear most

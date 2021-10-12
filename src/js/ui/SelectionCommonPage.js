@@ -315,7 +315,7 @@ class SelectionCommonPage extends Page {
 					const id = node.id;
 					let colour;
 
-					if ( surveyColourMap !== null && surveyColourMap[ id ] !== undefined ) {
+					if ( surveyColourMap?.[ id ] !== undefined ) {
 
 						colour = '#' + surveyColourMap[ id ].getHexString();
 

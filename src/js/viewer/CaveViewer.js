@@ -114,7 +114,6 @@ class CaveViewer extends EventDispatcher {
 
 		let terrain = null;
 		let survey = null;
-		let stats = {};
 
 		let useFog = false;
 
@@ -274,14 +273,6 @@ class CaveViewer extends EventDispatcher {
 
 			'minHeight': {
 				get: function () { return ( survey === null ) ? 0 : survey.limits.min.z; }
-			},
-
-			'maxLegLength': {
-				get: function () { return stats.maxLegLength; }
-			},
-
-			'minLegLength': {
-				get: function () { return stats.minLegLength; }
 			},
 
 			'section': {
@@ -1117,8 +1108,6 @@ class CaveViewer extends EventDispatcher {
 			survey = newSurvey;
 
 			hud.getProgressDial( 1 ).watch( survey );
-
-			stats = self.getLegStats( LEG_CAVE );
 
 			setScale();
 

@@ -1,5 +1,5 @@
 import {
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_DISTANCE
+	SHADING_CURSOR, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_DISTANCE, LEG_CAVE
 } from '../core/constants';
 
 import { AHI } from './AHI';
@@ -290,6 +290,8 @@ function HUD ( viewer, renderer ) {
 		let useLinearScale = false;
 		let useCursorScale = false;
 
+		let stats;
+
 		switch ( viewer.shadingMode ) {
 
 		case SHADING_HEIGHT:
@@ -339,8 +341,8 @@ function HUD ( viewer, renderer ) {
 		case SHADING_LENGTH:
 
 			useLinearScale = true;
-
-			linearScale.setRange( viewer.minLegLength, viewer.maxLegLength, i18n( 'leg_length' ) );
+			stats = viewer.getLegStats( LEG_CAVE );
+			linearScale.setRange( stats.minLegLength, stats.maxLegLength, i18n( 'leg_length' ) );
 
 			break;
 

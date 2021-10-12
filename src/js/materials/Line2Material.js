@@ -3,7 +3,7 @@ import {
 	UniformsLib,
 	UniformsUtils,
 	Vector2
-} from '../three';
+} from '../Three';
 import { Shaders } from '../shaders/Shaders';
 
 const uniforms = UniformsUtils.merge( [

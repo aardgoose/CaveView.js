@@ -7,7 +7,7 @@ import {
 	InstancedBufferAttribute,
 	Sphere,
 	Vector3,
-} from '../three';
+} from '../Three';
 
 const _box = new Box3();
 const _vector = new Vector3();

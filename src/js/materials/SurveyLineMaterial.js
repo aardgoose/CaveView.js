@@ -1,4 +1,4 @@
-import { Vector3, cloneUniforms } from '../three';
+import { Vector3, cloneUniforms } from '../Three';
 import { Line2Material } from './Line2Material';
 
 // subclass Line2Material to provide custom defines and uniforms

@@ -74,16 +74,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 	}
 
-	const basicRenderer = function () {
-
-		renderer.render( scene, self.activeCamera );
-		renderer.getContext().flush();
-
-		lastFrame = renderer.info.render.frame;
-
-	};
-
-	const maskedRenderer = function () {
+	const standardRenderer = function () {
 
 		// render depth buffer from underside of terrain
 		const camera = self.activeCamera;
@@ -107,8 +98,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 	};
 
-	this.maskedTerrain = true;
-	this.activeRenderer = maskedRenderer;
+	this.activeRenderer = standardRenderer;
 
 	function initCamera ( camera ) {
 
@@ -221,15 +211,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		} else {
 
-			if ( this.maskedTerrain ) {
-
-				this.activeRenderer = maskedRenderer;
-
-			} else {
-
-				this.activeRenderer = basicRenderer;
-
-			}
+			this.activeRenderer = standardRenderer;
 
 		}
 

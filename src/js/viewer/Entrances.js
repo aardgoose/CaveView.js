@@ -70,7 +70,7 @@ class Entrances extends ClusterMarkers {
 
 			const entranceInfo = entrances[ node.getPath() ];
 
-			if ( entranceInfo !== undefined && entranceInfo.name !== undefined ) {
+			if ( entranceInfo?.name !== undefined ) {
 
 				name = entranceInfo.name;
 
@@ -114,26 +114,6 @@ class Entrances extends ClusterMarkers {
 		metadata.entrances[ station.getPath() ] = info;
 
 		metadata.saveLocal();
-
-	}
-
-	intersectLabels ( mouse, camera, scale ) {
-
-		const labels = this.labels.filter( _filter ).sort( _sort );
-
-		return ( labels.length === 0 ) ? null : labels[ 0 ];
-
-		function _filter ( label ) {
-
-			return label.intersects( mouse, camera, scale );
-
-		}
-
-		function _sort ( a, b ) {
-
-			return a.depth - b.depth;
-
-		}
 
 	}
 

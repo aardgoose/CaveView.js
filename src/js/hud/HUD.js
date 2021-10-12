@@ -149,8 +149,6 @@ function HUD ( viewer, renderer ) {
 
 	function resize () {
 
-		const container = viewer.container;
-
 		const hWidth  = container.clientWidth / 2;
 		const hHeight = container.clientHeight / 2;
 
@@ -231,7 +229,6 @@ function HUD ( viewer, renderer ) {
 
 	function newScales () {
 
-		const container = viewer.container;
 		const hasLegs = viewer.minHeight !== Infinity && viewer.maxHeight !== -Infinity;
 
 		if ( linearScale ) {

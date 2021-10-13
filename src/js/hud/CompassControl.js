@@ -1,135 +1,129 @@
+import { Control } from './Control';
 import { Vector2 } from '../Three';
 
-function CompassControl( hudObject, viewer ) {
+class CompassControl extends Control {
 
-	const container = viewer.container;
-	const controls = viewer.getControls();
+	constructor ( hudObject, viewer ) {
 
-	const point = new Vector2();
-	const center = new Vector2();
+		const dim = hudObject.stdWidth * 2;
 
-	let dragging = false;
-	let startAngle = 0;
+		super( viewer.container, dim, dim, handleEnter );
 
-	const hr = hudObject.createHitRegion( hudObject.stdWidth * 2, hudObject.stdWidth * 2, handleEnter );
+		const controls = viewer.getControls();
 
-	hr.style.right = hudObject.stdMargin + 'px';
-	hr.style.bottom = hudObject.stdMargin + 'px';
+		const point = new Vector2();
+		const center = new Vector2();
 
-	container.appendChild( hr );
+		let dragging = false;
+		let startAngle = 0;
 
-	function handleEnter ( event ) {
+		const hr = this.hitRegion;
 
-		if ( ! viewer.HUD ) return;
+		this.positionHitRegion( hudObject.stdMargin, hudObject.stdMargin );
 
-		const target = event.currentTarget;
+		const handlers = {
+			mouseleave: handleLeave,
+			mousemove:  handleMouseMove,
+			mousedown:  handleMouseDown,
+			mouseup:    handleMouseUp,
+			dblclick:   handleDblClick,
+		};
 
-		target.addEventListener( 'mouseleave', handleLeave );
-		target.addEventListener( 'mousemove',  handleMouseMove );
-		target.addEventListener( 'mousedown',  handleMouseDown );
-		target.addEventListener( 'mouseup',    handleMouseUp );
-		target.addEventListener( 'dblclick',   handleDblClick );
+		const self = this;
 
-		// update center position (accounts for resizes)
-		const bc = container.getBoundingClientRect();
-		center.set( bc.left + hr.offsetLeft + hudObject.stdWidth, bc.top + hr.offsetTop + hudObject.stdWidth );
-		hr.style.cursor = 'pointer';
+		function handleEnter ( event ) {
 
-	}
+			if ( ! viewer.HUD ) return;
 
-	function handleLeave ( event ) {
+			self.commonEnter( event.currentTarget, handlers );
 
-		const target = event.currentTarget;
+			const bc = self.rect;
 
-		if ( dragging ) controls.end();
+			center.set( bc.left + hr.offsetLeft + hudObject.stdWidth, bc.top + hr.offsetTop + hudObject.stdWidth );
+			dragging = false;
 
-		target.removeEventListener( 'mouseleave', handleLeave );
-		target.removeEventListener( 'mousemove',  handleMouseMove );
-		target.removeEventListener( 'mousedown',  handleMouseDown );
-		target.removeEventListener( 'mouseup',    handleMouseUp );
-		target.removeEventListener( 'dblclick',   handleDblClick );
+		}
 
-		hr.style.cursor = 'default';
-		dragging = false;
+		function handleLeave ( event ) {
 
-	}
+			if ( dragging ) controls.end();
 
-	function handleMouseDown ( event ) {
+			self.commonLeave( event.currentTarget, handlers );
 
-		event.stopPropagation();
+		}
 
-		dragging = true;
-		point.set( event.clientX, event.clientY ).sub( center );
-		startAngle = point.angle();
+		function handleMouseDown ( event ) {
 
-	}
+			event.stopPropagation();
 
-	function handleMouseUp ( event ) {
+			dragging = true;
+			point.set( event.clientX, event.clientY ).sub( center );
+			startAngle = point.angle();
 
-		event.stopPropagation();
+		}
 
-		controls.end();
+		function handleMouseUp ( event ) {
 
-		dragging = false;
+			event.stopPropagation();
 
-	}
+			controls.end();
 
-	function handleDblClick ( event ) {
+			dragging = false;
 
-		event.stopPropagation();
+		}
 
-		// select cardinal point from quadrant of control clicked on
+		function handleDblClick ( event ) {
 
-		if ( point.x > point.y ) {
+			event.stopPropagation();
 
-			if ( point.x < -point.y ) {
+			// select cardinal point from quadrant of control clicked on
 
-				viewer.azimuthAngle = 0;
+			if ( point.x > point.y ) {
 
-			} else {
+				if ( point.x < -point.y ) {
 
-				viewer.azimuthAngle = Math.PI / 2;
+					viewer.azimuthAngle = 0;
 
-			}
+				} else {
 
-		} else {
+					viewer.azimuthAngle = Math.PI / 2;
 
-			if ( point.x > -point.y ) {
-
-				viewer.azimuthAngle = Math.PI;
+				}
 
 			} else {
 
-				viewer.azimuthAngle = 3 * Math.PI / 2;
+				if ( point.x > -point.y ) {
+
+					viewer.azimuthAngle = Math.PI;
+
+				} else {
+
+					viewer.azimuthAngle = 3 * Math.PI / 2;
+
+				}
 
 			}
 
 		}
 
+		function handleMouseMove ( event ) {
+
+			event.stopPropagation();
+			event.preventDefault();
+
+			if ( ! dragging ) return;
+
+			point.set( event.clientX, event.clientY ).sub( center );
+
+			const angle = point.angle();
+
+			controls.rotateLeft( startAngle - angle );
+
+			startAngle = angle;
+
+		}
+
 	}
-
-	function handleMouseMove ( event ) {
-
-		event.stopPropagation();
-		event.preventDefault();
-
-		if ( ! dragging ) return;
-
-		point.set( event.clientX, event.clientY ).sub( center );
-
-		const angle = point.angle();
-
-		controls.rotateLeft( startAngle - angle );
-
-		startAngle = angle;
-
-	}
-
-	this.dispose = function () {
-
-		container.removeChild( hr );
-
-	};
 
 }
 

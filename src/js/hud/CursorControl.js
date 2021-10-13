@@ -1,110 +1,98 @@
+import { Control } from './Control';
 import { SHADING_CURSOR, SHADING_DEPTH_CURSOR } from '../core/constants';
 
-function CursorControl( hudObject, viewer, cursorScale ) {
+class CursorControl extends Control {
 
-	const container = viewer.container;
+	constructor ( hudObject, viewer, cursorScale ) {
 
-	const hr = hudObject.createHitRegion( cursorScale.barWidth, cursorScale.barHeight, handleEnter );
+		super( viewer.container, cursorScale.barWidth, cursorScale.barHeight, handleEnter );
 
-	let dragging = false;
-	let barTop;
+		const hr = this.hitRegion;
 
-	hr.style.right = hudObject.stdMargin + 'px';
-	hr.style.bottom = cursorScale.barOffset + 'px';
+		let dragging = false;
+		let barTop;
 
-	container.appendChild( hr );
+		this.positionHitRegion( hudObject.stdMargin, cursorScale.barOffset );
 
-	this.hr = hr;
+		const handlers = {
+			mouseleave: handleLeave,
+			mousemove:  handleMouseMove,
+			mousedown:  handleMouseDown,
+			mouseup:    handleMouseUp
+		};
 
-	function handleEnter ( event ) {
+		const self = this;
 
-		if ( ! viewer.HUD ) return;
-		if ( viewer.shadingMode !== SHADING_CURSOR && viewer.shadingMode !== SHADING_DEPTH_CURSOR ) return;
+		function handleEnter ( event ) {
 
-		const target = event.currentTarget;
+			if ( ! viewer.HUD ) return;
+			if ( viewer.shadingMode !== SHADING_CURSOR && viewer.shadingMode !== SHADING_DEPTH_CURSOR ) return;
 
-		target.addEventListener( 'mouseleave', handleLeave );
-		target.addEventListener( 'mousemove',  handleMouseMove );
-		target.addEventListener( 'mousedown',  handleMouseDown );
-		target.addEventListener( 'mouseup',    handleMouseUp );
+			self.commonEnter( event.currentTarget, handlers );
 
-		// update center position (accounts for resizes)
-		const bc = container.getBoundingClientRect();
+			// update center position (accounts for resizes)
+			const bc = self.rect;
 
-		barTop = bc.top + hr.offsetTop;
+			barTop = bc.top + hr.offsetTop;
+			dragging = false;
 
-		hr.style.cursor = 'pointer';
+		}
 
-	}
+		function setCursor( clientY ) {
 
-	function setCursor( clientY ) {
+			const heightFraction = ( cursorScale.barHeight - clientY + barTop ) / cursorScale.barHeight;
+			const range = viewer.maxHeight - viewer.minHeight;
 
-		const heightFraction = ( cursorScale.barHeight - clientY + barTop ) / cursorScale.barHeight;
-		const range = viewer.maxHeight - viewer.minHeight;
+			// handle direction of scale and range
 
-		// handle direction of scale and range
+			if ( viewer.shadingMode === SHADING_DEPTH_CURSOR ) {
 
-		if ( viewer.shadingMode === SHADING_DEPTH_CURSOR ) {
+				viewer.cursorHeight = range - range * heightFraction;
 
-			viewer.cursorHeight = range - range * heightFraction;
+			} else {
 
-		} else {
+				viewer.cursorHeight = range * heightFraction - range / 2;
 
-			viewer.cursorHeight = range * heightFraction - range / 2;
+			}
+
+		}
+
+		function handleLeave ( event ) {
+
+			self.commonLeave( event.currentTarget, handlers );
+
+		}
+
+		function handleMouseDown ( event ) {
+
+			event.stopPropagation();
+
+			setCursor( event.clientY );
+			dragging = true;
+
+		}
+
+		function handleMouseUp ( event ) {
+
+			event.stopPropagation();
+
+			dragging = false;
+
+		}
+
+		function handleMouseMove ( event ) {
+
+			event.stopPropagation();
+			event.preventDefault();
+
+			if ( ! dragging ) return;
+
+			setCursor( event.clientY );
 
 		}
 
 	}
 
-	function handleLeave ( event ) {
-
-		const target = event.currentTarget;
-
-		target.removeEventListener( 'mouseleave', handleLeave );
-		target.removeEventListener( 'mousemove',  handleMouseMove );
-		target.removeEventListener( 'mousedown',  handleMouseDown );
-		target.removeEventListener( 'mouseup',    handleMouseUp );
-
-		hr.style.cursor = 'default';
-		dragging = false;
-
-	}
-
-	function handleMouseDown ( event ) {
-
-		event.stopPropagation();
-
-		setCursor( event.clientY );
-		dragging = true;
-
-	}
-
-	function handleMouseUp ( event ) {
-
-		event.stopPropagation();
-
-		dragging = false;
-
-	}
-
-	function handleMouseMove ( event ) {
-
-		event.stopPropagation();
-		event.preventDefault();
-
-		if ( ! dragging ) return;
-
-		setCursor( event.clientY );
-
-	}
-
 }
-
-CursorControl.prototype.dispose = function () {
-
-	const hr = this.hr;
-	hr.parentNode.removeChild( hr );
-
-};
 
 export { CursorControl };

@@ -1,112 +1,123 @@
+import { Control } from './Control';
 
-function AHIControl( hudObject, viewer ) {
+class AHIControl extends Control {
 
-	const container = viewer.container;
-	const controls = viewer.getControls();
+	constructor ( hudObject, viewer ) {
 
-	const hr = hudObject.createHitRegion( hudObject.stdWidth * 2, hudObject.stdWidth * 2, handleEnter );
-	const ballSize = hudObject.stdWidth - 10;
+		const dim = hudObject.stdWidth * 2;
 
-	let dragging = false;
-	let centerY;
-	let lastAngle;
+		super( viewer.container, dim, dim, handleEnter );
 
-	hr.style.right = hudObject.stdMargin * 3 + hudObject.stdWidth * 2 + 'px';
-	hr.style.bottom = hudObject.stdMargin + 'px';
+		const controls = viewer.getControls();
 
-	container.appendChild( hr );
+		const hr = this.hitRegion;
+		const ballSize = hudObject.stdWidth - 10;
 
-	function handleEnter ( event ) {
+		let dragging = false;
+		let centerY;
+		let lastAngle;
 
-		if ( ! viewer.HUD ) return;
+		this.positionHitRegion( hudObject.stdMargin * 3 + hudObject.stdWidth * 2, hudObject.stdMargin );
 
-		const target = event.currentTarget;
+		const handlers = {
+			mouseleave: handleLeave,
+			mousemove:  handleMouseMove,
+			mousedown:  handleMouseDown,
+			mouseup:    handleMouseUp,
+//			click:      handleClick,
+			dblclick:   handleDblClick,
+		};
 
-		target.addEventListener( 'mouseleave', handleLeave );
-		target.addEventListener( 'mousemove',  handleMouseMove );
-		target.addEventListener( 'mousedown',  handleMouseDown );
-		target.addEventListener( 'mouseup',    handleMouseUp );
-		target.addEventListener( 'dblclick',   handleDblClick );
+		const self = this;
 
-		// update center position (accounts for resizes)
-		const bc = container.getBoundingClientRect();
-		centerY = bc.top + hr.offsetTop + hudObject.stdWidth;
+		function handleEnter ( event ) {
 
-		hr.style.cursor = 'pointer';
+			if ( ! viewer.HUD ) return;
 
-	}
+			self.commonEnter( event.currentTarget, handlers );
 
-	function handleLeave ( event ) {
+			// update center position (accounts for resizes)
+			const bc = self.rect;
 
-		const target = event.currentTarget;
+			centerY = bc.top + hr.offsetTop + hudObject.stdWidth;
+			dragging = false;
 
-		if ( dragging ) controls.end();
+		}
 
-		target.removeEventListener( 'mouseleave', handleLeave );
-		target.removeEventListener( 'mousemove',  handleMouseMove );
-		target.removeEventListener( 'mousedown',  handleMouseDown );
-		target.removeEventListener( 'mouseup',    handleMouseUp );
-		target.removeEventListener( 'dblclick',   handleDblClick );
+		function handleLeave ( event ) {
 
-		hr.style.cursor = 'default';
-		dragging = false;
+			if ( dragging ) controls.end();
 
-	}
+			self.commonLeave( event.currentTarget, handlers );
 
-	function handleMouseDown ( event ) {
+		}
 
-		event.stopPropagation();
+		function handleMouseDown ( event ) {
 
-		dragging = true;
-		lastAngle = Math.atan( ( event.clientY - centerY ) / ballSize );
+			event.stopPropagation();
 
-	}
+			dragging = true;
+			lastAngle = Math.atan( ( event.clientY - centerY ) / ballSize );
 
-	function handleMouseUp ( event ) {
+		}
 
-		event.stopPropagation();
-		controls.end();
+		function handleMouseUp ( event ) {
 
-		dragging = false;
+			event.stopPropagation();
+			controls.end();
 
-	}
+			dragging = false;
 
-	function handleDblClick ( event ) {
+		}
 
-		event.stopPropagation();
+		function handleClick ( event ) {
 
-		if ( viewer.polarAngle < 0.0001 ) {
+			event.stopPropagation();
 
-			viewer.polarAngle = Math.PI / 2;
+			if ( viewer.polarAngle < 0.0001 ) {
 
-		} else {
+				viewer.polarAngle = Math.PI / 2;
 
-			viewer.polarAngle = 0;
+			} else {
+
+				viewer.polarAngle = 0;
+
+			}
+
+		}
+
+		function handleDblClick ( event ) {
+
+			event.stopPropagation();
+
+			if ( viewer.polarAngle < 0.0001 ) {
+
+				viewer.polarAngle = Math.PI / 2;
+
+			} else {
+
+				viewer.polarAngle = 0;
+
+			}
+
+		}
+
+		function handleMouseMove ( event ) {
+
+			event.stopPropagation();
+			event.preventDefault();
+
+			if ( ! dragging ) return;
+
+			const angle = Math.atan( ( event.clientY - centerY ) / ballSize );
+
+			controls.rotateUp( lastAngle - angle );
+
+			lastAngle = angle;
 
 		}
 
 	}
-
-	function handleMouseMove ( event ) {
-
-		event.stopPropagation();
-		event.preventDefault();
-
-		if ( ! dragging ) return;
-
-		const angle = Math.atan( ( event.clientY - centerY ) / ballSize );
-
-		controls.rotateUp( lastAngle - angle );
-
-		lastAngle = angle;
-
-	}
-
-	this.dispose = function () {
-
-		container.removeChild( hr );
-
-	};
 
 }
 

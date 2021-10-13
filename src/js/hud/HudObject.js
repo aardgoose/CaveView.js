@@ -19,23 +19,6 @@ Object.assign( HudObject.prototype, {
 
 	stdMargin: 5,
 
-	createHitRegion: function ( width, height, onEnter ) {
-
-		const div = document.createElement( 'div' );
-
-		div.style.width = width + 'px';
-		div.style.height = height + 'px';
-		div.style.position = 'absolute';
-
-		div.setAttribute( 'draggable', 'false' );
-		div.addEventListener( 'dragstart', e => e.preventDefault() );
-
-		div.addEventListener( 'mouseenter', onEnter );
-
-		return div;
-
-	},
-
 	getCommonRing: function () {
 
 		let commonRing = this.commonRing;

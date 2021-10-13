@@ -23,6 +23,19 @@ class CommonTerrainMaterial extends MeshLambertMaterial {
 
 	}
 
+	editShaderInclude( shader, name ) {
+
+		const start = '#include <' + name;
+		this.editShader(
+			shader,
+			start + '_vertex_pars>',
+			start + '_vertex>',
+			start + '_fragment_pars>',
+			start + '_fragment>'
+		);
+
+	}
+
 	setThroughMode ( mode ) {
 
 		this.stencilWrite = false;

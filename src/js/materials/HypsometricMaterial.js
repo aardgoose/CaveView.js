@@ -1,27 +1,5 @@
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 
-const vertexPars = [
-	'uniform float minZ;',
-	'uniform float scaleZ;',
-	'varying float zMap;',
-	'varying vec2 vPosition;'
-].join( '\n' );
-
-const vertexMain = [
-	'vPosition = vec2( position.x, position.y );',
-	'zMap = saturate( ( position.z - minZ ) * scaleZ );'
-].join( '\n' );
-
-const fragmentPars = [
-	'uniform sampler2D cmap;',
-	'varying float zMap;'
-].join( '\n' );
-
-const fragmentColor = [
-	'diffuseColor = texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) );',
-	'diffuseColor.a = opacity;'
-].join( '\n' );
-
 class HypsometricMaterial extends CommonTerrainMaterial {
 
 	constructor ( ctx ) {
@@ -54,7 +32,7 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 				}
 			);
 
-			this.editShader( shader, vertexPars, vertexMain, fragmentPars, fragmentColor );
+			this.editShaderInclude( shader, 'hypsometric' );
 
 		};
 

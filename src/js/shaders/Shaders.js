@@ -45,6 +45,16 @@ import depth_vertex from './chunks/depth_vertex.glsl';
 import cursor_fragment from './chunks/cursor_fragment.glsl';
 import cursor_fragment_pars from './chunks/cursor_fragment_pars.glsl';
 
+import contour_vertex from './chunks/contour_vertex.glsl';
+import contour_vertex_pars from './chunks/contour_vertex_pars.glsl';
+import contour_fragment_pars from './chunks/contour_fragment_pars.glsl';
+import contour_fragment from './chunks/contour_fragment.glsl';
+
+import hypsometric_vertex from './chunks/hypsometric_vertex.glsl';
+import hypsometric_vertex_pars from './chunks/hypsometric_vertex_pars.glsl';
+import hypsometric_fragment_pars from './chunks/hypsometric_fragment_pars.glsl';
+import hypsometric_fragment from './chunks/hypsometric_fragment.glsl';
+
 Object.assign( ShaderChunk, {
 	// common wall shader code
 	wall_vertex: wall_vertex,
@@ -57,7 +67,18 @@ Object.assign( ShaderChunk, {
 
 	// common cursor shader code
 	cursor_fragment: cursor_fragment,
-	cursor_fragment_pars: cursor_fragment_pars
+	cursor_fragment_pars: cursor_fragment_pars,
+
+	contour_vertex: contour_vertex,
+	contour_vertex_pars: contour_vertex_pars,
+	contour_fragment_pars: contour_fragment_pars,
+	contour_fragment: contour_fragment,
+
+	hypsometric_vertex: hypsometric_vertex,
+	hypsometric_vertex_pars: hypsometric_vertex_pars,
+	hypsometric_fragment_pars: hypsometric_fragment_pars,
+	hypsometric_fragment: hypsometric_fragment,
+
 } );
 
 export const Shaders = {

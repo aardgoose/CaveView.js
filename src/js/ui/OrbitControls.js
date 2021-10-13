@@ -15,7 +15,7 @@
 import {
 	Vector2, Vector3, Quaternion, Spherical,
 	MOUSE,
-	EventDispatcher
+	EventDispatcher, MathUtils
 } from '../Three';
 
 const MODE_LOCK_UNLOCKED = 0;
@@ -188,10 +188,10 @@ class OrbitControls extends EventDispatcher {
 				spherical.phi += sphericalDelta.phi;
 
 				// restrict theta to be between desired limits
-				spherical.theta = Math.max( scope.minAzimuthAngle, Math.min( scope.maxAzimuthAngle, spherical.theta ) );
+				spherical.theta = MathUtils.clamp( spherical.theta, scope.minAzimuthAngle, scope.maxAzimuthAngle );
 
 				// restrict phi to be between desired limits
-				spherical.phi = Math.max( scope.minPolarAngle, Math.min( scope.maxPolarAngle, spherical.phi ) );
+				spherical.phi = MathUtils.clamp( spherical.phi, scope.minPolarAngle, scope.maxPolarAngle );
 
 				spherical.makeSafe();
 
@@ -199,7 +199,7 @@ class OrbitControls extends EventDispatcher {
 				spherical.radius *= scale;
 
 				// restrict radius to be between desired limits
-				spherical.radius = Math.max( scope.minDistance, Math.min( scope.maxDistance, spherical.radius ) );
+				spherical.radius = MathUtils.clamp( spherical.radius, scope.minDistance, scope.maxDistance );
 
 				// move target to panned location
 				target.add( panOffset );
@@ -210,11 +210,11 @@ class OrbitControls extends EventDispatcher {
 
 					if ( camera.isPerspectiveCamera ) {
 
-						scope.target.lerp( mouse3D, 1 - spherical.radius / prevRadius );
+						target.lerp( mouse3D, 1 - spherical.radius / prevRadius );
 
 					} else if ( camera.isOrthographicCamera ) {
 
-						scope.target.lerp( mouse3D, 1 - zoomFactor );
+						target.lerp( mouse3D, 1 - zoomFactor );
 
 					}
 
@@ -465,7 +465,7 @@ class OrbitControls extends EventDispatcher {
 			} else if ( camera.isOrthographicCamera ) {
 
 				zoomFactor = camera.zoom;
-				camera.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, camera.zoom * dollyScale ) );
+				camera.zoom = MathUtils.clamp( camera.zoom * dollyScale, scope.minZoom, scope.maxZoom );
 				zoomFactor /= camera.zoom;
 				camera.updateProjectionMatrix();
 				zoomChanged = true;
@@ -485,7 +485,7 @@ class OrbitControls extends EventDispatcher {
 			} else if ( camera.isOrthographicCamera ) {
 
 				zoomFactor = camera.zoom;
-				camera.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, camera.zoom / dollyScale ) );
+				camera.zoom = MathUtils.clamp( camera.zoom / dollyScale, scope.minZoom, scope.maxZoom );
 				zoomFactor /= camera.zoom;
 				camera.updateProjectionMatrix();
 				zoomChanged = true;
@@ -678,11 +678,12 @@ class OrbitControls extends EventDispatcher {
 
 			const v = new Vector3();
 			const v1 = new Vector3();
+			const up = new Vector3();
 
 			return function updateMouse3D( x, y ) {
 
 				const camera = cameraManager.activeCamera;
-				const up = camera.up;
+				camera.getWorldDirection( up );
 
 				let distance;
 
@@ -702,13 +703,12 @@ class OrbitControls extends EventDispatcher {
 
 				if ( camera.isPerspectiveCamera ) {
 
-					v.set( mouse.x, mouse.y, mouseStart.z );
-
-					v.unproject( camera );
-
+					v.set( mouse.x, mouse.y, mouseStart.z ).unproject( camera );
 					v.sub( camera.position ).normalize();
 
-					distance = v1.copy( scope.target ).sub( camera.position ).dot( up ) / v.dot( up );
+					v1.copy( scope.target ).sub( camera.position );
+
+					distance = v1.dot( up ) / v.dot( up );
 
 					mouse3D.copy( camera.position ).add( v.multiplyScalar( distance ) );
 
@@ -723,11 +723,6 @@ class OrbitControls extends EventDispatcher {
 					distance = - v.dot( up ) / v1.dot( up );
 
 					mouse3D.copy( v ).add( v1.multiplyScalar( distance ) );
-
-				} else {
-
-					// camera neither orthographic nor perspective
-					console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type.' );
 
 				}
 

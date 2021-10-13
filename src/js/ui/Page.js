@@ -109,13 +109,9 @@ class Page {
 
 	addCollapsingHeader ( text ) {
 
-		const div = document.createElement( 'div' );
+		const div = this.addHeader( text );
 
-		div.classList.add( 'header' );
-		div.textContent = this.i18n( text );
 		div.classList.add( 'header_full' );
-
-		this.page.appendChild( div );
 
 		const container = document.createElement( 'div' );
 
@@ -125,21 +121,14 @@ class Page {
 
 		this.addListener( div, 'click', () => {
 
-			let redraw; // eslint-disable-line no-unused-vars
-
 			if ( div.classList.contains( 'header_collapsed' ) ) {
 
-				container.style.display = 'block';
-
 				this.addListener( container, 'transitionend', _onReveal );
-
-				redraw = container.clientHeight; // lgtm
 				container.classList.remove( 'container_collapsed' );
 
 			} else {
 
 				this.addListener( container, 'transitionend', _onCollapse );
-
 				container.classList.add( 'container_collapsed' );
 
 			}
@@ -147,7 +136,6 @@ class Page {
 			function _onReveal () {
 
 				container.removeEventListener( 'transitionend', _onReveal );
-
 				div.classList.remove( 'header_collapsed' );
 
 			}
@@ -155,9 +143,7 @@ class Page {
 			function _onCollapse () {
 
 				container.removeEventListener( 'transitionend', _onCollapse );
-
 				div.classList.add( 'header_collapsed' );
-				container.style.display = 'none';
 
 			}
 

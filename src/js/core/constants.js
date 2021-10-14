@@ -1,5 +1,5 @@
 
-export const VERSION = '2.3.1';
+export const VERSION = '2.4.0';
 
 export const CAMERA_NONE         = 0;
 export const CAMERA_ORTHOGRAPHIC = 1;

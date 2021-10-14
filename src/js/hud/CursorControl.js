@@ -13,10 +13,10 @@ class CursorControl extends Control {
 		this.positionHitRegion( hudObject.stdMargin, cursorScale.barOffset );
 
 		const handlers = {
-			mouseleave: handleLeave,
-			mousemove:  handleMouseMove,
-			mousedown:  handleMouseDown,
-			mouseup:    handleMouseUp
+			pointerleave: handleLeave,
+			pointermove:  handlePointerMove,
+			pointerdown:  handlePointerDown,
+			pointerup:    handlePointerUp
 		};
 
 		const self = this;
@@ -60,7 +60,7 @@ class CursorControl extends Control {
 
 		}
 
-		function handleMouseDown ( event ) {
+		function handlePointerDown ( event ) {
 
 			event.stopPropagation();
 
@@ -69,7 +69,7 @@ class CursorControl extends Control {
 
 		}
 
-		function handleMouseUp ( event ) {
+		function handlePointerUp ( event ) {
 
 			event.stopPropagation();
 
@@ -77,7 +77,7 @@ class CursorControl extends Control {
 
 		}
 
-		function handleMouseMove ( event ) {
+		function handlePointerMove ( event ) {
 
 			event.stopPropagation();
 			event.preventDefault();

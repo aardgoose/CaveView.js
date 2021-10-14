@@ -18,7 +18,7 @@ class Control {
 		div.setAttribute( 'draggable', 'false' );
 		div.addEventListener( 'dragstart', e => e.preventDefault() );
 
-		div.addEventListener( 'mouseenter', onEnter );
+		div.addEventListener( 'pointerenter', onEnter );
 
 		return div;
 
@@ -30,7 +30,6 @@ class Control {
 
 		hr.style.right = right + 'px';
 		hr.style.bottom = bottom + 'px';
-		hr.style.border = 'solid 1px red';
 
 		this.container.appendChild( hr );
 

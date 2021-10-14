@@ -22,11 +22,10 @@ class CompassControl extends Control {
 		this.positionHitRegion( hudObject.stdMargin, hudObject.stdMargin );
 
 		const handlers = {
-			mouseleave: handleLeave,
-			mousemove:  handleMouseMove,
-			mousedown:  handleMouseDown,
-			mouseup:    handleMouseUp,
-			click:      handleClick,
+			pointerleave: handleLeave,
+			pointermove:  handlePointerMove,
+			pointerdown:  handlePointerDown,
+			pointerup:    handlePointerUp
 		};
 
 		const self = this;
@@ -52,7 +51,7 @@ class CompassControl extends Control {
 
 		}
 
-		function handleMouseDown ( event ) {
+		function handlePointerDown ( event ) {
 
 			event.stopPropagation();
 
@@ -64,21 +63,25 @@ class CompassControl extends Control {
 
 		}
 
-		function handleMouseUp ( event ) {
+		function handlePointerUp ( event ) {
 
 			event.stopPropagation();
 
-			controls.end();
+			if ( dragged ) {
+
+				controls.end();
+
+			} else {
+
+				handleClick();
+
+			}
 
 			dragging = false;
 
 		}
 
-		function handleClick ( event ) {
-
-			event.stopPropagation();
-
-			if ( dragged ) return;
+		function handleClick () {
 
 			// select cardinal point from quadrant of control clicked on
 
@@ -110,7 +113,7 @@ class CompassControl extends Control {
 
 		}
 
-		function handleMouseMove ( event ) {
+		function handlePointerMove ( event ) {
 
 			event.stopPropagation();
 			event.preventDefault();

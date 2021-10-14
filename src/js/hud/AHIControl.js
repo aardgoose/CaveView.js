@@ -22,11 +22,10 @@ class AHIControl extends Control {
 		this.positionHitRegion( hudObject.stdMargin * 3 + hudObject.stdWidth * 2, hudObject.stdMargin );
 
 		const handlers = {
-			mouseleave: handleLeave,
-			mousemove:  handleMouseMove,
-			mousedown:  handleMouseDown,
-			mouseup:    handleMouseUp,
-			click:      handleClick
+			pointerleave: handleLeave,
+			pointermove:  handlePointerMove,
+			pointerdown:  handlePointerDown,
+			pointerup:    handlePointerUp,
 		};
 
 		const self = this;
@@ -51,7 +50,7 @@ class AHIControl extends Control {
 
 		}
 
-		function handleMouseDown ( event ) {
+		function handlePointerDown ( event ) {
 
 			event.stopPropagation();
 
@@ -61,29 +60,26 @@ class AHIControl extends Control {
 
 		}
 
-		function handleMouseUp ( event ) {
+		function handlePointerUp ( event ) {
 
 			event.stopPropagation();
+
+			if ( ! dragged ) {
+
+				const dir = Math.sign( event.clientY - centerY );
+
+				// round to nearest 30 degrees and inc/dec by 30 degrees. clamping in orbit control.
+				viewer.polarAngle = d30 * ( Math.round( viewer.polarAngle / d30 ) + dir );
+
+			}
+
 			controls.end();
 
 			dragging = false;
 
 		}
 
-		function handleClick ( event ) {
-
-			event.stopPropagation();
-
-			if ( dragged ) return;
-
-			const dir = Math.sign( event.clientY - centerY );
-
-			// round to nearest 30 degrees and inc/dec by 30 degrees. clamping in orbit control.
-			viewer.polarAngle = d30 * ( Math.round( viewer.polarAngle / d30 ) + dir );
-
-		}
-
-		function handleMouseMove ( event ) {
+		function handlePointerMove ( event ) {
 
 			event.stopPropagation();
 			event.preventDefault();

@@ -82,7 +82,6 @@ Svx3dHandler.prototype.parse = function ( cave, dataStream, metadata, section, p
 Svx3dHandler.prototype.parse2 = function () {
 
 	const cave = this.cave;
-	const pos = this.pos;
 
 	switch ( this.version ) {
 

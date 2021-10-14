@@ -431,7 +431,6 @@ class WebTerrain extends CommonTerrain {
 
 	}
 
-
 	zoomCheck ( cameraManager ) {
 
 		if ( performance.now() - this.lastActivityTime < this.retile_timeout ) return;

@@ -12,24 +12,24 @@ class ColourCache {
 
 	getColorSet ( name ) {
 
-			let entry = ColourCache.setCache[ name ];
+		let entry = ColourCache.setCache[ name ];
 
-			if ( entry === undefined ) {
+		if ( entry === undefined ) {
 
-				const scale = Colours[ name ];
+			const scale = Colours[ name ];
 
-				if ( scale === undefined ) console.error( 'unknown colour scale requested ' + name );
+			if ( scale === undefined ) console.error( 'unknown colour scale requested ' + name );
 
-				entry = scale.map( c => new Color( c[ 0 ] / 255, c[ 1 ] / 255, c[ 2 ] / 255 ) );
-				ColourCache.setCache[ name ] = entry;
+			entry = scale.map( c => new Color( c[ 0 ] / 255, c[ 1 ] / 255, c[ 2 ] / 255 ) );
+			ColourCache.setCache[ name ] = entry;
 
-			}
+		}
 
-			return entry;
+		return entry;
 
 	}
 
-	getColour( name ) {
+	getColour ( name ) {
 
 		let entry = ColourCache.cache[ name ];
 

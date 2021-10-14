@@ -2,6 +2,11 @@ import { BufferGeometry, Float32BufferAttribute, Mesh } from '../../Three';
 
 class Walls extends Mesh {
 
+	ready = true;
+	flat = false;
+	flatGeometry = null;
+	indexedGeometry = null;
+
 	constructor ( ctx ) {
 
 		const geometry = new BufferGeometry();
@@ -219,10 +224,5 @@ class Walls extends Mesh {
 	}
 
 }
-
-Walls.prototype.ready = true;
-Walls.prototype.flat = false;
-Walls.prototype.flatGeometry = null;
-Walls.prototype.indexedGeometry = null;
 
 export { Walls };

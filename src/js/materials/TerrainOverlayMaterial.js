@@ -4,7 +4,7 @@ class TerrainOverlayMaterial extends CommonTerrainMaterial {
 
 	constructor ( ctx ) {
 
-		super();
+		super( ctx );
 
 		this.transparent = true;
 
@@ -17,10 +17,6 @@ class TerrainOverlayMaterial extends CommonTerrainMaterial {
 				'' );
 
 		};
-
-		Object.defineProperty( this, 'opacity', {
-			get: function () { return ctx.materials.terrainOpacity; }
-		} );
 
 	}
 

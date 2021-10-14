@@ -8,7 +8,7 @@ class ContourMaterial extends CommonTerrainMaterial {
 		const cfg = ctx.cfg;
 		const materials = ctx.materials;
 
-		super();
+		super( ctx );
 
 		this.transparent = true;
 		this.extensions = { derivatives: true };
@@ -26,10 +26,6 @@ class ContourMaterial extends CommonTerrainMaterial {
 			this.editShaderInclude( shader, 'contour' );
 
 		};
-
-		Object.defineProperty( this, 'opacity', {
-			get: function () { return ctx.materials.terrainOpacity; }
-		} );
 
 	}
 

@@ -9,7 +9,7 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 		const terrain = survey.terrain;
 		const textureCache = ctx.materials.textureCache;
 
-		super();
+		super( ctx );
 
 		let zMin = cfg.themeValue( 'shading.hypsometric.min' );
 		let zMax = cfg.themeValue( 'shading.hypsometric.max' );
@@ -35,10 +35,6 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 			this.editShaderInclude( shader, 'hypsometric' );
 
 		};
-
-		Object.defineProperty( this, 'opacity', {
-			get: function () { return ctx.materials.terrainOpacity; }
-		} );
 
 	}
 

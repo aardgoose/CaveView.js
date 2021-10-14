@@ -8,6 +8,16 @@ import { TERRAIN_BLEND, TERRAIN_STENCIL, TERRAIN_BASIC } from '../core/constants
 
 class CommonTerrainMaterial extends MeshLambertMaterial {
 
+	constructor ( ctx, parameters ) {
+
+		super( parameters );
+
+		Object.defineProperty( this, 'opacity', {
+			get: function () { return ctx.materials.terrainOpacity; }
+		} );
+
+	}
+
 	editShader ( shader, vertexPars, vertexMain, fragmentPars, fragmentColor ) {
 
 		const vertexShader = shader.vertexShader

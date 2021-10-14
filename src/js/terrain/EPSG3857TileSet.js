@@ -129,7 +129,7 @@ class EPSG3857TileSet {
 
 	}
 
-	findTind ( point ) {
+	findTile ( point ) {
 
 		const tileSet = this.tileSet;
 

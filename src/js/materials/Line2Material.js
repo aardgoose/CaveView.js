@@ -15,12 +15,14 @@ const uniforms = UniformsUtils.merge( [
 		dashScale: { value: 1 },
 		dashSize: { value: 1 },
 		dashOffset: { value: 0 },
-		gapSize: { value: 1 }, // todo FIX - maybe change to totalSize
+		gapSize: { value: 1 },
 		opacity: { value: 1 }
 	}
 ] );
 
 class Line2Material extends ShaderMaterial {
+
+	isLineMaterial = true;
 
 	constructor ( ctx, params, defines = { CV_BASIC: true }, callerUniforms = {} ) {
 
@@ -232,7 +234,5 @@ class Line2Material extends ShaderMaterial {
 	}
 
 }
-
-Line2Material.prototype.isLineMaterial = true;
 
 export { Line2Material };

@@ -28,6 +28,8 @@ const _clipToWorldVector = new Vector4();
 
 class LineSegments2 extends Mesh {
 
+	LineSegments2 = true;
+
 	constructor( geometry = new LineSegmentsGeometry(), material = new Line2Material( {
 		color: Math.random() * 0xffffff
 	} ) ) {
@@ -35,8 +37,9 @@ class LineSegments2 extends Mesh {
 		super( geometry, material );
 		this.type = 'LineSegments2';
 
-	} // for backwards-compatability, but could be a method of LineSegmentsGeometry...
+	}
 
+	// for backwards-compatability, but could be a method of LineSegmentsGeometry...
 	computeLineDistances() {
 
 		const geometry = this.geometry;
@@ -276,7 +279,5 @@ class LineSegments2 extends Mesh {
 	}
 
 }
-
-LineSegments2.prototype.LineSegments2 = true;
 
 export { LineSegments2 };

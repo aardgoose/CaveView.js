@@ -7,6 +7,8 @@ import { TextureLoader, Mesh } from '../Three';
 
 class LoxTile extends Mesh {
 
+	isTile = true;
+
 	constructor ( ctx, terrain, offsets ) {
 
 		super( new LoxTerrainGeometry( terrain.dtm, offsets ), ctx.materials.getSurfaceMaterial() );
@@ -88,10 +90,10 @@ class LoxTile extends Mesh {
 
 }
 
-LoxTile.prototype.isTile = true;
-
-
 class LoxTerrain extends CommonTerrain {
+
+	isTiled = false;
+	isLoaded = true;
 
 	constructor ( ctx, terrains, offsets ) {
 
@@ -168,8 +170,5 @@ class LoxTerrain extends CommonTerrain {
 	}
 
 }
-
-LoxTerrain.prototype.isTiled = false;
-LoxTerrain.prototype.isLoaded = true;
 
 export { LoxTerrain };

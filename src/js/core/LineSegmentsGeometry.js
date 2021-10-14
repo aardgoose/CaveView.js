@@ -14,6 +14,8 @@ const _vector = new Vector3();
 
 class LineSegmentsGeometry extends InstancedBufferGeometry {
 
+	isLineSegmentsGeometry = true;
+
 	constructor () {
 
 		super();
@@ -30,13 +32,7 @@ class LineSegmentsGeometry extends InstancedBufferGeometry {
 
 	}
 
-}
-
-Object.assign( LineSegmentsGeometry.prototype, {
-
-	isLineSegmentsGeometry: true,
-
-	applyMatrix4: function ( matrix ) {
+	applyMatrix4 ( matrix ) {
 
 		const start = this.attributes.instanceStart;
 		const end = this.attributes.instanceEnd;
@@ -65,9 +61,9 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 		return this;
 
-	},
+	}
 
-	setPositions: function ( array ) {
+	setPositions ( array ) {
 
 		let lineSegments;
 
@@ -93,9 +89,9 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 		return this;
 
-	},
+	}
 
-	setColors: function ( array ) {
+	setColors ( array ) {
 
 		let colors;
 
@@ -116,9 +112,9 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 		return this;
 
-	},
+	}
 
-	setHide: function ( array ) {
+	setHide ( array ) {
 
 		let hiddenVertices;
 
@@ -136,15 +132,15 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 		return this;
 
-	},
+	}
 
-	clearHide: function () {
+	clearHide () {
 
 		this.deleteAttribute( 'instanceHideVertex' );
 
-	},
+	}
 
-	computeBoundingBox: function () {
+	computeBoundingBox () {
 
 		if ( this.boundingBox === null ) {
 
@@ -166,9 +162,9 @@ Object.assign( LineSegmentsGeometry.prototype, {
 		}
 
 
-	},
+	}
 
-	computeBoundingSphere: function () {
+	computeBoundingSphere () {
 
 		if ( this.boundingSphere === null ) {
 
@@ -213,8 +209,8 @@ Object.assign( LineSegmentsGeometry.prototype, {
 
 		}
 
-	},
+	}
 
-} );
+}
 
 export { LineSegmentsGeometry };

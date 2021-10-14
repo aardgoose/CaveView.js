@@ -1,25 +1,25 @@
 import { CylinderBufferGeometry } from '../Three';
 
-function HudObject ( ctx ) {
+class HudObject {
 
-	const cfg = ctx.cfg;
-	this.stdWidth = cfg.themeValue( 'hud.widgetSize' );
+	stdMargin = 5;
 
-	this.atlasSpec = {
-		color: cfg.themeColorCSS( 'hud.text' ),
-		font: cfg.themeValue( 'hud.font' )
-	};
+	constructor ( ctx ) {
 
-	this.commonRing = null;
-	this.ctx = ctx;
+		const cfg = ctx.cfg;
+		this.stdWidth = cfg.themeValue( 'hud.widgetSize' );
 
-}
+		this.atlasSpec = {
+			color: cfg.themeColorCSS( 'hud.text' ),
+			font: cfg.themeValue( 'hud.font' )
+		};
 
-Object.assign( HudObject.prototype, {
+		this.commonRing = null;
+		this.ctx = ctx;
 
-	stdMargin: 5,
+	}
 
-	getCommonRing: function () {
+	getCommonRing () {
 
 		let commonRing = this.commonRing;
 
@@ -33,8 +33,8 @@ Object.assign( HudObject.prototype, {
 
 		return commonRing;
 
-	},
+	}
 
-} );
+}
 
 export { HudObject };

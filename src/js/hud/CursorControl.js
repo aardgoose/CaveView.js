@@ -7,8 +7,6 @@ class CursorControl extends Control {
 
 		super( viewer.container, cursorScale.barWidth, cursorScale.barHeight, handleEnter );
 
-		const hr = this.hitRegion;
-
 		let dragging = false;
 		let barTop;
 
@@ -31,9 +29,8 @@ class CursorControl extends Control {
 			self.commonEnter( event.currentTarget, handlers );
 
 			// update center position (accounts for resizes)
-			const bc = self.rect;
 
-			barTop = bc.top + hr.offsetTop;
+			barTop = self.rect.top;
 			dragging = false;
 
 		}

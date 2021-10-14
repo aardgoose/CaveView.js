@@ -1,5 +1,7 @@
 import { Control } from './Control';
 
+const d30 = Math.PI / 6;
+
 class AHIControl extends Control {
 
 	constructor ( hudObject, viewer ) {
@@ -10,10 +12,10 @@ class AHIControl extends Control {
 
 		const controls = viewer.getControls();
 
-		const hr = this.hitRegion;
 		const ballSize = hudObject.stdWidth - 10;
 
 		let dragging = false;
+		let dragged = false;
 		let centerY;
 		let lastAngle;
 
@@ -24,8 +26,7 @@ class AHIControl extends Control {
 			mousemove:  handleMouseMove,
 			mousedown:  handleMouseDown,
 			mouseup:    handleMouseUp,
-//			click:      handleClick,
-			dblclick:   handleDblClick,
+			click:      handleClick
 		};
 
 		const self = this;
@@ -37,9 +38,7 @@ class AHIControl extends Control {
 			self.commonEnter( event.currentTarget, handlers );
 
 			// update center position (accounts for resizes)
-			const bc = self.rect;
-
-			centerY = bc.top + hr.offsetTop + hudObject.stdWidth;
+			centerY = self.rect.top +  hudObject.stdWidth;
 			dragging = false;
 
 		}
@@ -57,6 +56,7 @@ class AHIControl extends Control {
 			event.stopPropagation();
 
 			dragging = true;
+			dragged = false;
 			lastAngle = Math.atan( ( event.clientY - centerY ) / ballSize );
 
 		}
@@ -74,31 +74,12 @@ class AHIControl extends Control {
 
 			event.stopPropagation();
 
-			if ( viewer.polarAngle < 0.0001 ) {
+			if ( dragged ) return;
 
-				viewer.polarAngle = Math.PI / 2;
+			const dir = Math.sign( event.clientY - centerY );
 
-			} else {
-
-				viewer.polarAngle = 0;
-
-			}
-
-		}
-
-		function handleDblClick ( event ) {
-
-			event.stopPropagation();
-
-			if ( viewer.polarAngle < 0.0001 ) {
-
-				viewer.polarAngle = Math.PI / 2;
-
-			} else {
-
-				viewer.polarAngle = 0;
-
-			}
+			// round to nearest 30 degrees and inc/dec by 30 degrees. clamping in orbit control.
+			viewer.polarAngle = d30 * ( Math.round( viewer.polarAngle / d30 ) + dir );
 
 		}
 
@@ -114,6 +95,7 @@ class AHIControl extends Control {
 			controls.rotateUp( lastAngle - angle );
 
 			lastAngle = angle;
+			dragged = true;
 
 		}
 

@@ -44,7 +44,7 @@ class Control {
 
 		}
 
-		this.rect = this.container.getBoundingClientRect();
+		this.rect = this.hitRegion.getBoundingClientRect();
 		this.hitRegion.style.cursor = 'pointer';
 
 	}

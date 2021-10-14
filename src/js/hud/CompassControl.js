@@ -15,9 +15,9 @@ class CompassControl extends Control {
 		const center = new Vector2();
 
 		let dragging = false;
-		let startAngle = 0;
+		let dragged = false;
 
-		const hr = this.hitRegion;
+		let startAngle = 0;
 
 		this.positionHitRegion( hudObject.stdMargin, hudObject.stdMargin );
 
@@ -26,7 +26,7 @@ class CompassControl extends Control {
 			mousemove:  handleMouseMove,
 			mousedown:  handleMouseDown,
 			mouseup:    handleMouseUp,
-			dblclick:   handleDblClick,
+			click:      handleClick,
 		};
 
 		const self = this;
@@ -39,7 +39,7 @@ class CompassControl extends Control {
 
 			const bc = self.rect;
 
-			center.set( bc.left + hr.offsetLeft + hudObject.stdWidth, bc.top + hr.offsetTop + hudObject.stdWidth );
+			center.set( bc.left + hudObject.stdWidth, bc.top + hudObject.stdWidth );
 			dragging = false;
 
 		}
@@ -57,6 +57,8 @@ class CompassControl extends Control {
 			event.stopPropagation();
 
 			dragging = true;
+			dragged = false;
+
 			point.set( event.clientX, event.clientY ).sub( center );
 			startAngle = point.angle();
 
@@ -72,9 +74,11 @@ class CompassControl extends Control {
 
 		}
 
-		function handleDblClick ( event ) {
+		function handleClick ( event ) {
 
 			event.stopPropagation();
+
+			if ( dragged ) return;
 
 			// select cardinal point from quadrant of control clicked on
 
@@ -120,6 +124,7 @@ class CompassControl extends Control {
 			controls.rotateLeft( startAngle - angle );
 
 			startAngle = angle;
+			dragged = true;
 
 		}
 

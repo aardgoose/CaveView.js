@@ -50,7 +50,7 @@ class WorkerPool {
 
 		return worker;
 
-	};
+	}
 
 	putWorker ( worker ) {
 

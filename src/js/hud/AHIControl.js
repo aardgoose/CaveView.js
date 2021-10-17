@@ -44,8 +44,6 @@ class AHIControl extends Control {
 
 		function handleLeave ( event ) {
 
-			if ( dragging ) controls.end();
-
 			self.commonLeave( event.currentTarget, handlers );
 
 		}
@@ -56,7 +54,9 @@ class AHIControl extends Control {
 
 			dragging = true;
 			dragged = false;
+
 			lastAngle = Math.atan( ( event.clientY - centerY ) / ballSize );
+			self.hitRegion.setPointerCapture( event.pointerId );
 
 		}
 
@@ -74,6 +74,7 @@ class AHIControl extends Control {
 			}
 
 			controls.end();
+			self.hitRegion.releasePointerCapture( event.pointerId );
 
 			dragging = false;
 

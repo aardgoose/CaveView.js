@@ -83,9 +83,7 @@ Tree.prototype.addPath = function ( path ) {
 
 	let node = this.getByPathArray( pathArray );
 
-	if ( pathArray.length === 0 ) return node;
-
-	// add remainder of path to node
+	// return node or add remainder of path to node
 
 	while ( pathArray.length > 0 ) {
 

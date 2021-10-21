@@ -255,8 +255,8 @@ function CameraManager ( ctx, renderer, scene ) {
 	Object.defineProperties( this, {
 
 		'eyeSeparation': {
-			get: function () { return eyeSeparation; },
-			set: function ( x ) {
+			get() { return eyeSeparation; },
+			set( x ) {
 
 				// x varies from 0 to 1
 				// base separation = 0.064
@@ -273,8 +273,8 @@ function CameraManager ( ctx, renderer, scene ) {
 		},
 
 		'focalLength': {
-			get: function () { return perspectiveCamera.getFocalLength(); },
-			set: function ( x ) { perspectiveCamera.setFocalLength( x ); }
+			get() { return perspectiveCamera.getFocalLength(); },
+			set( x ) { perspectiveCamera.setFocalLength( x ); }
 		}
 
 	} );

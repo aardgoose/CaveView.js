@@ -32,8 +32,8 @@ function LightingManager ( ctx, scene ) {
 	};
 
 	Object.defineProperty( this, 'directionalLighting', {
-		get: function () { return directionalLight.visible; },
-		set: function ( on ) {
+		get() { return directionalLight.visible; },
+		set( on ) {
 
 			directionalLight.visible = on;
 			ambientLight.intensity = on ? 0.3 : 1.0;

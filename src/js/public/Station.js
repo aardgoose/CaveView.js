@@ -3,6 +3,23 @@ import { Leg } from './Leg';
 
 class Station {
 
+	static cache = new WeakMap();
+
+	static get( survey, station ) {
+
+		let s = Station.cache.get( station );
+
+		if ( s == undefined ) {
+
+			s = new Station( survey, station );
+			Station.cache.set( station, s );
+
+		}
+
+		return s;
+
+	}
+
 	constructor ( survey, station ) {
 
 		this.station = station;
@@ -59,7 +76,7 @@ class Station {
 		const legs = survey.features.get( LEG_CAVE );
 
 		survey.topology.shortestPathSearch( this.station, ( leg, s1, s2 ) =>
-			callback( new Leg( legs, leg, new Station( survey, s1 ), new Station( survey, s2 ) ) )
+			callback( new Leg( legs, leg, Station.get( survey, s1 ), Station.get( survey, s2 ) ) )
 		);
 
 	}

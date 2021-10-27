@@ -1277,7 +1277,7 @@ class CaveViewer extends EventDispatcher {
 
 				const e = {
 					type: 'leg',
-					leg: new Leg( legs, legIndex, new Station( survey, leg.start ), new Station( survey, leg.end ) ),
+					leg: new Leg( legs, legIndex, Station.get( survey, leg.start ), Station.get( survey, leg.end ) ),
 					handled: false,
 					highlight: false,
 					mouseEvent: event
@@ -1328,7 +1328,7 @@ class CaveViewer extends EventDispatcher {
 					const e = {
 						type: 'entrance',
 						displayName: entrance.name,
-						station: new Station( survey, station ),
+						station: Station.get( survey, station ),
 						filterConnected: false,
 						handled: false,
 						mouseEvent: event
@@ -1405,7 +1405,7 @@ class CaveViewer extends EventDispatcher {
 
 				const selectEvent = {
 					type: 'station',
-					node: new Station( survey, station),
+					node: Station.get( survey, station),
 					handled: false,
 					mouseEvent: event,
 					filterConnected: false
@@ -1651,7 +1651,7 @@ class CaveViewer extends EventDispatcher {
 
 		this.forEachStation = function ( callback ) {
 
-			survey.stations.forEach( station => callback( new Station( survey, station ) ) );
+			survey.stations.forEach( station => callback( Station.get( survey, station ) ) );
 
 		};
 

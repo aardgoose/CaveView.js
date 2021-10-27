@@ -330,7 +330,11 @@ class Stations extends Points {
 
 	forEach ( callback ) {
 
-		this.vertices.forEach( station => callback( station ) );
+		this.vertices.forEach( station => {
+
+			if ( station.connections !== 0 ) callback( station );
+
+		} );
 
 	}
 

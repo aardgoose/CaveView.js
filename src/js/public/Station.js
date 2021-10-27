@@ -20,6 +20,12 @@ class Station {
 
 	}
 
+	static flushCache() {
+
+		Station.cache = new WeakMap();
+
+	}
+
 	constructor ( survey, station ) {
 
 		this.station = station;

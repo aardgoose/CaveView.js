@@ -1112,6 +1112,7 @@ class CaveViewer extends EventDispatcher {
 			setScale();
 
 			materials.flushCache();
+			Station.flushCache();
 
 			scene.addStatic( survey );
 

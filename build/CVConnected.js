@@ -35,13 +35,10 @@ class Connected {
 
 			} );
 
-			viewer.shadingMode = CV2.SHADING_CUSTOM;
-			viewer.renderView();
-
 		} );
 
-
-
+		viewer.shadingMode = CV2.SHADING_CUSTOM;
+		viewer.renderView();
 
 	}
 

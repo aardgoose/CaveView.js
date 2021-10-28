@@ -1112,7 +1112,7 @@ class CaveViewer extends EventDispatcher {
 			setScale();
 
 			materials.flushCache();
-			Station.flushCache();
+			Station.initCache( survey );
 
 			scene.addStatic( survey );
 
@@ -1263,7 +1263,7 @@ class CaveViewer extends EventDispatcher {
 
 		};
 
-		function checkLegIntersects( event ) {
+		function checkLegIntersects ( event ) {
 
 			const legs = survey.features.get( LEG_CAVE );
 			const legIntersect = raycaster.intersectObject( legs, false )[ 0 ];
@@ -1278,7 +1278,7 @@ class CaveViewer extends EventDispatcher {
 
 				const e = {
 					type: 'leg',
-					leg: new Leg( legs, legIndex, Station.get( survey, leg.start ), Station.get( survey, leg.end ) ),
+					leg: new Leg( legs, legIndex, Station.get( leg.start ), Station.get( leg.end ) ),
 					handled: false,
 					highlight: false,
 					mouseEvent: event
@@ -1329,7 +1329,7 @@ class CaveViewer extends EventDispatcher {
 					const e = {
 						type: 'entrance',
 						displayName: entrance.name,
-						station: Station.get( survey, station ),
+						station: Station.get( station ),
 						filterConnected: false,
 						handled: false,
 						mouseEvent: event
@@ -1406,7 +1406,7 @@ class CaveViewer extends EventDispatcher {
 
 				const selectEvent = {
 					type: 'station',
-					node: Station.get( survey, station),
+					node: Station.get( station ),
 					handled: false,
 					mouseEvent: event,
 					filterConnected: false
@@ -1652,7 +1652,7 @@ class CaveViewer extends EventDispatcher {
 
 		this.forEachStation = function ( callback ) {
 
-			survey.stations.forEach( station => callback( Station.get( survey, station ) ) );
+			survey.stations.forEach( station => callback( Station.get( station ) ) );
 
 		};
 

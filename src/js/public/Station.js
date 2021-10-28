@@ -4,14 +4,15 @@ import { Leg } from './Leg';
 class Station {
 
 	static cache = new WeakMap();
+	static survey = null;
 
-	static get( survey, station ) {
+	static get( station ) {
 
 		let s = Station.cache.get( station );
 
 		if ( s == undefined ) {
 
-			s = new Station( survey, station );
+			s = new Station( station );
 			Station.cache.set( station, s );
 
 		}
@@ -20,26 +21,26 @@ class Station {
 
 	}
 
-	static flushCache() {
+	static initCache ( survey ) {
 
 		Station.cache = new WeakMap();
+		Station.survey = survey;
 
 	}
 
-	constructor ( survey, station ) {
+	constructor ( station ) {
 
 		this.station = station;
-		this.survey = survey;
 
 	}
 
-	id() {
+	id () {
 
 		return this.station.id;
 
 	}
 
-	name() {
+	name () {
 
 		return this.station.getPath();
 
@@ -47,42 +48,42 @@ class Station {
 
 	coordinates () {
 
-		return this.survey.getGeographicalPosition( this.station );
+		return Station.survey.getGeographicalPosition( this.station );
 
 	}
 
 
-	connectionCount() {
+	connectionCount () {
 
 		return this.station.connections;
 
 	}
 
-	isEntrance() {
+	isEntrance () {
 
 		return  ( this.station.type & STATION_ENTRANCE  ) === STATION_ENTRANCE;
 
 	}
 
-	adjacentStationIds() {
+	adjacentStationIds () {
 
-		return this.survey.topology.getAdjacentStations( this.station ).slice();
+		return Station.survey.topology.getAdjacentStations( this.station ).slice();
 
 	}
 
-	shortestPathDistance() {
+	shortestPathDistance () {
 
 		return this.station.shortestPath;
 
 	}
 
-	forEachConnectedLeg( callback ) {
+	forEachConnectedLeg ( callback ) {
 
-		const survey = this.survey;
+		const survey = Station.survey;
 		const legs = survey.features.get( LEG_CAVE );
 
 		survey.topology.shortestPathSearch( this.station, ( leg, s1, s2 ) =>
-			callback( new Leg( legs, leg, Station.get( survey, s1 ), Station.get( survey, s2 ) ) )
+			callback( new Leg( legs, leg, Station.get( s1 ), Station.get( s2 ) ) )
 		);
 
 	}

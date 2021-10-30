@@ -109,7 +109,7 @@ class Topology {
 		const legLengths = legsObject.legLengths;
 		const stations = this.stations;
 
-		stations.resetDistances();
+		stations.vertices.forEach( node => node.shortestPath = Infinity );
 
 		let maxDistance = 0;
 

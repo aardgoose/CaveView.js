@@ -1,4 +1,5 @@
 import { EventDispatcher } from '../Three';
+import { LEG_CAVE } from '../core/constants';
 
 class Routes extends EventDispatcher {
 
@@ -9,7 +10,8 @@ class Routes extends EventDispatcher {
 		// determine segments between junctions and entrances/passage ends and create mapping array.
 
 		this.metadata = survey.metadata;
-		this.topology = survey.topology;
+		this.segments = survey.topology.segments;
+		this.legs = survey.features.get( LEG_CAVE );
 		this.surveyTree = survey.surveyTree;
 
 		this.routes = new Map();
@@ -67,7 +69,7 @@ class Routes extends EventDispatcher {
 
 		const surveyTree = this.surveyTree;
 		const currentRoute = this.currentRoute;
-		const segmentMap = this.topology.segmentMap;
+		const segmentMap = this.segments.getMap();
 		const routeSegments = this.routes.get( routeName );
 
 		if ( ! routeSegments ) {
@@ -106,7 +108,7 @@ class Routes extends EventDispatcher {
 	saveCurrent () {
 
 		const routeName = this.currentRouteName;
-		const segmentMap = this.topology.segmentMap;
+		const segmentMap = this.segments.getMap();
 		const route = this.currentRoute;
 
 		if ( ! routeName ) return;
@@ -148,7 +150,7 @@ class Routes extends EventDispatcher {
 
 		const self = this;
 		const route = this.currentRoute;
-		const segment = this.topology.vertexSegment( index );
+		const segment = this.legs.vertexSegment( index );
 
 		this.adjacentSegments.clear();
 
@@ -162,7 +164,7 @@ class Routes extends EventDispatcher {
 
 			// handle adjacent segments to the latest segment toggled 'on'
 
-			const segmentInfo = this.topology.segmentToInfo[ segment ];
+			const segmentInfo = this.segments.getSegmentInfo( segment );
 
 			if ( segmentInfo !== undefined ) {
 
@@ -183,15 +185,15 @@ class Routes extends EventDispatcher {
 
 	}
 
-	inCurrentRoute ( index ) {
+	inCurrentRoute ( segment ) {
 
-		return this.currentRoute.has( this.topology.vertexSegment( index ) );
+		return this.currentRoute.has( segment );
 
 	}
 
-	adjacentToRoute ( index ) {
+	adjacentToRoute ( segment ) {
 
-		return this.adjacentSegments.has( this.topology.vertexSegment( index ) );
+		return this.adjacentSegments.has( segment );
 
 	}
 

@@ -1248,7 +1248,7 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		this.getStation = function ( mouse ) {
+		this.getStationUnderMouse = function ( mouse ) {
 
 			const threshold = raycaster.params.Points.threshold;
 
@@ -1269,12 +1269,15 @@ class CaveViewer extends EventDispatcher {
 			const legIntersect = raycaster.intersectObject( legs, false )[ 0 ];
 
 			let legIndex = null;
+			let segment = null;
 
 			if  ( legIntersect ) {
 
 				legIndex = legIntersect.faceIndex;
 
-				const leg = legs.getLegStations( legIndex );
+				const leg = legs.getLegInfo( legIndex );
+
+				segment = leg.segment;
 
 				const e = {
 					type: 'leg',
@@ -1288,20 +1291,35 @@ class CaveViewer extends EventDispatcher {
 
 				if ( e.highlight ) {
 
-					mouseUpFunction = _setHighlight;
+					mouseUpFunction = _setLegHighlight;
 
-					_setHighlight();
+					_setLegHighlight();
+					renderView();
+
+				} else {
+
+					mouseUpFunction = _setSegmentHighlight;
+
+					_setSegmentHighlight();
 					renderView();
 
 				}
 
 				legIndex = null;
+				segment = null;
 
 			}
 
-			function _setHighlight () {
+			function _setLegHighlight () {
 
-				survey.topology.legsObject.setHighlightLeg( legIndex );
+				legs.setHighlightLeg( legIndex );
+				setShadingMode( survey.caveShading );
+
+			}
+
+			function _setSegmentHighlight () {
+
+				legs.setHighlightSegment( segment );
 				setShadingMode( survey.caveShading );
 
 			}
@@ -1634,6 +1652,22 @@ class CaveViewer extends EventDispatcher {
 		this.getSurveyTree = function () {
 
 			return survey.surveyTree;
+
+		};
+
+		this.getStation = function ( path ) {
+
+			const node = survey.surveyTree.getByPath( path );
+
+			if ( node && node.isStation() && node.connections > 0 ) {
+
+				return Station.get( node );
+
+			} else {
+
+				return null;
+
+			}
 
 		};
 

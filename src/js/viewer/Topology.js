@@ -1,3 +1,5 @@
+import { Segments } from './Segments';
+
 class Topology {
 
 	constructor ( stations, legsObject ) {
@@ -7,9 +9,7 @@ class Topology {
 		this.stations = stations;
 		this.legsObject = legsObject;
 
-		this.vertexPairToSegment = []; // maps vertex index to segment membership
-		this.segmentMap = new Map(); // maps segments of survey between ends of passages and junctions.
-		this.segmentToInfo = {};
+		this.segments = new Segments();
 
 		this.maxDistance = 0;
 		this.zeroStation = null;
@@ -17,9 +17,10 @@ class Topology {
 		// determine segments between junctions and entrances/passage ends and create mapping array.
 
 		const legs = legsObject.legVertices;
-		const segmentMap = this.segmentMap;
-		const vertexPairToSegment = this.vertexPairToSegment;
-		const segmentToInfo = this.segmentToInfo;
+		const legLengths = legsObject.legLengths;
+		const vertexPairToSegment = legsObject.vertexPairToSegment;
+		const segments = this.segments;
+
 		const l = legs.length;
 
 		let station;
@@ -51,11 +52,14 @@ class Topology {
 					segment: segment,
 					startStation: station,
 					endStation: null,
+					length: 0
 				};
 
 				newSegment = false;
 
 			}
+
+			segmentInfo.length += legLengths[ i / 2 ];
 
 			station = v2;
 
@@ -64,15 +68,10 @@ class Topology {
 			if ( station && ( station.connections > 2 || ( i + 2 < l && ! station.equals( legs[ i + 2 ] ) ) ) ) {
 
 				// we have found a junction or a passage end
-				segmentInfo.endStation = station;
 
-				segmentMap.set( segmentInfo.startStation.id + ':' + station.id, segmentInfo );
-				segmentToInfo[ segment ] = segmentInfo;
-
-				station.linkedSegments.push( segment );
+				_addSegment();
 
 				segment++;
-
 				newSegment = true;
 
 			}
@@ -81,20 +80,27 @@ class Topology {
 
 		if ( ! newSegment ) {
 
+			_addSegment();
+
+		}
+
+		return this;
+
+		function _addSegment() {
+
 			segmentInfo.endStation = station;
 
-			segmentMap.set( segmentInfo.startStation.id + ':' + station.id, segmentInfo );
+			segments.addSegment( segmentInfo );
 
 			station.linkedSegments.push( segment );
 
 		}
 
-		return this;
 	}
 
-	vertexSegment ( index ) {
+	getSegmentInfo ( index ) {
 
-		return this.vertexPairToSegment[ index / 2 ];
+		return this.segments.getSegmentInfo( index );
 
 	}
 
@@ -106,6 +112,7 @@ class Topology {
 
 		const legsObject = this.legsObject;
 		const legs = legsObject.legVertices;
+		const legLengths = legsObject.legLengths;
 		const stations = this.stations;
 
 		stations.resetDistances();
@@ -133,7 +140,7 @@ class Topology {
 				const v1 = legs[ leg ];
 
 				const nextStation = ( v1 === station ) ? legs[ leg + 1 ] : v1;
-				const nextLength = legsObject.legLengths[ leg / 2 ];
+				const nextLength = legLengths[ leg / 2 ];
 
 				if ( legCallback !== null && ! legsSeen[ leg ] ) {
 

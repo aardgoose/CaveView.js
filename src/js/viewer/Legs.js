@@ -15,9 +15,11 @@ class Legs extends LineSegments2 {
 		this.colourCache = ctx.materials.colourCache;
 		this.legLengths = [];
 		this.legVertices = [];
+		this.vertexPairToSegment = []; // maps vertex index to segment membership
 		this.colors = [];
 		this.type = 'Legs';
 		this.highlightLeg = null;
+		this.highlightSegment = null;
 		this.scale.set( 1, 1, 1 );
 
 	}
@@ -154,6 +156,12 @@ class Legs extends LineSegments2 {
 
 	}
 
+	setHighlightSegment ( l ) {
+
+		this.highlightSegment = l;
+
+	}
+
 	setShading ( idSet, colourSegment, mode, dashed, filterConnected ) {
 
 		this.material = this.ctx.materials.getSurveyLineMaterial( mode, dashed );
@@ -165,6 +173,7 @@ class Legs extends LineSegments2 {
 		const vertices = this.legVertices;
 		const colors = this.colors.array;
 		const highlightLeg = this.highlightLeg === null ? null : this.highlightLeg * 2;
+		const highlightSegment = this.highlightSegment;
 
 		if ( idSet.size > 0 && legRuns ) {
 
@@ -198,12 +207,15 @@ class Legs extends LineSegments2 {
 
 		} else {
 
+			const segments = this.vertexPairToSegment;
+
 			for ( let v1 = 0, l = vertices.length; v1 < l; v1 += 2 ) {
 
 				const v2 = v1 + 1;
 
 				if (
 					( highlightLeg !== null && v1 !== highlightLeg ) ||
+					( highlightSegment !== null && segments[ v1 / 2 ] !== highlightSegment ) ||
 					( filterConnected && ( vertices[ v1 ].shortestPath === Infinity || vertices[ v2 ].shortestPath === Infinity ) )
 				) {
 
@@ -253,16 +265,22 @@ class Legs extends LineSegments2 {
 
 	}
 
-	getLegStations ( vertexIndex ) {
+	vertexSegment ( index ) {
+
+		return this.vertexPairToSegment[ index / 2 ];
+
+	}
+
+	getLegInfo ( legIndex ) {
 
 		const vertices = this.legVertices;
+		const vertexIndex = legIndex * 2;
 
-		vertexIndex *= 2;
-
-		const start = vertices[ vertexIndex ];
-		const end = vertices[ vertexIndex + 1 ];
-
-		return { start: start, end: end };
+		return {
+			start: vertices[ vertexIndex ],
+			end: vertices[ vertexIndex + 1 ],
+			segment: this.vertexPairToSegment[ legIndex ]
+		};
 
 	}
 

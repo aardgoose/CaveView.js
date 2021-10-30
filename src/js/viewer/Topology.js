@@ -98,12 +98,6 @@ class Topology {
 
 	}
 
-	getSegmentInfo ( index ) {
-
-		return this.segments.getSegmentInfo( index );
-
-	}
-
 	shortestPathSearch ( station, legCallback = null ) {
 
 		const legsSeen = [];

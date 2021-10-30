@@ -6,7 +6,6 @@ import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { ExtendedPointsMaterial } from './ExtendedPointsMaterial';
 import { GlyphMaterial } from './GlyphMaterial';
 import { HeightMaterial } from './HeightMaterial';
-import { ZMaterial } from './ZMaterial';
 import { HypsometricMaterial } from './HypsometricMaterial';
 import { MissingMaterial } from './MissingMaterial';
 import { SurveyLineMaterial } from './SurveyLineMaterial';
@@ -175,13 +174,6 @@ function Materials ( viewer ) {
 
 		const func = () => new HeightMaterial( ctx );
 		return getSurveyCacheMaterial( 'height', func, true );
-
-	};
-
-	this.getZMaterial = function () {
-
-		const func = () => new ZMaterial( ctx );
-		return getSurveyCacheMaterial( 'z', func, true );
 
 	};
 

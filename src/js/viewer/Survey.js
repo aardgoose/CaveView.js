@@ -6,7 +6,7 @@ import {
 	LABEL_STATION, LABEL_STATION_COMMENT,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
-	SHADING_SURFACE, CLUSTER_MARKERS, SHADING_DUPLICATE, SHADING_CUSTOM, SHADING_Z
+	SHADING_SURFACE, CLUSTER_MARKERS, SHADING_DUPLICATE, SHADING_CUSTOM
 } from '../core/constants';
 
 import { StationPosition } from '../core/StationPosition';
@@ -942,12 +942,6 @@ Survey.prototype.setShadingMode = function ( mode, filterConnected ) {
 	case SHADING_HEIGHT:
 
 		material = materials.getHeightMaterial();
-
-		break;
-
-	case SHADING_Z:
-
-		material = materials.getZMaterial();
 
 		break;
 

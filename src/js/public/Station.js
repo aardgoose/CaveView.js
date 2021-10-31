@@ -5,6 +5,7 @@ class Station {
 
 	static cache = new WeakMap();
 	static survey = null;
+	static legs = null;
 
 	static get( station ) {
 
@@ -25,6 +26,7 @@ class Station {
 
 		Station.cache = new WeakMap();
 		Station.survey = survey;
+		Station.legs = survey.features.get( LEG_CAVE );
 
 	}
 
@@ -67,7 +69,7 @@ class Station {
 
 	adjacentStationIds () {
 
-		return Station.survey.topology.getAdjacentStations( this.station ).slice();
+		return Station.legs.getAdjacentStations( this.station ).slice();
 
 	}
 
@@ -80,10 +82,9 @@ class Station {
 	forEachConnectedLeg ( callback ) {
 
 		const survey = Station.survey;
-		const legs = survey.features.get( LEG_CAVE );
 
-		survey.topology.shortestPathSearch( this.station, ( leg, s1, s2 ) =>
-			callback( new Leg( legs, leg, Station.get( s1 ), Station.get( s2 ) ) )
+		Station.legs.setShortestPaths( survey.stations, this.station, ( leg, s1, s2 ) =>
+			callback( new Leg( Station.legs, leg, Station.get( s1 ), Station.get( s2 ) ) )
 		);
 
 	}

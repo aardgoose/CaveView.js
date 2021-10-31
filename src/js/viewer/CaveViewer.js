@@ -17,6 +17,7 @@ import { CameraMove } from './CameraMove';
 import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
+import { SegmentPopup } from './SegmentPopup';
 import { Station } from '../public/Station';
 import { ImagePopup } from './ImagePopup';
 import { WebTerrain } from '../terrain/WebTerrain';
@@ -1204,6 +1205,17 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
+		function showSegmentPopup ( leg, point ) {
+
+			if ( popup !== null ) return;
+
+			popup = new SegmentPopup( ctx, leg, point, survey );
+			scene.add( popup );
+
+			renderView();
+
+		}
+
 		function setPopup ( station ) {
 
 			closePopup();
@@ -1296,11 +1308,14 @@ class CaveViewer extends EventDispatcher {
 					_setLegHighlight();
 					renderView();
 
-				} else {
+				}
+
+				if ( ! e.handled ) {
 
 					mouseUpFunction = _setSegmentHighlight;
 
 					_setSegmentHighlight();
+					_showSegmentPopup( leg, legIntersect.pointOnLine );
 					renderView();
 
 				}
@@ -1321,6 +1336,13 @@ class CaveViewer extends EventDispatcher {
 
 				legs.setHighlightSegment( segment );
 				setShadingMode( survey.caveShading );
+				if ( segment === null ) closePopup();
+
+			}
+
+			function _showSegmentPopup ( leg, point ) {
+
+				showSegmentPopup( leg, point );
 
 			}
 
@@ -1335,6 +1357,13 @@ class CaveViewer extends EventDispatcher {
 			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
 
 			container.addEventListener( 'mouseup', mouseUp );
+
+			if ( event.altKey ) {
+
+				checkLegIntersects( event );
+				return;
+
+			}
 
 			if ( self.entrances ) {
 
@@ -1371,12 +1400,7 @@ class CaveViewer extends EventDispatcher {
 
 			const hit = raycaster.intersectObjects( mouseTargets, false )[ 0 ];
 
-			if ( hit === undefined ) {
-
-				checkLegIntersects( event );
-				return;
-
-			}
+			if ( hit === undefined ) return;
 
 			switch ( mouseMode ) {
 
@@ -1475,7 +1499,7 @@ class CaveViewer extends EventDispatcher {
 
 				} else if ( event.button === MOUSE.RIGHT ) {
 
-					survey.shortestPathSearch( station );
+					survey.setShortestPaths( station );
 
 					self.dispatchEvent( { type: 'change', name: 'shadingMode' } );
 					renderView();

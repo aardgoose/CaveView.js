@@ -14,7 +14,6 @@ import { Entrances } from './Entrances';
 import { Stations } from './Stations';
 import { StationLabels } from './StationLabels';
 import { StationMarkers } from './StationMarkers';
-import { Topology } from './Topology';
 import { Routes } from './Routes';
 import { Legs } from './Legs';
 import { DyeTraces } from './DyeTraces';
@@ -65,7 +64,7 @@ class Survey extends Object3D {
 		this.routes = null;
 		this.stations = null;
 		this.terrain = null;
-		this.topology = null;
+		this.segments = null;
 		this.inverseWorld = new Matrix4();
 
 		this.lightDirection = new Vector3( -1, -1, 2 ).normalize();
@@ -338,7 +337,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.loadDyeTraces();
 
-	this.topology = new Topology( this.stations, this.getFeature( LEG_CAVE ) );
+	this.segments = this.getFeature( LEG_CAVE ).findTopology();
 
 	this.routes = new Routes( this );
 
@@ -672,13 +671,15 @@ Survey.prototype.getModelSurfaceFromWGS84 = function ( position, callback ) {
 
 };
 
-Survey.prototype.shortestPathSearch = function ( station ) {
+Survey.prototype.setShortestPaths = function ( station ) {
+
+	const legs = this.getFeature( LEG_CAVE );
 
 	this.highlightPath = null;
 
 	this.markers.clear();
 
-	this.topology.shortestPathSearch( station );
+	legs.setShortestPaths( this.stations, station );
 
 	this.markers.mark( station );
 
@@ -688,7 +689,9 @@ Survey.prototype.shortestPathSearch = function ( station ) {
 
 Survey.prototype.showShortestPath = function ( station ) {
 
-	this.highlightPath = this.topology.getShortestPath( station );
+	const legs = this.getFeature( LEG_CAVE );
+
+	this.highlightPath = legs.getShortestPath( station );
 
 	if ( this.lastMarkedStation !== null ) this.markers.unmark( this.lastMarkedStation );
 
@@ -702,7 +705,7 @@ Survey.prototype.showShortestPath = function ( station ) {
 
 Survey.prototype.getMaxDistance = function () {
 
-	return this.topology.maxDistance;
+	return this.getFeature( LEG_CAVE ).maxDistance;
 
 };
 
@@ -847,7 +850,7 @@ Survey.prototype.cutSection = function ( node ) {
 	// this.loadDyeTraces();
 
 	const legs = this.getFeature( LEG_CAVE );
-	this.topology = new Topology( this.stations, legs );
+	this.sections = legs.findTopology();
 
 	this.cutInProgress = true;
 
@@ -1121,7 +1124,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed, fil
 
 	case SHADING_DISTANCE:
 
-		if ( this.topology.maxDistance === 0 ) {
+		if ( mesh.maxDistance === 0 ) {
 
 			this.setLegColourByColour( mesh, cfg.themeColor( 'shading.unconnected' ) );
 
@@ -1211,7 +1214,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh, filterConnected ) {
 	const pathColor = cfg.themeColor( 'routes.active' );
 
 	const colourRange = colours.length - 1;
-	const maxDistance = this.topology.maxDistance;
+	const maxDistance = mesh.maxDistance;
 	const path = this.highlightPath;
 
 	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', false, filterConnected );

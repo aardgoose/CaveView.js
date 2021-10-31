@@ -10,7 +10,7 @@ class Routes extends EventDispatcher {
 		// determine segments between junctions and entrances/passage ends and create mapping array.
 
 		this.metadata = survey.metadata;
-		this.segments = survey.topology.segments;
+		this.segments = survey.segments;
 		this.legs = survey.features.get( LEG_CAVE );
 		this.surveyTree = survey.surveyTree;
 

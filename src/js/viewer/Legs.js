@@ -280,7 +280,8 @@ class Legs extends LineSegments2 {
 		return {
 			start: vertices[ vertexIndex ],
 			end: vertices[ vertexIndex + 1 ],
-			segment: this.vertexPairToSegment[ legIndex ]
+			segment: this.vertexPairToSegment[ legIndex ],
+			length: this.legLengths[ legIndex ]
 		};
 
 	}

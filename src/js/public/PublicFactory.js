@@ -28,9 +28,9 @@ class PublicFactory {
 
 	}
 
-	getLeg ( legs, leg ) {
+	getLeg ( leg ) {
 
-		return new Leg( legs, leg, this.getStation( leg.start ), this.getStation( leg.end ) );
+		return new Leg( this.survey, leg, this.getStation( leg.start ), this.getStation( leg.end ) );
 
 	}
 

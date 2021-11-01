@@ -60,9 +60,9 @@ class Station {
 		const legs = this.legs;
 		const factory = this.factory;
 
-		legs.setShortestPaths( survey.stations, this.station, ( leg ) => {
-			callback( new Leg( legs, leg, factory.getStation( leg.start ), factory.getStation( leg.end ) ) );
-		} );
+		legs.setShortestPaths( survey.stations, this.station, ( leg ) =>
+			callback( new Leg( survey, leg, factory.getStation( leg.start ), factory.getStation( leg.end ) ) )
+		);
 
 	}
 

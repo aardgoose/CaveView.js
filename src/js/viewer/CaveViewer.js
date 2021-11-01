@@ -1287,13 +1287,13 @@ class CaveViewer extends EventDispatcher {
 
 				legIndex = legIntersect.faceIndex;
 
-				const leg = legs.getLegInfo( legIndex );
+				const legInfo = legs.getLegInfo( legIndex );
 
-				segment = leg.segment;
+				segment = legInfo.segment;
 
 				const e = {
 					type: 'leg',
-					leg: publicFactory.getLeg( legs, leg ),
+					leg: publicFactory.getLeg( legInfo ),
 					handled: false,
 					highlight: false,
 					mouseEvent: event
@@ -1315,7 +1315,7 @@ class CaveViewer extends EventDispatcher {
 					mouseUpFunction = _setSegmentHighlight;
 
 					_setSegmentHighlight();
-					_showSegmentPopup( leg, legIntersect.pointOnLine );
+					_showSegmentPopup( legInfo, legIntersect.pointOnLine );
 					renderView();
 
 				}

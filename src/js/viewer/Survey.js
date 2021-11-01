@@ -637,6 +637,15 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 
 };
 
+Survey.prototype.getGeographicalDistance = function ( v1, v2 ) {
+
+	const p1 = this.getGeographicalPosition( v1 );
+	const p2 = this.getGeographicalPosition( v2 );
+
+	return p1.distanceTo( p2 );
+
+};
+
 Survey.prototype.containsWGS84Position = function ( position ) {
 
 	position.copy( this.projectionWGS84.forward( position ) );

@@ -528,6 +528,16 @@ class Legs extends LineSegments2 {
 
 	}
 
+	forEachLeg ( callback ) {
+
+		const l = this.legLengths.length;
+
+		for ( let i = 0; i < l; i++ ) {
+			callback ( this.getLegInfo( i ) );
+		}
+
+	}
+
 }
 
 export { Legs };

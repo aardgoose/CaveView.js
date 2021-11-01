@@ -1714,6 +1714,13 @@ class CaveViewer extends EventDispatcher {
 
 		};
 
+		this.forEachLeg = function ( callback ) {
+
+			const legs = survey.getFeature( LEG_CAVE );
+			legs.forEachLeg( legId => callback( publicFactory.getLeg( legId ) ) );
+
+		};
+
 		this.dispose = function () {
 
 			ctx.workerPools.dispose();

@@ -1,5 +1,4 @@
 import { STATION_ENTRANCE, LEG_CAVE } from '../core/constants';
-import { Leg } from './Leg';
 
 class Station {
 

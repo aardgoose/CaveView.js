@@ -9,7 +9,6 @@ import {
 	SHADING_SURFACE, CLUSTER_MARKERS, SHADING_DUPLICATE, SHADING_CUSTOM
 } from '../core/constants';
 
-import { StationPosition } from '../core/StationPosition';
 import { Entrances } from './Entrances';
 import { Stations } from './Stations';
 import { StationLabels } from './StationLabels';

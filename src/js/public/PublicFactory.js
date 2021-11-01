@@ -30,7 +30,7 @@ class PublicFactory {
 
 	}
 
-	getLeg( legInfo ) {
+	getLeg ( legInfo ) {
 
 		let leg = this.legCache.get( legInfo );
 
@@ -55,7 +55,7 @@ class PublicFactory {
 
 			const segmentInfo = survey.segments.getSegmentInfo( segmentIndex );
 
-			segment = Segment( segmentInfo, this.getStation( segmentInfo.startStation ), this.getStation( segmentInfo.endStation ) );
+			segment = new Segment( segmentInfo, this.getStation( segmentInfo.startStation ), this.getStation( segmentInfo.endStation ) );
 			this.segmentCache[ segmentIndex ] = segment;
 
 		}

@@ -7,7 +7,7 @@ class Leg {
 		const s1Start = ( s1.shortestPathDistance() < s2.shortestPathDistance() );
 		const survey = factory.survey;
 
-		this.survey = survey;
+		this.factory = factory;
 		this.legLength = legInfo.length;
 		this.index = legInfo.index;
 		this.segmentId = legInfo.segment;

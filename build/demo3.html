@@ -18,6 +18,7 @@
 <script type="text/javascript" src="CVLegLength.js" ></script>
 <script type="text/javascript" src="CVReveal.js" ></script>
 <script type="text/javascript" src="CVConnected.js" ></script>
+<script type="text/javascript" src="CVSinuosity.js" ></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.19.1/cytoscape.min.js" integrity="sha512-REr7ZKldLo2Lx6UiQ6autPWZR+j4u1/7ElYsrcwFe3ZmT/TKXCF/vXqNP/d2BQ78k0tapdZFccpFkku9bwrS3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript" src="CVSimpleGraph.js" ></script>
@@ -41,6 +42,10 @@ function onload () {
 
 			const graph = new Connected( viewer );
 
+		} else if ( mode === 'sinuosity' ) {
+
+			const graph = new Sinuosity( viewer );
+
 		} else if ( lastEvent ) {
 
 			onEntrance( lastEvent );
@@ -58,8 +63,8 @@ function onload () {
 	} );
 
 	var caves = [
-		"Castleton_Master_NoSurface.3d",
 		"P8_Master.3d",
+		"Castleton_Master_NoSurface.3d",
 		"OFDCPT.3d",
 		"Peak_Master_NoSurface.3d",
 	];
@@ -90,6 +95,7 @@ function onload () {
 				break;
 
 			case 'connected':
+			case 'sinuosity':
 
 				break;
 
@@ -101,6 +107,7 @@ function onload () {
 		}
 
 		graph.show( event );
+		viewer.renderView();
 
 	}
 
@@ -163,6 +170,10 @@ function onload () {
 			<div>
 				<input type="radio" id="g5" name="graph" value="connected">
 				<label for="g5">Connected</label>
+			</div>
+			<div>
+				<input type="radio" id="g6" name="graph" value="sinuosity">
+				<label for="g6">Sinuosity</label>
 			</div>
 			<p>Select a graph type <b>&uArr;</b> and then select the entrance label <b>&lArr;</b>.</p>
 			<div id="graph" style="height: 400px; width: 400px; border: darkgray solid 1px;"></div>

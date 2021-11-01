@@ -16,7 +16,7 @@ class Legs extends LineSegments2 {
 		this.colourCache = ctx.materials.colourCache;
 		this.legLengths = [];
 		this.legVertices = [];
-		this.vertexPairToSegment = []; // maps vertex index to segment membership
+		this.legToSegment = []; // maps vertex index to segment membership
 		this.colors = [];
 		this.type = 'Legs';
 		this.highlightLeg = null;
@@ -64,13 +64,10 @@ class Legs extends LineSegments2 {
 
 		for ( let i = 0; i < l; i += 2 ) {
 
-			const vertex1 = vertices[ i ];
-			const vertex2 = vertices[ i + 1 ];
+			const v1 = vertices[ i ];
+			const v2 = vertices[ i + 1 ];
 
-			const start = survey.getGeographicalPosition( vertex1 );
-			const end = survey.getGeographicalPosition( vertex2 );
-
-			const legLength = start.distanceTo( end );
+			const legLength= survey.getGeographicalDistance( v1, v2 );
 
 			legLengths[ i / 2 ] = legLength; // cache lengths to avoid recalc
 
@@ -211,7 +208,7 @@ class Legs extends LineSegments2 {
 
 		} else {
 
-			const segments = this.vertexPairToSegment;
+			const segments = this.legToSegment;
 
 			for ( let v1 = 0, l = vertices.length; v1 < l; v1 += 2 ) {
 
@@ -271,7 +268,7 @@ class Legs extends LineSegments2 {
 
 	vertexSegment ( index ) {
 
-		return this.vertexPairToSegment[ index / 2 ];
+		return this.legToSegment[ index / 2 ];
 
 	}
 
@@ -284,7 +281,7 @@ class Legs extends LineSegments2 {
 			index: legIndex,
 			start: vertices[ vertexIndex ],
 			end: vertices[ vertexIndex + 1 ],
-			segment: this.vertexPairToSegment[ legIndex ],
+			segment: this.legToSegment[ legIndex ],
 			length: this.legLengths[ legIndex ]
 		};
 
@@ -315,11 +312,13 @@ class Legs extends LineSegments2 {
 
 		const legs = this.legVertices;
 		const legLengths = this.legLengths;
-		const vertexPairToSegment = this.vertexPairToSegment;
-
 		const segments = new Segments();
 
 		const l = legs.length;
+
+		this.legToSegment = new Array( l / 2 );
+
+		const legToSegment = this.legToSegment;
 
 		let station;
 		let newSegment = true;
@@ -331,7 +330,7 @@ class Legs extends LineSegments2 {
 			const v1 = legs[ i ];
 			const v2 = legs[ i + 1 ];
 
-			vertexPairToSegment.push( segment );
+			legToSegment[ i / 2 ] = segment;
 
 			station = v1;
 

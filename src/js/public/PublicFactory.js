@@ -30,7 +30,7 @@ class PublicFactory {
 
 	getLeg ( legs, leg ) {
 
-		return new Leg( legs, leg.index, this.getStation( leg.start ), this.getStation( leg.end ) );
+		return new Leg( legs, leg, this.getStation( leg.start ), this.getStation( leg.end ) );
 
 	}
 

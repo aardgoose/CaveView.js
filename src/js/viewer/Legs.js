@@ -498,12 +498,13 @@ class Legs extends LineSegments2 {
 
 				const v1 = legs[ leg ];
 
+				const legIndex = leg / 2;
 				const nextStation = ( v1 === station ) ? legs[ leg + 1 ] : v1;
-				const nextLength = legLengths[ leg / 2 ];
+				const nextLength = legLengths[ legIndex];
 
 				if ( legCallback !== null && ! legsSeen[ leg ] ) {
 
-					legCallback( leg, station, nextStation );
+					legCallback( this.getLegInfo( legIndex ) );
 					legsSeen[ leg ] = true;
 
 				}

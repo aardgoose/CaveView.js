@@ -2,12 +2,15 @@ import { LEG_CAVE } from '../core/constants';
 
 class Leg {
 
-	constructor ( survey, leg, s1, s2 ) {
+	constructor ( factory, legInfo, s1, s2 ) {
 
 		const s1Start = ( s1.shortestPathDistance() < s2.shortestPathDistance() );
+		const survey = factory.survey;
 
-		this.legLength = leg.length;
-		this.index = leg.index;
+		this.survey = survey;
+		this.legLength = legInfo.length;
+		this.index = legInfo.index;
+		this.segmentId = legInfo.segment;
 		this.startStation = s1Start ? s1 : s2;
 		this.endStation = s1Start ? s2 : s1;
 		this.legs = survey.getFeature( LEG_CAVE );
@@ -34,6 +37,12 @@ class Leg {
 	color ( color = false ) {
 
 		this.legs.setLegColor( this.index * 2, color );
+
+	}
+
+	segment() {
+
+		return this.factory.getSegment( this.segmentId );
 
 	}
 

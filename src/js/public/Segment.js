@@ -1,8 +1,22 @@
-import { Station } from 'Station';
-
 class Segment {
 
-	constructor ( s1, s2 ) {
+	constructor ( segmentInfo, start, end ) {
+
+		this.segmentLength = segmentInfo.length;
+		this.startStation = start;
+		this.endStation = end;
+
+	}
+
+	length () {
+
+		return this.segmentLength;
+
+	}
+
+	directDistance () {
+
+		return this.startStation.distanceTo( this.endStation );
 
 	}
 

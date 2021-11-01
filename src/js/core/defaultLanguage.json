@@ -259,5 +259,12 @@
 	},
 	"dnd": {
 		"splash_text": "Drag&nbsp;and&nbsp;drop a .3d or .lox model here to&nbsp;load"
+	},
+	"popup": {
+		"leg_length": "Leg length",
+		"segment_length": "Segment length",
+		"direct_length": "Direct length",
+		"depth_from_surface": "depth from surface",
+		"distance": "distance"
 	}
 }

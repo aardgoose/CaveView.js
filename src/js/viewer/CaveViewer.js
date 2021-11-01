@@ -18,7 +18,7 @@ import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
 import { SegmentPopup } from './SegmentPopup';
-import { Station } from '../public/Station';
+import { PublicFactory } from '../public/PublicFactory';
 import { ImagePopup } from './ImagePopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { CommonTerrain } from '../terrain/CommonTerrain';
@@ -27,7 +27,6 @@ import { WorkerPoolCache } from '../core/WorkerPool';
 import { defaultView, ViewState } from './ViewState';
 import { OrbitControls } from '../ui/OrbitControls';
 import { ExportGltf } from './ExportGltf';
-import { Leg } from '../public/Leg';
 import { Snapshot } from './Snapshot';
 
 import {
@@ -104,6 +103,7 @@ class CaveViewer extends EventDispatcher {
 		const formatters = {};
 
 		let caveIsLoaded = false;
+		let publicFactory = null;
 
 		const mouseUpEvent = { type: 'select', node: null };
 
@@ -1113,7 +1113,7 @@ class CaveViewer extends EventDispatcher {
 			setScale();
 
 			materials.flushCache();
-			Station.initCache( survey );
+			publicFactory = new PublicFactory( survey );
 
 			scene.addStatic( survey );
 
@@ -1293,7 +1293,7 @@ class CaveViewer extends EventDispatcher {
 
 				const e = {
 					type: 'leg',
-					leg: new Leg( legs, legIndex, Station.get( leg.start ), Station.get( leg.end ) ),
+					leg: publicFactory.getLeg( legs, leg ),
 					handled: false,
 					highlight: false,
 					mouseEvent: event
@@ -1376,7 +1376,7 @@ class CaveViewer extends EventDispatcher {
 					const e = {
 						type: 'entrance',
 						displayName: entrance.name,
-						station: Station.get( station ),
+						station: publicFactory.getStation( station ),
 						filterConnected: false,
 						handled: false,
 						mouseEvent: event
@@ -1448,7 +1448,7 @@ class CaveViewer extends EventDispatcher {
 
 				const selectEvent = {
 					type: 'station',
-					node: Station.get( station ),
+					node: publicFactory.getStation( station ),
 					handled: false,
 					mouseEvent: event,
 					filterConnected: false
@@ -1685,7 +1685,7 @@ class CaveViewer extends EventDispatcher {
 
 			if ( node && node.isStation() && node.connections > 0 ) {
 
-				return Station.get( node );
+				return publicFactory.getStation( node );
 
 			} else {
 
@@ -1710,7 +1710,7 @@ class CaveViewer extends EventDispatcher {
 
 		this.forEachStation = function ( callback ) {
 
-			survey.stations.forEach( station => callback( Station.get( station ) ) );
+			survey.stations.forEach( station => callback( publicFactory.getStation( station ) ) );
 
 		};
 

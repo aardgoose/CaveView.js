@@ -278,6 +278,7 @@ class Legs extends LineSegments2 {
 		const vertexIndex = legIndex * 2;
 
 		return {
+			index: legIndex,
 			start: vertices[ vertexIndex ],
 			end: vertices[ vertexIndex + 1 ],
 			segment: this.vertexPairToSegment[ legIndex ],

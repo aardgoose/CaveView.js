@@ -3,37 +3,13 @@ import { Leg } from './Leg';
 
 class Station {
 
-	static cache = new WeakMap();
-	static survey = null;
-	static legs = null;
+	constructor ( factory, station ) {
 
-	static get( station ) {
-
-		let s = Station.cache.get( station );
-
-		if ( s == undefined ) {
-
-			s = new Station( station );
-			Station.cache.set( station, s );
-
-		}
-
-		return s;
-
-	}
-
-	static initCache ( survey ) {
-
-		Station.cache = new WeakMap();
-		Station.survey = survey;
-		Station.legs = survey.features.get( LEG_CAVE );
-
-	}
-
-	constructor ( station ) {
-
+		const survey = factory.survey;
+		this.survey = survey;
 		this.station = station;
-
+		this.legs = survey.getFeature( LEG_CAVE );
+		this.factory = factory;
 	}
 
 	id () {
@@ -50,10 +26,9 @@ class Station {
 
 	coordinates () {
 
-		return Station.survey.getGeographicalPosition( this.station );
+		return this.survey.getGeographicalPosition( this.station );
 
 	}
-
 
 	connectionCount () {
 
@@ -69,7 +44,7 @@ class Station {
 
 	adjacentStationIds () {
 
-		return Station.legs.getAdjacentStations( this.station ).slice();
+		return this.legs.getAdjacentStations( this.station ).slice();
 
 	}
 
@@ -81,10 +56,12 @@ class Station {
 
 	forEachConnectedLeg ( callback ) {
 
-		const survey = Station.survey;
+		const survey = this.survey;
+		const legs = this.legs;
+		const factory = this.factory;
 
-		Station.legs.setShortestPaths( survey.stations, this.station, ( leg, s1, s2 ) =>
-			callback( new Leg( Station.legs, leg, Station.get( s1 ), Station.get( s2 ) ) )
+		legs.setShortestPaths( survey.stations, this.station, ( leg, s1, s2 ) =>
+			callback( new Leg( legs, leg, factory.getStation( s1 ), factory.getStation( s2 ) ) )
 		);
 
 	}

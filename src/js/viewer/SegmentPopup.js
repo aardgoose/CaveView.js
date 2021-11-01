@@ -8,16 +8,13 @@ class SegmentPopup extends CanvasPopup {
 
 		const segment = survey.segments.getSegmentInfo( leg.segment );
 
-		const start = survey.getGeographicalPosition( segment.startStation );
-		const end = survey.getGeographicalPosition( segment.endStation );
+		const d = survey.getGeographicalDistance( segment.startStation, segment.endStation );
 
-		this.addLine( 'Leg length: ' + leg.length.toFixed( 2 ) + '\u202fm' );
-		this.addLine( 'Segment length: ' + segment.length.toFixed( 2 ) + '\u202fm' );
-		this.addLine( 'Direct length: ' + start.distanceTo( end ).toFixed( 2 ) + '\u202fm' );
+		this.addValue( 'leg_length', leg.length );
+		this.addValue( 'segment_length', segment.length );
+		this.addValue( 'direct_length', d );
 
-		this.finish();
-
-		this.position.copy( point );
+		this.finish( point );
 
 	}
 

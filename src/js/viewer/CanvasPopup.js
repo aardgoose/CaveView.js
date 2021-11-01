@@ -15,6 +15,14 @@ class CanvasPopup extends Popup {
 
 	}
 
+	i18n ( text ) {
+
+		const tr = this.ctx.cfg.i18n( 'popup.' + text );
+
+		return ( tr === undefined ) ? text : tr;
+
+	}
+
 	addLine ( line ) {
 
 		this.lines.push( line );
@@ -23,7 +31,13 @@ class CanvasPopup extends Popup {
 
 	}
 
-	finish () {
+	addValue( text, value ) {
+
+		this.addLine( this.i18n( text ) + ': ' + Math.round( value ) + '\u202fm' );
+
+	}
+
+	finish ( position ) {
 
 		const cfg = this.ctx.cfg;
 		const container = this.ctx.container;
@@ -74,6 +88,8 @@ class CanvasPopup extends Popup {
 
 		this.material = new PopupMaterial( container, texture, 0 );
 		this.material.needsUpdate = true;
+
+		this.position.copy( position );
 
 		return this;
 

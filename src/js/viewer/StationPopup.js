@@ -64,11 +64,11 @@ class StationPopup extends CanvasPopup {
 
 				this.addLine( 'x: ' + Math.round( position.x ) + ' m, y: ' + Math.round( position.y ) + ' m' ).addLine( 'z: ' + Math.round( position.z ) + ' m' );
 
-				if ( depth !== null ) this.addLine( 'depth from surface: ' + Math.round( depth ) + ' m' );
+				if ( depth !== null ) this.addValue( 'depth_from_surface', + depth );
 
 				if ( showDistance ) {
 
-					this.addLine( 'distance: ' + distance + '\u202fm' );
+					this.addValue( 'distance', distance );
 
 				}
 
@@ -76,9 +76,7 @@ class StationPopup extends CanvasPopup {
 
 		}
 
-		this.finish();
-
-		this.position.copy( station );
+		this.finish( station );
 
 	}
 

@@ -29,6 +29,8 @@ import proj4 from 'proj4';
 
 const __set = new Set();
 const white = new Color( 0xffffff );
+const __v1 = new Vector3();
+const __v2 = new Vector3();
 
 class Survey extends Object3D {
 
@@ -620,7 +622,7 @@ Survey.prototype.getWorldPosition = function ( position ) {
 
 };
 
-Survey.prototype.getGeographicalPosition = function ( position ) {
+Survey.prototype.getGeographicalPosition = function ( position, vector = false ) {
 
 	const offsets = this.offsets;
 	const projection = this.projection;
@@ -629,17 +631,18 @@ Survey.prototype.getGeographicalPosition = function ( position ) {
 
 	// convert to original survey CRS
 
-	if ( projection !== null )
-		p = projection.forward( p );
+	if ( projection !== null ) p = projection.forward( p );
 
-	return new Vector3( p.x, p.y, position.z + offsets.z );
+	return vector !== false
+		? vector.set( p.x, p.y, position.z + offsets.z )
+		: new Vector3( p.x, p.y, position.z + offsets.z );
 
 };
 
 Survey.prototype.getGeographicalDistance = function ( v1, v2 ) {
 
-	const p1 = this.getGeographicalPosition( v1 );
-	const p2 = this.getGeographicalPosition( v2 );
+	const p1 = this.getGeographicalPosition( v1, __v1 );
+	const p2 = this.getGeographicalPosition( v2, __v2 );
 
 	return p1.distanceTo( p2 );
 

@@ -25,7 +25,7 @@ class Legs extends LineSegments2 {
 
 	}
 
-	addLegs ( vertices, legRuns ) {
+	addLegs ( survey, vertices, legRuns ) {
 
 		this.legVertices = vertices;
 		this.legRuns = legRuns;
@@ -42,7 +42,7 @@ class Legs extends LineSegments2 {
 		geometry.setColors( colors.array );
 
 		this.computeLineDistances();
-		this.computeStats();
+		this.computeStats( survey );
 
 		this.colors = colors;
 
@@ -50,7 +50,7 @@ class Legs extends LineSegments2 {
 
 	}
 
-	computeStats () {
+	computeStats ( survey ) {
 
 		const vertices = this.legVertices;
 		const l = vertices.length;
@@ -67,7 +67,10 @@ class Legs extends LineSegments2 {
 			const vertex1 = vertices[ i ];
 			const vertex2 = vertices[ i + 1 ];
 
-			const legLength = vertex1.correctedDistanceTo( vertex2 );
+			const start = survey.getGeographicalPosition( vertex1 );
+			const end = survey.getGeographicalPosition( vertex2 );
+
+			const legLength = start.distanceTo( end );
 
 			legLengths[ i / 2 ] = legLength; // cache lengths to avoid recalc
 

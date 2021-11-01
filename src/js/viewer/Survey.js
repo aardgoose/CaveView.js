@@ -154,27 +154,25 @@ class Survey extends Object3D {
 
 			}
 
-			const limits = self.limits;
+			// set up projection from model to original CRS
+			const transform = proj4( displayCRS, survey.sourceCRS );
+			self.projection = transform;
 
-			const p1 = limits.min.clone();
-			const p2 = limits.max.clone();
+			// calculate lat/long distortion between CRS and display
+			const p1 = self.limits.min.clone();
+			const p2 = self.limits.max.clone();
 
 			p1.z = 0;
 			p2.z = 0;
 
 			const l1 = p1.distanceTo( p2 );
 
-			const transform = proj4( displayCRS, survey.sourceCRS );
-
 			p1.copy( transform.forward( p1 ) );
 			p2.copy( transform.forward( p2 ) );
-
-			self.projection = transform;
 
 			const l2 = p1.distanceTo( p2 );
 
 			self.scaleFactor = l1 / l2;
-			StationPosition.scaleFactor = 1 / self.scaleFactor;
 
 			self.projectionWGS84 = proj4( 'WGS84', survey.displayCRS );
 
@@ -431,7 +429,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			const legObject = new Legs( ctx );
 
-			legObject.addLegs( legs.vertices, legs.runs );
+			legObject.addLegs( self, legs.vertices, legs.runs );
 
 			self.addFeature( legObject, tag, name + ':g' );
 

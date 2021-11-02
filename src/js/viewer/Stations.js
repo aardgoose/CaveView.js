@@ -320,6 +320,12 @@ class Stations extends Points {
 		pSize.needsUpdate = true;
 	}
 
+	resetPaths () {
+
+		this.vertices.forEach( node => node.shortestPath = Infinity );
+
+	}
+
 	forEach ( callback ) {
 
 		this.vertices.forEach( station => {

@@ -159,6 +159,12 @@ class Entrances extends ClusterMarkers {
 
 	}
 
+	forEachEntrance ( callback ) {
+
+		this.vertices.forEach( (v, i ) => callback( v, i ) );
+
+	}
+
 }
 
 export { Entrances };

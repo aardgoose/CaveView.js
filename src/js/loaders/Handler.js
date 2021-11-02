@@ -23,6 +23,7 @@ class Handler {
 		this.messages = [];
 		this.metadata = null;
 		this.fileCount = 0;
+		this.splayFix = false;
 		this.ctx = ctx;
 
 	}
@@ -234,6 +235,12 @@ class Handler {
 
 	}
 
+	enableSplayFix () {
+
+		this.splayFix = true;
+
+	}
+
 	getSurvey () {
 
 		const limits = this.limits;
@@ -294,7 +301,8 @@ class Handler {
 			metadata: this.metadata,
 			terrains: this.terrains,
 			limits: this.limits,
-			offsets: this.offsets
+			offsets: this.offsets,
+			splayFix: this.splayFix
 		};
 
 	}

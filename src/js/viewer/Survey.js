@@ -315,6 +315,7 @@ Survey.prototype.loadCave = function ( survey, messages ) {
 
 	const self = this;
 	const ctx = this.ctx;
+	const splayFix = survey.splayFix;
 
 	const surveyTree = survey.surveyTree;
 
@@ -378,7 +379,7 @@ Survey.prototype.loadCave = function ( survey, messages ) {
 
 			}
 
-			if ( type === LEG_SPLAY ) {
+			if ( splayFix && type === LEG_SPLAY ) {
 
 				if ( leg.to.splays > -1 ||
 					( leg.from.connections != 0 && leg.to.connections != 0 ) ) {
@@ -706,7 +707,10 @@ Survey.prototype.setShortestPaths = function ( station ) {
 
 	this.markers.clear();
 
-	this.maxDistance = legs.setShortestPaths( this.stations, station );
+	// reset distances to unknown
+	this.stations.resetPaths();
+
+	this.maxDistance = legs.setShortestPaths( station );
 
 	this.markers.mark( station );
 
@@ -1073,9 +1077,9 @@ Survey.prototype.setDuplicateShading = function ( mode ) {
 
 Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed, filterConnected ) {
 
-	const mesh = this.features.get( legType );
+	const legs = this.features.get( legType );
 
-	if ( mesh === undefined ) return false;
+	if ( legs === undefined ) return false;
 
 	const cfg = this.ctx.cfg;
 
@@ -1083,57 +1087,57 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed, fil
 
 	case SHADING_HEIGHT:
 
-		this.setLegColourByMaterial( mesh, 'height', dashed, filterConnected );
+		this.setLegColourByMaterial( legs, 'height', dashed, filterConnected );
 		break;
 
 	case SHADING_LENGTH:
 
-		this.setLegColourByLength( mesh, filterConnected );
+		this.setLegColourByLength( legs, filterConnected );
 		break;
 
 	case SHADING_INCLINATION:
 
-		this.setLegColourByInclination( mesh, filterConnected );
+		this.setLegColourByInclination( legs, filterConnected );
 		break;
 
 	case SHADING_CURSOR:
 
-		this.setLegColourByMaterial( mesh, 'cursor', filterConnected );
+		this.setLegColourByMaterial( legs, 'cursor', filterConnected );
 		break;
 
 	case SHADING_DEPTH_CURSOR:
 
-		this.setLegColourByMaterial( mesh, 'depth-cursor', filterConnected );
+		this.setLegColourByMaterial( legs, 'depth-cursor', filterConnected );
 		break;
 
 	case SHADING_SINGLE:
 
-		this.setLegColourByColour( mesh, cfg.themeColor( 'shading.single' ), dashed, filterConnected );
+		this.setLegColourByColour( legs, cfg.themeColor( 'shading.single' ), dashed, filterConnected );
 		break;
 
 	case SHADING_SURFACE:
 
-		this.setLegColourByColour( mesh, cfg.themeColor( 'shading.surface' ), dashed, filterConnected );
+		this.setLegColourByColour( legs, cfg.themeColor( 'shading.surface' ), dashed, filterConnected );
 		break;
 
 	case SHADING_DUPLICATE:
 
-		this.setLegColourByColour( mesh, cfg.themeColor( 'shading.duplicate' ), dashed, filterConnected );
+		this.setLegColourByColour( legs, cfg.themeColor( 'shading.duplicate' ), dashed, filterConnected );
 		break;
 
 	case SHADING_CUSTOM:
 
-		this.setLegCustomColor( mesh, dashed, filterConnected );
+		this.setLegCustomColor( legs, dashed, filterConnected );
 		break;
 
 	case SHADING_SURVEY:
 
-		this.setLegColourBySurvey( mesh, filterConnected );
+		this.setLegColourBySurvey( legs, filterConnected );
 		break;
 
 	case SHADING_PATH:
 
-		this.setLegColourByPath( mesh );
+		this.setLegColourByPath( legs );
 		break;
 
 	case SHADING_OVERLAY:
@@ -1146,18 +1150,31 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed, fil
 
 	case SHADING_DEPTH:
 
-		this.setLegColourByMaterial( mesh, 'depth', dashed, filterConnected );
+		this.setLegColourByMaterial( legs, 'depth', dashed, filterConnected );
 		break;
 
 	case SHADING_DISTANCE:
 
 		if ( this.maxDistance === 0 ) {
 
-			this.setLegColourByColour( mesh, cfg.themeColor( 'shading.unconnected' ) );
+			if ( this.entrances ) {
+
+				let maxDistance = 0;
+
+				// reset distances to unknown
+				this.stations.resetPaths();
+
+				this.entrances.forEachEntrance( e => maxDistance = Math.max( maxDistance, legs.setShortestPaths( e ) ) );
+
+				this.maxDistance = maxDistance;
+
+			}
+
+			this.setLegColourByDistance( legs );
 
 		} else {
 
-			this.setLegColourByDistance( mesh );
+			this.setLegColourByDistance( legs );
 
 		}
 

@@ -114,6 +114,7 @@ Svx3dHandler.prototype.parse2 = function () {
 	cave.addStations( this.stationMap );
 
 	cave.addLineSegments( this.groups );
+	cave.enableSplayFix();
 
 	return cave;
 

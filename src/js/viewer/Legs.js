@@ -449,10 +449,7 @@ class Legs extends LineSegments2 {
 					nextStation = testStation;
 					path.add( leg );
 
-					if ( nextStation.shortestPath == 0 ) {
-							console.log( nextStation );
-						testNext = false;
-					}
+					if ( nextStation.shortestPath == 0 ) testNext = false;
 
 				}
 
@@ -464,7 +461,7 @@ class Legs extends LineSegments2 {
 
 	}
 
-	setShortestPaths ( stations, station, legCallback = null ) {
+	setShortestPaths ( station, legCallback = null ) {
 
 		const legsSeen = [];
 		// queue of stations searched.
@@ -472,8 +469,6 @@ class Legs extends LineSegments2 {
 
 		const legs = this.legVertices;
 		const legLengths = this.legLengths;
-
-		stations.vertices.forEach( node => node.shortestPath = Infinity );
 
 		let maxDistance = 0;
 
@@ -484,7 +479,7 @@ class Legs extends LineSegments2 {
 			const station = queue.shift();
 			const stationLegs = station.legs;
 
-			if ( ! stationLegs ) continue;
+			//if ( ! stationLegs ) continue;
 
 			const currentDistance = station.shortestPath;
 

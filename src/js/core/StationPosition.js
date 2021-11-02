@@ -13,6 +13,9 @@ class StationPosition extends Vector3 {
 		this.id = 0;
 		this.parent = null;
 		this.name = null;
+		this.legs = [];
+		this.linkedSegments = [];
+		this.stationVertexIndex = -1;
 
 	}
 

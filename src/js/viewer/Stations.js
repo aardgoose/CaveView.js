@@ -130,7 +130,7 @@ class Stations extends Points {
 
 	addStation ( node ) {
 
-		if ( node.legs !== undefined ) return; // duplicated entry
+		if ( node.stationVertexIndex != -1 ) return; // duplicated entry
 
 		const instanceData = this.instanceData;
 		const offset = instanceData.length;
@@ -159,8 +159,6 @@ class Stations extends Points {
 		this.pointSizes.push( pointSize );
 
 		node.stationVertexIndex = this.stationCount++;
-		node.linkedSegments = [];
-		node.legs = [];
 
 	}
 

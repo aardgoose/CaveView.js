@@ -100,7 +100,7 @@ class Survey extends Object3D {
 
 		_setProjectionScale();
 
-		this.loadCave( survey );
+		this.loadCave( survey, cave.messages );
 
 		this.loadWarnings( cave.messages );
 
@@ -310,28 +310,28 @@ Survey.prototype.setupTerrain = function ( terrain ) {
 
 };
 
-Survey.prototype.loadCave = function ( cave ) {
+Survey.prototype.loadCave = function ( survey, messages ) {
 
 	const self = this;
 	const ctx = this.ctx;
 
-	const surveyTree = cave.surveyTree;
+	const surveyTree = survey.surveyTree;
 
 	this.surveyTree = surveyTree;
 
 	this.selection = new Selection( ctx, ctx.cfg.themeValue( 'box.select' ) );
 
-	_loadSegments( cave.lineSegments );
+	_loadSegments( survey.lineSegments );
 
 	this.loadStations( surveyTree );
 
-	_loadTerrain( cave );
+	_loadTerrain( survey );
 
 	this.computeBoundingBoxes( surveyTree );
 
 	this.pointTargets.push( this.stations );
 
-	const metadata = new SurveyMetadata( this.name, cave.metadata );
+	const metadata = new SurveyMetadata( this.name, survey.metadata );
 
 	this.metadata = metadata;
 
@@ -341,7 +341,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 	this.routes = new Routes( this );
 
-	buildWallsSync( cave, this );
+	buildWallsSync( survey, this );
 
 	return;
 
@@ -364,9 +364,9 @@ Survey.prototype.loadCave = function ( cave ) {
 		for ( let i = 0; i < l; i++ ) {
 
 			const leg = srcSegments[ i ];
-
-			const type   = leg.type;
 			const survey = leg.survey;
+
+			let type = leg.type;
 
 			legs = typeLegs[ type ];
 
@@ -374,6 +374,22 @@ Survey.prototype.loadCave = function ( cave ) {
 
 				console.warn( 'unknown segment type: ', type );
 				break;
+
+			}
+
+			if ( type === LEG_SPLAY ) {
+
+				if ( leg.to.splays > -1 ||
+					( leg.from.connections != 0 && leg.to.connections != 0 ) ) {
+
+					leg.to.connections++;
+
+					messages.push( { station: leg.to, text: 'splay fault' } );
+
+					legs = typeLegs[ LEG_CAVE ];
+					type = LEG_CAVE;
+
+				}
 
 			}
 

@@ -29,6 +29,13 @@ class Station {
 
 	}
 
+	depth () {
+
+		const terrain = this.survey.terrain;
+		return ( terrain ) ? this.station.z - terrain.getHeight( this.station ) : null;
+
+	}
+
 	connectionCount () {
 
 		return this.station.connections;
@@ -50,6 +57,12 @@ class Station {
 	shortestPathDistance () {
 
 		return this.station.shortestPath;
+
+	}
+
+	message() {
+
+		return this.station.messageText;
 
 	}
 

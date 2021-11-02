@@ -25,6 +25,10 @@ class StationPopup extends CanvasPopup {
 
 		}
 
+		if ( long ) name = '...' + name;
+
+		this.addLine( name );
+
 		let distance;
 
 		if ( showDistance ) {
@@ -37,10 +41,6 @@ class StationPopup extends CanvasPopup {
 			distance = null;
 
 		}
-
-		if ( long ) name = '...' + name;
-
-		this.addLine( name );
 
 		if ( warnings ) {
 

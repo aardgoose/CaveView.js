@@ -2,13 +2,14 @@ import { CanvasPopup } from './CanvasPopup';
 
 class StationPopup extends CanvasPopup {
 
-	constructor ( ctx, station, survey, depth, formatter, showDistance, warnings ) {
+	constructor ( ctx, pStation, survey, formatter, showDistance, warnings ) {
 
 		super( ctx );
 
-		const position = survey.getGeographicalPosition( station );
+		const position = pStation.coordinates();
+		const depth = pStation.depth();
 
-		let name = station.getPath();
+		let name = pStation.name();
 		let long = false;
 		let lines = null;
 
@@ -28,7 +29,8 @@ class StationPopup extends CanvasPopup {
 
 		if ( showDistance ) {
 
-			distance = station.shortestPath !== Infinity ? Math.round( station.shortestPath ) : 'unconnected';
+			distance = pStation.shortestPathDistance();
+			distance = distance !== Infinity ? Math.round( distance ) : 'unconnected';
 
 		} else {
 
@@ -40,9 +42,11 @@ class StationPopup extends CanvasPopup {
 
 		this.addLine( name );
 
-		if ( warnings && station.messageText !== undefined ) {
+		if ( warnings ) {
 
-			this.addLine( station.messageText );
+			const message = pStation.message();
+
+			if ( message !== undefined ) this.addLine( message );
 
 		} else {
 
@@ -76,7 +80,7 @@ class StationPopup extends CanvasPopup {
 
 		}
 
-		this.finish( station );
+		this.finish( pStation.station );
 
 	}
 

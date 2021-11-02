@@ -2,17 +2,15 @@ import { CanvasPopup } from './CanvasPopup';
 
 class SegmentPopup extends CanvasPopup {
 
-	constructor ( ctx, leg, point, survey ) {
+	constructor ( ctx, leg, point ) {
 
 		super( ctx );
 
-		const segment = survey.segments.getSegmentInfo( leg.segment );
+		const segment = leg.segment();
 
-		const d = survey.getGeographicalDistance( segment.startStation, segment.endStation );
-
-		this.addValue( 'leg_length', leg.length );
-		this.addValue( 'segment_length', segment.length );
-		this.addValue( 'direct_length', d );
+		this.addValue( 'leg_length', leg.length() );
+		this.addValue( 'segment_length', segment.length() );
+		this.addValue( 'direct_length', segment.directDistance() );
 
 		this.finish( point );
 

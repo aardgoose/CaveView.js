@@ -1192,13 +1192,11 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		function showStationPopup ( station ) {
+		function showStationPopup ( pStation ) {
 
 			if ( popup !== null ) return;
 
-			const depth = ( terrain ) ? station.z - terrain.getHeight( station ) : null;
-
-			popup = new StationPopup( ctx, station, survey, depth, formatters.station, ( survey.caveShading === SHADING_DISTANCE ), self.warnings );
+			popup = new StationPopup( ctx, pStation, survey, formatters.station, ( survey.caveShading === SHADING_DISTANCE ), self.warnings );
 			survey.add( popup );
 
 			renderView();
@@ -1220,7 +1218,7 @@ class CaveViewer extends EventDispatcher {
 
 			closePopup();
 
-			if ( station.isStation() ) showStationPopup( station );
+			if ( station.isStation() ) showStationPopup( publicFactory.getStation( station ) );
 
 		}
 
@@ -1288,12 +1286,13 @@ class CaveViewer extends EventDispatcher {
 				legIndex = legIntersect.faceIndex;
 
 				const legInfo = legs.getLegInfo( legIndex );
+				const leg = publicFactory.getLeg( legInfo );
 
 				segment = legInfo.segment;
 
 				const e = {
 					type: 'leg',
-					leg: publicFactory.getLeg( legInfo ),
+					leg: leg,
 					handled: false,
 					highlight: false,
 					mouseEvent: event
@@ -1315,7 +1314,7 @@ class CaveViewer extends EventDispatcher {
 					mouseUpFunction = _setSegmentHighlight;
 
 					_setSegmentHighlight();
-					_showSegmentPopup( legInfo, legIntersect.pointOnLine );
+					_showSegmentPopup( leg, legIntersect.pointOnLine );
 					renderView();
 
 				}
@@ -1446,9 +1445,11 @@ class CaveViewer extends EventDispatcher {
 
 				survey.selectStation( station );
 
+				const pStation = publicFactory.getStation( station );
+
 				const selectEvent = {
 					type: 'station',
-					node: publicFactory.getStation( station ),
+					node: pStation,
 					handled: false,
 					mouseEvent: event,
 					filterConnected: false
@@ -1462,7 +1463,7 @@ class CaveViewer extends EventDispatcher {
 
 				if ( event.button === MOUSE.LEFT ) {
 
-					_showStationPopup( station );
+					_showStationPopup( pStation );
 
 				} else if ( event.button === MOUSE.RIGHT ) {
 
@@ -1495,7 +1496,7 @@ class CaveViewer extends EventDispatcher {
 
 					survey.showShortestPath( station );
 
-					_showStationPopup( station );
+					_showStationPopup( publicFactory.getStation( station ) );
 
 				} else if ( event.button === MOUSE.RIGHT ) {
 
@@ -1513,7 +1514,7 @@ class CaveViewer extends EventDispatcher {
 				showStationPopup( station );
 				mouseUpFunction = closePopup;
 
-				cameraMove.preparePoint( survey.getWorldPosition( station.clone() ) );
+				cameraMove.preparePoint( survey.getWorldPosition( station.station.clone() ) );
 
 			}
 

@@ -29,6 +29,7 @@ import proj4 from 'proj4';
 
 const __set = new Set();
 const white = new Color( 0xffffff );
+const __v0 = new Vector3();
 const __v1 = new Vector3();
 const __v2 = new Vector3();
 
@@ -627,11 +628,11 @@ Survey.prototype.getGeographicalPosition = function ( position, vector = false )
 	const offsets = this.offsets;
 	const projection = this.projection;
 
-	let p = { x: position.x + offsets.x, y: position.y + offsets.y };
+	__v0.x = position.x + offsets.x;
+	__v0.y = position.y + offsets.y;
 
 	// convert to original survey CRS
-
-	if ( projection !== null ) p = projection.forward( p );
+	const p = ( projection == null ) ? __v0 : projection.forward( __v0 );
 
 	return vector !== false
 		? vector.set( p.x, p.y, position.z + offsets.z )

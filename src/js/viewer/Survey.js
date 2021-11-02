@@ -370,7 +370,7 @@ Survey.prototype.loadCave = function ( cave ) {
 
 			legs = typeLegs[ type ];
 
-			if ( leg === undefined ) {
+			if ( legs === undefined ) {
 
 				console.warn( 'unknown segment type: ', type );
 				break;

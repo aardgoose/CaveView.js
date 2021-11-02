@@ -94,6 +94,7 @@ class Survey extends Object3D {
 
 		this.modelLimits = modelLimits;
 		this.combinedLimits = modelLimits;
+		this.maxDistance = 0;
 
 		// this needs to be defined before loading the leg data to
 		// allow correct leg lengths to be calculated
@@ -705,7 +706,7 @@ Survey.prototype.setShortestPaths = function ( station ) {
 
 	this.markers.clear();
 
-	legs.setShortestPaths( this.stations, station );
+	this.maxDistance = legs.setShortestPaths( this.stations, station );
 
 	this.markers.mark( station );
 
@@ -731,7 +732,7 @@ Survey.prototype.showShortestPath = function ( station ) {
 
 Survey.prototype.getMaxDistance = function () {
 
-	return this.getFeature( LEG_CAVE ).maxDistance;
+	return this.maxDistance;
 
 };
 
@@ -1150,7 +1151,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed, fil
 
 	case SHADING_DISTANCE:
 
-		if ( mesh.maxDistance === 0 ) {
+		if ( this.maxDistance === 0 ) {
 
 			this.setLegColourByColour( mesh, cfg.themeColor( 'shading.unconnected' ) );
 
@@ -1240,7 +1241,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh, filterConnected ) {
 	const pathColor = cfg.themeColor( 'routes.active' );
 
 	const colourRange = colours.length - 1;
-	const maxDistance = mesh.maxDistance;
+	const maxDistance = this.maxDistance;
 	const path = this.highlightPath;
 
 	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', false, filterConnected );

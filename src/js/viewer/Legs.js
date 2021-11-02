@@ -22,6 +22,7 @@ class Legs extends LineSegments2 {
 		this.highlightLeg = null;
 		this.highlightSegment = null;
 		this.scale.set( 1, 1, 1 );
+		this.pathsSet = false;
 
 	}
 
@@ -305,9 +306,6 @@ class Legs extends LineSegments2 {
 
 	findTopology () {
 
-		this.maxDistance = 0;
-		this.zeroStation = null;
-
 		// determine segments between junctions and entrances/passage ends and create mapping array.
 
 		const legs = this.legVertices;
@@ -419,13 +417,11 @@ class Legs extends LineSegments2 {
 
 	getShortestPath ( startStation ) {
 
-		const zeroStation = this.zeroStation;
 		const path = new Set();
 
 		if (
-			zeroStation === null ||
+			! this.pathsSet ||
 			startStation.shortestPath === Infinity ||
-			startStation === zeroStation ||
 			startStation.shortestPath === 0
 		) return path;
 
@@ -453,7 +449,10 @@ class Legs extends LineSegments2 {
 					nextStation = testStation;
 					path.add( leg );
 
-					if ( nextStation === zeroStation ) testNext = false;
+					if ( nextStation.shortestPath == 0 ) {
+							console.log( nextStation );
+						testNext = false;
+					}
 
 				}
 
@@ -523,8 +522,9 @@ class Legs extends LineSegments2 {
 
 		}
 
-		this.zeroStation = station;
-		this.maxDistance = maxDistance;
+		this.pathsSet = true;
+
+		return maxDistance;
 
 	}
 

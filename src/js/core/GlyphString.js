@@ -1,5 +1,6 @@
 import {
 	InstancedBufferGeometry, InstancedInterleavedBuffer, InterleavedBufferAttribute,
+	Float32BufferAttribute,
 	Mesh, Vector2, Vector3, Vector4, Box2, Object3D
 } from '../Three';
 
@@ -21,13 +22,13 @@ class GlyphStringGeometryCache {
 
 	}
 
-	getGeometry ( text ) {
+	getGeometry ( text, yOffset ) {
 
 		let entry = this.cache[ text ];
 
 		if ( entry === undefined ) {
 
-			entry = new GlyphStringGeometry( text, this.material.getAtlas() );
+			entry = new GlyphStringGeometry( text, this.material.getAtlas(), yOffset );
 			this.cache[ text ] = entry;
 			entry.isCached = true;
 
@@ -41,15 +42,18 @@ class GlyphStringGeometryCache {
 
 class GlyphStringGeometry extends InstancedBufferGeometry {
 
-	constructor ( text, glyphAtlas ) {
+	constructor ( text, glyphAtlas, yOffset = 0 ) {
 
 		super();
 
 		this.type = 'GlyphStringGeometry';
 		this.width = 0;
 
+		yOffset /= glyphAtlas.cellSize;
+
 		this.setIndex( CommonAttributes.index );
 		this.setAttribute( 'position', CommonAttributes.position );
+		this.setAttribute( 'offsets', new Float32BufferAttribute( [ yOffset, yOffset, yOffset, yOffset, yOffset, yOffset ], 1 ) );
 
 		this.glyphAtlas = glyphAtlas;
 
@@ -175,7 +179,7 @@ class GlyphStringBase extends Mesh {
 		_labelEnd.copy( labelOrigin );
 		_labelEnd.add( this.labelOffset );
 
-		this.labelBox.setFromPoints( [labelOrigin, _labelEnd ] );
+		this.labelBox.setFromPoints( [ labelOrigin, _labelEnd ] );
 
 	}
 
@@ -259,7 +263,7 @@ class GlyphStringBase extends Mesh {
 
 class GlyphString extends GlyphStringBase {
 
-	constructor ( text, glyphMaterial, ctx ) {
+	constructor ( text, glyphMaterial, ctx, yOffset ) {
 
 		const glyphStringCache = ctx.glyphStringCache;
 
@@ -273,7 +277,7 @@ class GlyphString extends GlyphStringBase {
 
 		}
 
-		const geometry = cache.getGeometry( text );
+		const geometry = cache.getGeometry( text, yOffset );
 
 		super( text, glyphMaterial, geometry );
 

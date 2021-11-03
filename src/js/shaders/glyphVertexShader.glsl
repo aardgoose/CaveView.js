@@ -6,6 +6,8 @@ uniform float cellScale;
 uniform vec2 scale;
 uniform mat2 rotate;
 
+attribute float offsets;
+
 attribute vec2 instanceUvs;
 attribute float instanceOffsets;
 attribute float instanceWidths;
@@ -25,6 +27,7 @@ void main() {
 	// move to correct offset in string
 
 	newPosition.x += instanceOffsets;
+	newPosition.y += offsets;
 
 	// rotate as required
 
@@ -35,7 +38,6 @@ void main() {
 	vec4 offset = projectionMatrix * modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
 
 	// scale glyphs
-
 	newPosition *= scale;
 
 	// move to clip space

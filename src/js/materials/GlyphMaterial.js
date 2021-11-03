@@ -65,6 +65,12 @@ class GlyphMaterial extends ShaderMaterial {
 
 	}
 
+	getCellSize () {
+
+		return this.atlas.cellSize;
+
+	}
+
 	getAtlas () {
 
 		return this.atlas;

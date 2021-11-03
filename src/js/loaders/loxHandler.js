@@ -41,10 +41,12 @@ loxHandler.prototype.parse = function ( cave, source, metadata, section, progres
 	const l = source.byteLength;
 	const idOffset = modelOffset;
 	const stations = [];
+	const shash = [];
 
 	let pos = 0; // file position
 	let dataStart;
 	const f = new DataView( source, 0 );
+	const bytes = new Uint8Array( source );
 
 	let sectionId = 0;
 	let lastParentId;
@@ -236,11 +238,23 @@ loxHandler.prototype.parse = function ( cave, source, metadata, section, progres
 
 	function readCoords () {
 
+		const lastKey = String.fromCharCode.apply( null, bytes.subarray( pos, pos + 24 ) );
+
+		const oldcoords = shash[ lastKey ];
+
 		const coords = new StationPosition(
 			readFloat64(),
 			readFloat64(),
 			readFloat64()
 		);
+
+		shash[ lastKey ] = coords;
+
+		if ( oldcoords !== undefined ) {
+
+			lineSegments.push( { from: oldcoords, to: coords, type: LEG_CAVE, survey: oldcoords.parent.id } );
+
+		}
 
 		if ( projection !== null ) {
 
@@ -350,9 +364,6 @@ loxHandler.prototype.parse = function ( cave, source, metadata, section, progres
 			xSects.push( { m_from: m_from, m_to: m_to, start: from, end: to, fromLRUD: fromLRUD, lrud: toLRUD, survey: surveyId, type: m_sectionType } );
 
 		}
-
-		// omit zero length legs
-		if ( from.equals( to ) ) return;
 
 		if ( type === LEG_CAVE ) {
 

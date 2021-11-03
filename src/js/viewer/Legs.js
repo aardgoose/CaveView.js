@@ -415,60 +415,14 @@ class Legs extends LineSegments2 {
 
 	}
 
-	getShortestPath ( startStation ) {
-
-		const path = new Set();
-
-		if (
-			! this.pathsSet ||
-			startStation.shortestPath === Infinity ||
-			startStation.shortestPath === 0
-		) return path;
-
-		const legs = this.legVertices;
-
-		let nextStation = startStation;
-		let testNext = true;
-
-		// for each station find station with shortest distance to zeroStation
-
-		while ( testNext ) {
-
-			const stationLegs = nextStation.legs;
-			const l = stationLegs.length;
-
-			for ( let i = 0; i < l; i++ ) {
-
-				const leg = stationLegs[ i ];
-				const v1 = legs[ leg ];
-
-				const testStation = ( v1 === nextStation ) ? legs[ leg + 1 ] : v1;
-
-				if ( testStation.shortestPath < nextStation.shortestPath ) {
-
-					nextStation = testStation;
-					path.add( leg );
-
-					if ( nextStation.shortestPath == 0 ) testNext = false;
-
-				}
-
-			}
-
-		}
-
-		return path;
-
-	}
-
 	setShortestPaths ( station, legCallback = null ) {
 
-		const legsSeen = [];
 		// queue of stations searched.
 		const queue = [ station ];
 
 		const legs = this.legVertices;
 		const legLengths = this.legLengths;
+		const legsSeen = [];
 
 		let maxDistance = 0;
 
@@ -478,8 +432,6 @@ class Legs extends LineSegments2 {
 
 			const station = queue.shift();
 			const stationLegs = station.legs;
-
-			//if ( ! stationLegs ) continue;
 
 			const currentDistance = station.shortestPath;
 
@@ -520,6 +472,54 @@ class Legs extends LineSegments2 {
 		this.pathsSet = true;
 
 		return maxDistance;
+
+	}
+
+	getShortestPath ( startStation ) {
+
+		const path = new Set();
+
+		if (
+			! this.pathsSet ||
+			startStation.shortestPath === Infinity ||
+			startStation.shortestPath === 0
+		) return path;
+
+		const legs = this.legVertices;
+
+		let nextStation = startStation;
+		let testNext = true;
+
+		// for each station find station with shortest distance to zeroStation
+
+		while ( testNext ) {
+
+			const stationLegs = nextStation.legs;
+			const l = stationLegs.length;
+			let lastStation = null;
+
+			for ( let i = 0; i < l; i++ ) {
+
+				const leg = stationLegs[ i ];
+				const v1 = legs[ leg ];
+
+				const testStation = ( v1 === nextStation ) ? legs[ leg + 1 ] : v1;
+
+				if ( testStation != lastStation && testStation.shortestPath <= nextStation.shortestPath ) {
+
+					lastStation = nextStation;
+					nextStation = testStation;
+					path.add( leg );
+
+					if ( nextStation.shortestPath == 0 ) testNext = false;
+
+				}
+
+			}
+
+		}
+
+		return path;
 
 	}
 

@@ -311,7 +311,7 @@ function HUD ( viewer, renderer ) {
 
 			useLinearScale = true;
 
-			linearScale.setRange( 0, viewer.maxDistance, i18n( 'distance' ) );
+			linearScale.setRange( viewer.maxDistance, 0, i18n( 'distance' ) );
 
 			break;
 

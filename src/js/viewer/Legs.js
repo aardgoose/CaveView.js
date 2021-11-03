@@ -479,47 +479,58 @@ class Legs extends LineSegments2 {
 
 		const path = new Set();
 
+		let shortestPath = startStation.shortestPath;
+
 		if (
 			! this.pathsSet ||
-			startStation.shortestPath === Infinity ||
-			startStation.shortestPath === 0
+			shortestPath === Infinity ||
+			shortestPath === 0
 		) return path;
 
 		const legs = this.legVertices;
 
-		let nextStation = startStation;
-		let testNext = true;
+		_shortestPathSearch( null, startStation );
 
-		// for each station find station with shortest distance to zeroStation
+		return path;
 
-		while ( testNext ) {
+		function _shortestPathSearch ( lastStation, station ) {
 
-			const stationLegs = nextStation.legs;
+			const stationLegs = station.legs;
 			const l = stationLegs.length;
-			let lastStation = null;
 
 			for ( let i = 0; i < l; i++ ) {
 
 				const leg = stationLegs[ i ];
 				const v1 = legs[ leg ];
 
-				const testStation = ( v1 === nextStation ) ? legs[ leg + 1 ] : v1;
+				const nextStation = ( v1 === station ) ? legs[ leg + 1 ] : v1;
 
-				if ( testStation != lastStation && testStation.shortestPath <= nextStation.shortestPath ) {
+				// prevent loops with zero length legs
+				if ( nextStation === lastStation ) continue;
 
-					lastStation = nextStation;
-					nextStation = testStation;
+				// '<=' to search via zero length legs
+				if ( nextStation.shortestPath <= shortestPath ) {
+
+					shortestPath = nextStation.shortestPath;
+
 					path.add( leg );
 
-					if ( nextStation.shortestPath == 0 ) testNext = false;
+					if ( nextStation.shortestPath === 0 ) {
+
+						return;
+
+					} else {
+
+						_shortestPathSearch( station, nextStation );
+
+					}
+
 
 				}
 
 			}
 
 		}
-
-		return path;
 
 	}
 

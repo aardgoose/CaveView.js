@@ -1155,29 +1155,7 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed, fil
 
 	case SHADING_DISTANCE:
 
-		if ( this.maxDistance === 0 ) {
-
-			if ( this.entrances ) {
-
-				let maxDistance = 0;
-
-				// reset distances to unknown
-				this.stations.resetPaths();
-
-				this.entrances.forEachEntrance( e => maxDistance = Math.max( maxDistance, legs.setShortestPaths( e ) ) );
-
-				this.maxDistance = maxDistance;
-
-			}
-
-			this.setLegColourByDistance( legs );
-
-		} else {
-
-			this.setLegColourByDistance( legs );
-
-		}
-
+		this.setLegColourByDistance( legs );
 		break;
 
 	default:
@@ -1259,6 +1237,27 @@ Survey.prototype.setLegColourByDistance = function ( mesh, filterConnected ) {
 
 	const colourRange = colours.length - 1;
 	const maxDistance = this.maxDistance;
+
+	if ( this.maxDistance === 0 ) {
+
+		if ( this.entrances ) {
+
+			let maxDistance = 0;
+
+			// reset distances to unknown
+			this.stations.resetPaths();
+
+			this.highlightPath = null;
+			this.markers.clear();
+
+			this.entrances.forEachEntrance( e => maxDistance = Math.max( maxDistance, mesh.setShortestPaths( e ) ) );
+
+			this.maxDistance = maxDistance;
+
+		}
+
+	}
+
 	const path = this.highlightPath;
 
 	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', false, filterConnected );

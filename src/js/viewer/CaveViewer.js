@@ -1399,31 +1399,31 @@ class CaveViewer extends EventDispatcher {
 
 			const hit = raycaster.intersectObjects( mouseTargets, false )[ 0 ];
 
-			if ( hit === undefined ) return;
-
 			switch ( mouseMode ) {
 
 			case MOUSE_MODE_NORMAL:
 
+				if ( hit === undefined ) break;
 				_selectStation( hit.station );
 
 				break;
 
 			case MOUSE_MODE_ROUTE_EDIT:
 
+				if ( hit === undefined ) break;
 				_selectSegment( hit );
 
 				break;
 
 			case MOUSE_MODE_DISTANCE:
 
-				_selectDistance( hit.station );
+				_selectDistance( hit );
 
 				break;
 
 			case MOUSE_MODE_TRACE_EDIT:
 
-				if ( event.button === MOUSE.LEFT ) {
+				if ( event.button === MOUSE.LEFT && hit ) {
 
 					if ( hit.station ) {
 
@@ -1490,7 +1490,23 @@ class CaveViewer extends EventDispatcher {
 
 			}
 
-			function _selectDistance ( station ) {
+			function _selectDistance ( hit ) {
+
+				if ( ! hit ) {
+
+					if ( event.button === MOUSE.RIGHT ) {
+
+						// default distance shading
+						survey.maxDistance = 0;
+						setShadingMode( SHADING_DISTANCE );
+
+					}
+
+					return;
+
+				}
+
+				const station = hit.station;
 
 				if ( event.button === MOUSE.LEFT ) {
 

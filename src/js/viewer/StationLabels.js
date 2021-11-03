@@ -75,13 +75,14 @@ class StationLabels extends Group {
 
 			}
 
+			const connections = station.effectiveConnections();
 			let d2 = 40000;
 
-			if ( station.connections === 0 ) {
+			if ( connections === 0 ) {
 
 				d2 = 250;
 
-			} else if ( station.connections < 3 ) {
+			} else if ( connections < 3 ) {
 
 				d2 = 5000;
 
@@ -123,7 +124,17 @@ class StationLabels extends Group {
 
 	addLabel ( station, name ) {
 
-		const connections = station.connections;
+		const connections = station.effectiveConnections();
+
+		let yOffset = 0;
+
+		// handle labels for duplicate stations
+		if ( station.duplicate !== null ) {
+
+			// ofset one label upwards
+			yOffset = ( station.id > station.duplicate.id ) ? 1.2 : 0;
+
+		}
 
 		let material;
 
@@ -141,7 +152,7 @@ class StationLabels extends Group {
 
 		}
 
-		const label = new GlyphString( name, material, this.ctx );
+		const label = new GlyphString( name, material, this.ctx, yOffset * material.getCellSize() );
 
 		label.layers.mask = this.layers.mask;
 		label.position.copy( station );

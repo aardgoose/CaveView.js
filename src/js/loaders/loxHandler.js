@@ -218,11 +218,17 @@ loxHandler.prototype.parse = function ( cave, source, metadata, section, progres
 			readFloat64()
 		);
 
-		shash[ lastKey ] = coords;
-
 		if ( oldcoords !== undefined ) {
 
+			// mark as a pair
+			oldcoords.duplicate = coords;
+			coords.duplicate = oldcoords;
+
 			lineSegments.push( { from: oldcoords, to: coords, type: LEG_CAVE, survey: oldcoords.parent.id } );
+
+		} else {
+
+			shash[ lastKey ] = coords;
 
 		}
 

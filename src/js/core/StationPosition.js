@@ -19,12 +19,29 @@ class StationPosition extends Vector3 {
 
 	}
 
+	effectiveConnections () {
+
+		let connections = this.connections;
+
+		if ( this.duplicate !== null ) {
+
+			//combine connection count
+			connections += this.duplicate.connections;
+
+		}
+
+		return connections;
+
+	}
+
 }
 
 StationPosition.prototype.connections = 0;
 StationPosition.prototype.splays = 0;
 StationPosition.prototype.shortestPath = Infinity;
 StationPosition.prototype.children = []; // leaf nodes
+StationPosition.prototype.duplicate = null;
+
 
 Object.assign( StationPosition.prototype, Tree.prototype );
 

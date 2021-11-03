@@ -145,7 +145,7 @@ class Stations extends Points {
 
 		} else {
 
-			color = node.connections > 2 ? this.junctionColor : this.baseColor;
+			color = node.effectiveConnections() > 2 ? this.junctionColor : this.baseColor;
 			pointSize = 8.0;
 
 		}

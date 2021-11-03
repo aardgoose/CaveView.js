@@ -1236,7 +1236,6 @@ Survey.prototype.setLegColourByDistance = function ( mesh, filterConnected ) {
 	const pathColor = cfg.themeColor( 'routes.active' );
 
 	const colourRange = colours.length - 1;
-	const maxDistance = this.maxDistance;
 
 	if ( this.maxDistance === 0 ) {
 
@@ -1258,6 +1257,7 @@ Survey.prototype.setLegColourByDistance = function ( mesh, filterConnected ) {
 
 	}
 
+	const maxDistance = this.maxDistance;
 	const path = this.highlightPath;
 
 	mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', false, filterConnected );

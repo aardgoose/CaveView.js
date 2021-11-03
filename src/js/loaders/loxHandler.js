@@ -206,36 +206,6 @@ loxHandler.prototype.parse = function ( cave, source, metadata, section, progres
 
 	}
 
-	function readStation () {
-
-		const m_id       = readUint();
-		const m_surveyId = readUint();
-		const namePtr    = readDataPtr();
-		const commentPtr = readDataPtr();
-
-		const m_flags = readUint();
-		const coords = readCoords();
-
-		stations[ m_id ] = coords;
-
-		// add stations to surveyTree make station id negative to avoid clashes with survey id space.
-
-		// m_flags & 0x01 = surface
-
-		if ( lastParentId !== m_surveyId ) {
-
-			parentNode = surveyTree.findById( m_surveyId + idOffset );
-			lastParentId = m_surveyId;
-
-		}
-
-		const name = ( namePtr.size === 0 ) ? '[' + m_id + ']' : readString( namePtr );
-		const comment = ( commentPtr.size > 0 ) ? readString( commentPtr ) : null;
-
-		parentNode.addLeafById( name, - ( m_id + idOffset ), ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL, coords, comment );
-
-	}
-
 	function readCoords () {
 
 		const lastKey = String.fromCharCode.apply( null, bytes.subarray( pos, pos + 24 ) );
@@ -271,6 +241,43 @@ loxHandler.prototype.parse = function ( cave, source, metadata, section, progres
 		limits.expandByPoint( coords );
 
 		return coords;
+
+	}
+
+	function readStation () {
+
+		const m_id       = readUint();
+		const m_surveyId = readUint();
+		const namePtr    = readDataPtr();
+		const commentPtr = readDataPtr();
+
+		const m_flags = readUint();
+		const coords = readCoords();
+
+		stations[ m_id ] = coords;
+
+		// add stations to surveyTree make station id negative to avoid clashes with survey id space.
+
+		/*
+		.lox station flags
+		LXFILE_STATION_FLAG_SURFACE = 1,
+		LXFILE_STATION_FLAG_ENTRANCE = 2,
+		LXFILE_STATION_FLAG_FIXED = 4,
+		LXFILE_STATION_FLAG_CONTINUATION = 8,
+		LXFILE_STATION_FLAG_HAS_WALLS = 16,
+		*/
+
+		if ( lastParentId !== m_surveyId ) {
+
+			parentNode = surveyTree.findById( m_surveyId + idOffset );
+			lastParentId = m_surveyId;
+
+		}
+
+		const name = ( namePtr.size === 0 ) ? '[' + m_id + ']' : readString( namePtr );
+		const comment = ( commentPtr.size > 0 ) ? readString( commentPtr ) : null;
+
+		parentNode.addLeafById( name, - ( m_id + idOffset ), ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL, coords, comment );
 
 	}
 

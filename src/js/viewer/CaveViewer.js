@@ -845,9 +845,13 @@ class CaveViewer extends EventDispatcher {
 
 			if ( shadingMode === SHADING_DISTANCE ) {
 
-				lastMouseMode = mouseMode;
-				mouseMode = MOUSE_MODE_DISTANCE;
-				mouseTargets = survey.pointTargets;
+				if ( mouseMode !== MOUSE_MODE_DISTANCE ) {
+
+					lastMouseMode = mouseMode;
+					mouseMode = MOUSE_MODE_DISTANCE;
+					mouseTargets = survey.pointTargets;
+
+				}
 
 			} else {
 

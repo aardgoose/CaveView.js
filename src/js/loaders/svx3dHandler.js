@@ -915,9 +915,23 @@ Svx3dHandler.prototype.handleVx = function ( version, section ) {
 		const coords = readCoordinates();
 		const path = label.split( '.' );
 
+		let useCoords = coords;
+
+		if ( coords.parent !== null ) {
+
+			useCoords = new StationPosition( coords.x, coords.y, coords.z );
+
+			coords.duplicate = useCoords;
+			useCoords.duplicate = coords;
+
+			// add to station map to ensure correct offsetting in Handler.getSurvey()
+			stationMap.set( {}, useCoords ); // use dummy object as map key
+
+		}
+
 		stations.set(
 			label,
-			surveyTree.addLeaf( path, ( ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL ), coords )
+			surveyTree.addLeaf( path, ( ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL ), useCoords )
 		);
 
 		return true;

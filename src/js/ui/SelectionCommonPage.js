@@ -80,24 +80,6 @@ class SelectionCommonPage extends Page {
 			const text = ( child.comment === undefined ) ? child.name : child.name + ' ( ' + child.comment + ' )';
 			const txt = document.createTextNode( text );
 
-			let isEntrance;
-			let duplicateTag = null;
-
-			if ( child.duplicate ) {
-
-				isEntrance =  ( child.type | child.duplicate.type ) & STATION_ENTRANCE;
-
-				duplicateTag = document.createElement( 'span' );
-
-				duplicateTag.textContent = ' [linked station]';
-				duplicateTag.classList.add( 'duplicate' );
-
-			} else {
-
-				isEntrance =  child.type & STATION_ENTRANCE;
-
-			}
-
 			let key;
 
 			self.nodes.set( li, child );
@@ -110,7 +92,7 @@ class SelectionCommonPage extends Page {
 
 				li.classList.add( 'section' );
 
-			} else if ( isEntrance ) {
+			} else if ( child.type & STATION_ENTRANCE ) {
 
 				key = _makeKey( '\u2229 ', cfg.themeColorCSS( 'stations.entrances.marker' ) );
 				key.classList.add( 'cv-entrance' );
@@ -132,7 +114,16 @@ class SelectionCommonPage extends Page {
 			li.appendChild( key );
 			li.appendChild( txt );
 
-			if ( duplicateTag ) li.appendChild( duplicateTag );
+			if ( child.next ) {
+
+				const duplicateTag = document.createElement( 'span' );
+
+				duplicateTag.textContent = ' [linked station]';
+				duplicateTag.classList.add( 'duplicate' );
+
+				li.appendChild( duplicateTag );
+
+			}
 
 			if ( child.children.length > 0 ) {
 
@@ -275,7 +266,7 @@ class SelectionCommonPage extends Page {
 				if ( target.classList.contains( 'duplicate' ) ) {
 
 					const node = self.nodes.get( target.parentNode );
-					self.selectNode( node.duplicate );
+					self.selectNode( node.next );
 
 				} else {
 					self.handleBack( target );

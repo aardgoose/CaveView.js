@@ -61,6 +61,8 @@ class pltHandler {
 				path[ 2 ] = stationName;
 
 				coords = readCoords( parts );
+				coords.type = STATION_NORMAL;
+
 				stationIndex = coords.stationIndex;
 
 				segments.push( { coords: coords, type: LEG_CAVE, survey: surveyId } );
@@ -70,7 +72,7 @@ class pltHandler {
 					// parse comment
 					const comment = ( parts[ 13 ] === undefined ) ? null : parts.slice( 13 ).join( ' ' );
 
-					surveyTree.addLeaf( path, STATION_NORMAL, coords, comment );
+					surveyTree.addLeaf( path, coords, comment );
 
 				}
 

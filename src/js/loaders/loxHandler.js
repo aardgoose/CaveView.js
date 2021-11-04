@@ -206,7 +206,7 @@ loxHandler.prototype.parse = function ( cave, source, metadata, section, progres
 
 	}
 
-	function readCoords () {
+	function readCoords ( m_flags ) {
 
 		const lastKey = String.fromCharCode.apply( null, bytes.subarray( pos, pos + 24 ) );
 
@@ -218,12 +218,14 @@ loxHandler.prototype.parse = function ( cave, source, metadata, section, progres
 			readFloat64()
 		);
 
+		coords.type = ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL;
+
 		if ( oldcoords !== undefined ) {
 
-			// mark as a pair
-			oldcoords.duplicate = coords;
-			coords.duplicate = oldcoords;
+			// mark as a duplicate
+			oldcoords.linkStation( coords );
 
+			// create zero length show to preserve topology
 			lineSegments.push( { from: oldcoords, to: coords, type: LEG_CAVE, survey: oldcoords.parent.id } );
 
 		} else {
@@ -258,7 +260,7 @@ loxHandler.prototype.parse = function ( cave, source, metadata, section, progres
 		const commentPtr = readDataPtr();
 
 		const m_flags = readUint();
-		const coords = readCoords();
+		const coords = readCoords( m_flags );
 
 		stations[ m_id ] = coords;
 
@@ -283,7 +285,7 @@ loxHandler.prototype.parse = function ( cave, source, metadata, section, progres
 		const name = ( namePtr.size === 0 ) ? '[' + m_id + ']' : readString( namePtr );
 		const comment = ( commentPtr.size > 0 ) ? readString( commentPtr ) : null;
 
-		parentNode.addLeafById( name, - ( m_id + idOffset ), ( m_flags & 0x02 ) ? STATION_ENTRANCE : STATION_NORMAL, coords, comment );
+		parentNode.addLeafById( name, - ( m_id + idOffset ), coords, comment );
 
 	}
 

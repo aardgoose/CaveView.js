@@ -98,7 +98,7 @@ Tree.prototype.addPath = function ( path ) {
 
 };
 
-Tree.prototype.addLeaf = function ( path, type, leafNode, comments ) {
+Tree.prototype.addLeaf = function ( path, leafNode, comments ) {
 
 	const root = this.root;
 
@@ -106,7 +106,6 @@ Tree.prototype.addLeaf = function ( path, type, leafNode, comments ) {
 
 	leafNode.root = root;
 	leafNode.id = ++root.maxId;
-	leafNode.type = type;
 
 	if ( comments ) leafNode.comments = comments;
 
@@ -170,11 +169,10 @@ Tree.prototype.addLeaf = function ( path, type, leafNode, comments ) {
 
 };
 
-Tree.prototype.addLeafById = function ( name, id, type, leafNode, comments ) {
+Tree.prototype.addLeafById = function ( name, id, leafNode, comments ) {
 
 	const root = this.root;
 
-	leafNode.type = type;
 	leafNode.name = name;
 	leafNode.id = id;
 	leafNode.parent = this;

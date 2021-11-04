@@ -22,15 +22,47 @@ class StationPosition extends Vector3 {
 	effectiveConnections () {
 
 		let connections = this.connections;
+		let next = this.next;
 
-		if ( this.duplicate !== null ) {
+		while ( next !== null && next !== this ) {
 
-			//combine connection count
-			connections += this.duplicate.connections;
+			connections += next.connections;
+			next = next.next;
 
 		}
 
 		return connections;
+
+	}
+
+	// add station to linked list of duplicate stations
+	linkStation ( station ) {
+
+		if ( this.next ) {
+
+			const oldNext = this.next;
+
+			this.next = station;
+			station.prev = this;
+
+			station.next = oldNext;
+			oldNext.prev = station;
+
+		} else {
+
+			// note: special case adding to single station.
+			// preserves benefit of default null values attached to prototype
+
+			this.next = station;
+			this.prev = station;
+
+			station.next = this;
+			station.prev = this;
+
+		}
+
+		this.type |= station.type;
+		station.type = this.type;
 
 	}
 
@@ -40,8 +72,8 @@ StationPosition.prototype.connections = 0;
 StationPosition.prototype.splays = 0;
 StationPosition.prototype.shortestPath = Infinity;
 StationPosition.prototype.children = []; // leaf nodes
-StationPosition.prototype.duplicate = null;
-
+StationPosition.prototype.prev = null;
+StationPosition.prototype.next = null;
 
 Object.assign( StationPosition.prototype, Tree.prototype );
 

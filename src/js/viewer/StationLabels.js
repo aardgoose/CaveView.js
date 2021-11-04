@@ -94,27 +94,33 @@ class StationLabels extends Group {
 			// show labels for network vertices at greater distance than intermediate stations
 			const visible = ( station.distanceToSquared( cameraPosition ) < d2 );
 
-			let name = '';
+			if ( visible ) {
 
-			if ( showName ) name += station.name;
-			if ( showName && showComment && station.comment !== undefined ) name += ' ';
-			if ( showComment && station.comment !== undefined ) name += station.comment;
+				let name = '';
 
-			if ( ! label || label.name !== name ) {
+				if ( showName ) name += station.name;
+				if ( showName && showComment && station.comment !== undefined ) name += ' ';
+				if ( showComment && station.comment !== undefined ) name += station.comment;
 
-				// remove label with the wrong text
-				if ( label !== undefined ) {
+				if ( label && label.name !== name ) {
 
+					// remove label with the wrong text
 					this.remove( label );
 					station.label = null;
 
 				}
 
-				if ( visible ) this.addLabel( station, name );
+				if ( ! station.label  ) {
+
+					this.addLabel( station, name, connections );
+
+				}
+
+				station.label.visible = true;
 
 			} else {
 
-				label.visible = visible;
+				if ( label ) label.visible = false;
 
 			}
 
@@ -122,17 +128,15 @@ class StationLabels extends Group {
 
 	}
 
-	addLabel ( station, name ) {
-
-		const connections = station.effectiveConnections();
+	addLabel ( station, name, connections ) {
 
 		let yOffset = 0;
 
 		// handle labels for duplicate stations
-		if ( station.duplicate !== null ) {
+		if ( station.next !== null ) {
 
 			// ofset one label upwards
-			yOffset = ( station.id > station.duplicate.id ) ? 1.2 : 0;
+			yOffset = ( station.id > station.next.id ) ? 1.2 : 0;
 
 		}
 

@@ -256,8 +256,9 @@ Svx3dHandler.prototype.handleOld = function ( version ) {
 		if ( db[ 0 ] === 92 ) db.shift(); // remove initial '/' characters
 
 		label = String.fromCharCode.apply( null, db );
+		lastPosition.type = STATION_NORMAL;
 
-		const node = surveyTree.addLeaf( label.split( '.' ), STATION_NORMAL, lastPosition );
+		const node = surveyTree.addLeaf( label.split( '.' ), lastPosition );
 
 		// track coords to sectionId to allow survey ID's to be added to leg vertices
 		stations.set( lastPosition, node );
@@ -905,6 +906,7 @@ Svx3dHandler.prototype.handleVx = function ( version, section ) {
 		*/
 
 		readLabel( 0 );
+
 		if ( ( ! ( flags & 0x0E ) || flags & 0x20 ) || ! inSection ) { // skip surface only stations
 
 			pos += 12; //skip coordinates
@@ -914,6 +916,7 @@ Svx3dHandler.prototype.handleVx = function ( version, section ) {
 
 		const coords = readCoordinates();
 		const path = label.split( '.' );
+		const type = ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL;
 
 		let useCoords = coords;
 
@@ -921,17 +924,22 @@ Svx3dHandler.prototype.handleVx = function ( version, section ) {
 
 			useCoords = new StationPosition( coords.x, coords.y, coords.z );
 
-			coords.duplicate = useCoords;
-			useCoords.duplicate = coords;
+			useCoords.type = type;
+
+			coords.linkStation( useCoords );
 
 			// add to station map to ensure correct offsetting in Handler.getSurvey()
 			stationMap.set( {}, useCoords ); // use dummy object as map key
+
+		} else {
+
+			coords.type = type;
 
 		}
 
 		stations.set(
 			label,
-			surveyTree.addLeaf( path, ( ( flags & 0x04 ) ? STATION_ENTRANCE : STATION_NORMAL ), useCoords )
+			surveyTree.addLeaf( path, useCoords )
 		);
 
 		return true;

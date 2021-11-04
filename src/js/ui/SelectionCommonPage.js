@@ -81,10 +81,16 @@ class SelectionCommonPage extends Page {
 			const txt = document.createTextNode( text );
 
 			let isEntrance;
+			let duplicateTag = null;
 
 			if ( child.duplicate ) {
 
 				isEntrance =  ( child.type | child.duplicate.type ) & STATION_ENTRANCE;
+
+				duplicateTag = document.createElement( 'span' );
+
+				duplicateTag.textContent = ' [linked station]';
+				duplicateTag.classList.add( 'duplicate' );
 
 			} else {
 
@@ -125,6 +131,8 @@ class SelectionCommonPage extends Page {
 
 			li.appendChild( key );
 			li.appendChild( txt );
+
+			if ( duplicateTag ) li.appendChild( duplicateTag );
 
 			if ( child.children.length > 0 ) {
 
@@ -264,7 +272,15 @@ class SelectionCommonPage extends Page {
 
 			case 'SPAN':
 
-				self.handleBack( target );
+				if ( target.classList.contains( 'duplicate' ) ) {
+
+					const node = self.nodes.get( target.parentNode );
+					self.selectNode( node.duplicate );
+
+				} else {
+					self.handleBack( target );
+				}
+
 				break;
 
 			}
@@ -366,6 +382,8 @@ class SelectionCommonPage extends Page {
 		}
 
 	}
+
+	selectNode () {} // not implemented for side scrolling tree structure
 
 }
 

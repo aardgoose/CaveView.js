@@ -126,6 +126,10 @@ $animation-speed: 0.25s;
 	color: white;
 }
 
+.cv-frame li:not(.section):hover {
+	background-color: black;
+}
+
 .cv-frame div.page div.slide {
 	position: absolute;
 	top: 42px;
@@ -736,6 +740,11 @@ div.cv-frame::-webkit-scrollbar-button:end {
 	display: inline-block;
 	width: 14px;
 	padding-right: 4px;
+}
+
+.cv-frame li span.duplicate {
+	display: inline;
+	color: $highlight;
 }
 
 .cv-frame div.page li.highlight {

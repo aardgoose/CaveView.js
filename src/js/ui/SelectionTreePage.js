@@ -7,7 +7,7 @@ class SelectionTreePage extends SelectionCommonPage {
 		super( frame, viewer, container, fileSelector );
 
 		const self = this;
-		const domTop = self.displaySectionCommon( this.currentTop );
+		const domTop = this.displaySectionCommon( this.currentTop );
 
 		let hightlitElement = null;
 		let lastHighlitScroll = 0;
@@ -18,7 +18,7 @@ class SelectionTreePage extends SelectionCommonPage {
 
 		this.handleNext = function ( target, node ) {
 
-			if ( node !== undefined && node !== self.surveyTree ) {
+			if ( node !== undefined && node !== this.surveyTree ) {
 
 				const li = target.parentNode;
 
@@ -29,7 +29,7 @@ class SelectionTreePage extends SelectionCommonPage {
 
 				} else {
 
-					const ul = self.displaySectionCommon( node );
+					const ul = this.displaySectionCommon( node );
 					li.appendChild( ul );
 					target.classList.add( 'open' );
 
@@ -39,7 +39,7 @@ class SelectionTreePage extends SelectionCommonPage {
 
 			} else if ( target.id === 'ui-path' ) {
 
-				viewer.section = self.currentTop;
+				viewer.section = this.currentTop;
 
 			}
 
@@ -47,18 +47,14 @@ class SelectionTreePage extends SelectionCommonPage {
 
 		this.handleBack = function () {};
 
-		this.addListener( viewer, 'station', _selectNode );
+		this.selectNode = function ( station ) {
 
-		return;
-
-		function _selectNode ( event ) {
-
-			if ( ! self.isOntop) return;
+			if ( ! this.isOntop) return;
 
 			// traverse DOM to find existing tree elements and add required
 			// until selected node is visible and can be highlighted
 
-			const selectedNode = event.node.station;
+			const selectedNode = station;
 
 			if ( selectedNode === null  ) {
 
@@ -93,7 +89,7 @@ class SelectionTreePage extends SelectionCommonPage {
 				for ( i = 0; i < children.length; i++ ) {
 
 					listElement = children[ i ];
-					if ( self.nodes.get( listElement ) === node ) break;
+					if ( this.nodes.get( listElement ) === node ) break;
 
 				}
 
@@ -111,7 +107,7 @@ class SelectionTreePage extends SelectionCommonPage {
 					// expand tree if not already visible
 					if ( nextTopElement.tagName === 'DIV' ) {
 
-						nextTopElement = self.handleNext( nextTopElement, node );
+						nextTopElement = this.handleNext( nextTopElement, node );
 
 					}
 
@@ -121,6 +117,16 @@ class SelectionTreePage extends SelectionCommonPage {
 				}
 
 			}
+
+		};
+
+		this.addListener( viewer, 'station', _selectNode );
+
+		return;
+
+		function _selectNode( event ) {
+
+			self.selectNode( event.node.station );
 
 		}
 

@@ -1,5 +1,5 @@
 import { ShaderMaterial, Vector2 } from '../Three';
-import { Shaders } from '../shaders/Shaders';
+import { Shaders } from './shaders/Shaders';
 
 class PopupMaterial extends ShaderMaterial {
 

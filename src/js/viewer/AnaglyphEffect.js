@@ -13,7 +13,7 @@ import {
 	ShaderMaterial
 } from '../Three';
 
-import { Shaders } from '../shaders/Shaders';
+import { Shaders } from '../materials/shaders/Shaders';
 
 function AnaglyphEffect ( renderer, width, height ) {
 

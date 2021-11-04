@@ -1,4 +1,4 @@
-import { ShaderChunk } from '../Three';
+import { ShaderChunk } from '../../Three';
 
 import anaglyphVertexShader from './anaglyphVertexShader.glsl';
 import anaglyphFragmentShader from './anaglyphFragmentShader.glsl';

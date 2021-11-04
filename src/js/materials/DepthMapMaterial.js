@@ -1,4 +1,4 @@
-import { Shaders } from '../shaders/Shaders';
+import { Shaders } from './shaders/Shaders';
 import { ShaderMaterial } from '../Three';
 
 class DepthMapMaterial extends ShaderMaterial {

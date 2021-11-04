@@ -1,5 +1,5 @@
 import { ShaderMaterial, Vector2, Vector3 } from '../Three';
-import { Shaders } from '../shaders/Shaders';
+import { Shaders } from './shaders/Shaders';
 
 class GlyphMaterial extends ShaderMaterial {
 

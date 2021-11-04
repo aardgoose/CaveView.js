@@ -1,4 +1,4 @@
-import { Shaders } from '../shaders/Shaders';
+import { Shaders } from './shaders/Shaders';
 import { ShaderMaterial, cloneUniforms } from '../Three';
 
 class CursorMaterial extends ShaderMaterial {

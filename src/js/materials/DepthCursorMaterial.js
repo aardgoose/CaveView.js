@@ -1,4 +1,4 @@
-import { Shaders } from '../shaders/Shaders';
+import { Shaders } from './shaders/Shaders';
 import { ShaderMaterial, Vector3, cloneUniforms } from '../Three';
 
 class DepthCursorMaterial extends ShaderMaterial {

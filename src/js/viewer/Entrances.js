@@ -64,7 +64,15 @@ class Entrances extends ClusterMarkers {
 
 		function _addEntrance( node ) {
 
-			if ( ! ( node.type & STATION_ENTRANCE ) ) return;
+			let type = node.type;
+
+			if ( node.duplicate ) {
+
+				type = type | node.duplicate.type;
+
+			}
+
+			if ( ! ( type & STATION_ENTRANCE ) ) return;
 
 			let name;
 

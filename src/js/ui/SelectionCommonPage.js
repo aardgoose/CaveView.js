@@ -80,6 +80,18 @@ class SelectionCommonPage extends Page {
 			const text = ( child.comment === undefined ) ? child.name : child.name + ' ( ' + child.comment + ' )';
 			const txt = document.createTextNode( text );
 
+			let isEntrance;
+
+			if ( child.duplicate ) {
+
+				isEntrance =  ( child.type | child.duplicate.type ) & STATION_ENTRANCE;
+
+			} else {
+
+				isEntrance =  child.type & STATION_ENTRANCE;
+
+			}
+
 			let key;
 
 			self.nodes.set( li, child );
@@ -92,7 +104,7 @@ class SelectionCommonPage extends Page {
 
 				li.classList.add( 'section' );
 
-			} else if ( child.type & STATION_ENTRANCE ) {
+			} else if ( isEntrance ) {
 
 				key = _makeKey( '\u2229 ', cfg.themeColorCSS( 'stations.entrances.marker' ) );
 				key.classList.add( 'cv-entrance' );

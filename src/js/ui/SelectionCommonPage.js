@@ -64,7 +64,9 @@ class SelectionCommonPage extends Page {
 
 		this.addLine = function ( ul, child ) {
 
-			const connections = ( child === null ) ? null : child.connections;
+			if ( child === null ) return;
+
+			const connections = child.isStation() ? child.effectiveConnections() : null;
 
 			// track which sections have stations as children
 

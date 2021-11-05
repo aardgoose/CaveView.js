@@ -534,8 +534,6 @@ class Page {
 
 		const a = document.createElement( 'a' );
 
-		if ( typeof a.download === 'undefined' ) return null;
-
 		this.addListener( a, 'click', () => { a.href = urlProvider( a ); } );
 
 		a.textContent = this.i18n( title );
@@ -554,8 +552,6 @@ class Page {
 	download ( data, fileName ) {
 
 		const a = document.createElement( 'a' );
-
-		if ( typeof a.download === 'undefined' ) return null;
 
 		a.type = 'download';
 		a.download = fileName;

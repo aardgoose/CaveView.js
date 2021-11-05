@@ -74,7 +74,7 @@ class CanvasPopup extends Popup {
 		// write text contents
 
 		ctx.textAlign = 'left';
-		ctx.font = fontSize + 'px ' + 'normal helvetica,sans-serif';
+		ctx.font = fontSize + 'px normal helvetica,sans-serif';
 		ctx.fillStyle = cfg.themeColorCSS( 'popup.text' );
 
 		for ( let i = 0; i < lineCount; i++ ) {

@@ -64,10 +64,19 @@ class Entrances extends ClusterMarkers {
 
 		function _addEntrance( node ) {
 
-			// FIXME supress mutiple copies of the point being created
+			if ( ! ( ( node.ownType ?? node.type ) & STATION_ENTRANCE ) ) return;
 
-			if ( ! ( node.type & STATION_ENTRANCE ) ) return;
-			//if ( node.next && ! ( node.ownType & STATION_ENTRANCE ) ) return;
+			let next = node.next;
+
+			while ( next && next !== node ) {
+
+				// skip if a colocated station is already found as an entrance.
+				if ( vertices.includes( next ) ) return;
+				next = next.next;
+
+			}
+
+			vertices.push( node );
 
 			let name;
 
@@ -76,6 +85,7 @@ class Entrances extends ClusterMarkers {
 			if ( entranceInfo?.name !== undefined ) {
 
 				name = entranceInfo.name;
+				if ( name === '-skip' ) return;
 
 			} else if ( node.comment !== undefined ) {
 
@@ -86,10 +96,6 @@ class Entrances extends ClusterMarkers {
 				name = node.getPath( endNode );
 
 			}
-
-			vertices.push( node );
-
-			if ( name === '-skip' ) return;
 
 			self.addMarker( node, ' ' + name + ' ' );
 

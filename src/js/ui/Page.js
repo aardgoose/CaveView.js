@@ -256,7 +256,13 @@ class Page {
 
 		const frame = this.frame;
 
-		this.addListener( select, 'change', function onChange ( event ) { frame.inHandler = true; trgObj[ property ] = event.target.value; frame.inHandler = false; } );
+		this.addListener( select, 'change', function onChange ( event ) {
+
+			frame.inHandler = true;
+			trgObj[ property ] = event.target.value;
+			frame.inHandler = false;
+
+		} );
 
 		frame.controls[ property ] = select;
 

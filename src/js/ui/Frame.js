@@ -14,6 +14,7 @@ class Frame {
 	reset () {
 
 		const self = this;
+
 		// create UI side panel and reveal tabs
 		const frame = document.createElement( 'div' );
 		frame.classList.add( 'cv-frame' );
@@ -49,8 +50,8 @@ class Frame {
 		function _closeFrame ( /* event */ ) {
 
 			self.openPageId = null;
-			self.tabBox.classList.remove( 'onscreen' );
-			self.frame.classList.remove( 'onscreen' );
+			tabBox.classList.remove( 'onscreen' );
+			frame.classList.remove( 'onscreen' );
 
 		}
 

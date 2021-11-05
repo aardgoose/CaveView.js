@@ -122,7 +122,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		// ignore if no change
 
-		if ( enable === this.activeCamera.layers.test( 1 << layerTag ) ) return false;
+		if ( enable == this.testCameraLayer( layerTag ) ) return false;
 
 		if ( enable ) {
 

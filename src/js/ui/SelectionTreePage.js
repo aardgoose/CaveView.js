@@ -7,6 +7,8 @@ class SelectionTreePage extends SelectionCommonPage {
 		super( frame, viewer, container, fileSelector );
 
 		const self = this;
+		const frameDiv = frame.frame;
+
 		const domTop = this.displaySectionCommon( this.currentTop );
 
 		let hightlitElement = null;
@@ -98,6 +100,7 @@ class SelectionTreePage extends SelectionCommonPage {
 				if ( node === selectedNode ) {
 
 					_setHighlight( listElement );
+					console.log( listElement.classList );
 					break;
 
 				} else {
@@ -124,6 +127,7 @@ class SelectionTreePage extends SelectionCommonPage {
 
 		return;
 
+
 		function _selectNode( event ) {
 
 			self.selectNode( event.node.station );
@@ -133,7 +137,7 @@ class SelectionTreePage extends SelectionCommonPage {
 		function _setHighlight( element ) {
 
 			lastHighlitScroll = 0;
-			self.frame.frame.addEventListener( 'scroll', _onScroll );
+			frameDiv.addEventListener( 'scroll', _onScroll );
 
 			element.classList.add( 'highlight' );
 			element.scrollIntoView( { behavior: 'smooth', block: 'center' } );
@@ -145,7 +149,7 @@ class SelectionTreePage extends SelectionCommonPage {
 
 		function _clearHighlitElement () {
 
-			self.frame.frame.removeEventListener( 'scroll', _onScroll );
+			frameDiv.removeEventListener( 'scroll', _onScroll );
 
 			if ( lastHighlitScroll > performance.now() - 1000 ) {
 

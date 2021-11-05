@@ -67,18 +67,21 @@ class Page {
 			if ( otherTab === tab ) {
 
 				otherPage.style.display = 'block';
+				this.frame.frame.scrollTo( 0, page.lastScrollY );
 
 			} else {
 
-				otherPage.style.display = 'none';
-
 				if ( otherTab.classList.contains( 'toptab' ) ) {
+
+					page.lastScrollY = this.frame.frame.scrollTop;
 
 					otherTab.classList.remove( 'toptab' );
 
 					if ( owner.onLeave !== undefined ) owner.onLeave();
 
 				}
+
+				otherPage.style.display = 'none';
 
 			}
 

@@ -61,6 +61,8 @@ class StationPosition extends Vector3 {
 
 		}
 
+		station.ownType = station.type;
+
 		this.type |= station.type;
 		station.type = this.type;
 
@@ -74,6 +76,7 @@ StationPosition.prototype.shortestPath = Infinity;
 StationPosition.prototype.children = []; // leaf nodes
 StationPosition.prototype.prev = null;
 StationPosition.prototype.next = null;
+StationPosition.prototype.ownType = null;
 
 Object.assign( StationPosition.prototype, Tree.prototype );
 

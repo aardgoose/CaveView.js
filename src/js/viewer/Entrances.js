@@ -67,6 +67,7 @@ class Entrances extends ClusterMarkers {
 			// FIXME supress mutiple copies of the point being created
 
 			if ( ! ( node.type & STATION_ENTRANCE ) ) return;
+			//if ( node.next && ! ( node.ownType & STATION_ENTRANCE ) ) return;
 
 			let name;
 

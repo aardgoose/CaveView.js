@@ -60,13 +60,16 @@ class StationLabels extends Group {
 		const l = points.length;
 
 		const showName = ( ( camera.layers.mask & 1 << LABEL_STATION ) !== 0 );
-		const showComment = ( ( camera.layers.mask & 1 << LABEL_STATION_COMMENT ) !== 0 );
+		const showComments = ( ( camera.layers.mask & 1 << LABEL_STATION_COMMENT ) !== 0 );
 		const commentRatio = l / this.commentCount;
 
 		for ( let i = 0; i < l; i++ ) {
 
 			const station = points[ i ];
+			const comment = station.comment;
 			const label = station.label;
+
+			const showComment = showComments && comment !== undefined;
 
 			if ( ! stations.isStationVisible( station ) ) {
 
@@ -89,7 +92,7 @@ class StationLabels extends Group {
 			}
 
 			// eager display of comments scaled by density of comments in survey
-			if ( showComment && station.comment !== undefined ) d2 *= commentRatio;
+			if ( showComment ) d2 *= commentRatio;
 
 			// show labels for network vertices at greater distance than intermediate stations
 			const visible = ( station.distanceToSquared( cameraPosition ) < d2 );
@@ -99,8 +102,8 @@ class StationLabels extends Group {
 				let name = '';
 
 				if ( showName ) name += station.name;
-				if ( showName && showComment && station.comment !== undefined ) name += ' ';
-				if ( showComment && station.comment !== undefined ) name += station.comment;
+				if ( showName && showComment ) name += ' ';
+				if ( showComment ) name += comment;
 
 				if ( label && label.name !== name ) {
 

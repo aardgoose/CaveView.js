@@ -116,9 +116,19 @@ class SelectionCommonPage extends Page {
 
 			if ( child.next ) {
 
+				let next = child.next;
+				let count = 1;
+
+				while ( next && next !== child ) {
+
+					count++;
+					next = next.next;
+
+				}
+
 				const duplicateTag = document.createElement( 'span' );
 
-				duplicateTag.textContent = ' [linked station]';
+				duplicateTag.textContent = ` [linked station ${count}]`;
 				duplicateTag.classList.add( 'duplicate' );
 
 				li.appendChild( duplicateTag );

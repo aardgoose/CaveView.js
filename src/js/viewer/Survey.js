@@ -1161,7 +1161,6 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed, fil
 	default:
 
 		console.warn( 'invalid leg shading mode' );
-
 		return false;
 
 	}

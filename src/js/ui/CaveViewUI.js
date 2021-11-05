@@ -8,7 +8,6 @@ import { SurfacePage } from './SurfacePage';
 import { EditPage } from './EditPage';
 import { KeyboardControls } from './KeyboardControls';
 import { FileSelector } from './FileSelector';
-import { Page } from './Page';
 import { ExportPage } from './ExportPage';
 
 function CaveViewUI ( viewer ) {

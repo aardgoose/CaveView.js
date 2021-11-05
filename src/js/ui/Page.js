@@ -20,6 +20,7 @@ class Page {
 		this.x18nPrefix = x18nPrefix + '.';
 		this.onChange = null;
 		this.id = id;
+		this.lastScrollY = 0;
 
 	}
 
@@ -50,39 +51,41 @@ class Page {
 
 	open () {
 
-		const tab = this.tab;
+		const thisTab = this.tab;
 		const pages = this.frame.pages;
+		const frameDiv = this.frame.frame;
 
-		tab.classList.add( 'toptab' );
+		thisTab.classList.add( 'toptab' );
 
 		this.frame.onScreen( this.i18n( 'title' ) );
 		this.frame.openPageId = this.id;
 
 		pages.forEach( page => {
 
-			const otherPage = page.page;
-			const otherTab = page.tab;
+			const pageDiv = page.page;
+			const tabDiv = page.tab;
 			const owner = page.owner;
 
-			if ( otherTab === tab ) {
+			if ( tabDiv !== thisTab ) {
 
-				otherPage.style.display = 'block';
+				if ( tabDiv.classList.contains( 'toptab' ) ) {
 
-			} else {
-
-				otherPage.style.display = 'none';
-
-				if ( otherTab.classList.contains( 'toptab' ) ) {
-
-					otherTab.classList.remove( 'toptab' );
+					// previously open page
+					owner.lastScrollY = frameDiv.scrollTop;
+					tabDiv.classList.remove( 'toptab' );
 
 					if ( owner.onLeave !== undefined ) owner.onLeave();
 
 				}
 
+				pageDiv.style.display = 'none';
+
 			}
 
 		} );
+
+		this.page.style.display = 'block';
+		frameDiv.scrollTo( 0, this.lastScrollY );
 
 	}
 

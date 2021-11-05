@@ -470,8 +470,13 @@ class CaveViewer extends EventDispatcher {
 			Object.defineProperty( self, name, {
 				get: function () { return cameraManager.testCameraLayer( layerTag ); },
 				set: function ( x ) {
-					cameraManager.setCameraLayer( layerTag, x );
-					self.dispatchEvent( { type: 'change', name: name } );
+
+					if ( cameraManager.setCameraLayer( layerTag, x ) ) {
+
+						self.dispatchEvent( { type: 'change', name: name } );
+
+					}
+
 					renderView();
 				}
 			} );

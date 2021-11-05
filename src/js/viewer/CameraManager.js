@@ -120,6 +120,10 @@ function CameraManager ( ctx, renderer, scene ) {
 
 	this.setCameraLayer = function ( layerTag, enable ) {
 
+		// ignore if no change
+
+		if ( enable === this.activeCamera.layers.test( 1 << layerTag ) ) return false;
+
 		if ( enable ) {
 
 			perspectiveCamera.layers.enable( layerTag );
@@ -139,6 +143,8 @@ function CameraManager ( ctx, renderer, scene ) {
 			activeEffect.setLayers( savedMask );
 
 		}
+
+		return true;
 
 	};
 

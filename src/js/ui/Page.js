@@ -551,13 +551,6 @@ class Page {
 
 	}
 
-	static canDownload () {
-
-		const a = document.createElement( 'a' );
-		return ( typeof a.download !== 'undefined' );
-
-	}
-
 	download ( data, fileName ) {
 
 		const a = document.createElement( 'a' );

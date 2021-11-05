@@ -6,9 +6,9 @@ import { Tree } from './Tree';
 
 class StationPosition extends Vector3 {
 
-	constructor( x, y, z ) {
+	constructor ( x, y, z ) {
 
-		super( x, y, z );
+		super ( x, y, z );
 
 		this.id = 0;
 		this.parent = null;

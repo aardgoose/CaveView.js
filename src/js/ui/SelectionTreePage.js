@@ -100,7 +100,6 @@ class SelectionTreePage extends SelectionCommonPage {
 				if ( node === selectedNode ) {
 
 					_setHighlight( listElement );
-					console.log( listElement.classList );
 					break;
 
 				} else {

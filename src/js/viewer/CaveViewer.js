@@ -159,7 +159,7 @@ class CaveViewer extends EventDispatcher {
 				set: loadTerrain
 			},
 
-			'stationLabel': {
+			'stationLabelOver': {
 				get: function () { return showStationNameLabel; },
 				set: setStationNameLabelMode
 			},

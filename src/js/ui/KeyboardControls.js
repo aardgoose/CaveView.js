@@ -268,7 +268,7 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 			case 'l':
 
-				viewer.stationLabel = ! viewer.stationLabel;
+				viewer.stationLabelOver = ! viewer.stationLabelOver;
 				break;
 
 			case 'x':

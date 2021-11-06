@@ -27,6 +27,8 @@ function CameraManager ( ctx, renderer, scene ) {
 
 	const self = this;
 
+	let savedMask;
+
 	scene.add( perspectiveCamera );
 	scene.add( orthographicCamera );
 
@@ -39,7 +41,6 @@ function CameraManager ( ctx, renderer, scene ) {
 	const backMaterial = new MeshBasicMaterial( { side: BackSide, colorWrite: false } );
 	const backMask = 1 << FEATURE_SURVEY | 1 << FEATURE_TERRAIN;
 
-	let savedMask;
 	let eyeSeparation = 0.5;
 	let lastFrame = 0;
 	let activeEffect = null;
@@ -108,6 +109,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		camera.layers.enable( LEG_CAVE );
 		camera.layers.enable( FEATURE_SELECTED_BOX );
+		savedMask = camera.layers.mask;
 
 	}
 

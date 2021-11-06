@@ -18,6 +18,7 @@ import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
 import { SegmentPopup } from './SegmentPopup';
+import { StationNameLabel } from './StationNameLabel';
 import { PublicFactory } from '../public/PublicFactory';
 import { ImagePopup } from './ImagePopup';
 import { WebTerrain } from '../terrain/WebTerrain';
@@ -132,6 +133,8 @@ class CaveViewer extends EventDispatcher {
 		let mouseUpFunction = null;
 		let savedView = null;
 		let mouseOver = false;
+
+		let stationNameLabel = null;
 
 		// event handler
 		window.addEventListener( 'resize', onResize );
@@ -434,6 +437,35 @@ class CaveViewer extends EventDispatcher {
 		function onMouseLeave () {
 
 			mouseOver = false;
+
+		}
+
+		function onKeyDown ( event ) {
+
+			if ( event.key === 'Alt' ) {
+
+				document.addEventListener( 'keyup', onKeyUp );
+				container.addEventListener( 'pointermove', onPointerMove );
+
+			}
+
+		}
+
+		function onKeyUp ( event ) {
+
+			if ( event.key === 'Alt' ) {
+
+				if ( stationNameLabel !== null ) {
+
+					stationNameLabel.removeFromParent();
+					stationNameLabel = null;
+
+				}
+
+				document.removeEventListener( 'keyup', onKeyUp );
+				container.removeEventListener( 'pointermove', onPointerMove );
+
+			}
 
 		}
 
@@ -1030,6 +1062,7 @@ class CaveViewer extends EventDispatcher {
 			// remove event listeners
 
 			container.removeEventListener( 'mousedown', onMouseDown );
+			document.removeEventListener( 'keydown', onKeyDown );
 
 			cameraManager.resetCameras();
 
@@ -1134,6 +1167,8 @@ class CaveViewer extends EventDispatcher {
 
 			controls.enabled = true;
 
+			document.addEventListener( 'keydown', onKeyDown );
+
 			survey.getRoutes().addEventListener( 'changed', onSurveyChanged );
 			survey.addEventListener( 'changed', onSurveyChanged );
 
@@ -1195,7 +1230,7 @@ class CaveViewer extends EventDispatcher {
 			if ( popup !== null ) return;
 
 			popup = new ImagePopup( ctx, station, imageUrl, renderView );
-			survey.add( popup );
+			survey.addStatic( popup );
 
 			renderView();
 
@@ -1206,7 +1241,7 @@ class CaveViewer extends EventDispatcher {
 			if ( popup !== null ) return;
 
 			popup = new StationPopup( ctx, pStation, survey, formatters.station, ( survey.caveShading === SHADING_DISTANCE ), self.warnings );
-			survey.add( popup );
+			survey.addStatic( popup );
 
 			renderView();
 
@@ -1217,7 +1252,7 @@ class CaveViewer extends EventDispatcher {
 			if ( popup !== null ) return;
 
 			popup = new SegmentPopup( ctx, leg, point, survey );
-			scene.add( popup );
+			scene.addStatic( popup );
 
 			renderView();
 
@@ -1237,6 +1272,15 @@ class CaveViewer extends EventDispatcher {
 
 			popup.close();
 			popup = null;
+
+		}
+
+		function showStationPopupX ( station ) {
+
+			showStationPopup( station );
+			mouseUpFunction = closePopup;
+
+			cameraMove.preparePoint( survey.getWorldPosition( station.station.clone() ) );
 
 		}
 
@@ -1356,6 +1400,80 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
+		function selectStation ( station, event ) {
+
+			survey.selectStation( station );
+
+			const pStation = publicFactory.getStation( station );
+
+			const selectEvent = {
+				type: 'station',
+				node: pStation,
+				handled: false,
+				mouseEvent: event,
+				filterConnected: false
+			};
+
+			self.dispatchEvent( selectEvent );
+
+			filterConnectedLegs( selectEvent );
+
+			if ( selectEvent.handled ) return;
+
+			if ( event.button === MOUSE.LEFT ) {
+
+				showStationPopupX( pStation );
+
+			} else if ( event.button === MOUSE.RIGHT ) {
+
+				if ( ! survey.selection.contains( station.id ) ) {
+
+					survey.selectSection( survey.surveyTree );
+
+				}
+
+				selectSection( station );
+
+				cameraMove.start( true );
+				event.stopPropagation();
+
+				mouseUpFunction = null;
+
+			}
+
+		}
+
+		function onPointerMove( event ) {
+
+			if ( event.target !== renderer.domElement ) return;
+
+			const mouse = cameraManager.getMouse( event.clientX, event.clientY );
+
+			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
+			const hit = raycaster.intersectObjects( mouseTargets, false )[ 0 ];
+
+			if ( hit === undefined ) return;
+
+			const station = hit.station;
+
+			if ( stationNameLabel !== null && stationNameLabel.station !== station ) {
+
+				survey.remove( stationNameLabel );
+				stationNameLabel = null;
+
+			}
+
+			if ( stationNameLabel === null ) {
+
+				stationNameLabel = new StationNameLabel( ctx, station );
+				survey.addStatic( stationNameLabel );
+
+			}
+
+			renderView();
+
+		}
+
 		function onMouseDown ( event ) {
 
 			if ( event.target !== renderer.domElement ) return;
@@ -1396,7 +1514,7 @@ class CaveViewer extends EventDispatcher {
 
 					if ( ! e.handled ) {
 
-						_selectStation( station );
+						selectStation( station );
 
 					}
 
@@ -1413,7 +1531,7 @@ class CaveViewer extends EventDispatcher {
 			case MOUSE_MODE_NORMAL:
 
 				if ( hit === undefined ) break;
-				_selectStation( hit.station );
+				selectStation( hit.station, event );
 
 				break;
 
@@ -1450,55 +1568,6 @@ class CaveViewer extends EventDispatcher {
 
 			}
 
-			function _selectStation ( station ) {
-
-				survey.selectStation( station );
-
-				const pStation = publicFactory.getStation( station );
-
-				const selectEvent = {
-					type: 'station',
-					node: pStation,
-					handled: false,
-					mouseEvent: event,
-					filterConnected: false
-				};
-
-				self.dispatchEvent( selectEvent );
-
-				filterConnectedLegs( selectEvent );
-
-				if ( selectEvent.handled ) return;
-
-				if ( event.button === MOUSE.LEFT ) {
-
-					_showStationPopup( pStation );
-
-				} else if ( event.button === MOUSE.RIGHT ) {
-
-					_setStationPOI( station );
-
-				}
-
-			}
-
-			function _setStationPOI( station ) {
-
-				if ( ! survey.selection.contains( station.id ) ) {
-
-					survey.selectSection( survey.surveyTree );
-
-				}
-
-				selectSection( station );
-
-				cameraMove.start( true );
-				event.stopPropagation();
-
-				mouseUpFunction = null;
-
-			}
-
 			function _selectDistance ( hit ) {
 
 				if ( ! hit ) {
@@ -1521,7 +1590,7 @@ class CaveViewer extends EventDispatcher {
 
 					survey.showShortestPath( station );
 
-					_showStationPopup( publicFactory.getStation( station ) );
+					showStationPopupX( publicFactory.getStation( station ) );
 
 				} else if ( event.button === MOUSE.RIGHT ) {
 
@@ -1531,15 +1600,6 @@ class CaveViewer extends EventDispatcher {
 					renderView();
 
 				}
-
-			}
-
-			function _showStationPopup ( station ) {
-
-				showStationPopup( station );
-				mouseUpFunction = closePopup;
-
-				cameraMove.preparePoint( survey.getWorldPosition( station.station.clone() ) );
 
 			}
 

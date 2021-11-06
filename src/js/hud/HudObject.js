@@ -8,12 +8,6 @@ class HudObject {
 
 		const cfg = ctx.cfg;
 		this.stdWidth = cfg.themeValue( 'hud.widgetSize' );
-
-		this.atlasSpec = {
-			color: cfg.themeColorCSS( 'hud.text' ),
-			font: cfg.themeValue( 'hud.font' )
-		};
-
 		this.commonRing = null;
 		this.ctx = ctx;
 

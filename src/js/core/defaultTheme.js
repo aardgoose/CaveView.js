@@ -55,10 +55,12 @@ const defaultTheme = {
 		},
 		junctions: {
 			text: 'yellow',
+			font: 'normal Arial, sans-serif',
 			marker: 'yellow'
 		},
 		default: {
 			text: 'white',
+			font: 'normal Arial, sans-serif',
 			marker: 'red'
 		}
 	},

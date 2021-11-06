@@ -16,23 +16,11 @@ class StationLabels extends Group {
 		this.commentCount = commentCount;
 		this.ctx = ctx;
 
-		const cfg = ctx.cfg;
 		const materials = ctx.materials;
 
-		const atlasSpecDefault = {
-			color: cfg.themeColorCSS( 'stations.default.text' ),
-			font: cfg.themeValue( 'stations.font' )
-		};
-
-		this.defaultLabelMaterial = materials.getGlyphMaterial( atlasSpecDefault, 0 );
-		this.splayLabelMaterial = materials.getGlyphMaterial( atlasSpecDefault, 0 );
-
-		const atlasSpecJunction = {
-			color: cfg.themeColorCSS( 'stations.junctions.text' ),
-			font: cfg.themeValue( 'stations.font' )
-		};
-
-		this.junctionLabelMaterial = materials.getGlyphMaterial( atlasSpecJunction, 0 );
+		this.defaultLabelMaterial = materials.getLabelMaterial( 'stations.default' );
+		this.splayLabelMaterial = materials.getLabelMaterial( 'stations.default' );
+		this.junctionLabelMaterial = materials.getLabelMaterial( 'stations.junctions' );
 
 	}
 

@@ -121,7 +121,7 @@ class AHI extends Group {
 
 		this.globe = globe;
 
-		const material = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
+		const material = materials.getLabelMaterial( 'hud' );
 		const label = new MutableGlyphString( '-90\u00B0', material );
 
 		label.translateX( - label.getWidth() / 2 );

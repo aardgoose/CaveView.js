@@ -74,7 +74,7 @@ class ScaleBar extends Group {
 		this.position.set( -container.clientWidth / 2 + 45, -container.clientHeight / 2 + leftMargin, 0 );
 		this.scaleMax = container.clientWidth - ( 40 + leftMargin + rightMargin );
 
-		const material = materials.getGlyphMaterial( hudObject.atlasSpec, 0 );
+		const material = materials.getLabelMaterial( 'hud' );
 		const label = new MutableGlyphString( '--------', material );
 
 		label.translateX( 0 );

@@ -122,7 +122,7 @@ function Materials ( viewer ) {
 
 		let material = cache.get( name );
 
-		if ( material === undefined ) {
+		if ( material === undefined && materialFunc ) {
 
 			material = cacheMaterial( name, materialFunc(), stencil );
 
@@ -304,6 +304,25 @@ function Materials ( viewer ) {
 		const func = () => new GlyphMaterial( ctx, atlas, rotation, viewer );
 
 		return getCacheMaterial( name, func );
+
+	};
+
+	this.getLabelMaterial = function ( type ) {
+
+		let material = getCacheMaterial( `label-${type}` );
+
+		if ( material === undefined ) {
+
+			const atlasSpec = {
+				color: cfg.themeColorCSS( `${type}.text` ),
+				font: cfg.themeValue( `${type}.font` )
+			};
+
+			material = this.getGlyphMaterial( atlasSpec, 0 );
+
+		}
+
+		return material;
 
 	};
 

@@ -1513,7 +1513,7 @@ class CaveViewer extends EventDispatcher {
 
 					if ( ! e.handled ) {
 
-						selectStation( station );
+						selectStation( station, event );
 
 					}
 

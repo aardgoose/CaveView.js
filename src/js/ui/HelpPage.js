@@ -86,6 +86,7 @@ class HelpPage extends Page {
 
 		}
 
+		_addKey( '<alt>L', 'view.show_labels' );
 		_addKey( '<alt>S', 'view.control_mode' );
 		_addKey( '<alt>X', 'view.zoom_to_cursor' );
 		_addKey( '(', 'view.decrease_focal_length' );

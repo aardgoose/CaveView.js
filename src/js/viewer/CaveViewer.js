@@ -135,6 +135,7 @@ class CaveViewer extends EventDispatcher {
 		let mouseOver = false;
 
 		let stationNameLabel = null;
+		let showStationNameLabel = false;
 
 		// event handler
 		window.addEventListener( 'resize', onResize );
@@ -156,6 +157,11 @@ class CaveViewer extends EventDispatcher {
 			'terrain': {
 				get: function () { return cameraManager.testCameraLayer( FEATURE_TERRAIN ); },
 				set: loadTerrain
+			},
+
+			'stationLabel': {
+				get: function () { return showStationNameLabel; },
+				set: setStationNameLabelMode
 			},
 
 			'terrainShading': {
@@ -440,32 +446,28 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		function onKeyDown ( event ) {
+		function setStationNameLabelMode ( mode ) {
 
-			if ( event.key === 'Alt' ) {
+			if ( mode ) {
 
-				document.addEventListener( 'keyup', onKeyUp );
 				container.addEventListener( 'pointermove', onPointerMove );
 
-			}
 
-		}
-
-		function onKeyUp ( event ) {
-
-			if ( event.key === 'Alt' ) {
+			} else {
 
 				if ( stationNameLabel !== null ) {
 
 					stationNameLabel.removeFromParent();
 					stationNameLabel = null;
+					renderView();
 
 				}
 
-				document.removeEventListener( 'keyup', onKeyUp );
 				container.removeEventListener( 'pointermove', onPointerMove );
 
 			}
+
+			showStationNameLabel = mode;
 
 		}
 
@@ -1062,7 +1064,6 @@ class CaveViewer extends EventDispatcher {
 			// remove event listeners
 
 			container.removeEventListener( 'mousedown', onMouseDown );
-			document.removeEventListener( 'keydown', onKeyDown );
 
 			cameraManager.resetCameras();
 
@@ -1166,8 +1167,6 @@ class CaveViewer extends EventDispatcher {
 			container.addEventListener( 'mousedown', onMouseDown, false );
 
 			controls.enabled = true;
-
-			document.addEventListener( 'keydown', onKeyDown );
 
 			survey.getRoutes().addEventListener( 'changed', onSurveyChanged );
 			survey.addEventListener( 'changed', onSurveyChanged );

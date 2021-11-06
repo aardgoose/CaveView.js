@@ -213,7 +213,8 @@
 			"zoom_to_cursor": "toggle zoom to cursor mode",
 			"control_mode": "toggle control mode",
 			"decrease_focal_length": "decrease focal length",
-			"increase_focal_length": "increase focal length"
+			"increase_focal_length": "increase focal length",
+			"show_labels": "show station names when under mouse"
 		},
 		"visibility": {
 			"header": "Visibility",

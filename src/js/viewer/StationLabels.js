@@ -21,6 +21,7 @@ class StationLabels extends Group {
 		this.defaultLabelMaterial = materials.getLabelMaterial( 'stations.default' );
 		this.splayLabelMaterial = materials.getLabelMaterial( 'stations.default' );
 		this.junctionLabelMaterial = materials.getLabelMaterial( 'stations.junctions' );
+		this.linkedLabelMaterial = materials.getLabelMaterial( 'stations.linked' );
 
 	}
 
@@ -107,7 +108,7 @@ class StationLabels extends Group {
 
 				}
 
-				station.label.visible = true;
+				if ( station.label ) station.label.visible = true;
 
 			} else {
 
@@ -121,19 +122,23 @@ class StationLabels extends Group {
 
 	addLabel ( station, name, connections ) {
 
-		let yOffset = 0;
-
-		// handle labels for duplicate stations
-		if ( station.next !== null ) {
-
-			// ofset one label upwards
-			yOffset = ( station.id > station.next.id ) ? 1.2 : 0;
-
-		}
-
 		let material;
 
-		if ( connections === 0 ) {
+		if ( station.next !== null ) {
+
+			let next = station;
+
+			// skip labels for all expect lowest id station
+			do {
+
+				if ( Math.abs( station.id ) > Math.abs( next.id ) ) return;
+				next = next.next;
+
+			} while ( next !== station );
+
+			material = this.linkedLabelMaterial;
+
+		} else if ( connections === 0 ) {
 
 			material = this.splayLabelMaterial;
 
@@ -147,7 +152,7 @@ class StationLabels extends Group {
 
 		}
 
-		const label = new GlyphString( name, material, this.ctx, yOffset * material.getCellSize() );
+		const label = new GlyphString( name, material, this.ctx );
 
 		label.layers.mask = this.layers.mask;
 		label.position.copy( station );

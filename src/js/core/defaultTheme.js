@@ -47,6 +47,11 @@ const defaultTheme = {
 	},
 	stations: {
 		font: 'normal Arial, sans-serif',
+		default: {
+			text: 'white',
+			font: 'normal Arial, sans-serif',
+			marker: 'red'
+		},
 		entrances: {
 			text: 'white',
 			background: 'darkred',
@@ -58,10 +63,10 @@ const defaultTheme = {
 			font: 'normal Arial, sans-serif',
 			marker: 'yellow'
 		},
-		default: {
-			text: 'white',
+		linked: {
+			text: 'cyan',
 			font: 'normal Arial, sans-serif',
-			marker: 'red'
+			marker: 'cyan'
 		}
 	},
 	shading: {

@@ -1,5 +1,27 @@
 import { CanvasPopup } from './CanvasPopup';
 
+function formatName ( name ) {
+
+	let long = false;
+
+	// reduce name length if too long
+
+	while ( name.length > 20 ) {
+
+		const tmp = name.split( '.' );
+		tmp.shift();
+
+		name = tmp.join( '.' );
+		long = true;
+
+	}
+
+	if ( long ) name = '...' + name;
+
+	return name;
+
+}
+
 class StationPopup extends CanvasPopup {
 
 	constructor ( ctx, pStation, survey, formatter, showDistance, warnings ) {
@@ -9,25 +31,19 @@ class StationPopup extends CanvasPopup {
 		const position = pStation.coordinates();
 		const depth = pStation.depth();
 
-		let name = pStation.name();
-		let long = false;
 		let lines = null;
 
-		// reduce name length if too long
+		this.addLine( formatName( pStation.name() ) );
 
-		while ( name.length > 20 ) {
+		if ( pStation.isLinked() ) {
 
-			const tmp = name.split( '.' );
-			tmp.shift();
+			pStation.linkedStations().forEach( station => {
 
-			name = tmp.join( '.' );
-			long = true;
+				this.addLine( ` (${formatName( station.name() )})` );
+
+			} );
 
 		}
-
-		if ( long ) name = '...' + name;
-
-		this.addLine( name );
 
 		let distance;
 

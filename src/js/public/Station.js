@@ -60,9 +60,32 @@ class Station {
 
 	}
 
-	message() {
+	message () {
 
 		return this.station.messageText;
+
+	}
+
+	isLinked () {
+
+		return ( this.station.next !== null );
+
+	}
+
+	linkedStations () {
+
+		const linked = [];
+		const station = this.station;
+		let next = station.next;
+
+		while ( next && next !== station ) {
+
+			linked.push( this.factory.getStation( next ) );
+			next = next.next;
+
+		}
+
+		return linked;
 
 	}
 

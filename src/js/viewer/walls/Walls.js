@@ -93,7 +93,7 @@ class Walls extends Mesh {
 
 	}
 
-	cutRuns ( selection ) {
+	cutRuns ( survey, selection ) {
 
 		const wasFlat = this.flat;
 

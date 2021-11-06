@@ -824,6 +824,7 @@ Survey.prototype.getWorldBoundingBox = function () {
 Survey.prototype.cutSection = function ( node ) {
 
 	const selection = this.selection;
+	const self = this;
 
 	selection.set( node );
 
@@ -894,7 +895,7 @@ Survey.prototype.cutSection = function ( node ) {
 		case 'Legs':
 		case 'Walls':
 
-			if ( ! obj.cutRuns( selection ) ) cutList.push( obj );
+			if ( ! obj.cutRuns( self, selection ) ) cutList.push( obj );
 
 			break;
 

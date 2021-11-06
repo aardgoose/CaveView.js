@@ -96,7 +96,7 @@ class Legs extends LineSegments2 {
 
 	}
 
-	cutRuns ( selection ) {
+	cutRuns ( survey, selection ) {
 
 		const idSet = selection.getIds();
 		const legRuns = this.legRuns;
@@ -146,7 +146,7 @@ class Legs extends LineSegments2 {
 
 		this.geometry.dispose();
 
-		this.addLegs( newVertices, newLegRuns );
+		this.addLegs( survey, newVertices, newLegRuns );
 
 		return true;
 

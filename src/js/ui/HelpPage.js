@@ -103,6 +103,7 @@ class HelpPage extends Page {
 			_addKey( 'J', 'visibility.station_labels' );
 			_addKey( 'Q', 'visibility.splays' );
 			_addKey( 'T', 'visibility.terrain' );
+			_addKey( '<ctrl>B', 'visibility.bounding_box' );
 			_addKey( '<ctrl>N', 'visibility.station_labels' );
 			_addKey( '<ctrl>X', 'visibility.stations' );
 			_addKey( '<ctrl>L', 'visibility.survey' );

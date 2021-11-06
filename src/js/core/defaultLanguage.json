@@ -219,6 +219,7 @@
 		"visibility": {
 			"header": "Visibility",
 			"scraps": "scraps on/off [lox only]",
+			"bounding_box": "bounding box on/off",
 			"station_labels": "station labels on/off",
 			"entrance_labels": "entrance labels on/off",
 			"splays": "splay legs on/off",

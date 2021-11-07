@@ -136,6 +136,7 @@ class CaveViewer extends EventDispatcher {
 
 		let stationNameLabel = null;
 		let showStationNameLabel = false;
+		let lastPointerOver = 0;
 
 		// event handler
 		window.addEventListener( 'resize', onResize );
@@ -1451,7 +1452,26 @@ class CaveViewer extends EventDispatcher {
 			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
 			const hit = raycaster.intersectObjects( mouseTargets, false )[ 0 ];
 
-			if ( hit === undefined ) return;
+			if ( hit === undefined ) {
+
+				setTimeout( () => {
+
+					if ( stationNameLabel !== null && performance.now() - lastPointerOver > 250 ) {
+
+						survey.remove( stationNameLabel );
+						stationNameLabel = null;
+
+						renderView();
+
+					}
+
+					return;
+
+				}, 500 );
+
+				return;
+
+			}
 
 			const station = hit.station;
 
@@ -1468,6 +1488,8 @@ class CaveViewer extends EventDispatcher {
 				survey.addStatic( stationNameLabel );
 
 			}
+
+			lastPointerOver = performance.now();
 
 			renderView();
 

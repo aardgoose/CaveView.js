@@ -102,7 +102,7 @@ class StationLabels extends Group {
 
 				}
 
-				if ( ! station.label  ) {
+				if ( ! station.label ) {
 
 					this.addLabel( station, name, connections );
 

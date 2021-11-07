@@ -126,15 +126,15 @@ class StationLabels extends Group {
 
 		if ( station.next !== null ) {
 
-			let next = station;
+			let next = station.next;
 
 			// skip labels for all expect lowest id station
-			do {
+			while ( next !== station ) {
 
 				if ( Math.abs( station.id ) > Math.abs( next.id ) ) return;
 				next = next.next;
 
-			} while ( next !== station );
+			}
 
 			material = this.linkedLabelMaterial;
 

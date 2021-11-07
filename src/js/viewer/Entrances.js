@@ -66,13 +66,17 @@ class Entrances extends ClusterMarkers {
 
 			if ( ! ( ( node.ownType ?? node.type ) & STATION_ENTRANCE ) ) return;
 
-			let next = node.next;
+			if ( node.next ) {
 
-			while ( next && next !== node ) {
+				let next = node.next;
 
-				// skip if a colocated station is already found as an entrance.
-				if ( vertices.includes( next ) ) return;
-				next = next.next;
+				// skip labels for all expect lowest id station
+				while ( next !== node ) {
+
+					if ( ( next.ownType & STATION_ENTRANCE ) !== 0 && Math.abs( node.id ) > Math.abs( next.id ) ) return;
+					next = next.next;
+
+				}
 
 			}
 

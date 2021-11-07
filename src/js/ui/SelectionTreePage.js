@@ -16,7 +16,7 @@ class SelectionTreePage extends SelectionCommonPage {
 
 		this.appendChild( domTop );
 
-		let redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
+		const redraw = container.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
 
 		this.handleNext = function ( target, node ) {
 

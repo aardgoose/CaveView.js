@@ -444,13 +444,13 @@ class Page {
 			oldSlide.addEventListener( 'transitionend', afterSlideOut );
 			oldSlide.classList.add( 'slide-out' );
 
-			redraw = oldSlide.clientHeight; // lgtm
+			redraw = oldSlide.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
 
 		} else if ( depth < this.slideDepth ) {
 
 			newSlide.addEventListener( 'transitionend', afterSlideIn );
 
-			redraw = newSlide.clientHeight; // lgtm
+			redraw = newSlide.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
 
 			newSlide.classList.remove( 'slide-out' );
 

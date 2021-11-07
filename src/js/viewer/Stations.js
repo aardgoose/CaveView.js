@@ -1,5 +1,5 @@
 import {
-	BufferGeometry, Points, Vector3, Float32BufferAttribute,
+	BufferGeometry, Points, Vector3, Float32BufferAttribute, Box3,
 	InterleavedBuffer, InterleavedBufferAttribute, Sphere, Matrix4, Vector4
 } from '../Three';
 
@@ -11,6 +11,7 @@ const _position = new Vector4();
 const _ssOrigin = new Vector4();
 const _mouse = new Vector3();
 const _mvMatrix = new Matrix4();
+const _box3 = new Box3;
 
 class Stations extends Points {
 
@@ -34,6 +35,7 @@ class Stations extends Points {
 		this.pointSizes = [];
 		this.instanceData = [];
 
+		this.survey = survey;
 		this.selected = null;
 		this.selectedSize = 0;
 		this.selection = survey.selection;
@@ -68,6 +70,17 @@ class Stations extends Points {
 		_sphere.radius += threshold;
 
 		if ( raycaster.ray.intersectsSphere( _sphere ) === false ) return;
+
+		// test against survey section bounding boxes
+
+		const surveyTree = this.survey.surveyTree;
+
+		surveyTree.findIntersects( boundingBox => {
+
+			_box3.copy( boundingBox ).applyMatrix4( matrixWorld );
+			return raycaster.ray.intersectsBox( _box3 );
+
+		} );
 
 		const vertices = this.vertices;
 

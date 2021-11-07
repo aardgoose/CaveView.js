@@ -10,6 +10,7 @@ function Tree( name, id, root, parent ) { // root parameter only used internally
 		this.parent = null;
 		this.pathCache = [];
 		this.idCache = [];
+
 	} else {
 
 		this.root = root;
@@ -346,6 +347,31 @@ Tree.prototype.trim = function ( path ) {
 	this.children = [ child ];
 
 	child.trim( path );
+
+};
+
+Tree.prototype.findIntersects = function ( match ) {
+
+	if ( this.type !== 0 ) return undefined;
+
+	console.log( 'tree test', this.getPath() );
+
+	const children = this.children;
+	const l = children.length;
+
+	for ( let i = 0; i < l; i++ ) {
+
+		const node = children[ i ];
+
+		if ( node.type !== 0 ) continue;
+
+		if ( match( node.boundingBox ) ) {
+
+			return node.findIntersects( match );
+
+		}
+
+	}
 
 };
 

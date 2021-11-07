@@ -14,7 +14,9 @@ const _mvMatrix = new Matrix4();
 
 class Stations extends Points {
 
-	constructor ( ctx, selection ) {
+	constructor ( survey ) {
+
+		const ctx = survey.ctx;
 
 		super( new BufferGeometry, ctx.materials.getExtendedPointsMaterial() );
 
@@ -34,7 +36,7 @@ class Stations extends Points {
 
 		this.selected = null;
 		this.selectedSize = 0;
-		this.selection = selection;
+		this.selection = survey.selection;
 		this.splaysVisible = false;
 		this.ssThresholdSq = Math.pow( cfg.value( 'stationSelectionDistance', 12 ), 2 );
 

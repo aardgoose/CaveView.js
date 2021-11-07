@@ -539,7 +539,7 @@ Survey.prototype.hasFeature = function ( tag ) {
 
 Survey.prototype.loadStations = function ( surveyTree ) {
 
-	const stations = new Stations( this.ctx, this.selection );
+	const stations = new Stations( this );
 
 	let commentCount = 0;
 

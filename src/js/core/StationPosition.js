@@ -43,10 +43,7 @@ class StationPosition extends Vector3 {
 			const oldNext = this.next;
 
 			this.next = station;
-			station.prev = this;
-
 			station.next = oldNext;
-			oldNext.prev = station;
 
 		} else {
 
@@ -54,10 +51,9 @@ class StationPosition extends Vector3 {
 			// preserves benefit of default null values attached to prototype
 
 			this.next = station;
-			this.prev = station;
-
 			station.next = this;
-			station.prev = this;
+
+			this.ownType = this.type;
 
 		}
 
@@ -74,7 +70,6 @@ StationPosition.prototype.connections = 0;
 StationPosition.prototype.splays = 0;
 StationPosition.prototype.shortestPath = Infinity;
 StationPosition.prototype.children = []; // leaf nodes
-StationPosition.prototype.prev = null;
 StationPosition.prototype.next = null;
 StationPosition.prototype.ownType = null;
 

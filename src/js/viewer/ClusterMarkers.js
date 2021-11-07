@@ -270,6 +270,22 @@ class ClusterMarkers extends Object3D {
 		this.labels = [];
 		this.ctx = ctx;
 
+		const cfg = ctx.cfg;
+
+		const atlasSpec = {
+			background: cfg.themeColorCSS( 'stations.entrances.background' ),
+			color: cfg.themeColorCSS( 'stations.entrances.text' ),
+			font: 'normal helvetica,sans-serif'
+		};
+
+		const material = ctx.materials.getGlyphMaterial( atlasSpec, cfg.themeAngle( 'stations.entrances.angle' ) );
+
+		material.depthTest = true;
+		material.transparent = false;
+		material.alphaTest = 0;
+
+		this.labelMaterial = material;
+
 		this.addEventListener( 'removed', this.onRemoved );
 
 	}
@@ -290,23 +306,7 @@ class ClusterMarkers extends Object3D {
 
 	addMarker ( node, label ) {
 
-		const cfg = this.ctx.cfg;
-		const materials = this.ctx.materials;
-
-		// create marker
-		const atlasSpec = {
-			background: cfg.themeColorCSS( 'stations.entrances.background' ),
-			color: cfg.themeColorCSS( 'stations.entrances.text' ),
-			font: 'normal helvetica,sans-serif'
-		};
-
-		const material = materials.getGlyphMaterial( atlasSpec, cfg.themeAngle( 'stations.entrances.angle' ) );
-
-		material.depthTest = true;
-		material.transparent = false;
-		material.alphaTest = 0;
-
-		const marker = new GlyphString( label, material, this.ctx );
+		const marker = new GlyphString( label, this.labelMaterial, this.ctx );
 
 		marker.layers.set( FEATURE_ENTRANCES );
 		marker.position.copy( node );
@@ -326,7 +326,6 @@ class ClusterMarkers extends Object3D {
 		// determine which labels are too close together to be usefully displayed as separate objects.
 
 		// immediate exit if only a single label or none.
-
 		if ( this.children.length < 2 ) return;
 
 		this.camera = cameraManager.activeCamera;

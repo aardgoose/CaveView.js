@@ -708,6 +708,10 @@ div.cv-frame::-webkit-scrollbar-button:end {
   color: #1ab4e5;
 }
 
+.cv-frame li span.duplicate:hover {
+  color: white;
+}
+
 .cv-frame div.page li.highlight {
   border-bottom: 1px solid white;
   font-weight: bold;

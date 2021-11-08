@@ -807,7 +807,7 @@ class CaveViewer extends EventDispatcher {
 
 			lightingManager.setRotation( cameraManager.getRotation() );
 
-			renderView();
+			renderView( true );
 
 		}
 
@@ -1700,9 +1700,14 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		function renderView () {
+		function renderView ( autorotate = false ) {
 
 			if ( ! renderRequired ) return;
+
+			// ignore render requests if we are autorotating so don't need
+			// extra render calls
+
+			if ( controls.autoRotate && ! autorotate ) return;
 
 			renderer.clear();
 

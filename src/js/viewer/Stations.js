@@ -1,12 +1,11 @@
 import {
-	BufferGeometry, Points, Vector3, Float32BufferAttribute, Box3,
-	InterleavedBuffer, InterleavedBufferAttribute, Sphere, Matrix4, Vector4
+	BufferGeometry, Points, Vector3, Float32BufferAttribute,
+	InterleavedBuffer, InterleavedBufferAttribute, Matrix4, Vector4
 } from '../Three';
 
 import { STATION_ENTRANCE } from '../core/constants';
 import { PointIndicator } from './PointIndicator';
 
-const _sphere = new Sphere();
 const _position = new Vector4();
 const _ssOrigin = new Vector4();
 const _mouse = new Vector3();
@@ -55,42 +54,13 @@ class Stations extends Points {
 
 		if ( ! this.visible ) return intersects;
 
-		const geometry = this.geometry;
 		const matrixWorld = this.matrixWorld;
-		const threshold = raycaster.params.Points.threshold;
 		const ray = raycaster.ray;
-
-		// Checking boundingSphere distance to ray
-
-		if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();
-
-		_sphere.copy( geometry.boundingSphere );
-		_sphere.applyMatrix4( matrixWorld );
-		_sphere.radius += threshold;
-
-		if ( ray.intersectsSphere( _sphere ) === false ) return;
 
 		// test against survey section bounding boxes
 
 		const surveyTree = this.survey.surveyTree;
-
-		const node = surveyTree.findIntersects( matrixWorld, worldBoundingBox => {
-
-			return ray.intersectsBox( worldBoundingBox );
-
-		} );
-
-		if ( node === surveyTree ) return;
-		//console.log( 'found:', node.getPath() );
-
-		const  vList = [];
-		const nodeVertices = node.children;
-
-		if ( nodeVertices.length !== 0 ) vList.push( nodeVertices );
-
-		vList.push( this.vertices );
-
-		console.log( this.vertices.length, ' - ', nodeVertices.length );
+		const searchNodes = surveyTree.findIntersects( matrixWorld, ray );
 
 		const camera = raycaster.camera;
 		const projectionMatrix = camera.projectionMatrix;
@@ -118,16 +88,16 @@ class Stations extends Points {
 
 		const ssThresholdSq = this.ssThresholdSq;
 
-		for ( let v = 0; v < vList.length; v++ ) {
+		for ( const node of searchNodes ) {
 
-			const vertices = vList[ v ];
+			const vertices = node.children;
 
 			for ( let i = 0, l = vertices.length; i < l; i ++ ) {
 
 				const station = vertices[ i ];
 
 				// skip splay end stations if not visible
-				if ( skipSplays && station.connections === 0 ) continue;
+				if ( skipSplays && station.connections === 0 || station.type === 0 ) continue;
 
 				_position.copy( station );
 				_position.w = 1;
@@ -149,8 +119,6 @@ class Stations extends Points {
 				testPoint( _position, station, i, ssThresholdSq, intersects, this );
 
 			}
-
-			if ( intersects.length > 0 ) break;
 
 		}
 
@@ -177,7 +145,6 @@ class Stations extends Points {
 			pointSize = 8.0;
 
 		}
-
 
 		this.vertices.push( node );
 

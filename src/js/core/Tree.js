@@ -1,6 +1,4 @@
-import { Box3, Vector3 } from '../Three';
-
-const __v3 = new Vector3;
+import { Box3 } from '../Three';
 
 function Tree( name, id, root, parent ) { // root parameter only used internally
 
@@ -24,7 +22,7 @@ function Tree( name, id, root, parent ) { // root parameter only used internally
 	}
 
 	this.boundingBox = new Box3(); // FIXME - make optional - overhead for stations
-	this.volume = -1;
+	this.stationCount = 0;
 	this.name = name || '';
 	this.children = [];
 	this.type = 0;
@@ -358,48 +356,45 @@ Tree.prototype.updateWorld = function ( matrixWorld ) {
 
 	this.worldBoundingBox = this.boundingBox.clone().applyMatrix4( matrixWorld );
 
-	const size = this.boundingBox.getSize( __v3 );
-	this.volume = size.x * size.y * size.z;
-
 };
 
-Tree.prototype.findIntersects = function ( matrixWorld, match ) {
+// node: recursive generator function - handle with care
 
-	if ( this.type !== 0 ) return undefined;
+Tree.prototype.findIntersects = function* ( matrixWorld, ray ) {
 
-	//console.log( 'tree test', this.getPath() );
+	if ( this.type !== 0 ) return;
+
+	if ( this === this.root ) {
+
+		if ( ! this.worldBoundingBox ) this.updateWorld( matrixWorld );
+		if ( ! ray.intersectsBox( this.worldBoundingBox ) ) return;
+
+	}
 
 	const children = this.children;
 	const l = children.length;
 
-	let v = Infinity;
-	let next = null;
-
 	// finding smallest child box that intersects
+
 	for ( let i = 0; i < l; i++ ) {
 
 		const node = children[ i ];
 
+		// ignore survey stations
 		if ( node.type !== 0 ) continue;
 
-		if ( node.volume < 1 ) node.updateWorld( matrixWorld );
+		if ( ! node.worldBoundingBox ) node.updateWorld( matrixWorld );
 
-		if ( match( node.worldBoundingBox ) ) {
+		if ( ray.intersectsBox( node.worldBoundingBox ) ) {
 
-			if ( node.volume < v ) {
-
-				next = node;
-				v = node.volume;
-
-			}
+			yield* node.findIntersects( matrixWorld, ray );
 
 		}
 
 	}
 
-	if ( next ) return next.findIntersects( matrixWorld, match );
-
-	return this;
+	// only return nodes with stations as children
+	if ( this.stationCount > 0 ) yield this;
 
 };
 

@@ -588,6 +588,7 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 		if ( node.isStation() ) {
 
 			parent.boundingBox.expandByPoint( node );
+			parent.stationCount++;
 
 		} else if ( parent ) {
 

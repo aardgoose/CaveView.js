@@ -11,7 +11,6 @@ const _position = new Vector4();
 const _ssOrigin = new Vector4();
 const _mouse = new Vector3();
 const _mvMatrix = new Matrix4();
-const _box3 = new Box3;
 
 class Stations extends Points {
 
@@ -59,7 +58,7 @@ class Stations extends Points {
 		const geometry = this.geometry;
 		const matrixWorld = this.matrixWorld;
 		const threshold = raycaster.params.Points.threshold;
-		const drawRange = geometry.drawRange;
+		const ray = raycaster.ray;
 
 		// Checking boundingSphere distance to ray
 
@@ -69,22 +68,30 @@ class Stations extends Points {
 		_sphere.applyMatrix4( matrixWorld );
 		_sphere.radius += threshold;
 
-		if ( raycaster.ray.intersectsSphere( _sphere ) === false ) return;
+		if ( ray.intersectsSphere( _sphere ) === false ) return;
 
 		// test against survey section bounding boxes
 
 		const surveyTree = this.survey.surveyTree;
 
-		surveyTree.findIntersects( boundingBox => {
+		const node = surveyTree.findIntersects( matrixWorld, worldBoundingBox => {
 
-			_box3.copy( boundingBox ).applyMatrix4( matrixWorld );
-			return raycaster.ray.intersectsBox( _box3 );
+			return ray.intersectsBox( worldBoundingBox );
 
 		} );
 
-		const vertices = this.vertices;
+		if ( node === surveyTree ) return;
+		//console.log( 'found:', node.getPath() );
 
-		const ray = raycaster.ray;
+		const  vList = [];
+		const nodeVertices = node.children;
+
+		if ( nodeVertices.length !== 0 ) vList.push( nodeVertices );
+
+		vList.push( this.vertices );
+
+		console.log( this.vertices.length, ' - ', nodeVertices.length );
+
 		const camera = raycaster.camera;
 		const projectionMatrix = camera.projectionMatrix;
 		const skipSplays = ! this.splaysVisible;
@@ -110,34 +117,40 @@ class Stations extends Points {
 		_mvMatrix.multiplyMatrices( camera.matrixWorldInverse, matrixWorld );
 
 		const ssThresholdSq = this.ssThresholdSq;
-		const start = Math.max( 0, drawRange.start );
-		const end = Math.min( vertices.length, ( drawRange.start + drawRange.count ) );
 
-		for ( let i = start, l = end; i < l; i ++ ) {
+		for ( let v = 0; v < vList.length; v++ ) {
 
-			const station = vertices[ i ];
+			const vertices = vList[ v ];
 
-			// skip splay end stations if not visible
-			if ( skipSplays && station.connections === 0 ) continue;
+			for ( let i = 0, l = vertices.length; i < l; i ++ ) {
 
-			_position.copy( station );
-			_position.w = 1;
+				const station = vertices[ i ];
 
-			_position.applyMatrix4( _mvMatrix );
+				// skip splay end stations if not visible
+				if ( skipSplays && station.connections === 0 ) continue;
 
-			if ( _position.z > near ) {
+				_position.copy( station );
+				_position.w = 1;
 
-				continue;
+				_position.applyMatrix4( _mvMatrix );
+
+				if ( _position.z > near ) {
+
+					continue;
+
+				}
+
+				_position.applyMatrix4( projectionMatrix );
+				_position.multiplyScalar( 1 / _position.w );
+
+				_position.x *= scale.x;
+				_position.y *= scale.y;
+
+				testPoint( _position, station, i, ssThresholdSq, intersects, this );
 
 			}
 
-			_position.applyMatrix4( projectionMatrix );
-			_position.multiplyScalar( 1 / _position.w );
-
-			_position.x *= scale.x;
-			_position.y *= scale.y;
-
-			testPoint( _position, station, i, ssThresholdSq, intersects, this );
+			if ( intersects.length > 0 ) break;
 
 		}
 

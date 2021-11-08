@@ -1,4 +1,6 @@
-import { Box3 } from '../Three';
+import { Box3, Vector3 } from '../Three';
+
+const __v3 = new Vector3;
 
 function Tree( name, id, root, parent ) { // root parameter only used internally
 
@@ -20,7 +22,9 @@ function Tree( name, id, root, parent ) { // root parameter only used internally
 		parent.children.push( this );
 
 	}
-	this.boundingBox = new Box3();
+
+	this.boundingBox = new Box3(); // FIXME - make optional - overhead for stations
+	this.volume = -1;
 	this.name = name || '';
 	this.children = [];
 	this.type = 0;
@@ -350,28 +354,52 @@ Tree.prototype.trim = function ( path ) {
 
 };
 
-Tree.prototype.findIntersects = function ( match ) {
+Tree.prototype.updateWorld = function ( matrixWorld ) {
+
+	this.worldBoundingBox = this.boundingBox.clone().applyMatrix4( matrixWorld );
+
+	const size = this.boundingBox.getSize( __v3 );
+	this.volume = size.x * size.y * size.z;
+
+};
+
+Tree.prototype.findIntersects = function ( matrixWorld, match ) {
 
 	if ( this.type !== 0 ) return undefined;
 
-	console.log( 'tree test', this.getPath() );
+	//console.log( 'tree test', this.getPath() );
 
 	const children = this.children;
 	const l = children.length;
 
+	let v = Infinity;
+	let next = null;
+
+	// finding smallest child box that intersects
 	for ( let i = 0; i < l; i++ ) {
 
 		const node = children[ i ];
 
 		if ( node.type !== 0 ) continue;
 
-		if ( match( node.boundingBox ) ) {
+		if ( node.volume < 1 ) node.updateWorld( matrixWorld );
 
-			return node.findIntersects( match );
+		if ( match( node.worldBoundingBox ) ) {
+
+			if ( node.volume < v ) {
+
+				next = node;
+				v = node.volume;
+
+			}
 
 		}
 
 	}
+
+	if ( next ) return next.findIntersects( matrixWorld, match );
+
+	return this;
 
 };
 

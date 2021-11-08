@@ -79,7 +79,7 @@ class SettingsPage extends Page {
 		cvw.appendChild( this.addRange( 'view.vertical_scaling', viewer, 'zScale' ) );
 
 		cvw.appendChild( this.addRange( 'view.linewidth', viewer, 'linewidth' ) );
-		cvw.appendChild( this.addCheckbox( 'view.scaleLinewidth', viewer, 'scaleLinewidth' ) );
+		// cvw.appendChild( this.addCheckbox( 'view.scaleLinewidth', viewer, 'scaleLinewidth' ) );
 		cvw.appendChild( this.addCheckbox( 'view.autorotate', viewer, 'autoRotate' ) );
 
 		cvw.appendChild( this.addRange( 'view.rotation_speed', viewer, 'autoRotateSpeed' ) );

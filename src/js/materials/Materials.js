@@ -315,6 +315,7 @@ function Materials ( viewer ) {
 
 			const atlasSpec = {
 				color: cfg.themeColorCSS( `${type}.text` ),
+				background: cfg.themeValue( `${type}.background` ),
 				font: cfg.themeValue( `${type}.font` )
 			};
 

@@ -49,6 +49,7 @@ const defaultTheme = {
 		font: 'normal Arial, sans-serif',
 		default: {
 			text: 'white',
+			background: 'rgba( 0.0, 0.0, 0.0, 0.75 ) ',
 			font: 'normal Arial, sans-serif',
 			marker: 'red'
 		},

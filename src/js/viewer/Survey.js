@@ -749,13 +749,14 @@ Survey.prototype.selectStation = function ( station ) {
 
 Survey.prototype.highlightSelection = function ( node ) {
 
+	let box = this.highlightBox;
+
 	if ( node.isStation() ) {
 
 		this.stations.highlightStation( node );
+		if ( box ) box.set( this.surveyTree );
 
 	} else {
-
-		let box = this.highlightBox;
 
 		if ( box === null ) {
 

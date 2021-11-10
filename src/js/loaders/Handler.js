@@ -51,7 +51,7 @@ class Handler {
 
 				default:
 
-					code = init.match( /epsg:([0-9]+)/ );
+					code = init.match( /(epsg|esri):([0-9]+)/ );
 
 					if ( code !== null ) {
 

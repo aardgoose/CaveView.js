@@ -304,7 +304,7 @@ Tree.prototype.getSubtreeIds = function ( idSet ) {
 
 	function _getId( node ) {
 
-		idSet.add( node.id );
+		if ( node.type === 0 ) idSet.add( node.id );
 
 	}
 

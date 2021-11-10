@@ -134,6 +134,12 @@ class OrbitControls extends EventDispatcher {
 
 		};
 
+		this.getCurrentDistance = function () {
+
+			return spherical.radius;
+
+		};
+
 		this.reset = function () {
 
 			const camera = cameraManager.activeCamera;

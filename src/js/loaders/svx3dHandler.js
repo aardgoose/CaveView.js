@@ -603,7 +603,7 @@ Svx3dHandler.prototype.handleVx = function ( version, section ) {
 
 	function readLabelV8 ( flags ) {
 
-		if ( flags & 0x20 ) return false; // no label change
+		if ( flags & 0x20 ) return; // no label change
 
 		let b = data[ pos++ ];
 		let add = 0;

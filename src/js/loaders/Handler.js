@@ -55,9 +55,9 @@ class Handler {
 
 					if ( code !== null ) {
 
-						console.log( 'looking up CRS code EPSG:' + code [ 1 ] );
+						console.log( 'looking up CRS code EPSG:' + code [ 2 ] );
 
-						return fetch( 'https://epsg.io/' + code[ 1 ] + '.proj4' )
+						return fetch( 'https://epsg.io/' + code[ 2 ] + '.proj4' )
 							.then( response => {
 
 								return response.text();

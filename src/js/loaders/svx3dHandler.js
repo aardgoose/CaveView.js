@@ -782,12 +782,12 @@ Svx3dHandler.prototype.handleVx = function ( version, section ) {
 
 		readLabel( flags );
 
-		if ( labelChanged && label !== '' ) {
+		if ( labelChanged ) {
 
-			// we have a new section name
+			// if we have a new section name
 			// add it to the survey tree
 
-			sectionId = surveyTree.addPath( label ).id;
+			sectionId = label === '' ? 0 : surveyTree.addPath( label ).id;
 			labelChanged = false;
 
 		}

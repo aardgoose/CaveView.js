@@ -62,7 +62,7 @@ class Entrances extends ClusterMarkers {
 
 		return this;
 
-		function _addEntrance( node ) {
+		function _addEntrance ( node ) {
 
 			if ( ! ( ( node.ownType ?? node.type ) & STATION_ENTRANCE ) ) return;
 

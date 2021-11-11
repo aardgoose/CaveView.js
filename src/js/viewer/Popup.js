@@ -45,7 +45,7 @@ class Popup extends Mesh {
 
 		material.dispose();
 
-		if ( material.texture) material.texture.dispose();
+		if ( material.texture ) material.texture.dispose();
 
 
 	}

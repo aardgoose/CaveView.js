@@ -31,7 +31,7 @@ class CanvasPopup extends Popup {
 
 	}
 
-	addValue( text, value ) {
+	addValue ( text, value ) {
 
 		const n = isNaN( value ) ? value : Math.round( value ) + '\u202fm';
 		this.addLine( this.i18n( text ) + ': ' + n );

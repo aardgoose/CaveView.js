@@ -1141,16 +1141,8 @@ class CaveViewer extends EventDispatcher {
 
 				self.dispatchEvent( { type: 'newCave', name: 'newCave' } );
 
-				const range = survey.combinedLimits.getSize( __v );
-				const mSize = Math.max( range.x, range.y );
-
-				let scale = 2;
-
-				if ( range.z > mSize ) scale *= range.z / mSize;
-
-				console.log( 'sss', controls.getCurrentDistance() );
-				controls.maxDistance = controls.getCurrentDistance() * scale;
-				controls.minZoom = 1 / scale;
+				// set reasonable min/max zoom & distances for the cameras
+				controls.setLimits( survey.combinedLimits.getSize( __v ) );
 
 			}
 

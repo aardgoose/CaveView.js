@@ -91,6 +91,24 @@ class OrbitControls extends EventDispatcher {
 		// public methods
 		//
 
+		this.setLimits = function ( range ) {
+
+			const currentDistance =  spherical.radius;
+			const mSize = Math.max( range.x, range.y );
+
+			let scale = 2;
+
+			if ( range.z > mSize ) scale *= range.z / mSize;
+
+			this.maxDistance = currentDistance * scale;
+			this.minDistance = currentDistance / mSize;
+
+			// for orthographic camera
+			this.minZoom = 1 / scale;
+			this.maxZoom = Math.max( range.x, range.y );
+
+		};
+
 		this.getPolarAngle = function () {
 
 			return spherical.phi;
@@ -131,12 +149,6 @@ class OrbitControls extends EventDispatcher {
 			scope.target0.copy( scope.target );
 			scope.position0.copy( camera.position );
 			scope.zoom0 = camera.zoom;
-
-		};
-
-		this.getCurrentDistance = function () {
-
-			return spherical.radius;
 
 		};
 

@@ -222,7 +222,7 @@ Survey.prototype.loadWarnings = function ( messages ) {
 
 			const node = message.station;
 
-			if ( node !== undefined && ( selection.isEmpty() || selection.contains( node.id ) ) ) {
+			if ( node !== undefined && selection.contains( node.id ) ) {
 
 				errorMarkers.mark( node );
 				node.messageText = message.text;

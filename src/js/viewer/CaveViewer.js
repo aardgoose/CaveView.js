@@ -968,31 +968,6 @@ class CaveViewer extends EventDispatcher {
 
 			if ( node.isStation() ) {
 
-				_selectStation( node );
-
-			} else {
-
-				_selectSection( node );
-
-			}
-
-			renderView();
-
-			return;
-
-			function _selectSection ( node ) {
-
-				survey.selectSection( node );
-
-				cameraMove.cancel();
-				cameraMove.prepare( survey.selection.getWorldBoundingBox() );
-
-				if ( survey.selection.isEmpty() ) cameraMove.start( renderRequired );
-
-			}
-
-			function _selectStation ( node ) {
-
 				if ( mouseMode === MOUSE_MODE_TRACE_EDIT ) {
 
 					selectTraceStation( node );
@@ -1005,7 +980,18 @@ class CaveViewer extends EventDispatcher {
 
 				}
 
+			} else {
+
+				survey.selectSection( node );
+
+				cameraMove.cancel();
+				cameraMove.prepare( survey.selection.getWorldBoundingBox() );
+
+				if ( survey.selection.isEmpty() ) cameraMove.start( renderRequired );
+
 			}
+
+			renderView();
 
 		}
 

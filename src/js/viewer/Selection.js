@@ -1,14 +1,13 @@
 import { FEATURE_SELECTED_BOX } from '../core/constants';
 import { SurveyBox } from '../core/SurveyBox';
 
-import { Box3, IncrementStencilOp } from '../Three';
+import { IncrementStencilOp } from '../Three';
 
 class Selection extends SurveyBox {
 
 	constructor ( ctx, color ) {
 
 		const survey = ctx.survey;
-		const worldBoundingBox = new Box3();
 
 		let root = survey.surveyTree;
 		let selectedNode = root;
@@ -56,6 +55,12 @@ class Selection extends SurveyBox {
 
 		};
 
+		this.getByName = function ( name ) {
+
+			return root.getByPath( name ) || root;
+
+		};
+
 		this.getIds = function () {
 
 			return selectedSectionIds;
@@ -82,7 +87,8 @@ class Selection extends SurveyBox {
 
 			} else {
 
-				return worldBoundingBox.copy( selectedNode.boundingBox ).applyMatrix4( survey.matrixWorld );
+				if ( ! selectedNode.worldBoundingBox ) selectedNode.updateWorld( survey.matrixWorld );
+				return selectedNode.worldBoundingBox;
 
 			}
 

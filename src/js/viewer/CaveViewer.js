@@ -1003,7 +1003,7 @@ class CaveViewer extends EventDispatcher {
 
 		function setSelectedSectionName ( name ) {
 
-			selectSection( survey.surveyTree.getByPath( name ) || survey.surveyTree );
+			selectSection( survey.selection.getByNme( name ) );
 
 		}
 
@@ -1356,7 +1356,7 @@ class CaveViewer extends EventDispatcher {
 					mouseUpFunction = _setSegmentHighlight;
 
 					_setSegmentHighlight();
-					_showSegmentPopup( leg, legIntersect.pointOnLine );
+					showSegmentPopup( leg, legIntersect.pointOnLine );
 					renderView();
 
 				}
@@ -1378,12 +1378,6 @@ class CaveViewer extends EventDispatcher {
 				legs.setHighlightSegment( segment );
 				setShadingMode( survey.caveShading );
 				if ( segment === null ) closePopup();
-
-			}
-
-			function _showSegmentPopup ( leg, point ) {
-
-				showSegmentPopup( leg, point );
 
 			}
 

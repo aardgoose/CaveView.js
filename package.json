@@ -33,7 +33,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.6",
     "@rollup/pluginutils": "^4.1.1",
-    "concurrently": "^6.3.0",
+    "concurrently": "^6.4.0",
     "eslint": "^8.2.0",
     "postcss": "^8.3.11",
     "proj4": "^2.7.5",

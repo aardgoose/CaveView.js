@@ -291,7 +291,7 @@ class Page {
 		const label = div.firstChild;
 		const id = 'cv-' + frame.getSeq();
 
-		label.for = id;
+		label.htmlFor = id;
 		label.classList.add( 'cv-file-label' );
 
 		const input = document.createElement( 'input' );

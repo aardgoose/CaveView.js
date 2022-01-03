@@ -24,6 +24,7 @@
 			},
 			"eye_separation": "Eye Separation",
 			"vertical_scaling": "Vertical Scaling",
+			"linewidth": "Line width",
 			"autorotate": "Auto Rotate",
 			"rotation_speed": "Rotation Speed"
 		},
@@ -55,6 +56,7 @@
 			"walls": "Walls (LRUD)",
 			"scraps": "Scraps",
 			"splays": "Splay Legs",
+			"duplicates": "Duplicate Legs",
 			"traces": "Dye Traces",
 			"warnings": "Warnings",
 			"box": "Bounding box",
@@ -80,6 +82,7 @@
 			"bounding_box": "Bounding box",
 			"legs_fixed": "Passage lines (fixed)",
 			"surface_fixed": "Surface lines (fixed)",
+			"duplicate_fixed": "Duplicate lines (fixed)",
 			"hud_text": "Scale text",
 			"defaults": "Restore default colours"
 		}
@@ -159,7 +162,10 @@
 			"legs": "Leg count",
 			"totalLength": "Total length",
 			"minLength": "Shortest leg",
-			"maxLength": "Longest leg"
+			"maxLength": "Longest leg",
+			"splayCount": "Splay leg count",
+			"surfaceCount": "Surface leg count",
+			"duplicateCount": "Duplicate leg count"
 		}
 	},
 	"help": {
@@ -207,11 +213,13 @@
 			"zoom_to_cursor": "toggle zoom to cursor mode",
 			"control_mode": "toggle control mode",
 			"decrease_focal_length": "decrease focal length",
-			"increase_focal_length": "increase focal length"
+			"increase_focal_length": "increase focal length",
+			"show_labels": "show station names when under mouse"
 		},
 		"visibility": {
 			"header": "Visibility",
 			"scraps": "scraps on/off [lox only]",
+			"bounding_box": "bounding box on/off",
 			"station_labels": "station labels on/off",
 			"entrance_labels": "entrance labels on/off",
 			"splays": "splay legs on/off",
@@ -253,5 +261,12 @@
 	},
 	"dnd": {
 		"splash_text": "Drag&nbsp;and&nbsp;drop a .3d or .lox model here to&nbsp;load"
+	},
+	"popup": {
+		"leg_length": "Leg length",
+		"segment_length": "Segment length",
+		"direct_length": "Direct length",
+		"depth_from_surface": "depth from surface",
+		"distance": "distance"
 	}
 }

@@ -1,4 +1,4 @@
-﻿{
+{
 	"settings": {
 		"title": "Nastavitve",
 		"survey": {
@@ -24,6 +24,7 @@
 			},
 			"eye_separation": "Ločeni očesi",
 			"vertical_scaling": "Navpična prilagoditev",
+			"linewidth": "Debelina črte",
 			"autorotate": "Samodejno vrtenje",
 			"rotation_speed": "Hitrost vrtenja"
 		},
@@ -55,6 +56,7 @@
 			"walls": "Stene (LDGD)",
 			"scraps": "Delni načrti",
 			"splays": "Stranske meritve",
+			"duplicates": "Podvojene vizure",
 			"traces": "Sledi barvanja",
 			"warnings": "Opozorila",
 			"box": "Škatlasi okvir",
@@ -77,9 +79,10 @@
 			"entrance_text": "Oznaka vhoda",
 			"entrance_background": "Ozadje vhoda",
 			"entrance_marker": "Marker vhoda",
-			"bounding_box": "Škatlasi okvir",
+			"bounding_box": "Škatlasti okvir",
 			"legs_fixed": "Linije prehodov (fiksne)",
 			"surface_fixed": "Površinske linije (fiksne)",
+			"duplicate_fixed": "Podvojene linije (fiksne)",
 			"hud_text": "Tekst skale",
 			"defaults": "Obnovi privzete barve"
 		}
@@ -212,6 +215,7 @@
 		"visibility": {
 			"header": "Vidnost",
 			"scraps": "delni načrti da/ne [samo lox]",
+			"bounding_box": "škatlasti okvir da/ne",
 			"station_labels": "oznake merilnih točk da/ne",
 			"entrance_labels": "oznake vhodov da/ne",
 			"splays": "stranske meritve da/ne",
@@ -253,5 +257,12 @@
 	},
 	"dnd": {
 		"splash_text": "Povleci&nbsp;in&nbsp;spusti sem model .3d ali .lox, da&nbsp;ga&nbsp;naložiš"
+	},
+	"popup": {
+		"leg_length": "Dolžina vizure",
+		"segment_length": "Dolžina segmenta",
+		"direct_length": "Direktna dolžina",
+		"depth_from_surface": "globina od površja",
+		"distance": "razdalja"
 	}
 }

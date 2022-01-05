@@ -321,7 +321,7 @@ class WebTerrain extends CommonTerrain {
 	tileSet () {
 
 		const tileSet = Object.assign( {}, EPSG3857TileSet.defaultTileSet );
-		const coverage = this.coverage;
+		const coverage = this.TS.getCoverage( this.limits, tileSet.maxZoom );
 
 		delete tileSet.isFlat;
 		delete tileSet.directory;
@@ -329,7 +329,7 @@ class WebTerrain extends CommonTerrain {
 		tileSet.title = 'new tile set';
 		tileSet.subdirectory = 'new_tile_set';
 
-		tileSet.minZoom = coverage.zoom;
+		tileSet.usedZoom = coverage.zoom;
 
 		tileSet.minX = coverage.minX;
 		tileSet.maxX = coverage.maxX;

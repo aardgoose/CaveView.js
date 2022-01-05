@@ -9,7 +9,7 @@ class EPSG3857TileSet {
 		isFlat: true,
 		title: 'flat',
 		overlayMaxZoom: 18,
-		maxZoom: 16,
+		maxZoom: 18,
 		minZoom: 10,
 		divisions: 128,
 		subdirectory: null,

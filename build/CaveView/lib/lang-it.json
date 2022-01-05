@@ -1,4 +1,4 @@
-﻿{
+{
 	"settings": {
 		"title": "Impostazioni",
 		"survey": {
@@ -24,6 +24,7 @@
 			},
 			"eye_separation": "Separazione degli occhi",
 			"vertical_scaling": "Scala verticale",
+			"linewidth": "Spessore linea",
 			"autorotate": "Auto rotazione",
 			"rotation_speed": "Velocità di rotazione"
 		},
@@ -55,6 +56,7 @@
 			"walls": "Pareti (LRUD)",
 			"scraps": "Scraps",
 			"splays": "Battute splay",
+			"duplicates": "Battute duplicate",
 			"traces": "Tracce colorazione",
 			"warnings": "Avvertenze",
 			"box": "Bounding box",
@@ -80,6 +82,7 @@
 			"bounding_box": "Bounding box",
 			"legs_fixed": "Linee di passaggio (fissa)",
 			"surface_fixed": "Linee di superficie (fisse)",
+			"duplicate_fixed": "Linee duplicate (fisse)",
 			"hud_text": "Testo della scala",
 			"defaults": "Ripristinare i colori predefiniti"
 		}
@@ -160,6 +163,9 @@
 			"totalLength": "Lunghezza totale",
 			"minLength": "La battuta più corta",
 			"maxLength": "La battuta più lunga"
+			"splayCount": "Conteggio battute splay",
+			"surfaceCount": "Conteggio battute in superficie",
+			"duplicateCount": "Conteggio battute duplicate"
 		}
 	},
 	"help": {
@@ -208,15 +214,17 @@
 			"control_mode": "attiva la modalità di controllo",
 			"decrease_focal_length": "diminuire la lunghezza focale",
 			"increase_focal_length": "aumentare la lunghezza focale"
+			"show_labels": "mostra nomi stazioni sotto il mouse"
 		},
 		"visibility": {
 			"header": "Visibilità",
 			"scraps": "scraps on/off [solo lox]",
+			"bounding_box": "bounding box on/off",
 			"station_labels": "etichette dei capisaldi on/off",
 			"entrance_labels": "etichette degli ingressi on/off",
 			"splays": "battute splay on/off",
 			"survey": "battute sotterranee on/off",
-			"surface": "battute di superfice on/off",
+			"surface": "battute di superficie on/off",
 			"terrain": "terreno on/off",
 			"walls": "pareti LRUD on/off",
 			"stations": "marcatori di caposaldo on/off",
@@ -253,5 +261,12 @@
 	},
 	"dnd": {
 		"splash_text": "Trascina&nbsp;qui un modello .3d o .lox per&nbsp;caricarlo"
+	},
+	"popup": {
+		"leg_length": "Lunghezza battuta",
+		"segment_length": "Lunghezza segmento",
+		"direct_length": "Lunghezza diretta",
+		"depth_from_surface": "profondità dalla superficie",
+		"distance": "distanza"
 	}
 }

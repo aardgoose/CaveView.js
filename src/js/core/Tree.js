@@ -172,7 +172,7 @@ Tree.prototype.addLeaf = function ( path, leafNode, comments ) {
 
 };
 
-Tree.prototype.addLeafById = function ( name, id, leafNode, comments ) {
+Tree.prototype.addLeafById = function ( name, id, leafNode, comment ) {
 
 	const root = this.root;
 
@@ -182,7 +182,7 @@ Tree.prototype.addLeafById = function ( name, id, leafNode, comments ) {
 
 	this.children.push( leafNode );
 
-	if ( comments ) leafNode.comments = comments;
+	if ( comment ) leafNode.comment = comment;
 
 	root.maxId = Math.max( root.maxId, id );
 	this.root.idCache[ id ] = leafNode;

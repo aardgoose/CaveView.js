@@ -1,5 +1,5 @@
 import { Colours } from './Colours';
-import { DataTexture, RGBFormat, UnsignedByteType, LinearFilter, TextureLoader } from '../Three';
+import { DataTexture, RGBAFormat, UnsignedByteType, LinearFilter, TextureLoader } from '../Three';
 
 // define colors to share THREE.color objects
 
@@ -11,8 +11,13 @@ class TextureCache {
 
 		function createTexture ( scale ) {
 
-			const data = Uint8Array.from( scale.flat() );
-			const texture = new DataTexture( data, scale.length, 1, RGBFormat, UnsignedByteType );
+			const n = [];
+
+			// add alpha values
+			scale.forEach( colour => { n.push( ...colour, 255 ); } );
+
+			const data = Uint8Array.from( n );
+			const texture = new DataTexture( data, scale.length, 1, RGBAFormat, UnsignedByteType );
 
 			texture.minFilter = LinearFilter;
 			texture.magFilter = LinearFilter;

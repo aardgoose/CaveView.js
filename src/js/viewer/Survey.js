@@ -496,7 +496,9 @@ Survey.prototype.update = function ( cameraManager, target  ) {
 
 	const stationLabels = this.features.get( LABEL_STATION );
 
-	if ( ( stationLabels && cameraManager.testCameraLayer( LABEL_STATION ) ) ||
+	if ( ! stationLabels ) return;
+
+	if ( ( cameraManager.testCameraLayer( LABEL_STATION ) ) ||
 		stationLabels.commentCount > 0 && cameraManager.testCameraLayer( LABEL_STATION_COMMENT ) ) {
 
 		stationLabels.update( camera, target, this.inverseWorld );

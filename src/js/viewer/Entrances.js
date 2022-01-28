@@ -180,7 +180,7 @@ class Entrances extends ClusterMarkers {
 
 			let next = e.next;
 
-			while ( next !== null & next !== e ) {
+			while ( next !== null && next !== e ) {
 
 				callback( next );
 				next = next.next;

@@ -88,7 +88,6 @@ class EPSG4326TileSet {
 			const attribution = attributions[ i ];
 
 			div.innerHTML = attribution.html;
-			break;
 
 		}
 

@@ -50,8 +50,6 @@ function buildCrossSections ( cave, survey ) {
 
 	let vertexCount; // number of vertices per section
 
-	if ( l === 0 ) return;
-
 	for ( let i = 0; i < l; i++ ) {
 
 		const crossSectionGroup = crossSectionGroups[ i ];

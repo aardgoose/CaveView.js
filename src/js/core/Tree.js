@@ -160,13 +160,13 @@ Tree.prototype.addLeaf = function ( path, leafNode, comments ) {
 
 	while ( path.length > 1 ) {
 
-		const node = new Tree( path.shift(), null, this.root, node );
+		node = new Tree( path.shift(), null, this.root, node );
 
 	}
 
 	leafNode.name = path.shift();
 	leafNode.parent = node;
-	node.children.push( node );
+	node.children.push( leafNode );
 
 	return leafNode;
 

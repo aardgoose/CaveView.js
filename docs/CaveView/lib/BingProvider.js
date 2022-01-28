@@ -99,8 +99,6 @@ function BingProvider ( imagerySet, key ) {
 
 				}
 
-				return;
-
 			}
 
 		}

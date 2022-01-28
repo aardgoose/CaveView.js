@@ -124,7 +124,7 @@ loxHandler.prototype.parse = function ( cave, source, metadata, section, progres
 
 		default:
 
-			throw new Error( 'unknown chunk header. type : ', m_type );
+			throw new Error( 'unknown chunk header. type : ' + m_type );
 
 		}
 
@@ -194,7 +194,7 @@ loxHandler.prototype.parse = function ( cave, source, metadata, section, progres
 
 			const node = parentNode.addById( readString( namePtr ), m_id + idOffset );
 
-			if ( node === null ) throw new Error( 'error constructing survey tree for', readString( titlePtr ) );
+			if ( node === null ) throw new Error( 'error constructing survey tree for : ' + readString( titlePtr ) );
 
 			if ( section !== null && node.getPath() === section ) {
 

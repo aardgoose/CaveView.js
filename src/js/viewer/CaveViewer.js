@@ -43,9 +43,9 @@ class CaveViewer extends EventDispatcher {
 
 		const container = document.getElementById( domID );
 
-		this.container = container;
+		if ( ! container ) throw new Error( 'No container DOM object [' + domID + '] available' );
 
-		if ( ! container ) alert( 'No container DOM object [' + domID + '] available' );
+		this.container = container;
 
 		// target with css for fullscreen on small screen devices
 		container.classList.add( 'cv-container' );

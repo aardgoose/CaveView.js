@@ -109,7 +109,7 @@ class TerrainMeshGeometry extends BufferGeometry {
 
 		while ( nextStart < meshData.byteLength ) {
 
-			const extentionId = dataView.getUint8( nextStart, true );
+			const extentionId = dataView.getUint8( nextStart );
 			const extentionLength = dataView.getUint32( nextStart + 1, true );
 
 			nextStart += 5;

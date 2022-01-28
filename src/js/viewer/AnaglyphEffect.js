@@ -125,10 +125,11 @@ function AnaglyphEffect ( renderer, width, height ) {
 	this.dispose = function() {
 
 		if ( _renderTargetL ) _renderTargetL.dispose();
-		if ( _renderTargetR ) _renderTargetR.dispose();
+		_renderTargetR.dispose();
 
 		if ( _material ) _material.dispose();
-		if ( _mesh ) _mesh.geometry.dispose();
+		_mesh.geometry.dispose();
+
 	};
 
 }

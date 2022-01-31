@@ -1086,7 +1086,17 @@ class CaveViewer extends EventDispatcher {
 			}
 
 			onResize();
-			loadSurvey( new Survey( ctx, cave ) );
+
+			try {
+
+				loadSurvey( new Survey( ctx, cave ) );
+
+			} catch ( e ) {
+
+				alert( e );
+
+			}
+
 			caveLoader.reset();
 
 		}

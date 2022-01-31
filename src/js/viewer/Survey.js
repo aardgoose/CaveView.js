@@ -80,6 +80,8 @@ class Survey extends Object3D {
 
 		let survey = cave.getSurvey();
 
+		if ( survey.limits.isEmpty() ) throw new Error( 'Empty survey or region of survey' );
+
 		this.name = survey.title;
 		this.CRS = survey.sourceCRS;
 		this.displayCRS = survey.displayCRS;

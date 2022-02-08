@@ -4,8 +4,8 @@
  * @author Takahiro / https://github.com/takahirox
  */
 
-import { BufferAttribute } from 'three/src/core/BufferAttribute';
-import { BufferGeometry } from 'three/src/core/BufferGeometry';
+import { BufferAttribute } from 'three/src/core/BufferAttribute.js';
+import { BufferGeometry } from 'three/src/core/BufferGeometry.js';
 
 import {ClampToEdgeWrapping,
 	DoubleSide,
@@ -19,12 +19,12 @@ import {ClampToEdgeWrapping,
 	NearestMipmapLinearFilter,
 	NearestMipmapNearestFilter,
 	RGBAFormat,
-	RepeatWrapping } from 'three/src/constants';
+	RepeatWrapping } from 'three/src/constants.js';
 
-import { PropertyBinding } from 'three/src/animation/PropertyBinding';
-import { Scene } from 'three/src/scenes/Scene';
-import { Vector3 } from 'three/src/math/Vector3';
-import * as MathUtils from 'three/src/math/MathUtils';
+import { PropertyBinding } from 'three/src/animation/PropertyBinding.js';
+import { Scene } from 'three/src/scenes/Scene.js';
+import { Vector3 } from 'three/src/math/Vector3.js';
+import * as MathUtils from 'three/src/math/MathUtils.js';
 
 //------------------------------------------------------------------------------
 // Constants

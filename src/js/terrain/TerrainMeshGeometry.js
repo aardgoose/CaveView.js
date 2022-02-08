@@ -1,7 +1,7 @@
-import { BufferGeometry } from 'three/src/core/BufferGeometry';
-import { Float32BufferAttribute } from 'three/src/core/BufferAttribute';
-import { Vector3 } from 'three/src/math/Vector3';
-import { Quaternion } from 'three/src/math/Quaternion';
+import { BufferGeometry } from 'three/src/core/BufferGeometry.js';
+import { Float32BufferAttribute } from 'three/src/core/BufferAttribute.js';
+import { Vector3 } from 'three/src/math/Vector3.js';
+import { Quaternion } from 'three/src/math/Quaternion.js';
 
 class TerrainMeshGeometry extends BufferGeometry {
 

@@ -1,11 +1,11 @@
-import { Mesh } from 'three/src/objects/Mesh';
-import { BufferGeometry } from 'three/src/core/BufferGeometry';
-import { MeshStandardMaterial } from 'three/src/materials/MeshStandardMaterial';
-import { Scene } from 'three/src/scenes/Scene';
-import { Float32BufferAttribute } from 'three/src/core/BufferAttribute';
-import { GLTFExporter } from '../core/GLTFExporter';
-import { Texture } from 'three/src/textures/Texture';
-import { LineSegments } from 'three/src/objects/LineSegments';
+import { Mesh } from 'three/src/objects/Mesh.js';
+import { BufferGeometry } from 'three/src/core/BufferGeometry.js';
+import { MeshStandardMaterial } from 'three/src/materials/MeshStandardMaterial.js';
+import { Scene } from 'three/src/scenes/Scene.js';
+import { Float32BufferAttribute } from 'three/src/core/BufferAttribute.js';
+import { GLTFExporter } from '../core/GLTFExporter.js';
+import { Texture } from 'three/src/textures/Texture.js';
+import { LineSegments } from 'three/src/objects/LineSegments.js';
 
 onmessage = onMessage;
 

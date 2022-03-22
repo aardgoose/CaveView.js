@@ -106,107 +106,103 @@ class Overlay {
 		let xOffset = 0;
 		let yOffset = 0;
 
-		return new Promise( resolve => {
+		if ( material !== undefined ) {
 
-			if ( material !== undefined ) {
+			return Promise.resolve( this.active ? material : null );
 
-				resolve( this.active ? material : null );
-				return;
+		}
 
-			}
+		const zoomDelta = z - overlayMaxZoom;
 
-			const zoomDelta = z - overlayMaxZoom;
+		if ( zoomDelta > 0 ) {
 
-			if ( zoomDelta > 0 ) {
+			const scale = Math.pow( 2, zoomDelta );
 
-				const scale = Math.pow( 2, zoomDelta );
+			repeat = 1 / scale;
 
-				repeat = 1 / scale;
+			// get image for lower zoom
+			const newX = Math.floor( x * repeat );
+			const newY = Math.floor( y * repeat );
 
-				// get image for lower zoom
-				const newX = Math.floor( x * repeat );
-				const newY = Math.floor( y * repeat );
+			xOffset = ( x - newX * scale ) / scale;
+			yOffset = 1 - ( y - newY * scale ) / scale;
+			yOffset -= repeat;
 
-				xOffset = ( x - newX * scale ) / scale;
-				yOffset = 1 - ( y - newY * scale ) / scale;
-				yOffset -= repeat;
+			x = newX;
+			y = newY;
+			z = overlayMaxZoom;
 
-				x = newX;
-				y = newY;
-				z = overlayMaxZoom;
+		}
 
-			}
+		let urlPromise;
+
+		if ( this.provider.getPromise ) {
+
+			urlPromise = this.provider.getPromise( x, y, z );
+
+		} else {
 
 			const url = this.provider.getUrl( x, y, z );
 
 			if ( url === null || this.missing.has( url ) ) {
 
-				resolve( materials.getMissingMaterial() );
-				return;
+				return Promise.resolve( materials.getMissingMaterial() );
 
 			}
-			/*
-			new ImageBitmapLoader()
-				.setCrossOrigin( 'anonymous' )
-				.setOptions( { imageOrientation: 'flipY' } )
-				.load(
-					url,
-					// success handler
-					imageBitmap => {
 
-						if ( ! this.active ) {
+			urlPromise = Promise.resolve( url );
 
-							texture.dispose();
+		}
 
-							resolve( null );
-							return;
+		return urlPromise.then( url => {
+
+			return new Promise( resolve => {
+
+				new TextureLoader()
+					.setCrossOrigin( 'anonymous' )
+					.load(
+						url,
+						// success handler
+						texture => {
+
+							if ( ! this.active ) {
+
+								texture.dispose();
+
+								resolve( null );
+								return;
+
+							}
+
+							const material = new TerrainOverlayMaterial( this.ctx );
+
+							texture.anisotropy = cfg.value( 'anisotropy', 4 );
+							texture.repeat.setScalar( repeat );
+							texture.offset.set( xOffset, yOffset );
+
+							material.map = texture;
+							material.needsUpdate = true;
+
+							this.materialCache.set( key, material );
+
+							resolve( material );
+
+						},
+
+						// progress handler
+						undefined,
+						// error handler
+						() => {
+
+							this.missing.add( url );
+							resolve( this.active ? materials.getMissingMaterial() : null );
 
 						}
-						const texture = new CanvasTexture( imageBitmap );
-			*/
-			new TextureLoader()
-				.setCrossOrigin( 'anonymous' )
-				.load(
-					url,
-					// success handler
-					texture => {
+					);
+			} );
 
-						if ( ! this.active ) {
+		} );
 
-							texture.dispose();
-
-							resolve( null );
-							return;
-
-						}
-
-						const material = new TerrainOverlayMaterial( this.ctx );
-
-						texture.anisotropy = cfg.value( 'anisotropy', 4 );
-
-						texture.repeat.setScalar( repeat );
-						texture.offset.set( xOffset, yOffset );
-
-						material.map = texture;
-						material.needsUpdate = true;
-
-						this.materialCache.set( key, material );
-
-						resolve( material );
-
-					},
-
-					// progress handler
-					undefined,
-					// error handler
-					() => {
-
-						this.missing.add( url );
-						resolve( this.active ? materials.getMissingMaterial() : null );
-
-					}
-				);
-		});
 	}
 
 	setActive () {

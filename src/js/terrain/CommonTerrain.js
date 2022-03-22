@@ -85,7 +85,7 @@ class CommonTerrain extends Group {
 
 		if ( this.isTiled ) {
 
-			for ( const name in overlays ) {
+			Object.keys( overlays ).sort().forEach( name => {
 
 				const overlay = overlays[ name ];
 
@@ -96,7 +96,7 @@ class CommonTerrain extends Group {
 
 				}
 
-			}
+			} );
 
 		} else if ( this.hasOverlay ) {
 

@@ -1,5 +1,5 @@
-import { LM_SINGLE, LM_MULTIPLE } from '../core/constants';
-import { Spherical, Vector3, Object3D, Group, AmbientLight, DirectionalLight, MathUtils } from '../Three';
+import { LM_NONE, LM_SINGLE, LM_MULTIPLE } from '../core/constants';
+import { Vector3, Object3D, Group, AmbientLight, DirectionalLight, MathUtils } from '../Three';
 
 
 function LightingManager ( ctx, scene ) {
@@ -8,53 +8,47 @@ function LightingManager ( ctx, scene ) {
 	const xAxis = new Vector3( 1, 0, 0 );
 	const up = Object3D.DefaultUp;
 
-	const lightPosition0 = new Vector3();
-	const lightPosition1 = new Vector3();
-	const lightPosition2 = new Vector3();
-	const lightPosition3 = new Vector3();
+	const ambient = [];
 
-	const directionalLight0 = new DirectionalLight( 0xffffff );
-	const directionalLight1 = new DirectionalLight( 0xff0000 );
-	const directionalLight2 = new DirectionalLight( 0x00ff00 );
-	const directionalLight3 = new DirectionalLight( 0x0000ff );
+	ambient[ LM_SINGLE   ] = 0.3;
+	ambient[ LM_MULTIPLE ] = 0.0;
+	ambient[ LM_NONE     ] = 1.0;
 
 	const ambientLight = new AmbientLight( 0xffffff, 0.3 );
 
-	const inclination = cfg.themeAngle( 'lighting.inclination' );
-	const azimuth = cfg.themeAngle( 'lighting.azimuth' ) - Math.PI / 2;
-
-	lightPosition0.setFromSpherical( new Spherical( 1, inclination, azimuth ) );
-	lightPosition0.applyAxisAngle( xAxis, Math.PI / 2 );
-
-	lightPosition1.copy( up );
-	lightPosition1.applyAxisAngle( xAxis, 55 * MathUtils.DEG2RAD );
-	lightPosition1.applyAxisAngle( up, ( 315 - 90 ) * MathUtils.DEG2RAD );
-
-	lightPosition2.copy( up );
-	lightPosition2.applyAxisAngle( xAxis, 55 * MathUtils.DEG2RAD );
-	lightPosition2.applyAxisAngle( up, ( 15 - 90 ) * MathUtils.DEG2RAD );
-
-	lightPosition3.copy( up );
-	lightPosition3.applyAxisAngle( xAxis, 55 * MathUtils.DEG2RAD );
-	lightPosition3.applyAxisAngle( up, ( 75 - 90 ) * MathUtils.DEG2RAD );
-
-	directionalLight0.position.copy( lightPosition0 );
-	directionalLight1.position.copy( lightPosition1 );
-	directionalLight2.position.copy( lightPosition2 );
-	directionalLight3.position.copy( lightPosition3 );
+	const inclination = cfg.themeAngle( 'lighting.inclination' ) * MathUtils.RAD2DEG;
+	const azimuth = cfg.themeAngle( 'lighting.azimuth' ) * MathUtils.RAD2DEG;
 
 	const lights = new Group();
 
-	lights.addStatic( directionalLight0 );
-	lights.addStatic( directionalLight1 );
-	lights.addStatic( directionalLight2 );
-	lights.addStatic( directionalLight3 );
+	// single direction of illumination
+	const directionalLight0 = _createDirectionalLight( 0xffffff, inclination, azimuth );
+
+	//multiple directions of illumination
+	const directionalLight1 = _createDirectionalLight( 0xff0000, 55, 315 );
+	const directionalLight2 = _createDirectionalLight( 0x00ff00, 55, 15 );
+	const directionalLight3 = _createDirectionalLight( 0x0000ff, 55, 75 );
 
 	scene.addStatic( lights );
 
 	scene.addStatic( ambientLight );
 
 	this.mode = LM_SINGLE;
+
+	function _createDirectionalLight( color, alt, azimuth ) {
+
+		const light = new DirectionalLight( color );
+		const position = light.position;
+
+		position.copy( up );
+		position.applyAxisAngle( xAxis, alt * MathUtils.DEG2RAD );
+		position.applyAxisAngle( up, ( azimuth - 90 ) * MathUtils.DEG2RAD );
+
+		lights.addStatic( light );
+
+		return light;
+
+	}
 
 	this.setRotation = function( rotation ) {
 
@@ -63,15 +57,19 @@ function LightingManager ( ctx, scene ) {
 
 	};
 
-	Object.defineProperty( this, 'directionalLighting', {
-		get() { return directionalLight0.visible; },
-		set( on ) {
+	Object.defineProperty( this, 'lightingMode', {
+		get() { return this.mode; },
+		set( mode ) {
 
-			directionalLight0.visible = ( on && this.mode == LM_SINGLE );
-			directionalLight1.visible = ( on && this.mode == LM_MULTIPLE );
-			directionalLight2.visible = ( on && this.mode == LM_MULTIPLE );
-			directionalLight3.visible = ( on && this.mode == LM_MULTIPLE );
-			ambientLight.intensity = ( this.mode == LM_SINGLE) ? ( on ? 0.3 : 1.0 ) : 0.0;
+			this.mode = mode;
+
+			directionalLight0.visible = ( mode == LM_SINGLE );
+
+			directionalLight1.visible = ( mode == LM_MULTIPLE );
+			directionalLight2.visible = ( mode == LM_MULTIPLE );
+			directionalLight3.visible = ( mode == LM_MULTIPLE );
+
+			ambientLight.intensity = ambient[ mode ];
 
 		}
 	} );

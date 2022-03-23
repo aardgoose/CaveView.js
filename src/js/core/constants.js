@@ -81,5 +81,6 @@ export const TERRAIN_STENCIL = 1;
 export const TERRAIN_BLEND   = 2;
 
 // lighting modes
-export const LM_SINGLE = 0;
-export const LM_MULTIPLE = 1;
+export const LM_NONE = 0;
+export const LM_SINGLE = 1;
+export const LM_MULTIPLE = 2;

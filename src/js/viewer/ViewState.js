@@ -1,7 +1,7 @@
 import {
 	CAMERA_PERSPECTIVE,
 	SHADING_HEIGHT, SHADING_RELIEF,
-	VIEW_PLAN, MOUSE_MODE_NORMAL, SHADING_DUPLICATE
+	VIEW_PLAN, MOUSE_MODE_NORMAL, SHADING_DUPLICATE, LM_SINGLE
 } from '../core/constants';
 
 const defaultView = {
@@ -29,7 +29,7 @@ const defaultView = {
 	surfaceShading: SHADING_HEIGHT,
 	terrain: false,
 	terrainDatumShift: false,
-	terrainDirectionalLighting: true,
+	terrainLightingMode: LM_SINGLE,
 	terrainOpacity: 0.5,
 	terrainShading: SHADING_RELIEF,
 	traces: false,

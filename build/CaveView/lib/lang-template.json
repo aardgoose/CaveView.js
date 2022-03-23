@@ -116,6 +116,12 @@
 			"opacity": "Opacity",
 			"datum_shift": "Vertical datum shift",
 			"lighting": "Directional Lighting",
+			"lightingmode": "Lighting",
+			"lightingmodes": {
+				"none": "flat",
+				"single": "directional",
+				"multiple": "muti-directional"
+			},
 			"downloadTileSet": "download tile set spec"
 		}
 	},

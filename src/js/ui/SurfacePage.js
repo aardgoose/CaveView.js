@@ -1,4 +1,5 @@
 import {
+	LM_NONE, LM_SINGLE, LM_MULTIPLE,
 	SHADING_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_SURFACE,
 	// TERRAIN_BLEND, TERRAIN_STENCIL, TERRAIN_BASIC
 } from '../core/constants';
@@ -10,6 +11,13 @@ const surfaceShadingModes = {
 	'surface.shading.inclination':   SHADING_INCLINATION,
 	'surface.shading.height_cursor': SHADING_CURSOR,
 	'surface.shading.fixed':         SHADING_SURFACE
+};
+
+
+const lightingModes = {
+	'terrain.lightingmodes.none': LM_NONE,
+	'terrain.lightingmodes.single': LM_SINGLE,
+	'terrain.lightingmodes.multiple': LM_MULTIPLE
 };
 
 /*
@@ -52,7 +60,7 @@ class SurfacePage extends Page {
 			controls.push( this.addRange( 'terrain.opacity', viewer, 'terrainOpacity' ) );
 
 			controls.push( this.addCheckbox( 'terrain.datum_shift', viewer, 'terrainDatumShift' ) );
-			controls.push( this.addCheckbox( 'terrain.lighting', viewer, 'terrainDirectionalLighting' ) );
+			controls.push( this.addSelect( 'terrain.lightingmode', lightingModes, viewer, 'terrainLightingMode' ) );
 
 			if ( ! viewer.hasRealTerrain ) {
 

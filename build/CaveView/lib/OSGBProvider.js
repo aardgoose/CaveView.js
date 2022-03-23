@@ -32,12 +32,16 @@ class OSGBProvider {
 				} else {
 
 					resolve(
-						fetch( this.tokenSource, { mode: 'no-cors' } ).then( response => response.json() ).then( osToken => {
 
-							this.accessToken = osToken.access_token;
-							return this.accessToken;
+						fetch( this.tokenSource, { mode: 'no-cors' } )
+							.then( response => response.json() )
+							.then( osToken => {
 
-						} )
+								this.accessToken = osToken.access_token;
+								return this.accessToken;
+
+							} )
+
 					);
 
 				}

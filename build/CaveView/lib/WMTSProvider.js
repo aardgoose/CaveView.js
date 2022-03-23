@@ -1,67 +1,70 @@
 
+class WMTSProvider {
 
-function WMTSProvider ( overlayMap ) {
+	minZoom = 10;
+	maxZoom = 20;
 
-	if ( overlayMap ) {
+	coverage = {
+		minX: -9.39288367353,
+		minY: 35.946850084,
+		maxX: 3.03948408368,
+		maxY: 43.7483377142
+	};
 
-		// conventional mapping
+	constructor ( overlayMap ) {
 
-		this.urlBase = 'http://www.ign.es/wmts/mapa-raster?REQUEST=GetTile&SERVICE=WMTS&Version=1.0.0&Layer=MTN&Style=default&Format=image/jpeg';
+		if ( overlayMap ) {
 
-	} else {
+			// conventional mapping
+			this.urlBase = 'http://www.ign.es/wmts/mapa-raster?REQUEST=GetTile&SERVICE=WMTS&Version=1.0.0&Layer=MTN&Style=default&Format=image/jpeg';
 
-		// aerial photography
+		} else {
 
-		this.urlBase = 'http://www.ign.es/wmts/pnoa-ma?REQUEST=GetTile&SERVICE=WMTS&Version=1.0.0&Layer=OI.OrthoimageCoverage&Style=default&Format=image/jpeg';
+			// aerial photography
+
+			this.urlBase = 'http://www.ign.es/wmts/pnoa-ma?REQUEST=GetTile&SERVICE=WMTS&Version=1.0.0&Layer=OI.OrthoimageCoverage&Style=default&Format=image/jpeg';
+
+		}
+
+	}
+
+
+	getUrl ( x, y, z ) {
+
+		let tileMatrixSet;
+		let tileMatrixPrefix;
+
+		switch ( this.crs ) {
+
+		case 'EPSG:4326':
+		case 'ORIGINAL':
+
+			tileMatrixSet = 'EPSG:4326';
+			tileMatrixPrefix = 'EPSG:4326:';
+			y = Math.pow( 2, z ) - y - 1;
+
+			break;
+
+		default:
+
+			tileMatrixSet = 'GoogleMapsCompatible';
+			tileMatrixPrefix = '';
+
+		}
+
+		return `${this.urlBase}&TileMatrixSet=${tileMatrixSet}&TileMatrix=${tileMatrixPrefix}${z}&TileRow=${y}&TileCol=${x}`;
+
+	}
+
+	getAttribution () {
+
+		const a = document.createElement( 'a' );
+
+		a.href = 'http://maps.nls.uk';
+		a.textContent = 'map overlay by National Library of Scotland';
+
+		return a;
 
 	}
 
 }
-
-WMTSProvider.prototype.minZoom = 10;
-WMTSProvider.prototype.maxZoom = 20;
-
-WMTSProvider.prototype.coverage = {
-	minX: -9.39288367353,
-	minY: 35.946850084,
-	maxX: 3.03948408368,
-	maxY: 43.7483377142
-};
-
-WMTSProvider.prototype.getUrl = function ( x, y, z ) {
-
-	var tileMatrixSet;
-	var tileMatrixPrefix;
-
-	switch ( this.crs ) {
-
-	case 'EPSG:4326':
-	case 'ORIGINAL':
-
-		tileMatrixSet = 'EPSG:4326';
-		tileMatrixPrefix = 'EPSG:4326:';
-		y = Math.pow( 2, z ) - y - 1;
-
-		break;
-
-	default:
-
-		tileMatrixSet = 'GoogleMapsCompatible';
-		tileMatrixPrefix = '';
-
-	}
-
-	return this.urlBase + '&TileMatrixSet=' + tileMatrixSet + '&TileMatrix=' + tileMatrixPrefix + z + '&TileRow=' + y + '&TileCol=' + x;
-
-};
-
-WMTSProvider.prototype.getAttribution = function () {
-
-	var a = document.createElement( 'a' );
-
-	a.href = 'http://maps.nls.uk';
-	a.textContent = 'map overlay by National Library of Scotland';
-
-	return a;
-
-};

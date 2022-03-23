@@ -1,81 +1,83 @@
 
+class BGSProvider {
 
-function BGSProvider ( layers ) {
+	crsSupported = [ 'EPSG:3857' ];
 
-	var styles = [];
+	minZoom = 12;
+	maxZoom = 14;
 
-	for ( var i = 0; i < layers.length; i++ ) styles.push( 'default' );
+	coverage = {
+		minX: -8,
+		minY: 50,
+		maxX: 2,
+		maxY: 62
+	};
 
-	this.layers = '&LAYERS=' + layers.join() + '&STYLES=' + styles.join();
 
-}
+	constructor ( layers ) {
 
-BGSProvider.prototype.crsSupported = [ 'EPSG:3857' ];
+		const styles = [];
 
-BGSProvider.prototype.minZoom = 12;
-BGSProvider.prototype.maxZoom = 14;
+		for ( let i = 0; i < layers.length; i++ ) styles.push( 'default' );
 
-BGSProvider.prototype.coverage = {
-	minX: -8,
-	minY: 50,
-	maxX: 2,
-	maxY: 62
-};
-
-BGSProvider.prototype.getUrl = function ( x, y, z ) {
-
-	var earthRadius = 6378137; // in meters
-
-	var tileCount = Math.pow( 2, z );
-	var tileSize = earthRadius * 2 * Math.PI / tileCount;
-
-	var x1, x2, y1, y2;
-
-	x = x - tileCount / 2;
-	y = tileCount / 2 - y - 1;
-
-	x1 = x * tileSize;
-	y1 = y * tileSize;
-
-	x2 = x1 + tileSize;
-	y2 = y1 + tileSize;
-
-	var imageSize = 256;
-
-	switch ( z ) {
-
-	case 10:
-
-		imageSize = 2048;
-		break;
-
-	case 11:
-
-		imageSize = 1024;
-		break;
-
-	case 12:
-
-		imageSize = 512;
-		break;
+		this.layers = '&LAYERS=' + layers.join() + '&STYLES=' + styles.join();
 
 	}
 
-	var url = 'https://map.bgs.ac.uk/arcgis/services/BGS_Detailed_Geology/MapServer/WMSServer?REQUEST=GetMap&VERSION=1.3.0' + this.layers + '&FORMAT=image/png&CRS=EPSG:3857';
-	var size = '&WIDTH=' + imageSize + '&HEIGHT=' + imageSize;
-	var bbox = '&BBOX=' + x1 + ',' + y1 + ',' + x2 + ',' + y2;
+	getUrl ( x, y, z ) {
 
-	return url + size + bbox;
+		const earthRadius = 6378137; // in meters
 
-};
+		const tileCount = Math.pow( 2, z );
+		const tileSize = earthRadius * 2 * Math.PI / tileCount;
 
-BGSProvider.prototype.getAttribution = function () {
+		x = x - tileCount / 2;
+		y = tileCount / 2 - y - 1;
 
-	var a = document.createElement( 'a' );
+		const x1 = x * tileSize;
+		const y1 = y * tileSize;
 
-	a.href = 'http://www.bgs.ac.uk/data/services/wms.html';
-	a.textContent = 'Contains British Geological Survey materials © NERC 2017';
+		const x2 = x1 + tileSize;
+		const y2 = y1 + tileSize;
 
-	return a;
+		let imageSize = 256;
 
-};
+		switch ( z ) {
+
+		case 10:
+
+			imageSize = 2048;
+			break;
+
+		case 11:
+
+			imageSize = 1024;
+			break;
+
+		case 12:
+
+			imageSize = 512;
+			break;
+
+		}
+
+		let url = `https://map.bgs.ac.uk/arcgis/services/BGS_Detailed_Geology/MapServer/WMSServer?REQUEST=GetMap&VERSION=1.3.0${this.layers}&FORMAT=image/png&CRS=EPSG:3857`;
+		url += `&WIDTH=${imageSize}&HEIGHT=${imageSize}`;
+		url += `&BBOX=${x1},${y1},${x2},${y2}`;
+
+		return url;
+
+	}
+
+	getAttribution () {
+
+		const a = document.createElement( 'a' );
+
+		a.href = 'http://www.bgs.ac.uk/data/services/wms.html';
+		a.textContent = 'Contains British Geological Survey materials © NERC 2017';
+
+		return a;
+
+	}
+
+}

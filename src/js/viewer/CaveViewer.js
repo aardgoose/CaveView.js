@@ -1,5 +1,6 @@
 import {
 	VERSION,
+	LM_NONE, LM_SINGLE,
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES, FEATURE_GRID, SURVEY_WARNINGS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LEG_DUPLICATE,
 	LABEL_STATION, LABEL_STATION_COMMENT,
@@ -33,6 +34,7 @@ import { Snapshot } from './Snapshot';
 import {
 	EventDispatcher, Vector3, Scene, Raycaster, WebGLRenderer, MOUSE, FogExp2
 } from '../Three';
+import { CanvasPopup } from './CanvasPopup';
 
 class CaveViewer extends EventDispatcher {
 
@@ -87,6 +89,10 @@ class CaveViewer extends EventDispatcher {
 		const cameraManager = new CameraManager( ctx, renderer, scene );
 
 		const raycaster = new Raycaster();
+
+		const _v1 = new Vector3();
+		const _v2 = new Vector3();
+
 		raycaster.layers.enableAll();
 
 		// setup lighting
@@ -136,6 +142,8 @@ class CaveViewer extends EventDispatcher {
 
 		let stationNameLabel = null;
 		let showStationNameLabel = false;
+		let showStationDistances = false;
+		let startStation = null;
 		let lastPointerOver = 0;
 
 		// event handler
@@ -183,7 +191,12 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'terrainDirectionalLighting': {
-				get: function () { return lightingManager.directionalLighting; },
+				get: function () { return ( lightingManager.lightingMode !== LM_NONE ); },
+				set: function ( x ) { setTerrainLighting( x ? LM_SINGLE : LM_NONE ); }
+			},
+
+			'terrainLightingMode': {
+				get: function () { return lightingManager.lightingMode; },
 				set: setTerrainLighting
 			},
 
@@ -743,9 +756,9 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		function setTerrainLighting ( on ) {
+		function setTerrainLighting ( mode ) {
 
-			lightingManager.directionalLighting = on;
+			lightingManager.lightingMode = mode;
 
 			renderView();
 
@@ -1277,7 +1290,20 @@ class CaveViewer extends EventDispatcher {
 		function showStationPopupX ( station ) {
 
 			showStationPopup( station );
-			mouseUpFunction = closePopup;
+
+			if ( event.shiftKey ) {
+
+				mouseUpFunction = null;
+				showStationDistances = true;
+				startStation = station;
+
+				setStationNameLabelMode( true );
+
+			} else {
+
+				mouseUpFunction = closePopup;
+
+			}
 
 			cameraMove.preparePoint( survey.getWorldPosition( station.station.clone() ) );
 
@@ -1415,7 +1441,7 @@ class CaveViewer extends EventDispatcher {
 
 			if ( event.button === MOUSE.LEFT ) {
 
-				showStationPopupX( pStation );
+				showStationPopupX( pStation, event );
 
 			} else if ( event.button === MOUSE.RIGHT ) {
 
@@ -1477,7 +1503,29 @@ class CaveViewer extends EventDispatcher {
 
 			if ( stationNameLabel === null ) {
 
-				stationNameLabel = new StationNameLabel( ctx, station );
+				if ( showStationDistances ) {
+
+					stationNameLabel = new CanvasPopup( ctx );
+
+					stationNameLabel.addLine( station.getPath() );
+
+					console.log( startStation, station );
+					const p1 = survey.getGeographicalPosition( startStation.station, _v1 );
+					const p2 = survey.getGeographicalPosition( station, _v2 );
+
+					stationNameLabel.addValue( 'dX', Math.abs( p1.x - p2.x ) );
+					stationNameLabel.addValue( 'dY', Math.abs( p1.y - p2.y ) );
+					stationNameLabel.addValue( 'dZ', Math.abs( p1.z - p2.z ) );
+					stationNameLabel.addValue( 'distance', p1.distanceTo( p2 ) );
+
+					stationNameLabel.finish( station );
+
+				} else {
+
+					stationNameLabel = new StationNameLabel( ctx, station );
+
+				}
+
 				survey.addStatic( stationNameLabel );
 
 			}

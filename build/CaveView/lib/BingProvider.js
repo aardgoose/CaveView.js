@@ -52,13 +52,11 @@ class BingProvider {
 		const metaUrl = uriScheme + `://dev.virtualearth.net/REST/v1/Imagery/Metadata/${imagerySet}?include=imageryProviders&uriScheme=${uriScheme}&key=${key}`;
 		const req = new XMLHttpRequest();
 
-		let metadata;
-
 		req.open( 'GET', metaUrl );
 		req.responseType = 'text';
 		req.addEventListener( 'load', () => {
 
-			metadata = JSON.parse( req.response );
+			const metadata = JSON.parse( req.response );
 
 			const rss = metadata.resourceSets;
 
@@ -77,7 +75,7 @@ class BingProvider {
 					this.maxZoom = r.zoomMax;
 					this.subdomainCount = this.subdomains.length;
 
-					_setAttribution( r );
+					_setAttribution( metadata, r );
 
 					if ( this.OS ) {
 
@@ -97,15 +95,15 @@ class BingProvider {
 
 		return;
 
-		function _setAttribution( resourceSet ) {
+		function _setAttribution( metadata, resourceSet ) {
 
-			var span = document.createElement( 'span' );
+			const span = document.createElement( 'span' );
 
 			span.style.paddingRight = '4px';
 
 			if ( self.OS ) {
 
-				span.textContent = 'Ordnance Survey © Crown Copyright 2017';
+				span.textContent = 'Ordnance Survey © Crown Copyright 2022';
 
 			} else {
 
@@ -169,13 +167,11 @@ class BingProvider {
 
 		if ( urlTemplate === null ) return null;
 
-		const qk = this.quadkey( x, y, z );
-
 		this.subdomainIndex = ++this.subdomainIndex % this.subdomainCount;
 
-		const url = urlTemplate.replace( '{subdomain}', this.subdomains[ this.subdomainIndex ] ).replace( '{quadkey}', qk );
-
-		return url;
+		return urlTemplate
+			.replace( '{subdomain}', this.subdomains[ this.subdomainIndex ] )
+			.replace( '{quadkey}', this.quadkey( x, y, z ) );
 
 	}
 

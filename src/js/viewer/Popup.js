@@ -23,14 +23,14 @@ class Popup extends Mesh {
 
 	type = 'Popup';
 
-	constructor ( ctx ) {
+	constructor ( ctx, renderOrder = Infinity ) {
 
 		if ( Popup.commonGeometry === null ) Popup.commonGeometry = new PopupGeometry();
 
 		super( Popup.commonGeometry );
 
 		this.layers.set( LEG_CAVE );
-		this.renderOrder = Infinity;
+		this.renderOrder = renderOrder;
 		this.ctx = ctx;
 
 	}

@@ -1529,7 +1529,7 @@ class CaveViewer extends EventDispatcher {
 
 				if ( showStationDistances ) {
 
-					stationNameLabel = new CanvasPopup( ctx );
+					stationNameLabel = new CanvasPopup( ctx, 20000 );
 
 					stationNameLabel.addLine( station.getPath() );
 

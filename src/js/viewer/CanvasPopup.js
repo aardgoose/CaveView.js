@@ -4,9 +4,9 @@ import { CanvasTexture } from '../Three';
 
 class CanvasPopup extends Popup {
 
-	constructor ( ctx ) {
+	constructor ( ctx, renderOrder = 10000 ) {
 
-		super( ctx );
+		super( ctx, renderOrder );
 
 		this.lines = [];
 		this.type = 'CanvasPopup';

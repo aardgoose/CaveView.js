@@ -1287,6 +1287,28 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
+		function endDistanceMode ( event ) {
+
+			if ( event.key != 'Shift' ) return;
+
+			// cancel showStation mode
+
+			showStationDistances = false;
+
+			closePopup();
+			setStationNameLabelMode( false );
+
+			if ( stationNameLabel !== null ) {
+
+				survey.remove( stationNameLabel );
+				stationNameLabel = null;
+
+			}
+
+			document.removeEventListener( 'keyup', endDistanceMode );
+
+		}
+
 		function showStationPopupX ( station ) {
 
 			showStationPopup( station );
@@ -1298,6 +1320,8 @@ class CaveViewer extends EventDispatcher {
 				startStation = station;
 
 				setStationNameLabelMode( true );
+
+				document.addEventListener( 'keyup', endDistanceMode );
 
 			} else {
 
@@ -1509,7 +1533,6 @@ class CaveViewer extends EventDispatcher {
 
 					stationNameLabel.addLine( station.getPath() );
 
-					console.log( startStation, station );
 					const p1 = survey.getGeographicalPosition( startStation.station, _v1 );
 					const p2 = survey.getGeographicalPosition( station, _v2 );
 

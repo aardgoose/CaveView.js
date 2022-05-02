@@ -14,6 +14,7 @@
 
 <script type="text/javascript" src="http://nls.tileserver.com/api.js"></script>
 
+<script type="text/javascript" src="CaveView/lib/OSGBProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/BingProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/BarmasterProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/OSMProvider.js" ></script>
@@ -46,6 +47,7 @@ function onload () {
 //		defaultCRS: "+proj=tmerc +lat_0=0 +lon_0=15 +k=0.9999 +x_0=500000 +y_0=-5000000 +ellps=bessel +towgs84=577.326,90.129,463.919,5.137,1.474,5.297,2.4232 +units=m +no_defs"
 } );
 
+	viewer.addOverlay( 'OSGB', new OSGBProvider() );
 	viewer.addOverlay( 'Barmaster', new BarmasterProvider() );
 	viewer.addOverlay( 'OSM', new OSMProvider() );
 	viewer.addOverlay( 'BGS Solid', new BGSProvider( [ 'BGS.50k.Bedrock', 'BGS.50k.Linear.features' ] ) );

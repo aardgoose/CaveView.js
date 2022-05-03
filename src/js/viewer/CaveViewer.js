@@ -75,6 +75,7 @@ class CaveViewer extends EventDispatcher {
 
 		resetRenderer();
 
+
 		renderer.clear();
 		renderer.autoClear = false;
 
@@ -468,7 +469,7 @@ class CaveViewer extends EventDispatcher {
 
 				if ( stationNameLabel !== null ) {
 
-					stationNameLabel.removeFromParent();
+					stationNameLabel.close();
 					stationNameLabel = null;
 					renderView();
 
@@ -1295,18 +1296,11 @@ class CaveViewer extends EventDispatcher {
 			closePopup();
 			setStationNameLabelMode( false );
 
-			if ( stationNameLabel !== null ) {
-
-				survey.remove( stationNameLabel );
-				stationNameLabel = null;
-
-			}
-
 			document.removeEventListener( 'keyup', endDistanceMode );
 
 		}
 
-		function showStationPopupX ( station ) {
+		function showStationPopupX ( station, event ) {
 
 			if ( event.shiftKey && ! showStationDistances ) {
 
@@ -1497,7 +1491,7 @@ class CaveViewer extends EventDispatcher {
 
 					if ( stationNameLabel !== null && performance.now() - lastPointerOver > 250 ) {
 
-						survey.remove( stationNameLabel );
+						stationNameLabel.close();
 						stationNameLabel = null;
 
 						renderView();
@@ -1516,7 +1510,7 @@ class CaveViewer extends EventDispatcher {
 
 			if ( stationNameLabel !== null && stationNameLabel.station !== station ) {
 
-				survey.remove( stationNameLabel );
+				stationNameLabel.close();
 				stationNameLabel = null;
 
 			}
@@ -1659,7 +1653,7 @@ class CaveViewer extends EventDispatcher {
 
 					survey.showShortestPath( station );
 
-					showStationPopupX( publicFactory.getStation( station ) );
+					showStationPopupX( publicFactory.getStation( station ), event );
 
 				} else if ( event.button === MOUSE.RIGHT ) {
 

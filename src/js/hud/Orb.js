@@ -44,7 +44,6 @@ class Orb extends Group {
 		const stdWidth  = hudObject.stdWidth;
 		// const stdMargin = hudObject.stdMargin;
 		const ctx = hudObject.ctx;
-		const cfg = hudObject.ctx.cfg;
 		//const materials = hudObject.ctx.materials;
 
 		super();

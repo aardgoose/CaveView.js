@@ -1271,7 +1271,7 @@ class CaveViewer extends EventDispatcher {
 
 			if ( popup !== null ) return;
 
-			popup = new SegmentPopup( ctx, leg, point, survey );
+			popup = new SegmentPopup( ctx, leg, point );
 			scene.addStatic( popup );
 
 			renderView();

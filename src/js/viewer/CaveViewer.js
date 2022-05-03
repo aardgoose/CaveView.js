@@ -35,7 +35,6 @@ import { Snapshot } from './Snapshot';
 import {
 	EventDispatcher, Vector3, Scene, Raycaster, WebGLRenderer, MOUSE, FogExp2
 } from '../Three';
-import { CanvasPopup } from './CanvasPopup';
 
 class CaveViewer extends EventDispatcher {
 

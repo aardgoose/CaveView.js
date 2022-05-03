@@ -75,6 +75,7 @@ class CaveViewer extends EventDispatcher {
 
 		resetRenderer();
 
+		updatePixelRatio();
 
 		renderer.clear();
 		renderer.autoClear = false;
@@ -553,6 +554,15 @@ class CaveViewer extends EventDispatcher {
 			renderer.setClearColor( cfg.themeColor( 'background' ), 0.0 );
 			renderer.setClearAlpha( 0.0 );
 			renderer.setRenderTarget( null );
+
+		}
+
+		function updatePixelRatio() {
+
+			const pr = window.devicePixelRatio;
+			renderer.setPixelRatio( pr );
+
+			matchMedia( `(resolution: ${pr}dppx)` ).addEventListener( 'change', updatePixelRatio, { once: true } );
 
 		}
 

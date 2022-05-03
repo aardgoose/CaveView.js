@@ -18,6 +18,7 @@ import { CameraMove } from './CameraMove';
 import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
 import { StationPopup } from './StationPopup';
+import { StationDistancePopup } from './StationDistancePopup';
 import { SegmentPopup } from './SegmentPopup';
 import { StationNameLabel } from './StationNameLabel';
 import { PublicFactory } from '../public/PublicFactory';
@@ -89,9 +90,6 @@ class CaveViewer extends EventDispatcher {
 		const cameraManager = new CameraManager( ctx, renderer, scene );
 
 		const raycaster = new Raycaster();
-
-		const _v1 = new Vector3();
-		const _v2 = new Vector3();
 
 		raycaster.layers.enableAll();
 
@@ -1311,13 +1309,10 @@ class CaveViewer extends EventDispatcher {
 
 		function showStationPopupX ( station ) {
 
-			showStationPopup( station );
+			if ( event.shiftKey && ! showStationDistances ) {
 
-			if ( event.shiftKey ) {
-
-				mouseUpFunction = null;
 				showStationDistances = true;
-				startStation = station;
+				startStation = station.station;
 
 				setStationNameLabelMode( true );
 
@@ -1325,9 +1320,11 @@ class CaveViewer extends EventDispatcher {
 
 			} else {
 
-				mouseUpFunction = closePopup;
+				showStationPopup( station );
 
 			}
+
+			mouseUpFunction = closePopup;
 
 			cameraMove.preparePoint( survey.getWorldPosition( station.station.clone() ) );
 
@@ -1529,19 +1526,7 @@ class CaveViewer extends EventDispatcher {
 
 				if ( showStationDistances ) {
 
-					stationNameLabel = new CanvasPopup( ctx, 20000 );
-
-					stationNameLabel.addLine( station.getPath() );
-
-					const p1 = survey.getGeographicalPosition( startStation.station, _v1 );
-					const p2 = survey.getGeographicalPosition( station, _v2 );
-
-					stationNameLabel.addValue( 'dX', Math.abs( p1.x - p2.x ) );
-					stationNameLabel.addValue( 'dY', Math.abs( p1.y - p2.y ) );
-					stationNameLabel.addValue( 'dZ', Math.abs( p1.z - p2.z ) );
-					stationNameLabel.addValue( 'distance', p1.distanceTo( p2 ) );
-
-					stationNameLabel.finish( station );
+					stationNameLabel = new StationDistancePopup( ctx, survey, startStation, station );
 
 				} else {
 

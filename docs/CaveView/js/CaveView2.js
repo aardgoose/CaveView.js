@@ -57904,6 +57904,7 @@
 
 				closePopup();
 				setStationNameLabelMode( false );
+				controls.enabled = true;
 
 				document.removeEventListener( 'keyup', endDistanceMode );
 
@@ -57917,6 +57918,7 @@
 					startStation = station.station;
 
 					setStationNameLabelMode( true );
+					controls.enabled = false;
 
 					document.addEventListener( 'keyup', endDistanceMode );
 

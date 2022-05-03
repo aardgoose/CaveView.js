@@ -23,6 +23,28 @@ class CanvasPopup extends Popup {
 
 	}
 
+	formatName ( name ) {
+
+		let long = false;
+
+		// reduce name length if too long
+
+		while ( name.length > 20 ) {
+
+			const tmp = name.split( '.' );
+			tmp.shift();
+
+			name = tmp.join( '.' );
+			long = true;
+
+		}
+
+		if ( long ) name = '...' + name;
+
+		return name;
+
+	}
+
 	addLine ( line ) {
 
 		this.lines.push( line );

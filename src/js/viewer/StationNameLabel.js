@@ -15,6 +15,12 @@ class StationNameLabel extends GlyphString {
 
 	}
 
+	close () {
+
+		this.removeFromParent();
+
+	}
+
 }
 
 export { StationNameLabel };

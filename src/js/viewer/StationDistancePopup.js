@@ -18,9 +18,9 @@ class StationDistancePopup extends CanvasPopup {
 		const p1 = survey.getGeographicalPosition( startStation, __v1 );
 		const p2 = survey.getGeographicalPosition( endStation, __v2 );
 
-		this.addValue( 'dX', Math.abs( p1.x - p2.x ) );
-		this.addValue( 'dY', Math.abs( p1.y - p2.y ) );
-		this.addValue( 'dZ', Math.abs( p1.z - p2.z ) );
+		this.addValue( ' dX', Math.abs( p1.x - p2.x ) );
+		this.addValue( ' dY', Math.abs( p1.y - p2.y ) );
+		this.addValue( ' dZ', Math.abs( p1.z - p2.z ) );
 		this.addValue( 'distance', p1.distanceTo( p2 ) );
 
 		this.finish( endStation );
@@ -33,6 +33,8 @@ class StationDistancePopup extends CanvasPopup {
 		] );
 
 		this.line = new LineSegments2( geometry, ctx.materials.getLine2Material() );
+		this.station = startStation;
+
 		survey.addStatic( this.line );
 
 	}

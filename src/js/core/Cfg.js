@@ -34,8 +34,6 @@ class Cfg extends EventDispatcher {
 
 	setLanguage ( lang ) {
 
-		console.log( 'home:', Cfg.home );
-
 		if ( lang === 'en' ) {
 
 			x18n.set( 'en' );

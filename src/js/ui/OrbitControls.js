@@ -694,6 +694,7 @@ class OrbitControls extends EventDispatcher {
 
 		const updateMouse3D = function () {
 
+			const _station = new Vector3();
 			const v = new Vector3();
 			const v1 = new Vector3();
 			const up = new Vector3();
@@ -710,7 +711,7 @@ class OrbitControls extends EventDispatcher {
 
 				if ( firstWheelMove || mouseStart.x !== mouse.x || mouseStart.y !== mouse.y ) {
 
-					const station = viewer.getStationUnderMouse( mouse );
+					const station = viewer.getStationUnderMouse( mouse, _station );
 
 					if ( station !== null ) station.project( camera );
 

@@ -1362,7 +1362,7 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		this.getStationUnderMouse = function ( mouse ) {
+		this.getStationUnderMouse = function ( mouse, station ) {
 
 			const threshold = raycaster.params.Points.threshold;
 
@@ -1373,7 +1373,7 @@ class CaveViewer extends EventDispatcher {
 
 			raycaster.params.Points.threshold = threshold;
 
-			return ( hit !== undefined ) ? survey.getWorldPosition( hit.station.clone() ) : null;
+			return ( hit !== undefined ) ? survey.getWorldPosition( station.copy( hit.station ) ) : null;
 
 		};
 

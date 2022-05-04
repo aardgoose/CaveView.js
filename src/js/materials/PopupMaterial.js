@@ -10,7 +10,8 @@ class PopupMaterial extends ShaderMaterial {
 		const pixelRatio = window.devicePixelRatio || 1;
 		const canvas = popupImage.image;
 		const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
-		const scale = new Vector2( canvas.width * pixelRatio / container.clientWidth, canvas.height * pixelRatio / container.clientHeight );
+
+		const scale = new Vector2( canvas.width / Math.floor( pixelRatio * container.clientWidth), canvas.height / Math.floor( pixelRatio * container.clientHeight ) ).multiplyScalar( 2 );
 
 		colour = colour || [ 1, 1, 1 ];
 

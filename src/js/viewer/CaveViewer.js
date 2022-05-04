@@ -139,7 +139,7 @@ class CaveViewer extends EventDispatcher {
 		let savedView = null;
 		let mouseOver = false;
 
-		let stationNameLabel = null;
+		let hoverLabel = null;
 		let showStationNameLabel = false;
 		let showStationDistances = false;
 		let startStation = null;
@@ -468,10 +468,10 @@ class CaveViewer extends EventDispatcher {
 
 			} else {
 
-				if ( stationNameLabel !== null ) {
+				if ( hoverLabel !== null ) {
 
-					stationNameLabel.close();
-					stationNameLabel = null;
+					hoverLabel.close();
+					hoverLabel = null;
 					renderView();
 
 				}
@@ -1501,10 +1501,10 @@ class CaveViewer extends EventDispatcher {
 
 				setTimeout( () => {
 
-					if ( stationNameLabel !== null && performance.now() - lastPointerOver > 250 ) {
+					if ( hoverLabel !== null && performance.now() - lastPointerOver > 250 ) {
 
-						stationNameLabel.close();
-						stationNameLabel = null;
+						hoverLabel.close();
+						hoverLabel = null;
 
 						renderView();
 
@@ -1520,26 +1520,26 @@ class CaveViewer extends EventDispatcher {
 
 			const station = hit.station;
 
-			if ( stationNameLabel !== null && stationNameLabel.station !== station ) {
+			if ( hoverLabel !== null && hoverLabel.station !== station ) {
 
-				stationNameLabel.close();
-				stationNameLabel = null;
+				hoverLabel.close();
+				hoverLabel = null;
 
 			}
 
-			if ( stationNameLabel === null ) {
+			if ( hoverLabel === null ) {
 
 				if ( showStationDistances ) {
 
-					stationNameLabel = new StationDistancePopup( ctx, survey, startStation, station );
+					hoverLabel = new StationDistancePopup( ctx, survey, startStation, station );
 
 				} else {
 
-					stationNameLabel = new StationNameLabel( ctx, station );
+					hoverLabel = new StationNameLabel( ctx, station );
 
 				}
 
-				survey.addStatic( stationNameLabel );
+				survey.addStatic( hoverLabel );
 
 			}
 

@@ -10,22 +10,18 @@ class ImagePopup extends Popup {
 
 		this.type = 'ImagePopup';
 
-		const texture = new TextureLoader().load( imageUrl, _textureLoaded );
+		const texture = new TextureLoader().load( imageUrl, ( texture ) => {
+
+			this.material = new PopupMaterial( ctx.container, texture, 0 );
+			this.material.needsUpdate = true;
+
+			callback();
+
+		} );
 
 		texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
 
 		this.position.copy( station );
-
-		const self = this;
-
-		function _textureLoaded( texture ) {
-
-			self.material = new PopupMaterial( self.ctx.container, texture, 0 );
-			self.material.needsUpdate = true;
-
-			callback();
-
-		}
 
 	}
 

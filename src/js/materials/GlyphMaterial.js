@@ -8,7 +8,8 @@ class GlyphMaterial extends ShaderMaterial {
 		const uniforms = ctx.materials.uniforms;
 		const cellScale = glyphAtlas.cellScale;
 		const container = viewer.container;
-		const realPixels = glyphAtlas.cellSize;
+		const realPixels = glyphAtlas.cellSize * 2;
+		const pixelRatio = window.devicePixelRatio || 1;
 
 		const cos = Math.cos( -rotation );
 		const sin = Math.sin( -rotation );
@@ -16,7 +17,7 @@ class GlyphMaterial extends ShaderMaterial {
 		const cosR = Math.cos( rotation );
 		const sinR = Math.sin( rotation );
 
-		const scale = new Vector2( realPixels / container.clientWidth, realPixels / container.clientHeight );
+		const scale = new Vector2( realPixels / Math.floor( pixelRatio * container.clientWidth), realPixels / Math.floor( pixelRatio * container.clientHeight ) );
 
 		const rotationMatrix = new Float32Array( [ cos, -sin, sin, cos ] );
 
@@ -39,7 +40,7 @@ class GlyphMaterial extends ShaderMaterial {
 
 		this.type = 'CV.GlyphMaterial';
 		this.atlas = glyphAtlas;
-		this.scaleFactor = glyphAtlas.cellSize / 2;
+		this.scaleFactor = glyphAtlas.cellSize / pixelRatio;
 		this.toScreenSpace = new Vector3( container.clientWidth/ 2, container.clientHeight / 2, 1 );
 
 		viewer.addEventListener( 'resized', _resize );
@@ -48,8 +49,9 @@ class GlyphMaterial extends ShaderMaterial {
 
 		function _resize() {
 
-			self.uniforms.scale.value.set( realPixels / container.clientWidth, realPixels / container.clientHeight );
+			self.uniforms.scale.value.set( realPixels / Math.floor( pixelRatio * container.clientWidth ), realPixels/ Math.floor( pixelRatio * container.clientHeight ) );
 			self.toScreenSpace.set( container.clientWidth/ 2, container.clientHeight / 2, 1 );
+			this.scaleFactor = glyphAtlas.cellSize / pixelRatio;
 
 		}
 

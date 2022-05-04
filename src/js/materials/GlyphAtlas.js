@@ -5,7 +5,7 @@ class GlyphAtlas {
 	constructor ( glyphAtlasSpec ) {
 
 		const atlasSize = 512;
-		const fontSize = 28;
+		const fontSize = 18;
 		const cellSize = 32;
 
 		const divisions = atlasSize / cellSize;

@@ -3,7 +3,7 @@ import { TerrainTileGeometry } from '../terrain/TerrainTileGeometry';
 import { FlatTileGeometry } from '../terrain/FlatTileGeometry';
 
 const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
-var tileSpec;
+let tileSpec;
 
 onmessage = onMessage;
 

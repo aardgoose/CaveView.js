@@ -1,6 +1,6 @@
 const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-var tileSets;
+let tileSets;
 
 class EPSG3857TileSet {
 

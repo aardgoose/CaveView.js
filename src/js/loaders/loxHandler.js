@@ -5,7 +5,7 @@ import {
 import { Vector3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';
 
-var modelOffset = 0;
+let modelOffset = 0;
 
 class loxHandler {
 

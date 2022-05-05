@@ -1141,18 +1141,6 @@ class Svx3dHandler {
 
 	}
 
-	getTerrainDimensions () {
-
-		return { lines: 0, samples: 0 };
-
-	}
-
-	getTerrainBitmap () {
-
-		return false;
-
-	}
-
 }
 
 export { Svx3dHandler };

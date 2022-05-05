@@ -139,6 +139,8 @@ class CaveLoader extends EventDispatcher {
 		const req = loader.load( fileName, _dataLoaded, _progress, _dataError );
 		if ( req ) this.requests.push( req );
 
+		const end = () => { if ( ++doneCount === taskCount ) this.callHandler(); };
+
 		return true;
 
 		function _dataLoaded ( result ) {
@@ -147,7 +149,7 @@ class CaveLoader extends EventDispatcher {
 
 			self.progress( 75 );
 
-			if ( ++doneCount === taskCount ) self.callHandler();
+			end();
 
 		}
 
@@ -155,7 +157,7 @@ class CaveLoader extends EventDispatcher {
 
 			self.metadataResponse = result;
 
-			if ( ++doneCount === taskCount ) self.callHandler();
+			end();
 
 		}
 
@@ -171,7 +173,7 @@ class CaveLoader extends EventDispatcher {
 
 			console.warn( 'error event', event );
 
-			if ( ++doneCount === taskCount ) self.callHandler();
+			end();
 
 		}
 
@@ -179,7 +181,7 @@ class CaveLoader extends EventDispatcher {
 
 			if ( event.type === 'abort' ) return;
 
-			if ( ++doneCount === taskCount ) self.callHandler();
+			end();
 
 		}
 

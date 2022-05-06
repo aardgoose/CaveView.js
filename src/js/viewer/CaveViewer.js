@@ -731,7 +731,7 @@ class CaveViewer extends EventDispatcher {
 
 		function setTerrainShadingMode ( mode ) {
 
-			if ( survey.terrain === null ) return;
+			if ( terrain === null ) return;
 
 			terrain.setShadingMode( mode, renderView );
 
@@ -1609,13 +1609,13 @@ class CaveViewer extends EventDispatcher {
 			case MOUSE_MODE_ROUTE_EDIT:
 
 				if ( hit === undefined ) break;
-				_selectSegment( hit );
+				selectSegment( hit );
 
 				break;
 
 			case MOUSE_MODE_DISTANCE:
 
-				_selectDistance( hit );
+				selectDistance( hit, event );
 
 				break;
 
@@ -1639,50 +1639,50 @@ class CaveViewer extends EventDispatcher {
 
 			}
 
-			function _selectDistance ( hit ) {
+		}
 
-				if ( ! hit ) {
+		function selectDistance ( hit, event ) {
 
-					if ( event.button === MOUSE.RIGHT ) {
+			if ( ! hit ) {
 
-						// default distance shading
-						survey.maxDistance = 0;
-						setShadingMode( SHADING_DISTANCE );
+				if ( event.button === MOUSE.RIGHT ) {
 
-					}
-
-					return;
+					// default distance shading
+					survey.maxDistance = 0;
+					setShadingMode( SHADING_DISTANCE );
 
 				}
 
-				const station = hit.station;
-
-				if ( event.button === MOUSE.LEFT ) {
-
-					survey.showShortestPath( station );
-
-					showStationPopupX( publicFactory.getStation( station ), event );
-
-				} else if ( event.button === MOUSE.RIGHT ) {
-
-					survey.setShortestPaths( station );
-
-					self.dispatchEvent( { type: 'change', name: 'shadingMode' } );
-					renderView();
-
-				}
+				return;
 
 			}
 
-			function _selectSegment ( picked ) {
+			const station = hit.station;
 
-				survey.getRoutes().toggleSegment( picked.index );
+			if ( event.button === MOUSE.LEFT ) {
 
-				setShadingMode( SHADING_PATH );
+				survey.showShortestPath( station );
 
+				showStationPopupX( publicFactory.getStation( station ), event );
+
+			} else if ( event.button === MOUSE.RIGHT ) {
+
+				survey.setShortestPaths( station );
+
+				self.dispatchEvent( { type: 'change', name: 'shadingMode' } );
 				renderView();
 
 			}
+
+		}
+
+		function selectSegment ( picked ) {
+
+			survey.getRoutes().toggleSegment( picked.index );
+
+			setShadingMode( SHADING_PATH );
+
+			renderView();
 
 		}
 

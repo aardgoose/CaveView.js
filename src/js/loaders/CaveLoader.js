@@ -252,6 +252,7 @@ class CaveLoader extends EventDispatcher {
 
 			this.callback( false );
 			this.dispatchEvent( { type: 'progress', name: 'end' } );
+			this.reset();
 
 			return;
 
@@ -282,6 +283,7 @@ class CaveLoader extends EventDispatcher {
 
 				this.callback( models );
 				this.dispatchEvent( { type: 'progress', name: 'end' } );
+				this.reset();
 
 			}
 

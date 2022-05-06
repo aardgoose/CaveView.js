@@ -1083,7 +1083,6 @@ class CaveViewer extends EventDispatcher {
 
 		this.loadCave = function ( file, section ) {
 
-			caveLoader.reset();
 			caveLoader.loadFile( file, section );
 
 			clipped = ( section !== undefined && section !== '' );
@@ -1092,7 +1091,6 @@ class CaveViewer extends EventDispatcher {
 
 		this.loadCaves = function ( files ) {
 
-			caveLoader.reset();
 			caveLoader.loadFiles( files );
 
 		};
@@ -1117,8 +1115,6 @@ class CaveViewer extends EventDispatcher {
 				alert( e );
 
 			}
-
-			caveLoader.reset();
 
 		}
 

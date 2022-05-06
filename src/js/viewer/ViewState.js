@@ -4,75 +4,75 @@ import {
 	VIEW_PLAN, MOUSE_MODE_NORMAL, SHADING_DUPLICATE, LM_SINGLE
 } from '../core/constants';
 
-const defaultView = {
-	autoRotate: false,
-	autoRotateSpeed: 0.5,
-	box: true,
-	cameraType: CAMERA_PERSPECTIVE,
-	duplicateShading: SHADING_DUPLICATE,
-	editMode: MOUSE_MODE_NORMAL,
-	entrances: true,
-	entrance_dots: true,
-	fog: false,
-	fullscreen: false,
-	grid: false,
-	HUD: true,
-	linewidth: 0,
-	scaleLinewidth: false,
-	scraps: false,
-	shadingMode: SHADING_HEIGHT,
-	splays: false,
-	stations: false,
-	stationLabels: false,
-	stationLabelOver: false,
-	surfaceLegs: false,
-	surfaceShading: SHADING_HEIGHT,
-	terrain: false,
-	terrainDatumShift: false,
-	terrainLightingMode: LM_SINGLE,
-	terrainOpacity: 0.5,
-	terrainShading: SHADING_RELIEF,
-	traces: false,
-	view: VIEW_PLAN,
-	walls: false,
-	warnings: false,
-	zoomToCursor: true
-};
+class ViewState {
 
-function ViewState ( viewer ) {
+	static default = {
+		autoRotate: false,
+		autoRotateSpeed: 0.5,
+		box: true,
+		cameraType: CAMERA_PERSPECTIVE,
+		duplicateShading: SHADING_DUPLICATE,
+		editMode: MOUSE_MODE_NORMAL,
+		entrances: true,
+		entrance_dots: true,
+		fog: false,
+		fullscreen: false,
+		grid: false,
+		HUD: true,
+		linewidth: 0,
+		scaleLinewidth: false,
+		scraps: false,
+		shadingMode: SHADING_HEIGHT,
+		splays: false,
+		stations: false,
+		stationLabels: false,
+		stationLabelOver: false,
+		surfaceLegs: false,
+		surfaceShading: SHADING_HEIGHT,
+		terrain: false,
+		terrainDatumShift: false,
+		terrainLightingMode: LM_SINGLE,
+		terrainOpacity: 0.5,
+		terrainShading: SHADING_RELIEF,
+		traces: false,
+		view: VIEW_PLAN,
+		walls: false,
+		warnings: false,
+		zoomToCursor: true
+	};
 
-	const properties = [];
+	constructor ( viewer ) {
 
-	Object.keys( viewer ).forEach( name => {
+		const properties = [];
 
-		const pDesc = Object.getOwnPropertyDescriptor( viewer, name );
+		Object.keys( viewer ).forEach( name => {
 
-		if ( pDesc.set !== undefined && pDesc.get !== undefined ) {
+			const pDesc = Object.getOwnPropertyDescriptor( viewer, name );
 
-			properties.push( name );
-
-		}
-
-	} );
-
-	this.saveState = function () {
-
-		const savedState = {};
-
-		properties.forEach( name => {
-
-			const value = viewer[ name ];
-
-			if ( typeof value === 'object' ) return;
-
-			savedState[ name ] = value;
+			if ( pDesc.set !== undefined && pDesc.get !== undefined ) properties.push( name );
 
 		} );
 
-		return savedState;
+		this.saveState = function () {
 
-	};
+			const savedState = {};
+
+			properties.forEach( name => {
+
+				const value = viewer[ name ];
+
+				if ( typeof value === 'object' ) return;
+
+				savedState[ name ] = value;
+
+			} );
+
+			return savedState;
+
+		};
+
+	}
 
 }
 
-export { ViewState, defaultView };
+export { ViewState };

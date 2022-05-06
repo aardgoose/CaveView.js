@@ -27,7 +27,7 @@ import { WebTerrain } from '../terrain/WebTerrain';
 import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/Cfg';
 import { WorkerPoolCache } from '../core/WorkerPool';
-import { defaultView, ViewState } from './ViewState';
+import { ViewState } from './ViewState';
 import { OrbitControls } from '../ui/OrbitControls';
 import { ExportGltf } from './ExportGltf';
 import { Snapshot } from './Snapshot';
@@ -1143,7 +1143,7 @@ class CaveViewer extends EventDispatcher {
 
 			if ( savedView === null ) {
 
-				self.setView( defaultView, cfg.value( 'view', {} ) );
+				self.setView( ViewState.default, cfg.value( 'view', {} ) );
 
 			} else {
 

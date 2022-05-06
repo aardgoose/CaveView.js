@@ -128,7 +128,7 @@ class QuadTree {
 
 				if ( this.quadMarker === null ) {
 
-					__b.copy( this.centroid.clone().divideScalar( this.count ) ).applyMatrix4( cluster.matrixWorld );
+					__b.copy( this.centroid ).divideScalar( this.count ).applyMatrix4( cluster.matrixWorld );
 
 				} else {
 

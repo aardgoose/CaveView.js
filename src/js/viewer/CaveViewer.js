@@ -141,6 +141,8 @@ class CaveViewer extends EventDispatcher {
 
 		let hoverLabel = null;
 		let showStationNameLabel = false;
+		let lastStationNameLabel = false;
+
 		let showStationDistances = false;
 		let startStation = null;
 		let lastPointerOver = 0;
@@ -1300,7 +1302,7 @@ class CaveViewer extends EventDispatcher {
 			showStationDistances = false;
 
 			closePopup();
-			setStationNameLabelMode( false );
+			setStationNameLabelMode( lastStationNameLabel );
 			controls.enabled = true;
 
 			document.removeEventListener( 'keyup', endDistanceMode );
@@ -1311,6 +1313,7 @@ class CaveViewer extends EventDispatcher {
 
 			if ( event.shiftKey && ! showStationDistances ) {
 
+				lastStationNameLabel = showStationNameLabel;
 				showStationDistances = true;
 				startStation = station.station;
 

@@ -174,7 +174,7 @@ class CaveViewer extends EventDispatcher {
 
 			'terrainShading': {
 				get: function () { return terrain !== null ? terrain.shadingMode : null; },
-				set: _stateSetter( setTerrainShadingMode, 'terrainShading')
+				set: stateSetter( setTerrainShadingMode, 'terrainShading')
 			},
 
 			'hasTerrain': {
@@ -201,7 +201,7 @@ class CaveViewer extends EventDispatcher {
 
 			'terrainThrough': {
 				get: function () { return terrain !== null ? terrain.throughMode : null; },
-				set: _stateSetter( setTerrainThroughMode, 'terrainThrough' )
+				set: stateSetter( setTerrainThroughMode, 'terrainThrough' )
 			},
 
 			'terrainShadingModes': {
@@ -224,7 +224,7 @@ class CaveViewer extends EventDispatcher {
 
 			'shadingMode': {
 				get: function () { return survey.caveShading; },
-				set: _stateSetter( setShadingMode, 'shadingMode' )
+				set: stateSetter( setShadingMode, 'shadingMode' )
 			},
 
 			'hideMode': {
@@ -248,17 +248,17 @@ class CaveViewer extends EventDispatcher {
 
 			'surfaceShading': {
 				get: function () { return survey.surfaceShading; },
-				set: _stateSetter( setSurfaceShadingMode, 'surfaceShading' )
+				set: stateSetter( setSurfaceShadingMode, 'surfaceShading' )
 			},
 
 			'duplicateShading': {
 				get: function () { return survey.duplicateShading; },
-				set: _stateSetter( setDuplicateShadingMode, 'duplicateShading' )
+				set: stateSetter( setDuplicateShadingMode, 'duplicateShading' )
 			},
 
 			'cameraType': {
 				get: function () { return cameraManager.mode; },
-				set: _stateSetter( setCameraMode, 'cameraType' )
+				set: stateSetter( setCameraMode, 'cameraType' )
 			},
 
 			'eyeSeparation': {
@@ -268,7 +268,7 @@ class CaveViewer extends EventDispatcher {
 
 			'view': {
 				get: function () { return VIEW_NONE; },
-				set: _stateSetter( setViewMode, 'view' )
+				set: stateSetter( setViewMode, 'view' )
 			},
 
 			'cursorHeight': {
@@ -278,12 +278,12 @@ class CaveViewer extends EventDispatcher {
 
 			'linewidth': {
 				get: function () { return ( materials.linewidth - 1 ) / 10; },
-				set: _stateSetter( setLinewidth, 'linewidth' )
+				set: stateSetter( setLinewidth, 'linewidth' )
 			},
 
 			'scaleLinewidth': {
 				get: function () { return materials.scaleLinewidth; },
-				set: _stateSetter( setScaleLinewidth, 'scaleLinewidth' )
+				set: stateSetter( setScaleLinewidth, 'scaleLinewidth' )
 			},
 
 			'maxDistance': {
@@ -300,7 +300,7 @@ class CaveViewer extends EventDispatcher {
 
 			'section': {
 				get: function () { return survey.selection.getNode(); },
-				set: _stateSetter( selectSection, 'section' )
+				set: stateSetter( selectSection, 'section' )
 			},
 
 			'sectionByName': {
@@ -313,7 +313,7 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'highlight': {
-				set: _stateSetter( highlightSelection, 'highlight' )
+				set: stateSetter( highlightSelection, 'highlight' )
 			},
 
 			'polarAngle': {
@@ -327,12 +327,12 @@ class CaveViewer extends EventDispatcher {
 
 			'editMode': {
 				get: function () { return mouseMode; },
-				set: _stateSetter( setEditMode, 'editMode' )
+				set: stateSetter( setEditMode, 'editMode' )
 			},
 
 			'setPOI': {
 				//get: function () { return true; },
-				set: _stateSetter( setCameraPOI, 'setPOI' )
+				set: stateSetter( setCameraPOI, 'setPOI' )
 			},
 
 			'HUD': {
@@ -412,21 +412,21 @@ class CaveViewer extends EventDispatcher {
 			}
 		} );
 
-		_enableLayer( FEATURE_BOX,       'box' );
-		_enableLayer( FEATURE_ENTRANCES, 'entrances' );
-		_enableLayer( FEATURE_ENTRANCE_DOTS, 'entrance_dots' );
-		_enableLayer( FEATURE_STATIONS,  'stations' );
-		_enableLayer( FEATURE_TRACES,    'traces' );
-		_enableLayer( FEATURE_GRID,      'grid' );
-		_enableLayer( FACE_SCRAPS,       'scraps' );
-		_enableLayer( FACE_WALLS,        'walls' );
-		_enableLayer( LEG_CAVE,          'legs' );
-		_enableLayer( LEG_SPLAY,         'splays' );
-		_enableLayer( LEG_SURFACE,       'surfaceLegs' );
-		_enableLayer( LEG_DUPLICATE,     'duplicateLegs' );
-		_enableLayer( LABEL_STATION,     'stationLabels' );
-		_enableLayer( LABEL_STATION_COMMENT, 'stationComments' );
-		_enableLayer( SURVEY_WARNINGS,     'warnings' );
+		enableLayer( FEATURE_BOX,       'box' );
+		enableLayer( FEATURE_ENTRANCES, 'entrances' );
+		enableLayer( FEATURE_ENTRANCE_DOTS, 'entrance_dots' );
+		enableLayer( FEATURE_STATIONS,  'stations' );
+		enableLayer( FEATURE_TRACES,    'traces' );
+		enableLayer( FEATURE_GRID,      'grid' );
+		enableLayer( FACE_SCRAPS,       'scraps' );
+		enableLayer( FACE_WALLS,        'walls' );
+		enableLayer( LEG_CAVE,          'legs' );
+		enableLayer( LEG_SPLAY,         'splays' );
+		enableLayer( LEG_SURFACE,       'surfaceLegs' );
+		enableLayer( LEG_DUPLICATE,     'duplicateLegs' );
+		enableLayer( LABEL_STATION,     'stationLabels' );
+		enableLayer( LABEL_STATION_COMMENT, 'stationComments' );
+		enableLayer( SURVEY_WARNINGS,     'warnings' );
 
 		container.addEventListener( 'mouseover', onMouseOver );
 		container.addEventListener( 'mouseleave', onMouseLeave );
@@ -512,7 +512,7 @@ class CaveViewer extends EventDispatcher {
 
 		onResize();
 
-		function _enableLayer ( layerTag, name ) {
+		function enableLayer ( layerTag, name ) {
 
 			Object.defineProperty( self, name, {
 				get: function () { return cameraManager.testCameraLayer( layerTag ); },
@@ -536,7 +536,7 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		function _stateSetter ( modeFunction, name ) {
+		function stateSetter ( modeFunction, name ) {
 
 			return function ( newMode ) {
 

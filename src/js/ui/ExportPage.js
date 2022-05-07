@@ -57,7 +57,7 @@ class ExportPage extends Page {
 		this.addCheckbox( 'gltf_export.legs', selection, 'legs' );
 
 		this.addCheckbox( 'gltf_export.rotate_axes', options, 'rotate' );
-		// this.addCheckbox( 'gltf_export.binary_format', options, 'binary' );
+		this.addCheckbox( 'gltf_export.binary_format', options, 'binary' );
 
 		this.addButton( 'gltf_export.export', function () {
 

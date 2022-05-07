@@ -250,7 +250,8 @@
 			"scraps": "include scraps",
 			"legs": "include centre lines",
 			"rotate_axes": "rotate axes",
-			"export": "Download"
+			"export": "Download",
+			"binary_format": "Export as .glb"
 		},
 		"png_export": {
 			"header": "Image (PNG) Export",

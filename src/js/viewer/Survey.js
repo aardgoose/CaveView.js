@@ -598,8 +598,7 @@ Survey.prototype.computeBoundingBoxes = function ( surveyTree ) {
 
 			if ( node.children.length === 0 || node.boundingBox.isEmpty() ) return;
 
-			parent.boundingBox.expandByPoint( node.boundingBox.min );
-			parent.boundingBox.expandByPoint( node.boundingBox.max );
+			parent.boundingBox.union( node.boundingBox );
 
 		}
 
@@ -669,17 +668,6 @@ Survey.prototype.getGeographicalDistance = function ( v1, v2 ) {
 	const p2 = this.getGeographicalPosition( v2, __v2 );
 
 	return p1.distanceTo( p2 );
-
-};
-
-Survey.prototype.containsWGS84Position = function ( position ) {
-
-	position.copy( this.projectionWGS84.forward( position ) );
-
-	const min = this.limits.min;
-	const max = this.limits.max;
-
-	return ( position.x >= min.x && position.x <= max.x && position.y >= min.y && position.y <= max.y );
 
 };
 

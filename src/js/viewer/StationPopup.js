@@ -60,7 +60,7 @@ class StationPopup extends CanvasPopup {
 
 			} else {
 
-				this.addLine( 'x: ' + Math.round( position.x ) + ' m, y: ' + Math.round( position.y ) + ' m' ).addLine( 'z: ' + Math.round( position.z ) + ' m' );
+				this.addLine( 'x: ' + Math.round( position.x ) + '\u202fm, y: ' + Math.round( position.y ) + '\u202fm' ).addValue( 'z', position.z );
 
 				if ( depth !== null ) this.addValue( 'depth_from_surface', + depth );
 

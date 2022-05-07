@@ -14,6 +14,7 @@ export { DataTexture } from 'three/src/textures/DataTexture.js';
 export { CubeTexture } from 'three/src/textures/CubeTexture.js';
 export { CanvasTexture } from 'three/src/textures/CanvasTexture.js';
 export { Texture } from 'three/src/textures/Texture.js';
+export { Source } from 'three/src/textures/Source.js';
 
 export { SphereBufferGeometry } from 'three/src/geometries/SphereGeometry.js';
 export { RingBufferGeometry } from 'three/src/geometries/RingGeometry.js';

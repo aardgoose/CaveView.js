@@ -43,20 +43,29 @@ class ExportGltf {
 
 		worker.addEventListener( 'message', function ( event ) {
 
-			let mimeType;
+			if ( event.data.status === 'ok' ) {
 
-			if ( options.binary ) {
+				let mimeType;
 
-				mimeType = 'application/octet-stream';
+				if ( options.binary ) {
+
+					mimeType = 'application/octet-stream';
+
+				} else {
+
+					mimeType = 'application/gltf+json';
+
+				}
+
+				callback( new Blob( [ event.data.gltf ], { type : mimeType } ), options.binary );
 
 			} else {
 
-				mimeType = 'application/gltf+json';
+				console.warn( event.data.error );
 
 			}
 
 			worker.terminate();
-			callback( new Blob( [ event.data.gltf ], { type : mimeType } ), options.binary );
 
 		} );
 

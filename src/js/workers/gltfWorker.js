@@ -3,7 +3,9 @@ import { BufferGeometry } from 'three/src/core/BufferGeometry.js';
 import { MeshStandardMaterial } from 'three/src/materials/MeshStandardMaterial.js';
 import { Scene } from 'three/src/scenes/Scene.js';
 import { Float32BufferAttribute } from 'three/src/core/BufferAttribute.js';
-import { GLTFExporter } from '../core/GLTFExporter.js';
+import { Uint16BufferAttribute } from 'three/src/core/BufferAttribute';
+import { Uint32BufferAttribute } from 'three/src/core/BufferAttribute';
+import { GLTFExporter } from '../core/GLTFExporter';
 import { Texture } from 'three/src/textures/Texture.js';
 import { LineSegments } from 'three/src/objects/LineSegments.js';
 
@@ -38,12 +40,15 @@ function onMessage ( event ) {
 			}
 
 		},
-		{ binary: options.binary }
+		function ( e ) {
+			postMessage( { status: 'error', error: e } );
+		},
+		{ binary: options.binary, embedImages: false }
 	);
 
 }
 
-function getItem( item, options ) {
+function getItem ( item, options ) {
 
 	switch ( item.type ) {
 
@@ -60,12 +65,29 @@ function getItem( item, options ) {
 
 }
 
-function getWalls( item, options ) {
+function getCommonGeometry ( item, options ) {
 
 	const geometry = new BufferGeometry();
 
-	geometry.setIndex( item.index );
-	geometry.setAttribute( 'position', item.position );
+	const indices = item.index.array;
+	const vertices = item.position.array;
+
+	if ( options.rotate ) rotateAxes( vertices );
+
+	const index = indices instanceof Uint16Array ?
+		new Uint16BufferAttribute( indices, 1 ) :
+		new Uint32BufferAttribute( indices, 1 );
+
+	geometry.setIndex( index );
+	geometry.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+
+	return geometry;
+
+}
+
+function getWalls ( item, options ) {
+
+	const geometry = getCommonGeometry( item, options );
 
 	const vertices = item.position.array;
 	const vertexCount = vertices.length / 3;
@@ -78,7 +100,7 @@ function getWalls( item, options ) {
 
 	for ( let i = 0; i < vertexCount; i++ ) {
 
-		const zOffset = i * 3 + 2; // ( offset of Z value )
+		const zOffset = i * 3 + ( options.rotate ? 1 : 2 ); // ( offset of Z value, may be rotated )
 		const offset = i * 2;
 
 		const u = ( vertices[ zOffset ] + zz ) / z2;
@@ -90,38 +112,23 @@ function getWalls( item, options ) {
 
 	geometry.setAttribute( 'uv', uvs );
 
-	const material = new MeshStandardMaterial( { map: new Texture( gradient ) } );
-
-	if ( options.rotate ) {
-
-		rotateAxes( vertices );
-
-	}
+	// fake an HTMLImage element and use non embed image with data url.
+	const material = new MeshStandardMaterial( { map: new Texture( { src: gradient } ) } );
 
 	return new Mesh( geometry, material );
 
 }
 
-function getLines( item, options ) {
+function getLines ( item, options ) {
 
-	const geometry = new BufferGeometry();
-
-	geometry.setIndex( item.index );
-	geometry.setAttribute( 'position', item.position );
-
+	const geometry = getCommonGeometry( item, options );
 	const material = new MeshStandardMaterial();
-
-	if ( options.rotate ) {
-
-		rotateAxes( item.position.array );
-
-	}
 
 	return new LineSegments( geometry, material );
 
 }
 
-function rotateAxes( vertices ) {
+function rotateAxes ( vertices ) {
 
 	const vertexCount = vertices.length;
 

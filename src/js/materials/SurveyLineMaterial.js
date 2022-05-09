@@ -131,10 +131,29 @@ class SurveyLineMaterial extends Line2Material {
 		// for cursor material variant
 		this.halfRange = ( surveyLimits.max.z - surveyLimits.min.z ) / 2;
 		this.max = max;
+		this.surveyBox = surveyLimits;
 
 	}
 
-	updateFocus( focusPosition ) {
+	updateFocus ( focusPosition ) {
+
+		const min = this.surveyBox.min;
+		const max = this.surveyBox.max;
+
+		const x = focusPosition.x;
+		const y = focusPosition.y;
+		const z = focusPosition.z;
+
+		this.uniforms.dMax.value = Math.max(
+			Math.hypot( x - min.x, y - min.y, z - min.z ),
+			Math.hypot( x - min.x, y - min.y, z - max.z ),
+			Math.hypot( x - min.x, y - max.y, z - min.z ),
+			Math.hypot( x - min.x, y - max.y, z - max.z ),
+			Math.hypot( x - max.x, y - min.y, z - min.z ),
+			Math.hypot( x - max.x, y - min.y, z - max.z ),
+			Math.hypot( x - max.x, y - max.y, z - min.z ),
+			Math.hypot( x - max.x, y - max.y, z - max.z ),
+		);
 
 		this.uniforms.focusPosition.value = focusPosition;
 

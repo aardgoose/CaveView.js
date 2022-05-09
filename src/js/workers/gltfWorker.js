@@ -103,7 +103,7 @@ function getWalls ( item, options ) {
 		const zOffset = i * 3 + ( options.rotate ? 1 : 2 ); // ( offset of Z value, may be rotated )
 		const offset = i * 2;
 
-		const u = ( vertices[ zOffset ] + zz ) / z2;
+		const u = 1 - ( vertices[ zOffset ] + zz ) / z2;
 
 		uvBuffer[ offset ] = u;
 		uvBuffer[ offset + 1 ] = u;

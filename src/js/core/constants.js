@@ -27,23 +27,24 @@ export const MOUSE_MODE_ENTRANCES  = 4;
 
 // shading types
 
-export const SHADING_HEIGHT       = 1;
-export const SHADING_LENGTH       = 2;
-export const SHADING_INCLINATION  = 3;
-export const SHADING_CURSOR       = 4;
-export const SHADING_SINGLE       = 5;
-export const SHADING_SURVEY       = 6;
-export const SHADING_OVERLAY      = 7;
-export const SHADING_SHADED       = 8;
-export const SHADING_RELIEF       = 8;
-export const SHADING_DEPTH        = 9;
-export const SHADING_PATH         = 10;
-export const SHADING_DEPTH_CURSOR = 11;
-export const SHADING_DISTANCE     = 13;
-export const SHADING_CONTOURS     = 15;
-export const SHADING_SURFACE      = 17;
-export const SHADING_DUPLICATE    = 18;
-export const SHADING_CUSTOM       = 19;
+export const SHADING_HEIGHT         = 1;
+export const SHADING_LENGTH         = 2;
+export const SHADING_INCLINATION    = 3;
+export const SHADING_CURSOR         = 4;
+export const SHADING_SINGLE         = 5;
+export const SHADING_SURVEY         = 6;
+export const SHADING_OVERLAY        = 7;
+export const SHADING_SHADED         = 8;
+export const SHADING_RELIEF         = 8;
+export const SHADING_DEPTH          = 9;
+export const SHADING_PATH           = 10;
+export const SHADING_DEPTH_CURSOR   = 11;
+export const SHADING_DISTANCE       = 13;
+export const SHADING_CONTOURS       = 15;
+export const SHADING_SURFACE        = 17;
+export const SHADING_DUPLICATE      = 18;
+export const SHADING_CUSTOM         = 19;
+export const SHADING_POINT_DISTANCE = 20;
 
 // layer tags for scene objects
 

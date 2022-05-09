@@ -99,6 +99,16 @@ class SurveyLineMaterial extends Line2Material {
 			defines.CV_Z = true;
 			break;
 
+		case 'point_distance':
+console.log( 'cc');
+			defines.CV_POINT_DISTANCE = true;
+			customUniforms = {
+				dMax:   { value: 10000 },
+				targetPosition: { value: new Vector3() },
+				cmap:   { value: textureCache.getTexture( gradient ) },
+			};
+			break;
+
 		default:
 
 			defines.CV_BASIC = true;

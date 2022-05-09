@@ -46,6 +46,12 @@ varying float vHide;
 
 #endif
 
+#ifdef CV_POINT_DISTANCE
+
+	varying vec3 vRealPosition;
+
+#endif
+
 #ifdef USE_DASH
 
 	uniform float dashScale;
@@ -197,11 +203,21 @@ void main() {
 
 	#endif
 
+	#if defined( CV_DEPTH ) || defined( CV_DEPTH_CURSOR ) || defined( CV_POINT_DISTANCE )
+
+		vec3 realPosition = instanceStart + ( instanceEnd - instanceStart ) * position.y;
+
+	#endif
+
+	#ifdef CV_POINT_DISTANCE
+
+		vRealPosition = realPosition;
+
+	#endif
+
 	#if defined( CV_DEPTH ) || defined( CV_DEPTH_CURSOR )
 
 		#include <depth_vertex>
-
-		vec3 realPosition = instanceStart + ( instanceEnd - instanceStart ) * position.y;
 		height = terrainHeight - realPosition.z;
 
 	#endif

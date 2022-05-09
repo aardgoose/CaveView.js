@@ -6,7 +6,7 @@ import {
 	LABEL_STATION, LABEL_STATION_COMMENT,
 	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
 	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
-	SHADING_SURFACE, CLUSTER_MARKERS, SHADING_DUPLICATE, SHADING_CUSTOM
+	SHADING_SURFACE, CLUSTER_MARKERS, SHADING_DUPLICATE, SHADING_CUSTOM, SHADING_POINT_DISTANCE
 } from '../core/constants';
 
 import { Entrances } from './Entrances';
@@ -964,25 +964,25 @@ Survey.prototype.setShadingMode = function ( mode, filterConnected ) {
 
 	const materials = this.ctx.materials;
 
-	let material;
+	let surfaceMaterial;
 
 	switch ( mode ) {
 
 	case SHADING_HEIGHT:
 
-		material = materials.getHeightMaterial();
+		surfaceMaterial = materials.getHeightMaterial();
 
 		break;
 
 	case SHADING_CURSOR:
 
-		material = materials.getCursorMaterial();
+		surfaceMaterial = materials.getCursorMaterial();
 
 		break;
 
 	case SHADING_SINGLE:
 
-		material = materials.getSurfaceMaterial();
+		surfaceMaterial = materials.getSurfaceMaterial();
 
 		break;
 
@@ -990,9 +990,9 @@ Survey.prototype.setShadingMode = function ( mode, filterConnected ) {
 
 		if ( this.terrain === null ) return false;
 
-		material = materials.getDepthMaterial();
+		surfaceMaterial = materials.getDepthMaterial();
 
-		if ( ! material ) return false;
+		if ( ! surfaceMaterial ) return false;
 
 		break;
 
@@ -1000,16 +1000,17 @@ Survey.prototype.setShadingMode = function ( mode, filterConnected ) {
 
 		if ( this.terrain === null ) return false;
 
-		material = materials.getDepthCursorMaterial();
+		surfaceMaterial = materials.getDepthCursorMaterial();
 
-		if ( ! material ) return false;
+		if ( ! surfaceMaterial ) return false;
 
 		break;
 
 	case SHADING_DISTANCE:
 	case SHADING_SURVEY:
+	case SHADING_POINT_DISTANCE:
 
-		material = false;
+		surfaceMaterial = false;
 
 		break;
 
@@ -1019,8 +1020,8 @@ Survey.prototype.setShadingMode = function ( mode, filterConnected ) {
 
 	if ( this.setLegShading( LEG_CAVE, mode, false, filterConnected ) ) {
 
-		this.setWallShading( this.features.get( FACE_WALLS  ), material );
-		this.setWallShading( this.features.get( FACE_SCRAPS ), material );
+		this.setWallShading( this.features.get( FACE_WALLS  ), surfaceMaterial );
+		this.setWallShading( this.features.get( FACE_SCRAPS ), surfaceMaterial );
 
 		this.caveShading = mode;
 
@@ -1151,6 +1152,11 @@ Survey.prototype.setLegShading = function ( legType, legShadingMode, dashed, fil
 	case SHADING_DISTANCE:
 
 		this.setLegColourByDistance( legs );
+		break;
+
+	case SHADING_POINT_DISTANCE:
+
+		this.setLegColourByMaterial( legs, 'point_distance', dashed, filterConnected );
 		break;
 
 	default:

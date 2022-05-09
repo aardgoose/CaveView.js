@@ -46,7 +46,7 @@ varying float vHide;
 
 #endif
 
-#ifdef CV_POINT_DISTANCE
+#ifdef CV_FOCUS
 
 	varying vec3 vRealPosition;
 
@@ -203,13 +203,13 @@ void main() {
 
 	#endif
 
-	#if defined( CV_DEPTH ) || defined( CV_DEPTH_CURSOR ) || defined( CV_POINT_DISTANCE )
+	#if defined( CV_DEPTH ) || defined( CV_DEPTH_CURSOR ) || defined( CV_FOCUS )
 
 		vec3 realPosition = instanceStart + ( instanceEnd - instanceStart ) * position.y;
 
 	#endif
 
-	#ifdef CV_POINT_DISTANCE
+	#ifdef CV_FOCUS
 
 		vRealPosition = realPosition;
 

@@ -15,7 +15,7 @@ class DyeTraces extends LineSegments2 {
 		const geometry = new LineSegmentsGeometry();
 		const survey = ctx.survey;
 
-		super( geometry, new SurveyLineMaterial( ctx, '', true ) );
+		super( geometry, new SurveyLineMaterial( ctx, '', { dashed: true, focus: false } ) );
 
 		this.metadata = survey.metadata;
 		this.vertices = [];

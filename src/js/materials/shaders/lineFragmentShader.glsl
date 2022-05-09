@@ -37,10 +37,9 @@ uniform float opacity;
 
 #endif
 
-#ifdef CV_POINT_DISTANCE
+#ifdef CV_FOCUS
 
-	uniform vec3 targetPosition;
-	uniform sampler2D cmap;
+	uniform vec3 focusPosition;
 	uniform float dMax;
 
 	varying vec3 vRealPosition;
@@ -95,10 +94,9 @@ void main() {
 
 	#endif
 
-	#ifdef CV_POINT_DISTANCE
+	#ifdef CV_FOCUS
 
-		float d = distance( targetPosition, vRealPosition ) / dMax;
-		gl_FragColor = texture2D( cmap, vec2( d, 1.0 ) ) * vec4( vColor, 1.0 );
+		float d = distance( focusPosition, vRealPosition ) / dMax;
 
 	#endif
 

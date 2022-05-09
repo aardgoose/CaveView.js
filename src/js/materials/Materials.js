@@ -150,10 +150,10 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getSurveyLineMaterial = function ( mode = '', dashed = false ) {
+	this.getSurveyLineMaterial = function ( mode = '', options = { dashed: false, focus: false } ) {
 
-		const func = () => new SurveyLineMaterial( ctx, mode, dashed );
-		const material = getSurveyCacheMaterial( 'survey-line-' + mode + ( dashed ? '-dashed' : '' ), func, true );
+		const func = () => new SurveyLineMaterial( ctx, mode, options );
+		const material = getSurveyCacheMaterial( `survey-line-${mode}-${options.dashed}-${options.focus}`, func, true );
 
 		if ( mode === 'cursor' || mode === 'depth-cursor' ) {
 

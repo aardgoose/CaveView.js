@@ -5,7 +5,7 @@ import { Line2Material } from './Line2Material';
 
 class SurveyLineMaterial extends Line2Material {
 
-	constructor ( ctx, mode = 'height', dashed ) {
+	constructor ( ctx, mode = 'height', options = { dashed: false, focus: false } ) {
 
 		const survey = ctx.survey;
 		const cfg = ctx.cfg;
@@ -99,15 +99,6 @@ class SurveyLineMaterial extends Line2Material {
 			defines.CV_Z = true;
 			break;
 
-		case 'point_distance':
-console.log( 'cc');
-			defines.CV_POINT_DISTANCE = true;
-			customUniforms = {
-				dMax:   { value: 10000 },
-				targetPosition: { value: new Vector3() },
-				cmap:   { value: textureCache.getTexture( gradient ) },
-			};
-			break;
 
 		default:
 
@@ -115,7 +106,18 @@ console.log( 'cc');
 
 		}
 
-		if ( dashed ) defines.USE_DASH = true;
+		if ( options.focused ) {
+
+			defines.CV_FOCUS = true;
+
+			customUniforms = Object.assign( customUniforms, {
+				dMax:   { value: 10000 },
+				focusPosition: { value: new Vector3() },
+			} );
+
+		}
+
+		if ( options.dashed ) defines.USE_DASH = true;
 
 		const params = {
 			color: 0xffffff,

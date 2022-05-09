@@ -4,7 +4,7 @@ import {
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES, FEATURE_GRID, SURVEY_WARNINGS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LEG_DUPLICATE,
 	LABEL_STATION, LABEL_STATION_COMMENT,
-	SHADING_PATH, SHADING_DISTANCE, SHADING_POINT_DISTANCE,
+	SHADING_PATH, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_TERRAIN, FEATURE_STATIONS, FEATURE_ENTRANCE_DOTS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
 	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, TERRAIN_BLEND
@@ -1303,6 +1303,8 @@ class CaveViewer extends EventDispatcher {
 
 			closePopup();
 			setStationNameLabelMode( lastStationNameLabel );
+			survey.setFocus( null );
+
 			controls.enabled = true;
 
 			document.removeEventListener( 'keyup', endDistanceMode );
@@ -1320,7 +1322,8 @@ class CaveViewer extends EventDispatcher {
 				setStationNameLabelMode( true );
 				controls.enabled = false;
 
-				setShadingMode( SHADING_POINT_DISTANCE );
+				// set survey focus
+				survey.setFocus( startStation );
 				document.addEventListener( 'keyup', endDistanceMode );
 
 			} else {

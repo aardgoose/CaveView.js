@@ -162,6 +162,12 @@ function Materials ( viewer ) {
 
 		}
 
+		if ( options.focus ) {
+
+			material.updateFocus( ctx.survey.focusPoint );
+
+		}
+
 		lineMaterials.add( material );
 		surveyLineMaterials.add( material );
 		material.linewidth = linewidth;

@@ -96,7 +96,8 @@ void main() {
 
 	#ifdef CV_FOCUS
 
-		float d = distance( focusPosition, vRealPosition ) / dMax;
+		float d = 1.0 - distance( focusPosition, vRealPosition ) / dMax;
+		gl_FragColor.rgb = gl_FragColor.rgb * d;
 
 	#endif
 

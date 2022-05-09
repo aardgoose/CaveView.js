@@ -51,6 +51,7 @@ class Survey extends Object3D {
 		this.caveShading = SHADING_HEIGHT;
 		this.surfaceShading = SHADING_SINGLE;
 		this.duplicateShading = SHADING_DUPLICATE;
+		this.focusPoint = null;
 		this.wallsMode = false;
 		this.hideMode = false;
 		this.ctx = ctx;
@@ -960,6 +961,13 @@ Survey.prototype.setHideMode = function ( mode ) {
 
 };
 
+Survey.prototype.setFocus = function ( point ) {
+
+	this.focusPoint = point;
+	this.setShadingMode( this.caveShading );
+
+};
+
 Survey.prototype.setShadingMode = function ( mode, filterConnected ) {
 
 	const materials = this.ctx.materials;
@@ -1017,7 +1025,7 @@ Survey.prototype.setShadingMode = function ( mode, filterConnected ) {
 
 	this.markers.setVisibility( ( mode === SHADING_DISTANCE ) );
 
-	if ( this.setLegShading( LEG_CAVE, mode, { dashed: false, focus: false }, filterConnected ) ) {
+	if ( this.setLegShading( LEG_CAVE, mode, { dashed: false, focus: ( this.focusPoint != null ) }, filterConnected ) ) {
 
 		this.setWallShading( this.features.get( FACE_WALLS  ), surfaceMaterial );
 		this.setWallShading( this.features.get( FACE_SCRAPS ), surfaceMaterial );

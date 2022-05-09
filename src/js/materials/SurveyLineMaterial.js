@@ -106,7 +106,7 @@ class SurveyLineMaterial extends Line2Material {
 
 		}
 
-		if ( options.focused ) {
+		if ( options.focus ) {
 
 			defines.CV_FOCUS = true;
 
@@ -131,6 +131,12 @@ class SurveyLineMaterial extends Line2Material {
 		// for cursor material variant
 		this.halfRange = ( surveyLimits.max.z - surveyLimits.min.z ) / 2;
 		this.max = max;
+
+	}
+
+	updateFocus( focusPosition ) {
+
+		this.uniforms.focusPosition.value = focusPosition;
 
 	}
 

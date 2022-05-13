@@ -177,6 +177,77 @@ class WebTerrain extends CommonTerrain {
 
 	}
 
+	tileDataLoaded ( tile, tileData ) {
+
+		--this.tilesLoading;
+
+		// the survey/region in the viewer may have changed while the height maps are being loaded.
+		// bail out in this case to avoid errors
+
+		if ( this.dying ) {
+
+			this.dispatchEvent( __endEvent );
+			return;
+
+		}
+
+		if ( tileData.status === 'zoom' ) {
+
+			tile.setSkipped();
+			this.zoomTile( tile, tile.parent );
+
+			return;
+
+		}
+
+		// error out early if we or other tiles have failed to load.
+
+		if ( tileData.status !== 'ok' || tile.parent.childErrors !== 0 ) {
+
+			tile.setFailed();
+
+			// signal error to caller
+			if ( this.tilesLoading === 0 && ! this.isLoaded ) {
+
+				this.onLoaded( this );
+
+			}
+
+			this.dispatchEvent( __endEvent );
+
+			return;
+
+		}
+
+		tile.createFromTileData( tileData, this.material );
+
+		this.dispatchEvent( { type: 'progress', name: 'set', progress: 100 * ( this.maxTilesLoading - this.tilesLoading ) / this.maxTilesLoading } );
+
+		tile.setLoaded( this.activeOverlay, canZoom => this.tileLoaded( tile, canZoom ) );
+
+	}
+
+	tileLoaded ( tile, canZoom ) {
+
+		if ( canZoom && this.activeOverlay !== null && tile.zoom < this.activeOverlay.getMinZoom() ) {
+
+			this.zoomTile( tile );
+
+		}
+
+		if ( this.tilesLoading !== 0 ) return;
+
+		this.dispatchEvent( __endEvent );
+
+		if ( ! this.isLoaded ) {
+
+			this.isLoaded = true;
+			this.onLoaded( this );
+
+		}
+
+	}
+
 	loadTile ( x, y, z, parentTile, existingTile ) {
 
 		if ( existingTile === undefined ) {
@@ -187,7 +258,6 @@ class WebTerrain extends CommonTerrain {
 
 		}
 
-		const self = this;
 		const tileSpec = this.TS.getTileSpec( x, y, z, this.limits );
 
 		if ( tileSpec === null ) return;
@@ -212,80 +282,7 @@ class WebTerrain extends CommonTerrain {
 
 		tile.setPending( parentTile ); // tile load/reload pending
 
-		this.workerPool.runWorker( tileSpec, _mapLoaded );
-
-		return;
-
-		function _mapLoaded ( tileData ) {
-
-			--self.tilesLoading;
-
-			// the survey/region in the viewer may have changed while the height maps are being loaded.
-			// bail out in this case to avoid errors
-
-			if ( self.dying ) {
-
-				self.dispatchEvent( __endEvent );
-				return;
-
-			}
-
-			if ( tileData.status === 'zoom' ) {
-
-				tile.setSkipped();
-				self.zoomTile( tile, tile.parent );
-
-				return;
-
-			}
-
-			// error out early if we or other tiles have failed to load.
-
-			if ( tileData.status !== 'ok' || tile.parent.childErrors !== 0 ) {
-
-				tile.setFailed();
-
-				// signal error to caller
-				if ( self.tilesLoading === 0 && ! self.isLoaded ) {
-
-					self.onLoaded( self );
-
-				}
-
-				self.dispatchEvent( __endEvent );
-
-				return;
-
-			}
-
-			tile.createFromTileData( tileData, self.material );
-
-			self.dispatchEvent( { type: 'progress', name: 'set', progress: 100 * ( self.maxTilesLoading - self.tilesLoading ) / self.maxTilesLoading } );
-
-			tile.setLoaded( self.activeOverlay, _loaded );
-
-		}
-
-		function _loaded ( canZoom ) {
-
-			if ( canZoom && self.activeOverlay !== null && tile.zoom < self.activeOverlay.getMinZoom() ) {
-
-				self.zoomTile( tile );
-
-			}
-
-			if ( self.tilesLoading !== 0 ) return;
-
-			self.dispatchEvent( __endEvent );
-
-			if ( ! self.isLoaded ) {
-
-				self.isLoaded = true;
-				self.onLoaded( self );
-
-			}
-
-		}
+		this.workerPool.runWorker( tileSpec, tileData => this.tileDataLoaded( tile, tileData ) );
 
 	}
 
@@ -436,7 +433,6 @@ class WebTerrain extends CommonTerrain {
 		if ( performance.now() - this.lastActivityTime < this.retile_timeout ) return;
 		if ( this.tilesLoading > 0 ) return true;
 
-		const self = this;
 		const frustum = __frustum;
 		const camera = cameraManager.activeCamera;
 		const lastFrame = cameraManager.getLastFrame();
@@ -459,7 +455,7 @@ class WebTerrain extends CommonTerrain {
 
 		// evict offsreen tiles
 
-		let evictTarget = Tile.liveTiles - self.maxTiles;
+		let evictTarget = Tile.liveTiles - this.maxTiles;
 
 		if ( Math.min( candidateEvictionCount, evictTarget ) > 0 ) {
 
@@ -613,8 +609,6 @@ class WebTerrain extends CommonTerrain {
 		return;
 
 		function _mapLoaded ( data ) {
-
-			// return worker to pool
 
 			const resultPoints = data.points;
 

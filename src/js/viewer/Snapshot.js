@@ -36,15 +36,15 @@ class Snapshot {
 			const line = newWidth * 4;
 			const invertedBuffer = new Uint8ClampedArray( bSize );
 
+			let dst = bSize;
+			let end = 0;
+
 			for ( let i = 0; i < bSize; i += line ) {
 
-				const dst = bSize - i - line;
+				dst -= line;
+				end += line;
 
-				for ( let j = 0; j < line; j++ ) {
-
-					invertedBuffer[ dst + j ] = buffer[ i + j ];
-
-				}
+				invertedBuffer.set( buffer.subarray( i, end ), dst );
 
 			}
 

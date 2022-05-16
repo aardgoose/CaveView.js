@@ -259,7 +259,7 @@ class Tile extends Mesh {
 	setOverlay ( overlay ) {
 
 		return overlay
-			.getTile( this.x, this.y, this.zoom )
+			.getTile( this )
 			.then( material => {
 
 				if ( material !== null ) {

@@ -93,13 +93,16 @@ class Overlay {
 
 	}
 
-	getTile ( x, y, z ) {
+	getTile ( tile ) {
 
-		const key = x + ':' + y + ':' + z;
+		let x = tile.x;
+		let y = tile.y;
+		let z = tile.zoom;
+
 		const cfg = this.ctx.cfg;
 		const materials = this.ctx.materials;
 
-		const material = this.materialCache.get( key );
+		const material = this.materialCache.get( tile );
 		const overlayMaxZoom = this.provider.maxZoom;
 
 		let repeat = 1;
@@ -183,7 +186,7 @@ class Overlay {
 							material.map = texture;
 							material.needsUpdate = true;
 
-							this.materialCache.set( key, material );
+							this.materialCache.set( tile, material );
 
 							resolve( material );
 

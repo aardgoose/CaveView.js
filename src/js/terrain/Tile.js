@@ -76,8 +76,8 @@ class Tile extends Mesh {
 		// use precalculated bounding box rather than recalculating it here.
 
 		bufferGeometry.boundingBox = new Box3(
-			new Vector3( boundingBox.min.x, boundingBox.min.y, boundingBox.min.z ),
-			new Vector3( boundingBox.max.x, boundingBox.max.y, boundingBox.max.z )
+			new Vector3().copy( boundingBox.min ),
+			new Vector3().copy( boundingBox.max ),
 		);
 
 		this.boundingBox = bufferGeometry.boundingBox;

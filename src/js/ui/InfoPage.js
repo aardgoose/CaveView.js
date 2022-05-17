@@ -27,7 +27,7 @@ class InfoPage extends Page {
 		if ( viewer.hasSplays || viewer.hasDuplicateLegs || viewer.hasSurfaceLegs ) {
 
 			this.addBlankLine();
-			this.addLine( 'Other legs' );
+			this.addLine( this.i18n( 'stats.otherLegs' ) );
 			this.addBlankLine();
 
 		}

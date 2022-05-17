@@ -13,3 +13,4 @@ npm-debug.log
 workspace.code-workspace
 build/test/*
 .tmp.driveupload/*
+package-lock.json

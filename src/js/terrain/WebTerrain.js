@@ -274,7 +274,7 @@ class WebTerrain extends CommonTerrain {
 
 		this.maxTilesLoading = Math.max( this.maxTilesLoading, ++this.tilesLoading );
 
-		if ( this.log ) console.log( 'load: [ ', z +'/' + x + '/' + y, ']', this.tilesLoading );
+		if ( this.log ) console.log( `load: [ ${z}/${x}/${y} ]`, this.tilesLoading );
 
 		// get Tile instance.
 
@@ -576,7 +576,7 @@ class WebTerrain extends CommonTerrain {
 		points.forEach( function ( point, i ) {
 
 			const tileSpec = tileSet.findTile( point );
-			const key = tileSpec.x + ':' + tileSpec.y + ':' + tileSpec.z;
+			const key = `${tileSpec.x}:${tileSpec.y}:${tileSpec.z}`;
 			// index used to map point height results with starting points.
 			point.index = i;
 

@@ -19,8 +19,6 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 		if ( zMin === undefined ) zMin = terrain.boundingBox.min.z;
 		if ( zMax === undefined ) zMax = terrain.boundingBox.max.z;
 
-		this.transparent = true;
-
 		this.onBeforeCompile = function ( shader ) {
 
 			Object.assign(

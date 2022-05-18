@@ -10,7 +10,6 @@ class ContourMaterial extends CommonTerrainMaterial {
 
 		super( ctx );
 
-		this.transparent = true;
 		this.extensions = { derivatives: true };
 
 		this.onBeforeCompile = function ( shader ) {

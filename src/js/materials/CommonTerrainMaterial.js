@@ -10,6 +10,7 @@ class CommonTerrainMaterial extends MeshLambertMaterial {
 			get: function () { return ctx.materials.terrainOpacity; }
 		} );
 
+		this.transparent = true;
 		this.stencilWrite = true;
 		this.stencilFunc = EqualStencilFunc;
 

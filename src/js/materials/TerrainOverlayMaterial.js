@@ -6,8 +6,6 @@ class TerrainOverlayMaterial extends CommonTerrainMaterial {
 
 		super( ctx );
 
-		this.transparent = true;
-
 		this.onBeforeCompile = function ( shader ) {
 
 			this.editShader( shader,

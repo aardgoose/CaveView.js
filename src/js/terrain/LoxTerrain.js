@@ -60,7 +60,6 @@ class LoxTile extends Mesh {
 			self.overlayMaterial = new TerrainOverlayMaterial( ctx );
 
 			self.overlayMaterial.map = texture;
-			self.overlayMaterial.setThroughMode( self.parent.throughMode );
 
 			bitmap.data = null;
 			bitmap.image = null;
@@ -131,7 +130,6 @@ class LoxTerrain extends CommonTerrain {
 				if ( tile.overlayMaterial !== null ) {
 
 					tile.material = tile.overlayMaterial;
-					// tile.material.setThroughMode( this.throughMode );
 
 				}
 

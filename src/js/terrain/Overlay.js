@@ -2,7 +2,6 @@ import { TextureLoader, Box2, Vector2, Color } from '../Three';
 
 import {TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 import proj4 from 'proj4';
-import { TERRAIN_BLEND } from '../core/constants';
 
 class Overlay {
 
@@ -12,7 +11,6 @@ class Overlay {
 		this.active = false;
 		this.hasCoverage = false;
 		this.crsSupported = overlayProvider.crsSupported === undefined ? [ 'EPSG:3857', 'EPSG:4326', 'ORIGINAL' ] : overlayProvider.crsSupported;
-		this.throughMode = TERRAIN_BLEND;
 		this.ctx = ctx;
 
 		const attribution = overlayProvider.getAttribution();

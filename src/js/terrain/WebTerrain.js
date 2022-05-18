@@ -135,7 +135,7 @@ class WebTerrain extends CommonTerrain {
 
 	hasCoverage () {
 
-		// iterate through available tileSets and pick the first match
+		// iterate available tileSets and pick the first match
 
 		const limits = this.limits;
 		const baseDirectory = this.ctx.cfg.value( 'terrainDirectory', '' );
@@ -355,21 +355,12 @@ class WebTerrain extends CommonTerrain {
 		if ( this.tilesLoading > 0 ) return;
 
 		const currentOverlay = this.activeOverlay;
-		const throughMode = overlay.throughMode;
 
 		if ( currentOverlay !== null ) {
 
-			if ( currentOverlay === overlay ) {
+			if ( currentOverlay === overlay ) return;
 
-				this.traverse( tile => tile.setThroughMode( throughMode ) );
-
-				return;
-
-			} else {
-
-				currentOverlay.setInactive();
-
-			}
+			currentOverlay.setInactive();
 
 		}
 

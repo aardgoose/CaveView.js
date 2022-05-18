@@ -1,10 +1,4 @@
-import {
-	EqualStencilFunc,
-	CustomBlending, NormalBlending, OneMinusDstAlphaFactor, DstAlphaFactor,
-	MeshLambertMaterial
-} from '../Three';
-
-import { TERRAIN_BLEND, TERRAIN_STENCIL, TERRAIN_BASIC } from '../core/constants';
+import { EqualStencilFunc, MeshLambertMaterial } from '../Three';
 
 class CommonTerrainMaterial extends MeshLambertMaterial {
 
@@ -15,6 +9,9 @@ class CommonTerrainMaterial extends MeshLambertMaterial {
 		Object.defineProperty( this, 'opacity', {
 			get: function () { return ctx.materials.terrainOpacity; }
 		} );
+
+		this.stencilWrite = true;
+		this.stencilFunc = EqualStencilFunc;
 
 	}
 
@@ -43,36 +40,6 @@ class CommonTerrainMaterial extends MeshLambertMaterial {
 			start + '_fragment_pars>',
 			start + '_fragment>'
 		);
-
-	}
-
-	setThroughMode ( mode ) {
-
-		this.stencilWrite = false;
-		this.blending = NormalBlending;
-
-		switch ( mode ) {
-
-		case TERRAIN_BLEND:
-
-			this.blending = CustomBlending;
-			this.blendSrc = OneMinusDstAlphaFactor;
-			this.blendDst = DstAlphaFactor;
-
-			break;
-
-		case TERRAIN_STENCIL:
-
-			this.stencilWrite = true;
-			this.stencilFunc = EqualStencilFunc;
-
-			break;
-
-		case TERRAIN_BASIC:
-
-			break;
-
-		}
 
 	}
 

@@ -1,7 +1,5 @@
 import {
-	LM_NONE, LM_SINGLE, LM_MULTIPLE,
-	SHADING_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_SURFACE,
-	// TERRAIN_BLEND, TERRAIN_STENCIL, TERRAIN_BASIC
+	LM_NONE, LM_SINGLE, LM_MULTIPLE, SHADING_CURSOR, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_SURFACE
 } from '../core/constants';
 
 import { Page } from './Page';
@@ -13,20 +11,11 @@ const surfaceShadingModes = {
 	'surface.shading.fixed':         SHADING_SURFACE
 };
 
-
 const lightingModes = {
 	'terrain.lightingmodes.none': LM_NONE,
 	'terrain.lightingmodes.single': LM_SINGLE,
 	'terrain.lightingmodes.multiple': LM_MULTIPLE
 };
-
-/*
-const terrainThroughModes = {
-	'terrain.through.basic':   TERRAIN_BASIC,
-	'terrain.through.blend':   TERRAIN_BLEND,
-	'terrain.through.stencil': TERRAIN_STENCIL
-};
-*/
 
 class SurfacePage extends Page {
 
@@ -54,8 +43,6 @@ class SurfacePage extends Page {
 			this.addCheckbox( 'terrain.terrain', viewer, 'terrain' );
 
 			controls.push( this.addSelect( 'terrain.shading.caption', viewer.terrainShadingModes, viewer, 'terrainShading' ) );
-
-			// controls.push( this.addSelect( 'terrain.through.caption', terrainThroughModes, viewer, 'terrainThrough' ) );
 
 			controls.push( this.addRange( 'terrain.opacity', viewer, 'terrainOpacity' ) );
 

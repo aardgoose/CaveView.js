@@ -248,14 +248,6 @@ class Tile extends Mesh {
 
 	}
 
-	setThroughMode ( mode ) {
-
-		if ( ! this.isTile || ! this.isMesh ) return;
-
-		this.material.setThroughMode( mode );
-
-	}
-
 	setOverlay ( overlay ) {
 
 		return overlay
@@ -265,7 +257,6 @@ class Tile extends Mesh {
 				if ( material !== null ) {
 
 					this.material = material;
-					material.setThroughMode( overlay.throughMode );
 
 				}
 

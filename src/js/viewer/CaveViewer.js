@@ -7,7 +7,7 @@ import {
 	SHADING_PATH, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_TERRAIN, FEATURE_STATIONS, FEATURE_ENTRANCE_DOTS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, TERRAIN_BLEND
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -199,11 +199,6 @@ class CaveViewer extends EventDispatcher {
 			'terrainLightingMode': {
 				get: function () { return lightingManager.lightingMode; },
 				set: setTerrainLighting
-			},
-
-			'terrainThrough': {
-				get: function () { return terrain !== null ? terrain.throughMode : null; },
-				set: stateSetter( setTerrainThroughMode, 'terrainThrough' )
 			},
 
 			'terrainShadingModes': {
@@ -740,18 +735,6 @@ class CaveViewer extends EventDispatcher {
 			renderView();
 
 			if ( terrain.isTiled ) terrain.zoomCheck( cameraManager );
-
-		}
-
-		function setTerrainThroughMode ( mode ) {
-
-			if ( terrain === null ) return;
-
-			terrain.setThroughMode( mode );
-
-			materials.distanceTransparency = mode === TERRAIN_BLEND ? 200 : 0;
-
-			setTerrainShadingMode( terrain.shadingMode );
 
 		}
 

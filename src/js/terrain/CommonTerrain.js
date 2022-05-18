@@ -1,7 +1,5 @@
 import {
-	FEATURE_TERRAIN,
-	SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS,
-	TERRAIN_STENCIL
+	FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS
 } from '../core/constants';
 import { DepthMapMaterial } from '../materials/DepthMapMaterial';
 
@@ -37,7 +35,6 @@ class CommonTerrain extends Group {
 		this.isFlat = false;
 		this.screenAttribution = null;
 		this.terrainShadingModes = {};
-		this.throughMode = TERRAIN_STENCIL;
 		this.commonUniforms = ctx.materials.commonTerrainUniforms;
 		this.ctx = ctx;
 		this.shadingMode = SHADING_RELIEF;
@@ -221,8 +218,6 @@ class CommonTerrain extends Group {
 
 				if ( this.isTiled && overlay.hasCoverage ) {
 
-					overlay.throughMode = this.throughMode;
-
 					this.setOverlay( overlay, renderCallback );
 					hideAttribution = false;
 
@@ -253,7 +248,6 @@ class CommonTerrain extends Group {
 
 		if ( material !== undefined ) {
 
-			material.setThroughMode( this.throughMode );
 			this.setMaterial( material );
 
 		}
@@ -261,12 +255,6 @@ class CommonTerrain extends Group {
 		this.shadingMode = mode;
 
 		return true;
-
-	}
-
-	setThroughMode ( mode ) {
-
-		this.throughMode = mode;
 
 	}
 

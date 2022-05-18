@@ -7,12 +7,8 @@ class MissingMaterial extends CommonTerrainMaterial {
 		super( ctx, { color: 0xff8888} );
 
 		this.transparent = true;
-		this.ctx = ctx;
-
 
 	}
-
-	get opacity() { return this.ctx.materials.terrainOpacity; }
 
 }
 

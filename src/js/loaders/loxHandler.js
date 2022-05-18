@@ -5,9 +5,9 @@ import {
 import { Vector3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';
 
-let modelOffset = 0;
-
 class loxHandler {
+
+	static modelOffset = 0;
 
 	type = 'arraybuffer';
 
@@ -20,7 +20,7 @@ class loxHandler {
 
 		// assumes little endian data ATM - FIXME
 
-		modelOffset += 100000;
+		loxHandler.modelOffset += 100000;
 
 		cave.metadata = metadata;
 
@@ -38,7 +38,7 @@ class loxHandler {
 		const utf8Decoder = new TextDecoder( 'utf-8' );
 
 		const l = source.byteLength;
-		const idOffset = modelOffset;
+		const idOffset = loxHandler.modelOffset;
 		const stations = [];
 		const shash = [];
 

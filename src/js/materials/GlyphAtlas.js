@@ -89,7 +89,7 @@ class GlyphAtlas {
 
 				if ( glyphCount + 1 > divisions * divisions ) {
 
-					console.warn( 'too many glyphs for atlas when adding [' + glyph + ']' );
+					console.warn( `too many glyphs for atlas when adding [${glyph}]` );
 					return;
 
 				}

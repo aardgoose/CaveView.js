@@ -1,7 +1,5 @@
 const halfMapExtent = 6378137 * Math.PI; // from EPSG:3875 definition
 
-let tileSets;
-
 class EPSG3857TileSet {
 
 	static workerScript = 'webTileWorker.js';
@@ -24,13 +22,13 @@ class EPSG3857TileSet {
 
 	constructor ( ctx ) {
 
-		tileSets = [ EPSG3857TileSet.defaultTileSet ];
+		this.tileSets = [ EPSG3857TileSet.defaultTileSet ];
 
-		return fetch( ctx.cfg.value('terrainDirectory', '') + '/tileSets.json' )
+		return fetch( ctx.cfg.value( 'terrainDirectory', '' ) + '/tileSets.json' )
 			.then( response => {
 				return response.ok ? response.json() : [];
 			} ).then( ts => {
-				tileSets = ts.concat( tileSets );
+				this.tileSets = ts.concat( this.tileSets );
 				return this;
 			}, () => { return this; } );
 
@@ -44,7 +42,7 @@ class EPSG3857TileSet {
 
 	getTileSets () {
 
-		return tileSets;
+		return this.tileSets;
 
 	}
 

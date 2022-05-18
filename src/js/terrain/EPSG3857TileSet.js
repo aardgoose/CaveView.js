@@ -26,7 +26,7 @@ class EPSG3857TileSet {
 
 		tileSets = [ EPSG3857TileSet.defaultTileSet ];
 
-		return fetch( ctx.cfg.value('terrainDirectory', '') + '/' + 'tileSets.json' )
+		return fetch( ctx.cfg.value('terrainDirectory', '') + '/tileSets.json' )
 			.then( response => {
 				return response.ok ? response.json() : [];
 			} ).then( ts => {
@@ -84,7 +84,7 @@ class EPSG3857TileSet {
 
 		if ( scale !== 1 && this.activeOverlay === null ) return null;
 
-		if ( this.log ) console.log('load: [ ', z + '/' + x + '/' + y, ']');
+		if ( this.log ) console.log( `load: [ ${z}/${x}/${y} ]` );
 
 		const tileWidth = halfMapExtent / Math.pow( 2, z - 1 );
 

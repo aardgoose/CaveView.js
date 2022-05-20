@@ -116,6 +116,12 @@
 			"opacity": "Prosojnost",
 			"datum_shift": "Navpični premik po datumu",
 			"lighting": "Usmerjena razsvetljava",
+			"lightingmode": "Razsvetljava",
+			"lightingmodes": {
+				"none": "ploska",
+				"single": "usmerjena",
+				"multiple": "več-smerna"
+			},
 			"downloadTileSet": "Prenos skupine ploščic"
 		}
 	},
@@ -146,8 +152,8 @@
 		},
 		"trace": {
 			"header": "Sledi",
-"start": "Začetek",
-"end": "Konec"
+			"start": "Začetek",
+			"end": "Konec"
 		}
 	},
 	"info": {
@@ -162,7 +168,11 @@
 			"legs": "Število vizur",
 			"totalLength": "Skupna dolžina",
 			"minLength": "Najkrajša vizura",
-			"maxLength": "Najdaljša vizura"
+			"maxLength": "Najdaljša vizura",
+			"splayCount": "Število stranskih vizur",
+			"surfaceCount": "Število zunanjih vizur",
+			"duplicateCount": "Število podvojenih vizur",
+			"otherLegs": "Druge vizure"
 		}
 	},
 	"help": {
@@ -210,7 +220,8 @@
 			"zoom_to_cursor": "preklop povečave v način kurzorja",
 			"control_mode": "preklop načina upravljanja",
 			"decrease_focal_length": "zmanjšaj goriščno razdaljo",
-			"increase_focal_length": "povečaj goriščno razdaljo"
+			"increase_focal_length": "povečaj goriščno razdaljo",
+			"show_labels": "pokaži imena merilnih točk pod miško"
 		},
 		"visibility": {
 			"header": "Vidnost",
@@ -240,7 +251,8 @@
 			"scraps": "Vključi delne načrte",
 			"legs": "Vključi sredinske črte",
 			"rotate_axes": "Vrtenje osi",
-			"export": "Prenesi"
+			"export": "Prenesi",
+			"binary_format": "Izvozi kot .glb"
 		},
 		"png_export": {
 			"header": "Izvoz slike (PNG)",

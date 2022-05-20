@@ -1,5 +1,5 @@
 import { CommonTerrain } from './CommonTerrain';
-import { Tile } from './Tile';
+import { Tile, TILE_EVICTED, TILE_PENDING } from './Tile';
 
 import { EPSG4326TileSet } from './EPSG4326TileSet';
 import { EPSG3857TileSet } from './EPSG3857TileSet';
@@ -258,6 +258,13 @@ class WebTerrain extends CommonTerrain {
 
 		}
 
+		if ( existingTile?.state === TILE_PENDING ) {
+
+			console.log( `pending: [ ${z}/${x}/${y} ]`, this.tilesLoading );
+			return;
+
+		}
+
 		const tileSpec = this.TS.getTileSpec( x, y, z, this.limits );
 
 		if ( tileSpec === null ) return;
@@ -274,7 +281,7 @@ class WebTerrain extends CommonTerrain {
 
 		this.maxTilesLoading = Math.max( this.maxTilesLoading, ++this.tilesLoading );
 
-		if ( this.log ) console.log( `load: [ ${z}/${x}/${y} ]`, this.tilesLoading );
+		if ( !this.log ) console.log( `load: [ ${z}/${x}/${y} ]`, this.tilesLoading );
 
 		// get Tile instance.
 
@@ -528,7 +535,7 @@ class WebTerrain extends CommonTerrain {
 				tile.computeProjectedArea( camera );
 				if ( tile.area / 4 > 0.81 ) candidateTiles.push( tile );
 
-			} else if ( ! parent.isMesh && tile.evicted && frustum.intersectsBox( tile.worldBoundingBox ) ) {
+			} else if ( ! parent.isMesh && tile.state == TILE_EVICTED && frustum.intersectsBox( tile.worldBoundingBox ) ) {
 
 				// this tile is not loaded, but has been previously
 
@@ -538,8 +545,7 @@ class WebTerrain extends CommonTerrain {
 				tile.traverse( function ( subtile ) {
 
 					if ( subtile === tile ) return; // ignore this tile
-					subtile.evicted = false;
-					subtile.replaced = true;
+					subtile.setReplaced();
 
 				} );
 

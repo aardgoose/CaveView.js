@@ -66,7 +66,6 @@ class WebTerrain extends CommonTerrain {
 		this.dying = false;
 		this.tilesLoading = 0;
 		this.maxTilesLoading = 0;
-		this.overlaysLoading = 0;
 		this.coverage = null;
 		this.TS = null;
 		this.maxTiles = ctx.cfg.value( 'maxTiles', 128 );
@@ -114,7 +113,7 @@ class WebTerrain extends CommonTerrain {
 
 			if ( this.hasCoverage() ) {
 
-				this.tileArea( this.limits );
+				this.tileArea();
 
 			} else {
 
@@ -293,8 +292,9 @@ class WebTerrain extends CommonTerrain {
 
 	}
 
-	tileArea ( limits ) {
+	tileArea () {
 
+		const limits = this.limits;
 		const tileSet = this.TS.tileSet;
 
 		let zoom = tileSet.initialZoom || tileSet.overlayMaxZoom + 1;
@@ -376,6 +376,7 @@ class WebTerrain extends CommonTerrain {
 		this.activeOverlay = overlay;
 
 		const overlayMinZoom = overlay.getMinZoom();
+		let overlaysLoading = 0;
 
 		this.traverse( tile => {
 
@@ -388,11 +389,11 @@ class WebTerrain extends CommonTerrain {
 
 			} else {
 
-				this.overlaysLoading++;
+				overlaysLoading++;
 				tile
 					.setOverlay( overlay )
 					.then(
-						() => { if ( --this.overlaysLoading === 0 ) overlayLoadedCallback(); }
+						() => { if ( --overlaysLoading === 0 ) overlayLoadedCallback(); }
 					);
 
 			}
@@ -428,8 +429,7 @@ class WebTerrain extends CommonTerrain {
 
 	zoomCheck ( cameraManager ) {
 
-		if ( performance.now() - this.lastActivityTime < this.retile_timeout ) return;
-		if ( this.tilesLoading > 0 ) return true;
+		if ( this.tilesLoading > 0 || performance.now() - this.lastActivityTime < this.retile_timeout ) return;
 
 		const frustum = __frustum;
 		const camera = cameraManager.activeCamera;
@@ -651,7 +651,7 @@ class WebTerrain extends CommonTerrain {
 			// simple average
 			this.datumShift = s1 / n;
 
-			console.log( 'Adjustmenting terrain height by:', this.datumShift, 'sd:', sd );
+			console.log( `Adjustmenting terrain height by: ${this.datumShift} sd: ${sd}` );
 
 		} );
 

@@ -116,6 +116,12 @@
 			"opacity": "Opacità",
 			"datum_shift": "Spostamento verticale da datum",
 			"lighting": "Illuminazione direzionale",
+			"lightingmode": "Illuminazione",
+			"lightingmodes": {
+				"none": "piatta",
+				"single": "direzionale",
+				"multiple": "muti-direzionale"
+			},
 			"downloadTileSet": "Scarica spec. set di tasselli"
 		}
 	},
@@ -146,8 +152,8 @@
 		},
 		"trace": {
 			"header": "Tracce",
-"start": "Inizio",
-"end": "Fine"
+			"start": "Inizio",
+			"end": "Fine"
 		}
 	},
 	"info": {
@@ -162,10 +168,11 @@
 			"legs": "Conteggio delle battute",
 			"totalLength": "Lunghezza totale",
 			"minLength": "La battuta più corta",
-			"maxLength": "La battuta più lunga"
+			"maxLength": "La battuta più lunga",
 			"splayCount": "Conteggio battute splay",
 			"surfaceCount": "Conteggio battute in superficie",
-			"duplicateCount": "Conteggio battute duplicate"
+			"duplicateCount": "Conteggio battute duplicate",
+			"otherLegs": "Altre battute"
 		}
 	},
 	"help": {
@@ -213,7 +220,7 @@
 			"zoom_to_cursor": "attiva lo zoom in modalità cursore",
 			"control_mode": "attiva la modalità di controllo",
 			"decrease_focal_length": "diminuire la lunghezza focale",
-			"increase_focal_length": "aumentare la lunghezza focale"
+			"increase_focal_length": "aumentare la lunghezza focale",
 			"show_labels": "mostra nomi stazioni sotto il mouse"
 		},
 		"visibility": {
@@ -244,7 +251,8 @@
 			"scraps": "Includere gli scraps",
 			"legs": "Includere le linee centrali",
 			"rotate_axes": "Rotazione degli assi",
-			"export": "Scarica"
+			"export": "Scarica",
+			"binary_format": "Esportazione come .glb"
 		},
 		"png_export": {
 			"header": "Esportazione immage (PNG)",

@@ -503,7 +503,7 @@ class CaveViewer extends EventDispatcher {
 
 		hud.getProgressDial( 0 ).watch( caveLoader );
 
-		const viewState = new ViewState( this );
+		const viewState = new ViewState( cfg, this );
 
 		this.renderView = renderView;
 
@@ -1103,18 +1103,24 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		this.setView = function ( properties1, properties2 ) {
+		this.setView = function ( properties ) {
 
 			// don't render until all settings made.
 			if ( ! renderRequired ) return;
 
 			renderRequired = false;
 
-			Object.assign( this, properties1, properties2 );
+			Object.assign( this, properties );
 
 			renderRequired = true;
 
 			renderView();
+
+		};
+
+		this.getView = function () {
+
+			return viewState.saveState();
 
 		};
 
@@ -1124,7 +1130,7 @@ class CaveViewer extends EventDispatcher {
 
 			if ( savedView === null ) {
 
-				self.setView( ViewState.default, cfg.value( 'view', {} ) );
+				self.setView( viewState.getDefaultState() );
 
 			} else {
 

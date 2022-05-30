@@ -41,7 +41,7 @@ class ViewState {
 		zoomToCursor: true
 	};
 
-	constructor ( viewer ) {
+	constructor ( cfg, viewer ) {
 
 		const properties = [];
 
@@ -68,6 +68,12 @@ class ViewState {
 			} );
 
 			return savedState;
+
+		};
+
+		this.getDefaultState = function () {
+
+			return Object.assign( {}, ViewState.default, cfg.value( 'view', {} ) );
 
 		};
 

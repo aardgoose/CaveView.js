@@ -110,15 +110,17 @@ class Page {
 
 	}
 
-	addCollapsingHeader ( text ) {
+	addCollapsingHeader ( text, collapsed = false ) {
 
 		const div = this.addHeader( text );
 
 		div.classList.add( 'header_full' );
+		if ( collapsed ) div.classList.add( 'header_collapsed' );
 
 		const container = document.createElement( 'div' );
 
 		container.classList.add( 'container_full' );
+		if ( collapsed ) container.classList.add( 'container_collapsed' );
 
 		this.page.appendChild( container );
 

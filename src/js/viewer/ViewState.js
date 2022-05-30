@@ -53,9 +53,9 @@ class ViewState {
 
 		} );
 
-		this.saveState = function () {
+		this.getState = function () {
 
-			const savedState = {};
+			const state = {};
 
 			properties.forEach( name => {
 
@@ -63,17 +63,31 @@ class ViewState {
 
 				if ( typeof value === 'object' ) return;
 
-				savedState[ name ] = value;
+				state[ name ] = value;
 
 			} );
 
-			return savedState;
+			return state;
+
+		};
+
+		this.saveState = function () {
+
+			window.localStorage.setItem( 'cv-state', JSON.stringify( this.getState() ) );
+
+		};
+
+		this.clear = function () {
+
+			window.localStorage.removeItem( 'cv-state' );
 
 		};
 
 		this.getDefaultState = function () {
 
-			return Object.assign( {}, ViewState.default, cfg.value( 'view', {} ) );
+			const userSettings = JSON.parse( window.localStorage.getItem( 'cv-state' ) ) || {} ;
+
+			return Object.assign( {}, ViewState.default, cfg.value( 'view', {} ), userSettings );
 
 		};
 

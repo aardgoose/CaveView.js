@@ -73,6 +73,11 @@
 		"ui": {
 			"selection_tree": "Use tree selection"
 		},
+		"default": {
+			"header": "Defaults",
+			"save": "Save default settings",
+			"reset": "Reset default setings"
+		},
 		"colors": {
 			"header": "Colours",
 			"background_color": "Background",

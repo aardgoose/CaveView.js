@@ -166,17 +166,20 @@ class CaveViewer extends EventDispatcher {
 
 			'terrain': {
 				get: function () { return cameraManager.testCameraLayer( FEATURE_TERRAIN ); },
-				set: loadTerrain
+				set: loadTerrain,
+				enumerable: true
 			},
 
 			'stationLabelOver': {
 				get: function () { return showStationNameLabel; },
-				set: setStationNameLabelMode
+				set: setStationNameLabelMode,
+				enumerable: true
 			},
 
 			'terrainShading': {
 				get: function () { return terrain !== null ? terrain.shadingMode : null; },
-				set: stateSetter( setTerrainShadingMode, 'terrainShading')
+				set: stateSetter( setTerrainShadingMode, 'terrainShading'),
+				enumerable: true
 			},
 
 			'hasTerrain': {
@@ -198,7 +201,8 @@ class CaveViewer extends EventDispatcher {
 
 			'terrainLightingMode': {
 				get: function () { return lightingManager.lightingMode; },
-				set: setTerrainLighting
+				set: setTerrainLighting,
+				enumerable: true
 			},
 
 			'terrainShadingModes': {
@@ -211,17 +215,20 @@ class CaveViewer extends EventDispatcher {
 
 			'terrainDatumShift': {
 				get: function () { return !! terrain.activeDatumShift; },
-				set: applyTerrainDatumShift
+				set: applyTerrainDatumShift,
+				enumerable: true
 			},
 
 			'terrainOpacity': {
 				get: function () { return ( terrain !== null ) ? terrain.getOpacity() : 0; },
-				set: setTerrainOpacity
+				set: setTerrainOpacity,
+				enumerable: true
 			},
 
 			'shadingMode': {
 				get: function () { return survey.caveShading; },
-				set: stateSetter( setShadingMode, 'shadingMode' )
+				set: stateSetter( setShadingMode, 'shadingMode' ),
+				enumerable: true
 			},
 
 			'hideMode': {
@@ -231,7 +238,8 @@ class CaveViewer extends EventDispatcher {
 
 			'flatShading': {
 				get: function () { return survey.wallsMode; },
-				set: function ( x ) { survey.setWallsMode( x ); renderView(); }
+				set: function ( x ) { survey.setWallsMode( x ); renderView(); },
+				enumerable: true
 			},
 
 			'route': {
@@ -245,12 +253,14 @@ class CaveViewer extends EventDispatcher {
 
 			'surfaceShading': {
 				get: function () { return survey.surfaceShading; },
-				set: stateSetter( setSurfaceShadingMode, 'surfaceShading' )
+				set: stateSetter( setSurfaceShadingMode, 'surfaceShading' ),
+				enumerable: true
 			},
 
 			'duplicateShading': {
 				get: function () { return survey.duplicateShading; },
-				set: stateSetter( setDuplicateShadingMode, 'duplicateShading' )
+				set: stateSetter( setDuplicateShadingMode, 'duplicateShading' ),
+				enumerable: true
 			},
 
 			'cameraType': {
@@ -275,7 +285,8 @@ class CaveViewer extends EventDispatcher {
 
 			'linewidth': {
 				get: function () { return ( materials.linewidth - 1 ) / 10; },
-				set: stateSetter( setLinewidth, 'linewidth' )
+				set: stateSetter( setLinewidth, 'linewidth' ),
+				enumerable: true
 			},
 
 			'scaleLinewidth': {
@@ -334,7 +345,8 @@ class CaveViewer extends EventDispatcher {
 
 			'HUD': {
 				get: function () { return hud.getVisibility(); },
-				set: function ( x ) { hud.setVisibility( x ); }
+				set: function ( x ) { hud.setVisibility( x ); },
+				enumerable: true
 			},
 
 			'cut': {
@@ -344,7 +356,8 @@ class CaveViewer extends EventDispatcher {
 
 			'zScale': {
 				get: function () { return survey.zScale; },
-				set: setZScale
+				set: setZScale,
+				enumerable: true
 			},
 
 			'autoRotate': {
@@ -357,7 +370,8 @@ class CaveViewer extends EventDispatcher {
 				set: function ( x ) {
 					controls.wheelTilt = !! x;
 					self.dispatchEvent( { type: 'change', name: 'wheelTilt' } );
-				}
+				},
+				enumerable: true
 			},
 
 			'svxControlMode': {
@@ -366,7 +380,8 @@ class CaveViewer extends EventDispatcher {
 					controls.svxControlMode = !! x;
 					// force refresh of help tab
 					self.dispatchEvent( { type: 'newCave', name: 'newCave' } );
-				}
+				},
+				enumerable: true
 			},
 
 			'zoomToCursor': {
@@ -374,7 +389,8 @@ class CaveViewer extends EventDispatcher {
 				set: function ( x ) {
 					controls.zoomToCursor = !! x;
 					self.dispatchEvent( { type: 'change', name: 'zoomToCursor' } );
-				}
+				},
+				enumerable: true
 			},
 
 			'autoRotateSpeed': {
@@ -389,7 +405,8 @@ class CaveViewer extends EventDispatcher {
 
 			'fog': {
 				get: function () { return useFog; },
-				set: setFog
+				set: setFog,
+				enumerable: true
 			},
 
 			'isClipped': {
@@ -405,7 +422,8 @@ class CaveViewer extends EventDispatcher {
 
 			'focalLength': {
 				get: function () { return cameraManager.focalLength; },
-				set: setFocalLength
+				set: setFocalLength,
+				enumerable: true
 			}
 		} );
 
@@ -522,7 +540,8 @@ class CaveViewer extends EventDispatcher {
 					}
 
 					renderView();
-				}
+				},
+				enumerable: true
 			} );
 
 			const hasName = 'has' + name.substr( 0, 1 ).toUpperCase() + name.substr( 1 );
@@ -951,7 +970,7 @@ class CaveViewer extends EventDispatcher {
 			// grab a reference to prevent survey being destroyed in clearView()
 			const cutSurvey = survey;
 
-			savedView = viewState.saveState();
+			savedView = viewState.getState();
 
 			// reset view
 			self.clearView();
@@ -1118,9 +1137,16 @@ class CaveViewer extends EventDispatcher {
 
 		};
 
-		this.getView = function () {
+		this.saveView = function () {
 
-			return viewState.saveState();
+			viewState.saveState();
+
+		};
+
+		this.resetView = function () {
+
+			viewState.clear();
+			self.setView( viewState.getDefaultState() );
 
 		};
 

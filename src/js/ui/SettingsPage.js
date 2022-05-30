@@ -121,13 +121,18 @@ class SettingsPage extends Page {
 
 		if ( viewer.hasWarnings ) cv.appendChild( this.addCheckbox( 'visibility.warnings', viewer, 'warnings' ) );
 
-		const ch = this.addCollapsingHeader( 'controls.header' );
+		const ch = this.addCollapsingHeader( 'controls.header', true );
 
 		ch.appendChild( this.addCheckbox( 'controls.svx_control_mode', viewer, 'svxControlMode' ) );
 		ch.appendChild( this.addCheckbox( 'controls.zoom_to_cursor', viewer, 'zoomToCursor' ) );
 		ch.appendChild( this.addCheckbox( 'ui.selection_tree', cfg, 'selectionTree' ) );
 
-		const cc = this.addCollapsingHeader( 'colors.header' );
+		const cs = this.addCollapsingHeader( 'default.header', true );
+
+		cs.appendChild( this.addButton( 'default.save', () => viewer.saveView() ) );
+		cs.appendChild( this.addButton( 'default.reset', () => viewer.resetView() ) );
+
+		const cc = this.addCollapsingHeader( 'colors.header', true );
 
 		cc.appendChild( this.addColor( 'colors.background_color', 'background' ) );
 		cc.appendChild( this.addColor( 'colors.entrance_text', 'stations.entrances.text' ) );
@@ -138,6 +143,7 @@ class SettingsPage extends Page {
 		cc.appendChild( this.addColor( 'colors.surface_fixed', 'shading.surface' ) );
 		cc.appendChild( this.addColor( 'colors.duplicate_fixed', 'shading.duplicate' ) );
 		cc.appendChild( this.addColor( 'colors.hud_text', 'hud.text' ) );
+
 		cc.appendChild( this.addButton( 'colors.defaults', cfg.resetColors.bind( cfg ) ) );
 
 		if ( viewer.svxControlMode ) ch.appendChild( this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' ) );

@@ -196,8 +196,10 @@ class Cfg extends EventDispatcher {
 
 	resetColors () {
 
+		const ls = window.localStorage;
+
+		this.themeColors.forEach( ( name ) => ls.removeItem( `cv-color:${name}` ) );
 		this.themeColors.clear();
-		window.localStorage.clear();
 
 		this.dispatchEvent( { type: 'colors', name: 'all' } );
 

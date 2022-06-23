@@ -1046,6 +1046,12 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
+		this.addPlugin = function ( plugin ) {
+
+			new plugin( ctx, renderer, scene );
+
+		};
+
 		this.clearView = function () {
 
 			// clear the current cave model, and clear the screen
@@ -1169,7 +1175,7 @@ class CaveViewer extends EventDispatcher {
 
 				// signal any listeners that we have a new cave
 
-				self.dispatchEvent( { type: 'newCave', name: 'newCave' } );
+				self.dispatchEvent( { type: 'newCave', name: 'newCave', survey: survey } );
 
 				// set reasonable min/max zoom & distances for the cameras
 				controls.setLimits( survey.combinedLimits.getSize( __v ) );

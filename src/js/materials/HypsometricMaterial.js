@@ -11,28 +11,29 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 
 		super( ctx );
 
-		let zMin = cfg.themeValue( 'shading.hypsometric.min' );
-		let zMax = cfg.themeValue( 'shading.hypsometric.max' );
+		if ( terrain ) {
 
-		if ( terrain.boundBox === undefined ) terrain.computeBoundingBox();
+			if ( terrain.boundingBox === undefined ) terrain.computeBoundingBox();
 
-		if ( zMin === undefined ) zMin = terrain.boundingBox.min.z;
-		if ( zMax === undefined ) zMax = terrain.boundingBox.max.z;
+			const zMin = cfg.themeValue( 'shading.hypsometric.min', terrain.boundingBox.min.z );
+			const zMax = cfg.themeValue( 'shading.hypsometric.max', terrain.boundingBox.max.z );
 
-		this.onBeforeCompile = function ( shader ) {
+			this.onBeforeCompile = function ( shader ) {
 
-			Object.assign(
-				shader.uniforms,
-				{
-					minZ:   { value: zMin },
-					scaleZ: { value: 1 / ( zMax - zMin ) },
-					cmap:   { value: textureCache.getTexture( 'hypsometric' ) }
-				}
-			);
+				Object.assign(
+					shader.uniforms,
+					{
+						minZ:   { value: zMin },
+						scaleZ: { value: 1 / ( zMax - zMin ) },
+						cmap:   { value: textureCache.getTexture( 'hypsometric' ) }
+					}
+				);
 
-			this.editShaderInclude( shader, 'hypsometric' );
+				this.editShaderInclude( shader, 'hypsometric' );
 
-		};
+			};
+
+		}
 
 	}
 

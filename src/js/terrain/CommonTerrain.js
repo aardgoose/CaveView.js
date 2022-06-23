@@ -80,7 +80,7 @@ class CommonTerrain extends Group {
 
 		}
 
-		if ( this.isTiled ) {
+		if ( this.isTiled && overlays) {
 
 			Object.keys( overlays ).sort().forEach( name => {
 

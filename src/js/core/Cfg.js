@@ -87,6 +87,12 @@ class Cfg extends EventDispatcher {
 
 	}
 
+	setValue ( item, value ) {
+
+		this.environment.set ( item, value );
+
+	}
+
 	setPropertyValue ( item, defaultValue ) {
 
 		// set to defined value or default

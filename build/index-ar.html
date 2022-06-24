@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>demo 3d cave viewer</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+	<link rel="manifest" href="/manifest.webmanifest" />
+	<meta name="Description" content="CaveView - 3d Cave model viewer">
+	<meta name="theme-color" content="#00FF00"/>
+	<link rel="icon" type="image/svg+xml" href="CaveView/images/logo.svg">
+</head>
+<body onload="onload();" >
+<style>
+	video {
+		border: 1px solid lime;
+		width: 100%;
+		z-index: -100;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+</style>
+<script type="text/javascript" src="CaveView/js/CaveView2.js" ></script>
+
+<script type="text/javascript" >
+
+function onload () {
+
+	const viewer = new CV2.CaveViewer( "scene", {
+		terrainDirectory: "/terrain/",
+		surveyDirectory: "/surveys/",
+		home: "/CaveView/",
+		useGPS: true,
+		view: { walls: false, alpha: false, terrain: false },
+		saturatedGradient: true,
+	} );
+
+	const caves = [
+		"P8_Master.3d",
+		"durzon.lox",
+		"titan.3d",
+		"Castleton_Master_NoSurface.3d",
+		"all.3d",
+		"TopoElefanteCutted.lox",
+		"MA-all.3d",
+		"test/demo.plt",
+		"evklidova_piscal.3d",
+		"andara.3d",
+		"ELSaguaro.lox",
+		"Fighiera-sin-2018.lox",
+		"20181128_Wmap_3D_Apuane.lox",
+		"demo.plt",
+		"Peak_Master_NoSurface.3d",
+		"garrel.lox",
+		"Giants_Oxlow_Maskhill_System.3d",
+		"Lathkill.3d",
+		"OFDCPT.3d",
+		"BlueWater.lox",
+		"Castleton_Master.3d",
+		"Cheddar.lox"
+	];
+
+	viewer.addPlugin( CV2.LocationPlugin );
+//	viewer.addPlugin( CV2.ARPlugin );
+
+	viewer.loadCave( "Castleton_Master_NoSurface.3d" );
+
+}
+</script>
+<div style="padding: 20px">
+<div id="scene" style="position: relative;" ></div>
+</div>
+<div style="clear: both" id="scratch">.</div>
+</body>
+</html>

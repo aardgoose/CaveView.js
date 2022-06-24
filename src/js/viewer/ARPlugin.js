@@ -1,5 +1,5 @@
 
-import { Vector3 } from '../Three';
+import { PerspectiveCamera } from '../Three';
 
 class ARPlugin {
 
@@ -7,74 +7,99 @@ class ARPlugin {
 
 	constructor ( ctx, renderer, scene ) {
 
+		if ( ! ( 'xr' in navigator ) && ! ( 'geolocation' in navigator ) ) return;
+
+		console.log( 'AR Plugin 0.1' );
+
+		const viewer = ctx.viewer;
+
 		let survey = null;
+		let savedView = null;
 
 		// keep in survey CRS
-		ctx.cfg.setValue( 'displayCRS', 'ORIGINAL' );
+//		ctx.cfg.setValue( 'displayCRS', 'ORIGINAL' );
 
-		console.log( 'plugin.init' );
+		const camera = new PerspectiveCamera();
+
 		document.body.appendChild( ARButton.createButton( renderer, {} ) );
 
-		// install hook to track geopgraphical position
+		navigator.xr.isSessionSupported( 'immersive-ar' ).then( function ( supported ) {
 
-		renderer.xr.enabled = true;
-		renderer.setAnimationLoop( () => ctx.viewer.renderView() );
+			if ( ! supported ) return;
 
-		ctx.viewer.addEventListener( 'newCave', event => {
+			renderer.xr.enabled = true;
 
-			console.log( event );
-			survey = event.survey;
+			// listen for survey events
 
-		} );
+			viewer.addEventListener( 'newCave', event => {
 
-		renderer.xr.addEventListener( 'sessionstart', () => {
+				survey = event.survey;
+				console.log( 'ar new' );
+				viewer.terrain = true;
 
-			const updateLocation = position => {
+			} );
 
-				if ( survey === null ) return;
+			viewer.addEventListener( 'clear', () => {
 
-				if ( this.location === null ) this.location = new Vector3();
+				survey = null;
 
-				const location = this.location;
+			} );
 
-				const coords = position.coords;
-				console.log( coords );
-
-				location.set( coords.longitude, coords.latitude, coords.altidude || 0  );
-
-				// move into webGL coords system.
-				location.copy( survey.projectionWGS84.forward( location ) );
-				location.sub ( survey.offsets );
-				location.divide( survey.modelLimits.max );
-
-				console.log( location );
-
-			};
-
-			navigator.geolocation.getCurrentPosition( updateLocation );
-			navigator.geolocation.watchPosition( updateLocation );
+			renderer.xr.addEventListener( 'sessionstart', onSessionStart );
 
 		} );
 
-		scene.onBeforeRender = ( renderer, scene, camera ) => {
+		function onSessionStart () {
 
-			if ( camera.isArrayCamera && location !== null ) {
+			survey.rotateX( - Math.PI / 2 );
+			survey.updateMatrix();
+
+			savedView = viewer.getView();
+
+			viewer.HUD = false;
+			viewer.linewidth = 1;
+
+			scene.onBeforeRender = onSceneBeforeRender;
+			renderer.setAnimationLoop( () => { console.log( 'rb' ); renderer.render( scene, camera ); } );
+
+			renderer.xr.addEventListener( 'sessionend', onSessionEnd );
+
+		}
+
+		function onSessionEnd () {
+
+			renderer.xr.removeEventListener( 'sessionend', onSessionEnd );
+
+			renderer.setAnimationLoop( null );
+			scene.onBeforeRender = function () {};
+
+			survey.rotateX( Math.PI / 2 );
+			survey.updateMatrix();
+
+			// reset initial view state
+			viewer.setView( savedView );
+
+		}
+
+		function onSceneBeforeRender ( renderer, scene, camera ) {
+
+			if ( camera.isArrayCamera && location !== null && camera.cameras.length ) {
 
 				const cameraL = camera.cameras[ 0 ];
+				cameraL.layers.enableAll();
+				camera.layers.enableAll();
 
 				// account for rotated coord system
 				cameraL.position.x = location.x;
 				cameraL.position.z = location.y;
-				cameraL.position.y = location.z;
+				cameraL.position.y = location.z + 0.75;
 
-//				console.log( camera );
+				console.log( camera );
 			}
 
-		};
+		}
 
 	}
-
-
 
 }
 
@@ -254,30 +279,6 @@ class ARButton {
 			} ).catch( showARNotAllowed );
 
 			return button;
-
-		} else {
-
-			const message = document.createElement( 'a' );
-
-			if ( window.isSecureContext === false ) {
-
-				message.href = document.location.href.replace( /^http:/, 'https:' );
-				message.innerHTML = 'WEBXR NEEDS HTTPS'; // TODO Improve message
-
-			} else {
-
-				message.href = 'https://immersiveweb.dev/';
-				message.innerHTML = 'WEBXR NOT AVAILABLE';
-
-			}
-
-			message.style.left = 'calc(50% - 90px)';
-			message.style.width = '180px';
-			message.style.textDecoration = 'none';
-
-			stylizeElement( message );
-
-			return message;
 
 		}
 

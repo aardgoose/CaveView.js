@@ -72,7 +72,6 @@ class LocationPlugin {
 					console.log( 'in survey', location );
 					watcherId = navigator.geolocation.watchPosition( updateLocation );
 
-
 				}
 
 			} else {

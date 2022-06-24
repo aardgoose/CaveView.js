@@ -1152,7 +1152,13 @@ class CaveViewer extends EventDispatcher {
 		this.resetView = function () {
 
 			viewState.clear();
-			self.setView( viewState.getDefaultState() );
+			this.setView( viewState.getDefaultState() );
+
+		};
+
+		this.getView = function () {
+
+			return viewState.getState();
 
 		};
 

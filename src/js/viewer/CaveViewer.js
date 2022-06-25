@@ -1782,7 +1782,7 @@ class CaveViewer extends EventDispatcher {
 
 		function renderView ( autorotate = false ) {
 
-			if ( ! renderRequired ) return;
+			if ( ! renderRequired || renderer.xr.isPresenting ) return;
 
 			// ignore render requests if we are autorotating so don't need
 			// extra render calls

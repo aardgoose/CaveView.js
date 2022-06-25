@@ -1,53 +1,71 @@
 
-import { PerspectiveCamera } from '../Three';
+import { Vector3, PerspectiveCamera } from '../Three';
 
 class ARPlugin {
 
-	location = null;
-
 	constructor ( ctx, renderer, scene ) {
-
-		if ( ! ( 'xr' in navigator ) && ! ( 'geolocation' in navigator ) ) return;
 
 		console.log( 'AR Plugin 0.1' );
 
 		const viewer = ctx.viewer;
+		const locationSource = viewer.locationSource;
+		const camera = new PerspectiveCamera();
+		const cameraLocation = new Vector3();
 
 		let survey = null;
 		let savedView = null;
 
-		// keep in survey CRS
-//		ctx.cfg.setValue( 'displayCRS', 'ORIGINAL' );
+		if ( ! locationSource ) {
 
-		const camera = new PerspectiveCamera();
+			console.warn( 'location plugin must be loaded' );
+			return;
 
-		document.body.appendChild( ARButton.createButton( renderer, {} ) );
+		}
 
-		navigator.xr.isSessionSupported( 'immersive-ar' ).then( function ( supported ) {
+		if ( ! ( 'xr' in navigator ) ) return;
 
-			if ( ! supported ) return;
+		locationSource.addEventListener( 'location', event => {
+
+			if ( ! renderer.xr.enabled ) enable( event );
+
+			// translate events to openGL coords
+
+			cameraLocation.copy( event.location );
+			cameraLocation.sub ( survey.offsets );
+			survey.markers.mark( cameraLocation );
+			cameraLocation.divide( survey.modelLimits.max );
+
+		} );
+
+		function enable  ( event ) {
+
+			console.log( 'has location, enable AR' );
+
+			survey = event.survey;
+
+			// keep in survey CRS
+			// ctx.cfg.setValue( 'displayCRS', 'ORIGINAL' );
+
+			document.body.appendChild( ARButton.createButton( renderer, {} ) );
 
 			renderer.xr.enabled = true;
 
 			// listen for survey events
 
-			viewer.addEventListener( 'newCave', event => {
+			locationSource.addEventListener( 'invalid', () => {
 
-				survey = event.survey;
-				console.log( 'ar new' );
-				viewer.terrain = true;
+				const session = renderer.getSession();
 
-			} );
-
-			viewer.addEventListener( 'clear', () => {
+				if ( session ) session.end();
 
 				survey = null;
+				renderer.xr.enabled = false;
 
 			} );
 
 			renderer.xr.addEventListener( 'sessionstart', onSessionStart );
 
-		} );
+		}
 
 		function onSessionStart () {
 
@@ -60,7 +78,7 @@ class ARPlugin {
 			viewer.linewidth = 1;
 
 			scene.onBeforeRender = onSceneBeforeRender;
-			renderer.setAnimationLoop( () => { console.log( 'rb' ); renderer.render( scene, camera ); } );
+			renderer.setAnimationLoop( () => renderer.render( scene, camera ) );
 
 			renderer.xr.addEventListener( 'sessionend', onSessionEnd );
 
@@ -90,11 +108,10 @@ class ARPlugin {
 				camera.layers.enableAll();
 
 				// account for rotated coord system
-				cameraL.position.x = location.x;
-				cameraL.position.z = location.y;
-				cameraL.position.y = location.z + 0.75;
+				cameraL.position.x = cameraLocation.x;
+				cameraL.position.z = cameraLocation.y;
+				cameraL.position.y = cameraLocation.z + 0.75;
 
-				console.log( camera );
 			}
 
 		}
@@ -265,7 +282,7 @@ class ARButton {
 
 		}
 
-		if ( 'xr' in navigator && 'geolocation' in navigator ) {
+		if ( 'xr' in navigator ) {
 
 			button.id = 'ARButton';
 			button.style.display = 'none';

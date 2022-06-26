@@ -240,6 +240,13 @@ function Materials ( viewer ) {
 
 	};
 
+	this.getSingleWallMaterial = function  () {
+
+		const func = () => new MeshLambertMaterial( { color: cfg.themeColor( 'shading.single' ), vertexColors: false } );
+		return getCacheMaterial( 'single', func, true );
+
+	};
+
 	this.getSurfaceMaterial = function  () {
 
 		const func = () => new MeshLambertMaterial( { color: surfaceColour, vertexColors: false } );

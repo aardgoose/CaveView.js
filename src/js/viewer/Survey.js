@@ -980,7 +980,7 @@ class Survey extends Object3D {
 
 		case SHADING_SINGLE:
 
-			material = materials.getSurfaceMaterial();
+			material = materials.getSingleWallMaterial();
 
 			break;
 

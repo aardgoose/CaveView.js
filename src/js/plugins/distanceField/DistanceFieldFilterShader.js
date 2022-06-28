@@ -1,4 +1,4 @@
-import fragmentShader from './DistanceFieldFilterFragmentShader';
+import fragmentShader from './DistanceFieldFilterFragmentShader.glsl';
 import vertexShader from './commonVertexShader.glsl';
 
 const DistanceFieldFilterShader = {

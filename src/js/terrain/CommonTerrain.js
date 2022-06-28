@@ -6,9 +6,10 @@ import { DepthMapMaterial } from '../materials/DepthMapMaterial';
 import { unpackRGBA } from '../core/unpackRGBA';
 import { Overlay } from './Overlay';
 import {
-	Group, OrthographicCamera, Box3, Vector3,
+	Group, Box3, Vector3,
 	WebGLRenderTarget, LinearFilter, NearestFilter, RGBAFormat
 } from '../Three';
+import { RenderUtils } from '../core/RenderUtils';
 
 // preallocated tmp objects
 
@@ -115,30 +116,10 @@ class CommonTerrain extends Group {
 
 		const dim = 1024;
 
-		// set camera frustrum to cover region/survey area
 		const container = this.ctx.container;
 
-		let width  = container.clientWidth;
-		let height = container.clientHeight;
-
-		const range = survey.combinedLimits.getSize( __vector3 );
-
-		const scaleX = width / range.x;
-		const scaleY = height / range.y;
-
-		if ( scaleX < scaleY ) {
-
-			height = height * scaleX / scaleY;
-
-		} else {
-
-			width = width * scaleY / scaleX;
-
-		}
-
-		// render the terrain to a new canvas square canvas and extract image data
-
-		const rtCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, -10000, 10000 );
+		// set camera frustrum to cover region/survey area
+		const rtCamera = RenderUtils.makePlanCamera( container, survey );
 
 		rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
 

@@ -1,3 +1,4 @@
+import { OrthographicCamera, Vector3 } from '../Three';
 
 const RenderUtils = {
 
@@ -39,7 +40,32 @@ const RenderUtils = {
 
 		return canvas;
 
+	},
+
+	makePlanCamera: function ( container, survey ) {
+
+		let width  = container.clientWidth;
+		let height = container.clientHeight;
+
+		const range = survey.combinedLimits.getSize( new Vector3() );
+
+		const scaleX = width / range.x;
+		const scaleY = height / range.y;
+
+		if ( scaleX < scaleY ) {
+
+			height = height * scaleX / scaleY;
+
+		} else {
+
+			width = width * scaleY / scaleX;
+
+		}
+
+		return new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, -10000, 10000 );
+
 	}
+
 
 };
 

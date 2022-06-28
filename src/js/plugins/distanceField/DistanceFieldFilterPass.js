@@ -1,13 +1,10 @@
-import {
-	ShaderMaterial,
-	UniformsUtils
-} from 'three';
+import { ShaderMaterial, UniformsUtils } from 'three';
 import { Pass, FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass.js';
 import { DistanceFieldFilterShader } from './DistanceFieldFilterShader';
 
 class DistanceFieldFilterPass extends Pass {
 
-	constructor ( width, height, /* params */ ) {
+	constructor ( width, height ) {
 
 		super();
 
@@ -26,30 +23,15 @@ class DistanceFieldFilterPass extends Pass {
 
 	}
 
-	render( renderer, writeBuffer, readBuffer/*, deltaTime, maskActive*/ ) {
+	render( renderer, writeBuffer, readBuffer  ) {
 
 		this.material.uniforms[ 'tDiffuse' ].value = readBuffer.texture;
 
-		if ( this.renderToScreen ) {
 
-			renderer.setRenderTarget( null );
-			this.fsQuad.render( renderer );
-
-		} else {
-
-			renderer.setRenderTarget( writeBuffer );
-			if ( this.clear ) renderer.clear();
-			this.fsQuad.render( renderer );
-
-		}
-
-	}
-
-	setSize( width, height ) {
-
-		this.uniforms.width.value = width;
-		this.uniforms.height.value = height;
-
+		renderer.setRenderTarget( writeBuffer );
+		renderer.clear();
+		this.fsQuad.render( renderer );
+		renderer.getContext().finish();
 	}
 
 }

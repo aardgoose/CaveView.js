@@ -1,4 +1,5 @@
 import { WebGLRenderTarget, LinearFilter, NearestFilter, RGBAFormat } from '../Three';
+import { RenderUtils } from '../core/RenderUtils';
 
 class Snapshot {
 
@@ -27,37 +28,7 @@ class Snapshot {
 
 			viewer.renderView();
 
-			const bSize = newWidth * newHeight * 4;
-			const buffer = new Uint8ClampedArray( bSize );
-
-			renderer.readRenderTargetPixels( renderTarget, 0, 0, newWidth, newHeight, buffer );
-
-			// invert image
-			const line = newWidth * 4;
-			const invertedBuffer = new Uint8ClampedArray( bSize );
-
-			let dst = bSize;
-			let end = 0;
-
-			for ( let i = 0; i < bSize; i += line ) {
-
-				dst -= line;
-				end += line;
-
-				invertedBuffer.set( buffer.subarray( i, end ), dst );
-
-			}
-
-			const id = new ImageData( invertedBuffer, newWidth, newHeight );
-
-			const canvas = document.createElement( 'canvas' );
-
-			canvas.width = newWidth;
-			canvas.height = newHeight;
-
-			const canvasCtx = canvas.getContext( '2d' );
-
-			canvasCtx.putImageData( id, 0, 0 );
+			const canvas = RenderUtils.renderTargetToCanvas( renderer, renderTarget );
 
 			renderTarget.dispose();
 

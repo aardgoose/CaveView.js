@@ -1,12 +1,13 @@
 import {
 	ShaderMaterial,
 	UniformsLib,
-	UniformsUtils,
+	cloneUniforms,
+	mergeUniforms,
 	Vector2
 } from '../Three';
 import { Shaders } from './shaders/Shaders';
 
-const uniforms = UniformsUtils.merge( [
+const uniforms = mergeUniforms( [
 	UniformsLib.common,
 	UniformsLib.fog,
 	{
@@ -31,7 +32,7 @@ class Line2Material extends ShaderMaterial {
 			type: 'LineMaterial',
 
 			uniforms: Object.assign(
-				UniformsUtils.clone( uniforms ),
+				cloneUniforms( uniforms ),
 				ctx.materials.uniforms.common,
 				callerUniforms
 			),

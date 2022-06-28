@@ -1,7 +1,7 @@
 export { WebGLRenderTarget } from 'three/src/renderers/WebGLRenderTarget.js';
 export { WebGLRenderer } from 'three/src/renderers/WebGLRenderer.js';
 export { ShaderChunk } from 'three/src/renderers/shaders/ShaderChunk.js';
-export { cloneUniforms } from 'three/src/renderers/shaders/UniformsUtils.js';
+export { cloneUniforms, mergeUniforms } from 'three/src/renderers/shaders/UniformsUtils.js';
 export { FogExp2 } from 'three/src/scenes/FogExp2.js';
 export { Scene } from 'three/src/scenes/Scene.js';
 export { Mesh } from 'three/src/objects/Mesh.js';
@@ -28,7 +28,6 @@ export { MeshLambertMaterial } from 'three/src/materials/MeshLambertMaterial.js'
 export { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial.js';
 export { LineBasicMaterial } from 'three/src/materials/LineBasicMaterial.js';
 export { UniformsLib } from 'three/src/renderers/shaders/UniformsLib.js';
-export { UniformsUtils } from 'three/src/renderers/shaders/UniformsUtils.js';
 export { TextureLoader } from 'three/src/loaders/TextureLoader.js';
 export { ImageLoader } from 'three/src/loaders/ImageLoader.js';
 export { FileLoader } from 'three/src/loaders/FileLoader.js';

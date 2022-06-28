@@ -1,18 +1,15 @@
-import { ShaderMaterial, UniformsUtils } from 'three';
-
-import { Pass, FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass';
+import { ShaderMaterial, cloneUniforms } from '../../Three';
+import { FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass';
 import { CopyShader } from 'three/examples/jsm/shaders/CopyShader';
 import { DistanceFieldShader } from './DistanceFieldShader';
 
-class DistanceFieldPass extends Pass {
+class DistanceFieldPass {
 
 	constructor ( width, height ) {
 
-		super();
-
 		// distance field iteration shader
 
-		this.uniforms = UniformsUtils.clone( DistanceFieldShader.uniforms );
+		this.uniforms = cloneUniforms( DistanceFieldShader.uniforms );
 		this.material = new ShaderMaterial( {
 			uniforms: this.uniforms,
 			fragmentShader: DistanceFieldShader.fragmentShader,
@@ -21,14 +18,13 @@ class DistanceFieldPass extends Pass {
 			depthWrite: false
 		} );
 
-		// set params
 		this.uniforms.width.value = width;
 		this.uniforms.height.value = height;
 		this.fsQuad = new FullScreenQuad( this.material );
 
 		// copy shader
 
-		this.copyUniforms = UniformsUtils.clone( CopyShader.uniforms );
+		this.copyUniforms = cloneUniforms( CopyShader.uniforms );
 		this.copyMaterial = new ShaderMaterial(  {
 			uniforms: this.copyUniforms,
 			vertexShader: CopyShader.vertexShader,
@@ -44,7 +40,7 @@ class DistanceFieldPass extends Pass {
 	render( renderer, writeBuffer, readBuffer, params ) {
 
 		this.material.uniforms[ 'tSource' ].value = readBuffer.texture;
-		this.material.uniforms.beta.value = params.beta / (  256 * 20   );
+		this.material.uniforms.beta.value = params.beta / (  256 * 128   );
 		this.material.uniforms.offset.value = params.offset;
 		this.material.needsUpdate = true;
 
@@ -52,19 +48,19 @@ class DistanceFieldPass extends Pass {
 		this.copyMaterial.needsUpdate = true;
 
 		const gl = renderer.getContext();
-//		const query = gl.createQuery();
+		const query = gl.createQuery();
 
 		renderer.setRenderTarget( writeBuffer );
 		renderer.clear();
 
 		this.fsQuadCopy.render( renderer );
 
-//		gl.beginQuery( gl.ANY_SAMPLES_PASSED, query );
+		gl.beginQuery( gl.ANY_SAMPLES_PASSED, query );
 		this.fsQuad.render( renderer );
 
-//		gl.endQuery( gl.ANY_SAMPLES_PASSED );
+		gl.endQuery( gl.ANY_SAMPLES_PASSED );
 		gl.finish();
-/*
+
 		const resA = gl.getQueryParameter( query, gl.QUERY_RESULT_AVAILABLE );
 		const res = gl.getQueryParameter( query, gl.QUERY_RESULT );
 
@@ -78,7 +74,7 @@ class DistanceFieldPass extends Pass {
 			console.log( 'q2', resA, res );
 
 		}, 100 );
-*/
+
 	}
 
 }

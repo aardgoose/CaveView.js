@@ -2,7 +2,7 @@ import { NearestFilter, Vector2, Vector3, WebGLRenderTarget, OrthographicCamera 
 import { DistanceFieldPass } from './distanceField/DistanceFieldPass';
 import { DistanceFieldFilterPass } from './distanceField/DistanceFieldFilterPass';
 import { RenderUtils } from '../core/RenderUtils';
-import { LEG_CAVE } from '../core/constants';
+import { FACE_SCRAPS, FACE_WALLS, LEG_CAVE } from '../core/constants';
 
 class DistanceFieldPlugin {
 
@@ -12,13 +12,24 @@ class DistanceFieldPlugin {
 
 		const viewer = ctx.viewer;
 
+		/*
+
+		const savedView = viewer.getView();
+
+		const pluginView = {
+			shadingMode: CV2.SHADING_SINGLE,
+		};
+
+		viewer.setView( pluginView );
+		viewer.setView( savedView );
+
+		*/
+
 		viewer.getComposer = function ( renderer, scene ) {
 
-			const width  = 300;
-			const height = 300;
+			const width  = 1000;
+			const height = 600;
 
-			const renderTarget1 = new WebGLRenderTarget( width, height, { depthBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
-			const renderTarget2 = new WebGLRenderTarget( width, height, { depthBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
 
 			const distancePass = new DistanceFieldPass( width, height );
 			const distanceFilterPass = new DistanceFieldFilterPass( width, height );
@@ -49,6 +60,9 @@ class DistanceFieldPlugin {
 
 				if ( survey === undefined ) return;
 
+				const renderTarget1 = new WebGLRenderTarget( width, height, { depthBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
+				const renderTarget2 = new WebGLRenderTarget( width, height, { depthBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
+
 				renderer.setRenderTarget( renderTarget1 );
 				renderer.setPixelRatio( 1 );
 				renderer.setSize( width, height );
@@ -58,6 +72,8 @@ class DistanceFieldPlugin {
 				const camera = fred( ctx.container, survey );
 
 				camera.layers.enable( LEG_CAVE );
+				camera.layers.enable( FACE_SCRAPS );
+				camera.layers.enable( FACE_WALLS );
 
 				renderer.render( scene, camera );
 
@@ -70,32 +86,29 @@ class DistanceFieldPlugin {
 
 				const offset = new Vector2();
 
-				offset.set( 1 / width, 0 );
-
-				for ( let i = 1; i < 250; i += 2 ) {
-
-					distancePass.render( renderer, target, source, { beta: i, offset: offset } );
-
-					swapBuffers();
-
-				}
-
-
-				offset.set( 0, 1 / height );
-
-				for ( let i = 1; i < 250; i += 2 ) {
-
-					distancePass.render( renderer, target, source, { beta: i, offset: offset } );
-
-					swapBuffers();
-
-				}
+				runPass( offset.set( 1 / width, 0 ) );  // run pass in x direction
+				runPass( offset.set( 0, 1 / height ) ); // run pass in y direction
 
 				dumpTarget( source );
 
 				ctx.viewer.resetRenderer();
 
-				function swapBuffers() {
+				renderTarget1.dispose();
+				renderTarget2.dispose();
+
+				function runPass ( offset ) {
+
+					for ( let i = 1; i < 500; i += 2 ) {
+
+						distancePass.render( renderer, target, source, { beta: i, offset: offset } );
+
+						swapBuffers();
+
+					}
+
+				}
+
+				function swapBuffers () {
 
 					const tmp = source;
 
@@ -132,7 +145,7 @@ function fred ( container, survey ) {
 
 	}
 
-	return  new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, -10000, 10000 );
+	return new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, -10000, 10000 );
 
 }
 

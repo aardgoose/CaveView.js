@@ -1,5 +1,5 @@
-import distanceFieldVertexShader from './distanceFieldVertexShader.glsl';
-import distanceFieldFragmentShader from './distanceFieldFragmentShader.glsl';
+import vertexShader from './commonVertexShader.glsl';
+import fragmentShader from './distanceFieldFragmentShader.glsl';
 
 const DistanceFieldShader  = {
 	uniforms: {
@@ -9,8 +9,8 @@ const DistanceFieldShader  = {
 		'height': { value: 1 },
 		'offset': { value: null }
 	},
-	vertexShader: distanceFieldVertexShader,
-	fragmentShader: distanceFieldFragmentShader
+	vertexShader: vertexShader,
+	fragmentShader: fragmentShader
 };
 
 export { DistanceFieldShader };

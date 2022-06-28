@@ -20,7 +20,7 @@ class DistanceFieldFilterPass  {
 
 	}
 
-	render( renderer, writeBuffer, readBuffer  ) {
+	render ( renderer, writeBuffer, readBuffer  ) {
 
 		this.material.uniforms[ 'tDiffuse' ].value = readBuffer.texture;
 

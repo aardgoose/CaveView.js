@@ -37,10 +37,10 @@ class DistanceFieldPass {
 
 	}
 
-	render( renderer, writeBuffer, readBuffer, params ) {
+	render ( renderer, writeBuffer, readBuffer, params ) {
 
 		this.material.uniforms[ 'tSource' ].value = readBuffer.texture;
-		this.material.uniforms.beta.value = params.beta / (  256 * 128   );
+		this.material.uniforms.beta.value = params.beta / (  256 * 128 );
 		this.material.uniforms.offset.value = params.offset;
 		this.material.needsUpdate = true;
 

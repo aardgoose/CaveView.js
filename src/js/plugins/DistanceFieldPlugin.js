@@ -26,7 +26,6 @@ class DistanceFieldPlugin {
 		*/
 		viewer.addEventListener( 'newCave', createDistanceField );
 
-
 		function createDistanceField( event ) {
 
 			const survey = event.survey;
@@ -43,6 +42,9 @@ class DistanceFieldPlugin {
 
 			const renderTarget1 = new WebGLRenderTarget( width, height, { depthBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
 			const renderTarget2 = new WebGLRenderTarget( width, height, { depthBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
+
+			renderTarget1.texture.generateMipmaps = false;
+			renderTarget2.texture.generateMipmaps = false;
 
 			renderer.setRenderTarget( renderTarget1 );
 			renderer.setPixelRatio( 1 );
@@ -71,6 +73,13 @@ class DistanceFieldPlugin {
 			runPass( offset.set( 0, 1 / height ) ); // run pass in y direction
 
 			dumpTarget( source );
+
+			// save distance map to arrayData
+			const buffer = new Uint8ClampedArray( width * height * 4 );
+			renderer.readRenderTargetPixels( target, 0, 0, width, height, buffer );
+
+			// drop resources associated with temporary camera
+			renderer.renderLists.dispose();
 
 			ctx.viewer.resetRenderer();
 

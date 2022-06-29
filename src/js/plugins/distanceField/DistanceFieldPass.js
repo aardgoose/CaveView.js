@@ -47,33 +47,14 @@ class DistanceFieldPass {
 		this.copyMaterial.uniforms[ 'tDiffuse' ].value = readBuffer.texture;
 		this.copyMaterial.needsUpdate = true;
 
-		const gl = renderer.getContext();
-		const query = gl.createQuery();
-
 		renderer.setRenderTarget( writeBuffer );
 		renderer.clear();
 
 		this.fsQuadCopy.render( renderer );
 
-		gl.beginQuery( gl.ANY_SAMPLES_PASSED, query );
 		this.fsQuad.render( renderer );
 
-		gl.endQuery( gl.ANY_SAMPLES_PASSED );
-		gl.finish();
-
-		const resA = gl.getQueryParameter( query, gl.QUERY_RESULT_AVAILABLE );
-		const res = gl.getQueryParameter( query, gl.QUERY_RESULT );
-
-		console.log( 'q', resA, res );
-
-		setTimeout( () => {
-
-			const resA = gl.getQueryParameter( query, gl.QUERY_RESULT_AVAILABLE );
-			const res = gl.getQueryParameter( query, gl.QUERY_RESULT );
-
-			console.log( 'q2', resA, res );
-
-		}, 100 );
+		renderer.getContext().finish();
 
 	}
 

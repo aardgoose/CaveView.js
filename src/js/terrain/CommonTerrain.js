@@ -16,8 +16,6 @@ import { RenderUtils } from '../core/RenderUtils';
 const __vector3 = new Vector3();
 const __adjust = new Vector3();
 
-const __result = new Uint8Array( 4 );
-
 class CommonTerrain extends Group {
 
 	constructor ( ctx ) {
@@ -29,6 +27,7 @@ class CommonTerrain extends Group {
 		this.depthTexture = null;
 		this.renderer = null;
 		this.renderTarget = null;
+		this.heightMap = null;
 		this.datumShift = 0;
 		this.activeDatumShift = 0;
 		this.terrainBase = null;
@@ -141,9 +140,14 @@ class CommonTerrain extends Group {
 
 		scene.overrideMaterial = null;
 
+		// get height map into array - much faster access
+
+		const buffer = new Uint8ClampedArray( dim * dim * 4 );
+		renderer.readRenderTargetPixels( renderTarget, 0, 0, dim, dim, buffer );
+
 		// correct height between entrances and terrain
 
-		this.addHeightMap( renderer, renderTarget );
+		this.addHeightMap( renderer, renderTarget, buffer );
 
 		this.checkTerrainShadingModes( renderer );
 
@@ -324,17 +328,16 @@ class CommonTerrain extends Group {
 
 	}
 
-	addHeightMap ( renderer, renderTarget ) {
+	addHeightMap ( renderer, renderTarget, buffer ) {
 
 		this.depthTexture = renderTarget.texture;
 		this.renderer = renderer;
 		this.renderTarget = renderTarget;
+		this.heightMap = buffer;
 
 	}
 
 	getHeight ( point ) {
-
-		const renderTarget = this.renderTarget;
 
 		if ( this.terrainBase === null ) {
 
@@ -345,7 +348,7 @@ class CommonTerrain extends Group {
 
 			// setup value cached
 
-			__adjust.set( renderTarget.width, renderTarget.height, 1 ).divide( this.terrainRange );
+			__adjust.set( 1024, 1024, 1 ).divide( this.terrainRange );
 
 		}
 
@@ -353,11 +356,11 @@ class CommonTerrain extends Group {
 
 		__vector3.copy( point ).sub( terrainBase ).multiply( __adjust ).round();
 
-		this.renderer.readRenderTargetPixels( renderTarget, __vector3.x, __vector3.y, 1, 1, __result );
+		const offset = ( __vector3.x + __vector3.y * 1024 ) * 4;
 
 		// convert to survey units and return
 
-		return unpackRGBA( __result ) * this.terrainRange.z + terrainBase.z;
+		return unpackRGBA( this.heightMap.subarray( offset, offset + 4 ) ) * this.terrainRange.z + terrainBase.z;
 
 	}
 

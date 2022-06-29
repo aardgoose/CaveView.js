@@ -1,5 +1,6 @@
 #include <fog_pars_fragment>
 #include <wall_fragment_pars>
+#include <cursor_fragment_pars>
 #include <depth_fragment_pars>
 
 void main() {
@@ -8,10 +9,9 @@ void main() {
 
 	terrainHeight = terrainHeight * rangeZ + modelMin.z + datumShift;
 
-	float depth = ( terrainHeight - vZ ) * depthScale;
+	float vCursor = ( terrainHeight - vZ );
 
-	gl_FragColor = texture2D( cmap, vec2( depth, 1.0 ) ) * vec4( vColor, 1.0 );
-
+	#include <cursor_fragment>
 	#include <fog_fragment>
 
 }

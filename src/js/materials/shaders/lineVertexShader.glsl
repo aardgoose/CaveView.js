@@ -29,7 +29,6 @@ varying float vHide;
 
 	#include <depth_vertex_pars>
 
-	uniform float depthScale;
 	varying float height;
 
 #endif
@@ -199,23 +198,10 @@ void main() {
 
 	#if defined( CV_DEPTH ) || defined( CV_DEPTH_CURSOR )
 
-		#include <depth_vertex>
-
 		vec3 realPosition = instanceStart + ( instanceEnd - instanceStart ) * position.y;
-		height = terrainHeight - realPosition.z;
 
-	#endif
-
-	#ifdef CV_DEPTH_CURSOR
-
-		vCursor = height;
-
-	#endif
-
-	#ifdef CV_DEPTH
-
-		// depth below terrain for this vertex, scaled in 0.0 - 1.0 range
-		height *= depthScale;
+		vTerrainCoords = vec2( ( realPosition.x - modelMin.x ) * scaleX, ( realPosition.y - modelMin.y ) * scaleY );
+		vZ = realPosition.z;
 
 	#endif
 

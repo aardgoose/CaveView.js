@@ -13,7 +13,7 @@ import depthVertexShader from './depthVertexShader.glsl';
 import depthFragmentShader from './depthFragmentShader.glsl';
 
 import depthCursorVertexShader from './depthCursorVertexShader.glsl';
-import depthCursorFragmentShader from './cursorFragmentShader.glsl';
+import depthCursorFragmentShader from './depthCursorFragmentShader.glsl';
 
 import glyphVertexShader from './glyphVertexShader.glsl';
 import glyphFragmentShader from './glyphFragmentShader.glsl';
@@ -36,6 +36,7 @@ import wall_vertex from './chunks/wall_vertex.glsl';
 import wall_vertex_pars from './chunks/wall_vertex_pars.glsl';
 import wall_fragment_pars from './chunks/wall_fragment_pars.glsl';
 
+import depth_fragment_pars from './chunks/depth_fragment_pars.glsl';
 import depth_vertex_pars from './chunks/depth_vertex_pars.glsl';
 import depth_vertex from './chunks/depth_vertex.glsl';
 
@@ -59,6 +60,7 @@ Object.assign( ShaderChunk, {
 	wall_fragment_pars: wall_fragment_pars,
 
 	// common depth below surface shader code
+	depth_fragment_pars: depth_fragment_pars,
 	depth_vertex_pars: depth_vertex_pars,
 	depth_vertex: depth_vertex,
 

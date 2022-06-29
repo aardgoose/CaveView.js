@@ -1,6 +1,7 @@
 #include <fog_pars_vertex>
 #include <wall_vertex_pars>
 #include <depth_vertex_pars>
+
 varying float vCursor;
 
 void main() {
@@ -8,7 +9,7 @@ void main() {
 	#include <wall_vertex>
 	#include <depth_vertex>
 
-	vCursor = vDepth;
+	vZ = position.z;
 
 	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 

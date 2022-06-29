@@ -1,3 +1,12 @@
+const float UnpackDownscale = 255. / 256.; // 0..1 -> fraction (excluding 1)
+
+const vec3 PackFactors = vec3( 256. * 256. * 256., 256. * 256., 256. );
+const vec4 UnpackFactors = UnpackDownscale / vec4( PackFactors, 1. );
+
+float unpackRGBAToFloat( const in vec4 v ) {
+	return dot( v, UnpackFactors );
+}
+
 uniform vec3 diffuse;
 uniform float opacity;
 
@@ -8,10 +17,19 @@ uniform float opacity;
 
 #endif
 
-#ifdef CV_DEPTH
+#if defined( CV_DEPTH ) || defined( CV_DEPTH_CURSOR )
 
+	uniform sampler2D depthMap;
 	uniform sampler2D cmap;
-	varying float height;
+
+	uniform vec3 modelMin;
+
+	uniform float depthScale;
+	uniform float rangeZ;
+	uniform float datumShift;
+
+	varying vec2 vTerrainCoords;
+	varying float vZ;
 
 #endif
 
@@ -79,9 +97,20 @@ void main() {
 
 	#endif
 
+	#if defined( CV_DEPTH ) || defined( CV_DEPTH_CURSOR )
+
+		float terrainHeight = unpackRGBAToFloat( texture2D( depthMap, vTerrainCoords ) );
+
+		terrainHeight = terrainHeight * rangeZ + modelMin.z + datumShift;
+
+		float depth = ( terrainHeight - vZ );
+		float vCursor = depth; // hack
+
+	#endif
+
 	#ifdef CV_DEPTH
 
-		gl_FragColor = texture2D( cmap, vec2( height, 1.0 ) ) * vec4( vColor, 1.0 );
+		gl_FragColor = texture2D( cmap, vec2( depth * depthScale, 1.0 ) ) * vec4( vColor, 1.0 );
 
 	#endif
 

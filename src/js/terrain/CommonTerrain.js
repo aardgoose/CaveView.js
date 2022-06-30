@@ -2,19 +2,10 @@ import {
 	FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS
 } from '../core/constants';
 import { DepthMapMaterial } from '../materials/DepthMapMaterial';
-
-import { unpackRGBA } from '../core/unpackRGBA';
+import { HeightLookup } from './HeightLookup';
 import { Overlay } from './Overlay';
-import {
-	Group, Box3, Vector3,
-	WebGLRenderTarget, LinearFilter, NearestFilter, RGBAFormat
-} from '../Three';
+import { Group, Box3, WebGLRenderTarget, LinearFilter, NearestFilter, RGBAFormat } from '../Three';
 import { RenderUtils } from '../core/RenderUtils';
-
-// preallocated tmp objects
-
-const __vector3 = new Vector3();
-const __adjust = new Vector3();
 
 class CommonTerrain extends Group {
 
@@ -27,7 +18,7 @@ class CommonTerrain extends Group {
 		this.depthTexture = null;
 		this.renderer = null;
 		this.renderTarget = null;
-		this.heightMap = null;
+		this.heightLookup = null;
 		this.datumShift = 0;
 		this.activeDatumShift = 0;
 		this.terrainBase = null;
@@ -140,14 +131,12 @@ class CommonTerrain extends Group {
 
 		scene.overrideMaterial = null;
 
-		// get height map into array - much faster access
+		this.depthTexture = renderTarget.texture;
+		this.renderer = renderer;
+		this.renderTarget = renderTarget;
 
-		const buffer = new Uint8ClampedArray( dim * dim * 4 );
-		renderer.readRenderTargetPixels( renderTarget, 0, 0, dim, dim, buffer );
-
-		// correct height between entrances and terrain
-
-		this.addHeightMap( renderer, renderTarget, buffer );
+		// add lookup using heightMap texture
+		this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox );
 
 		this.checkTerrainShadingModes( renderer );
 
@@ -328,39 +317,9 @@ class CommonTerrain extends Group {
 
 	}
 
-	addHeightMap ( renderer, renderTarget, buffer ) {
-
-		this.depthTexture = renderTarget.texture;
-		this.renderer = renderer;
-		this.renderTarget = renderTarget;
-		this.heightMap = buffer;
-
-	}
-
 	getHeight ( point ) {
 
-		if ( this.terrainBase === null ) {
-
-			if ( this.boundingBox === undefined ) this.computeBoundingBox();
-
-			this.terrainBase = this.boundingBox.min;
-			this.terrainRange = this.boundingBox.getSize( new Vector3() );
-
-			// setup value cached
-
-			__adjust.set( 1024, 1024, 1 ).divide( this.terrainRange );
-
-		}
-
-		const terrainBase = this.terrainBase;
-
-		__vector3.copy( point ).sub( terrainBase ).multiply( __adjust ).round();
-
-		const offset = ( __vector3.x + __vector3.y * 1024 ) * 4;
-
-		// convert to survey units and return
-
-		return unpackRGBA( this.heightMap.subarray( offset, offset + 4 ) ) * this.terrainRange.z + terrainBase.z;
+		return this.heightLookup.lookup( point );
 
 	}
 
@@ -384,7 +343,7 @@ class CommonTerrain extends Group {
 		// simple average
 		this.datumShift = s1 / n;
 
-		console.log( 'Adjustmenting terrain height by:', this.datumShift, 'sd:', sd );
+		console.log( `Adjustmenting terrain height by: ${this.datumShift} sd: ${sd} n: ${n}` );
 
 	}
 

@@ -30,6 +30,13 @@ class DistanceFieldPlugin {
 
 		console.log( 'Distance Field Plugin 0.0' );
 
+		if ( ! renderer.capabilities.isWebGL2 ) {
+
+			console.warn( 'DistanceField plugin requires WebGL2' );
+			return;
+
+		}
+
 		const viewer = ctx.viewer;
 
 		viewer.addEventListener( 'newCave', createDistanceField );

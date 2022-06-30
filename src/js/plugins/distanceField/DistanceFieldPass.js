@@ -5,7 +5,7 @@ import { DistanceFieldShader } from './DistanceFieldShader';
 
 class DistanceFieldPass {
 
-	constructor ( width, height ) {
+	constructor ( width, height, pixelIncrement ) {
 
 		// distance field iteration shader
 
@@ -34,13 +34,14 @@ class DistanceFieldPass {
 		} );
 
 		this.fsQuadCopy = new FullScreenQuad( this.copyMaterial );
+		this.pixelIncrement = pixelIncrement;
 
 	}
 
 	render ( renderer, writeBuffer, readBuffer, params ) {
 
 		this.material.uniforms[ 'tSource' ].value = readBuffer.texture;
-		this.material.uniforms.beta.value = params.beta / (  256 * 128 );
+		this.material.uniforms.beta.value = params.beta / this.pixelIncrement;
 		this.material.uniforms.offset.value = params.offset;
 		this.material.needsUpdate = true;
 

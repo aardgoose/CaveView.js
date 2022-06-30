@@ -89,20 +89,20 @@ class Cfg extends EventDispatcher {
 
 	setValue ( item, value ) {
 
-		this.environment.set ( item, value );
+		this.environment.set( item, value );
 
 	}
 
 	setPropertyValue ( item, defaultValue ) {
 
 		// set to defined value or default
-		this.environment.set ( item, this.value( item, defaultValue ) );
+		this.environment.set( item, this.value( item, defaultValue ) );
 
 		Object.defineProperty( this, item, {
 
 			set: function ( value ) {
 
-				this.environment.set ( item, value );
+				this.environment.set( item, value );
 				this.dispatchEvent( { type: 'change', name: item } );
 
 			},
@@ -112,7 +112,7 @@ class Cfg extends EventDispatcher {
 
 	}
 
-	themeValue ( name ) {
+	themeValue ( name, defaultValue = undefined ) {
 
 		const theme = this.environment.get( 'theme' );
 		const parts = name.split( '.' );
@@ -127,11 +127,11 @@ class Cfg extends EventDispatcher {
 
 		if ( value === undefined ) {
 
-			value = this.treeValue( defaultTheme, parts);
+			value = this.treeValue( defaultTheme, parts );
 
 		}
 
-		return value;
+		return value || defaultValue;
 
 	}
 

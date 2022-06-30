@@ -1028,6 +1028,12 @@ class Survey extends Object3D {
 
 	}
 
+	getShadingMode () {
+
+		return this.caveShading;
+
+	}
+
 	setWallShading ( mesh, selectedMaterial ) {
 
 		if ( ! mesh ) return;

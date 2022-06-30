@@ -194,6 +194,13 @@ function CameraManager ( ctx, renderer, scene ) {
 
 			offsetLength = offset.length();
 
+			if ( offsetLength === 0 ) {
+
+				offset.z = 1;
+				offsetLength = 1;
+
+			}
+
 			orthographicCamera.zoom = 2 * height * Math.tan( MathUtils.DEG2RAD * perspectiveCamera.fov / 2 ) / offsetLength;
 
 			activeCamera = orthographicCamera;

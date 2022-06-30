@@ -651,7 +651,7 @@ class WebTerrain extends CommonTerrain {
 			// simple average
 			this.datumShift = s1 / n;
 
-			console.log( `Adjustmenting terrain height by: ${this.datumShift} sd: ${sd}` );
+			console.log( `Adjustmenting terrain height by: ${this.datumShift} sd: ${sd} n: ${n}` );
 
 		} );
 

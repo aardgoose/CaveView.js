@@ -53,6 +53,8 @@ import hypsometric_vertex_pars from './chunks/hypsometric_vertex_pars.glsl';
 import hypsometric_fragment_pars from './chunks/hypsometric_fragment_pars.glsl';
 import hypsometric_fragment from './chunks/hypsometric_fragment.glsl';
 
+import packRGBA from './chunks/packRGBA.glsl';
+
 Object.assign( ShaderChunk, {
 	// common wall shader code
 	wall_vertex: wall_vertex,
@@ -78,6 +80,7 @@ Object.assign( ShaderChunk, {
 	hypsometric_fragment_pars: hypsometric_fragment_pars,
 	hypsometric_fragment: hypsometric_fragment,
 
+	packRGBA: packRGBA
 } );
 
 export const Shaders = {

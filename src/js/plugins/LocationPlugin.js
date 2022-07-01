@@ -1,5 +1,5 @@
 
-import { Vector3, EventDispatcher } from '../Three';
+import { Vector3, EventDispatcher } from './Three';
 
 class LocationSource extends EventDispatcher {
 
@@ -25,11 +25,33 @@ class LocationSource extends EventDispatcher {
 
 			location.copy( survey.projectionWGS84.forward( location ) );
 
-			// FIXME - if no altitude do we do lookup via DTM is a terrain is present
+			// fake altitude for containsPoint check
 
 			if ( location.z == 0 ) location.z = survey.limits.max.z;
 
 			if ( survey.limits.containsPoint( location ) ) {
+
+				// return location in model space
+
+				location.sub ( survey.offsets );
+
+				// if no altitude we do lookup via DTM is a terrain is present
+
+				if ( coords.altitude === null ) {
+
+					if ( survey.terrain ) {
+
+						// FIXME - needs offset?
+						location.z = survey.terrain.getHeight( location );
+						console.log( location );
+
+					} else {
+
+						location.z = 0;
+
+					}
+
+				}
 
 				this.dispatchEvent( { type: 'location', location: location, survey: survey } );
 

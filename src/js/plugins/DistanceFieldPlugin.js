@@ -1,24 +1,25 @@
-import { NearestFilter, Vector2, Vector3, WebGLRenderTarget } from 'three';
+import { Vector2, Vector3 } from './Three';
 import { DistanceFieldPass } from './distanceField/DistanceFieldPass';
 import { DistanceFieldFilterPass } from './distanceField/DistanceFieldFilterPass';
-import { RenderUtils } from '../core/RenderUtils';
 import { FACE_SCRAPS, FACE_WALLS, LEG_CAVE } from '../core/constants';
-import { TextureLookup } from '../core/TextureLookup';
 
-class DistanceSquaredLookup extends TextureLookup {
+class DistanceSquaredLookup {
 
 	scale = 1;
+	pixelIncrement = 1;
+	textureLookup = null;
 
-	constructor ( renderer, renderTarget, boundingBox, scale ) {
+	constructor ( textureLookup, pixelIncrement, scale ) {
 
-		super( renderer, renderTarget, boundingBox );
 		this.scale = scale;
+		this.pixelIncrement = pixelIncrement;
+		this.textureLookup = textureLookup;
 
 	}
 
 	lookup ( point ) {
 
-		return super.lookup( point ) * this.scale;
+		return Math.sqrt( this.textureLookup.lookup( point ) * this.pixelIncrement ) * this.scale;
 
 	}
 
@@ -44,12 +45,13 @@ class DistanceFieldPlugin {
 		function createDistanceField( event ) {
 
 			const survey = event.survey;
+			const renderUtils = ctx.renderUtils;
 
 			if ( survey === undefined ) return;
 
 			const width  = 1024;
 			const range = survey.combinedLimits.getSize( new Vector3() );
-			const scale = range.x / 1024; // scale metres per texture pixel
+			const scale = range.x / width; // scale metres per texture pixel
 
 			const height = Math.round( range.y / scale );
 
@@ -61,16 +63,13 @@ class DistanceFieldPlugin {
 
 			cfg.themeColorCSS( 'shading.single', 'black' );
 
-			const distancePass = new DistanceFieldPass( width, height, pixelIncrement );
+			const distancePass = new DistanceFieldPass( width, height, pixelIncrement, scale );
 			const distanceFilterPass = new DistanceFieldFilterPass( width, height );
 
 			let lastNode = null;
 
-			const renderTarget1 = new WebGLRenderTarget( width, height, { depthBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
-			const renderTarget2 = new WebGLRenderTarget( width, height, { depthBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
-
-			renderTarget1.texture.generateMipmaps = false;
-			renderTarget2.texture.generateMipmaps = false;
+			const renderTarget1 = renderUtils.makeRenderTarget( width, height );
+			const renderTarget2 = renderUtils.makeRenderTarget( width, height );
 
 			renderer.setRenderTarget( renderTarget1 );
 			renderer.setPixelRatio( 1 );
@@ -78,7 +77,7 @@ class DistanceFieldPlugin {
 			renderer.setClearColor( 'white', 1.0 );
 			renderer.clear();
 
-			const camera = RenderUtils.makePlanCamera( ctx.container, survey );
+			const camera = renderUtils.makePlanCamera( ctx.container, survey );
 
 			camera.layers.enable( LEG_CAVE );
 			camera.layers.enable( FACE_SCRAPS );
@@ -100,14 +99,12 @@ class DistanceFieldPlugin {
 
 			dumpTarget( target );
 
-			const lookup = new DistanceSquaredLookup( renderer, target, survey.combinedLimits, scale * pixelIncrement );
+			const textureLookup = renderUtils.makeTextureLookup( renderer, target, survey.combinedLimits );
+
+			const lookup = new DistanceSquaredLookup( textureLookup, pixelIncrement, scale );
 
 			console.log( lookup.lookup( new Vector2( 0, 0 ) ) );
 			survey.distanceSquaredLookup = lookup;
-
-			// save distance map to arrayData
-			const buffer = new Uint8ClampedArray( width * height * 4 );
-			renderer.readRenderTargetPixels( target, 0, 0, width, height, buffer );
 
 			// drop resources associated with temporary camera
 			renderer.renderLists.dispose();
@@ -116,10 +113,13 @@ class DistanceFieldPlugin {
 			cfg.themeColorCSS( 'shading.single', savedColor );
 			survey.setShadingMode( savedShadingMode );
 
-			ctx.viewer.resetRenderer();
+			viewer.resetRenderer();
 
 			renderTarget1.dispose();
 			renderTarget2.dispose();
+
+			distanceFilterPass.dispose();
+			distancePass.dispose();
 
 			function runPass ( offset ) {
 
@@ -145,7 +145,7 @@ class DistanceFieldPlugin {
 
 			function dumpTarget ( renderTarget ) {
 
-				const canvas = RenderUtils.renderTargetToCanvas( renderer, renderTarget );
+				const canvas = renderUtils.renderTargetToCanvas( renderer, renderTarget );
 
 				if ( lastNode ) {
 

@@ -1,5 +1,5 @@
-import { ShaderMaterial, cloneUniforms } from '../../Three';
-import { FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass';
+import { ShaderMaterial, cloneUniforms } from '../Three';
+import { FullScreenQuad } from './FullScreenQuad';
 import { CopyShader } from 'three/examples/jsm/shaders/CopyShader';
 import { DistanceFieldShader } from './DistanceFieldShader';
 
@@ -56,6 +56,13 @@ class DistanceFieldPass {
 		this.fsQuad.render( renderer );
 
 		renderer.getContext().finish();
+
+	}
+
+	dispose () {
+
+		this.fsQuad.dispose();
+		this.fsQuadCopy.dispose();
 
 	}
 

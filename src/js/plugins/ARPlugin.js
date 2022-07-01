@@ -1,5 +1,5 @@
 
-import { Vector3, PerspectiveCamera } from '../Three';
+import { Vector3, PerspectiveCamera } from './Three';
 
 class ARPlugin {
 
@@ -31,8 +31,12 @@ class ARPlugin {
 			// translate events to openGL coords
 
 			cameraLocation.copy( event.location );
-			cameraLocation.sub ( survey.offsets );
 			survey.markers.mark( cameraLocation );
+
+			const lookup = survey.distanceSquaredLookup;
+
+			console.log( lookup.lookup( cameraLocation ), lookup.range, survey.offsets );
+
 			cameraLocation.divide( survey.modelLimits.max );
 
 		} );

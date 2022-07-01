@@ -14,3 +14,4 @@ workspace.code-workspace
 build/test/*
 .tmp.driveupload/*
 package-lock.json
+src/js/viewer/ViewState.js

@@ -22,6 +22,7 @@
 	}
 </style>
 <script type="text/javascript" src="CaveView/js/CaveView2.js" ></script>
+<script type="text/javascript" src="CaveView/js/CaveView2Plugins.js" ></script>
 
 <script type="text/javascript" >
 
@@ -32,7 +33,14 @@ function onload () {
 		surveyDirectory: "/surveys/",
 		home: "/CaveView/",
 		useGPS: true,
-		view: { walls: false, alpha: false, terrain: false },
+		view: {
+			cameraType: CV2.CAMERA_ORTHOGRAPHIC,
+			walls: true,
+			box: false,
+			terrain: false,
+			entrances: false,
+			entrance_dots: false,
+		},
 		saturatedGradient: true,
 	} );
 
@@ -61,10 +69,13 @@ function onload () {
 		"Cheddar.lox"
 	];
 
-	viewer.addPlugin( CV2.LocationPlugin );
-	viewer.addPlugin( CV2.ARPlugin );
+	viewer.addPlugin( CV2Plugins.DistanceFieldPlugin );
+	viewer.addPlugin( CV2Plugins.LocationPlugin );
+	viewer.addPlugin( CV2Plugins.ARPlugin );
 
-	viewer.loadCave( "Castleton_Master_NoSurface.3d" );
+	const ui = new CV2.CaveViewUI( viewer );
+
+	ui.loadCave( "Castleton_Master_NoSurface.3d" );
 
 }
 </script>

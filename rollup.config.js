@@ -2,7 +2,6 @@ import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
-
 import { glconstants, glsl, glslThree } from './rollup-gl';
 
 export default [
@@ -17,6 +16,34 @@ export default [
 			{
 				name: 'CV2',
 				file: 'build/CaveView/js/CaveView2.min.js',
+				format: 'umd',
+				plugins: [ terser() ]
+			}
+		],
+		plugins: [
+			glsl(),
+			glslThree(),
+			glconstants(),
+			json( {
+				exclude: [ 'node_modules/**', 'build/**', 'tools/**' ],
+				preferConst: true, // Default: false
+			} ),
+			nodeResolve( {} ),
+			commonjs( {
+				sourceMap: false,  // Default: true
+			} )
+		]
+	}, {
+		input: 'src/js/CV2Plugins.js',
+		output: [
+			{
+				name: 'CV2Plugins',
+				file: 'build/CaveView/js/CaveView2Plugins.js',
+				format: 'umd'
+			},
+			{
+				name: 'CV2Plugins',
+				file: 'build/CaveView/js/CaveView2Plugins.min.js',
 				format: 'umd',
 				plugins: [ terser() ]
 			}

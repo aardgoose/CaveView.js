@@ -1,8 +1,11 @@
-import { OrthographicCamera, Vector3 } from '../Three';
+import { OrthographicCamera, Vector3, WebGLRenderTarget, NearestFilter } from '../Three';
+import { TextureLookup } from './TextureLookup';
 
-const RenderUtils = {
+class RenderUtils {
 
-	renderTargetToCanvas: function ( renderer, renderTarget ) {
+	constructor () {}
+
+	renderTargetToCanvas ( renderer, renderTarget ) {
 
 		const width = Math.floor( renderTarget.width );
 		const height = Math.floor( renderTarget.height );
@@ -40,9 +43,9 @@ const RenderUtils = {
 
 		return canvas;
 
-	},
+	}
 
-	makePlanCamera: function ( container, survey ) {
+	makePlanCamera ( container, survey ) {
 
 		let width  = container.clientWidth;
 		let height = container.clientHeight;
@@ -66,7 +69,21 @@ const RenderUtils = {
 
 	}
 
+	makeRenderTarget ( width, height ) {
 
-};
+		const renderTarget = new WebGLRenderTarget( width, height, { depthBuffer: false, stencilBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
+
+		renderTarget.texture.generateMipmaps = false;
+		return renderTarget;
+
+	}
+
+	makeTextureLookup ( renderer, renderTarget, boundingBox ) {
+
+		return new TextureLookup( renderer, renderTarget, boundingBox );
+
+	}
+
+}
 
 export { RenderUtils };

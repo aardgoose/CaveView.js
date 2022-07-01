@@ -4,8 +4,7 @@ import {
 import { DepthMapMaterial } from '../materials/DepthMapMaterial';
 import { HeightLookup } from './HeightLookup';
 import { Overlay } from './Overlay';
-import { Group, Box3, WebGLRenderTarget, LinearFilter, NearestFilter, RGBAFormat } from '../Three';
-import { RenderUtils } from '../core/RenderUtils';
+import { Group, Box3 } from '../Three';
 
 class CommonTerrain extends Group {
 
@@ -107,13 +106,13 @@ class CommonTerrain extends Group {
 		const dim = 1024;
 
 		const container = this.ctx.container;
-
+		const renderUtils = this.ctx.renderUtils;
 		// set camera frustrum to cover region/survey area
-		const rtCamera = RenderUtils.makePlanCamera( container, survey );
+		const rtCamera = renderUtils.makePlanCamera( container, survey );
 
 		rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
 
-		const renderTarget = new WebGLRenderTarget( dim, dim, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, stencilBuffer: true } );
+		const renderTarget = renderUtils.makeRenderTarget( dim, dim );
 
 		renderTarget.texture.generateMipmaps = false;
 		renderTarget.texture.name = 'CV.DepthMapTexture';
@@ -331,7 +330,7 @@ class CommonTerrain extends Group {
 
 		points.forEach( point => {
 
-			const v = this.getHeight( point );
+			const v = point.z - this.getHeight( point );
 			s1 += v;
 			s2 += v * v;
 			n++;
@@ -343,7 +342,7 @@ class CommonTerrain extends Group {
 		// simple average
 		this.datumShift = s1 / n;
 
-		console.log( `Adjustmenting terrain height by: ${this.datumShift} sd: ${sd} n: ${n}` );
+		console.log( `Adjustmenting terrain height by: ${this.datumShift} sd: ${sd} n: ${n} --` );
 
 	}
 

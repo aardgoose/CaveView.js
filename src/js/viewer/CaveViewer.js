@@ -31,6 +31,7 @@ import { ViewState } from './ViewState';
 import { OrbitControls } from '../ui/OrbitControls';
 import { ExportGltf } from './ExportGltf';
 import { Snapshot } from './Snapshot';
+import { RenderUtils } from '../core/RenderUtils';
 
 import {
 	EventDispatcher, Vector3, Scene, Raycaster, WebGLRenderer, MOUSE, FogExp2
@@ -60,7 +61,8 @@ class CaveViewer extends EventDispatcher {
 			workerPools: new WorkerPoolCache ( cfg ),
 			glyphStringCache: new Map(),
 			materials: null,
-			viewer: this
+			viewer: this,
+			renderUtils: new RenderUtils()
 		};
 
 		this.ctx = ctx;

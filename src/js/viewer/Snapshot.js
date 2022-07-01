@@ -1,5 +1,4 @@
 import { WebGLRenderTarget, LinearFilter, NearestFilter, RGBAFormat } from '../Three';
-import { RenderUtils } from '../core/RenderUtils';
 
 class Snapshot {
 
@@ -28,7 +27,7 @@ class Snapshot {
 
 			viewer.renderView();
 
-			const canvas = RenderUtils.renderTargetToCanvas( renderer, renderTarget );
+			const canvas = ctx.renderUtils.renderTargetToCanvas( renderer, renderTarget );
 
 			renderTarget.dispose();
 

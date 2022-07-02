@@ -18,8 +18,6 @@ class CommonTerrainMaterial extends MeshLambertMaterial {
 
 	commonBeforeCompile( ctx, shader ) {
 
-		return;
-
 		Object.assign(
 			shader.uniforms,
 			ctx.materials.uniforms.location
@@ -46,7 +44,7 @@ class CommonTerrainMaterial extends MeshLambertMaterial {
 
 		const fragmentShader = shader.fragmentShader
 			.replace( '#include <common>', '$&\n' + fragmentPars )
-			.replace( '#include <color_fragment>', fragmentColor );
+			.replace( '#include <color_fragment>', '$&\n' + fragmentColor );
 
 		shader.fragmentShader = fragmentShader;
 

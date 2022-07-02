@@ -77,6 +77,9 @@ function Materials ( viewer ) {
 	this.terrainOpacity = 0.5;
 
 	const distanceTransparency = this.uniforms.common.distanceTransparency;
+	const locationAccuracy = this.uniforms.location.accuracy;
+	const locationScale = this.uniforms.location.scale;
+	const location = this.uniforms.location.target;
 
 	Object.defineProperties( this, {
 
@@ -108,7 +111,27 @@ function Materials ( viewer ) {
 		'distanceTransparency': {
 			get() { return distanceTransparency.value; },
 			set( x ) { distanceTransparency.value = x; }
+		},
+
+		'location': {
+			get() { return location.value; },
+		},
+
+		'locationAccuracy': {
+			get() { return locationAccuracy.value; },
+			set( x ) { locationAccuracy.value = x; }
+		},
+
+		'locationScale': {
+			get() { return locationScale.value; },
+			set( x ) {
+				console.log( 'ccc', x) ;
+				for ( name in perSurveyMaterials ) {
+					perSurveyMaterials[ name ].needsUpdate == true;
+				}
+				locationScale.value = x; }
 		}
+
 	} );
 
 	function cacheMaterial ( name, material, stencil ) {

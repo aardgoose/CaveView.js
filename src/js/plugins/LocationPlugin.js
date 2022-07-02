@@ -3,9 +3,12 @@ import { Vector3, EventDispatcher } from './Three';
 
 class LocationSource extends EventDispatcher {
 
-	constructor ( viewer ) {
+	constructor ( ctx ) {
 
 		super();
+
+		const viewer = ctx.viewer;
+		const materials = ctx.materials;
 
 		const location = new Vector3();
 
@@ -60,6 +63,10 @@ class LocationSource extends EventDispatcher {
 					console.log( 'in survey', location );
 					watcherId = navigator.geolocation.watchPosition( updateLocation );
 
+//					materials.location.copy( location );
+					materials.locationScale = 0.008;
+					materials.locationAccuracy = 50;
+
 				}
 
 			} else {
@@ -110,7 +117,7 @@ class LocationPlugin {
 		console.log( 'Location Plugin 0.1' );
 
 		const viewer = ctx.viewer;
-		const source = new LocationSource( ctx.viewer );
+		const source = new LocationSource( ctx );
 
 		Object.defineProperties( viewer, {
 			'locationSource': {

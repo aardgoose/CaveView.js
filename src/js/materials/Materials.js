@@ -17,7 +17,7 @@ import { EntrancePointMaterial } from './EntrancePointMaterial';
 
 import {
 	LineBasicMaterial, MeshLambertMaterial, MeshBasicMaterial, MeshPhongMaterial,
-	IncrementStencilOp,
+	IncrementStencilOp, Color, Vector2
 } from '../Three';
 
 function Materials ( viewer ) {
@@ -63,7 +63,15 @@ function Materials ( viewer ) {
 			cursorWidth: { value: 5.0 },
 			baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
 			cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
+		},
+
+		location: {
+			scale: { value: 0.0 },
+			accuracy: { value: 0.0 },
+			target: { value: new Vector2() },
+			ringColor: { value: new Color( 0xff0000 ) }
 		}
+
 	};
 
 	this.terrainOpacity = 0.5;

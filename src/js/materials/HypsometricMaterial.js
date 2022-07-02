@@ -20,6 +20,8 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 
 			this.onBeforeCompile = function ( shader ) {
 
+				this.commonBeforeCompile( ctx, shader );
+
 				Object.assign(
 					shader.uniforms,
 					{

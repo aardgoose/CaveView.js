@@ -14,6 +14,8 @@ class ContourMaterial extends CommonTerrainMaterial {
 
 		this.onBeforeCompile = function ( shader ) {
 
+			this.commonBeforeCompile( ctx, shader );
+
 			Object.assign( shader.uniforms, {
 				zOffset:         { value: survey.offsets.z },
 				contourInterval: { value: cfg.themeValue( 'shading.contours.interval' ) },

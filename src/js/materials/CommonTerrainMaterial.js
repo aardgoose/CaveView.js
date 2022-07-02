@@ -16,17 +16,38 @@ class CommonTerrainMaterial extends MeshLambertMaterial {
 
 	}
 
-	editShader ( shader, vertexPars, vertexMain, fragmentPars, fragmentColor ) {
+	commonBeforeCompile( ctx, shader ) {
+
+		return;
+
+		Object.assign(
+			shader.uniforms,
+			ctx.materials.uniforms.location
+		);
+
+		this.editFragmentShader(
+			shader,
+			'#include <location_fragment_pars>',
+			'#include <location_fragment>'
+		);
+
+	}
+
+	editVertexShader ( shader, vertexPars, vertexMain ) {
 
 		const vertexShader = shader.vertexShader
 			.replace( '#include <common>', '$&\n' + vertexPars )
 			.replace( 'include <begin_vertex>', '$&\n' + vertexMain );
 
+		shader.vertexShader = vertexShader;
+	}
+
+	editFragmentShader ( shader, fragmentPars, fragmentColor ) {
+
 		const fragmentShader = shader.fragmentShader
 			.replace( '#include <common>', '$&\n' + fragmentPars )
 			.replace( '#include <color_fragment>', fragmentColor );
 
-		shader.vertexShader = vertexShader;
 		shader.fragmentShader = fragmentShader;
 
 	}
@@ -34,10 +55,15 @@ class CommonTerrainMaterial extends MeshLambertMaterial {
 	editShaderInclude( shader, name ) {
 
 		const start = '#include <' + name;
-		this.editShader(
+
+		this.editVertexShader(
 			shader,
 			start + '_vertex_pars>',
-			start + '_vertex>',
+			start + '_vertex>'
+		);
+
+		this.editFragmentShader(
+			shader,
 			start + '_fragment_pars>',
 			start + '_fragment>'
 		);

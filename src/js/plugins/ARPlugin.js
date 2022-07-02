@@ -1,6 +1,10 @@
 
 import { Vector3, PerspectiveCamera } from './Three';
 
+const NORMAL = 0;
+const FLAT = 1;
+const SWITCH = 5;
+
 class ARPlugin {
 
 	constructor ( ctx, renderer, scene ) {
@@ -14,6 +18,7 @@ class ARPlugin {
 
 		let survey = null;
 		let savedView = null;
+		let mode = NORMAL;
 
 		if ( ! locationSource ) {
 
@@ -23,6 +28,26 @@ class ARPlugin {
 		}
 
 		if ( ! ( 'xr' in navigator ) ) return;
+
+		window.addEventListener( 'deviceorientation', event => {
+
+			// fixme add hysteresis.
+
+			if ( Math.abs( event.beta ) < SWITCH && Math.abs( event.gamma ) < SWITCH ) {
+
+				// flat mode
+				console.log( 'flat mode' );
+				mode = FLAT;
+
+			} else {
+
+				// normal AR mode
+				console.log( 'normal mode' );
+				mode = NORMAL;
+
+			}
+
+		} );
 
 		locationSource.addEventListener( 'location', event => {
 
@@ -306,7 +331,5 @@ class ARButton {
 	}
 
 }
-
-
 
 export { ARPlugin };

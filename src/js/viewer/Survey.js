@@ -285,6 +285,12 @@ class Survey extends Object3D {
 
 		this.surveyTree.traverse( _getSurfacePoints );
 
+		if ( this.hasFeature( LEG_SURFACE) ) {
+
+			points.push( ...this.getFeature( LEG_SURFACE ).legVertices );
+
+		}
+
 		terrain.fitSurface( points, this.offsets );
 
 		if ( this.terrain === null ) this.terrain = terrain;

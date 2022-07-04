@@ -598,7 +598,7 @@ class WebTerrain extends CommonTerrain {
 
 		for ( const key in tileSpecs ) {
 
-			this.workerPool.runWorker( tileSpecs[ key ], _mapLoaded );
+			this.workerPool.queueWork( tileSpecs[ key ], _mapLoaded );
 			requestCount++;
 
 		}

@@ -124,12 +124,7 @@ function Materials ( viewer ) {
 
 		'locationScale': {
 			get() { return locationScale.value; },
-			set( x ) {
-				console.log( 'ccc', x) ;
-				for ( name in perSurveyMaterials ) {
-					perSurveyMaterials[ name ].needsUpdate == true;
-				}
-				locationScale.value = x; }
+			set( x ) { locationScale.value = x; }
 		}
 
 	} );

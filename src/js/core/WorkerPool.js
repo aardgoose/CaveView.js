@@ -3,7 +3,7 @@ const cpuCount = window.navigator.hardwareConcurrency;
 class WorkerPool {
 
 	static pendingWork = [];
-	static activeWorkers = 0;
+	static activeWorkerCount = 0;
 	static maxActive = cpuCount === undefined ? 4 : cpuCount;
 
 	constructor ( script ) {
@@ -55,6 +55,7 @@ class WorkerPool {
 	putWorker ( worker ) {
 
 		this.activeWorkers.delete( worker );
+		WorkerPool.activeWorkerCount--;
 
 		if ( this.workers.length < 4 ) {
 
@@ -82,8 +83,7 @@ class WorkerPool {
 
 	runWorker ( message, callback ) {
 
-		WorkerPool.activeWorkers++;
-
+		WorkerPool.activeWorkerCount++;
 		const worker = this.getWorker();
 
 		worker.onmessage = e => {
@@ -101,7 +101,7 @@ class WorkerPool {
 
 	queueWork ( message, callback ) {
 
-		if ( WorkerPool.activeWorkers === WorkerPool.maxActive ) {
+		if ( WorkerPool.activeWorkerCount >= WorkerPool.maxActive ) {
 
 			WorkerPool.pendingWork.push( { pool: this, message: message, callback: callback } );
 			return;

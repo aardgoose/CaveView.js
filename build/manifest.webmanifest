@@ -1,25 +1,40 @@
 {
 	"name": "CaveView",
+	"id": "/index-ar.html",
 	"short_name": "CaveView",
-	"start_url": "/index.html",
+	"start_url": "/index-ar.html",
 	"display": "standalone",
 	"background_color": "#000",
 	"theme_color": "#00ff00",
 	"description": "3D Cave Model Viewer.",
 	"scope": "/",
-	"icons": [{
-		"src": "CaveView/images/logo48.png",
-		"sizes": "48x48",
-		"type": "image/png"
-	},
-	{
-		"src": "CaveView/images/logo192.png",
-		"sizes": "192x192",
-		"type": "image/png"
-	},
-	{
-		"src": "CaveView/images/logo512.png",
-		"sizes": "512x512",
-		"type": "image/png"
-	}]
+	"icons": [
+		{
+			"src": "CaveView/images/logo192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "CaveView/images/logo512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"file_handlers": [
+		{
+			"action": "/index-ar.html",
+			"accept": {
+				"model/therion-lox": [ ".lox" ],
+				"application/x-survex-3d": [ ".3d" ]
+			},
+			"icons": [
+				{
+					"src": "CaveView/images/logo192.png",
+					"sizes": "192x192",
+					"type": "image/png"
+				}
+			],
+			"launch_type": "single-client"
+		}
+	]
 }

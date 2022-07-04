@@ -63,8 +63,8 @@ class LocationSource extends EventDispatcher {
 					console.log( 'in survey', location );
 					watcherId = navigator.geolocation.watchPosition( updateLocation );
 
-//					materials.location.copy( location );
-					materials.locationScale = 0.008;
+					materials.location.copy( location );
+					materials.locationScale = 0.2;
 					materials.locationAccuracy = 50;
 
 				}

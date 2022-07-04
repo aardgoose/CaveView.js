@@ -26,7 +26,30 @@
 
 <script type="text/javascript" >
 
+function loadServiceWorker () {
+
+	if ('serviceWorker' in navigator) {
+		// Register a service worker hosted at the root of the
+		// site using the default scope.
+		navigator.serviceWorker
+			.register('/sw.js')
+			.then(function(registration) {
+   					console.log('Service worker registration succeeded:', registration);
+				}, /*catch*/ function(error) {
+    				console.log('Service worker registration failed:', error);
+  				}
+			);
+	} else {
+
+		console.log('Service workers are not supported.');
+
+	}
+
+}
+
 function onload () {
+
+	loadServiceWorker();
 
 	const viewer = new CV2.CaveViewer( "scene", {
 		terrainDirectory: "/terrain/",
@@ -72,10 +95,11 @@ function onload () {
 	viewer.addPlugin( CV2Plugins.DistanceFieldPlugin );
 	viewer.addPlugin( CV2Plugins.LocationPlugin );
 	viewer.addPlugin( CV2Plugins.ARPlugin );
+	viewer.addPlugin( CV2Plugins.OSFilePlugin );
 
 	const ui = new CV2.CaveViewUI( viewer );
 
-	ui.loadCave( "Castleton_Master_NoSurface.3d" );
+//	ui.loadCave( "Castleton_Master_NoSurface.3d" );
 
 }
 </script>

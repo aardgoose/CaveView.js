@@ -57,7 +57,6 @@ class Frame {
 
 	}
 
-
 	addPage ( page ) {
 
 		const pageDiv = page.page;

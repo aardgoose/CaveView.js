@@ -9,6 +9,7 @@ import { EditPage } from './EditPage';
 import { KeyboardControls } from './KeyboardControls';
 import { FileSelector } from './FileSelector';
 import { ExportPage } from './ExportPage';
+import { ModelSource } from '../core/ModelSource';
 
 function CaveViewUI ( viewer ) {
 
@@ -16,6 +17,8 @@ function CaveViewUI ( viewer ) {
 	const container = viewer.container;
 	const frame = new Frame( ctx );
 	const cfg = ctx.cfg;
+
+	ctx.ui = this;
 
 	const fileSelector = new FileSelector( container, ctx );
 	fileSelector.addEventListener( 'selected', selectFile );
@@ -32,49 +35,46 @@ function CaveViewUI ( viewer ) {
 
 	const keyboardControls = new KeyboardControls( viewer, fileSelector, cfg.value( 'avenControls', true ) );
 
+	initUI();
+
 	function selectFile( event ) {
 
 		frame.clear();
 		viewer.clearView();
 
-		if ( Array.isArray( event.file ) ) {
-
-			viewer.loadCaves( event.file );
-
-		} else {
-
-			viewer.loadCave( event.file, event.section );
-
-		}
+		viewer.loadSource( event.source, event.section );
 
 	}
 
 	function initUI () {
-
-		if ( ! viewer.surveyLoaded ) return;
 
 		// create UI side panel and reveal tabs
 		frame.clear();
 
 		new SettingsPage( frame, viewer, fileSelector );
 
-		if ( viewer.hasSurfaceLegs || viewer.hasTerrain ) new SurfacePage( frame, viewer );
+		if ( viewer.surveyLoaded ) {
 
-		if ( cfg.selectionTree ) {
+			if ( viewer.hasSurfaceLegs || viewer.hasTerrain ) new SurfacePage( frame, viewer );
 
-			new SelectionTreePage( frame, viewer, container, fileSelector );
+			if ( cfg.selectionTree ) {
 
-		} else {
+				new SelectionTreePage( frame, viewer, container, fileSelector );
 
-			new SelectionPage( frame, viewer, container, fileSelector );
+			} else {
+
+				new SelectionPage( frame, viewer, container, fileSelector );
+
+			}
+
+			if ( cfg.value( 'showEditPage', false ) && ! fileSelector.isMultiple ) new EditPage( frame, viewer, fileSelector );
+
+			if ( cfg.value( 'showExportPage', false) ) new ExportPage( frame, viewer, fileSelector );
+
+			new InfoPage( frame, viewer, fileSelector );
 
 		}
 
-		if ( cfg.value( 'showEditPage', false ) && ! fileSelector.isMultiple ) new EditPage( frame, viewer, fileSelector );
-
-		if ( cfg.value( 'showExportPage', false) ) new ExportPage( frame, viewer, fileSelector );
-
-		new InfoPage( frame, viewer, fileSelector );
 		new HelpPage( frame, viewer.svxControlMode );
 
 		frame.setParent( container );
@@ -85,21 +85,20 @@ function CaveViewUI ( viewer ) {
 
 	this.loadCaveList = function ( list ) {
 
-		fileSelector.addList( list );
+		fileSelector.addNetList( list );
 		fileSelector.nextFile();
 
 	};
 
 	this.loadCave = function ( file, section ) {
 
-		fileSelector.selectFile( file, section );
+		fileSelector.selectSource( new ModelSource( [ { name: file } ], false ), section );
 
 	};
 
 	this.loadCaves = function ( files ) {
 
-		viewer.clearView();
-		viewer.loadCaves( files );
+		fileSelector.selectSource( new ModelSource.makeModelSourceFiles( files ) );
 
 	};
 
@@ -107,6 +106,18 @@ function CaveViewUI ( viewer ) {
 
 		frame.clear();
 		viewer.clearView();
+
+	};
+
+	this.getFrame = function () {
+
+		return frame;
+
+	};
+
+	this.getFileSelector = function () {
+
+		return fileSelector;
 
 	};
 

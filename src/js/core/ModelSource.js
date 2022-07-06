@@ -12,6 +12,17 @@ class ModelSource {
 		this.id = ModelSource.lastId++;
 
 	}
+
+	static makeModelSourceFiles( files ) {
+
+		const fileList = [];
+
+		files.forEach( file => fileList.push( { name: file } ) );
+
+		return new ModelSource( fileList, false );
+
+	}
+
 }
 
 export { ModelSource };

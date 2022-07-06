@@ -285,16 +285,56 @@ class Page {
 
 	}
 
-	addFileSelect ( title, obj, trgObj, property ) {
+	addFileSelect ( title, fileSelector ) {
 
 		const frame = this.frame;
-		const div = this.addSelect( title, obj, trgObj, property );
-
-		const label = div.firstChild;
 		const id = 'cv-' + frame.getSeq();
+		const sourceList = fileSelector.sourceList;
+		const div = document.createElement( 'div' );
+		const select = document.createElement( 'select' );
+		const label = this.makeLabel( title, 'cv-select', id );
 
-		label.htmlFor = id;
+		div.classList.add( 'control' );
 		label.classList.add( 'cv-file-label' );
+
+		sourceList.forEach( source => {
+
+			const opt = document.createElement( 'option' );
+
+			if ( source.files.length == 1 ) {
+
+				opt.text = source.files[ 0 ].name;
+
+			} else {
+
+				opt.text = '[multiple]';
+
+			}
+
+			opt.value = source.id;
+
+			if ( opt.value == fileSelector.loadedSource.id ) opt.selected = true;
+
+			select.add( opt, null );
+
+		} );
+
+		this.addListener( select, 'change', function onChange ( event ) {
+
+
+			frame.inHandler = true;
+
+			fileSelector.selectSource( sourceList.find( source => source.id == event.target.value  ) );
+
+			frame.inHandler = false;
+
+		} );
+
+		frame.controls[ 'fileSelector' ] = select;
+
+		div.appendChild( label );
+		div.appendChild( select );
+
 
 		const input = document.createElement( 'input' );
 
@@ -306,20 +346,12 @@ class Page {
 
 		this.addListener( input, 'change', function _handleFileChange () {
 
-			const count = input.files.length;
-			const files = [];
-
-			if ( count > 0 ) {
-
-				for ( let i = 0; i < count; i++ ) files.push( input.files[ i ] );
-
-				trgObj[ property ] = files;
-
-			}
+			fileSelector.loadLocalFiles( input.files );
 
 		} );
 
 		label.appendChild( input );
+		this.page.appendChild( div );
 
 		return div;
 

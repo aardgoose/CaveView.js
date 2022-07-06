@@ -36,6 +36,7 @@ import { RenderUtils } from '../core/RenderUtils';
 import {
 	EventDispatcher, Vector3, Scene, Raycaster, WebGLRenderer, MOUSE, FogExp2
 } from '../Three';
+import { ModelSource } from '../core/ModelSource';
 
 class CaveViewer extends EventDispatcher {
 
@@ -832,7 +833,15 @@ class CaveViewer extends EventDispatcher {
 
 		function onCameraMoved () {
 
+			if ( survey === null ) return;
+
 			lightingManager.setRotation( cameraManager.getRotation() );
+
+			if ( cameraManager.activeCamera.isOrthographicCamera ) {
+
+				ctx.materials.scale =  cameraManager.activeCamera.zoom * survey.scale.z;
+
+			}
 
 			renderView( true );
 
@@ -1093,17 +1102,23 @@ class CaveViewer extends EventDispatcher {
 
 		};
 
-		this.loadCave = function ( file, section ) {
+		this.loadSource = function ( source, section ) {
 
-			caveLoader.loadFile( file, section );
+			caveLoader.loadSource( source, section );
 
 			clipped = ( section !== undefined && section !== '' );
 
 		};
 
+		this.loadCave = function ( file, section ) {
+
+			this.loadSource( new ModelSource( [ { name: file } ], false ), section );
+
+		};
+
 		this.loadCaves = function ( files ) {
 
-			caveLoader.loadFiles( files );
+			caveLoader.loadSource( ModelSource.makeModelSourceFiles( files ) );
 
 		};
 
@@ -1391,6 +1406,8 @@ class CaveViewer extends EventDispatcher {
 		}
 
 		this.getStationUnderMouse = function ( mouse, station ) {
+
+			if ( survey === null ) return null;
 
 			const threshold = raycaster.params.Points.threshold;
 
@@ -1805,7 +1822,7 @@ class CaveViewer extends EventDispatcher {
 
 			if ( useFog ) materials.setFog( false );
 
-			hud.renderHUD();
+			if ( survey !== null ) hud.renderHUD();
 
 		}
 

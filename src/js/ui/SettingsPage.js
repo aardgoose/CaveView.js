@@ -47,24 +47,18 @@ class SettingsPage extends Page {
 
 		const legShadingModesActive = Object.assign( {}, legShadingModes );
 
+		this.addHeader( 'survey.header' );
+
+		this.addFileSelect( 'survey.caption', fileSelector  );
+
+		if ( ! viewer.surveyLoaded ) return this;
+
 		const routeNames = viewer.routeNames;
 
 		if ( viewer.hasRealTerrain ) {
 
 			legShadingModesActive[ 'shading.depth' ] = SHADING_DEPTH;
 			legShadingModesActive[ 'shading.depth_cursor' ] = SHADING_DEPTH_CURSOR;
-
-		}
-
-		this.addHeader( 'survey.header' );
-
-		if ( fileSelector.fileCount > 1 ) {
-
-			this.addFileSelect( 'survey.caption', fileSelector.fileList, fileSelector, 'file' );
-
-		} else {
-
-			this.addLine( fileSelector.selectedFile );
 
 		}
 

@@ -1,4 +1,5 @@
 import { EventDispatcher } from '../Three';
+import { ModelSource } from '../core/ModelSource';
 
 class FileSelector extends EventDispatcher {
 
@@ -6,13 +7,12 @@ class FileSelector extends EventDispatcher {
 
 		super();
 
-		this.fileList = [];
-		this.fileCount = 0;
+		this.sourceList = [];
+		this.sourceCount = 0;
 		this.currentIndex = Infinity;
-		this.loadedFile = null;
-		this.isMultiple = false;
+		this.loadedSource = null;
+
 		this.splash = null;
-		this.localFilename = null;
 
 		const self = this;
 
@@ -20,11 +20,6 @@ class FileSelector extends EventDispatcher {
 		container.addEventListener( 'dragenter', _handleDragenter );
 		container.addEventListener( 'dragover', _handleDragover );
 		container.addEventListener( 'dragleave', _handleDragleave );
-
-		Object.defineProperty( this, 'file', {
-			get: function () { return this.selectedFile; },
-			set: this.selectFile
-		} );
 
 		function _closeSpash () {
 
@@ -81,20 +76,7 @@ class FileSelector extends EventDispatcher {
 
 			event.preventDefault();
 
-			const count = dt.files.length;
-			const files = [];
-
-			if ( count > 0 ) {
-
-				for ( let i = 0; i < count; i++ ) {
-
-					files.push( dt.files[ i ] );
-
-				}
-
-				self.selectFile( files, null );
-
-			}
+			self.launchFiles( dt.files );
 
 		}
 
@@ -109,60 +91,65 @@ class FileSelector extends EventDispatcher {
 
 	}
 
-	addList ( list ) {
+	loadLocalFiles ( list ) {
 
-		this.fileList = list;
-		this.fileCount = list.length;
+		const count = list.length;
+		const source = new ModelSource( [], true );
+
+		if ( count > 0 ) {
+
+			for ( let i = 0; i < count; i++ ) {
+
+				source.files.push( list[ i ] );
+
+			}
+
+			// FIXME ( add to list??)
+			this.sourceList.push( source );
+			this.selectSource( source, null );
+
+		}
+
+	}
+
+	addNetList ( list ) {
+
+		const sourceList = this.sourceList;
+
+		list.forEach( name => {
+
+			sourceList.push( new ModelSource( [ { name: name } ], false ) );
+
+		} );
+
+		this.sourceCount = list.length;
 
 	}
 
 	nextFile () {
 
-		const fileList = this.fileList;
+		const sourceList = this.sourceList;
 
 		//cycle through caves in list provided
-		if ( this.fileCount === 0 ) return false;
+		if ( this.sourceCount === 0 ) return false;
 
-		if ( ++this.currentIndex >= this.fileCount ) this.currentIndex = 0;
+		if ( ++this.currentIndex >= this.sourceCount ) this.currentIndex = 0;
 
-		this.selectFile( fileList[ this.currentIndex ] );
+		this.selectSource( sourceList[ this.currentIndex ] );
 
 	}
 
-	selectFile ( file, section ) {
+	selectSource ( source, section = null ) {
 
-		if ( Array.isArray( file ) ) {
+		this.loadedSource = source;
 
-			if ( file.length === 1 ) {
-
-				this.localFilename = file[ 0 ].name;
-				this.selectedFile = file[ 0 ];
-				this.isMultiple = false;
-
-			} else {
-
-				this.selectedFile = '[multiple]';
-				this.localFilename = 'multiple';
-				this.isMultiple = true;
-
-			}
-
-		} else {
-
-			this.selectedFile = file;
-			this.localFilename = file;
-
-		}
-
-		this.loadedFile = file;
-
-		this.dispatchEvent( { type: 'selected', file: file, section: section } );
+		this.dispatchEvent( { type: 'selected', source: source, section: section } );
 
 	}
 
 	reload () {
 
-		this.selectFile( this.loadedFile );
+		this.selectSource( this.loadedSource );
 
 	}
 

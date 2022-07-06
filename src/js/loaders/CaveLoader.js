@@ -31,7 +31,8 @@ class CaveLoader extends EventDispatcher {
 
 	reset () {
 
-		this.files = null;
+		this.source = null;
+		this.sourceIndex = 0;
 		this.handler = null;
 		this.section = null;
 
@@ -76,24 +77,29 @@ class CaveLoader extends EventDispatcher {
 
 	}
 
-	loadFile ( file, section ) {
+	loadSource ( source, section = null ) {
 
-		if ( file instanceof File ) {
+		this.source = source;
+		this.section = section;
 
-			this.loadLocalFile( file, section );
-
-		} else {
-
-			this.loadURL( file, section );
-
-		}
+		this.loadNext();
 
 	}
 
-	loadFiles ( files ) {
+	loadNext () {
 
-		this.files = files;
-		this.loadFile( files.pop() );
+		const source = this.source;
+		const file = source.files[ this.sourceIndex++ ];
+
+		if ( source.local ) {
+
+			this.loadLocalFile( file );
+
+		} else {
+
+			this.loadURL( file );
+
+		}
 
 	}
 
@@ -104,8 +110,9 @@ class CaveLoader extends EventDispatcher {
 
 	}
 
-	loadURL ( fileName, section ) {
+	loadURL ( fileDesc, section ) {
 
+		const fileName = fileDesc.name;
 		const cfg = this.ctx.cfg;
 
 		this.dispatchEvent( { type: 'progress', name: 'start' } );
@@ -261,19 +268,18 @@ class CaveLoader extends EventDispatcher {
 		const data = this.dataResponse;
 		const metadata = this.metadataResponse;
 		const section = this.section;
-		const files = this.files;
 
 		this.dataResponse = null;
 		this.metadataResponse = null;
 
-		const moreFiles = files !== null && files.length > 0;
+		const moreFiles = ( this.sourceIndex < this.source.files.length );
 
 		// start the next download to overlap parsing previous file
 		const handler = this.handler;
 
 		this.handler = null;
 
-		if ( moreFiles ) this.loadFile( files.pop() );
+		if ( moreFiles ) this.loadNext();
 
 		const progress = this.progress.bind( this );
 

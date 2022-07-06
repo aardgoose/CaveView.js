@@ -1,3 +1,5 @@
+import { ModelSource } from '../core/ModelSource';
+
 class OSFilePlugin {
 
 	constructor ( ctx ) {
@@ -10,11 +12,6 @@ class OSFilePlugin {
 
 			window.launchQueue.setConsumer( ( launchParams ) => {
 
-				// Nothing to do when the queue is empty.
-				if ( ! launchParams.files.length ) {
-					return;
-				}
-
 				const filePromises = [];
 
 				for ( const fileHandle of launchParams.files ) {
@@ -24,8 +21,22 @@ class OSFilePlugin {
 
 				}
 
-				Promise.all( filePromises)
-					.then( files => viewer.loadCaves( files ) )
+				Promise.all( filePromises )
+					.then( files => {
+
+						if ( ctx.ui ) {
+
+							console.log( 'load via ui' );
+							const fs = ctx.ui.getFileSelector();
+							fs.loadLocalFiles( files );
+
+						} else {
+
+							viewer.loadCave( new ModelSource( files, true ) );
+
+						}
+
+					} )
 					.catch( console.warn( 'error opening files' ) );
 
 			} );

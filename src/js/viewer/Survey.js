@@ -287,7 +287,7 @@ class Survey extends Object3D {
 
 		if ( this.hasFeature( LEG_SURFACE) ) {
 
-			points.push( ...this.getFeature( LEG_SURFACE ).legVertices );
+			this.getFeature( LEG_SURFACE ).legVertices.forEach( point => points.push( point ) );
 
 		}
 

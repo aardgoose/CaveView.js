@@ -26,9 +26,7 @@ class OSFilePlugin {
 
 						if ( ctx.ui ) {
 
-							console.log( 'load via ui' );
-							const fs = ctx.ui.getFileSelector();
-							fs.loadLocalFiles( files );
+							ctx.ui.loadLocalFiles( files );
 
 						} else {
 

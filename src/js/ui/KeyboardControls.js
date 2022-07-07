@@ -172,7 +172,7 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 		case 'n': // load next cave in list
 
-			fileSelector.nextFile();
+			fileSelector.nextSource();
 			break;
 
 		case 'o': // switch view to orthoganal'

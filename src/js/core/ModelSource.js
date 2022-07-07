@@ -13,13 +13,19 @@ class ModelSource {
 
 	}
 
+	addFile ( file ) {
+
+		this.files.push( file );
+
+	}
+
 	static makeModelSourceFiles( files ) {
 
-		const fileList = [];
+		const source = new ModelSource( [], false );
 
-		files.forEach( file => fileList.push( { name: file } ) );
+		files.forEach( file => source.addFile( { name: file } ) );
 
-		return new ModelSource( fileList, false );
+		return source;
 
 	}
 

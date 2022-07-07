@@ -86,7 +86,7 @@ function CaveViewUI ( viewer ) {
 	this.loadCaveList = function ( list ) {
 
 		fileSelector.addNetList( list );
-		fileSelector.nextFile();
+		fileSelector.nextSource();
 
 	};
 
@@ -102,22 +102,16 @@ function CaveViewUI ( viewer ) {
 
 	};
 
+	this.loadLocalFiles = function ( files ) {
+
+		fileSelector.loadLocalFiles( files );
+
+	};
+
 	this.clearView = function () {
 
 		frame.clear();
 		viewer.clearView();
-
-	};
-
-	this.getFrame = function () {
-
-		return frame;
-
-	};
-
-	this.getFileSelector = function () {
-
-		return fileSelector;
 
 	};
 

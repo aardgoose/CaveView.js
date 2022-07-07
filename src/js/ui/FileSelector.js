@@ -76,7 +76,7 @@ class FileSelector extends EventDispatcher {
 
 			event.preventDefault();
 
-			self.launchFiles( dt.files );
+			self.loadLocalFiles( dt.files );
 
 		}
 
@@ -100,7 +100,7 @@ class FileSelector extends EventDispatcher {
 
 			for ( let i = 0; i < count; i++ ) {
 
-				source.files.push( list[ i ] );
+				source.addFile( list[ i ] );
 
 			}
 
@@ -118,7 +118,20 @@ class FileSelector extends EventDispatcher {
 
 		list.forEach( name => {
 
-			sourceList.push( new ModelSource( [ { name: name } ], false ) );
+			const source = new ModelSource( [], false );
+
+			if ( name instanceof Array ) {
+
+
+				name.forEach( file => source.addFile( { name: file } ) );
+
+			} else {
+
+				source.addFile( { name: name } );
+
+			}
+
+			sourceList.push( source );
 
 		} );
 
@@ -126,7 +139,7 @@ class FileSelector extends EventDispatcher {
 
 	}
 
-	nextFile () {
+	nextSource () {
 
 		const sourceList = this.sourceList;
 

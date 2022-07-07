@@ -36,42 +36,53 @@ class Handler {
 
 			const matches = sourceCRS.match( /\+init=(.*)\s/ );
 
+			let init;
+
 			if ( matches && matches.length === 2 ) {
 
-				const init = matches[ 1 ];
-				let code;
+				init = matches[ 1 ];
 
-				switch ( init ) {
+			} else {
 
-				case 'epsg:27700' :
+				init = sourceCRS.toLowerCase();
 
-					sourceCRS = '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs';
+			}
 
-					break;
+			let code;
 
-				default:
+			switch ( init ) {
 
-					code = init.match( /(epsg|esri):([0-9]+)/ );
+			case 'epsg:27700' :
 
-					if ( code !== null ) {
+				sourceCRS = '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs';
 
-						console.log( 'looking up CRS code EPSG:' + code [ 2 ] );
+				break;
 
-						return fetch( 'https://epsg.io/' + code[ 2 ] + '.proj4' )
-							.then( response => {
+			default:
 
-								return response.text();
+				code = init.match( /(epsg|esri):([0-9]+)/ );
 
-							} ).then( text => {
+				if ( code !== null ) {
 
-								this._setCRS( text );
+					console.log( 'looking up CRS code EPSG:' + code [ 2 ] );
 
-							} ).catch( function () { console.log( 'CRS lookup failed' ); } );
+					return fetch( 'https://epsg.io/' + code[ 2 ] + '.proj4' )
+						.then( response => {
 
-					} else {
+							return response.text();
 
-						console.log( 'Unsupported projection:', sourceCRS );
+						} ).then( text => {
+
+							this._setCRS( text );
+
+						} ).catch( function () { console.log( 'CRS lookup failed' ); } );
+
+				} else {
+
+					if ( ! sourceCRS.match( /^\+proj/ ) ) {
+
 						sourceCRS = null;
+						console.log( 'got proj');
 
 					}
 

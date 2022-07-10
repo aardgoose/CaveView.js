@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
 <head>
-	<title>demo 3d cave viewer</title>
+	<title>3d cave viewer</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
 	<link rel="manifest" href="/manifest.webmanifest" />
 	<meta name="Description" content="CaveView - 3d Cave model viewer">
-	<meta name="theme-color" content="#00FF00"/>
+	<meta name="theme-color" content="#1590b7/>
 	<link rel="icon" type="image/svg+xml" href="CaveView/images/logo.svg">
 </head>
 <body onload="onload();" >
@@ -92,12 +92,12 @@ function onload () {
 		"Cheddar.lox"
 	];
 
+	const ui = new CV2.CaveViewUI( viewer );
+
 	viewer.addPlugin( CV2Plugins.DistanceFieldPlugin );
 	viewer.addPlugin( CV2Plugins.LocationPlugin );
 	viewer.addPlugin( CV2Plugins.ARPlugin );
 	viewer.addPlugin( CV2Plugins.OSFilePlugin );
-
-	const ui = new CV2.CaveViewUI( viewer );
 
 //	ui.loadCave( "Castleton_Master_NoSurface.3d" );
 

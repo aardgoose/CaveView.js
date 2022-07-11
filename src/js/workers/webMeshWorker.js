@@ -1,7 +1,8 @@
-import { TerrainMeshLoader } from '../loaders/TerrainMeshLoader';
-import { TerrainMeshGeometry } from '../terrain/TerrainMeshGeometry';
 import { Box2 } from 'three/src/math/Box2.js';
+import { TerrainMeshGeometry } from '../terrain/TerrainMeshGeometry';
+import { TerrainMeshLoader } from '../loaders/TerrainMeshLoader';
 import { Vector3 } from 'three/src/math/Vector3.js';
+
 import proj4 from 'proj4';
 
 let tileSpec;

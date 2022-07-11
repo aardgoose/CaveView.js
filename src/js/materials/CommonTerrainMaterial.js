@@ -16,7 +16,7 @@ class CommonTerrainMaterial extends MeshLambertMaterial {
 
 	}
 
-	commonBeforeCompile( ctx, shader ) {
+	commonBeforeCompile ( ctx, shader ) {
 
 		Object.assign(
 			shader.uniforms,
@@ -50,7 +50,7 @@ class CommonTerrainMaterial extends MeshLambertMaterial {
 
 	}
 
-	editShaderInclude( shader, name ) {
+	editShaderInclude ( shader, name ) {
 
 		const start = '#include <' + name;
 

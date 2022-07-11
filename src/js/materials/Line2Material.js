@@ -1,8 +1,8 @@
 import {
-	ShaderMaterial,
-	UniformsLib,
 	cloneUniforms,
 	mergeUniforms,
+	ShaderMaterial,
+	UniformsLib,
 	Vector2
 } from '../Three';
 import { Shaders } from './shaders/Shaders';

@@ -1,5 +1,5 @@
-import { Shaders } from './shaders/Shaders';
 import { ShaderMaterial } from '../Three';
+import { Shaders } from './shaders/Shaders';
 
 class HeightMaterial extends ShaderMaterial {
 

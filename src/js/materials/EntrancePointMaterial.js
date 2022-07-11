@@ -1,4 +1,4 @@
-import { PointsMaterial, IncrementStencilOp } from '../Three';
+import { IncrementStencilOp, PointsMaterial } from '../Three';
 
 class EntrancePointMaterial extends PointsMaterial {
 

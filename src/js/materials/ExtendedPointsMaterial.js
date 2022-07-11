@@ -1,4 +1,4 @@
-import { PointsMaterial, Color } from '../Three';
+import { Color, PointsMaterial } from '../Three';
 
 class ExtendedPointsMaterial extends PointsMaterial {
 

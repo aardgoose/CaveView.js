@@ -1,23 +1,23 @@
-import { CursorMaterial } from './CursorMaterial';
 import { ClusterMaterial } from './ClusterMaterial';
+import { ColourCache } from '../core/ColourCache';
 import { ContourMaterial } from './ContourMaterial';
-import { DepthMaterial } from './DepthMaterial';
+import { CursorMaterial } from './CursorMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
+import { DepthMaterial } from './DepthMaterial';
+import { EntrancePointMaterial } from './EntrancePointMaterial';
 import { ExtendedPointsMaterial } from './ExtendedPointsMaterial';
+import { GlyphAtlasCache } from './GlyphAtlas';
 import { GlyphMaterial } from './GlyphMaterial';
 import { HeightMaterial } from './HeightMaterial';
 import { HypsometricMaterial } from './HypsometricMaterial';
+import { Line2Material } from './Line2Material';
 import { MissingMaterial } from './MissingMaterial';
 import { SurveyLineMaterial } from './SurveyLineMaterial';
-import { Line2Material } from './Line2Material';
-import { ColourCache } from '../core/ColourCache';
 import { TextureCache } from '../core/TextureCache';
-import { GlyphAtlasCache } from './GlyphAtlas';
-import { EntrancePointMaterial } from './EntrancePointMaterial';
 
 import {
-	LineBasicMaterial, MeshLambertMaterial, MeshBasicMaterial, MeshPhongMaterial,
-	IncrementStencilOp, Color, Vector2
+	Color, IncrementStencilOp, LineBasicMaterial,
+	MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, Vector2
 } from '../Three';
 
 function Materials ( viewer ) {

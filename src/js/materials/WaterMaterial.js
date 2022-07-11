@@ -1,5 +1,5 @@
-import { Shaders } from './shaders/Shaders';
 import { ShaderMaterial, DoubleSide } from '../Three';
+import { Shaders } from './shaders/Shaders';
 
 class WaterMaterial extends ShaderMaterial {
 

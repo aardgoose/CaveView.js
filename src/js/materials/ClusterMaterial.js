@@ -1,4 +1,4 @@
-import { PointsMaterial, CanvasTexture } from '../Three';
+import { CanvasTexture, PointsMaterial } from '../Three';
 
 class ClusterMaterial extends PointsMaterial {
 

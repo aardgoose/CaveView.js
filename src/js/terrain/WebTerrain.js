@@ -1,10 +1,8 @@
+import { Frustum, Matrix4 } from '../Three';
 import { CommonTerrain } from './CommonTerrain';
-import { Tile, TILE_EVICTED, TILE_PENDING } from './Tile';
-
 import { EPSG4326TileSet } from './EPSG4326TileSet';
 import { EPSG3857TileSet } from './EPSG3857TileSet';
-
-import { Frustum, Matrix4 } from '../Three';
+import { Tile, TILE_EVICTED, TILE_PENDING } from './Tile';
 import { dataURL } from '../core/lib';
 
 const __frustum = new Frustum();

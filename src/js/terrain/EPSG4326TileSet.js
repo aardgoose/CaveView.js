@@ -31,7 +31,14 @@ class EPSG4326TileSet {
 
 		this.transformedLimits = null;
 
-		const accessToken = ctx.cfg.value( 'cesiumAccessToken', 'no access token' );
+		const accessToken = ctx.cfg.value( 'cesiumAccessToken', false );
+
+		if ( ! accessToken ) {
+
+			return Promise.reject( this );
+
+		}
+
 		const url = 'https://api.cesium.com/v1/assets/1/endpoint?access_token=' + accessToken;
 
 		return new Promise( ( resolve, reject ) => {

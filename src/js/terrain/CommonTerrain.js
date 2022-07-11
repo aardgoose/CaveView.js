@@ -1,10 +1,8 @@
-import {
-	FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS
-} from '../core/constants';
+import { Box3, Group } from '../Three';
+import { FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS } from '../core/constants';
 import { DepthMapMaterial } from '../materials/DepthMapMaterial';
 import { HeightLookup } from './HeightLookup';
 import { Overlay } from './Overlay';
-import { Group, Box3 } from '../Three';
 
 class CommonTerrain extends Group {
 
@@ -356,6 +354,5 @@ CommonTerrain.addOverlay = function ( ctx, name, overlayProvider ) {
 	ctx.overlays[ name ] = new Overlay( ctx, overlayProvider );
 
 };
-
 
 export { CommonTerrain };

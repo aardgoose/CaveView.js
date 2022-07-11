@@ -6,7 +6,7 @@
  * based on http://papervision3d.googlecode.com/svn/trunk/as3/trunk/src/org/papervision3d/objects/primitives/Plane.as
  */
 
-import { BufferGeometry, Float32BufferAttribute, Vector3, Box3 } from '../Three';
+import { Box3, BufferGeometry, Float32BufferAttribute, Vector3 } from '../Three';
 
 class LoxTerrainGeometry extends BufferGeometry {
 

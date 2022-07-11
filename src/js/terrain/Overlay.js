@@ -1,6 +1,5 @@
-import { TextureLoader, Box2, Vector2, Color } from '../Three';
-
-import {TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
+import { Box2, Color, TextureLoader, Vector2 } from '../Three';
+import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 import proj4 from 'proj4';
 
 class Overlay {

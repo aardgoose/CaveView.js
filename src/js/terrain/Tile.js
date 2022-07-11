@@ -1,9 +1,5 @@
+import { Box3, BufferGeometry, Float32BufferAttribute, Mesh, Triangle, Uint16BufferAttribute, Vector3 } from '../Three';
 import { FEATURE_TERRAIN } from '../core/constants';
-
-import {
-	Vector3, Triangle, Box3, BufferGeometry,
-	Float32BufferAttribute, Uint16BufferAttribute, Mesh
-} from '../Three';
 
 // preallocated for projected area calculations
 

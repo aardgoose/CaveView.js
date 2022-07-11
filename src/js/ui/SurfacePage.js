@@ -46,7 +46,6 @@ class SurfacePage extends Page {
 
 			controls.push( this.addRange( 'terrain.opacity', viewer, 'terrainOpacity' ) );
 
-			controls.push( this.addCheckbox( 'terrain.datum_shift', viewer, 'terrainDatumShift' ) );
 			controls.push( this.addSelect( 'terrain.lightingmode', lightingModes, viewer, 'terrainLightingMode' ) );
 
 			if ( ! viewer.hasRealTerrain ) {
@@ -54,6 +53,9 @@ class SurfacePage extends Page {
 				controls.push( this.addDownloadButton( 'terrain.downloadTileSet', viewer.terrainTileSet, 'tileSetEntry.json' ) );
 
 			}
+
+			this.addCheckbox( 'terrain.datum_shift', viewer, 'terrainDatumShift' );
+			this.addNumber( 'terrain.datum_shift_value', viewer, 'terrainDatumShiftValue' );
 
 			viewer.terrainAttributions.forEach( attribution => {
 

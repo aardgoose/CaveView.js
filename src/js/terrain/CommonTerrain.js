@@ -135,7 +135,7 @@ class CommonTerrain extends Group {
 		this.renderTarget = renderTarget;
 
 		// add lookup using heightMap texture
-		this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox );
+		this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox, survey.offsets );
 
 		this.checkTerrainShadingModes( renderer );
 
@@ -317,7 +317,7 @@ class CommonTerrain extends Group {
 	}
 
 	getHeight ( point ) {
-
+console.log( point );
 		return this.heightLookup.lookup( point );
 
 	}
@@ -340,7 +340,8 @@ class CommonTerrain extends Group {
 		const sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
 
 		// simple average
-		this.datumShift = s1 / n;
+		//this.datumShift = s1 / n;
+		this.ctx.viewer.terrainDatumShiftValue = s1 / n;
 
 		console.log( `Adjustmenting terrain height by: ${this.datumShift} sd: ${sd} n: ${n} --` );
 

@@ -204,7 +204,7 @@ class CaveViewer extends EventDispatcher {
 
 			'terrainDatumShiftValue': {
 				get: function () { return terrain.datumShift; },
-				enumerable: true
+				set: stateSetter( ( x ) => { terrain.datumShift = x; }, 'terrainDatumShiftValue' )
 			},
 
 			'terrainOpacity': {

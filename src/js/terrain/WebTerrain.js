@@ -649,9 +649,12 @@ class WebTerrain extends CommonTerrain {
 			const sd = Math.sqrt( s2 / n - Math.pow( s1 / n, 2 ) );
 
 			// simple average
-			this.datumShift = s1 / n;
+			// this.datumShift = s1 / n;
+			// hack to update ui async
+			this.ctx.viewer.terrainDatumShiftValue = s1 / n;
 
 			console.log( `Adjustmenting terrain height by: ${this.datumShift} sd: ${sd} n: ${n}` );
+
 
 		} );
 

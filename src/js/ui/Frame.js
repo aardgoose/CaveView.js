@@ -211,6 +211,7 @@ class Frame {
 
 				case 'select-one':
 				case 'range':
+				case 'number':
 
 					ctrl.value = obj[ property ];
 

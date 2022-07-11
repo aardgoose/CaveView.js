@@ -1,14 +1,19 @@
 import {
+	BackSide,
+	Euler,
+	MathUtils,
+	MeshBasicMaterial,
+	OrthographicCamera,
+	PerspectiveCamera,
+	Quaternion
+} from '../Three';
+import {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_ANAGLYPH,
 	LEG_CAVE, FEATURE_SELECTED_BOX, FEATURE_SURVEY, FEATURE_TERRAIN
 } from '../core/constants';
 
 import { AnaglyphEffect } from './AnaglyphEffect';
 
-import {
-	OrthographicCamera, PerspectiveCamera, MathUtils,
-	MeshBasicMaterial, BackSide, Euler, Quaternion,
-} from '../Three';
 
 const __rotation = new Euler();
 const __q = new Quaternion();

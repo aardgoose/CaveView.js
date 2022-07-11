@@ -6,9 +6,8 @@ import {
 import { StationPopup } from './StationPopup';
 import { StationDistancePopup } from './StationDistancePopup';
 import { SegmentPopup } from './SegmentPopup';
-import { StationNameLabel } from './StationNameLabel';
 import { ImagePopup } from './ImagePopup';
-
+import { StationNameLabel } from './StationNameLabel';
 import { EventDispatcher, Raycaster, MOUSE } from '../Three';
 
 class PointerControls extends EventDispatcher {

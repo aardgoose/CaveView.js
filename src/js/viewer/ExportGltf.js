@@ -1,5 +1,5 @@
-import { FACE_SCRAPS, FACE_WALLS, LEG_CAVE } from '../core/constants';
 import { Float32BufferAttribute } from '../Three';
+import { FACE_SCRAPS, FACE_WALLS, LEG_CAVE } from '../core/constants';
 
 class ExportGltf {
 

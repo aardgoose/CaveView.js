@@ -1,7 +1,6 @@
+import { IncrementStencilOp } from '../Three';
 import { FEATURE_SELECTED_BOX } from '../core/constants';
 import { SurveyBox } from '../core/SurveyBox';
-
-import { IncrementStencilOp } from '../Three';
 
 class Selection extends SurveyBox {
 

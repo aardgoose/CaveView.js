@@ -1,37 +1,29 @@
+import { EventDispatcher, FogExp2, Raycaster, Scene, Vector2, Vector3, WebGLRenderer } from '../Three';
 import {
-	VERSION,
-	LM_NONE, LM_SINGLE,
-	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES, FEATURE_GRID, SURVEY_WARNINGS,
-	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LEG_DUPLICATE,
-	LABEL_STATION, LABEL_STATION_COMMENT,
-	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_TERRAIN, FEATURE_STATIONS, FEATURE_ENTRANCE_DOTS,
-	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_TRACE_EDIT
+	FACE_SCRAPS, FACE_WALLS,FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_ENTRANCE_DOTS, FEATURE_GRID, FEATURE_STATIONS, FEATURE_TERRAIN, FEATURE_TRACES,
+	LABEL_STATION, LABEL_STATION_COMMENT, LEG_CAVE, LEG_SPLAY, LEG_DUPLICATE, LEG_SURFACE, LM_NONE, LM_SINGLE, MOUSE_MODE_TRACE_EDIT, SURVEY_WARNINGS,
+	VERSION, VIEW_ELEVATION_E, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_W,  VIEW_NONE, VIEW_PLAN,
 } from '../core/constants';
 
-import { HUD } from '../hud/HUD';
-import { Materials } from '../materials/Materials';
 import { CameraManager } from './CameraManager';
-import { LightingManager } from './LightingManager';
 import { CameraMove } from './CameraMove';
 import { CaveLoader } from '../loaders/CaveLoader';
-import { Survey } from './Survey';
-import { PublicFactory } from '../public/PublicFactory';
-import { WebTerrain } from '../terrain/WebTerrain';
-import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/Cfg';
-import { WorkerPoolCache } from '../core/WorkerPool';
-import { ViewState } from './ViewState';
+import { CommonTerrain } from '../terrain/CommonTerrain';
+import { ExportGltf } from './ExportGltf';
+import { HUD } from '../hud/HUD';
+import { LightingManager } from './LightingManager';
+import { Materials } from '../materials/Materials';
+import { ModelSource } from '../core/ModelSource';
 import { OrbitControls } from '../ui/OrbitControls';
 import { PointerControls } from './PointerControls';
-import { ExportGltf } from './ExportGltf';
-import { Snapshot } from './Snapshot';
+import { PublicFactory } from '../public/PublicFactory';
 import { RenderUtils } from '../core/RenderUtils';
-
-import {
-	EventDispatcher, Vector3, Vector2, Scene, WebGLRenderer, FogExp2, Raycaster
-} from '../Three';
-import { ModelSource } from '../core/ModelSource';
+import { Snapshot } from './Snapshot';
+import { Survey } from './Survey';
+import { ViewState } from './ViewState';
+import { WebTerrain } from '../terrain/WebTerrain';
+import { WorkerPoolCache } from '../core/WorkerPool';
 
 class CaveViewer extends EventDispatcher {
 

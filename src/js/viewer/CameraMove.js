@@ -1,5 +1,4 @@
-import { Object3D, Vector3, Quaternion, Matrix4, Euler, MathUtils } from '../Three';
-
+import { Euler, MathUtils, Matrix4, Object3D, Quaternion, Vector3 } from '../Three';
 import { CAMERA_OFFSET } from '../core/constants';
 
 const __v1 = new Vector3();

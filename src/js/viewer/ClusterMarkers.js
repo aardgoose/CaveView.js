@@ -1,7 +1,7 @@
+import { Object3D, Plane, Triangle, Vector3 } from '../Three';
 import { FEATURE_ENTRANCES, CLUSTER_MARKERS } from '../core/constants';
 import { GlyphString } from '../core/GlyphString';
 import { Marker } from './Marker';
-import { Object3D, Vector3, Triangle, Plane } from '../Three';
 
 // preallocated objects for projected area calculation and cluster visibility checks
 

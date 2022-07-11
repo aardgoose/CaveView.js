@@ -1,6 +1,6 @@
-import { PopupMaterial } from '../materials/PopupMaterial';
-import { Popup } from './Popup';
 import { CanvasTexture } from '../Three';
+import { Popup } from './Popup';
+import { PopupMaterial } from '../materials/PopupMaterial';
 
 class CanvasPopup extends Popup {
 

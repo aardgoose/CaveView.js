@@ -1,6 +1,6 @@
-import { PopupMaterial } from '../materials/PopupMaterial';
-import { Popup } from './Popup';
 import { TextureLoader } from '../Three';
+import { Popup } from './Popup';
+import { PopupMaterial } from '../materials/PopupMaterial';
 
 class ImagePopup extends Popup {
 

@@ -288,7 +288,7 @@ class Legs extends LineSegments2 {
 
 	}
 
-	setLegColor( leg, color1, color2 = null ) {
+	setLegColor ( leg, color1, color2 = null ) {
 
 		const c1 = this.colourCache.getColour( color1 );
 		const c2 = ( ! color2 ) ? c1: this.colourCache.getColour( color2 );

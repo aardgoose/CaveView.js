@@ -1,6 +1,6 @@
+import { BufferGeometry, Float32BufferAttribute, Points } from '../Three';
 import { ClusterMarkers } from './ClusterMarkers';
 import { STATION_ENTRANCE, FEATURE_ENTRANCE_DOTS } from '../core/constants';
-import { Points, BufferGeometry, Float32BufferAttribute } from '../Three';
 
 class Entrances extends ClusterMarkers {
 

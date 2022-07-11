@@ -1,4 +1,4 @@
-import { Points, BufferGeometry, Float32BufferAttribute } from '../Three';
+import { BufferGeometry, Float32BufferAttribute, Points } from '../Three';
 
 class Point extends Points {
 

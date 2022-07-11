@@ -1,6 +1,6 @@
 import {
-	BufferGeometry, Points, Vector3, Float32BufferAttribute,
-	InterleavedBuffer, InterleavedBufferAttribute, Matrix4, Vector4
+	BufferGeometry, Float32BufferAttribute, InterleavedBuffer, InterleavedBufferAttribute,
+	Matrix4, Points, Vector3, Vector4
 } from '../Three';
 
 import { STATION_ENTRANCE } from '../core/constants';

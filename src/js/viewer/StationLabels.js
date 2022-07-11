@@ -1,5 +1,4 @@
 import { Group, Vector3 } from '../Three';
-
 import { CAMERA_OFFSET, LABEL_STATION, LABEL_STATION_COMMENT } from '../core/constants';
 import { GlyphString } from '../core/GlyphString';
 

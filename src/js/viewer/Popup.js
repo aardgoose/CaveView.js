@@ -1,6 +1,6 @@
+import { BufferGeometry, Mesh } from '../Three';
 import { LEG_CAVE } from '../core/constants';
 import { CommonAttributes } from '../core/CommonAttributes';
-import { BufferGeometry, Mesh } from '../Three';
 
 class PopupGeometry extends BufferGeometry {
 

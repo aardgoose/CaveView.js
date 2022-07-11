@@ -1,4 +1,4 @@
-import { WebGLRenderTarget, LinearFilter, NearestFilter, RGBAFormat } from '../Three';
+import { LinearFilter, NearestFilter, RGBAFormat, WebGLRenderTarget } from '../Three';
 
 class Snapshot {
 

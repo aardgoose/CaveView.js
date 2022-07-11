@@ -1,6 +1,5 @@
+import { AmbientLight, DirectionalLight, Group, MathUtils, Object3D, Vector3 } from '../Three';
 import { LM_NONE, LM_SINGLE, LM_MULTIPLE } from '../core/constants';
-import { Vector3, Object3D, Group, AmbientLight, DirectionalLight, MathUtils } from '../Three';
-
 
 function LightingManager ( ctx, scene ) {
 
@@ -35,7 +34,7 @@ function LightingManager ( ctx, scene ) {
 
 	this.mode = LM_SINGLE;
 
-	function _createDirectionalLight( color, alt, azimuth ) {
+	function _createDirectionalLight ( color, alt, azimuth ) {
 
 		const light = new DirectionalLight( color );
 		const position = light.position;
@@ -50,7 +49,7 @@ function LightingManager ( ctx, scene ) {
 
 	}
 
-	this.setRotation = function( rotation ) {
+	this.setRotation = function ( rotation ) {
 
 		lights.setRotationFromAxisAngle( up, rotation.z );
 		lights.updateMatrix();

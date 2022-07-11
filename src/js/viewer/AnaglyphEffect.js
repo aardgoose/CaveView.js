@@ -6,11 +6,17 @@
  */
 
 import {
-	Matrix3, Scene, Mesh, PlaneBufferGeometry,
-	OrthographicCamera, StereoCamera,
-	WebGLRenderTarget,
-	LinearFilter, NearestFilter, RGBAFormat,
-	ShaderMaterial
+	LinearFilter,
+	Matrix3,
+	Mesh,
+	NearestFilter,
+	OrthographicCamera,
+	PlaneBufferGeometry,
+	RGBAFormat,
+	Scene,
+	ShaderMaterial,
+	StereoCamera,
+	WebGLRenderTarget
 } from '../Three';
 
 import { Shaders } from '../materials/shaders/Shaders';

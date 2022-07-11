@@ -1,30 +1,26 @@
+import { Box3, Color, Matrix4, Object3D, Vector3 } from '../Three';
 import {
-	FACE_SCRAPS, FACE_WALLS,
-	FEATURE_ENTRANCES, FEATURE_BOX, FEATURE_TRACES, FEATURE_GRID,
-	FEATURE_STATIONS, SURVEY_WARNINGS, STATION_ENTRANCE,
-	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LEG_DUPLICATE,
-	LABEL_STATION, LABEL_STATION_COMMENT,
-	SHADING_CURSOR, SHADING_DEPTH, SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY,
-	SHADING_SURVEY, SHADING_SINGLE, SHADING_SHADED, SHADING_PATH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE,
-	SHADING_SURFACE, CLUSTER_MARKERS, SHADING_DUPLICATE, SHADING_CUSTOM
+	CLUSTER_MARKERS,
+	FACE_SCRAPS, FACE_WALLS, FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_GRID, FEATURE_STATIONS, FEATURE_TRACES,
+	LABEL_STATION, LABEL_STATION_COMMENT, LEG_CAVE, LEG_DUPLICATE, LEG_SPLAY, LEG_SURFACE,
+	SHADING_CURSOR, SHADING_CUSTOM, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE, SHADING_DUPLICATE,
+	SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_PATH,
+	SHADING_SHADED, SHADING_SINGLE, SHADING_SURFACE, SHADING_SURVEY, STATION_ENTRANCE, SURVEY_WARNINGS,
 } from '../core/constants';
-
+import { buildWallsSync } from './walls/WallBuilders';
+import { DyeTraces } from './DyeTraces';
 import { Entrances } from './Entrances';
+import { Grid } from './Grid';
+import { Legs } from './Legs';
+import { LoxTerrain } from '../terrain/LoxTerrain';
+import { Routes } from './Routes';
 import { Stations } from './Stations';
 import { StationLabels } from './StationLabels';
 import { StationMarkers } from './StationMarkers';
-import { Routes } from './Routes';
-import { Legs } from './Legs';
-import { DyeTraces } from './DyeTraces';
-import { SurveyMetadata } from './SurveyMetadata';
-import { LoxTerrain } from '../terrain/LoxTerrain';
-import { buildWallsSync } from './walls/WallBuilders';
-import { SurveyColourMapper} from '../core/SurveyColourMapper';
 import { Selection } from './Selection';
 import { SurveyBox } from '../core/SurveyBox';
-import { Grid } from './Grid';
-
-import { Matrix4, Vector3, Box3, Object3D, Color } from '../Three';
+import { SurveyColourMapper} from '../core/SurveyColourMapper';
+import { SurveyMetadata } from './SurveyMetadata';
 import proj4 from 'proj4';
 
 const __set = new Set();

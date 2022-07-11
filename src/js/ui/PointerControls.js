@@ -70,13 +70,17 @@ class PointerControls extends EventDispatcher {
 			mouseTargets = [];
 			mouseMode = MOUSE_MODE_NORMAL;
 
-			container.removeEventListener( 'mousedown', onMouseDown, false );
+			container.removeEventListener( 'mousedown', onMouseDown );
 
 		} );
 
 		viewer.addEventListener( 'dispose', () => {
 
-			container.removeEventListener( 'mousedown', onMouseDown, false );
+			document.rmeoveEventListener( 'keyup', endDistanceMode );
+
+			container.removeEventListener( 'mouseup', mouseUp );
+			container.removeEventListener( 'mousedown', onMouseDown );
+			container.removeEventListener( 'pointermove', onPointerMove );
 
 		} );
 

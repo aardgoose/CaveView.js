@@ -16,7 +16,7 @@ import { LightingManager } from './LightingManager';
 import { Materials } from '../materials/Materials';
 import { ModelSource } from '../core/ModelSource';
 import { OrbitControls } from '../ui/OrbitControls';
-import { PointerControls } from './PointerControls';
+import { PointerControls } from '../ui/PointerControls';
 import { PublicFactory } from '../public/PublicFactory';
 import { RenderUtils } from '../core/RenderUtils';
 import { Snapshot } from './Snapshot';
@@ -195,7 +195,7 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'terrainDatumShiftValue': {
-				get: function () { return terrain.datumShift; },
+				get: function () { return Math.round( terrain.datumShift ); },
 				set: stateSetter( ( x ) => { terrain.datumShift = x; }, 'terrainDatumShiftValue' )
 			},
 

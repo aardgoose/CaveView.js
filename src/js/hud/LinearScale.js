@@ -1,6 +1,5 @@
-import { Scale } from './Scale';
-
 import { PlaneBufferGeometry } from '../Three';
+import { Scale } from './Scale';
 
 class LinearScale extends Scale {
 

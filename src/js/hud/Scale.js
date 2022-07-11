@@ -1,5 +1,5 @@
+import { Group, Mesh } from '../Three';
 import { GlyphString } from '../core/GlyphString';
-import { Mesh, Group } from '../Three';
 
 class Scale extends Group {
 

@@ -1,4 +1,4 @@
-import { Vector3, Group } from '../Three';
+import { Group, Vector3 } from '../Three';
 import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { Line2Material } from '../materials/Line2Material';
@@ -36,7 +36,6 @@ class CGeometry extends LineSegmentsGeometry {
 
 }
 
-
 class Orb extends Group {
 
 	constructor( hudObject ) {
@@ -47,7 +46,6 @@ class Orb extends Group {
 		//const materials = hudObject.ctx.materials;
 
 		super();
-
 
 		this.name = 'CV.Orb';
 

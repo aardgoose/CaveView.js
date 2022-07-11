@@ -1,6 +1,5 @@
+import { BufferGeometry, Float32BufferAttribute, Group, Mesh } from '../Three';
 import { MutableGlyphString } from '../core/GlyphString';
-
-import { Float32BufferAttribute, BufferGeometry, Group, Mesh } from '../Three';
 
 class BarGeometry extends BufferGeometry {
 

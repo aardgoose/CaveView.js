@@ -1,6 +1,5 @@
+import { Float32BufferAttribute, Mesh, Object3D, RingBufferGeometry } from '../Three';
 import { MutableGlyphString } from '../core/GlyphString';
-
-import { RingBufferGeometry, Object3D, Mesh, Float32BufferAttribute } from '../Three';
 
 class ProgressDial extends Mesh {
 

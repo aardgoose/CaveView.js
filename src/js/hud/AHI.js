@@ -1,14 +1,17 @@
-import { MutableGlyphString } from '../core/GlyphString';
 import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { Line2Material } from '../materials/Line2Material';
+import { MutableGlyphString } from '../core/GlyphString';
 
 import {
-	Vector3, MathUtils,
-	SphereBufferGeometry,
-	MeshPhongMaterial,
 	Float32BufferAttribute,
-	Object3D, Mesh, Group
+	Group,
+	MathUtils,
+	Mesh,
+	MeshPhongMaterial,
+	Object3D,
+	SphereBufferGeometry,
+	Vector3
 } from '../Three';
 
 // preallocated tmp objects

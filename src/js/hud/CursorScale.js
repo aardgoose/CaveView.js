@@ -4,7 +4,7 @@ import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { Line2Material } from '../materials/Line2Material';
 
-import { PlaneBufferGeometry, MeshBasicMaterial } from '../Three';
+import { MeshBasicMaterial, PlaneBufferGeometry } from '../Three';
 
 class CursorScale extends Scale {
 

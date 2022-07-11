@@ -1,12 +1,17 @@
-import { MutableGlyphString } from '../core/GlyphString';
-
 import {
-	Vector3, MathUtils,
+	BufferGeometry,
+	Euler,
+	Float32BufferAttribute,
+	Group,
+	MathUtils,
+	Mesh,
+	MeshBasicMaterial,
+	MeshLambertMaterial,
 	RingBufferGeometry,
-	MeshBasicMaterial, MeshLambertMaterial,
-	BufferGeometry, Float32BufferAttribute,
-	Mesh, Group, Euler
+	Vector3
 } from '../Three';
+
+import { MutableGlyphString } from '../core/GlyphString';
 
 const __direction = new Vector3();
 const __negativeZAxis = new Vector3( 0, 0, -1 );

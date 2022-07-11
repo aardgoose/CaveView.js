@@ -1,5 +1,5 @@
-import { Colours } from './Colours';
 import { Color } from '../Three';
+import { Colours } from './Colours';
 
 // define colors to share THREE.color objects across multiple instances
 

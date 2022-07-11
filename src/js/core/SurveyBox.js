@@ -1,4 +1,4 @@
-import { Vector3, Float32BufferAttribute } from '../Three';
+import { Float32BufferAttribute, Vector3, } from '../Three';
 import { LineSegments2 } from './LineSegments2';
 import { LineSegmentsGeometry } from './LineSegmentsGeometry';
 

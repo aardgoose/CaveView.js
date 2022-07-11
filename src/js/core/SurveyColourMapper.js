@@ -1,4 +1,3 @@
-
 function SurveyColourMapper ( ctx ) {
 
 	let map = [];

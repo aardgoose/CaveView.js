@@ -1,5 +1,5 @@
+import { DataTexture, LinearFilter, RGBAFormat, TextureLoader, UnsignedByteType } from '../Three';
 import { Colours } from './Colours';
-import { DataTexture, RGBAFormat, UnsignedByteType, LinearFilter, TextureLoader } from '../Three';
 
 // define colors to share THREE.color objects
 

@@ -1,4 +1,3 @@
-
 const defaultTheme = {
 	fieldOfView: 50,
 	background: 'black',

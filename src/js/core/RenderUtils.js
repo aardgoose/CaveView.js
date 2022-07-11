@@ -1,4 +1,4 @@
-import { OrthographicCamera, Vector3, WebGLRenderTarget, NearestFilter } from '../Three';
+import { NearestFilter, OrthographicCamera, Vector3, WebGLRenderTarget } from '../Three';
 import { TextureLookup } from './TextureLookup';
 
 class RenderUtils {

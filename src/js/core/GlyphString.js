@@ -1,4 +1,4 @@
-import { Mesh, Vector2, Vector3, Vector4, Box2, Object3D } from '../Three';
+import { Box2, Mesh, Object3D, Vector2, Vector3, Vector4 } from '../Three';
 import { GlyphStringGeometry, GlyphStringGeometryCache } from './GlyphStringGeometry';
 
 // temporary objects for raycasting

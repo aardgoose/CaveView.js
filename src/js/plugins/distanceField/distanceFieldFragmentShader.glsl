@@ -1,4 +1,3 @@
-
 #include <packRGBA>
 
 uniform sampler2D tSource;

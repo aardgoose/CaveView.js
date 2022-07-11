@@ -1,5 +1,4 @@
-
-import { Vector3, PerspectiveCamera } from './Three';
+import { PerspectiveCamera, Vector3 } from './Three';
 
 const NORMAL = 0;
 const FLAT = 1;

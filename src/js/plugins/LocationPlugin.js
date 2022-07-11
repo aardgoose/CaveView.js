@@ -1,4 +1,3 @@
-
 import { Vector3, EventDispatcher } from './Three';
 
 class LocationSource extends EventDispatcher {

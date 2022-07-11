@@ -20,6 +20,8 @@ const TILE_FAILED   = 5;
 
 class Tile extends Mesh {
 
+	static liveTiles = 0;
+
 	constructor ( ctx, x, y, zoom, tileSpec ) {
 
 		super( new BufferGeometry(), ctx.materials.getSurfaceMaterial() );
@@ -301,7 +303,5 @@ class Tile extends Mesh {
 	}
 
 }
-
-Tile.liveTiles = 0;
 
 export { Tile, TILE_PENDING, TILE_ACTIVE, TILE_EVICTED, TILE_REPLACED };

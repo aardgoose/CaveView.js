@@ -13,7 +13,7 @@ class HeightLookup extends TextureLookup {
 	}
 
 	lookup ( point ) {
-		console.log( this.base.z, this.zOffset );
+
 		return super.lookup( point ) * this.range.z;
 
 	}

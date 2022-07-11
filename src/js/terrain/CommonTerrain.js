@@ -315,7 +315,7 @@ class CommonTerrain extends Group {
 	}
 
 	getHeight ( point ) {
-console.log( point );
+
 		return this.heightLookup.lookup( point );
 
 	}

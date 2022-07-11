@@ -480,6 +480,13 @@ div.cv-frame::-webkit-scrollbar-button:end {
   bottom: 4px;
 }
 
+.cv-frame div.page input[type=number] {
+  position: absolute;
+  width: 80px;
+  right: 0px;
+  bottom: 4px;
+}
+
 .cv-frame div.page div.control.color {
   height: 36px;
 }

@@ -394,6 +394,33 @@ class Page {
 
 	}
 
+	addNumber ( title, obj, property ) {
+
+		const frame = this.frame;
+		const number    = document.createElement( 'input' );
+		const div   = document.createElement( 'div' );
+
+		const id = 'cv-' + frame.getSeq();
+
+		div.classList.add( 'control' );
+
+		number.type = 'number';
+		number.value = obj[ property ];
+		number.id = id;
+		number.disabled = true;
+
+
+		frame.controls[ property ] = number;
+
+		div.appendChild( number );
+		div.appendChild( this.makeLabel( title, 'check', id ) );
+
+		this.page.appendChild( div );
+
+		return div;
+
+	}
+
 	addRange ( title, obj, property ) {
 
 		const frame = this.frame;

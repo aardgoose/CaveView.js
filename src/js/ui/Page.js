@@ -1,4 +1,3 @@
-
 class Page {
 
 	constructor ( id, x18nPrefix, onTop, onLeave ) {

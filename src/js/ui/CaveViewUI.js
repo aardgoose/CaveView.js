@@ -1,15 +1,15 @@
+import { EditPage } from './EditPage';
+import { ExportPage } from './ExportPage';
+import { FileSelector } from './FileSelector';
 import { Frame } from './Frame';
 import { HelpPage } from './HelpPage';
 import { InfoPage } from './InfoPage';
+import { KeyboardControls } from './KeyboardControls';
+import { ModelSource } from '../core/ModelSource';
 import { SelectionPage } from './SelectionPage';
 import { SelectionTreePage } from './SelectionTreePage';
 import { SettingsPage } from './SettingsPage';
 import { SurfacePage } from './SurfacePage';
-import { EditPage } from './EditPage';
-import { KeyboardControls } from './KeyboardControls';
-import { FileSelector } from './FileSelector';
-import { ExportPage } from './ExportPage';
-import { ModelSource } from '../core/ModelSource';
 
 function CaveViewUI ( viewer ) {
 

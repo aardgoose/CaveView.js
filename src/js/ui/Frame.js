@@ -1,4 +1,3 @@
-
 class Frame {
 
 	static seq = 0;

@@ -1,13 +1,10 @@
-import { SHADING_PATH, MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_NORMAL, /* MOUSE_MODE_ENTRANCES */ } from '../core/constants';
-
+import { SHADING_PATH, MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_NORMAL } from '../core/constants';
 import { Page } from './Page';
 import { RoutePanel } from './RoutePanel';
 import { TracePanel } from './TracePanel';
-//import { EntrancePanel } from './EntrancePanel';
 
 const mode = {
 	'modes.none': MOUSE_MODE_NORMAL,
-	// 'modes.entrances': MOUSE_MODE_ENTRANCES,
 	'modes.route': MOUSE_MODE_ROUTE_EDIT,
 	'modes.trace': MOUSE_MODE_TRACE_EDIT
 };
@@ -27,7 +24,6 @@ class EditPage extends Page {
 
 		let routePanel = null;
 		let tracePanel = null;
-		// let entrancePanel = null;
 
 		this.addSelect( 'mode', mode, viewer, 'editMode' );
 
@@ -61,16 +57,6 @@ class EditPage extends Page {
 					newState.shadingMode = SHADING_PATH;
 
 					break;
-				/*
-				case MOUSE_MODE_ENTRANCES:
-
-					if ( entrancePanel === null ) entrancePanel = new EntrancePanel( self, viewer );
-
-					newState.entrances = true;
-
-					break;
-
-				*/
 
 				}
 
@@ -78,7 +64,6 @@ class EditPage extends Page {
 
 				frame.setControlsVisibility( intro, viewer.editMode === MOUSE_MODE_NORMAL );
 
-				// if ( entrancePanel !== null ) entrancePanel.setVisibility( viewer.editMode === MOUSE_MODE_ENTRANCES );
 				if ( routePanel !== null ) routePanel.setVisibility( viewer.editMode === MOUSE_MODE_ROUTE_EDIT );
 				if ( tracePanel !== null ) tracePanel.setVisibility( viewer.editMode === MOUSE_MODE_TRACE_EDIT );
 
@@ -92,7 +77,6 @@ class EditPage extends Page {
 
 			initialState = {
 				shadingMode: viewer.shadingMode,
-				// entrances: viewer.entrances,
 				stations: viewer.stations,
 				traces: viewer.traces
 			};

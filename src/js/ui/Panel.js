@@ -1,4 +1,3 @@
-
 class Panel {
 
 	constructor ( page ) {

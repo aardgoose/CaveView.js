@@ -1,8 +1,8 @@
+import { EventDispatcher, FileLoader } from '../Three';
 import { replaceExtension } from '../core/lib';
 import { Svx3dHandler } from './svx3dHandler';
 import { loxHandler } from './loxHandler';
 import { pltHandler } from './pltHandler';
-import { FileLoader, EventDispatcher } from '../Three';
 import { Handler } from './Handler';
 
 const setProgressEvent = { type: 'progress', name: 'set', progress: 0 };
@@ -298,6 +298,5 @@ class CaveLoader extends EventDispatcher {
 	}
 
 }
-
 
 export { CaveLoader };

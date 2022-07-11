@@ -1,8 +1,8 @@
+import { Vector3 } from '../Three';
 import {
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LEG_DUPLICATE,
 	STATION_ENTRANCE, STATION_NORMAL, STATION_XSECT
 } from '../core/constants';
-import { Vector3 } from '../Three';
 import { StationPosition } from '../core/StationPosition';
 
 class loxHandler {

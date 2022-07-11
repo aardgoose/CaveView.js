@@ -1,4 +1,3 @@
-
 class HeightMapLoader {
 
 	constructor ( tileSpec ) {

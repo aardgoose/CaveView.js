@@ -40,7 +40,7 @@ class Leg {
 
 	}
 
-	segment() {
+	segment () {
 
 		return this.factory.getSegment( this.segmentId );
 

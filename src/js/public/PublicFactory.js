@@ -45,7 +45,7 @@ class PublicFactory {
 
 	}
 
-	getSegment( segmentIndex ) {
+	getSegment ( segmentIndex ) {
 
 		const survey = this.survey;
 

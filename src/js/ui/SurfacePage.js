@@ -54,8 +54,8 @@ class SurfacePage extends Page {
 
 			}
 
-			this.addCheckbox( 'terrain.datum_shift', viewer, 'terrainDatumShift' );
 			this.addNumber( 'terrain.datum_shift_value', viewer, 'terrainDatumShiftValue' );
+			this.addCheckbox( 'terrain.datum_shift', viewer, 'terrainDatumShift' );
 
 			viewer.terrainAttributions.forEach( attribution => {
 

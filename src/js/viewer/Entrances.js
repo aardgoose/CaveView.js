@@ -101,7 +101,7 @@ class Entrances extends ClusterMarkers {
 
 			}
 
-			self.addMarker( node, ' ' + name + ' ' );
+			self.addMarker( node, ` ${name} ` );
 
 		}
 

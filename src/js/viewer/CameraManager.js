@@ -7,7 +7,7 @@ import { AnaglyphEffect } from './AnaglyphEffect';
 
 import {
 	OrthographicCamera, PerspectiveCamera, MathUtils,
-	MeshBasicMaterial, BackSide, Vector2, Euler, Quaternion,
+	MeshBasicMaterial, BackSide, Euler, Quaternion,
 } from '../Three';
 
 const __rotation = new Euler();
@@ -22,8 +22,6 @@ function CameraManager ( ctx, renderer, scene ) {
 
 	const orthographicCamera = new OrthographicCamera( -width / 2, width / 2, height / 2, -height / 2, 0.05, 4000 );
 	const perspectiveCamera = new PerspectiveCamera( ctx.cfg.themeValue( 'fieldOfView' ), width / height, 1, 16000 );
-
-	const mouse = new Vector2();
 
 	const self = this;
 
@@ -245,19 +243,6 @@ function CameraManager ( ctx, renderer, scene ) {
 	this.getLastFrame = function () {
 
 		return lastFrame;
-
-	};
-
-	this.getMouse = function ( x, y ) {
-
-		const boundingRect = container.getBoundingClientRect();
-
-		mouse.set(
-			( ( x - boundingRect.left ) / container.clientWidth ) * 2 - 1,
-			- ( ( y - boundingRect.top ) / container.clientHeight ) * 2 + 1
-		);
-
-		return mouse;
 
 	};
 

@@ -35,7 +35,6 @@ class PointerControls extends EventDispatcher {
 		let lastMouseMode = MOUSE_MODE_NORMAL;
 		let mouseMode = MOUSE_MODE_NORMAL;
 		let mouseTargets = [];
-		let filterConnected = false;
 		let clickCount = 0;
 
 		let survey = null;
@@ -267,12 +266,8 @@ class PointerControls extends EventDispatcher {
 
 			if ( event.filterConnected ) {
 
-				filterConnected = true;
-
-				viewer.setShadingMode( survey.caveShading );
+				survey.setShadingMode( survey.caveShading, true );
 				viewer.renderView();
-
-				filterConnected = false;
 
 			}
 

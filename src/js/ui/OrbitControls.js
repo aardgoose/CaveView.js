@@ -707,7 +707,7 @@ class OrbitControls extends EventDispatcher {
 				let distance;
 
 				// get mouse in ndc
-				const mouse = cameraManager.getMouse( x, y );
+				const mouse = viewer.getMouse( x, y );
 
 				if ( firstWheelMove || mouseStart.x !== mouse.x || mouseStart.y !== mouse.y ) {
 

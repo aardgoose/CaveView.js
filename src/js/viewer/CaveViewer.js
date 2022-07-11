@@ -4,10 +4,9 @@ import {
 	FACE_WALLS, FACE_SCRAPS, FEATURE_TRACES, FEATURE_GRID, SURVEY_WARNINGS,
 	LEG_CAVE, LEG_SPLAY, LEG_SURFACE, LEG_DUPLICATE,
 	LABEL_STATION, LABEL_STATION_COMMENT,
-	SHADING_PATH, SHADING_DISTANCE,
 	FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_TERRAIN, FEATURE_STATIONS, FEATURE_ENTRANCE_DOTS,
 	VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_E, VIEW_ELEVATION_W, VIEW_PLAN, VIEW_NONE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES
+	MOUSE_MODE_TRACE_EDIT
 } from '../core/constants';
 
 import { HUD } from '../hud/HUD';
@@ -17,24 +16,20 @@ import { LightingManager } from './LightingManager';
 import { CameraMove } from './CameraMove';
 import { CaveLoader } from '../loaders/CaveLoader';
 import { Survey } from './Survey';
-import { StationPopup } from './StationPopup';
-import { StationDistancePopup } from './StationDistancePopup';
-import { SegmentPopup } from './SegmentPopup';
-import { StationNameLabel } from './StationNameLabel';
 import { PublicFactory } from '../public/PublicFactory';
-import { ImagePopup } from './ImagePopup';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { CommonTerrain } from '../terrain/CommonTerrain';
 import { Cfg } from '../core/Cfg';
 import { WorkerPoolCache } from '../core/WorkerPool';
 import { ViewState } from './ViewState';
 import { OrbitControls } from '../ui/OrbitControls';
+import { PointerControls } from './PointerControls';
 import { ExportGltf } from './ExportGltf';
 import { Snapshot } from './Snapshot';
 import { RenderUtils } from '../core/RenderUtils';
 
 import {
-	EventDispatcher, Vector3, Scene, Raycaster, WebGLRenderer, MOUSE, FogExp2
+	EventDispatcher, Vector3, Vector2, Scene, WebGLRenderer, FogExp2, Raycaster
 } from '../Three';
 import { ModelSource } from '../core/ModelSource';
 
@@ -93,34 +88,31 @@ class CaveViewer extends EventDispatcher {
 
 		const cameraManager = new CameraManager( ctx, renderer, scene );
 
-		const raycaster = new Raycaster();
-
-		raycaster.layers.enableAll();
-
 		// setup lighting
 		const lightingManager = new LightingManager( ctx, scene );
 
 		// setup controllers
 		const controls = new OrbitControls( cameraManager, renderer.domElement, this );
+
+		this.getControls = function () { return controls; };
+
 		controls.maxPolarAngle = cfg.themeAngle( 'maxPolarAngle' );
 		controls.addEventListener( 'change', onCameraMoved );
 		controls.addEventListener( 'end', onCameraMoveEnd );
 
 		const cameraMove = new CameraMove( controls, onCameraMoved );
+		this.cameraMove = cameraMove;
+
 		const moveEndEvent = { type: 'moved', cameraManager: cameraManager };
+		const pointerControls = new PointerControls( ctx, renderer.domElement );
 
-		const formatters = {};
-
-		let caveIsLoaded = false;
 		let publicFactory = null;
 
-		const mouseUpEvent = { type: 'select', node: null };
+		const mouse = new Vector2();
+		const raycaster = new Raycaster();
 
-		let lastMouseMode = MOUSE_MODE_NORMAL;
-		let mouseMode = MOUSE_MODE_NORMAL;
-		let mouseTargets = [];
-		let filterConnected = false;
-		let clickCount = 0;
+		raycaster.layers.enableAll();
+		raycaster.params.Points.threshold = 20;
 
 		let terrain = null;
 		let survey = null;
@@ -128,9 +120,6 @@ class CaveViewer extends EventDispatcher {
 		let useFog = false;
 
 		let renderRequired = true;
-
-		let popup = null;
-
 		let clipped = false;
 
 		// preallocated tmp objects
@@ -138,17 +127,8 @@ class CaveViewer extends EventDispatcher {
 		const __v = new Vector3();
 		const self = this;
 
-		let mouseUpFunction = null;
 		let savedView = null;
 		let mouseOver = false;
-
-		let hoverLabel = null;
-		let showStationNameLabel = false;
-		let lastStationNameLabel = false;
-
-		let showStationDistances = false;
-		let startStation = null;
-		let lastPointerOver = 0;
 
 		// event handler
 		window.addEventListener( 'resize', onResize );
@@ -164,7 +144,7 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'surveyLoaded': {
-				get: function () { return caveIsLoaded; }
+				get: function () { return ( survey !== null ); }
 			},
 
 			'terrain': {
@@ -174,8 +154,8 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'stationLabelOver': {
-				get: function () { return showStationNameLabel; },
-				set: setStationNameLabelMode,
+				get: function () { return pointerControls.getStationNameLabelMode(); },
+				set: function ( x ) { pointerControls.setStationNameLabelMode( x ); },
 				enumerable: true
 			},
 
@@ -219,6 +199,11 @@ class CaveViewer extends EventDispatcher {
 			'terrainDatumShift': {
 				get: function () { return !! terrain.activeDatumShift; },
 				set: applyTerrainDatumShift,
+				enumerable: true
+			},
+
+			'terrainDatumShiftValue': {
+				get: function () { return terrain.datumShift; },
 				enumerable: true
 			},
 
@@ -320,7 +305,7 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'popup': {
-				set: setPopup
+				set: ( x ) => { pointerControls.setPopup( x ); }
 			},
 
 			'highlight': {
@@ -337,8 +322,8 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'editMode': {
-				get: function () { return mouseMode; },
-				set: stateSetter( setEditMode, 'editMode' )
+				get: function () { return pointerControls.getEditMode(); },
+				set: stateSetter( ( x ) => { pointerControls.setEditMode( x ); }, 'editMode' )
 			},
 
 			'setPOI': {
@@ -365,7 +350,7 @@ class CaveViewer extends EventDispatcher {
 
 			'autoRotate': {
 				get: function () { return controls.autoRotate; },
-				set: function ( x ) { setAutoRotate( !! x ); }
+				set: stateSetter( setAutoRotate, 'autoRotate' )
 			},
 
 			'wheelTilt': {
@@ -398,7 +383,7 @@ class CaveViewer extends EventDispatcher {
 
 			'autoRotateSpeed': {
 				get: function () { return controls.autoRotateSpeed / 11; },
-				set: setAutoRotateSpeed
+				set: stateSetter( setAutoRotateSpeed, 'autoRotateSpeed' )
 			},
 
 			'fullscreen': {
@@ -465,42 +450,9 @@ class CaveViewer extends EventDispatcher {
 
 		} );
 
-		function onMouseOver () {
+		function onMouseOver () { mouseOver = true; }
 
-			mouseOver = true;
-
-		}
-
-		function onMouseLeave () {
-
-			mouseOver = false;
-
-		}
-
-		function setStationNameLabelMode ( mode ) {
-
-			if ( mode ) {
-
-				container.addEventListener( 'pointermove', onPointerMove );
-
-
-			} else {
-
-				if ( hoverLabel !== null ) {
-
-					hoverLabel.close();
-					hoverLabel = null;
-					renderView();
-
-				}
-
-				container.removeEventListener( 'pointermove', onPointerMove );
-
-			}
-
-			showStationNameLabel = mode;
-
-		}
+		function onMouseLeave () { mouseOver = false; }
 
 		function viewChanged( event ) {
 
@@ -511,12 +463,6 @@ class CaveViewer extends EventDispatcher {
 			}
 
 		}
-
-		this.getControls = function () {
-
-			return controls;
-
-		};
 
 		const hud = new HUD( this, renderer );
 
@@ -560,7 +506,7 @@ class CaveViewer extends EventDispatcher {
 			return function ( newMode ) {
 
 				modeFunction( isNaN( newMode ) ? newMode : Number( newMode ) );
-				self.dispatchEvent( { type: 'change', name: name } );
+				self.dispatchEvent( { type: 'change', name: name, value: newMode } );
 
 			};
 
@@ -582,54 +528,6 @@ class CaveViewer extends EventDispatcher {
 			renderer.setPixelRatio( pr );
 
 			matchMedia( `(resolution: ${pr}dppx)` ).addEventListener( 'change', updatePixelRatio, { once: true } );
-
-		}
-
-		function setEditMode ( x ) {
-
-			mouseMode = Number( x );
-			lastMouseMode = mouseMode;
-
-			clickCount = 0;
-			survey.markers.clear();
-			survey.selectSection( survey.surveyTree );
-
-			renderView();
-
-			raycaster.params.Points.threshold = 3;
-
-			switch ( mouseMode ) {
-
-			case MOUSE_MODE_TRACE_EDIT:
-
-				mouseTargets = survey.pointTargets.concat( [ survey.dyeTraces ] );
-
-				break;
-
-			case MOUSE_MODE_NORMAL:
-
-				mouseTargets = survey.pointTargets;
-
-				break;
-
-			case MOUSE_MODE_ROUTE_EDIT:
-
-				mouseTargets = survey.legTargets;
-
-				break;
-
-			case MOUSE_MODE_ENTRANCES:
-
-				mouseTargets = survey.entranceTargets;
-				raycaster.params.Points.threshold = 15;
-
-				break;
-
-			default:
-
-				console.warn( 'invalid mouse mode', x );
-
-			}
 
 		}
 
@@ -712,9 +610,7 @@ class CaveViewer extends EventDispatcher {
 
 		function setAutoRotate ( state ) {
 
-			cameraMove.setAutoRotate( state );
-
-			self.dispatchEvent( { type: 'change', name: 'autoRotate' } );
+			cameraMove.setAutoRotate( !! state );
 
 		}
 
@@ -722,14 +618,13 @@ class CaveViewer extends EventDispatcher {
 
 			controls.autoRotateSpeed = Math.max( Math.min( speed, 1.0 ), -1.0 ) * 11;
 
-			self.dispatchEvent( { type: 'change', name: 'autoRotateSpeed' } );
-
 		}
 
 		function setCursorHeight ( x ) {
 
 			materials.cursorHeight = x;
 			self.dispatchEvent( { type: 'cursorChange', name: 'cursorHeight' } );
+
 			renderView();
 
 		}
@@ -917,23 +812,7 @@ class CaveViewer extends EventDispatcher {
 
 		function setShadingMode ( mode ) {
 
-			const shadingMode = survey.setShadingMode( mode, filterConnected );
-
-			if ( shadingMode === SHADING_DISTANCE ) {
-
-				if ( mouseMode !== MOUSE_MODE_DISTANCE ) {
-
-					lastMouseMode = mouseMode;
-					mouseMode = MOUSE_MODE_DISTANCE;
-					mouseTargets = survey.pointTargets;
-
-				}
-
-			} else {
-
-				mouseMode = lastMouseMode;
-
-			}
+			survey.setShadingMode( mode, false );
 
 			renderView();
 
@@ -963,7 +842,7 @@ class CaveViewer extends EventDispatcher {
 
 		this.addFormatters = function ( stationFormatter ) {
 
-			formatters.station = stationFormatter;
+			pointerControls.formatters.station = stationFormatter;
 
 		};
 
@@ -1004,9 +883,9 @@ class CaveViewer extends EventDispatcher {
 
 			if ( node.isStation() ) {
 
-				if ( mouseMode === MOUSE_MODE_TRACE_EDIT ) {
+				if ( pointerControls.getEditMode() === MOUSE_MODE_TRACE_EDIT ) {
 
-					selectTraceStation( node );
+					pointerControls.selectTraceStation( node );
 
 				} else {
 
@@ -1066,8 +945,6 @@ class CaveViewer extends EventDispatcher {
 		this.clearView = function () {
 
 			// clear the current cave model, and clear the screen
-			caveIsLoaded = false;
-
 			renderer.clear();
 
 			hud.setVisibility( false );
@@ -1087,12 +964,6 @@ class CaveViewer extends EventDispatcher {
 
 			survey          = null;
 			terrain         = null;
-			mouseMode       = MOUSE_MODE_NORMAL;
-			mouseTargets    = [];
-
-			// remove event listeners
-
-			container.removeEventListener( 'mousedown', onMouseDown );
 
 			cameraManager.resetCameras();
 
@@ -1222,19 +1093,14 @@ class CaveViewer extends EventDispatcher {
 			publicFactory = new PublicFactory( survey );
 
 			scene.addStatic( survey );
-
-			mouseTargets = survey.pointTargets;
-
 			scene.matrixAutoUpdate = false;
-
-			container.addEventListener( 'mousedown', onMouseDown, false );
 
 			controls.enabled = true;
 
 			survey.getRoutes().addEventListener( 'changed', onSurveyChanged );
 			survey.addEventListener( 'changed', onSurveyChanged );
 
-			caveIsLoaded = true;
+			self.dispatchEvent( { type: 'newSurvey', name: 'newSurvey', survey: survey, publicFactory: publicFactory } );
 
 			// have we got built in terrain
 			let terrain = survey.terrain;
@@ -1287,518 +1153,6 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		function showStationImagePopup ( station, imageUrl ) {
-
-			if ( popup !== null ) return;
-
-			popup = new ImagePopup( ctx, station, imageUrl, renderView );
-			survey.addStatic( popup );
-
-			renderView();
-
-		}
-
-		function showStationPopup ( pStation ) {
-
-			if ( popup !== null ) return;
-
-			popup = new StationPopup( ctx, pStation, survey, formatters.station, ( survey.caveShading === SHADING_DISTANCE ), self.warnings );
-			survey.addStatic( popup );
-
-			renderView();
-
-		}
-
-		function showSegmentPopup ( leg, point ) {
-
-			if ( popup !== null ) return;
-
-			popup = new SegmentPopup( ctx, leg, point );
-			scene.addStatic( popup );
-
-			renderView();
-
-		}
-
-		function setPopup ( station ) {
-
-			closePopup();
-
-			if ( station.isStation() ) showStationPopup( publicFactory.getStation( station ) );
-
-		}
-
-		function closePopup () {
-
-			if ( popup === null ) return;
-
-			popup.close();
-			popup = null;
-
-		}
-
-		function endDistanceMode ( event ) {
-
-			if ( event.key != 'Shift' ) return;
-
-			// cancel showStation mode
-
-			showStationDistances = false;
-
-			closePopup();
-			setStationNameLabelMode( lastStationNameLabel );
-			controls.enabled = true;
-
-			document.removeEventListener( 'keyup', endDistanceMode );
-
-		}
-
-		function showStationPopupX ( station, event ) {
-
-			if ( event.shiftKey && ! showStationDistances ) {
-
-				lastStationNameLabel = showStationNameLabel;
-				showStationDistances = true;
-				startStation = station.station;
-
-				setStationNameLabelMode( true );
-				controls.enabled = false;
-
-				document.addEventListener( 'keyup', endDistanceMode );
-
-			} else {
-
-				showStationPopup( station );
-
-			}
-
-			mouseUpFunction = closePopup;
-
-			cameraMove.preparePoint( survey.getWorldPosition( station.station.clone() ) );
-
-		}
-
-		function mouseUp () {
-
-			container.removeEventListener( 'mouseup', mouseUp );
-
-			if ( mouseUpFunction ) mouseUpFunction();
-
-			renderView();
-
-			self.dispatchEvent( mouseUpEvent );
-
-		}
-
-		function filterConnectedLegs ( event ) {
-
-			if ( event.filterConnected ) {
-
-				filterConnected = true;
-
-				setShadingMode( survey.caveShading );
-				renderView();
-
-				filterConnected = false;
-
-			}
-
-		}
-
-		this.getStationUnderMouse = function ( mouse, station ) {
-
-			if ( survey === null ) return null;
-
-			const threshold = raycaster.params.Points.threshold;
-
-			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
-			raycaster.params.Points.threshold = 20;
-
-			const hit = raycaster.intersectObject( survey.stations, false )[ 0 ];
-
-			raycaster.params.Points.threshold = threshold;
-
-			return ( hit !== undefined ) ? survey.getWorldPosition( station.copy( hit.station ) ) : null;
-
-		};
-
-		function checkLegIntersects ( event ) {
-
-			const legs = survey.features.get( LEG_CAVE );
-			const legIntersect = raycaster.intersectObject( legs, false )[ 0 ];
-
-			let legIndex = null;
-			let segment = null;
-
-			if  ( legIntersect ) {
-
-				legIndex = legIntersect.faceIndex;
-
-				const legInfo = legs.getLegInfo( legIndex );
-				const leg = publicFactory.getLeg( legInfo );
-
-				segment = legInfo.segment;
-
-				const e = {
-					type: 'leg',
-					leg: leg,
-					handled: false,
-					highlight: false,
-					mouseEvent: event
-				};
-
-				self.dispatchEvent( e );
-
-				if ( e.highlight ) {
-
-					mouseUpFunction = _setLegHighlight;
-
-					_setLegHighlight();
-					renderView();
-
-				}
-
-				if ( ! e.handled ) {
-
-					mouseUpFunction = _setSegmentHighlight;
-
-					_setSegmentHighlight();
-					showSegmentPopup( leg, legIntersect.pointOnLine );
-					renderView();
-
-				}
-
-				legIndex = null;
-				segment = null;
-
-			}
-
-			function _setLegHighlight () {
-
-				legs.setHighlightLeg( legIndex );
-				setShadingMode( survey.caveShading );
-
-			}
-
-			function _setSegmentHighlight () {
-
-				legs.setHighlightSegment( segment );
-				setShadingMode( survey.caveShading );
-				if ( segment === null ) closePopup();
-
-			}
-
-		}
-
-		function selectStation ( station, event ) {
-
-			survey.selectStation( station );
-
-			const pStation = publicFactory.getStation( station );
-
-			const selectEvent = {
-				type: 'station',
-				node: pStation,
-				handled: false,
-				mouseEvent: event,
-				filterConnected: false
-			};
-
-			self.dispatchEvent( selectEvent );
-
-			filterConnectedLegs( selectEvent );
-
-			if ( selectEvent.handled ) return;
-
-			if ( event.button === MOUSE.LEFT ) {
-
-				showStationPopupX( pStation, event );
-
-			} else if ( event.button === MOUSE.RIGHT ) {
-
-				if ( ! survey.selection.contains( station.id ) ) {
-
-					survey.selectSection( survey.surveyTree );
-
-				}
-
-				selectSection( station );
-
-				cameraMove.start( true );
-				event.stopPropagation();
-
-				mouseUpFunction = null;
-
-			}
-
-		}
-
-		function onPointerMove( event ) {
-
-			if ( event.target !== renderer.domElement ) return;
-
-			const mouse = cameraManager.getMouse( event.clientX, event.clientY );
-
-			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
-			const hit = raycaster.intersectObjects( mouseTargets, false )[ 0 ];
-
-			if ( hit === undefined ) {
-
-				setTimeout( () => {
-
-					if ( hoverLabel !== null && performance.now() - lastPointerOver > 250 ) {
-
-						hoverLabel.close();
-						hoverLabel = null;
-
-						renderView();
-
-					}
-
-					return;
-
-				}, 500 );
-
-				return;
-
-			}
-
-			const station = hit.station;
-
-			if ( hoverLabel !== null && hoverLabel.station !== station ) {
-
-				hoverLabel.close();
-				hoverLabel = null;
-
-			}
-
-			if ( hoverLabel === null ) {
-
-				if ( showStationDistances ) {
-
-					hoverLabel = new StationDistancePopup( ctx, survey, startStation, station );
-
-				} else {
-
-					hoverLabel = new StationNameLabel( ctx, station );
-
-				}
-
-				survey.addStatic( hoverLabel );
-
-			}
-
-			lastPointerOver = performance.now();
-
-			renderView();
-
-		}
-
-		function onMouseDown ( event ) {
-
-			if ( event.target !== renderer.domElement ) return;
-
-			const mouse = cameraManager.getMouse( event.clientX, event.clientY );
-
-			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
-
-			container.addEventListener( 'mouseup', mouseUp );
-
-			if ( event.altKey ) {
-
-				checkLegIntersects( event );
-				return;
-
-			}
-
-			if ( self.entrances ) {
-
-				const entrance = raycaster.intersectObjects( survey.entrances.labels, false )[ 0 ];
-
-				if ( entrance !== undefined ) {
-
-					const station = survey.surveyTree.findById( entrance.object.stationID );
-
-					const e = {
-						type: 'entrance',
-						displayName: entrance.name,
-						station: publicFactory.getStation( station ),
-						filterConnected: false,
-						handled: false,
-						mouseEvent: event
-					};
-
-					self.dispatchEvent( e );
-
-					filterConnectedLegs( e );
-
-					if ( ! e.handled ) {
-
-						selectStation( station, event );
-
-					}
-
-					return;
-
-				}
-
-			}
-
-			const hit = raycaster.intersectObjects( mouseTargets, false )[ 0 ];
-
-			switch ( mouseMode ) {
-
-			case MOUSE_MODE_NORMAL:
-
-				if ( hit === undefined ) break;
-				selectStation( hit.station, event );
-
-				break;
-
-			case MOUSE_MODE_ROUTE_EDIT:
-
-				if ( hit === undefined ) break;
-				selectSegment( hit );
-
-				break;
-
-			case MOUSE_MODE_DISTANCE:
-
-				selectDistance( hit, event );
-
-				break;
-
-			case MOUSE_MODE_TRACE_EDIT:
-
-				if ( event.button === MOUSE.LEFT && hit ) {
-
-					if ( hit.station ) {
-
-						selectTraceStation( hit.station );
-
-					} else {
-
-						selectTrace( hit );
-
-					}
-
-				}
-
-				break;
-
-			}
-
-		}
-
-		function selectDistance ( hit, event ) {
-
-			if ( ! hit ) {
-
-				if ( event.button === MOUSE.RIGHT ) {
-
-					// default distance shading
-					survey.maxDistance = 0;
-					setShadingMode( SHADING_DISTANCE );
-
-				}
-
-				return;
-
-			}
-
-			const station = hit.station;
-
-			if ( event.button === MOUSE.LEFT ) {
-
-				survey.showShortestPath( station );
-
-				showStationPopupX( publicFactory.getStation( station ), event );
-
-			} else if ( event.button === MOUSE.RIGHT ) {
-
-				survey.setShortestPaths( station );
-
-				self.dispatchEvent( { type: 'change', name: 'shadingMode' } );
-				renderView();
-
-			}
-
-		}
-
-		function selectSegment ( picked ) {
-
-			survey.getRoutes().toggleSegment( picked.index );
-
-			setShadingMode( SHADING_PATH );
-
-			renderView();
-
-		}
-
-		function selectTrace ( hit ) {
-
-			const dyeTraces = survey.dyeTraces;
-			const traceIndex = hit.faceIndex;
-
-			survey.markers.clear();
-
-			dyeTraces.outlineTrace( traceIndex );
-
-			self.dispatchEvent( {
-				type: 'selectedTrace',
-				trace: dyeTraces.getTraceStations( traceIndex ),
-				delete: function _deleteTrace () {
-					dyeTraces.deleteTrace( traceIndex );
-					renderView();
-				}
-			} );
-
-			renderView();
-
-		}
-
-		function selectTraceStation ( station ) {
-
-			const dyeTraces = survey.dyeTraces;
-			const markers = survey.markers;
-
-			dyeTraces.outlineTrace( null );
-
-			if ( ++clickCount === 3 ) {
-
-				markers.clear();
-				clickCount = 1;
-
-			}
-
-			markers.mark( station );
-
-			const list = markers.getStations();
-
-			let start, end;
-
-			if ( list[ 0 ] !== undefined ) start = list[ 0 ].getPath();
-			if ( list[ 1 ] !== undefined ) end = list[ 1 ].getPath();
-
-			self.dispatchEvent( {
-				type: 'selectedTrace',
-				start: start,
-				end: end,
-				add: function () {
-					if ( list.length !== 2 ) return;
-
-					dyeTraces.addTrace( list[ 0 ], list[ 1 ] );
-
-					markers.clear();
-					renderView();
-
-				}
-			} );
-
-			renderView();
-
-		}
-
 		function renderView ( autorotate = false ) {
 
 			if ( ! renderRequired || renderer.xr.isPresenting ) return;
@@ -1810,7 +1164,7 @@ class CaveViewer extends EventDispatcher {
 
 			renderer.clear();
 
-			if ( caveIsLoaded ) {
+			if ( survey !== null ) {
 
 				survey.update( cameraManager, controls.target );
 
@@ -1826,6 +1180,7 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
+		this.selectSection = selectSection;
 		this.resetRenderer = resetRenderer;
 		this.renderView = renderView;
 		this.resize = onResize;
@@ -1858,6 +1213,37 @@ class CaveViewer extends EventDispatcher {
 			hud.setScale( vScale );
 
 		}
+
+		this.getMouse = function ( x, y ) {
+
+			const boundingRect = container.getBoundingClientRect();
+
+			mouse.set(
+				( ( x - boundingRect.left ) / container.clientWidth ) * 2 - 1,
+				- ( ( y - boundingRect.top ) / container.clientHeight ) * 2 + 1
+			);
+
+			return mouse;
+
+		};
+
+		this.getStationUnderMouse = function ( mouse, station ) {
+
+			if ( survey === null ) return null;
+
+			this.setRaycaster( raycaster, mouse );
+
+			const hit = raycaster.intersectObject( survey.stations, false )[ 0 ];
+
+			return ( hit !== undefined ) ? survey.getWorldPosition( station.copy( hit.station ) ) : null;
+
+		};
+
+		this.setRaycaster = function ( raycaster, mouse ) {
+
+			raycaster.setFromCamera( mouse, cameraManager.activeCamera );
+
+		};
 
 		this.getLegStats = function ( type ) {
 
@@ -1908,8 +1294,7 @@ class CaveViewer extends EventDispatcher {
 
 		this.showImagePopup = function ( event, imageUrl ) {
 
-			showStationImagePopup( event.node, imageUrl );
-			mouseUpFunction = closePopup;
+			pointerControls.showImagePopup( event, imageUrl );
 
 		};
 
@@ -1934,6 +1319,8 @@ class CaveViewer extends EventDispatcher {
 
 		this.dispose = function () {
 
+			this.dispatchEvent( { type: 'dispose' } );
+
 			ctx.workerPools.dispose();
 			scene.remove( survey );
 			controls.dispose();
@@ -1951,7 +1338,6 @@ class CaveViewer extends EventDispatcher {
 
 			container.removeEventListener( 'mouseover', onMouseOver );
 			container.removeEventListener( 'mouseleave', onMouseLeave );
-			container.removeEventListener( 'mousedown', onMouseDown );
 
 			container.removeEventListener( 'fullscreenchange', onFullscreenChange );
 			container.removeEventListener( 'webkitfullscreenchange', onFullscreenChange );

@@ -119,7 +119,8 @@
 				"caption": "Overlay"
 			},
 			"opacity": "Opacity",
-			"datum_shift": "Vertical datum shift",
+			"datum_shift": "Apply datum shift",
+			"datum_shift_value": "Vertical datum shift",
 			"lighting": "Directional Lighting",
 			"lightingmode": "Lighting",
 			"lightingmodes": {

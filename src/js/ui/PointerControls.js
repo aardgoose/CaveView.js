@@ -361,14 +361,14 @@ class PointerControls extends EventDispatcher {
 			function _setLegHighlight () {
 
 				legs.setHighlightLeg( legIndex );
-				viewer.setShadingMode( survey.caveShading );
+				viewer.shadingMode = survey.caveShading;
 
 			}
 
 			function _setSegmentHighlight () {
 
 				legs.setHighlightSegment( segment );
-				viewer.setShadingMode( survey.caveShading );
+				viewer.shadingMode = survey.caveShading;
 				if ( segment === null ) closePopup();
 
 			}
@@ -580,7 +580,7 @@ class PointerControls extends EventDispatcher {
 
 					// default distance shading
 					survey.maxDistance = 0;
-					viewer.setShadingMode( SHADING_DISTANCE );
+					viewer.shadingMode = SHADING_DISTANCE;
 
 				}
 

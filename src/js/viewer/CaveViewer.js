@@ -147,7 +147,7 @@ class CaveViewer extends EventDispatcher {
 
 			'stationLabelOver': {
 				get: function () { return pointerControls.getStationNameLabelMode(); },
-				set: function ( x ) { pointerControls.setStationNameLabelMode( x ); },
+				set: x => { pointerControls.setStationNameLabelMode( x ); },
 				enumerable: true
 			},
 
@@ -171,12 +171,12 @@ class CaveViewer extends EventDispatcher {
 
 			'terrainDirectionalLighting': {
 				get: function () { return ( lightingManager.lightingMode !== LM_NONE ); },
-				set: function ( x ) { setTerrainLighting( x ? LM_SINGLE : LM_NONE ); }
+				set: x => { lightingManager.lightingMode = x ? LM_SINGLE : LM_NONE; }
 			},
 
 			'terrainLightingMode': {
 				get: function () { return lightingManager.lightingMode; },
-				set: setTerrainLighting,
+				set: stateSetter( mode => { lightingManager.lightingMode = mode; }, 'terrainLightingMode' ),
 				enumerable: true
 			},
 
@@ -185,46 +185,46 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'terrainTileSet': {
-				get: function () { return terrain.tileSet.bind( terrain ); }
+				get: function () { return terrain?.tileSet.bind( terrain ); }
 			},
 
 			'terrainDatumShift': {
-				get: function () { return !! terrain.activeDatumShift; },
-				set: applyTerrainDatumShift,
+				get: function () { return !! terrain?.activeDatumShift; },
+				set: stateSetter( x => { terrain?.applyDatumShift( x ); }, 'terrainDatumShift' ),
 				enumerable: true
 			},
 
 			'terrainDatumShiftValue': {
 				get: function () { return Math.round( terrain.datumShift ); },
-				set: stateSetter( ( x ) => { terrain.datumShift = x; }, 'terrainDatumShiftValue' )
+				set: stateSetter( x => { terrain.datumShift = x; }, 'terrainDatumShiftValue' )
 			},
 
 			'terrainOpacity': {
 				get: function () { return ( terrain !== null ) ? terrain.getOpacity() : 0; },
-				set: setTerrainOpacity,
+				set: stateSetter( x => { terrain?.setOpacity( x ); }, 'terrainOpacity' ),
 				enumerable: true
 			},
 
 			'shadingMode': {
 				get: function () { return survey.caveShading; },
-				set: stateSetter( setShadingMode, 'shadingMode' ),
+				set: stateSetter( mode => survey.setShadingMode( mode, false ), 'shadingMode' ),
 				enumerable: true
 			},
 
 			'hideMode': {
 				get: function () { return survey.hideMode; },
-				set: function ( x ) { survey.setHideMode( x ); renderView(); }
+				set: x => { survey.setHideMode( x ); renderView(); }
 			},
 
 			'flatShading': {
 				get: function () { return survey.wallsMode; },
-				set: function ( x ) { survey.setWallsMode( x ); renderView(); },
+				set: x => { survey.setWallsMode( x ); renderView(); },
 				enumerable: true
 			},
 
 			'route': {
 				get: function () { return survey.getRoutes().setRoute; },
-				set: function ( x ) { survey.getRoutes().setRoute = x; }
+				set: x => { survey.getRoutes().setRoute = x; }
 			},
 
 			'routeNames': {
@@ -233,24 +233,24 @@ class CaveViewer extends EventDispatcher {
 
 			'surfaceShading': {
 				get: function () { return survey.surfaceShading; },
-				set: stateSetter( setSurfaceShadingMode, 'surfaceShading' ),
+				set: stateSetter( mode => survey.setSurfaceShading( mode ), 'surfaceShading' ),
 				enumerable: true
 			},
 
 			'duplicateShading': {
 				get: function () { return survey.duplicateShading; },
-				set: stateSetter( setDuplicateShadingMode, 'duplicateShading' ),
+				set: stateSetter( mode => survey.setDuplicateShading( mode ), 'duplicateShading' ),
 				enumerable: true
 			},
 
 			'cameraType': {
 				get: function () { return cameraManager.mode; },
-				set: stateSetter( setCameraMode, 'cameraType' )
+				set: stateSetter( mode => cameraManager.setCamera( mode, controls.target ), 'cameraType' )
 			},
 
 			'eyeSeparation': {
 				get: function () { return cameraManager.eyeSeparation; },
-				set: setEyeSeparation
+				set: stateSetter( x => { cameraManager.eyeSeparation = x; }, 'eyeSeparation' )
 			},
 
 			'view': {
@@ -265,17 +265,17 @@ class CaveViewer extends EventDispatcher {
 
 			'linewidth': {
 				get: function () { return ( materials.linewidth - 1 ) / 10; },
-				set: stateSetter( setLinewidth, 'linewidth' ),
+				set: stateSetter( x => { materials.linewidth = x * 10 + 1; }, 'linewidth' ),
 				enumerable: true
 			},
 
 			'scaleLinewidth': {
 				get: function () { return materials.scaleLinewidth; },
-				set: stateSetter( setScaleLinewidth, 'scaleLinewidth' )
+				set: stateSetter( x => { materials.scaleLinewidth = !! x; }, 'scaleLinewidth' )
 			},
 
 			'maxDistance': {
-				get: function () { return survey.getMaxDistance(); }
+				get: function () { return ( survey === null ) ? 0 :  survey.getMaxDistance(); }
 			},
 
 			'maxHeight': {
@@ -287,45 +287,45 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'section': {
-				get: function () { return survey.selection.getNode(); },
+				get: function () { return ( survey === null ) ? null : survey.selection.getNode(); },
 				set: stateSetter( selectSection, 'section' )
 			},
 
 			'sectionByName': {
-				get: getSelectedSectionName,
-				set: setSelectedSectionName
+				get: () => survey.selection.getName(),
+				set: name => { selectSection( survey.selection.getByName( name ) ); }
 			},
 
 			'popup': {
-				set: ( x ) => { pointerControls.setPopup( x ); }
+				set: x => { pointerControls.setPopup( x ); }
 			},
 
 			'highlight': {
-				set: stateSetter( highlightSelection, 'highlight' )
+				set: stateSetter( node => survey.highlightSelection( node ), 'highlight' )
 			},
 
 			'polarAngle': {
 				get: function () { return controls.getPolarAngle(); },
-				set: function ( x ) { cameraMove.setPolarAngle( x ); }
+				set: x => { cameraMove.setPolarAngle( x ); }
 			},
 
 			'azimuthAngle': {
-				set: function ( x ) { cameraMove.setAzimuthAngle( x ); }
+				set: x => { cameraMove.setAzimuthAngle( x ); }
 			},
 
 			'editMode': {
 				get: function () { return pointerControls.getEditMode(); },
-				set: stateSetter( ( x ) => { pointerControls.setEditMode( x ); }, 'editMode' )
+				set: stateSetter( x => { pointerControls.setEditMode( x ); }, 'editMode' )
 			},
 
 			'setPOI': {
 				//get: function () { return true; },
-				set: stateSetter( setCameraPOI, 'setPOI' )
+				set: stateSetter( () => cameraMove.start( true ), 'setPOI' )
 			},
 
 			'HUD': {
 				get: function () { return hud.getVisibility(); },
-				set: function ( x ) { hud.setVisibility( x ); },
+				set: x => { hud.setVisibility( x ); },
 				enumerable: true
 			},
 
@@ -336,13 +336,13 @@ class CaveViewer extends EventDispatcher {
 
 			'zScale': {
 				get: function () { return survey.zScale; },
-				set: setZScale,
+				set: stateSetter( x => { survey.zScale = x; }, 'zScale' ),
 				enumerable: true
 			},
 
 			'autoRotate': {
 				get: function () { return controls.autoRotate; },
-				set: stateSetter( setAutoRotate, 'autoRotate' )
+				set: stateSetter( x => cameraMove.setAutoRotate( !! x ), 'autoRotate' )
 			},
 
 			'wheelTilt': {
@@ -385,7 +385,7 @@ class CaveViewer extends EventDispatcher {
 
 			'fog': {
 				get: function () { return useFog; },
-				set: setFog,
+				set: stateSetter( setFog, 'fog' ),
 				enumerable: true
 			},
 
@@ -498,7 +498,10 @@ class CaveViewer extends EventDispatcher {
 			return function ( newMode ) {
 
 				modeFunction( isNaN( newMode ) ? newMode : Number( newMode ) );
+
 				self.dispatchEvent( { type: 'change', name: name, value: newMode } );
+
+				renderView();
 
 			};
 
@@ -593,19 +596,6 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		function setZScale ( scale ) {
-
-			survey.zScale = scale;
-			renderView();
-
-		}
-
-		function setAutoRotate ( state ) {
-
-			cameraMove.setAutoRotate( !! state );
-
-		}
-
 		function setAutoRotateSpeed ( speed ) {
 
 			controls.autoRotateSpeed = Math.max( Math.min( speed, 1.0 ), -1.0 ) * 11;
@@ -621,61 +611,16 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		function setLinewidth ( x ) {
-
-			materials.linewidth = x * 10 + 1;
-			renderView();
-
-		}
-
-		function setScaleLinewidth ( x ) {
-
-			materials.scaleLinewidth = !! x;
-			renderView();
-
-		}
-
 		function setTerrainShadingMode ( mode ) {
 
 			if ( terrain === null ) return;
 
 			terrain.setShadingMode( mode, renderView );
 
-			renderView();
-
 			if ( terrain.isTiled ) terrain.zoomCheck( cameraManager );
 
 		}
 
-		function setTerrainOpacity ( x ) {
-
-			if ( terrain === null ) return;
-
-			terrain.setOpacity( x );
-			self.dispatchEvent( { type: 'change', name: 'terrainOpacity' } );
-
-			renderView();
-
-		}
-
-		function setTerrainLighting ( mode ) {
-
-			lightingManager.lightingMode = mode;
-
-			renderView();
-
-		}
-
-		function applyTerrainDatumShift ( x ) {
-
-			if ( terrain === null ) return;
-
-			terrain.applyDatumShift( x );
-			self.dispatchEvent( { type: 'change', name: 'terrainDatumShift' } );
-
-			renderView();
-
-		}
 
 		function setupTerrain ( newTerrain ) {
 
@@ -696,14 +641,6 @@ class CaveViewer extends EventDispatcher {
 
 			setScale();
 			setupView( true );
-
-		}
-
-		function setCameraMode ( mode ) {
-
-			cameraManager.setCamera( mode, controls.target );
-
-			renderView();
 
 		}
 
@@ -731,13 +668,6 @@ class CaveViewer extends EventDispatcher {
 			}
 
 			renderView( true );
-
-		}
-
-		function setEyeSeparation ( x ) {
-
-			cameraManager.eyeSeparation = x;
-			renderView();
 
 		}
 
@@ -798,32 +728,6 @@ class CaveViewer extends EventDispatcher {
 			useFog = enable;
 			fog.density = useFog ? 0.0025 : 0;
 
-			renderView();
-
-		}
-
-		function setShadingMode ( mode ) {
-
-			survey.setShadingMode( mode, false );
-
-			renderView();
-
-		}
-
-		function setSurfaceShadingMode ( mode ) {
-
-			survey.setSurfaceShading( mode );
-
-			renderView();
-
-		}
-
-		function setDuplicateShadingMode ( mode ) {
-
-			survey.setDuplicateShading( mode );
-
-			renderView();
-
 		}
 
 		this.addOverlay = function ( name, overlayProvider ) {
@@ -863,14 +767,6 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		function highlightSelection ( node ) {
-
-			survey.highlightSelection( node );
-
-			renderView();
-
-		}
-
 		function selectSection ( node ) {
 
 			if ( node.isStation() ) {
@@ -897,20 +793,6 @@ class CaveViewer extends EventDispatcher {
 				if ( survey.selection.isEmpty() ) cameraMove.start( renderRequired );
 
 			}
-
-			renderView();
-
-		}
-
-		function getSelectedSectionName () {
-
-			return survey.selection.getName();
-
-		}
-
-		function setSelectedSectionName ( name ) {
-
-			selectSection( survey.selection.getByNme( name ) );
 
 		}
 
@@ -1125,7 +1007,7 @@ class CaveViewer extends EventDispatcher {
 
 		function onSurveyChanged ( /* event */ ) {
 
-			setShadingMode( survey.caveShading );
+			survey.setShadingMode( survey.caveShading );
 
 		}
 
@@ -1180,12 +1062,6 @@ class CaveViewer extends EventDispatcher {
 		function onCameraMoveEnd () {
 
 			self.dispatchEvent( moveEndEvent );
-
-		}
-
-		function setCameraPOI () {
-
-			cameraMove.start( true );
 
 		}
 

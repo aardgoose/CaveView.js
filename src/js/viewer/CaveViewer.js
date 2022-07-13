@@ -260,7 +260,7 @@ class CaveViewer extends EventDispatcher {
 
 			'cursorHeight': {
 				get: function () { return materials.cursorHeight; },
-				set: setCursorHeight
+				set: stateSetter( x => { materials.cursorHeight = x; }, 'cursorHeight' )
 			},
 
 			'linewidth': {
@@ -599,15 +599,6 @@ class CaveViewer extends EventDispatcher {
 		function setAutoRotateSpeed ( speed ) {
 
 			controls.autoRotateSpeed = Math.max( Math.min( speed, 1.0 ), -1.0 ) * 11;
-
-		}
-
-		function setCursorHeight ( x ) {
-
-			materials.cursorHeight = x;
-			self.dispatchEvent( { type: 'cursorChange', name: 'cursorHeight' } );
-
-			renderView();
 
 		}
 

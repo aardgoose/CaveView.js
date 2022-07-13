@@ -329,7 +329,7 @@ function HUD ( viewer, renderer ) {
 
 			cursorScale.setRange( viewer.maxHeight - viewer.minHeight, 0, i18n( 'depth' ) );
 
-			cursorChanged();
+			cursorChanged( { type: 'change', name: 'cursorHeight' } );
 
 			break;
 
@@ -355,11 +355,11 @@ function HUD ( viewer, renderer ) {
 
 		if ( useCursorScale ) {
 
-			viewer.addEventListener( 'cursorChange', cursorChanged );
+			viewer.addEventListener( 'change', cursorChanged );
 
 		} else {
 
-			viewer.removeEventListener( 'cursorChange', cursorChanged );
+			viewer.removeEventListener( 'change', cursorChanged );
 
 		}
 
@@ -367,7 +367,9 @@ function HUD ( viewer, renderer ) {
 
 	}
 
-	function cursorChanged ( /* event */ ) {
+	function cursorChanged ( event ) {
+
+		if ( event.name !== 'cursorHeight' ) return;
 
 		const cursorHeight = viewer.cursorHeight;
 		const range = viewer.maxHeight - viewer.minHeight;
@@ -419,7 +421,7 @@ function HUD ( viewer, renderer ) {
 
 		ahiControl.dispose();
 		compassControl.dispose();
-		if ( cursorControl ) cursorControl.dispose();
+		cursorControl?.dispose();
 
 	};
 

@@ -70,11 +70,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		perspectiveCamera.updateProjectionMatrix();
 
-		if ( activeEffect !== null ) {
-
-			activeEffect.setSize( width, height );
-
-		}
+		activeEffect?.setSize( width, height );
 
 	}
 
@@ -143,11 +139,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		savedMask = this.activeCamera.layers.mask;
 
-		if ( activeEffect !== null ) {
-
-			activeEffect.setLayers( savedMask );
-
-		}
+		activeEffect?.setLayers( savedMask );
 
 		return true;
 

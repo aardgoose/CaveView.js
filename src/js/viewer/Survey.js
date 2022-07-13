@@ -940,11 +940,8 @@ class Survey extends Object3D {
 
 	setWallsMode ( mode ) {
 
-		const walls = this.getFeature( FACE_WALLS );
-		const scraps = this.getFeature( FACE_SCRAPS );
-
-		if ( walls ) walls.setFlat( mode );
-		if ( scraps ) scraps.setFlat( mode );
+		this.getFeature( FACE_WALLS )?.setFlat( mode );
+		this.getFeature( FACE_SCRAPS )?.setFlat( mode );
 
 		this.wallsMode = mode;
 
@@ -952,9 +949,7 @@ class Survey extends Object3D {
 
 	setHideMode ( mode ) {
 
-		const legs = this.getFeature( LEG_CAVE );
-
-		if ( legs ) legs.hide( mode );
+		this.getFeature( LEG_CAVE )?.hide( mode );
 
 		this.hideMode = mode;
 

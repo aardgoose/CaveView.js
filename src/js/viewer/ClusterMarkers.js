@@ -191,9 +191,7 @@ class QuadTree {
 
 		for ( let i = 0; i < 4; i++ ) {
 
-			const subQuad = this.nodes[ i ];
-
-			if ( subQuad !== undefined ) subQuad.hideQuadMarkers();
+			this.nodes[ i ]?.hideQuadMarkers();
 
 		}
 
@@ -227,9 +225,7 @@ class QuadTree {
 
 		for ( let i = 0; i < 4; i++ ) {
 
-			const subQuad = this.nodes[ i ];
-
-			if ( subQuad !== undefined ) subQuad.hideQuadMarkers();
+			this.nodes[ i ]?.hideQuadMarkers();
 
 		}
 

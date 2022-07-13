@@ -305,7 +305,6 @@ class Survey extends Object3D {
 
 		function _getSurfacePoints( node ) {
 
-			// FIXME to extend to surface points
 			if ( ! ( node.type & STATION_ENTRANCE ) ) return;
 			points.push( node );
 

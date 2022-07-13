@@ -68,7 +68,7 @@ class Legs extends LineSegments2 {
 			const v1 = vertices[ i ];
 			const v2 = vertices[ i + 1 ];
 
-			const legLength= survey.getGeographicalDistance( v1, v2 );
+			const legLength = survey.getGeographicalDistance( v1, v2 );
 
 			legLengths[ i / 2 ] = legLength; // cache lengths to avoid recalc
 
@@ -291,7 +291,7 @@ class Legs extends LineSegments2 {
 	setLegColor ( leg, color1, color2 = null ) {
 
 		const c1 = this.colourCache.getColour( color1 );
-		const c2 = ( ! color2 ) ? c1: this.colourCache.getColour( color2 );
+		const c2 = ( ! color2 ) ? c1 : this.colourCache.getColour( color2 );
 
 		const colours = this.colors.array;
 

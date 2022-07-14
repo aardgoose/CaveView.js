@@ -40,6 +40,7 @@ class CaveViewer extends EventDispatcher {
 
 		// target with css for fullscreen on small screen devices
 		container.classList.add( 'cv-container' );
+		container.style.backgroundColor = cfg.themeColorCSS( 'background' );
 
 		const cfg = new Cfg( configuration );
 
@@ -58,8 +59,6 @@ class CaveViewer extends EventDispatcher {
 		const materials = new Materials( this );
 
 		ctx.materials = materials;
-
-		container.style.backgroundColor = cfg.themeColorCSS( 'background' );
 
 		let renderer = new WebGLRenderer( { antialias: true, alpha: true } );
 

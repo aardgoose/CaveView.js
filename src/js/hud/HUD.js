@@ -281,9 +281,9 @@ function HUD ( viewer, renderer ) {
 
 		// hide all - and only make required elements visible
 
-		let useAngleScale = false;
-		let useLinearScale = false;
-		let useCursorScale = false;
+		angleScale.visible = false;
+		linearScale.visible = false;
+		cursorScale.visible = false;
 
 		let stats;
 
@@ -291,7 +291,7 @@ function HUD ( viewer, renderer ) {
 
 		case SHADING_HEIGHT:
 
-			useLinearScale = true;
+			linearScale.visible = true;
 
 			linearScale.setRange( viewer.minHeight, viewer.maxHeight, i18n( 'height' ) );
 
@@ -299,7 +299,7 @@ function HUD ( viewer, renderer ) {
 
 		case SHADING_DEPTH:
 
-			useLinearScale = true;
+			linearScale.visible = true;
 
 			linearScale.setRange( viewer.maxHeight - viewer.minHeight, 0, i18n( 'depth' ) );
 
@@ -307,7 +307,7 @@ function HUD ( viewer, renderer ) {
 
 		case SHADING_DISTANCE:
 
-			useLinearScale = true;
+			linearScale.visible = true;
 
 			linearScale.setRange( viewer.maxDistance, 0, i18n( 'distance' ) );
 
@@ -315,17 +315,17 @@ function HUD ( viewer, renderer ) {
 
 		case SHADING_CURSOR:
 
-			useCursorScale = true;
+			cursorScale.visible = true;
 
 			cursorScale.setRange( viewer.minHeight, viewer.maxHeight, i18n( 'height' ) );
 
-			cursorChanged();
+			cursorChanged( { type: 'change', name: 'cursorHeight' } );
 
 			break;
 
 		case SHADING_DEPTH_CURSOR:
 
-			useCursorScale = true;
+			cursorScale.visible = true;
 
 			cursorScale.setRange( viewer.maxHeight - viewer.minHeight, 0, i18n( 'depth' ) );
 
@@ -335,7 +335,8 @@ function HUD ( viewer, renderer ) {
 
 		case SHADING_LENGTH:
 
-			useLinearScale = true;
+			linearScale.visible = true;
+
 			stats = viewer.getLegStats( LEG_CAVE );
 			linearScale.setRange( stats.minLegLength, stats.maxLegLength, i18n( 'leg_length' ) );
 
@@ -343,17 +344,13 @@ function HUD ( viewer, renderer ) {
 
 		case SHADING_INCLINATION:
 
-			useAngleScale = true;
+			angleScale.visible = true;
 
 			break;
 
 		}
 
-		angleScale.visible = useAngleScale;
-		linearScale.visible= useLinearScale;
-		cursorScale.visible = useCursorScale;
-
-		if ( useCursorScale ) {
+		if ( cursorScale.visible ) {
 
 			viewer.addEventListener( 'change', cursorChanged );
 

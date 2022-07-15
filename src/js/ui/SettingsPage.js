@@ -41,8 +41,9 @@ class SettingsPage extends Page {
 
 		frame.addPage( this );
 
-		const controls = [];
 		const routeControls = [];
+		const rotateControls = [];
+
 		const cfg = viewer.ctx.cfg;
 
 		const legShadingModesActive = Object.assign( {}, legShadingModes );
@@ -76,7 +77,7 @@ class SettingsPage extends Page {
 		// cvw.appendChild( this.addCheckbox( 'view.scaleLinewidth', viewer, 'scaleLinewidth' ) );
 		cvw.appendChild( this.addCheckbox( 'view.autorotate', viewer, 'autoRotate' ) );
 
-		cvw.appendChild( this.addRange( 'view.rotation_speed', viewer, 'autoRotateSpeed' ) );
+		rotateControls.push( cvw.appendChild( this.addRange( 'view.rotation_speed', viewer, 'autoRotateSpeed' ) ) );
 
 		const sh = this.addCollapsingHeader( 'shading.header' );
 
@@ -144,6 +145,7 @@ class SettingsPage extends Page {
 
 		_onChange( { name: 'cameraType' } );
 		_onChange( { name: 'shadingMode' } );
+		_onChange( { name: 'autoRotate' } );
 
 		this.onChange = _onChange;
 
@@ -151,16 +153,18 @@ class SettingsPage extends Page {
 
 		function _onChange ( event ) {
 
-			if ( event.name === 'shadingMode' ) {
+			switch ( event.name ) {
+
+			case 'shadingMode':
 
 				frame.setControlsVisibility( routeControls, ( viewer.shadingMode === SHADING_PATH ) );
+				break;
 
-			}
+			case 'autoRotate':
 
-			// change UI dynamicly to only display useful controls
-			if ( event.name === 'cameraType' ) {
+				frame.setControlsVisibility( rotateControls, viewer.autoRotate );
+				break;
 
-				frame.setControlsVisibility( controls, ( viewer.cameraType === CAMERA_ANAGLYPH ) );
 
 			}
 

@@ -4,17 +4,18 @@ class HeightLookup extends TextureLookup {
 
 	zOffset = 0;
 
-	constructor ( renderer, renderTarget, boundingBox, offsets ) {
+	constructor ( renderer, renderTarget, boundingBox ) {
 
 		super( renderer, renderTarget, boundingBox );
 
-		this.zOffset = offsets.z;
+		this.zOffset = boundingBox.min.z;
 
 	}
 
 	lookup ( point ) {
 
-		return super.lookup( point ) * this.range.z;
+		// return height in model space (needs offsets applying to get survey CRS or EPSG:3857)
+		return super.lookup( point ) * this.range.z + this.zOffset;
 
 	}
 

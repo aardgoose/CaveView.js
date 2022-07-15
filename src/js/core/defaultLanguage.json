@@ -281,6 +281,7 @@
 		"segment_length": "Segment length",
 		"direct_length": "Direct length",
 		"depth_from_surface": "depth from surface",
+		"adjusted_depth": "adjusted depth",
 		"distance": "distance"
 	}
 }

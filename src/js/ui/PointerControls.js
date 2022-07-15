@@ -50,6 +50,7 @@ class PointerControls extends EventDispatcher {
 		let showStationDistances = false;
 		let startStation = null;
 		let lastPointerOver = 0;
+		let activePointerId = null;
 
 		// event handler
 
@@ -60,7 +61,7 @@ class PointerControls extends EventDispatcher {
 
 			mouseTargets = survey.pointTargets;
 
-			container.addEventListener( 'mousedown', onMouseDown, false );
+			container.addEventListener( 'pointerdown', onPointerDown, false );
 
 		} );
 
@@ -70,7 +71,7 @@ class PointerControls extends EventDispatcher {
 			mouseTargets = [];
 			mouseMode = MOUSE_MODE_NORMAL;
 
-			container.removeEventListener( 'mousedown', onMouseDown );
+			container.removeEventListener( 'pointerdown', onPointerDown );
 
 		} );
 
@@ -78,8 +79,8 @@ class PointerControls extends EventDispatcher {
 
 			document.rmeoveEventListener( 'keyup', endDistanceMode );
 
-			container.removeEventListener( 'mouseup', mouseUp );
-			container.removeEventListener( 'mousedown', onMouseDown );
+			container.removeEventListener( 'pointerup', pointerUp );
+			container.removeEventListener( 'pointerdown', onPointerDown );
 			container.removeEventListener( 'pointermove', onPointerMove );
 
 		} );
@@ -253,9 +254,14 @@ class PointerControls extends EventDispatcher {
 
 		}
 
-		function mouseUp () {
+		function pointerUp ( event ) {
 
-			container.removeEventListener( 'mouseup', mouseUp );
+			container.removeEventListener( 'pointerup', pointerUp );
+
+			// trap for event that shouldn't happen
+			if ( event.pointerId !== activePointerId ) console.warn( 'wrong pointer up' );
+
+			activePointerId = null;
 
 			if ( mouseUpFunction ) mouseUpFunction();
 
@@ -478,13 +484,15 @@ class PointerControls extends EventDispatcher {
 
 		}
 
-		function onMouseDown ( event ) {
+		function onPointerDown ( event ) {
 
-			if ( event.target !== domElement ) return;
+			if ( activePointerId !== null || event.target !== domElement ) return;
 
 			viewer.setRaycaster( raycaster, viewer.getMouse( event.clientX, event.clientY ) );
 
-			container.addEventListener( 'mouseup', mouseUp );
+			container.addEventListener( 'pointerup', pointerUp );
+
+			activePointerId = event.pointerId;
 
 			if ( event.altKey ) {
 

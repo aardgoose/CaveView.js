@@ -97,7 +97,7 @@ class Stations extends Points {
 				const station = vertices[ i ];
 
 				// skip splay end stations if not visible
-				if ( skipSplays && station.connections === 0 || station.type === 0 ) continue;
+				if ( skipSplays && station.connections === 0 && station.type === 1 ) continue;
 
 				_position.copy( station );
 				_position.w = 1;

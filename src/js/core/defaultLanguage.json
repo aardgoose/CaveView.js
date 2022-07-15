@@ -76,7 +76,7 @@
 		"default": {
 			"header": "Defaults",
 			"save": "Save default settings",
-			"reset": "Reset default setings"
+			"reset": "Reset default settings"
 		},
 		"colors": {
 			"header": "Colours",

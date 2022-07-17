@@ -2,6 +2,7 @@
 
 uniform mat2 rotate;
 uniform vec2 scale;
+uniform vec2 viewPort;
 
 varying vec2 vUv;
 varying vec3 vColor;
@@ -32,5 +33,11 @@ void main() {
 	newPosition *= offset.w;
 
 	gl_Position = vec4( newPosition, 0.0, 0.0 ) + offset;
+
+	// snap to screen pixels
+
+	vec2 snap = viewPort / gl_Position.w;
+
+	gl_Position.xy =  ( trunc( gl_Position.xy * snap ) + 0.5 ) / snap;
 
 }

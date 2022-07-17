@@ -11,7 +11,8 @@ class PopupMaterial extends ShaderMaterial {
 		const canvas = popupImage.image;
 		const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
 
-		const scale = new Vector2( canvas.width / Math.floor( pixelRatio * container.clientWidth), canvas.height / Math.floor( pixelRatio * container.clientHeight ) ).multiplyScalar( 2 );
+		const viewPort = new Vector2( Math.floor( pixelRatio * container.clientWidth ) / 2, Math.floor( pixelRatio * container.clientHeight ) / 2 );
+		const scale = new Vector2( canvas.width, canvas.height ).divide( viewPort );
 
 		colour = colour || [ 1, 1, 1 ];
 
@@ -23,6 +24,7 @@ class PopupMaterial extends ShaderMaterial {
 				rotate: { value: rotationMatrix },
 				popupImage: { value: popupImage },
 				scale: { value: scale },
+				viewPort: { value: viewPort }
 			},
 			defines: {
 				USE_COLOR: true

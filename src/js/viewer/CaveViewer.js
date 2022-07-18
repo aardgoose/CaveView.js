@@ -1041,7 +1041,7 @@ class CaveViewer extends EventDispatcher {
 
 			if ( useFog ) materials.setFog( false );
 
-			if ( survey !== null ) hud.renderHUD();
+			hud.renderHUD();
 
 		}
 

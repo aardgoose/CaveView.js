@@ -206,39 +206,39 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'shadingMode': {
-				get: function () { return survey.caveShading; },
+				get: function () { return survey?.caveShading; },
 				set: stateSetter( mode => survey.setShadingMode( mode, false ), 'shadingMode' ),
 				enumerable: true
 			},
 
 			'hideMode': {
-				get: function () { return survey.hideMode; },
+				get: function () { return survey?.hideMode; },
 				set: x => { survey.setHideMode( x ); renderView(); }
 			},
 
 			'flatShading': {
-				get: function () { return survey.wallsMode; },
+				get: function () { return survey?.wallsMode; },
 				set: x => { survey.setWallsMode( x ); renderView(); },
 				enumerable: true
 			},
 
 			'route': {
-				get: function () { return survey.getRoutes().setRoute; },
+				get: function () { return survey?.getRoutes().setRoute; },
 				set: x => { survey.getRoutes().setRoute = x; }
 			},
 
 			'routeNames': {
-				get: function () { return survey.getRoutes().getRouteNames(); },
+				get: function () { return survey?.getRoutes().getRouteNames(); },
 			},
 
 			'surfaceShading': {
-				get: function () { return survey.surfaceShading; },
+				get: function () { return survey?.surfaceShading; },
 				set: stateSetter( mode => survey.setSurfaceShading( mode ), 'surfaceShading' ),
 				enumerable: true
 			},
 
 			'duplicateShading': {
-				get: function () { return survey.duplicateShading; },
+				get: function () { return survey?.duplicateShading; },
 				set: stateSetter( mode => survey.setDuplicateShading( mode ), 'duplicateShading' ),
 				enumerable: true
 			},
@@ -292,7 +292,7 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'sectionByName': {
-				get: () => survey.selection.getName(),
+				get: () => survey?.selection.getName(),
 				set: name => { selectSection( survey.selection.getByName( name ) ); }
 			},
 
@@ -335,7 +335,7 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'zScale': {
-				get: function () { return survey.zScale; },
+				get: function () { return survey?.zScale; },
 				set: stateSetter( x => { survey.zScale = x; }, 'zScale' ),
 				enumerable: true
 			},

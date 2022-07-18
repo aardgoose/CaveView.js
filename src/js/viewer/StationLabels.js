@@ -69,13 +69,33 @@ class StationLabels extends Group {
 			const connections = station.effectiveConnections();
 			let d2 = 40000;
 
-			if ( connections === 0 ) {
+			if ( label?.visible ) {
 
-				d2 = 250;
+				if ( connections === 0 ) {
 
-			} else if ( connections < 3 ) {
+					d2 = 600;
 
-				d2 = 5000;
+				} else if ( connections < 3 ) {
+
+					d2 = 10000;
+
+				} else {
+
+					d2 = 50000;
+
+				}
+
+			} else {
+
+				if ( connections === 0 ) {
+
+					d2 = 250;
+
+				} else if ( connections < 3 ) {
+
+					d2 = 5000;
+
+				}
 
 			}
 

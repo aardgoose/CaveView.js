@@ -16,10 +16,10 @@ export { CanvasTexture } from 'three/src/textures/CanvasTexture.js';
 export { Texture } from 'three/src/textures/Texture.js';
 export { Source } from 'three/src/textures/Source.js';
 
-export { SphereBufferGeometry } from 'three/src/geometries/SphereGeometry.js';
-export { RingBufferGeometry } from 'three/src/geometries/RingGeometry.js';
-export { PlaneBufferGeometry } from 'three/src/geometries/PlaneGeometry.js';
-export { CylinderBufferGeometry } from 'three/src/geometries/CylinderGeometry.js';
+export { SphereGeometry } from 'three/src/geometries/SphereGeometry.js';
+export { RingGeometry } from 'three/src/geometries/RingGeometry.js';
+export { PlaneGeometry } from 'three/src/geometries/PlaneGeometry.js';
+export { CylinderGeometry } from 'three/src/geometries/CylinderGeometry.js';
 
 export { ShaderMaterial } from 'three/src/materials/ShaderMaterial.js';
 export { PointsMaterial } from 'three/src/materials/PointsMaterial.js';

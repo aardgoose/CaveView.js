@@ -1,4 +1,4 @@
-import { Float32BufferAttribute, Mesh, Object3D, RingBufferGeometry } from '../Three';
+import { Float32BufferAttribute, Mesh, Object3D, RingGeometry } from '../Three';
 import { MutableGlyphString } from '../core/GlyphString';
 
 class ProgressDial extends Mesh {
@@ -14,7 +14,7 @@ class ProgressDial extends Mesh {
 
 		const gap = ring === 0 ? 0 : 1;
 		const segments = 50;
-		const geometry = new RingBufferGeometry( stdWidth * ( 0.9 - ring * 0.1 ), stdWidth * ( 1 - ring * 0.1 ) - gap, segments );
+		const geometry = new RingGeometry( stdWidth * ( 0.9 - ring * 0.1 ), stdWidth * ( 1 - ring * 0.1 ) - gap, segments );
 
 		const colors = new Float32BufferAttribute( ( segments + 1) * 6, 3 );
 

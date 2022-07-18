@@ -1,4 +1,4 @@
-import { CylinderBufferGeometry } from '../Three';
+import { CylinderGeometry } from '../Three';
 
 class HudObject {
 
@@ -19,7 +19,7 @@ class HudObject {
 
 		if ( commonRing === null ) {
 
-			commonRing = new CylinderBufferGeometry( this.stdWidth * 0.90, this.stdWidth, 3, 32, 1, true );
+			commonRing = new CylinderGeometry( this.stdWidth * 0.90, this.stdWidth, 3, 32, 1, true );
 			commonRing.rotateX( Math.PI / 2 );
 
 			this.commonRing = commonRing;

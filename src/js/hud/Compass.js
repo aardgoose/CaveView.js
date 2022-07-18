@@ -7,7 +7,7 @@ import {
 	Mesh,
 	MeshBasicMaterial,
 	MeshLambertMaterial,
-	RingBufferGeometry,
+	RingGeometry,
 	Vector3
 } from '../Three';
 
@@ -34,7 +34,7 @@ class Compass extends Group {
 
 		const c1 = new Mesh( cg1, materials.getBezelMaterial() );
 
-		const cg2 = new RingBufferGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
+		const cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 		cg2.translate( 0, 0, 5 );
 
 		const c2 = new Mesh( cg2, new MeshBasicMaterial( { color: cfg.themeValue( 'hud.compass.top1' ) } ) );

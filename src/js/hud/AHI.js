@@ -10,7 +10,7 @@ import {
 	Mesh,
 	MeshPhongMaterial,
 	Object3D,
-	SphereBufferGeometry,
+	SphereGeometry,
 	Vector3
 } from '../Three';
 
@@ -44,7 +44,7 @@ class AHI extends Group {
 		const ring = hudObject.getCommonRing();
 		const ahiWidth = stdWidth * 0.75;
 
-		const sphere = new SphereBufferGeometry( ahiWidth, 31, 31 );
+		const sphere = new SphereGeometry( ahiWidth, 31, 31 );
 		const bar    = new LineSegmentsGeometry();
 		const marks  = new LineSegmentsGeometry();
 

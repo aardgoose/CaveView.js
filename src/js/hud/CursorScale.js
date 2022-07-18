@@ -4,7 +4,7 @@ import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { Line2Material } from '../materials/Line2Material';
 
-import { MeshBasicMaterial, PlaneBufferGeometry } from '../Three';
+import { MeshBasicMaterial, PlaneGeometry } from '../Three';
 
 class CursorScale extends Scale {
 
@@ -13,7 +13,7 @@ class CursorScale extends Scale {
 		const ctx = hudObject.ctx;
 		const cfg = ctx.cfg;
 		const materials = ctx.materials;
-		const geometry = new PlaneBufferGeometry();
+		const geometry = new PlaneGeometry();
 
 		super( hudObject, container, geometry, new MeshBasicMaterial( { color: 0x676767 } ) );
 

@@ -1,4 +1,4 @@
-import { Float32BufferAttribute, Mesh, MeshBasicMaterial, RingBufferGeometry, Vector3 } from '../Three';
+import { Float32BufferAttribute, Mesh, MeshBasicMaterial, RingGeometry, Vector3 } from '../Three';
 import { GlyphString } from '../core/GlyphString';
 
 class AngleScale extends Mesh {
@@ -11,7 +11,7 @@ class AngleScale extends Mesh {
 
 		const pNormal = new Vector3( 1, 0, 0 );
 
-		const geometry = new RingBufferGeometry( 1, 40, 36, 1, Math.PI, Math.PI );
+		const geometry = new RingGeometry( 1, 40, 36, 1, Math.PI, Math.PI );
 
 		const hues = materials.colourCache.getColorSet( 'inclination' );
 		const colors = [];

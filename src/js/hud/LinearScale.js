@@ -1,4 +1,4 @@
-import { PlaneBufferGeometry } from '../Three';
+import { PlaneGeometry } from '../Three';
 import { Scale } from './Scale';
 
 class LinearScale extends Scale {
@@ -6,7 +6,7 @@ class LinearScale extends Scale {
 	constructor ( hudObject, container ) {
 
 		const materials = hudObject.ctx.materials;
-		const geometry = new PlaneBufferGeometry();
+		const geometry = new PlaneGeometry();
 
 		super( hudObject, container, geometry, materials.getScaleMaterial() );
 

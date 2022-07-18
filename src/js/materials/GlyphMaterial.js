@@ -17,7 +17,8 @@ class GlyphMaterial extends ShaderMaterial {
 		const cosR = Math.cos( rotation );
 		const sinR = Math.sin( rotation );
 
-		const scale = new Vector2( realPixels / Math.floor( pixelRatio * container.clientWidth), realPixels / Math.floor( pixelRatio * container.clientHeight ) );
+		const viewPort = new Vector2( Math.floor( pixelRatio * container.clientWidth ) / 2, Math.floor( pixelRatio * container.clientHeight ) / 2 );
+		const scale = new Vector2( realPixels, realPixels ).divide( viewPort );
 
 		const rotationMatrix = new Float32Array( [ cos, -sin, sin, cos ] );
 
@@ -29,7 +30,8 @@ class GlyphMaterial extends ShaderMaterial {
 				cellScale: { value: cellScale },
 				atlas: { value: glyphAtlas.getTexture() },
 				rotate: { value: rotationMatrix },
-				scale: { value: scale }
+				scale: { value: scale },
+				viewPort: { value: viewPort }
 			}, uniforms.common ),
 		} );
 

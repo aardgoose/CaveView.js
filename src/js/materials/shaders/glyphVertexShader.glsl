@@ -5,6 +5,7 @@
 uniform float cellScale;
 uniform vec2 scale;
 uniform mat2 rotate;
+uniform vec2 viewPort;
 
 attribute float offsets;
 
@@ -47,6 +48,10 @@ void main() {
 	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 
 	gl_Position = vec4( newPosition, 0.0, 0.0 ) + offset;
+
+	vec2 snap = viewPort / gl_Position.w;
+
+	gl_Position.xy =  ( trunc( gl_Position.xy * snap ) + 0.5 ) / snap;
 
 	#include <fog_vertex>
 

@@ -98,9 +98,12 @@ function HUD ( viewer, renderer ) {
 
 	this.setVisibility = function ( visible ) {
 
+		progressDial.setVisibility( visible );
+
+		if ( ! caveLoaded ) return;
+
 		compass.visible = visible;
 		ahi.visible = visible;
-		progressDial.setVisibility( visible );
 
 		if ( scaleBar ) scaleBar.visible = visible;
 

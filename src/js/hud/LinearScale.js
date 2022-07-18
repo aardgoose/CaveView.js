@@ -11,6 +11,7 @@ class LinearScale extends Scale {
 		super( hudObject, container, geometry, materials.getScaleMaterial() );
 
 		this.name = 'CV.LinearScale';
+		this.visible = false;
 
 		geometry.rotateZ( - Math.PI / 2 ); // rotate to use default UV values
 		geometry.scale( this.barWidth, this.barHeight, 1 );

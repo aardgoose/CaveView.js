@@ -18,6 +18,7 @@ class CursorScale extends Scale {
 		super( hudObject, container, geometry, new MeshBasicMaterial( { color: 0x676767 } ) );
 
 		this.name = 'CV.CursorScale';
+		this.visible = false;
 
 		const barWidth = this.barWidth;
 		const barHeight = this.barHeight;

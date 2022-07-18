@@ -29,6 +29,7 @@ class Compass extends Group {
 		super();
 
 		this.name = 'CV.Compass';
+		this.visible = false;
 
 		const cg1 = hudObject.getCommonRing();
 

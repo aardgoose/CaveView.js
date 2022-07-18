@@ -35,6 +35,7 @@ class AHI extends Group {
 		super();
 
 		this.name = 'CV.AHI';
+		this.visible = false;
 
 		this.lastPitch = 0;
 

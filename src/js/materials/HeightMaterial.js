@@ -3,7 +3,7 @@ import { Shaders } from './shaders/Shaders';
 
 class HeightMaterial extends ShaderMaterial {
 
-	constructor ( ctx ) {
+	constructor ( ctx, options ) {
 
 		const survey = ctx.survey;
 		const limits = survey.modelLimits;
@@ -25,11 +25,14 @@ class HeightMaterial extends ShaderMaterial {
 				cmap:   { value: textureCache.getTexture( gradient ) },
 			}, uniforms.common ),
 			defines: {
-				USE_COLOR: true
+				USE_COLOR: true,
+				CV_LOCATION: options.location
 			}
 		} );
 
+		this.transparent = options.location;
 		this.midRange = ( zMax + zMin ) / 2;
+
 	}
 
 }

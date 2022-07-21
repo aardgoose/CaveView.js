@@ -5,4 +5,3 @@ uniform float scaleX;
 uniform float scaleY;
 
 varying vec2 vTerrainCoords;
-varying float vZ;

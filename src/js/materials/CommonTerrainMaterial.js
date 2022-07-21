@@ -7,7 +7,7 @@ class CommonTerrainMaterial extends MeshLambertMaterial {
 		super( parameters );
 
 		Object.defineProperty( this, 'opacity', {
-			get: function () { return ctx.materials.terrainOpacity; }
+			get() { return ctx.materials.terrainOpacity; }
 		} );
 
 		this.transparent = true;

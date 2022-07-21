@@ -1,14 +1,9 @@
-const float UnpackDownscale = 255. / 256.; // 0..1 -> fraction (excluding 1)
-
-const vec3 PackFactors = vec3( 256. * 256. * 256., 256. * 256., 256. );
-const vec4 UnpackFactors = UnpackDownscale / vec4( PackFactors, 1. );
-
-float unpackRGBAToFloat( const in vec4 v ) {
-	return dot( v, UnpackFactors );
-}
+#include <packRGBA>
 
 uniform vec3 diffuse;
 uniform float opacity;
+
+#include <location_fade_fragment_pars>
 
 #ifdef CV_HEIGHT
 
@@ -29,7 +24,6 @@ uniform float opacity;
 	uniform float datumShift;
 
 	varying vec2 vTerrainCoords;
-	varying float vZ;
 
 #endif
 
@@ -56,6 +50,7 @@ uniform float opacity;
 #endif
 
 varying float vLineDistance;
+varying vec3 vPosition;
 
 #include <common>
 #include <color_pars_fragment>
@@ -103,7 +98,7 @@ void main() {
 
 		terrainHeight = terrainHeight * rangeZ + modelMin.z + datumShift;
 
-		float depth = ( terrainHeight - vZ );
+		float depth = terrainHeight - vPosition.z;
 		float vCursor = depth; // hack
 
 	#endif
@@ -122,7 +117,7 @@ void main() {
 
 	#ifdef CV_BASIC
 
-		gl_FragColor = vec4( diffuseColor.rgb, diffuseColor.a );
+		gl_FragColor = diffuseColor;
 
 	#endif
 
@@ -131,6 +126,8 @@ void main() {
 		gl_FragColor = vec4( vFadeDepth, 0.0, 1.0 - vFadeDepth, diffuseColor.a );
 
 	#endif
+
+	#include <location_fade_fragment>
 
 	#include <tonemapping_fragment>
 	#include <encodings_fragment>

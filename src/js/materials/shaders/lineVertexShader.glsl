@@ -54,6 +54,8 @@ varying float vHide;
 
 #endif
 
+varying vec3 vPosition;
+
 void trimSegment( const in vec4 start, inout vec4 end ) {
 
 	// trim end segment so it terminates between the camera plane and the near plane
@@ -184,24 +186,23 @@ void main() {
 
 	clip.xy += offset;
 
+	vPosition = ( position.y < 0.5 ) ? instanceStart : instanceEnd;
+
 	#ifdef CV_CURSOR
 
-		vCursor = instanceStart.z + ( instanceEnd.z - instanceStart.z) * position.y;
+		vCursor = vPosition.z;
 
 	#endif
 
 	#ifdef CV_HEIGHT
 
-		zMap = ( instanceStart.z + ( instanceEnd.z - instanceStart.z) * position.y - minZ ) * scaleZ;
+		zMap = ( vPosition.z - minZ ) * scaleZ;
 
 	#endif
 
 	#if defined( CV_DEPTH ) || defined( CV_DEPTH_CURSOR )
 
-		vec3 realPosition = instanceStart + ( instanceEnd - instanceStart ) * position.y;
-
-		vTerrainCoords = vec2( ( realPosition.x - modelMin.x ) * scaleX, ( realPosition.y - modelMin.y ) * scaleY );
-		vZ = realPosition.z;
+		vTerrainCoords = vec2( ( vPosition.x - modelMin.x ) * scaleX, ( vPosition.y - modelMin.y ) * scaleY );
 
 	#endif
 

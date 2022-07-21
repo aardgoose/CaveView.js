@@ -17,7 +17,7 @@ import { TextureCache } from '../core/TextureCache';
 
 import {
 	Color, IncrementStencilOp, LineBasicMaterial,
-	MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, Vector2
+	MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, Vector2, Vector3
 } from '../Three';
 
 function Materials ( viewer ) {
@@ -30,12 +30,14 @@ function Materials ( viewer ) {
 	const cursorMaterials = new Set();
 	const lineMaterials = new Set();
 	const surveyLineMaterials = new Set();
+	const wallMaterials = new Set();
 
 	let perSurveyMaterials = {};
 
 	let cursorHeight = 0;
 	let linewidth = 1;
 	let scaleLinewidth = false;
+	let locationMode = false;
 
 	const colourCache = new ColourCache();
 	const textureCache = new TextureCache();
@@ -51,7 +53,9 @@ function Materials ( viewer ) {
 		common: {
 			fogColor: { value: cfg.themeColor( 'background' ) },
 			fogDensity: { value: 0.0025 },
-			distanceTransparency: { value: 0.0 }
+			distanceFadeMin: { value: 0.0 },
+			distanceFadeMax: { value: 0.0 },
+			cameraLocation: { value: new Vector3() }
 		},
 
 		commonDepth: {
@@ -69,17 +73,18 @@ function Materials ( viewer ) {
 			scale: { value: 0.0 },
 			accuracy: { value: 0.0 },
 			target: { value: new Vector2() },
-			ringColor: { value: new Color( 0xff0000 ) }
+			ringColor: { value: new Color( 0xff0000 ) },
 		}
 
 	};
 
 	this.terrainOpacity = 0.5;
 
-	const distanceTransparency = this.uniforms.common.distanceTransparency;
-	const locationAccuracy = this.uniforms.location.accuracy;
-	const locationScale = this.uniforms.location.scale;
-	const location = this.uniforms.location.target;
+	const locationUniforms = this.uniforms.location;
+
+	const locationAccuracy = locationUniforms.accuracy;
+	const locationScale = locationUniforms.scale;
+	const location = locationUniforms.target;
 
 	Object.defineProperties( this, {
 
@@ -106,11 +111,6 @@ function Materials ( viewer ) {
 				surveyLineMaterials.forEach( material => material.scaleLinewidth = mode );
 				scaleLinewidth = mode;
 			}
-		},
-
-		'distanceTransparency': {
-			get() { return distanceTransparency.value; },
-			set( x ) { distanceTransparency.value = x; }
 		},
 
 		'location': {
@@ -167,6 +167,50 @@ function Materials ( viewer ) {
 
 	}
 
+	this.setLocation = function ( location = null, minDistance = 0, maxDistance = 0 ) {
+
+		const updateMaterial = ( material ) => {
+
+			material.defines.CV_LOCATION = locationMode;
+			material.transparent = locationMode;
+			material.needsUpdate = true;
+
+		};
+
+		if ( location === null ) {
+
+			if ( locationMode ) {
+
+				console.log( 'disable loc' );
+				locationMode = false;
+
+				surveyLineMaterials.forEach( updateMaterial );
+				wallMaterials.forEach( updateMaterial );
+
+			}
+
+		} else {
+
+			if ( ! locationMode ) {
+
+				console.log( 'enable loc' );
+				locationMode = true;
+
+				surveyLineMaterials.forEach( updateMaterial );
+				wallMaterials.forEach( updateMaterial );
+
+			}
+
+			const commonUniforms = this.uniforms.common;
+
+			commonUniforms.distanceFadeMin.value = minDistance;
+			commonUniforms.distanceFadeMax.value = maxDistance;
+			commonUniforms.cameraLocation.value.copy( location );
+
+		}
+
+	};
+
 	this.getLine2Material = function ( params = { color: 'green' } ) {
 
 		const func = () => new Line2Material( ctx, params );
@@ -178,7 +222,9 @@ function Materials ( viewer ) {
 
 	this.getSurveyLineMaterial = function ( mode = '', dashed = false ) {
 
-		const func = () => new SurveyLineMaterial( ctx, mode, dashed );
+		const options = { dashed: dashed, location: locationMode };
+
+		const func = () => new SurveyLineMaterial( ctx, mode, options );
 		const material = getSurveyCacheMaterial( 'survey-line-' + mode + ( dashed ? '-dashed' : '' ), func, true );
 
 		if ( mode === 'cursor' || mode === 'depth-cursor' ) {
@@ -198,8 +244,12 @@ function Materials ( viewer ) {
 
 	this.getHeightMaterial = function () {
 
-		const func = () => new HeightMaterial( ctx );
-		return getSurveyCacheMaterial( 'height', func, true );
+		const func = () => new HeightMaterial( ctx, { location: locationMode } );
+		const material = getSurveyCacheMaterial( 'height', func, true );
+
+		wallMaterials.add( material );
+
+		return material;
 
 	};
 
@@ -212,18 +262,23 @@ function Materials ( viewer ) {
 
 	this.getDepthMaterial = function () {
 
-		const func = () => new DepthMaterial( ctx );
-		return getSurveyCacheMaterial( 'depth', func, true );
+		const func = () => new DepthMaterial( ctx, { location: locationMode } );
+		const material = getSurveyCacheMaterial( 'depth', func, true );
+
+		wallMaterials.add( material );
+
+		return material;
 
 	};
 
 	this.getCursorMaterial = function () {
 
-		const func = () => new CursorMaterial( ctx );
+		const func = () => new CursorMaterial( ctx, { location: locationMode } );
 		const material = getSurveyCacheMaterial( 'cursor', func, true );
 
 		// set active cursor material for updating
 		cursorMaterials.add( material );
+		wallMaterials.add( material );
 
 		return material;
 
@@ -231,11 +286,12 @@ function Materials ( viewer ) {
 
 	this.getDepthCursorMaterial = function () {
 
-		const func = () => new DepthCursorMaterial( ctx );
+		const func = () => new DepthCursorMaterial( ctx, { location: locationMode } );
 		const material = getSurveyCacheMaterial( 'depthCursor', func, true );
 
 		// set active cursor material for updating
 		cursorMaterials.add( material );
+		wallMaterials.add( material );
 
 		return material;
 

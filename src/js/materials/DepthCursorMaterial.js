@@ -3,7 +3,7 @@ import { Shaders } from './shaders/Shaders';
 
 class DepthCursorMaterial extends ShaderMaterial {
 
-	constructor( ctx ) {
+	constructor( ctx, options ) {
 
 		const survey = ctx.survey;
 		const surveyLimits = survey.modelLimits;
@@ -30,10 +30,12 @@ class DepthCursorMaterial extends ShaderMaterial {
 			}, cloneUniforms( uniforms.cursor ),
 			uniforms.common, uniforms.commonDepth ),
 			defines: {
-				USE_COLOR: true
+				USE_COLOR: true,
+				CV_LOCATION: options.location
 			}
 		} );
 
+		this.transparent = options.location;
 		this.max = max;
 		this.uniforms.cursor.value = max;
 

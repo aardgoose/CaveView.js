@@ -1,4 +1,4 @@
-	float delta = abs( vCursor - cursor );
+	float delta = abs( vPosition.z - cursor );
 	float ss = smoothstep( 0.0, cursorWidth, cursorWidth - delta );
 
 	if ( delta < cursorWidth * 0.05 ) {

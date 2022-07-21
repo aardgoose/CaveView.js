@@ -56,6 +56,9 @@ import hypsometric_fragment from './chunks/hypsometric_fragment.glsl';
 import location_fragment_pars from './chunks/location_fragment_pars.glsl';
 import location_fragment from './chunks/location_fragment.glsl';
 
+import location_fade_fragment_pars from './chunks/location_fade_fragment_pars.glsl';
+import location_fade_fragment from './chunks/location_fade_fragment.glsl';
+
 import packRGBA from './chunks/packRGBA.glsl';
 
 Object.assign( ShaderChunk, {
@@ -87,6 +90,9 @@ Object.assign( ShaderChunk, {
 
 	location_fragment_pars: location_fragment_pars,
 	location_fragment: location_fragment,
+
+	location_fade_fragment_pars: location_fade_fragment_pars,
+	location_fade_fragment: location_fade_fragment,
 
 	packRGBA: packRGBA
 } );

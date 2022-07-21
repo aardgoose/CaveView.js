@@ -5,7 +5,7 @@ import { Line2Material } from './Line2Material';
 
 class SurveyLineMaterial extends Line2Material {
 
-	constructor ( ctx, mode = 'height', dashed ) {
+	constructor ( ctx, mode = 'height', options = null) {
 
 		const survey = ctx.survey;
 		const cfg = ctx.cfg;
@@ -105,8 +105,6 @@ class SurveyLineMaterial extends Line2Material {
 
 		}
 
-		if ( dashed ) defines.USE_DASH = true;
-
 		const params = {
 			color: 0xffffff,
 			vertexColors: true,
@@ -115,6 +113,19 @@ class SurveyLineMaterial extends Line2Material {
 		};
 
 		super( ctx, params, defines, customUniforms );
+
+		if ( options !== null ) {
+
+			if ( options.dashed ) defines.USE_DASH = true;
+
+			if ( options.location ) {
+
+				defines.CV_LOCATION = true;
+				this.transparent = true;
+
+			}
+
+		}
 
 		// for cursor material variant
 		this.halfRange = ( surveyLimits.max.z - surveyLimits.min.z ) / 2;

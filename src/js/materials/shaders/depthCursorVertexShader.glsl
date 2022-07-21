@@ -9,8 +9,6 @@ void main() {
 	#include <wall_vertex>
 	#include <depth_vertex>
 
-	vZ = position.z;
-
 	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 
 	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );

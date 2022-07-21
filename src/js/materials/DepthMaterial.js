@@ -3,7 +3,7 @@ import { Shaders } from './shaders/Shaders';
 
 class DepthMaterial extends ShaderMaterial {
 
-	constructor ( ctx ) {
+	constructor ( ctx, options ) {
 
 		const survey = ctx.survey;
 		const surveyLimits = survey.modelLimits;
@@ -30,9 +30,12 @@ class DepthMaterial extends ShaderMaterial {
 				depthMap:   { value: terrain.depthTexture },
 			}, uniforms.common, uniforms.commonDepth ),
 			defines: {
-				USE_COLOR: true
+				USE_COLOR: true,
+				CV_LOCATION: options.location
 			}
 		} );
+
+		this.transparent = options.location;
 
 	}
 

@@ -3,7 +3,7 @@ import { Shaders } from './shaders/Shaders';
 
 class CursorMaterial extends ShaderMaterial {
 
-	constructor ( ctx ) {
+	constructor ( ctx, options ) {
 
 		const survey = ctx.survey;
 		const limits = survey.modelLimits;
@@ -18,12 +18,15 @@ class CursorMaterial extends ShaderMaterial {
 			}, cloneUniforms( uniforms.cursor ),
 			uniforms.common ),
 			defines: {
-				USE_COLOR: true
+				USE_COLOR: true,
+				CV_LOCATION: options.location
 			}
 		} );
 
+		this.transparent = options.location;
 		this.halfRange = ( limits.max.z - limits.min.z ) / 2;
 		this.uniforms.cursor.value = 0;
+
 	}
 
 	setCursor ( value ) {

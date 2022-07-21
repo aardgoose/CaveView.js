@@ -3,5 +3,3 @@ uniform float cursorWidth;
 
 uniform vec3 baseColor;
 uniform vec3 cursorColor;
-
-varying float vCursor;

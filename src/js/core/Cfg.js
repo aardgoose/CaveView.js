@@ -100,13 +100,13 @@ class Cfg extends EventDispatcher {
 
 		Object.defineProperty( this, item, {
 
-			set: function ( value ) {
+			set( value ) {
 
 				this.environment.set( item, value );
 				this.dispatchEvent( { type: 'change', name: item } );
 
 			},
-			get: function () {
+			get() {
 				return this.environment.get( item ); }
 		} );
 

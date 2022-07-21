@@ -128,166 +128,166 @@ class CaveViewer extends EventDispatcher {
 		Object.defineProperties( this, {
 
 			'mouseOver': {
-				get: function () { return mouseOver; }
+				get() { return mouseOver; }
 			},
 
 			'reset': {
-				set: function () { setupView( false ); }
+				set() { setupView( false ); }
 			},
 
 			'surveyLoaded': {
-				get: function () { return ( survey !== null ); }
+				get() { return ( survey !== null ); }
 			},
 
 			'terrain': {
-				get: function () { return cameraManager.testCameraLayer( FEATURE_TERRAIN ); },
+				get() { return cameraManager.testCameraLayer( FEATURE_TERRAIN ); },
 				set: loadTerrain,
 				enumerable: true
 			},
 
 			'stationLabelOver': {
-				get: function () { return pointerControls.getStationNameLabelMode(); },
+				get() { return pointerControls.getStationNameLabelMode(); },
 				set: x => { pointerControls.setStationNameLabelMode( x ); },
 				enumerable: true
 			},
 
 			'terrainShading': {
-				get: function () { return terrain !== null ? terrain.shadingMode : null; },
+				get() { return terrain !== null ? terrain.shadingMode : null; },
 				set: stateSetter( setTerrainShadingMode, 'terrainShading'),
 				enumerable: true
 			},
 
 			'hasTerrain': {
-				get: function () { return !! terrain; }
+				get() { return !! terrain; }
 			},
 
 			'hasRealTerrain': {
-				get: function () { return ( terrain && ! terrain.isFlat ); }
+				get() { return ( terrain && ! terrain.isFlat ); }
 			},
 
 			'terrainAttributions': {
-				get: function () { return terrain !== null ? terrain.attributions : []; }
+				get() { return terrain !== null ? terrain.attributions : []; }
 			},
 
 			'terrainDirectionalLighting': {
-				get: function () { return ( lightingManager.lightingMode !== LM_NONE ); },
+				get() { return ( lightingManager.lightingMode !== LM_NONE ); },
 				set: x => { lightingManager.lightingMode = x ? LM_SINGLE : LM_NONE; }
 			},
 
 			'terrainLightingMode': {
-				get: function () { return lightingManager.lightingMode; },
+				get() { return lightingManager.lightingMode; },
 				set: stateSetter( mode => { lightingManager.lightingMode = mode; }, 'terrainLightingMode' ),
 				enumerable: true
 			},
 
 			'terrainShadingModes': {
-				get: function () { return terrain !== null ? terrain.terrainShadingModes : {}; }
+				get() { return terrain !== null ? terrain.terrainShadingModes : {}; }
 			},
 
 			'terrainTileSet': {
-				get: function () { return terrain?.tileSet.bind( terrain ); }
+				get() { return terrain?.tileSet.bind( terrain ); }
 			},
 
 			'terrainDatumShift': {
-				get: function () { return !! terrain?.activeDatumShift; },
+				get() { return !! terrain?.activeDatumShift; },
 				set: stateSetter( x => { terrain?.applyDatumShift( x ); }, 'terrainDatumShift' ),
 				enumerable: true
 			},
 
 			'terrainDatumShiftValue': {
-				get: function () { return Math.round( terrain.datumShift ); },
+				get() { return Math.round( terrain.datumShift ); },
 				set: stateSetter( x => { terrain.datumShift = x; }, 'terrainDatumShiftValue' )
 			},
 
 			'terrainOpacity': {
-				get: function () { return ( terrain !== null ) ? terrain.getOpacity() : 0; },
+				get() { return ( terrain !== null ) ? terrain.getOpacity() : 0; },
 				set: stateSetter( x => { terrain?.setOpacity( x ); }, 'terrainOpacity' ),
 				enumerable: true
 			},
 
 			'shadingMode': {
-				get: function () { return survey?.caveShading; },
+				get() { return survey?.caveShading; },
 				set: stateSetter( mode => survey.setShadingMode( mode, false ), 'shadingMode' ),
 				enumerable: true
 			},
 
 			'hideMode': {
-				get: function () { return survey?.hideMode; },
+				get() { return survey?.hideMode; },
 				set: x => { survey.setHideMode( x ); renderView(); }
 			},
 
 			'flatShading': {
-				get: function () { return survey?.wallsMode; },
+				get() { return survey?.wallsMode; },
 				set: x => { survey.setWallsMode( x ); renderView(); },
 				enumerable: true
 			},
 
 			'route': {
-				get: function () { return survey?.getRoutes().setRoute; },
+				get() { return survey?.getRoutes().setRoute; },
 				set: x => { survey.getRoutes().setRoute = x; }
 			},
 
 			'routeNames': {
-				get: function () { return survey?.getRoutes().getRouteNames(); },
+				get() { return survey?.getRoutes().getRouteNames(); },
 			},
 
 			'surfaceShading': {
-				get: function () { return survey?.surfaceShading; },
+				get() { return survey?.surfaceShading; },
 				set: stateSetter( mode => survey.setSurfaceShading( mode ), 'surfaceShading' ),
 				enumerable: true
 			},
 
 			'duplicateShading': {
-				get: function () { return survey?.duplicateShading; },
+				get() { return survey?.duplicateShading; },
 				set: stateSetter( mode => survey.setDuplicateShading( mode ), 'duplicateShading' ),
 				enumerable: true
 			},
 
 			'cameraType': {
-				get: function () { return cameraManager.mode; },
+				get() { return cameraManager.mode; },
 				set: stateSetter( mode => cameraManager.setCamera( mode, controls.target ), 'cameraType' )
 			},
 
 			'eyeSeparation': {
-				get: function () { return cameraManager.eyeSeparation; },
+				get() { return cameraManager.eyeSeparation; },
 				set: stateSetter( x => { cameraManager.eyeSeparation = x; }, 'eyeSeparation' )
 			},
 
 			'view': {
-				get: function () { return VIEW_NONE; },
+				get() { return VIEW_NONE; },
 				set: stateSetter( setViewMode, 'view' )
 			},
 
 			'cursorHeight': {
-				get: function () { return materials.cursorHeight; },
+				get() { return materials.cursorHeight; },
 				set: stateSetter( x => { materials.cursorHeight = x; }, 'cursorHeight' )
 			},
 
 			'linewidth': {
-				get: function () { return ( materials.linewidth - 1 ) / 10; },
+				get() { return ( materials.linewidth - 1 ) / 10; },
 				set: stateSetter( x => { materials.linewidth = x * 10 + 1; }, 'linewidth' ),
 				enumerable: true
 			},
 
 			'scaleLinewidth': {
-				get: function () { return materials.scaleLinewidth; },
+				get() { return materials.scaleLinewidth; },
 				set: stateSetter( x => { materials.scaleLinewidth = !! x; }, 'scaleLinewidth' )
 			},
 
 			'maxDistance': {
-				get: function () { return ( survey === null ) ? 0 :  survey.getMaxDistance(); }
+				get() { return ( survey === null ) ? 0 :  survey.getMaxDistance(); }
 			},
 
 			'maxHeight': {
-				get: function () { return ( survey === null ) ? 0 : survey.limits.max.z; }
+				get() { return ( survey === null ) ? 0 : survey.limits.max.z; }
 			},
 
 			'minHeight': {
-				get: function () { return ( survey === null ) ? 0 : survey.limits.min.z; }
+				get() { return ( survey === null ) ? 0 : survey.limits.min.z; }
 			},
 
 			'section': {
-				get: function () { return ( survey === null ) ? null : survey.selection.getNode(); },
+				get() { return ( survey === null ) ? null : survey.selection.getNode(); },
 				set: stateSetter( selectSection, 'section' )
 			},
 
@@ -305,7 +305,7 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'polarAngle': {
-				get: function () { return controls.getPolarAngle(); },
+				get() { return controls.getPolarAngle(); },
 				set: x => { cameraMove.setPolarAngle( x ); }
 			},
 
@@ -314,40 +314,38 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'editMode': {
-				get: function () { return pointerControls.getEditMode(); },
+				get() { return pointerControls.getEditMode(); },
 				set: stateSetter( x => { pointerControls.setEditMode( x ); }, 'editMode' )
 			},
 
 			'setPOI': {
-				//get: function () { return true; },
 				set: stateSetter( () => cameraMove.start( true ), 'setPOI' )
 			},
 
 			'HUD': {
-				get: function () { return hud.getVisibility(); },
+				get() { return hud.getVisibility(); },
 				set: x => { hud.setVisibility( x ); },
 				enumerable: true
 			},
 
 			'cut': {
-				// get: function () { return true; },
 				set: cutSection
 			},
 
 			'zScale': {
-				get: function () { return survey?.zScale; },
+				get() { return survey?.zScale; },
 				set: stateSetter( x => { survey.zScale = x; }, 'zScale' ),
 				enumerable: true
 			},
 
 			'autoRotate': {
-				get: function () { return controls.autoRotate; },
+				get() { return controls.autoRotate; },
 				set: stateSetter( x => cameraMove.setAutoRotate( !! x ), 'autoRotate' )
 			},
 
 			'wheelTilt': {
-				get: function () { return controls.wheelTilt; },
-				set: function ( x ) {
+				get() { return controls.wheelTilt; },
+				set( x ) {
 					controls.wheelTilt = !! x;
 					self.dispatchEvent( { type: 'change', name: 'wheelTilt' } );
 				},
@@ -355,8 +353,8 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'svxControlMode': {
-				get: function () { return controls.svxControlMode; },
-				set: function ( x ) {
+				get() { return controls.svxControlMode; },
+				set( x ) {
 					controls.svxControlMode = !! x;
 					// force refresh of help tab
 					self.dispatchEvent( { type: 'newCave', name: 'newCave' } );
@@ -365,8 +363,8 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'zoomToCursor': {
-				get: function () { return controls.zoomToCursor; },
-				set: function ( x ) {
+				get() { return controls.zoomToCursor; },
+				set( x ) {
 					controls.zoomToCursor = !! x;
 					self.dispatchEvent( { type: 'change', name: 'zoomToCursor' } );
 				},
@@ -374,7 +372,7 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'autoRotateSpeed': {
-				get: function () { return controls.autoRotateSpeed / 11; },
+				get() { return controls.autoRotateSpeed / 11; },
 				set: stateSetter( setAutoRotateSpeed, 'autoRotateSpeed' )
 			},
 
@@ -384,24 +382,24 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'fog': {
-				get: function () { return useFog; },
+				get() { return useFog; },
 				set: stateSetter( setFog, 'fog' ),
 				enumerable: true
 			},
 
 			'isClipped': {
-				get: function () { return clipped; }
+				get() { return clipped; }
 			},
 
 			'maxSnapshotSize': {
-				get: function () {
+				get() {
 					const context = renderer.getContext();
 					return context.getParameter( context.MAX_RENDERBUFFER_SIZE );
 				}
 			},
 
 			'focalLength': {
-				get: function () { return cameraManager.focalLength; },
+				get() { return cameraManager.focalLength; },
 				set: setFocalLength,
 				enumerable: true
 			}
@@ -471,8 +469,8 @@ class CaveViewer extends EventDispatcher {
 		function enableLayer ( layerTag, name ) {
 
 			Object.defineProperty( self, name, {
-				get: function () { return cameraManager.testCameraLayer( layerTag ); },
-				set: function ( x ) {
+				get() { return cameraManager.testCameraLayer( layerTag ); },
+				set( x ) {
 
 					if ( cameraManager.setCameraLayer( layerTag, x ) ) {
 
@@ -488,7 +486,7 @@ class CaveViewer extends EventDispatcher {
 			const hasName = 'has' + name.substr( 0, 1 ).toUpperCase() + name.substr( 1 );
 
 			Object.defineProperty( self, hasName, {
-				get: function () { return survey.hasFeature( layerTag ); }
+				get() { return survey.hasFeature( layerTag ); }
 			} );
 
 		}

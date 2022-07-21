@@ -3,7 +3,7 @@ import { DistanceFieldPass } from './distanceField/DistanceFieldPass';
 import { DistanceFieldFilterPass } from './distanceField/DistanceFieldFilterPass';
 import { FACE_SCRAPS, FACE_WALLS, LEG_CAVE } from '../core/constants';
 
-class DistanceSquaredLookup {
+class DistanceLookup {
 
 	scale = 1;
 	pixelIncrement = 1;
@@ -101,10 +101,10 @@ class DistanceFieldPlugin {
 
 			const textureLookup = renderUtils.makeTextureLookup( renderer, target, survey.combinedLimits );
 
-			const lookup = new DistanceSquaredLookup( textureLookup, pixelIncrement, scale );
+			const lookup = new DistanceLookup( textureLookup, pixelIncrement, scale );
 
 			console.log( lookup.lookup( new Vector2( 0, 0 ) ) );
-			survey.distanceSquaredLookup = lookup;
+			survey.distanceLookup = lookup;
 
 			// drop resources associated with temporary camera
 			renderer.renderLists.dispose();

@@ -14,6 +14,7 @@ class ARPlugin {
 		const locationSource = viewer.locationSource;
 		const camera = new PerspectiveCamera();
 		const cameraLocation = new Vector3();
+		const materials = ctx.materials;
 
 		let survey = null;
 		let savedView = null;
@@ -57,9 +58,14 @@ class ARPlugin {
 			cameraLocation.copy( event.location );
 			survey.markers.mark( cameraLocation );
 
-			const lookup = survey.distanceSquaredLookup;
+			const lookup = survey.distanceLookup;
 
-			console.log( lookup.lookup( cameraLocation ), lookup.range, survey.offsets );
+			const minDistance = lookup.lookup( cameraLocation );
+			const maxDistance = minDistance + 500;
+
+			console.log( 'min', minDistance, cameraLocation.x, cameraLocation.y, cameraLocation.z );
+
+			materials.setLocation( cameraLocation, minDistance, maxDistance );
 
 			cameraLocation.divide( survey.modelLimits.max );
 

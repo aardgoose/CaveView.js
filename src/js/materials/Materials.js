@@ -11,6 +11,7 @@ import { GlyphMaterial } from './GlyphMaterial';
 import { HeightMaterial } from './HeightMaterial';
 import { HypsometricMaterial } from './HypsometricMaterial';
 import { Line2Material } from './Line2Material';
+import { WallMaterial } from './WallMaterial';
 import { MissingMaterial } from './MissingMaterial';
 import { SurveyLineMaterial } from './SurveyLineMaterial';
 import { TextureCache } from '../core/TextureCache';
@@ -167,6 +168,16 @@ function Materials ( viewer ) {
 
 	}
 
+	function getWallMaterial ( name, materialClass, stencil ) {
+
+		const material = getSurveyCacheMaterial( name, () => new materialClass( ctx, { location: locationMode } ), stencil );
+
+		wallMaterials.add( material );
+
+		return material;
+
+	}
+
 	this.setLocation = function ( location = null, minDistance = 0, maxDistance = 0 ) {
 
 		const updateMaterial = ( material ) => {
@@ -193,7 +204,6 @@ function Materials ( viewer ) {
 
 			if ( ! locationMode ) {
 
-				console.log( 'enable loc' );
 				locationMode = true;
 
 				surveyLineMaterials.forEach( updateMaterial );
@@ -244,41 +254,26 @@ function Materials ( viewer ) {
 
 	this.getHeightMaterial = function () {
 
-		const func = () => new HeightMaterial( ctx, { location: locationMode } );
-		const material = getSurveyCacheMaterial( 'height', func, true );
-
-		wallMaterials.add( material );
-
-		return material;
+		return getWallMaterial( 'height', HeightMaterial, true );
 
 	};
 
-	this.getHypsometricMaterial = function () {
+	this.getSingleWallMaterial = function  () {
 
-		const func = () => new HypsometricMaterial( ctx );
-		return getSurveyCacheMaterial( 'hypsometric', func );
+		return getWallMaterial( 'single', WallMaterial, true );
 
 	};
 
 	this.getDepthMaterial = function () {
 
-		const func = () => new DepthMaterial( ctx, { location: locationMode } );
-		const material = getSurveyCacheMaterial( 'depth', func, true );
-
-		wallMaterials.add( material );
-
-		return material;
+		return getWallMaterial( 'depth', DepthMaterial, true );
 
 	};
 
 	this.getCursorMaterial = function () {
 
-		const func = () => new CursorMaterial( ctx, { location: locationMode } );
-		const material = getSurveyCacheMaterial( 'cursor', func, true );
-
-		// set active cursor material for updating
+		const material = getWallMaterial( 'cursor', CursorMaterial, true );
 		cursorMaterials.add( material );
-		wallMaterials.add( material );
 
 		return material;
 
@@ -286,14 +281,24 @@ function Materials ( viewer ) {
 
 	this.getDepthCursorMaterial = function () {
 
-		const func = () => new DepthCursorMaterial( ctx, { location: locationMode } );
-		const material = getSurveyCacheMaterial( 'depthCursor', func, true );
-
-		// set active cursor material for updating
+		const material = getWallMaterial( 'depthCursor', DepthCursorMaterial, true );
 		cursorMaterials.add( material );
-		wallMaterials.add( material );
 
 		return material;
+
+	};
+
+	this.getUnselectedWallMaterial = function () {
+
+		const func = () => new MeshLambertMaterial( { color: 0x444444, vertexColors: true} );
+		return getCacheMaterial( 'unselectedWall', func );
+
+	};
+
+	this.getHypsometricMaterial = function () {
+
+		const func = () => new HypsometricMaterial( ctx );
+		return getSurveyCacheMaterial( 'hypsometric', func );
 
 	};
 
@@ -322,12 +327,6 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getSingleWallMaterial = function  () {
-
-		const func = () => new MeshLambertMaterial( { color: cfg.themeColor( 'shading.single' ), vertexColors: false } );
-		return getCacheMaterial( 'single', func, true );
-
-	};
 
 	this.getSurfaceMaterial = function  () {
 
@@ -361,13 +360,6 @@ function Materials ( viewer ) {
 
 		const func = () => new LineBasicMaterial( { color: 0x444444, vertexColors: true } );
 		return getCacheMaterial( 'unselected', func );
-
-	};
-
-	this.getUnselectedWallMaterial = function () {
-
-		const func = () => new MeshLambertMaterial( { color: 0x444444, vertexColors: true} );
-		return getCacheMaterial( 'unselectedWall', func );
 
 	};
 
@@ -440,6 +432,7 @@ function Materials ( viewer ) {
 		cursorMaterials.clear();
 		lineMaterials.clear();
 		surveyLineMaterials.clear();
+		wallMaterials.clear();
 
 		for ( const name in perSurveyMaterials ) {
 

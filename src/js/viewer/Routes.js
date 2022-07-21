@@ -22,8 +22,8 @@ class Routes extends EventDispatcher {
 		this.adjacentSegments = new Set();
 
 		Object.defineProperty( this, 'setRoute', {
-			set: function ( x ) { this.loadRoute( x ); },
-			get: function () { return this.currentRouteName; }
+			set( x ) { this.loadRoute( x ); },
+			get() { return this.currentRouteName; }
 		} );
 
 		const routes = this.metadata.getRoutes();

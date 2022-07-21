@@ -340,7 +340,7 @@ class Page {
 		input.id = id;
 		input.classList.add( 'cv-file' );
 		input.type = 'file';
-		input.accept = '.svx,.lox,.plt';
+		input.accept = '.3d,.lox,.plt';
 		input.multiple = true;
 
 		this.addListener( input, 'change', function _handleFileChange () {

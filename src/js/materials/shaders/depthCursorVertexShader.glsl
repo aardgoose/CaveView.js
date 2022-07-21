@@ -8,11 +8,6 @@ void main() {
 
 	#include <wall_vertex>
 	#include <depth_vertex>
-
-	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-
-	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-
 	#include <fog_vertex>
 
 }

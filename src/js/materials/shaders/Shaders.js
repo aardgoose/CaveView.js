@@ -30,6 +30,9 @@ import waterFragmentShader from './waterFragmentShader.glsl';
 import lineVertexShader from './lineVertexShader.glsl';
 import lineFragmentShader from './lineFragmentShader.glsl';
 
+import wallVertexShader from './wallVertexShader.glsl';
+import wallFragmentShader from './wallFragmentShader.glsl';
+
 // shader chunks to be included
 
 import wall_vertex from './chunks/wall_vertex.glsl';
@@ -117,7 +120,9 @@ export const Shaders = {
 	waterVertexShader:		waterVertexShader,
 	waterFragmentShader:	waterFragmentShader,
 	lineVertexShader:		lineVertexShader,
-	lineFragmentShader:		lineFragmentShader
+	lineFragmentShader:		lineFragmentShader,
+	wallVertexShader:		wallVertexShader,
+	wallFragmentShader:		wallFragmentShader
 };
 
 // EOF

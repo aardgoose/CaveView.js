@@ -302,7 +302,7 @@ class OrbitControls extends EventDispatcher {
 
 		Object.defineProperty( this, 'svxControlMode', {
 			set: setControlMode,
-			get: function () { return svxControlMode; }
+			get() { return svxControlMode; }
 
 		} );
 

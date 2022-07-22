@@ -48,7 +48,6 @@ function Materials ( viewer ) {
 
 	const gradientType = cfg.value( 'saturatedGradient', false ) || cfg.themeValue( 'saturatedGradient' );
 	const gradient = gradientType ? 'gradientHi' : 'gradientLow';
-	const surfaceColour = cfg.themeValue( 'shading.single' );
 
 	this.uniforms = {
 		common: {
@@ -290,7 +289,7 @@ function Materials ( viewer ) {
 
 	this.getUnselectedWallMaterial = function () {
 
-		const func = () => new MeshLambertMaterial( { color: 0x444444, vertexColors: true} );
+		const func = () => new MeshLambertMaterial( { color: 0x444444, vertexColors: true } );
 		return getCacheMaterial( 'unselectedWall', func );
 
 	};
@@ -330,7 +329,7 @@ function Materials ( viewer ) {
 
 	this.getSurfaceMaterial = function  () {
 
-		const func = () => new MeshLambertMaterial( { color: surfaceColour, vertexColors: false } );
+		const func = () => new MeshLambertMaterial( { color: cfg.themeValue( 'shading.single' ), vertexColors: false } );
 		return getCacheMaterial( 'surface', func, true );
 
 	};

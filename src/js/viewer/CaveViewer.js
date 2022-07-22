@@ -421,8 +421,8 @@ class CaveViewer extends EventDispatcher {
 		enableLayer( LABEL_STATION_COMMENT, 'stationComments' );
 		enableLayer( SURVEY_WARNINGS,     'warnings' );
 
-		container.addEventListener( 'mouseover', onMouseOver );
-		container.addEventListener( 'mouseleave', onMouseLeave );
+		container.addEventListener( 'pointerover', onPointerOver );
+		container.addEventListener( 'pointerleave', onPointerLeave );
 
 		container.addEventListener( 'fullscreenchange', onFullscreenChange );
 		container.addEventListener( 'webkitfullscreenchange', onFullscreenChange );
@@ -440,9 +440,9 @@ class CaveViewer extends EventDispatcher {
 
 		} );
 
-		function onMouseOver () { mouseOver = true; }
+		function onPointerOver () { mouseOver = true; }
 
-		function onMouseLeave () { mouseOver = false; }
+		function onPointerLeave () { mouseOver = false; }
 
 		function viewChanged( event ) {
 
@@ -825,8 +825,8 @@ class CaveViewer extends EventDispatcher {
 
 			controls.enabled = false;
 
-			survey          = null;
-			terrain         = null;
+			survey  = null;
+			terrain = null;
 
 			cameraManager.resetCameras();
 
@@ -1193,8 +1193,8 @@ class CaveViewer extends EventDispatcher {
 
 			container.removeChild( renderer.domElement );
 
-			container.removeEventListener( 'mouseover', onMouseOver );
-			container.removeEventListener( 'mouseleave', onMouseLeave );
+			container.removeEventListener( 'pointerover', onPointerOver );
+			container.removeEventListener( 'pointerleave', onPointerLeave );
 
 			container.removeEventListener( 'fullscreenchange', onFullscreenChange );
 			container.removeEventListener( 'webkitfullscreenchange', onFullscreenChange );

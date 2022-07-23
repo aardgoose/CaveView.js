@@ -136,6 +136,8 @@ class Tile extends Mesh {
 
 	setReplaced () {
 
+		if ( this.state == TILE_REPLACED ) return;
+
 		this.state = TILE_REPLACED;
 
 		this.empty();
@@ -180,6 +182,15 @@ class Tile extends Mesh {
 
 	}
 
+	setActive () {
+
+		this.isMesh = true;
+		this.state = TILE_ACTIVE;
+
+		Tile.liveTiles++;
+
+	}
+
 	setLoaded ( overlay, renderCallback ) {
 
 		const parent = this.parent;
@@ -190,15 +201,15 @@ class Tile extends Mesh {
 
 			if ( parent.childErrors === 0 ) { // all loaded without error
 
-				parent.children.forEach( sibling => {
+				const siblings = parent.children;
 
-					if ( sibling.state === TILE_REPLACED || sibling.state === TILE_EVICTED ) return;
+				siblings.forEach( sibling => {
+
+					if ( sibling.state !== TILE_PENDING ) return;
 
 					if ( overlay === null ) {
 
-						sibling.isMesh = true;
-						sibling.state = TILE_ACTIVE;
-						Tile.liveTiles++;
+						sibling.setActive();
 
 					} else {
 
@@ -207,16 +218,21 @@ class Tile extends Mesh {
 
 						sibling
 							.setOverlay( overlay )
-							.then( tile => {
-
-								tile.isMesh = true;
-								tile.state = TILE_ACTIVE;
-								Tile.liveTiles++;
+							.then( () => {
 
 								if ( --tilesWaiting === 0 ) {
 
+									siblings.forEach( tile => {
+
+										if ( tile.state !== TILE_PENDING ) return;
+
+										tile.setActive();
+
+									} );
+
 									if ( parent.isTile ) parent.setReplaced();
 									renderCallback( this.canZoom );
+
 									return;
 
 								}
@@ -240,6 +256,7 @@ class Tile extends Mesh {
 			} else {
 
 				parent.remove( this );
+				renderCallback( false );
 
 			}
 
@@ -265,11 +282,7 @@ class Tile extends Mesh {
 			.getTile( this )
 			.then( material => {
 
-				if ( material !== null ) {
-
-					this.material = material;
-
-				}
+				if ( material !== null ) this.material = material;
 
 				return this;
 

@@ -2,7 +2,7 @@ import { Frustum, Matrix4 } from '../Three';
 import { CommonTerrain } from './CommonTerrain';
 import { EPSG4326TileSet } from './EPSG4326TileSet';
 import { EPSG3857TileSet } from './EPSG3857TileSet';
-import { Tile, TILE_EVICTED, TILE_PENDING } from './Tile';
+import { Tile, TILE_EVICTED, TILE_PENDING, TILE_ACTIVE } from './Tile';
 import { dataURL } from '../core/lib';
 
 const __frustum = new Frustum();
@@ -255,12 +255,7 @@ class WebTerrain extends CommonTerrain {
 
 		}
 
-		if ( existingTile?.state === TILE_PENDING ) {
-
-			console.log( `pending: [ ${z}/${x}/${y} ]`, this.tilesLoading );
-			return;
-
-		}
+		if ( existingTile?.state === TILE_PENDING ) return;
 
 		const tileSpec = this.TS.getTileSpec( x, y, z, this.limits );
 
@@ -378,7 +373,7 @@ class WebTerrain extends CommonTerrain {
 
 		this.traverse( tile => {
 
-			if ( ! tile.isTile || ! tile.isMesh ) return;
+			if ( tile.state !== TILE_ACTIVE  ) return;
 
 			if ( tile.zoom < overlayMinZoom ) {
 
@@ -521,7 +516,7 @@ class WebTerrain extends CommonTerrain {
 
 			const parent = tile.parent;
 
-			if ( ! tile.isTile || ! parent.canZoom ) return;
+			if ( ! tile.isTile || ! parent.canZoom || tile.state === TILE_PENDING ) return;
 
 			if ( tile.isMesh && tile.canZoom && tile.lastFrame === lastFrame ) {
 

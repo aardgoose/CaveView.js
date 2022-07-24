@@ -68,7 +68,7 @@ class HelpPage extends Page {
 
 			_addKey( '" "', 'view.auto_rotate' );
 			_addKey( 'Z', 'view.rotate_speed_up' );
-			_addKey( 'V', 'view.rotate_speed_down' );
+			_addKey( 'X', 'view.rotate_speed_down' );
 			_addKey( 'R', 'view.reverse_rotation' );
 
 			_addKey( '', '-' );
@@ -108,6 +108,7 @@ class HelpPage extends Page {
 			_addKey( '<ctrl>X', 'visibility.stations' );
 			_addKey( '<ctrl>L', 'visibility.survey' );
 			_addKey( '<ctrl>F', 'visibility.surface' );
+			_addKey( '<alt>E',  'visibility.entrances' );
 
 			_addKey( '', '-' );
 

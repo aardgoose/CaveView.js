@@ -7,6 +7,28 @@ import {
 
 import { Page } from './Page';
 
+let lastSign = 1;
+
+function clampedInc( value, inc ) {
+
+	console.log ( 'clamped inc',value, inc );
+
+	let sign = Math.sign( value );
+
+	if ( sign === 0 ) {
+
+		sign = lastSign;
+
+	} else {
+
+		lastSign = sign;
+
+	}
+
+	return sign * Math.max( Math.abs( value ) + inc, 0 );
+
+}
+
 function KeyboardControls ( viewer, fileSelector, avenControls ) {
 
 	document.addEventListener( 'keydown', keyDown );
@@ -123,14 +145,24 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 				viewer.azimuthAngle = Math.PI / 2;
 				break;
 
+			case 'c': // rotate clockwise
+
+				viewer.autoRotateSpeed = - Math.abs( viewer.autoRotateSpeed );
+				break;
+
+			case 'v': // rotate anticlockwise
+
+				viewer.autoRotateSpeed = Math.abs( viewer.autoRotateSpeed );
+				break;
+
 			case 'x': // decrease rotation speed
 
-				viewer.autoRotateSpeed -= 0.1;
+				viewer.autoRotateSpeed = clampedInc( viewer.autoRotateSpeed, -0.1 );
 				break;
 
 			case 'z': // increase rotation speed
 
-				viewer.autoRotateSpeed += 0.1;
+				viewer.autoRotateSpeed = clampedInc( viewer.autoRotateSpeed, 0.1 );
 				break;
 
 			}
@@ -256,6 +288,11 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 				viewer.svxControlMode = ! viewer.svxControlMode;
 				break;
 
+			case 'e': // toggle entrance labels
+
+				viewer.entrances = ! viewer.entrances;
+				break;
+
 			case 'f':
 
 				viewer.flatShading = ! viewer.flatShading;
@@ -351,7 +388,7 @@ function KeyboardControls ( viewer, fileSelector, avenControls ) {
 				viewer.cameraType = CAMERA_ORTHOGRAPHIC;
 				break;
 
-			case 'q': // switch view to perspective
+			case 'q': // toggle splays
 
 				if ( viewer.hasSplays ) viewer.splays = ! viewer.splays;
 				break;

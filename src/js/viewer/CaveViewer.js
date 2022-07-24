@@ -1002,7 +1002,7 @@ class CaveViewer extends EventDispatcher {
 
 		function loadTerrain ( mode ) {
 
-			if ( terrain !== null && terrain.isLoaded ) {
+			if ( terrain !== null ) {
 
 				terrain.setVisibility( mode );
 

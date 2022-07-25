@@ -104,6 +104,8 @@ class FileSelector extends EventDispatcher {
 
 			}
 
+			source.name = count === 1 ? '*' + list[ 0 ].name : '*multiple';
+
 			// FIXME ( add to list??)
 			this.sourceList.push( source );
 			this.selectSource( source, null );

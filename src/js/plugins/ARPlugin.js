@@ -65,7 +65,9 @@ class ARPlugin {
 
 			console.log( 'min', minDistance, cameraLocation.x, cameraLocation.y, cameraLocation.z );
 
-			materials.setLocation( cameraLocation, minDistance, maxDistance );
+			const accuracy = 30; // FIXME dummy value
+
+			materials.setLocation( cameraLocation, accuracy, minDistance, maxDistance );
 
 			cameraLocation.divide( survey.modelLimits.max );
 

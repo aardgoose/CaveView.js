@@ -70,8 +70,7 @@ function Materials ( viewer ) {
 		},
 
 		location: {
-			scale: { value: 0.0 },
-			accuracy: { value: 0.0 },
+			accuracy: { value: -1.0 },
 			target: { value: new Vector2() },
 			ringColor: { value: new Color( 0xff0000 ) },
 		}
@@ -79,12 +78,6 @@ function Materials ( viewer ) {
 	};
 
 	this.terrainOpacity = 0.5;
-
-	const locationUniforms = this.uniforms.location;
-
-	const locationAccuracy = locationUniforms.accuracy;
-	const locationScale = locationUniforms.scale;
-	const location = locationUniforms.target;
 
 	Object.defineProperties( this, {
 
@@ -111,20 +104,6 @@ function Materials ( viewer ) {
 				surveyLineMaterials.forEach( material => material.scaleLinewidth = mode );
 				scaleLinewidth = mode;
 			}
-		},
-
-		'location': {
-			get() { return location.value; },
-		},
-
-		'locationAccuracy': {
-			get() { return locationAccuracy.value; },
-			set( x ) { locationAccuracy.value = x; }
-		},
-
-		'locationScale': {
-			get() { return locationScale.value; },
-			set( x ) { locationScale.value = x; }
 		}
 
 	} );
@@ -177,7 +156,7 @@ function Materials ( viewer ) {
 
 	}
 
-	this.setLocation = function ( location = null, minDistance = 0, maxDistance = 0 ) {
+	this.setLocation = function ( location = null, accuracy = 0, minDistance = 0, maxDistance = 0 ) {
 
 		const updateMaterial = ( material ) => {
 
@@ -187,12 +166,16 @@ function Materials ( viewer ) {
 
 		};
 
+		const locationUniforms = this.uniforms.location;
+
 		if ( location === null ) {
 
 			if ( locationMode ) {
 
 				console.log( 'disable loc' );
 				locationMode = false;
+
+				locationUniforms.accuracy.value = -1.0;
 
 				surveyLineMaterials.forEach( updateMaterial );
 				wallMaterials.forEach( updateMaterial );
@@ -205,6 +188,9 @@ function Materials ( viewer ) {
 
 				locationMode = true;
 
+				locationUniforms.accuracy.value = accuracy;
+				locationUniforms.target.value.set( location.x, location.y );
+
 				surveyLineMaterials.forEach( updateMaterial );
 				wallMaterials.forEach( updateMaterial );
 
@@ -215,6 +201,8 @@ function Materials ( viewer ) {
 			commonUniforms.distanceFadeMin.value = minDistance;
 			commonUniforms.distanceFadeMax.value = maxDistance;
 			commonUniforms.cameraLocation.value.copy( location );
+
+			locationUniforms.target.value.set( location.x, location.y );
 
 		}
 

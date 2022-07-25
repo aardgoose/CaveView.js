@@ -108,7 +108,7 @@ class HelpPage extends Page {
 			_addKey( '<ctrl>X', 'visibility.stations' );
 			_addKey( '<ctrl>L', 'visibility.survey' );
 			_addKey( '<ctrl>F', 'visibility.surface' );
-			_addKey( '<alt>E',  'visibility.entrances' );
+			_addKey( '<alt>E',  'visibility.entrance_labels' );
 
 			_addKey( '', '-' );
 

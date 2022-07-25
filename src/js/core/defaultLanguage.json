@@ -242,8 +242,7 @@
 			"walls": "LRUD walls on/off",
 			"stations": "station markers on/off",
 			"opacity_down": "decrease terrain opacity",
-			"opacity_up": "increase terrain opacity",
-			"entrances": "Entrance names on/off"
+			"opacity_up": "increase terrain opacity"
 		},
 		"selection": {
 			"header": "Selection",

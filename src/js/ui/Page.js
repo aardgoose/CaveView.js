@@ -300,16 +300,7 @@ class Page {
 
 			const opt = document.createElement( 'option' );
 
-			if ( source.files.length == 1 ) {
-
-				opt.text = source.files[ 0 ].name;
-
-			} else {
-
-				opt.text = '[multiple]';
-
-			}
-
+			opt.text = source.name;
 			opt.value = source.id;
 
 			if ( opt.value == fileSelector.loadedSource.id ) opt.selected = true;

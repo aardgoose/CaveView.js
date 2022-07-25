@@ -2,6 +2,7 @@ class ModelSource {
 
 	static lastId = 0;
 
+	name = null;
 	files = [];
 	local = true;
 

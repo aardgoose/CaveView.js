@@ -120,14 +120,15 @@ class FileSelector extends EventDispatcher {
 
 			const source = new ModelSource( [], false );
 
-			if ( name instanceof Array ) {
+			if ( name instanceof Object ) {
 
-
-				name.forEach( file => source.addFile( { name: file } ) );
+				name.files.forEach( file => source.addFile( { name: file } ) );
+				source.name = name.name;
 
 			} else {
 
 				source.addFile( { name: name } );
+				source.name = name;
 
 			}
 

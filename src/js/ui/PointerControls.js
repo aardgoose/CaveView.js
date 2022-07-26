@@ -1,6 +1,6 @@
 import {
 	LEG_CAVE, SHADING_PATH, SHADING_DISTANCE,
-	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES
+	MOUSE_MODE_ROUTE_EDIT, MOUSE_MODE_NORMAL, MOUSE_MODE_DISTANCE, MOUSE_MODE_TRACE_EDIT, MOUSE_MODE_ENTRANCES, SHADING_CURSOR
 } from '../core/constants';
 
 import { StationPopup } from './StationPopup';
@@ -404,6 +404,8 @@ class PointerControls extends EventDispatcher {
 			if ( event.button === MOUSE.LEFT ) {
 
 				showStationPopupX( pStation, event );
+
+				if ( viewer.shadingMode === SHADING_CURSOR ) viewer.cursorHeight = station.z;
 
 			} else if ( event.button === MOUSE.RIGHT ) {
 

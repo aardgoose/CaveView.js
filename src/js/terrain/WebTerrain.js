@@ -281,7 +281,7 @@ class WebTerrain extends CommonTerrain {
 
 		tile.setPending( parentTile ); // tile load/reload pending
 
-		this.workerPool.runWorker( tileSpec, tileData => this.tileDataLoaded( tile, tileData ) );
+		this.workerPool.queueWork( tileSpec, tileData => this.tileDataLoaded( tile, tileData ) );
 
 	}
 

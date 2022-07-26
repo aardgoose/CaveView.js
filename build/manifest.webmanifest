@@ -5,10 +5,23 @@
 	"start_url": "/index-ar.html",
 	"display": "standalone",
 	"background_color": "#000",
-	"theme_color": "#00ff00",
+	"theme_color": "#1590b7",
 	"description": "3D Cave Model Viewer.",
+	"dir": "ltr",
 	"scope": "/",
 	"icons": [
+		{
+			"src": "CaveView/images/maskable_icon_x192.png",
+			"purpose": "any maskable",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "CaveView/images/maskable_icon_x512.png",
+			"purpose": "any maskable",
+			"sizes": "512x512",
+			"type": "image/png"
+		},
 		{
 			"src": "CaveView/images/logo192.png",
 			"sizes": "192x192",

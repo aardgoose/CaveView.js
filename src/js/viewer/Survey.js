@@ -118,8 +118,8 @@ class Survey extends Object3D {
 		survey = null;
 
 		Object.defineProperty( this, 'zScale', {
-			get: function () { return zScale; },
-			set: function ( scale ) {
+			get() { return zScale; },
+			set( scale ) {
 
 				// scale - in range 0 - 1
 

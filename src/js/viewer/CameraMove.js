@@ -258,8 +258,7 @@ class CameraMove {
 		function endAnimation () {
 
 			controls.target.copy( endPOI );
-
-			if ( rotation > 0 ) cameraManager.activeCamera.position.copy( endCameraPosition );
+			cameraManager.activeCamera.position.copy( endCameraPosition );
 
 			running = false;
 			rotation = 0;

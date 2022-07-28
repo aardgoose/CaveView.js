@@ -93,7 +93,7 @@ class OrbitControls extends EventDispatcher {
 
 		this.setLimits = function ( range ) {
 
-			const currentDistance =  spherical.radius;
+			const currentDistance = spherical.radius;
 			const mSize = Math.max( range.x, range.y );
 
 			let scale = 2;
@@ -146,9 +146,9 @@ class OrbitControls extends EventDispatcher {
 
 			const camera = cameraManager.activeCamera;
 
-			scope.target0.copy( scope.target );
-			scope.position0.copy( camera.position );
-			scope.zoom0 = camera.zoom;
+			this.target0.copy( scope.target );
+			this.position0.copy( camera.position );
+			this.zoom0 = camera.zoom;
 
 		};
 
@@ -156,14 +156,14 @@ class OrbitControls extends EventDispatcher {
 
 			const camera = cameraManager.activeCamera;
 
-			scope.target.copy( scope.target0 );
+			this.target.copy( scope.target0 );
 			camera.position.copy( scope.position0 );
 			camera.zoom = scope.zoom0;
 
 			camera.updateProjectionMatrix();
-			scope.dispatchEvent( changeEvent );
+			this.dispatchEvent( changeEvent );
 
-			scope.update();
+			this.update();
 
 			state = STATE.NONE;
 
@@ -296,7 +296,7 @@ class OrbitControls extends EventDispatcher {
 
 		this.end = function () {
 
-			scope.dispatchEvent( endEvent );
+			this.dispatchEvent( endEvent );
 
 		};
 
@@ -463,7 +463,6 @@ class OrbitControls extends EventDispatcher {
 				panUp( 2 * deltaY * targetDistance / element.clientHeight, camera.matrix );
 
 			} else if ( camera.isOrthographicCamera ) {
-
 				// orthographic
 				panLeft( deltaX * ( camera.right - camera.left ) / ( camera.zoom * element.clientWidth ), camera.matrix );
 				panUp( deltaY * ( camera.top - camera.bottom ) / ( camera.zoom * element.clientHeight ), camera.matrix );

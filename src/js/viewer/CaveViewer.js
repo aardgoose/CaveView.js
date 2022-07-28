@@ -754,6 +754,9 @@ class CaveViewer extends EventDispatcher {
 
 			loadSurvey( cutSurvey );
 
+			cameraMove.prepare( survey.getWorldBoundingBox() );
+			cameraMove.start( false );
+
 		}
 
 		function selectSection ( node ) {
@@ -882,7 +885,6 @@ class CaveViewer extends EventDispatcher {
 		this.setView = function ( properties ) {
 
 			// don't render until all settings made.
-			if ( ! renderRequired ) return;
 
 			renderRequired = false;
 
@@ -924,12 +926,12 @@ class CaveViewer extends EventDispatcher {
 			} else {
 
 				self.setView( savedView );
-				savedView = null;
 
 			}
 
 			if ( final ) {
 
+				savedView = null;
 				// signal any listeners that we have a new cave
 
 				self.dispatchEvent( { type: 'newCave', name: 'newCave', survey: survey } );

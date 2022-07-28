@@ -850,6 +850,9 @@ class Survey extends Object3D {
 
 		if ( this.highlightBox ) this.highlightBox.setRoot( node );
 
+		// reset vertex indices to allow stations to be displayed.
+		node.traverse( node => { if ( node.isStation() ) node.stationVertexIndex = -1; } );
+
 		this.loadStations( node );
 
 		this.pointTargets.push( this.stations );
@@ -864,11 +867,10 @@ class Survey extends Object3D {
 		this.limits.copy( this.modelLimits ).translate( this.offsets );
 
 		this.featureBox = null;
-		this.setFeatureBox();
-		this.addFeature( new Grid( this.ctx ), FEATURE_GRID );
-
 		this.worldBoundingBox = null;
 
+		this.setFeatureBox();
+		this.addFeature( new Grid( this.ctx ), FEATURE_GRID );
 		this.loadEntrances();
 
 		// this.loadWarnings();
@@ -897,7 +899,10 @@ class Survey extends Object3D {
 			case 'CV.StationLabels':
 			case 'CV.ClusterMarker':
 			case 'CV.Grid':
-
+			case 'CV.GlyphString':
+			case 'Point':
+			case 'Points':
+			case 'LineSegments2':
 				cutList.push( obj );
 
 				break;
@@ -924,7 +929,6 @@ class Survey extends Object3D {
 
 			if ( obj.type === 'CV.Survey' || obj.type === 'CV.Box3' ) return;
 			// skip survey which is positioned/scaled into world space
-
 			const geometry = obj.geometry;
 
 			if ( geometry && geometry.boundingBox ) {

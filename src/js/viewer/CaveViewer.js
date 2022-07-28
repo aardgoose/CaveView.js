@@ -754,7 +754,8 @@ class CaveViewer extends EventDispatcher {
 
 			loadSurvey( cutSurvey );
 
-			cameraMove.prepare( survey.getWorldBoundingBox() );
+			// move to plan view - required to set zoom limits atm
+			cameraMove.prepare( survey.getWorldBoundingBox(), __v.set( 0, 0, -1 ) );
 			cameraMove.start( false );
 
 		}

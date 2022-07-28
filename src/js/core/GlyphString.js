@@ -15,6 +15,7 @@ class GlyphStringBase extends Mesh {
 		super( geometry, glyphMaterial );
 
 		this.name = text;
+		this.type = 'CV.GlyphString';
 
 		this.labelOrigin = new Vector3();
 		this.labelOffset = new Vector2();

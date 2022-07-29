@@ -134,12 +134,12 @@ class Entrances extends ClusterMarkers {
 
 		const colors = this.markers.geometry.getAttribute( 'color' );
 		const color = this.entranceColor;
+		const array = colors.array;
 
 		if ( colors === undefined ) return;
 
 		if ( selection === null || selection.isEmpty() ) {
 
-			const array = colors.array;
 			const l = array.length;
 
 			for ( let i = 0; i < l; i += 3 ) {
@@ -154,9 +154,9 @@ class Entrances extends ClusterMarkers {
 
 			this.vertices.forEach( function ( node, i ) {
 
-				if ( idSet.has( node.id ) ) {
+				if ( idSet.has( node.parent.id ) ) {
 
-					color.toArray( colors, i * 3 );
+					color.toArray( array, i * 3 );
 
 				} else {
 
@@ -169,6 +169,7 @@ class Entrances extends ClusterMarkers {
 		}
 
 		colors.needsUpdate = true;
+		this.markers.needsUpdate = true;
 
 	}
 

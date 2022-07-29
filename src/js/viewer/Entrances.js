@@ -44,6 +44,7 @@ class Entrances extends ClusterMarkers {
 
 			geometry.setAttribute( 'position', positions );
 			geometry.setAttribute( 'color', colors );
+			geometry.computeBoundingBox();
 
 		} else {
 
@@ -131,6 +132,8 @@ class Entrances extends ClusterMarkers {
 	}
 
 	setSelection ( selection ) {
+
+		if ( ! this.visible ) return; // no entrances in survey
 
 		const colors = this.markers.geometry.getAttribute( 'color' );
 		const color = this.entranceColor;

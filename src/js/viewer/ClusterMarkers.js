@@ -165,7 +165,7 @@ class QuadTree {
 
 		// show the indiviual markers in this quad
 
-		this.markers.forEach( marker => marker.visible = selection.contains( marker.stationID ) );
+		this.markers.forEach( marker => marker.visible = selection.contains( marker.parentId ) );
 
 		if ( this.quadMarker !== null ) this.quadMarker.visible = false;
 
@@ -306,7 +306,7 @@ class ClusterMarkers extends Object3D {
 
 		marker.layers.set( FEATURE_ENTRANCES );
 		marker.position.copy( node );
-		marker.stationID = node.id;
+		marker.parentId = node.parent.id;
 
 		this.labels.push( marker );
 		this.quadTree.addNode( marker, this.maxDepth );

@@ -124,7 +124,14 @@ class Legs extends LineSegments2 {
 
 				for ( let v = start; v < end; v++ ) {
 
-					newVertices.push( vertices[ v ] );
+					const station = vertices[ v ];
+
+					newVertices.push( station );
+
+					//  clear topology info
+					station.legs = [];
+					station.linkedSegments = [];
+
 
 				}
 

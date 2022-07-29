@@ -861,6 +861,8 @@ class Survey extends Object3D {
 
 		this.selectSection( node );
 
+		this.loadEntrances();
+
 		this.modelLimits = this.getBounds();
 		this.combinedLimits = this.modelLimits;
 
@@ -871,13 +873,11 @@ class Survey extends Object3D {
 
 		this.setFeatureBox();
 		this.addFeature( new Grid( this.ctx ), FEATURE_GRID );
-		this.loadEntrances();
 
 		// this.loadWarnings();
 		// this.loadDyeTraces();
 
-		const legs = this.getFeature( LEG_CAVE );
-		this.sections = legs.findTopology();
+		this.sections = this.getFeature( LEG_CAVE ).findTopology();
 
 		this.cutInProgress = true;
 
@@ -930,9 +930,10 @@ class Survey extends Object3D {
 			if ( obj.type === 'CV.Survey' || obj.type === 'CV.Box3' ) return;
 			// skip survey which is positioned/scaled into world space
 			const geometry = obj.geometry;
+			console.log( 'bounds 1', obj.type, obj.name );
 
 			if ( geometry && geometry.boundingBox ) {
-
+console.log( 'bounds 2', obj.type, obj.name );
 				box.union( geometry.boundingBox );
 
 			}

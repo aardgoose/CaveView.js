@@ -159,7 +159,7 @@ class Stations extends Points {
 
 	isStationVisible ( node ) {
 
-		return ( this.selection.contains( node.id ) &&
+		return ( this.selection.contains( node.parent.id ) &&
 			( node.connections > 0 || this.splaysVisible )
 		);
 
@@ -245,7 +245,7 @@ class Stations extends Points {
 
 			let size = 8;
 
-			if ( isEmpty || idSet.has( node.id ) ) {
+			if ( isEmpty || idSet.has( node.parent.id ) ) {
 
 				if ( node.type & STATION_ENTRANCE ) {
 

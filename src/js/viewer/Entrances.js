@@ -169,7 +169,6 @@ class Entrances extends ClusterMarkers {
 		}
 
 		colors.needsUpdate = true;
-		this.markers.needsUpdate = true;
 
 	}
 

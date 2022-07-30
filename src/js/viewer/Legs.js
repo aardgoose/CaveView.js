@@ -118,9 +118,9 @@ class Legs extends LineSegments2 {
 			const start  = legRun.start;
 			const end    = legRun.end;
 
-			let vp = 0;
-
 			if ( idSet.has( survey ) ) {
+
+				let vp = newVertices.length;
 
 				for ( let v = start; v < end; v++ ) {
 

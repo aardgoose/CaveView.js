@@ -256,25 +256,6 @@ class Handler {
 
 		const limits = this.limits;
 
-		if ( ! this.hasTerrain ) {
-
-			const min = limits.min;
-			const max = limits.max;
-
-			// expand survey area by 10%
-
-			limits.expandByVector(
-
-				new Vector3(
-					( max.x - min.x ) * 0.05,
-					( max.y - min.y ) * 0.05,
-					0
-				)
-
-			);
-
-		}
-
 		// convert to origin centered coordinates
 
 		const offsets = limits.getCenter( this.offsets );

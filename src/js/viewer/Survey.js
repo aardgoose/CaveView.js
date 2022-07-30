@@ -83,6 +83,9 @@ class Survey extends Object3D {
 		this.displayCRS = survey.displayCRS;
 
 		this.limits = survey.limits;
+
+		if ( ! survey.hasTerrain ) this.expand( this.limits );
+
 		this.offsets = survey.offsets;
 
 		const modelLimits = this.limits.clone();
@@ -178,6 +181,17 @@ class Survey extends Object3D {
 			self.projectionWGS84 = proj4( 'WGS84', survey.displayCRS );
 
 		}
+
+	}
+
+	expand ( box3 ) {
+
+		const size = box3.getSize( __v0 );
+		const scale = __v1;
+
+		size.multiply( scale.set( 0.05, 0.05, 0 ) );
+
+		box3.expandByVector( size );
 
 	}
 
@@ -858,7 +872,9 @@ class Survey extends Object3D {
 
 		this.loadEntrances();
 
-		this.modelLimits = node.boundingBox;
+		this.modelLimits.copy( node.boundingBox );
+		this.expand( this.modelLimits );
+
 		this.combinedLimits.copy( this.modelLimits );
 
 		this.limits.copy( this.modelLimits ).translate( this.offsets );

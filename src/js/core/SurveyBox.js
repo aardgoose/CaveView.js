@@ -48,6 +48,7 @@ class SurveyBox extends LineSegments2 {
 		box3.getSize( this.scale );
 		box3.getCenter( this.position );
 		this.updateMatrix();
+		this.updateWorldMatrix( true, true );
 
 		this.geometry.computeBoundingSphere();
 

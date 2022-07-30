@@ -8,7 +8,7 @@ class Selection extends SurveyBox {
 
 		const survey = ctx.survey;
 
-		let root = survey.surveyTree;
+		const root = survey.surveyTree;
 		let selectedNode = root;
 
 		super( ctx, root.boundingBox, color );

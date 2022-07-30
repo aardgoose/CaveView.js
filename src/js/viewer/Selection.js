@@ -40,7 +40,6 @@ class Selection extends SurveyBox {
 
 				if ( ! node.isStation() && node.boundingBox !== undefined ) {
 
-					console.log( node );
 					this.update( node.boundingBox );
 
 				}

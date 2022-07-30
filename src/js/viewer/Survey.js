@@ -829,6 +829,7 @@ class Survey extends Object3D {
 		this.entranceTargets = [];
 
 		this.terrain = null;
+		this.highlightBox = null;
 
 		// iterate through objects replace geometries and remove bounding boxes;
 
@@ -846,9 +847,7 @@ class Survey extends Object3D {
 		} );
 
 		this.surveyTree = node;
-		this.selection.setRoot( node );
-
-		if ( this.highlightBox ) this.highlightBox.setRoot( node );
+		this.selection = new Selection( this.ctx, this.ctx.cfg.themeValue( 'box.select' ) );
 
 		// reset vertex indices to allow stations to be displayed.
 		node.traverse( node => { if ( node.isStation() ) node.stationVertexIndex = -1; } );
@@ -933,7 +932,7 @@ class Survey extends Object3D {
 			console.log( 'bounds 1', obj.type, obj.name );
 
 			if ( geometry && geometry.boundingBox ) {
-console.log( 'bounds 2', obj.type, obj.name );
+
 				box.union( geometry.boundingBox );
 
 			}

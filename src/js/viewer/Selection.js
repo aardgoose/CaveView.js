@@ -24,12 +24,6 @@ class Selection extends SurveyBox {
 
 		const selectedSectionIds = new Set();
 
-		this.setRoot = function ( rootNode ) {
-
-			root = rootNode;
-
-		};
-
 		this.set = function ( node ) {
 
 			selectedNode = node;
@@ -46,6 +40,7 @@ class Selection extends SurveyBox {
 
 				if ( ! node.isStation() && node.boundingBox !== undefined ) {
 
+					console.log( node );
 					this.update( node.boundingBox );
 
 				}

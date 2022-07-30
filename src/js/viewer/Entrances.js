@@ -139,8 +139,6 @@ class Entrances extends ClusterMarkers {
 		const color = this.entranceColor;
 		const array = colors.array;
 
-		if ( colors === undefined ) return;
-
 		if ( selection === null || selection.isEmpty() ) {
 
 			const l = array.length;

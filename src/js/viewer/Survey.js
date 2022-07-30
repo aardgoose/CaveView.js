@@ -1,4 +1,4 @@
-import { Box3, Color, Matrix4, Object3D, Vector3 } from '../Three';
+import { Color, Matrix4, Object3D, Vector3 } from '../Three';
 import {
 	CLUSTER_MARKERS,
 	FACE_SCRAPS, FACE_WALLS, FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_GRID, FEATURE_STATIONS, FEATURE_TRACES,
@@ -323,6 +323,7 @@ class Survey extends Object3D {
 		this.surveyTree = surveyTree;
 
 		this.selection = new Selection( ctx, ctx.cfg.themeValue( 'box.select' ) );
+		this.highlightBox = new Selection( this.ctx, this.ctx.cfg.themeValue( 'box.highlight' ) );
 
 		_loadSegments( survey.lineSegments );
 
@@ -740,21 +741,14 @@ class Survey extends Object3D {
 
 	highlightSelection ( node ) {
 
-		let box = this.highlightBox;
+		const box = this.highlightBox;
 
 		if ( node.isStation() ) {
 
 			this.stations.highlightStation( node );
-			if ( box ) box.set( this.surveyTree );
+			box.set( this.surveyTree );
 
 		} else {
-
-			if ( box === null ) {
-
-				box = new Selection( this.ctx, this.ctx.cfg.themeValue( 'box.highlight' ) );
-				this.highlightBox = box;
-
-			}
 
 			box.set( node );
 			this.stations.clearHighlight();
@@ -847,7 +841,9 @@ class Survey extends Object3D {
 		} );
 
 		this.surveyTree = node;
+
 		this.selection = new Selection( this.ctx, this.ctx.cfg.themeValue( 'box.select' ) );
+		this.highlightBox = new Selection( this.ctx, this.ctx.cfg.themeValue( 'box.highlight' ) );
 
 		// reset vertex indices to allow stations to be displayed.
 		node.traverse( node => { if ( node.isStation() ) node.stationVertexIndex = -1; } );
@@ -862,8 +858,8 @@ class Survey extends Object3D {
 
 		this.loadEntrances();
 
-		this.modelLimits = this.getBounds();
-		this.combinedLimits = this.modelLimits;
+		this.modelLimits = node.boundingBox;
+		this.combinedLimits.copy( this.modelLimits );
 
 		this.limits.copy( this.modelLimits ).translate( this.offsets );
 
@@ -909,31 +905,6 @@ class Survey extends Object3D {
 			case 'Group':
 
 				break;
-
-			}
-
-		}
-
-	}
-
-	getBounds () {
-
-		const box = new Box3();
-
-		this.traverse( _addObjectBounds );
-
-		return box;
-
-		function _addObjectBounds ( obj ) {
-
-			if ( obj.type === 'CV.Survey' || obj.type === 'CV.Box3' ) return;
-			// skip survey which is positioned/scaled into world space
-			const geometry = obj.geometry;
-			console.log( 'bounds 1', obj.type, obj.name );
-
-			if ( geometry && geometry.boundingBox ) {
-
-				box.union( geometry.boundingBox );
 
 			}
 

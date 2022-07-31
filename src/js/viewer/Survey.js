@@ -43,7 +43,6 @@ class Survey extends Object3D {
 		this.surveyTree = null;
 		this.projection = null;
 		this.projectionWGS84 = null;
-		this.worldBoundingBox = null;
 		this.caveShading = SHADING_HEIGHT;
 		this.surfaceShading = SHADING_SINGLE;
 		this.duplicateShading = SHADING_DUPLICATE;
@@ -94,7 +93,7 @@ class Survey extends Object3D {
 		modelLimits.max.sub( this.offsets );
 
 		this.modelLimits = modelLimits;
-		this.combinedLimits = modelLimits;
+		this.combinedLimits = modelLimits.clone();
 		this.maxDistance = 0;
 
 		// this needs to be defined before loading the leg data to
@@ -279,7 +278,8 @@ class Survey extends Object3D {
 	setupTerrain ( terrain ) {
 
 		// expand limits with terrain
-		this.combinedLimits = terrain.boundingBox.clone().union( this.modelLimits );
+		this.combinedLimits.union( terrain.boundingBox );
+
 		this.setFeatureBox();
 
 		if ( terrain.isFlat ) return;
@@ -635,9 +635,8 @@ class Survey extends Object3D {
 		this.scale.set( hScale, hScale, vScale );
 
 		this.updateMatrix();
-		this.updateMatrixWorld();
+		this.updateWorldMatrix( true, true );
 		this.inverseWorld.copy( this.matrixWorld ).invert();
-		this.worldBoundingBox = this.combinedLimits.clone().applyMatrix4( this.matrixWorld );
 
 	}
 
@@ -812,13 +811,11 @@ class Survey extends Object3D {
 
 		}
 
-		this.worldBoundingBox = this.combinedLimits.clone().applyMatrix4( this.matrixWorld );
-
 	}
 
 	getWorldBoundingBox () {
 
-		return this.worldBoundingBox;
+		return this.combinedLimits.clone().applyMatrix4( this.matrixWorld );
 
 	}
 
@@ -880,7 +877,6 @@ class Survey extends Object3D {
 		this.limits.copy( this.modelLimits ).translate( this.offsets );
 
 		this.featureBox = null;
-		this.worldBoundingBox = null;
 
 		this.setFeatureBox();
 		this.addFeature( new Grid( this.ctx ), FEATURE_GRID );

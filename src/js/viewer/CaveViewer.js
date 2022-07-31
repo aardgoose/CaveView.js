@@ -245,7 +245,8 @@ class CaveViewer extends EventDispatcher {
 
 			'cameraType': {
 				get() { return cameraManager.mode; },
-				set: stateSetter( mode => cameraManager.setCamera( mode, controls.target ), 'cameraType' )
+				set: stateSetter( mode => cameraManager.setCamera( mode, controls.target ), 'cameraType' ),
+				enumerable: true
 			},
 
 			'eyeSeparation': {
@@ -254,8 +255,9 @@ class CaveViewer extends EventDispatcher {
 			},
 
 			'view': {
-				get() { return VIEW_NONE; },
-				set: stateSetter( setViewMode, 'view' )
+				get() { return VIEW_PLAN; },
+				set: stateSetter( setViewMode, 'view' ),
+				enumerable: true
 			},
 
 			'cursorHeight': {
@@ -844,7 +846,7 @@ class CaveViewer extends EventDispatcher {
 
 			caveLoader.loadSource( source, section );
 
-			clipped = ( section !== undefined && section !== '' );
+			clipped = ( section !== null && section !== '' );
 
 		};
 
@@ -918,8 +920,6 @@ class CaveViewer extends EventDispatcher {
 
 		function setupView ( final ) {
 
-			renderRequired = true;
-
 			if ( savedView === null ) {
 
 				self.setView( viewState.getDefaultState() );
@@ -937,8 +937,7 @@ class CaveViewer extends EventDispatcher {
 
 				self.dispatchEvent( { type: 'newCave', name: 'newCave', survey: survey } );
 
-				// set reasonable min/max zoom & distances for the cameras
-				controls.setLimits( survey.combinedLimits.getSize( __v ) );
+//				controls.setLimits( survey.combinedLimits.getSize( __v ) );
 
 			}
 

@@ -41,14 +41,6 @@ class OrbitControls extends EventDispatcher {
 		// "target" sets the location of focus, where the object orbits around
 		this.target = new Vector3();
 
-		// How far you can dolly in and out ( PerspectiveCamera only )
-		this.minDistance = 0;
-		this.maxDistance = Infinity;
-
-		// How far you can zoom in and out ( OrthographicCamera only )
-		this.minZoom = 0;
-		this.maxZoom = Infinity;
-
 		// How far you can orbit vertically, upper and lower limits.
 		// Range is 0 to Math.PI radians.
 		this.minPolarAngle = 0; // radians
@@ -87,13 +79,31 @@ class OrbitControls extends EventDispatcher {
 		this.position0 = camera.position.clone();
 		this.zoom0 = camera.zoom;
 
+
 		//
 		// public methods
 		//
 
+		this.clearLimits = function () {
+
+			// How far you can dolly in and out ( PerspectiveCamera only )
+			this.minDistance = 0;
+			this.maxDistance = Infinity;
+
+			// How far you can zoom in and out ( OrthographicCamera only )
+			this.minZoom = 0;
+			this.maxZoom = Infinity;
+
+		};
+
+		this.clearLimits();
+
 		this.setLimits = function ( range ) {
 
-			const currentDistance = spherical.radius;
+			const camera = cameraManager.activeCamera;
+
+			const currentDistance = this.target.distanceTo( camera.position );
+
 			const mSize = Math.max( range.x, range.y );
 
 			let scale = 2;
@@ -155,6 +165,8 @@ class OrbitControls extends EventDispatcher {
 		this.reset = function () {
 
 			const camera = cameraManager.activeCamera;
+
+			this.clearLimits();
 
 			this.target.copy( scope.target0 );
 			camera.position.copy( scope.position0 );

@@ -267,7 +267,7 @@ class PointerControls extends EventDispatcher {
 
 			viewer.renderView();
 
-			self.dispatchEvent( mouseUpEvent );
+			viewer.dispatchEvent( mouseUpEvent );
 
 		}
 
@@ -338,7 +338,7 @@ class PointerControls extends EventDispatcher {
 					mouseEvent: event
 				};
 
-				self.dispatchEvent( e );
+				viewer.dispatchEvent( e );
 
 				if ( e.highlight ) {
 
@@ -395,7 +395,7 @@ class PointerControls extends EventDispatcher {
 				filterConnected: false
 			};
 
-			self.dispatchEvent( selectEvent );
+			viewer.dispatchEvent( selectEvent );
 
 			filterConnectedLegs( selectEvent );
 
@@ -520,7 +520,7 @@ class PointerControls extends EventDispatcher {
 						mouseEvent: event
 					};
 
-					self.dispatchEvent( e );
+					viewer.dispatchEvent( e );
 
 					filterConnectedLegs( e );
 
@@ -610,7 +610,7 @@ class PointerControls extends EventDispatcher {
 
 				survey.setShortestPaths( station );
 
-				self.dispatchEvent( { type: 'change', name: 'shadingMode' } );
+				viewer.dispatchEvent( { type: 'change', name: 'shadingMode' } );
 				viewer.renderView();
 
 			}
@@ -636,7 +636,7 @@ class PointerControls extends EventDispatcher {
 
 			dyeTraces.outlineTrace( traceIndex );
 
-			self.dispatchEvent( {
+			viewer.dispatchEvent( {
 				type: 'selectedTrace',
 				trace: dyeTraces.getTraceStations( traceIndex ),
 				delete: function _deleteTrace () {
@@ -672,7 +672,7 @@ class PointerControls extends EventDispatcher {
 			if ( list[ 0 ] !== undefined ) start = list[ 0 ].getPath();
 			if ( list[ 1 ] !== undefined ) end = list[ 1 ].getPath();
 
-			self.dispatchEvent( {
+			viewer.dispatchEvent( {
 				type: 'selectedTrace',
 				start: start,
 				end: end,

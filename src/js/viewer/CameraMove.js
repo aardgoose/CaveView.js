@@ -264,9 +264,7 @@ class CameraMove {
 			rotation = 0;
 			rafID = 0;
 
-			controls.update();
 			controls.enabled = true;
-
 			controls.end();
 
 		}

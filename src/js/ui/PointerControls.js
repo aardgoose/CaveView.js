@@ -609,8 +609,6 @@ class PointerControls extends EventDispatcher {
 			} else if ( event.button === MOUSE.RIGHT ) {
 
 				survey.setShortestPaths( station );
-
-				viewer.dispatchEvent( { type: 'change', name: 'shadingMode' } );
 				viewer.renderView();
 
 			}

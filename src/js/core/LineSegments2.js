@@ -247,6 +247,9 @@ class LineSegments2 extends Mesh {
 
 			if ( isInClipSpace && isInside ) {
 
+				/*
+
+				// we don't used this information
 				_line.start.fromBufferAttribute( instanceStart, i );
 
 				_line.end.fromBufferAttribute( instanceEnd, i );
@@ -258,10 +261,15 @@ class LineSegments2 extends Mesh {
 				const pointOnLine = new Vector3();
 				const point = new Vector3();
 				ray.distanceSqToSegment( _line.start, _line.end, point, pointOnLine );
+
+				*/
+
 				intersects.push( {
+					/*
 					point: point,
 					pointOnLine: pointOnLine,
 					distance: ray.origin.distanceTo( point ),
+					*/
 					object: this,
 					face: null,
 					faceIndex: i,

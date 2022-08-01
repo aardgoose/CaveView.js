@@ -885,6 +885,7 @@ class Survey extends Object3D {
 		// this.loadDyeTraces();
 
 		this.sections = this.getFeature( LEG_CAVE ).findTopology();
+		this.maxDistance = 0;
 
 		this.cutInProgress = true;
 
@@ -1260,6 +1261,11 @@ class Survey extends Object3D {
 			const vertex = vertices[ vertexIndex ];
 			const distance = vertex.shortestPath;
 
+			const c = ( distance === Infinity ) ? unconnected : colours[ Math.floor( colourRange * distance / maxDistance ) ];
+
+			if ( c === undefined ) {
+				console.log( 'length', colours.length, 'index', Math.floor( colourRange * distance / maxDistance ), 'd', distance, 'max', maxDistance );
+			}
 			return ( distance === Infinity ) ? unconnected : colours[ Math.floor( colourRange * distance / maxDistance ) ];
 
 		}

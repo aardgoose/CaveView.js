@@ -140,12 +140,9 @@ class LineSegments2 extends Mesh {
 
 
 		const boxMargin = Math.abs( ssMaxWidth / _clipToWorldVector.w ) * 0.5;
-		_box.max.x += boxMargin;
-		_box.max.y += boxMargin;
-		_box.max.z += boxMargin;
-		_box.min.x -= boxMargin;
-		_box.min.y -= boxMargin;
-		_box.min.z -= boxMargin;
+
+		_box.expandByScalar( boxMargin );
+
 
 		if ( raycaster.ray.intersectsBox( _box ) === false ) {
 

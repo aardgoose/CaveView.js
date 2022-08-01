@@ -937,7 +937,7 @@ class CaveViewer extends EventDispatcher {
 
 				self.dispatchEvent( { type: 'newCave', name: 'newCave', survey: survey } );
 
-//				controls.setLimits( survey.combinedLimits.getSize( __v ) );
+				controls.setLimits( survey.combinedLimits.getSize( __v ) );
 
 			}
 

@@ -11,8 +11,6 @@ let lastSign = 1;
 
 function clampedInc( value, inc ) {
 
-	console.log ( 'clamped inc',value, inc );
-
 	let sign = Math.sign( value );
 
 	if ( sign === 0 ) {

@@ -1,8 +1,11 @@
+import { Vector3 } from '../Three';
 import { CanvasPopup } from './CanvasPopup';
+
+const __v0 = new Vector3();
 
 class SegmentPopup extends CanvasPopup {
 
-	constructor ( ctx, leg, point ) {
+	constructor ( ctx, leg ) {
 
 		super( ctx );
 
@@ -12,7 +15,8 @@ class SegmentPopup extends CanvasPopup {
 		this.addValue( 'segment_length', segment.length() );
 		this.addValue( 'direct_length', segment.directDistance() );
 
-		this.finish( point );
+		// midpoint of line segment
+		this.finish( __v0.copy( leg.startStation.station ).add( leg.endStation.station ).divideScalar( 2 ) );
 
 	}
 

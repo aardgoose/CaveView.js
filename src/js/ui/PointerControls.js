@@ -354,7 +354,7 @@ class PointerControls extends EventDispatcher {
 					mouseUpFunction = _setSegmentHighlight;
 
 					_setSegmentHighlight();
-					showSegmentPopup( leg, legIntersect.pointOnLine );
+					showSegmentPopup( leg );
 					viewer.renderView();
 
 				}

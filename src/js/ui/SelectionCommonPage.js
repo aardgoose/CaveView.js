@@ -5,7 +5,12 @@ class SelectionCommonPage extends Page {
 
 	constructor ( frame, viewer, container, fileSelector ) {
 
+		const _onTop = () => { this.isOntop = true; };
+		const _onLeave = () => { this.isOntop = false; };
+
 		super( 'icon_explore', 'selection', _onTop, _onLeave );
+
+		this.isOntop = false;
 
 		frame.addPage( this );
 
@@ -19,7 +24,6 @@ class SelectionCommonPage extends Page {
 		this.lastShadingMode = viewer.shadingMode;
 		this.currentHover = null;
 		this.stringCompare = new Intl.Collator( 'en-GB', { numeric: true } ).compare;
-		this.isOntop = false;
 
 		const titleBar = document.createElement( 'div' );
 		const cfg = viewer.ctx.cfg;
@@ -82,7 +86,7 @@ class SelectionCommonPage extends Page {
 
 			let key;
 
-			self.nodes.set( li, child );
+			this.nodes.set( li, child );
 
 			if ( viewer.section === child ) li.classList.add( 'selected' );
 
@@ -204,6 +208,7 @@ class SelectionCommonPage extends Page {
 
 		this.onChange = _onChange;
 
+
 		return;
 
 		function _makeKey ( text, color ) {
@@ -302,7 +307,7 @@ class SelectionCommonPage extends Page {
 
 		}
 
-		function _onChange( event ) {
+		function _onChange ( event ) {
 
 			if ( ! viewer.surveyLoaded ) return;
 
@@ -327,7 +332,7 @@ class SelectionCommonPage extends Page {
 
 		}
 
-		function _colourSections( ul ) {
+		function _colourSections ( ul ) {
 
 			const root = ( ul === undefined ) ? self.page : ul;
 			const lis = root.getElementsByTagName( 'li' );
@@ -367,18 +372,6 @@ class SelectionCommonPage extends Page {
 		function __handleLoadFull () {
 
 			fileSelector.reload();
-
-		}
-
-		function _onTop( ) {
-
-			self.isOntop = true;
-
-		}
-
-		function _onLeave( ) {
-
-			self.isOntop = false;
 
 		}
 

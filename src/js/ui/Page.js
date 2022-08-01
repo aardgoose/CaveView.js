@@ -73,7 +73,7 @@ class Page {
 					owner.lastScrollY = frameDiv.scrollTop;
 					tabDiv.classList.remove( 'toptab' );
 
-					if ( owner.onLeave !== undefined ) owner.onLeave();
+					if ( owner.id !== this.id && owner.onLeave !== undefined ) owner.onLeave();
 
 				}
 
@@ -85,6 +85,8 @@ class Page {
 
 		this.page.style.display = 'block';
 		frameDiv.scrollTo( 0, this.lastScrollY );
+
+		if ( this.onTop ) this.onTop();
 
 	}
 

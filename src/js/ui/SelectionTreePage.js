@@ -73,7 +73,7 @@ class SelectionTreePage extends SelectionCommonPage {
 			do {
 				path.push( node );
 				node = node.parent;
-			} while ( node.id !== 0 );
+			} while ( node.id !== this.surveyTree.id );
 
 			// search dom tree for list Element <LI> mapped to selected node
 

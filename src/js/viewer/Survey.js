@@ -856,8 +856,15 @@ class Survey extends Object3D {
 		this.selection = new Selection( this.ctx, this.ctx.cfg.themeValue( 'box.select' ) );
 		this.highlightBox = new Selection( this.ctx, this.ctx.cfg.themeValue( 'box.highlight' ) );
 
-		// reset vertex indices to allow stations to be displayed.
-		node.traverse( node => { if ( node.isStation() ) node.stationVertexIndex = -1; } );
+		// reset vertex indices to allow stations to be displayed and remove stale world bounding boxes
+		node.traverse( node => {
+			if ( node.isStation() ) {
+
+				node.stationVertexIndex = -1;
+			} else {
+				node.worldBoundingBox = null;
+			}
+		} );
 
 		this.loadStations( node );
 

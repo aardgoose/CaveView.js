@@ -39,8 +39,7 @@ class Frame {
 		this.seq = 0;
 
 		const close = document.createElement( 'div' );
-		close.classList.add( 'close' );
-		close.classList.add( 'tab' );
+		close.classList.add( 'close', 'tab' );
 
 		this.addListener( close, 'click', _closeFrame );
 
@@ -138,8 +137,7 @@ class Frame {
 		const tabBox = this.tabBox;
 		const fullscreen = document.createElement( 'div' );
 
-		fullscreen.classList.add( id );
-		fullscreen.classList.add( 'tab' );
+		fullscreen.classList.add( id, 'tab' );
 
 		this.addListener( fullscreen, 'click', _toggleButton );
 
@@ -163,7 +161,7 @@ class Frame {
 
 			if ( obj[ property ] ) {
 
-				fullscreen.classList.remove( 'expand' );
+				fullscreen.classList.remove( 'expand'  );
 				fullscreen.classList.add( 'collapse' );
 
 			} else {

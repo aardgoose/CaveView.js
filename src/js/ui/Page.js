@@ -7,8 +7,7 @@ class Page {
 
 		page.classList.add( 'page' );
 
-		tab.classList.add( id );
-		tab.classList.add( 'tab' );
+		tab.classList.add( id, 'tab' );
 
 		this.page = page;
 		this.tab = tab;
@@ -622,8 +621,7 @@ class Page {
 
 		const id = 'cv-' + frame.getSeq();
 
-		div.classList.add( 'control' );
-		div.classList.add( 'color' );
+		div.classList.add( 'control', 'color' );
 
 		cb.type = 'color';
 		cb.value = cfg.themeColorHex( name ),

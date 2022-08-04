@@ -716,7 +716,7 @@ class Survey extends Object3D {
 		// reset distances to unknown
 		this.stations.resetPaths();
 
-		this.maxDistance = legs.setShortestPaths( station );
+		legs.setShortestPaths( station );
 
 		this.markers.mark( station );
 
@@ -1268,9 +1268,9 @@ class Survey extends Object3D {
 			const vertex = vertices[ vertexIndex ];
 			const distance = vertex.shortestPath;
 
-			return ( distance === Infinity ) ? unconnected : colours[ Math.floor( colourRange * distance / maxDistance ) ];
+			const i =  Math.floor( colourRange * distance / maxDistance );
 
-		}
+			return ( distance == Infinity ) ? unconnected : colours[ Math.floor( colourRange * distance / maxDistance ) ];
 
 	}
 

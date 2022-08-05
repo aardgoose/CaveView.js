@@ -132,6 +132,8 @@ class Legs extends LineSegments2 {
 					station.legs = [];
 					station.linkedSegments = [];
 
+					station.stationVertexIndex = -1;
+					station.shortestPath = Infinity;
 
 				}
 

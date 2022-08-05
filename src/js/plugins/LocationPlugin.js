@@ -7,8 +7,6 @@ class LocationSource extends EventDispatcher {
 		super();
 
 		const viewer = ctx.viewer;
-		const materials = ctx.materials;
-
 		const location = new Vector3();
 
 		let watcherId = null;

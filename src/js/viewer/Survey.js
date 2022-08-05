@@ -716,11 +716,12 @@ class Survey extends Object3D {
 		// reset distances to unknown
 		this.stations.resetPaths();
 
-		legs.setShortestPaths( station );
+		this.maxDistance = legs.setShortestPaths( station );
 
 		this.markers.mark( station );
 
-		this.setShadingMode( SHADING_DISTANCE );
+		// set view viewer to dispatch events to update HUD.
+		this.ctx.viewer.shadingMode = SHADING_DISTANCE;
 
 	}
 
@@ -856,15 +857,8 @@ class Survey extends Object3D {
 		this.selection = new Selection( this.ctx, this.ctx.cfg.themeValue( 'box.select' ) );
 		this.highlightBox = new Selection( this.ctx, this.ctx.cfg.themeValue( 'box.highlight' ) );
 
-		// reset vertex indices to allow stations to be displayed and remove stale world bounding boxes
-		node.traverse( node => {
-			if ( node.isStation() ) {
-
-				node.stationVertexIndex = -1;
-			} else {
-				node.worldBoundingBox = null;
-			}
-		} );
+		// remove stale world bounding boxes
+		node.traverse( node => { if ( ! node.isStation() ) { node.worldBoundingBox = null; } } );
 
 		this.loadStations( node );
 
@@ -1268,9 +1262,9 @@ class Survey extends Object3D {
 			const vertex = vertices[ vertexIndex ];
 			const distance = vertex.shortestPath;
 
-			const i =  Math.floor( colourRange * distance / maxDistance );
+			return ( distance == Infinity || vertex.stationVertexIndex === -1 ) ? unconnected : colours[ Math.floor( colourRange * distance / maxDistance ) ];
 
-			return ( distance == Infinity ) ? unconnected : colours[ Math.floor( colourRange * distance / maxDistance ) ];
+		}
 
 	}
 

@@ -13,10 +13,11 @@ class CursorMaterial extends ShaderMaterial {
 			vertexShader: Shaders.cursorVertexShader,
 			fragmentShader: Shaders.cursorFragmentShader,
 			type: 'CV.CursorMaterial',
-			uniforms: Object.assign( {
-				uLight:      { value: survey.lightDirection }
-			}, cloneUniforms( uniforms.cursor ),
-			uniforms.common ),
+			uniforms: Object.assign(
+				{},
+				cloneUniforms( uniforms.cursor ),
+				uniforms.common
+			),
 			defines: {
 				USE_COLOR: true,
 				CV_LOCATION: options.location

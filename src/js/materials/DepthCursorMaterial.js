@@ -21,7 +21,6 @@ class DepthCursorMaterial extends ShaderMaterial {
 			fragmentShader: Shaders.depthCursorFragmentShader,
 			type: 'CV.DepthCursorMaterial',
 			uniforms: Object.assign( {
-				uLight:      { value: survey.lightDirection },
 				modelMin:    { value: limits.min },
 				scaleX:      { value: 1 / range.x },
 				scaleY:      { value: 1 / range.y },

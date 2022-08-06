@@ -51,6 +51,7 @@ function Materials ( viewer ) {
 
 	this.uniforms = {
 		common: {
+			uLight: { value: new Vector3( -1, -1, 2 ).normalize() },
 			fogColor: { value: cfg.themeColor( 'background' ) },
 			fogDensity: { value: 0.0025 },
 			distanceFadeMin: { value: 0.0 },

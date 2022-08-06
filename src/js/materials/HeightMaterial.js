@@ -19,7 +19,6 @@ class HeightMaterial extends ShaderMaterial {
 			fragmentShader: Shaders.heightFragmentShader,
 			type: 'CV.HeightMaterial',
 			uniforms: Object.assign( {
-				uLight: { value: survey.lightDirection },
 				minZ:   { value: zMin },
 				scaleZ: { value: 1 / ( zMax - zMin ) },
 				cmap:   { value: textureCache.getTexture( gradient ) },

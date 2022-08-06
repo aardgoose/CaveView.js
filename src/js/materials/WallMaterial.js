@@ -5,17 +5,17 @@ class WallMaterial extends ShaderMaterial {
 
 	constructor ( ctx, options ) {
 
-		const survey = ctx.survey;
 		const uniforms = ctx.materials.uniforms;
 
 		super( {
 			vertexShader: Shaders.wallVertexShader,
 			fragmentShader: Shaders.wallFragmentShader,
 			type: 'CV.WallMaterial',
-			uniforms: Object.assign( {
-				// pseudo light source somewhere over viewer's left shoulder.
-				uLight:     { value: survey.lightDirection },
-			}, uniforms.common, uniforms.commonDepth ),
+			uniforms: Object.assign(
+				{},
+				uniforms.common,
+				uniforms.commonDepth
+			),
 			defines: {
 				USE_COLOR: true,
 				CV_LOCATION: options.location

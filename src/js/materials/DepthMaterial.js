@@ -20,7 +20,6 @@ class DepthMaterial extends ShaderMaterial {
 			type: 'CV.DepthMaterial',
 			uniforms: Object.assign( {
 				// pseudo light source somewhere over viewer's left shoulder.
-				uLight:     { value: survey.lightDirection },
 				modelMin:   { value: limits.min },
 				scaleX:     { value: 1 / range.x },
 				scaleY:     { value: 1 / range.y },

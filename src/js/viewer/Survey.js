@@ -64,8 +64,6 @@ class Survey extends Object3D {
 		this.segments = null;
 		this.inverseWorld = new Matrix4();
 
-		this.lightDirection = new Vector3( -1, -1, 2 ).normalize();
-
 		const self = this;
 
 		this.gradientName = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';

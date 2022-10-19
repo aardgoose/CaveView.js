@@ -122,13 +122,13 @@
 			"datum_shift": "Apply datum shift",
 			"datum_shift_value": "Vertical datum shift",
 			"lighting": "Directional Lighting",
-			"downloadTileSet": "download tile set spec",
 			"lightingmode": "Lighting",
 			"lightingmodes": {
 				"none": "flat",
 				"single": "directional",
 				"multiple": "muti-directional"
-			}
+			},
+			"downloadTileSet": "download tile set spec"
 		}
 	},
 	"selection": {

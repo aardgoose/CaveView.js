@@ -73,6 +73,11 @@
 		"ui": {
 			"selection_tree": "Uporabi izbiro drevesa"
 		},
+		"default": {
+			"header": "Privzete nastavitve",
+			"save": "Shrani privzete nastavitve",
+			"reset": "Ponastavi privzete nastavitve"
+		},
 		"colors": {
 			"header": "Barve",
 			"background_color": "Ozadje",
@@ -114,7 +119,8 @@
 				"caption": "Prekrivanje"
 			},
 			"opacity": "Prosojnost",
-			"datum_shift": "Navpični premik po datumu",
+			"datum_shift": "Uporabi zamik po datumu",
+			"datum_shift_value": "Navpični zaemik po datumu",
 			"lighting": "Usmerjena razsvetljava",
 			"lightingmode": "Razsvetljava",
 			"lightingmodes": {
@@ -275,6 +281,7 @@
 		"segment_length": "Dolžina segmenta",
 		"direct_length": "Direktna dolžina",
 		"depth_from_surface": "globina od površja",
+		"adjusted_depth": "prilagojena globina",
 		"distance": "razdalja"
 	}
 }

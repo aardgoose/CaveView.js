@@ -73,6 +73,11 @@
 		"ui": {
 			"selection_tree": "Usa la selezione ad albero"
 		},
+		"default": {
+			"header": "Predefiniti",
+			"save": "Salva le impostazioni predefinite",
+			"reset": "Ripristina le impostazioni predefinite"
+		},
 		"colors": {
 			"header": "Colori",
 			"background_color": "Sfondo",
@@ -114,7 +119,8 @@
 				"caption": "Sovrapposizione"
 			},
 			"opacity": "Opacità",
-			"datum_shift": "Spostamento verticale da datum",
+			"datum_shift": "Applicare lo spostamento del datum",
+			"datum_shift_value": "Spostamento verticale da datum",
 			"lighting": "Illuminazione direzionale",
 			"lightingmode": "Illuminazione",
 			"lightingmodes": {
@@ -275,6 +281,7 @@
 		"segment_length": "Lunghezza segmento",
 		"direct_length": "Lunghezza diretta",
 		"depth_from_surface": "profondità dalla superficie",
+		"adjusted_depth": "profondità aggiustata",
 		"distance": "distanza"
 	}
 }

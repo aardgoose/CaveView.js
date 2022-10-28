@@ -66,7 +66,7 @@ class Handler {
 
 					console.log( 'looking up CRS code EPSG:' + code [ 2 ] );
 
-					return fetch( 'https://epsg.io/' + code[ 2 ] + '.proj4' )
+					return fetch( 'https://epsg.io/' + code[ 2 ] + '.proj4', { mode: 'no-cors' } )
 						.then( response => {
 
 							return response.text();

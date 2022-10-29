@@ -6,8 +6,8 @@ import { Mesh } from 'three/src/objects/Mesh.js';
 import { MeshStandardMaterial } from 'three/src/materials/MeshStandardMaterial.js';
 import { Scene } from 'three/src/scenes/Scene.js';
 import { Texture } from 'three/src/textures/Texture.js';
-import { Uint16BufferAttribute } from 'three/src/core/BufferAttribute';
-import { Uint32BufferAttribute } from 'three/src/core/BufferAttribute';
+import { Uint16BufferAttribute } from 'three/src/core/BufferAttribute.js';
+import { Uint32BufferAttribute } from 'three/src/core/BufferAttribute.js';
 
 onmessage = onMessage;
 

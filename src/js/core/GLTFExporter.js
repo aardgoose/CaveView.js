@@ -20,7 +20,7 @@ import {
 	Vector3
 } from '../Three';
 
-import { PropertyBinding } from 'three/src/animation/PropertyBinding';
+import { PropertyBinding } from 'three/src/animation/PropertyBinding.js';
 
 class GLTFExporter {
 

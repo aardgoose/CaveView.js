@@ -1,6 +1,6 @@
 import { ShaderMaterial, cloneUniforms } from '../Three';
 import { FullScreenQuad } from './FullScreenQuad';
-import { CopyShader } from 'three/examples/jsm/shaders/CopyShader';
+import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
 import { DistanceFieldShader } from './DistanceFieldShader';
 
 class DistanceFieldPass {

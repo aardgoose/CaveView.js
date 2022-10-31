@@ -133,7 +133,7 @@ class CommonTerrain extends Group {
 		this.renderTarget = renderTarget;
 
 		// add lookup using heightMap texture
-		this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox, survey.offsets );
+		this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox );
 
 		this.checkTerrainShadingModes( renderer );
 

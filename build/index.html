@@ -11,8 +11,6 @@
 </head>
 <body onload="onload();" >
 
-<script type="text/javascript" src="https://nls.tileserver.com/api.js"></script>
-
 <script type="text/javascript" src="CaveView/lib/OSGBProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/BingProvider.js" ></script>
 <script type="text/javascript" src="CaveView/lib/BarmasterProvider.js" ></script>
@@ -51,7 +49,7 @@ function onload () {
 	viewer.addOverlay( 'OSM', new OSMProvider() );
 	viewer.addOverlay( 'BGS Solid', new BGSProvider( [ 'BGS.50k.Bedrock', 'BGS.50k.Linear.features' ] ) );
 	viewer.addOverlay( 'BGS Drift', new BGSProvider( [ 'BGS.50k.Superficial.deposits' ] ) );
-	viewer.addOverlay( 'NLS', new NLSProvider() );
+//	viewer.addOverlay( 'NLS', new NLSProvider() );
 	viewer.addOverlay( 'Bing Aerial',  new BingProvider( 'Aerial', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
 	viewer.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
 	viewer.addOverlay( 'Spanish IGN mapping', new WMTSProvider( true ) );
@@ -60,6 +58,7 @@ function onload () {
 //	viewer.addFormatters( OSGBStationFormatter );
 
 	const caves = [
+		"buffalora-caveview-issue50.lox",
 		"Dales/threecounties.3d",
 		"Castleton_Master_NoSurface.3d",
 		{

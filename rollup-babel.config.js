@@ -1,7 +1,7 @@
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 import { babel } from '@rollup/plugin-babel';
 import { glconstants, glslThree, glsl } from './rollup-gl';
 

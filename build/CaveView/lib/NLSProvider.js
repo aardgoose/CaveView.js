@@ -13,9 +13,15 @@ class NLSProvider {
 		maxY: 62
 	};
 
+	constructor ( key ) {
+
+		this.key = key;
+
+	}
+
 	getUrl ( x, y, z ) {
 
-		return NLSTileUrlOS( x, y, z );
+		return `https://api.maptiler.com/tiles/uk-osgb1919/${z}/${x}/${y}.jpg?key=${this.key}`;
 
 	}
 

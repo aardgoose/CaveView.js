@@ -34,7 +34,8 @@ class Legs extends LineSegments2 {
 		const positions = new Float32BufferAttribute( vertices.length * 3, 3 );
 		const colors = new Float32BufferAttribute( vertices.length * 3, 3 );
 
-		positions.copyVector3sArray( vertices );
+		vertices.forEach( ( v, i ) => { positions.setXYZ( i, v.x, v.y, v.z ); } );
+
 		colors.array.fill( 1.0 );
 
 		const geometry = this.geometry;

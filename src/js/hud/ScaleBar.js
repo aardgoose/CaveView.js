@@ -12,16 +12,18 @@ class BarGeometry extends BufferGeometry {
 		const c1 = cfg.themeColor( 'hud.scale.bar1' );
 		const c2 = cfg.themeColor( 'hud.scale.bar2' );
 
-		const vertices = [];
-		const colors = [];
+		const size = divisions * 11 * 6 * 3;
+
+		const colorBuffer = new Float32BufferAttribute( size, 3 );
+		const positions = new Float32BufferAttribute( size, 3 );
+
+		let vertex = 0;
 
 		_makeBar( divisions * 10, 0 );
 		_makeBar( divisions, height + 1 );
 
-		const colorBuffer = new Float32BufferAttribute( colors.length * 3, 3 );
-
-		this.setAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-		this.setAttribute( 'color', colorBuffer.copyColorsArray( colors ) );
+		this.setAttribute( 'position', positions );
+		this.setAttribute( 'color', colorBuffer );
 
 		function _makeBar( divisions, offset ) {
 
@@ -34,17 +36,25 @@ class BarGeometry extends BufferGeometry {
 				const y1 = offset;
 				const y2 = y1 + height;
 
-				vertices.push(
-					x1, y1, 0,
-					x2, y2, 0,
-					x1, y2, 0,
-					x2, y2, 0,
-					x1, y1, 0,
-					x2, y1, 0
-				);
-
 				const c = ( i % 2 ) ? c1 : c2;
-				colors.push( c, c, c, c, c, c );
+
+				positions.setXYZ( vertex, x1, y1, 0 );
+				colorBuffer.setXYZ( vertex++, c.r, c.g, c.b );
+
+				positions.setXYZ( vertex, x2, y2, 0 );
+				colorBuffer.setXYZ( vertex++, c.r, c.g, c.b );
+
+				positions.setXYZ( vertex, x1, y2, 0 );
+				colorBuffer.setXYZ( vertex++, c.r, c.g, c.b );
+
+				positions.setXYZ( vertex, x2, y2, 0 );
+				colorBuffer.setXYZ( vertex++, c.r, c.g, c.b );
+
+				positions.setXYZ( vertex, x1, y1, 0 );
+				colorBuffer.setXYZ( vertex++, c.r, c.g, c.b );
+
+				positions.setXYZ( vertex, x2, y1, 0 );
+				colorBuffer.setXYZ( vertex++, c.r, c.g, c.b );
 
 			}
 

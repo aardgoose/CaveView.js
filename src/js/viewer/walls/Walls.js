@@ -23,7 +23,9 @@ class Walls extends Mesh {
 		const geometry = this.geometry;
 		const positions = new Float32BufferAttribute( vertices.length * 3, 3 );
 
-		geometry.setAttribute( 'position', positions.copyVector3sArray( vertices ) );
+		vertices.forEach( ( v, i ) => {  positions.setXYZ( i, v.x, v.y, v.z ); } );
+
+		geometry.setAttribute( 'position', positions );
 
 		geometry.setIndex( indices );
 

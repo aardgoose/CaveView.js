@@ -33,7 +33,8 @@ class SurveyBox extends LineSegments2 {
 		const positions = new Float32BufferAttribute( vertices.length * 3, 3 );
 		const geometry = new LineSegmentsGeometry();
 
-		positions.copyVector3sArray( vertices );
+		vertices.forEach( ( v, i ) => { positions.setXYZ( i, v.x, v.y, v.z ); } );
+
 		geometry.setPositions( positions.array );
 
 		super( geometry, ctx.materials.getLine2Material( { color: color } ) );

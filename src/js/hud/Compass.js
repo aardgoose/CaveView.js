@@ -80,17 +80,16 @@ class Compass extends Group {
 
 			const mesh = new Mesh( geometry, material );
 
-			const vertices = [];
-			const colours = [];
+			const positions = new Float32BufferAttribute( 144, 3 );
+			const colors = new Float32BufferAttribute( 144, 3 );
+
+			let vertex = 0;
 
 			_makeRose2( cfg.themeColor( 'hud.compass.bottom1' ), cfg.themeColor( 'hud.compass.bottom2' ), Math.PI / 4 );
 			_makeRose2( cfg.themeColor( 'hud.compass.top1' ), cfg.themeColor( 'hud.compass.top2' ), 0 );
 
-			const positions = new Float32BufferAttribute( vertices.length, 3 );
-			const colors = new Float32BufferAttribute( vertices.length * 3, 3 );
-
-			geometry.setAttribute( 'position', positions.copyArray( vertices ) );
-			geometry.setAttribute( 'color', colors.copyColorsArray( colours ) );
+			geometry.setAttribute( 'position', positions );
+			geometry.setAttribute( 'color', colors );
 
 			geometry.computeVertexNormals();
 
@@ -108,17 +107,25 @@ class Compass extends Group {
 
 					const a = i * Math.PI / 2 + offset;
 
-					vertices.push( Math.sin( a ) * radius, Math.cos( a ) * radius, 0 );
-					vertices.push( 0, 0, 2 );
-					vertices.push( Math.sin( a + xlv ) * innerR, Math.cos( a + xlv ) * innerR, 0 );
+					positions.setXYZ( vertex, Math.sin( a ) * radius, Math.cos( a ) * radius, 0 );
+					colors.setXYZ( vertex++, color1.r, color1.g, color1.b );
 
-					colours.push( color1, color1, color1 );
+					positions.setXYZ( vertex, 0, 0, 2 );
+					colors.setXYZ( vertex++, color1.r, color1.g, color1.b );
 
-					vertices.push( Math.sin( a + xlv ) * innerR, Math.cos( a + xlv ) * innerR, 0 );
-					vertices.push( 0, 0, 2 );
-					vertices.push( Math.sin( a + xc ) * radius, Math.cos( a + xc ) * radius, 0 );
+					positions.setXYZ( vertex, Math.sin( a + xlv ) * innerR, Math.cos( a + xlv ) * innerR, 0 );
+					colors.setXYZ( vertex++, color1.r, color1.g, color1.b );
 
-					colours.push( color2, color2, color2 );
+
+					positions.setXYZ( vertex, Math.sin( a + xlv ) * innerR, Math.cos( a + xlv ) * innerR, 0 );
+					colors.setXYZ( vertex++, color2.r, color2.g, color2.b );
+
+					positions.setXYZ( vertex, 0, 0, 2 );
+					colors.setXYZ( vertex++, color2.r, color2.g, color2.b );
+
+					positions.setXYZ( vertex, Math.sin( a + xc ) * radius, Math.cos( a + xc ) * radius, 0 );
+					colors.setXYZ( vertex++, color2.r, color2.g, color2.b );
+
 
 				}
 

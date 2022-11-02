@@ -40,7 +40,7 @@ class Entrances extends ClusterMarkers {
 			const positions = new Float32BufferAttribute( l, 3 );
 			const colors = new Float32BufferAttribute( l, 3 );
 
-			positions.copyVector3sArray( vertices );
+			vertices.forEach( ( v, i ) => { positions.setXYZ( i, v.x, v.y, v.z ); } );
 
 			geometry.setAttribute( 'position', positions );
 			geometry.setAttribute( 'color', colors );

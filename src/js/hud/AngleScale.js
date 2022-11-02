@@ -14,7 +14,6 @@ class AngleScale extends Mesh {
 		const geometry = new RingGeometry( 1, 40, 36, 1, Math.PI, Math.PI );
 
 		const hues = materials.colourCache.getColorSet( 'inclination' );
-		const colors = [];
 
 		const vertices = geometry.getAttribute( 'position' );
 		const vertexCount = vertices.count;
@@ -27,12 +26,13 @@ class AngleScale extends Mesh {
 			v3.fromBufferAttribute( vertices, i ).normalize();
 
 			const hueIndex = Math.floor( 127 * 2 * Math.asin( Math.abs( v3.dot( pNormal ) ) ) / Math.PI );
+			const hue = hues[ hueIndex ];
 
-			colors.push( hues[ hueIndex ] );
+			ringColors.setXYZ( i, hue.r, hue.g, hue.b );
 
 		}
 
-		geometry.setAttribute( 'color', ringColors.copyColorsArray( colors ) );
+		geometry.setAttribute( 'color', ringColors );
 
 		super( geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: true } ) );
 

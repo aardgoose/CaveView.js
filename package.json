@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c -w \" \"serve -l 8080 build \"",
     "build": "rollup -c",
-    "graph": "rollup -c rollup.graph.js | dot -Tpdf > graph.pdf",
-    "build-babel": "rollup -c rollup-babel.config.js",
+    "graph": "rollup -c rollup.graph.mjs | dot -Tpdf > graph.pdf",
+    "build-babel": "rollup -c rollup-babel.config.mjs",
     "lint": "eslint src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -43,7 +43,7 @@
     "eslint": "^8.19.0",
     "postcss": "^8.4.00",
     "proj4": "^2.8.0",
-    "rollup": "^2.78.0",
+    "rollup": "^3.2.0",
     "rollup-plugin-graph": "^2.0.0",
     "serve": "^14.0.0",
     "terser": "^5.14.0",

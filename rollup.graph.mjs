@@ -2,9 +2,9 @@ import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 
-import { glconstants, glsl, glslThree } from './rollup-gl';
+import { glconstants, glsl, glslThree } from './rollup-gl.mjs';
 
-let graph = require( 'rollup-plugin-graph' );
+import graph from 'rollup-plugin-graph';
 
 export default [
 	{

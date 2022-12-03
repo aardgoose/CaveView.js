@@ -279,6 +279,7 @@ class loxHandler {
 				parentNode = surveyTree.findById( m_surveyId + idOffset );
 				lastParentId = m_surveyId;
 
+				if ( parentNode === undefined ) parentNode = surveyTree;
 			}
 
 			const name = ( namePtr.size === 0 ) ? '[' + m_id + ']' : readString( namePtr );

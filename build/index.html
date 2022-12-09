@@ -49,7 +49,7 @@ function onload () {
 	viewer.addOverlay( 'OSM', new OSMProvider() );
 	viewer.addOverlay( 'BGS Solid', new BGSProvider( [ 'BGS.50k.Bedrock', 'BGS.50k.Linear.features' ] ) );
 	viewer.addOverlay( 'BGS Drift', new BGSProvider( [ 'BGS.50k.Superficial.deposits' ] ) );
-//	viewer.addOverlay( 'NLS', new NLSProvider() );
+	viewer.addOverlay( 'NLS', new NLSProvider( 'qe7homSGddc2ubf3mxW1' ) );
 	viewer.addOverlay( 'Bing Aerial',  new BingProvider( 'Aerial', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
 	viewer.addOverlay( 'Bing OS', new BingProvider( 'OrdnanceSurvey', 'Ap8PRYAyAVcyoSPio8EaFtDEpYJVNwEA70GqYj31EXa6jkT_SduFHMKeHnvyS4D_' ) );
 	viewer.addOverlay( 'Spanish IGN mapping', new WMTSProvider( true ) );

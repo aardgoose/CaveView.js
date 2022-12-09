@@ -92,7 +92,11 @@ function CaveViewUI ( viewer ) {
 
 	this.loadCave = function ( file, section ) {
 
-		fileSelector.selectSource( new ModelSource( [ { name: file } ], false ), section );
+		if(file instanceof File ) {
+			fileSelector.selectSource( new ModelSource( [ file ], true ), section );
+		} else {
+			fileSelector.selectSource( new ModelSource( [ { name: file } ], false ), section );
+		}
 
 	};
 

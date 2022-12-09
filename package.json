@@ -3,7 +3,7 @@
   "version": "2.6.2",
   "description": "3D Cave Survey Viewer",
   "scripts": {
-    "dev": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c -w \" \"serve -l 8080 build \"",
+    "dev": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c -w \" \"serve -L -l 8080 build \"",
     "build": "rollup -c",
     "graph": "rollup -c rollup.graph.mjs | dot -Tpdf > graph.pdf",
     "build-babel": "rollup -c rollup-babel.config.mjs",

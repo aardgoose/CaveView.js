@@ -23,7 +23,7 @@ function buildCrossSections ( cave, survey ) {
 	if ( crossSectionGroups.length === 0 ) return;
 
 	const warnings = [];
-	const mesh = survey.addFeature( new Walls( ctx ), FACE_WALLS, 'Walls' );
+	const mesh = survey.addFeature( new Walls( ctx ), FACE_WALLS, 'CV.Survey:faces:walls' );
 
 	const indices = [];
 	const vertices = [];
@@ -230,7 +230,6 @@ function buildCrossSections ( cave, survey ) {
 
 	mesh.addWalls( vertices, indices, indexRuns );
 
-	survey.addFeature( mesh, FACE_WALLS, 'CV.Survey:faces:walls' );
 	survey.loadWarnings( warnings );
 
 	return;

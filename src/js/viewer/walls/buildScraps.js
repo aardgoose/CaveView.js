@@ -8,7 +8,7 @@ function buildScraps ( cave, survey ) {
 
 	if ( l === 0 ) return null;
 
-	const mesh = survey.addFeature( new Walls( survey.ctx ), FACE_SCRAPS, 'Scraps' );
+	const mesh = survey.addFeature( new Walls( survey.ctx ), FACE_SCRAPS, 'CV.Survey:faces:scraps' );
 
 	const indices = [];
 	const vertices = [];
@@ -25,8 +25,6 @@ function buildScraps ( cave, survey ) {
 	}
 
 	mesh.addWalls( vertices, indices, indexRuns );
-
-	survey.addFeature( mesh, FACE_SCRAPS, 'CV.Survey:faces:scraps' );
 
 	return;
 

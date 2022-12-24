@@ -15,6 +15,7 @@ class Handler {
 		this.xGroups      = [];
 		this.scraps     = [];
 		this.terrains   = [];
+		this.models     = [];
 		this.sourceCRS  = null;
 		this.targetCRS  = 'EPSG:3857'; // "web mercator"
 		this.displayCRS = null;
@@ -259,6 +260,7 @@ class Handler {
 		// convert to origin centered coordinates
 
 		const offsets = limits.getCenter( this.offsets );
+
 		const allStations = this.allStations;
 
 		allStations.forEach( all => all.forEach( s => s.sub( offsets ) ) );
@@ -289,6 +291,7 @@ class Handler {
 			lineSegments: this.lineSegments,
 			crossSections: this.xGroups,
 			scraps: this.scraps,
+			models: this.models,
 			hasTerrain: this.hasTerrain,
 			metadata: this.metadata,
 			terrains: this.terrains,

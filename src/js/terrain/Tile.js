@@ -60,7 +60,6 @@ class Tile extends Mesh {
 
 		const attributes = tileData.attributes;
 		const index = tileData.index;
-		const boundingBox = tileData.boundingBox;
 		const bufferGeometry = this.geometry;
 
 		let attributeName;
@@ -79,10 +78,7 @@ class Tile extends Mesh {
 
 		// use precalculated bounding box rather than recalculating it here.
 
-		bufferGeometry.boundingBox = new Box3(
-			new Vector3().copy( boundingBox.min ),
-			new Vector3().copy( boundingBox.max ),
-		);
+		bufferGeometry.boundingBox = new Box3().copy( tileData.boundingBox );
 
 		this.boundingBox = bufferGeometry.boundingBox;
 

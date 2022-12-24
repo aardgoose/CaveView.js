@@ -1,6 +1,6 @@
 import { EventDispatcher, FogExp2, Raycaster, Scene, Vector2, Vector3, WebGLRenderer } from '../Three';
 import {
-	FACE_SCRAPS, FACE_WALLS,FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_ENTRANCE_DOTS, FEATURE_GRID, FEATURE_STATIONS, FEATURE_TERRAIN, FEATURE_TRACES,
+	FACE_SCRAPS, FACE_WALLS, FACE_MODEL, FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_ENTRANCE_DOTS, FEATURE_GRID, FEATURE_STATIONS, FEATURE_TERRAIN, FEATURE_TRACES,
 	LABEL_STATION, LABEL_STATION_COMMENT, LEG_CAVE, LEG_SPLAY, LEG_DUPLICATE, LEG_SURFACE, LM_NONE, LM_SINGLE, MOUSE_MODE_TRACE_EDIT, SURVEY_WARNINGS,
 	VERSION, VIEW_ELEVATION_E, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_W,  VIEW_NONE, VIEW_PLAN,
 } from '../core/constants';
@@ -414,6 +414,7 @@ class CaveViewer extends EventDispatcher {
 		enableLayer( FEATURE_TRACES,    'traces' );
 		enableLayer( FEATURE_GRID,      'grid' );
 		enableLayer( FACE_SCRAPS,       'scraps' );
+		enableLayer( FACE_MODEL,        'model' );
 		enableLayer( FACE_WALLS,        'walls' );
 		enableLayer( LEG_CAVE,          'legs' );
 		enableLayer( LEG_SPLAY,         'splays' );

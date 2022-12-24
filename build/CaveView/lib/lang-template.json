@@ -55,6 +55,7 @@
 			"comments": "Station Comments",
 			"walls": "Walls (LRUD)",
 			"scraps": "Scraps",
+			"model": "Model",
 			"splays": "Splay Legs",
 			"duplicates": "Duplicate Legs",
 			"traces": "Dye Traces",

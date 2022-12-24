@@ -124,6 +124,12 @@ class Stations extends Points {
 
 	}
 
+	count () {
+
+		return this.vertices.length;
+
+	}
+
 	addStation ( node ) {
 
 		if ( node.stationVertexIndex != -1 ) return; // duplicated entry

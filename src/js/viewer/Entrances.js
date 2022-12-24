@@ -108,6 +108,12 @@ class Entrances extends ClusterMarkers {
 
 	}
 
+	count () {
+
+		return this.vertices.length;
+
+	}
+
 	getStation ( index ) {
 
 		const station = this.vertices[ index ];

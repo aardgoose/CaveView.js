@@ -1,7 +1,7 @@
 import { Color, Matrix4, Object3D, Vector3 } from '../Three';
 import {
 	CLUSTER_MARKERS,
-	FACE_SCRAPS, FACE_WALLS, FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_GRID, FEATURE_STATIONS, FEATURE_TRACES,
+	FACE_SCRAPS, FACE_MODEL, FACE_WALLS, FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_GRID, FEATURE_STATIONS, FEATURE_TRACES,
 	LABEL_STATION, LABEL_STATION_COMMENT, LEG_CAVE, LEG_DUPLICATE, LEG_SPLAY, LEG_SURFACE,
 	SHADING_CURSOR, SHADING_CUSTOM, SHADING_DEPTH, SHADING_DEPTH_CURSOR, SHADING_DISTANCE, SHADING_DUPLICATE,
 	SHADING_HEIGHT, SHADING_INCLINATION, SHADING_LENGTH, SHADING_OVERLAY, SHADING_PATH,
@@ -266,7 +266,11 @@ class Survey extends Object3D {
 
 		const entrances = new Entrances( this.ctx, this );
 
-		this.addFeature( entrances, FEATURE_ENTRANCES, 'CV.Survey:entrances' );
+		if ( entrances.count > 0 ) {
+
+			this.addFeature( entrances, FEATURE_ENTRANCES, 'CV.Survey:entrances' );
+
+		}
 
 		this.entranceTargets = [ entrances.markers ];
 		this.entrances = entrances;
@@ -353,7 +357,7 @@ class Survey extends Object3D {
 
 		this.loadDyeTraces();
 
-		this.segments = this.getFeature( LEG_CAVE ).findTopology();
+		this.segments = this.getFeature( LEG_CAVE )?.findTopology();
 
 		this.routes = new Routes( this );
 
@@ -566,8 +570,12 @@ class Survey extends Object3D {
 
 		const stationLabels = new StationLabels( this.ctx, stations, commentCount );
 
-		this.addFeature( stations, FEATURE_STATIONS, 'CV.Stations' );
-		this.addFeature( stationLabels, LABEL_STATION, 'CV.StationLabels' );
+		if ( stations.count() > 0 ) {
+
+			this.addFeature( stations, FEATURE_STATIONS, 'CV.Stations' );
+			this.addFeature( stationLabels, LABEL_STATION, 'CV.StationLabels' );
+
+		}
 
 		if ( commentCount > 0 ) {
 
@@ -640,7 +648,7 @@ class Survey extends Object3D {
 
 	getLegs () {
 
-		return this.getFeature( LEG_CAVE ).legVertices;
+		return this.getFeature( LEG_CAVE )?.legVertices;
 
 	}
 
@@ -1002,6 +1010,7 @@ class Survey extends Object3D {
 
 			this.setWallShading( this.features.get( FACE_WALLS  ), material );
 			this.setWallShading( this.features.get( FACE_SCRAPS ), material );
+			this.setWallShading( this.features.get( FACE_MODEL ), material );
 
 			this.caveShading = mode;
 
@@ -1061,7 +1070,7 @@ class Survey extends Object3D {
 
 		const legs = this.features.get( legType );
 
-		if ( legs === undefined ) return false;
+		if ( legs === undefined ) return true;
 
 		const cfg = this.ctx.cfg;
 

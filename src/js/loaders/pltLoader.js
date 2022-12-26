@@ -6,15 +6,9 @@ const ftom = 12 * 0.0254;
 
 class pltLoader {
 
-	constructor( file ) {
-
-		this.file = file;
-
-	}
-
 	load ( loadingContext, progress, model ) {
 
-		return new FileLoader( this.file, 'text', loadingContext, progress ).then( results => {
+		return super.load( 'text', loadingContext, progress ).then( results => {
 
 			this.parse( model, results.data, results.metadata, loadingContext.section, progress );
 

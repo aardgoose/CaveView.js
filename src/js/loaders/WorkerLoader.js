@@ -1,15 +1,15 @@
 class WorkerLoader {
 
-	constructor( file, script ) {
+	constructor ( file, script ) {
 
 		this.file = file;
-		this.script = script;
+		this.worker = new Worker( script );
 
 	}
 
 	load ( loadingContext, progress, model ) {
 
-		const worker = new Worker( this.script );
+		const worker = this.worker;
 
 		return new Promise( ( resolve, reject ) => {
 
@@ -17,25 +17,42 @@ class WorkerLoader {
 
 				const data = event.data;
 
-				if ( data.status == 'progress' ) {
+				switch ( data.status ) {
+
+				case 'progress':
 
 					progress( data );
 					return;
 
+				case 'ok':
+
+					model.limits.copy( data.boundingBox );
+					model.models.push( data );
+
+					resolve();
+					break;
+
+				case 'error':
+
+					reject( data.message );
+					break;
+
 				}
 
-				model.limits.copy( data.boundingBox );
-				model.models.push( data );
-
-				resolve( data.status == 'ok' )
-
 				worker.terminate();
+				this.worker = null;
 
 			}
 
 			worker.postMessage( { file: this.file, loadingContext: loadingContext } );
 
 		} );
+
+	}
+
+	abort () {
+
+		if ( this.worker !== null ) this.worker.postMessage( { action: 'abort' } );
 
 	}
 

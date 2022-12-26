@@ -2,43 +2,52 @@ import { replaceExtension } from '../core/lib';
 
 class FileLoader {
 
-	constructor ( file, type, loadingContext, progress ) {
+	constructor ( file ) {
+
+		this.file = file;
+		this.requests = [];
+
+	}
+
+	load ( type, loadingContext, progress ) {
 
 		const results = { data: null, metadata: null };
+		const file = this.file;
 
 		if ( file instanceof File ) {
 
 			return new Promise( ( resolve, reject ) => {
 
-				const fLoader = new FileReader();
+				const fileReader = new FileReader();
 
-				fLoader.addEventListener( 'load', _loaded );
-				fLoader.addEventListener( 'progress', progress );
+				fileReader.addEventListener( 'load', _loaded );
+				fileReader.addEventListener( 'progress', progress );
+
+				this.requests.push( fileReader );
 
 				switch ( type ) {
 
 				case 'arraybuffer':
 
-					fLoader.readAsArrayBuffer( file );
+					fileReader.readAsArrayBuffer( file );
 					break;
 
 			   case 'text':
 
-					fLoader.readAsText( file );
+					fileReader.readAsText( file );
 					break;
 
 				default:
 
-					alert( 'unknown file data type' );
-					reject();
+					reject( 'unknown file data type' );
 					return;
 
 				}
 
 				function _loaded ( event ) {
 
-					fLoader.removeEventListener( 'load', _loaded );
-					fLoader.removeEventListener( 'progress', progress );
+					fileReader.removeEventListener( 'load', _loaded );
+					fileReader.removeEventListener( 'progress', progress );
 
 					results.data = event.target.result;
 
@@ -66,6 +75,8 @@ class FileLoader {
 
 				dataReq.send();
 
+				this.requests.push( dataReq );
+
 				if ( loadingContext.loadMetadata ) {
 
 					jobs++;
@@ -79,12 +90,14 @@ class FileLoader {
 					metadataReq.responseType = 'json';
 
 					metadataReq.send();
+					this.requests.push( metadataReq );
 
 				}
 
-				function _dataLoaded ( result ) {
+				function _dataLoaded ( event ) {
 
-					results.data = result.target.response;
+					results.data = event.target.response;
+
 					if ( --jobs === 0 ) resolve( results );
 
 				}
@@ -92,15 +105,15 @@ class FileLoader {
 				function _dataError ( event ) {
 
 					if ( event.type === 'abort' ) return;
-					console.warn( 'error event', event );
 
-					if ( --jobs === 0 ) reject();
+					if ( --jobs === 0 ) reject( `error loading data with error: ${dataReq.statusText}` );
 
 				}
 
-				function _metadataLoaded ( result ) {
+				function _metadataLoaded ( event ) {
 
-					results.metadata = result;
+					results.metadata = event.target.response;
+
 					if ( --jobs === 0 ) resolve( results );
 
 				}
@@ -108,15 +121,22 @@ class FileLoader {
 
 				function _metadataError ( event ) {
 
+					--jobs;
 					if ( event.type === 'abort' ) return;
 
-					if ( --jobs === 0 ) resolve( results );
+					if ( jobs === 0 ) resolve( results );
 
 				}
 
 			} );
 
 		}
+
+	}
+
+	abort () {
+
+		this.requests.forEach( request => request.abort() );
 
 	}
 

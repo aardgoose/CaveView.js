@@ -20,7 +20,7 @@ class CaveLoader extends EventDispatcher {
 		}
 
 		this.callback = callback;
-		this.requests = [];
+		this.handlers = [];
 		this.loading = [];
 		this.ctx = ctx;
 
@@ -35,10 +35,8 @@ class CaveLoader extends EventDispatcher {
 
 	reset () {
 
-		// FIXME cache handlers and move abort/terminate into per handler handling
-		this.requests.forEach( request => request.abort() );
-		this.requests = [];
-
+		this.handlers.forEach( handler => handler.abort() );
+		this.handlers = [];
 		this.loading = [];
 		this.models = new Handler( this.ctx );
 
@@ -81,6 +79,7 @@ class CaveLoader extends EventDispatcher {
 
 		source.files.forEach( file => this.loadFile( file ) );
 
+		// wait for all loaders to complete or fail
 		Promise.all( this.loading ).then( () => this._end( this.models ) );
 
 	}
@@ -94,7 +93,9 @@ class CaveLoader extends EventDispatcher {
 
 		this.dispatchEvent( { type: 'progress', name: 'start' } );
 
+		this.handlers.push( handler );
 		this.loading.push( handler.load( this.loadingContext, _progress , this.models ) );
+
 
 	}
 

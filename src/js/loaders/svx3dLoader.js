@@ -6,11 +6,12 @@ import {
 import { StationPosition } from '../core/StationPosition';
 import { FileLoader  } from './FileLoader';
 
-class Svx3dLoader {
+class Svx3dLoader extends FileLoader{
 
 	constructor ( file ) {
 
-		this.file = file;
+		super( file );
+
 		this.groups = [];
 		this.section = null;
 
@@ -18,7 +19,7 @@ class Svx3dLoader {
 
 	load ( loadingContext, progress, model ) {
 
-		return new FileLoader( this.file, 'arraybuffer', loadingContext, progress ).then( results => {
+		return super.load( 'arraybuffer', loadingContext, progress ).then( results => {
 
 			this.parse( model, results.data, results.metadata, loadingContext.section, progress );
 

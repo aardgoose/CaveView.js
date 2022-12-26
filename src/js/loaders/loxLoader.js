@@ -6,19 +6,13 @@ import {
 import { StationPosition } from '../core/StationPosition';
 import { FileLoader  } from './FileLoader';
 
-class loxLoader {
+class loxLoader extends FileLoader {
 
 	static modelOffset = 0;
 
-	constructor ( file ) {
-
-		this.file = file;
-
-	}
-
 	load ( loadingContext, progress, model ) {
 
-		return new FileLoader( this.file, 'arraybuffer', loadingContext, progress ).then( results => {
+		return super.load( 'arraybuffer', loadingContext, progress ).then( results => {
 
 			this.parse( model, results.data, results.metadata, loadingContext.section, progress );
 

@@ -23,6 +23,7 @@ class ViewState {
 		scraps: false,
 		shadingMode: SHADING_HEIGHT,
 		splays: false,
+		model: true,
 		stations: false,
 		stationLabels: false,
 		stationLabelOver: false,

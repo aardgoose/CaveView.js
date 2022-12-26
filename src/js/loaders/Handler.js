@@ -179,7 +179,7 @@ class Handler {
 
 		xSects.sort( function ( a, b ) { return a.m_from - b.m_from; } );
 
-		for ( let i = 0; i < xSects.length; i++ ) {
+		for ( let i = 0, l = xSects.length; i < l; i++ ) {
 
 			const xSect = xSects[ i ];
 
@@ -222,7 +222,7 @@ class Handler {
 
 		}
 
-		for ( let i = 0; i < xGroups.length; i++ ) {
+		for ( let i = 0, l = xGroups.length; i < l; i++ ) {
 
 			const group = xGroups[ i ];
 
@@ -271,11 +271,11 @@ class Handler {
 
 		// covert scraps coordinates
 
-		for ( let i = 0; i < scraps.length; i++ ) {
+		for ( let il = scraps.length, i = 0; i < il; i++ ) {
 
 			const vertices = scraps[ i ].vertices;
 
-			for ( let j = 0; j < vertices.length; j++ ) {
+			for ( let ij = vertices.length, j = 0; j < ij; j++ ) {
 
 				vertices[ j ].sub( offsets );
 

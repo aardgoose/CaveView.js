@@ -1,10 +1,8 @@
-import { Box3, Float32BufferAttribute, Uint16BufferAttribute } from '../../Three';
+import { Box3, Float32BufferAttribute, Uint16BufferAttribute, Uint32BufferAttribute } from '../../Three';
 import { FACE_MODEL } from '../../core/constants';
 import { Walls } from './Walls';
 
 function buildModels ( cave, survey ) {
-
-	console.log( cave );
 
 	const model = cave.models[ 0 ];
 
@@ -25,11 +23,21 @@ function buildModels ( cave, survey ) {
 	for ( attributeName in attributes ) {
 
 		attribute = attributes[ attributeName ];
-		bufferGeometry.setAttribute( attributeName, new Float32BufferAttribute( attribute.array, attribute.itemSize ) );
+
+		bufferGeometry.setAttribute( attributeName, new Float32BufferAttribute( attribute.array.buffer, attribute.itemSize ) );
 
 	}
 
-	bufferGeometry.setIndex( new Uint16BufferAttribute( index, 1 ) );
+	if ( index.array.BYTES_PER_ELEMENT == 2 ) {
+
+		bufferGeometry.setIndex( new Uint16BufferAttribute( index.array.buffer, 1 ) );
+
+	} else {
+
+		bufferGeometry.setIndex( new Uint32BufferAttribute( index.array.buffer, 1 ) );
+
+	}
+
 
 	// use precalculated bounding box rather than recalculating it here.
 

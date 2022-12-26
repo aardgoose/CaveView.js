@@ -86,7 +86,7 @@ class FileLoader {
 					metadataReq.addEventListener( 'load', _metadataLoaded );
 					metadataReq.addEventListener( 'error', _metadataError );
 
-					metadataReq.open( 'GET', loadingContext,prefix + file.name ); // FIXME extension
+					metadataReq.open( 'GET', loadingContext,prefix + replaceExtension( file.name, 'json' ) ); // FIXME extension
 					metadataReq.responseType = 'json';
 
 					metadataReq.send();
@@ -121,10 +121,9 @@ class FileLoader {
 
 				function _metadataError ( event ) {
 
-					--jobs;
 					if ( event.type === 'abort' ) return;
 
-					if ( jobs === 0 ) resolve( results );
+					if ( --jobs === 0 ) resolve( results );
 
 				}
 

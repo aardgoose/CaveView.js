@@ -4,16 +4,26 @@ import {
 	WALL_SQUARE
 } from '../core/constants';
 import { StationPosition } from '../core/StationPosition';
+import { FileLoader  } from './FileLoader';
 
-class Svx3dHandler {
+class Svx3dLoader {
 
-	type = 'arraybuffer';
+	constructor ( file ) {
 
-	constructor ( fileName ) {
-
-		this.fileName = fileName;
+		this.file = file;
 		this.groups = [];
 		this.section = null;
+
+	}
+
+	load ( loadingContext, progress, model ) {
+
+		return new FileLoader( this.file, 'arraybuffer', loadingContext, progress ).then( results => {
+
+			this.parse( model, results.data, results.metadata, loadingContext.section, progress );
+
+		} );
+
 	}
 
 	parse ( cave, dataStream, metadata, section, progress ) {
@@ -1143,4 +1153,4 @@ class Svx3dHandler {
 
 }
 
-export { Svx3dHandler };
+export { Svx3dLoader };

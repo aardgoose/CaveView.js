@@ -1,14 +1,24 @@
 import { LEG_CAVE, STATION_NORMAL } from '../core/constants';
 import { StationPosition } from '../core/StationPosition';
+import { FileLoader  } from './FileLoader';
 
 const ftom = 12 * 0.0254;
 
-class pltHandler {
+class pltLoader {
 
-	constructor( fileName ) {
+	constructor( file ) {
 
-		this.fileName = fileName;
-		this.type = 'text';
+		this.file = file;
+
+	}
+
+	load ( loadingContext, progress, model ) {
+
+		return new FileLoader( this.file, 'text', loadingContext, progress ).then( results => {
+
+			this.parse( model, results.data, results.metadata, loadingContext.section, progress );
+
+		} );
 
 	}
 
@@ -223,4 +233,4 @@ class pltHandler {
 
 }
 
-export { pltHandler };
+export { pltLoader };

@@ -1,4 +1,4 @@
-class WorkerHandler {
+class WorkerLoader {
 
 	constructor( file, script ) {
 
@@ -41,4 +41,4 @@ class WorkerHandler {
 
 }
 
-export { WorkerHandler };
+export { WorkerLoader };

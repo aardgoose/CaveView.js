@@ -4,23 +4,33 @@ import {
 	STATION_ENTRANCE, STATION_NORMAL, STATION_XSECT
 } from '../core/constants';
 import { StationPosition } from '../core/StationPosition';
+import { FileLoader  } from './FileLoader';
 
-class loxHandler {
+class loxLoader {
 
 	static modelOffset = 0;
 
-	type = 'arraybuffer';
+	constructor ( file ) {
 
-	constructor ( fileName ) {
+		this.file = file;
 
-		this.fileName = fileName;
+	}
+
+	load ( loadingContext, progress, model ) {
+
+		return new FileLoader( this.file, 'arraybuffer', loadingContext, progress ).then( results => {
+
+			this.parse( model, results.data, results.metadata, loadingContext.section, progress );
+
+		} );
+
 	}
 
 	parse ( cave, source, metadata, section, progress ) {
 
 		// assumes little endian data ATM - FIXME
 
-		loxHandler.modelOffset += 100000;
+		loxLoader.modelOffset += 100000;
 
 		cave.metadata = metadata;
 
@@ -38,7 +48,7 @@ class loxHandler {
 		const utf8Decoder = new TextDecoder( 'utf-8' );
 
 		const l = source.byteLength;
-		const idOffset = loxHandler.modelOffset;
+		const idOffset = loxLoader.modelOffset;
 		const stations = [];
 		const shash = [];
 
@@ -610,4 +620,4 @@ class loxHandler {
 
 }
 
-export { loxHandler };
+export { loxLoader };

@@ -1,3 +1,5 @@
+import { replaceExtension } from '../core/lib';
+
 class FileLoader {
 
 	constructor ( file, type, loadingContext, progress ) {
@@ -73,7 +75,7 @@ class FileLoader {
 					metadataReq.addEventListener( 'load', _metadataLoaded );
 					metadataReq.addEventListener( 'error', _metadataError );
 
-					metadataReq.open( 'GET', loadingContext,prefix + file.name );
+					metadataReq.open( 'GET', loadingContext,prefix + file.name ); // FIXME extension
 					metadataReq.responseType = 'json';
 
 					metadataReq.send();

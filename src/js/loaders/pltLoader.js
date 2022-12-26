@@ -4,7 +4,7 @@ import { FileLoader  } from './FileLoader';
 
 const ftom = 12 * 0.0254;
 
-class pltLoader {
+class pltLoader extends FileLoader {
 
 	load ( loadingContext, progress, model ) {
 

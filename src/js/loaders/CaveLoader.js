@@ -13,12 +13,6 @@ class CaveLoader extends EventDispatcher {
 
 		super();
 
-		if ( ! callback ) {
-
-			alert( 'No callback specified' );
-
-		}
-
 		this.callback = callback;
 		this.ctx = ctx;
 

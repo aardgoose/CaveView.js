@@ -459,7 +459,7 @@ class CaveViewer extends EventDispatcher {
 
 		const hud = new HUD( this, renderer );
 
-		const caveLoader = new CaveLoader( ctx, caveLoaded );
+		const caveLoader = new CaveLoader( ctx );
 
 		hud.getProgressDial( 0 ).watch( caveLoader );
 
@@ -843,9 +843,31 @@ class CaveViewer extends EventDispatcher {
 
 		};
 
-		this.loadSource = function ( source, section ) {
+		this.loadSource = function ( source, section = null ) {
 
-			caveLoader.loadSource( source, section );
+			caveLoader.loadSource( source, section ).then(
+				cave => {
+
+					onResize();
+
+					try {
+
+						loadSurvey( new Survey( ctx, cave ) );
+
+					} catch ( e ) {
+
+						alert( e );
+
+					}
+
+				},
+				error => {
+
+					alert( 'failed loading cave information: ', error );
+
+				}
+
+			);
 
 			clipped = ( section !== null && section !== '' );
 
@@ -859,32 +881,9 @@ class CaveViewer extends EventDispatcher {
 
 		this.loadCaves = function ( files ) {
 
-			caveLoader.loadSource( ModelSource.makeModelSourceFiles( files ) );
+			this.loadSource( ModelSource.makeModelSourceFiles( files ) );
 
 		};
-
-		function caveLoaded ( cave ) {
-
-			if ( ! cave ) {
-
-				alert( 'failed loading cave information' );
-				return;
-
-			}
-
-			onResize();
-
-			try {
-
-				loadSurvey( new Survey( ctx, cave ) );
-
-			} catch ( e ) {
-
-				alert( e );
-
-			}
-
-		}
 
 		this.setView = function ( properties ) {
 

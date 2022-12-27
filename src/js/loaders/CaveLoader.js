@@ -9,11 +9,10 @@ const setProgressEvent = { type: 'progress', name: 'set', progress: 0 };
 
 class CaveLoader extends EventDispatcher {
 
-	constructor ( ctx, callback ) {
+	constructor ( ctx ) {
 
 		super();
 
-		this.callback = callback;
 		this.ctx = ctx;
 
 		this.reset();
@@ -31,7 +30,6 @@ class CaveLoader extends EventDispatcher {
 		this.handlers = [];
 		this.loading = [];
 		this.progress = new Map();
-		this.models = new Handler( this.ctx );
 
 	}
 
@@ -68,24 +66,26 @@ class CaveLoader extends EventDispatcher {
 
 	loadSource ( source, section = null ) {
 
+		const models = new Handler( this.ctx );
+
 		this.loadingContext.section = section;
 
-		source.files.forEach( file => this.loadFile( file ) );
+		source.files.forEach( file => this.loadFile( file, models ) );
 
 		// wait for all loaders to complete or fail
-		Promise.all( this.loading ).then(
-			() => this._end( this.models ),
-			error => {
+		return Promise.all( this.loading )
+			.then( () => models )
+			.finally( () => {
 
-				console.warn( 'error loading files: ', error );
-				this._end( false );
+				this.dispatchEvent( { type: 'progress', name: 'end' } );
+				this.reset();
 
 			}
 		);
 
 	}
 
-	loadFile ( file )  {
+	loadFile ( file, models )  {
 
 		const handler = this.getHandler( file );
 
@@ -105,8 +105,7 @@ class CaveLoader extends EventDispatcher {
 		this.dispatchEvent( { type: 'progress', name: 'start' } );
 
 		this.handlers.push( handler );
-		this.loading.push( handler.load( this.loadingContext, _progress , this.models ) );
-
+		this.loading.push( handler.load( this.loadingContext, _progress, models ) );
 
 	}
 
@@ -126,14 +125,6 @@ class CaveLoader extends EventDispatcher {
 		setProgressEvent.progress = Math.round( 75 * loaded / total );
 
 		this.dispatchEvent( setProgressEvent );
-
-	}
-
-	_end ( result ) {
-
-		this.callback( result );
-		this.dispatchEvent( { type: 'progress', name: 'end' } );
-		this.reset();
 
 	}
 

@@ -31,7 +31,7 @@ const __v2 = new Vector3();
 
 class Survey extends Object3D {
 
-	constructor ( ctx, cave ) {
+	constructor ( ctx, surveyData ) {
 
 		super();
 
@@ -71,7 +71,7 @@ class Survey extends Object3D {
 		ctx.surveyColourMapper = new SurveyColourMapper( ctx );
 		ctx.survey = this;
 
-		let survey = cave.getSurvey();
+		let survey = surveyData.getSurvey();
 
 		if ( survey.limits.isEmpty() ) throw new Error( 'Empty survey or region of survey' );
 
@@ -99,9 +99,9 @@ class Survey extends Object3D {
 
 		_setProjectionScale();
 
-		this.loadCave( survey, cave.messages );
+		this.loadCave( survey, surveyData.messages );
 
-		this.loadWarnings( cave.messages );
+		this.loadWarnings( surveyData.messages );
 
 		this.loadEntrances();
 
@@ -339,7 +339,7 @@ class Survey extends Object3D {
 		this.surveyTree = surveyTree;
 
 		this.selection = new Selection( ctx, ctx.cfg.themeValue( 'box.select' ) );
-		this.highlightBox = new Selection( this.ctx, this.ctx.cfg.themeValue( 'box.highlight' ) );
+		this.highlightBox = new Selection( ctx, ctx.cfg.themeValue( 'box.highlight' ) );
 
 		_loadSegments( survey.lineSegments );
 
@@ -830,6 +830,7 @@ class Survey extends Object3D {
 
 		const selection = this.selection;
 		const self = this;
+		const ctx = this.ctx;
 
 		selection.set( node );
 
@@ -860,8 +861,8 @@ class Survey extends Object3D {
 
 		this.surveyTree = node;
 
-		this.selection = new Selection( this.ctx, this.ctx.cfg.themeValue( 'box.select' ) );
-		this.highlightBox = new Selection( this.ctx, this.ctx.cfg.themeValue( 'box.highlight' ) );
+		this.selection = new Selection( ctx, ctx.cfg.themeValue( 'box.select' ) );
+		this.highlightBox = new Selection( ctx, ctx.cfg.themeValue( 'box.highlight' ) );
 
 		// remove stale world bounding boxes
 		node.traverse( node => { if ( ! node.isStation() ) { node.worldBoundingBox = null; } } );
@@ -886,7 +887,7 @@ class Survey extends Object3D {
 		this.featureBox = null;
 
 		this.setFeatureBox();
-		this.addFeature( new Grid( this.ctx ), FEATURE_GRID );
+		this.addFeature( new Grid( ctx ), FEATURE_GRID );
 
 		// this.loadWarnings();
 		// this.loadDyeTraces();

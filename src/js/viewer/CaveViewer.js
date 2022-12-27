@@ -846,13 +846,13 @@ class CaveViewer extends EventDispatcher {
 		this.loadSource = function ( source, section = null ) {
 
 			caveLoader.loadSource( source, section ).then(
-				cave => {
+				surveyData => {
 
 					onResize();
 
 					try {
 
-						loadSurvey( new Survey( ctx, cave ) );
+						loadSurvey( new Survey( ctx, surveyData ) );
 
 					} catch ( e ) {
 

@@ -6,11 +6,11 @@ const ftom = 12 * 0.0254;
 
 class pltLoader extends FileLoader {
 
-	load ( loadingContext, progress, model ) {
+	load ( loadingContext, progress, surveyData ) {
 
 		return super.load( 'text', loadingContext, progress ).then( results => {
 
-			this.parse( model, results.data, results.metadata, loadingContext.section, progress );
+			this.parse( surveyData, results.data, results.metadata, loadingContext.section, progress );
 
 		} );
 

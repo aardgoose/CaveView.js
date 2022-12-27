@@ -17,11 +17,11 @@ class Svx3dLoader extends FileLoader{
 
 	}
 
-	load ( loadingContext, progress, model ) {
+	load ( loadingContext, progress, surveyData ) {
 
 		return super.load( 'arraybuffer', loadingContext, progress ).then( results => {
 
-			this.parse( model, results.data, results.metadata, loadingContext.section, progress );
+			this.parse( surveyData, results.data, results.metadata, loadingContext.section, progress );
 
 		} );
 

@@ -3,7 +3,7 @@ import { Svx3dLoader} from './svx3dLoader';
 import { loxLoader } from './loxLoader';
 import { pltLoader } from './pltLoader';
 import { WorkerLoader } from './WorkerLoader';
-import { Handler } from './Handler';
+import { SurveyData } from './SurveyData';
 
 const setProgressEvent = { type: 'progress', name: 'set', progress: 0 };
 
@@ -66,7 +66,7 @@ class CaveLoader extends EventDispatcher {
 
 	loadSource ( source, section = null ) {
 
-		const models = new Handler( this.ctx );
+		const models = new SurveyData( this.ctx );
 
 		this.loadingContext.section = section;
 

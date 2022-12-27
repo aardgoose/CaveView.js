@@ -3,7 +3,7 @@ import { Tree } from '../core/Tree';
 
 import proj4 from 'proj4';
 
-class Handler {
+class SurveyData {
 
 	constructor ( ctx ) {
 
@@ -304,4 +304,4 @@ class Handler {
 
 }
 
-export { Handler };
+export { SurveyData };

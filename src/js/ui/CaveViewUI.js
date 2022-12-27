@@ -57,7 +57,7 @@ function CaveViewUI ( viewer ) {
 
 			if ( viewer.hasSurfaceLegs || viewer.hasTerrain ) new SurfacePage( frame, viewer );
 
-			if ( viewer.getSurveyTree().stationCount > 0 ) {
+			if ( viewer.getSurveyTree().maxId > 0 ) {
 
 				if ( cfg.selectionTree ) {
 

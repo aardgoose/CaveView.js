@@ -18,6 +18,12 @@ const legShadingModes = {
 	'shading.distance':      SHADING_DISTANCE
 };
 
+const modelShadingModes = {
+	'shading.height':        SHADING_HEIGHT,
+	'shading.height_cursor': SHADING_CURSOR,
+	'shading.fixed':         SHADING_SINGLE,
+};
+
 const cameraViews = {
 	'view.viewpoints.none':        VIEW_NONE,
 	'view.viewpoints.plan':        VIEW_PLAN,
@@ -46,8 +52,6 @@ class SettingsPage extends Page {
 
 		const cfg = viewer.ctx.cfg;
 
-		const legShadingModesActive = Object.assign( {}, legShadingModes );
-
 		this.addHeader( 'survey.header' );
 
 		this.addFileSelect( 'survey.caption', fileSelector  );
@@ -55,6 +59,7 @@ class SettingsPage extends Page {
 		if ( ! viewer.surveyLoaded ) return this;
 
 		const routeNames = viewer.routeNames;
+		const legShadingModesActive = Object.assign( {}, viewer.hasLegs ? legShadingModes : modelShadingModes );
 
 		if ( viewer.hasRealTerrain ) {
 

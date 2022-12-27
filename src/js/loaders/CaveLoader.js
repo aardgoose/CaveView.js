@@ -20,8 +20,6 @@ class CaveLoader extends EventDispatcher {
 		}
 
 		this.callback = callback;
-		this.handlers = [];
-		this.loading = [];
 		this.ctx = ctx;
 
 		this.reset();
@@ -35,9 +33,10 @@ class CaveLoader extends EventDispatcher {
 
 	reset () {
 
-		this.handlers.forEach( handler => handler.abort() );
+		this.handlers?.forEach( handler => handler.abort() );
 		this.handlers = [];
 		this.loading = [];
+		this.progress = new Map();
 		this.models = new Handler( this.ctx );
 
 	}
@@ -80,16 +79,34 @@ class CaveLoader extends EventDispatcher {
 		source.files.forEach( file => this.loadFile( file ) );
 
 		// wait for all loaders to complete or fail
-		Promise.all( this.loading ).then( () => this._end( this.models ) );
+		Promise.all( this.loading ).then(
+			() => this._end( this.models ),
+			error => {
+
+				console.warn( 'error loading files: ', error );
+				this._end( false );
+
+			}
+		);
 
 	}
 
 	loadFile ( file )  {
 
 		const handler = this.getHandler( file );
-		const _progress = ( event ) => { if ( event.total > 0 ) this.progress( Math.round( 75 * event.loaded / event.total ) ); };
 
 		if ( ! handler ) return false;
+
+		const _progress = ( event ) => {
+
+			if ( event.total > 0 ) {
+
+				this.progress.set( handler, event );
+				this.progressTotal();
+
+			}
+
+		};
 
 		this.dispatchEvent( { type: 'progress', name: 'start' } );
 
@@ -99,9 +116,21 @@ class CaveLoader extends EventDispatcher {
 
 	}
 
-	progress ( v ) {
+	progressTotal () {
 
-		setProgressEvent.progress = v;
+		let total = 0, loaded = 0;
+
+		// total all active loading events
+
+		this.progress.forEach( event => {
+
+			total += event.total;
+			loaded += event.loaded;
+
+		} )
+
+		setProgressEvent.progress = Math.round( 75 * loaded / total );
+
 		this.dispatchEvent( setProgressEvent );
 
 	}

@@ -47,7 +47,7 @@ class SelectionPage extends SelectionCommonPage {
 
 			let tmp;
 
-			while ( tmp = self.titleBar.firstChild ) self.titleBar.removeChild( tmp ); // eslint-disable-line no-cond-assign
+			self.titleBar.replaceChildren(); // remove all children
 
 			if ( top === self.surveyTree ) {
 

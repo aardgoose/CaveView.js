@@ -45,8 +45,6 @@ class SelectionPage extends SelectionCommonPage {
 
 			self.nodes = new WeakMap();
 
-			let tmp;
-
 			self.titleBar.replaceChildren(); // remove all children
 
 			if ( top === self.surveyTree ) {

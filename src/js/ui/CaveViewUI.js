@@ -57,13 +57,17 @@ function CaveViewUI ( viewer ) {
 
 			if ( viewer.hasSurfaceLegs || viewer.hasTerrain ) new SurfacePage( frame, viewer );
 
-			if ( cfg.selectionTree ) {
+			if ( viewer.getSurveyTree().stationCount > 0 ) {
 
-				new SelectionTreePage( frame, viewer, container, fileSelector );
+				if ( cfg.selectionTree ) {
 
-			} else {
+					new SelectionTreePage( frame, viewer, container, fileSelector );
 
-				new SelectionPage( frame, viewer, container, fileSelector );
+				} else {
+
+					new SelectionPage( frame, viewer, container, fileSelector );
+
+				}
 
 			}
 

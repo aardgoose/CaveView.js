@@ -13,7 +13,18 @@ class InfoPage extends Page {
 
 		this.addHeader( 'stats.header' );
 
-		this.addText( this.i18n( 'file' ) + ': ' + fileSelector.file );
+		const names = fileSelector.loadedSource.getNames();
+
+		if ( names.length === 1 ) {
+
+			this.addText( this.i18n( 'file' ) + ': ' + names[ 0 ] );
+
+		} else {
+
+			this.addText( this.i18n( 'files' ) + ':' );
+			names.forEach( name => this.addLine( name ) );
+
+		}
 
 		const stats = viewer.getLegStats( LEG_CAVE );
 
@@ -60,7 +71,7 @@ class InfoPage extends Page {
 
 		this.addText( this.i18n( 'more' ) + ': ' );
 		this.addLink( 'https://aardgoose.github.io/CaveView.js/', this.i18n( 'github' ) );
-		this.addText( '© Angus Sawyer, 2021' );
+		this.addText( '© Angus Sawyer, 2023' );
 
 	}
 

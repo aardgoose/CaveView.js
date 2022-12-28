@@ -20,6 +20,12 @@ class ModelSource {
 
 	}
 
+	getNames () {
+
+		return this.files.map( v => v.name );
+
+	}
+
 	static makeModelSourceFiles( files ) {
 
 		const source = new ModelSource( [], false );

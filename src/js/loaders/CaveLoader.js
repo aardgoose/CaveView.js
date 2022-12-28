@@ -74,7 +74,7 @@ class CaveLoader extends EventDispatcher {
 
 		// wait for all loaders to complete or fail
 		return Promise.all( this.loading )
-			.then( () => surveyDataCollector )
+			.then( () => surveyDataCollector.getSurvey() )
 			.finally( () => {
 
 				this.dispatchEvent( { type: 'progress', name: 'end' } );

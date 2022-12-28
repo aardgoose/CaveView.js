@@ -29,6 +29,7 @@ function CaveViewUI ( viewer ) {
 	// event handlers
 	viewer.addEventListener( 'change', frame.handleChange.bind( frame ) );
 	viewer.addEventListener( 'newCave', initUI );
+	viewer.addEventListener( 'clear', initUI );
 
 	// make sure we get new language strings if slow loading
 	cfg.addEventListener( 'change', initUI );
@@ -96,10 +97,14 @@ function CaveViewUI ( viewer ) {
 
 	this.loadCave = function ( file, section ) {
 
-		if(file instanceof File ) {
+		if ( file instanceof File ) {
+
 			fileSelector.selectSource( new ModelSource( [ file ], true ), section );
+
 		} else {
+
 			fileSelector.selectSource( new ModelSource( [ { name: file } ], false ), section );
+
 		}
 
 	};

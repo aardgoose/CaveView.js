@@ -297,7 +297,8 @@ class SurveyDataCollector {
 			terrains: this.terrains,
 			limits: this.limits,
 			offsets: this.offsets,
-			splayFix: this.splayFix
+			splayFix: this.splayFix,
+			messages: this.messages
 		};
 
 	}

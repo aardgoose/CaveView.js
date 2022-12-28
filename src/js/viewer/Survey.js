@@ -31,7 +31,7 @@ const __v2 = new Vector3();
 
 class Survey extends Object3D {
 
-	constructor ( ctx, surveyDataCollector ) {
+	constructor ( ctx, surveyData ) {
 
 		super();
 
@@ -71,19 +71,17 @@ class Survey extends Object3D {
 		ctx.surveyColourMapper = new SurveyColourMapper( ctx );
 		ctx.survey = this;
 
-		let surveyData = surveyDataCollector.getSurvey();
+		if ( surveyData.limits.isEmpty() ) throw new Error( 'Empty survey or region of survey' );
 
-		if ( surveyDataCollector.limits.isEmpty() ) throw new Error( 'Empty survey or region of survey' );
+		this.name = surveyData.title;
+		this.CRS = surveyData.sourceCRS;
+		this.displayCRS = surveyData.displayCRS;
 
-		this.name = surveyDataCollector.title;
-		this.CRS = surveyDataCollector.sourceCRS;
-		this.displayCRS = surveyDataCollector.displayCRS;
+		this.limits = surveyData.limits;
 
-		this.limits = surveyDataCollector.limits;
+		if ( ! surveyData.hasTerrain ) this.expand( this.limits );
 
-		if ( ! surveyDataCollector.hasTerrain ) this.expand( this.limits );
-
-		this.offsets = surveyDataCollector.offsets;
+		this.offsets = surveyData.offsets;
 
 		const modelLimits = this.limits.clone();
 
@@ -99,9 +97,9 @@ class Survey extends Object3D {
 
 		_setProjectionScale();
 
-		this.loadCave( surveyData, surveyDataCollector.messages );
+		this.loadCave( surveyData );
 
-		this.loadWarnings( surveyDataCollector.messages );
+		this.loadWarnings( surveyData.messages );
 
 		this.loadEntrances();
 
@@ -139,15 +137,15 @@ class Survey extends Object3D {
 		function _setProjectionScale () {
 
 			// calculate scaling distortion if we have required CRS definitions
-			const displayCRS = surveyDataCollector.displayCRS;
+			const displayCRS = surveyData.displayCRS;
 
-			if ( surveyDataCollector.sourceCRS === null || displayCRS === null || displayCRS === 'ORIGINAL' ) {
+			if ( surveyData.sourceCRS === null || displayCRS === null || displayCRS === 'ORIGINAL' ) {
 
 				self.scaleFactor = 1;
 
-				if ( surveyDataCollector.sourceCRS !== null ) {
+				if ( surveyData.sourceCRS !== null ) {
 
-					self.projectionWGS84 = proj4( 'WGS84', surveyDataCollector.sourceCRS );
+					self.projectionWGS84 = proj4( 'WGS84', surveyData.sourceCRS );
 
 				}
 
@@ -156,7 +154,7 @@ class Survey extends Object3D {
 			}
 
 			// set up projection from model to original CRS
-			const transform = proj4( displayCRS, surveyDataCollector.sourceCRS );
+			const transform = proj4( displayCRS, surveyData.sourceCRS );
 			self.projection = transform;
 
 			// calculate lat/long distortion between CRS and display
@@ -175,7 +173,7 @@ class Survey extends Object3D {
 
 			self.scaleFactor = l1 / l2;
 
-			self.projectionWGS84 = proj4( 'WGS84', surveyDataCollector.displayCRS );
+			self.projectionWGS84 = proj4( 'WGS84', surveyData.displayCRS );
 
 		}
 
@@ -328,11 +326,12 @@ class Survey extends Object3D {
 
 	}
 
-	loadCave ( surveyData, messages ) {
+	loadCave ( surveyData ) {
 
 		const self = this;
 		const ctx = this.ctx;
 		const splayFix = surveyData.splayFix;
+		const messages = surveyData.messages;
 
 		const surveyTree = surveyData.surveyTree;
 

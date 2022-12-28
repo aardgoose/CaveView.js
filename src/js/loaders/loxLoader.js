@@ -55,11 +55,12 @@ class loxLoader extends FileLoader {
 		let lastParentId;
 		let parentNode;
 
-		// read file and parse chunk by chunk
 		const __coords = {
 			x: 0.0,
 			y: 0.0
 		};
+
+		// read file and parse chunk by chunk
 
 		while ( pos < l ) readChunkHdr();
 

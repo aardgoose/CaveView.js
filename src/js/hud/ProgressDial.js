@@ -120,9 +120,7 @@ class ProgressDial extends Mesh {
 
 	end () {
 
-		const self = this;
-
-		setTimeout( function endProgress () { self.visible = false; self.viewer.renderView(); }, 500 );
+		setTimeout( () => { this.visible = false; this.viewer.renderView(); }, 500 );
 
 	}
 

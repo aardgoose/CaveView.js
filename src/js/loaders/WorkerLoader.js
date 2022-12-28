@@ -26,7 +26,7 @@ class WorkerLoader {
 
 				case 'ok':
 
-					surveyDataCollector.limits.copy( data.boundingBox ); // FIXME to integrate with surveys
+					surveyDataCollector.limits.union( data.boundingBox );
 					surveyDataCollector.models.push( data );
 
 					resolve();

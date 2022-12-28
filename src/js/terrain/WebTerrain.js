@@ -47,7 +47,6 @@ class WebTerrain extends CommonTerrain {
 
 		this.attributions = [];
 		this.log = false;
-		this.ctx = ctx;
 
 		this.displayCRS = survey.displayCRS;
 		this.surveyCRS = survey.CRS;

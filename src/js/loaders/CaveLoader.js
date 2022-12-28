@@ -70,6 +70,8 @@ class CaveLoader extends EventDispatcher {
 
 		this.loadingContext.section = section;
 
+		this.dispatchEvent( { type: 'progress', name: 'start' } );
+
 		source.files.forEach( file => this.loadFile( file, surveyDataCollector ) );
 
 		// wait for all loaders to complete or fail
@@ -101,8 +103,6 @@ class CaveLoader extends EventDispatcher {
 			}
 
 		};
-
-		this.dispatchEvent( { type: 'progress', name: 'start' } );
 
 		this.handlers.push( handler );
 		this.loading.push( handler.load( this.loadingContext, _progress, surveyDataCollector ) );

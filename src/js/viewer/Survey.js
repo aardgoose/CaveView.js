@@ -31,7 +31,7 @@ const __v2 = new Vector3();
 
 class Survey extends Object3D {
 
-	constructor ( ctx, surveyData ) {
+	constructor ( ctx, surveyDataCollector ) {
 
 		super();
 
@@ -71,19 +71,19 @@ class Survey extends Object3D {
 		ctx.surveyColourMapper = new SurveyColourMapper( ctx );
 		ctx.survey = this;
 
-		let survey = surveyData.getSurvey();
+		let surveyData = surveyDataCollector.getSurvey();
 
-		if ( survey.limits.isEmpty() ) throw new Error( 'Empty survey or region of survey' );
+		if ( surveyDataCollector.limits.isEmpty() ) throw new Error( 'Empty survey or region of survey' );
 
-		this.name = survey.title;
-		this.CRS = survey.sourceCRS;
-		this.displayCRS = survey.displayCRS;
+		this.name = surveyDataCollector.title;
+		this.CRS = surveyDataCollector.sourceCRS;
+		this.displayCRS = surveyDataCollector.displayCRS;
 
-		this.limits = survey.limits;
+		this.limits = surveyDataCollector.limits;
 
-		if ( ! survey.hasTerrain ) this.expand( this.limits );
+		if ( ! surveyDataCollector.hasTerrain ) this.expand( this.limits );
 
-		this.offsets = survey.offsets;
+		this.offsets = surveyDataCollector.offsets;
 
 		const modelLimits = this.limits.clone();
 
@@ -99,9 +99,9 @@ class Survey extends Object3D {
 
 		_setProjectionScale();
 
-		this.loadCave( survey, surveyData.messages );
+		this.loadCave( surveyData, surveyDataCollector.messages );
 
-		this.loadWarnings( surveyData.messages );
+		this.loadWarnings( surveyDataCollector.messages );
 
 		this.loadEntrances();
 
@@ -115,7 +115,7 @@ class Survey extends Object3D {
 
 		let zScale = 0.5;
 
-		survey = null;
+		surveyData = null;
 
 		Object.defineProperty( this, 'zScale', {
 			get() { return zScale; },
@@ -139,15 +139,15 @@ class Survey extends Object3D {
 		function _setProjectionScale () {
 
 			// calculate scaling distortion if we have required CRS definitions
-			const displayCRS = survey.displayCRS;
+			const displayCRS = surveyDataCollector.displayCRS;
 
-			if ( survey.sourceCRS === null || displayCRS === null || displayCRS === 'ORIGINAL' ) {
+			if ( surveyDataCollector.sourceCRS === null || displayCRS === null || displayCRS === 'ORIGINAL' ) {
 
 				self.scaleFactor = 1;
 
-				if ( survey.sourceCRS !== null ) {
+				if ( surveyDataCollector.sourceCRS !== null ) {
 
-					self.projectionWGS84 = proj4( 'WGS84', survey.sourceCRS );
+					self.projectionWGS84 = proj4( 'WGS84', surveyDataCollector.sourceCRS );
 
 				}
 
@@ -156,7 +156,7 @@ class Survey extends Object3D {
 			}
 
 			// set up projection from model to original CRS
-			const transform = proj4( displayCRS, survey.sourceCRS );
+			const transform = proj4( displayCRS, surveyDataCollector.sourceCRS );
 			self.projection = transform;
 
 			// calculate lat/long distortion between CRS and display
@@ -175,7 +175,7 @@ class Survey extends Object3D {
 
 			self.scaleFactor = l1 / l2;
 
-			self.projectionWGS84 = proj4( 'WGS84', survey.displayCRS );
+			self.projectionWGS84 = proj4( 'WGS84', surveyDataCollector.displayCRS );
 
 		}
 
@@ -328,30 +328,30 @@ class Survey extends Object3D {
 
 	}
 
-	loadCave ( survey, messages ) {
+	loadCave ( surveyData, messages ) {
 
 		const self = this;
 		const ctx = this.ctx;
-		const splayFix = survey.splayFix;
+		const splayFix = surveyData.splayFix;
 
-		const surveyTree = survey.surveyTree;
+		const surveyTree = surveyData.surveyTree;
 
 		this.surveyTree = surveyTree;
 
 		this.selection = new Selection( ctx, ctx.cfg.themeValue( 'box.select' ) );
 		this.highlightBox = new Selection( ctx, ctx.cfg.themeValue( 'box.highlight' ) );
 
-		_loadSegments( survey.lineSegments );
+		_loadSegments( surveyData.lineSegments );
 
 		this.loadStations( surveyTree );
 
-		_loadTerrain( survey );
+		_loadTerrain( surveyData );
 
 		this.computeBoundingBoxes( surveyTree );
 
 		this.pointTargets.push( this.stations );
 
-		const metadata = new SurveyMetadata( this.name, survey.metadata );
+		const metadata = new SurveyMetadata( this.name, surveyData.metadata );
 
 		this.metadata = metadata;
 
@@ -361,7 +361,7 @@ class Survey extends Object3D {
 
 		this.routes = new Routes( this );
 
-		buildWallsSync( survey, this );
+		buildWallsSync( surveyData, this );
 
 		return;
 

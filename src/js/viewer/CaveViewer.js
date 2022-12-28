@@ -846,13 +846,13 @@ class CaveViewer extends EventDispatcher {
 		this.loadSource = function ( source, section = null ) {
 
 			caveLoader.loadSource( source, section ).then(
-				surveyData => {
+				surveyDataCollector => {
 
 					onResize();
 
 					try {
 
-						loadSurvey( new Survey( ctx, surveyData ) );
+						loadSurvey( new Survey( ctx, surveyDataCollector ) );
 
 					} catch ( e ) {
 
@@ -863,7 +863,8 @@ class CaveViewer extends EventDispatcher {
 				},
 				error => {
 
-					alert( 'failed loading cave information: ', error );
+					alert( `Failed loading cave information: ${error}.`);
+					this.clearView();
 
 				}
 

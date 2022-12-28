@@ -96,6 +96,13 @@ class FileLoader {
 
 				function _dataLoaded ( event ) {
 
+					if ( dataReq.status != 200 )  {
+
+						reject( dataReq.statusText );
+						return;
+
+					}
+
 					results.data = event.target.response;
 
 					if ( --jobs === 0 ) resolve( results );

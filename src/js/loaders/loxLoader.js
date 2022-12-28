@@ -10,30 +10,30 @@ class loxLoader extends FileLoader {
 
 	static modelOffset = 0;
 
-	load ( loadingContext, progress, surveyData ) {
+	load ( loadingContext, progress, surveyDataCollector ) {
 
 		return super.load( 'arraybuffer', loadingContext, progress ).then( results => {
 
-			this.parse( surveyData, results.data, results.metadata, loadingContext.section, progress );
+			this.parse( surveyDataCollector, results.data, results.metadata, loadingContext.section, progress );
 
 		} );
 
 	}
 
-	parse ( cave, source, metadata, section, progress ) {
+	parse ( surveyDataCollector, source, metadata, section, progress ) {
 
 		// assumes little endian data ATM - FIXME
 
 		loxLoader.modelOffset += 100000;
 
-		cave.metadata = metadata;
+		surveyDataCollector.metadata = metadata;
 
-		cave.setCRS( null );
+		surveyDataCollector.setCRS( null );
 
-		const lineSegments = cave.lineSegments;
-		const surveyTree   = cave.surveyTree;
-		const limits       = cave.limits;
-		const projection   = cave.projection;
+		const lineSegments = surveyDataCollector.lineSegments;
+		const surveyTree   = surveyDataCollector.surveyTree;
+		const limits       = surveyDataCollector.limits;
+		const projection   = surveyDataCollector.projection;
 
 		const xSects  = [];
 		const terrain = {};
@@ -67,11 +67,11 @@ class loxLoader extends FileLoader {
 
 		source = null;
 
-		cave.addStations( stations );
+		surveyDataCollector.addStations( stations );
 
-		cave.addXsects( xSects );
+		surveyDataCollector.addXsects( xSects );
 
-		return Promise.resolve( cave );
+		return Promise.resolve( surveyDataCollector );
 
 		// .lox parsing functions
 
@@ -512,7 +512,7 @@ class loxLoader extends FileLoader {
 
 			}
 
-			cave.scraps.push( scrap );
+			surveyDataCollector.scraps.push( scrap );
 
 		}
 
@@ -539,8 +539,8 @@ class loxLoader extends FileLoader {
 				calib:   m_calib
 			};
 
-			cave.terrains.push( terrain );
-			cave.hasTerrain = true;
+			surveyDataCollector.terrains.push( terrain );
+			surveyDataCollector.hasTerrain = true;
 
 		}
 

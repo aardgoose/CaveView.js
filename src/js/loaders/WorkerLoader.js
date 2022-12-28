@@ -7,7 +7,7 @@ class WorkerLoader {
 
 	}
 
-	load ( loadingContext, progress, surveyData ) {
+	load ( loadingContext, progress, surveyDataCollector ) {
 
 		const worker = this.worker;
 
@@ -26,8 +26,8 @@ class WorkerLoader {
 
 				case 'ok':
 
-					surveyData.limits.copy( data.boundingBox ); // FIXME to integrate with surveys
-					surveyData.models.push( data );
+					surveyDataCollector.limits.copy( data.boundingBox ); // FIXME to integrate with surveys
+					surveyDataCollector.models.push( data );
 
 					resolve();
 					break;

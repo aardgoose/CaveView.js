@@ -6,25 +6,25 @@ const ftom = 12 * 0.0254;
 
 class pltLoader extends FileLoader {
 
-	load ( loadingContext, progress, surveyData ) {
+	load ( loadingContext, progress, surveyDataCollector ) {
 
 		return super.load( 'text', loadingContext, progress ).then( results => {
 
-			this.parse( surveyData, results.data, results.metadata, loadingContext.section, progress );
+			this.parse( surveyDataCollector, results.data, results.metadata, loadingContext.section, progress );
 
 		} );
 
 	}
 
-	parse ( cave, dataStream, metadata /*, section */ ) {
+	parse ( surveyDataCollector, dataStream, metadata /*, section */ ) {
 
-		cave.metadata = metadata;
+		surveyDataCollector.metadata = metadata;
 
-		cave.setCRS( null );
+		surveyDataCollector.setCRS( null );
 
-		const surveyTree  = cave.surveyTree;
-		const limits      = cave.limits;
-		const projection  = cave.projection;
+		const surveyTree  = surveyDataCollector.surveyTree;
+		const limits      = surveyDataCollector.limits;
+		const projection  = surveyDataCollector.projection;
 
 		const stationMap  = new Map();
 		const xSects      = [];
@@ -171,13 +171,13 @@ class pltLoader extends FileLoader {
 
 		if ( segments.length > 1 ) groups.push( segments );
 
-		cave.addStations( stations );
+		surveyDataCollector.addStations( stations );
 
-		cave.addLineSegments( groups );
+		surveyDataCollector.addLineSegments( groups );
 
-		cave.addXsects( xSects );
+		surveyDataCollector.addXsects( xSects );
 
-		return Promise.resolve( cave );
+		return Promise.resolve( surveyDataCollector );
 
 		function readCoords( parts ) {
 

@@ -3,7 +3,7 @@ import { Svx3dLoader} from './svx3dLoader';
 import { loxLoader } from './loxLoader';
 import { pltLoader } from './pltLoader';
 import { WorkerLoader } from './WorkerLoader';
-import { SurveyData } from './SurveyData';
+import { SurveyDataCollector } from './SurveyDataCollector';
 
 const setProgressEvent = { type: 'progress', name: 'set', progress: 0 };
 
@@ -66,15 +66,15 @@ class CaveLoader extends EventDispatcher {
 
 	loadSource ( source, section = null ) {
 
-		const models = new SurveyData( this.ctx );
+		const surveyDataCollector = new SurveyDataCollector( this.ctx );
 
 		this.loadingContext.section = section;
 
-		source.files.forEach( file => this.loadFile( file, models ) );
+		source.files.forEach( file => this.loadFile( file, surveyDataCollector ) );
 
 		// wait for all loaders to complete or fail
 		return Promise.all( this.loading )
-			.then( () => models )
+			.then( () => surveyDataCollector )
 			.finally( () => {
 
 				this.dispatchEvent( { type: 'progress', name: 'end' } );
@@ -85,7 +85,7 @@ class CaveLoader extends EventDispatcher {
 
 	}
 
-	loadFile ( file, models )  {
+	loadFile ( file, surveyDataCollector )  {
 
 		const handler = this.getHandler( file );
 
@@ -105,7 +105,7 @@ class CaveLoader extends EventDispatcher {
 		this.dispatchEvent( { type: 'progress', name: 'start' } );
 
 		this.handlers.push( handler );
-		this.loading.push( handler.load( this.loadingContext, _progress, models ) );
+		this.loading.push( handler.load( this.loadingContext, _progress, surveyDataCollector ) );
 
 	}
 

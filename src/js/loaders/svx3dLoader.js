@@ -17,24 +17,24 @@ class Svx3dLoader extends FileLoader{
 
 	}
 
-	load ( loadingContext, progress, surveyData ) {
+	load ( loadingContext, progress, surveyDataCollector ) {
 
 		return super.load( 'arraybuffer', loadingContext, progress ).then( results => {
 
-			this.parse( surveyData, results.data, results.metadata, loadingContext.section, progress );
+			this.parse( surveyDataCollector, results.data, results.metadata, loadingContext.section, progress );
 
 		} );
 
 	}
 
-	parse ( cave, dataStream, metadata, section, progress ) {
+	parse ( surveyDataCollector, dataStream, metadata, section, progress ) {
 
-		cave.metadata = metadata;
+		surveyDataCollector.metadata = metadata;
 
 		this.section = section;
 		this.progress = progress;
 		this.groups = [];
-		this.cave = cave;
+		this.surveyDataCollector = surveyDataCollector;
 		this.stationMap = new Map();
 		this.dataStream = dataStream;
 
@@ -54,7 +54,7 @@ class Svx3dLoader extends FileLoader{
 
 		this.pos = pos;
 
-		return cave.setCRS( sourceCRS ).then( () => this.parse2() );
+		return surveyDataCollector.setCRS( sourceCRS ).then( () => this.parse2() );
 
 		function readLF () { // read until Line feed
 
@@ -91,7 +91,7 @@ class Svx3dLoader extends FileLoader{
 
 	parse2 () {
 
-		const cave = this.cave;
+		const surveyDataCollector = this.surveyDataCollector;
 
 		switch ( this.version ) {
 
@@ -119,24 +119,24 @@ class Svx3dLoader extends FileLoader{
 		}
 
 		// if pre selecting a section - trim returned surveyTree
-		if ( this.section !== null ) cave.surveyTree.trim( this.section.split( '.' ) );
+		if ( this.section !== null ) surveyDataCollector.surveyTree.trim( this.section.split( '.' ) );
 
-		cave.addStations( this.stationMap );
+		surveyDataCollector.addStations( this.stationMap );
 
-		cave.addLineSegments( this.groups );
-		cave.enableSplayFix();
+		surveyDataCollector.addLineSegments( this.groups );
+		surveyDataCollector.enableSplayFix();
 
-		return cave;
+		return surveyDataCollector;
 
 	}
 
 	handleOld ( version ) {
 
-		const cave       = this.cave;
+		const surveyDataCollector       = this.surveyDataCollector;
 		const source     = this.dataStream;
-		const surveyTree = cave.surveyTree;
-		const projection = cave.projection;
-		const limits     = cave.limits;
+		const surveyTree = surveyDataCollector.surveyTree;
+		const projection = surveyDataCollector.projection;
+		const limits     = surveyDataCollector.limits;
 
 		const groups     = this.groups;
 		const stationMap = this.stationMap;
@@ -391,13 +391,13 @@ class Svx3dLoader extends FileLoader{
 
 	handleVx ( version, section ) {
 
-		const cave       = this.cave;
+		const surveyDataCollector       = this.surveyDataCollector;
 		const source     = this.dataStream;
 
-		const surveyTree = cave.surveyTree;
-		const messages   = cave.messages;
-		const projection = cave.projection;
-		const limits     = cave.limits;
+		const surveyTree = surveyDataCollector.surveyTree;
+		const messages   = surveyDataCollector.messages;
+		const projection = surveyDataCollector.projection;
+		const limits     = surveyDataCollector.limits;
 
 		const groups     = this.groups;
 		const xGroups    = [];
@@ -560,10 +560,10 @@ class Svx3dLoader extends FileLoader{
 
 		}
 
-		const caveXgroups = cave.xGroups;
+		const surveyDataCollectorXgroups = surveyDataCollector.xGroups;
 
 		xGroups.forEach( group => {
-			if ( group.length > 1 ) caveXgroups.push( group );
+			if ( group.length > 1 ) surveyDataCollectorXgroups.push( group );
 		} );
 
 		stationMap.forEach( coords => limits.expandByPoint( coords ) );

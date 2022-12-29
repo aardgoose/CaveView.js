@@ -32,5 +32,8 @@ module.exports = {
 			"destructuring": "any",
 			"ignoreReadBeforeAssign": false
 		}]
+	},
+	"globals": {
+		LaunchParams: "readonly"
 	}
 };

@@ -27,7 +27,7 @@ function mapLoaded ( meshData ) {
 	const clip       = new Box2().copy( tileSpec.clip );
 
 	const resolution = tileSpec.resolution;
-	const transform  = proj4( 'EPSG:4326', tileSpec.displayCRS ); // eslint-disable-line no-undef
+	const transform  = proj4( 'EPSG:4326', tileSpec.displayCRS );
 
 	// tile origin
 

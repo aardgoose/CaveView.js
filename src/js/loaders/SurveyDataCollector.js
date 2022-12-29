@@ -65,9 +65,9 @@ class SurveyDataCollector {
 
 				if ( code !== null ) {
 
-					console.log( 'looking up CRS code EPSG:' + code [ 2 ] );
+					console.log( `looking up CRS code EPSG: ${code[ 2 ]}` );
 
-					return fetch( 'https://epsg.io/' + code[ 2 ] + '.proj4' )
+					return fetch( `https://epsg.io/${code[ 2 ]}.proj4` )
 						.then( response => {
 
 							return response.text();
@@ -108,7 +108,7 @@ class SurveyDataCollector {
 
 			sourceCRS = cfg.value( 'defaultCRS', null );
 
-			if ( sourceCRS !== null ) console.log( 'Using default projection.' );
+			if ( sourceCRS !== null ) console.log( `Using default projection: ${sourceCRS}` );
 
 		}
 
@@ -123,7 +123,7 @@ class SurveyDataCollector {
 
 			} else {
 
-				console.log( 'Reprojecting from', sourceCRS, 'to', this.targetCRS );
+				console.log( `Reprojecting from ${sourceCRS} to ${this.targetCRS}` );
 
 				this.projection = proj4( this.sourceCRS, this.targetCRS );
 				this.displayCRS = this.targetCRS;

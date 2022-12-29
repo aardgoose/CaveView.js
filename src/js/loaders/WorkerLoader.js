@@ -42,7 +42,7 @@ class WorkerLoader {
 				worker.terminate();
 				this.worker = null;
 
-			}
+			};
 
 			worker.postMessage( { file: this.file, loadingContext: loadingContext } );
 

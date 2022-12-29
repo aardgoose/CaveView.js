@@ -35,7 +35,7 @@ class HeightMapLoader {
 
 		}
 
-		const tileFile = tileSet.directory + '/' + z + '/DTM-' + x + '-' + y + '.bin';
+		const tileFile = `${tileSet.directory}/${z}/DTM-${x}-${y}.bin`;
 
 		return fetch( tileFile )
 			.then( response => {

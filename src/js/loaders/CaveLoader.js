@@ -82,8 +82,7 @@ class CaveLoader extends EventDispatcher {
 				this.dispatchEvent( { type: 'progress', name: 'end' } );
 				this.reset();
 
-			}
-		);
+			} );
 
 	}
 
@@ -120,7 +119,7 @@ class CaveLoader extends EventDispatcher {
 			total += event.total;
 			loaded += event.loaded;
 
-		} )
+		} );
 
 		setProgressEvent.progress = Math.round( 75 * loaded / total );
 

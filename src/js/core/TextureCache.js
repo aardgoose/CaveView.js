@@ -36,11 +36,11 @@ class TextureCache {
 
 				if ( name === 'disc' ) {
 
-					entry = new TextureLoader().load( "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg id='a' width='32mm' height='32mm' version='1.1' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' %3E%3Ccircle id='d' cx='16' cy='16' r='14' color='%23000000' fill='%23fff' fill-rule='evenodd' stroke-width='0'/%3E%3C/svg%3E%0A" );
+					entry = new TextureLoader().load( "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg id='a' width='32mm' height='32mm' version='1.1' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' %3E%3Ccircle id='d' cx='16' cy='16' r='14' color='%23000000' fill='%23fff' fill-rule='evenodd' stroke-width='0'/%3E%3C/svg%3E%0A" );  // eslint-disable-line
 
 				} else if ( name === 'disc-outlined' ) {
 
-					entry = new TextureLoader().load( "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg id='a' width='32mm' height='32mm' version='1.1' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' %3E%3Ccircle id='d' cx='16' cy='16' r='14' color='%23000000' fill='%23fff' fill-rule='evenodd' stroke-width='1' stroke='%23000'/%3E%3C/svg%3E%0A" );
+					entry = new TextureLoader().load( "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg id='a' width='32mm' height='32mm' version='1.1' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg' %3E%3Ccircle id='d' cx='16' cy='16' r='14' color='%23000000' fill='%23fff' fill-rule='evenodd' stroke-width='1' stroke='%23000'/%3E%3C/svg%3E%0A" );  // eslint-disable-line
 
 				} else {
 

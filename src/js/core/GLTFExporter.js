@@ -265,7 +265,7 @@ function getMinMax( attribute, start, count ) {
 
 			if ( attribute.itemSize > 4 ) {
 
-				 // no support for interleaved data for itemSize > 4
+				// no support for interleaved data for itemSize > 4
 
 				value = attribute.array[ i * attribute.itemSize + a ];
 
@@ -822,7 +822,7 @@ class GLTFWriter {
 
 				if ( attribute.itemSize > 4 ) {
 
-					 // no support for interleaved data for itemSize > 4
+					// no support for interleaved data for itemSize > 4
 
 					value = attribute.array[ i * attribute.itemSize + a ];
 
@@ -1846,7 +1846,7 @@ class GLTFWriter {
 	 * @param {THREE.Object3D} object
 	 * @return {number|null}
 	 */
-	 processSkin( object ) {
+	processSkin( object ) {
 
 		const json = this.json;
 		const nodeMap = this.nodeMap;

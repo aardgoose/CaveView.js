@@ -32,7 +32,7 @@ class FileLoader {
 					fileReader.readAsArrayBuffer( file );
 					break;
 
-			   case 'text':
+				case 'text':
 
 					fileReader.readAsText( file );
 					break;
@@ -51,7 +51,7 @@ class FileLoader {
 
 					results.data = event.target.result;
 
-					resolve( results )
+					resolve( results );
 
 				}
 
@@ -67,7 +67,7 @@ class FileLoader {
 				const dataReq = new XMLHttpRequest();
 
 				dataReq.addEventListener( 'load', _dataLoaded );
-		    	dataReq.addEventListener( 'progress', progress );
+				dataReq.addEventListener( 'progress', progress );
 				dataReq.addEventListener( 'error', _dataError );
 
 				dataReq.open( 'GET', loadingContext.prefix + file.name );
@@ -86,7 +86,7 @@ class FileLoader {
 					metadataReq.addEventListener( 'load', _metadataLoaded );
 					metadataReq.addEventListener( 'error', _metadataError );
 
-					metadataReq.open( 'GET', loadingContext,prefix + replaceExtension( file.name, 'json' ) ); // FIXME extension
+					metadataReq.open( 'GET', loadingContext.prefix + replaceExtension( file.name, 'json' ) ); // FIXME extension
 					metadataReq.responseType = 'json';
 
 					metadataReq.send();
@@ -148,4 +148,4 @@ class FileLoader {
 
 }
 
-export { FileLoader }
+export { FileLoader };

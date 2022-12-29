@@ -2,7 +2,7 @@ class TerrainMeshLoader {
 
 	constructor ( tileSpec ) {
 
-		const tileFile = tileSpec.url + tileSpec.z + '/' + tileSpec.x + '/' + tileSpec.y + '.terrain';
+		const tileFile = `${tileSpec.url}${tileSpec.z}/${tileSpec.x}/${tileSpec.y}.terrain`;
 
 		const options = {
 			headers: {

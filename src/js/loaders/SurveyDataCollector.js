@@ -23,7 +23,6 @@ class SurveyDataCollector {
 		this.hasTerrain  = false;
 		this.messages = [];
 		this.metadata = null;
-		this.fileCount = 0;
 		this.splayFix = false;
 		this.ctx = ctx;
 
@@ -135,8 +134,6 @@ class SurveyDataCollector {
 	}
 
 	addStations ( stations ) {
-
-		this.fileCount++;
 
 		this.allStations.push( stations );
 

@@ -1,7 +1,6 @@
-import { Box3, BufferGeometry, Float32BufferAttribute, Mesh, Triangle, Uint16BufferAttribute, Vector3 } from '../Three';
+import { BufferGeometry, Mesh, Triangle, Vector3 } from '../Three';
 import { FEATURE_TERRAIN } from '../core/constants';
-
-// preallocated for projected area calculations
+import { hydrateGeometry } from '../core/lib';
 
 const __a = new Vector3();
 const __b = new Vector3();
@@ -58,27 +57,9 @@ class Tile extends Mesh {
 
 	createFromTileData ( tileData, material ) {
 
-		const attributes = tileData.attributes;
-		const index = tileData.index;
 		const bufferGeometry = this.geometry;
 
-		let attributeName;
-		let attribute;
-
-		// assemble BufferGeometry from binary buffer objects transfered from worker
-
-		for ( attributeName in attributes ) {
-
-			attribute = attributes[ attributeName ];
-			bufferGeometry.setAttribute( attributeName, new Float32BufferAttribute( attribute.array, attribute.itemSize ) );
-
-		}
-
-		bufferGeometry.setIndex( new Uint16BufferAttribute( index, 1 ) );
-
-		// use precalculated bounding box rather than recalculating it here.
-
-		bufferGeometry.boundingBox = new Box3().copy( tileData.boundingBox );
+		hydrateGeometry( bufferGeometry, tileData );
 
 		this.boundingBox = bufferGeometry.boundingBox;
 

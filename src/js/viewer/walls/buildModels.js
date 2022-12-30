@@ -1,10 +1,10 @@
-import { Box3, Float32BufferAttribute, Uint16BufferAttribute, Uint32BufferAttribute } from '../../Three';
 import { FACE_MODEL } from '../../core/constants';
 import { Walls } from './Walls';
+import { hydrateGeometry } from '../core/lib';
 
-function buildModels ( cave, survey ) {
+function buildModels ( surveyData, survey ) {
 
-	const model = cave.models[ 0 ];
+	const model = surveyData.models[ 0 ];
 
 	if ( ! model ) return null;
 
@@ -12,36 +12,7 @@ function buildModels ( cave, survey ) {
 
 	const bufferGeometry = mesh.geometry;
 
-	const attributes = model.attributes;
-	const index = model.index;
-
-	let attributeName;
-	let attribute;
-
-	// assemble BufferGeometry from binary buffer objects transfered from worker
-
-	for ( attributeName in attributes ) {
-
-		attribute = attributes[ attributeName ];
-
-		bufferGeometry.setAttribute( attributeName, new Float32BufferAttribute( attribute.array.buffer, attribute.itemSize ) );
-
-	}
-
-	if ( index.array.BYTES_PER_ELEMENT == 2 ) {
-
-		bufferGeometry.setIndex( new Uint16BufferAttribute( index.array.buffer, 1 ) );
-
-	} else {
-
-		bufferGeometry.setIndex( new Uint32BufferAttribute( index.array.buffer, 1 ) );
-
-	}
-
-
-	// use precalculated bounding box rather than recalculating it here.
-
-	bufferGeometry.boundingBox = new Box3().copy( model.boundingBox );
+	hydrateGeometry( bufferGeometry, model );
 
 	mesh.boundingBox = bufferGeometry.boundingBox;
 
@@ -49,7 +20,6 @@ function buildModels ( cave, survey ) {
 	mesh.dropBuffers();
 
 	bufferGeometry.computeVertexNormals();
-	bufferGeometry.computeBoundingBox();
 
 	mesh.translateX( - survey.offsets.x );
 	mesh.translateY( - survey.offsets.y );

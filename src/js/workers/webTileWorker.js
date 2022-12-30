@@ -32,12 +32,14 @@ function dzzDecode( data, size ) {
 	const buffer = new Uint8Array( data );
 	const target = new Uint32Array( size );
 
+	const l = buffer.length;
+
 	// handle empty files.
-	if ( buffer.length === 4 ) return target;
+	if ( l === 4 ) return target;
 
 	let last = 0, outPos = 0;
 
-	for ( let i = 0; i < buffer.length; i++ ) {
+	for ( let i = 0; i < l; i++ ) {
 
 		let z = 0, shift = 0;
 		let b = buffer[ i ];
@@ -178,27 +180,22 @@ function loadTile ( terrainData ) {
 
 	// support transferable objects where possible
 
-	const indexBuffer = terrainTile.index.array.buffer;
-	const attributes = {};
 	const transferable = [];
+	const attributes = terrainTile.attributes;
+	const index = terrainTile.index;
 
-	const srcAttributes = terrainTile.attributes;
+	for ( const attributeName in attributes ) {
 
-	for ( const attributeName in srcAttributes ) {
-
-		const attribute = srcAttributes[ attributeName ];
-		const arrayBuffer = attribute.array.buffer;
-
-		attributes[ attributeName ] = { array: arrayBuffer, itemSize: attribute.itemSize };
-
-		transferable.push( arrayBuffer );
+		transferable.push( attributes[ attributeName ].array.buffer );
 
 	}
+
+	transferable.push( index.array.buffer );
 
 	postMessage(
 		{
 			status: 'ok',
-			index: indexBuffer,
+			index: index,
 			attributes: attributes,
 			boundingBox: boundingBox,
 			canZoom: true

@@ -34,7 +34,7 @@ class CaveViewer extends EventDispatcher {
 
 		const container = document.getElementById( domID );
 
-		if ( ! container ) throw new Error( 'No container DOM object [' + domID + '] available' );
+		if ( ! container ) throw new Error( `No container DOM object [${domID}] available` );
 
 		this.container = container;
 
@@ -171,7 +171,8 @@ class CaveViewer extends EventDispatcher {
 
 			'terrainDirectionalLighting': {
 				get() { return ( lightingManager.lightingMode !== LM_NONE ); },
-				set: x => { lightingManager.lightingMode = x ? LM_SINGLE : LM_NONE; }
+				set: x => { lightingManager.lightingMode = x ? LM_SINGLE : LM_NONE; },
+				enumerable: true
 			},
 
 			'terrainLightingMode': {
@@ -213,7 +214,8 @@ class CaveViewer extends EventDispatcher {
 
 			'hideMode': {
 				get() { return survey?.hideMode; },
-				set: x => { survey.setHideMode( x ); renderView(); }
+				set: x => { survey.setHideMode( x ); renderView(); },
+				enumerable: true
 			},
 
 			'flatShading': {

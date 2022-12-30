@@ -1,9 +1,9 @@
 import { FACE_SCRAPS } from '../../core/constants';
 import { Walls } from './Walls';
 
-function buildScraps ( cave, survey ) {
+function buildScraps ( surveyData, survey ) {
 
-	const scrapList = cave.scraps;
+	const scrapList = surveyData.scraps;
 	const l = scrapList.length;
 
 	if ( l === 0 ) return null;

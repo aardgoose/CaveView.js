@@ -2,11 +2,11 @@ import { buildScraps } from './buildScraps';
 import { buildCrossSections } from './buildCrossSections';
 import { buildModels } from './buildModels';
 
-function buildWallsSync ( cave, survey ) {
+function buildWallsSync ( surveyData, survey ) {
 
-	buildScraps( cave, survey );
-	buildCrossSections( cave, survey );
-	buildModels( cave, survey );
+	buildScraps( surveyData, survey );
+	buildCrossSections( surveyData, survey );
+	buildModels( surveyData, survey );
 
 }
 

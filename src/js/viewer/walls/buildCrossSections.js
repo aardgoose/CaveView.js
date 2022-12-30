@@ -3,9 +3,9 @@ import { Walls } from './Walls';
 
 import { Object3D, Vector3 } from '../../Three';
 
-function buildCrossSections ( cave, survey ) {
+function buildCrossSections ( surveyData, survey ) {
 
-	const crossSectionGroups = cave.crossSections;
+	const crossSectionGroups = surveyData.crossSections;
 	const legs = survey.getLegs();
 	const ctx = survey.ctx;
 

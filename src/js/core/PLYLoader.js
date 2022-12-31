@@ -638,7 +638,6 @@ class PLYLoader extends Loader {
 
 			}  while ( cont && i < bytes.length );
 
-			console.log( lines );
 			return lines.join( "\r" ) + "\r";
 
 		}

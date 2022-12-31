@@ -298,9 +298,8 @@ class PLYLoader extends Loader {
 
 		}
 
-		function mapElementAttributes( elementDesc ) {
+		function mapElementAttributes( properties ) {
 
-			const properties = elementDesc.properties;
 			const elementNames = properties.map(  property => { return property.name } );
 
 			function findAttrName( names ) {
@@ -353,8 +352,7 @@ class PLYLoader extends Loader {
 			let currentElement = 0;
 			let currentElementCount = 0;
 			let elementDesc = header.elements[ currentElement ];
-
-			let attributeMap = mapElementAttributes( elementDesc );
+			let attributeMap = mapElementAttributes( elementDesc.properties );
 
 			for ( let i = 0; i < lines.length; i ++ ) {
 
@@ -372,7 +370,7 @@ class PLYLoader extends Loader {
 					currentElementCount = 0;
 					elementDesc = header.elements[ currentElement ];
 
-					attributeMap = mapElementAttributes( elementDesc );
+					attributeMap = mapElementAttributes( elementDesc.properties );
 
 				}
 
@@ -589,7 +587,7 @@ class PLYLoader extends Loader {
 			for ( let currentElement = 0; currentElement < header.elements.length; currentElement ++ ) {
 
 				const elementDesc = header.elements[ currentElement ];
-				const attributeMap = mapElementAttributes( elementDesc );
+				const attributeMap = mapElementAttributes( elementDesc.properties );
 
 				for ( let currentElementCount = 0; currentElementCount < elementDesc.count; currentElementCount ++ ) {
 
@@ -632,7 +630,6 @@ class PLYLoader extends Loader {
 						line = '';
 
 					}
-
 
 				}
 

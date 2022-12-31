@@ -1,6 +1,6 @@
 import { FACE_MODEL } from '../../core/constants';
 import { Walls } from './Walls';
-import { hydrateGeometry } from '../core/lib';
+import { hydrateGeometry } from '../../core/lib';
 
 function buildModels ( surveyData, survey ) {
 

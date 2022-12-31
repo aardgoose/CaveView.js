@@ -619,22 +619,26 @@ class PLYLoader extends Loader {
 
 				const c = String.fromCharCode( bytes[ i++ ] );
 
-				if ( c !== "\n" && c !== "\r ") {
+				if ( c !== "\n" && c !== "\r" ) {
 
 					line += c;
 
 				} else {
 
-					lines.push( line );
-
 					if ( line === 'end_header' ) cont = false;
+					if ( line !== '' ) {
 
-					line = '';
+						lines.push( line );
+						line = '';
+
+					}
+
 
 				}
 
 			}  while ( cont && i < bytes.length );
 
+			console.log( lines );
 			return lines.join( "\r" ) + "\r";
 
 		}

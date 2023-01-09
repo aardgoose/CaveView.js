@@ -28,16 +28,19 @@ function hydrateGeometry( bufferGeometry, data ) {
 
 	}
 
-	if ( index.array.BYTES_PER_ELEMENT == 2 ) {
+	if ( index ) {
 
-		bufferGeometry.setIndex( new Uint16BufferAttribute( index.array.buffer, 1 ) );
+		if ( index.array.BYTES_PER_ELEMENT == 2 ) {
 
-	} else {
+			bufferGeometry.setIndex( new Uint16BufferAttribute( index.array.buffer, 1 ) );
 
-		bufferGeometry.setIndex( new Uint32BufferAttribute( index.array.buffer, 1 ) );
+		} else {
+
+			bufferGeometry.setIndex( new Uint32BufferAttribute( index.array.buffer, 1 ) );
+
+		}
 
 	}
-
 
 	// use precalculated bounding box rather than recalculating it here.
 

@@ -2,7 +2,7 @@ import { Points, BufferGeometry } from '../../Three';
 import { FACE_MODEL } from '../../core/constants';
 import { Walls } from './Walls';
 import { hydrateGeometry } from '../../core/lib';
-import { CloudPointsMaterial } from '../../materials/CloudPointsMaterial';
+// import { CloudPointsMaterial } from '../../materials/CloudPointsMaterial';
 
 function buildModels ( surveyData, survey ) {
 

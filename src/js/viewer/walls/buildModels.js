@@ -1,4 +1,4 @@
-import { Points, BufferGeometry } from '../../Three';
+// import { Points, BufferGeometry } from '../../Three';
 import { FACE_MODEL } from '../../core/constants';
 import { Walls } from './Walls';
 import { hydrateGeometry } from '../../core/lib';

@@ -266,7 +266,7 @@ class SurveyDataCollector {
 
 		const scraps = this.scraps;
 
-		// covert scraps coordinates
+		// convert scraps coordinates
 
 		for ( let il = scraps.length, i = 0; i < il; i++ ) {
 

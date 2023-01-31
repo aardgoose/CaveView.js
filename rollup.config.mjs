@@ -116,5 +116,22 @@ export default [
 		plugins: [
 			nodeResolve( {} )
 		]
+	}, {
+		input: 'src/js/workers/plyLoaderWorker.js',
+		output: [
+			{
+				file: 'build/CaveView/js/workers/plyLoaderWorker.js',
+				name: 'gltfWorker',
+				format: 'umd'
+			}, {
+				file: 'build/CaveView/js/workers/plyLoaderWorker.min.js',
+				name: 'plyLoaderWorker',
+				format: 'umd',
+				plugins: [ terser() ]
+			}
+		],
+		plugins: [
+			nodeResolve( {} )
+		]
 	}
 ];

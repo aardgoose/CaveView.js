@@ -32,7 +32,7 @@ function buildCrossSections ( surveyData, survey ) {
 
 	// survey to face index mapping
 	const indexRuns = [];
-	const upAxis = Object3D.DefaultUp;
+	const upAxis = Object3D.DEFAULT_UP;
 
 	let currentSurvey;
 

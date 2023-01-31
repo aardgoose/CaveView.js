@@ -16,4 +16,4 @@ export * from 'three/src/constants.js';
 
 import { Object3D } from 'three/src/core/Object3D.js';
 
-Object3D.DefaultUp.set( 0, 0, 1 );
+Object3D.DEFAULT_UP.set( 0, 0, 1 );

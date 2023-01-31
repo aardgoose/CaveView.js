@@ -34,7 +34,7 @@ class ProgressDial extends Mesh {
 		this.translateX( -offset * 5 );
 		this.translateY(  offset );
 
-		this.rotateOnAxis( Object3D.DefaultUp, Math.PI / 2 );
+		this.rotateOnAxis( Object3D.DEFAULT_UP, Math.PI / 2 );
 
 		this.visible = false;
 		this.isVisible = true;

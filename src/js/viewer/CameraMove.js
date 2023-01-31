@@ -55,7 +55,7 @@ class CameraMove {
 
 			__v1.copy( endCamera ).sub( endPOI ).normalize();
 
-			const zDot = __v1.dot( Object3D.DefaultUp );
+			const zDot = __v1.dot( Object3D.DEFAULT_UP );
 
 			if ( Math.abs( zDot ) > 0.99999 && orientation !== undefined ) {
 
@@ -66,7 +66,7 @@ class CameraMove {
 
 			// calculate end state rotation of camera
 
-			__m4.lookAt( endCamera, endPOI, Object3D.DefaultUp );
+			__m4.lookAt( endCamera, endPOI, Object3D.DEFAULT_UP );
 
 			endQuaternion.setFromRotationMatrix( __m4 ).normalize();
 

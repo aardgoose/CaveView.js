@@ -143,7 +143,7 @@ class AHI extends Group {
 
 		vCamera.getWorldDirection( __direction );
 
-		const pitch = Math.PI / 2 - __direction.angleTo( Object3D.DefaultUp );
+		const pitch = Math.PI / 2 - __direction.angleTo( Object3D.DEFAULT_UP );
 
 		if ( pitch === this.lastPitch ) return;
 

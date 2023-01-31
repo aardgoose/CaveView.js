@@ -326,7 +326,7 @@ class ClusterMarkers extends Object3D {
 
 		this.camera = cameraManager.activeCamera;
 
-		const angle = this.camera.getWorldDirection( __v ).dot( Object3D.DefaultUp );
+		const angle = this.camera.getWorldDirection( __v ).dot( Object3.DEFAULT_UP );
 
 		this.quadTree.check( this, target, Math.max( 0.05, 1 - Math.cos( angle ) ), selectedStationSet );
 

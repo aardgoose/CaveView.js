@@ -1,14 +1,32 @@
+import { Points, BufferGeometry } from '../../Three';
 import { FACE_MODEL } from '../../core/constants';
 import { Walls } from './Walls';
 import { hydrateGeometry } from '../../core/lib';
+import { CloudPointsMaterial } from '../../materials/CloudPointsMaterial';
 
 function buildModels ( surveyData, survey ) {
 
 	const model = surveyData.models[ 0 ];
 
 	if ( ! model ) return null;
+	let mesh = null;
 
-	const mesh = survey.addFeature( new Walls( survey.ctx ), FACE_MODEL, 'Model' );
+	if ( model.index ) {
+
+		mesh = survey.addFeature( new Walls( survey.ctx ), FACE_MODEL, 'Model' );
+
+	} else {
+
+		const m = new Points( new BufferGeometry(), new CloudPointsMaterial() );
+
+		console.log( 'no indices: assuming point cloud' );
+		mesh = survey.addFeature( m, FACE_MODEL, 'Model' );
+
+		mesh.material.vertexColors = true;
+
+		mesh.setShading = ( s ) => { console.log( 'mode', s ) };
+
+	}
 
 	const bufferGeometry = mesh.geometry;
 

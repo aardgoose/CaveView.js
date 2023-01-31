@@ -5,7 +5,7 @@ function LightingManager ( ctx, scene ) {
 
 	const cfg = ctx.cfg;
 	const xAxis = new Vector3( 1, 0, 0 );
-	const up = Object3D.DefaultUp;
+	const up = Object3D.DEFAULT_UP;
 
 	const ambient = [];
 

@@ -1353,7 +1353,7 @@ class Survey extends Object3D {
 
 			legNormal.subVectors( vertex1, vertex2 ).normalize();
 
-			const dotProduct = legNormal.dot( Object3D.DefaultUp );
+			const dotProduct = legNormal.dot( Object3D.DEFAULT_UP );
 
 			const hueIndex = Math.floor( hueFactor * Math.acos( Math.abs( dotProduct ) ) );
 			const colour = colours[ hueIndex ];

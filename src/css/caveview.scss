@@ -77,6 +77,10 @@ $animation-speed: 0.25s;
 	border-bottom: 1px solid white;
 }
 
+.cv-frame * {
+	color: $foreground;
+}
+
 .cv-frame div.page {
 	position: absolute;
 	top: 40px;

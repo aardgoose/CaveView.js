@@ -17,6 +17,8 @@ function buildModels ( surveyData, survey ) {
 
 	} else {
 
+		console.error( 'point clouds not supported' );
+/*
 		const m = new Points( new BufferGeometry(), new CloudPointsMaterial() );
 
 		console.log( 'no indices: assuming point cloud' );
@@ -25,12 +27,29 @@ function buildModels ( surveyData, survey ) {
 		mesh.material.vertexColors = true;
 
 		mesh.setShading = ( s ) => { console.log( 'mode', s ) };
-
+*/
 	}
 
 	const bufferGeometry = mesh.geometry;
 
 	hydrateGeometry( bufferGeometry, model );
+
+	const bb = bufferGeometry.boundingBox;
+	const vertices = bufferGeometry.getAttribute( 'position' ).array;
+	const offsets = survey.offsets;
+
+	if ( vertices ) {
+
+		for ( let i = 0, l = vertices.length; i < l; i += 3 ) {
+			vertices[ i ] -= offsets.x;
+			vertices[ i + 1 ] -= offsets.y;
+			vertices[ i + 2 ] -= offsets.z;
+		}
+
+	}
+
+	bb.min.sub( offsets );
+	bb.max.sub( offsets );
 
 	mesh.boundingBox = bufferGeometry.boundingBox;
 
@@ -38,10 +57,6 @@ function buildModels ( surveyData, survey ) {
 	mesh.dropBuffers();
 
 	bufferGeometry.computeVertexNormals();
-
-	mesh.translateX( - survey.offsets.x );
-	mesh.translateY( - survey.offsets.y );
-	mesh.translateZ( - survey.offsets.z );
 
 	mesh.updateMatrix();
 	mesh.updateMatrixWorld();

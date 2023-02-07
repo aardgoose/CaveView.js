@@ -44,6 +44,9 @@
   z-index: 20;
   border-bottom: 1px solid white;
 }
+.cv-frame * {
+  color: white;
+}
 
 .cv-frame div.page {
   position: absolute;

@@ -44,6 +44,9 @@
   z-index: 20;
   border-bottom: 1px solid white;
 }
+.cv-frame * {
+  color: white;
+}
 
 .cv-frame div.page {
   position: absolute;
@@ -94,6 +97,10 @@
   color: white;
 }
 
+.cv-frame li:not(.section):hover {
+  background-color: black;
+}
+
 .cv-frame div.page div.slide {
   position: absolute;
   top: 42px;
@@ -115,7 +122,7 @@
   right: 0px;
   margin: 0;
   color: #1ab4e5;
-  z-index: 110;
+  z-index: 11;
 }
 
 .cv-frame div.page span.back {
@@ -403,14 +410,6 @@ div.cv-frame::-webkit-scrollbar-button:end {
   border-bottom: 1px solid grey;
 }
 
-.cv-frame div.page div.control.color {
-  height: 36px;
-}
-
-.cv-frame div.page input[type=color] {
-  float: right;
-}
-
 .cv-frame div.page label {
   display: block;
   height: 24px;
@@ -484,9 +483,19 @@ div.cv-frame::-webkit-scrollbar-button:end {
   bottom: 4px;
 }
 
+.cv-frame div.page input[type=number] {
+  position: absolute;
+  width: 80px;
+  right: 0px;
+  bottom: 4px;
+}
+
+.cv-frame div.page div.control.color {
+  height: 36px;
+}
+
 .cv-frame div.page input[type=color] {
   float: right;
-  height: 20px;
 }
 
 .cv-frame dt {
@@ -597,45 +606,6 @@ div.cv-frame::-webkit-scrollbar-button:end {
   cursor: pointer;
 }
 
-.cv-frame input[type=range]::-ms-track {
-  height: 4px;
-  width: 100%;
-  cursor: pointer;
-  background: transparent;
-  border-color: transparent;
-  color: transparent;
-}
-
-.cv-frame input[type=range]::-ms-fill-lower {
-  box-shadow: 0px 0px 0px #000000;
-  background: #eeeeee;
-  border-radius: 0px;
-  border: 0px solid #010101;
-}
-
-.cv-frame input[type=range]::-ms-fill-upper {
-  box-shadow: 0px 0px 0px #000000;
-  background: #eeeeee;
-  border-radius: 0px;
-  border: 0px solid #010101;
-}
-
-.cv-frame input[type=range]::-ms-thumb {
-  height: 16px;
-  width: 16px;
-  border: 1px solid #00001E;
-  border-radius: 15px;
-  background: #1ab4e5;
-  box-shadow: 0px 0px 0px #000031;
-  cursor: pointer;
-  margin-top: 1px;
-}
-
-.cv-frame input[type=range]:focus::-ms-fill-lower,
-.cv-frame input[type=range]:focus::-ms-fill-upper {
-  background: #eeeeee;
-}
-
 .cv-frame div.page label.cv-file-label {
   margin: 2px 0px 2px 0px;
   padding: 0px 0px 3px 20px;
@@ -741,6 +711,15 @@ div.cv-frame::-webkit-scrollbar-button:end {
   display: inline-block;
   width: 14px;
   padding-right: 4px;
+}
+
+.cv-frame li span.duplicate {
+	display: inline;
+  color: #1ab4e5;
+}
+
+.cv-frame li span.duplicate:hover {
+  color: white;
 }
 
 .cv-frame div.page li.highlight {

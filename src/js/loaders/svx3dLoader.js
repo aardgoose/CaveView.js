@@ -354,9 +354,10 @@ class Svx3dLoader extends FileLoader{
 				l.getInt32( 8, true ) / 100
 			);
 
+			const key = String.fromCharCode.apply( null, bytes.subarray( pos, pos + 12 ) );
+
 			pos += 12;
 
-			const key = coords.x + ',' + coords.y + ',' + coords.z;
 			const cachedCoords = stationMap.get( key );
 
 			if ( cachedCoords !== undefined ) {

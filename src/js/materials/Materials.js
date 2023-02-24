@@ -17,7 +17,8 @@ import { SurveyLineMaterial } from './SurveyLineMaterial';
 import { TextureCache } from '../core/TextureCache';
 
 import {
-	Color, IncrementStencilOp, LineBasicMaterial,
+	BackSide,
+	Color, DoubleSide, FrontSide, IncrementStencilOp, LineBasicMaterial,
 	MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, Vector2, Vector3
 } from '../Three';
 
@@ -131,6 +132,7 @@ function Materials ( viewer ) {
 		if ( material === undefined && materialFunc ) {
 
 			material = cacheMaterial( name, materialFunc(), stencil );
+			material.side = viewer.hasModel ? BackSide : FrontSide;
 
 		}
 

@@ -491,7 +491,7 @@ class CaveViewer extends EventDispatcher {
 			const hasName = 'has' + name.substr( 0, 1 ).toUpperCase() + name.substr( 1 );
 
 			Object.defineProperty( self, hasName, {
-				get() { return survey.hasFeature( layerTag ); }
+				get() { return survey ? survey.hasFeature( layerTag ) : false; }
 			} );
 
 		}

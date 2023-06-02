@@ -39,7 +39,7 @@
     "@rollup/plugin-node-resolve": "^15.0.0",
     "@rollup/plugin-terser": "^0.4.0",
     "@rollup/pluginutils": "^5.0.0",
-    "concurrently": "^7.5.0",
+    "concurrently": "^8.0.0",
     "eslint": "^8.19.0",
     "postcss": "^8.4.00",
     "proj4": "^2.8.0",
@@ -47,7 +47,7 @@
     "rollup-plugin-graph": "^2.0.0",
     "serve": "^14.0.0",
     "terser": "^5.14.0",
-    "three": "^0.150.0",
+    "three": "^0.153.0",
     "x18n": "^2.0.3"
   }
 }

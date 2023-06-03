@@ -6,7 +6,7 @@ import { HelpPage } from './HelpPage';
 import { InfoPage } from './InfoPage';
 import { KeyboardControls } from './KeyboardControls';
 import { ModelSource } from '../core/ModelSource';
-import { SelectionTreePage } from './SelectionTreePage';
+import { SelectionPage } from './SelectionPage';
 import { SettingsPage } from './SettingsPage';
 import { SurfacePage } from './SurfacePage';
 
@@ -54,7 +54,7 @@ function CaveViewUI ( viewer ) {
 
 			if ( viewer.hasSurfaceLegs || viewer.hasTerrain ) new SurfacePage( frame, viewer );
 
-			if ( viewer.getSurveyTree().maxId > 0 ) new SelectionTreePage( frame, viewer, container, fileSelector );
+			if ( viewer.getSurveyTree().maxId > 0 ) new SelectionPage( frame, viewer, container, fileSelector );
 
 			if ( cfg.value( 'showEditPage', false ) && ! fileSelector.isMultiple ) new EditPage( frame, viewer, fileSelector );
 

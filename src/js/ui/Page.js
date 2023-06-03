@@ -14,7 +14,6 @@ class Page {
 		this.onTop = onTop;
 		this.frame = null;
 		this.onLeave = onLeave;
-		this.slide = undefined;
 		this.x18nPrefix = x18nPrefix + '.';
 		this.onChange = null;
 		this.id = id;
@@ -428,90 +427,6 @@ class Page {
 			obj[ property ] = event.target.value;
 
 			frame.inHandler = false;
-
-		}
-
-	}
-
-	addSlide ( domElement, depth ) {
-
-		const slide = document.createElement( 'div' );
-
-		slide.classList.add( 'slide' );
-		slide.style.zIndex = 200 - depth;
-
-		slide.appendChild( domElement );
-
-		this.slide = slide;
-		this.slideDepth = depth;
-
-		return this.page.appendChild( slide );
-
-	}
-
-	replaceSlide ( domElement, depth ) {
-
-		const newSlide = document.createElement( 'div' );
-		const page = this.page;
-
-		let oldSlide = this.slide;
-
-		let redraw; // eslint-disable-line no-unused-vars
-
-		newSlide.classList.add( 'slide' );
-		newSlide.style.zIndex = 200 - depth;
-
-		if ( depth < this.slideDepth ) {
-
-			newSlide.classList.add( 'slide-out' );
-
-		}
-
-		newSlide.appendChild( domElement );
-
-		page.appendChild( newSlide );
-
-		if ( depth > this.slideDepth ) {
-
-			oldSlide.addEventListener( 'transitionend', afterSlideOut );
-			oldSlide.classList.add( 'slide-out' );
-
-			redraw = oldSlide.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
-
-		} else if ( depth < this.slideDepth ) {
-
-			newSlide.addEventListener( 'transitionend', afterSlideIn );
-
-			redraw = newSlide.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
-
-			newSlide.classList.remove( 'slide-out' );
-
-		} else {
-
-			page.removeChild( oldSlide );
-
-		}
-
-		this.slide = newSlide;
-		this.slideDepth = depth;
-
-		return newSlide;
-
-		function afterSlideOut () {
-
-			oldSlide.removeEventListener( 'transitionend', afterSlideOut );
-			page.removeChild( oldSlide );
-
-			oldSlide = null;
-
-		}
-
-		function afterSlideIn () {
-
-			page.removeChild( oldSlide );
-			newSlide.removeEventListener( 'transitionend', afterSlideIn );
-
-			oldSlide = null;
 
 		}
 

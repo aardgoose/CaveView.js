@@ -52,9 +52,11 @@ function CaveViewUI ( viewer ) {
 
 		if ( viewer.surveyLoaded ) {
 
+			const surveyTree = viewer.getSurveyTree();
+
 			if ( viewer.hasSurfaceLegs || viewer.hasTerrain ) new SurfacePage( frame, viewer );
 
-			if ( viewer.getSurveyTree().maxId > 0 ) new SelectionPage( frame, viewer, container, fileSelector );
+			if ( surveyTree.maxId > 0 || surveyTree.id != 0 ) new SelectionPage( frame, viewer, container, fileSelector );
 
 			if ( cfg.value( 'showEditPage', false ) && ! fileSelector.isMultiple ) new EditPage( frame, viewer, fileSelector );
 

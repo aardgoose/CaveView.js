@@ -148,7 +148,6 @@ class SettingsPage extends Page {
 
 		if ( viewer.svxControlMode ) ch.appendChild( this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' ) );
 
-		_onChange( { name: 'cameraType' } );
 		_onChange( { name: 'shadingMode' } );
 		_onChange( { name: 'autoRotate' } );
 

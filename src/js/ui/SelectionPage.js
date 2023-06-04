@@ -40,10 +40,7 @@ class SelectionPage extends Page {
 
 			titleBar.classList.add( 'reload' );
 
-			const txt = document.createTextNode( this.currentTop.name );
-
-			titleBar.appendChild( span );
-			titleBar.appendChild( txt );
+			titleBar.append( span, this.currentTop.name );
 
 		} else {
 
@@ -78,7 +75,6 @@ class SelectionPage extends Page {
 
 			const li  = document.createElement( 'li' );
 			const text = ( child.comment === undefined ) ? child.name : child.name + ' ( ' + child.comment + ' )';
-			const txt = document.createTextNode( text );
 
 			let key;
 
@@ -111,8 +107,7 @@ class SelectionPage extends Page {
 
 			}
 
-			li.appendChild( key );
-			li.appendChild( txt );
+			li.append( key, text );
 
 			if ( child.next ) {
 
@@ -247,8 +242,6 @@ class SelectionPage extends Page {
 
 		};
 
-		this.handleBack = function () {};
-
 		this.selectNode = function ( station ) {
 
 			if ( ! this.isOntop) return;
@@ -326,8 +319,6 @@ class SelectionPage extends Page {
 
 		return;
 
-		return;
-
 		function _makeKey ( text, color ) {
 
 			const key = document.createElement( 'span' );
@@ -400,8 +391,6 @@ class SelectionPage extends Page {
 					const node = self.nodes.get( target.parentNode );
 					self.selectNode( node.next );
 
-				} else {
-					self.handleBack( target );
 				}
 
 				break;

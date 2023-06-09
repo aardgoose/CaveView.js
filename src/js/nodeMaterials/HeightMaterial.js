@@ -2,7 +2,7 @@ import { MeshPhongNodeMaterial, float, uniform, varying, vec2, texture, position
 
 class HeightMaterial extends MeshPhongNodeMaterial {
 
-	constructor ( ctx, options ) {
+	constructor ( ctx, options ) { // FIXME option handling
 
 		super();
 

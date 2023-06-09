@@ -1,15 +1,15 @@
 import { ClusterMaterial } from './ClusterMaterial';
 import { ColourCache } from '../core/ColourCache';
 import { ContourMaterial } from './ContourMaterial';
-import { CursorMaterial } from './CursorMaterial';
+import { CursorMaterial } from '../nodeMaterials/CursorMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMaterial } from './DepthMaterial';
 import { EntrancePointMaterial } from './EntrancePointMaterial';
 import { ExtendedPointsMaterial } from './ExtendedPointsMaterial';
 import { GlyphAtlasCache } from './GlyphAtlas';
 import { GlyphMaterial } from './GlyphMaterial';
-import { HeightMaterial } from './HeightMaterial';
-import { HypsometricMaterial } from './HypsometricMaterial';
+import { HeightMaterial } from '../nodeMaterials/HeightMaterial';
+import { HypsometricMaterial } from '../nodeMaterials/HypsometricMaterial';
 import { Line2Material } from './Line2Material';
 import { WallMaterial } from './WallMaterial';
 import { MissingMaterial } from './MissingMaterial';
@@ -21,6 +21,7 @@ import {
 	Color, DoubleSide, FrontSide, IncrementStencilOp, LineBasicMaterial,
 	MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, Vector2, Vector3
 } from '../Three';
+import { MeshStandardNodeMaterial, MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
 
 function Materials ( viewer ) {
 
@@ -298,11 +299,11 @@ function Materials ( viewer ) {
 
 		if ( cfg.themeValue( 'hud.bezelType' ) === 'flat' ) {
 
-			func = () => new MeshBasicMaterial( { color: cfg.themeValue( 'hud.bezel' ) } );
+			func = () => new MeshBasicNodeMaterial( { color: cfg.themeValue( 'hud.bezel' ) } );
 
 		} else {
 
-			func = () => new MeshPhongMaterial( { color: cfg.themeValue( 'hud.bezel' ), specular: 0x888888 } );
+			func = () => new MeshStandardNodeMaterial( { color: cfg.themeValue( 'hud.bezel' ), metalness: 0.9, roughness: 0.3 } );
 
 		}
 
@@ -312,7 +313,7 @@ function Materials ( viewer ) {
 
 	this.getPlainMaterial = function  () {
 
-		const func = () => new MeshBasicMaterial( { color: 0xffffff, vertexColors: true } );
+		const func = () => new MeshBasicNodeMaterial( { vertexColors: true } );
 		return getCacheMaterial( 'plain', func, true );
 
 	};

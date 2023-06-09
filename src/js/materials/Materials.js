@@ -5,7 +5,7 @@ import { CursorMaterial } from '../nodeMaterials/CursorMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMaterial } from './DepthMaterial';
 import { EntrancePointMaterial } from './EntrancePointMaterial';
-import { ExtendedPointsMaterial } from './ExtendedPointsMaterial';
+import { ExtendedPointsMaterial } from '../nodeMaterials/ExtendedPointsMaterial';
 import { GlyphAtlasCache } from './GlyphAtlas';
 import { GlyphMaterial } from './GlyphMaterial';
 import { HeightMaterial } from '../nodeMaterials/HeightMaterial';

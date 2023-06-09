@@ -19,7 +19,7 @@ class HeightMaterial extends MeshPhongNodeMaterial {
 
 		const zMap = varying( positionGeometry.z.sub( minZ ).mul( scaleZ ) );
 
-		this.colorNode = texture( textureCache.getTexture( gradient ), vec2( float( 1.0 ).sub( zMap ), float( 1.0 ) ) );
+		this.colorNode = texture( textureCache.getTexture( gradient ), vec2( float( 1.0 ).sub( zMap ), 1.0 ) );
 
 	}
 

@@ -2,7 +2,7 @@ import { MeshPhongNodeMaterial, expression, abs, cond, mix, smoothstep, uniform,
 
 class CursorMaterial extends MeshPhongNodeMaterial {
 
-	constructor ( ctx, options ) {
+	constructor ( ctx, options ) { // FIXME options handling
 
 		super( { vertexColors: true } );
 

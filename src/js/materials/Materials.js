@@ -11,7 +11,7 @@ import { GlyphMaterial } from './GlyphMaterial';
 import { HeightMaterial } from '../nodeMaterials/HeightMaterial';
 import { HypsometricMaterial } from '../nodeMaterials/HypsometricMaterial';
 import { Line2Material } from './Line2Material';
-import { WallMaterial } from './WallMaterial';
+import { WallMaterial } from '../nodeMaterials/WallMaterial';
 import { MissingMaterial } from './MissingMaterial';
 import { SurveyLineMaterial } from './SurveyLineMaterial';
 import { TextureCache } from '../core/TextureCache';

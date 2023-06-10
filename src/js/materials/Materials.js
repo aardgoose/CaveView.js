@@ -1,6 +1,6 @@
 import { ClusterMaterial } from './ClusterMaterial';
 import { ColourCache } from '../core/ColourCache';
-import { ContourMaterial } from './ContourMaterial';
+import { ContourMaterial } from '../nodeMaterials/ContourMaterial';
 import { CursorMaterial } from '../nodeMaterials/CursorMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMaterial } from './DepthMaterial';

@@ -3,8 +3,8 @@ import { ShaderChunk } from '../../Three';
 import anaglyphVertexShader from './anaglyphVertexShader.glsl';
 import anaglyphFragmentShader from './anaglyphFragmentShader.glsl';
 
-// import cursorVertexShader from './cursorVertexShader.glsl';
-// import cursorFragmentShader from './cursorFragmentShader.glsl';
+import cursorVertexShader from './cursorVertexShader.glsl';
+import cursorFragmentShader from './cursorFragmentShader.glsl';
 
 import depthMapVertexShader from './depthMapVertexShader.glsl';
 import depthMapFragmentShader from './depthMapFragmentShader.glsl';
@@ -18,8 +18,8 @@ import depthCursorFragmentShader from './depthCursorFragmentShader.glsl';
 import glyphVertexShader from './glyphVertexShader.glsl';
 import glyphFragmentShader from './glyphFragmentShader.glsl';
 
-//import heightVertexShader from './heightVertexShader.glsl';
-//import heightFragmentShader from './heightFragmentShader.glsl';
+import heightVertexShader from './heightVertexShader.glsl';
+import heightFragmentShader from './heightFragmentShader.glsl';
 
 import popupVertexShader from './popupVertexShader.glsl';
 import popupFragmentShader from './popupFragmentShader.glsl';
@@ -46,15 +46,15 @@ import depth_vertex from './chunks/depth_vertex.glsl';
 import cursor_fragment from './chunks/cursor_fragment.glsl';
 import cursor_fragment_pars from './chunks/cursor_fragment_pars.glsl';
 
-//import contour_vertex from './chunks/contour_vertex.glsl';
-//import contour_vertex_pars from './chunks/contour_vertex_pars.glsl';
-//import contour_fragment_pars from './chunks/contour_fragment_pars.glsl';
-//import contour_fragment from './chunks/contour_fragment.glsl';
+import contour_vertex from './chunks/contour_vertex.glsl';
+import contour_vertex_pars from './chunks/contour_vertex_pars.glsl';
+import contour_fragment_pars from './chunks/contour_fragment_pars.glsl';
+import contour_fragment from './chunks/contour_fragment.glsl';
 
-//import hypsometric_vertex from './chunks/hypsometric_vertex.glsl';
-//import hypsometric_vertex_pars from './chunks/hypsometric_vertex_pars.glsl';
-//import hypsometric_fragment_pars from './chunks/hypsometric_fragment_pars.glsl';
-//import hypsometric_fragment from './chunks/hypsometric_fragment.glsl';
+import hypsometric_vertex from './chunks/hypsometric_vertex.glsl';
+import hypsometric_vertex_pars from './chunks/hypsometric_vertex_pars.glsl';
+import hypsometric_fragment_pars from './chunks/hypsometric_fragment_pars.glsl';
+import hypsometric_fragment from './chunks/hypsometric_fragment.glsl';
 
 import location_fragment_pars from './chunks/location_fragment_pars.glsl';
 import location_fragment from './chunks/location_fragment.glsl';
@@ -79,15 +79,15 @@ Object.assign( ShaderChunk, {
 	cursor_fragment: cursor_fragment,
 	cursor_fragment_pars: cursor_fragment_pars,
 
-//	contour_vertex: contour_vertex,
-//	contour_vertex_pars: contour_vertex_pars,
-//	contour_fragment_pars: contour_fragment_pars,
-//	contour_fragment: contour_fragment,
+	contour_vertex: contour_vertex,
+	contour_vertex_pars: contour_vertex_pars,
+	contour_fragment_pars: contour_fragment_pars,
+	contour_fragment: contour_fragment,
 
-//	hypsometric_vertex: hypsometric_vertex,
-//	hypsometric_vertex_pars: hypsometric_vertex_pars,
-//	hypsometric_fragment_pars: hypsometric_fragment_pars,
-//	hypsometric_fragment: hypsometric_fragment,
+	hypsometric_vertex: hypsometric_vertex,
+	hypsometric_vertex_pars: hypsometric_vertex_pars,
+	hypsometric_fragment_pars: hypsometric_fragment_pars,
+	hypsometric_fragment: hypsometric_fragment,
 
 	// common terrain location indicator
 
@@ -103,8 +103,8 @@ Object.assign( ShaderChunk, {
 export const Shaders = {
 	anaglyphVertexShader:	anaglyphVertexShader,
 	anaglyphFragmentShader:	anaglyphFragmentShader,
-//	cursorVertexShader:		cursorVertexShader,
-//	cursorFragmentShader:	cursorFragmentShader,
+	cursorVertexShader:		cursorVertexShader,
+	cursorFragmentShader:	cursorFragmentShader,
 	depthMapVertexShader:	depthMapVertexShader,
 	depthMapFragmentShader:	depthMapFragmentShader,
 	depthVertexShader:		depthVertexShader,
@@ -113,8 +113,8 @@ export const Shaders = {
 	depthCursorFragmentShader:		depthCursorFragmentShader,
 	glyphVertexShader:		glyphVertexShader,
 	glyphFragmentShader:	glyphFragmentShader,
-//	heightVertexShader:		heightVertexShader,
-//	heightFragmentShader:	heightFragmentShader,
+	heightVertexShader:		heightVertexShader,
+	heightFragmentShader:	heightFragmentShader,
 	popupVertexShader:		popupVertexShader,
 	popupFragmentShader:	popupFragmentShader,
 	waterVertexShader:		waterVertexShader,

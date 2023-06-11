@@ -9,7 +9,7 @@ class ExtendedPointsMaterial extends PointsNodeMaterial {
 			alphaTest: 0.8,
 			depthWrite: false,
 			transparent: true,
-			sizeAttenuation: true
+			sizeAttenuation: false
 		} );
 
 		const pSize = attribute( 'pSize', 'float' );

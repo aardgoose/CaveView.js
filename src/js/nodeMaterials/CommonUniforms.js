@@ -3,6 +3,12 @@ import { uniform, vec2 } from '../../../node_modules/three/examples/jsm/nodes/No
 
 class CommonUniforms {
 
+    // shared common uniforms
+
+    static datumShift = uniform( 0, 'float' );
+    static accuracy   = uniform( -1.0, 'float' );
+    static target     = uniform( vec2( 0, 0 ), 'vec2' );
+
     static depth ( ctx ) {
 
         const survey = ctx.survey;
@@ -16,7 +22,7 @@ class CommonUniforms {
             scale:      uniform( vec2( 1 / range.x, 1 / range.y), 'vec2' ),
             rangeZ:     uniform( range.z, 'float' ),
             depthScale: uniform( 1 / ( surveyLimits.max.z - surveyLimits.min.z ), 'float' ),
-            datumShift: uniform( 0, 'float' ) // FIXME
+            datumShift: this.datumShift
         }
 
     }
@@ -30,6 +36,16 @@ class CommonUniforms {
 		    cursorWidth: uniform( 5.0, 'float' ),
 		    baseColor:   uniform( cfg.themeColor( 'shading.cursorBase' ) ),
 		    cursorColor: uniform( cfg.themeColor( 'shading.cursor' ) ),
+        }
+
+    }
+
+    static location ( ctx ) {
+
+        return {
+            accuracy:  this.accuracy,
+            target:    this.target,
+            ringColor: uniform( ctx.cfg.themeColor( 'shading.ringColor' ), 'vec3' )
         }
 
     }

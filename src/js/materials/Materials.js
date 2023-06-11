@@ -22,6 +22,7 @@ import {
 	MeshLambertMaterial, Vector2, Vector3
 } from '../Three';
 import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { CommonUniforms } from '../nodeMaterials/CommonUniforms';
 
 function Materials ( viewer ) {
 
@@ -180,6 +181,7 @@ function Materials ( viewer ) {
 				locationMode = false;
 
 				locationUniforms.accuracy.value = -1.0;
+				CommonUniforms.accuracy.value = -1.0;
 
 				surveyLineMaterials.forEach( updateMaterial );
 				wallMaterials.forEach( updateMaterial );
@@ -193,8 +195,13 @@ function Materials ( viewer ) {
 				locationMode = true;
 
 				locationUniforms.accuracy.value = accuracy;
-				locationUniforms.target.value.set( location.x, location.y );
+				CommonUniforms.accuracy.value = accuracy;
 
+				locationUniforms.target.value.set( location.x, location.y );
+				// FIXME
+				CommonUniforms.target.value.set( location.x, location.y );
+				console.log( 'cut', CommonUniforms.target.value );
+				console.log( 'cua', CommonUniforms.accuracy.value );
 				surveyLineMaterials.forEach( updateMaterial );
 				wallMaterials.forEach( updateMaterial );
 
@@ -410,6 +417,7 @@ function Materials ( viewer ) {
 
 		const updateDatumShifts = event => {
 
+			CommonUniforms.datumShift.value = event.value;
 			this.uniforms.commonDepth.datumShift.value = event.value;
 
 		};

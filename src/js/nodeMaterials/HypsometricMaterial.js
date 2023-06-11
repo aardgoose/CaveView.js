@@ -1,5 +1,6 @@
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 import { saturate, texture, uniform, varying, vec2, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { CommonComponents } from './CommonComponents';
 
 class HypsometricMaterial extends CommonTerrainMaterial {
 
@@ -24,7 +25,7 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 
 			const zMap = varying( saturate( positionGeometry.z.sub( minZ ).mul( scaleZ ) ) );
 
-			this.colorNode = texture( textureCache.getTexture( 'hypsometric' ), vec2( zMap.oneMinus(), 1.0 ) );
+			this.colorNode = CommonComponents.location( ctx, texture( textureCache.getTexture( 'hypsometric' ), vec2( zMap.oneMinus(), 1.0 ) ) );
 
 		}
 

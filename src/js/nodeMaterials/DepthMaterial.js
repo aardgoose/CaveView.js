@@ -1,26 +1,18 @@
-import { Vector3 } from '../Three';
-import { MeshPhongNodeMaterial, float, expression, texture, uniform, varying, vec2, vec3, vec4, positionGeometry, positionLocal } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { MeshPhongNodeMaterial, float, texture, varying, vec2, vec3, vec4, positionGeometry, positionLocal } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { CommonUniforms } from './CommonUniforms';
 
 class DepthMaterial extends MeshPhongNodeMaterial {
 
 	constructor ( ctx, options ) {
 
 		const survey = ctx.survey;
-		const surveyLimits = survey.modelLimits;
 		const terrain = survey.terrain;
-		const limits = terrain.boundingBox;
-		const range = limits.getSize( new Vector3() );
 		const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 		const textureCache = ctx.materials.textureCache;
 
 		super( { transparent: options.location } );
 
-		const modelMin   = uniform( limits.min, 'vec3' );
-		const scaleX     = uniform( 1 / range.x, 'float' );
-		const scaleY     = uniform( 1 / range.y, 'float' );
-		const rangeZ     = uniform( range.z, 'float' );
-		const depthScale = uniform( 1 / ( surveyLimits.max.z - surveyLimits.min.z ), 'float' );
-		const datumShift = uniform( 0, 'float' ); // FIXME
+		const du = CommonUniforms.depth( ctx );
 
 		// unpack functions
 
@@ -29,13 +21,13 @@ class DepthMaterial extends MeshPhongNodeMaterial {
 		const PackFactors = vec3( 256. * 256. * 256., 256. * 256., 256. );
 		const UnpackFactors = vec4( UnpackDownscale.div( vec4( PackFactors, 1. ) ) );
 
-		const vTerrainCoords = varying( vec2( positionGeometry.x.sub( modelMin.x ).mul( scaleX ), positionGeometry.y.sub( modelMin.y ).mul( scaleY ) ) );
+		const vTerrainCoords = varying( positionGeometry.xy.sub( du.modelMin.xy ).mul( du.scale ) );
 
 		let terrainHeight = texture( terrain.depthTexture, vTerrainCoords ).dot( UnpackFactors ); // FIXME
 
-		terrainHeight = terrainHeight.mul( rangeZ ).add( modelMin.z ).add( datumShift );
+		terrainHeight = terrainHeight.mul( du.rangeZ ).add( du.modelMin.z ).add( du.datumShift );
 
-		const depth = terrainHeight.sub( positionLocal.z ).mul( depthScale );
+		const depth = terrainHeight.sub( positionLocal.z ).mul( du.depthScale );
 
 		this.colorNode = texture( textureCache.getTexture( gradient ), vec2( depth, 1.0 ) ); // FIXME vertex colot
 

@@ -4,7 +4,8 @@ import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { Line2Material } from '../materials/Line2Material';
 
-import { MeshBasicMaterial, PlaneGeometry } from '../Three';
+import { PlaneGeometry } from '../Three';
+import { MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
 
 class CursorScale extends Scale {
 
@@ -15,7 +16,7 @@ class CursorScale extends Scale {
 		const materials = ctx.materials;
 		const geometry = new PlaneGeometry();
 
-		super( hudObject, container, geometry, new MeshBasicMaterial( { color: 0x676767 } ) );
+		super( hudObject, container, geometry, new MeshBasicNodeMaterial( { color: 0x676767 } ) );
 
 		this.name = 'CV.CursorScale';
 		this.visible = false;

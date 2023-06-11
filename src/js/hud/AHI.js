@@ -8,11 +8,12 @@ import {
 	Group,
 	MathUtils,
 	Mesh,
-	MeshPhongMaterial,
 	Object3D,
 	SphereGeometry,
 	Vector3
 } from '../Three';
+
+import { MeshPhongNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
 
 // preallocated tmp objects
 const __xAxis = new Vector3( 1, 0, 0 );
@@ -100,7 +101,7 @@ class AHI extends Group {
 		marks.setPositions( vertices );
 
 		const mRing   = new Mesh( ring, materials.getBezelMaterial() );
-		const mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: true, specular: 0x666666, shininess: 20 } ) );
+		const mSphere = new Mesh( sphere, new MeshPhongNodeMaterial( { vertexColors: true, specular: 0x666666, shininess: 20 } ) );
 		const mBar    = new LineSegments2( bar,   new Line2Material( ctx, { color: cfg.themeValue( 'hud.ahi.bar' ) } ) );
 		const mMarks  = new LineSegments2( marks, new Line2Material( ctx, { color: cfg.themeValue( 'hud.ahi.marks' ) } ) );
 

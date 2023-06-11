@@ -4,7 +4,7 @@ import { ContourMaterial } from '../nodeMaterials/ContourMaterial';
 import { CursorMaterial } from '../nodeMaterials/CursorMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMaterial } from '../nodeMaterials/DepthMaterial';
-import { EntrancePointMaterial } from './EntrancePointMaterial';
+import { EntrancePointMaterial } from '../nodeMaterials/EntrancePointMaterial';
 import { ExtendedPointsMaterial } from '../nodeMaterials/ExtendedPointsMaterial';
 import { GlyphAtlasCache } from './GlyphAtlas';
 import { GlyphMaterial } from './GlyphMaterial';
@@ -12,7 +12,7 @@ import { HeightMaterial } from '../nodeMaterials/HeightMaterial';
 import { HypsometricMaterial } from '../nodeMaterials/HypsometricMaterial';
 import { Line2Material } from './Line2Material';
 import { WallMaterial } from '../nodeMaterials/WallMaterial';
-import { MissingMaterial } from './MissingMaterial';
+import { MissingMaterial } from '../nodeMaterials/MissingMaterial';
 import { SurveyLineMaterial } from './SurveyLineMaterial';
 import { TextureCache } from '../core/TextureCache';
 

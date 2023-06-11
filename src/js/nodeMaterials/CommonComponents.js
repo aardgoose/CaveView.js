@@ -1,4 +1,5 @@
-import { expression, abs, cond, float, mix, smoothstep, texture, varying, vec3, vec4, positionGeometry } from 'three/examples/jsm/nodes/Nodes.js';
+import { expression, abs, cond, distance, float, fwidth, mix, smoothstep, texture, varying, vec3, vec4, positionGeometry, positionLocal } from 'three/examples/jsm/nodes/Nodes.js';
+import { CommonUniforms } from './CommonUniforms';
 
 class CommonComponents {
 
@@ -26,6 +27,22 @@ class CommonComponents {
 		const terrainHeight = texture( terrain.depthTexture, vTerrainCoords ).dot( UnpackFactors ); // FIXME
 
 		return terrainHeight.mul( du.rangeZ ).add( du.modelMin.z ).add( du.datumShift );
+
+    }
+
+    static location ( ctx, color ) {
+
+        const lu = CommonUniforms.location( ctx );
+
+        const targetDistance = distance( lu.target, positionLocal.xy );
+
+        const f = abs( targetDistance.sub( lu.accuracy ) );
+        const df = abs( fwidth( targetDistance ) );
+
+        return cond( lu.accuracy.greaterThanEqual( 0 ),
+            mix( vec4( lu.ringColor, 1.0 ), color, smoothstep( 0.0, df.mul( 4.0 ), f ) ),
+            vec4( 0, 1, 0, 1  )
+         );
 
     }
 

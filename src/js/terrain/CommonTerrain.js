@@ -55,18 +55,13 @@ class CommonTerrain extends Group {
 
 	}
 
-	checkTerrainShadingModes ( renderer ) {
+	checkTerrainShadingModes () {
 
 		const overlays = this.ctx.overlays;
 		const terrainShadingModes = {};
 
 		terrainShadingModes[ 'terrain.shading.height' ] = SHADING_RELIEF;
-
-		if ( renderer.capabilities.isWebGL2 || renderer.extensions.get( 'OES_standard_derivatives' ) !== null && ! this.isFlat ) {
-
-			terrainShadingModes[ 'terrain.shading.contours' + ' (' + this.ctx.cfg.themeValue( 'shading.contours.interval' ) + '\u202fm)' ] = SHADING_CONTOURS;
-
-		}
+		terrainShadingModes[ 'terrain.shading.contours' + ' (' + this.ctx.cfg.themeValue( 'shading.contours.interval' ) + '\u202fm)' ] = SHADING_CONTOURS;
 
 		if ( this.isTiled && overlays) {
 
@@ -135,7 +130,7 @@ class CommonTerrain extends Group {
 		// add lookup using heightMap texture
 		this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox );
 
-		this.checkTerrainShadingModes( renderer );
+		this.checkTerrainShadingModes();
 
 		// restore renderer to normal render size and target
 

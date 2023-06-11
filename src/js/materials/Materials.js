@@ -3,7 +3,7 @@ import { ColourCache } from '../core/ColourCache';
 import { ContourMaterial } from '../nodeMaterials/ContourMaterial';
 import { CursorMaterial } from '../nodeMaterials/CursorMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
-import { DepthMaterial } from './DepthMaterial';
+import { DepthMaterial } from '../nodeMaterials/DepthMaterial';
 import { EntrancePointMaterial } from './EntrancePointMaterial';
 import { ExtendedPointsMaterial } from '../nodeMaterials/ExtendedPointsMaterial';
 import { GlyphAtlasCache } from './GlyphAtlas';

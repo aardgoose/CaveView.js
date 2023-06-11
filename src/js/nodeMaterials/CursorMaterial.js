@@ -1,4 +1,5 @@
-import { MeshPhongNodeMaterial, expression, abs, cond, mix, smoothstep, uniform, varying, vec4, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { MeshPhongNodeMaterial, expression, abs, cond, mix, smoothstep, varying, vec4, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
+import { CommonUniforms } from './CommonUniforms';
 
 class CursorMaterial extends MeshPhongNodeMaterial {
 
@@ -8,21 +9,17 @@ class CursorMaterial extends MeshPhongNodeMaterial {
 
 		const survey = ctx.survey;
 		const limits = survey.modelLimits;
-		const cfg = ctx.cfg;
 
-		const cursor      = uniform( 0, 'float' );
-		const cursorWidth = uniform( 5.0, 'float' );
-		const baseColor   = uniform( cfg.themeColor( 'shading.cursorBase' ) );
-		const cursorColor = uniform( cfg.themeColor( 'shading.cursor' ) );
+		const cu = CommonUniforms.cursor( ctx );
 
-		const delta = abs( varying( positionGeometry.z.sub( cursor ) ) );
-		const ss = smoothstep( 0.0, cursorWidth, cursorWidth.sub( delta ) );
+		const delta = abs( varying( positionGeometry.z.sub( cu.cursor ) ) );
+		const ss = smoothstep( 0.0, cu.cursorWidth, cu.cursorWidth.sub( delta ) );
 
-		this.cursor = cursor;
+		this.cursor = cu.cursor;
 
-		this.colorNode = cond( delta.lessThan( cursorWidth.mul( 0.05 ) ),
+		this.colorNode = cond( delta.lessThan( cu.cursorWidth.mul( 0.05 ) ),
 			vec4( expression( 'vColor', 'vec3' ), 1.0 ),
-			vec4( mix( baseColor, cursorColor, ss ), 1.0 ).mul( expression( 'vColor', 'vec3' ), 1.0 )
+			vec4( mix( cu.baseColor, cu.cursorColor, ss ), 1.0 ).mul( expression( 'vColor', 'vec3' ), 1.0 )
 		);
 
 		this.transparent = options.location;

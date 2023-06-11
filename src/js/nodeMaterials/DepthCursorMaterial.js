@@ -1,9 +1,12 @@
-import { MeshPhongNodeMaterial, expression, abs, cond, mix, smoothstep, varying, vec4, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
+import { MeshPhongNodeMaterial, positionLocal } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
 import { CommonUniforms } from './CommonUniforms';
+import { CommonComponents } from './CommonComponents';
 
-class DepthCursorMaterial extends MeshPhongMaterial {
+class DepthCursorMaterial extends MeshPhongNodeMaterial {
 
 	constructor( ctx, options ) {
+
+		super( { vertexColors: true } );
 
 		const survey = ctx.survey;
 		const surveyLimits = survey.modelLimits;
@@ -14,18 +17,20 @@ class DepthCursorMaterial extends MeshPhongMaterial {
 		const cu = CommonUniforms.cursor( ctx );
 		const du = CommonUniforms.depth( ctx );
 
+		const terrainHeight = CommonComponents.terrainHeight( du, survey.terrain );
 
+		// FIXME double check all depth calcs
 
+		const vCursor = terrainHeight.sub(  positionLocal.z );
 
+		const delta = vCursor.sub( cu.cursor );
 
-
-
-
+		this.colorNode = CommonComponents.cursorColor( cu, delta );
 
 		this.cursor = cu.cursor;
 		this.transparent = options.location;
 		this.max = max;
-		this.uniforms.cursor.value = max;
+		this.cursor.value = max;
 
 	}
 

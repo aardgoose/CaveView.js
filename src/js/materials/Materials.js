@@ -2,7 +2,7 @@ import { ClusterMaterial } from '../nodeMaterials/ClusterMaterial';
 import { ColourCache } from '../core/ColourCache';
 import { ContourMaterial } from '../nodeMaterials/ContourMaterial';
 import { CursorMaterial } from '../nodeMaterials/CursorMaterial';
-import { DepthCursorMaterial } from './DepthCursorMaterial';
+import { DepthCursorMaterial } from '../nodeMaterials/DepthCursorMaterial';
 import { DepthMaterial } from '../nodeMaterials/DepthMaterial';
 import { EntrancePointMaterial } from './EntrancePointMaterial';
 import { ExtendedPointsMaterial } from '../nodeMaterials/ExtendedPointsMaterial';

@@ -1,5 +1,7 @@
-import { MeshPhongNodeMaterial, expression, abs, cond, mix, smoothstep, varying, vec4, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
+import { MeshPhongNodeMaterial, varying, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
 import { CommonUniforms } from './CommonUniforms';
+import { CommonComponents } from './CommonComponents';
+
 
 class CursorMaterial extends MeshPhongNodeMaterial {
 
@@ -12,16 +14,11 @@ class CursorMaterial extends MeshPhongNodeMaterial {
 
 		const cu = CommonUniforms.cursor( ctx );
 
-		const delta = abs( varying( positionGeometry.z.sub( cu.cursor ) ) );
-		const ss = smoothstep( 0.0, cu.cursorWidth, cu.cursorWidth.sub( delta ) );
+		const delta = varying( positionGeometry.z.sub( cu.cursor ) );
+
+		this.colorNode = CommonComponents.cursorColor( cu, delta );
 
 		this.cursor = cu.cursor;
-
-		this.colorNode = cond( delta.lessThan( cu.cursorWidth.mul( 0.05 ) ),
-			vec4( expression( 'vColor', 'vec3' ), 1.0 ),
-			vec4( mix( cu.baseColor, cu.cursorColor, ss ), 1.0 ).mul( expression( 'vColor', 'vec3' ), 1.0 )
-		);
-
 		this.transparent = options.location;
 		this.halfRange = ( limits.max.z - limits.min.z ) / 2;
 

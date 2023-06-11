@@ -1,6 +1,7 @@
-import { MeshPhongNodeMaterial, float,saturate, uniform, varying, vec2, texture, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { CommonTerrainMaterial } from './CommonTerrainMaterial';
+import { saturate, texture, uniform, varying, vec2, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
 
-class HypsometricMaterial extends MeshPhongNodeMaterial {
+class HypsometricMaterial extends CommonTerrainMaterial {
 
 	constructor ( ctx ) {
 
@@ -9,7 +10,7 @@ class HypsometricMaterial extends MeshPhongNodeMaterial {
 		const terrain = survey.terrain;
 		const textureCache = ctx.materials.textureCache;
 
-		super();
+		super( ctx );
 
 		if ( terrain ) {
 

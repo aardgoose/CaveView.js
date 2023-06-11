@@ -1,18 +1,14 @@
-import { MeshPhongNodeMaterial, fract, fwidth, step, cond, mix, smoothstep, uniform, vec4, positionLocal, materialOpacity } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { CommonTerrainMaterial } from './CommonTerrainMaterial';
+import { fract, fwidth, step, cond, mix, smoothstep, uniform, vec4, positionLocal, materialOpacity } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
 
-class ContourMaterial extends MeshPhongNodeMaterial {
+class ContourMaterial extends CommonTerrainMaterial {
 
 	constructor ( ctx ) {
 
 		const survey = ctx.survey;
 		const cfg = ctx.cfg;
-		const materials = ctx.materials;
 
-		super( { opacity: 0.5, transparent: true } );
-
-		Object.defineProperty( this, 'opacity', {
-			get() { return ctx.materials.terrainOpacity; }
-		} );
+		super( ctx, { opacity: 0.5 } );
 
 		const zOffset         = uniform( survey.offsets.z, 'float' );
 		const contourInterval = uniform( cfg.themeValue( 'shading.contours.interval' ), 'float' );

@@ -5,11 +5,10 @@ import {
 	Group,
 	MathUtils,
 	Mesh,
-	MeshBasicMaterial,
-	MeshLambertMaterial,
 	RingGeometry,
 	Vector3
 } from '../Three';
+import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
 
 import { MutableGlyphString } from '../core/GlyphString';
 
@@ -38,7 +37,7 @@ class Compass extends Group {
 		const cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 		cg2.translate( 0, 0, 5 );
 
-		const c2 = new Mesh( cg2, new MeshBasicMaterial( { color: cfg.themeValue( 'hud.compass.top1' ) } ) );
+		const c2 = new Mesh( cg2, new MeshBasicNodeMaterial( { color: cfg.themeValue( 'hud.compass.top1' ) } ) );
 
 		c1.dropBuffers();
 		c2.dropBuffers();
@@ -76,9 +75,8 @@ class Compass extends Group {
 		function _makeRose() {
 
 			const geometry = new BufferGeometry();
-			const material = new MeshLambertMaterial( { vertexColors: true } );
 
-			const mesh = new Mesh( geometry, material );
+			const mesh = new Mesh( geometry, new MeshPhongNodeMaterial( { vertexColors: true } ) );
 
 			const positions = new Float32BufferAttribute( 144, 3 );
 			const colors = new Float32BufferAttribute( 144, 3 );
@@ -125,7 +123,6 @@ class Compass extends Group {
 
 					positions.setXYZ( vertex, Math.sin( a + xc ) * radius, Math.cos( a + xc ) * radius, 0 );
 					colors.setXYZ( vertex++, color2.r, color2.g, color2.b );
-
 
 				}
 

@@ -1,10 +1,10 @@
-import { ClusterMaterial } from './ClusterMaterial';
+import { ClusterMaterial } from '../nodeMaterials/ClusterMaterial';
 import { ColourCache } from '../core/ColourCache';
 import { ContourMaterial } from '../nodeMaterials/ContourMaterial';
 import { CursorMaterial } from '../nodeMaterials/CursorMaterial';
 import { DepthCursorMaterial } from './DepthCursorMaterial';
 import { DepthMaterial } from '../nodeMaterials/DepthMaterial';
-import { EntrancePointMaterial } from '../nodeMaterials/EntrancePointMaterial';
+import { EntrancePointMaterial } from './EntrancePointMaterial';
 import { ExtendedPointsMaterial } from '../nodeMaterials/ExtendedPointsMaterial';
 import { GlyphAtlasCache } from './GlyphAtlas';
 import { GlyphMaterial } from './GlyphMaterial';
@@ -18,10 +18,10 @@ import { TextureCache } from '../core/TextureCache';
 
 import {
 	BackSide,
-	Color, DoubleSide, FrontSide, IncrementStencilOp, LineBasicMaterial,
-	MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial, Vector2, Vector3
+	Color, FrontSide, IncrementStencilOp, LineBasicMaterial,
+	MeshLambertMaterial, Vector2, Vector3
 } from '../Three';
-import { MeshStandardNodeMaterial, MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
 
 function Materials ( viewer ) {
 
@@ -303,7 +303,7 @@ function Materials ( viewer ) {
 
 		} else {
 
-			func = () => new MeshStandardNodeMaterial( { color: cfg.themeValue( 'hud.bezel' ), metalness: 0.9, roughness: 0.3 } );
+			func = () => new MeshPhongNodeMaterial( { color: cfg.themeValue( 'hud.bezel' ), shininess: 20, specular: 0x666666 } );
 
 		}
 
@@ -356,7 +356,7 @@ function Materials ( viewer ) {
 
 	this.getScaleMaterial = function () {
 
-		const func = () => new MeshBasicMaterial( { color: 0xffffff, map: textureCache.getTexture( gradient ) } );
+		const func = () => new MeshBasicNodeMaterial( { color: 0xffffff, map: textureCache.getTexture( gradient ) } );
 		return getCacheMaterial( 'scale', func );
 
 	};

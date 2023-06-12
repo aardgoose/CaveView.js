@@ -41,8 +41,16 @@ class CommonComponents {
 
         return cond( lu.accuracy.greaterThanEqual( 0 ),
             mix( vec4( lu.ringColor, 1.0 ), color, smoothstep( 0.0, df.mul( 4.0 ), f ) ),
-            vec4( 0, 1, 0, 1  )
+            color
          );
+
+    }
+
+    static distanceFade() {
+
+        const du = CommonUniforms.distanceFade();
+
+        return smoothstep( du.distanceFadeMin, du.distanceFadeMax, distance( du.cameraLocation, vPosition ) ).oneMinus();
 
     }
 

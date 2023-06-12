@@ -5,9 +5,17 @@ class CommonUniforms {
 
     // shared common uniforms
 
-    static datumShift = uniform( 0, 'float' );
-    static accuracy   = uniform( -1.0, 'float' );
-    static target     = uniform( vec2( 0, 0 ), 'vec2' );
+    // terrain adjustment
+    static datumShift      = uniform( 0, 'float' );
+
+    // location ring
+    static accuracy        = uniform( -1.0, 'float' );
+    static target          = uniform( vec2( 0, 0 ), 'vec2' );
+
+    // distance fade
+    static distanceFadeMin = uniform( 0.0, 'float' );
+    static distanceFadeMax = uniform( 0.0, 'float' );
+    static cameraLocation  = uniform( new Vector3(), 'vec3' );
 
     static depth ( ctx ) {
 
@@ -36,7 +44,7 @@ class CommonUniforms {
 		    cursorWidth: uniform( 5.0, 'float' ),
 		    baseColor:   uniform( cfg.themeColor( 'shading.cursorBase' ) ),
 		    cursorColor: uniform( cfg.themeColor( 'shading.cursor' ) ),
-        }
+        };
 
     }
 
@@ -46,7 +54,17 @@ class CommonUniforms {
             accuracy:  this.accuracy,
             target:    this.target,
             ringColor: uniform( ctx.cfg.themeColor( 'shading.ringColor' ), 'vec3' )
-        }
+        };
+
+    }
+
+    static distanceFade( ) {
+
+        return {
+            distanceFadeMin: this.distanceFadeMin,
+            distanceFadeMax: this.distanceFadeMax,
+            cameraLocation:  this.cameraLocation
+        };
 
     }
 

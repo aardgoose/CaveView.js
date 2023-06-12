@@ -197,11 +197,9 @@ function Materials ( viewer ) {
 				locationUniforms.accuracy.value = accuracy;
 				CommonUniforms.accuracy.value = accuracy;
 
-				locationUniforms.target.value.set( location.x, location.y );
-				// FIXME
-				CommonUniforms.target.value.set( location.x, location.y );
 				console.log( 'cut', CommonUniforms.target.value );
 				console.log( 'cua', CommonUniforms.accuracy.value );
+
 				surveyLineMaterials.forEach( updateMaterial );
 				wallMaterials.forEach( updateMaterial );
 
@@ -214,6 +212,12 @@ function Materials ( viewer ) {
 			commonUniforms.cameraLocation.value.copy( location );
 
 			locationUniforms.target.value.set( location.x, location.y );
+
+			CommonUniforms.distanceFadeMin.value = minDistance;
+			CommonUniforms.distanceFadeMax.value = maxDistance;
+			CommonUniforms.cameraLocation.value.copy ( location );
+
+			CommonUniforms.target.value.set( location.x, location.y );
 
 		}
 

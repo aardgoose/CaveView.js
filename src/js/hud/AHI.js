@@ -1,6 +1,5 @@
 import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
-import { Line2Material } from '../materials/Line2Material';
 import { MutableGlyphString } from '../core/GlyphString';
 
 import {
@@ -13,7 +12,7 @@ import {
 	Vector3
 } from '../Three';
 
-import { MeshPhongNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { lights, MeshStandardNodeMaterial, MeshPhongNodeMaterial, LineBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
 
 // preallocated tmp objects
 const __xAxis = new Vector3( 1, 0, 0 );
@@ -102,13 +101,18 @@ class AHI extends Group {
 
 		const mRing   = new Mesh( ring, materials.getBezelMaterial() );
 		const mSphere = new Mesh( sphere, new MeshPhongNodeMaterial( { vertexColors: true, specular: 0x666666, shininess: 20 } ) );
-		const mBar    = new LineSegments2( bar,   new Line2Material( ctx, { color: cfg.themeValue( 'hud.ahi.bar' ) } ) );
-		const mMarks  = new LineSegments2( marks, new Line2Material( ctx, { color: cfg.themeValue( 'hud.ahi.marks' ) } ) );
+//		const mSphere = new Mesh( sphere, new MeshStandardNodeMaterial( { color: 0xffffff } ) );
+//		const mSphere = new Mesh( sphere, new MeshBasicNodeMaterial( { vertexColors: true } ) );
+		const mBar    = new LineSegments2( bar,   new LineBasicNodeMaterial(  { color: cfg.themeValue( 'hud.ahi.bar' ) } ) );
+		const mMarks  = new LineSegments2( marks, new LineBasicNodeMaterial(  { color: cfg.themeValue( 'hud.ahi.marks' ) } ) );
 
 		mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 		mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );
 		mRing.rotateOnAxis( new Vector3( 0, 0, 1 ), Math.PI / 8 );
 
+
+		mSphere.material.lightsNode = lights( hudObject.lights );
+		console.log( mSphere.material );
 		mSphere.dropBuffers();
 
 		globe.addStatic( mSphere );

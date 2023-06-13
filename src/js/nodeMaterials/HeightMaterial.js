@@ -1,10 +1,13 @@
-import { MeshPhongNodeMaterial, float, uniform, varying, vec2, texture, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { float, uniform, varying, vec2, texture, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { SubsurfaceMaterial } from './SubsufaceMaterial';
 
-class HeightMaterial extends MeshPhongNodeMaterial {
+class HeightMaterial extends SubsurfaceMaterial {
 
-	constructor ( ctx, options ) { // FIXME option handling
+	constructor ( ctx, options ) { // FIXME option handlin
 
-		super();
+		super( ctx, options );
+
+		this.name ='CV:HightMaterial';
 
 		const survey = ctx.survey;
 		const limits = survey.modelLimits;

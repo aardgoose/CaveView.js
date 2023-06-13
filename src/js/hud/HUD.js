@@ -69,6 +69,7 @@ function HUD ( viewer, renderer ) {
 		new ProgressDial( hudObject, false, 1, viewer )
 	];
 
+	hudObject.lights = [ aLight, dLight ];
 	const progressDial = progressDials [ 0 ];
 
 	newAttitudeGroup();

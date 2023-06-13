@@ -1,4 +1,4 @@
-import { expression, abs, cond, distance, float, fwidth, mix, smoothstep, texture, varying, vec3, vec4, positionGeometry, positionLocal } from 'three/examples/jsm/nodes/Nodes.js';
+import { materialColor, abs, cond, distance, float, fwidth, mix, smoothstep, texture, varying, vec3, vec4, positionGeometry, positionLocal } from 'three/examples/jsm/nodes/Nodes.js';
 import { CommonUniforms } from './CommonUniforms';
 
 class CommonComponents {
@@ -9,8 +9,8 @@ class CommonComponents {
         const ss = smoothstep( 0.0, cu.cursorWidth, cu.cursorWidth.sub( aDelta ) );
 
         return cond( aDelta.lessThan( cu.cursorWidth.mul( 0.05 ) ),
-            vec4( expression( 'vColor', 'vec3' ), 1.0 ),
-            vec4( mix( cu.baseColor, cu.cursorColor, ss ), 1.0 ).mul( expression( 'vColor', 'vec3' ), 1.0 )
+            vec4( materialColor, 1.0 ),
+            vec4( mix( cu.baseColor, cu.cursorColor, ss ), 1.0 ).mul( materialColor, 1.0 )
         );
 
     }

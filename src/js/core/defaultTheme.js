@@ -78,10 +78,11 @@ const defaultTheme = {
 		unselected: 'gray',
 		contours: {
 			line: 0xe1bba2,
-			line10: 0xf29d62,
+			line10: 'green',
 			interval: 10,
 			base: 'white'
 		},
+		ringColor: 'red',
 		/*
 		hypsometric: {
 			min: 0,

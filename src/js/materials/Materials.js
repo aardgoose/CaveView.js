@@ -4,13 +4,12 @@ import { ContourMaterial } from '../nodeMaterials/ContourMaterial';
 import { CursorMaterial } from '../nodeMaterials/CursorMaterial';
 import { DepthCursorMaterial } from '../nodeMaterials/DepthCursorMaterial';
 import { DepthMaterial } from '../nodeMaterials/DepthMaterial';
-import { EntrancePointMaterial } from './EntrancePointMaterial';
+import { EntrancePointMaterial } from '../nodeMaterials/EntrancePointMaterial';
 import { ExtendedPointsMaterial } from '../nodeMaterials/ExtendedPointsMaterial';
 import { GlyphAtlasCache } from './GlyphAtlas';
 import { GlyphMaterial } from './GlyphMaterial';
 import { HeightMaterial } from '../nodeMaterials/HeightMaterial';
 import { HypsometricMaterial } from '../nodeMaterials/HypsometricMaterial';
-import { Line2Material } from './Line2Material';
 import { WallMaterial } from '../nodeMaterials/WallMaterial';
 import { MissingMaterial } from '../nodeMaterials/MissingMaterial';
 import { SurveyLineMaterial } from './SurveyLineMaterial';
@@ -18,10 +17,10 @@ import { TextureCache } from '../core/TextureCache';
 
 import {
 	BackSide,
-	Color, FrontSide, IncrementStencilOp, LineBasicMaterial,
-	MeshLambertMaterial, Vector2, Vector3
+	Color, FrontSide, IncrementStencilOp,
+	Vector2, Vector3
 } from '../Three';
-import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { MeshPhongNodeMaterial, MeshBasicNodeMaterial, LineBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
 import { CommonUniforms } from '../nodeMaterials/CommonUniforms';
 
 function Materials ( viewer ) {
@@ -225,7 +224,7 @@ function Materials ( viewer ) {
 
 	this.getLine2Material = function ( params = { color: 'green' } ) {
 
-		const func = () => new Line2Material( ctx, params );
+		const func = () => new LineBasicNodeMaterial(  params );
 		const material = getCacheMaterial( 'line2' + JSON.stringify( params ), func, true );
 
 		return material;
@@ -292,7 +291,7 @@ function Materials ( viewer ) {
 
 	this.getUnselectedWallMaterial = function () {
 
-		const func = () => new MeshLambertMaterial( { color: 0x444444, vertexColors: true } );
+		const func = () => new MeshPhongNodeMaterial( { color: 0x444444, vertexColors: true } );
 		return getCacheMaterial( 'unselectedWall', func );
 
 	};
@@ -360,7 +359,7 @@ function Materials ( viewer ) {
 
 	this.getUnselectedMaterial = function () {
 
-		const func = () => new LineBasicMaterial( { color: 0x444444, vertexColors: true } );
+		const func = () => new LineBasicNodeMaterial( { color: 0x444444, vertexColors: true } );
 		return getCacheMaterial( 'unselected', func );
 
 	};

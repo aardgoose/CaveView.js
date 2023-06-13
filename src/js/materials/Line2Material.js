@@ -44,6 +44,7 @@ class Line2Material extends ShaderMaterial {
 			defines: defines
 		} );
 
+		console.warn( 'lm' );
 		this.dashed = false;
 		this.ctx = ctx;
 

@@ -1,13 +1,12 @@
-import { MeshPhongNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { SubsurfaceMaterial } from './SubsufaceMaterial';
 
-class WallMaterial extends MeshPhongNodeMaterial {
+class WallMaterial extends SubsurfaceMaterial {
 
 	constructor( ctx, options ) {
 
-		super( { color: ctx.cfg.themeColor( 'shading.single' ) } );
+		super( ctx, { color: ctx.cfg.themeColor( 'shading.single' ) } );
 
-
-		// FIXME location code
+		this.name = 'CV:WallMaterial';
 
 	}
 

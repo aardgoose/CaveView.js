@@ -14,7 +14,7 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 		super( ctx );
 
 		if ( terrain ) {
-
+console.log( 'hrhrsss');
 			if ( terrain.boundingBox === undefined ) terrain.computeBoundingBox();
 
 			const zMin = cfg.themeValue( 'shading.hypsometric.min', terrain.boundingBox.min.z );
@@ -25,7 +25,7 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 
 			const zMap = varying( saturate( positionGeometry.z.sub( minZ ).mul( scaleZ ) ) );
 
-			this.colorNode = CommonComponents.location( ctx, texture( textureCache.getTexture( 'hypsometric' ), vec2( zMap.oneMinus(), 1.0 ) ) );
+			this.colorNode = texture( textureCache.getTexture( 'hypsometric' ), vec2( zMap.oneMinus(), 1.0 ) );
 
 		}
 

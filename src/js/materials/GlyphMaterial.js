@@ -1,7 +1,8 @@
 import { ShaderMaterial, Vector2, Vector3 } from '../Three';
 import { Shaders } from './shaders/Shaders';
+import { MeshBasicNodeMaterial, float, uniform, varying, vec2, texture, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
 
-class GlyphMaterial extends ShaderMaterial {
+class GlyphMaterial extends MeshBasicNodeMaterial {
 
 	constructor ( ctx, glyphAtlas, rotation, viewer ) {
 

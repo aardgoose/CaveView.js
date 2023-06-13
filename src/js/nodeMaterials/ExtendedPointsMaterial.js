@@ -22,8 +22,6 @@ class ExtendedPointsMaterial extends PointsNodeMaterial {
 		this.colorNode = pointTexture.mul( color );
 		this.sizeNode = pSize;
 
-		return this;
-
 	}
 
 }

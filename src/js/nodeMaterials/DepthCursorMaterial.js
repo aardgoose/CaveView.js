@@ -1,12 +1,15 @@
-import { MeshPhongNodeMaterial, positionLocal } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
-import { CommonUniforms } from './CommonUniforms';
+import { positionLocal } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
+import { SubsurfaceMaterial } from './SubsufaceMaterial';
 import { CommonComponents } from './CommonComponents';
+import { CommonUniforms } from './CommonUniforms';
 
-class DepthCursorMaterial extends MeshPhongNodeMaterial {
+class DepthCursorMaterial extends SubsurfaceMaterial {
 
 	constructor( ctx, options ) {
 
-		super( { vertexColors: true } );
+		super( ctx, { vertexColors: true } );
+
+		this.name = 'CV:DepthCursorMaterial';
 
 		const survey = ctx.survey;
 		const surveyLimits = survey.modelLimits;

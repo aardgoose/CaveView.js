@@ -57,8 +57,8 @@ function HUD ( viewer, renderer ) {
 
 	let hudObject = new HudObject( viewer.ctx );
 
-	const aLight = new AmbientLight( 0x888888 );
-	const dLight = new DirectionalLight( 0xFFFFFF );
+	const aLight = new AmbientLight( 0x888888, 1 );
+	const dLight = new DirectionalLight( 0xFFFFFF, 1 );
 	dLight.position.set( -1, 1, 1 );
 
 	scene.addStatic( aLight );
@@ -69,6 +69,7 @@ function HUD ( viewer, renderer ) {
 		new ProgressDial( hudObject, false, 1, viewer )
 	];
 
+	hudObject.lights = [ aLight, dLight ];
 	const progressDial = progressDials [ 0 ];
 
 	newAttitudeGroup();

@@ -6,19 +6,20 @@ import { glconstants, glsl, glslThree } from './rollup-gl.mjs';
 
 export default [
 	{
+		treeshake: false,
 		input: 'src/js/CV2.js',
 		output: [
 			{
 				name: 'CV2',
 				file: 'build/CaveView/js/CaveView2.js',
-				format: 'umd'
-			},
+				format: 'es'
+			}/*,
 			{
 				name: 'CV2',
 				file: 'build/CaveView/js/CaveView2.min.js',
-				format: 'umd',
+				format: 'es',
 				plugins: [ terser() ]
-			}
+			}*/
 		],
 		plugins: [
 			glsl(),

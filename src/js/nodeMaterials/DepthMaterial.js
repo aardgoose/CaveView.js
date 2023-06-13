@@ -1,8 +1,9 @@
-import { MeshPhongNodeMaterial, texture, vec2, positionLocal } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { texture, vec2, positionLocal } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { SubsurfaceMaterial } from './SubsufaceMaterial';
 import { CommonComponents } from './CommonComponents';
 import { CommonUniforms } from './CommonUniforms';
 
-class DepthMaterial extends MeshPhongNodeMaterial {
+class DepthMaterial extends SubsurfaceMaterial {
 
 	constructor ( ctx, options ) {
 
@@ -11,7 +12,9 @@ class DepthMaterial extends MeshPhongNodeMaterial {
 		const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 		const textureCache = ctx.materials.textureCache;
 
-		super( { transparent: options.location } );
+		super( ctx, { transparent: options.location } );
+
+		this.name = 'CV:DepthMaterial';
 
 		const du = CommonUniforms.depth( ctx );
 
@@ -21,8 +24,6 @@ class DepthMaterial extends MeshPhongNodeMaterial {
 		const depth = terrainHeight.sub( positionLocal.z ).mul( du.depthScale );
 
 		this.colorNode = texture( textureCache.getTexture( gradient ), vec2( depth, 1.0 ) ); // FIXME vertex colot
-
-		// FIXME add location code
 
 	}
 

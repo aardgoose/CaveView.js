@@ -1,5 +1,6 @@
-import { Float32BufferAttribute, Mesh, MeshBasicMaterial, RingGeometry, Vector3 } from '../Three';
+import { Float32BufferAttribute, Mesh, RingGeometry, Vector3 } from '../Three';
 import { GlyphString } from '../core/GlyphString';
+import { MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
 
 class AngleScale extends Mesh {
 
@@ -34,7 +35,7 @@ class AngleScale extends Mesh {
 
 		geometry.setAttribute( 'color', ringColors );
 
-		super( geometry, new MeshBasicMaterial( { color: 0xffffff, vertexColors: true } ) );
+		super( geometry, new MeshBasicNodeMaterial( { color: 0xffffff, vertexColors: true } ) );
 
 		this.translateY( 3 * ( stdWidth + stdMargin ) + stdMargin + 30 );
 		this.translateX( - 40 - 5 );

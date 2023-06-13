@@ -17,24 +17,6 @@ class CommonTerrainMaterial extends MeshPhongNodeMaterial {
 
 	}
 
-	// FIXME add common location shader nodes here
-/*
-	commonBeforeCompile ( ctx, shader ) {
-
-		Object.assign(
-			shader.uniforms,
-			ctx.materials.uniforms.location
-		);
-
-		this.editFragmentShader(
-			shader,
-			'#include <location_fragment_pars>',
-			'#include <location_fragment>'
-		);
-
-	}
-*/
-
 }
 
 export { CommonTerrainMaterial };

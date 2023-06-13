@@ -32,7 +32,7 @@ function CaveViewUI ( viewer ) {
 
 	const keyboardControls = new KeyboardControls( viewer, fileSelector, cfg.value( 'avenControls', true ) );
 
-	initUI();
+	viewer.addEventListener( 'ready', initUI );
 
 	function selectFile( event ) {
 
@@ -44,6 +44,8 @@ function CaveViewUI ( viewer ) {
 	}
 
 	function initUI () {
+
+		if ( ! viewer.ready ) return;
 
 		// create UI side panel and reveal tabs
 		frame.clear();

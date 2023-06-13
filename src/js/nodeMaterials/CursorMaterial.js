@@ -1,13 +1,16 @@
-import { MeshPhongNodeMaterial, varying, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
-import { CommonUniforms } from './CommonUniforms';
+import { varying, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
+import { SubsurfaceMaterial } from './SubsufaceMaterial.js';
 import { CommonComponents } from './CommonComponents';
+import { CommonUniforms } from './CommonUniforms';
 
 
-class CursorMaterial extends MeshPhongNodeMaterial {
+class CursorMaterial extends SubsurfaceMaterial {
 
 	constructor ( ctx, options ) { // FIXME options handling
 
-		super( { vertexColors: true } );
+		super( ctx, { vertexColors: true } );
+
+		this.name = 'CV:CursorMaterial';
 
 		const survey = ctx.survey;
 		const limits = survey.modelLimits;

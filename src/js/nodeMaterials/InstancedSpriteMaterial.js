@@ -1,6 +1,6 @@
 import NodeMaterial from '../../../node_modules/three/examples/jsm/nodes/materials/NodeMaterial.js';
 import { MeshBasicMaterial } from 'three';
-import { positionGeometry, attribute,  uniform, texture, varying, vec4, modelViewProjection } from 'three/examples/jsm/nodes/Nodes.js';
+import { positionGeometry, attribute,  float, uniform, texture, varying, vec4, modelViewProjection } from 'three/examples/jsm/nodes/Nodes.js';
 
 const defaultValues = new MeshBasicMaterial();
 
@@ -22,10 +22,13 @@ class InstancedSpriteMaterial extends NodeMaterial {
 		this.lights = false;
 		this.normals = false;
 		this.isTest = true;
+		this.alphaTest = 0.8;
 
 		const instancePosition = attribute( 'instancePosition' );
+		const instanceColor = attribute( 'instanceColor' );
+		const instanceSize = attribute( 'instanceSize' );
 
-		const scale = uniform( 0.08, 'float' );
+		const scale = uniform( 0.005, 'float' ).mul( instanceSize );
 
 		// position of instance in screen space
 		const offset = modelViewProjection( vec4( instancePosition, 1.0 ) );
@@ -34,7 +37,7 @@ class InstancedSpriteMaterial extends NodeMaterial {
 		const pos = positionGeometry.xy.mul( scale ).mul( offset.w );
 
 		this.outputNode = vec4( pos, 0, 0 ).add( offset );
-		this.colorNode = texture( textureSrc, varying( attribute( 'uv' ) ) );
+		this.colorNode = texture( textureSrc, varying( attribute( 'uv' ) ) ).mul( instanceColor );
 
 		this.setValues( {} );
 
@@ -42,7 +45,6 @@ class InstancedSpriteMaterial extends NodeMaterial {
 
 	constructPosition( builder ) {
 
-		console.log( 'hgeh000');
 		return this.outputNode;
 
 	}

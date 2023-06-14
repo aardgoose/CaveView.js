@@ -31,6 +31,8 @@ class InstancedSpriteGeometry extends InstancedBufferGeometry {
 
 		this.instanceCount = instanceCount;
 
+		this.computeBoundingSphere();
+
 	}
 
 	setColors ( colors ) {
@@ -86,6 +88,35 @@ class InstancedSpriteGeometry extends InstancedBufferGeometry {
 		const instanceSize = this.getAttribute( 'instanceSize' );
 
 		return instanceSize.getX( index );
+
+	}
+
+
+	setAllPointColors ( color ) {
+
+		let instanceColor = this.getAttribute( 'instanceColor' );
+		let buffer;
+
+		if ( ! instanceColor ) {
+
+			buffer = new Float32Array( this.instantCount * 3 );
+			instanceColor = new InstancedBufferAttribute( buffer, 3, false, 1 );
+
+		} else {
+
+			buffer = instanceColor.array;
+
+		}
+
+		const l = buffer.length;
+
+		for ( let i = 0; i < l; i += 3 ) {
+
+			color.toArray( buffer, i );
+
+		}
+
+		instanceColor.needsUpdate = true;
 
 	}
 

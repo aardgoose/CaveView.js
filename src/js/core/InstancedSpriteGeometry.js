@@ -18,7 +18,7 @@ class InstancedSpriteGeometry extends InstancedBufferGeometry {
 		const instanceCount = positions.length;
 
 		const buffer = new Float32Array( instanceCount * 3 );
-		const instancePosition = new InstancedBufferAttribute( buffer, 3,false, 1 );
+		const instancePosition = new InstancedBufferAttribute( buffer, 3, false, 1 );
 
 		for ( let i = 0; i < instanceCount; i++ ) {
 

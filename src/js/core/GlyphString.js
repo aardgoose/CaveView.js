@@ -21,7 +21,9 @@ class GlyphStringBase extends Mesh {
 		this.labelOffset = new Vector2();
 		this.labelBox = new Box2();
 		this.lastFrame = 0;
+//		this.layers.set( 31 );
 
+//		this.layers.set = () => {};
 		this.updateLabelOffset();
 
 	}
@@ -169,7 +171,7 @@ class GlyphString extends GlyphStringBase {
 
 		super( text, glyphMaterial, geometry );
 
-		geometry.instanceBuffer.onUpload( Object3D.onUploadDropBuffer );
+//		geometry.instanceBuffer.onUpload( Object3D.onUploadDropBuffer );
 
 	}
 

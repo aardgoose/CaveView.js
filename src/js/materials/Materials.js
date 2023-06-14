@@ -7,7 +7,7 @@ import { DepthMaterial } from '../nodeMaterials/DepthMaterial';
 import { EntrancePointMaterial } from '../nodeMaterials/EntrancePointMaterial';
 import { ExtendedPointsMaterial } from '../nodeMaterials/ExtendedPointsMaterial';
 import { GlyphAtlasCache } from './GlyphAtlas';
-import { GlyphMaterial } from './GlyphMaterial';
+import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
 import { HeightMaterial } from '../nodeMaterials/HeightMaterial';
 import { HypsometricMaterial } from '../nodeMaterials/HypsometricMaterial';
 import { WallMaterial } from '../nodeMaterials/WallMaterial';

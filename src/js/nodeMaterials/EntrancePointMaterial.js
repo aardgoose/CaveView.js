@@ -12,7 +12,7 @@ class EntrancePointMaterial extends PointsNodeMaterial {
 			opacity: 1.0,
 			alphaTest: 0.8,
 			sizeAttenuation: false,
-			transparent: true,
+			transparent: false,
 			size: Math.max( dotSize, Math.floor( dotSize * ctx.container.clientWidth / 1000 ) ),
 			vertexColors: true
 		} );

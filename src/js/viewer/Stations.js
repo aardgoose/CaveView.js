@@ -1,23 +1,22 @@
-import {
-	BufferGeometry, Float32BufferAttribute, InterleavedBuffer, InterleavedBufferAttribute,
-	Matrix4, Points, Vector3, Vector4
-} from '../Three';
+import { Mesh, Matrix4, Vector3, Vector4 } from '../Three';
 
 import { STATION_ENTRANCE } from '../core/constants';
 import { PointIndicator } from './PointIndicator';
+import { ExtendedPointsMaterial } from '../nodeMaterials/ExtendedPointsMaterial';
+import { InstancedSpriteGeometry } from '../core/InstancedSpriteGeometry';
 
 const _position = new Vector4();
 const _ssOrigin = new Vector4();
 const _mouse = new Vector3();
 const _mvMatrix = new Matrix4();
 
-class Stations extends Points {
+class Stations extends Mesh {
 
 	constructor ( survey ) {
 
 		const ctx = survey.ctx;
 
-		super( new BufferGeometry, ctx.materials.getExtendedPointsMaterial() );
+		super( new InstancedSpriteGeometry(), new ExtendedPointsMaterial( ctx ) );
 
 		this.type = 'CV.Stations';
 		this.stationCount = 0;
@@ -219,6 +218,7 @@ class Stations extends Points {
 
 	selectStationByIndex ( index ) {
 
+		return;
 		const pSize = this.geometry.getAttribute( 'pSize' );
 
 		if ( this.selected !== null ) {
@@ -237,7 +237,7 @@ class Stations extends Points {
 	}
 
 	selectStations ( selection ) {
-
+		return;
 		const vertices = this.vertices;
 		const l = vertices.length;
 		const pSize = this.geometry.getAttribute( 'pSize' );
@@ -281,18 +281,7 @@ class Stations extends Points {
 
 	finalise () {
 
-		const bufferGeometry = this.geometry;
-
-		const buffer = new Float32Array( this.instanceData );
-		const instanceBuffer = new InterleavedBuffer( buffer, 6 ); // position, color
-
-		bufferGeometry.setAttribute( 'position', new InterleavedBufferAttribute( instanceBuffer, 3, 0 ) );
-		bufferGeometry.setAttribute( 'color', new InterleavedBufferAttribute( instanceBuffer, 3, 3 ) );
-
-		// non-interleaved to avoid excess data uploads to GPU
-		bufferGeometry.setAttribute( 'pSize', new Float32BufferAttribute( this.pointSizes, 1 ) );
-
-		this.instanceData = null;
+		this.geometry.setPositions( this.vertices );
 
 	}
 

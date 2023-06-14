@@ -1,26 +1,13 @@
-import { attribute, pointUV, texture, PointsNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { InstancedSpriteMaterial } from './InstancedSpriteMaterial';
 
-class ExtendedPointsMaterial extends PointsNodeMaterial {
+class ExtendedPointsMaterial extends InstancedSpriteMaterial {
+
 
 	constructor ( ctx ) {
 
-		super( {
-			opacity: 1.0,
-			alphaTest: 0.8,
-			depthWrite: false,
-			transparent: true,
-			sizeAttenuation: false
-		} );
-
-		const pSize = attribute( 'pSize', 'float' );
-		const color = attribute( 'color', 'vec3' );
-
 		const textureCache = ctx.materials.textureCache;
 
-		const pointTexture = texture( textureCache.getTexture( 'disc' ), pointUV );
-
-		this.colorNode = pointTexture.mul( color );
-		this.sizeNode = pSize;
+		super( textureCache.getTexture( 'disc' ) );
 
 	}
 

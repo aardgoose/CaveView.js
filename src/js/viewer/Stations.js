@@ -18,7 +18,7 @@ class Stations extends Mesh {
 
 		super( new InstancedSpriteGeometry(), new ExtendedPointsMaterial( ctx ) );
 
-		this.type = 'CV.Stations';
+		this.type = 'CV:Stations';
 		this.stationCount = 0;
 		this.ctx = ctx;
 
@@ -29,8 +29,8 @@ class Stations extends Mesh {
 		this.entranceColor = cfg.themeColor( 'stations.entrances.marker' );
 
 		this.vertices = [];
-		this.pointSizes = [];
-		this.instanceData = [];
+		this.colors = [];
+		this.sizes = [];
 
 		this.survey = survey;
 		this.selected = null;
@@ -45,10 +45,11 @@ class Stations extends Mesh {
 
 		this.addStatic( point );
 		this.highlightPoint = point;
+
 	}
 
 	raycast( raycaster, intersects ) {
-
+		// FIXME -
 		// screen space raycasing for stations
 
 		if ( ! this.visible ) return intersects;
@@ -133,30 +134,24 @@ class Stations extends Mesh {
 
 		if ( node.stationVertexIndex != -1 ) return; // duplicated entry
 
-		const instanceData = this.instanceData;
-		const offset = instanceData.length;
-
-		let pointSize = 0.0;
+		let size = 0.0;
 		let color;
 
 		if ( node.type & STATION_ENTRANCE ) {
 
 			color = this.entranceColor;
-			pointSize = 12.0;
+			size = 12.0;
 
 		} else {
 
 			color = node.effectiveConnections() > 2 ? this.junctionColor : this.baseColor;
-			pointSize = 8.0;
+			size = 8.0;
 
 		}
 
 		this.vertices.push( node );
-
-		node.toArray( instanceData, offset );
-		color.toArray( instanceData, offset + 3 );
-
-		this.pointSizes.push( pointSize );
+		this.colors.push( color );
+		this.sizes.push( size );
 
 		node.stationVertexIndex = this.stationCount++;
 
@@ -180,11 +175,7 @@ class Stations extends Mesh {
 
 		if ( this.selected !== null ) {
 
-			const pSize = this.geometry.getAttribute( 'pSize' );
-
-			pSize.setX( this.selected, this.selectedSize );
-			pSize.needsUpdate = true;
-
+			this.geometry.setPointSize( this.selected, this.selectedSize );
 			this.selected = null;
 
 		}
@@ -218,32 +209,25 @@ class Stations extends Mesh {
 
 	selectStationByIndex ( index ) {
 
-		return;
-		const pSize = this.geometry.getAttribute( 'pSize' );
+		this.clearSelected();
 
-		if ( this.selected !== null ) {
+		this.selectedSize = this.geometry.getPointSize( index );
 
-			pSize.setX( this.selected, this.selectedSize );
-
-		}
-
-		this.selectedSize = pSize.getX( index );
-
-		pSize.setX( index, this.selectedSize * 2 );
-		pSize.needsUpdate = true;
+		this.geometry.setPointSize( index, this.selectedSize * 2 );
 
 		this.selected = index;
 
 	}
 
 	selectStations ( selection ) {
-		return;
+
 		const vertices = this.vertices;
 		const l = vertices.length;
-		const pSize = this.geometry.getAttribute( 'pSize' );
 		const splaySize = this.splaysVisible ? 6.0 : 0.0;
 		const idSet = selection.getIds();
 		const isEmpty = selection.isEmpty();
+
+		const geometry = this.geometry;
 
 		for ( let i = 0; i < l; i++ ) {
 
@@ -263,11 +247,11 @@ class Stations extends Mesh {
 
 				}
 
-				pSize.setX( i, size );
+				geometry.setPointSize( i, size );
 
 			} else {
 
-				pSize.setX( i, 0 );
+				geometry.setPointSize( i, 0 );
 
 				if ( node.label !== undefined ) node.label.visible = false;
 
@@ -275,13 +259,16 @@ class Stations extends Mesh {
 
 		}
 
-		pSize.needsUpdate = true;
-
 	}
 
 	finalise () {
 
 		this.geometry.setPositions( this.vertices );
+		this.geometry.setColors( this.colors );
+		this.geometry.setSizes( this.sizes );
+
+		this.sizes = null;
+		this.points = null;
 
 	}
 
@@ -291,9 +278,9 @@ class Stations extends Mesh {
 		const splaySize = visible ? 6.0 : 0.0;
 
 		const vertices = this.vertices;
-		const pSize = this.geometry.getAttribute( 'pSize' );
 		const l = vertices.length;
 		const selection = this.selection;
+		const geometry = this.geometry;
 
 		for ( let i = 0; i < l; i++ ) {
 
@@ -301,13 +288,12 @@ class Stations extends Mesh {
 
 			if ( node.connections === 0 && ( splaySize === 0 || selection.contains( node.id ) ) ) {
 
-				pSize.setX( i, splaySize );
+				geometry.setPointSize( i, splaySize );
 
 			}
 
 		}
 
-		pSize.needsUpdate = true;
 	}
 
 	resetPaths () {

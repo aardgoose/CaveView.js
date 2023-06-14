@@ -1,6 +1,6 @@
 import {
-	InstancedBufferGeometry, InstancedInterleavedBuffer,
-	InterleavedBufferAttribute, Float32BufferAttribute
+	InstancedBufferGeometry,
+	InstancedBufferAttribute, Float32BufferAttribute
 } from '../Three';
 
 import { CommonAttributes } from './CommonAttributes';
@@ -49,16 +49,15 @@ class GlyphStringGeometry extends InstancedBufferGeometry {
 
 		this.glyphAtlas = glyphAtlas;
 
-		const buffer = new Float32Array( text.length * 4 );
-		const instanceBuffer = new InstancedInterleavedBuffer( buffer, 4, 1 ); // uv, offset, widths
+		const length = text.length;
 
-		this.instanceBuffer = instanceBuffer;
-
-		this.setAttribute( 'instanceUvs', new InterleavedBufferAttribute( instanceBuffer, 2, 0 ) );
-		this.setAttribute( 'instanceOffsets', new InterleavedBufferAttribute( instanceBuffer, 1, 2 ) );
-		this.setAttribute( 'instanceWidths', new InterleavedBufferAttribute( instanceBuffer, 1, 3 ) );
+		this.setAttribute( 'instanceUV', new InstancedBufferAttribute( new Float32Array( length * 2 ), 2, false, 1) );
+		this.setAttribute( 'instanceOffset', new InstancedBufferAttribute( new Float32Array( length ), 1, false, 1 ) );
+		this.setAttribute( 'instanceWidth', new InstancedBufferAttribute( new Float32Array( length ), 1, false, 1 ) );
 
 		this.setString( text );
+
+		this.instanceCount = length;
 
 		this.computeBoundingSphere();
 
@@ -80,9 +79,9 @@ class GlyphStringGeometry extends InstancedBufferGeometry {
 
 	setString ( text ) {
 
-		const instanceUvs = this.getAttribute( 'instanceUvs' );
-		const instanceOffsets = this.getAttribute( 'instanceOffsets' );
-		const instanceWidths = this.getAttribute( 'instanceWidths' );
+		const instanceUV = this.getAttribute( 'instanceUV' );
+		const instanceOffset = this.getAttribute( 'instanceOffset' );
+		const instanceWidth = this.getAttribute( 'instanceWidth' );
 
 		const l = text.length, glyphAtlas = this.glyphAtlas;
 
@@ -93,17 +92,17 @@ class GlyphStringGeometry extends InstancedBufferGeometry {
 			if ( text.charCodeAt( i ) === 0 ) continue; // skip null characters
 			const glyphData = glyphAtlas.getGlyph( text[ i ] );
 
-			instanceUvs.setXY( i, glyphData.column, glyphData.row );
-			instanceWidths.setX( i, glyphData.width );
-			instanceOffsets.setX( i, offset );
+			instanceUV.setXY( i, glyphData.column, glyphData.row );
+			instanceWidth.setX( i, glyphData.width );
+			instanceOffset.setX( i, offset );
 
 			offset += glyphData.width;
 
 		}
 
-		instanceUvs.needsUpdate = true;
-		instanceOffsets.needsUpdate = true;
-		instanceWidths.needsUpdate = true;
+		instanceUV.needsUpdate = true;
+		instanceOffset.needsUpdate = true;
+		instanceWidth.needsUpdate = true;
 
 		this.width = offset;
 		this.name = text;

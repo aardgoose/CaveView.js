@@ -4,8 +4,9 @@ import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 
 import { PlaneGeometry } from '../Three';
-import { MeshBasicNodeMaterial, LineBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { MeshBasicNodeMaterial } from '../Nodes';
 import { Line2Material } from '../nodeMaterials/Line2Material';
+import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
 
 class CursorScale extends Scale {
 
@@ -43,7 +44,7 @@ class CursorScale extends Scale {
 			font: 'bold helvetica,sans-serif'
 		};
 
-		const material = materials.getGlyphMaterial( 'hud.cursor.text' );
+		const material = materials.getMaterial( GlyphMaterial, 'hud.cursor.text' );
 
 		const cursorLabel = new MutableGlyphString( '      ', material );
 

@@ -1,4 +1,5 @@
 import { BufferGeometry, Float32BufferAttribute, Mesh } from '../../Three';
+import { MeshPhongNodeMaterial } from '../Nodes';
 
 class Walls extends Mesh {
 
@@ -11,8 +12,11 @@ class Walls extends Mesh {
 
 		const geometry = new BufferGeometry();
 
-		super( geometry, ctx.materials.getUnselectedWallMaterial() );
+		const material = ctx.materials.getMaterial( MeshPhongNodeMaterial, { color: 0x444444, vertexColors: true } );
 
+		super( geometry, material );
+
+		this.unselectedMaterial = material;
 		this.ctx = ctx;
 		this.type = 'Walls';
 
@@ -50,7 +54,7 @@ class Walls extends Mesh {
 
 		if ( idSet.length > 0 && indexRuns ) {
 
-			this.material = [ selectedMaterial, materials.getUnselectedWallMaterial() ];
+			this.material = [ selectedMaterial, this.unselectedMaterial ];
 
 			let indexRun = indexRuns[ 0 ];
 

@@ -1,4 +1,4 @@
-import { texture, vec2, positionLocal } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { texture, vec2, positionLocal } from '../Nodes';
 import { SubsurfaceMaterial } from './SubsufaceMaterial';
 import { CommonComponents } from './CommonComponents';
 import { CommonUniforms } from './CommonUniforms';

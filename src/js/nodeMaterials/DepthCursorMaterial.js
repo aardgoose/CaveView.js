@@ -1,4 +1,4 @@
-import { positionLocal } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
+import { positionLocal } from '../Nodes.js';
 import { SubsurfaceMaterial } from './SubsufaceMaterial';
 import { CommonComponents } from './CommonComponents';
 import { CommonUniforms } from './CommonUniforms';

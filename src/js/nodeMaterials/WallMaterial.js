@@ -2,7 +2,7 @@ import { SubsurfaceMaterial } from './SubsufaceMaterial';
 
 class WallMaterial extends SubsurfaceMaterial {
 
-	constructor( ctx, options ) {
+	constructor( options, ctx ) {
 
 		super( ctx, { color: ctx.cfg.themeColor( 'shading.single' ) } );
 

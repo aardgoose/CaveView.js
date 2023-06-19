@@ -1,6 +1,7 @@
 import { Float32BufferAttribute, Mesh, RingGeometry, Vector3 } from '../Three';
 import { GlyphString } from '../core/GlyphString';
-import { MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { MeshBasicNodeMaterial } from '../Nodes';
+import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
 
 class AngleScale extends Mesh {
 
@@ -44,7 +45,7 @@ class AngleScale extends Mesh {
 
 		this.name = 'CV.AngleScale';
 
-		const material = materials.getGlyphMaterial( 'hud.text' );
+		const material = materials.getMaterial( GlyphMaterial, 'hud.text' );
 		const label = new GlyphString( caption, material, hudObject.ctx );
 
 		label.translateX( - label.getWidth() / 2 );

@@ -8,8 +8,8 @@ import {
 	RingGeometry,
 	Vector3
 } from '../Three';
-import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
-
+import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from '../Nodes';
+import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
 import { MutableGlyphString } from '../core/GlyphString';
 
 const __direction = new Vector3();
@@ -60,7 +60,7 @@ class Compass extends Group {
 
 		this.lastRotation = 0;
 
-		const material = materials.getGlyphMaterial( 'hud.text' );
+		const material = materials.getMaterial( GlyphMaterial, 'hud.text' );
 		const label = new MutableGlyphString( '000\u00B0', material );
 
 		label.translateX( - label.getWidth() / 2 );

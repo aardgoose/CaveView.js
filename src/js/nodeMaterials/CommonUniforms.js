@@ -1,5 +1,5 @@
 import { Vector3 } from '../Three';
-import { uniform, vec2 } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { uniform, vec2 } from '../Nodes';
 
 class CommonUniforms {
 

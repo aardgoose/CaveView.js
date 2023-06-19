@@ -1,4 +1,4 @@
-import { materialColor, abs, cond, distance, float, fwidth, mix, smoothstep, texture, varying, vec3, vec4, positionGeometry, positionLocal } from 'three/examples/jsm/nodes/Nodes.js';
+import { materialColor, abs, cond, distance, float, fwidth, mix, smoothstep, texture, varying, vec3, vec4, positionGeometry, positionLocal } from '../Nodes.js';
 import { CommonUniforms } from './CommonUniforms';
 
 class CommonComponents {

@@ -1,14 +1,16 @@
 import { Vector2, Vector3 } from '../Three';
-import { attribute, modelViewProjection, shader, NodeMaterial, float, uniform, varying, vec2, vec4, texture, positionGeometry, modelViewMatrix } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { attribute, modelViewProjection, shader, NodeMaterial, float, uniform, varying, vec2, vec4, texture, positionGeometry, modelViewMatrix } from '../Nodes';
 import { GlyphAtlasCache } from '../materials/GlyphAtlasCache';
 
 let id = 0;
+
 class GlyphMaterial extends NodeMaterial {
 
-	constructor ( ctx, type, viewer ) {
+	constructor ( type, ctx ) {
 
 		const glyphAtlas = GlyphAtlasCache.getAtlas( type, ctx );
 
+		const viewer = ctx.viewer;
 		const rotation = ctx.cfg.themeAngle( `${type}.rotation` );
 		const container = viewer.container;
 		const realPixels = glyphAtlas.cellSize * 2;

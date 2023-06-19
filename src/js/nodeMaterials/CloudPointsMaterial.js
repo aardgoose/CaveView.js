@@ -1,5 +1,5 @@
 import { Color, Vector3 } from '../Three';
-import { PointsNodeMaterial, texture, vec2, positionLocal } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { PointsNodeMaterial, texture, vec2, positionLocal } from '../Nodes';
 
 class CloudPointsMaterial extends PointsNodeMaterial {
 

@@ -1,5 +1,5 @@
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
-import { fract, fwidth, step, cond, mix, smoothstep, uniform, vec4, positionLocal, materialOpacity } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { fract, fwidth, step, cond, mix, smoothstep, uniform, vec4, positionLocal, materialOpacity } from '../Nodes';
 
 class ContourMaterial extends CommonTerrainMaterial {
 

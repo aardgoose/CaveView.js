@@ -1,4 +1,4 @@
-import { float, uniform, varying, vec2, texture, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { float, uniform, varying, vec2, texture, positionGeometry } from '../Nodes';
 import { SubsurfaceMaterial } from './SubsufaceMaterial';
 
 class HeightMaterial extends SubsurfaceMaterial {

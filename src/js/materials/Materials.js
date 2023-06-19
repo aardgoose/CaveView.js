@@ -1,6 +1,5 @@
 import { ClusterMaterial } from '../nodeMaterials/ClusterMaterial';
 import { ColourCache } from '../core/ColourCache';
-import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
 import { WallMaterial } from '../nodeMaterials/WallMaterial';
 import { SurveyLineMaterial } from './SurveyLineMaterial';
 import { TextureCache } from '../core/TextureCache';
@@ -11,7 +10,7 @@ import {
 	Color, FrontSide, IncrementStencilOp,
 	Vector2, Vector3
 } from '../Three';
-import { MeshPhongNodeMaterial, LineBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { LineBasicNodeMaterial } from '../Nodes';
 import { CommonUniforms } from '../nodeMaterials/CommonUniforms';
 
 function Materials ( viewer ) {
@@ -38,9 +37,6 @@ function Materials ( viewer ) {
 
 	this.colourCache = colourCache;
 	this.textureCache = textureCache;
-
-	const gradientType = cfg.value( 'saturatedGradient', false ) || cfg.themeValue( 'saturatedGradient' );
-	const gradient = gradientType ? 'gradientHi' : 'gradientLow';
 
 	this.uniforms = {
 		common: {
@@ -168,9 +164,9 @@ function Materials ( viewer ) {
 
 	}
 
-	function getWallMaterial ( name, materialClass, stencil ) {
+	this.getSingleWallMaterial = function () {
 
-		const material = getSurveyCacheMaterial( name, () => new materialClass( ctx, { location: locationMode } ), stencil );
+		const material = getSurveyCacheMaterial( 'single', () => new WallMaterial( ctx, { location: locationMode } ), true );
 
 		wallMaterials.add( material );
 
@@ -240,6 +236,16 @@ function Materials ( viewer ) {
 
 	};
 
+	this.getSingleWallMaterial = function () {
+
+		const material = getSurveyCacheMaterial( 'single', () => new WallMaterial( ctx, { location: locationMode } ), true );
+
+		wallMaterials.add( material );
+
+		return material;
+
+	}
+
 	this.getSurveyLineMaterial = function ( mode = '', dashed = false ) {
 
 		return this.getMaterial( Line2Material, { color: 'cyan' } );
@@ -263,39 +269,10 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getSingleWallMaterial = function  () {
-
-		return getWallMaterial( 'single', WallMaterial, true );
-
-	};
-
-
-	this.getUnselectedWallMaterial = function () {
-
-		const func = () => new MeshPhongNodeMaterial( { color: 0x444444, vertexColors: true } );
-		return getCacheMaterial( 'unselectedWall', func );
-
-	};
-
-	this.getSurfaceMaterial = function  () {
-
-		const func = () => new MeshLambertMaterial( { color: cfg.themeValue( 'shading.single' ), vertexColors: false } );
-		return getCacheMaterial( 'surface', func, true );
-
-	};
-
 	this.getUnselectedMaterial = function () {
 
 		const func = () => new LineBasicNodeMaterial( { color: 0x444444, vertexColors: true } );
 		return getCacheMaterial( 'unselected', func );
-
-	};
-
-	this.getGlyphMaterial = function ( type ) {
-
-		const func = () => new GlyphMaterial( ctx, type, viewer ); // FIXME move rotation into config
-
-		return getCacheMaterial( type, func );
 
 	};
 

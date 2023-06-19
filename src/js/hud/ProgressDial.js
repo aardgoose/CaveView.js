@@ -1,6 +1,7 @@
 import { Float32BufferAttribute, Mesh, Object3D, RingGeometry } from '../Three';
 import { MutableGlyphString } from '../core/GlyphString';
-import { MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
+import { MeshBasicNodeMaterial } from '../Nodes.js';
+import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
 
 class ProgressDial extends Mesh {
 
@@ -44,7 +45,7 @@ class ProgressDial extends Mesh {
 
 		if ( addText ) {
 
-			const glyphMaterial = materials.getGlyphMaterial( 'hud.text' );
+			const glyphMaterial = materials.getMaterial( GlyphMaterial, 'hud.text' );
 			const pcent = new MutableGlyphString( '----', glyphMaterial );
 
 			pcent.translateY( pcent.getWidth() / 2 );

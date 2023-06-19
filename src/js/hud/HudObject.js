@@ -1,5 +1,5 @@
 import { CylinderGeometry } from '../Three';
-import { MeshBasicNodeMaterial, MeshPhongNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { MeshBasicNodeMaterial, MeshPhongNodeMaterial } from '../Nodes';
 
 class HudObject {
 

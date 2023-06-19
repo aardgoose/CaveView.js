@@ -1,4 +1,4 @@
-import { MeshPhongNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { MeshPhongNodeMaterial } from '../Nodes';
 
 class SubsurfaceMaterial extends MeshPhongNodeMaterial {
 

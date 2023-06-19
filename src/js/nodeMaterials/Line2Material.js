@@ -1,5 +1,5 @@
 import { MeshBasicMaterial, Color, Vector2 } from '../Three';
-import { NodeMaterial, materialColor, ShaderNode, positionGeometry, abs, shader, attribute, color, cond, cross, discard, dot, mix, normalize, float, uniform, texture, varying, vec2, vec3, vec4, modelViewMatrix, modelViewProjection, cameraProjectionMatrix } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
+import { NodeMaterial, materialColor, ShaderNode, positionGeometry, abs, shader, attribute, cond, discard, mix, normalize, uniform, varying, vec2, vec3, vec4, modelViewMatrix, cameraProjectionMatrix } from '../Nodes.js';
 
 const defaultValues = new MeshBasicMaterial();
 

@@ -1,6 +1,6 @@
 import { PlaneGeometry } from '../Three';
 import { Scale } from './Scale';
-import { MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
+import { MeshBasicNodeMaterial } from '../Nodes.js';
 
 class LinearScale extends Scale {
 

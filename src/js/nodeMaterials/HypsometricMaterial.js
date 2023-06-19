@@ -1,5 +1,5 @@
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
-import { saturate, texture, uniform, varying, vec2, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { saturate, texture, uniform, varying, vec2, positionGeometry } from '../Nodes';
 import { CommonComponents } from './CommonComponents';
 
 class HypsometricMaterial extends CommonTerrainMaterial {

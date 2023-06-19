@@ -55,7 +55,6 @@ const defaultTheme = {
 		default: 'gray'
 	},
 	stations: {
-		font: 'normal Arial, sans-serif',
 		default: {
 			text: {
 				color: 'white',

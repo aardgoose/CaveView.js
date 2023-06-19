@@ -1,6 +1,6 @@
 import { AmbientLight, DirectionalLight, Group, MathUtils, Object3D, Vector3 } from '../Three';
 import { LM_NONE, LM_SINGLE, LM_MULTIPLE } from '../core/constants';
-import { lights } from 'three/examples/jsm/nodes/Nodes.js';
+import { lights } from '../Nodes';
 
 function LightingManager ( ctx, scene ) {
 

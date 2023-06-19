@@ -1,4 +1,4 @@
-import { varying, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
+import { varying, positionGeometry } from '../Nodes.js';
 import { SubsurfaceMaterial } from './SubsufaceMaterial.js';
 import { CommonComponents } from './CommonComponents';
 import { CommonUniforms } from './CommonUniforms';

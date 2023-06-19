@@ -1,4 +1,4 @@
-import { MeshBasicNodeMaterial, shader, float, fract, temp, uniform, varying, vec3, vec4, positionGeometry } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { MeshBasicNodeMaterial, shader, float, fract, temp, uniform, varying, vec3, vec4, positionGeometry } from '../Nodes';
 
 class DepthMapMaterial extends MeshBasicNodeMaterial {
 

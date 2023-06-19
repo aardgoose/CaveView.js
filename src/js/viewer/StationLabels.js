@@ -1,6 +1,7 @@
 import { Group, Vector3 } from '../Three';
 import { CAMERA_OFFSET, LABEL_STATION, LABEL_STATION_COMMENT } from '../core/constants';
 import { GlyphString } from '../core/GlyphString';
+import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
 
 const _tmpVector3 = new Vector3();
 
@@ -17,10 +18,10 @@ class StationLabels extends Group {
 
 		const materials = ctx.materials;
 
-		this.defaultLabelMaterial = materials.getGlyphMaterial( 'stations.default.text' );
-		this.splayLabelMaterial = materials.getGlyphMaterial( 'stations.default.text' );
-		this.junctionLabelMaterial = materials.getGlyphMaterial( 'stations.junctions.text' );
-		this.linkedLabelMaterial = materials.getGlyphMaterial( 'stations.linked.text' );
+		this.defaultLabelMaterial = materials.getMaterial( GlyphMaterial, 'stations.default.text' );
+		this.splayLabelMaterial = materials.getMaterial( GlyphMaterial, 'stations.default.text' );
+		this.junctionLabelMaterial = materials.getMaterial( GlyphMaterial, 'stations.junctions.text' );
+		this.linkedLabelMaterial = materials.getMaterial( GlyphMaterial, 'stations.linked.text' );
 
 	}
 

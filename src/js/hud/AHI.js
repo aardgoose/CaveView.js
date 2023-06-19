@@ -1,6 +1,7 @@
 import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { MutableGlyphString } from '../core/GlyphString';
+import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
 
 import {
 	Float32BufferAttribute,
@@ -12,7 +13,7 @@ import {
 	Vector3
 } from '../Three';
 
-import { lights, MeshPhongNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { lights, MeshPhongNodeMaterial } from '../Nodes';
 import { Line2Material } from '../nodeMaterials/Line2Material';
 
 // preallocated tmp objects
@@ -129,7 +130,7 @@ class AHI extends Group {
 
 		this.globe = globe;
 
-		const material = materials.getGlyphMaterial( 'hud.text' );
+		const material = materials.getMaterial( GlyphMaterial, 'hud.text' );
 		const label = new MutableGlyphString( '-90\u00B0', material );
 
 		label.translateX( - label.getWidth() / 2 );

@@ -1,6 +1,6 @@
 import { ShaderMaterial, Vector2 } from '../Three';
 import { Shaders } from './shaders/Shaders';
-import { float, texture, uniform, varying, vec2, vec3, vec4, cameraProjectionMatrix, modelViewMatrix, positionLocal, positionGeometry, NodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { float, texture, uniform, varying, vec2, vec3, vec4, cameraProjectionMatrix, modelViewMatrix, positionLocal, positionGeometry, NodeMaterial } from '../Nodes';
 /*
 class PopupMaterial extends NodeMaterial {
 

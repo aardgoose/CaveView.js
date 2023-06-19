@@ -1,5 +1,5 @@
 import { CanvasTexture } from '../Three';
-import { PointsNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { PointsNodeMaterial } from '../Nodes';
 
 class ClusterMaterial extends PointsNodeMaterial {
 

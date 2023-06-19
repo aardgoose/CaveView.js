@@ -4,7 +4,7 @@ import { EPSG4326TileSet } from './EPSG4326TileSet';
 import { EPSG3857TileSet } from './EPSG3857TileSet';
 import { Tile, TILE_EVICTED, TILE_PENDING, TILE_ACTIVE } from './Tile';
 import { dataURL } from '../core/lib';
-import { MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
+import { MeshBasicNodeMaterial } from '../Nodes.js';
 
 const __frustum = new Frustum();
 const __matrix4 = new Matrix4();

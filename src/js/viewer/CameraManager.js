@@ -12,7 +12,7 @@ import {
 } from '../core/constants';
 
 import { AnaglyphEffect } from './AnaglyphEffect';
-import { MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { MeshBasicNodeMaterial } from '../Nodes';
 
 
 const __rotation = new Euler();

@@ -1,6 +1,7 @@
 import { BufferGeometry, Float32BufferAttribute, Group, Mesh } from '../Three';
 import { MutableGlyphString } from '../core/GlyphString';
-import { MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
+import { MeshBasicNodeMaterial } from '../Nodes.js';
+import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
 
 class BarGeometry extends BufferGeometry {
 
@@ -84,7 +85,7 @@ class ScaleBar extends Group {
 		this.position.set( -container.clientWidth / 2 + 45, -container.clientHeight / 2 + leftMargin, 0 );
 		this.scaleMax = container.clientWidth - ( 40 + leftMargin + rightMargin );
 
-		const material = materials.getGlyphMaterial( 'hud.text' );
+		const material = materials.getMaterial( GlyphMaterial, 'hud.text' );
 		const label = new MutableGlyphString( '--------', material );
 
 		label.translateX( 0 );

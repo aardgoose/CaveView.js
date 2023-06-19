@@ -1,5 +1,5 @@
 import { MeshBasicMaterial } from 'three';
-import { NodeMaterial, positionGeometry, attribute, uniform, texture, varying, vec4, modelViewProjection } from 'three/examples/jsm/nodes/Nodes.js';
+import { NodeMaterial, positionGeometry, attribute, uniform, texture, varying, vec4, modelViewProjection } from '../Nodes.js';
 
 const defaultValues = new MeshBasicMaterial();
 

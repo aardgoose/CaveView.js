@@ -1,5 +1,6 @@
 import { Object3D, Plane, Triangle, Vector3 } from '../Three';
 import { FEATURE_ENTRANCES, CLUSTER_MARKERS } from '../core/constants';
+import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
 import { GlyphString } from '../core/GlyphString';
 import { Marker } from './Marker';
 
@@ -266,7 +267,7 @@ class ClusterMarkers extends Object3D {
 		this.labels = [];
 		this.ctx = ctx;
 
-		const material = ctx.materials.getGlyphMaterial( 'stations.entrances.text' );
+		const material = ctx.materials.getMaterial( GlyphMaterial, 'stations.entrances.text' );
 
 		material.depthTest = true;
 		material.transparent = false;

@@ -46,7 +46,6 @@ class Walls extends Mesh {
 
 		const geometry = this.geometry;
 		const indexRuns = this.indexRuns;
-		const materials = this.ctx.materials;
 
 		geometry.clearGroups();
 

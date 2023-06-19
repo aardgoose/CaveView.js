@@ -1,4 +1,4 @@
-import { Box2, Mesh, Object3D, Vector2, Vector3, Vector4 } from '../Three';
+import { Box2, Mesh, Vector2, Vector3, Vector4 } from '../Three';
 import { GlyphStringGeometry, GlyphStringGeometryCache } from './GlyphStringGeometry';
 
 // temporary objects for raycasting
@@ -21,9 +21,7 @@ class GlyphStringBase extends Mesh {
 		this.labelOffset = new Vector2();
 		this.labelBox = new Box2();
 		this.lastFrame = 0;
-//		this.layers.set( 31 );
 
-//		this.layers.set = () => {};
 		this.updateLabelOffset();
 
 	}

@@ -38,12 +38,6 @@ class CursorScale extends Scale {
 
 		const cursor = new LineSegments2( cursorGeometry, materials.getMaterial( Line2Material, { color: cfg.themeColor( 'hud.cursor.color' ) } ) );
 
-		const atlasSpec = {
-			color: cfg.themeColorCSS( 'hud.cursor' ),
-			background: '#444444',
-			font: 'bold helvetica,sans-serif'
-		};
-
 		const material = materials.getMaterial( GlyphMaterial, 'hud.cursor.text' );
 
 		const cursorLabel = new MutableGlyphString( '      ', material );

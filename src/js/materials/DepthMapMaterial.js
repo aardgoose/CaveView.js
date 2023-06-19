@@ -1,25 +1,45 @@
-import { ShaderMaterial } from '../Three';
-import { Shaders } from './shaders/Shaders';
+import { MeshBasicNodeMaterial, shader, float, fract, uniform, varying, vec3, vec4, positionGeometry } from '../Nodes';
 
-class DepthMapMaterial extends ShaderMaterial {
+class DepthMapMaterial extends MeshBasicNodeMaterial {
 
 	constructor ( terrain ) {
+
+		super();
+
+		this.isTest = true;
 
 		const boundingBox = terrain.boundingBox;
 
 		const minHeight = boundingBox.min.z;
 		const maxHeight = boundingBox.max.z;
 
-		super( {
-			vertexShader: Shaders.depthMapVertexShader,
-			fragmentShader: Shaders.depthMapFragmentShader,
-			type: 'CV.DepthMapMaterial',
-			depthWrite: false,
-			uniforms: {
-				minZ:   { value: minHeight },
-				scaleZ: { value: 1 / ( maxHeight - minHeight ) }
-			}
+
+		const minZ = uniform( minHeight, 'float' );
+		const scaleZ = uniform( 1 / ( maxHeight - minHeight ), 'float' );
+
+		const PackUpscale = float( 256. / 255. ); // fraction -> 0..1 (including 1)
+		const PackFactors = vec3( 256. * 256. * 256., 256. * 256., 256. );
+		const ShiftRight8 = float( 1 / 256 );
+
+		const packFloatToRGBA = shader( ( v, stack ) => {
+
+			const r = vec4( fract( v.mul( PackFactors ) ), v );
+			const t = r.xyz.mul( ShiftRight8 );
+			stack.assign( r.yzw, r.yzw.sub( t ) ); // tidy overflow
+
+			return r.mul( PackUpscale );
+
 		} );
+
+		const vHeight = varying( positionGeometry.z.sub( minZ ).mul( scaleZ ) );
+
+		const fragmentShaderNode = shader( ( stack ) => {
+
+			return packFloatToRGBA.call( vHeight, stack );
+
+		} );
+
+		this.colorNode = fragmentShaderNode;
 
 	}
 

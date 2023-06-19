@@ -1,6 +1,7 @@
 import { BufferGeometry, Mesh, Triangle, Vector3 } from '../Three';
 import { FEATURE_TERRAIN } from '../core/constants';
 import { hydrateGeometry } from '../core/lib';
+import { CommonTerrainMaterial } from '../nodeMaterials/CommonTerrainMaterial';
 
 const __a = new Vector3();
 const __b = new Vector3();
@@ -23,7 +24,7 @@ class Tile extends Mesh {
 
 	constructor ( ctx, x, y, zoom, tileSpec ) {
 
-		super( new BufferGeometry(), ctx.materials.getSurfaceMaterial() );
+		super( new BufferGeometry(), ctx.materials.getMaterial( CommonTerrainMaterial, { color: 0xff8888 } ) );
 
 		this.x = x;
 		this.y = y;
@@ -51,7 +52,7 @@ class Tile extends Mesh {
 
 	onBeforeRender ( renderer ) {
 
-		this.lastFrame = renderer.info.render.frame;
+//		this.lastFrame = renderer.info.render.frame;
 
 	}
 

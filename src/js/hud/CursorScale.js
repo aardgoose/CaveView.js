@@ -5,6 +5,7 @@ import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 
 import { PlaneGeometry } from '../Three';
 import { MeshBasicNodeMaterial, LineBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { Line2Material } from '../nodeMaterials/Line2Material';
 
 class CursorScale extends Scale {
 
@@ -34,7 +35,7 @@ class CursorScale extends Scale {
 			-barWidth / 2, -barHeight / 2, 10
 		] );
 
-		const cursor = new LineSegments2( cursorGeometry, new LineBasicNodeMaterial(  { color: cfg.themeColor( 'hud.cursor' ) } ) );
+		const cursor = new LineSegments2( cursorGeometry, materials.getMaterial( Line2Material, { color: cfg.themeColor( 'hud.cursor.color' ) } ) );
 
 		const atlasSpec = {
 			color: cfg.themeColorCSS( 'hud.cursor' ),
@@ -42,7 +43,7 @@ class CursorScale extends Scale {
 			font: 'bold helvetica,sans-serif'
 		};
 
-		const material = materials.getGlyphMaterial( atlasSpec, 0 );
+		const material = materials.getGlyphMaterial( 'hud.cursor.text' );
 
 		const cursorLabel = new MutableGlyphString( '      ', material );
 

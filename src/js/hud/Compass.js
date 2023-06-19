@@ -32,7 +32,7 @@ class Compass extends Group {
 
 		const cg1 = hudObject.getCommonRing();
 
-		const c1 = new Mesh( cg1, materials.getBezelMaterial() );
+		const c1 = new Mesh( cg1, hudObject.getBezelMaterial() );
 
 		const cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 		cg2.translate( 0, 0, 5 );
@@ -60,7 +60,7 @@ class Compass extends Group {
 
 		this.lastRotation = 0;
 
-		const material = materials.getLabelMaterial( 'hud' );
+		const material = materials.getGlyphMaterial( 'hud.text' );
 		const label = new MutableGlyphString( '000\u00B0', material );
 
 		label.translateX( - label.getWidth() / 2 );

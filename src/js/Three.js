@@ -1,3 +1,7 @@
+export * from 'three';
+export { cloneUniforms, mergeUniforms } from 'three/src/renderers/shaders/UniformsUtils.js';
+
+/*
 export { WebGLRenderTarget } from 'three/src/renderers/WebGLRenderTarget.js';
 export { WebGLRenderer } from 'three/src/renderers/WebGLRenderer.js';
 export { ShaderChunk } from 'three/src/renderers/shaders/ShaderChunk.js';
@@ -5,6 +9,7 @@ export { cloneUniforms, mergeUniforms } from 'three/src/renderers/shaders/Unifor
 export { FogExp2 } from 'three/src/scenes/FogExp2.js';
 export { Scene } from 'three/src/scenes/Scene.js';
 export { Mesh } from 'three/src/objects/Mesh.js';
+export { Sprite } from 'three/src/objects/Sprite.js';
 export { LineSegments } from 'three/src/objects/LineSegments.js';
 export { Line } from 'three/src/objects/Line.js';
 export { Points } from 'three/src/objects/Points.js';
@@ -22,11 +27,11 @@ export { PlaneGeometry } from 'three/src/geometries/PlaneGeometry.js';
 export { CylinderGeometry } from 'three/src/geometries/CylinderGeometry.js';
 
 export { ShaderMaterial } from 'three/src/materials/ShaderMaterial.js';
-export { PointsMaterial } from 'three/src/materials/PointsMaterial.js';
-export { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial.js';
-export { MeshLambertMaterial } from 'three/src/materials/MeshLambertMaterial.js';
-export { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial.js';
-export { LineBasicMaterial } from 'three/src/materials/LineBasicMaterial.js';
+//export { PointsMaterial } from 'three/src/materials/PointsMaterial.js';
+//export { MeshBasicMaterial } from 'three/src/materials/MeshBasicMaterial.js';
+//export { MeshLambertMaterial } from 'three/src/materials/MeshLambertMaterial.js';
+//export { MeshPhongMaterial } from 'three/src/materials/MeshPhongMaterial.js';
+export { SpriteMaterial } from 'three/src/materials/SpriteMaterial.js';
 export { UniformsLib } from 'three/src/renderers/shaders/UniformsLib.js';
 export { TextureLoader } from 'three/src/loaders/TextureLoader.js';
 export { ImageLoader } from 'three/src/loaders/ImageLoader.js';
@@ -70,14 +75,20 @@ export { Vector2 } from 'three/src/math/Vector2.js';
 export { Quaternion } from 'three/src/math/Quaternion.js';
 export { Color } from 'three/src/math/Color.js';
 export { Line3 } from 'three/src/math/Line3.js';
-export * from 'three/src/constants.js';
+export { ColorManagement } from 'three/src/math/ColorManagement.js';
 
-import { Object3D } from 'three/src/core/Object3D.js';
+export * from 'three/src/constants.js';
+*/
+import { ColorManagement } from 'three';
+import { Object3D } from 'three';
+//import { Object3D } from 'three/src/core/Object3D.js';
+
+ColorManagement.enabled = true;
 
 Object3D.onUploadDropBuffer = function () {
 
 	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
-	this.array = null;
+//	this.array = null;
 
 };
 

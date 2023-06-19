@@ -34,7 +34,7 @@ class Scale extends Group {
 		this.scaleBar = new Mesh( geometry, material );
 		this.scaleBar.name = 'scale bar';
 
-		this.textMaterial = materials.getLabelMaterial( 'hud' );
+		this.textMaterial = materials.getGlyphMaterial( 'hud.text' );
 
 		this.add( this.scaleBar );
 

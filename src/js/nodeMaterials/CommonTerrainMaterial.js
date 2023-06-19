@@ -3,7 +3,7 @@ import { MeshPhongNodeMaterial } from '../../../node_modules/three/examples/jsm/
 
 class CommonTerrainMaterial extends MeshPhongNodeMaterial {
 
-	constructor ( ctx, parameters ) {
+	constructor ( parameters, ctx ) {
 
 		super( parameters );
 

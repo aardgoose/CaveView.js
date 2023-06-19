@@ -5,7 +5,7 @@ class StationNameLabel extends GlyphString {
 
 	constructor ( ctx, station ) {
 
-		const material = ctx.materials.getLabelMaterial( 'stations.default' );
+		const material = ctx.materials.getGlyphMaterial( 'stations.default.text' );
 
 		super( station.getPath(), material, ctx );
 

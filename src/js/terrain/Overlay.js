@@ -1,4 +1,5 @@
 import { Box2, Color, TextureLoader, Vector2 } from '../Three';
+import { CommonTerrainMaterial } from '../nodeMaterials/CommonTerrainMaterial';
 import { TerrainOverlayMaterial } from '../nodeMaterials/TerrainOverlayMaterial';
 import proj4 from 'proj4';
 
@@ -146,7 +147,7 @@ class Overlay {
 
 			if ( url === null || this.missing.has( url ) ) {
 
-				return Promise.resolve( materials.getMissingMaterial() );
+				return Promise.resolve( materials.getMaterial( CommonTerrainMaterial, { color: 0xff8888 } ) );
 
 			}
 
@@ -195,7 +196,7 @@ class Overlay {
 						() => {
 
 							this.missing.add( url );
-							resolve( this.active ? materials.getMissingMaterial() : null );
+							resolve( this.active ? materials.getMaterial( CommonTerrainMaterial, { color: 0xff8888 } ) : null );
 
 						}
 					);

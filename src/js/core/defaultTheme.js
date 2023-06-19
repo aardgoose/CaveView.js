@@ -10,8 +10,11 @@ const defaultTheme = {
 	},
 	entrance_dot_size: 5,
 	hud: {
-		font: 'normal Arial, sans-serif',
-		text: 'white',
+		text: {
+			background: 'green',
+			color: 'white',
+			font: 'normal Arial, sans-serif',
+		},
 		progress: 'green',
 		progressBackground: 'dimgray',
 		bezel: 'gray',
@@ -32,7 +35,14 @@ const defaultTheme = {
 			bar: 'yellow',
 			marks: 'white'
 		},
-		cursor: 'yellow'
+		cursor: {
+			text: {
+				color: 'yellow',
+				background: '#444444',
+				font: 'bold helvetica,sans-serif'
+			},
+			color: 'yellow'
+		}
 	},
 	box: {
 		bounding: 'white',
@@ -47,25 +57,35 @@ const defaultTheme = {
 	stations: {
 		font: 'normal Arial, sans-serif',
 		default: {
-			text: 'white',
-			background: 'rgba( 0.0, 0.0, 0.0, 0.75 ) ',
-			font: 'normal Arial, sans-serif',
+			text: {
+				color: 'white',
+				background: 'rgba( 0.0, 0.0, 0.0, 0.75 ) ',
+				font: 'normal Arial, sans-serif'
+			},
 			marker: 'red'
 		},
 		entrances: {
-			text: 'white',
-			background: 'darkred',
+			text: {
+				color: 'white',
+				background: 'darkred',
+				font: 'normal helvetica,sans-serif',
+				rotation: 45
+
+			},
 			marker: 'white',
-			angle: 45,
 		},
 		junctions: {
-			text: 'yellow',
-			font: 'normal Arial, sans-serif',
+			text: {
+				color: 'yellow',
+				font: 'normal Arial, sans-serif'
+			},
 			marker: 'yellow'
 		},
 		linked: {
-			text: 'cyan',
-			font: 'normal Arial, sans-serif',
+			text: {
+				color: 'cyan',
+				font: 'normal Arial, sans-serif'
+			},
 			marker: 'cyan'
 		}
 	},
@@ -98,6 +118,14 @@ const defaultTheme = {
 	},
 	grid: {
 		base: 'gray'
+	},
+	clusters: {
+		text: {
+			background: 'darkred',
+			color: 'white',
+			font: 'normal helvetica,sans-serif'
+
+		}
 	}
 };
 

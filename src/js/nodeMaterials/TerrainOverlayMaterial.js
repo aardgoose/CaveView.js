@@ -2,9 +2,9 @@ import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 
 class TerrainOverlayMaterial extends CommonTerrainMaterial {
 
-	constructor ( ctx ) {
+	constructor ( params = {}, ctx ) {
 
-		super( ctx );
+		super( params, ctx );
 		// FIXME - location 
 	}
 

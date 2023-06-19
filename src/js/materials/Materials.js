@@ -1,35 +1,26 @@
 import { ClusterMaterial } from '../nodeMaterials/ClusterMaterial';
 import { ColourCache } from '../core/ColourCache';
-import { ContourMaterial } from '../nodeMaterials/ContourMaterial';
-import { CursorMaterial } from '../nodeMaterials/CursorMaterial';
-import { DepthCursorMaterial } from '../nodeMaterials/DepthCursorMaterial';
-import { DepthMaterial } from '../nodeMaterials/DepthMaterial';
-import { EntrancePointMaterial } from '../nodeMaterials/EntrancePointMaterial';
-import { ExtendedPointsMaterial } from '../nodeMaterials/ExtendedPointsMaterial';
-import { GlyphAtlasCache } from './GlyphAtlas';
 import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
-import { HeightMaterial } from '../nodeMaterials/HeightMaterial';
-import { HypsometricMaterial } from '../nodeMaterials/HypsometricMaterial';
 import { WallMaterial } from '../nodeMaterials/WallMaterial';
-import { MissingMaterial } from '../nodeMaterials/MissingMaterial';
 import { SurveyLineMaterial } from './SurveyLineMaterial';
 import { TextureCache } from '../core/TextureCache';
+import { Line2Material } from '../nodeMaterials/Line2Material';
 
 import {
 	BackSide,
 	Color, FrontSide, IncrementStencilOp,
 	Vector2, Vector3
 } from '../Three';
-import { MeshPhongNodeMaterial, MeshBasicNodeMaterial, LineBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { MeshPhongNodeMaterial, LineBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
 import { CommonUniforms } from '../nodeMaterials/CommonUniforms';
 
 function Materials ( viewer ) {
 
+	const materialClassCache = new Map();
 	const cache = new Map();
 	const ctx = viewer.ctx;
 	const cfg = ctx.cfg;
 
-	const glyphAtlasCache = new GlyphAtlasCache();
 	const cursorMaterials = new Set();
 	const lineMaterials = new Set();
 	const surveyLineMaterials = new Set();
@@ -111,6 +102,7 @@ function Materials ( viewer ) {
 
 	} );
 
+	// FIXME add flags for survey specific materials for restting or make materials use object uniforms
 	function cacheMaterial ( name, material, stencil ) {
 
 		cache.set( name, material );
@@ -134,6 +126,32 @@ function Materials ( viewer ) {
 
 			material = cacheMaterial( name, materialFunc(), stencil );
 			material.side = viewer.hasModel ? BackSide : FrontSide;
+
+		}
+
+		return material;
+
+	}
+
+	this.getMaterial = function ( materialClass, params = {}, stencil = false ) {
+
+		let materialCache = materialClassCache.get( materialClass );
+
+		if ( ! materialCache ) {
+
+			materialCache = new Map();
+			materialClassCache.set( materialClassCache, materialCache );
+
+		}
+
+		const materialCacheKey = JSON.stringify( params );
+
+		let material = materialCache.get( JSON.stringify( materialCacheKey ) );
+
+		if ( ! material ) {
+
+			material = new materialClass( params, ctx );
+			materialCache.set( materialCacheKey, material );
 
 		}
 
@@ -222,17 +240,9 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getLine2Material = function ( params = { color: 'green' } ) {
-
-		const func = () => new LineBasicNodeMaterial(  params );
-		const material = getCacheMaterial( 'line2' + JSON.stringify( params ), func, true );
-
-		return material;
-
-	};
-
 	this.getSurveyLineMaterial = function ( mode = '', dashed = false ) {
 
+		return this.getMaterial( Line2Material, { color: 'cyan' } );
 		const options = { dashed: dashed, location: locationMode };
 
 		const func = () => new SurveyLineMaterial( ctx, mode, options );
@@ -253,41 +263,12 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getHeightMaterial = function () {
-
-		return getWallMaterial( 'height', HeightMaterial, true );
-
-	};
-
 	this.getSingleWallMaterial = function  () {
 
 		return getWallMaterial( 'single', WallMaterial, true );
 
 	};
 
-	this.getDepthMaterial = function () {
-
-		return getWallMaterial( 'depth', DepthMaterial, true );
-
-	};
-
-	this.getCursorMaterial = function () {
-
-		const material = getWallMaterial( 'cursor', CursorMaterial, true );
-		cursorMaterials.add( material );
-
-		return material;
-
-	};
-
-	this.getDepthCursorMaterial = function () {
-
-		const material = getWallMaterial( 'depthCursor', DepthCursorMaterial, true );
-		cursorMaterials.add( material );
-
-		return material;
-
-	};
 
 	this.getUnselectedWallMaterial = function () {
 
@@ -296,64 +277,10 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getHypsometricMaterial = function () {
-
-		const func = () => new HypsometricMaterial( ctx );
-		return getSurveyCacheMaterial( 'hypsometric', func );
-
-	};
-
-	this.getBezelMaterial = function  () {
-
-		let func;
-
-		if ( cfg.themeValue( 'hud.bezelType' ) === 'flat' ) {
-
-			func = () => new MeshBasicNodeMaterial( { color: cfg.themeValue( 'hud.bezel' ) } );
-
-		} else {
-
-			func = () => new MeshPhongNodeMaterial( { color: cfg.themeValue( 'hud.bezel' ), shininess: 20, specular: 0x666666 } );
-
-		}
-
-		return getCacheMaterial( 'bezel', func, true );
-
-	};
-
-	this.getPlainMaterial = function  () {
-
-		const func = () => new MeshBasicNodeMaterial( { vertexColors: true } );
-		return getCacheMaterial( 'plain', func, true );
-
-	};
-
-
 	this.getSurfaceMaterial = function  () {
 
 		const func = () => new MeshLambertMaterial( { color: cfg.themeValue( 'shading.single' ), vertexColors: false } );
 		return getCacheMaterial( 'surface', func, true );
-
-	};
-
-	this.getEntrancePointMaterial = function  () {
-
-		const func = () => new EntrancePointMaterial( ctx );
-		return getCacheMaterial( 'entrance', func, true );
-
-	};
-
-	this.getExtendedPointsMaterial = function () {
-
-		const func = () => new ExtendedPointsMaterial( ctx );
-		return getCacheMaterial( 'extendedPoints', func, true );
-
-	};
-
-	this.getMissingMaterial = function () {
-
-		const func = () => new MissingMaterial( ctx );
-		return getCacheMaterial( 'missing', func );
 
 	};
 
@@ -364,48 +291,11 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getScaleMaterial = function () {
+	this.getGlyphMaterial = function ( type ) {
 
-		const func = () => new MeshBasicNodeMaterial( { color: 0xffffff, map: textureCache.getTexture( gradient ) } );
-		return getCacheMaterial( 'scale', func );
+		const func = () => new GlyphMaterial( ctx, type, viewer ); // FIXME move rotation into config
 
-	};
-
-	this.getContourMaterial = function () {
-
-		const func = () => new ContourMaterial( ctx );
-		return getSurveyCacheMaterial( 'contour', func );
-
-	};
-
-	this.getGlyphMaterial = function ( glyphAtlasSpec, rotation ) {
-
-		const atlas = glyphAtlasCache.getAtlas( glyphAtlasSpec );
-		const name = JSON.stringify( glyphAtlasSpec ) + ':' + rotation.toString();
-
-		const func = () => new GlyphMaterial( ctx, atlas, rotation, viewer );
-
-		return getCacheMaterial( name, func );
-
-	};
-
-	this.getLabelMaterial = function ( type ) {
-
-		let material = getCacheMaterial( `label-${type}` );
-
-		if ( material === undefined ) {
-
-			const atlasSpec = {
-				color: cfg.themeColorCSS( `${type}.text` ),
-				background: cfg.themeValue( `${type}.background` ),
-				font: cfg.themeValue( `${type}.font` )
-			};
-
-			material = this.getGlyphMaterial( atlasSpec, 0 );
-
-		}
-
-		return material;
+		return getCacheMaterial( type, func );
 
 	};
 

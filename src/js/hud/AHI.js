@@ -12,7 +12,8 @@ import {
 	Vector3
 } from '../Three';
 
-import { lights, MeshStandardNodeMaterial, MeshPhongNodeMaterial, LineBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { lights, MeshPhongNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { Line2Material } from '../nodeMaterials/Line2Material';
 
 // preallocated tmp objects
 const __xAxis = new Vector3( 1, 0, 0 );
@@ -99,12 +100,10 @@ class AHI extends Group {
 
 		marks.setPositions( vertices );
 
-		const mRing   = new Mesh( ring, materials.getBezelMaterial() );
-		const mSphere = new Mesh( sphere, new MeshPhongNodeMaterial( { vertexColors: true, specular: 0x666666, shininess: 20 } ) );
-//		const mSphere = new Mesh( sphere, new MeshStandardNodeMaterial( { color: 0xffffff } ) );
-//		const mSphere = new Mesh( sphere, new MeshBasicNodeMaterial( { vertexColors: true } ) );
-		const mBar    = new LineSegments2( bar,   new LineBasicNodeMaterial(  { color: cfg.themeValue( 'hud.ahi.bar' ) } ) );
-		const mMarks  = new LineSegments2( marks, new LineBasicNodeMaterial(  { color: cfg.themeValue( 'hud.ahi.marks' ) } ) );
+		const mRing   = new Mesh( ring, hudObject.getBezelMaterial() );
+		const mSphere = new Mesh( sphere, materials.getMaterial( MeshPhongNodeMaterial, { vertexColors: true, specular: 0x666666, shininess: 20 } ) );
+		const mBar    = new LineSegments2( bar,   materials.getMaterial( Line2Material, { color: cfg.themeValue( 'hud.ahi.bar' ) } ) );
+		const mMarks  = new LineSegments2( marks, materials.getMaterial( Line2Material, { color: cfg.themeValue( 'hud.ahi.marks' ) } ) );
 
 		mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 		mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );
@@ -130,7 +129,7 @@ class AHI extends Group {
 
 		this.globe = globe;
 
-		const material = materials.getLabelMaterial( 'hud' );
+		const material = materials.getGlyphMaterial( 'hud.text' );
 		const label = new MutableGlyphString( '-90\u00B0', material );
 
 		label.translateX( - label.getWidth() / 2 );

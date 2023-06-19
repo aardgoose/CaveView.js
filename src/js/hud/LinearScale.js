@@ -1,14 +1,20 @@
 import { PlaneGeometry } from '../Three';
 import { Scale } from './Scale';
+import { MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
 
 class LinearScale extends Scale {
 
 	constructor ( hudObject, container ) {
 
 		const materials = hudObject.ctx.materials;
+		const textureCache = materials.textureCache;
 		const geometry = new PlaneGeometry();
 
-		super( hudObject, container, geometry, materials.getScaleMaterial() );
+		const cfg = hudObject.ctx.cfg;
+		const gradientType = cfg.value( 'saturatedGradient', false ) || cfg.themeValue( 'saturatedGradient' );
+		const gradient = gradientType ? 'gradientHi' : 'gradientLow';
+
+		super( hudObject, container, geometry, materials.getMaterial( MeshBasicNodeMaterial, { color: 0xffffff, map: textureCache.getTexture( gradient ) } ) );
 
 		this.name = 'CV.LinearScale';
 		this.visible = false;

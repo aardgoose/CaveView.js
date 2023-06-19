@@ -1,10 +1,15 @@
 import { Vector2, Vector3 } from '../Three';
-import { attribute, color, modelViewProjection, NodeMaterial, float, uniform, varying, vec2, vec4, texture, positionGeometry, modelViewMatrix } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { attribute, modelViewProjection, shader, NodeMaterial, float, uniform, varying, vec2, vec4, texture, positionGeometry, modelViewMatrix } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
+import { GlyphAtlasCache } from '../materials/GlyphAtlasCache';
 
+let id = 0;
 class GlyphMaterial extends NodeMaterial {
 
-	constructor ( ctx, glyphAtlas, rotation, viewer ) {
+	constructor ( ctx, type, viewer ) {
 
+		const glyphAtlas = GlyphAtlasCache.getAtlas( type, ctx );
+
+		const rotation = ctx.cfg.themeAngle( `${type}.rotation` );
 		const container = viewer.container;
 		const realPixels = glyphAtlas.cellSize * 2;
 		const pixelRatio = window.devicePixelRatio || 1;
@@ -20,73 +25,80 @@ class GlyphMaterial extends NodeMaterial {
 		const rotationMatrix = new Float32Array( [ cos, -sin, sin, cos ] ); // FIXME
 
 		super( {
-//			color: 0xffffff,
-//			depthTest: false,
-//			transparent: false,
+			alphaTest: 0.9,
+			color: 0xffffff,
+			depthTest: false,
+			transparent: false,
+
 		} );
 
 		this.normals = false;
+		this.lights = false;
+//		this.isTest = true;
 
 		// glyph shader, each instance represents one glyph.
 
-		// uniforms
-
 		const cellScale = uniform( glyphAtlas.cellScale );
-		const atlas = uniform( glyphAtlas.getTexture() );
-		// const rotate = uniform( rotationMatrix, 'mat2' );
 		const scale = uniform( new Vector2( realPixels, realPixels ).divide( viewPortV ), 'vec2' );
-//		const viewPort = uniform( viewPortV, 'vec2' );
+		// const rotate = uniform( rotationMatrix, 'mat2' );
+		const viewPort = uniform( viewPortV, 'vec2' );
 
 		// attributes
 
-		const offsets        = attribute( 'offsets', float );
-
-		const instanceUV     = attribute( 'instanceUV', 'vec2' );
+		const offsets        = attribute( 'offsets', 'float' );
 		const instanceOffset = attribute( 'instanceOffset', 'float' );
+		const instanceUV     = attribute( 'instanceUV', 'vec2' );
 		const instanceWidth  = attribute( 'instanceWidth', 'float' );
 
-		// vertex shader
+		const uv = varying( instanceUV.add( vec2( positionGeometry.x.mul( cellScale ).mul( instanceWidth ), positionGeometry.y.mul( cellScale ) ) ) );
 
-		const uv = varying( instanceUV.add( vec2(  positionGeometry.x.mul( cellScale ).mul( instanceWidth ), positionGeometry.y.mul( cellScale ) ) ) );
+		const vertexShader = shader( ( stack ) => {
 
-		// scale by glyph width ( vertices form unit square with (0,0) origin )
+			// scale by glyph width ( vertices form unit square with (0,0) origin )
 
-		let newPosition = vec2( positionGeometry.x.mul( instanceWidth ), positionGeometry.y );
+			const newPosition = vec2( positionGeometry.x.mul( instanceWidth ), positionGeometry.y );
 
-		// move to correct offset in string
-		newPosition = newPosition.add( vec2( instanceOffset, offsets ) )
+			// move to correct offset in string
 
-		// rotate as required
+			stack.assign( newPosition, newPosition.add( vec2( instanceOffset, offsets ) ) );
 
-		//newPosition = rotate * newPosition; //FIXME
+			// rotate as required
 
-		// position of GlyphString object on screen
+			// newPosition = rotate * newPosition; //FIXME
 
-		const offset = modelViewProjection( vec4( 0.0, 0.0, 0.0, 1.0 ) );
+			// position of GlyphString object on screen
 
-		// scale glyphs
-		newPosition = newPosition.mul( scale );
+			const offset = modelViewProjection( vec4( 0.0, 0.0, 0.0, 1.0 ) );
 
-		// move to clip space
+			// scale glyphs
 
-		newPosition = newPosition.mul( offset.w );
+			stack.assign( newPosition, newPosition.mul( scale ) );
 
-//		const mvPosition = modelViewMatrix.mul( vec4( positionGeometry, 1.0 ) );
+			// move to clip space
 
-		this.outputNode = vec4( newPosition, 0.0, 0.0 ).add( offset );
+			stack.assign( newPosition, newPosition.mul( offset.w ) );
 
-		/*
-		vec2 snap = viewPort / gl_Position.w;
+			const mvPosition = modelViewMatrix.mul( vec4( positionGeometry, 1.0 ) );
 
-		gl_Position.xy =  ( trunc( gl_Position.xy * snap ) + 0.5 ) / snap;
-		*/
+			this.outputNode = vec4( newPosition, 0.0, 0.0 ).add( offset );
+
+			/*
+			vec2 snap = viewPort / gl_Position.w;
+
+			gl_Position.xy =  ( trunc( gl_Position.xy * snap ) + 0.5 ) / snap; // FIXME
+			*/
+
+			return this.outputNode;
+
+		} );
 
 		//		this.rotation = rotationMatrix;
+
+		this.outNode = vertexShader;
 
 		// fragment shader
 
 		this.colorNode = texture( glyphAtlas.getTexture(), uv );
-//		this.colorNode = color( 0xff00ff );
 
 		// end of shader
 
@@ -94,7 +106,6 @@ class GlyphMaterial extends NodeMaterial {
 		this.atlas = glyphAtlas;
 		this.scaleFactor = glyphAtlas.cellSize / pixelRatio;
 		this.toScreenSpace = new Vector3( container.clientWidth/ 2, container.clientHeight / 2, 1 );
-
 
 		this.scale = scale;
 
@@ -123,8 +134,8 @@ class GlyphMaterial extends NodeMaterial {
 	}
 
 	constructPosition( /* builder */ ) {
-console.warn( 'vvvvvvv' );
-		return this.outputNode;
+
+		return this.outNode;
 
 	}
 
@@ -142,55 +153,10 @@ console.warn( 'vvvvvvv' );
 
 	customProgramCacheKey () {
 
-		return 'glyph';
+		return `glyph${id++}`;
 
 	}
 
 }
 
 export { GlyphMaterial };
-
-/*
-
-varying vec2 vUv;
-
-void main() {
-
-	// select glyph from atlas ( with proportional spacing ).
-
-	vUv = instanceUvs + vec2( position.x * cellScale * instanceWidths, position.y * cellScale );
-
-	// scale by glyph width ( vertices form unit square with (0,0) origin )
-
-	vec2 newPosition = vec2( position.x * instanceWidths, position.y );
-
-	// move to correct offset in string
-
-	newPosition.x += instanceOffsets;
-	newPosition.y += offsets;
-
-	// rotate as required
-
-	newPosition = rotate * newPosition;
-
-	// position of GlyphString object on screen
-
-	vec4 offset = projectionMatrix * modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
-
-	// scale glyphs
-	newPosition *= scale;
-
-	// move to clip space
-
-	newPosition.xy *= offset.w;
-
-	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-
-	gl_Position = vec4( newPosition, 0.0, 0.0 ) + offset;
-
-	vec2 snap = viewPort / gl_Position.w;
-
-	gl_Position.xy =  ( trunc( gl_Position.xy * snap ) + 0.5 ) / snap;
-
-}
-*/

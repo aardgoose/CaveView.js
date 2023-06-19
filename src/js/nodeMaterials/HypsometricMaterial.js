@@ -4,17 +4,17 @@ import { CommonComponents } from './CommonComponents';
 
 class HypsometricMaterial extends CommonTerrainMaterial {
 
-	constructor ( ctx ) {
+	constructor ( params = {}, ctx ) {
 
 		const survey = ctx.survey;
 		const cfg = ctx.cfg;
 		const terrain = survey.terrain;
 		const textureCache = ctx.materials.textureCache;
 
-		super( ctx );
+		super( params, ctx );
 
 		if ( terrain ) {
-console.log( 'hrhrsss');
+
 			if ( terrain.boundingBox === undefined ) terrain.computeBoundingBox();
 
 			const zMin = cfg.themeValue( 'shading.hypsometric.min', terrain.boundingBox.min.z );

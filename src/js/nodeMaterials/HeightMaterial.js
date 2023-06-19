@@ -3,9 +3,9 @@ import { SubsurfaceMaterial } from './SubsufaceMaterial';
 
 class HeightMaterial extends SubsurfaceMaterial {
 
-	constructor ( ctx, options ) { // FIXME option handlin
+	constructor ( options, ctx ) { // FIXME option handlin
 
-		super( ctx, options );
+		super( options, ctx );
 
 		this.name ='CV:HightMaterial';
 

@@ -2,8 +2,8 @@ import { Mesh, Matrix4, Vector3, Vector4 } from '../Three';
 
 import { STATION_ENTRANCE } from '../core/constants';
 import { PointIndicator } from './PointIndicator';
-import { ExtendedPointsMaterial } from '../nodeMaterials/ExtendedPointsMaterial';
 import { InstancedSpriteGeometry } from '../core/InstancedSpriteGeometry';
+import { InstancedSpriteMaterial } from '../nodeMaterials/InstancedSpriteMaterial';
 
 const _position = new Vector4();
 const _ssOrigin = new Vector4();
@@ -16,7 +16,11 @@ class Stations extends Mesh {
 
 		const ctx = survey.ctx;
 
-		super( new InstancedSpriteGeometry(), new ExtendedPointsMaterial( ctx ) );
+//		const textureCache = ctx.materials.textureCache;
+
+		const m = ctx.materials.getMaterial( InstancedSpriteMaterial );
+
+		super( new InstancedSpriteGeometry(), m );
 
 		this.type = 'CV:Stations';
 		this.stationCount = 0;

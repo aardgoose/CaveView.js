@@ -25,7 +25,7 @@ class EntrancePointMaterial extends InstancedSpriteMaterial {
 
 	customProgramCacheKey () {
 
-		return 'entrancePoints';
+		return 'CV:EntrancePointMaterial';
 
 	}
 

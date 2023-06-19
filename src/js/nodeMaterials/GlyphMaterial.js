@@ -1,5 +1,5 @@
 import { Vector2, Vector3 } from '../Three';
-import { attribute, modelViewProjection, shader, NodeMaterial, float, uniform, varying, vec2, vec4, texture, positionGeometry, modelViewMatrix } from '../Nodes';
+import { attribute, modelViewProjection, shader, NodeMaterial, uniform, varying, vec2, vec4, texture, positionGeometry, modelViewMatrix } from '../Nodes';
 import { GlyphAtlasCache } from '../materials/GlyphAtlasCache';
 
 let id = 0;

@@ -10,6 +10,8 @@ class ContourMaterial extends CommonTerrainMaterial {
 
 		super( { opacity: 0.5 }, ctx );
 
+		const commonUniforms = ctx.materials.commonUniforms;
+
 		// FIXME survey specific
 		const zOffset         = uniform( survey.offsets.z, 'float' );
 		const contourInterval = uniform( cfg.themeValue( 'shading.contours.interval' ), 'float' );
@@ -17,7 +19,7 @@ class ContourMaterial extends CommonTerrainMaterial {
 		const contourColor10  = uniform( cfg.themeColor( 'shading.contours.line10' ), 'vec3' );
 		const baseColor       = uniform( cfg.themeColor( 'shading.contours.base' ), 'vec3' );
 
-		const datumShift      = uniform( 0, 'float' ); //FIXME - should be common
+		const datumShift      = commonUniforms.datumShift;
 
 		const zLine = positionLocal.z.add( zOffset).add( datumShift ).div( contourInterval );
 
@@ -36,6 +38,7 @@ class ContourMaterial extends CommonTerrainMaterial {
 
 		this.opacityNode = mix( 1.0, materialOpacity, c );
 		this.colorNode = mix( finalColor, baseColor, c );
+		this.name = 'CV:ContourMaterial'
 
 	}
 

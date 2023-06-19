@@ -111,7 +111,7 @@ const defaultTheme = {
 		unconnected: 'gray'
 	},
 	popup: {
-		text: 'white',
+		color: 'white',
 		border: 'white',
 		background: 0x111111
 	},

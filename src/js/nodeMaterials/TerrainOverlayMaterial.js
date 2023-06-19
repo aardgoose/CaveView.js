@@ -6,6 +6,8 @@ class TerrainOverlayMaterial extends CommonTerrainMaterial {
 
 		super( params, ctx );
 		// FIXME - location 
+		this.name = 'CV:TerrainOverlayMaterial'
+
 	}
 
 }

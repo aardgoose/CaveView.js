@@ -1,15 +1,8 @@
-import { ClusterMaterial } from '../nodeMaterials/ClusterMaterial';
 import { ColourCache } from '../core/ColourCache';
-import { WallMaterial } from '../nodeMaterials/WallMaterial';
 import { SurveyLineMaterial } from './SurveyLineMaterial';
 import { TextureCache } from '../core/TextureCache';
 import { Line2Material } from '../nodeMaterials/Line2Material';
-
-import {
-	BackSide,
-	Color, FrontSide, IncrementStencilOp,
-	Vector2, Vector3
-} from '../Three';
+import { BackSide, FrontSide, IncrementStencilOp, Vector3 } from '../Three';
 import { LineBasicNodeMaterial } from '../Nodes';
 import { CommonUniforms } from '../nodeMaterials/CommonUniforms';
 
@@ -41,8 +34,6 @@ function Materials ( viewer ) {
 	this.uniforms = {
 		common: {
 			uLight: { value: new Vector3( -1, -1, 2 ).normalize() },
-			fogColor: { value: cfg.themeColor( 'background' ) },
-			fogDensity: { value: 0.0025 },
 			distanceFadeMin: { value: 0.0 },
 			distanceFadeMax: { value: 0.0 },
 			cameraLocation: { value: new Vector3() }
@@ -50,23 +41,10 @@ function Materials ( viewer ) {
 
 		commonDepth: {
 			datumShift: { value: 0.0 }
-		},
-
-		cursor: {
-			cursor:      { value: 0 },
-			cursorWidth: { value: 5.0 },
-			baseColor:   { value: cfg.themeColor( 'shading.cursorBase' ) },
-			cursorColor: { value: cfg.themeColor( 'shading.cursor' ) },
-		},
-
-		location: {
-			accuracy: { value: -1.0 },
-			target: { value: new Vector2() },
-			ringColor: { value: new Color( 0xff0000 ) },
 		}
-
 	};
 
+	this.commonUniforms = new CommonUniforms();
 	this.terrainOpacity = 0.5;
 
 	Object.defineProperties( this, {
@@ -98,7 +76,6 @@ function Materials ( viewer ) {
 
 	} );
 
-	// FIXME add flags for survey specific materials for restting or make materials use object uniforms
 	function cacheMaterial ( name, material, stencil ) {
 
 		cache.set( name, material );
@@ -129,6 +106,7 @@ function Materials ( viewer ) {
 
 	}
 
+	// FIXME add flags for survey specific materials for restting or make materials use object uniforms
 	this.getMaterial = function ( materialClass, params = {}, stencil = false ) {
 
 		let materialCache = materialClassCache.get( materialClass );
@@ -164,16 +142,6 @@ function Materials ( viewer ) {
 
 	}
 
-	this.getSingleWallMaterial = function () {
-
-		const material = getSurveyCacheMaterial( 'single', () => new WallMaterial( ctx, { location: locationMode } ), true );
-
-		wallMaterials.add( material );
-
-		return material;
-
-	}
-
 	this.setLocation = function ( location = null, accuracy = 0, minDistance = 0, maxDistance = 0 ) {
 
 		const updateMaterial = ( material ) => {
@@ -184,7 +152,7 @@ function Materials ( viewer ) {
 
 		};
 
-		const locationUniforms = this.uniforms.location;
+		const commonUniforms = this.commonUniforms;
 
 		if ( location === null ) {
 
@@ -193,8 +161,7 @@ function Materials ( viewer ) {
 				console.log( 'disable loc' );
 				locationMode = false;
 
-				locationUniforms.accuracy.value = -1.0;
-				CommonUniforms.accuracy.value = -1.0;
+				commonUniforms.accuracy.value = -1.0;
 
 				surveyLineMaterials.forEach( updateMaterial );
 				wallMaterials.forEach( updateMaterial );
@@ -207,44 +174,25 @@ function Materials ( viewer ) {
 
 				locationMode = true;
 
-				locationUniforms.accuracy.value = accuracy;
-				CommonUniforms.accuracy.value = accuracy;
+				commonUniforms.accuracy.value = accuracy;
 
-				console.log( 'cut', CommonUniforms.target.value );
-				console.log( 'cua', CommonUniforms.accuracy.value );
+				console.log( 'cut', commonUniforms.target.value );
+				console.log( 'cua', commonUniforms.accuracy.value );
 
 				surveyLineMaterials.forEach( updateMaterial );
 				wallMaterials.forEach( updateMaterial );
 
 			}
 
-			const commonUniforms = this.uniforms.common;
-
 			commonUniforms.distanceFadeMin.value = minDistance;
 			commonUniforms.distanceFadeMax.value = maxDistance;
-			commonUniforms.cameraLocation.value.copy( location );
+			commonUniforms.cameraLocation.value.copy ( location );
 
-			locationUniforms.target.value.set( location.x, location.y );
-
-			CommonUniforms.distanceFadeMin.value = minDistance;
-			CommonUniforms.distanceFadeMax.value = maxDistance;
-			CommonUniforms.cameraLocation.value.copy ( location );
-
-			CommonUniforms.target.value.set( location.x, location.y );
+			commonUniforms.target.value.set( location.x, location.y );
 
 		}
 
 	};
-
-	this.getSingleWallMaterial = function () {
-
-		const material = getSurveyCacheMaterial( 'single', () => new WallMaterial( ctx, { location: locationMode } ), true );
-
-		wallMaterials.add( material );
-
-		return material;
-
-	}
 
 	this.getSurveyLineMaterial = function ( mode = '', dashed = false ) {
 
@@ -276,19 +224,11 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getClusterMaterial = function ( count ) {
-
-		const func = () => new ClusterMaterial( count );
-		return getCacheMaterial( 'cluster' + count, func, true );
-
-	};
-
 	this.setTerrain = function ( terrain ) {
 
 		const updateDatumShifts = event => {
 
-			CommonUniforms.datumShift.value = event.value;
-			this.uniforms.commonDepth.datumShift.value = event.value;
+			this.commonUniforms.datumShift.value = event.value;
 
 		};
 

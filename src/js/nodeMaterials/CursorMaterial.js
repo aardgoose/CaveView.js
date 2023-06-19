@@ -1,7 +1,6 @@
 import { varying, positionGeometry } from '../Nodes.js';
 import { SubsurfaceMaterial } from './SubsufaceMaterial.js';
 import { CommonComponents } from './CommonComponents';
-import { CommonUniforms } from './CommonUniforms';
 
 
 class CursorMaterial extends SubsurfaceMaterial {
@@ -15,7 +14,7 @@ class CursorMaterial extends SubsurfaceMaterial {
 		const survey = ctx.survey;
 		const limits = survey.modelLimits;
 
-		const cu = CommonUniforms.cursor( ctx );
+		const cu = ctx.materials.commonUniforms.cursor( ctx );
 
 		const delta = varying( positionGeometry.z.sub( cu.cursor ) );
 

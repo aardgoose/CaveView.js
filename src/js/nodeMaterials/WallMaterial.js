@@ -4,7 +4,7 @@ class WallMaterial extends SubsurfaceMaterial {
 
 	constructor( options, ctx ) {
 
-		super( ctx, { color: ctx.cfg.themeColor( 'shading.single' ) } );
+		super( { color: ctx.cfg.themeColor( 'shading.single' ) }, ctx );
 
 		this.name = 'CV:WallMaterial';
 

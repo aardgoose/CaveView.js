@@ -1,7 +1,6 @@
 import { positionLocal } from '../Nodes.js';
 import { SubsurfaceMaterial } from './SubsufaceMaterial';
 import { CommonComponents } from './CommonComponents';
-import { CommonUniforms } from './CommonUniforms';
 
 class DepthCursorMaterial extends SubsurfaceMaterial {
 
@@ -13,12 +12,13 @@ class DepthCursorMaterial extends SubsurfaceMaterial {
 
 		const survey = ctx.survey;
 		const surveyLimits = survey.modelLimits;
+		const commonUniforms = ctx.materials.commonUniforms;
 
 		// max range of depth values
 		const max = surveyLimits.max.z - surveyLimits.min.z;
 
-		const cu = CommonUniforms.cursor( ctx );
-		const du = CommonUniforms.depth( ctx );
+		const cu = commonUniforms.cursor( ctx );
+		const du = commonUniforms.depth( ctx );
 
 		const terrainHeight = CommonComponents.terrainHeight( du, survey.terrain );
 

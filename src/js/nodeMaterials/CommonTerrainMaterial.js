@@ -17,6 +17,12 @@ class CommonTerrainMaterial extends MeshPhongNodeMaterial {
 
 	}
 
+	customProgramCacheKey () {
+
+		return this.name;
+
+	}
+
 }
 
 export { CommonTerrainMaterial };

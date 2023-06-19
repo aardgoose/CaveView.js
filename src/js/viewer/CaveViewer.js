@@ -5,7 +5,7 @@ import {
 	VERSION, VIEW_ELEVATION_E, VIEW_ELEVATION_N, VIEW_ELEVATION_S, VIEW_ELEVATION_W,  VIEW_NONE, VIEW_PLAN,
 } from '../core/constants';
 
-import { nodeFrame } from '../Nodes';
+import { nodeFrame } from '../../../node_modules/three/examples/jsm/renderers/webgl/nodes/WebGLNodes';
 import { CameraManager } from './CameraManager';
 import { CameraMove } from './CameraMove';
 import { CaveLoader } from '../loaders/CaveLoader';

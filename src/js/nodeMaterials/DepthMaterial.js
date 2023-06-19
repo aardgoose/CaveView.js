@@ -1,7 +1,6 @@
 import { texture, vec2, positionLocal } from '../Nodes';
 import { SubsurfaceMaterial } from './SubsufaceMaterial';
 import { CommonComponents } from './CommonComponents';
-import { CommonUniforms } from './CommonUniforms';
 
 class DepthMaterial extends SubsurfaceMaterial {
 
@@ -10,13 +9,14 @@ class DepthMaterial extends SubsurfaceMaterial {
 		const survey = ctx.survey;
 		const terrain = survey.terrain;
 		const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
-		const textureCache = ctx.materials.textureCache;
+		const materials = ctx.materials;
+		const textureCache = materials.textureCache;
 
 		super( { transparent: options.location }, ctx );
 
 		this.name = 'CV:DepthMaterial';
 
-		const du = CommonUniforms.depth( ctx );
+		const du = materials.commonUniforms.depth( ctx );
 
 		const terrainHeight = CommonComponents.terrainHeight( du, terrain );
 

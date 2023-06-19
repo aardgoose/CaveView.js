@@ -1,4 +1,5 @@
 import { Point } from './Point';
+import { ClusterMaterial } from '../nodeMaterials/ClusterMaterial';
 
 class Marker extends Point {
 
@@ -8,7 +9,7 @@ class Marker extends Point {
 
 		const materials = ctx.materials;
 
-		super( materials.getClusterMaterial( count ), ctx );
+		super( materials.getMaterial( ClusterMaterial, { count: count } ) );
 		this.renderOrder = 1;
 
 	}

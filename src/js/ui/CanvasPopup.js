@@ -1,6 +1,6 @@
 import { CanvasTexture } from '../Three';
 import { Popup } from './Popup';
-import { PopupMaterial } from '../materials/PopupMaterial';
+import { PopupMaterial } from '../nodeMaterials/PopupMaterial';
 
 class CanvasPopup extends Popup {
 
@@ -97,7 +97,7 @@ class CanvasPopup extends Popup {
 
 		ctx.textAlign = 'left';
 		ctx.font = fontSize + 'px normal helvetica,sans-serif';
-		ctx.fillStyle = cfg.themeColorCSS( 'popup.text' );
+		ctx.fillStyle = cfg.themeColorCSS( 'popup.color' );
 
 		for ( let i = 0; i < lineCount; i++ ) {
 

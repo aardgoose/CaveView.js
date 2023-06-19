@@ -266,15 +266,7 @@ class ClusterMarkers extends Object3D {
 		this.labels = [];
 		this.ctx = ctx;
 
-		const cfg = ctx.cfg;
-
-		const atlasSpec = {
-			background: cfg.themeColorCSS( 'stations.entrances.background' ),
-			color: cfg.themeColorCSS( 'stations.entrances.text' ),
-			font: 'normal helvetica,sans-serif'
-		};
-
-		const material = ctx.materials.getGlyphMaterial( atlasSpec, cfg.themeAngle( 'stations.entrances.angle' ) );
+		const material = ctx.materials.getGlyphMaterial( 'stations.entrances.text' );
 
 		material.depthTest = true;
 		material.transparent = false;

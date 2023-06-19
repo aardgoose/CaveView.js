@@ -17,7 +17,7 @@ class CommonUniforms {
     static distanceFadeMax = uniform( 0.0, 'float' );
     static cameraLocation  = uniform( new Vector3(), 'vec3' );
 
-    static depth ( ctx ) {
+    static depth ( ctx ) {  // FIXME - share for line materials when ready
 
         const survey = ctx.survey;
 		const surveyLimits = survey.modelLimits;
@@ -35,7 +35,7 @@ class CommonUniforms {
 
     }
 
-    static cursor ( ctx ) {
+    static cursor ( ctx ) { // FIXME - share for line materials when ready
 
         const cfg = ctx.cfg;
 

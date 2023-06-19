@@ -17,10 +17,10 @@ class StationLabels extends Group {
 
 		const materials = ctx.materials;
 
-		this.defaultLabelMaterial = materials.getLabelMaterial( 'stations.default' );
-		this.splayLabelMaterial = materials.getLabelMaterial( 'stations.default' );
-		this.junctionLabelMaterial = materials.getLabelMaterial( 'stations.junctions' );
-		this.linkedLabelMaterial = materials.getLabelMaterial( 'stations.linked' );
+		this.defaultLabelMaterial = materials.getGlyphMaterial( 'stations.default.text' );
+		this.splayLabelMaterial = materials.getGlyphMaterial( 'stations.default.text' );
+		this.junctionLabelMaterial = materials.getGlyphMaterial( 'stations.junctions.text' );
+		this.linkedLabelMaterial = materials.getGlyphMaterial( 'stations.linked.text' );
 
 	}
 

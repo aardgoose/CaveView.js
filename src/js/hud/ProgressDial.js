@@ -1,5 +1,6 @@
 import { Float32BufferAttribute, Mesh, Object3D, RingGeometry } from '../Three';
 import { MutableGlyphString } from '../core/GlyphString';
+import { MeshBasicNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes.js';
 
 class ProgressDial extends Mesh {
 
@@ -20,7 +21,7 @@ class ProgressDial extends Mesh {
 
 		geometry.setAttribute( 'color', colors );
 
-		super( geometry, materials.getPlainMaterial() );
+		super( geometry, materials.getMaterial( MeshBasicNodeMaterial, { vertexColors: true } ) );
 
 		this.backgroundColor = cfg.themeColor( 'hud.progressBackground' );
 		this.setColor = cfg.themeColor( 'hud.progress' );
@@ -43,7 +44,7 @@ class ProgressDial extends Mesh {
 
 		if ( addText ) {
 
-			const glyphMaterial = materials.getLabelMaterial( 'hud' );
+			const glyphMaterial = materials.getGlyphMaterial( 'hud.text' );
 			const pcent = new MutableGlyphString( '----', glyphMaterial );
 
 			pcent.translateY( pcent.getWidth() / 2 );

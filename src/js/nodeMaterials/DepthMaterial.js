@@ -5,14 +5,14 @@ import { CommonUniforms } from './CommonUniforms';
 
 class DepthMaterial extends SubsurfaceMaterial {
 
-	constructor ( ctx, options ) {
+	constructor ( options, ctx ) {
 
 		const survey = ctx.survey;
 		const terrain = survey.terrain;
 		const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 		const textureCache = ctx.materials.textureCache;
 
-		super( ctx, { transparent: options.location } );
+		super( { transparent: options.location }, ctx );
 
 		this.name = 'CV:DepthMaterial';
 

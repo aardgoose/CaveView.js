@@ -6,9 +6,6 @@ import anaglyphFragmentShader from './anaglyphFragmentShader.glsl';
 import depthMapVertexShader from './depthMapVertexShader.glsl';
 import depthMapFragmentShader from './depthMapFragmentShader.glsl';
 
-import glyphVertexShader from './glyphVertexShader.glsl';
-import glyphFragmentShader from './glyphFragmentShader.glsl';
-
 import popupVertexShader from './popupVertexShader.glsl';
 import popupFragmentShader from './popupFragmentShader.glsl';
 
@@ -39,8 +36,6 @@ export const Shaders = {
 	anaglyphFragmentShader:	anaglyphFragmentShader,
 	depthMapVertexShader:	depthMapVertexShader,
 	depthMapFragmentShader:	depthMapFragmentShader,
-	glyphVertexShader:		glyphVertexShader,
-	glyphFragmentShader:	glyphFragmentShader,
 	popupVertexShader:		popupVertexShader,
 	popupFragmentShader:	popupFragmentShader,
 	waterVertexShader:		waterVertexShader,

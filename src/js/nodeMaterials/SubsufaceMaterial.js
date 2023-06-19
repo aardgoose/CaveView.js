@@ -2,7 +2,7 @@ import { MeshPhongNodeMaterial } from '../../../node_modules/three/examples/jsm/
 
 class SubsurfaceMaterial extends MeshPhongNodeMaterial {
 
-	constructor ( ctx, options = {} ) {
+	constructor ( options = {}, ctx ) {
 
 		super( options );
 

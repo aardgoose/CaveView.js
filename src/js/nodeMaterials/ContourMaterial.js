@@ -3,13 +3,14 @@ import { fract, fwidth, step, cond, mix, smoothstep, uniform, vec4, positionLoca
 
 class ContourMaterial extends CommonTerrainMaterial {
 
-	constructor ( ctx ) {
+	constructor ( params = {}, ctx ) {
 
 		const survey = ctx.survey;
 		const cfg = ctx.cfg;
 
-		super( ctx, { opacity: 0.5 } );
+		super( { opacity: 0.5 }, ctx );
 
+		// FIXME survey specific
 		const zOffset         = uniform( survey.offsets.z, 'float' );
 		const contourInterval = uniform( cfg.themeValue( 'shading.contours.interval' ), 'float' );
 		const contourColor    = uniform( cfg.themeColor( 'shading.contours.line' ), 'vec3' );

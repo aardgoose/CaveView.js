@@ -7,11 +7,13 @@ class Line2Material extends NodeMaterial {
 
 	isLineMaterial = true;
 
-	constructor ( ctx, params = {} ) {
+	constructor ( params = {}, ctx ) {
 
 		super( params );
 
 		this.setDefaultValues( defaultValues );
+
+		console.log( 'l2m', params );
 
 		const linewidth  = uniform( 0.002, 'float' );
 		const resolution = uniform( new Vector2( 1, 1 ), 'vec2' );
@@ -21,8 +23,6 @@ class Line2Material extends NodeMaterial {
 		const dashOffset = uniform( 0, 'float' );
 		const gapSize    = uniform( 1, 'float'  );
 		const opacity    = uniform( 1, 'float' );
-
-//		this.isTest = true;
 
 		const USE_COLOR = false;
 		const USE_DASH = false;
@@ -48,7 +48,7 @@ class Line2Material extends NodeMaterial {
 		this.normals = false;
 		this.lights = false;
 		this.color = new Color( 0x00ff00 );
-		this.isTest = true;
+//		this.isTest = true;
 
 		const uv = attribute( 'uv', 'vec2' );
 		const vUv = varying( uv, 'vec2' );
@@ -188,9 +188,7 @@ class Line2Material extends NodeMaterial {
 			} );
 
 //			const diffuseColor = vec4( 1.0, 1.0, 1.0 , 1.0 );
-			const diffuseColor = vec4( defaultColor, 1.0 );
-
-			return diffuseColor;
+			return vec4( materialColor, 1.0 );
 
 			if ( CV_HEIGHT ) {
 

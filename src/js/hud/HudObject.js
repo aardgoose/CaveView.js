@@ -1,4 +1,5 @@
 import { CylinderGeometry } from '../Three';
+import { MeshBasicNodeMaterial, MeshPhongNodeMaterial } from '../../../node_modules/three/examples/jsm/nodes/Nodes';
 
 class HudObject {
 
@@ -10,6 +11,23 @@ class HudObject {
 		this.stdWidth = cfg.themeValue( 'hud.widgetSize' );
 		this.commonRing = null;
 		this.ctx = ctx;
+
+	}
+
+	getBezelMaterial() {
+
+		const ctx = this.ctx;
+		const cfg  = ctx.cfg;
+
+		if ( cfg.themeValue( 'hud.bezelType' ) === 'flat' ) {
+
+			return ctx.materials.getMaterial( MeshBasicNodeMaterial, { color: cfg.themeValue( 'hud.bezel' ) } );
+
+		} else {
+
+			return ctx.materials.getMaterial( MeshPhongNodeMaterial, { color: cfg.themeValue( 'hud.bezel' ), shininess: 20, specular: 0x666666 } );
+
+		}
 
 	}
 

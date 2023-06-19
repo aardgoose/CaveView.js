@@ -1,7 +1,9 @@
 import { Box3, Group } from '../Three';
 import { FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS } from '../core/constants';
-import { DepthMapMaterial } from '../materials/DepthMapMaterial';
+import { DepthMapMaterial } from '../nodeMaterials/DepthMapMaterial';
 import { HeightLookup } from './HeightLookup';
+import { HypsometricMaterial } from '../nodeMaterials/HypsometricMaterial';
+import { ContourMaterial } from '../nodeMaterials/ContourMaterial';
 import { Overlay } from './Overlay';
 
 class CommonTerrain extends Group {
@@ -117,7 +119,7 @@ class CommonTerrain extends Group {
 
 		renderer.setRenderTarget( renderTarget );
 
-		scene.overrideMaterial = new DepthMapMaterial( this );
+//		scene.overrideMaterial = new DepthMapMaterial( this );
 
 		renderer.render( scene, rtCamera );
 
@@ -128,18 +130,17 @@ class CommonTerrain extends Group {
 		this.renderTarget = renderTarget;
 
 		// add lookup using heightMap texture
-		this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox );
-
-		this.checkTerrainShadingModes();
+//		this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox );
 
 		// restore renderer to normal render size and target
 
-		renderer.renderLists.dispose();
+//		renderer.renderLists.dispose(); // FIXME is this needed and is there a webHPU equivalent
 
 		// restore renderer to normal render size and target
 
 		this.ctx.viewer.resetRenderer();
 
+		this.checkTerrainShadingModes();
 		survey.setupTerrain( this );
 		this.ctx.materials.setTerrain( this );
 
@@ -159,7 +160,7 @@ class CommonTerrain extends Group {
 
 		case SHADING_RELIEF:
 
-			material = materials.getHypsometricMaterial();
+			material = materials.getMaterial( HypsometricMaterial, {} );
 
 			break;
 
@@ -172,7 +173,7 @@ class CommonTerrain extends Group {
 
 		case SHADING_CONTOURS:
 
-			material = materials.getContourMaterial();
+			material = materials.getMaterial( ContourMaterial, {} );
 
 			break;
 

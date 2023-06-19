@@ -21,6 +21,12 @@ import { Selection } from './Selection';
 import { SurveyBox } from '../core/SurveyBox';
 import { SurveyColourMapper} from '../core/SurveyColourMapper';
 import { SurveyMetadata } from './SurveyMetadata';
+
+import { HeightMaterial } from '../nodeMaterials/HeightMaterial';
+import { DepthMaterial } from '../nodeMaterials/DepthMaterial';
+import { CursorMaterial } from '../nodeMaterials/CursorMaterial';
+import { DepthCursorMaterial } from '../nodeMaterials/DepthCursorMaterial';
+
 import proj4 from 'proj4';
 
 const __set = new Set();
@@ -354,7 +360,7 @@ class Survey extends Object3D {
 
 		this.metadata = metadata;
 
-		this.loadDyeTraces();
+//		this.loadDyeTraces();
 
 		this.segments = this.getFeature( LEG_CAVE )?.findTopology();
 
@@ -953,25 +959,25 @@ class Survey extends Object3D {
 
 		const materials = this.ctx.materials;
 
-		let material;
+		let materialClass;
 
 		switch ( mode ) {
 
 		case SHADING_HEIGHT:
 
-			material = materials.getHeightMaterial();
+			materialClass = HeightMaterial;
 
 			break;
 
 		case SHADING_CURSOR:
 
-			material = materials.getCursorMaterial();
+			materialClass = CursorMaterial;
 
 			break;
 
 		case SHADING_SINGLE:
 
-			material = materials.getSingleWallMaterial();
+//			materialClass = materials.getSingleWallMaterial();
 
 			break;
 
@@ -979,9 +985,7 @@ class Survey extends Object3D {
 
 			if ( this.terrain === null ) return false;
 
-			material = materials.getDepthMaterial();
-
-			if ( ! material ) return false;
+			materialClass = DepthMaterial;
 
 			break;
 
@@ -989,20 +993,23 @@ class Survey extends Object3D {
 
 			if ( this.terrain === null ) return false;
 
-			material = materials.getDepthCursorMaterial();
-
-			if ( ! material ) return false;
+			materialClass = DepthCursorMaterial;
 
 			break;
 
 		case SHADING_DISTANCE:
 		case SHADING_SURVEY:
 
-			material = false;
+			materialClass = null;
 
 			break;
 
 		}
+
+		if ( materialClass === undefined ) return;
+
+		const material = materials.getMaterial( materialClass, {}, true );
+
 
 		this.markers.setVisibility( ( mode === SHADING_DISTANCE ) );
 

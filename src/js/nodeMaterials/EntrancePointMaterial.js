@@ -20,6 +20,13 @@ class EntrancePointMaterial extends InstancedSpriteMaterial {
 
 		} );
 
+		// FIXME transfer to InstancedSprite imp
+	}
+
+	customProgramCacheKey () {
+
+		return 'entrancePoints';
+
 	}
 
 }

@@ -6,9 +6,9 @@ import { CommonUniforms } from './CommonUniforms';
 
 class CursorMaterial extends SubsurfaceMaterial {
 
-	constructor ( ctx, options ) { // FIXME options handling
+	constructor ( options, ctx ) { // FIXME options handling
 
-		super( ctx, { vertexColors: true } );
+		super( { vertexColors: true }, ctx );
 
 		this.name = 'CV:CursorMaterial';
 

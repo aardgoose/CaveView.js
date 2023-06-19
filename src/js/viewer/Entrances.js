@@ -2,6 +2,7 @@ import { Mesh, Color } from '../Three';
 import { ClusterMarkers } from './ClusterMarkers';
 import { STATION_ENTRANCE, FEATURE_ENTRANCE_DOTS } from '../core/constants';
 import { InstancedSpriteGeometry } from '../core/InstancedSpriteGeometry';
+import { InstancedSpriteMaterial } from '../nodeMaterials/InstancedSpriteMaterial';
 
 class Entrances extends ClusterMarkers {
 
@@ -15,11 +16,10 @@ class Entrances extends ClusterMarkers {
 		const vertices = [];
 
 		const geometry = new InstancedSpriteGeometry();
-		const material = ctx.materials.getEntrancePointMaterial();
 
 		this.entranceColor = ctx.cfg.themeColor( 'stations.entrances.marker' );
 
-		const markers = new Mesh( geometry, material );
+		const markers = new Mesh( geometry, ctx.materials.getMaterial( InstancedSpriteMaterial ) );
 
 		markers.layers.set( FEATURE_ENTRANCE_DOTS );
 

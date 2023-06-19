@@ -5,9 +5,9 @@ import { CommonUniforms } from './CommonUniforms';
 
 class DepthCursorMaterial extends SubsurfaceMaterial {
 
-	constructor( ctx, options ) {
+	constructor( options, ctx ) {
 
-		super( ctx, { vertexColors: true } );
+		super( { vertexColors: true }, ctx );
 
 		this.name = 'CV:DepthCursorMaterial';
 

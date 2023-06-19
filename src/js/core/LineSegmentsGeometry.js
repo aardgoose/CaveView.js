@@ -77,13 +77,38 @@ class LineSegmentsGeometry extends InstancedBufferGeometry {
 
 		}
 
+		const instanceCount = array.length / 6;
+
+		const sBuffer = new Float32Array( instanceCount * 3 );
+		const eBuffer = new Float32Array( instanceCount * 3 );
+
+		for ( let i = 0; i < instanceCount; i++ ) {
+
+			const rPos = i * 6;
+			const iPos = i * 3;
+
+			sBuffer[ iPos ]     = lineSegments[ rPos ];
+			sBuffer[ iPos + 1 ] = lineSegments[ rPos + 1 ];
+			sBuffer[ iPos + 2 ] = lineSegments[ rPos + 2 ];
+
+			eBuffer[ iPos ]     = lineSegments[ rPos + 3 ];
+			eBuffer[ iPos + 1 ] = lineSegments[ rPos + 4 ];
+			eBuffer[ iPos + 2 ] = lineSegments[ rPos + 5 ];
+
+		};
+
+		this.setAttribute( 'instanceStart', new InstancedBufferAttribute( sBuffer, 3, false, 1 ) ); // xyz
+		this.setAttribute( 'instanceEnd', new InstancedBufferAttribute( eBuffer, 3, false, 1 ) ); // xyz
+
+/*
 		const instanceBuffer = new InstancedInterleavedBuffer( lineSegments, 6, 1 ); // xyz, xyz
 
 		this.setAttribute( 'instanceStart', new InterleavedBufferAttribute( instanceBuffer, 3, 0 ) ); // xyz
 		this.setAttribute( 'instanceEnd', new InterleavedBufferAttribute( instanceBuffer, 3, 3 ) ); // xyz
-
+*/
 		//
 
+		this.instanceCount = instanceCount;
 		this.computeBoundingBox();
 		this.computeBoundingSphere();
 
@@ -105,10 +130,10 @@ class LineSegmentsGeometry extends InstancedBufferGeometry {
 
 		}
 
-		const instanceColorBuffer = new InstancedInterleavedBuffer( colors, 6, 1 ); // rgb, rgb
+//		const instanceColorBuffer = new InstancedInterleavedBuffer( colors, 6, 1 ); // rgb, rgb
 
-		this.setAttribute( 'instanceColorStart', new InterleavedBufferAttribute( instanceColorBuffer, 3, 0 ) ); // rgb
-		this.setAttribute( 'instanceColorEnd', new InterleavedBufferAttribute( instanceColorBuffer, 3, 3 ) ); // rgb
+//		this.setAttribute( 'instanceColorStart', new InterleavedBufferAttribute( instanceColorBuffer, 3, 0 ) ); // rgb
+//		this.setAttribute( 'instanceColorEnd', new InterleavedBufferAttribute( instanceColorBuffer, 3, 3 ) ); // rgb
 
 		return this;
 

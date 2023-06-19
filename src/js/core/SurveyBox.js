@@ -1,5 +1,5 @@
 import { Float32BufferAttribute, Vector3, } from '../Three';
-import { Line2Material } from '../nodeMaterials/Line2Material';
+import { Line2Material } from '../materials/Line2Material';
 import { LineSegments2 } from './LineSegments2';
 import { LineSegmentsGeometry } from './LineSegmentsGeometry';
 

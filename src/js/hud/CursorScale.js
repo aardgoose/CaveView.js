@@ -5,8 +5,8 @@ import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 
 import { PlaneGeometry } from '../Three';
 import { MeshBasicNodeMaterial } from '../Nodes';
-import { Line2Material } from '../nodeMaterials/Line2Material';
-import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
+import { Line2Material } from '../materials/Line2Material';
+import { GlyphMaterial } from '../materials/GlyphMaterial';
 
 class CursorScale extends Scale {
 

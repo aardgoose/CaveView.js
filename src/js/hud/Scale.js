@@ -1,6 +1,6 @@
 import { Group, Mesh } from '../Three';
 import { GlyphString } from '../core/GlyphString';
-import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
+import { GlyphMaterial } from '../materials/GlyphMaterial';
 
 class Scale extends Group {
 

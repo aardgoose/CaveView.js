@@ -1,10 +1,10 @@
 import { ColourCache } from '../core/ColourCache';
 import { SurveyLineMaterial } from './SurveyLineMaterial';
 import { TextureCache } from '../core/TextureCache';
-import { Line2Material } from '../nodeMaterials/Line2Material';
+import { Line2Material } from './Line2Material';
 import { BackSide, FrontSide, IncrementStencilOp, Vector3 } from '../Three';
 import { LineBasicNodeMaterial } from '../Nodes';
-import { CommonUniforms } from '../nodeMaterials/CommonUniforms';
+import { CommonUniforms } from './CommonUniforms';
 
 function Materials ( viewer ) {
 

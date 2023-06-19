@@ -1,7 +1,7 @@
 import { BufferGeometry, Mesh, Triangle, Vector3 } from '../Three';
 import { FEATURE_TERRAIN } from '../core/constants';
 import { hydrateGeometry } from '../core/lib';
-import { CommonTerrainMaterial } from '../nodeMaterials/CommonTerrainMaterial';
+import { CommonTerrainMaterial } from '../materials/CommonTerrainMaterial';
 
 const __a = new Vector3();
 const __b = new Vector3();

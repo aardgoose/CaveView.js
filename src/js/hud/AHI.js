@@ -1,7 +1,7 @@
 import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { MutableGlyphString } from '../core/GlyphString';
-import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
+import { GlyphMaterial } from '../materials/GlyphMaterial';
 
 import {
 	Float32BufferAttribute,
@@ -14,7 +14,7 @@ import {
 } from '../Three';
 
 import { lights, MeshPhongNodeMaterial } from '../Nodes';
-import { Line2Material } from '../nodeMaterials/Line2Material';
+import { Line2Material } from '../materials/Line2Material';
 
 // preallocated tmp objects
 const __xAxis = new Vector3( 1, 0, 0 );

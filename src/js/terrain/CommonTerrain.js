@@ -1,9 +1,9 @@
 import { Box3, Group } from '../Three';
 import { FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS } from '../core/constants';
-import { DepthMapMaterial } from '../nodeMaterials/DepthMapMaterial';
+import { DepthMapMaterial } from '../materials/DepthMapMaterial';
 import { HeightLookup } from './HeightLookup';
-import { HypsometricMaterial } from '../nodeMaterials/HypsometricMaterial';
-import { ContourMaterial } from '../nodeMaterials/ContourMaterial';
+import { HypsometricMaterial } from '../materials/HypsometricMaterial';
+import { ContourMaterial } from '../materials/ContourMaterial';
 import { Overlay } from './Overlay';
 
 class CommonTerrain extends Group {

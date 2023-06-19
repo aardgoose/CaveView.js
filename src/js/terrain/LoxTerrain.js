@@ -2,8 +2,8 @@ import { TextureLoader, Mesh } from '../Three';
 import { CommonTerrain } from './CommonTerrain';
 import { LoxTerrainGeometry } from './LoxTerrainGeometry';
 import { FEATURE_TERRAIN } from '../core/constants';
-import { TerrainOverlayMaterial } from '../nodeMaterials/TerrainOverlayMaterial';
-import { CommonTerrainMaterial } from '../nodeMaterials/CommonTerrainMaterial';
+import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
+import { CommonTerrainMaterial } from '../materials/CommonTerrainMaterial';
 
 class LoxTile extends Mesh {
 

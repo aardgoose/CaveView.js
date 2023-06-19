@@ -2,7 +2,7 @@ import { Mesh, Color } from '../Three';
 import { ClusterMarkers } from './ClusterMarkers';
 import { STATION_ENTRANCE, FEATURE_ENTRANCE_DOTS } from '../core/constants';
 import { InstancedSpriteGeometry } from '../core/InstancedSpriteGeometry';
-import { InstancedSpriteMaterial } from '../nodeMaterials/InstancedSpriteMaterial';
+import { InstancedSpriteMaterial } from '../materials/InstancedSpriteMaterial';
 
 class Entrances extends ClusterMarkers {
 

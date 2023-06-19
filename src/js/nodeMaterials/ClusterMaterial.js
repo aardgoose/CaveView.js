@@ -1,9 +1,11 @@
 import { CanvasTexture } from '../Three';
 import { PointsNodeMaterial } from '../Nodes';
-
+// FIXME POINTS NODE DOESN:T WORK
 class ClusterMaterial extends PointsNodeMaterial {
 
-	constructor ( count ) {
+	constructor ( params ) {
+
+		const count = params.count;
 
 		const markerSize = 64;
 		const fontSize = 40;

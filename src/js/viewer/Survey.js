@@ -26,6 +26,7 @@ import { HeightMaterial } from '../nodeMaterials/HeightMaterial';
 import { DepthMaterial } from '../nodeMaterials/DepthMaterial';
 import { CursorMaterial } from '../nodeMaterials/CursorMaterial';
 import { DepthCursorMaterial } from '../nodeMaterials/DepthCursorMaterial';
+import { WallMaterial } from '../nodeMaterials/WallMaterial';
 
 import proj4 from 'proj4';
 
@@ -977,7 +978,7 @@ class Survey extends Object3D {
 
 		case SHADING_SINGLE:
 
-//			materialClass = materials.getSingleWallMaterial();
+			materialClass = WallMaterial;
 
 			break;
 
@@ -1008,12 +1009,11 @@ class Survey extends Object3D {
 
 		if ( materialClass === undefined ) return;
 
-		const material = materials.getMaterial( materialClass, {}, true );
-
-
 		this.markers.setVisibility( ( mode === SHADING_DISTANCE ) );
 
-		if ( this.setLegShading( LEG_CAVE, mode, false, filterConnected ) ) {
+		if ( this.setLegShading( LEG_CAVE, mode, false, filterConnected ) && materialClass !== null ) {
+
+			const material = materials.getMaterial( materialClass, {}, true );
 
 			this.setWallShading( this.features.get( FACE_WALLS  ), material );
 			this.setWallShading( this.features.get( FACE_SCRAPS ), material );

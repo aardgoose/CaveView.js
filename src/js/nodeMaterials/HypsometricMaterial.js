@@ -1,6 +1,5 @@
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
 import { saturate, texture, uniform, varying, vec2, positionGeometry } from '../Nodes';
-import { CommonComponents } from './CommonComponents';
 
 class HypsometricMaterial extends CommonTerrainMaterial {
 
@@ -28,6 +27,8 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 			this.colorNode = texture( textureCache.getTexture( 'hypsometric' ), vec2( zMap.oneMinus(), 1.0 ) );
 
 		}
+
+		this.name = 'CV:HypsometricMaterial'
 
 	}
 

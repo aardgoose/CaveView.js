@@ -1,5 +1,4 @@
 import { materialColor, abs, cond, distance, float, fwidth, mix, smoothstep, texture, varying, vec3, vec4, positionGeometry, positionLocal } from '../Nodes.js';
-import { CommonUniforms } from './CommonUniforms';
 
 class CommonComponents {
 
@@ -32,7 +31,7 @@ class CommonComponents {
 
     static location ( ctx, color ) {
 
-        const lu = CommonUniforms.location( ctx );
+        const lu = ctx.materials.commonUniforms.location( ctx );
 
         const targetDistance = distance( lu.target, positionLocal.xy );
 
@@ -46,11 +45,9 @@ class CommonComponents {
 
     }
 
-    static distanceFade() {
+    static distanceFade( dfu ) {
 
-        const du = CommonUniforms.distanceFade();
-
-        return smoothstep( du.distanceFadeMin, du.distanceFadeMax, distance( du.cameraLocation, vPosition ) ).oneMinus();
+        return smoothstep( dfu.distanceFadeMin, dfu.distanceFadeMax, distance( dfu.cameraLocation, vPosition ) ).oneMinus();
 
     }
 

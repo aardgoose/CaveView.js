@@ -311,7 +311,7 @@ class CommonTerrain extends Group {
 	}
 
 	getHeight ( point ) {
-
+		return 666; // FIXME
 		return this.heightLookup.lookup( point );
 
 	}

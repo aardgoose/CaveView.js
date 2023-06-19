@@ -11,7 +11,6 @@ function Materials ( viewer ) {
 	const materialClassCache = new Map();
 	const cache = new Map();
 	const ctx = viewer.ctx;
-	const cfg = ctx.cfg;
 
 	const cursorMaterials = new Set();
 	const lineMaterials = new Set();

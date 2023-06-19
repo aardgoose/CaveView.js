@@ -1,7 +1,7 @@
 import { Float32BufferAttribute, Mesh, RingGeometry, Vector3 } from '../Three';
 import { GlyphString } from '../core/GlyphString';
 import { MeshBasicNodeMaterial } from '../Nodes';
-import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
+import { GlyphMaterial } from '../materials/GlyphMaterial';
 
 class AngleScale extends Mesh {
 

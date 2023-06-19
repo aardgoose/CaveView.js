@@ -9,7 +9,7 @@ import {
 	Vector3
 } from '../Three';
 import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from '../Nodes';
-import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
+import { GlyphMaterial } from '../materials/GlyphMaterial';
 import { MutableGlyphString } from '../core/GlyphString';
 
 const __direction = new Vector3();

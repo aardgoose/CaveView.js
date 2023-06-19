@@ -1,6 +1,6 @@
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { LineSegments2 } from '../core/LineSegments2';
-import { Line2Material } from '../nodeMaterials/Line2Material';
+import { Line2Material } from '../materials/Line2Material';
 
 class Grid extends LineSegments2 {
 

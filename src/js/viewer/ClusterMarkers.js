@@ -1,6 +1,6 @@
 import { Object3D, Plane, Triangle, Vector3 } from '../Three';
 import { FEATURE_ENTRANCES, CLUSTER_MARKERS } from '../core/constants';
-import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
+import { GlyphMaterial } from '../materials/GlyphMaterial';
 import { GlyphString } from '../core/GlyphString';
 import { Marker } from './Marker';
 

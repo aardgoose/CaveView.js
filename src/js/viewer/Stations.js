@@ -3,7 +3,7 @@ import { Mesh, Matrix4, Vector3, Vector4 } from '../Three';
 import { STATION_ENTRANCE } from '../core/constants';
 import { PointIndicator } from './PointIndicator';
 import { InstancedSpriteGeometry } from '../core/InstancedSpriteGeometry';
-import { InstancedSpriteMaterial } from '../nodeMaterials/InstancedSpriteMaterial';
+import { InstancedSpriteMaterial } from '../materials/InstancedSpriteMaterial';
 
 const _position = new Vector4();
 const _ssOrigin = new Vector4();

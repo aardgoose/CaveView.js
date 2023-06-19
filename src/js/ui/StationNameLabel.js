@@ -1,6 +1,6 @@
 import { GlyphString } from '../core/GlyphString';
 import { FEATURE_SURVEY } from '../core/constants';
-import { GlyphMaterial } from '../nodeMaterials/GlyphMaterial';
+import { GlyphMaterial } from '../materials/GlyphMaterial';
 
 class StationNameLabel extends GlyphString {
 

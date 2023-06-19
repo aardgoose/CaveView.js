@@ -1,5 +1,5 @@
 import { Point } from './Point';
-import { ClusterMaterial } from '../nodeMaterials/ClusterMaterial';
+import { ClusterMaterial } from '../materials/ClusterMaterial';
 
 class Marker extends Point {
 

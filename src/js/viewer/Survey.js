@@ -22,11 +22,11 @@ import { SurveyBox } from '../core/SurveyBox';
 import { SurveyColourMapper} from '../core/SurveyColourMapper';
 import { SurveyMetadata } from './SurveyMetadata';
 
-import { HeightMaterial } from '../nodeMaterials/HeightMaterial';
-import { DepthMaterial } from '../nodeMaterials/DepthMaterial';
-import { CursorMaterial } from '../nodeMaterials/CursorMaterial';
-import { DepthCursorMaterial } from '../nodeMaterials/DepthCursorMaterial';
-import { WallMaterial } from '../nodeMaterials/WallMaterial';
+import { HeightMaterial } from '../materials/HeightMaterial';
+import { DepthMaterial } from '../materials/DepthMaterial';
+import { CursorMaterial } from '../materials/CursorMaterial';
+import { DepthCursorMaterial } from '../materials/DepthCursorMaterial';
+import { WallMaterial } from '../materials/WallMaterial';
 
 import proj4 from 'proj4';
 

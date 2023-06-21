@@ -1,5 +1,5 @@
-import { Color, Vector3 } from '../Three';
-import { PointsNodeMaterial, texture, vec2, positionLocal } from '../Nodes';
+import { Color } from '../Three';
+import { PointsNodeMaterial } from '../Nodes';
 
 class CloudPointsMaterial extends PointsNodeMaterial {
 
@@ -17,9 +17,6 @@ class CloudPointsMaterial extends PointsNodeMaterial {
 		this.vertexColors = true;
 
 		this.onBeforeCompile = function ( shader ) {
-			console.log ( shader);
-
-			Object.assign( shader.uniforms, { uLight: { value: new Vector3( -1, -1, 2 ).normalize() } } );
 
 			const vertexShader = shader.vertexShader
 				.replace( '#include <common>', '\nuniform vec3 uLight;\nvarying float pLight;\n\n\n$&' )

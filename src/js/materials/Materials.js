@@ -2,14 +2,12 @@ import { ColourCache } from '../core/ColourCache';
 import { SurveyLineMaterial } from './SurveyLineMaterial';
 import { TextureCache } from '../core/TextureCache';
 import { Line2Material } from './Line2Material';
-import { BackSide, FrontSide, IncrementStencilOp, Vector3 } from '../Three';
-import { LineBasicNodeMaterial } from '../Nodes';
+import { IncrementStencilOp } from '../Three';
 import { CommonUniforms } from './CommonUniforms';
 
 function Materials ( viewer ) {
 
 	const materialClassCache = new Map();
-	const cache = new Map();
 	const ctx = viewer.ctx;
 
 	const cursorMaterials = new Set();
@@ -29,19 +27,6 @@ function Materials ( viewer ) {
 
 	this.colourCache = colourCache;
 	this.textureCache = textureCache;
-
-	this.uniforms = {
-		common: {
-			uLight: { value: new Vector3( -1, -1, 2 ).normalize() },
-			distanceFadeMin: { value: 0.0 },
-			distanceFadeMax: { value: 0.0 },
-			cameraLocation: { value: new Vector3() }
-		},
-
-		commonDepth: {
-			datumShift: { value: 0.0 }
-		}
-	};
 
 	this.commonUniforms = new CommonUniforms();
 	this.terrainOpacity = 0.5;
@@ -75,36 +60,6 @@ function Materials ( viewer ) {
 
 	} );
 
-	function cacheMaterial ( name, material, stencil ) {
-
-		cache.set( name, material );
-
-		if ( stencil ) {
-
-			material.stencilWrite = true;
-			material.stencilZPass = IncrementStencilOp;
-
-		}
-
-		return material;
-
-	}
-
-	function getCacheMaterial ( name, materialFunc, stencil ) {
-
-		let material = cache.get( name );
-
-		if ( material === undefined && materialFunc ) {
-
-			material = cacheMaterial( name, materialFunc(), stencil );
-			material.side = viewer.hasModel ? BackSide : FrontSide;
-
-		}
-
-		return material;
-
-	}
-
 	// FIXME add flags for survey specific materials for restting or make materials use object uniforms
 	this.getMaterial = function ( materialClass, params = {}, stencil = false ) {
 
@@ -124,18 +79,17 @@ function Materials ( viewer ) {
 		if ( ! material ) {
 
 			material = new materialClass( params, ctx );
+
+			if ( stencil ) {
+
+				material.stencilWrite = true;
+				material.stencilZPass = IncrementStencilOp;
+
+			}
+
 			materialCache.set( materialCacheKey, material );
 
 		}
-
-		return material;
-
-	}
-
-	function getSurveyCacheMaterial ( name, materialFunc, stencil ) {
-
-		const material = getCacheMaterial( name, materialFunc, stencil );
-		perSurveyMaterials[ name ] = material;
 
 		return material;
 
@@ -216,13 +170,6 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getUnselectedMaterial = function () {
-
-		const func = () => new LineBasicNodeMaterial( { color: 0x444444, vertexColors: true } );
-		return getCacheMaterial( 'unselected', func );
-
-	};
-
 	this.setTerrain = function ( terrain ) {
 
 		const updateDatumShifts = event => {
@@ -247,7 +194,7 @@ function Materials ( viewer ) {
 			const material = perSurveyMaterials[ name ];
 
 			material.dispose();
-			cache.delete( name );
+			// material cache clear ???
 
 		}
 

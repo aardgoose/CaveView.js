@@ -35,6 +35,7 @@ const white = new Color( 0xffffff );
 const __v0 = new Vector3();
 const __v1 = new Vector3();
 const __v2 = new Vector3();
+const __basic = { color: 'white', vertexColors: true };
 
 class Survey extends Object3D {
 
@@ -1171,7 +1172,7 @@ class Survey extends Object3D {
 
 	setLegColourByMaterial ( mesh, mode, dashed, filterConnected ) {
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, mode, dashed, filterConnected );
+		mesh.setShading( this.selection.getIds(), _colourSegment, {}, dashed, filterConnected );
 
 		function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1184,7 +1185,7 @@ class Survey extends Object3D {
 
 	setLegColourByColour ( mesh, colour, dashed, filterConnected ) {
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', dashed, filterConnected );
+		mesh.setShading( this.selection.getIds(), _colourSegment, __basic, dashed, filterConnected );
 
 		function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1197,7 +1198,7 @@ class Survey extends Object3D {
 
 	setLegCustomColor ( mesh, dashed, filterConnected ) {
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', dashed, filterConnected );
+		mesh.setShading( this.selection.getIds(), _colourSegment, __basic, dashed, filterConnected );
 
 		function _colourSegment() {}
 
@@ -1211,7 +1212,7 @@ class Survey extends Object3D {
 		const stats = mesh.stats;
 		const legLengths = mesh.legLengths;
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', false, filterConnected );
+		mesh.setShading( this.selection.getIds(), _colourSegment, __basic, false, filterConnected );
 
 		function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1259,7 +1260,7 @@ class Survey extends Object3D {
 		const maxDistance = this.maxDistance;
 		const path = this.highlightPath;
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', false, filterConnected );
+		mesh.setShading( this.selection.getIds(), _colourSegment, __basic, false, filterConnected );
 
 		function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1295,7 +1296,7 @@ class Survey extends Object3D {
 
 		const surveyToColourMap = this.ctx.surveyColourMapper.getColourMap( node );
 
-		mesh.setShading( __set, _colourSegment, 'basic', false, filterConnected );
+		mesh.setShading( __set, _colourSegment, __basic, false, filterConnected );
 
 		function _colourSegment ( vertices, colors, v1, v2, survey ) {
 
@@ -1317,7 +1318,7 @@ class Survey extends Object3D {
 		const c2 = cfg.themeColor( 'routes.adjacent' );
 		const c3 = cfg.themeColor( 'routes.default' );
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, 'basic');
+		mesh.setShading( this.selection.getIds(), _colourSegment, __basic );
 
 		function _colourSegment ( vertices, colors, v1, v2 /*, survey */ ) {
 
@@ -1353,7 +1354,7 @@ class Survey extends Object3D {
 		const hueFactor = colourRange * 2 / Math.PI;
 		const legNormal = new Vector3();
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', false, filterConnected );
+		mesh.setShading( this.selection.getIds(), _colourSegment, __basic, false, filterConnected );
 
 		function _colourSegment ( vertices, colors, v1, v2 ) {
 

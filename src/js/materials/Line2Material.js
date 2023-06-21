@@ -1,5 +1,5 @@
-import { MeshBasicMaterial, Color, Vector2 } from '../Three';
-import { NodeMaterial, materialColor, ShaderNode, positionGeometry, abs, shader, attribute, cond, discard, mix, normalize, uniform, varying, vec2, vec3, vec4, modelViewMatrix, cameraProjectionMatrix } from '../Nodes.js';
+import { MeshBasicMaterial, Vector2 } from '../Three';
+import { NodeMaterial, ShaderNode, positionGeometry, abs, shader, attribute, cond, discard, mix, normalize, uniform, varying, vec2, vec3, vec4, modelViewMatrix, cameraProjectionMatrix } from '../Nodes.js';
 
 const defaultValues = new MeshBasicMaterial();
 
@@ -186,7 +186,6 @@ class Line2Material extends NodeMaterial {
 
 			} );
 
-//			const diffuseColor = vec4( 1.0, 1.0, 1.0 , 1.0 );
 			return vec4( vColor, 1.0 );
 
 			if ( CV_HEIGHT ) {

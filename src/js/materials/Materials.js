@@ -113,13 +113,13 @@ function Materials ( viewer ) {
 		if ( ! materialCache ) {
 
 			materialCache = new Map();
-			materialClassCache.set( materialClassCache, materialCache );
+			materialClassCache.set( materialClass, materialCache );
 
 		}
 
 		const materialCacheKey = JSON.stringify( params );
 
-		let material = materialCache.get( JSON.stringify( materialCacheKey ) );
+		let material = materialCache.get( materialCacheKey );
 
 		if ( ! material ) {
 
@@ -185,7 +185,7 @@ function Materials ( viewer ) {
 
 			commonUniforms.distanceFadeMin.value = minDistance;
 			commonUniforms.distanceFadeMax.value = maxDistance;
-			commonUniforms.cameraLocation.value.copy ( location );
+			commonUniforms.cameraLocation.value.copy( location );
 
 			commonUniforms.target.value.set( location.x, location.y );
 
@@ -195,7 +195,7 @@ function Materials ( viewer ) {
 
 	this.getSurveyLineMaterial = function ( mode = '', dashed = false ) {
 
-		return this.getMaterial( Line2Material, { color: 'cyan' } );
+		return this.getMaterial( Line2Material, { color: 'white', vertexColors: true } );
 		const options = { dashed: dashed, location: locationMode };
 
 		const func = () => new SurveyLineMaterial( ctx, mode, options );

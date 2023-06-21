@@ -10,7 +10,7 @@ class Legs extends LineSegments2 {
 
 		const geometry = new LineSegmentsGeometry();
 
-		super( geometry, ctx.materials.getSurveyLineMaterial( 'basic' ) );
+		super( geometry, ctx.materials.getSurveyLineMaterial( { color: 'white', vertexColors: true } ) );
 
 		this.ctx = ctx;
 		this.colourCache = ctx.materials.colourCache;
@@ -243,7 +243,7 @@ class Legs extends LineSegments2 {
 			}
 
 		}
-console.log( 'xxxxx' );
+
 		this.geometry.getAttribute( 'instanceColorStart' ).needsUpdate = true;
 		this.geometry.getAttribute( 'instanceColorEnd' ).needsUpdate = true;
 

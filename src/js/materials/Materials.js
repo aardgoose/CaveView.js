@@ -193,9 +193,9 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getSurveyLineMaterial = function ( mode = '', dashed = false ) {
+	this.getSurveyLineMaterial = function ( params = {}, dashed = false ) {
 
-		return this.getMaterial( Line2Material, { color: 'white', vertexColors: true } );
+		return this.getMaterial( Line2Material, params );
 		const options = { dashed: dashed, location: locationMode };
 
 		const func = () => new SurveyLineMaterial( ctx, mode, options );

@@ -13,8 +13,6 @@ class Line2Material extends NodeMaterial {
 
 		this.setDefaultValues( defaultValues );
 
-		console.log( 'l2m', params );
-
 		const linewidth  = uniform( 0.002, 'float' );
 		const resolution = uniform( new Vector2( 1, 1 ), 'vec2' );
 
@@ -24,7 +22,7 @@ class Line2Material extends NodeMaterial {
 		const gapSize    = uniform( 1, 'float'  );
 		const opacity    = uniform( 1, 'float' );
 
-		const USE_COLOR = false;
+		const USE_COLOR = params.vertexColors;
 		const USE_DASH = false;
 
 		const CV_BASIC = false;
@@ -47,8 +45,7 @@ class Line2Material extends NodeMaterial {
 
 		this.normals = false;
 		this.lights = false;
-		this.color = new Color( 0x00ff00 );
-//		this.isTest = true;
+		// this.isTest = true;
 
 		const uv = attribute( 'uv', 'vec2' );
 		const vUv = varying( uv, 'vec2' );
@@ -61,6 +58,10 @@ class Line2Material extends NodeMaterial {
 			const instanceColorEnd = attribute( 'instanceColorEnd', 'vec3' );
 
 			vColor = varying( positionGeometry.y.lessThan( 0.5 ).cond( instanceColorStart, instanceColorEnd ) );
+
+		} else {
+
+			vColor = this.color;
 
 		}
 
@@ -164,8 +165,6 @@ class Line2Material extends NodeMaterial {
 
 		const fragmentShaderNode = shader( ( stack ) => {
 
-			const defaultColor = uniform( vec3( 1, 0.5, 1.0 ), 'vec3' );
-
 			//if ( vHide > 0.0 ) discard;
 
 			if ( USE_DASH ) {
@@ -188,7 +187,7 @@ class Line2Material extends NodeMaterial {
 			} );
 
 //			const diffuseColor = vec4( 1.0, 1.0, 1.0 , 1.0 );
-			return vec4( materialColor, 1.0 );
+			return vec4( vColor, 1.0 );
 
 			if ( CV_HEIGHT ) {
 

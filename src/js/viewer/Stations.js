@@ -16,11 +16,7 @@ class Stations extends Mesh {
 
 		const ctx = survey.ctx;
 
-//		const textureCache = ctx.materials.textureCache;
-
-		const m = ctx.materials.getMaterial( InstancedSpriteMaterial );
-
-		super( new InstancedSpriteGeometry(), m );
+		super( new InstancedSpriteGeometry(), ctx.materials.getMaterial( InstancedSpriteMaterial ) );
 
 		this.type = 'CV:Stations';
 		this.stationCount = 0;

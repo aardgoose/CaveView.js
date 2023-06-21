@@ -1000,6 +1000,8 @@ class Survey extends Object3D {
 
 		case SHADING_DISTANCE:
 		case SHADING_SURVEY:
+		case SHADING_LENGTH:
+		case SHADING_INCLINATION:
 
 			materialClass = null;
 

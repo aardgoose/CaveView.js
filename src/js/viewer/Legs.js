@@ -175,7 +175,7 @@ class Legs extends LineSegments2 {
 	}
 
 	setShading ( idSet, colourSegment, mode, dashed, filterConnected ) {
-return;
+
 		this.material = this.ctx.materials.getSurveyLineMaterial( mode, dashed );
 		this.material.needsUpdate = true;
 

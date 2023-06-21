@@ -243,7 +243,7 @@ class Legs extends LineSegments2 {
 			}
 
 		}
-
+console.log( 'xxxxx' );
 		this.geometry.getAttribute( 'instanceColorStart' ).needsUpdate = true;
 		this.geometry.getAttribute( 'instanceColorEnd' ).needsUpdate = true;
 

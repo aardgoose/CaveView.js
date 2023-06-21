@@ -35,7 +35,7 @@ function LightingManager ( ctx, scene ) {
 	scene.addStatic( ambientLight );
 
 	const light = new DirectionalLight( 0xffffff, 1.0 );
-	light.position.set( -1, -1, 2 );
+	light.position.set(  1, -1, 2 );
 
 	scene.addStatic( light );
 

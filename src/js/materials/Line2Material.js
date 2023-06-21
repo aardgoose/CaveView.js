@@ -1,11 +1,13 @@
 import { MeshBasicMaterial, Vector2 } from '../Three';
-import { NodeMaterial, ShaderNode, positionGeometry, abs, shader, attribute, cond, discard, mix, normalize, uniform, varying, vec2, vec3, vec4, modelViewMatrix, cameraProjectionMatrix } from '../Nodes.js';
+import { NodeMaterial, ShaderNode, positionGeometry, abs, shader, attribute, cond, discard, float, mix, mod, normalize, uniform, varying, vec2, vec3, vec4, modelViewMatrix, cameraProjectionMatrix, materialColor } from '../Nodes.js';
 
 const defaultValues = new MeshBasicMaterial();
 
 class Line2Material extends NodeMaterial {
 
 	isLineMaterial = true;
+	name = 'Line2Material';
+	colorInsert = null;
 
 	constructor ( params = {}, ctx ) {
 
@@ -16,21 +18,20 @@ class Line2Material extends NodeMaterial {
 		const linewidth  = uniform( 0.002, 'float' );
 		const resolution = uniform( new Vector2( 1, 1 ), 'vec2' );
 
-		const dashScale  = uniform( 1, 'float' );
-		const dashSize   = uniform( 1, 'float'  );
+		const dashSize   = uniform( 0.1, 'float'  );
 		const dashOffset = uniform( 0, 'float' );
-		const gapSize    = uniform( 1, 'float'  );
+		const gapSize    = uniform( 0.2, 'float'  );
 		const opacity    = uniform( 1, 'float' );
 
 		const USE_COLOR = params.vertexColors;
-		const USE_DASH = false;
+		const USE_DASH = params.dashed;
 
-		const CV_BASIC = false;
 		const CV_CURSOR = false;
 		const CV_DEPTH = false;
 		const CV_DEPTH_CURSOR = false;
 		const CV_Z = false;
 
+		console.log( '***** dashed ******', USE_DASH );
 		const trimSegment = new ShaderNode( ( start, end ) => {
 
 			const a = cameraProjectionMatrix.element( 2 ).element( 2 ); // 3nd entry in 3th column
@@ -48,7 +49,7 @@ class Line2Material extends NodeMaterial {
 		// this.isTest = true;
 
 		const uv = attribute( 'uv', 'vec2' );
-		const vUv = varying( uv, 'vec2' );
+		const vUv = varying( uv );
 
 		let vColor;
 
@@ -61,7 +62,7 @@ class Line2Material extends NodeMaterial {
 
 		} else {
 
-			vColor = this.color;
+			vColor = materialColor;
 
 		}
 
@@ -69,7 +70,7 @@ class Line2Material extends NodeMaterial {
 
 		if ( USE_DASH ) {
 
-			const dashScale = uniform( 'dashScale', 'float' );
+			const dashScale = uniform( 1.0, 'float' );
 			const instanceDistanceStart = attribute( 'instanceDistanceStart', 'float' );
 			const instanceDistanceEnd = attribute( 'instanceDistanceEnd', 'float' );
 
@@ -186,11 +187,14 @@ class Line2Material extends NodeMaterial {
 
 			} );
 
-			return vec4( vColor, 1.0 );
+			if ( this.colorInsert !== null ) {
 
-			if ( CV_HEIGHT ) {
 
-				return texture2D( cmap, vec2( 1.0 - zMap, 1.0 ) ) * vec4( vColor, 1.0 );
+				return vColor.mul( this.colorInsert );
+
+			} else {
+
+				return vColor;
 
 			}
 
@@ -214,12 +218,6 @@ class Line2Material extends NodeMaterial {
 			if ( CV_CURSOR || CV_DEPTH_CURSOR ) {
 
 				// #include <cursor_fragment>
-
-			}
-
-			if ( CV_BASIC ) {
-
-				return diffuseColor;
 
 			}
 
@@ -427,7 +425,7 @@ class Line2Material extends NodeMaterial {
 
 	customProgramCacheKey () {
 
-		return 'line2';
+		return this.name;
 
 	}
 

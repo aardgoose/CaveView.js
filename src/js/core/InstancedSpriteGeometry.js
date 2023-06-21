@@ -23,7 +23,7 @@ class InstancedSpriteGeometry extends InstancedBufferGeometry {
 		for ( let i = 0; i < instanceCount; i++ ) {
 
 			const v = positions[ i ];
-			instancePosition.setXYZ( i * 3, v.x, v.y, v.z );
+			instancePosition.setXYZ( i, v.x, v.y, v.z );
 
 		}
 
@@ -47,7 +47,7 @@ class InstancedSpriteGeometry extends InstancedBufferGeometry {
 		for ( let i = 0; i < count; i++ ) {
 
 			const v = colors[ i ];
-			instanceColor.setXYZ( i * 3, v.r, v.g, v.b );
+			instanceColor.setXYZ( i, v.r, v.g, v.b );
 
 		}
 

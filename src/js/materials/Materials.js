@@ -147,7 +147,7 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getSurveyLineMaterial = function ( params = {}, dashed = false ) {
+	this.getSurveyLineMaterial = function ( params = {} ) {
 
 		return this.getMaterial( Line2Material, params );
 		const options = { dashed: dashed, location: locationMode };

@@ -1019,13 +1019,17 @@ class Survey extends Object3D {
 
 		this.markers.setVisibility( ( mode === SHADING_DISTANCE ) );
 
-		if ( this.setLegShading( LEG_CAVE, mode, false, filterConnected ) && materialClass !== null ) {
+		if ( this.setLegShading( LEG_CAVE, mode, false, filterConnected ) ) {
 
-			const material = materials.getMaterial( materialClass, {}, true );
+			if ( materialClass !== null ) {
 
-			this.setWallShading( this.features.get( FACE_WALLS  ), material );
-			this.setWallShading( this.features.get( FACE_SCRAPS ), material );
-			this.setWallShading( this.features.get( FACE_MODEL ), material );
+				const material = materials.getMaterial( materialClass, {}, true );
+
+				this.setWallShading( this.features.get( FACE_WALLS  ), material );
+				this.setWallShading( this.features.get( FACE_SCRAPS ), material );
+				this.setWallShading( this.features.get( FACE_MODEL ), material );
+
+			}
 
 			this.caveShading = mode;
 

@@ -4,7 +4,7 @@ import { CommonComponents } from './CommonComponents.js';
 
 class CursorLineMaterial extends Line2Material {
 
-	name = 'CursorLineMaterial';
+	name = 'CV:CursorLineMaterial';
 
 	constructor ( params = {}, ctx ) {
 
@@ -14,8 +14,8 @@ class CursorLineMaterial extends Line2Material {
 		const survey = ctx.survey;
 		const limits = survey.modelLimits;
 
-		const instanceStart = attribute( 'instanceStart', 'vec3' );
-		const instanceEnd   = attribute( 'instanceEnd', 'vec3' );
+		const instanceStart = attribute( 'instanceStart' );
+		const instanceEnd   = attribute( 'instanceEnd' );
 
 		const vPosition = positionGeometry.y.lessThan( 0.5 ).cond( instanceStart, instanceEnd );
 

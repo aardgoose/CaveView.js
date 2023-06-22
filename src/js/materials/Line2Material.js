@@ -1,5 +1,5 @@
 import { MeshBasicMaterial, Vector2 } from '../Three';
-import { NodeMaterial, ShaderNode, positionGeometry, abs, shader, attribute, cond, discard, float, mix, mod, normalize, uniform, varying, vec2, vec3, vec4, modelViewMatrix, cameraProjectionMatrix, materialColor } from '../Nodes.js';
+import { NodeMaterial, ShaderNode, positionGeometry, abs, shader, attribute, cond, discard, mix, mod, normalize, uniform, varying, vec2, vec3, vec4, modelViewMatrix, cameraProjectionMatrix, materialColor } from '../Nodes.js';
 
 const defaultValues = new MeshBasicMaterial();
 
@@ -15,13 +15,13 @@ class Line2Material extends NodeMaterial {
 
 		this.setDefaultValues( defaultValues );
 
-		const linewidth  = uniform( 0.002, 'float' );
-		const resolution = uniform( new Vector2( 1, 1 ), 'vec2' );
+		const linewidth  = uniform( 0.002 );
+		const resolution = uniform( new Vector2( 1, 1 ) );
 
-		const dashSize   = uniform( 0.1, 'float'  );
-		const dashOffset = uniform( 0, 'float' );
-		const gapSize    = uniform( 0.2, 'float'  );
-		const opacity    = uniform( 1, 'float' );
+		const dashSize   = uniform( 0.1 );
+		const dashOffset = uniform( 0 );
+		const gapSize    = uniform( 0.2 );
+		const opacity    = uniform( 1 );
 
 		const USE_COLOR = params.vertexColors;
 		const USE_DASH = params.dashed;
@@ -45,15 +45,15 @@ class Line2Material extends NodeMaterial {
 		this.lights = false;
 		// this.isTest = true;
 
-		const uv = attribute( 'uv', 'vec2' );
+		const uv = attribute( 'uv' );
 		const vUv = varying( uv );
 
 		let vColor;
 
 		if ( USE_COLOR ) {
 
-			const instanceColorStart = attribute( 'instanceColorStart', 'vec3' );
-			const instanceColorEnd = attribute( 'instanceColorEnd', 'vec3' );
+			const instanceColorStart = attribute( 'instanceColorStart' );
+			const instanceColorEnd = attribute( 'instanceColorEnd' );
 
 			vColor = varying( positionGeometry.y.lessThan( 0.5 ).cond( instanceColorStart, instanceColorEnd ) );
 
@@ -68,8 +68,8 @@ class Line2Material extends NodeMaterial {
 		if ( USE_DASH ) {
 
 			const dashScale = uniform( 1.0, 'float' );
-			const instanceDistanceStart = attribute( 'instanceDistanceStart', 'float' );
-			const instanceDistanceEnd = attribute( 'instanceDistanceEnd', 'float' );
+			const instanceDistanceStart = attribute( 'instanceDistanceStart' );
+			const instanceDistanceEnd = attribute( 'instanceDistanceEnd' );
 
 			vLineDistance = varying( positionGeometry.y.lessThan( 0.5 ).cond( dashScale.mul( instanceDistanceStart ), dashScale.mul( instanceDistanceEnd ) ) );
 
@@ -78,8 +78,8 @@ class Line2Material extends NodeMaterial {
 
 		const vertexShaderNode = shader( ( stack ) => {
 
-			const instanceStart = attribute( 'instanceStart', 'vec3' );
-			const instanceEnd   = attribute( 'instanceEnd',  'vec3' );
+			const instanceStart = attribute( 'instanceStart' );
+			const instanceEnd   = attribute( 'instanceEnd' );
 
 			const aspect = resolution.x.div( resolution.y );
 	

@@ -175,7 +175,7 @@ class Overlay {
 
 							}
 
-							const material = new TerrainOverlayMaterial( this.ctx );
+							const material = new TerrainOverlayMaterial( {}, this.ctx );
 
 							texture.anisotropy = cfg.value( 'anisotropy', 4 );
 							texture.repeat.setScalar( repeat );

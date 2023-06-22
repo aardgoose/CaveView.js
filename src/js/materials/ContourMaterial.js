@@ -1,14 +1,16 @@
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
-import { fract, fwidth, step, cond, mix, smoothstep, uniform, vec4, positionLocal, materialOpacity } from '../Nodes';
+import { fract, fwidth, step, cond, mix, smoothstep, float, uniform, vec4, positionLocal, materialOpacity } from '../Nodes';
 
 class ContourMaterial extends CommonTerrainMaterial {
+
+	name = 'CV:ContourMaterial'
 
 	constructor ( params = {}, ctx ) {
 
 		const survey = ctx.survey;
 		const cfg = ctx.cfg;
 
-		super( { opacity: 0.5 }, ctx );
+		super( params, ctx );
 
 		const commonUniforms = ctx.materials.commonUniforms;
 
@@ -28,17 +30,17 @@ class ContourMaterial extends CommonTerrainMaterial {
 
 		const df = fwidth( zLine );
 
-		cond( f.greaterThan( 0.5 ), f = f.oneMinus() );
-		cond( f.greaterThan( 0.5 ), f10 = f10.oneMinus() );
+//		cond( f.greaterThan( 0.5 ), f = f.oneMinus() );
+//		cond( f.greaterThan( 0.5 ), f10 = f10.oneMinus() );
 
 		const contourColorSelection = step( 0.81, f10 );
 
 		const c = smoothstep( df.mul( 0.5 ), df, f );
 		const finalColor = vec4( mix( contourColor, contourColor10, contourColorSelection ), 1.0 );
 
-		this.opacityNode = mix( 1.0, materialOpacity, c );
+		this.opacityNode = float( 1.0 );
+//		this.opacityNode = mix( 1.0, materialOpacity, c );
 		this.colorNode = mix( finalColor, baseColor, c );
-		this.name = 'CV:ContourMaterial'
 
 	}
 

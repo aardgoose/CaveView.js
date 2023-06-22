@@ -3,6 +3,8 @@ import { saturate, texture, uniform, varying, vec2, positionGeometry } from '../
 
 class HypsometricMaterial extends CommonTerrainMaterial {
 
+	name = 'CV:HypsometricMaterial';
+
 	constructor ( params = {}, ctx ) {
 
 		const survey = ctx.survey;
@@ -27,8 +29,6 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 			this.colorNode = texture( textureCache.getTexture( 'hypsometric' ), vec2( zMap.oneMinus(), 1.0 ) );
 
 		}
-
-		this.name = 'CV:HypsometricMaterial'
 
 	}
 

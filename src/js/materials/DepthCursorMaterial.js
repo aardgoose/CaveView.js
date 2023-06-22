@@ -4,11 +4,11 @@ import { CommonComponents } from './CommonComponents';
 
 class DepthCursorMaterial extends SubsurfaceMaterial {
 
+	name = 'CV:DepthCursorMaterial';
+
 	constructor( options, ctx ) {
 
 		super( { vertexColors: true }, ctx );
-
-		this.name = 'CV:DepthCursorMaterial';
 
 		const survey = ctx.survey;
 		const surveyLimits = survey.modelLimits;

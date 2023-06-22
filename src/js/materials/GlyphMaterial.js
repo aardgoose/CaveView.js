@@ -1,8 +1,6 @@
 import { Vector2, Vector3 } from '../Three';
-import { attribute, modelViewProjection, shader, NodeMaterial, uniform, varying, vec2, vec4, texture, positionGeometry, modelViewMatrix } from '../Nodes';
+import { attribute, modelViewProjection, shader, texture, NodeMaterial, uniform, varying, vec2, vec4, positionGeometry, modelViewMatrix } from '../Nodes';
 import { GlyphAtlasCache } from '../materials/GlyphAtlasCache';
-
-let id = 0;
 
 class GlyphMaterial extends NodeMaterial {
 
@@ -34,9 +32,9 @@ class GlyphMaterial extends NodeMaterial {
 
 		} );
 
+		this.name = `CV:GlyphMaterial:${type}`;
 		this.normals = false;
 		this.lights = false;
-//		this.isTest = true;
 
 		// glyph shader, each instance represents one glyph.
 
@@ -135,7 +133,7 @@ class GlyphMaterial extends NodeMaterial {
 
 	}
 
-	constructPosition( /* builder */ ) {
+	constructPosition ( /* builder */ ) {
 
 		return this.outNode;
 
@@ -155,7 +153,7 @@ class GlyphMaterial extends NodeMaterial {
 
 	customProgramCacheKey () {
 
-		return `glyph${id++}`;
+		return this.name;
 
 	}
 

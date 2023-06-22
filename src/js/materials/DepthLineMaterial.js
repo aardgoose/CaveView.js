@@ -3,7 +3,7 @@ import { Line2Material } from './Line2Material.js';
 
 class DepthLineMaterial extends Line2Material {
 
-	name = 'HeightLineMaterial';
+	name = 'DepthLineMaterial';
 
 	constructor ( params = {}, ctx ) {
 
@@ -30,6 +30,13 @@ class DepthLineMaterial extends Line2Material {
 		this.colorInsert = texture( textureCache.getTexture( gradient ), vec2( float( 1 ).sub( zMap ), 1.0 ) );
 /*
 		if ( CV_DEPTH ) {
+
+//				float terrainHeight = unpackRGBAToFloat( texture2D( depthMap, vTerrainCoords ) );
+
+				stack.assign( terrainHeight, terrainHeight.mul( rangeZ ).add( modelMin.z ).add( datumShift ) );
+
+				const depth = terrainHeight.sub( vPosition.z );
+				const vCursor = depth; // hack
 
 			return texture2D( cmap, vec2( depth * depthScale, 1.0 ) ) * vec4( vColor, 1.0 );
 

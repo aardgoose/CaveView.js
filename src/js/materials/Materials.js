@@ -1,7 +1,5 @@
 import { ColourCache } from '../core/ColourCache';
-import { SurveyLineMaterial } from './SurveyLineMaterial';
 import { TextureCache } from '../core/TextureCache';
-import { Line2Material } from './Line2Material';
 import { IncrementStencilOp } from '../Three';
 import { CommonUniforms } from './CommonUniforms';
 
@@ -9,13 +7,6 @@ function Materials ( viewer ) {
 
 	const materialClassCache = new Map();
 	const ctx = viewer.ctx;
-
-	const cursorMaterials = new Set();
-	const lineMaterials = new Set();
-	const surveyLineMaterials = new Set();
-	const wallMaterials = new Set();
-
-	let perSurveyMaterials = {};
 
 	let cursorHeight = 0;
 	let linewidth = 1;
@@ -31,21 +22,18 @@ function Materials ( viewer ) {
 	this.commonUniforms = new CommonUniforms();
 	this.terrainOpacity = 0.5;
 
+// FIXME - common uniforms or other mech
 	Object.defineProperties( this, {
 
 		'cursorHeight': {
 			get() { return cursorHeight; },
 			set( newHeight ) {
-				cursorMaterials.forEach(
-					material => cursorHeight = material.setCursor( newHeight )
-				);
 			}
 		},
 
 		'linewidth': {
 			get() { return linewidth; },
 			set( width ) {
-				lineMaterials.forEach( material => material.linewidth = width );
 				linewidth = width;
 			}
 		},
@@ -53,7 +41,6 @@ function Materials ( viewer ) {
 		'scaleLinewidth': {
 			get() { return scaleLinewidth; },
 			set( mode ) {
-				surveyLineMaterials.forEach( material => material.scaleLinewidth = mode );
 				scaleLinewidth = mode;
 			}
 		}
@@ -147,29 +134,6 @@ function Materials ( viewer ) {
 
 	};
 
-	this.getSurveyLineMaterial = function ( params = {} ) {
-
-		return this.getMaterial( Line2Material, params );
-		const options = { dashed: dashed, location: locationMode };
-
-		const func = () => new SurveyLineMaterial( ctx, mode, options );
-		const material = getSurveyCacheMaterial( 'survey-line-' + mode + ( dashed ? '-dashed' : '' ), func, true );
-
-		if ( mode === 'cursor' || mode === 'depth-cursor' ) {
-
-			// set active cursor material for updating
-			cursorMaterials.add( material );
-
-		}
-
-		lineMaterials.add( material );
-		surveyLineMaterials.add( material );
-		material.linewidth = linewidth;
-
-		return material;
-
-	};
-
 	this.setTerrain = function ( terrain ) {
 
 		const updateDatumShifts = event => {
@@ -184,36 +148,12 @@ function Materials ( viewer ) {
 
 	this.flushCache = function () {
 
-		cursorMaterials.clear();
-		lineMaterials.clear();
-		surveyLineMaterials.clear();
-		wallMaterials.clear();
-
-		for ( const name in perSurveyMaterials ) {
-
-			const material = perSurveyMaterials[ name ];
-
-			material.dispose();
-			// material cache clear ???
-
-		}
-
-		perSurveyMaterials = {};
 		ctx.glyphStringCache = new Map();
 		cursorHeight = 0;
 
 	};
 
 	this.setFog = function ( enable ) {
-
-		for ( const name in perSurveyMaterials ) {
-
-			const material = perSurveyMaterials[ name ];
-
-			material.fog = enable;
-			material.needsUpdate = true;
-
-		}
 
 	};
 

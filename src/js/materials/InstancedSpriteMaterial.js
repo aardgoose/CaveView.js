@@ -5,6 +5,8 @@ const defaultValues = new MeshBasicMaterial();
 
 class InstancedSpriteMaterial extends NodeMaterial {
 
+	name = 'CV:InstancedSpriteMaterial';
+
 	constructor( params = {}, ctx ) {
 
 		super( {
@@ -31,7 +33,7 @@ class InstancedSpriteMaterial extends NodeMaterial {
 		const offset = modelViewProjection( vec4( instancePosition, 1.0 ) );
 
 		// scale instance geometry for screen
-		const pos = positionGeometry.xy.mul( scale ).mul( offset.w );
+		const pos = positionGeometry.xy.sub( 0.5 ).mul( scale ).mul( offset.w );
 
 		let spriteTexture;
 
@@ -49,7 +51,7 @@ class InstancedSpriteMaterial extends NodeMaterial {
 
 	}
 
-	constructPosition( builder ) {
+	constructPosition( /* builder */ ) {
 
 		return this.outputNode;
 
@@ -67,6 +69,12 @@ class InstancedSpriteMaterial extends NodeMaterial {
 		this.positionNode = source.positionNode;
 
 		return super.copy( source );
+
+	}
+
+	customProgramCacheKey () {
+
+		return this.name;
 
 	}
 

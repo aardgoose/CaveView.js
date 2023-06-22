@@ -80,12 +80,6 @@ function LightingManager ( ctx, scene ) {
 		}
 	} );
 
-	this.getSurfaceLights = function () {
-
-		return lights( surfaceLights.children );
-
-	}
-
 	this.getSubsurfaceLights = function () {
 
 		return subsurfaceLights;

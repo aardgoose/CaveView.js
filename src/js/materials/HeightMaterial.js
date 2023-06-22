@@ -3,11 +3,11 @@ import { SubsurfaceMaterial } from './SubsufaceMaterial';
 
 class HeightMaterial extends SubsurfaceMaterial {
 
+	name ='CV:HightMaterial';
+
 	constructor ( options, ctx ) { // FIXME option handlin
 
 		super( options, ctx );
-
-		this.name ='CV:HightMaterial';
 
 		const survey = ctx.survey;
 		const limits = survey.modelLimits;

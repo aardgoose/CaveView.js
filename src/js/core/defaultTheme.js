@@ -11,7 +11,7 @@ const defaultTheme = {
 	entrance_dot_size: 5,
 	hud: {
 		text: {
-			background: 'green',
+			background: 'black',
 			color: 'white',
 			font: 'normal Arial, sans-serif',
 		},

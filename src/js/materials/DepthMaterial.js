@@ -4,6 +4,8 @@ import { CommonComponents } from './CommonComponents';
 
 class DepthMaterial extends SubsurfaceMaterial {
 
+	name = 'CV:DepthMaterial';
+
 	constructor ( options, ctx ) {
 
 		const survey = ctx.survey;
@@ -13,8 +15,6 @@ class DepthMaterial extends SubsurfaceMaterial {
 		const textureCache = materials.textureCache;
 
 		super( { transparent: options.location }, ctx );
-
-		this.name = 'CV:DepthMaterial';
 
 		const du = materials.commonUniforms.depth( ctx );
 

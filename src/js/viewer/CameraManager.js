@@ -86,7 +86,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 //			renderer.render( scene, camera );
 
-			scene.overrideMaterial = null;
+//			scene.overrideMaterial = null;
 			camera.layers.mask = savedMask;
 
 		}
@@ -94,7 +94,7 @@ function CameraManager ( ctx, renderer, scene ) {
 		renderer.render( scene, camera );
 //		renderer.getContext().flush();
 
-//		lastFrame = renderer.info.render.frame;
+//		lastFrame = renderer._info.render.frame;
 
 	};
 

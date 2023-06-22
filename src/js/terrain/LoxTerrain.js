@@ -57,7 +57,7 @@ class LoxTile extends Mesh {
 
 			};
 
-			self.overlayMaterial = new TerrainOverlayMaterial( ctx );
+			self.overlayMaterial = new TerrainOverlayMaterial( {}, ctx );
 
 			self.overlayMaterial.map = texture;
 

@@ -19,7 +19,7 @@ import {
 	WebGLRenderTarget
 } from '../Three';
 
-import { Shaders } from '../materials/shaders/Shaders';
+//import { Shaders } from '../materials/shaders/Shaders';
 
 function AnaglyphEffect ( renderer, width, height ) {
 
@@ -75,8 +75,8 @@ function AnaglyphEffect ( renderer, width, height ) {
 
 		},
 
-		vertexShader: Shaders.anaglyphVertexShader,
-		fragmentShader: Shaders.anaglyphFragmentShader
+//		vertexShader: Shaders.anaglyphVertexShader,
+//		fragmentShader: Shaders.anaglyphFragmentShader
 
 	} );
 

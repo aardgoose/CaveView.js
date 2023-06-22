@@ -26,12 +26,9 @@ class Line2Material extends NodeMaterial {
 		const USE_COLOR = params.vertexColors;
 		const USE_DASH = params.dashed;
 
-		const CV_CURSOR = false;
-		const CV_DEPTH = false;
 		const CV_DEPTH_CURSOR = false;
 		const CV_Z = false;
 
-		console.log( '***** dashed ******', USE_DASH );
 		const trimSegment = new ShaderNode( ( start, end ) => {
 
 			const a = cameraProjectionMatrix.element( 2 ).element( 2 ); // 3nd entry in 3th column
@@ -209,17 +206,6 @@ class Line2Material extends NodeMaterial {
 
 			}
 
-			if ( CV_DEPTH ) {
-
-				return texture2D( cmap, vec2( depth * depthScale, 1.0 ) ) * vec4( vColor, 1.0 );
-
-			}
-
-			if ( CV_CURSOR || CV_DEPTH_CURSOR ) {
-
-				// #include <cursor_fragment>
-
-			}
 
 			if ( CV_Z ) {
 

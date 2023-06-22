@@ -3,9 +3,9 @@ import { MeshPhongNodeMaterial } from '../Nodes';
 
 class CommonTerrainMaterial extends MeshPhongNodeMaterial {
 
-	constructor ( parameters, ctx ) {
+	constructor ( params, ctx ) {
 
-		super( parameters );
+		super( params );
 
 		Object.defineProperty( this, 'opacity', {
 			get() { return ctx.materials.terrainOpacity; }

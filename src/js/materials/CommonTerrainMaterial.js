@@ -3,6 +3,8 @@ import { MeshPhongNodeMaterial } from '../Nodes';
 
 class CommonTerrainMaterial extends MeshPhongNodeMaterial {
 
+	name = 'CV:CommonTerrainMaterial';
+
 	constructor ( params, ctx ) {
 
 		super( params );

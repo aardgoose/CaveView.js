@@ -31,10 +31,10 @@ class CommonUniforms {
 		const range = limits.getSize( new Vector3() );
 
 		return {
-			modelMin:   uniform( limits.min, 'vec3' ),
-			scale:      uniform( vec2( 1 / range.x, 1 / range.y), 'vec2' ),
-			rangeZ:     uniform( range.z, 'float' ),
-			depthScale: uniform( 1 / ( surveyLimits.max.z - surveyLimits.min.z ), 'float' ),
+			modelMin:   uniform( limits.min ),
+			scale:      uniform( vec2( 1 / range.x, 1 / range.y ) ),
+			rangeZ:     uniform( range.z ),
+			depthScale: uniform( 1 / ( surveyLimits.max.z - surveyLimits.min.z ) ),
 			datumShift: this.datumShift
 		}
 
@@ -45,8 +45,8 @@ class CommonUniforms {
 		const cfg = ctx.cfg;
 
 		return {
-			cursor:      uniform( 0, 'float' ),
-			cursorWidth: uniform( 5.0, 'float' ),
+			cursor:      uniform( 0 ),
+			cursorWidth: uniform( 5.0 ),
 			baseColor:   uniform( cfg.themeColor( 'shading.cursorBase' ) ),
 			cursorColor: uniform( cfg.themeColor( 'shading.cursor' ) ),
 		};

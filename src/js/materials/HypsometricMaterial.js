@@ -21,8 +21,8 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 			const zMin = cfg.themeValue( 'shading.hypsometric.min', terrain.boundingBox.min.z );
 			const zMax = cfg.themeValue( 'shading.hypsometric.max', terrain.boundingBox.max.z );
 
-			const minZ = uniform( zMin, 'float' );
-			const scaleZ = uniform( 1 / ( zMax - zMin ), 'float' );
+			const minZ = uniform( zMin );
+			const scaleZ = uniform( 1 / ( zMax - zMin ) );
 
 			const zMap = varying( saturate( positionGeometry.z.sub( minZ ).mul( scaleZ ) ) );
 

@@ -45,10 +45,10 @@ class GlyphMaterial extends NodeMaterial {
 
 		// attributes
 
-		const offsets        = attribute( 'offsets', 'float' );
-		const instanceOffset = attribute( 'instanceOffset', 'float' );
-		const instanceUV     = attribute( 'instanceUV', 'vec2' );
-		const instanceWidth  = attribute( 'instanceWidth', 'float' );
+		const offsets        = attribute( 'offsets' );
+		const instanceOffset = attribute( 'instanceOffset' );
+		const instanceUV     = attribute( 'instanceUV' );
+		const instanceWidth  = attribute( 'instanceWidth' );
 
 		const uv = varying( instanceUV.add( vec2( positionGeometry.x.mul( cellScale ).mul( instanceWidth ), positionGeometry.y.mul( cellScale ) ) ) );
 

@@ -1,10 +1,12 @@
 import { Box3, Group } from '../Three';
-import { FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS } from '../core/constants';
-import { DepthMapMaterial } from '../materials/DepthMapMaterial';
+import { FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS, SHADING_DEPTHMAP } from '../core/constants';
 import { HeightLookup } from './HeightLookup';
 import { HypsometricMaterial } from '../materials/HypsometricMaterial';
 import { ContourMaterial } from '../materials/ContourMaterial';
+import { DepthMapMaterial } from '../materials/DepthMapMaterial';
 import { Overlay } from './Overlay';
+import { Popup } from '../ui/Popup';
+import { PopupMaterial } from '../materials/PopupMaterial';
 
 class CommonTerrain extends Group {
 
@@ -14,9 +16,9 @@ class CommonTerrain extends Group {
 
 		this.hasOverlay = false;
 		this.activeOverlay = null;
-		this.depthTexture = null;
+//		this.depthTexture = null;
 		this.renderer = null;
-		this.renderTarget = null;
+//		this.renderTarget = null;
 		this.heightLookup = null;
 		this.datumShift = 0;
 		this.activeDatumShift = 0;
@@ -25,7 +27,7 @@ class CommonTerrain extends Group {
 		this.isFlat = false;
 		this.screenAttribution = null;
 		this.terrainShadingModes = {};
-		this.commonUniforms = ctx.materials.commonTerrainUniforms;
+//		this.commonUniforms = ctx.materials.commonTerrainUniforms; FIXME
 		this.ctx = ctx;
 		this.shadingMode = SHADING_RELIEF;
 
@@ -52,8 +54,6 @@ class CommonTerrain extends Group {
 		const activeOverlay = this.activeOverlay;
 
 		if ( activeOverlay !== null ) activeOverlay.setInactive();
-
-		if ( this.renderTarget !== null ) this.renderTarget.dispose();
 
 	}
 
@@ -102,14 +102,15 @@ class CommonTerrain extends Group {
 
 		const container = this.ctx.container;
 		const renderUtils = this.ctx.renderUtils;
+
 		// set camera frustrum to cover region/survey area
 		const rtCamera = renderUtils.makePlanCamera( container, survey );
 
 		rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
+		console.log( 'render depthmap' );
 
 		const renderTarget = renderUtils.makeRenderTarget( dim, dim );
 
-		renderTarget.texture.generateMipmaps = false;
 		renderTarget.texture.name = 'CV.DepthMapTexture';
 
 		renderer.setSize( dim, dim );
@@ -119,22 +120,50 @@ class CommonTerrain extends Group {
 
 		renderer.setRenderTarget( renderTarget );
 
-//		scene.overrideMaterial = new DepthMapMaterial( this );
+		scene.overrideMaterial = new DepthMapMaterial( this );
 
+		// FIXME this should be a compilation pass only
 		renderer.render( scene, rtCamera );
+
+		Promise.all( renderer.pendingCompilations ).then( ( i ) => {
+
+			renderer.setSize( dim, dim );
+			renderer.setPixelRatio( 1 );
+
+			renderer.clear();
+
+			renderer.setRenderTarget( renderTarget );
+
+			scene.overrideMaterial = new DepthMapMaterial( this );
+
+			renderer.render( scene, rtCamera );
+			scene.overrideMaterial = null;
+
+			renderer.setRenderTarget( null );
+			this.ctx.viewer.resetRenderer();
+
+			// add lookup using heightMap texture
+			this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox );
+
+			const p = new Popup( this.ctx );
+
+			p.material = new PopupMaterial( container, renderTarget.texture );
+	
+			scene.add( p );
+
+		} );
 
 		scene.overrideMaterial = null;
 
-		this.depthTexture = renderTarget.texture;
+		renderer.setRenderTarget( null );
+
+		console.log( 'end render - target');
+
+		// this.depthTexture = renderTarget.texture; // FIXME do we still use this?
+
 		this.renderer = renderer;
-		this.renderTarget = renderTarget;
 
-		// add lookup using heightMap texture
-//		this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox );
-
-		// restore renderer to normal render size and target
-
-//		renderer.renderLists.dispose(); // FIXME is this needed and is there a webHPU equivalent
+		// renderer.renderLists.dispose(); // FIXME is this needed and is there a webHPU equivalent
 
 		// restore renderer to normal render size and target
 
@@ -191,7 +220,7 @@ class CommonTerrain extends Group {
 				} else {
 
 					// if initial setting is not valid, default to shaded relief
-					material = materials.getHypsometricMaterial();
+					material = materials.getMaterial( HypsometricMaterial, {} );
 					mode = SHADING_RELIEF;
 
 				}
@@ -311,7 +340,7 @@ class CommonTerrain extends Group {
 	}
 
 	getHeight ( point ) {
-		return 666; // FIXME
+
 		return this.heightLookup.lookup( point );
 
 	}

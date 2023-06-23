@@ -133,11 +133,20 @@ class GlyphMaterial extends NodeMaterial {
 
 	}
 
+	constructOutput( /* builder */  ) {
+
+		return this.colorNode;
+
+	}
+
+
 	constructPosition ( /* builder */ ) {
 
 		return this.outNode;
 
 	}
+
+	constructDiffuseColor( /* builder */  ) {}
 
 	getCellSize () {
 

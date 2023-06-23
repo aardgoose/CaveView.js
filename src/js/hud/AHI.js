@@ -110,9 +110,8 @@ class AHI extends Group {
 		mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );
 		mRing.rotateOnAxis( new Vector3( 0, 0, 1 ), Math.PI / 8 );
 
-
 		mSphere.material.lightsNode = lights( hudObject.lights );
-		console.log( mSphere.material );
+
 		mSphere.dropBuffers();
 
 		globe.addStatic( mSphere );

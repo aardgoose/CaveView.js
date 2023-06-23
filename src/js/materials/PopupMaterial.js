@@ -17,14 +17,15 @@ class PopupMaterial extends NodeMaterial {
 		this.normals = false;
 
 		const pixelRatio = window.devicePixelRatio || 1;
-		const canvas = popupImage.image;
+//		const canvas = popupImage.image;
 
 		// const cos = Math.cos( rotation );
 		// const sin = Math.sin( rotation );
 		// const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
 
 		const viewPort = new Vector2( Math.floor( pixelRatio * container.clientWidth ) / 2, Math.floor( pixelRatio * container.clientHeight ) / 2 );
-		const scale = new Vector2( canvas.width, canvas.height ).divide( viewPort );
+//		const scale = new Vector2( canvas.width, canvas.height ).divide( viewPort );
+		const scale = new Vector2( 100, 100 );
 
 		// const rotate = uniform( mat2( cos, sin, -sin, cos ) );
 

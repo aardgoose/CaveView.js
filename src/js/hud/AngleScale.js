@@ -46,7 +46,7 @@ class AngleScale extends Mesh {
 		this.name = 'CV.AngleScale';
 
 		const material = materials.getMaterial( GlyphMaterial, 'hud.text' );
-		const label = new GlyphString( caption, material, hudObject.ctx );
+		const label = new GlyphString( caption, material );
 
 		label.translateX( - label.getWidth() / 2 );
 		label.translateY( 5 );

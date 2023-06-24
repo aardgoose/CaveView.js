@@ -8,7 +8,7 @@ class StationNameLabel extends GlyphString {
 
 		const material = ctx.materials.getMaterial( GlyphMaterial, 'stations.default.text' );
 
-		super( station.getPath(), material, ctx );
+		super( station.getPath(), material );
 
 		this.station = station;
 		this.layers.enable( FEATURE_SURVEY );

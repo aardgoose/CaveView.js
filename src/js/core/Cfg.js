@@ -131,7 +131,7 @@ class Cfg extends EventDispatcher {
 
 		}
 
-		return value || defaultValue;
+		return value ?? defaultValue;
 
 	}
 

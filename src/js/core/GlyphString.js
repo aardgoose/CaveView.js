@@ -151,9 +151,11 @@ class GlyphStringBase extends Mesh {
 
 class GlyphString extends GlyphStringBase {
 
-	constructor ( text, glyphMaterial, ctx, yOffset ) {
+	static glyphStringCache = new Map();
 
-		const glyphStringCache = ctx.glyphStringCache;
+	constructor ( text, glyphMaterial, yOffset ) {
+
+		const glyphStringCache = GlyphString.glyphStringCache;
 
 		let cache = glyphStringCache.get( glyphMaterial );
 

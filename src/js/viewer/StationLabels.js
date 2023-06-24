@@ -172,7 +172,7 @@ class StationLabels extends Group {
 
 		}
 
-		const label = new GlyphString( name, material, this.ctx );
+		const label = new GlyphString( name, material );
 
 		label.layers.mask = this.layers.mask;
 		label.position.copy( station );

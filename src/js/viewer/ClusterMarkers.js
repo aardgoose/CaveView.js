@@ -295,18 +295,17 @@ class ClusterMarkers extends Object3D {
 
 	addMarker ( node, label ) {
 
-		const marker = new GlyphString( label, this.labelMaterial, this.ctx );
+		const marker = new GlyphString( label, this.labelMaterial );
 
 		marker.layers.set( FEATURE_ENTRANCES );
-		marker.layers.set( 31 );
-		marker.layers.set = () => {};
+
 		marker.position.copy( node );
 		marker.parentId = node.parent.id;
 
-//		this.labels.push( marker );
-//		this.quadTree.addNode( marker, this.maxDepth );
+		this.labels.push( marker );
+		this.quadTree.addNode( marker, this.maxDepth );
 
-//		this.addStatic( marker );
+		this.addStatic( marker );
 
 		return marker;
 

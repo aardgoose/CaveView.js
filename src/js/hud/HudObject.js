@@ -1,5 +1,6 @@
 import { CylinderGeometry } from '../Three';
 import { MeshBasicNodeMaterial, MeshPhongNodeMaterial } from '../Nodes';
+import { GlyphMaterial } from '../materials/GlyphMaterial';
 
 class HudObject {
 
@@ -11,6 +12,7 @@ class HudObject {
 		this.stdWidth = cfg.themeValue( 'hud.widgetSize' );
 		this.commonRing = null;
 		this.ctx = ctx;
+		this.textMaterial = ctx.materials.getMaterial( GlyphMaterial, 'hud.text' )
 
 	}
 

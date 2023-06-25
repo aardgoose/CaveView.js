@@ -1,6 +1,5 @@
 import { Group, Mesh } from '../Three';
 import { GlyphString } from '../core/GlyphString';
-import { GlyphMaterial } from '../materials/GlyphMaterial';
 
 class Scale extends Group {
 
@@ -35,7 +34,7 @@ class Scale extends Group {
 		this.scaleBar = new Mesh( geometry, material );
 		this.scaleBar.name = 'scale bar';
 
-		this.textMaterial = materials.getMaterial( GlyphMaterial, 'hud.text' );
+		this.textMaterial = hudObject.textMaterial;
 
 		this.add( this.scaleBar );
 

@@ -39,14 +39,13 @@ class AngleScale extends Mesh {
 		super( geometry, new MeshBasicNodeMaterial( { color: 0xffffff, vertexColors: true } ) );
 
 		this.translateY( 3 * ( stdWidth + stdMargin ) + stdMargin + 30 );
-		this.translateX( - 40 - 5 );
+		this.translateX( - stdWidth - stdMargin );
 
 		this.dropBuffers();
 
 		this.name = 'CV.AngleScale';
 
-		const material = materials.getMaterial( GlyphMaterial, 'hud.text' );
-		const label = new GlyphString( caption, material );
+		const label = new GlyphString( caption, materials.getMaterial( GlyphMaterial, 'hud.text' ) );
 
 		label.translateX( - label.getWidth() / 2 );
 		label.translateY( 5 );

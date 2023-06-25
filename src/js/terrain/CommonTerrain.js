@@ -1,12 +1,12 @@
 import { Box3, Group } from '../Three';
-import { FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS, SHADING_DEPTHMAP } from '../core/constants';
+import { FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS } from '../core/constants';
 import { HeightLookup } from './HeightLookup';
 import { HypsometricMaterial } from '../materials/HypsometricMaterial';
 import { ContourMaterial } from '../materials/ContourMaterial';
 import { DepthMapMaterial } from '../materials/DepthMapMaterial';
 import { Overlay } from './Overlay';
 import { Popup } from '../ui/Popup';
-import { PopupMaterial } from '../materials/PopupMaterial';
+import { PopupMaterial} from '../materials/PopupMaterial';
 
 class CommonTerrain extends Group {
 
@@ -16,9 +16,7 @@ class CommonTerrain extends Group {
 
 		this.hasOverlay = false;
 		this.activeOverlay = null;
-//		this.depthTexture = null;
 		this.renderer = null;
-//		this.renderTarget = null;
 		this.heightLookup = null;
 		this.datumShift = 0;
 		this.activeDatumShift = 0;
@@ -30,6 +28,8 @@ class CommonTerrain extends Group {
 //		this.commonUniforms = ctx.materials.commonTerrainUniforms; FIXME
 		this.ctx = ctx;
 		this.shadingMode = SHADING_RELIEF;
+		this.renderTarget = null;
+		this.depthTexture = null;
 
 		this.addEventListener( 'removed', () => this.removed() );
 
@@ -54,6 +54,8 @@ class CommonTerrain extends Group {
 		const activeOverlay = this.activeOverlay;
 
 		if ( activeOverlay !== null ) activeOverlay.setInactive();
+
+		if ( this.renderTarget !== null ) this.renderTarget.dispose();
 
 	}
 
@@ -92,7 +94,7 @@ class CommonTerrain extends Group {
 
 	}
 
-	setup ( renderer, scene, survey ) {
+	async setup ( renderer, scene, survey ) {
 
 		this.computeBoundingBox();
 
@@ -107,9 +109,9 @@ class CommonTerrain extends Group {
 		const rtCamera = renderUtils.makePlanCamera( container, survey );
 
 		rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
-		console.log( 'render depthmap' );
 
 		const renderTarget = renderUtils.makeRenderTarget( dim, dim );
+		const depthMapMaterial = new DepthMapMaterial( this );
 
 		renderTarget.texture.name = 'CV.DepthMapTexture';
 
@@ -120,46 +122,27 @@ class CommonTerrain extends Group {
 
 		renderer.setRenderTarget( renderTarget );
 
-		scene.overrideMaterial = new DepthMapMaterial( this );
+		scene.overrideMaterial = depthMapMaterial;
 
-		// FIXME this should be a compilation pass only
-		renderer.render( scene, rtCamera );
+		renderer.render( scene, rtCamera, true ).then( () => {
 
-		Promise.all( renderer.pendingCompilations ).then( ( i ) => {
-
-			renderer.setSize( dim, dim );
-			renderer.setPixelRatio( 1 );
-
-			renderer.clear();
-
-			renderer.setRenderTarget( renderTarget );
-
-			scene.overrideMaterial = new DepthMapMaterial( this );
-
-			renderer.render( scene, rtCamera );
-			scene.overrideMaterial = null;
-
-			renderer.setRenderTarget( null );
-			this.ctx.viewer.resetRenderer();
+			// const p = new Popup( this.ctx );
+			// const pop = new PopupMaterial( container, renderTarget.texture );
+			// p.material = pop;
+			// scene.add( p );
 
 			// add lookup using heightMap texture
 			this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox );
+			this.renderTarget = renderTarget;
+			this.depthTexture = renderTarget.texture;
 
-			const p = new Popup( this.ctx );
-
-			p.material = new PopupMaterial( container, renderTarget.texture );
-	
-			scene.add( p );
+			survey.setupTerrain( this );
+			this.ctx.materials.setTerrain( this );
 
 		} );
 
 		scene.overrideMaterial = null;
-
 		renderer.setRenderTarget( null );
-
-		console.log( 'end render - target');
-
-		// this.depthTexture = renderTarget.texture; // FIXME do we still use this?
 
 		this.renderer = renderer;
 

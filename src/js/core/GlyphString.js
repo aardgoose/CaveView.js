@@ -151,7 +151,7 @@ class GlyphStringBase extends Mesh {
 
 class GlyphString extends GlyphStringBase {
 
-	static glyphStringCache = new Map();
+	static glyphStringCache = new WeakMap();
 
 	constructor ( text, glyphMaterial, yOffset ) {
 

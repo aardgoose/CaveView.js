@@ -49,7 +49,6 @@ class CaveViewer extends EventDispatcher {
 			cfg: cfg,
 			container: container,
 			workerPools: new WorkerPoolCache ( cfg ),
-			glyphStringCache: new Map(),
 			materials: null,
 			viewer: this,
 			renderUtils: new RenderUtils()
@@ -1202,7 +1201,6 @@ class CaveViewer extends EventDispatcher {
 			controls.dispose();
 			hud.dispose();
 
-			ctx.glyphStringCache = null;
 			ctx.cfg = null;
 			ctx.workerPools = null;
 			ctx.materials = null;

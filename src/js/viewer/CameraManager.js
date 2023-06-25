@@ -81,18 +81,17 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		if ( self.testCameraLayer( FEATURE_TERRAIN ) ) {
 
-//			camera.layers.mask = backMask;
-//			scene.overrideMaterial = backMaterial;
+			camera.layers.mask = backMask;
+			scene.overrideMaterial = backMaterial;
 
 //			renderer.render( scene, camera );
 
-//			scene.overrideMaterial = null;
+			scene.overrideMaterial = null;
 			camera.layers.mask = savedMask;
 
 		}
 
 		renderer.render( scene, camera );
-//		renderer.getContext().flush();
 
 //		lastFrame = renderer._info.render.frame;
 

@@ -5,8 +5,6 @@ import { HypsometricMaterial } from '../materials/HypsometricMaterial';
 import { ContourMaterial } from '../materials/ContourMaterial';
 import { DepthMapMaterial } from '../materials/DepthMapMaterial';
 import { Overlay } from './Overlay';
-import { Popup } from '../ui/Popup';
-import { PopupMaterial} from '../materials/PopupMaterial';
 
 class CommonTerrain extends Group {
 

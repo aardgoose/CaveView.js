@@ -6,7 +6,7 @@ class Marker extends Sprite {
 	isMarker = true;
 
 	constructor ( ctx, count ) {
-console.log( 'cmarker', count );
+
 		super( ctx.materials.getMaterial( ClusterMaterial, { count: count } ) );
 		this.renderOrder = 1;
 		this.scale.set( 100, 100 );

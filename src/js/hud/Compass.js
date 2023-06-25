@@ -22,7 +22,6 @@ class Compass extends Group {
 		const stdWidth  = hudObject.stdWidth;
 		const stdMargin = hudObject.stdMargin;
 		const cfg = hudObject.ctx.cfg;
-		const materials = hudObject.ctx.materials;
 
 		super();
 

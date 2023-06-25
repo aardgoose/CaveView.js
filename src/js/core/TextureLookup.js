@@ -1,5 +1,4 @@
 import { Matrix3, Vector3 } from '../Three';
-import { unpackRGBA } from './unpackRGBA';
 
 const __v = new Vector3();
 
@@ -16,12 +15,10 @@ class TextureLookup {
 		const width = renderTarget.width;
 		const height = renderTarget.height;
 
-		this.buffer = new Uint8ClampedArray( width * height * 4 );
-
 		// copy texture data into ArrayBuffer
 
-		renderer.readRenderTargetPixels( renderTarget, 0, 0, width, height, this.buffer );
-
+		renderer.readRenderTargetPixelsAsync( renderTarget, 0, 0, width, height, this.buffer )
+			.then( buffer => { this.buffer = buffer; } );
 
 		// calculate tranform matrix from Model coordinates to texure coordinates.
 
@@ -39,11 +36,16 @@ class TextureLookup {
 
 	subLookup ( x, y ) {
 
-		const offset = ( x + y * this.width ) * 4;
+		if ( this.buffer === null ) {
 
-		// convert to survey units and return
+			console.warn( 'lookup not ready yet' );
+			return 0;
 
-		return unpackRGBA( this.buffer.subarray( offset, offset + 4 ) );
+		};
+
+		const offset = ( x + y * this.width );
+
+		return this.buffer[ offset ];
 
 	}
 

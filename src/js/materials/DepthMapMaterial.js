@@ -1,5 +1,5 @@
 import { NoBlending } from '../Three';
-import { NodeMaterial, saturate, color, uniform, varying, vec4, positionGeometry } from '../Nodes';
+import { NodeMaterial, saturate, uniform, varying, vec4, positionGeometry } from '../Nodes';
 
 class DepthMapMaterial extends NodeMaterial {
 

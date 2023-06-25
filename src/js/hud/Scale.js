@@ -5,7 +5,6 @@ class Scale extends Group {
 
 	constructor ( hudObject, container, geometry, material ) {
 
-		const materials = hudObject.ctx.materials;
 		const width  = container.clientWidth;
 		const height = container.clientHeight;
 

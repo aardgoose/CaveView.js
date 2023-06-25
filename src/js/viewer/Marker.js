@@ -1,16 +1,15 @@
-import { Point } from './Point';
 import { ClusterMaterial } from '../materials/ClusterMaterial';
+import { Sprite } from '../Three';
 
-class Marker extends Point {
+class Marker extends Sprite {
 
 	isMarker = true;
 
 	constructor ( ctx, count ) {
-
-		const materials = ctx.materials;
-
-		super( materials.getMaterial( ClusterMaterial, { count: count } ) );
+console.log( 'cmarker', count );
+		super( ctx.materials.getMaterial( ClusterMaterial, { count: count } ) );
 		this.renderOrder = 1;
+		this.scale.set( 100, 100 );
 
 	}
 

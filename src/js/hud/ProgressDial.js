@@ -45,8 +45,7 @@ class ProgressDial extends Mesh {
 
 		if ( addText ) {
 
-			const glyphMaterial = materials.getMaterial( GlyphMaterial, 'hud.text' );
-			const pcent = new MutableGlyphString( '----', glyphMaterial );
+			const pcent = new MutableGlyphString( '----', hudObject.textMaterial );
 
 			pcent.translateY( pcent.getWidth() / 2 );
 			pcent.translateX( -10 );

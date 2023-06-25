@@ -1,7 +1,6 @@
 import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { MutableGlyphString } from '../core/GlyphString';
-import { GlyphMaterial } from '../materials/GlyphMaterial';
 
 import {
 	Float32BufferAttribute,
@@ -129,8 +128,7 @@ class AHI extends Group {
 
 		this.globe = globe;
 
-		const material = materials.getMaterial( GlyphMaterial, 'hud.text' );
-		const label = new MutableGlyphString( '-90\u00B0', material );
+		const label = new MutableGlyphString( '-90\u00B0', hudObject.textMaterial );
 
 		label.translateX( - label.getWidth() / 2 );
 		label.translateY( stdWidth + 5 );

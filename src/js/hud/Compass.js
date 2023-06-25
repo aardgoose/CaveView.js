@@ -9,7 +9,6 @@ import {
 	Vector3
 } from '../Three';
 import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from '../Nodes';
-import { GlyphMaterial } from '../materials/GlyphMaterial';
 import { MutableGlyphString } from '../core/GlyphString';
 
 const __direction = new Vector3();
@@ -60,8 +59,7 @@ class Compass extends Group {
 
 		this.lastRotation = 0;
 
-		const material = materials.getMaterial( GlyphMaterial, 'hud.text' );
-		const label = new MutableGlyphString( '000\u00B0', material );
+		const label = new MutableGlyphString( '000\u00B0', hudObject.textMaterial );
 
 		label.translateX( - label.getWidth() / 2 );
 		label.translateY( stdWidth + 5 );

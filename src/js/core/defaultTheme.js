@@ -58,8 +58,8 @@ const defaultTheme = {
 		default: {
 			text: {
 				color: 'white',
-				background: 'rgba( 0.0, 0.0, 0.0, 0.75 ) ',
-				font: 'normal Arial, sans-serif'
+				font: 'normal Arial, sans-serif',
+				opacity: 0
 			},
 			marker: 'red'
 		},
@@ -76,14 +76,16 @@ const defaultTheme = {
 		junctions: {
 			text: {
 				color: 'yellow',
-				font: 'normal Arial, sans-serif'
+				font: 'normal Arial, sans-serif',
+				opacity: 0
 			},
 			marker: 'yellow'
 		},
 		linked: {
 			text: {
 				color: 'cyan',
-				font: 'normal Arial, sans-serif'
+				font: 'normal Arial, sans-serif',
+				opacity: 0
 			},
 			marker: 'cyan'
 		}

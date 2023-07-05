@@ -1,5 +1,5 @@
 import { Vector2, Vector3 } from '../Three';
-import { attribute, modelViewProjection, shader, texture, NodeMaterial, uniform, varying, vec2, vec4, positionGeometry, modelViewMatrix } from '../Nodes';
+import { attribute, modelViewProjection, ShaderNode, texture, NodeMaterial, uniform, varying, vec2, vec4, positionGeometry, modelViewMatrix } from '../Nodes';
 import { GlyphAtlasCache } from '../materials/GlyphAtlasCache';
 
 class GlyphMaterial extends NodeMaterial {
@@ -25,11 +25,10 @@ class GlyphMaterial extends NodeMaterial {
 		const rotationMatrix = new Float32Array( [ cos, -sin, sin, cos ] ); // FIXME
 
 		super( {
-			alphaTest: 0.9,
+			alphaTest: 0.8,
 			color: 0xffffff,
 			depthTest: false,
-			transparent: false,
-
+			transparent: true,
 		} );
 
 		this.name = `CV:GlyphMaterial:${type}`;
@@ -52,7 +51,7 @@ class GlyphMaterial extends NodeMaterial {
 
 		const uv = varying( instanceUV.add( vec2( positionGeometry.x.mul( cellScale ).mul( instanceWidth ), positionGeometry.y.mul( cellScale ) ) ) );
 
-		const vertexShader = shader( ( stack ) => {
+		const vertexShader = new ShaderNode( ( stack ) => {
 
 			// scale by glyph width ( vertices form unit square with (0,0) origin )
 
@@ -80,15 +79,13 @@ class GlyphMaterial extends NodeMaterial {
 
 			const mvPosition = modelViewMatrix.mul( vec4( positionGeometry, 1.0 ) );
 
-			this.outputNode = vec4( newPosition, 0.0, 0.0 ).add( offset );
+			return vec4( newPosition, 0.0, 0.0 ).add( offset );
 
 			/*
 			vec2 snap = viewPort / gl_Position.w;
 
 			gl_Position.xy =  ( trunc( gl_Position.xy * snap ) + 0.5 ) / snap; // FIXME
 			*/
-
-			return this.outputNode;
 
 		} );
 
@@ -99,6 +96,7 @@ class GlyphMaterial extends NodeMaterial {
 		// fragment shader
 
 		this.colorNode = texture( glyphAtlas.getTexture(), uv );
+		this.opacityNode = texture( glyphAtlas.getTexture(), uv ).a;
 
 		// end of shader
 
@@ -132,13 +130,13 @@ class GlyphMaterial extends NodeMaterial {
 		};
 
 	}
-
-	constructOutput( /* builder */  ) {
+/*
+	constructOutput( /* builder   ) {
 
 		return this.colorNode;
 
 	}
-
+*/
 
 	constructPosition ( /* builder */ ) {
 
@@ -146,7 +144,7 @@ class GlyphMaterial extends NodeMaterial {
 
 	}
 
-	constructDiffuseColor( /* builder */  ) {}
+//	constructDiffuseColor( /* builder */  ) {}
 
 	getCellSize () {
 

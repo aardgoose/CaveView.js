@@ -1,4 +1,4 @@
-import { CanvasTexture, LinearFilter } from '../Three';
+import { CanvasTexture, LinearFilter, NearestFilter } from '../Three';
 
 class GlyphAtlas {
 
@@ -36,8 +36,14 @@ class GlyphAtlas {
 		if ( ! ctx ) console.error( 'cannot obtain 2D canvas' );
 
 		// set background
-		ctx.fillStyle = cfg.themeColorCSS( `${type}.background`, 'rgba( 0, 0, 0, 0 )' );
+		const opacity = cfg.themeValue( `${type}.opacity`, 1 );
+
+		ctx.globalAlpha = opacity;
+
+		ctx.fillStyle = cfg.themeColorCSS( `${type}.background` );
 		ctx.fillRect( 0, 0, atlasSize, atlasSize );
+
+		ctx.globalAlpha = 1;
 
 		// set up text settings
 		ctx.textAlign = 'left';

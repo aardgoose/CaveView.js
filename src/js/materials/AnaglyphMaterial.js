@@ -1,4 +1,4 @@
-import { NodeMaterial, ShaderNode, pow, shader,attribute, clamp, max, texture, uniform, varying, vec4 } from '../Nodes.js';
+import { NodeMaterial, ShaderNode, pow, tslFn ,attribute, clamp, max, texture, uniform, varying, vec4 } from '../Nodes.js';
 import { Matrix3 } from '../Three';
 
 class AnaglyphMaterial extends NodeMaterial {
@@ -30,19 +30,19 @@ class AnaglyphMaterial extends NodeMaterial {
 
 		] );
 
-		const fLin = new ShaderNode( ( c ) => {
+		const fLin = tslFn( ( c ) => {
 
 			return c.lessThanEqual( 0.04045 ).cond( c.mul( 0.0773993808 ),  pow( c.mul( 0.9478672986 ).add( 0.0521327014 ), 2.4 ) );
 
 		} );
 
-		const vLin = new ShaderNode( ( c ) => {
+		const vLin = tslFn( ( c ) => {
 
-			return vec4( fLin.call( c.r ), fLin.call( c.g ), fLin.call( c.b ), c.a );
+			return vec4( fLin( c.r ), fLin( c.g ), fLin( c.b ), c.a );
 
 		} );
 
-		const dev = new ShaderNode( ( c ) => {
+		const dev = tslFn( ( c ) => {
 
 			return c.lessThanEqual( 0.0031308 ).cond( c.mul( 12.92 ), pow( c, 0.41666 ).mul( 1.055 ).sub( 0.055 ) );
 
@@ -55,35 +55,39 @@ class AnaglyphMaterial extends NodeMaterial {
 		this.transparent = false;
 		this.isTest = true;
 
-		const uvs = varying( attribute( 'uv', 'vec2' ) );
+		const uvs = varying( attribute( 'uv' ) );
 
-//		const fragmentShaderNode = shader( ( stack ) => {
+		const colorMatrixLeft = uniform( colorMatrixLeftSrc );
+		const colorMatrixRight = uniform( colorMatrixRightSrc );
 
-			const colorMatrixLeft = uniform( colorMatrixLeftSrc );
-			const colorMatrixRight = uniform( colorMatrixRightSrc );
+		const fragmentShader = new ShaderNode( ( stack ) => {
 
-//            const tL = texture( params.left, uvs );
-			const tR = texture( params.right, uvs )
-			/*
+			const colorL = vec4().temp();
+			const colorR = vec4().temp();
 
-			const colorL = vLin.call( tL );
-			const colorR = vLin.call( tR );
 
-			const color = clamp(
-					colorMatrixLeft.mul( colorL.rgb ).add( colorMatrixRight.mul( colorR.rgb ) ),
-					0, 1
+			stack.assign( colorL, texture( params.left, uvs ) );
+			stack.assign( colorR, texture( params.right, uvs ) );
+
+			stack.assign( colorL, vLin( colorL ) );
+			stack.assign( colorR, vLin( colorR ) );
+
+			const color = vec4().temp();
+
+			stack.assign( color, clamp(
+				colorMatrixLeft.mul( colorL.rgb ).add( colorMatrixRight.mul( colorR.rgb ) ),
+				0, 1
+			) );
+
+			return vec4(
+				dev( color.r ), dev( color.g ), dev( color.b ),
+				max( colorL.a, colorR.a )
 			);
 
-		   this.colorNode = vec4(
-					dev.call( color.r ), dev.call( color.g ), dev.call( color.b ),
-					max( colorL.a, colorR.a )
-			);
-*/
-			this.outNode = tR;
-//            this.colorNode = vec4(0,1,0,1);
-//		} );
+		} );
 
-//		this.colorNode = fragmentShaderNode;
+
+		this.outNode = fragmentShader;
 
 	}
 

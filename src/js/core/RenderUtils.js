@@ -1,19 +1,20 @@
-import { NearestFilter, OrthographicCamera, Vector3, WebGLRenderTarget } from '../Three';
+import { FloatType, NearestFilter, OrthographicCamera, RedFormat, Vector3, WebGLRenderTarget } from '../Three';
 import { TextureLookup } from './TextureLookup';
 
 class RenderUtils {
 
 	constructor () {}
 
-	renderTargetToCanvas ( renderer, renderTarget ) {
+	async renderTargetToCanvas ( renderer, renderTarget ) {
 
 		const width = Math.floor( renderTarget.width );
 		const height = Math.floor( renderTarget.height );
 
 		const bSize = width * height * 4;
-		const buffer = new Uint8ClampedArray( bSize );
+		console.log( width, height );
 
-		renderer.readRenderTargetPixels( renderTarget, 0, 0, width, height, buffer );
+		const buffer = await renderer.readRenderTargetPixelsAsync( renderTarget, 0, 0, width, height );
+		console.log( 'done1', width, height );
 
 		// invert image
 		const line = width * 4;
@@ -38,6 +39,7 @@ class RenderUtils {
 
 		canvas.width = width;
 		canvas.height = height;
+		console.log( 'done2', width, height );
 
 		canvasCtx.putImageData( id, 0, 0 );
 
@@ -71,7 +73,7 @@ class RenderUtils {
 
 	makeRenderTarget ( width, height ) {
 
-		const renderTarget = new WebGLRenderTarget( width, height, { depthBuffer: false, stencilBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
+		const renderTarget = new WebGLRenderTarget( width, height, { format: RedFormat, type: FloatType, internalFormat: 'r32float', depthBuffer: false, stencilBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
 
 		renderTarget.texture.generateMipmaps = false;
 		return renderTarget;

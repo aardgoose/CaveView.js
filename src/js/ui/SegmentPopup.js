@@ -16,7 +16,7 @@ class SegmentPopup extends CanvasPopup {
 		this.addValue( 'direct_length', segment.directDistance() );
 
 		// midpoint of line segment
-		this.finish( __v0.copy( leg.startStation.station ).add( leg.endStation.station ).divideScalar( 2 ) );
+		return this.finish( __v0.copy( leg.startStation.station ).add( leg.endStation.station ).divideScalar( 2 ) );
 
 	}
 

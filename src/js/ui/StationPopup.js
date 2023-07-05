@@ -84,7 +84,7 @@ class StationPopup extends CanvasPopup {
 
 		}
 
-		this.finish( pStation.station );
+		return this.finish( pStation.station );
 
 	}
 

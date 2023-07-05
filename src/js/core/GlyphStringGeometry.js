@@ -1,6 +1,6 @@
 import {
-	InstancedBufferGeometry,
-	InstancedBufferAttribute, Float32BufferAttribute
+	InstancedBufferGeometry, InterleavedBufferAttribute,
+	Float32BufferAttribute, InstancedInterleavedBuffer,
 } from '../Three';
 
 import { CommonAttributes } from './CommonAttributes';
@@ -51,9 +51,11 @@ class GlyphStringGeometry extends InstancedBufferGeometry {
 
 		const length = text.length;
 
-		this.setAttribute( 'instanceUV', new InstancedBufferAttribute( new Float32Array( length * 2 ), 2, false, 1) );
-		this.setAttribute( 'instanceOffset', new InstancedBufferAttribute( new Float32Array( length ), 1, false, 1 ) );
-		this.setAttribute( 'instanceWidth', new InstancedBufferAttribute( new Float32Array( length ), 1, false, 1 ) );
+		const instanceBuffer = new InstancedInterleavedBuffer( new Float32Array( length * 4 ), 4, 1 ); // xyz, xyz
+
+		this.setAttribute( 'instanceUV', new InterleavedBufferAttribute( instanceBuffer, 2, 0) );
+		this.setAttribute( 'instanceOffset', new InterleavedBufferAttribute( instanceBuffer, 1, 2 ) );
+		this.setAttribute( 'instanceWidth', new InterleavedBufferAttribute( instanceBuffer, 1, 3 ) );
 
 		this.setString( text );
 

@@ -178,10 +178,14 @@ class PointerControls extends EventDispatcher {
 
 			if ( popup !== null ) return;
 
-			popup = new StationPopup( ctx, pStation, survey, formatters.station, ( survey.caveShading === SHADING_DISTANCE ), self.warnings );
-			survey.addStatic( popup );
+			new StationPopup( ctx, pStation, survey, formatters.station, ( survey.caveShading === SHADING_DISTANCE ), self.warnings ).then ( ( p ) => {
 
-			viewer.renderView();
+				survey.addStatic( p );
+				viewer.renderView();
+
+				popup = p;
+
+			} );
 
 		}
 
@@ -189,10 +193,14 @@ class PointerControls extends EventDispatcher {
 
 			if ( popup !== null ) return;
 
-			popup = new SegmentPopup( ctx, leg, point );
-			survey.addStatic( popup );
+			new SegmentPopup( ctx, leg, point ).then( ( p ) => {
 
-			viewer.renderView();
+				survey.addStatic( p );
+				viewer.renderView();
+
+				popup = p;
+
+			} );
 
 		}
 

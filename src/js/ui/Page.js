@@ -479,7 +479,18 @@ class Page {
 
 		const a = document.createElement( 'a' );
 
-		this.addListener( a, 'click', () => { a.href = urlProvider( a ); } );
+		this.addListener( a, 'click', ( e ) => {
+
+			e.preventDefault();
+
+			urlProvider().then( ( url ) => {
+//			 console.log( url );
+			 a.href = url;
+
+			} )
+			return false;
+
+		} );
 
 		a.textContent = this.i18n( title );
 		a.type = 'download';

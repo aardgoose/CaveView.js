@@ -1,5 +1,5 @@
 import { Vector2 } from '../Three';
-import { float, texture, uniform, varying, vec2, vec4, cameraProjectionMatrix, modelViewMatrix, positionGeometry, NodeMaterial } from '../Nodes';
+import { ShaderNode, texture, trunc, uniform, varying, vec2, vec4, cameraProjectionMatrix, modelViewMatrix, positionGeometry, NodeMaterial } from '../Nodes';
 
 class PopupMaterial extends NodeMaterial {
 
@@ -15,57 +15,60 @@ class PopupMaterial extends NodeMaterial {
 		this.isShaderMaterial = false;
 		this.lights = false;
 		this.normals = false;
+		this.generateMipmaps = false;
 
 		const pixelRatio = window.devicePixelRatio || 1;
-//		const canvas = popupImage.image;
+		const canvas = popupImage.image;
 
 		// const cos = Math.cos( rotation );
 		// const sin = Math.sin( rotation );
 		// const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
+		this.outNode = new ShaderNode( ( stack ) => {
 
-		const viewPort = new Vector2( Math.floor( pixelRatio * container.clientWidth ) / 2, Math.floor( pixelRatio * container.clientHeight ) / 2 );
-//		const scale = new Vector2( canvas.width, canvas.height ).divide( viewPort );
-		const scale = new Vector2( 100, 100 );
+			const viewPort = new Vector2( Math.floor( pixelRatio * container.clientWidth ) / 2, Math.floor( pixelRatio * container.clientHeight ) / 2 );
+			const scale = new Vector2( canvas.width, canvas.height ).divide( viewPort );
+			// const rotate = uniform( mat2( cos, sin, -sin, cos ) );
 
-		// const rotate = uniform( mat2( cos, sin, -sin, cos ) );
+			const newPosition = vec2( positionGeometry.x, positionGeometry.y );
 
-		// FIXME - needs adjust to form factor of popup
+			// position of Popup object on screen
 
-		const newPosition = vec2( positionGeometry.x, positionGeometry.y );
+			const offset = cameraProjectionMatrix.mul( modelViewMatrix ).mul( vec4( 0.0, 0.0, 0.0, 1.0 ) );
 
-//		const vColor = varying( color );
+			// scale popup
+			// move to clip space
 
-		// position of Popup object on screen
+			const fpos = vec4( newPosition.mul( uniform( scale ) ).mul( offset.w ), 0.0, 0.0 ).add( offset );
 
-		const offset = cameraProjectionMatrix.mul( modelViewMatrix ).mul( vec4( float( 0.0 ), float( 0.0 ), float( 0.0 ), float( 1.0 ) ) );
+			// snap to screen pixels
 
-		// scale popup
-		// move to clip space
+			const snap = uniform( viewPort ).div( fpos.w );
 
-		this.outNode = vec4( newPosition.mul( uniform( scale ) ).mul( offset.w ), float( 0.0 ), float( 0.0 ) ).add( offset );
+			fpos.xy = trunc( fpos.xy.mul( snap ) ).add( 0.5 ).div( snap );
 
-		// snap to screen pixels
-/*
-//		const snap = vec2( uniform( viewPort ) ).div( fpos.w );
+			return fpos;
 
-		fpos.xy = trunc( fpos.xy.mul( snap ) ).add( float( 0.5 ) ).div( snap );
+		} );
 
-		this.outNode = fpos;
-//		this.positionNode = vec4( positionGeometry, float( 1 ) );
-//		this.positionNode = cameraProjectionMatrix.mul( modelViewMatrix ).mul( positionGeometry );
-*/
 		this.colorNode = texture( popupImage, varying( positionGeometry.xy ) );
 
 		this.texture = popupImage;
 
 	}
 
-	constructPosition( /* builder */ ) {
+	constructOutput () {
+
+		return this.colorNode;
+
+	}
+
+	constructPosition ( /* builder */ ) {
 
 		return this.outNode;
 
 	}
 
+	constructDiffuseColor ( /* builder */  ) {}
 
 }
 

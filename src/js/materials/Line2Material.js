@@ -1,5 +1,5 @@
 import { MeshBasicMaterial, Vector2 } from '../Three';
-import { NodeMaterial, ShaderNode, positionGeometry, abs, shader, attribute, cond, discard, mix, mod, normalize, uniform, varying, vec2, vec3, vec4, modelViewMatrix, cameraProjectionMatrix, materialColor } from '../Nodes.js';
+import { NodeMaterial, ShaderNode, positionGeometry, abs, attribute, cond, discard, mix, mod, normalize, tslFn, uniform, varying, vec2, vec4, modelViewMatrix, cameraProjectionMatrix, materialColor } from '../Nodes.js';
 
 const defaultValues = new MeshBasicMaterial();
 
@@ -29,7 +29,7 @@ class Line2Material extends NodeMaterial {
 		const CV_DEPTH_CURSOR = false;
 		const CV_Z = false;
 
-		const trimSegment = new ShaderNode( ( start, end ) => {
+		const trimSegment = tslFn( ( start, end ) => {
 
 			const a = cameraProjectionMatrix.element( 2 ).element( 2 ); // 3nd entry in 3th column
 			const b = cameraProjectionMatrix.element( 3 ).element( 2 ); // 3nd entry in 4th column
@@ -76,7 +76,7 @@ class Line2Material extends NodeMaterial {
 		}
 
 
-		const vertexShaderNode = shader( ( stack ) => {
+		const vertexShaderNode = new ShaderNode( ( stack ) => {
 
 			const instanceStart = attribute( 'instanceStart' );
 			const instanceEnd   = attribute( 'instanceEnd' );
@@ -97,8 +97,8 @@ class Line2Material extends NodeMaterial {
 			stack.if( perspective, ( /* stack */ ) => {
 
 				start.z.lessThan( 0.0 ).and( end.z.greaterThan( 0.0 ) ).cond(
-					trimSegment.call( start, end ),
-					end.z.lessThan( 0.0 ).and( start.z.greaterThanEqual( 0.0 ) ).cond( trimSegment.call( end, start ) )
+					trimSegment( start, end ),
+					end.z.lessThan( 0.0 ).and( start.z.greaterThanEqual( 0.0 ) ).cond( trimSegment( end, start ) )
 				);
 
 			} );
@@ -161,7 +161,7 @@ class Line2Material extends NodeMaterial {
 
 		} );
 
-		const fragmentShaderNode = shader( ( stack ) => {
+		const fragmentShaderNode = new ShaderNode( ( stack ) => {
 
 			//if ( vHide > 0.0 ) discard;
 

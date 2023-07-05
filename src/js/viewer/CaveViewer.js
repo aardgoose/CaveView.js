@@ -43,7 +43,8 @@ class CaveViewer extends EventDispatcher {
 
 		// target with css for fullscreen on small screen devices
 		container.classList.add( 'cv-container' );
-		container.style.backgroundColor = cfg.themeColorCSS( 'background' );
+//		container.style.backgroundColor = cfg.themeColorCSS( 'background' );
+		container.style.backgroundColor = 'green';
 
 		const ctx = {
 			cfg: cfg,
@@ -80,8 +81,10 @@ class CaveViewer extends EventDispatcher {
 		const scene = new Scene();
 		scene.fog = fog;
 		scene.name = 'CV.Viewer';
+		scene.background = cfg.themeColor( 'background' );
 
 		ctx.scene = scene;
+		ctx.renderer = renderer;
 
 		const cameraManager = new CameraManager( ctx, renderer, scene );
 
@@ -1036,7 +1039,7 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		function renderView ( autorotate = false ) {
+		async function renderView ( autorotate = false ) {
 
 			if ( ! renderRequired || renderer.xr.isPresenting ) return;
 
@@ -1045,7 +1048,7 @@ class CaveViewer extends EventDispatcher {
 
 			if ( controls.autoRotate && ! autorotate ) return;
 
-			renderer.clear();
+//			renderer.clear();
 
 			if ( survey !== null ) {
 
@@ -1177,7 +1180,7 @@ class CaveViewer extends EventDispatcher {
 
 		this.getSnapshot = function ( exportSize, lineScale ) {
 
-			return new Snapshot( ctx, renderer ).getSnapshot( exportSize, lineScale );
+			return Snapshot( ctx, renderer, exportSize, lineScale );
 
 		};
 

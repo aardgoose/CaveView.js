@@ -28,10 +28,7 @@ class ExportPage extends Page {
 
 		this.addDownloadButton(
 			'png_export.export',
-			() => {
-				const url = viewer.getSnapshot( pngParams.exportSize, pngParams.lineScale );
-				return url;
-			},
+			() => { return viewer.getSnapshot( pngParams.exportSize, pngParams.lineScale ); },
 			'snapshot.png'
 		);
 

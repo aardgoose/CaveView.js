@@ -7,23 +7,19 @@ class ContourMaterial extends CommonTerrainMaterial {
 
 	constructor ( params = {}, ctx ) {
 
-		const survey = ctx.survey;
 		const cfg = ctx.cfg;
 
 		super( params, ctx );
 
 		// FIXME survey specific
-		const commonUniforms = ctx.materials.commonUniforms;
+		const tu = ctx.materials.commonUniforms.terrain();
 
-		const zOffset         = uniform( survey.offsets.z );
 		const contourInterval = uniform( cfg.themeValue( 'shading.contours.interval' ) );
 		const contourColor    = uniform( cfg.themeColor( 'shading.contours.line' ) );
 		const contourColor10  = uniform( cfg.themeColor( 'shading.contours.line10' ) );
 		const baseColor       = uniform( cfg.themeColor( 'shading.contours.base' ) );
 
-		const datumShift = commonUniforms.datumShift;
-
-		const zLine = positionLocal.z.add( zOffset).add( datumShift ).div( contourInterval );
+		const zLine = positionLocal.z.add( tu.zOffset).add( tu.datumShift ).div( contourInterval );
 
 		let f = fract( zLine );
 		let f10 = fract( zLine.div( 10 ) );

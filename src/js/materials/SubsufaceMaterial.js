@@ -2,6 +2,8 @@ import { MeshPhongNodeMaterial } from '../Nodes';
 
 class SubsurfaceMaterial extends MeshPhongNodeMaterial {
 
+	static isSubsurfaceMaterial = true;
+
 	name = 'CV:SubsurfaceMaterial';
 
 	constructor ( options = {}, ctx ) {

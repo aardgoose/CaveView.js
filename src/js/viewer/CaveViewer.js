@@ -947,6 +947,8 @@ class CaveViewer extends EventDispatcher {
 
 			}
 
+			materials.setSurvey( survey );
+
 			if ( final ) {
 
 				savedView = null;

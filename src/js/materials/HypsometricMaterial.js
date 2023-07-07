@@ -1,5 +1,5 @@
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
-import { saturate, texture, uniform, varying, vec2, positionGeometry } from '../Nodes';
+import { saturate, texture, varying, vec2, positionGeometry } from '../Nodes';
 
 class HypsometricMaterial extends CommonTerrainMaterial {
 
@@ -7,28 +7,15 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 
 	constructor ( params = {}, ctx ) {
 
-		const survey = ctx.survey;
-		const cfg = ctx.cfg;
-		const terrain = survey.terrain;
 		const textureCache = ctx.materials.textureCache;
 
 		super( params, ctx );
 
-		if ( terrain ) {
+		const tu = ctx.materials.commonUniforms.terrain();
 
-			if ( terrain.boundingBox === undefined ) terrain.computeBoundingBox();
+		const zMap = varying( saturate( positionGeometry.z.sub( tu.hypsometricMinZ ).mul( tu.hypsometricScaleZ ) ) );
 
-			const zMin = cfg.themeValue( 'shading.hypsometric.min', terrain.boundingBox.min.z );
-			const zMax = cfg.themeValue( 'shading.hypsometric.max', terrain.boundingBox.max.z );
-
-			const minZ = uniform( zMin );
-			const scaleZ = uniform( 1 / ( zMax - zMin ) );
-
-			const zMap = varying( saturate( positionGeometry.z.sub( minZ ).mul( scaleZ ) ) );
-
-			this.colorNode = texture( textureCache.getTexture( 'hypsometric' ), vec2( zMap.oneMinus(), 1.0 ) );
-
-		}
+		this.colorNode = texture( textureCache.getTexture( 'hypsometric' ), vec2( zMap.oneMinus(), 1.0 ) );
 
 	}
 

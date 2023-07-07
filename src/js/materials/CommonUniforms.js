@@ -1,40 +1,106 @@
 import { Vector3 } from '../Three';
-import { uniform, vec2 } from '../Nodes';
+import { uniform, vec2, vec3 } from '../Nodes';
 
 class CommonUniforms {
 
 	// shared common uniforms
 
-	constructor () {
+	constructor ( ctx ) {
 
-		// terrain adjustment
-		this.datumShift      = uniform( 0, 'float' );
+		this.ctx = ctx;
 
 		// location ring
-		this.accuracy        = uniform( -1.0, 'float' );
-		this.target          = uniform( vec2( 0, 0 ), 'vec2' );
+
+		this.accuracy        = uniform( -1.0 );
+		this.target          = uniform( vec2( 0, 0 ) );
 
 		// distance fade
-		this.distanceFadeMin = uniform( 0.0, 'float' );
-		this.distanceFadeMax = uniform( 0.0, 'float' );
+
+		this.distanceFadeMin = uniform( 0.0 );
+		this.distanceFadeMax = uniform( 0.0 );
 		this.cameraLocation  = uniform( new Vector3(), 'vec3' );
+
+		// terrain adjustment
+
+		this.datumShift = uniform( 0 );
+		this.scale      = uniform( vec2( 1, 1 ) );
+		this.rangeZ     = uniform( 1 );
+		this.zOffset    = uniform( 1 );
+		this.hypsometricMinZ = uniform( 1 );
+		this.hypsometricScaleZ = uniform( 1 );
+
+		// survey
+
+		this.depthScale = uniform( 1 );
+		this.modelMin   = uniform( vec3() );
+		this.minZ       = uniform( 1 );
+		this.scaleZ     = uniform( 1 );
 
 	}
 
+	updateSurveyUniforms( survey ) {
 
-	depth ( ctx ) {  // FIXME - share for line materials when ready
-
-		const survey = ctx.survey;
 		const surveyLimits = survey.modelLimits;
-		const terrain = survey.terrain;
+
+		const zMin = surveyLimits.min.z;
+		const zMax = surveyLimits.max.z;
+
+		this.depthScale.value = 1 / ( zMax - zMin );
+		this.minZ.value = zMin;
+		this.scaleZ.value = 1 / ( zMax - zMin );
+
+	}
+
+	updateTerrainUniforms( terrain ) {
+
 		const limits = terrain.boundingBox;
 		const range = limits.getSize( new Vector3() );
 
+		this.modelMin.value = limits.min;
+
+		this.scale.value.x = 1 / range.x;
+		this.scale.value.y = 1 / range.y;
+
+		this.rangeZ.value = range.z;
+		this.zOffset.value = terrain.offsets.z;
+
+		const cfg = this.ctx.cfg;
+
+		const zMin = cfg.themeValue( 'shading.hypsometric.min', terrain.boundingBox.min.z );
+		const zMax = cfg.themeValue( 'shading.hypsometric.max', terrain.boundingBox.max.z );
+
+		this.hypsometricMinZ.value = zMin;
+		this.hypsometricScaleZ.value = 1 / ( zMax - zMin );
+
+	}
+
+	terrain() {
+
 		return {
-			modelMin:   uniform( limits.min ),
-			scale:      uniform( vec2( 1 / range.x, 1 / range.y ) ),
-			rangeZ:     uniform( range.z ),
-			depthScale: uniform( 1 / ( surveyLimits.max.z - surveyLimits.min.z ) ),
+			datumShift: this.datumShift,
+			zOffset: this.zOffset,
+			hypsometricMinZ: this.hypsometricMinZ,
+			hypsometricScaleZ: this.hypsometricScaleZ
+		}
+
+	}
+
+	height () {
+
+		return {
+			minZ:  this.minZ,
+			scaleZ: this.scaleZ
+		};
+
+	}
+
+	depth () {  // FIXME - share for line materials when ready
+
+		return {
+			modelMin:   this.limits,
+			scale:      this.scale,
+			rangeZ:     this.range,
+			depthScale: this.depthScale,
 			datumShift: this.datumShift
 		}
 

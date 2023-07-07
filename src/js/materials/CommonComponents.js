@@ -16,6 +16,7 @@ class CommonComponents {
 
     static terrainHeight( du, terrain ) {
 
+        // FIXME use float32 texture and check calcs
         const UnpackDownscale = float( 255. / 256. ); // 0..1 -> fraction (excluding 1)
 
 		const PackFactors = vec3( 256. * 256. * 256., 256. * 256., 256. );

@@ -1,4 +1,4 @@
-import { positionGeometry, attribute, float, texture, uniform, varying, vec2 } from '../Nodes.js';
+import { positionGeometry, attribute, float, texture, varying, vec2 } from '../Nodes.js';
 import { Line2Material } from './Line2Material';
 
 class HeightLineMaterial extends Line2Material {
@@ -9,23 +9,17 @@ class HeightLineMaterial extends Line2Material {
 
 		super( params, ctx );
 
-		const survey = ctx.survey;
-		const limits = survey.modelLimits;
-
-		const zMin = limits.min.z;
-		const zMax = limits.max.z;
 		const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 		const textureCache = ctx.materials.textureCache;
 
-		const minZ = uniform( zMin );
-		const scaleZ = uniform( 1 / ( zMax - zMin ) );
+		const hu = ctx.materials.commonUniforms.height();
 
 		const instanceStart = attribute( 'instanceStart' );
 		const instanceEnd   = attribute( 'instanceEnd' );
 
 		const vPosition = positionGeometry.y.lessThan( 0.5 ).cond( instanceStart, instanceEnd );
 
-		const zMap = varying( vPosition.z.sub( minZ ).mul( scaleZ ) );
+		const zMap = varying( vPosition.z.sub( hu.minZ ).mul( hu.scaleZ ) );
 
 		this.colorInsert = texture( textureCache.getTexture( gradient ), vec2( float( 1 ).sub( zMap ), 1.0 ) );
 

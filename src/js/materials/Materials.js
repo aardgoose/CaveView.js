@@ -13,16 +13,12 @@ function Materials ( viewer ) {
 	let scaleLinewidth = false;
 	let locationMode = false;
 
-	const colourCache = new ColourCache();
-	const textureCache = new TextureCache();
+	this.colourCache = new ColourCache();
+	this.textureCache = new TextureCache()
 
-	this.colourCache = colourCache;
-	this.textureCache = textureCache;
-
-	this.commonUniforms = new CommonUniforms();
+	this.commonUniforms = new CommonUniforms( ctx );
 	this.terrainOpacity = 0.5;
 
-// FIXME - common uniforms or other mech
 	Object.defineProperties( this, {
 
 		'cursorHeight': {
@@ -47,7 +43,6 @@ function Materials ( viewer ) {
 
 	} );
 
-	// FIXME add flags for survey specific materials for restting or make materials use object uniforms
 	this.getMaterial = function ( materialClass, params = {}, stencil = false ) {
 
 		let materialCache = materialClassCache.get( materialClass );
@@ -103,9 +98,6 @@ function Materials ( viewer ) {
 
 				commonUniforms.accuracy.value = -1.0;
 
-				surveyLineMaterials.forEach( updateMaterial );
-				wallMaterials.forEach( updateMaterial );
-
 			}
 
 		} else {
@@ -118,9 +110,6 @@ function Materials ( viewer ) {
 
 				console.log( 'cut', commonUniforms.target.value );
 				console.log( 'cua', commonUniforms.accuracy.value );
-
-				surveyLineMaterials.forEach( updateMaterial );
-				wallMaterials.forEach( updateMaterial );
 
 			}
 
@@ -136,6 +125,8 @@ function Materials ( viewer ) {
 
 	this.setTerrain = function ( terrain ) {
 
+		this.commonUniforms.updateTerrainUniforms( terrain );
+
 		const updateDatumShifts = event => {
 
 			this.commonUniforms.datumShift.value = event.value;
@@ -143,6 +134,12 @@ function Materials ( viewer ) {
 		};
 
 		terrain.addEventListener( 'datumShiftChange', updateDatumShifts );
+
+	};
+
+	this.setSurvey = function ( survey ) {
+
+		this.commonUniforms.updateSurveyUniforms( survey );
 
 	};
 

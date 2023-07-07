@@ -16,7 +16,7 @@ class DepthMaterial extends SubsurfaceMaterial {
 
 		super( { transparent: options.location }, ctx );
 
-		const du = materials.commonUniforms.depth( ctx );
+		const du = materials.commonUniforms.depth();
 
 		const terrainHeight = CommonComponents.terrainHeight( du, terrain );
 

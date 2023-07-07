@@ -93,7 +93,7 @@ function CameraManager ( ctx, renderer, scene ) {
 
 		renderer.render( scene, camera );
 
-//		lastFrame = renderer._info.render.frame;
+		lastFrame = renderer._info?.render.frame;
 
 	};
 

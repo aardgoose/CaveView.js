@@ -181,8 +181,13 @@ function HUD ( viewer, renderer ) {
 		updateScaleBar( currentCamera );
 
 		// render on screen
-		renderer.clearDepth();
+
+		renderer.autoClear = true;
+		renderer.autoClearColor = false;
+
 		renderer.render( scene, camera );
+
+		renderer.autoClearColor = true;
 
 	};
 

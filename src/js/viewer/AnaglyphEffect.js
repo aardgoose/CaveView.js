@@ -33,8 +33,8 @@ function AnaglyphEffect ( renderer, width, height ) {
 
 	const pixelRatio = renderer.getPixelRatio();
 
-	const _renderTargetL = new WebGLRenderTarget( width * pixelRatio, height * pixelRatio );
-	const _renderTargetR = new WebGLRenderTarget( width * pixelRatio, height * pixelRatio );
+	const _renderTargetL = new WebGLRenderTarget( width * pixelRatio, height * pixelRatio, _params );
+	const _renderTargetR = new WebGLRenderTarget( width * pixelRatio, height * pixelRatio, _params );
 
 	const _material = new AnaglyphMaterial( {
 		left: _renderTargetL.texture,
@@ -84,10 +84,7 @@ function AnaglyphEffect ( renderer, width, height ) {
 		renderer.render( scene, _stereo.cameraR );
 
 		renderer.setRenderTarget( null );
-//		renderer.clear();
 		renderer.render( _scene, _camera );
-		console.log( 'red2');
-
 
 	};
 

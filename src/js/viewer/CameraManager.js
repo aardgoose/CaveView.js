@@ -86,6 +86,8 @@ function CameraManager ( ctx, renderer, scene ) {
 
 			renderer.render( scene, camera );
 
+			this.autoClear = false;
+
 			scene.overrideMaterial = null;
 			camera.layers.mask = savedMask;
 

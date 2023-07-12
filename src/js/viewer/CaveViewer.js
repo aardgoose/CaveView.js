@@ -70,7 +70,7 @@ class CaveViewer extends EventDispatcher {
 		updatePixelRatio();
 
 		renderer.clear();
-		renderer.autoClear = false;
+//		renderer.autoClear = false;
 
 		container.appendChild( renderer.domElement );
 
@@ -1047,8 +1047,6 @@ class CaveViewer extends EventDispatcher {
 			// extra render calls
 
 			if ( controls.autoRotate && ! autorotate ) return;
-
-//			renderer.clear();
 
 			if ( survey !== null ) {
 

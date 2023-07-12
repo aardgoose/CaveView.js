@@ -1,5 +1,5 @@
 import { MeshBasicMaterial } from 'three';
-import { NodeMaterial, positionGeometry, attribute, uniform, texture, varying, vec4, modelViewProjection } from '../Nodes.js';
+import { NodeMaterial, positionGeometry, attribute, uniform, texture, uv, varying, vec4, modelViewProjection } from '../Nodes.js';
 
 const defaultValues = new MeshBasicMaterial();
 
@@ -38,7 +38,7 @@ class InstancedSpriteMaterial extends NodeMaterial {
 		const spriteTexture = params.texture === undefined ? ctx.materials.textureCache.getTexture( 'disc' ) : params.texture;
 
 		this.outputNode = vec4( pos, 0, 0 ).add( offset );
-		this.colorNode = texture( spriteTexture, varying( attribute( 'uv' ) ) ).mul( instanceColor );
+		this.colorNode = texture( spriteTexture, varying( uv() ) ).mul( instanceColor );
 
 		this.setValues( {} );
 

@@ -1,5 +1,6 @@
-import { positionGeometry, attribute, float, texture, uniform, varying, vec2 } from '../Nodes.js';
+import { positionGeometry, attribute, texture, varying, vec2 } from '../Nodes.js';
 import { Line2Material } from './Line2Material.js';
+import { CommonComponents } from './CommonComponents';
 
 class DepthLineMaterial extends Line2Material {
 
@@ -10,38 +11,26 @@ class DepthLineMaterial extends Line2Material {
 		super( params, ctx );
 
 		const survey = ctx.survey;
-		const limits = survey.modelLimits;
+		const terrain = survey.terrain;
 
-		const zMin = limits.min.z;
-		const zMax = limits.max.z;
 		const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 		const textureCache = ctx.materials.textureCache;
 
-		const minZ = uniform( zMin );
-		const scaleZ = uniform( 1 / ( zMax - zMin ) );
+		const du = ctx.materials.commonUniforms.depth();
+
+		const terrainHeight = CommonComponents.terrainHeight( du, terrain );
 
 		const instanceStart = attribute( 'instanceStart' );
 		const instanceEnd   = attribute( 'instanceEnd' );
 
 		const vPosition = positionGeometry.y.lessThan( 0.5 ).cond( instanceStart, instanceEnd );
 
-		const zMap = varying( vPosition.z.sub( minZ ).mul( scaleZ ) );
+		// FIXME double check all depth calcs
+//		const depth = terrainHeight( vPosition ).sub( vPosition.z ).mul( du.depthScale );
+		const depth = terrainHeight( vPosition ); //.sub( vPosition.z ).mul( du.depthScale );
 
-		this.colorInsert = texture( textureCache.getTexture( gradient ), vec2( float( 1 ).sub( zMap ), 1.0 ) );
-/*
-		if ( CV_DEPTH ) {
+		this.colorInsert = texture( textureCache.getTexture( gradient ), vec2( depth, 1.0 ) ); // FIXME vertex colot
 
-//				float terrainHeight = unpackRGBAToFloat( texture2D( depthMap, vTerrainCoords ) );
-
-				stack.assign( terrainHeight, terrainHeight.mul( rangeZ ).add( modelMin.z ).add( datumShift ) );
-
-				const depth = terrainHeight.sub( vPosition.z );
-				const vCursor = depth; // hack
-
-			return texture2D( cmap, vec2( depth * depthScale, 1.0 ) ) * vec4( vColor, 1.0 );
-
-		}
-*/
 	}
 
 }

@@ -1,5 +1,5 @@
 import { MeshBasicMaterial, Vector2 } from '../Three';
-import { NodeMaterial, ShaderNode, positionGeometry, abs, attribute, cond, discard, mix, mod, normalize, tslFn, uniform, varying, vec2, vec4, modelViewMatrix, cameraProjectionMatrix, materialColor } from '../Nodes.js';
+import { NodeMaterial, ShaderNode, positionGeometry, abs, attribute, cond, discard, mix, mod, normalize, tslFn, uniform, uv, varying, vec2, vec4, modelViewMatrix, cameraProjectionMatrix, materialColor } from '../Nodes.js';
 
 const defaultValues = new MeshBasicMaterial();
 
@@ -43,10 +43,8 @@ class Line2Material extends NodeMaterial {
 
 		this.normals = false;
 		this.lights = false;
-		// this.isTest = true;
 
-		const uv = attribute( 'uv' );
-		const vUv = varying( uv );
+		const vUv = varying( uv() );
 
 		let vColor;
 

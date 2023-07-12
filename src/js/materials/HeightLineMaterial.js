@@ -21,7 +21,7 @@ class HeightLineMaterial extends Line2Material {
 
 		const zMap = varying( vPosition.z.sub( hu.minZ ).mul( hu.scaleZ ) );
 
-		this.colorInsert = texture( textureCache.getTexture( gradient ), vec2( float( 1 ).sub( zMap ), 1.0 ) );
+		this.colorInsert = texture( textureCache.getTexture( gradient ), vec2( zMap.oneMinus(), 1.0 ) );
 
 	}
 

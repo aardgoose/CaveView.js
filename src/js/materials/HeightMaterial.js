@@ -16,7 +16,7 @@ class HeightMaterial extends SubsurfaceMaterial {
 
 		const zMap = varying( positionGeometry.z.sub( hu.minZ ).mul( hu.scaleZ ) );
 
-		this.colorNode = texture( textureCache.getTexture( gradient ), vec2( float( 1.0 ).sub( zMap ), 1.0 ) );
+		this.colorNode = texture( textureCache.getTexture( gradient ), vec2( zMap.oneMinus(), 1.0 ) );
 
 	}
 

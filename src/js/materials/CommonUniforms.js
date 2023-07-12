@@ -97,9 +97,9 @@ class CommonUniforms {
 	depth () {  // FIXME - share for line materials when ready
 
 		return {
-			modelMin:   this.limits,
+			modelMin:   this.modelMin,
 			scale:      this.scale,
-			rangeZ:     this.range,
+			rangeZ:     this.rangeZ,
 			depthScale: this.depthScale,
 			datumShift: this.datumShift
 		}

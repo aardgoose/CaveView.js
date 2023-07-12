@@ -15,7 +15,7 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 
 		const zMap = varying( saturate( positionGeometry.z.sub( tu.hypsometricMinZ ).mul( tu.hypsometricScaleZ ) ) );
 
-		this.colorNode = texture( textureCache.getTexture( 'hypsometric' ), vec2( zMap.oneMinus(), 1.0 ) );
+		this.colorNode = texture( textureCache.getTexture( 'hypsometric' ), vec2( zMap, 1.0 ) );
 
 	}
 

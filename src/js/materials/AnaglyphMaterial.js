@@ -1,4 +1,4 @@
-import { NodeMaterial, ShaderNode, pow, tslFn ,attribute, clamp, max, texture, uniform, varying, vec4 } from '../Nodes.js';
+import { NodeMaterial, ShaderNode, pow, tslFn, clamp, max, texture, uniform, uv, varying, vec4 } from '../Nodes.js';
 import { Matrix3 } from '../Three';
 
 class AnaglyphMaterial extends NodeMaterial {
@@ -55,7 +55,7 @@ class AnaglyphMaterial extends NodeMaterial {
 		this.transparent = false;
 		this.isTest = true;
 
-		const uvs = varying( attribute( 'uv' ) );
+		const uvs = varying( uv() );
 
 		const colorMatrixLeft = uniform( colorMatrixLeftSrc );
 		const colorMatrixRight = uniform( colorMatrixRightSrc );

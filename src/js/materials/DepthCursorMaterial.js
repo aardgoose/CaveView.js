@@ -24,7 +24,7 @@ class DepthCursorMaterial extends SubsurfaceMaterial {
 
 		// FIXME double check all depth calcs
 
-		const vCursor = terrainHeight.sub(  positionLocal.z );
+		const vCursor = terrainHeight.sub( positionLocal.z );
 
 		const delta = vCursor.sub( cu.cursor );
 

@@ -1,7 +1,8 @@
-import { Line2NodeMaterial, positionGeometry, attribute, varying } from '../Nodes.js';
+import { positionGeometry, attribute, varying } from '../Nodes.js';
 import { CommonComponents } from './CommonComponents.js';
+import { SurveyLineMaterial } from './SurveyLineMaterial.js';
 
-class CursorLineMaterial extends Line2NodeMaterial {;
+class CursorLineMaterial extends SurveyLineMaterial {;
 
 	constructor ( params = {}, ctx ) {
 

@@ -36,6 +36,15 @@ class CommonUniforms {
 		this.minZ       = uniform( 1 );
 		this.scaleZ     = uniform( 1 );
 
+		// lines
+		this.linewidth = uniform( 2 );
+
+	}
+
+	updateLines( linewidth ) {
+
+		this.linewidth.value = linewidth;
+
 	}
 
 	updateSurveyUniforms( survey ) {
@@ -135,6 +144,14 @@ class CommonUniforms {
 			distanceFadeMin: this.distanceFadeMin,
 			distanceFadeMax: this.distanceFadeMax,
 			cameraLocation:  this.cameraLocation
+		};
+
+	}
+
+	lines() {
+
+		return {
+			linewidth: this.linewidth
 		};
 
 	}

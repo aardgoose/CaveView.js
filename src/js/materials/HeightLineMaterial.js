@@ -1,6 +1,7 @@
-import { Line2NodeMaterial, positionGeometry, attribute, texture, varying, vec2 } from '../Nodes.js';
+import { SurveyLineMaterial } from './SurveyLineMaterial.js';
+import { positionGeometry, attribute, texture, varying, vec2 } from '../Nodes.js';
 
-class HeightLineMaterial extends Line2NodeMaterial {
+class HeightLineMaterial extends SurveyLineMaterial {
 
 	constructor ( params = {}, ctx ) {
 

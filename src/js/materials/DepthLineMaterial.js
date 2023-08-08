@@ -1,7 +1,8 @@
-import { Line2NodeMaterial, positionGeometry, attribute, texture, vec2 } from '../Nodes.js';
+import { positionGeometry, attribute, texture, vec2 } from '../Nodes.js';
 import { CommonComponents } from './CommonComponents';
+import { SurveyLineMaterial } from './SurveyLineMaterial.js';
 
-class DepthLineMaterial extends Line2NodeMaterial {
+class DepthLineMaterial extends SurveyLineMaterial {
 
 	constructor ( params = {}, ctx ) {
 

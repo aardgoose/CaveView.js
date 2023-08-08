@@ -31,6 +31,7 @@ function Materials ( viewer ) {
 			get() { return linewidth; },
 			set( width ) {
 				linewidth = width;
+				this.commonUniforms.updateLines( linewidth );
 			}
 		},
 

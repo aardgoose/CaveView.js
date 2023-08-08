@@ -1,6 +1,6 @@
 import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
-import { Line2Material } from '../materials/Line2Material';
+import { Line2NodeMaterial } from '../Nodes';
 
 function beforeRender ( renderer, scene, camera, geometry, material ) {
 
@@ -15,7 +15,7 @@ class DyeTraces extends LineSegments2 {
 		const geometry = new LineSegmentsGeometry();
 		const survey = ctx.survey;
 
-		super( geometry, ctx.materials.getMaterial( Line2Material, {} ) );
+		super( geometry, ctx.materials.getMaterial( Line2NodeMaterial, {} ) );
 
 		this.metadata = survey.metadata;
 		this.vertices = [];

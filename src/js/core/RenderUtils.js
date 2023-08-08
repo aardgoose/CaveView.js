@@ -1,4 +1,4 @@
-import { FloatType, NearestFilter, OrthographicCamera, RedFormat, Vector3, WebGLRenderTarget } from '../Three';
+import { FloatType, LinearFilter, NearestFilter, OrthographicCamera, RedFormat, Vector3, WebGLRenderTarget } from '../Three';
 import { TextureLookup } from './TextureLookup';
 
 class RenderUtils {
@@ -73,7 +73,8 @@ class RenderUtils {
 
 	makeRenderTarget ( width, height ) {
 
-		const renderTarget = new WebGLRenderTarget( width, height, { format: RedFormat, type: FloatType, internalFormat: 'r32float', depthBuffer: false, stencilBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
+//		const renderTarget = new WebGLRenderTarget( width, height, { format: RedFormat, type: FloatType, internalFormat: 'r32float', depthBuffer: false, stencilBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
+		const renderTarget = new WebGLRenderTarget( width, height, {  depthBuffer: false, stencilBuffer: false, minFilter: LinearFilter, magFilter: LinearFilter } );
 
 		renderTarget.texture.generateMipmaps = false;
 		return renderTarget;

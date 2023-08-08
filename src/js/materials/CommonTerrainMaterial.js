@@ -3,8 +3,6 @@ import { MeshPhongNodeMaterial } from '../Nodes';
 
 class CommonTerrainMaterial extends MeshPhongNodeMaterial {
 
-	name = 'CV:CommonTerrainMaterial';
-
 	constructor ( params, ctx ) {
 
 		super( params );
@@ -16,12 +14,6 @@ class CommonTerrainMaterial extends MeshPhongNodeMaterial {
 		this.transparent = true;
 		this.stencilWrite = true;
 		this.stencilFunc = EqualStencilFunc;
-
-	}
-
-	customProgramCacheKey () {
-
-		return this.name;
 
 	}
 

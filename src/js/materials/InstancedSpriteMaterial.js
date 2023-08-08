@@ -5,8 +5,6 @@ const defaultValues = new MeshBasicMaterial();
 
 class InstancedSpriteMaterial extends NodeMaterial {
 
-	name = 'CV:InstancedSpriteMaterial';
-
 	constructor( params = {}, ctx ) {
 
 		super( {
@@ -37,37 +35,10 @@ class InstancedSpriteMaterial extends NodeMaterial {
 
 		const spriteTexture = params.texture === undefined ? ctx.materials.textureCache.getTexture( 'disc' ) : params.texture;
 
-		this.outputNode = vec4( pos, 0, 0 ).add( offset );
+		this.vertexNode = vec4( pos, 0, 0 ).add( offset );
 		this.colorNode = texture( spriteTexture, varying( uv() ) ).mul( instanceColor );
 
 		this.setValues( {} );
-
-	}
-
-	constructPosition( /* builder */ ) {
-
-		return this.outputNode;
-
-	}
-
-	copy( source ) {
-
-		this.colorNode = source.colorNode;
-		this.opacityNode = source.opacityNode;
-
-		this.alphaTestNode = source.alphaTestNode;
-
-		this.lightNode = source.lightNode;
-
-		this.positionNode = source.positionNode;
-
-		return super.copy( source );
-
-	}
-
-	customProgramCacheKey () {
-
-		return this.name;
 
 	}
 

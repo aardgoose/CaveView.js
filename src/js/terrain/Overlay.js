@@ -1,4 +1,4 @@
-import { Box2, Color, TextureLoader, Vector2 } from '../Three';
+import { Box2, Color, TextureLoader, Vector2, LinearSRGBColorSpace } from '../Three';
 import { CommonTerrainMaterial } from '../materials/CommonTerrainMaterial';
 import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 import proj4 from 'proj4';
@@ -159,6 +159,8 @@ class Overlay {
 
 			return new Promise( resolve => {
 
+
+
 				new TextureLoader()
 					.setCrossOrigin( 'anonymous' )
 					.load(
@@ -180,6 +182,7 @@ class Overlay {
 							texture.anisotropy = cfg.value( 'anisotropy', 4 );
 							texture.repeat.setScalar( repeat );
 							texture.offset.set( xOffset, yOffset );
+//							texture.colorSpace = LinearSRGBColorSpace;
 
 							material.map = texture;
 							material.needsUpdate = true;

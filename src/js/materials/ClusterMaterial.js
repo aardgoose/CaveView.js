@@ -3,8 +3,6 @@ import { SpriteNodeMaterial } from '../Nodes';
 
 class ClusterMaterial extends SpriteNodeMaterial {
 
-	name = 'ClusterMaterial';
-
 	constructor ( params ) {
 
 		const count = params.count;

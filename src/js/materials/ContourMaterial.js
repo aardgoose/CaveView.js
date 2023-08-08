@@ -3,8 +3,6 @@ import { fract, fwidth, step, mix, smoothstep, uniform, vec4, positionLocal, mat
 
 class ContourMaterial extends CommonTerrainMaterial {
 
-	name = 'CV:ContourMaterial'
-
 	constructor ( params = {}, ctx ) {
 
 		const cfg = ctx.cfg;

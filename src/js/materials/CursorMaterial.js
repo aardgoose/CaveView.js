@@ -5,8 +5,6 @@ import { CommonComponents } from './CommonComponents';
 
 class CursorMaterial extends SubsurfaceMaterial {
 
-	name = 'CV:CursorMaterial';
-
 	constructor ( options, ctx ) { // FIXME options handling
 
 		super( { vertexColors: true }, ctx );

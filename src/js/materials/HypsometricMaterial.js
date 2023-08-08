@@ -3,8 +3,6 @@ import { saturate, texture, varying, vec2, positionGeometry } from '../Nodes';
 
 class HypsometricMaterial extends CommonTerrainMaterial {
 
-	name = 'CV:HypsometricMaterial';
-
 	constructor ( params = {}, ctx ) {
 
 		const textureCache = ctx.materials.textureCache;

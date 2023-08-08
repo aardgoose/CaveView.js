@@ -1,9 +1,6 @@
-import { positionGeometry, attribute, float, texture, varying, vec2 } from '../Nodes.js';
-import { Line2Material } from './Line2Material';
+import { Line2NodeMaterial, positionGeometry, attribute, texture, varying, vec2 } from '../Nodes.js';
 
-class HeightLineMaterial extends Line2Material {
-
-	name = 'HeightLineMaterial';
+class HeightLineMaterial extends Line2NodeMaterial {
 
 	constructor ( params = {}, ctx ) {
 
@@ -21,7 +18,9 @@ class HeightLineMaterial extends Line2Material {
 
 		const zMap = varying( vPosition.z.sub( hu.minZ ).mul( hu.scaleZ ) );
 
-		this.colorInsert = texture( textureCache.getTexture( gradient ), vec2( zMap.oneMinus(), 1.0 ) );
+		this.lineColorNode = texture( textureCache.getTexture( gradient ), vec2( zMap.oneMinus(), 1.0 ) );
+
+		this.constructShaders();
 
 	}
 

@@ -1,10 +1,7 @@
-import { positionGeometry, attribute, varying } from '../Nodes.js';
-import { Line2Material } from './Line2Material.js';
+import { Line2NodeMaterial, positionGeometry, attribute, varying } from '../Nodes.js';
 import { CommonComponents } from './CommonComponents.js';
 
-class CursorLineMaterial extends Line2Material {
-
-	name = 'CV:CursorLineMaterial';
+class CursorLineMaterial extends Line2NodeMaterial {;
 
 	constructor ( params = {}, ctx ) {
 
@@ -21,7 +18,7 @@ class CursorLineMaterial extends Line2Material {
 
 		const delta = varying( vPosition.z.sub( cu.cursor ) );
 
-		this.colorInsert = CommonComponents.cursorColor( cu, delta );
+		this.lineColorNode = CommonComponents.cursorColor( cu, delta );
 
 		this.cursor = cu.cursor;
 		this.halfRange = ( limits.max.z - limits.min.z ) / 2;

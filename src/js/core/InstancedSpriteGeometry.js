@@ -91,6 +91,15 @@ class InstancedSpriteGeometry extends InstancedBufferGeometry {
 
 	}
 
+	getPointColor( index, color ) {
+
+		const instanceColor = this.getAttribute( 'instanceColor' );
+
+		instanceColor.setXYZ( index, color.r, color.g, color.b );
+		instanceColor.needsUpdate = true;
+
+	}
+
 
 	setAllPointColors ( color ) {
 

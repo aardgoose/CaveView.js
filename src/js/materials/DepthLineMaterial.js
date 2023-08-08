@@ -1,10 +1,7 @@
-import { positionGeometry, attribute, texture, varying, vec2 } from '../Nodes.js';
-import { Line2Material } from './Line2Material.js';
+import { Line2NodeMaterial, positionGeometry, attribute, texture, vec2 } from '../Nodes.js';
 import { CommonComponents } from './CommonComponents';
 
-class DepthLineMaterial extends Line2Material {
-
-	name = 'DepthLineMaterial';
+class DepthLineMaterial extends Line2NodeMaterial {
 
 	constructor ( params = {}, ctx ) {
 
@@ -29,7 +26,7 @@ class DepthLineMaterial extends Line2Material {
 //		const depth = terrainHeight( vPosition ).sub( vPosition.z ).mul( du.depthScale );
 		const depth = terrainHeight( vPosition ); //.sub( vPosition.z ).mul( du.depthScale );
 
-		this.colorInsert = texture( textureCache.getTexture( gradient ), vec2( depth, 1.0 ) ); // FIXME vertex colot
+		this.lineColorNode = texture( textureCache.getTexture( gradient ), vec2( depth, 1.0 ) ); // FIXME vertex colot
 
 	}
 

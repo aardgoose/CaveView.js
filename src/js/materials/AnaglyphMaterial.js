@@ -3,8 +3,6 @@ import { Matrix3 } from '../Three';
 
 class AnaglyphMaterial extends NodeMaterial {
 
-	name = 'AnaglyphMaterial';
-
 	constructor ( params ) {
 
 		super();
@@ -99,11 +97,6 @@ class AnaglyphMaterial extends NodeMaterial {
 
 	constructDiffuseColor( /* builder */  ) {}
 
-	customProgramCacheKey () {
-
-		return this.name;
-
-	}
 
 }
 

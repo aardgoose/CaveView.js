@@ -3,8 +3,6 @@ import { NodeMaterial, saturate, uniform, varying, vec4, positionGeometry } from
 
 class DepthMapMaterial extends NodeMaterial {
 
-	name = 'DepthMapMaterial';
-
 	constructor ( terrain ) {
 
 		super();
@@ -33,12 +31,6 @@ class DepthMapMaterial extends NodeMaterial {
 	}
 
 	constructDiffuseColor( /* builder */  ) {}
-
-	customProgramCacheKey () {
-
-		'CV:DepthMapMaterial';
-
-	}
 
 }
 

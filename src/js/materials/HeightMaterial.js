@@ -1,9 +1,7 @@
-import { float, uniform, varying, vec2, texture, positionGeometry } from '../Nodes';
+import { varying, vec2, texture, positionGeometry } from '../Nodes';
 import { SubsurfaceMaterial } from './SubsufaceMaterial';
 
 class HeightMaterial extends SubsurfaceMaterial {
-
-	name ='CV:HightMaterial';
 
 	constructor ( options, ctx ) { // FIXME option handlin
 

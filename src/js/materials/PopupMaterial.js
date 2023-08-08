@@ -23,10 +23,11 @@ class PopupMaterial extends NodeMaterial {
 		// const cos = Math.cos( rotation );
 		// const sin = Math.sin( rotation );
 		// const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
-		this.outNode = new ShaderNode( ( stack ) => {
+		this.vertexNode = new ShaderNode( ( stack ) => {
 
 			const viewPort = new Vector2( Math.floor( pixelRatio * container.clientWidth ) / 2, Math.floor( pixelRatio * container.clientHeight ) / 2 );
 			const scale = new Vector2( canvas.width, canvas.height ).divide( viewPort );
+
 			// const rotate = uniform( mat2( cos, sin, -sin, cos ) );
 
 			const newPosition = vec2( positionGeometry.x, positionGeometry.y );
@@ -44,27 +45,15 @@ class PopupMaterial extends NodeMaterial {
 
 			const snap = uniform( viewPort ).div( fpos.w );
 
-			fpos.xy = trunc( fpos.xy.mul( snap ) ).add( 0.5 ).div( snap );
+			stack.assign( fpos, vec4( trunc( fpos.xy.mul( snap ) ).add( 0.5 ).div( snap ), fpos.z, fpos.w ) );
 
 			return fpos;
 
 		} );
 
-		this.colorNode = texture( popupImage, varying( positionGeometry.xy ) );
+		this.outputNode = texture( popupImage, varying( positionGeometry.xy ) );
 
 		this.texture = popupImage;
-
-	}
-
-	constructOutput () {
-
-		return this.colorNode;
-
-	}
-
-	constructPosition ( /* builder */ ) {
-
-		return this.outNode;
 
 	}
 

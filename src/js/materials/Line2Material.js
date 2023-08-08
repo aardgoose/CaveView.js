@@ -6,7 +6,6 @@ const defaultValues = new MeshBasicMaterial();
 class Line2Material extends NodeMaterial {
 
 	isLineMaterial = true;
-	name = 'Line2Material';
 	colorInsert = null;
 
 	constructor ( params = {}, ctx ) {

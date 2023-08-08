@@ -1,5 +1,5 @@
 import { Vector2, Vector3 } from '../Three';
-import { attribute, modelViewProjection, ShaderNode, texture, NodeMaterial, uniform, varying, vec2, vec4, positionGeometry, modelViewMatrix } from '../Nodes';
+import { attribute, property, modelViewProjection, ShaderNode, trunc, texture, NodeMaterial, uniform, varying, vec2, vec4, positionGeometry, modelViewMatrix } from '../Nodes';
 import { GlyphAtlasCache } from '../materials/GlyphAtlasCache';
 
 class GlyphMaterial extends NodeMaterial {
@@ -51,7 +51,7 @@ class GlyphMaterial extends NodeMaterial {
 
 		const uv = varying( instanceUV.add( vec2( positionGeometry.x.mul( cellScale ).mul( instanceWidth ), positionGeometry.y.mul( cellScale ) ) ) );
 
-		const vertexShader = new ShaderNode( ( stack ) => {
+		this.vertexNode = new ShaderNode( ( stack ) => {
 
 			// scale by glyph width ( vertices form unit square with (0,0) origin )
 
@@ -67,7 +67,9 @@ class GlyphMaterial extends NodeMaterial {
 
 			// position of GlyphString object on screen
 
-			const offset = modelViewProjection( vec4( 0.0, 0.0, 0.0, 1.0 ) );
+			const offset = property( 'vec4', 'offset' );
+
+			stack.assign( offset, modelViewProjection( vec4( 0.0, 0.0, 0.0, 1.0 ) ) );
 
 			// scale glyphs
 
@@ -79,19 +81,17 @@ class GlyphMaterial extends NodeMaterial {
 
 			const mvPosition = modelViewMatrix.mul( vec4( positionGeometry, 1.0 ) );
 
-			return vec4( newPosition, 0.0, 0.0 ).add( offset );
+			stack.assign( offset, offset.add( vec4( newPosition, 0, 0 ) ) );
 
-			/*
-			vec2 snap = viewPort / gl_Position.w;
+			const snap = viewPort.div( offset.w );
 
-			gl_Position.xy =  ( trunc( gl_Position.xy * snap ) + 0.5 ) / snap; // FIXME
-			*/
+			stack.assign( offset, vec4( trunc( offset.xy.mul( snap ) ).add( 0.5 ).div( snap ), offset.z, offset.w ) );
+
+			return offset;
 
 		} );
 
 		//		this.rotation = rotationMatrix;
-
-		this.outNode = vertexShader;
 
 		// fragment shader
 
@@ -115,7 +115,7 @@ class GlyphMaterial extends NodeMaterial {
 
 			self.scale.value.set( realPixels / Math.floor( pixelRatio * container.clientWidth ), realPixels/ Math.floor( pixelRatio * container.clientHeight ) );
 			self.toScreenSpace.set( container.clientWidth/ 2, container.clientHeight / 2, 1 );
-			this.scaleFactor = glyphAtlas.cellSize / pixelRatio;
+			self.scaleFactor = glyphAtlas.cellSize / pixelRatio;
 
 		}
 
@@ -130,21 +130,7 @@ class GlyphMaterial extends NodeMaterial {
 		};
 
 	}
-/*
-	constructOutput( /* builder   ) {
 
-		return this.colorNode;
-
-	}
-*/
-
-	constructPosition ( /* builder */ ) {
-
-		return this.outNode;
-
-	}
-
-//	constructDiffuseColor( /* builder */  ) {}
 
 	getCellSize () {
 

@@ -4,8 +4,6 @@ import { CommonComponents } from './CommonComponents';
 
 class DepthMaterial extends SubsurfaceMaterial {
 
-	name = 'CV:DepthMaterial';
-
 	constructor ( options, ctx ) {
 
 		const survey = ctx.survey;

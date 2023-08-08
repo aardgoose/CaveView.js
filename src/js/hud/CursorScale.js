@@ -4,8 +4,7 @@ import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 
 import { PlaneGeometry } from '../Three';
-import { MeshBasicNodeMaterial } from '../Nodes';
-import { Line2Material } from '../materials/Line2Material';
+import { MeshBasicNodeMaterial, Line2NodeMaterial } from '../Nodes';
 import { GlyphMaterial } from '../materials/GlyphMaterial';
 
 class CursorScale extends Scale {
@@ -36,7 +35,7 @@ class CursorScale extends Scale {
 			-barWidth / 2, -barHeight / 2, 10
 		] );
 
-		const cursor = new LineSegments2( cursorGeometry, materials.getMaterial( Line2Material, { color: cfg.themeColor( 'hud.cursor.color' ) } ) );
+		const cursor = new LineSegments2( cursorGeometry, materials.getMaterial( Line2NodeMaterial, { color: cfg.themeColor( 'hud.cursor.color' ) } ) );
 
 		const material = materials.getMaterial( GlyphMaterial, 'hud.cursor.text' );
 

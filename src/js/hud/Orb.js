@@ -1,7 +1,7 @@
 import { Group, Vector3 } from '../Three';
 import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
-import { Line2Material } from '../materials/Line2Material';
+import { Line2NodeMaterial } from '../Nodes';
 
 class CGeometry extends LineSegmentsGeometry {
 
@@ -51,9 +51,9 @@ class Orb extends Group {
 
 		const g = new CGeometry( stdWidth, 32 );
 
-		const m1 = new LineSegments2( g, new Line2Material( ctx, { color: 0xff0000 } ) );
-		const m2 = new LineSegments2( g, new Line2Material( ctx, { color: 0x00ff00 } ) );
-		const m3 = new LineSegments2( g, new Line2Material( ctx, { color: 0x0000ff, linewidth: 6 } ) );
+		const m1 = new LineSegments2( g, new Line2NodeMaterial( ctx, { color: 0xff0000 } ) );
+		const m2 = new LineSegments2( g, new Line2NodeMaterial( ctx, { color: 0x00ff00 } ) );
+		const m3 = new LineSegments2( g, new Line2NodeMaterial( ctx, { color: 0x0000ff, linewidth: 6 } ) );
 
 		m1.material.linewidth = 5;
 

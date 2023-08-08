@@ -12,8 +12,7 @@ import {
 	Vector3
 } from '../Three';
 
-import { lights, MeshPhongNodeMaterial } from '../Nodes';
-import { Line2Material } from '../materials/Line2Material';
+import { lights, MeshPhongNodeMaterial, Line2NodeMaterial } from '../Nodes';
 
 // preallocated tmp objects
 const __xAxis = new Vector3( 1, 0, 0 );
@@ -102,8 +101,8 @@ class AHI extends Group {
 
 		const mRing   = new Mesh( ring, hudObject.getBezelMaterial() );
 		const mSphere = new Mesh( sphere, materials.getMaterial( MeshPhongNodeMaterial, { vertexColors: true, specular: 0x666666, shininess: 20 } ) );
-		const mBar    = new LineSegments2( bar,   materials.getMaterial( Line2Material, { color: cfg.themeValue( 'hud.ahi.bar' ) } ) );
-		const mMarks  = new LineSegments2( marks, materials.getMaterial( Line2Material, { color: cfg.themeValue( 'hud.ahi.marks' ) } ) );
+		const mBar    = new LineSegments2( bar,   materials.getMaterial( Line2NodeMaterial, { color: cfg.themeValue( 'hud.ahi.bar' ) } ) );
+		const mMarks  = new LineSegments2( marks, materials.getMaterial( Line2NodeMaterial, { color: cfg.themeValue( 'hud.ahi.marks' ) } ) );
 
 		mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 		mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );

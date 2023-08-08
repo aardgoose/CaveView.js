@@ -1,4 +1,4 @@
-import { Line2NodeMaterial, positionGeometry, attribute, texture, varying, vec2 } from '../Nodes.js';
+import { Line2NodeMaterial } from '../Nodes.js';
 
 class SurveyLineMaterial extends Line2NodeMaterial {
 

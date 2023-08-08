@@ -7,8 +7,6 @@ function Snapshot ( ctx, renderer, exportSize, lineScale ) {
 	const newWidth = exportSize;
 	const newHeight = Math.round( container.clientHeight * newWidth / container.clientWidth );
 
-	console.log( 'vv', newHeight, newWidth );
-
 	const renderTarget = new WebGLRenderTarget( newWidth, newHeight, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, stencil: true } );
 
 	renderTarget.texture.generateMipmaps = false;
@@ -26,7 +24,7 @@ function Snapshot ( ctx, renderer, exportSize, lineScale ) {
 
 	const result = ctx.renderUtils.renderTargetToCanvas( renderer, renderTarget ).then( ( canvas ) => {
 
-//		renderTarget.dispose();
+//		renderTarget.dispose(); // FIXME
 
 		// restore renderer to normal render size and target
 

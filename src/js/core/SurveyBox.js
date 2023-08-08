@@ -1,7 +1,7 @@
 import { Float32BufferAttribute, Vector3, } from '../Three';
-import { Line2Material } from '../materials/Line2Material';
 import { LineSegments2 } from './LineSegments2';
 import { LineSegmentsGeometry } from './LineSegmentsGeometry';
+import { Line2NodeMaterial } from '../Nodes';
 
 class SurveyBox extends LineSegments2 {
 
@@ -38,7 +38,7 @@ class SurveyBox extends LineSegments2 {
 
 		geometry.setPositions( positions.array );
 
-		super( geometry, ctx.materials.getMaterial( Line2Material, { color: color } ) );
+		super( geometry, ctx.materials.getMaterial( Line2NodeMaterial, { color: color } ) );
 
 		if ( box3 ) this.update( box3 );
 		this.type = 'CV.SurveyBox';

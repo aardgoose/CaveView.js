@@ -11,7 +11,7 @@ import {
 	Vector4
 } from '../Three';
 import { LineSegmentsGeometry } from './LineSegmentsGeometry.js';
-import { Line2Material } from '../materials/Line2Material.js';
+import { Line2NodeMaterial } from '../Nodes';
 
 const _start = new Vector3();
 const _end = new Vector3();
@@ -30,7 +30,7 @@ class LineSegments2 extends Mesh {
 
 	LineSegments2 = true;
 
-	constructor( geometry = new LineSegmentsGeometry(), material = new Line2Material( {
+	constructor( geometry = new LineSegmentsGeometry(), material = new Line2NodeMaterial( {
 		color: Math.random() * 0xffffff
 	} ) ) {
 

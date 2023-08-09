@@ -3,6 +3,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import { glconstants, glsl, glslThree } from './rollup-gl.mjs';
+import beep from '@rollup/plugin-beep';
 
 export default [
 	{
@@ -22,9 +23,7 @@ export default [
 			}*/
 		],
 		plugins: [
-			glsl(),
-			glslThree(),
-			glconstants(),
+			beep(),
 			json( {
 				exclude: [ 'node_modules/**', 'build/**', 'tools/**' ],
 				preferConst: true, // Default: false

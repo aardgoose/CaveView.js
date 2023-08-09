@@ -1,5 +1,5 @@
 import { Vector2 } from '../Three';
-import { ShaderNode, texture, trunc, uniform, varying, vec2, vec4, cameraProjectionMatrix, modelViewMatrix, positionGeometry, NodeMaterial } from '../Nodes';
+import { ShaderNode, texture, trunc, uniform, varying, vec2, vec4, modelViewProjection, positionGeometry, NodeMaterial } from '../Nodes';
 
 class PopupMaterial extends NodeMaterial {
 
@@ -34,7 +34,7 @@ class PopupMaterial extends NodeMaterial {
 
 			// position of Popup object on screen
 
-			const offset = cameraProjectionMatrix.mul( modelViewMatrix ).mul( vec4( 0.0, 0.0, 0.0, 1.0 ) );
+			const offset = modelViewProjection( vec4( 0.0, 0.0, 0.0, 1.0 ) );
 
 			// scale popup
 			// move to clip space

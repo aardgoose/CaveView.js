@@ -34,18 +34,15 @@ class GlyphStringGeometryCache {
 
 class GlyphStringGeometry extends InstancedBufferGeometry {
 
-	constructor ( text, glyphAtlas, yOffset = 0 ) {
+	constructor ( text, glyphAtlas ) {
 
 		super();
 
 		this.type = 'GlyphStringGeometry';
 		this.width = 0;
 
-		yOffset /= glyphAtlas.cellSize;
-
 		this.setIndex( CommonAttributes.index );
 		this.setAttribute( 'position', CommonAttributes.position );
-		this.setAttribute( 'offsets', new Float32BufferAttribute( [ yOffset, yOffset, yOffset, yOffset, yOffset, yOffset ], 1 ) );
 
 		this.glyphAtlas = glyphAtlas;
 

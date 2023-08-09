@@ -34,6 +34,7 @@
     "@babel/plugin-transform-runtime": "^7.22.0",
     "@babel/preset-env": "^7.22.0",
     "@rollup/plugin-babel": "^6.0.0",
+    "@rollup/plugin-beep": "^1.0.2",
     "@rollup/plugin-commonjs": "^25.0.0",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.1.0",

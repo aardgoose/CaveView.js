@@ -1,8 +1,8 @@
 import json from '@rollup/plugin-json';
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
+import beep from '@rollup/plugin-beep';
 
-import { glconstants, glsl, glslThree } from './rollup-gl.mjs';
 
 import graph from 'rollup-plugin-graph';
 
@@ -22,9 +22,7 @@ export default [
 			}
 		],
 		plugins: [
-			glsl(),
-			glslThree(),
-			glconstants(),
+			beep(),
 			json( {
 				exclude: [ 'node_modules/**', 'build/**', 'tools/**' ],
 				preferConst: true, // Default: false

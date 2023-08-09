@@ -1,5 +1,6 @@
 import { MeshBasicMaterial } from 'three';
-import { NodeMaterial, positionGeometry, attribute, uniform, texture, uv, varying, vec4, modelViewProjection } from '../Nodes.js';
+import { NodeMaterial, positionGeometry, attribute, texture, uv, varying, vec2, vec4, modelViewProjection } from '../Nodes.js'
+import { viewport } from '../../../node_modules/three/examples/jsm/nodes/display/ViewportNode.js';
 
 const defaultValues = new MeshBasicMaterial();
 
@@ -8,7 +9,7 @@ class InstancedSpriteMaterial extends NodeMaterial {
 	constructor( params = {}, ctx ) {
 
 		super( {
-			opacity: 1.0,
+			opacity: 0.0,
 			alphaTest: 0.8,
 			depthWrite: false,
 			transparent: true,
@@ -25,7 +26,7 @@ class InstancedSpriteMaterial extends NodeMaterial {
 		const instanceColor = attribute( 'instanceColor' );
 		const instanceSize = attribute( 'instanceSize' );
 
-		const scale = uniform( 0.005, 'float' ).mul( instanceSize );
+		const scale = vec2( instanceSize, instanceSize ).div( viewport.zw );
 
 		// position of instance in screen space
 		const offset = modelViewProjection( vec4( instancePosition, 1.0 ) );

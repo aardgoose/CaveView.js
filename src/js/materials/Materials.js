@@ -80,13 +80,14 @@ function Materials ( viewer ) {
 
 	this.setLocation = function ( location = null, accuracy = 0, minDistance = 0, maxDistance = 0 ) {
 
+		/*
 		const updateMaterial = ( material ) => {
 
-			material.defines.CV_LOCATION = locationMode;
 			material.transparent = locationMode;
 			material.needsUpdate = true;
 
 		};
+		*/
 
 		const commonUniforms = this.commonUniforms;
 

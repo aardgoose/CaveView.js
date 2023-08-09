@@ -26,12 +26,12 @@ class InstancedSpriteMaterial extends NodeMaterial {
 		const instanceColor = attribute( 'instanceColor' );
 		const instanceSize = attribute( 'instanceSize' );
 
-		const scale = vec2( instanceSize, instanceSize ).div( viewport.zw );
+			const scale = vec2( instanceSize, instanceSize ).div( viewport.zw );
 
-		// position of instance in screen space
-		const offset = modelViewProjection( vec4( instancePosition, 1.0 ) );
+			// position of instance in screen space
+			const offset = modelViewProjection( vec4( instancePosition, 1.0 ) );
 
-		// scale instance geometry for screen
+			// scale instance geometry for screen
 		const pos = positionGeometry.xy.sub( 0.5 ).mul( scale ).mul( offset.w );
 
 		const spriteTexture = params.texture === undefined ? ctx.materials.textureCache.getTexture( 'disc' ) : params.texture;

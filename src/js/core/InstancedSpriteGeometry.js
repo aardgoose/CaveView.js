@@ -1,5 +1,7 @@
-import { InstancedBufferGeometry, InstancedBufferAttribute } from 'three';
+import { InstancedBufferGeometry, InstancedBufferAttribute, Sphere, Box3, Vector3 } from 'three';
 import { CommonAttributes } from './CommonAttributes.js';
+
+const _vector = new Vector3();
 
 class InstancedSpriteGeometry extends InstancedBufferGeometry {
 
@@ -100,7 +102,6 @@ class InstancedSpriteGeometry extends InstancedBufferGeometry {
 
 	}
 
-
 	setAllPointColors ( color ) {
 
 		let instanceColor = this.getAttribute( 'instanceColor' );
@@ -129,7 +130,68 @@ class InstancedSpriteGeometry extends InstancedBufferGeometry {
 
 	}
 
-}
+	computeBoundingBox () {
 
+		if ( this.boundingBox === null ) {
+
+			this.boundingBox = new Box3();
+
+		}
+
+		const position = this.attributes.instancePosition;
+
+		if ( position !== undefined ) {
+
+			this.boundingBox.setFromBufferAttribute( position );
+
+		}
+
+
+	}
+
+	computeBoundingSphere () {
+
+		if ( this.boundingSphere === null ) {
+
+			this.boundingSphere = new Sphere();
+
+		}
+
+		if ( this.boundingBox === null ) {
+
+			this.computeBoundingBox();
+
+		}
+
+		const position = this.attributes.instancePosition;
+
+		if ( position !== undefined ) {
+
+			const center = this.boundingSphere.center;
+
+			this.boundingBox.getCenter( center );
+
+			let maxRadiusSq = 0;
+
+			for ( let i = 0, il = position.count; i < il; i ++ ) {
+
+				_vector.fromBufferAttribute( position, i );
+				maxRadiusSq = Math.max( maxRadiusSq, center.distanceToSquared( _vector ) );
+
+			}
+
+			this.boundingSphere.radius = Math.sqrt( maxRadiusSq );
+
+			if ( isNaN( this.boundingSphere.radius ) ) {
+
+				console.error( 'InstancedSpriteGeometry.computeBoundingSphere(): Computed radius is NaN. The instanced position data is likely to have NaN values.', this );
+
+			}
+
+		}
+
+	}
+
+}
 
 export { InstancedSpriteGeometry };

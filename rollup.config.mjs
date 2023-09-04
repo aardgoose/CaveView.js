@@ -4,25 +4,27 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import { glconstants, glsl, glslThree } from './rollup-gl.mjs';
 import beep from '@rollup/plugin-beep';
+import ansTest from './rollup-plugin-ans.mjs';
 
 export default [
 	{
-		treeshake: false,
+//		treeshake: false,
 		input: 'src/js/CV2.js',
 		output: [
 			{
 				name: 'CV2',
 				file: 'build/CaveView/js/CaveView2.js',
 				format: 'es'
-			}/*,
+			},
 			{
 				name: 'CV2',
 				file: 'build/CaveView/js/CaveView2.min.js',
 				format: 'es',
 				plugins: [ terser() ]
-			}*/
+			}
 		],
 		plugins: [
+			ansTest(),
 			beep(),
 			json( {
 				exclude: [ 'node_modules/**', 'build/**', 'tools/**' ],

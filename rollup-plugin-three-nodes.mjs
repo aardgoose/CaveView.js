@@ -2,10 +2,10 @@ import { simple } from 'acorn-walk';
 
 const nodeElements = {};
 
-export default function ansTest () {
+export default function threeNodes () {
 
 	return {
-		name: 'my-example', // this name will show up in logs and errors
+		name: 'three-nodes', // this name will show up in logs and errors
 
 		transform: {
 
@@ -76,21 +76,6 @@ export default function ansTest () {
 				}
 
 			},
-
-		},
-
-		buildEnd () {
-
-			for ( let i of this.getModuleIds() ) {
-
-				if ( i === 'C:\\Users\\angus\\Documents\\CaveView.js\\node_modules\\three\\examples\\jsm\\nodes\\utils\\DiscardNode.js' || i === 'ans' ) {
-
-					const m = this.getModuleInfo( i );
-					console.log( i, m.isIncluded );
-
-				}
-
-			}
 
 		}
 

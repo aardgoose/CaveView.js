@@ -48,7 +48,10 @@
     "rollup-plugin-graph": "^2.0.0",
     "serve": "^14.0.0",
     "terser": "^5.17.0",
-    "three": "^0.153.0",
+    "three": "^0.156.0",
     "x18n": "^2.0.3"
+  },
+  "dependencies": {
+    "acorn-walk": "^8.2.0"
   }
 }

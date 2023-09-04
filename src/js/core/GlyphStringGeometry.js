@@ -1,8 +1,4 @@
-import {
-	InstancedBufferGeometry, InterleavedBufferAttribute,
-	Float32BufferAttribute, InstancedInterleavedBuffer,
-} from '../Three';
-
+import { InstancedBufferGeometry, InterleavedBufferAttribute, InstancedInterleavedBuffer } from '../Three';
 import { CommonAttributes } from './CommonAttributes';
 
 class GlyphStringGeometryCache {

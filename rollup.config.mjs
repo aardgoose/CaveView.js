@@ -4,7 +4,8 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import { glconstants, glsl, glslThree } from './rollup-gl.mjs';
 import beep from '@rollup/plugin-beep';
-import ansTest from './rollup-plugin-ans.mjs';
+import threeNodes from './rollup-plugin-three-nodes.mjs';
+//import graph from 'rollup-plugin-graph';
 
 export default [
 	{
@@ -24,7 +25,7 @@ export default [
 			}
 		],
 		plugins: [
-			ansTest(),
+			threeNodes(),
 			beep(),
 			json( {
 				exclude: [ 'node_modules/**', 'build/**', 'tools/**' ],
@@ -33,7 +34,8 @@ export default [
 			nodeResolve( {} ),
 			commonjs( {
 				sourceMap: false,  // Default: true
-			} )
+			} ),
+			// graph()
 		]
 	}, {
 		input: 'src/js/CV2Plugins.js',

@@ -1,6 +1,6 @@
 import { simple } from 'acorn-walk';
 
-const ss = {};
+const nodeElements = {};
 
 export default function ansTest () {
 
@@ -8,7 +8,9 @@ export default function ansTest () {
 		name: 'my-example', // this name will show up in logs and errors
 
 		transform: {
+
 			order: 'post',
+
 			handler ( code, id ) {
 
 				const fileName =  id.split( '\\' ).pop();
@@ -16,16 +18,16 @@ export default function ansTest () {
 				// prevent creation of circular dependencies with spurious imports
 				if ( fileName === 'ShaderNode.js' ) return null;
 
-				const self = this;
 				const ast = this.parse( code );
-				const fixes = [];
-				const imports = {};
+				const newImports = [];
+				const currentImports = {};
 
 				simple( ast, {
 
 					ImportSpecifier( node ) {
 
-						imports[ node.imported.name ] = true;
+						// track file's current imports
+						currentImports[ node.imported.name ] = true;
 
 					},
 
@@ -33,7 +35,7 @@ export default function ansTest () {
 
 						if ( node.callee.type == 'Identifier' && node.callee.name == 'addNodeElement'  ) {
 
-							ss[ node.arguments[ 0 ].value ] = id;
+							nodeElements[ node.arguments[ 0 ].value ] = id;
 							return;
 
 						}
@@ -41,25 +43,21 @@ export default function ansTest () {
 						if ( node.callee.type === 'MemberExpression' ) {
 
 							const propertyName = node.callee.property.name;
-							const moduleId = ss[ propertyName ];
 
-							if ( moduleId === undefined ) return;
-
-							const moduleInfo = self.getModuleInfo( moduleId );
-
-							if ( moduleInfo === null ) return;
-
-							if ( moduleInfo.moduleSideEffects ) return;
-
-							if ( imports[ propertyName ] === true ) return;
+							// don't duplicate imports
+							if ( currentImports[ propertyName ] === true ) return;
 
 							// exclude builtin Math.x methods
 							if ( node.callee.object.name === 'Math' ) return;
 
-							fixes.push( `import { ${propertyName} } from '${moduleId.replaceAll( '\\', '\/' ) }';` );
-							fixes.push( `console.log( 'custard:', ${propertyName});` );
+							const moduleId = nodeElements[ propertyName ];
 
-							delete ss[ propertyName ];
+							if ( moduleId === undefined || typeof moduleId !== 'string' ) return;
+
+							newImports.push( `import { ${propertyName} } from '${moduleId.replaceAll( '\\', '\/' ) }';` );
+							newImports.push( `console.log( 'custard:', ${propertyName});` );
+
+							delete nodeElements[ propertyName ];
 
 						}
 
@@ -67,19 +65,20 @@ export default function ansTest () {
 
 				} );
 
-				if ( fixes.length === 0 ) {
+				if ( newImports.length === 0 ) {
 
 					return { code: code, ast: ast, map: null };
 
 				} else {
 
-					return fixes.join( "\n" ) +  "\n" + code;
+					return newImports.join( "\n" ) +  "\n" + code;
 
 				}
 
 			},
 
 		},
+
 		buildEnd () {
 
 			for ( let i of this.getModuleIds() ) {

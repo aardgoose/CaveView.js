@@ -1,4 +1,4 @@
-import { CanvasTexture, LinearFilter, NearestFilter } from '../Three';
+import { CanvasTexture, NearestFilter } from '../Three';
 
 class GlyphAtlas {
 
@@ -58,7 +58,7 @@ class GlyphAtlas {
 
 		const texture = new CanvasTexture( canvas );
 
-		texture.minFilter = LinearFilter;
+		texture.minFilter = NearestFilter;
 		this.generateMipmaps = false;
 
 		function addGlyphToCanvas ( glyph, i ) {

@@ -18,15 +18,25 @@ class PopupMaterial extends NodeMaterial {
 		this.generateMipmaps = false;
 
 		const pixelRatio = window.devicePixelRatio || 1;
-		const canvas = popupImage.image;
+
+		let { width, height } = popupImage.image;
+
+		if ( popupImage.isCanvasTexture ) {
+
+			width  *= pixelRatio;
+			height *= pixelRatio;
+
+		}
 
 		// const cos = Math.cos( rotation );
 		// const sin = Math.sin( rotation );
+
 		// const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
+
 		this.vertexNode = new ShaderNode( ( stack ) => {
 
 			const viewPort = new Vector2( Math.floor( pixelRatio * container.clientWidth ) / 2, Math.floor( pixelRatio * container.clientHeight ) / 2 );
-			const scale = new Vector2( canvas.width, canvas.height ).divide( viewPort );
+			const scale = new Vector2( width, height ).divide( viewPort );
 
 			// const rotate = uniform( mat2( cos, sin, -sin, cos ) );
 

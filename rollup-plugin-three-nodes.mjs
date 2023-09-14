@@ -1,10 +1,12 @@
 import { simple } from 'acorn-walk';
+import { traverse } from 'estree-toolkit';
 
 const nodeElements = {};
 
 export default function threeNodes () {
 
 	return {
+
 		name: 'three-nodes', // this name will show up in logs and errors
 
 		transform: {
@@ -22,16 +24,24 @@ export default function threeNodes () {
 				const newImports = [];
 				const currentImports = {};
 
-				simple( ast, {
 
-					ImportSpecifier( node ) {
+//				simple( ast, {
+				traverse( ast, {
+
+					$: { scope: true },
+
+					ImportSpecifier ( nodepath ) {
+
+						const node = nodepath.node;
 
 						// track file's current imports
 						currentImports[ node.imported.name ] = true;
 
 					},
 
-					CallExpression ( node ) {
+					CallExpression ( nodepath ) {
+
+						const node = nodepath.node;
 
 						if ( node.callee.type == 'Identifier' && node.callee.name == 'addNodeElement'  ) {
 
@@ -56,6 +66,9 @@ export default function threeNodes () {
 
 							newImports.push( `import { ${propertyName} } from '${moduleId.replaceAll( '\\', '\/' ) }';` );
 							newImports.push( `console.log( 'custard:', ${propertyName});` );
+
+							console.log( "\n\nfile:", fileName, "\nprop:", propertyName, "\n" ,nodepath.scope );
+							console.log( "\nparent", nodepath.parent);
 
 							delete nodeElements[ propertyName ];
 

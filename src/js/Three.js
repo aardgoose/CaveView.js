@@ -88,7 +88,7 @@ ColorManagement.enabled = true;
 Object3D.onUploadDropBuffer = function () {
 
 	// call back from BufferAttribute to drop JS buffers after data has been transfered to GPU
-//	this.array = null;
+	this.array = new this.array.constructor( 1 );
 
 };
 

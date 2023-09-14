@@ -1,9 +1,9 @@
 import { CanvasTexture } from '../Three';
-import { SpriteNodeMaterial } from '../Nodes';
+import { PopupMaterial } from './PopupMaterial';
 
-class ClusterMaterial extends SpriteNodeMaterial {
+class ClusterMaterial extends PopupMaterial {
 
-	constructor ( params ) {
+	constructor ( params, cvCtx ) {
 
 		const count = params.count;
 
@@ -49,8 +49,11 @@ class ClusterMaterial extends SpriteNodeMaterial {
 
 		const texture = new CanvasTexture( canvas );
 
-		super( { map: texture, depthTest: false, transparent: true, alphaTest: 0.8, sizeAttenuation: false } );
+		super( cvCtx.container, texture );
 
+		//super( { map: texture, depthTest: false, transparent: true, alphaTest: 0.8, sizeAttenuation: false } );
+
+//		this.scaleNode = float( 4 );
 		//texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
 
 	}

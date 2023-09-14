@@ -1,13 +1,15 @@
 import { ClusterMaterial } from '../materials/ClusterMaterial';
-import { Sprite } from '../Three';
+import { Popup } from '../ui/Popup';
 
-class Marker extends Sprite {
+class Marker extends Popup {
 
 	isMarker = true;
 
 	constructor ( ctx, count ) {
 
-		super( ctx.materials.getMaterial( ClusterMaterial, { count: count } ) );
+		super();
+
+		this.material = ctx.materials.getMaterial( ClusterMaterial, { count: count } );
 		this.renderOrder = 1;
 		this.scale.set( 100, 100 );
 

@@ -21,7 +21,7 @@ class DepthMaterial extends SubsurfaceMaterial {
 		// FIXME double check all depth calcs
 		const depth = terrainHeight( positionLocal ).sub( positionLocal.z ).mul( du.depthScale );
 
-		this.colorNode = texture( textureCache.getTexture( gradient ), vec2( depth, 1.0 ) ); // FIXME vertex colot
+		this.colorNode = texture( textureCache.getTexture( gradient ), vec2( depth, 1.0 ) ); // FIXME vertex color
 
 	}
 

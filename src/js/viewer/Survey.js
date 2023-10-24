@@ -264,7 +264,7 @@ class Survey extends Object3D {
 
 		const entrances = new Entrances( this.ctx, this );
 
-		if ( entrances.count > 0 ) {
+		if ( entrances.count() > 0 ) {
 
 			this.addFeature( entrances, FEATURE_ENTRANCES, 'CV.Survey:entrances' );
 

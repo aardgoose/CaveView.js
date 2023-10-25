@@ -1,5 +1,6 @@
 import { AmbientLight, DirectionalLight, Group, MathUtils, Object3D, Vector3 } from '../Three';
 import { LM_NONE, LM_SINGLE, LM_MULTIPLE } from '../core/constants';
+import { lights } from '../Nodes';
 
 function LightingManager ( ctx, scene ) {
 
@@ -8,6 +9,8 @@ function LightingManager ( ctx, scene ) {
 	const up = Object3D.DEFAULT_UP;
 
 	const ambient = [];
+
+	ctx.lightingManager = this;
 
 	ambient[ LM_SINGLE   ] = 0.3;
 	ambient[ LM_MULTIPLE ] = 0.0;
@@ -18,7 +21,7 @@ function LightingManager ( ctx, scene ) {
 	const inclination = cfg.themeAngle( 'lighting.inclination' ) * MathUtils.RAD2DEG;
 	const azimuth = cfg.themeAngle( 'lighting.azimuth' ) * MathUtils.RAD2DEG;
 
-	const lights = new Group();
+	const surfaceLights = new Group();
 
 	// single direction of illumination
 	const directionalLight0 = _createDirectionalLight( 0xffffff, inclination, azimuth );
@@ -28,9 +31,15 @@ function LightingManager ( ctx, scene ) {
 	const directionalLight2 = _createDirectionalLight( 0x00ff00, 55, 15 );
 	const directionalLight3 = _createDirectionalLight( 0x0000ff, 55, 75 );
 
-	scene.addStatic( lights );
-
+	scene.addStatic( surfaceLights );
 	scene.addStatic( ambientLight );
+
+	const light = new DirectionalLight( 0xffffff, 1.0 );
+	light.position.set(  1, -1, 2 );
+
+	scene.addStatic( light );
+
+	const subsurfaceLights = lights( [ light ] );
 
 	this.mode = LM_SINGLE;
 
@@ -43,7 +52,7 @@ function LightingManager ( ctx, scene ) {
 		position.applyAxisAngle( xAxis, alt * MathUtils.DEG2RAD );
 		position.applyAxisAngle( up, ( azimuth - 90 ) * MathUtils.DEG2RAD );
 
-		lights.addStatic( light );
+		surfaceLights.addStatic( light );
 
 		return light;
 
@@ -51,8 +60,8 @@ function LightingManager ( ctx, scene ) {
 
 	this.setRotation = function ( rotation ) {
 
-		lights.setRotationFromAxisAngle( up, rotation.z );
-		lights.updateMatrix();
+		surfaceLights.setRotationFromAxisAngle( up, rotation.z );
+		surfaceLights.updateMatrix();
 
 	};
 
@@ -72,6 +81,12 @@ function LightingManager ( ctx, scene ) {
 
 		}
 	} );
+
+	this.getSubsurfaceLights = function () {
+
+		return subsurfaceLights;
+
+	}
 
 }
 

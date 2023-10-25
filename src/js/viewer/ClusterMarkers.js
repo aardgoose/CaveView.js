@@ -1,5 +1,6 @@
 import { Object3D, Plane, Triangle, Vector3 } from '../Three';
 import { FEATURE_ENTRANCES, CLUSTER_MARKERS } from '../core/constants';
+import { GlyphMaterial } from '../materials/GlyphMaterial';
 import { GlyphString } from '../core/GlyphString';
 import { Marker } from './Marker';
 
@@ -266,15 +267,7 @@ class ClusterMarkers extends Object3D {
 		this.labels = [];
 		this.ctx = ctx;
 
-		const cfg = ctx.cfg;
-
-		const atlasSpec = {
-			background: cfg.themeColorCSS( 'stations.entrances.background' ),
-			color: cfg.themeColorCSS( 'stations.entrances.text' ),
-			font: 'normal helvetica,sans-serif'
-		};
-
-		const material = ctx.materials.getGlyphMaterial( atlasSpec, cfg.themeAngle( 'stations.entrances.angle' ) );
+		const material = ctx.materials.getMaterial( GlyphMaterial, 'stations.entrances.text' );
 
 		material.depthTest = true;
 		material.transparent = false;
@@ -302,9 +295,10 @@ class ClusterMarkers extends Object3D {
 
 	addMarker ( node, label ) {
 
-		const marker = new GlyphString( label, this.labelMaterial, this.ctx );
+		const marker = new GlyphString( label, this.labelMaterial );
 
 		marker.layers.set( FEATURE_ENTRANCES );
+
 		marker.position.copy( node );
 		marker.parentId = node.parent.id;
 

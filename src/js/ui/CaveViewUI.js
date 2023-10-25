@@ -7,7 +7,6 @@ import { InfoPage } from './InfoPage';
 import { KeyboardControls } from './KeyboardControls';
 import { ModelSource } from '../core/ModelSource';
 import { SelectionPage } from './SelectionPage';
-import { SelectionTreePage } from './SelectionTreePage';
 import { SettingsPage } from './SettingsPage';
 import { SurfacePage } from './SurfacePage';
 
@@ -23,9 +22,6 @@ function CaveViewUI ( viewer ) {
 	const fileSelector = new FileSelector( container, ctx );
 	fileSelector.addEventListener( 'selected', selectFile );
 
-	// add active property for runtime selection mode
-	cfg.setPropertyValue( 'selectionTree', true );
-
 	// event handlers
 	viewer.addEventListener( 'change', frame.handleChange.bind( frame ) );
 	viewer.addEventListener( 'newCave', initUI );
@@ -36,7 +32,7 @@ function CaveViewUI ( viewer ) {
 
 	const keyboardControls = new KeyboardControls( viewer, fileSelector, cfg.value( 'avenControls', true ) );
 
-	initUI();
+	viewer.addEventListener( 'ready', initUI );
 
 	function selectFile( event ) {
 
@@ -49,6 +45,8 @@ function CaveViewUI ( viewer ) {
 
 	function initUI () {
 
+		if ( ! viewer.ready ) return;
+
 		// create UI side panel and reveal tabs
 		frame.clear();
 
@@ -56,21 +54,11 @@ function CaveViewUI ( viewer ) {
 
 		if ( viewer.surveyLoaded ) {
 
+			const surveyTree = viewer.getSurveyTree();
+
 			if ( viewer.hasSurfaceLegs || viewer.hasTerrain ) new SurfacePage( frame, viewer );
 
-			if ( viewer.getSurveyTree().maxId > 0 ) {
-
-				if ( cfg.selectionTree ) {
-
-					new SelectionTreePage( frame, viewer, container, fileSelector );
-
-				} else {
-
-					new SelectionPage( frame, viewer, container, fileSelector );
-
-				}
-
-			}
+			if ( surveyTree.maxId > 0 || surveyTree.id != 0 ) new SelectionPage( frame, viewer, container, fileSelector );
 
 			if ( cfg.value( 'showEditPage', false ) && ! fileSelector.isMultiple ) new EditPage( frame, viewer, fileSelector );
 

@@ -1,5 +1,6 @@
 import { BufferGeometry, Float32BufferAttribute, Group, Mesh } from '../Three';
 import { MutableGlyphString } from '../core/GlyphString';
+import { MeshBasicNodeMaterial } from '../Nodes.js';
 
 class BarGeometry extends BufferGeometry {
 
@@ -68,7 +69,6 @@ class ScaleBar extends Group {
 	constructor ( hudObject, container, hScale, rightMargin ) {
 
 		const leftMargin = 10;
-		const materials = hudObject.ctx.materials;
 
 		super();
 
@@ -83,8 +83,7 @@ class ScaleBar extends Group {
 		this.position.set( -container.clientWidth / 2 + 45, -container.clientHeight / 2 + leftMargin, 0 );
 		this.scaleMax = container.clientWidth - ( 40 + leftMargin + rightMargin );
 
-		const material = materials.getLabelMaterial( 'hud' );
-		const label = new MutableGlyphString( '--------', material );
+		const label = new MutableGlyphString( '--------', hudObject.textMaterial );
 
 		label.translateX( 0 );
 		label.translateY( 10 );
@@ -179,7 +178,7 @@ class ScaleBar extends Group {
 			bar.computeBoundingBox();
 
 			return {
-				mesh: new Mesh( bar, ctx.materials.getPlainMaterial() ),
+				mesh: new Mesh( bar, ctx.materials.getMaterial( MeshBasicNodeMaterial, { normals: false, vertexColors: true } ) ),
 				topRight: bar.boundingBox.max.x
 			};
 

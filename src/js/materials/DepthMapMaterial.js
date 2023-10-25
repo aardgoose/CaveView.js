@@ -1,27 +1,36 @@
-import { ShaderMaterial } from '../Three';
-import { Shaders } from './shaders/Shaders';
+import { NoBlending } from '../Three';
+import { NodeMaterial, saturate, uniform, varying, vec4, positionGeometry } from '../Nodes';
 
-class DepthMapMaterial extends ShaderMaterial {
+class DepthMapMaterial extends NodeMaterial {
 
 	constructor ( terrain ) {
+
+		super();
 
 		const boundingBox = terrain.boundingBox;
 
 		const minHeight = boundingBox.min.z;
 		const maxHeight = boundingBox.max.z;
 
-		super( {
-			vertexShader: Shaders.depthMapVertexShader,
-			fragmentShader: Shaders.depthMapFragmentShader,
-			type: 'CV.DepthMapMaterial',
-			depthWrite: false,
-			uniforms: {
-				minZ:   { value: minHeight },
-				scaleZ: { value: 1 / ( maxHeight - minHeight ) }
-			}
-		} );
+		const minZ = uniform( minHeight );
+		const scaleZ = uniform( 1 / ( maxHeight - minHeight ) );
+		const vHeight = varying( saturate( positionGeometry.z.sub( minZ ).mul( scaleZ ) ) );
+
+		this.colorNode = vec4( vHeight, 0, 0, 1 );
+
+		this.blending = NoBlending;
+		this.normals = false;
+		this.depthTest = false;
 
 	}
+
+	constructOutput( /* builder, outgoingLight, opacity  */) {
+
+		return this.colorNode;
+
+	}
+
+	constructDiffuseColor( /* builder */  ) {}
 
 }
 

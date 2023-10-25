@@ -84,7 +84,7 @@ class Frame {
 
 	getSeq () {
 
-		return Frame.seq++;
+		return 'cv-' + Frame.seq++;
 
 	}
 

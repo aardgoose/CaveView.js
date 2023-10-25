@@ -1,7 +1,9 @@
 import { Box3, Group } from '../Three';
 import { FEATURE_TERRAIN, SHADING_RELIEF, SHADING_OVERLAY, SHADING_CONTOURS } from '../core/constants';
-import { DepthMapMaterial } from '../materials/DepthMapMaterial';
 import { HeightLookup } from './HeightLookup';
+import { HypsometricMaterial } from '../materials/HypsometricMaterial';
+import { ContourMaterial } from '../materials/ContourMaterial';
+import { DepthMapMaterial } from '../materials/DepthMapMaterial';
 import { Overlay } from './Overlay';
 
 class CommonTerrain extends Group {
@@ -12,9 +14,7 @@ class CommonTerrain extends Group {
 
 		this.hasOverlay = false;
 		this.activeOverlay = null;
-		this.depthTexture = null;
 		this.renderer = null;
-		this.renderTarget = null;
 		this.heightLookup = null;
 		this.datumShift = 0;
 		this.activeDatumShift = 0;
@@ -23,9 +23,11 @@ class CommonTerrain extends Group {
 		this.isFlat = false;
 		this.screenAttribution = null;
 		this.terrainShadingModes = {};
-		this.commonUniforms = ctx.materials.commonTerrainUniforms;
+//		this.commonUniforms = ctx.materials.commonTerrainUniforms; FIXME
 		this.ctx = ctx;
 		this.shadingMode = SHADING_RELIEF;
+		this.renderTarget = null;
+		this.depthTexture = null;
 
 		this.addEventListener( 'removed', () => this.removed() );
 
@@ -55,18 +57,13 @@ class CommonTerrain extends Group {
 
 	}
 
-	checkTerrainShadingModes ( renderer ) {
+	checkTerrainShadingModes () {
 
 		const overlays = this.ctx.overlays;
 		const terrainShadingModes = {};
 
 		terrainShadingModes[ 'terrain.shading.height' ] = SHADING_RELIEF;
-
-		if ( renderer.capabilities.isWebGL2 || renderer.extensions.get( 'OES_standard_derivatives' ) !== null && ! this.isFlat ) {
-
-			terrainShadingModes[ 'terrain.shading.contours' + ' (' + this.ctx.cfg.themeValue( 'shading.contours.interval' ) + '\u202fm)' ] = SHADING_CONTOURS;
-
-		}
+		terrainShadingModes[ 'terrain.shading.contours' + ' (' + this.ctx.cfg.themeValue( 'shading.contours.interval' ) + '\u202fm)' ] = SHADING_CONTOURS;
 
 		if ( this.isTiled && overlays) {
 
@@ -95,7 +92,7 @@ class CommonTerrain extends Group {
 
 	}
 
-	setup ( renderer, scene, survey ) {
+	async setup ( renderer, scene, survey ) {
 
 		this.computeBoundingBox();
 
@@ -105,14 +102,15 @@ class CommonTerrain extends Group {
 
 		const container = this.ctx.container;
 		const renderUtils = this.ctx.renderUtils;
+
 		// set camera frustrum to cover region/survey area
 		const rtCamera = renderUtils.makePlanCamera( container, survey );
 
 		rtCamera.layers.set( FEATURE_TERRAIN ); // just render the terrain
 
 		const renderTarget = renderUtils.makeRenderTarget( dim, dim );
+		const depthMapMaterial = new DepthMapMaterial( this );
 
-		renderTarget.texture.generateMipmaps = false;
 		renderTarget.texture.name = 'CV.DepthMapTexture';
 
 		renderer.setSize( dim, dim );
@@ -122,29 +120,37 @@ class CommonTerrain extends Group {
 
 		renderer.setRenderTarget( renderTarget );
 
-		scene.overrideMaterial = new DepthMapMaterial( this );
+		scene.overrideMaterial = depthMapMaterial;
 
-		renderer.render( scene, rtCamera );
+		renderer.render( scene, rtCamera, true ).then( () => {
+
+			// const p = new Popup( this.ctx );
+			// const pop = new PopupMaterial( container, renderTarget.texture );
+			// p.material = pop;
+			// scene.add( p );
+
+			// add lookup using heightMap texture
+			this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox );
+			this.renderTarget = renderTarget;
+			this.depthTexture = renderTarget.texture;
+
+			survey.setupTerrain( this );
+			this.ctx.materials.setTerrain( this );
+
+		} );
 
 		scene.overrideMaterial = null;
+		renderer.setRenderTarget( null );
 
-		this.depthTexture = renderTarget.texture;
 		this.renderer = renderer;
-		this.renderTarget = renderTarget;
 
-		// add lookup using heightMap texture
-		this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox );
-
-		this.checkTerrainShadingModes( renderer );
-
-		// restore renderer to normal render size and target
-
-		renderer.renderLists.dispose();
+		// renderer.renderLists.dispose(); // FIXME is this needed and is there a webHPU equivalent
 
 		// restore renderer to normal render size and target
 
 		this.ctx.viewer.resetRenderer();
 
+		this.checkTerrainShadingModes();
 		survey.setupTerrain( this );
 		this.ctx.materials.setTerrain( this );
 
@@ -164,7 +170,7 @@ class CommonTerrain extends Group {
 
 		case SHADING_RELIEF:
 
-			material = materials.getHypsometricMaterial();
+			material = materials.getMaterial( HypsometricMaterial, {} );
 
 			break;
 
@@ -177,7 +183,7 @@ class CommonTerrain extends Group {
 
 		case SHADING_CONTOURS:
 
-			material = materials.getContourMaterial();
+			material = materials.getMaterial( ContourMaterial, {} );
 
 			break;
 
@@ -195,7 +201,7 @@ class CommonTerrain extends Group {
 				} else {
 
 					// if initial setting is not valid, default to shaded relief
-					material = materials.getHypsometricMaterial();
+					material = materials.getMaterial( HypsometricMaterial, {} );
 					mode = SHADING_RELIEF;
 
 				}

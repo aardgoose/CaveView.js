@@ -1,42 +1,37 @@
-import { ShaderMaterial, Vector3, cloneUniforms } from '../Three';
-import { Shaders } from './shaders/Shaders';
+import { positionLocal } from '../Nodes.js';
+import { SubsurfaceMaterial } from './SubsufaceMaterial';
+import { CommonComponents } from './CommonComponents';
 
-class DepthCursorMaterial extends ShaderMaterial {
+class DepthCursorMaterial extends SubsurfaceMaterial {
 
-	constructor( ctx, options ) {
+	constructor( options, ctx ) {
+
+		super( { vertexColors: true }, ctx );
 
 		const survey = ctx.survey;
 		const surveyLimits = survey.modelLimits;
-		const terrain = survey.terrain;
-
-		const limits = terrain.boundingBox;
-		const range = limits.getSize( new Vector3() );
+		const commonUniforms = ctx.materials.commonUniforms;
 
 		// max range of depth values
 		const max = surveyLimits.max.z - surveyLimits.min.z;
-		const uniforms = ctx.materials.uniforms;
 
-		super( {
-			vertexShader: Shaders.depthCursorVertexShader,
-			fragmentShader: Shaders.depthCursorFragmentShader,
-			type: 'CV.DepthCursorMaterial',
-			uniforms: Object.assign( {
-				modelMin:    { value: limits.min },
-				scaleX:      { value: 1 / range.x },
-				scaleY:      { value: 1 / range.y },
-				rangeZ:      { value: range.z },
-				depthMap:    { value: terrain.depthTexture }
-			}, cloneUniforms( uniforms.cursor ),
-			uniforms.common, uniforms.commonDepth ),
-			defines: {
-				USE_COLOR: true,
-				CV_LOCATION: options.location
-			}
-		} );
+		const cu = commonUniforms.cursor( ctx );
+		const du = commonUniforms.depth( ctx );
 
+		const terrainHeight = CommonComponents.terrainHeight( du, survey.terrain );
+
+		// FIXME double check all depth calcs
+
+		const vCursor = terrainHeight.sub( positionLocal.z );
+
+		const delta = vCursor.sub( cu.cursor );
+
+		this.colorNode = CommonComponents.cursorColor( cu, delta );
+
+		this.cursor = cu.cursor;
 		this.transparent = options.location;
 		this.max = max;
-		this.uniforms.cursor.value = max;
+		this.cursor.value = max;
 
 	}
 
@@ -44,7 +39,7 @@ class DepthCursorMaterial extends ShaderMaterial {
 
 		const newValue = Math.max( Math.min( value, this.max ), 0 );
 
-		this.uniforms.cursor.value = newValue;
+		this.cursor.value = newValue;
 
 		return newValue; // return value clamped to material range
 
@@ -52,7 +47,7 @@ class DepthCursorMaterial extends ShaderMaterial {
 
 	getCursor () {
 
-		return this.uniforms.cursor.value;
+		return this.cursor.value;
 
 	}
 

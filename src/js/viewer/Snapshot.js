@@ -1,44 +1,40 @@
 import { LinearFilter, NearestFilter, RGBAFormat, WebGLRenderTarget } from '../Three';
 
-class Snapshot {
+function Snapshot ( ctx, renderer, exportSize, lineScale ) {
 
-	constructor ( ctx, renderer ) {
+	const container = ctx.container;
+	const viewer = ctx.viewer;
+	const newWidth = exportSize;
+	const newHeight = Math.round( container.clientHeight * newWidth / container.clientWidth );
 
-		this.getSnapshot = function ( exportSize, lineScale ) {
+	const renderTarget = new WebGLRenderTarget( newWidth, newHeight, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, stencil: true } );
 
-			const container = ctx.container;
-			const viewer = ctx.viewer;
+	renderTarget.texture.generateMipmaps = false;
+	renderTarget.texture.name = 'CV.snapshot';
 
-			const newWidth = exportSize;
-			const newHeight = Math.round( container.clientHeight * newWidth / container.clientWidth );
+	renderer.setPixelRatio( 1 );
+	renderer.setSize( newWidth, newHeight );
+	renderer.setRenderTarget( renderTarget );
+	renderer.setClearAlpha( 1.0 );
 
-			const renderTarget = new WebGLRenderTarget( newWidth, newHeight, { minFilter: LinearFilter, magFilter: NearestFilter, format: RGBAFormat, stencilBuffer: true } );
+	// reset camera and materials using renderer size/resolution
+	viewer.dispatchEvent( { type: 'resized', name: 'rts', width: newWidth, height: newHeight, lineScale: lineScale } );
 
-			renderTarget.texture.generateMipmaps = false;
-			renderTarget.texture.name = 'CV.snapshot';
+	viewer.renderView();
 
-			renderer.setSize( newWidth, newHeight );
-			renderer.setPixelRatio( 1 );
-			renderer.setRenderTarget( renderTarget );
-			renderer.setClearAlpha( 1.0 );
+	const result = ctx.renderUtils.renderTargetToCanvas( renderer, renderTarget ).then( ( canvas ) => {
 
-			// reset camera and materials using renderer size/resolution
-			viewer.dispatchEvent( { type: 'resized', name: 'rts', 'width': newWidth, 'height': newHeight, lineScale: lineScale } );
+//		renderTarget.dispose(); // FIXME
 
-			viewer.renderView();
+		// restore renderer to normal render size and target
 
-			const canvas = ctx.renderUtils.renderTargetToCanvas( renderer, renderTarget );
+		return canvas.toDataURL();
 
-			renderTarget.dispose();
+	} );
 
-			// restore renderer to normal render size and target
-			viewer.resetRenderer();
+	viewer.resetRenderer();
 
-			return canvas.toDataURL();
-
-		};
-
-	}
+	return result;
 
 }
 

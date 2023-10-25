@@ -5,7 +5,6 @@ class Scale extends Group {
 
 	constructor ( hudObject, container, geometry, material ) {
 
-		const materials = hudObject.ctx.materials;
 		const width  = container.clientWidth;
 		const height = container.clientHeight;
 
@@ -34,7 +33,7 @@ class Scale extends Group {
 		this.scaleBar = new Mesh( geometry, material );
 		this.scaleBar.name = 'scale bar';
 
-		this.textMaterial = materials.getLabelMaterial( 'hud' );
+		this.textMaterial = hudObject.textMaterial;
 
 		this.add( this.scaleBar );
 
@@ -61,8 +60,8 @@ class Scale extends Group {
 
 			}
 
-			const topLabel = new GlyphString( Math.round( max ) + '\u202fm', material, this.ctx );
-			const bottomLabel = new GlyphString( Math.round( min ) + '\u202fm', material, this.ctx );
+			const topLabel = new GlyphString( Math.round( max ) + '\u202fm', material );
+			const bottomLabel = new GlyphString( Math.round( min ) + '\u202fm', material );
 
 			topLabel.translateX( offsetX - topLabel.getWidth() );
 			bottomLabel.translateX( offsetX - bottomLabel.getWidth() );
@@ -100,7 +99,7 @@ class Scale extends Group {
 
 		}
 
-		caption = new GlyphString( text, this.textMaterial, this.ctx );
+		caption = new GlyphString( text, this.textMaterial );
 		caption.translateX( this.barWidth / 2 - caption.getWidth() );
 		caption.translateY( this.offsetY + this.barWidth / 2 );
 

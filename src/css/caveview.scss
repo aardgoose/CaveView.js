@@ -94,13 +94,6 @@ $animation-speed: 0.25s;
 	display: none;
 }
 
-.cv-frame div.page div.slide ul.cv-tree {
-	width: 280px;
-}
-
-.cv-frame div.page div.slide ul.cv-tree li {
-	margin-left: 20px;
-}
 
 .cv-frame div.page ul {
 	list-style-type: none;
@@ -132,16 +125,6 @@ $animation-speed: 0.25s;
 
 .cv-frame li:not(.section):hover {
 	background-color: black;
-}
-
-.cv-frame div.page div.slide {
-	position: absolute;
-	top: 42px;
-	bottom: 4px;
-	left: 0px;
-	max-height: 100%;
-	background-color: $background;
-	transition: transform $animation-speed ease-in;
 }
 
 .cv-frame div.slide-out {
@@ -362,10 +345,6 @@ div.cv-frame::-webkit-scrollbar-button:end {
 	.cv-frame div.page {
 		width: 95%;
 		top: $tab-size * 2;
-	}
-
-	.cv-frame div.page div.slide, .cv-frame div.slide ul {
-		width: 100%;
 	}
 
 	.cv-tab-box {

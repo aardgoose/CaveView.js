@@ -1,4 +1,5 @@
-import { Box2, Color, TextureLoader, Vector2 } from '../Three';
+import { Box2, Color, TextureLoader, Vector2, LinearSRGBColorSpace } from '../Three';
+import { CommonTerrainMaterial } from '../materials/CommonTerrainMaterial';
 import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
 import proj4 from 'proj4';
 
@@ -146,7 +147,7 @@ class Overlay {
 
 			if ( url === null || this.missing.has( url ) ) {
 
-				return Promise.resolve( materials.getMissingMaterial() );
+				return Promise.resolve( materials.getMaterial( CommonTerrainMaterial, { color: 0xff8888 } ) );
 
 			}
 
@@ -157,6 +158,8 @@ class Overlay {
 		return urlPromise.then( url => {
 
 			return new Promise( resolve => {
+
+
 
 				new TextureLoader()
 					.setCrossOrigin( 'anonymous' )
@@ -174,11 +177,12 @@ class Overlay {
 
 							}
 
-							const material = new TerrainOverlayMaterial( this.ctx );
+							const material = new TerrainOverlayMaterial( {}, this.ctx );
 
 							texture.anisotropy = cfg.value( 'anisotropy', 4 );
 							texture.repeat.setScalar( repeat );
 							texture.offset.set( xOffset, yOffset );
+//							texture.colorSpace = LinearSRGBColorSpace;
 
 							material.map = texture;
 							material.needsUpdate = true;
@@ -195,7 +199,7 @@ class Overlay {
 						() => {
 
 							this.missing.add( url );
-							resolve( this.active ? materials.getMissingMaterial() : null );
+							resolve( this.active ? materials.getMaterial( CommonTerrainMaterial, { color: 0xff8888 } ) : null );
 
 						}
 					);

@@ -131,13 +131,13 @@ class Cfg extends EventDispatcher {
 
 		}
 
-		return value || defaultValue;
+		return value ?? defaultValue;
 
 	}
 
-	themeAngle ( name ) {
+	themeAngle ( name, defaultAngle = 0 ) {
 
-		return MathUtils.degToRad( this.themeValue ( name ) );
+		return MathUtils.degToRad( this.themeValue ( name, defaultAngle ) );
 
 	}
 
@@ -159,13 +159,15 @@ class Cfg extends EventDispatcher {
 
 	}
 
-	themeColorCSS ( name ) {
+	themeColorCSS ( name, defaultColor = 'black' ) {
 
-		return this.themeColor( name ).getStyle();
+		const color = this.themeColor( name, defaultColor ).getStyle();
+
+		return color === undefined ? defaultColor : color;
 
 	}
 
-	themeColor ( name ) {
+	themeColor ( name, defaultColor = undefined ) {
 
 		let color = this.themeColors.get( name );
 
@@ -173,7 +175,10 @@ class Cfg extends EventDispatcher {
 
 			const savedColorName = window.localStorage.getItem( 'cv-color:' + name );
 
-			color = new Color( savedColorName ? savedColorName : this.themeValue( name ) );
+			let dcColor = this.themeValue( name );
+			if ( dcColor === undefined ) dcColor = defaultColor;
+
+			color = new Color( savedColorName ? savedColorName : dcColor );
 			this.themeColors.set( name, color );
 
 		}
@@ -215,7 +220,9 @@ class Cfg extends EventDispatcher {
 
 if ( document.currentScript !== undefined ) {
 
-	Cfg.home = document.currentScript.src.match( /^(.*\/)js\// )[ 1 ];
+	console.log( import.meta );
+	Cfg.home = import.meta.url.match( /^(.*\/)js\// )[ 1 ];
+//	Cfg.home = document.currentScript.src.match( /^(.*\/)js\// )[ 1 ];
 
 }
 

@@ -1,4 +1,4 @@
-import { Box2, Mesh, Object3D, Vector2, Vector3, Vector4 } from '../Three';
+import { Box2, Mesh, Vector2, Vector3, Vector4 } from '../Three';
 import { GlyphStringGeometry, GlyphStringGeometryCache } from './GlyphStringGeometry';
 
 // temporary objects for raycasting
@@ -151,9 +151,11 @@ class GlyphStringBase extends Mesh {
 
 class GlyphString extends GlyphStringBase {
 
-	constructor ( text, glyphMaterial, ctx, yOffset ) {
+	static glyphStringCache = new WeakMap();
 
-		const glyphStringCache = ctx.glyphStringCache;
+	constructor ( text, glyphMaterial, yOffset ) {
+
+		const glyphStringCache = GlyphString.glyphStringCache;
 
 		let cache = glyphStringCache.get( glyphMaterial );
 
@@ -169,7 +171,7 @@ class GlyphString extends GlyphStringBase {
 
 		super( text, glyphMaterial, geometry );
 
-		geometry.instanceBuffer.onUpload( Object3D.onUploadDropBuffer );
+//		geometry.instanceBuffer.onUpload( Object3D.onUploadDropBuffer );
 
 	}
 

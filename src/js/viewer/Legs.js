@@ -3,6 +3,7 @@ import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { LineSegments2 } from '../core/LineSegments2';
 import { STATION_XSECT } from '../core/constants';
 import { Segments } from './Segments';
+import { Line2NodeMaterial } from '../Nodes';
 
 class Legs extends LineSegments2 {
 
@@ -10,7 +11,7 @@ class Legs extends LineSegments2 {
 
 		const geometry = new LineSegmentsGeometry();
 
-		super( geometry, ctx.materials.getSurveyLineMaterial( 'basic' ) );
+		super( geometry, ctx.materials.getMaterial( Line2NodeMaterial, { color: 'white', vertexColors: true } ) );
 
 		this.ctx = ctx;
 		this.colourCache = ctx.materials.colourCache;
@@ -174,9 +175,9 @@ class Legs extends LineSegments2 {
 
 	}
 
-	setShading ( idSet, colourSegment, mode, dashed, filterConnected ) {
+	setShading ( idSet, colourSegment, material, params, filterConnected ) {
 
-		this.material = this.ctx.materials.getSurveyLineMaterial( mode, dashed );
+		this.material = this.ctx.materials.getMaterial( material, params );
 		this.material.needsUpdate = true;
 
 		const legRuns = this.legRuns;

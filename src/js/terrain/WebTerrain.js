@@ -4,6 +4,7 @@ import { EPSG4326TileSet } from './EPSG4326TileSet';
 import { EPSG3857TileSet } from './EPSG3857TileSet';
 import { Tile, TILE_EVICTED, TILE_PENDING, TILE_ACTIVE } from './Tile';
 import { dataURL } from '../core/lib';
+import { MeshBasicNodeMaterial } from '../Nodes.js';
 
 const __frustum = new Frustum();
 const __matrix4 = new Matrix4();
@@ -73,7 +74,7 @@ class WebTerrain extends CommonTerrain {
 		this.lastActivityTime = 0;
 		this.timerId = null;
 
-		this.material = ctx.materials.getCursorMaterial();
+		this.material = ctx.materials.getMaterial( MeshBasicNodeMaterial, { vertexColors: true } );
 		this.canZoom = true;
 
 		this.watcher = this.scheduleRetile.bind( this );

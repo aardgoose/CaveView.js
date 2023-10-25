@@ -1,49 +1,109 @@
-import { ShaderMaterial, Vector2, Vector3 } from '../Three';
-import { Shaders } from './shaders/Shaders';
+import { Vector2, Vector3 } from '../Three';
+import { attribute, property, modelViewProjection, ShaderNode, texture, trunc, NodeMaterial, uniform, varying, vec2, vec4, positionGeometry } from '../Nodes';
+import { GlyphAtlasCache } from '../materials/GlyphAtlasCache';
 
-class GlyphMaterial extends ShaderMaterial {
+class GlyphMaterial extends NodeMaterial {
 
-	constructor ( ctx, glyphAtlas, rotation, viewer ) {
+	constructor ( type, ctx ) {
 
-		const uniforms = ctx.materials.uniforms;
-		const cellScale = glyphAtlas.cellScale;
+		const glyphAtlas = GlyphAtlasCache.getAtlas( type, ctx );
+
+		const viewer = ctx.viewer;
+		const rotation = ctx.cfg.themeAngle( `${type}.rotation` );
 		const container = viewer.container;
-		const realPixels = glyphAtlas.cellSize * 2;
+		const realPixels = glyphAtlas.cellSize;
 		const pixelRatio = window.devicePixelRatio || 1;
 
-		const cos = Math.cos( -rotation );
-		const sin = Math.sin( -rotation );
+		// const cos = Math.cos( -rotation );
+		// const sin = Math.sin( -rotation );
 
 		const cosR = Math.cos( rotation );
 		const sinR = Math.sin( rotation );
 
-		const viewPort = new Vector2( Math.floor( pixelRatio * container.clientWidth ) / 2, Math.floor( pixelRatio * container.clientHeight ) / 2 );
-		const scale = new Vector2( realPixels, realPixels ).divide( viewPort );
+		const viewPortV = new Vector2( Math.floor( pixelRatio * container.clientWidth ) / 2, Math.floor( pixelRatio * container.clientHeight ) / 2 );
 
-		const rotationMatrix = new Float32Array( [ cos, -sin, sin, cos ] );
+		// const rotationMatrix = new Float32Array( [ cos, -sin, sin, cos ] ); // FIXME
 
 		super( {
-			vertexShader: Shaders.glyphVertexShader,
-			fragmentShader: Shaders.glyphFragmentShader,
-			type: 'CV.GlyphMaterial',
-			uniforms: Object.assign( {
-				cellScale: { value: cellScale },
-				atlas: { value: glyphAtlas.getTexture() },
-				rotate: { value: rotationMatrix },
-				scale: { value: scale },
-				viewPort: { value: viewPort }
-			}, uniforms.common ),
+			alphaTest: 0.9,
+			color: 0xffffff,
+			depthTest: false,
+			transparent: true,
 		} );
 
-		this.rotation = rotation;
-		this.alphaTest = 0.9;
-		this.depthTest = false;
-		this.transparent = true;
+		this.name = `CV:GlyphMaterial:${type}`;
+		this.normals = false;
+		this.lights = false;
 
-		this.type = 'CV.GlyphMaterial';
+		// glyph shader, each instance represents one glyph.
+
+		const cellScale = uniform( glyphAtlas.cellScale );
+		const scale = uniform( new Vector2( realPixels, realPixels ).divide( viewPortV ), 'vec2' );
+		// const rotate = uniform( rotationMatrix, 'mat2' );
+		const viewPort = uniform( viewPortV, 'vec2' );
+
+		// attributes
+
+		const instanceOffset = attribute( 'instanceOffset' );
+		const instanceUV     = attribute( 'instanceUV' );
+		const instanceWidth  = attribute( 'instanceWidth' );
+
+		// select glyph from UV trimmed to correct width
+		const uv = varying( instanceUV.add( vec2( positionGeometry.x.mul( cellScale ).mul( instanceWidth ), positionGeometry.y.mul( cellScale ) ) ) );
+
+		this.vertexNode = new ShaderNode( ( stack ) => {
+
+			// scale by glyph width ( vertices form unit square with (0,0) origin )
+
+			const newPosition = vec2( positionGeometry.x.mul( instanceWidth ), positionGeometry.y );
+
+			// move to correct offset in string
+
+			stack.assign( newPosition, newPosition.add( vec2( instanceOffset, 0 ) ) );
+
+			// rotate as required
+
+			// newPosition = rotate * newPosition; //FIXME
+
+			// position of GlyphString object on screen
+
+			const offset = property( 'vec4', 'offset' );
+
+			stack.assign( offset, modelViewProjection( vec4( 0.0, 0.0, 0.0, 1.0 ) ) );
+
+			// scale glyphs
+
+			stack.assign( newPosition, newPosition.mul( scale ) );
+
+			// move to clip space
+
+			stack.assign( newPosition, newPosition.mul( offset.w ) );
+
+			stack.assign( offset, offset.add( vec4( newPosition, 0, 0 ) ) );
+
+			const snap = viewPort.div( offset.w );
+
+			stack.assign( offset, vec4( trunc( offset.xy.mul( snap ) ).add( 0.5 ).div( snap ), offset.z, offset.w ) );
+
+			return offset;
+
+		} );
+
+		//		this.rotation = rotationMatrix;
+
+		// fragment shader
+
+		this.colorNode = texture( glyphAtlas.getTexture(), uv );
+		this.opacityNode = texture( glyphAtlas.getTexture(), uv ).a;
+
+		// end of shader
+
+		this.type = 'CV:GlyphMaterial';
 		this.atlas = glyphAtlas;
 		this.scaleFactor = glyphAtlas.cellSize / pixelRatio;
 		this.toScreenSpace = new Vector3( container.clientWidth/ 2, container.clientHeight / 2, 1 );
+
+		this.scale = scale;
 
 		viewer.addEventListener( 'resized', _resize );
 
@@ -51,9 +111,9 @@ class GlyphMaterial extends ShaderMaterial {
 
 		function _resize () {
 
-			self.uniforms.scale.value.set( realPixels / Math.floor( pixelRatio * container.clientWidth ), realPixels/ Math.floor( pixelRatio * container.clientHeight ) );
+			self.scale.value.set( realPixels * 2 / Math.floor( pixelRatio * container.clientWidth ), realPixels * 2 / Math.floor( pixelRatio * container.clientHeight ) );
 			self.toScreenSpace.set( container.clientWidth/ 2, container.clientHeight / 2, 1 );
-			this.scaleFactor = glyphAtlas.cellSize / pixelRatio;
+			self.scaleFactor = glyphAtlas.cellSize / pixelRatio;
 
 		}
 
@@ -69,6 +129,7 @@ class GlyphMaterial extends ShaderMaterial {
 
 	}
 
+
 	getCellSize () {
 
 		return this.atlas.cellSize;
@@ -78,6 +139,12 @@ class GlyphMaterial extends ShaderMaterial {
 	getAtlas () {
 
 		return this.atlas;
+
+	}
+
+	customProgramCacheKey () {
+
+		return this.name;
 
 	}
 

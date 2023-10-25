@@ -1,4 +1,4 @@
-import { EventDispatcher, FogExp2, Raycaster, Scene, Vector2, Vector3, WebGLRenderer } from '../Three';
+import { EventDispatcher, FogExp2, Raycaster, SRGBColorSpace, Scene, Vector2, Vector3 } from '../Three';
 import {
 	FACE_SCRAPS, FACE_WALLS, FACE_MODEL, FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_ENTRANCE_DOTS, FEATURE_GRID, FEATURE_STATIONS, FEATURE_TERRAIN, FEATURE_TRACES,
 	LABEL_STATION, LABEL_STATION_COMMENT, LEG_CAVE, LEG_SPLAY, LEG_DUPLICATE, LEG_SURFACE, LM_NONE, LM_SINGLE, MOUSE_MODE_TRACE_EDIT, SURVEY_WARNINGS,
@@ -24,6 +24,7 @@ import { Survey } from './Survey';
 import { ViewState } from './ViewState';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { WorkerPoolCache } from '../core/WorkerPool';
+import WebGPURenderer from '../../../node_modules/three/examples/jsm/renderers/webgpu/WebGPURenderer';
 
 class CaveViewer extends EventDispatcher {
 
@@ -42,14 +43,13 @@ class CaveViewer extends EventDispatcher {
 
 		// target with css for fullscreen on small screen devices
 		container.classList.add( 'cv-container' );
-		container.style.backgroundColor = cfg.themeColorCSS( 'background' );
-
+//		container.style.backgroundColor = cfg.themeColorCSS( 'background' );
+		container.style.backgroundColor = 'green';
 
 		const ctx = {
 			cfg: cfg,
 			container: container,
 			workerPools: new WorkerPoolCache ( cfg ),
-			glyphStringCache: new Map(),
 			materials: null,
 			viewer: this,
 			renderUtils: new RenderUtils()
@@ -61,14 +61,16 @@ class CaveViewer extends EventDispatcher {
 
 		ctx.materials = materials;
 
-		let renderer = new WebGLRenderer( { antialias: true, alpha: true } );
+		let renderer = new WebGPURenderer( { antialias: true, alpha: true } );
+
+		renderer.outputColorSpace = SRGBColorSpace;
 
 		resetRenderer();
 
 		updatePixelRatio();
 
 		renderer.clear();
-		renderer.autoClear = false;
+//		renderer.autoClear = false;
 
 		container.appendChild( renderer.domElement );
 
@@ -77,6 +79,10 @@ class CaveViewer extends EventDispatcher {
 		const scene = new Scene();
 		scene.fog = fog;
 		scene.name = 'CV.Viewer';
+		scene.background = cfg.themeColor( 'background' );
+
+		ctx.scene = scene;
+		ctx.renderer = renderer;
 
 		const cameraManager = new CameraManager( ctx, renderer, scene );
 
@@ -397,8 +403,7 @@ class CaveViewer extends EventDispatcher {
 
 			'maxSnapshotSize': {
 				get() {
-					const context = renderer.getContext();
-					return context.getParameter( context.MAX_RENDERBUFFER_SIZE );
+					return renderer.backend.adapter.limits.maxTextureDimension2D;
 				}
 			},
 
@@ -406,7 +411,14 @@ class CaveViewer extends EventDispatcher {
 				get() { return cameraManager.focalLength; },
 				set: setFocalLength,
 				enumerable: true
+			},
+
+			'ready': {
+				get() {
+					return ( !! renderer?.backend?.adapter );
+				}
 			}
+
 		} );
 
 		enableLayer( FEATURE_BOX,       'box' );
@@ -468,6 +480,8 @@ class CaveViewer extends EventDispatcher {
 		const viewState = new ViewState( cfg, this );
 
 		this.renderView = renderView;
+
+		renderer.init().then( () => this.dispatchEvent( { type: 'ready' } ) );
 
 		onResize();
 
@@ -933,6 +947,8 @@ class CaveViewer extends EventDispatcher {
 
 			}
 
+			materials.setSurvey( survey );
+
 			if ( final ) {
 
 				savedView = null;
@@ -969,7 +985,9 @@ class CaveViewer extends EventDispatcher {
 			survey.addEventListener( 'changed', onSurveyChanged );
 
 			self.dispatchEvent( { type: 'newSurvey', name: 'newSurvey', survey: survey, publicFactory: publicFactory } );
+//			setupView( true );
 
+//				return;
 			// have we got built in terrain
 			let terrain = survey.terrain;
 
@@ -1021,7 +1039,7 @@ class CaveViewer extends EventDispatcher {
 
 		}
 
-		function renderView ( autorotate = false ) {
+		async function renderView ( autorotate = false ) {
 
 			if ( ! renderRequired || renderer.xr.isPresenting ) return;
 
@@ -1029,8 +1047,6 @@ class CaveViewer extends EventDispatcher {
 			// extra render calls
 
 			if ( controls.autoRotate && ! autorotate ) return;
-
-			renderer.clear();
 
 			if ( survey !== null ) {
 
@@ -1162,7 +1178,7 @@ class CaveViewer extends EventDispatcher {
 
 		this.getSnapshot = function ( exportSize, lineScale ) {
 
-			return new Snapshot( ctx, renderer ).getSnapshot( exportSize, lineScale );
+			return Snapshot( ctx, renderer, exportSize, lineScale );
 
 		};
 
@@ -1188,11 +1204,11 @@ class CaveViewer extends EventDispatcher {
 			controls.dispose();
 			hud.dispose();
 
-			ctx.glyphStringCache = null;
 			ctx.cfg = null;
 			ctx.workerPools = null;
 			ctx.materials = null;
 			ctx.container = null;
+			ctx.scene = null;
 
 			window.removeEventListener( 'resize', onResize );
 

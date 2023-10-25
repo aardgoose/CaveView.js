@@ -1,9 +1,10 @@
-import { CanvasTexture, LinearFilter } from '../Three';
+import { CanvasTexture, LinearFilter, NearestFilter } from '../Three';
 
 class GlyphAtlas {
 
-	constructor ( glyphAtlasSpec ) {
+	constructor ( type, gCtx ) {
 
+		const cfg = gCtx.cfg;
 		const atlasSize = 512;
 		const fontSize = 18;
 		const cellSize = 32;
@@ -35,13 +36,19 @@ class GlyphAtlas {
 		if ( ! ctx ) console.error( 'cannot obtain 2D canvas' );
 
 		// set background
-		ctx.fillStyle = glyphAtlasSpec.background || 'rgba( 0, 0, 0, 0 )';
+		const opacity = cfg.themeValue( `${type}.opacity`, 1 );
+
+		ctx.globalAlpha = opacity;
+
+		ctx.fillStyle = cfg.themeColorCSS( `${type}.background` );
 		ctx.fillRect( 0, 0, atlasSize, atlasSize );
+
+		ctx.globalAlpha = 1;
 
 		// set up text settings
 		ctx.textAlign = 'left';
-		ctx.font = fontSize + 'px ' + glyphAtlasSpec.font;
-		ctx.fillStyle = glyphAtlasSpec.color || '#ffffff';
+		ctx.font = fontSize + 'px ' + cfg.themeValue( `${type}.font` );
+		ctx.fillStyle = cfg.themeColorCSS( `${type}.color`, '#ffffff' );
 
 		for ( let i = 0; i < glyphCount; i++ ) {
 
@@ -108,27 +115,4 @@ class GlyphAtlas {
 
 }
 
-function GlyphAtlasCache () {
-
-	const atlasCache = [];
-
-	this.getAtlas = function ( glyphAtlasSpec ) {
-
-		const key = JSON.stringify( glyphAtlasSpec );
-
-		let atlas = atlasCache[ key ];
-
-		if ( atlas === undefined ) {
-
-			atlas = new GlyphAtlas( glyphAtlasSpec );
-			atlasCache[ key ] = atlas;
-
-		}
-
-		return atlas;
-
-	};
-
-}
-
-export { GlyphAtlasCache };
+export { GlyphAtlas };

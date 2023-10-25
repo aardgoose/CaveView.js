@@ -3,6 +3,7 @@ import { CommonTerrain } from './CommonTerrain';
 import { LoxTerrainGeometry } from './LoxTerrainGeometry';
 import { FEATURE_TERRAIN } from '../core/constants';
 import { TerrainOverlayMaterial } from '../materials/TerrainOverlayMaterial';
+import { CommonTerrainMaterial } from '../materials/CommonTerrainMaterial';
 
 class LoxTile extends Mesh {
 
@@ -10,7 +11,7 @@ class LoxTile extends Mesh {
 
 	constructor ( ctx, terrain, offsets ) {
 
-		super( new LoxTerrainGeometry( terrain.dtm, offsets ), ctx.materials.getSurfaceMaterial() );
+		super( new LoxTerrainGeometry( terrain.dtm, offsets ), ctx.materials.getMaterial( CommonTerrainMaterial, { color: 0xff8888 } ) );
 
 		this.type = 'CV.LoxTile';
 		this.layers.set( FEATURE_TERRAIN );
@@ -56,7 +57,7 @@ class LoxTile extends Mesh {
 
 			};
 
-			self.overlayMaterial = new TerrainOverlayMaterial( ctx );
+			self.overlayMaterial = new TerrainOverlayMaterial( {}, ctx );
 
 			self.overlayMaterial.map = texture;
 

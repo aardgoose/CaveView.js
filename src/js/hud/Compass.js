@@ -5,12 +5,10 @@ import {
 	Group,
 	MathUtils,
 	Mesh,
-	MeshBasicMaterial,
-	MeshLambertMaterial,
 	RingGeometry,
 	Vector3
 } from '../Three';
-
+import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from '../Nodes';
 import { MutableGlyphString } from '../core/GlyphString';
 
 const __direction = new Vector3();
@@ -24,7 +22,6 @@ class Compass extends Group {
 		const stdWidth  = hudObject.stdWidth;
 		const stdMargin = hudObject.stdMargin;
 		const cfg = hudObject.ctx.cfg;
-		const materials = hudObject.ctx.materials;
 
 		super();
 
@@ -33,12 +30,12 @@ class Compass extends Group {
 
 		const cg1 = hudObject.getCommonRing();
 
-		const c1 = new Mesh( cg1, materials.getBezelMaterial() );
+		const c1 = new Mesh( cg1, hudObject.getBezelMaterial() );
 
 		const cg2 = new RingGeometry( stdWidth * 0.9, stdWidth, 4, 1, -Math.PI / 32 + Math.PI / 2, Math.PI / 16 );
 		cg2.translate( 0, 0, 5 );
 
-		const c2 = new Mesh( cg2, new MeshBasicMaterial( { color: cfg.themeValue( 'hud.compass.top1' ) } ) );
+		const c2 = new Mesh( cg2, new MeshBasicNodeMaterial( { color: cfg.themeValue( 'hud.compass.top1' ) } ) );
 
 		c1.dropBuffers();
 		c2.dropBuffers();
@@ -61,8 +58,7 @@ class Compass extends Group {
 
 		this.lastRotation = 0;
 
-		const material = materials.getLabelMaterial( 'hud' );
-		const label = new MutableGlyphString( '000\u00B0', material );
+		const label = new MutableGlyphString( '000\u00B0', hudObject.textMaterial );
 
 		label.translateX( - label.getWidth() / 2 );
 		label.translateY( stdWidth + 5 );
@@ -76,9 +72,8 @@ class Compass extends Group {
 		function _makeRose() {
 
 			const geometry = new BufferGeometry();
-			const material = new MeshLambertMaterial( { vertexColors: true } );
 
-			const mesh = new Mesh( geometry, material );
+			const mesh = new Mesh( geometry, new MeshPhongNodeMaterial( { vertexColors: true } ) );
 
 			const positions = new Float32BufferAttribute( 144, 3 );
 			const colors = new Float32BufferAttribute( 144, 3 );
@@ -125,7 +120,6 @@ class Compass extends Group {
 
 					positions.setXYZ( vertex, Math.sin( a + xc ) * radius, Math.cos( a + xc ) * radius, 0 );
 					colors.setXYZ( vertex++, color2.r, color2.g, color2.b );
-
 
 				}
 

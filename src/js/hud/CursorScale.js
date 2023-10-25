@@ -2,9 +2,10 @@ import { Scale } from './Scale';
 import { MutableGlyphString } from '../core/GlyphString';
 import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
-import { Line2Material } from '../materials/Line2Material';
 
-import { MeshBasicMaterial, PlaneGeometry } from '../Three';
+import { PlaneGeometry } from '../Three';
+import { MeshBasicNodeMaterial, Line2NodeMaterial } from '../Nodes';
+import { GlyphMaterial } from '../materials/GlyphMaterial';
 
 class CursorScale extends Scale {
 
@@ -15,7 +16,7 @@ class CursorScale extends Scale {
 		const materials = ctx.materials;
 		const geometry = new PlaneGeometry();
 
-		super( hudObject, container, geometry, new MeshBasicMaterial( { color: 0x676767 } ) );
+		super( hudObject, container, geometry, new MeshBasicNodeMaterial( { color: 0x676767 } ) );
 
 		this.name = 'CV.CursorScale';
 		this.visible = false;
@@ -34,15 +35,9 @@ class CursorScale extends Scale {
 			-barWidth / 2, -barHeight / 2, 10
 		] );
 
-		const cursor = new LineSegments2( cursorGeometry, new Line2Material( ctx, { color: cfg.themeColor( 'hud.cursor' ) } ) );
+		const cursor = new LineSegments2( cursorGeometry, materials.getMaterial( Line2NodeMaterial, { color: cfg.themeColor( 'hud.cursor.color' ) } ) );
 
-		const atlasSpec = {
-			color: cfg.themeColorCSS( 'hud.cursor' ),
-			background: '#444444',
-			font: 'bold helvetica,sans-serif'
-		};
-
-		const material = materials.getGlyphMaterial( atlasSpec, 0 );
+		const material = materials.getMaterial( GlyphMaterial, 'hud.cursor.text' );
 
 		const cursorLabel = new MutableGlyphString( '      ', material );
 

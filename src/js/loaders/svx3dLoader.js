@@ -21,7 +21,7 @@ class Svx3dLoader extends FileLoader{
 
 		return super.load( 'arraybuffer', loadingContext, progress ).then( results => {
 
-			this.parse( surveyDataCollector, results.data, results.metadata, loadingContext.section, progress );
+			return this.parse( surveyDataCollector, results.data, results.metadata, loadingContext.section, progress );
 
 		} );
 
@@ -150,6 +150,7 @@ class Svx3dLoader extends FileLoader{
 		const dataView   = new DataView( source, 0 );
 		const data       = new Uint8Array( source, 0 );
 		const dataLength = data.length;
+		const __coords = { x: 0.0, y: 0.0 };
 
 		let label     = '';
 		const sectionId = 0;
@@ -368,10 +369,10 @@ class Svx3dLoader extends FileLoader{
 
 				if ( projection !== null) {
 
-					const projectedCoords = projection.forward( {
-						x: coords.x,
-						y: coords.y
-					} );
+					__coords.x = coords.x;
+					__coords.y = coords.y;
+
+					const projectedCoords = projection.forward( __coords );
 
 					coords.x = projectedCoords.x;
 					coords.y = projectedCoords.y;

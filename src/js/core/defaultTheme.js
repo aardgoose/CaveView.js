@@ -10,8 +10,11 @@ const defaultTheme = {
 	},
 	entrance_dot_size: 5,
 	hud: {
-		font: 'normal Arial, sans-serif',
-		text: 'white',
+		text: {
+			background: 'black',
+			color: 'white',
+			font: 'normal Arial, sans-serif',
+		},
 		progress: 'green',
 		progressBackground: 'dimgray',
 		bezel: 'gray',
@@ -32,7 +35,14 @@ const defaultTheme = {
 			bar: 'yellow',
 			marks: 'white'
 		},
-		cursor: 'yellow'
+		cursor: {
+			text: {
+				color: 'yellow',
+				background: '#444444',
+				font: 'bold helvetica,sans-serif'
+			},
+			color: 'yellow'
+		}
 	},
 	box: {
 		bounding: 'white',
@@ -45,27 +55,38 @@ const defaultTheme = {
 		default: 'gray'
 	},
 	stations: {
-		font: 'normal Arial, sans-serif',
 		default: {
-			text: 'white',
-			background: 'rgba( 0.0, 0.0, 0.0, 0.75 ) ',
-			font: 'normal Arial, sans-serif',
+			text: {
+				color: 'white',
+				font: 'normal Arial, sans-serif',
+				opacity: 0
+			},
 			marker: 'red'
 		},
 		entrances: {
-			text: 'white',
-			background: 'darkred',
+			text: {
+				color: 'white',
+				background: 'darkred',
+				font: 'normal helvetica,sans-serif',
+				rotation: 45
+
+			},
 			marker: 'white',
-			angle: 45,
 		},
 		junctions: {
-			text: 'yellow',
-			font: 'normal Arial, sans-serif',
+			text: {
+				color: 'yellow',
+				font: 'normal Arial, sans-serif',
+				opacity: 0
+			},
 			marker: 'yellow'
 		},
 		linked: {
-			text: 'cyan',
-			font: 'normal Arial, sans-serif',
+			text: {
+				color: 'cyan',
+				font: 'normal Arial, sans-serif',
+				opacity: 0
+			},
 			marker: 'cyan'
 		}
 	},
@@ -78,10 +99,11 @@ const defaultTheme = {
 		unselected: 'gray',
 		contours: {
 			line: 0xe1bba2,
-			line10: 0xf29d62,
+			line10: 'green',
 			interval: 10,
 			base: 'white'
 		},
+		ringColor: 'red',
 		/*
 		hypsometric: {
 			min: 0,
@@ -91,12 +113,20 @@ const defaultTheme = {
 		unconnected: 'gray'
 	},
 	popup: {
-		text: 'white',
+		color: 'white',
 		border: 'white',
 		background: 0x111111
 	},
 	grid: {
 		base: 'gray'
+	},
+	clusters: {
+		text: {
+			background: 'darkred',
+			color: 'white',
+			font: 'normal helvetica,sans-serif'
+
+		}
 	}
 };
 

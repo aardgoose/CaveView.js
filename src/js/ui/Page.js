@@ -14,7 +14,6 @@ class Page {
 		this.onTop = onTop;
 		this.frame = null;
 		this.onLeave = onLeave;
-		this.slide = undefined;
 		this.x18nPrefix = x18nPrefix + '.';
 		this.onChange = null;
 		this.id = id;
@@ -91,9 +90,7 @@ class Page {
 
 	appendChild ( domElement ) {
 
-		this.page.appendChild( domElement );
-
-		return domElement;
+		return this.page.appendChild( domElement );
 
 	}
 
@@ -104,9 +101,7 @@ class Page {
 		div.classList.add( 'header' );
 		div.textContent = this.i18n( text );
 
-		this.page.appendChild( div );
-
-		return div;
+		return this.page.appendChild( div );
 
 	}
 
@@ -174,19 +169,13 @@ class Page {
 
 		p.textContent = text;
 
-		this.page.appendChild( p );
-
-		return p;
+		return this.page.appendChild( p );
 
 	}
 
 	addBlankLine () {
 
-		const b = document.createElement( 'br' );
-
-		this.page.appendChild( b );
-
-		return b;
+		return this.page.appendChild( document.createElement( 'br' ) );
 
 	}
 
@@ -198,13 +187,11 @@ class Page {
 		a.textContent = text;
 		a.target = '_blank';
 
-		this.page.appendChild( a );
-
-		return a;
+		return this.page.appendChild( a );
 
 	}
 
-	makeLabel ( title, labelClass, idFor = 'na' ) {
+	makeLabel ( title, labelClass, idFor ) {
 
 		const label = document.createElement( 'label' );
 
@@ -220,6 +207,9 @@ class Page {
 
 		const div    = document.createElement( 'div' );
 		const select = document.createElement( 'select' );
+		const id = this.frame.getSeq();
+
+		select.id = id;
 
 		div.classList.add( 'control' );
 
@@ -268,8 +258,7 @@ class Page {
 
 		frame.controls[ property ] = select;
 
-		div.appendChild( this.makeLabel( title, 'cv-select' ) );
-		div.appendChild( select );
+		div.append( this.makeLabel( title, 'cv-select', id ), select );
 
 		if ( replace === undefined ) {
 
@@ -288,11 +277,13 @@ class Page {
 	addFileSelect ( title, fileSelector ) {
 
 		const frame = this.frame;
-		const id = 'cv-' + frame.getSeq();
+		const id = frame.getSeq();
 		const sourceList = fileSelector.sourceList;
 		const div = document.createElement( 'div' );
 		const select = document.createElement( 'select' );
 		const label = this.makeLabel( title, 'cv-select', id );
+
+		select.id = id;
 
 		div.classList.add( 'control' );
 		label.classList.add( 'cv-file-label' );
@@ -323,9 +314,7 @@ class Page {
 
 		frame.controls[ 'fileSelector' ] = select;
 
-		div.appendChild( label );
-		div.appendChild( select );
-
+		div.append( label, select );
 
 		const input = document.createElement( 'input' );
 
@@ -342,9 +331,8 @@ class Page {
 		} );
 
 		label.appendChild( input );
-		this.page.appendChild( div );
 
-		return div;
+		return this.page.appendChild( div );
 
 	}
 
@@ -354,7 +342,7 @@ class Page {
 		const cb    = document.createElement( 'input' );
 		const div   = document.createElement( 'div' );
 
-		const id = 'cv-' + frame.getSeq();
+		const id = frame.getSeq();
 
 		div.classList.add( 'control' );
 
@@ -366,12 +354,9 @@ class Page {
 
 		frame.controls[ property ] = cb;
 
-		div.appendChild( cb );
-		div.appendChild( this.makeLabel( title, 'check', id ) );
+		div.append( cb, this.makeLabel( title, 'check', id ) );
 
-		this.page.appendChild( div );
-
-		return div;
+		return this.page.appendChild( div );
 
 		function _checkboxChanged ( event ) {
 
@@ -391,7 +376,7 @@ class Page {
 		const number    = document.createElement( 'input' );
 		const div   = document.createElement( 'div' );
 
-		const id = 'cv-' + frame.getSeq();
+		const id = frame.getSeq();
 
 		div.classList.add( 'control' );
 
@@ -400,15 +385,11 @@ class Page {
 		number.id = id;
 		number.disabled = true;
 
-
 		frame.controls[ property ] = number;
 
-		div.appendChild( number );
-		div.appendChild( this.makeLabel( title, 'check', id ) );
+		div.append( number, this.makeLabel( title, 'check', id ) );
 
-		this.page.appendChild( div );
-
-		return div;
+		return this.page.appendChild( div );
 
 	}
 
@@ -417,6 +398,9 @@ class Page {
 		const frame = this.frame;
 		const div = document.createElement( 'div' );
 		const range = document.createElement( 'input' );
+		const id = frame.getSeq();
+
+		range.id = id;
 
 		div.classList.add( 'control' );
 
@@ -432,12 +416,9 @@ class Page {
 
 		frame.controls[ property ] = range;
 
-		div.appendChild( this.makeLabel( title, 'cv-range' ) );
-		div.appendChild( range );
+		div.append( this.makeLabel( title, 'cv-range', id ), range );
 
-		this.page.appendChild( div );
-
-		return div;
+		return this.page.appendChild( div );
 
 		function _rangeChanged ( event ) {
 
@@ -446,92 +427,6 @@ class Page {
 			obj[ property ] = event.target.value;
 
 			frame.inHandler = false;
-
-		}
-
-	}
-
-	addSlide ( domElement, depth ) {
-
-		const slide = document.createElement( 'div' );
-
-		slide.classList.add( 'slide' );
-		slide.style.zIndex = 200 - depth;
-
-		slide.appendChild( domElement );
-
-		this.page.appendChild( slide );
-
-		this.slide = slide;
-		this.slideDepth = depth;
-
-		return slide;
-
-	}
-
-	replaceSlide ( domElement, depth ) {
-
-		const newSlide = document.createElement( 'div' );
-		const page = this.page;
-
-		let oldSlide = this.slide;
-
-		let redraw; // eslint-disable-line no-unused-vars
-
-		newSlide.classList.add( 'slide' );
-		newSlide.style.zIndex = 200 - depth;
-
-		if ( depth < this.slideDepth ) {
-
-			newSlide.classList.add( 'slide-out' );
-
-		}
-
-		newSlide.appendChild( domElement );
-
-		page.appendChild( newSlide );
-
-		if ( depth > this.slideDepth ) {
-
-			oldSlide.addEventListener( 'transitionend', afterSlideOut );
-			oldSlide.classList.add( 'slide-out' );
-
-			redraw = oldSlide.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
-
-		} else if ( depth < this.slideDepth ) {
-
-			newSlide.addEventListener( 'transitionend', afterSlideIn );
-
-			redraw = newSlide.clientHeight; /* lgtm[js/unused-local-variable] */ // eslint-disable-line no-unused-vars
-
-			newSlide.classList.remove( 'slide-out' );
-
-		} else {
-
-			page.removeChild( oldSlide );
-
-		}
-
-		this.slide = newSlide;
-		this.slideDepth = depth;
-
-		return newSlide;
-
-		function afterSlideOut () {
-
-			oldSlide.removeEventListener( 'transitionend', afterSlideOut );
-			page.removeChild( oldSlide );
-
-			oldSlide = null;
-
-		}
-
-		function afterSlideIn () {
-
-			page.removeChild( oldSlide );
-			newSlide.removeEventListener( 'transitionend', afterSlideIn );
-
-			oldSlide = null;
 
 		}
 
@@ -546,9 +441,7 @@ class Page {
 
 		this.addListener( button, 'click', func );
 
-		this.page.appendChild( button );
-
-		return button;
+		return this.page.appendChild( button );
 
 	}
 
@@ -556,22 +449,22 @@ class Page {
 
 		const div = document.createElement( 'div' );
 		const input = document.createElement( 'input' );
+		const id = this.frame.getSeq();
 
 		let value;
 
 		input.type = 'text';
+		input.id = id;
 		input.placeholder = placeholder;
 
-		div.appendChild( this.makeLabel( title, 'text' ) );
-		div.appendChild( input );
-
-		this.page.appendChild( div );
 
 		this.addListener( input, 'change', function ( e ) { value = e.target.value; return true; } );
 
 		getResultGetter( _result );
 
-		return div;
+		div.append( this.makeLabel( title, 'text', id ), input );
+
+		return this.page.appendChild( div );
 
 		function _result() {
 
@@ -586,7 +479,18 @@ class Page {
 
 		const a = document.createElement( 'a' );
 
-		this.addListener( a, 'click', () => { a.href = urlProvider( a ); } );
+		this.addListener( a, 'click', ( e ) => {
+
+			e.preventDefault();
+
+			urlProvider().then( ( url ) => {
+//			 console.log( url );
+			 a.href = url;
+
+			} )
+			return false;
+
+		} );
 
 		a.textContent = this.i18n( title );
 		a.type = 'download';
@@ -595,9 +499,7 @@ class Page {
 
 		a.classList.add( 'download' );
 
-		this.page.appendChild( a );
-
-		return a;
+		return this.page.appendChild( a );
 
 	}
 
@@ -619,7 +521,7 @@ class Page {
 		const div   = document.createElement( 'div' );
 		const cfg = frame.ctx.cfg;
 
-		const id = 'cv-' + frame.getSeq();
+		const id = frame.getSeq();
 
 		div.classList.add( 'control', 'color' );
 
@@ -632,14 +534,11 @@ class Page {
 
 		frame.controls[ name ] = cb;
 
-		div.appendChild( cb );
-		div.appendChild( this.makeLabel( title, 'color', id ) );
-
-		this.page.appendChild( div );
-
 		this.addListener( cfg, 'colors', e => { if (e.name === 'all' ) cb.value = cfg.themeColorHex( name ); } );
 
-		return div;
+		div.append( cb, this.makeLabel( title, 'color', id ) );
+
+		return this.page.appendChild( div );
 
 		function _colorChanged ( event ) {
 

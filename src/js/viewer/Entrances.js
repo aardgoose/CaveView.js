@@ -1,6 +1,8 @@
-import { BufferGeometry, Float32BufferAttribute, Points } from '../Three';
+import { Mesh, Color } from '../Three';
 import { ClusterMarkers } from './ClusterMarkers';
 import { STATION_ENTRANCE, FEATURE_ENTRANCE_DOTS } from '../core/constants';
+import { InstancedSpriteGeometry } from '../core/InstancedSpriteGeometry';
+import { InstancedSpriteMaterial } from '../materials/InstancedSpriteMaterial';
 
 class Entrances extends ClusterMarkers {
 
@@ -13,13 +15,11 @@ class Entrances extends ClusterMarkers {
 		const entrances = survey.metadata.entrances;
 		const vertices = [];
 
-		const geometry = new BufferGeometry();
-
-		const material = ctx.materials.getEntrancePointMaterial();
+		const geometry = new InstancedSpriteGeometry();
 
 		this.entranceColor = ctx.cfg.themeColor( 'stations.entrances.marker' );
 
-		const markers = new Points( geometry, material );
+		const markers = new Mesh( geometry, ctx.materials.getMaterial( InstancedSpriteMaterial ) );
 
 		markers.layers.set( FEATURE_ENTRANCE_DOTS );
 
@@ -37,14 +37,7 @@ class Entrances extends ClusterMarkers {
 
 		if ( l > 0 ) {
 
-			const positions = new Float32BufferAttribute( l, 3 );
-			const colors = new Float32BufferAttribute( l, 3 );
-
-			vertices.forEach( ( v, i ) => { positions.setXYZ( i, v.x, v.y, v.z ); } );
-
-			geometry.setAttribute( 'position', positions );
-			geometry.setAttribute( 'color', colors );
-			geometry.computeBoundingBox();
+			geometry.setPositions( vertices );
 
 		} else {
 
@@ -141,19 +134,13 @@ class Entrances extends ClusterMarkers {
 
 		if ( ! this.visible ) return; // no entrances in survey
 
-		const colors = this.markers.geometry.getAttribute( 'color' );
 		const color = this.entranceColor;
-		const array = colors.array;
+
+		const geometry = this.markers.geometry;
 
 		if ( selection === null || selection.isEmpty() ) {
 
-			const l = array.length;
-
-			for ( let i = 0; i < l; i += 3 ) {
-
-				color.toArray( array, i );
-
-			}
+			geometry.setAllPointColors( color );
 
 		} else {
 
@@ -163,19 +150,17 @@ class Entrances extends ClusterMarkers {
 
 				if ( idSet.has( node.parent.id ) ) {
 
-					color.toArray( array, i * 3 );
+					geometry.setPointColor( i, color );
 
 				} else {
 
-					colors.setXYZ( i, 0.5, 0.5, 0.5 );
+					geometry.setPointColor( i, Color( 0.5, 0.5, 0.5 ) );
 
 				}
 
 			} );
 
 		}
-
-		colors.needsUpdate = true;
 
 	}
 

@@ -126,7 +126,6 @@ class SettingsPage extends Page {
 
 		ch.appendChild( this.addCheckbox( 'controls.svx_control_mode', viewer, 'svxControlMode' ) );
 		ch.appendChild( this.addCheckbox( 'controls.zoom_to_cursor', viewer, 'zoomToCursor' ) );
-		ch.appendChild( this.addCheckbox( 'ui.selection_tree', cfg, 'selectionTree' ) );
 
 		const cs = this.addCollapsingHeader( 'default.header', true );
 
@@ -149,7 +148,6 @@ class SettingsPage extends Page {
 
 		if ( viewer.svxControlMode ) ch.appendChild( this.addCheckbox( 'controls.wheel_tilt', viewer, 'wheelTilt' ) );
 
-		_onChange( { name: 'cameraType' } );
 		_onChange( { name: 'shadingMode' } );
 		_onChange( { name: 'autoRotate' } );
 

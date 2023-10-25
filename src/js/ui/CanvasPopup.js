@@ -4,9 +4,9 @@ import { PopupMaterial } from '../materials/PopupMaterial';
 
 class CanvasPopup extends Popup {
 
-	constructor ( ctx, renderOrder = 10000 ) {
+	constructor ( ctx ) {
 
-		super( ctx, renderOrder );
+		super( ctx );
 
 		this.lines = [];
 		this.type = 'CanvasPopup';
@@ -60,7 +60,7 @@ class CanvasPopup extends Popup {
 
 	}
 
-	finish ( position ) {
+	async finish ( position ) {
 
 		const cfg = this.ctx.cfg;
 		const container = this.ctx.container;
@@ -97,7 +97,7 @@ class CanvasPopup extends Popup {
 
 		ctx.textAlign = 'left';
 		ctx.font = fontSize + 'px normal helvetica,sans-serif';
-		ctx.fillStyle = cfg.themeColorCSS( 'popup.text' );
+		ctx.fillStyle = cfg.themeColorCSS( 'popup.color' );
 
 		for ( let i = 0; i < lineCount; i++ ) {
 
@@ -105,14 +105,17 @@ class CanvasPopup extends Popup {
 
 		}
 
-		const texture = new CanvasTexture( canvas );
+		this.position.copy( position );
+
+		const imageBitmap = await createImageBitmap( canvas, { imageOrientation: 'flipY' } );
+
+		const texture = new CanvasTexture( imageBitmap );
 
 		texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
 
 		this.material = new PopupMaterial( container, texture, 0 );
 		this.material.needsUpdate = true;
 
-		this.position.copy( position );
 
 		return this;
 

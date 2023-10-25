@@ -1,32 +1,26 @@
-import { ShaderMaterial, cloneUniforms } from '../Three';
-import { Shaders } from './shaders/Shaders';
+import { varying, positionGeometry } from '../Nodes.js';
+import { SubsurfaceMaterial } from './SubsufaceMaterial.js';
+import { CommonComponents } from './CommonComponents';
 
-class CursorMaterial extends ShaderMaterial {
 
-	constructor ( ctx, options ) {
+class CursorMaterial extends SubsurfaceMaterial {
+
+	constructor ( options, ctx ) { // FIXME options handling
+
+		super( { vertexColors: true }, ctx );
 
 		const survey = ctx.survey;
 		const limits = survey.modelLimits;
-		const uniforms = ctx.materials.uniforms;
 
-		super( {
-			vertexShader: Shaders.cursorVertexShader,
-			fragmentShader: Shaders.cursorFragmentShader,
-			type: 'CV.CursorMaterial',
-			uniforms: Object.assign(
-				{},
-				cloneUniforms( uniforms.cursor ),
-				uniforms.common
-			),
-			defines: {
-				USE_COLOR: true,
-				CV_LOCATION: options.location
-			}
-		} );
+		const cu = ctx.materials.commonUniforms.cursor( ctx );
 
+		const delta = varying( positionGeometry.z.sub( cu.cursor ) );
+
+		this.colorNode = CommonComponents.cursorColor( cu, delta );
+
+		this.cursor = cu.cursor;
 		this.transparent = options.location;
 		this.halfRange = ( limits.max.z - limits.min.z ) / 2;
-		this.uniforms.cursor.value = 0;
 
 	}
 
@@ -34,7 +28,7 @@ class CursorMaterial extends ShaderMaterial {
 
 		const newValue = Math.max( Math.min( value, this.halfRange ), -this.halfRange );
 
-		this.uniforms.cursor.value = newValue;
+		this.cursor.value = newValue;
 
 		return newValue; // return value clamped to material range
 
@@ -42,7 +36,7 @@ class CursorMaterial extends ShaderMaterial {
 
 	getCursor () {
 
-		return this.uniforms.cursor.value;
+		return this.cursor.value;
 
 	}
 

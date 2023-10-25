@@ -3,27 +3,30 @@ import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import { glconstants, glsl, glslThree } from './rollup-gl.mjs';
+import beep from '@rollup/plugin-beep';
+import threeNodes from './rollup-plugin-three-nodes.mjs';
+//import graph from 'rollup-plugin-graph';
 
 export default [
 	{
+//		treeshake: false,
 		input: 'src/js/CV2.js',
 		output: [
 			{
 				name: 'CV2',
 				file: 'build/CaveView/js/CaveView2.js',
-				format: 'umd'
+				format: 'es'
 			},
 			{
 				name: 'CV2',
 				file: 'build/CaveView/js/CaveView2.min.js',
-				format: 'umd',
+				format: 'es',
 				plugins: [ terser() ]
 			}
 		],
 		plugins: [
-			glsl(),
-			glslThree(),
-			glconstants(),
+			threeNodes(),
+			beep(),
 			json( {
 				exclude: [ 'node_modules/**', 'build/**', 'tools/**' ],
 				preferConst: true, // Default: false
@@ -31,7 +34,8 @@ export default [
 			nodeResolve( {} ),
 			commonjs( {
 				sourceMap: false,  // Default: true
-			} )
+			} ),
+			// graph()
 		]
 	}, {
 		input: 'src/js/CV2Plugins.js',

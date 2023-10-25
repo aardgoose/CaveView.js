@@ -77,6 +77,7 @@ class LineSegmentsGeometry extends InstancedBufferGeometry {
 
 		}
 
+		const instanceCount = array.length / 6;
 		const instanceBuffer = new InstancedInterleavedBuffer( lineSegments, 6, 1 ); // xyz, xyz
 
 		this.setAttribute( 'instanceStart', new InterleavedBufferAttribute( instanceBuffer, 3, 0 ) ); // xyz
@@ -84,6 +85,7 @@ class LineSegmentsGeometry extends InstancedBufferGeometry {
 
 		//
 
+		this.instanceCount = instanceCount;
 		this.computeBoundingBox();
 		this.computeBoundingSphere();
 

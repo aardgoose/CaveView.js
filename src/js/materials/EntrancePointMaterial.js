@@ -1,20 +1,15 @@
-import { IncrementStencilOp, PointsMaterial } from '../Three';
+import { IncrementStencilOp } from '../Three';
+import { InstancedSpriteMaterial } from './InstancedSpriteMaterial';
 
-class EntrancePointMaterial extends PointsMaterial {
+class EntrancePointMaterial extends InstancedSpriteMaterial {
 
 	constructor ( ctx ) {
 
 		const dotSize = ctx.cfg.themeValue( 'entrance_dot_size' );
 
-		super( {
-			map: ctx.materials.textureCache.getTexture( 'disc-outlined' ),
-			opacity: 1.0,
-			alphaTest: 0.8,
-			sizeAttenuation: false,
-			transparent: true,
-			size: Math.max( dotSize, Math.floor( dotSize * ctx.container.clientWidth / 1000 ) ),
-			vertexColors: true
-		} );
+		super( ctx.materials.textureCache.getTexture( 'disc-outlined' ) );
+
+		//		size: Math.max( dotSize, Math.floor( dotSize * ctx.container.clientWidth / 1000 ) ),
 
 		this.stencilWrite = true;
 		this.stencilZPass = IncrementStencilOp;
@@ -25,6 +20,7 @@ class EntrancePointMaterial extends PointsMaterial {
 
 		} );
 
+		// FIXME transfer to InstancedSprite imp
 	}
 
 }

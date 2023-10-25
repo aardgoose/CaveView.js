@@ -1,5 +1,6 @@
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { LineSegments2 } from '../core/LineSegments2';
+import { Line2NodeMaterial } from '../Nodes';
 
 class Grid extends LineSegments2 {
 
@@ -9,7 +10,7 @@ class Grid extends LineSegments2 {
 		const survey = ctx.survey;
 		const baseColor = ctx.cfg.themeColor( 'grid.base' );
 
-		super( geometry, ctx.materials.getLine2Material( { color: baseColor } ) );
+		super( geometry, ctx.materials.getMaterial( Line2NodeMaterial, { color: baseColor } ) );
 
 		this.scale.set( 1, 1, 1 );
 		this.type = 'CV.Grid';

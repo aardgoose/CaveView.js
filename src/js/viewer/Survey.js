@@ -21,6 +21,17 @@ import { Selection } from './Selection';
 import { SurveyBox } from '../core/SurveyBox';
 import { SurveyColourMapper} from '../core/SurveyColourMapper';
 import { SurveyMetadata } from './SurveyMetadata';
+
+import { HeightMaterial } from '../materials/HeightMaterial';
+import { DepthMaterial } from '../materials/DepthMaterial';
+import { CursorMaterial } from '../materials/CursorMaterial';
+import { DepthCursorMaterial } from '../materials/DepthCursorMaterial';
+import { WallMaterial } from '../materials/WallMaterial';
+import { HeightLineMaterial } from '../materials/HeightLineMaterial';
+import { CursorLineMaterial } from '../materials/CursorLineMaterial';
+import { DepthLineMaterial } from '../materials/DepthLineMaterial';
+import { SurveyLineMaterial } from '../materials/SurveyLineMaterial';
+
 import proj4 from 'proj4';
 
 const __set = new Set();
@@ -28,6 +39,8 @@ const white = new Color( 0xffffff );
 const __v0 = new Vector3();
 const __v1 = new Vector3();
 const __v2 = new Vector3();
+const __basic = { color: 'white', vertexColors: true };
+const __dashedBasic = { color: 'white', vertexColors: true, dashed: true };
 
 class Survey extends Object3D {
 
@@ -354,7 +367,7 @@ class Survey extends Object3D {
 
 		this.metadata = metadata;
 
-		this.loadDyeTraces();
+//		this.loadDyeTraces();
 
 		this.segments = this.getFeature( LEG_CAVE )?.findTopology();
 
@@ -953,25 +966,25 @@ class Survey extends Object3D {
 
 		const materials = this.ctx.materials;
 
-		let material;
+		let materialClass;
 
 		switch ( mode ) {
 
 		case SHADING_HEIGHT:
 
-			material = materials.getHeightMaterial();
+			materialClass = HeightMaterial;
 
 			break;
 
 		case SHADING_CURSOR:
 
-			material = materials.getCursorMaterial();
+			materialClass = CursorMaterial;
 
 			break;
 
 		case SHADING_SINGLE:
 
-			material = materials.getSingleWallMaterial();
+			materialClass = WallMaterial;
 
 			break;
 
@@ -979,9 +992,7 @@ class Survey extends Object3D {
 
 			if ( this.terrain === null ) return false;
 
-			material = materials.getDepthMaterial();
-
-			if ( ! material ) return false;
+			materialClass = DepthMaterial;
 
 			break;
 
@@ -989,28 +1000,36 @@ class Survey extends Object3D {
 
 			if ( this.terrain === null ) return false;
 
-			material = materials.getDepthCursorMaterial();
-
-			if ( ! material ) return false;
+			materialClass = DepthCursorMaterial;
 
 			break;
 
 		case SHADING_DISTANCE:
 		case SHADING_SURVEY:
+		case SHADING_LENGTH:
+		case SHADING_INCLINATION:
 
-			material = false;
+			materialClass = null;
 
 			break;
 
 		}
 
+		if ( materialClass === undefined ) return;
+
 		this.markers.setVisibility( ( mode === SHADING_DISTANCE ) );
 
 		if ( this.setLegShading( LEG_CAVE, mode, false, filterConnected ) ) {
 
-			this.setWallShading( this.features.get( FACE_WALLS  ), material );
-			this.setWallShading( this.features.get( FACE_SCRAPS ), material );
-			this.setWallShading( this.features.get( FACE_MODEL ), material );
+			if ( materialClass !== null ) {
+
+				const material = materials.getMaterial( materialClass, {}, true );
+
+				this.setWallShading( this.features.get( FACE_WALLS  ), material );
+				this.setWallShading( this.features.get( FACE_SCRAPS ), material );
+				this.setWallShading( this.features.get( FACE_MODEL ), material );
+
+			}
 
 			this.caveShading = mode;
 
@@ -1073,57 +1092,58 @@ class Survey extends Object3D {
 		if ( legs === undefined ) return true;
 
 		const cfg = this.ctx.cfg;
+		const mode = dashed ? __dashedBasic : __basic;
 
 		switch ( legShadingMode ) {
 
 		case SHADING_HEIGHT:
 
-			this.setLegColourByMaterial( legs, 'height', dashed, filterConnected );
+			this.setLegColourByMaterial( legs, HeightLineMaterial, mode, filterConnected );
 			break;
 
 		case SHADING_LENGTH:
 
-			this.setLegColourByLength( legs, filterConnected );
+			this.setLegColourByLength( legs, mode, filterConnected );
 			break;
 
 		case SHADING_INCLINATION:
 
-			this.setLegColourByInclination( legs, filterConnected );
+			this.setLegColourByInclination( legs, mode, filterConnected );
 			break;
 
 		case SHADING_CURSOR:
 
-			this.setLegColourByMaterial( legs, 'cursor', filterConnected );
+			this.setLegColourByMaterial( legs, CursorLineMaterial, mode, filterConnected );
 			break;
 
 		case SHADING_DEPTH_CURSOR:
 
-			this.setLegColourByMaterial( legs, 'depth-cursor', filterConnected );
+			this.setLegColourByMaterial( legs, DepthCursorLineMaterial, mode, filterConnected );
 			break;
 
 		case SHADING_SINGLE:
 
-			this.setLegColourByColour( legs, cfg.themeColor( 'shading.single' ), dashed, filterConnected );
+			this.setLegColourByColour( legs, cfg.themeColor( 'shading.single' ), mode, filterConnected );
 			break;
 
 		case SHADING_SURFACE:
 
-			this.setLegColourByColour( legs, cfg.themeColor( 'shading.surface' ), dashed, filterConnected );
+			this.setLegColourByColour( legs, cfg.themeColor( 'shading.surface' ), mode, filterConnected );
 			break;
 
 		case SHADING_DUPLICATE:
 
-			this.setLegColourByColour( legs, cfg.themeColor( 'shading.duplicate' ), dashed, filterConnected );
+			this.setLegColourByColour( legs, cfg.themeColor( 'shading.duplicate' ), mode, filterConnected );
 			break;
 
 		case SHADING_CUSTOM:
 
-			this.setLegCustomColor( legs, dashed, filterConnected );
+			this.setLegCustomColor( legs, mode, filterConnected );
 			break;
 
 		case SHADING_SURVEY:
 
-			this.setLegColourBySurvey( legs, filterConnected );
+			this.setLegColourBySurvey( legs, mode, filterConnected );
 			break;
 
 		case SHADING_PATH:
@@ -1141,7 +1161,7 @@ class Survey extends Object3D {
 
 		case SHADING_DEPTH:
 
-			this.setLegColourByMaterial( legs, 'depth', dashed, filterConnected );
+			this.setLegColourByMaterial( legs, DepthLineMaterial, mode, filterConnected );
 			break;
 
 		case SHADING_DISTANCE:
@@ -1160,9 +1180,9 @@ class Survey extends Object3D {
 
 	}
 
-	setLegColourByMaterial ( mesh, mode, dashed, filterConnected ) {
+	setLegColourByMaterial ( mesh, material, mode, filterConnected ) {
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, mode, dashed, filterConnected );
+		mesh.setShading( this.selection.getIds(), _colourSegment, material, mode, filterConnected );
 
 		function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1173,9 +1193,9 @@ class Survey extends Object3D {
 
 	}
 
-	setLegColourByColour ( mesh, colour, dashed, filterConnected ) {
+	setLegColourByColour ( mesh, colour, mode, filterConnected ) {
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', dashed, filterConnected );
+		mesh.setShading( this.selection.getIds(), _colourSegment, SurveyLineMaterial, mode, filterConnected );
 
 		function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1186,15 +1206,15 @@ class Survey extends Object3D {
 
 	}
 
-	setLegCustomColor ( mesh, dashed, filterConnected ) {
+	setLegCustomColor ( mesh, mode, filterConnected ) {
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', dashed, filterConnected );
+		mesh.setShading( this.selection.getIds(), _colourSegment, SurveyLineMaterial, mode, filterConnected );
 
 		function _colourSegment() {}
 
 	}
 
-	setLegColourByLength ( mesh, filterConnected ) {
+	setLegColourByLength ( mesh, mode, filterConnected ) {
 
 		const materials = this.ctx.materials;
 		const colours = materials.colourCache.getColorSet( this.gradientName );
@@ -1202,7 +1222,7 @@ class Survey extends Object3D {
 		const stats = mesh.stats;
 		const legLengths = mesh.legLengths;
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', false, filterConnected );
+		mesh.setShading( this.selection.getIds(), _colourSegment, SurveyLineMaterial, mode, filterConnected );
 
 		function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1250,7 +1270,7 @@ class Survey extends Object3D {
 		const maxDistance = this.maxDistance;
 		const path = this.highlightPath;
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', false, filterConnected );
+		mesh.setShading( this.selection.getIds(), _colourSegment, SurveyLineMaterial, __basic, filterConnected );
 
 		function _colourSegment ( vertices, colors, v1, v2 ) {
 
@@ -1275,7 +1295,7 @@ class Survey extends Object3D {
 
 	}
 
-	setLegColourBySurvey ( mesh, filterConnected ) {
+	setLegColourBySurvey ( mesh, mode, filterConnected ) {
 
 		let node = this.selection.getNode();
 
@@ -1286,7 +1306,7 @@ class Survey extends Object3D {
 
 		const surveyToColourMap = this.ctx.surveyColourMapper.getColourMap( node );
 
-		mesh.setShading( __set, _colourSegment, 'basic', false, filterConnected );
+		mesh.setShading( __set, _colourSegment, SurveyLineMaterial, mode, filterConnected );
 
 		function _colourSegment ( vertices, colors, v1, v2, survey ) {
 
@@ -1308,7 +1328,7 @@ class Survey extends Object3D {
 		const c2 = cfg.themeColor( 'routes.adjacent' );
 		const c3 = cfg.themeColor( 'routes.default' );
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, 'basic');
+		mesh.setShading( this.selection.getIds(), _colourSegment, SurveyLineMaterial, __basic );
 
 		function _colourSegment ( vertices, colors, v1, v2 /*, survey */ ) {
 
@@ -1335,7 +1355,7 @@ class Survey extends Object3D {
 
 	}
 
-	setLegColourByInclination ( mesh, filterConnected ) {
+	setLegColourByInclination ( mesh, mode, filterConnected ) {
 
 		const colourCache = this.ctx.materials.colourCache;
 		const colours = colourCache.getColorSet( 'inclination' );
@@ -1344,7 +1364,7 @@ class Survey extends Object3D {
 		const hueFactor = colourRange * 2 / Math.PI;
 		const legNormal = new Vector3();
 
-		mesh.setShading( this.selection.getIds(), _colourSegment, 'basic', false, filterConnected );
+		mesh.setShading( this.selection.getIds(), _colourSegment, SurveyLineMaterial, mode, filterConnected );
 
 		function _colourSegment ( vertices, colors, v1, v2 ) {
 

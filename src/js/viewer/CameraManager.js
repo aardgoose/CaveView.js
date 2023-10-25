@@ -2,7 +2,6 @@ import {
 	BackSide,
 	Euler,
 	MathUtils,
-	MeshBasicMaterial,
 	OrthographicCamera,
 	PerspectiveCamera,
 	Quaternion
@@ -13,6 +12,7 @@ import {
 } from '../core/constants';
 
 import { AnaglyphEffect } from './AnaglyphEffect';
+import { MeshBasicNodeMaterial } from '../Nodes';
 
 
 const __rotation = new Euler();
@@ -41,7 +41,7 @@ function CameraManager ( ctx, renderer, scene ) {
 	this.activeCamera = perspectiveCamera;
 	this.mode = CAMERA_PERSPECTIVE;
 
-	const backMaterial = new MeshBasicMaterial( { side: BackSide, colorWrite: false } );
+	const backMaterial = new MeshBasicNodeMaterial( { side: BackSide, colorWrite: false } );
 	const backMask = 1 << FEATURE_SURVEY | 1 << FEATURE_TERRAIN;
 
 	let eyeSeparation = 0.5;
@@ -86,15 +86,16 @@ function CameraManager ( ctx, renderer, scene ) {
 
 			renderer.render( scene, camera );
 
+			this.autoClear = false;
+
 			scene.overrideMaterial = null;
 			camera.layers.mask = savedMask;
 
 		}
 
 		renderer.render( scene, camera );
-		renderer.getContext().flush();
 
-		lastFrame = renderer.info.render.frame;
+		lastFrame = renderer._info?.render.frame;
 
 	};
 

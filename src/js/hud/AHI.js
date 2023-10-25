@@ -1,6 +1,5 @@
 import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
-import { Line2Material } from '../materials/Line2Material';
 import { MutableGlyphString } from '../core/GlyphString';
 
 import {
@@ -8,11 +7,12 @@ import {
 	Group,
 	MathUtils,
 	Mesh,
-	MeshPhongMaterial,
 	Object3D,
 	SphereGeometry,
 	Vector3
 } from '../Three';
+
+import { lights, MeshPhongNodeMaterial, Line2NodeMaterial } from '../Nodes';
 
 // preallocated tmp objects
 const __xAxis = new Vector3( 1, 0, 0 );
@@ -99,14 +99,16 @@ class AHI extends Group {
 
 		marks.setPositions( vertices );
 
-		const mRing   = new Mesh( ring, materials.getBezelMaterial() );
-		const mSphere = new Mesh( sphere, new MeshPhongMaterial( { vertexColors: true, specular: 0x666666, shininess: 20 } ) );
-		const mBar    = new LineSegments2( bar,   new Line2Material( ctx, { color: cfg.themeValue( 'hud.ahi.bar' ) } ) );
-		const mMarks  = new LineSegments2( marks, new Line2Material( ctx, { color: cfg.themeValue( 'hud.ahi.marks' ) } ) );
+		const mRing   = new Mesh( ring, hudObject.getBezelMaterial() );
+		const mSphere = new Mesh( sphere, materials.getMaterial( MeshPhongNodeMaterial, { vertexColors: true, specular: 0x666666, shininess: 20 } ) );
+		const mBar    = new LineSegments2( bar,   materials.getMaterial( Line2NodeMaterial, { color: cfg.themeValue( 'hud.ahi.bar' ) } ) );
+		const mMarks  = new LineSegments2( marks, materials.getMaterial( Line2NodeMaterial, { color: cfg.themeValue( 'hud.ahi.marks' ) } ) );
 
 		mSphere.rotateOnAxis( new Vector3( 0, 1, 0 ), Math.PI / 2 );
 		mMarks.rotateOnAxis( new Vector3( 1, 0, 0 ), Math.PI / 2 );
 		mRing.rotateOnAxis( new Vector3( 0, 0, 1 ), Math.PI / 8 );
+
+		mSphere.material.lightsNode = lights( hudObject.lights );
 
 		mSphere.dropBuffers();
 
@@ -125,8 +127,7 @@ class AHI extends Group {
 
 		this.globe = globe;
 
-		const material = materials.getLabelMaterial( 'hud' );
-		const label = new MutableGlyphString( '-90\u00B0', material );
+		const label = new MutableGlyphString( '-90\u00B0', hudObject.textMaterial );
 
 		label.translateX( - label.getWidth() / 2 );
 		label.translateY( stdWidth + 5 );

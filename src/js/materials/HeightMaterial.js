@@ -1,36 +1,20 @@
-import { ShaderMaterial } from '../Three';
-import { Shaders } from './shaders/Shaders';
+import { varying, vec2, texture, positionGeometry } from '../Nodes';
+import { SubsurfaceMaterial } from './SubsufaceMaterial';
 
-class HeightMaterial extends ShaderMaterial {
+class HeightMaterial extends SubsurfaceMaterial {
 
-	constructor ( ctx, options ) {
+	constructor ( options, ctx ) { // FIXME option handlin
 
-		const survey = ctx.survey;
-		const limits = survey.modelLimits;
+		super( options, ctx );
 
-		const zMin = limits.min.z;
-		const zMax = limits.max.z;
+		const hu = ctx.materials.commonUniforms.height();
+
 		const gradient = ctx.cfg.value( 'saturatedGradient', false ) ? 'gradientHi' : 'gradientLow';
 		const textureCache = ctx.materials.textureCache;
-		const uniforms = ctx.materials.uniforms;
 
-		super( {
-			vertexShader: Shaders.heightVertexShader,
-			fragmentShader: Shaders.heightFragmentShader,
-			type: 'CV.HeightMaterial',
-			uniforms: Object.assign( {
-				minZ:   { value: zMin },
-				scaleZ: { value: 1 / ( zMax - zMin ) },
-				cmap:   { value: textureCache.getTexture( gradient ) },
-			}, uniforms.common ),
-			defines: {
-				USE_COLOR: true,
-				CV_LOCATION: options.location
-			}
-		} );
+		const zMap = varying( positionGeometry.z.sub( hu.minZ ).mul( hu.scaleZ ) );
 
-		this.transparent = options.location;
-		this.midRange = ( zMax + zMin ) / 2;
+		this.colorNode = texture( textureCache.getTexture( gradient ), vec2( zMap.oneMinus(), 1.0 ) );
 
 	}
 

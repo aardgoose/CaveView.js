@@ -1,8 +1,11 @@
-import { CanvasTexture, PointsMaterial } from '../Three';
+import { CanvasTexture } from '../Three';
+import { SpriteNodeMaterial } from '../Nodes';
 
-class ClusterMaterial extends PointsMaterial {
+class ClusterMaterial extends SpriteNodeMaterial {
 
-	constructor ( count ) {
+	constructor ( params ) {
+
+		const count = params.count;
 
 		const markerSize = 64;
 		const fontSize = 40;
@@ -25,7 +28,7 @@ class ClusterMaterial extends PointsMaterial {
 		ctx.fillRect( 0, 0, markerSize, markerSize );
 
 		ctx.textAlign = 'center';
-		ctx.font = 'bold ' + fontSize + 'px helvetica,sans-serif';
+		ctx.font = `bold ${fontSize}px helvetica,sans-serif`;
 		ctx.fillStyle = '#ffffff';
 
 		const gradient = ctx.createRadialGradient( halfSize, halfSize, 30, halfSize, halfSize, 0 );
@@ -46,11 +49,9 @@ class ClusterMaterial extends PointsMaterial {
 
 		const texture = new CanvasTexture( canvas );
 
-		super( { map: texture, size: 32, depthTest: false, transparent: true, alphaTest: 0.8, sizeAttenuation: false } );
+		super( { map: texture, depthTest: false, transparent: true, alphaTest: 0.8, sizeAttenuation: false } );
 
-		texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
-
-		this.name = 'ClusterMaterial';
+		//texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
 
 	}
 

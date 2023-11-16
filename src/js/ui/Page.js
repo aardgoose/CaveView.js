@@ -204,7 +204,7 @@ class Page {
 
 	}
 
-	makeLabel ( title, labelClass, idFor = 'na' ) {
+	makeLabel ( title, labelClass, idFor ) {
 
 		const label = document.createElement( 'label' );
 
@@ -220,6 +220,9 @@ class Page {
 
 		const div    = document.createElement( 'div' );
 		const select = document.createElement( 'select' );
+		const id = 'cv-' + this.frame.getSeq();
+
+		select.id = id;
 
 		div.classList.add( 'control' );
 
@@ -268,7 +271,7 @@ class Page {
 
 		frame.controls[ property ] = select;
 
-		div.appendChild( this.makeLabel( title, 'cv-select' ) );
+		div.appendChild( this.makeLabel( title, 'cv-select', id ) );
 		div.appendChild( select );
 
 		if ( replace === undefined ) {
@@ -322,6 +325,8 @@ class Page {
 		} );
 
 		frame.controls[ 'fileSelector' ] = select;
+
+		select.id = 'cv-' + frame.getSeq();
 
 		div.appendChild( label );
 		div.appendChild( select );
@@ -417,9 +422,11 @@ class Page {
 		const frame = this.frame;
 		const div = document.createElement( 'div' );
 		const range = document.createElement( 'input' );
+		const id = 'cv-' + frame.getSeq();
 
 		div.classList.add( 'control' );
 
+		range.id = id;
 		range.type = 'range';
 
 		range.min = 0;
@@ -432,7 +439,7 @@ class Page {
 
 		frame.controls[ property ] = range;
 
-		div.appendChild( this.makeLabel( title, 'cv-range' ) );
+		div.appendChild( this.makeLabel( title, 'cv-range', id ) );
 		div.appendChild( range );
 
 		this.page.appendChild( div );
@@ -556,13 +563,14 @@ class Page {
 
 		const div = document.createElement( 'div' );
 		const input = document.createElement( 'input' );
+		const id = 'cv-' + frame.getSeq();
 
 		let value;
 
 		input.type = 'text';
 		input.placeholder = placeholder;
 
-		div.appendChild( this.makeLabel( title, 'text' ) );
+		div.appendChild( this.makeLabel( title, 'text', id ) );
 		div.appendChild( input );
 
 		this.page.appendChild( div );

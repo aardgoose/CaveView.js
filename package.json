@@ -1,6 +1,6 @@
 {
   "name": "caveview",
-  "version": "2.7.2",
+  "version": "2.7.3",
   "description": "3D Cave Survey Viewer",
   "scripts": {
     "dev": "concurrently --names \"ROLLUP,HTTP\" -c \"bgBlue.bold,bgGreen.bold\" \"rollup -c -w \" \"serve -L -l 8080 build \"",

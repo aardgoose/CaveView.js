@@ -1,4 +1,4 @@
-import { EventDispatcher, FogExp2, Raycaster, Scene, Vector2, Vector3, WebGLRenderer } from '../Three';
+import { EventDispatcher, FogExp2, Raycaster, Scene, Vector2, Vector3, WebGLRenderer, LinearSRGBColorSpace } from '../Three';
 import {
 	FACE_SCRAPS, FACE_WALLS, FACE_MODEL, FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_ENTRANCE_DOTS, FEATURE_GRID, FEATURE_STATIONS, FEATURE_TERRAIN, FEATURE_TRACES,
 	LABEL_STATION, LABEL_STATION_COMMENT, LEG_CAVE, LEG_SPLAY, LEG_DUPLICATE, LEG_SURFACE, LM_NONE, LM_SINGLE, MOUSE_MODE_TRACE_EDIT, SURVEY_WARNINGS,
@@ -62,6 +62,8 @@ class CaveViewer extends EventDispatcher {
 		ctx.materials = materials;
 
 		let renderer = new WebGLRenderer( { antialias: true, alpha: true } );
+
+		renderer.outputColorSpace = LinearSRGBColorSpace;
 
 		resetRenderer();
 

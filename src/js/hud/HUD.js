@@ -57,8 +57,8 @@ function HUD ( viewer, renderer ) {
 
 	let hudObject = new HudObject( viewer.ctx );
 
-	const aLight = new AmbientLight( 0x888888 );
-	const dLight = new DirectionalLight( 0xFFFFFF );
+	const aLight = new AmbientLight( 0x888888, Math.PI );
+	const dLight = new DirectionalLight( 0xFFFFFF, Math.PI );
 	dLight.position.set( -1, 1, 1 );
 
 	scene.addStatic( aLight );

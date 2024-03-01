@@ -9,11 +9,11 @@ function LightingManager ( ctx, scene ) {
 
 	const ambient = [];
 
-	ambient[ LM_SINGLE   ] = 0.3;
+	ambient[ LM_SINGLE   ] = 0.3 * Math.PI;
 	ambient[ LM_MULTIPLE ] = 0.0;
-	ambient[ LM_NONE     ] = 1.0;
+	ambient[ LM_NONE     ] = 1.0 * Math.PI;
 
-	const ambientLight = new AmbientLight( 0xffffff, 0.3 );
+	const ambientLight = new AmbientLight( 0xffffff, ambient[ LM_SINGLE ] );
 
 	const inclination = cfg.themeAngle( 'lighting.inclination' ) * MathUtils.RAD2DEG;
 	const azimuth = cfg.themeAngle( 'lighting.azimuth' ) * MathUtils.RAD2DEG;

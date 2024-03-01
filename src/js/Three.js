@@ -103,3 +103,7 @@ Object3D.prototype.dropBuffers = function ( colors = true ) {
 	if ( geometry.index ) geometry.index.onUpload( Object3D.onUploadDropBuffer );
 
 };
+
+import { ColorManagement } from 'three/src/math/ColorManagement.js';
+
+ColorManagement.enabled = false;

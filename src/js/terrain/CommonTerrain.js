@@ -122,7 +122,7 @@ class CommonTerrain extends Group {
 
 		scene.overrideMaterial = depthMapMaterial;
 
-		renderer.render( scene, rtCamera, true ).then( () => {
+		renderer.renderAsync( scene, rtCamera, true ).then( () => {
 
 			// const p = new Popup( this.ctx );
 			// const pop = new PopupMaterial( container, renderTarget.texture );

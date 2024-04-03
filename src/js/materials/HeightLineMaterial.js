@@ -18,10 +18,9 @@ class HeightLineMaterial extends SurveyLineMaterial {
 		const vPosition = positionGeometry.y.lessThan( 0.5 ).cond( instanceStart, instanceEnd );
 
 		const zMap = varying( vPosition.z.sub( hu.minZ ).mul( hu.scaleZ ) );
+		this.lineColorNode = texture( textureCache.getTexture( gradient ), vec2( zMap.oneMinus(), 1.0 ) ).rgb;
 
-		this.lineColorNode = texture( textureCache.getTexture( gradient ), vec2( zMap.oneMinus(), 1.0 ) );
-
-		this.constructShaders();
+		this.setupShaders();
 
 	}
 

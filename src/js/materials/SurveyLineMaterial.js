@@ -4,11 +4,13 @@ class SurveyLineMaterial extends Line2NodeMaterial {
 
 	constructor ( params = {}, ctx ) {
 
-		super( params, ctx );
+		super( params );
+
+		this.ctx = ctx;
 
 		this.linewidthNode = ctx.materials.commonUniforms.lines().linewidth;
 
-        this.constructShaders();
+        this.setupShaders();
 
     }
 

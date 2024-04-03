@@ -1,4 +1,4 @@
-import { NodeMaterial, ShaderNode, pow, tslFn, clamp, max, texture, uniform, uv, varying, vec4 } from '../Nodes.js';
+import { NodeMaterial, pow, tslFn, clamp, max, texture, uniform, uv, varying, vec4 } from '../Nodes.js';
 import { Matrix3 } from '../Three';
 
 class AnaglyphMaterial extends NodeMaterial {
@@ -58,21 +58,20 @@ class AnaglyphMaterial extends NodeMaterial {
 		const colorMatrixLeft = uniform( colorMatrixLeftSrc );
 		const colorMatrixRight = uniform( colorMatrixRightSrc );
 
-		const fragmentShader = new ShaderNode( ( stack ) => {
+		this.outputNode = tslFn( () => {
 
 			const colorL = vec4().temp();
 			const colorR = vec4().temp();
 
+			colorL.assign( texture( params.left, uvs ) );
+			colorR.assign( texture( params.right, uvs ) );
 
-			stack.assign( colorL, texture( params.left, uvs ) );
-			stack.assign( colorR, texture( params.right, uvs ) );
-
-			stack.assign( colorL, vLin( colorL ) );
-			stack.assign( colorR, vLin( colorR ) );
+			colorL.assign( vLin( colorL ) );
+			colorR.assign( vLin( colorR ) );
 
 			const color = vec4().temp();
 
-			stack.assign( color, clamp(
+			color.assign( clamp(
 				colorMatrixLeft.mul( colorL.rgb ).add( colorMatrixRight.mul( colorR.rgb ) ),
 				0, 1
 			) );
@@ -82,21 +81,9 @@ class AnaglyphMaterial extends NodeMaterial {
 				max( colorL.a, colorR.a )
 			);
 
-		} );
-
-
-		this.outNode = fragmentShader;
+		} )();
 
 	}
-
-	constructOutput( /* builder */  ) {
-
-		return this.outNode;
-
-	}
-
-	constructDiffuseColor( /* builder */  ) {}
-
 
 }
 

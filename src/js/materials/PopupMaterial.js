@@ -1,11 +1,12 @@
 import { Vector2 } from '../Three';
-import { ShaderNode, texture, trunc, uniform, varying, vec2, vec4, modelViewProjection, positionGeometry, NodeMaterial } from '../Nodes';
+import { tslFn, texture, trunc, uniform, varying, vec2, vec4, modelViewProjection, positionGeometry, NodeMaterial } from '../Nodes';
 
 class PopupMaterial extends NodeMaterial {
 
 	constructor ( container, popupImage, rotation, colour ) {
 
 		super( {
+			color: 0xffffff,
 			opacity: 1.0,
 			alphaTest: 0.8,
 			depthTest: false,
@@ -33,7 +34,7 @@ class PopupMaterial extends NodeMaterial {
 
 		// const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
 
-		this.vertexNode = new ShaderNode( ( stack ) => {
+		this.vertexNode = tslFn( () => {
 
 			const viewPort = new Vector2( Math.floor( pixelRatio * container.clientWidth ) / 2, Math.floor( pixelRatio * container.clientHeight ) / 2 );
 			const scale = new Vector2( width, height ).divide( viewPort );
@@ -55,19 +56,17 @@ class PopupMaterial extends NodeMaterial {
 
 			const snap = uniform( viewPort ).div( fpos.w );
 
-			stack.assign( fpos, vec4( trunc( fpos.xy.mul( snap ) ).add( 0.5 ).div( snap ), fpos.z, fpos.w ) );
+			fpos.assign( vec4( trunc( fpos.xy.mul( snap ) ).add( 0.5 ).div( snap ), fpos.z, fpos.w ) );
 
 			return fpos;
 
-		} );
+		} )();
 
-		this.outputNode = texture( popupImage, varying( positionGeometry.xy ) );
+		this.colorNode = texture( popupImage, varying( positionGeometry.xy ) ).rgb;
 
 		this.texture = popupImage;
 
 	}
-
-	constructDiffuseColor ( /* builder */  ) {}
 
 }
 

@@ -1,5 +1,5 @@
 import { Vector2, Vector3 } from '../Three';
-import { attribute, property, modelViewProjection, ShaderNode, texture, trunc, NodeMaterial, uniform, varying, vec2, vec4, positionGeometry } from '../Nodes';
+import { attribute, property, modelViewProjection, tslFn, texture, trunc, NodeMaterial, uniform, varying, vec2, vec4, positionGeometry } from '../Nodes';
 import { GlyphAtlasCache } from '../materials/GlyphAtlasCache';
 
 class GlyphMaterial extends NodeMaterial {
@@ -51,7 +51,7 @@ class GlyphMaterial extends NodeMaterial {
 		// select glyph from UV trimmed to correct width
 		const uv = varying( instanceUV.add( vec2( positionGeometry.x.mul( cellScale ).mul( instanceWidth ), positionGeometry.y.mul( cellScale ) ) ) );
 
-		this.vertexNode = new ShaderNode( ( stack ) => {
+		this.vertexNode = tslFn( () => {
 
 			// scale by glyph width ( vertices form unit square with (0,0) origin )
 
@@ -59,7 +59,7 @@ class GlyphMaterial extends NodeMaterial {
 
 			// move to correct offset in string
 
-			stack.assign( newPosition, newPosition.add( vec2( instanceOffset, 0 ) ) );
+			newPosition.addAssign( vec2( instanceOffset, 0 ) );
 
 			// rotate as required
 
@@ -69,31 +69,31 @@ class GlyphMaterial extends NodeMaterial {
 
 			const offset = property( 'vec4', 'offset' );
 
-			stack.assign( offset, modelViewProjection( vec4( 0.0, 0.0, 0.0, 1.0 ) ) );
+			offset.assign( modelViewProjection( vec4( 0.0, 0.0, 0.0, 1.0 ) ) );
 
 			// scale glyphs
 
-			stack.assign( newPosition, newPosition.mul( scale ) );
+			newPosition.mulAssign( scale );
 
 			// move to clip space
 
-			stack.assign( newPosition, newPosition.mul( offset.w ) );
+			newPosition.mulAssign( offset.w );
 
-			stack.assign( offset, offset.add( vec4( newPosition, 0, 0 ) ) );
+			offset.addAssign( vec4( newPosition, 0, 0 ) );
 
 			const snap = viewPort.div( offset.w );
 
-			stack.assign( offset, vec4( trunc( offset.xy.mul( snap ) ).add( 0.5 ).div( snap ), offset.z, offset.w ) );
+			offset.assign( vec4( trunc( offset.xy.mul( snap ) ).add( 0.5 ).div( snap ), offset.z, offset.w ) );
 
 			return offset;
 
-		} );
+		} )();
 
 		//		this.rotation = rotationMatrix;
 
 		// fragment shader
 
-		this.colorNode = texture( glyphAtlas.getTexture(), uv );
+		this.colorNode = texture( glyphAtlas.getTexture(), uv ).rgb;
 		this.opacityNode = texture( glyphAtlas.getTexture(), uv ).a;
 
 		// end of shader

@@ -31,6 +31,9 @@ class CaveViewer extends EventDispatcher {
 	constructor ( domID, configuration ) {
 
 		super();
+
+		this.ready = false;
+
 		console.log( 'CaveView v' + VERSION );
 
 		const container = document.getElementById( domID );
@@ -63,7 +66,7 @@ class CaveViewer extends EventDispatcher {
 
 		let renderer = new WebGPURenderer( { antialias: true, alpha: true } );
 
-		renderer.outputColorSpace = SRGBColorSpace;
+//		renderer.outputColorSpace = SRGBColorSpace;
 
 		renderer.outputColorSpace = LinearSRGBColorSpace;
 
@@ -71,7 +74,9 @@ class CaveViewer extends EventDispatcher {
 
 		updatePixelRatio();
 
-		renderer.clear();
+		renderer.init().then( () => { this.ready = true; this.dispatchEvent( { type: 'ready' } ) } );
+
+		renderer.clearAsync();
 //		renderer.autoClear = false;
 
 		container.appendChild( renderer.domElement );
@@ -405,6 +410,7 @@ class CaveViewer extends EventDispatcher {
 
 			'maxSnapshotSize': {
 				get() {
+					return 1024; //FIXME
 					return renderer.backend.adapter.limits.maxTextureDimension2D;
 				}
 			},
@@ -414,12 +420,6 @@ class CaveViewer extends EventDispatcher {
 				set: setFocalLength,
 				enumerable: true
 			},
-
-			'ready': {
-				get() {
-					return ( !! renderer?.backend?.adapter );
-				}
-			}
 
 		} );
 
@@ -482,8 +482,6 @@ class CaveViewer extends EventDispatcher {
 		const viewState = new ViewState( cfg, this );
 
 		this.renderView = renderView;
-
-		renderer.init().then( () => this.dispatchEvent( { type: 'ready' } ) );
 
 		onResize();
 
@@ -833,7 +831,7 @@ class CaveViewer extends EventDispatcher {
 		this.clearView = function () {
 
 			// clear the current cave model, and clear the screen
-			renderer.clear();
+			renderer.clearAsync();
 
 			hud.setVisibility( false );
 
@@ -987,8 +985,8 @@ class CaveViewer extends EventDispatcher {
 			survey.addEventListener( 'changed', onSurveyChanged );
 
 			self.dispatchEvent( { type: 'newSurvey', name: 'newSurvey', survey: survey, publicFactory: publicFactory } );
-//			setupView( true );
-
+			setupView( true );
+/*
 //				return;
 			// have we got built in terrain
 			let terrain = survey.terrain;
@@ -1010,7 +1008,7 @@ class CaveViewer extends EventDispatcher {
 				setupView( true );
 
 			}
-
+*/
 		}
 
 		function onEnd ( event ) {

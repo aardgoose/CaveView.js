@@ -83,7 +83,7 @@ import { ColorManagement } from 'three';
 import { Object3D } from 'three';
 //import { Object3D } from 'three/src/core/Object3D.js';
 
-ColorManagement.enabled = true;
+ColorManagement.enabled = false;
 
 Object3D.onUploadDropBuffer = function () {
 

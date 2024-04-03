@@ -185,7 +185,7 @@ function HUD ( viewer, renderer ) {
 		renderer.autoClear = true;
 		renderer.autoClearColor = false;
 
-		renderer.render( scene, camera );
+		renderer.renderAsync( scene, camera );
 
 		renderer.autoClearColor = true;
 

@@ -19,7 +19,7 @@ class CursorLineMaterial extends SurveyLineMaterial {;
 
 		const delta = varying( vPosition.z.sub( cu.cursor ) );
 
-		this.lineColorNode = CommonComponents.cursorColor( cu, delta );
+		this.lineColorNode = CommonComponents.cursorColor( cu, delta ).rgb;
 
 		this.cursor = cu.cursor;
 		this.halfRange = ( limits.max.z - limits.min.z ) / 2;

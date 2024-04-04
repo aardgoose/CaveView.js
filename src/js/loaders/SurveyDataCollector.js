@@ -28,61 +28,47 @@ class SurveyDataCollector {
 
 	}
 
-	setCRS ( sourceCRS ) {
+	static gridfiles = [];
+
+	async lookupCRS( code ) {
+
+		console.log( `looking up CRS code EPSG: ${code}` );
+
+		return fetch( `https://epsg.io/${code}.proj4` )
+		.then( response => response.ok ? response.text() : null )
+		.catch( function () { console.warn( 'CRS lookup failed' ); } );
+
+
+	}
+
+	async setCRS ( sourceCRS ) {
+
+		const cfg = this.ctx.cfg;
 
 		if ( sourceCRS !== null ) {
 
 			// work around lack of +init string support in proj4js
 
-			const matches = sourceCRS.match( /\+init=(.*)\s/ );
+			const matches = sourceCRS.match( /\+init=(\S+)(?:\s.*|$)/ );
+			const init = matches === null ? sourceCRS : matches[ 1 ];
 
-			let init;
+			if ( init.toLowerCase() === 'epsg:27700' ) {
 
-			if ( matches && matches.length === 2 ) {
-
-				init = matches[ 1 ];
+				sourceCRS = '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +nadgrids=OSTN15_NTv2_OSGBtoETRS.gsb +no_defs';
 
 			} else {
 
-				init = sourceCRS.toLowerCase();
-
-			}
-
-			let code;
-
-			switch ( init ) {
-
-			case 'epsg:27700' :
-
-				sourceCRS = '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs';
-
-				break;
-
-			default:
-
-				code = init.match( /(epsg|esri):([0-9]+)/ );
+				const code = init.match( /(epsg|esri):([0-9]+)/ );
 
 				if ( code !== null ) {
 
-					console.log( `looking up CRS code EPSG: ${code[ 2 ]}` );
-
-					return fetch( `https://epsg.io/${code[ 2 ]}.proj4` )
-						.then( response => {
-
-							return response.text();
-
-						} ).then( text => {
-
-							this._setCRS( text );
-
-						} ).catch( function () { console.log( 'CRS lookup failed' ); } );
+					sourceCRS = await this.lookupCRS( code[ 2 ] );
 
 				} else {
 
 					if ( ! sourceCRS.match( /^\+proj/ ) ) {
 
 						sourceCRS = null;
-						console.log( 'got proj');
 
 					}
 
@@ -90,28 +76,63 @@ class SurveyDataCollector {
 
 			}
 
+			if ( sourceCRS === null ) {
+
+				sourceCRS = cfg.value( 'defaultCRS', null );
+
+				if ( sourceCRS !== null ) console.log( `Using default projection: ${sourceCRS}` );
+
+			}
+
+			if ( sourceCRS !== null ) {
+
+				let hasGrid = false;
+
+				if ( cfg.value( 'useGridFiles', false ) ) {
+
+					const matches = sourceCRS.match( /\+nadgrids=(\S+)(?:\s.*|$)/ );
+
+					if ( matches ) {
+
+						const gridfile = matches[ 1 ];
+
+						if ( SurveyDataCollector.gridfiles.find( filename => filename === gridfile ) ) {
+
+							hasGrid = true;
+
+						} else {
+
+							const buffer = await fetch( cfg.value( 'surveyDirectory', '' ) + gridfile )
+							.then( response => response.ok ? response.arrayBuffer() : null );
+
+							if ( buffer === null ) {
+
+								console.warn( 'missing grid file', gridfile );
+
+							} else {
+
+								console.log( 'set nadgrid', gridfile );
+
+								hasGrid = true;
+								proj4.nadgrid( gridfile, buffer );
+								SurveyDataCollector.gridfiles.push( gridfile );
+
+							}
+
+						}
+
+					}
+
+				}
+
+				if ( ! hasGrid ) sourceCRS = sourceCRS.replace( /\+nadgrids=\S+/, '' );
+
+			}
+
 		}
 
-		this._setCRS( sourceCRS );
-
-		return Promise.resolve( null );
-
-	}
-
-	_setCRS ( sourceCRS ) {
-
-		const cfg = this.ctx.cfg;
 		const displayCRS = cfg.value( 'displayCRS', 'EPSG:3857' );
 
-		if ( sourceCRS === null ) {
-
-			sourceCRS = cfg.value( 'defaultCRS', null );
-
-			if ( sourceCRS !== null ) console.log( `Using default projection: ${sourceCRS}` );
-
-		}
-
-		// FIXME use NAD grid corrections OSTM15 etc ( UK Centric )
 		if ( sourceCRS !== null ) {
 
 			this.sourceCRS = sourceCRS;

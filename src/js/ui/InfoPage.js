@@ -71,7 +71,7 @@ class InfoPage extends Page {
 
 		this.addText( this.i18n( 'more' ) + ': ' );
 		this.addLink( 'https://aardgoose.github.io/CaveView.js/', this.i18n( 'github' ) );
-		this.addText( '© Angus Sawyer, 2023' );
+		this.addText( '© Angus Sawyer, 2024' );
 
 	}
 

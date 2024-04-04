@@ -404,6 +404,7 @@ class Page {
 
 		div.classList.add( 'control' );
 
+		range.id = id;
 		range.type = 'range';
 
 		range.min = 0;

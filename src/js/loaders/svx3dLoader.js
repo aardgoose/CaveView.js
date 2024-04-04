@@ -21,7 +21,7 @@ class Svx3dLoader extends FileLoader{
 
 		return super.load( 'arraybuffer', loadingContext, progress ).then( results => {
 
-			this.parse( surveyDataCollector, results.data, results.metadata, loadingContext.section, progress );
+			return this.parse( surveyDataCollector, results.data, results.metadata, loadingContext.section, progress );
 
 		} );
 

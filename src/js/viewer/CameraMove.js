@@ -307,6 +307,7 @@ class CameraMove {
 		function animateAzimuthMove () {
 
 			controls.rotateLeft( delta );
+			endCameraPosition.copy( cameraManager.activeCamera.position );
 
 		}
 
@@ -327,6 +328,7 @@ class CameraMove {
 		function animatePolarMove () {
 
 			controls.rotateUp( delta );
+			endCameraPosition.copy( cameraManager.activeCamera.position );
 
 		}
 

@@ -984,8 +984,7 @@ class CaveViewer extends EventDispatcher {
 
 			self.dispatchEvent( { type: 'newSurvey', name: 'newSurvey', survey: survey, publicFactory: publicFactory } );
 			setupView( true );
-/*
-//				return;
+
 			// have we got built in terrain
 			let terrain = survey.terrain;
 
@@ -1006,7 +1005,7 @@ class CaveViewer extends EventDispatcher {
 				setupView( true );
 
 			}
-*/
+
 		}
 
 		function onEnd ( event ) {

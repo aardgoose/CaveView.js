@@ -218,12 +218,12 @@ class Cfg extends EventDispatcher {
 
 }
 
-if ( document.currentScript !== undefined ) {
+//if ( document.currentScript !== undefined ) {
 
-	console.log( import.meta );
+//	console.log( import.meta );
 	Cfg.home = import.meta.url.match( /^(.*\/)js\// )[ 1 ];
 //	Cfg.home = document.currentScript.src.match( /^(.*\/)js\// )[ 1 ];
 
-}
+//}
 
 export { Cfg };

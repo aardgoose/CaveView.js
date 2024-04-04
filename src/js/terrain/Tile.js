@@ -52,7 +52,7 @@ class Tile extends Mesh {
 
 	onBeforeRender ( renderer ) {
 
-		this.lastFrame = renderer._info.render.frame;
+		this.lastFrame = renderer.info.frame;
 
 	}
 

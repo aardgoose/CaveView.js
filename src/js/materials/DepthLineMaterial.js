@@ -25,9 +25,10 @@ class DepthLineMaterial extends SurveyLineMaterial {
 
 		// FIXME double check all depth calcs
 //		const depth = terrainHeight( vPosition ).sub( vPosition.z ).mul( du.depthScale );
-		const depth = terrainHeight( vPosition ); //.sub( vPosition.z ).mul( du.depthScale );
 
-		this.lineColorNode = texture( textureCache.getTexture( gradient ), vec2( depth, 1.0 ) ); // FIXME vertex colot
+		const depth = terrainHeight; //.sub( vPosition.z ).mul( du.depthScale );
+
+		this.lineColorNode = texture( textureCache.getTexture( gradient ), vec2( depth, 1.0 ) ).rgb; // FIXME vertex colot
 
 	}
 

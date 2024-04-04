@@ -26,10 +26,10 @@ class DepthCursorMaterial extends SubsurfaceMaterial {
 
 		const delta = vCursor.sub( cu.cursor );
 
-		this.colorNode = CommonComponents.cursorColor( cu, delta );
+		this.colorNode = CommonComponents.cursorColor( cu, delta ).rgb;
 
 		this.cursor = cu.cursor;
-		this.transparent = options.location;
+//		this.transparent = options.location;
 		this.max = max;
 		this.cursor.value = max;
 

@@ -36,7 +36,7 @@ class PopupMaterial extends NodeMaterial {
 
 		this.vertexNode = tslFn( () => {
 
-			const viewPort = new Vector2( Math.floor( pixelRatio * container.clientWidth ) / 2, Math.floor( pixelRatio * container.clientHeight ) / 2 );
+			const viewPort = new Vector2( Math.floor( pixelRatio * container.clientWidth ), Math.floor( pixelRatio * container.clientHeight ) );
 			const scale = new Vector2( width, height ).divide( viewPort );
 
 			// const rotate = uniform( mat2( cos, sin, -sin, cos ) );

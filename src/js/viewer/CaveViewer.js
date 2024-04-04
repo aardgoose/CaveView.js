@@ -66,9 +66,7 @@ class CaveViewer extends EventDispatcher {
 
 		let renderer = new WebGPURenderer( { antialias: true, alpha: true } );
 
-//		renderer.outputColorSpace = SRGBColorSpace;
-
-		renderer.outputColorSpace = LinearSRGBColorSpace;
+		renderer.outputColorSpace = SRGBColorSpace;
 
 		resetRenderer();
 
@@ -95,6 +93,8 @@ class CaveViewer extends EventDispatcher {
 
 		// setup lighting
 		const lightingManager = new LightingManager( ctx, scene );
+
+		ctx.lightingManager = lightingManager;
 
 		// setup controllers
 		const controls = new OrbitControls( cameraManager, renderer.domElement, this );

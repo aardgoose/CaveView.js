@@ -79,11 +79,10 @@ export { ColorManagement } from 'three/src/math/ColorManagement.js';
 
 export * from 'three/src/constants.js';
 */
-import { ColorManagement } from 'three';
+
 import { Object3D } from 'three';
 //import { Object3D } from 'three/src/core/Object3D.js';
 
-ColorManagement.enabled = false;
 
 Object3D.onUploadDropBuffer = function () {
 
@@ -114,7 +113,3 @@ Object3D.prototype.dropBuffers = function ( colors = true ) {
 	if ( geometry.index ) geometry.index.onUpload( Object3D.onUploadDropBuffer );
 
 };
-
-import { ColorManagement } from 'three/src/math/ColorManagement.js';
-
-ColorManagement.enabled = false;

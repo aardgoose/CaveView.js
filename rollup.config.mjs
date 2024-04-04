@@ -9,7 +9,7 @@ import threeNodes from './rollup-plugin-three-nodes.mjs';
 
 export default [
 	{
-//		treeshake: false,
+		treeshake: false,
 		input: 'src/js/CV2.js',
 		output: [
 			{
@@ -25,7 +25,7 @@ export default [
 			}
 		],
 		plugins: [
-			threeNodes(),
+//			threeNodes(),
 			beep(),
 			json( {
 				exclude: [ 'node_modules/**', 'build/**', 'tools/**' ],

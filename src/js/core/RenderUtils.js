@@ -1,4 +1,4 @@
-import { FloatType, LinearFilter, NearestFilter, OrthographicCamera, RedFormat, Vector3, WebGLRenderTarget } from '../Three';
+import { LinearFilter, OrthographicCamera, Vector3, WebGLRenderTarget } from '../Three';
 import { TextureLookup } from './TextureLookup';
 
 class RenderUtils {
@@ -14,7 +14,6 @@ class RenderUtils {
 		console.log( width, height );
 
 		const buffer = await renderer.readRenderTargetPixelsAsync( renderTarget, 0, 0, width, height );
-		console.log( 'done1', width, height );
 
 		// invert image
 		const line = width * 4;
@@ -73,7 +72,6 @@ class RenderUtils {
 
 	makeRenderTarget ( width, height ) {
 
-//		const renderTarget = new WebGLRenderTarget( width, height, { format: RedFormat, type: FloatType, internalFormat: 'r32float', depthBuffer: false, stencilBuffer: false, minFilter: NearestFilter, magFilter: NearestFilter } );
 		const renderTarget = new WebGLRenderTarget( width, height, {  depthBuffer: false, stencilBuffer: false, minFilter: LinearFilter, magFilter: LinearFilter } );
 
 		renderTarget.texture.generateMipmaps = false;

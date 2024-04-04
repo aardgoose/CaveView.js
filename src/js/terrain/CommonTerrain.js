@@ -5,6 +5,7 @@ import { HypsometricMaterial } from '../materials/HypsometricMaterial';
 import { ContourMaterial } from '../materials/ContourMaterial';
 import { DepthMapMaterial } from '../materials/DepthMapMaterial';
 import { Overlay } from './Overlay';
+import { RenderUtils } from '../core/RenderUtils';
 
 class CommonTerrain extends Group {
 
@@ -133,6 +134,8 @@ class CommonTerrain extends Group {
 			this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox );
 			this.renderTarget = renderTarget;
 			this.depthTexture = renderTarget.texture;
+
+			renderUtils.renderTargetToCanvas( renderer, renderTarget ).then( ( c ) => document.body.appendChild( c ) );
 
 			survey.setupTerrain( this );
 			this.ctx.materials.setTerrain( this );

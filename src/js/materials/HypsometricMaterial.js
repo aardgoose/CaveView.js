@@ -15,6 +15,8 @@ class HypsometricMaterial extends CommonTerrainMaterial {
 
 		this.colorNode = texture( textureCache.getTexture( 'hypsometric' ), vec2( zMap, 1.0 ) ).rgb;
 
+		this.colorSpaced = false;
+
 	}
 
 }

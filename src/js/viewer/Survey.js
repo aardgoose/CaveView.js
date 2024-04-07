@@ -350,8 +350,8 @@ class Survey extends Object3D {
 
 		this.surveyTree = surveyTree;
 
-		this.selection = new Selection( ctx, ctx.cfg.themeValue( 'box.select' ) );
-		this.highlightBox = new Selection( ctx, ctx.cfg.themeValue( 'box.highlight' ) );
+		this.selection = new Selection( ctx, 'box.select' );
+		this.highlightBox = new Selection( ctx, 'box.highlight' );
 
 		_loadSegments( surveyData.lineSegments );
 
@@ -819,7 +819,7 @@ class Survey extends Object3D {
 
 		if ( this.featureBox === null ) {
 
-			const box = new SurveyBox( this.ctx, this.combinedLimits, this.ctx.cfg.themeColorCSS( 'box.bounding' ) );
+			const box = new SurveyBox( this.ctx, this.combinedLimits, 'box.bounding' );
 
 			this.addFeature( box, FEATURE_BOX, 'survey-boundingbox' );
 			this.featureBox = box;
@@ -873,8 +873,8 @@ class Survey extends Object3D {
 
 		this.surveyTree = node;
 
-		this.selection = new Selection( ctx, ctx.cfg.themeValue( 'box.select' ) );
-		this.highlightBox = new Selection( ctx, ctx.cfg.themeValue( 'box.highlight' ) );
+		this.selection = new Selection( ctx, 'box.select' );
+		this.highlightBox = new Selection( ctx, 'box.highlight' );
 
 		// remove stale world bounding boxes
 		node.traverse( node => { if ( ! node.isStation() ) { node.worldBoundingBox = null; } } );

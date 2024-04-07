@@ -5,7 +5,9 @@ import { Line2NodeMaterial } from '../Nodes';
 
 class SurveyBox extends LineSegments2 {
 
-	constructor ( ctx, box3, color = 0xffff00 ) {
+	constructor ( ctx, box3, colorName ) {
+
+		const color = ctx.cfg.themeColorCSS( colorName );
 
 		const v0 = new Vector3(  0.5,  0.5,  0.5 );
 		const v1 = new Vector3( -0.5,  0.5,  0.5 );

@@ -1,5 +1,5 @@
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
-import { fract, fwidth, step, mix, smoothstep, uniform, vec4, positionLocal, materialOpacity } from '../Nodes';
+import { fract, fwidth, step, mix, smoothstep, uniform, vec4, positionLocal } from '../Nodes';
 
 class ContourMaterial extends CommonTerrainMaterial {
 
@@ -33,7 +33,7 @@ class ContourMaterial extends CommonTerrainMaterial {
 		const finalColor = vec4( mix( contourColor, contourColor10, contourColorSelection ), 1.0 );
 
 		this.colorNode = mix( finalColor, baseColor, c );
-		this.opacityNode = mix( 1.0, materialOpacity, c );
+		this.opacityNode = mix( 1.0, this.opacityNode, c );
 
 	}
 

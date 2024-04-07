@@ -453,7 +453,10 @@ class CaveViewer extends EventDispatcher {
 			container.style.backgroundColor = cfg.themeColorCSS( 'background' );
 			renderer.setClearColor( cfg.themeColor( 'background' ), 0.0 );
 
-			if ( survey ) survey.refreshColors();
+
+//			if ( survey ) survey.refreshColors();
+
+			materials.refreshColors();
 
 			renderView();
 

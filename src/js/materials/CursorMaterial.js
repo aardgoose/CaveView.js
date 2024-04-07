@@ -2,7 +2,6 @@ import { varying, positionGeometry } from '../Nodes.js';
 import { SubsurfaceMaterial } from './SubsufaceMaterial.js';
 import { CommonComponents } from './CommonComponents';
 
-
 class CursorMaterial extends SubsurfaceMaterial {
 
 	constructor ( options, ctx ) { // FIXME options handling
@@ -12,31 +11,13 @@ class CursorMaterial extends SubsurfaceMaterial {
 		const survey = ctx.survey;
 		const limits = survey.modelLimits;
 
-		const cu = ctx.materials.commonUniforms.cursor( ctx );
+		const cursorHeight = ctx.materials.getReference( 'cursorHeight' );
+		const delta = varying( positionGeometry.z.sub( cursorHeight ) );
 
-		const delta = varying( positionGeometry.z.sub( cu.cursor ) );
+		this.colorNode = CommonComponents.cursorColor( ctx, delta );
 
-		this.colorNode = CommonComponents.cursorColor( cu, delta );
-
-		this.cursor = cu.cursor;
 		this.transparent = options.location;
 		this.halfRange = ( limits.max.z - limits.min.z ) / 2;
-
-	}
-
-	setCursor ( value ) {
-
-		const newValue = Math.max( Math.min( value, this.halfRange ), -this.halfRange );
-
-		this.cursor.value = newValue;
-
-		return newValue; // return value clamped to material range
-
-	}
-
-	getCursor () {
-
-		return this.cursor.value;
 
 	}
 

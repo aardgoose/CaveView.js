@@ -1,6 +1,6 @@
 import { MeshBasicMaterial } from 'three';
-import { NodeMaterial, positionGeometry, attribute, texture, uv, varying, vec2, vec4, modelViewProjection } from '../Nodes.js'
-import { viewport } from '../../../node_modules/three/examples/jsm/nodes/display/ViewportNode.js';
+import { NodeMaterial, positionGeometry, attribute, texture, uv, varying, vec2, vec4, modelViewProjection, viewport } from '../Nodes.js'
+//import { viewport } from '../../../node_modules/three/examples/jsm/nodes/display/ViewportNode.js';
 
 const defaultValues = new MeshBasicMaterial();
 

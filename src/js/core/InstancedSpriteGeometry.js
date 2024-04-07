@@ -93,7 +93,7 @@ class InstancedSpriteGeometry extends InstancedBufferGeometry {
 
 	}
 
-	getPointColor( index, color ) {
+	setPointColor( index, color ) {
 
 		const instanceColor = this.getAttribute( 'instanceColor' );
 
@@ -103,7 +103,7 @@ class InstancedSpriteGeometry extends InstancedBufferGeometry {
 	}
 
 	setAllPointColors ( color ) {
-
+// FIXME - merge with setColors()
 		let instanceColor = this.getAttribute( 'instanceColor' );
 		let buffer;
 
@@ -111,6 +111,7 @@ class InstancedSpriteGeometry extends InstancedBufferGeometry {
 
 			buffer = new Float32Array( this.instantCount * 3 );
 			instanceColor = new InstancedBufferAttribute( buffer, 3, false, 1 );
+			this.setAttribute( 'instanceColor', instanceColor );
 
 		} else {
 

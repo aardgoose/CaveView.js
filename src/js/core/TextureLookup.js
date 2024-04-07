@@ -1,5 +1,5 @@
 import { Matrix3, Vector3 } from '../Three';
-
+import { unpackRGBA } from './uppackRGBA';
 const __v = new Vector3();
 
 class TextureLookup {
@@ -10,15 +10,10 @@ class TextureLookup {
 	transform = new Matrix3();
 	width = null;
 
-	constructor ( renderer, renderTarget, boundingBox ) {
+	async setup ( renderer, renderTarget, boundingBox ) {
 
 		const width = renderTarget.width;
 		const height = renderTarget.height;
-
-		// copy texture data into ArrayBuffer
-
-		renderer.readRenderTargetPixelsAsync( renderTarget, 0, 0, width, height, this.buffer )
-			.then( buffer => { this.buffer = buffer; } );
 
 		// calculate tranform matrix from Model coordinates to texure coordinates.
 
@@ -30,7 +25,12 @@ class TextureLookup {
 
 		this.base = base;
 		this.range = range;
-		this.width = width;
+		this.width = width * 4;
+
+		// copy texture data into ArrayBuffer
+
+		return renderer.readRenderTargetPixelsAsync( renderTarget, 0, 0, width, height )
+			.then( buffer => this.buffer = buffer );
 
 	}
 
@@ -43,9 +43,10 @@ class TextureLookup {
 
 		};
 
-		const offset = ( x + y * this.width );
+		const offset = ( x * 4 + y * this.width );
+//		console.log( 'aaa',x, y, unpackRGBA( this.buffer, offset ) );
 
-		return this.buffer[ offset ];
+		return unpackRGBA( this.buffer, offset );
 
 	}
 

@@ -1,4 +1,4 @@
-import { positionGeometry, attribute, texture, vec2 } from '../Nodes.js';
+import { positionGeometry, attribute, texture, vec2, temp, vec3 } from '../Nodes.js';
 import { CommonComponents } from './CommonComponents';
 import { SurveyLineMaterial } from './SurveyLineMaterial.js';
 
@@ -16,12 +16,11 @@ class DepthLineMaterial extends SurveyLineMaterial {
 
 		const du = ctx.materials.commonUniforms.depth();
 
-		const terrainHeight = CommonComponents.terrainHeight( du, terrain );
-
 		const instanceStart = attribute( 'instanceStart' );
 		const instanceEnd   = attribute( 'instanceEnd' );
 
-		const vPosition = positionGeometry.y.lessThan( 0.5 ).cond( instanceStart, instanceEnd );
+		const vPosition = temp( vec3() ).assign( positionGeometry.y.lessThan( 0.5 ).cond( instanceStart, instanceEnd ) );
+		const terrainHeight = CommonComponents.terrainHeight( du, terrain, vPosition );
 
 		// FIXME double check all depth calcs
 //		const depth = terrainHeight( vPosition ).sub( vPosition.z ).mul( du.depthScale );

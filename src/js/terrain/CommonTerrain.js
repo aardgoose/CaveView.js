@@ -5,7 +5,6 @@ import { HypsometricMaterial } from '../materials/HypsometricMaterial';
 import { ContourMaterial } from '../materials/ContourMaterial';
 import { DepthMapMaterial } from '../materials/DepthMapMaterial';
 import { Overlay } from './Overlay';
-import { RenderUtils } from '../core/RenderUtils';
 
 class CommonTerrain extends Group {
 
@@ -125,20 +124,27 @@ class CommonTerrain extends Group {
 
 		renderer.renderAsync( scene, rtCamera, true ).then( () => {
 
-			// const p = new Popup( this.ctx );
-			// const pop = new PopupMaterial( container, renderTarget.texture );
-			// p.material = pop;
-			// scene.add( p );
+			/*
+			const p = new Popup( this.ctx );
+			const pop = new PopupMaterial( container, renderTarget.texture );
+			p.material = pop;
+			scene.add( p );
+			*/
 
-			// add lookup using heightMap texture
-			this.heightLookup = new HeightLookup( renderer, renderTarget, this.boundingBox );
 			this.renderTarget = renderTarget;
 			this.depthTexture = renderTarget.texture;
 
-			renderUtils.renderTargetToCanvas( renderer, renderTarget ).then( ( c ) => document.body.appendChild( c ) );
+//			renderUtils.renderTargetToCanvas( renderer, renderTarget ).then( ( c ) => document.body.appendChild( c ) );
 
-			survey.setupTerrain( this );
-			this.ctx.materials.setTerrain( this );
+			// add lookup using heightMap texture
+			this.heightLookup = new HeightLookup();
+
+			this.heightLookup.setup( renderer, renderTarget, this.boundingBox ).then( () => {
+
+				survey.setupTerrain( this );
+				this.ctx.materials.setTerrain( this );
+
+			} );
 
 		} );
 
@@ -324,7 +330,7 @@ class CommonTerrain extends Group {
 	}
 
 	getHeight ( point ) {
-		return 0;
+
 		return this.heightLookup.lookup( point );
 
 	}

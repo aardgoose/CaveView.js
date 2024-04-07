@@ -154,7 +154,7 @@ class Entrances extends ClusterMarkers {
 
 				} else {
 
-					geometry.setPointColor( i, Color( 0.5, 0.5, 0.5 ) );
+					geometry.setPointColor( i, new Color( 0.5, 0.5, 0.5 ) );
 
 				}
 

@@ -12,7 +12,6 @@ class DepthMapMaterial extends NodeMaterial {
 		const minHeight = boundingBox.min.z;
 		const maxHeight = boundingBox.max.z;
 
-
 		const PackUpscale = 256. / 255.; // fraction -> 0..1 (including 1)
 		const PackFactors = vec3( 256. * 256. * 256., 256. * 256., 256. );
 		const ShiftRight8 = 1. / 256.;

@@ -8,11 +8,13 @@ class SurveyLineMaterial extends Line2NodeMaterial {
 
 		this.ctx = ctx;
 
-		this.linewidthNode = ctx.materials.commonUniforms.lines().linewidth;
+		Object.defineProperty( this, 'linewidth', {
+			get() { return ctx.materials.linewidth; }
+		} );
 
-        this.setupShaders();
+		// this.worldUnits = true;
 
-    }
+	}
 
 }
 

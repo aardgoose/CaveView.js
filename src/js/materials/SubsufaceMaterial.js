@@ -8,6 +8,7 @@ class SubsurfaceMaterial extends MeshPhongNodeMaterial {
 
 		super( options );
 
+		this.ctx = ctx;
 		this.lightsNode = ctx.lightingManager.getSubsurfaceLights();
 
 	}

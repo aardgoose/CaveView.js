@@ -4,11 +4,12 @@ class HeightLookup extends TextureLookup {
 
 	zOffset = 0;
 
-	constructor ( renderer, renderTarget, boundingBox ) {
-
-		super( renderer, renderTarget, boundingBox );
+	setup ( renderer, renderTarget, boundingBox ) {
 
 		this.zOffset = boundingBox.min.z;
+
+		return super.setup( renderer, renderTarget, boundingBox );
+
 
 	}
 

@@ -7,9 +7,7 @@ class CommonTerrainMaterial extends MeshPhongNodeMaterial {
 
 		super( params );
 
-		Object.defineProperty( this, 'opacity', {
-			get() { return ctx.materials.terrainOpacity; }
-		} );
+		this.opacityNode = ctx.materials.getReference( 'terrainOpacity' );
 
 		this.transparent = true;
 		this.stencilWrite = true;

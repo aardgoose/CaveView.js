@@ -4,14 +4,14 @@ import { SurveyBox } from '../core/SurveyBox';
 
 class Selection extends SurveyBox {
 
-	constructor ( ctx, color ) {
+	constructor ( ctx, colorName ) {
 
 		const survey = ctx.survey;
 
 		const root = survey.surveyTree;
 		let selectedNode = root;
 
-		super( ctx, root.boundingBox, color );
+		super( ctx, root.boundingBox, colorName );
 
 		const material = this.material;
 

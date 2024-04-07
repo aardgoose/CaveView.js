@@ -11,7 +11,6 @@ class RenderUtils {
 		const height = Math.floor( renderTarget.height );
 
 		const bSize = width * height * 4;
-		console.log( width, height );
 
 		const buffer = await renderer.readRenderTargetPixelsAsync( renderTarget, 0, 0, width, height );
 
@@ -38,7 +37,6 @@ class RenderUtils {
 
 		canvas.width = width;
 		canvas.height = height;
-		console.log( 'done2', width, height );
 
 		canvasCtx.putImageData( id, 0, 0 );
 

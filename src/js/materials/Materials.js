@@ -2,47 +2,70 @@ import { ColourCache } from '../core/ColourCache';
 import { TextureCache } from '../core/TextureCache';
 import { IncrementStencilOp } from '../Three';
 import { CommonUniforms } from './CommonUniforms';
+import { reference, uniform } from '../Nodes';
 
 function Materials ( viewer ) {
 
 	const materialClassCache = new Map();
 	const ctx = viewer.ctx;
 
-	let cursorHeight = 0;
-	let linewidth = 1;
-	let scaleLinewidth = false;
 	let locationMode = false;
 
 	this.colourCache = new ColourCache();
 	this.textureCache = new TextureCache()
 
 	this.commonUniforms = new CommonUniforms( ctx );
+
+	this.cursorHeight = 0;
 	this.terrainOpacity = 0.5;
+	this.linewidth = 1;
+	this.cursorWidth = 5;
 
-	Object.defineProperties( this, {
+	this.colorUniformCache = {};
+	this.referenceCache = {};
 
-		'cursorHeight': {
-			get() { return cursorHeight; },
-			set( newHeight ) {
-			}
-		},
+	this.getColorUniform = function ( colorName ) {
 
-		'linewidth': {
-			get() { return linewidth; },
-			set( width ) {
-				linewidth = width;
-				this.commonUniforms.updateLines( linewidth );
-			}
-		},
+		let u = this.colorUniformCache[ colorName ];
 
-		'scaleLinewidth': {
-			get() { return scaleLinewidth; },
-			set( mode ) {
-				scaleLinewidth = mode;
-			}
+		if ( u === undefined ) {
+
+			u = uniform( ctx.cfg.themeColor( colorName ) );
+			this.colorUniformCache[ colorName ] = u;
+
 		}
 
-	} );
+		return u;
+
+	};
+
+
+	this.refreshColors = function () {
+
+		console.log( 'refresh' );
+
+		for ( const colorName in this.colorUniformCache ) {
+
+			console.log( 'reset color', colorName );
+
+		}
+
+	};
+
+	this.getReference = function ( referenceName ) {
+
+		let r = this.referenceCache[ referenceName ];
+
+		if ( r === undefined ) {
+
+			r = reference( referenceName, 'float', this );
+			this.referenceCache[ referenceName ] = r;
+
+		}
+
+		return r;
+
+	};
 
 	this.getMaterial = function ( materialClass, params = {}, stencil = false ) {
 
@@ -148,11 +171,7 @@ function Materials ( viewer ) {
 	this.flushCache = function () {
 
 		ctx.glyphStringCache = new Map();
-		cursorHeight = 0;
-
-	};
-
-	this.setFog = function ( enable ) {
+		this.cursorHeight = 0;
 
 	};
 

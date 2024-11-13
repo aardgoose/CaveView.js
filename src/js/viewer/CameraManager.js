@@ -4,7 +4,8 @@ import {
 	MathUtils,
 	OrthographicCamera,
 	PerspectiveCamera,
-	Quaternion
+	Quaternion,
+	MeshBasicNodeMaterial
 } from '../Three';
 import {
 	CAMERA_ORTHOGRAPHIC, CAMERA_PERSPECTIVE, CAMERA_ANAGLYPH,
@@ -12,7 +13,6 @@ import {
 } from '../core/constants';
 
 import { AnaglyphEffect } from './AnaglyphEffect';
-import { MeshBasicNodeMaterial } from '../Nodes';
 
 
 const __rotation = new Euler();

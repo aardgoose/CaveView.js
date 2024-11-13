@@ -1,5 +1,4 @@
-import { Vector2, Vector3 } from '../Three';
-import { attribute, property, modelViewProjection, tslFn, texture, trunc, NodeMaterial, uniform, varying, vec2, vec4, positionGeometry } from '../Nodes';
+import { Vector2, Vector3, attribute, property, modelViewProjection, Fn, texture, trunc, NodeMaterial, uniform, varying, vec2, vec4, positionGeometry } from '../Three';
 import { GlyphAtlasCache } from '../materials/GlyphAtlasCache';
 
 class GlyphMaterial extends NodeMaterial {
@@ -51,7 +50,7 @@ class GlyphMaterial extends NodeMaterial {
 		// select glyph from UV trimmed to correct width
 		const uv = varying( instanceUV.add( vec2( positionGeometry.x.mul( cellScale ).mul( instanceWidth ), positionGeometry.y.mul( cellScale ) ) ) );
 
-		this.vertexNode = tslFn( () => {
+		this.vertexNode = Fn( () => {
 
 			// scale by glyph width ( vertices form unit square with (0,0) origin )
 

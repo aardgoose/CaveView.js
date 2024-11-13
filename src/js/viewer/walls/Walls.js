@@ -1,5 +1,4 @@
-import { BufferGeometry, Float32BufferAttribute, Mesh } from '../../Three';
-import { MeshPhongNodeMaterial } from '../../Nodes';
+import { MeshPhongNodeMaterial, BufferGeometry, Float32BufferAttribute, Mesh } from '../../Three';
 
 class Walls extends Mesh {
 

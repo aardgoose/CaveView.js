@@ -1,5 +1,4 @@
-import { Vector3 } from '../Three';
-import { uniform, vec2, vec3 } from '../Nodes';
+import { uniform, vec2, vec3, Vector3 } from '../Three';
 
 class CommonUniforms {
 

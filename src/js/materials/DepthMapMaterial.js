@@ -1,5 +1,4 @@
-import { NoBlending } from '../Three';
-import { NodeMaterial, saturate, uniform, varying, tslFn, vec3, vec4, temp, positionGeometry } from '../Nodes';
+import { NoBlending, NodeMaterial, saturate, uniform, varying, Fn, vec3, vec4, positionGeometry } from '../Three';
 
 class DepthMapMaterial extends NodeMaterial {
 
@@ -16,13 +15,13 @@ class DepthMapMaterial extends NodeMaterial {
 		const PackFactors = vec3( 256. * 256. * 256., 256. * 256., 256. );
 		const ShiftRight8 = 1. / 256.;
 
-		this.fragmentNode = tslFn( () => {
+		this.fragmentNode = Fn( () => {
 
 			const minZ = uniform( minHeight );
 			const scaleZ = uniform( 1 / ( maxHeight - minHeight ) );
 			const vHeight = varying( saturate( positionGeometry.z.sub( minZ ).mul( scaleZ ) ) );
 
-			const r = temp( vec4() ).assign( vHeight.mul( PackFactors ).fract(), vHeight );
+			const r = vec4().toVar().assign( vHeight.mul( PackFactors ).fract(), vHeight );
 
 			r.subAssign( vec4( 0, r.xyz.mul( ShiftRight8 ) ) ); // tidy overflow
 			r.mulAssign( PackUpscale );

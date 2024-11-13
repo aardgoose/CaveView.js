@@ -1,7 +1,6 @@
-import { Float32BufferAttribute, Vector3, } from '../Three';
+import { Line2NodeMaterial, Float32BufferAttribute, Vector3, } from '../Three';
 import { LineSegments2 } from './LineSegments2';
 import { LineSegmentsGeometry } from './LineSegmentsGeometry';
-import { Line2NodeMaterial } from '../Nodes';
 
 class SurveyBox extends LineSegments2 {
 

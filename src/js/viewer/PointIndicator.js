@@ -1,5 +1,4 @@
-import { Sprite } from '../Three';
-import { SpriteNodeMaterial } from '../Nodes.js';
+import { SpriteNodeMaterial, Sprite } from '../Three';
 
 class PointIndicator extends Sprite {
 

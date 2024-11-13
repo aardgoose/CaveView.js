@@ -1,5 +1,5 @@
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
-import { fract, fwidth, step, mix, smoothstep, uniform, vec4, positionLocal } from '../Nodes';
+import { fract, fwidth, step, mix, smoothstep, uniform, vec4, positionLocal } from '../Three';
 
 class ContourMaterial extends CommonTerrainMaterial {
 
@@ -24,8 +24,8 @@ class ContourMaterial extends CommonTerrainMaterial {
 
 		const df = fwidth( zLine );
 
-		f = f.greaterThan( 0.5 ).cond( f.oneMinus(), f );
-		f10 = f.greaterThan( 0.5 ).cond( f10.oneMinus(), f10 );
+		f = f.greaterThan( 0.5 ).select( f.oneMinus(), f );
+		f10 = f.greaterThan( 0.5 ).select( f10.oneMinus(), f10 );
 
 		const contourColorSelection = step( 0.81, f10 );
 

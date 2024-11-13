@@ -1,6 +1,6 @@
-import { positionLocal, reference } from '../Nodes.js';
+import { positionLocal, reference } from '../Three.js';
 import { SubsurfaceMaterial } from './SubsufaceMaterial';
-import { CommonComponents } from './CommonComponents';
+import { cursorColor, getTerrainHeight } from './CommonComponents';
 
 class DepthCursorMaterial extends SubsurfaceMaterial {
 
@@ -17,16 +17,16 @@ class DepthCursorMaterial extends SubsurfaceMaterial {
 
 		const du = commonUniforms.depth( ctx );
 
-		const terrainHeight = CommonComponents.terrainHeight( du, survey.terrain );
+		const terrainHeight = getTerrainHeight( du, survey.terrain );
 
 		// FIXME double check all depth calcs
 
 		const vCursor = terrainHeight.sub( positionLocal.z );
 
-		const cursorHeight = ctx.materials.getReference( 'cursorHeight' );
+		const cursorHeight = reference( 'cursorHeight', 'float', ctx.materials );
 		const delta = vCursor.sub( cursorHeight );
 
-		this.colorNode = CommonComponents.cursorColor( ctx, delta ).rgb;
+		this.colorNode = cursorColor( ctx, delta ).rgb;
 
 //		this.transparent = options.location;
 		this.ctx.materials.cursorHeight = max;

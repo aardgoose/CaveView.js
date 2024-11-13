@@ -1,5 +1,4 @@
-import { EqualStencilFunc } from '../Three';
-import { MeshPhongNodeMaterial } from '../Nodes';
+import { MeshPhongNodeMaterial, EqualStencilFunc, reference } from '../Three';
 
 class CommonTerrainMaterial extends MeshPhongNodeMaterial {
 
@@ -7,7 +6,7 @@ class CommonTerrainMaterial extends MeshPhongNodeMaterial {
 
 		super( params );
 
-		this.opacityNode = ctx.materials.getReference( 'terrainOpacity' );
+		this.opacityNode = reference( 'terrainOpacity', 'float', ctx.materials );
 
 		this.transparent = true;
 		this.stencilWrite = true;

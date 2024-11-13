@@ -1,5 +1,5 @@
 import { SurveyLineMaterial } from './SurveyLineMaterial.js';
-import { positionGeometry, attribute, texture, varying, vec2 } from '../Nodes.js';
+import { positionGeometry, attribute, texture, varying, vec2 } from '../Three.js';
 
 class HeightLineMaterial extends SurveyLineMaterial {
 
@@ -15,12 +15,10 @@ class HeightLineMaterial extends SurveyLineMaterial {
 		const instanceStart = attribute( 'instanceStart' );
 		const instanceEnd   = attribute( 'instanceEnd' );
 
-		const vPosition = positionGeometry.y.lessThan( 0.5 ).cond( instanceStart, instanceEnd );
+		const vPosition = positionGeometry.y.lessThan( 0.5 ).select( instanceStart, instanceEnd );
 
 		const zMap = varying( vPosition.z.sub( hu.minZ ).mul( hu.scaleZ ) );
 		this.lineColorNode = texture( textureCache.getTexture( gradient ), vec2( zMap.oneMinus(), 1.0 ) ).rgb;
-
-//		this.setupShaders();
 
 	}
 

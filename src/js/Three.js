@@ -1,4 +1,4 @@
-export * from 'three';
+export * from 'three/src/Three.WebGPU.js';
 export { cloneUniforms, mergeUniforms } from 'three/src/renderers/shaders/UniformsUtils.js';
 
 /*
@@ -80,7 +80,7 @@ export { ColorManagement } from 'three/src/math/ColorManagement.js';
 export * from 'three/src/constants.js';
 */
 
-import { Object3D } from 'three';
+import { Object3D } from 'three/src/Three.WebGPU.js';
 //import { Object3D } from 'three/src/core/Object3D.js';
 
 

@@ -1,8 +1,7 @@
-import { Vector3 } from '../Three';
+import { Line2NodeMaterial, Vector3 } from '../Three';
 import { CanvasPopup } from './CanvasPopup';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { LineSegments2 } from '../core/LineSegments2';
-import { Line2NodeMaterial } from '../Nodes';
 
 const __v1 = new Vector3();
 const __v2 = new Vector3();

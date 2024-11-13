@@ -16,7 +16,7 @@ class EntrancePointMaterial extends InstancedSpriteMaterial {
 
 		ctx.viewer.addEventListener( 'resized', ( e ) => {
 
-			this.size =  Math.max( dotSize, Math.floor( dotSize * e.width / 1000 ) );
+			this.size = Math.max( dotSize, Math.floor( dotSize * e.width / 1000 ) );
 
 		} );
 

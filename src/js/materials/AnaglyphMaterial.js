@@ -1,4 +1,4 @@
-import { NodeMaterial, pow, tslFn, clamp, max, texture, uniform, uv, varying, vec4 } from '../Nodes.js';
+import { NodeMaterial, pow, Fn, clamp, max, texture, uniform, uv, varying, vec4 } from '../Three.js';
 import { Matrix3 } from '../Three';
 
 class AnaglyphMaterial extends NodeMaterial {
@@ -28,21 +28,21 @@ class AnaglyphMaterial extends NodeMaterial {
 
 		] );
 
-		const fLin = tslFn( ( c ) => {
+		const fLin = Fn( ( c ) => {
 
-			return c.lessThanEqual( 0.04045 ).cond( c.mul( 0.0773993808 ),  pow( c.mul( 0.9478672986 ).add( 0.0521327014 ), 2.4 ) );
+			return c.lessThanEqual( 0.04045 ).select( c.mul( 0.0773993808 ),  pow( c.mul( 0.9478672986 ).add( 0.0521327014 ), 2.4 ) );
 
 		} );
 
-		const vLin = tslFn( ( c ) => {
+		const vLin = Fn( ( c ) => {
 
 			return vec4( fLin( c.r ), fLin( c.g ), fLin( c.b ), c.a );
 
 		} );
 
-		const dev = tslFn( ( c ) => {
+		const dev = Fn( ( c ) => {
 
-			return c.lessThanEqual( 0.0031308 ).cond( c.mul( 12.92 ), pow( c, 0.41666 ).mul( 1.055 ).sub( 0.055 ) );
+			return c.lessThanEqual( 0.0031308 ).select( c.mul( 12.92 ), pow( c, 0.41666 ).mul( 1.055 ).sub( 0.055 ) );
 
 		} );
 
@@ -58,10 +58,10 @@ class AnaglyphMaterial extends NodeMaterial {
 		const colorMatrixLeft = uniform( colorMatrixLeftSrc );
 		const colorMatrixRight = uniform( colorMatrixRightSrc );
 
-		this.outputNode = tslFn( () => {
+		this.outputNode = Fn( () => {
 
-			const colorL = vec4().temp();
-			const colorR = vec4().temp();
+			const colorL = vec4().toVar();
+			const colorR = vec4().toVar();
 
 			colorL.assign( texture( params.left, uvs ) );
 			colorR.assign( texture( params.right, uvs ) );
@@ -69,7 +69,7 @@ class AnaglyphMaterial extends NodeMaterial {
 			colorL.assign( vLin( colorL ) );
 			colorR.assign( vLin( colorR ) );
 
-			const color = vec4().temp();
+			const color = vec4().toVar();
 
 			color.assign( clamp(
 				colorMatrixLeft.mul( colorL.rgb ).add( colorMatrixRight.mul( colorR.rgb ) ),

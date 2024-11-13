@@ -1,6 +1,5 @@
-import { Float32BufferAttribute, Mesh, Object3D, RingGeometry } from '../Three';
+import { MeshBasicNodeMaterial, Float32BufferAttribute, Mesh, Object3D, RingGeometry } from '../Three';
 import { MutableGlyphString } from '../core/GlyphString';
-import { MeshBasicNodeMaterial } from '../Nodes.js';
 
 class ProgressDial extends Mesh {
 

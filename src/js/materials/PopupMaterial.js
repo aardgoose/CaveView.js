@@ -1,7 +1,6 @@
-import { Vector2 } from '../Three';
-import { tslFn, texture, trunc, uniform, varying, vec2, vec4, modelViewProjection, positionGeometry, NodeMaterial } from '../Nodes';
+import { Vector2, Fn, texture, trunc, uniform, varying, vec2, vec4, modelViewProjection, positionGeometry, MeshBasicNodeMaterial } from '../Three';
 
-class PopupMaterial extends NodeMaterial {
+class PopupMaterial extends MeshBasicNodeMaterial {
 
 	constructor ( container, popupImage, rotation, colour ) {
 
@@ -10,7 +9,7 @@ class PopupMaterial extends NodeMaterial {
 			opacity: 1.0,
 			alphaTest: 0.8,
 			depthTest: false,
-			transparent: true
+			transparent: false
 		} );
 
 		this.isShaderMaterial = false;
@@ -34,7 +33,7 @@ class PopupMaterial extends NodeMaterial {
 
 		// const rotationMatrix = new Float32Array( [ cos, sin, -sin, cos ] );
 
-		this.vertexNode = tslFn( () => {
+		this.vertexNode = Fn( () => {
 
 			const viewPort = new Vector2( Math.floor( pixelRatio * container.clientWidth ), Math.floor( pixelRatio * container.clientHeight ) );
 			const scale = new Vector2( width, height ).divide( viewPort );

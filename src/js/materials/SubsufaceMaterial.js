@@ -1,4 +1,4 @@
-import { MeshPhongNodeMaterial } from '../Nodes';
+import { MeshPhongNodeMaterial } from '../Three';
 
 class SubsurfaceMaterial extends MeshPhongNodeMaterial {
 

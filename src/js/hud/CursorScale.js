@@ -3,8 +3,7 @@ import { MutableGlyphString } from '../core/GlyphString';
 import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 
-import { PlaneGeometry } from '../Three';
-import { MeshBasicNodeMaterial, Line2NodeMaterial } from '../Nodes';
+import { MeshBasicNodeMaterial, Line2NodeMaterial, PlaneGeometry } from '../Three';
 import { GlyphMaterial } from '../materials/GlyphMaterial';
 
 class CursorScale extends Scale {

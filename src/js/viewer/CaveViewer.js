@@ -1,4 +1,4 @@
-import { EventDispatcher, FogExp2, Raycaster, SRGBColorSpace, Scene, Vector2, Vector3 } from '../Three';
+import { EventDispatcher, FogExp2, Raycaster, SRGBColorSpace, Scene, Vector2, Vector3, WebGPURenderer } from '../Three';
 import {
 	FACE_SCRAPS, FACE_WALLS, FACE_MODEL, FEATURE_BOX, FEATURE_ENTRANCES, FEATURE_ENTRANCE_DOTS, FEATURE_GRID, FEATURE_STATIONS, FEATURE_TERRAIN, FEATURE_TRACES,
 	LABEL_STATION, LABEL_STATION_COMMENT, LEG_CAVE, LEG_SPLAY, LEG_DUPLICATE, LEG_SURFACE, LM_NONE, LM_SINGLE, MOUSE_MODE_TRACE_EDIT, SURVEY_WARNINGS,
@@ -24,7 +24,6 @@ import { Survey } from './Survey';
 import { ViewState } from './ViewState';
 import { WebTerrain } from '../terrain/WebTerrain';
 import { WorkerPoolCache } from '../core/WorkerPool';
-import WebGPURenderer from '../../../node_modules/three/examples/jsm/renderers/webgpu/WebGPURenderer';
 
 class CaveViewer extends EventDispatcher {
 
@@ -64,7 +63,7 @@ class CaveViewer extends EventDispatcher {
 
 		ctx.materials = materials;
 
-		let renderer = new WebGPURenderer( { antialias: true, alpha: true } );
+		let renderer = new WebGPURenderer( { antialias: true, alpha: true, stencil: true } );
 
 		renderer.outputColorSpace = SRGBColorSpace;
 
@@ -75,6 +74,7 @@ class CaveViewer extends EventDispatcher {
 		renderer.init().then( () => { this.ready = true; this.dispatchEvent( { type: 'ready' } ) } );
 
 		renderer.clearAsync();
+		renderer.stencil = true;
 //		renderer.autoClear = false;
 
 		container.appendChild( renderer.domElement );
@@ -1222,7 +1222,7 @@ class CaveViewer extends EventDispatcher {
 			container.removeEventListener( 'fullscreenchange', onFullscreenChange );
 			container.removeEventListener( 'webkitfullscreenchange', onFullscreenChange );
 
-			renderer.clear();
+			renderer.clearAsync();
 			renderer.dispose();
 
 			renderer = null;

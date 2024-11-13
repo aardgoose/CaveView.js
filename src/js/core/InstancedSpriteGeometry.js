@@ -1,4 +1,4 @@
-import { InstancedBufferGeometry, InstancedBufferAttribute, Sphere, Box3, Vector3 } from 'three';
+import { InstancedBufferGeometry, InstancedBufferAttribute, Sphere, Box3, Vector3 } from '../Three';
 import { CommonAttributes } from './CommonAttributes.js';
 
 const _vector = new Vector3();

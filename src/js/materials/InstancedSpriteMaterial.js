@@ -1,6 +1,4 @@
-import { MeshBasicMaterial } from 'three';
-import { NodeMaterial, positionGeometry, attribute, texture, uv, varying, vec2, vec4, modelViewProjection, viewport } from '../Nodes.js'
-//import { viewport } from '../../../node_modules/three/examples/jsm/nodes/display/ViewportNode.js';
+import { MeshBasicMaterial, NodeMaterial, positionGeometry, attribute, texture, uv, varying, vec2, vec4, modelViewProjection, viewport } from '../Three.js'
 
 const defaultValues = new MeshBasicMaterial();
 
@@ -19,7 +17,6 @@ class InstancedSpriteMaterial extends NodeMaterial {
 		this.setDefaultValues( defaultValues );
 
 		this.lights = false;
-		this.normals = false;
 		this.alphaTest = 0.8;
 
 		const instancePosition = attribute( 'instancePosition' );
@@ -28,10 +25,10 @@ class InstancedSpriteMaterial extends NodeMaterial {
 
 		const scale = vec2( instanceSize, instanceSize ).div( viewport.zw );
 
-		// position of instance in screen space
+		// position of instance in ndc
 		const offset = modelViewProjection( vec4( instancePosition, 1.0 ) );
 
-		// scale instance geometry for screen
+		// scale instance geometry for ndc
 		const pos = positionGeometry.xy.sub( 0.5 ).mul( scale ).mul( offset.w );
 
 		const spriteTexture = params.texture === undefined ? ctx.materials.textureCache.getTexture( 'disc' ) : params.texture;

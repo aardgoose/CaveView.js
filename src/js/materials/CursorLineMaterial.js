@@ -1,5 +1,5 @@
-import { positionGeometry, attribute, varying } from '../Nodes.js';
-import { CommonComponents } from './CommonComponents.js';
+import { positionGeometry, attribute, reference, varying } from '../Three.js';
+import { cursorColor } from './CommonComponents.js';
 import { SurveyLineMaterial } from './SurveyLineMaterial.js';
 
 class CursorLineMaterial extends SurveyLineMaterial {;
@@ -11,12 +11,12 @@ class CursorLineMaterial extends SurveyLineMaterial {;
 		const instanceStart = attribute( 'instanceStart' );
 		const instanceEnd   = attribute( 'instanceEnd' );
 
-		const cursorHeight = ctx.materials.getReference( 'cursorHeight' );
-		const vPosition = positionGeometry.y.lessThan( 0.5 ).cond( instanceStart, instanceEnd );
+		const cursorHeight = reference( 'cursorHeight', 'float', ctx.materials );
+		const vPosition = positionGeometry.y.lessThan( 0.5 ).select( instanceStart, instanceEnd );
 
 		const delta = varying( vPosition.z.sub( cursorHeight ) );
 
-		this.lineColorNode = CommonComponents.cursorColor( ctx, delta ).rgb;
+		this.lineColorNode = cursorColor( ctx, delta ).rgb;
 
 	}
 

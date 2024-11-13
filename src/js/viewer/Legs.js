@@ -1,9 +1,8 @@
-import { Float32BufferAttribute } from '../Three';
+import { Line2NodeMaterial, Float32BufferAttribute } from '../Three';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
 import { LineSegments2 } from '../core/LineSegments2';
 import { STATION_XSECT } from '../core/constants';
 import { Segments } from './Segments';
-import { Line2NodeMaterial } from '../Nodes';
 
 class Legs extends LineSegments2 {
 

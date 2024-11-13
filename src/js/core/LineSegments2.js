@@ -11,7 +11,7 @@ import {
 	Vector4
 } from '../Three';
 import { LineSegmentsGeometry } from './LineSegmentsGeometry.js';
-import { Line2NodeMaterial } from '../Nodes';
+import { Line2NodeMaterial } from '../Three';
 
 const _start = new Vector3();
 const _end = new Vector3();

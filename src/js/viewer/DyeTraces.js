@@ -1,6 +1,6 @@
 import { LineSegments2 } from '../core/LineSegments2';
 import { LineSegmentsGeometry } from '../core/LineSegmentsGeometry';
-import { Line2NodeMaterial } from '../Nodes';
+import { Line2NodeMaterial } from '../Three';
 
 function beforeRender ( renderer, scene, camera, geometry, material ) {
 

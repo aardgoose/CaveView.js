@@ -1,4 +1,4 @@
-import { varying, vec2, texture, positionGeometry } from '../Nodes';
+import { varying, vec2, texture, positionGeometry } from '../Three';
 import { SubsurfaceMaterial } from './SubsufaceMaterial';
 
 class HeightMaterial extends SubsurfaceMaterial {

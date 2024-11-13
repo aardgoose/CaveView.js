@@ -107,15 +107,12 @@ class CanvasPopup extends Popup {
 
 		this.position.copy( position );
 
-		const imageBitmap = await createImageBitmap( canvas, { imageOrientation: 'flipY' } );
-
-		const texture = new CanvasTexture( imageBitmap );
+		const texture = new CanvasTexture( canvas );
+		texture.generateMipmaps = false;
 
 		texture.onUpdate = function _dropCanvas ( texture ) { texture.image = null; };
 
 		this.material = new PopupMaterial( container, texture, 0 );
-		this.material.needsUpdate = true;
-
 
 		return this;
 

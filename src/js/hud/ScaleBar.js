@@ -1,6 +1,5 @@
-import { BufferGeometry, Float32BufferAttribute, Group, Mesh } from '../Three';
+import { MeshBasicNodeMaterial, BufferGeometry, Float32BufferAttribute, Group, Mesh } from '../Three';
 import { MutableGlyphString } from '../core/GlyphString';
-import { MeshBasicNodeMaterial } from '../Nodes.js';
 
 class BarGeometry extends BufferGeometry {
 

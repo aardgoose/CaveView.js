@@ -1,5 +1,4 @@
-import { CylinderGeometry } from '../Three';
-import { MeshBasicNodeMaterial, MeshPhongNodeMaterial } from '../Nodes';
+import { CylinderGeometry, MeshBasicNodeMaterial, MeshPhongNodeMaterial } from '../Three';
 import { GlyphMaterial } from '../materials/GlyphMaterial';
 
 class HudObject {

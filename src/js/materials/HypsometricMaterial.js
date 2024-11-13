@@ -1,5 +1,5 @@
 import { CommonTerrainMaterial } from './CommonTerrainMaterial';
-import { saturate, texture, varying, vec2, positionGeometry } from '../Nodes';
+import { saturate, texture, varying, vec2, positionGeometry } from '../Three';
 
 class HypsometricMaterial extends CommonTerrainMaterial {
 

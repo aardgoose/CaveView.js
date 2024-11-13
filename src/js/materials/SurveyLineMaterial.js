@@ -1,4 +1,4 @@
-import { Line2NodeMaterial } from '../Nodes.js';
+import { Line2NodeMaterial } from '../Three.js';
 
 class SurveyLineMaterial extends Line2NodeMaterial {
 

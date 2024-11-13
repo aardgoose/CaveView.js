@@ -6,9 +6,11 @@ import {
 	MathUtils,
 	Mesh,
 	RingGeometry,
-	Vector3
+	Vector3,
+	MeshPhongNodeMaterial,
+	MeshBasicNodeMaterial
 } from '../Three';
-import { MeshPhongNodeMaterial, MeshBasicNodeMaterial } from '../Nodes';
+
 import { MutableGlyphString } from '../core/GlyphString';
 
 const __direction = new Vector3();

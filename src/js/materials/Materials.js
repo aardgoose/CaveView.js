@@ -1,8 +1,7 @@
 import { ColourCache } from '../core/ColourCache';
 import { TextureCache } from '../core/TextureCache';
-import { IncrementStencilOp } from '../Three';
+import { reference, uniform, IncrementStencilOp } from '../Three';
 import { CommonUniforms } from './CommonUniforms';
-import { reference, uniform } from '../Nodes';
 
 function Materials ( viewer ) {
 
@@ -22,7 +21,6 @@ function Materials ( viewer ) {
 	this.cursorWidth = 5;
 
 	this.colorUniformCache = {};
-	this.referenceCache = {};
 
 	this.getColorUniform = function ( colorName ) {
 
@@ -49,21 +47,6 @@ function Materials ( viewer ) {
 			console.log( 'reset color', colorName );
 
 		}
-
-	};
-
-	this.getReference = function ( referenceName ) {
-
-		let r = this.referenceCache[ referenceName ];
-
-		if ( r === undefined ) {
-
-			r = reference( referenceName, 'float', this );
-			this.referenceCache[ referenceName ] = r;
-
-		}
-
-		return r;
 
 	};
 

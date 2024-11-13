@@ -9,10 +9,12 @@ import {
 	Mesh,
 	Object3D,
 	SphereGeometry,
-	Vector3
+	Vector3,
+	lights,
+	MeshPhongNodeMaterial,
+	Line2NodeMaterial,
 } from '../Three';
 
-import { lights, MeshPhongNodeMaterial, Line2NodeMaterial } from '../Nodes';
 
 // preallocated tmp objects
 const __xAxis = new Vector3( 1, 0, 0 );

@@ -116,7 +116,7 @@ class CommonTerrain extends Group {
 		renderer.setSize( dim, dim );
 		renderer.setPixelRatio( 1 );
 
-		renderer.clear();
+		renderer.clearAsync();
 
 		renderer.setRenderTarget( renderTarget );
 

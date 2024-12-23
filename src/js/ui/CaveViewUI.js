@@ -10,6 +10,7 @@ import { SelectionPage } from './SelectionPage';
 import { SelectionTreePage } from './SelectionTreePage';
 import { SettingsPage } from './SettingsPage';
 import { SurfacePage } from './SurfacePage';
+import { CreditPage } from './CreditPage';
 
 function CaveViewUI ( viewer ) {
 
@@ -77,6 +78,7 @@ function CaveViewUI ( viewer ) {
 			if ( cfg.value( 'showExportPage', false) ) new ExportPage( frame, viewer, fileSelector );
 
 			new InfoPage( frame, viewer, fileSelector );
+			new CreditPage( frame, viewer, fileSelector );
 
 		}
 

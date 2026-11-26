@@ -1,6 +1,9 @@
 #include <common>
-#include <color_pars_vertex>
 #include <fog_pars_vertex>
+
+// declared here rather than by three's colour chunks, which declare vColor as a vec3 up to
+// r182 and as a vec4 from r183: the fragment shader builds a vec4 from it and needs one type
+varying vec3 vColor;
 
 uniform float linewidth;
 uniform vec2 resolution;

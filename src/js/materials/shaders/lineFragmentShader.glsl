@@ -53,8 +53,10 @@ varying float vLineDistance;
 varying vec3 vPosition;
 
 #include <common>
-#include <color_pars_fragment>
 #include <fog_pars_fragment>
+
+// see the vertex shader: declared here so that its type does not depend on the three release
+varying vec3 vColor;
 
 varying vec2 vUv;
 varying float vHide;
@@ -84,7 +86,8 @@ void main() {
 	vec4 diffuseColor = vec4( diffuse, opacity );
 
 	#include <logdepthbuf_fragment>
-	#include <color_fragment>
+
+	diffuseColor.rgb *= vColor;
 
 	#ifdef CV_HEIGHT
 

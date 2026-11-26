@@ -41,8 +41,119 @@
 	<dt>array</dt><dd><span>Array</span>an array of filenames of models to be displayed.</dd>
 </dl>
 
+<h4>focusStation( &lt;reference&gt;, &lt;options&gt; )</h4>
+<p>Select a station, and move the camera to centre the view on it.</p>
+<p>A reference identifies a station or a survey section by name, either as a dotted path
+(<i>entrance.pitch.3</i>) or as an array of the individual path components
+(<i>[ 'entrance', 'pitch', '3' ]</i>). A dotted path is ambiguous when a name within it contains a dot of
+its own. A path that matches nothing is tried once more with its last two components rejoined into a
+single name, and only those two, so a name containing a dot is matched only when it is the last name of
+the path and contains a single dot. An array reference is matched one component at a time, and is the
+reliable form for names of this kind.</p>
+<p>Returns a Promise, resolved with the Station object when the camera has finished moving. The Promise
+is rejected if no model is loaded, if the reference does not identify a station of the loaded model, or
+if the move is abandoned before it finishes - superseded by a later focus call, or cancelled by a
+selection made elsewhere.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>reference</dt><dd><span>string</span> or <span>Array</span>The name of the station.</dd>
+	<dt>options</dt><dd><span>Object</span>An object defined below (optional).</dd>
+</dl>
+
+<h4>focusSurvey( &lt;reference&gt; )</h4>
+<p>Select a section of the survey, and move the camera to frame it.</p>
+<p>Returns a Promise, resolved when the camera has finished moving. The Promise is rejected if no model
+is loaded, if the reference does not identify a section of the loaded model, or if the move is abandoned
+before it finishes - superseded by a later focus call, or cancelled by a selection made elsewhere.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>reference</dt><dd><span>string</span> or <span>Array</span>The name of the survey section.</dd>
+</dl>
+
+<h4>highlightStation( &lt;reference&gt; )</h4>
+<p>Highlight a station without moving the camera. Returns the Station object, or null if no model is
+loaded or the reference does not identify a station of the loaded model.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>reference</dt><dd><span>string</span> or <span>Array</span>The name of the station.</dd>
+</dl>
+
+<h4>clearHighlight()</h4>
+<p>Remove the highlight applied by highlightStation() or focusStation().</p>
+
+<h4>setStationMedia( &lt;source&gt; )</h4>
+<p>Supply images to be displayed for stations. A strip of thumbnails is displayed over the model next to
+the station when the pointer comes to rest on a station that has images - which requires the
+stationLabelOver view setting, as the station name label does - and when a station is focussed by
+focusStation() with the popup option set to true. The strip is HTML placed over the model rather than
+drawn into it as the popups are, as an image cannot be drawn into a popup.</p>
+<p>Only the URLs of the images are held. They are fetched by the browser as any other image of the page
+is, and with the same credentials. A thumbnail whose image fails to load is taken out of the strip, and
+the strip is closed when none is left; the failure is reported by the mediaError event.</p>
+<p>The strip follows the station as the view is moved, and is displayed only while the station itself is
+in view: moving the view off the station takes the strip off the screen with it, and moving the station
+back into view brings it back. It is removed altogether when the pointer leaves the station, when
+another station is hovered over, when the model is cleared and when clearStationMedia() is called. The
+pointer may be moved onto the strip itself without removing it. Nothing but the thumbnails takes pointer
+events, so the model can still be rotated and stations still selected through the rest of the strip.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>source</dt>
+	<dd><span>Map</span> or <span>function</span>A Map keyed by the name of a station - the dotted path
+	form of the reference accepted by focusStation() - with an Array of media entry Objects as each
+	value. A function is called with the Station object of the station and returns the same Array, or
+	null where the station has no images.</dd>
+</dl>
+
+<h4>clearStationMedia()</h4>
+<p>Remove the media source set by setStationMedia(), and any strip displayed.</p>
+
 <h4>dispose()</h4>
 <p>Free used memory including GPU and Javascript heap allocations.</p>
+
+<h3>Events</h3>
+
+<p>Listeners are registered with addEventListener( &lt;type&gt;, &lt;listener&gt; ) and removed with
+removeEventListener( &lt;type&gt;, &lt;listener&gt; ).</p>
+
+<h4>stationHover</h4>
+<p>Dispatched when the pointer comes to rest over a station, before the station name label is displayed.
+Stations are only tracked, and this event therefore only dispatched, when the stationLabelOver view
+setting is true. Hovering over any other part of the model dispatches no event.</p>
+<p>A listener that displays its own information for the station sets the handled property of the event,
+which suppresses the station name label until another station is hovered over. The distance popup
+displayed while measuring between stations is not suppressed.</p>
+<h5>Properties</h5>
+<dl>
+	<dt>station</dt><dd><span>Object</span>A Station object for the station under the pointer.</dd>
+	<dt>handled</dt><dd><span>boolean</span>Set to true by a listener to suppress the built in station name label <span>default: false</span>.</dd>
+</dl>
+
+<h4>mediaOpen</h4>
+<p>Dispatched when a thumbnail of the strip displayed for a station by setStationMedia() is clicked,
+before the image is displayed.</p>
+<p>A listener that displays the image itself - in a lightbox or a page of its own, which can show a
+caption, a download link or a video that the viewer cannot - sets the handled property of the event. The
+image is otherwise displayed in the model at the position of the station, as an image supplied by the
+station select event is.</p>
+<h5>Properties</h5>
+<dl>
+	<dt>station</dt><dd><span>Object</span>A Station object for the station the strip is displayed for.</dd>
+	<dt>entry</dt><dd><span>Object</span>The media entry Object of the thumbnail clicked.</dd>
+	<dt>handled</dt><dd><span>boolean</span>Set to true by a listener to suppress the built in image popup <span>default: false</span>.</dd>
+</dl>
+
+<h4>mediaError</h4>
+<p>Dispatched when the image of a thumbnail displayed by setStationMedia() fails to load, as the thumbnail
+is taken out of the strip. A listener that reports the failure itself sets the handled property of the
+event; a warning naming the URL is otherwise written to the console.</p>
+<h5>Properties</h5>
+<dl>
+	<dt>station</dt><dd><span>Object</span>A Station object for the station the strip is displayed for.</dd>
+	<dt>entry</dt><dd><span>Object</span>The media entry Object of the thumbnail.</dd>
+	<dt>url</dt><dd><span>string</span>The URL that failed to load, as the entry gave it.</dd>
+	<dt>handled</dt><dd><span>boolean</span>Set to true by a listener to suppress the console warning <span>default: false</span>.</dd>
+</dl>
 
 <h2>CaveViewUI Object</h2>
 
@@ -116,6 +227,42 @@
 	<dd><span>Object</span>An object, the properties of which determine the view settings applied to all models when loaded (optional).</dd>
 </dl>
 
+<h4>focusStation options Object</h4>
+<h5>Properties</h5>
+<dl>
+	<dt>highlight</dt>
+	<dd><span>boolean</span>highlight the station <span>default: true</span>. Set to false to remove an existing highlight. (optional).</dd>
+	<dt>popup</dt>
+	<dd><span>boolean</span>display the popup for the station. Set to false to close an open popup. If not set, an open popup is left as it is <span>default: unset</span>. (optional).</dd>
+</dl>
+
+<h4>media entry Object</h4>
+<p>One image of the strip displayed for a station by setStationMedia(). An entry without a url is
+ignored, and a station whose entries are all ignored displays no strip.</p>
+<h5>Properties</h5>
+<dl>
+	<dt>url</dt>
+	<dd><span>string</span>The URL of the full size image, displayed when the thumbnail is clicked.</dd>
+	<dt>thumbnailUrl</dt>
+	<dd><span>string</span>The URL of the image displayed in the strip. The full size image is used where this is not set, which is worth avoiding for a large one (optional).</dd>
+	<dt>caption</dt>
+	<dd><span>string</span>A caption, displayed under the thumbnail and as its tool tip (optional).</dd>
+</dl>
+<p>The strip is styled by the CSS custom properties below, which may be set on the container element of
+the viewer or on any of its ancestors. The value listed is the one used where the property is not set.</p>
+<dl>
+	<dt>--cv-media-background</dt><dd><span>rgba( 34, 34, 34, 0.85 )</span>background of the strip.</dd>
+	<dt>--cv-media-border</dt><dd><span>1px solid #808080</span>border of the strip.</dd>
+	<dt>--cv-media-radius</dt><dd><span>2px</span>corner radius of the strip and of the thumbnails.</dd>
+	<dt>--cv-media-padding</dt><dd><span>4px</span>space between the thumbnails and the edge of the strip.</dd>
+	<dt>--cv-media-gap</dt><dd><span>4px</span>space between thumbnails.</dd>
+	<dt>--cv-media-thumbnail-size</dt><dd><span>64px</span>width and height of each thumbnail.</dd>
+	<dt>--cv-media-font</dt><dd><span>sans-serif</span>font family of the captions.</dd>
+	<dt>--cv-media-caption-color</dt><dd><span>#dddddd</span>colour of the captions.</dd>
+	<dt>--cv-media-caption-size</dt><dd><span>11px</span>font size of the captions.</dd>
+	<dt>--cv-media-z-index</dt><dd><span>9</span>stacking order of the strip, below the side panel of the user interface.</dd>
+</dl>
+
 <h4>view Object</h4>
 <h5>Properties</h5>
 <dl>
@@ -154,6 +301,8 @@
 	<dd><span>boolean</span>visibility of station markers <span>default: false</span></dd>
 	<dt>stationLabels</dt>
 	<dd><span>boolean</span>visibility of station names <span>default: false</span></dd>
+	<dt>stationLabelOver</dt>
+	<dd><span>boolean</span>display the name of the station under the pointer <span>default: false</span></dd>
 	<dt>surface</dt>
 	<dd><span>boolean</span>visibility of surface legs <span>default: false</span></dd>
 	<dt>terrain</dt>

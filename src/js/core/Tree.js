@@ -280,6 +280,47 @@ Tree.prototype.getByPathArray = function ( path ) {
 
 };
 
+Tree.prototype.getByRef = function ( ref ) {
+
+	// resolve a reference to a node, given either as a dotted path or as an array of
+	// path components. Station names may themselves contain dots, so a lookup that
+	// fails is retried with the last two components rejoined into a single name - the
+	// same recovery getByPath applies to a dotted path.
+
+	// returns null when the reference matches nothing: references come from application
+	// code and may name parts of a survey that is no longer, or not yet, loaded.
+
+	if ( Array.isArray( ref ) ) {
+
+		if ( ref.length === 0 ) return null;
+
+		// getByPathArray consumes the array passed to it, so pass copies
+
+		const path = ref.slice();
+		const node = this.getByPathArray( path );
+
+		if ( path.length === 0 ) return node;
+
+		if ( ref.length < 2 ) return null;
+
+		const retryPath = ref.slice( 0, ref.length - 2 );
+
+		retryPath.push( ref.slice( ref.length - 2 ).join( '.' ) );
+
+		const retryNode = this.getByPathArray( retryPath );
+
+		return ( retryPath.length === 0 ) ? retryNode : null;
+
+	}
+
+	if ( typeof ref !== 'string' ) return null;
+
+	const node = this.getByPath( ref );
+
+	return ( node === undefined ) ? null : node;
+
+};
+
 Tree.prototype.getPath = function ( endNode ) {
 
 	const path = [];

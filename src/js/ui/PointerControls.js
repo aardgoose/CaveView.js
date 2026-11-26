@@ -31,6 +31,13 @@ class PointerControls extends EventDispatcher {
 
 		const mouseUpEvent = { type: 'select', node: null };
 
+		// signals the end of a station hover to the rest of the viewer. The hover itself
+		// is reported to applications as an event of the viewer, but its end is of no
+		// interest outside, where anything displayed for a station is displayed until
+		// something else replaces it.
+
+		const hoverEndEvent = { type: 'hoverEnd' };
+
 		let lastMouseMode = MOUSE_MODE_NORMAL;
 		let mouseMode = MOUSE_MODE_NORMAL;
 		let mouseTargets = [];
@@ -44,6 +51,8 @@ class PointerControls extends EventDispatcher {
 		let mouseUpFunction = null;
 
 		let hoverLabel = null;
+		let hoverStation = null;
+		let hoverHandled = false;
 		let showStationNameLabel = false;
 		let lastStationNameLabel = false;
 
@@ -70,6 +79,8 @@ class PointerControls extends EventDispatcher {
 			survey = null;
 			mouseTargets = [];
 			mouseMode = MOUSE_MODE_NORMAL;
+
+			endHover();
 
 			container.removeEventListener( 'pointerdown', onPointerDown );
 
@@ -305,6 +316,8 @@ class PointerControls extends EventDispatcher {
 
 				}
 
+				endHover();
+
 				container.removeEventListener( 'pointermove', onPointerMove );
 
 			}
@@ -426,6 +439,17 @@ class PointerControls extends EventDispatcher {
 
 		}
 
+		function endHover () {
+
+			if ( hoverStation === null ) return;
+
+			hoverStation = null;
+			hoverHandled = false;
+
+			self.dispatchEvent( hoverEndEvent );
+
+		}
+
 		function onPointerMove( event ) {
 
 			if ( event.target !== domElement ) return;
@@ -434,11 +458,22 @@ class PointerControls extends EventDispatcher {
 
 			const hit = raycaster.intersectObjects( mouseTargets, false )[ 0 ];
 
-			if ( hit === undefined ) {
+			// the mouse targets of an edit mode include geometry that is not a station -
+			// dye traces and entrance markers - so a hit alone does not identify a station
+
+			const station = hit?.station;
+
+			if ( station === undefined ) {
 
 				setTimeout( () => {
 
-					if ( hoverLabel !== null && performance.now() - lastPointerOver > 250 ) {
+					if ( performance.now() - lastPointerOver <= 250 ) return;
+
+					// the pointer has left the station - returning to it is a new hover
+
+					endHover();
+
+					if ( hoverLabel !== null ) {
 
 						hoverLabel.close();
 						hoverLabel = null;
@@ -447,15 +482,11 @@ class PointerControls extends EventDispatcher {
 
 					}
 
-					return;
-
 				}, 500 );
 
 				return;
 
 			}
-
-			const station = hit.station;
 
 			if ( hoverLabel !== null && hoverLabel.station !== station ) {
 
@@ -464,7 +495,26 @@ class PointerControls extends EventDispatcher {
 
 			}
 
-			if ( hoverLabel === null ) {
+			if ( station !== hoverStation ) {
+
+				hoverStation = station;
+
+				const hoverEvent = {
+					type: 'stationHover',
+					station: publicFactory.getStation( station ),
+					handled: false
+				};
+
+				viewer.dispatchEvent( hoverEvent );
+
+				// a listener displaying its own station information handles the hover,
+				// which suppresses the name label until another station is hovered over
+
+				hoverHandled = hoverEvent.handled;
+
+			}
+
+			if ( hoverLabel === null && ( showStationDistances || ! hoverHandled ) ) {
 
 				if ( showStationDistances ) {
 

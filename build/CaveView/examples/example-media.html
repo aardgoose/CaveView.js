@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>demo 3d cave viewer</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+	<meta name="Description" content="CaveView - 3d Cave model viewer">
+</head>
+<body onload="onload();" >
+
+<style>
+
+	* {
+		box-sizing: border-box;
+	}
+
+	#scene {
+		position: relative;
+		width: 600px;
+		height: 600px;
+
+		/* the thumbnail strip takes its appearance from these */
+
+		--cv-media-thumbnail-size: 72px;
+		--cv-media-background: rgba( 0, 0, 0, 0.75 );
+		--cv-media-border: 1px solid #1ab4e5;
+		--cv-media-caption-color: #1ab4e5;
+	}
+
+	#controls {
+		padding: 20px;
+	}
+
+	#status {
+		font-family: monospace;
+		min-height: 1.2em;
+	}
+
+	#lightbox img {
+		max-width: 300px;
+	}
+
+</style>
+
+<script type="text/javascript" src="CaveView/js/CaveView2.js" ></script>
+
+<script type="text/javascript" >
+
+function onload () {
+
+	const viewer = new CV2.CaveViewer( "scene", {
+		terrainDirectory: "terrain/",
+		surveyDirectory: "surveys/",
+		home: "CaveView/",
+		view: {
+			stations: true,
+			// the thumbnail strip is displayed on hover by the same station tracking
+			// that displays the station name label
+			stationLabelOver: true
+		}
+	} );
+
+	const ui = new CV2.CaveViewUI( viewer );
+
+	ui.loadCaveList( [ '<<SURVEY FILENAME>>', '<<SURVEY FILENAME>>' ] );
+
+	const stationList = document.getElementById( 'station-list' );
+	const status = document.getElementById( 'status' );
+	const lightbox = document.getElementById( 'lightbox' );
+	const inPage = document.getElementById( 'in-page' );
+
+	// give every tenth station of each model a couple of images as it is loaded. A real
+	// application would have a table of its own to build this from.
+
+	viewer.addEventListener( 'newCave', function () {
+
+		const media = new Map();
+
+		let count = 0;
+
+		viewer.forEachStation( function ( station ) {
+
+			if ( count++ % 10 !== 0 ) return;
+
+			const name = station.name();
+
+			media.set( name, [
+				{
+					url: placeholder( name, 400, '#33691e' ),
+					thumbnailUrl: placeholder( name, 72, '#33691e' ),
+					caption: 'survey photo'
+				},
+				{
+					url: placeholder( name, 400, '#4a148c' ),
+					thumbnailUrl: placeholder( name, 72, '#4a148c' ),
+					caption: 'sketch'
+				}
+			] );
+
+			addOption( stationList, name );
+
+		} );
+
+		// a Map keyed by station name. A function taking a Station object and returning
+		// the same array is accepted in its place, for a model too large to list.
+
+		viewer.setStationMedia( media );
+
+		status.textContent = media.size + ' stations with images - hover over one, or focus it below';
+
+	} );
+
+	viewer.addEventListener( 'clear', function () {
+
+		stationList.replaceChildren();
+		lightbox.replaceChildren();
+
+	} );
+
+	// focussing a station with its popup displays the strip as a hover does
+
+	document.getElementById( 'focus-station' ).addEventListener( 'click', function () {
+
+		viewer.focusStation( stationList.value, { popup: true } ).then(
+			function ( station ) {
+				status.textContent = 'centred on ' + station.name();
+			},
+			function ( error ) {
+				status.textContent = error.message;
+			}
+		);
+
+	} );
+
+	document.getElementById( 'clear-media' ).addEventListener( 'click', function () {
+
+		viewer.clearStationMedia();
+
+		status.textContent = 'images removed';
+
+	} );
+
+	// clicking a thumbnail displays the full size image in the model, unless the event is
+	// handled here
+
+	viewer.addEventListener( 'mediaOpen', function ( event ) {
+
+		status.textContent = event.entry.caption + ' of ' + event.station.name();
+
+		if ( ! inPage.checked ) return;
+
+		const image = document.createElement( 'img' );
+
+		image.src = event.entry.url;
+
+		lightbox.replaceChildren( image );
+
+		event.handled = true;
+
+	} );
+
+	function addOption ( list, name ) {
+
+		const option = document.createElement( 'option' );
+
+		option.value = name;
+		option.textContent = name;
+
+		list.appendChild( option );
+
+	}
+
+	// stand in for real images, so that this page needs no files of its own
+
+	function placeholder ( text, size, color ) {
+
+		const label = text.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' );
+
+		const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + size + '" height="' + size + '" viewBox="0 0 100 100">' +
+			'<rect width="100" height="100" fill="' + color + '" />' +
+			'<text x="50" y="54" fill="white" font-family="sans-serif" font-size="8" text-anchor="middle">' + label + '</text>' +
+			'</svg>';
+
+		return 'data:image/svg+xml,' + encodeURIComponent( svg );
+
+	}
+
+}
+
+</script>
+<h1>Example - station media</h1>
+<div style="padding: 20px">
+	<div id="scene"></div>
+</div>
+
+<div id="controls">
+	<p>
+		<select id="station-list" ></select>
+		<button id="focus-station" >focus station</button>
+		<button id="clear-media" >clear media</button>
+	</p>
+	<p>
+		<label><input type="checkbox" id="in-page" >display images in this page</label>
+	</p>
+	<p id="status" ></p>
+	<div id="lightbox" ></div>
+</div>
+
+<div style="clear: both" id="scratch">.</div>
+</body>
+</html>

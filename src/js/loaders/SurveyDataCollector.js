@@ -32,11 +32,36 @@ class SurveyDataCollector {
 
 	async lookupCRS( code ) {
 
+		// a host application can supply its own definition source via the
+		// 'crsLookup' configuration option - an async function mapping a
+		// numeric EPSG/ESRI code to a proj4 string (or null when unknown).
+		// This avoids network requests to third parties for hosts that must
+		// work offline or keep survey identities private.
+
+		const lookup = this.ctx.cfg.value( 'crsLookup', null );
+
+		if ( lookup !== null ) {
+
+			try {
+
+				const definition = await lookup( code );
+
+				return definition ? definition : null;
+
+			} catch ( e ) {
+
+				console.warn( 'CRS lookup failed' );
+				return null;
+
+			}
+
+		}
+
 		console.log( `looking up CRS code EPSG: ${code}` );
 
 		return fetch( `https://epsg.io/${code}.proj4` )
 		.then( response => response.ok ? response.text() : null )
-		.catch( function () { console.warn( 'CRS lookup failed' ); } );
+		.catch( function () { console.warn( 'CRS lookup failed' ); return null; } );
 
 
 	}

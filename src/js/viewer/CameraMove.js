@@ -215,6 +215,12 @@ class CameraMove {
 
 		};
 
+		this.isRunning = function () {
+
+			return running;
+
+		};
+
 		this.cancel = function () {
 
 			if ( rafID !== 0 ) window.cancelAnimationFrame( rafID );
@@ -357,11 +363,21 @@ class CameraMove {
 
 			} else {
 
-				if ( controls.autoRotate ) running = false;
+				if ( controls.autoRotate ) {
+
+					// the next frame of the rotation is already requested: forgetting its
+					// id without cancelling it leaves a callback that animates the next
+					// move an extra time on every frame
+
+					if ( rafID !== 0 ) window.cancelAnimationFrame( rafID );
+
+					running = false;
+					rafID = 0;
+
+				}
 
 				controls.autoRotate = false;
 				controls.enabled = true;
-				rafID = 0;
 
 			}
 

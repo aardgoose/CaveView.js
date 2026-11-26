@@ -124,6 +124,9 @@ class CaveViewer extends EventDispatcher {
 		let savedView = null;
 		let mouseOver = false;
 
+		// the camera move a focus call is waiting on - see settlePendingMove()
+		let pendingMove = null;
+
 		// event handler
 		window.addEventListener( 'resize', onResize );
 
@@ -744,6 +747,8 @@ class CaveViewer extends EventDispatcher {
 
 			if ( selection.isEmpty() || selection.isStation() ) return;
 
+			settlePendingMove( new Error( 'cancelled' ) );
+
 			cameraMove.cancel();
 
 			survey.remove( terrain );
@@ -786,6 +791,8 @@ class CaveViewer extends EventDispatcher {
 			} else {
 
 				survey.selectSection( node );
+
+				settlePendingMove( new Error( 'cancelled' ) );
 
 				cameraMove.cancel();
 				cameraMove.prepare( survey.selection.getWorldBoundingBox() );
@@ -1153,6 +1160,181 @@ class CaveViewer extends EventDispatcher {
 				return null;
 
 			}
+
+		};
+
+		// a reference identifies a station or survey section by name, as a dotted path
+		// or as an array of path components - see Tree.getByRef()
+
+		function getNodeByRef ( ref ) {
+
+			return ( survey === null ) ? null : survey.surveyTree.getByRef( ref );
+
+		}
+
+		function refName ( ref ) {
+
+			return Array.isArray( ref ) ? ref.join( '.' ) : String( ref );
+
+		}
+
+		// settle the move a focus call is waiting on, if any. Cancelling a move ends it
+		// at its own target, signalling an end that cannot be told from an arrival, so a
+		// move that is abandoned part way is settled before anything cancels it.
+
+		function settlePendingMove ( error ) {
+
+			if ( pendingMove !== null ) pendingMove( error );
+
+		}
+
+		function runCameraMove ( moveFunction ) {
+
+			// an auto rotation, or a move already in flight, stops a new move being
+			// prepared, and an auto rotation never ends by itself. Both are stopped
+			// before the listener is added below, so that the end of the abandoned
+			// move is not mistaken for the end of the new one.
+
+			settlePendingMove( new Error( 'superseded' ) );
+
+			if ( self.autoRotate ) self.autoRotate = false;
+
+			cameraMove.cancel();
+
+			return new Promise( ( resolve, reject ) => {
+
+				let settled = false;
+
+				function settle ( error ) {
+
+					settled = true;
+					pendingMove = null;
+
+					self.removeEventListener( 'moved', onMoved );
+
+					if ( error === undefined ) {
+
+						resolve();
+
+					} else {
+
+						reject( error );
+
+					}
+
+				}
+
+				function onMoved () {
+
+					settle();
+
+				}
+
+				// a move short enough to complete in a single frame signals its end
+				// before start() returns, so listen before moving
+
+				self.addEventListener( 'moved', onMoved );
+
+				moveFunction();
+
+				if ( settled ) return;
+
+				// a move that is not required - the camera already has the position
+				// and orientation asked for - never runs and so never signals an end
+
+				if ( ! cameraMove.isRunning() ) {
+
+					settle();
+					return;
+
+				}
+
+				// the move is only now the one in flight: marking it as pending any
+				// earlier would let a cancellation made by moveFunction() itself, while
+				// preparing this very move, settle it as abandoned
+
+				pendingMove = settle;
+
+			} );
+
+		}
+
+		this.focusStation = function ( ref, options ) {
+
+			if ( survey === null ) return Promise.reject( new Error( 'No survey loaded' ) );
+
+			const node = getNodeByRef( ref );
+
+			if ( node === null || ! node.isStation() ) {
+
+				return Promise.reject( new Error( `No station [${refName( ref )}] in the loaded survey` ) );
+
+			}
+
+			const highlight = ( options?.highlight !== false );
+			const popup = options?.popup;
+
+			return runCameraMove( () => {
+
+				// the station is selected directly rather than through selectSection(),
+				// which in trace edit mode marks a trace station instead of moving
+
+				survey.selectStation( node );
+
+				cameraMove.preparePoint( survey.getWorldPosition( node.clone() ) );
+
+				self.highlight = highlight ? node : survey.surveyTree;
+
+				// setting the popup to the survey tree closes any popup that is open, so
+				// an unasked for popup is left as it is rather than closed by default
+
+				if ( popup !== undefined ) self.popup = popup ? node : survey.surveyTree;
+
+				cameraMove.start( true );
+
+			} ).then( () => publicFactory.getStation( node ) );
+
+		};
+
+		this.focusSurvey = function ( ref ) {
+
+			if ( survey === null ) return Promise.reject( new Error( 'No survey loaded' ) );
+
+			const node = getNodeByRef( ref );
+
+			if ( node === null || node.isStation() ) {
+
+				return Promise.reject( new Error( `No survey section [${refName( ref )}] in the loaded survey` ) );
+
+			}
+
+			return runCameraMove( () => {
+
+				selectSection( node );
+
+				cameraMove.start( true );
+
+			} );
+
+		};
+
+		this.highlightStation = function ( ref ) {
+
+			const node = getNodeByRef( ref );
+
+			if ( node === null || ! node.isStation() ) return null;
+
+			self.highlight = node;
+
+			return publicFactory.getStation( node );
+
+		};
+
+		this.clearHighlight = function () {
+
+			if ( survey === null ) return;
+
+			self.highlight = survey.surveyTree;
 
 		};
 

@@ -41,8 +41,66 @@
 	<dt>array</dt><dd><span>Array</span>an array of filenames of models to be displayed.</dd>
 </dl>
 
+<h4>focusStation( &lt;reference&gt;, &lt;options&gt; )</h4>
+<p>Select a station, and move the camera to centre the view on it.</p>
+<p>A reference identifies a station or a survey section by name, either as a dotted path
+(<i>entrance.pitch.3</i>) or as an array of the individual path components
+(<i>[ 'entrance', 'pitch', '3' ]</i>). A dotted path is ambiguous when a name within it contains a dot of
+its own. A path that matches nothing is tried once more with its last two components rejoined into a
+single name, and only those two, so a name containing a dot is matched only when it is the last name of
+the path and contains a single dot. An array reference is matched one component at a time, and is the
+reliable form for names of this kind.</p>
+<p>Returns a Promise, resolved with the Station object when the camera has finished moving. The Promise
+is rejected if no model is loaded, if the reference does not identify a station of the loaded model, or
+if the move is abandoned before it finishes - superseded by a later focus call, or cancelled by a
+selection made elsewhere.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>reference</dt><dd><span>string</span> or <span>Array</span>The name of the station.</dd>
+	<dt>options</dt><dd><span>Object</span>An object defined below (optional).</dd>
+</dl>
+
+<h4>focusSurvey( &lt;reference&gt; )</h4>
+<p>Select a section of the survey, and move the camera to frame it.</p>
+<p>Returns a Promise, resolved when the camera has finished moving. The Promise is rejected if no model
+is loaded, if the reference does not identify a section of the loaded model, or if the move is abandoned
+before it finishes - superseded by a later focus call, or cancelled by a selection made elsewhere.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>reference</dt><dd><span>string</span> or <span>Array</span>The name of the survey section.</dd>
+</dl>
+
+<h4>highlightStation( &lt;reference&gt; )</h4>
+<p>Highlight a station without moving the camera. Returns the Station object, or null if no model is
+loaded or the reference does not identify a station of the loaded model.</p>
+<h5>Parameters</h5>
+<dl>
+	<dt>reference</dt><dd><span>string</span> or <span>Array</span>The name of the station.</dd>
+</dl>
+
+<h4>clearHighlight()</h4>
+<p>Remove the highlight applied by highlightStation() or focusStation().</p>
+
 <h4>dispose()</h4>
 <p>Free used memory including GPU and Javascript heap allocations.</p>
+
+<h3>Events</h3>
+
+<p>Listeners are registered with addEventListener( &lt;type&gt;, &lt;listener&gt; ) and removed with
+removeEventListener( &lt;type&gt;, &lt;listener&gt; ).</p>
+
+<h4>stationHover</h4>
+<p>Dispatched when the pointer comes to rest over a station, before the station name label is displayed.
+Stations are only tracked, and this event therefore only dispatched, when the stationLabelOver view
+setting is true. Hovering over any other part of the model dispatches no event.</p>
+<p>A listener that displays its own information for the station sets the handled property of the event,
+which suppresses the station name label until another station is hovered over. The distance popup
+displayed while measuring between stations is not suppressed.</p>
+<h5>Properties</h5>
+<dl>
+	<dt>station</dt><dd><span>Object</span>A Station object for the station under the pointer.</dd>
+	<dt>handled</dt><dd><span>boolean</span>Set to true by a listener to suppress the built in station name label <span>default: false</span>.</dd>
+</dl>
 
 <h2>CaveViewUI Object</h2>
 
@@ -116,6 +174,15 @@
 	<dd><span>Object</span>An object, the properties of which determine the view settings applied to all models when loaded (optional).</dd>
 </dl>
 
+<h4>focusStation options Object</h4>
+<h5>Properties</h5>
+<dl>
+	<dt>highlight</dt>
+	<dd><span>boolean</span>highlight the station <span>default: true</span>. Set to false to remove an existing highlight. (optional).</dd>
+	<dt>popup</dt>
+	<dd><span>boolean</span>display the popup for the station. Set to false to close an open popup. If not set, an open popup is left as it is <span>default: unset</span>. (optional).</dd>
+</dl>
+
 <h4>view Object</h4>
 <h5>Properties</h5>
 <dl>
@@ -154,6 +221,8 @@
 	<dd><span>boolean</span>visibility of station markers <span>default: false</span></dd>
 	<dt>stationLabels</dt>
 	<dd><span>boolean</span>visibility of station names <span>default: false</span></dd>
+	<dt>stationLabelOver</dt>
+	<dd><span>boolean</span>display the name of the station under the pointer <span>default: false</span></dd>
 	<dt>surface</dt>
 	<dd><span>boolean</span>visibility of surface legs <span>default: false</span></dd>
 	<dt>terrain</dt>

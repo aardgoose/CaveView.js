@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" dir="ltr">
+<head>
+	<title>demo 3d cave viewer</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link type="text/css" href="CaveView/css/caveview.css" rel="stylesheet"/>
+	<meta name="Description" content="CaveView - 3d Cave model viewer">
+</head>
+<body onload="onload();" >
+
+<style>
+
+	* {
+		box-sizing: border-box;
+	}
+
+	#scene {
+		position: relative;
+		width: 600px;
+		height: 600px;
+	}
+
+	#controls {
+		padding: 20px;
+	}
+
+	#hover, #status {
+		font-family: monospace;
+		min-height: 1.2em;
+	}
+
+</style>
+
+<script type="text/javascript" src="CaveView/js/CaveView2.js" ></script>
+
+<script type="text/javascript" >
+
+function onload () {
+
+	const viewer = new CV2.CaveViewer( "scene", {
+		terrainDirectory: "terrain/",
+		surveyDirectory: "surveys/",
+		home: "CaveView/",
+		view: {
+			stations: true,
+			stationLabelOver: true
+		}
+	} );
+
+	const ui = new CV2.CaveViewUI( viewer );
+
+	ui.loadCaveList( [ '<<SURVEY FILENAME>>', '<<SURVEY FILENAME>>' ] );
+
+	const stationList = document.getElementById( 'station-list' );
+	const surveyList = document.getElementById( 'survey-list' );
+	const hover = document.getElementById( 'hover' );
+	const status = document.getElementById( 'status' );
+
+	// list the stations and survey sections of each model as it is loaded
+
+	viewer.addEventListener( 'newCave', function () {
+
+		const surveyTree = viewer.getSurveyTree();
+
+		stationList.replaceChildren();
+		surveyList.replaceChildren();
+
+		viewer.forEachStation( function ( station ) {
+
+			addOption( stationList, station.name() );
+
+		} );
+
+		surveyTree.traverse( function ( node ) {
+
+			if ( node === surveyTree || node.isStation() ) return;
+
+			addOption( surveyList, node.getPath() );
+
+		} );
+
+		status.textContent = '';
+
+	} );
+
+	// the name of a station is also accepted as an array of path components,
+	// for example [ 'entrance', 'pitch', '3' ]
+
+	document.getElementById( 'focus-station' ).addEventListener( 'click', function () {
+
+		viewer.focusStation( stationList.value, { popup: true } ).then(
+			function ( station ) {
+				status.textContent = 'centred on ' + station.name();
+			},
+			function ( error ) {
+				status.textContent = error.message;
+			}
+		);
+
+	} );
+
+	document.getElementById( 'focus-survey' ).addEventListener( 'click', function () {
+
+		const name = surveyList.value;
+
+		viewer.focusSurvey( name ).then(
+			function () {
+				status.textContent = 'framed ' + name;
+			},
+			function ( error ) {
+				status.textContent = error.message;
+			}
+		);
+
+	} );
+
+	document.getElementById( 'clear-highlight' ).addEventListener( 'click', function () {
+
+		viewer.clearHighlight();
+
+	} );
+
+	viewer.addEventListener( 'stationHover', function ( event ) {
+
+		const station = event.station;
+
+		hover.textContent = station.name() + ' - ' + station.connectionCount() + ' connections';
+
+		// this page displays the station itself, so the built in name label is not required
+
+		event.handled = true;
+
+	} );
+
+	function addOption ( list, name ) {
+
+		const option = document.createElement( 'option' );
+
+		option.value = name;
+		option.textContent = name;
+
+		list.appendChild( option );
+
+	}
+
+}
+
+</script>
+<h1>Example - navigation</h1>
+<div style="padding: 20px">
+	<div id="scene"></div>
+</div>
+
+<div id="controls">
+	<p>
+		<select id="station-list" ></select>
+		<button id="focus-station" >focus station</button>
+		<button id="clear-highlight" >clear highlight</button>
+	</p>
+	<p>
+		<select id="survey-list" ></select>
+		<button id="focus-survey" >focus survey</button>
+	</p>
+	<p>hovered station: <span id="hover" ></span></p>
+	<p id="status" ></p>
+</div>
+
+<div style="clear: both" id="scratch">.</div>
+</body>
+</html>

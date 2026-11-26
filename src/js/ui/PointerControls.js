@@ -77,7 +77,7 @@ class PointerControls extends EventDispatcher {
 
 		viewer.addEventListener( 'dispose', () => {
 
-			document.rmeoveEventListener( 'keyup', endDistanceMode );
+			document.removeEventListener( 'keyup', endDistanceMode );
 
 			container.removeEventListener( 'pointerup', pointerUp );
 			container.removeEventListener( 'pointerdown', onPointerDown );

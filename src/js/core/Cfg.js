@@ -18,6 +18,9 @@ class Cfg extends EventDispatcher {
 		this.themeColors = new Map();
 		this.i18n = x18n.t;
 
+		// what this configuration has subscribed to the catalogue with - see dispose()
+		this.languageListener = null;
+
 		if ( envs === undefined ) return;
 
 		for ( const pName in envs ) {
@@ -52,7 +55,20 @@ class Cfg extends EventDispatcher {
 
 		const self = this;
 
-		x18n.on( [ 'lang:change' ], function () { self.dispatchEvent( { type: 'change', name: 'language' } ); } );
+		if ( this.languageListener === null ) {
+
+			this.languageListener = function () {
+
+				// the catalogue may report a change a moment after it was made, by which
+				// time the viewer this configuration belongs to may have been disposed
+
+				if ( self.languageListener !== null ) self.dispatchEvent( { type: 'change', name: 'language' } );
+
+			};
+
+			x18n.on( [ 'lang:change' ], this.languageListener );
+
+		}
 
 		return;
 
@@ -70,6 +86,21 @@ class Cfg extends EventDispatcher {
 			console.log( 'error loading language file', lang );
 
 		}
+
+	}
+
+	// the catalogue is shared by every viewer of the page and outlives each of them: a
+	// configuration left subscribed to it would go on telling the user interface of a
+	// disposed viewer to rebuild itself, at every change of language any other viewer made,
+	// and would keep that viewer from ever being collected
+
+	dispose () {
+
+		if ( this.languageListener === null ) return;
+
+		x18n.off( [ 'lang:change' ], this.languageListener );
+
+		this.languageListener = null;
 
 	}
 

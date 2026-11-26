@@ -42,7 +42,11 @@
 </dl>
 
 <h4>dispose()</h4>
-<p>Free used memory including GPU and Javascript heap allocations.</p>
+<p>Free used memory including GPU and Javascript heap allocations. Once disposed, a viewer does nothing:
+renderView(), resize(), resetRenderer(), clearView() and a further dispose() return without effect, and
+getSnapshot() throws an Error saying so. A survey still being loaded is given up: what is being fetched or
+read is aborted where it can be, and a load that completes or fails afterwards all the same - one that
+was waiting for a coordinate system to be looked up, say - ends without a message and without an event.</p>
 
 <h2>CaveViewUI Object</h2>
 
